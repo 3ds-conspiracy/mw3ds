@@ -1,8 +1,9 @@
 # E2E handoff: the OpenMW-parity commits against the emulator
 
-Updated 2026-10-03. The five parity commits (45c0b0e dialogue, 16cdcbe world rules, e2f342f magic effects, 0e3670a
-weather, 50edcf1 activation) have now been run in the emulator. The fixes that came out of that, and four reported
-bugs, are committed (b6ba258..HEAD); `out\world` was rebuilt on 2026-10-03 07:26 with them.
+Updated 2026-10-03 (evening). The five parity commits (45c0b0e dialogue, 16cdcbe world rules, e2f342f magic effects,
+0e3670a weather, 50edcf1 activation) have been run in the emulator. The fixes that came out of that, and four reported
+bugs, are committed (b6ba258..HEAD). Open items 1-5 of the earlier list were then fixed (b23622f..1b48c43);
+`out\world` was rebuilt on 2026-10-03 14:54 with them and everything below was re-run on that build.
 
 ## How the tests are run
 
@@ -12,8 +13,11 @@ bugs, are committed (b6ba258..HEAD); `out\world` was rebuilt on 2026-10-03 07:26
 - Parallel (four Azahar copies: main, azahar-b, -c, -d): `tools\test\sweep-par.ps1 -ItemsFile <file>`, one `test:<name>` per
   line, results in `build\par\<name>.result` / `.log`. Its `-Wait 1500` is too short for openmw-spec-dialogue, -world,
   -effects: run those directly.
-- Main-quest chain: `tools\test\run-suite.ps1 -Chained -Data out\world -Start 'Seyda Neen' -Wait 2400` (main emulator,
-  live `mw3ds.3dsx`: do not rebuild the app while it runs).
+- Main-quest chain: `tools\test\run-suite.ps1 -Chained -Data out\world -Start 'Seyda Neen' -Wait 2400 [-Emu <azahar
+  folder>] [-App <3dsx copy>] [-Logs <folder>]`. Without `-App` it runs the live `mw3ds.3dsx` (do not rebuild meanwhile).
+  Each chapter's closing save is kept as `<logs>\chain-mq-chN.sav`; `-ResumeFrom <that save> -Tests mq-chN,...` restarts
+  mid-chain. Chained, GIVE only tops up, SPELL skips a known spell, JOIN never lowers a rank, CHAIN pays a carried
+  bounty, and GOD goes before the LOAD.
 - Do not rebuild `out\world` while any emulator runs. Rebuild: `MW3DS_OUT=out/world python tools/convert/level.py --world`
   (about 12 minutes with the cell cache, ~4 GB of RAM). Under memory pressure `tex3ds` can die writing `map.t3x`
   (exit 0xC0000142) after the cells and skeletons are written but before `game.json`: check `game.json`'s time and rerun.
@@ -29,14 +33,14 @@ bugs, are committed (b6ba258..HEAD); `out\world` was rebuilt on 2026-10-03 07:26
 | openmw-spec-world-hooks | 424 met, 0 failed |
 | openmw-spec-world | 337 met, 0 failed |
 | openmw-spec-effects | 346 met, 0 failed |
-| openmw-spec-dialogue | 170 met, 0 failed, 3 SKIP (speaker disabled / elsewhere) |
+| openmw-spec-dialogue | 170 met, 0 failed, 3 SKIP (speaker disabled / elsewhere); 55 monitor warnings, 29 of them missing textures in ext_m1_m9 |
 | openmw-spec-magic / -actormagic / -enchcast | 126 / 5 / 98 met, 0 failed |
 | openmw-spec-combat / -enchant / -movement / -recharge | 440 / 120 / 160 / 160, all pass |
-| mg-fakesoulgem, bug-andrano-tomb | pass |
-| main quest, chained | ch2, 4, 7, 14 pass; ch1, 3, 11, 13, 15 have 0 failed expectations (monitors only); ch5, 6, 8, 9, 10, 12 fail chained |
-| main quest, alone | ch5, 8, 10, 12 run alone: 0 failed expectations (ch10 12/12, ch12 7/7) |
+| mg-fakesoulgem, bug-andrano-tomb, bug-guars-ground, bug-dagger-hand | pass |
+| bug-container-state (new) | 17 met, 0 failed (monitor: actors stuck fighting in Beshara) |
+| main quest, chained | all 15 chapters 0 failed expectations; ch1-7, 10, 12, 14 pass; ch8, 9, 11, 13, 15 monitor warnings only |
 
-"FAIL" with 0 failed expectations means monitor warnings only: actors 8-40 units off the floor, "no memory for
+"FAIL" with 0 failed expectations means monitor warnings only: actors stuck fighting, "no memory for
 sound", missing cliff racer textures when Bitter Coast cells stream in low linear memory. Noise for rules, but the
 linear-memory squeeze outdoors is real.
 
@@ -56,19 +60,31 @@ linear-memory squeeze outdoors is real.
 - First person: the Camera bone's tilt is taken out of the rig (mid-chop the fist drew over the forearm); NPC rigid
   parts use the pose their skins were built from.
 - From another session: deferred linear frees (GPU hang outdoors on hardware), README quick start.
+- Main quest chained (was Open 1): test setup, not the game. ch5's GIVE doubled the Dwemer artifact ch4 hands over,
+  ch7's SPELL:corprus gave corprus back after the cure (corprus greetings broke ch6, 8, 9, 12), ch9 ends mid-fight so
+  the player died loading ch10 before its GOD, and a bounty from driven thefts held the arrest screen over ch12. mq-ch9
+  also needed TOPIC:accompany_you before "name you Nerevarine".
+- Missing female body parts (was Open 2): male parts of the same race fill them (OpenMW getBodyParts), first person,
+  third person and NPCs (`firstperson.py`, `npc.py`). Argonian female forearm was the only gap in the data.
+- Follow-through (was Open 3): the converter exports `<W><Kind>FM` / `FS` and `Attack*M` / `S`; a blow under 0.33
+  strength (or a missed roll) cuts over at the hit to the small one, under 0.66 to the medium one, player and NPCs.
+- Container stacks (was Open 4): contents carry condition, soul and charge (`ContentItem`), stacked as OpenMW's
+  ContainerStore::stacks; put, take, barter and save keep them. New verb SETITEMCHARGE.
+- Actors above the floor (was Open 5): gravity and the monitor measured only under the middle while a step stands
+  actors on the highest floor under the feet; all three now use `collisionFootFloor`.
 
 ## Open
 
-1. Main quest chained: chapters fail chained but pass alone, so state carried between chapters breaks them (topics
-   "never learned", kills timing out in ch10 after earlier chapters). Compare the chained save going into ch5 / ch10
-   with a fresh one.
-2. Female Argonian has no forearm body part in the data (`b_n_argonian_f_forearm` missing): about 4 units of gap in
-   first person. Fill missing arm slots from the male entry in `tools/convert/firstperson.py` (`build()`, `third_person()`).
-3. First-person follow-through groups end at "large follow stop"; OpenMW picks small / medium / large by charge.
-4. Container contents hold only id and count: a filled soul gem is refused, condition / charge reset on put.
-5. Andrano / Rothan tombs and Seyda Neen: actors 8-40 units above the floor (placement), monitor noise.
-6. The first-person camera-tilt change has no OpenMW reference in build/openmw-full (no rendering code there); judge it
-   by eye on hardware.
+1. First-person camera-tilt change has no OpenMW reference in build/openmw-full (no rendering code there); judge it by
+   eye on hardware. Also by eye: female Argonian forearm (player and NPCs), small / medium / large follow-throughs.
+2. Linear memory outdoors: missing textures when exterior cells stream in (29 in ext_m1_m9 in the dialogue spec), "no
+   memory for sound", memory falling on each visit to Zainab Camp, Ashkhan's Yurt (ch8).
+3. Monitor noise left in the chain: actors stuck fighting (Ald Daedroth, Arena Pit, Akulakhan's Chamber, Beshara),
+   player falling in the Arena Pit / Akulakhan's Chamber, under the floor in Tel Naga Upper Tower (ch13), dralcea arethi
+   20 below the floor in Balmora.
+4. Not done, outside the fixed bugs: script Drop from a container drops a plain item (script.cpp); barter prices ignore
+   condition and soul; the converter does not skip not-playable body parts (BYDT flags & 2) as OpenMW does; driven
+   thefts in mq-ch2 / ch3 still run up a bounty (paid at CHAIN).
 
 ## Rules of thumb that held up
 
