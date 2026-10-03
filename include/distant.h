@@ -4,7 +4,7 @@
 
 #include "cell.h"
 
-// Distant land (tools/distant.py): a coarse, pre-lit height grid of the whole island, drawn for the
+// Distant land (tools/convert/distant.py): a coarse, pre-lit height grid of the whole island, drawn for the
 // grid cells past the loaded 3 x 3 so the view reaches further. One untextured batch per cell,
 // built when the camera comes near and freed when it leaves.
 struct DistantCell

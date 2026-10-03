@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-// Animated NPCs from cells/<cell>.act (tools/actors.py documents the layout).
+// Animated NPCs from cells/<cell>.act (tools/convert/actors.py documents the layout).
 
 struct RotKey { float t, w, x, y, z; };
 struct VecKey { float t, x, y, z; };

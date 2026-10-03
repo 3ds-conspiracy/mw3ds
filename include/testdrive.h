@@ -1,5 +1,5 @@
 // Test driver: harness actions that play the game the way a player would (walk there, face it, press A,
-// swing), for the automated story tests (tools/tests/*.txt, main.cpp's autoinput). Used only by the harness.
+// swing), for the automated story tests (tools/test/cases/*.txt, main.cpp's autoinput). Used only by the harness.
 //
 //   GOD:1              the player can't die and every blow lands and kills (story tests; combat tests don't)
 //   WALKTO:id          walk to that reference (path grid when there's one, straight otherwise)

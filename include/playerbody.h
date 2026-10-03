@@ -10,9 +10,9 @@
 struct World;
 
 // The player seen from outside (third-person view, character creation's face preview): the NPC skeleton
-// of their race and sex, dressed from the "third" pieces (tools/firstperson.py third_person): the bare
+// of their race and sex, dressed from the "third" pieces (tools/convert/firstperson.py third_person): the bare
 // body, the chosen head and hair, then clothes, armor, skirts and robes as an NPC's are put together
-// (tools/npc.py NpcBuilder.parts), the weapon while it is out.
+// (tools/convert/npc.py NpcBuilder.parts), the weapon while it is out.
 struct PlayerBody
 {
 	bool ready = false;

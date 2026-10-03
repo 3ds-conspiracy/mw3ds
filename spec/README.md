@@ -4,8 +4,8 @@ One page per mechanic: the inputs, the formula, the GMSTs it reads, and where Op
 function, for someone who wants to check). The formulas are written in our own words; nothing is copied from
 OpenMW (GPLv3), and the OpenMW checkout used for reading lives in `build/openmw-src/` (ignored by git).
 
-`tools/openmw_specgen.py` is the same spec as code: an oracle that computes each formula's number for random inputs
-and writes `tools/tests/spec-*.txt`, which sets those inputs in the engine and `EXPECT`s the number. A failing
+`tools/test/openmw_specgen.py` is the same spec as code: an oracle that computes each formula's number for random inputs
+and writes `tools/test/cases/spec-*.txt`, which sets those inputs in the engine and `EXPECT`s the number. A failing
 test is a place where the engine and the spec disagree; each page ends with what has been found so far.
 
 | Page | Covers | Test |

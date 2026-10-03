@@ -41,7 +41,7 @@ keywords (R22); the character after an unmatched `%` never being an escape (R26)
 
 ## Tests written
 
-`tools/specgen_dialogue.py` -> `tools/tests/openmw-spec-dialogue.txt` (seed 1, count 100: about 1200 lines, 100
+`tools/test/specgen_dialogue.py` -> `tools/test/cases/openmw-spec-dialogue.txt` (seed 1, count 100: about 1200 lines, 100
 cases). Each case: `LOAD` a clean save, `GOTO` the NPC's cell (only NPCs placed in exactly one interior cell), set the
 player state the sampled conditions read, `SETDISP`, then:
 - topic cases: `TALK`, state tokens, `KNOW:<topic>`, `EXPECT:answer:<topic>:<npc>:eq:<snippet of the oracle's response>`
@@ -56,7 +56,7 @@ membership and rank, disposition. It covers the conditions R3-R13 where the harn
 difference, reaction low / high, same faction, Not-ID / faction / class / race / cell with odd operators,
 Local / Not Local, Weather in interiors (always false), Choice outside a choice (always false), NPC Fight / Hello /
 Alarm / Flee, level and reputation. Unknown inputs make the oracle drop the case (it counts, does not guess).
-`python tools/specgen_dialogue.py --selftest` checks the oracle's own pieces (substitution quirks, keyword
+`python tools/test/specgen_dialogue.py --selftest` checks the oracle's own pieces (substitution quirks, keyword
 matching, faction math, disposition fallback) and writes nothing.
 `--pc-race <race> --pc-female <0|1>` adds `PCRACE` / `PCSEX` tokens (hooks below) and makes Same Race / Same Sex /
 PC Gender conditions decidable; without them greetings that depend on race or sex are not written.
@@ -110,7 +110,7 @@ Needed (name / args / returns):
   `npcstats.cpp`, not in this reading.
 - Info order inside a topic is the order in the ESM files as loaded (later plugins' infos are merged by `PREV` / `NEXT`
   links). The converter keeps one linear order; whether it equals OpenMW's merged order is not checked.
-- The converter (`tools/build_game.py static_match`) compares Not-ID / Faction / Class / Race / Cell conditions with
+- The converter (`tools/convert/build_game.py static_match`) compares Not-ID / Faction / Class / Race / Cell conditions with
   the stored operator and value, but OpenMW ignores them (R12). Infos where the stored form is not "= 1" (56 topics
   have one; the oracle skips them, and Greeting 2 among them) may have been dropped or kept wrongly by the
   converter and cannot be told from the converted data.
@@ -130,7 +130,7 @@ Fix phase (read against `mwdialogue/*.cpp`, `defines.cpp`, `interpretercontext.c
 
 | Rule | Our behaviour | Cause | Status | File |
 |---|---|---|---|---|
-| R12 Not-ID / Faction / Class / Race | The converter dropped an info when the stored operator / value said "= 0" (or similar): 56 topics, Greeting 2 among them | `static_match` ran `compare(op, truth, value)`; OpenMW needs only the plain truth (the engine already did) | fixed (needs a data rebuild) | tools/build_game.py |
+| R12 Not-ID / Faction / Class / Race | The converter dropped an info when the stored operator / value said "= 0" (or similar): 56 topics, Greeting 2 among them | `static_match` ran `compare(op, truth, value)`; OpenMW needs only the plain truth (the engine already did) | fixed (needs a data rebuild) | tools/convert/build_game.py |
 | R11 Same Sex / Same Race (44, 45) | A creature with a record "female" bit equal to the player's sex read true | no creature guard | fixed | source/dialogue.cpp |
 | R11 Vampirism (60) | Read the script global `pcvampire` | wrong source | fixed: the Vampirism effect (133) magnitude > 0 | source/dialogue.cpp |
 | R16 topic click | `dialogueTopic` answered while a choice was open and for any dialogue type (the UI hid both, a test hook did not) | no guard in the rule code | fixed | source/dialogue.cpp |

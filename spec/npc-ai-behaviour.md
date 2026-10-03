@@ -64,7 +64,7 @@ second. A fleeing actor runs until it is `fFleeDistance` away out of sight. Demo
 4. **Escorts** stopped and started at one distance (500), so they stuttered at the edge; now OpenMW's 450 / 250 wait.
 
 Test: `openmw-spec-ai` (generated from the actor data): the fight term and the flee rating at several distances and
-dispositions (`Session::fightTermOf`, `fleeRatingOf`). Needs `python tools/openmw_specgen.py` on `out/world`.
+dispositions (`Session::fightTermOf`, `fleeRatingOf`). Needs `python tools/test/openmw_specgen.py` on `out/world`.
 
 ## Open
 

@@ -11,7 +11,7 @@
 
 namespace
 {
-// Body part slots (tools/npc.py PART_BONES order)
+// Body part slots (tools/convert/npc.py PART_BONES order)
 const int kSlotCount = 27;
 const int SLOT_HEAD = 0, SLOT_HAIR = 1, SLOT_SHIELD = 10, SLOT_WEAPON = 25;
 const int CLOT_ROBE = 4, CLOT_SKIRT = 7;

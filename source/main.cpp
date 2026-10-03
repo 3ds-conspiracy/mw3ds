@@ -708,7 +708,7 @@ int main()
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024);
 	bool romfs = R_SUCCEEDED(romfsInit());
 	struct stat st;
-	// The PC that built the CIA listens for the log (tools/make-cia.ps1 writes romfs loghost.txt)
+	// The PC that built the CIA listens for the log (tools/build/make-cia.ps1 writes romfs loghost.txt)
 	logNetStart(stat("sdmc:/3ds/mw3ds/loghost.txt", &st) == 0 ? "sdmc:/3ds/mw3ds/loghost.txt" : "romfs:/loghost.txt");
 	logf("memory: %s, heap %lu KB, linear %lu KB (%lu KB free)", isNew3ds ? "New 3DS" : "Old 3DS",
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, linearSpaceFree() / 1024);

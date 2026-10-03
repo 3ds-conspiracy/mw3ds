@@ -885,7 +885,7 @@ void Session::drawTravel()
 	}
 }
 
-// The land map (tools/worldmap.py), centred on the player, with town names and an arrow for them
+// The land map (tools/convert/worldmap.py), centred on the player, with town names and an arrow for them
 // ---- maps: the world map outdoors, the local map (a top-down render) indoors
 
 // Jail: a day per hundred gold of bounty passes, stolen goods are taken, a skill a day changes (Security

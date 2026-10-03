@@ -362,7 +362,7 @@ struct Session : ScriptHost
 	void loopSound(int ref, const std::string& soundId, bool start, float volume = 1.0f, float pitch = 1.0f) override;
 	void streamMusic(const std::string& file) override;
 	bool soundPlaying(int ref, const std::string& soundId) override;
-	// Movies (tools/movies.py: data/movies/<name>.mwv, sound music/movie_<name>.snd): the game waits
+	// Movies (tools/convert/movies.py: data/movies/<name>.mwv, sound music/movie_<name>.snd): the game waits
 	bool playMovie(const std::string& name) override;
 	bool talking() override { return dlg.open; }
 	bool moviePlaying() const { return movieFile != nullptr; }

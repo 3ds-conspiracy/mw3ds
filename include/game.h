@@ -9,7 +9,7 @@
 #include <unordered_set>
 #include <vector>
 
-// ---- Script syntax tree (built by tools/mwscript.py, see there for the JSON shapes)
+// ---- Script syntax tree (built by tools/convert/mwscript.py, see there for the JSON shapes)
 
 enum NodeKind : unsigned char
 {
@@ -195,13 +195,13 @@ struct ActorDef
 	std::vector<std::pair<int, float>> constEffects;   // effect, magnitude: resistances, shields ... their abilities keep on them
 };
 
-// First-person view model parts (tools/firstperson.py): data/fp/<piece>.fpm files
+// First-person view model parts (tools/convert/firstperson.py): data/fp/<piece>.fpm files
 struct FpItem
 {
 	std::unordered_map<int, std::pair<std::string, std::string>> slots;   // body part slot -> male, female piece
 	std::string model;                   // the item's own mesh (arrows in flight)
 };
-// Third-person pieces (tools/firstperson.py third_person): [female] race -> slot -> piece, the heads and
+// Third-person pieces (tools/convert/firstperson.py third_person): [female] race -> slot -> piece, the heads and
 // hairs to choose from (body id, piece), and item -> slot -> (male, female piece)
 // The sun, the moons and the stars (level.py "sky_bodies"; Morrowind.ini [Moons])
 struct MoonDef { float size = 50, fadeInStart = 14, fadeInFinish = 15, fadeOutStart = 7, fadeOutFinish = 10,
@@ -212,7 +212,7 @@ struct SkyBodiesDef
 	MoonDef moons[2];
 	float sunrise = 6, sunset = 18;
 };
-// Pictures (tools/artassets.py): loading screens, the level-up art by class, book pictures by path
+// Pictures (tools/convert/artassets.py): loading screens, the level-up art by class, book pictures by path
 struct ArtRef { std::string file; int w = 0, h = 0; };
 struct ArtDef
 {

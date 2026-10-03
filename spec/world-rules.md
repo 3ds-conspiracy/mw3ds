@@ -5,7 +5,7 @@ Rules read from OpenMW's `mwworld/containerstore.cpp`, `cellstore.cpp`, `datetim
 advanceTime), `engine.cpp` (the per-frame clock), `mwmechanics/levelledlist.cpp`, `actors.cpp` (soulTrap),
 `spelleffects.cpp`, `mechanicsmanagerimp.cpp` (getDerivedDisposition), `mwdialogue/journalimp.cpp`, `quest.cpp`,
 `dialoguemanagerimp.cpp` (faction reaction) and `mwgui/dialogue.cpp`, `containeritemmodel.cpp` (restock). In our
-words. The oracle is `tools/specgen_world.py` (tests `openmw-spec-world`, `openmw-spec-world-hooks`); what each
+words. The oracle is `tools/test/specgen_world.py` (tests `openmw-spec-world`, `openmw-spec-world-hooks`); what each
 test needs from the engine and what is still unread is in `spec/findings/world-rules.md`.
 
 ## 1. Containers, NPC inventories, leveled lists, restock

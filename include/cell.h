@@ -22,7 +22,7 @@ struct TextureCache
 	C3D_Tex* recheck(const char* dataDir, const std::string& name);
 };
 
-// Batch render-state flags, matching tools/convert_cell.py
+// Batch render-state flags, matching tools/convert/convert_cell.py
 enum
 {
 	BATCH_BLEND = 1, BATCH_TEST = 2, BATCH_TWO_SIDED = 4, BATCH_CLAMP = 8, BATCH_ADDITIVE = 16,

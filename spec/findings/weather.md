@@ -44,7 +44,7 @@ J18, J19 (not redone).
 
 ## Tests written
 
-`tools/specgen_weather.py` -> `tools/tests/openmw-spec-weather.txt` (about 1800 steps; every EXPECT is computed from
+`tools/test/specgen_weather.py` -> `tools/test/cases/openmw-spec-weather.txt` (about 1800 steps; every EXPECT is computed from
 `out/world/game*.json` and the Morrowind.ini fallbacks):
 - colours (sky / fog / ambient / sun channels) and fog depth for each of the ten weathers at boundary and random
   hours (section 1);

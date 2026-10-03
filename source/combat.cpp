@@ -85,7 +85,7 @@ static const char* creatureAttackGroup(const ActorSet& set, const Actor& a, cons
 	return actorFindGroup(actorSkeleton(set, a.skeleton), "Attack1") >= 0 ? "Attack1" : attackGroup(w);
 }
 
-// First-person animation family of a weapon (tools/firstperson.py group names)
+// First-person animation family of a weapon (tools/convert/firstperson.py group names)
 static const char* vmGroup(const Object* w)
 {
 	if (!w)

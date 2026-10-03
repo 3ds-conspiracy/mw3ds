@@ -3,8 +3,8 @@
 Source: OpenMW `apps/openmw/mwworld/weather.cpp` (`WeatherManager`, `Weather`, `RegionWeather`,
 `TimeOfDayInterpolator`), `mwscript/skyextensions.cpp` (the script functions), `mwworld/datetimemanager.cpp` (the
 clock). Every number below comes from the Morrowind.ini `[Weather ...]` / `[Weather]` sections that OpenMW reads as
-"fallback" values, plus the GMST `fStromWindSpeed` (0.7). Oracle: `tools/specgen_weather.py`
--> `tools/tests/openmw-spec-weather.txt`. What was found: `spec/findings/weather.md`.
+"fallback" values, plus the GMST `fStromWindSpeed` (0.7). Oracle: `tools/test/specgen_weather.py`
+-> `tools/test/cases/openmw-spec-weather.txt`. What was found: `spec/findings/weather.md`.
 
 ## Constants (vanilla)
 

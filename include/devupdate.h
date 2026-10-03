@@ -4,7 +4,7 @@
 #include <string>
 
 // Development builds update themselves at launch (source/devupdate.cpp). A dev CIA
-// (tools/make-dev.ps1) carries romfs:/devhost.txt ("ip port" of the PC's tools/serve-cia.js dev
+// carries romfs:/devhost.txt ("ip port" of the PC's dev
 // port) and romfs:/buildid.txt. At launch it:
 //   1. brings sdmc:/3ds/mw3ds/data in line with the PC's out/data (only changed files, resumed
 //      and retried through Wi-Fi stalls; sdmc:/3ds/mw3ds/data/.manifest lists what is complete),

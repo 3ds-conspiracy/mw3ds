@@ -1,4 +1,4 @@
-// Distant land: see distant.h and tools/distant.py (the file layout).
+// Distant land: see distant.h and tools/convert/distant.py (the file layout).
 #include <cmath>
 #include <cstdio>
 #include <unordered_map>

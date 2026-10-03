@@ -117,7 +117,7 @@ pickpocket 1, Speechcraft 0 / fail 1, Armorer 0, Athletics run 0 / swim 1.
 ## Findings
 
 2026-09-29 (earlier): armor rating ignored the armor skill and Unarmored (fixed for the player, `Session::playerArmor`,
-and NPCs, `tools/npcstats.py armor_rating`).
+and NPCs, `tools/convert/npcstats.py armor_rating`).
 
 2026-09-29, this pass (all in `combat.cpp`, `projectile.cpp`, `formulas.cpp`, `session.cpp`):
 
@@ -149,5 +149,5 @@ elemental shield damage.
 ## Open
 
 - Enchanted weapons count as magical (OpenMW's default setting); vanilla may differ.
-- NPC armor ratings come from the converter (`tools/npcstats.py`), fixed at their worn condition.
+- NPC armor ratings come from the converter (`tools/convert/npcstats.py`), fixed at their worn condition.
 - The attack type an NPC picks (chop / slash / thrust) is random here; OpenMW picks by the weapon's best attack in AI.

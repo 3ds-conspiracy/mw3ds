@@ -1,5 +1,5 @@
 // The numbers behind repair, recharge, security, persuasion and the resistance roll, as functions of the player's
-// stats and the item / NPC in question, so the game and the generated spec tests (tools/openmw_specgen.py,
+// stats and the item / NPC in question, so the game and the generated spec tests (tools/test/openmw_specgen.py,
 // spec/combat.md, spec/derived.md) read the same code. Each is Morrowind's rule as OpenMW has it.
 #include <algorithm>
 #include <cmath>

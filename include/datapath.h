@@ -5,11 +5,11 @@
 
 // Sounds and textures live in 64 subfolders chosen by a checksum of the file name (the SD card's
 // file system scans a whole folder to open or create a file; thousands in one folder crawl).
-// tools/textures.py shard_dir computes the same.
+// tools/convert/textures.py shard_dir computes the same.
 inline std::string shardedPath(const std::string& dataDir, const char* folder, const std::string& name);
 
 // A cell's file (stem: its name without extension; ext: ".cel", ".act", ".json"): cells/<xx>/<stem><ext>
-// (tools/level.py shard_cells), else the older flat cells/<stem><ext>
+// (tools/convert/level.py shard_cells), else the older flat cells/<stem><ext>
 inline std::string cellPath(const std::string& dataDir, const std::string& stem, const char* ext);
 
 inline std::string shardedPath(const std::string& dataDir, const char* folder, const std::string& name)

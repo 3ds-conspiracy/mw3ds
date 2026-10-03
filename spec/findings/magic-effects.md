@@ -89,7 +89,7 @@ that kills credits its caster (player or the player's followers).
 
 ## Tests written
 
-- `tools/specgen_effects.py` (new, imports `openmw_specgen`) writes `tools/tests/openmw-spec-effects.txt` (about 70 cases, `--count N` scales, seed
+- `tools/test/specgen_effects.py` (new, imports `openmw_specgen`) writes `tools/test/cases/openmw-spec-effects.txt` (about 70 cases, `--count N` scales, seed
   `--seed`). Each case reloads a saved battlemage, sets Willpower / Luck 5 (so the random part of the resist roll is minimal) and Intelligence 100, makes a
   one- or two-effect spell with `ADDEFFECT` / `MAKESPELL`, casts it (`CAST`, or `CASTAT:scamp`), and `EXPECT`s mostly relative to a `SNAP`:
   - drain / fortify attribute and skill (floor at 0, return after expiry);
@@ -163,7 +163,7 @@ modifier (the engine only has a fleeing flag), `refdisp` after Charm (exists), `
 
 | Rule | Our behaviour | Cause | Status | File |
 |---|---|---|---|---|
-| Applied-once flag 0x1000 on effects | never set, so the cost rule "duration at least 1 unless applied once" was dead | OpenMW sets it in code (`HardcodedFlags` in loadmgef.cpp), not in the ESM | fixed (needs data rebuild) | tools/build_game.py `APPLIED_ONCE` |
+| Applied-once flag 0x1000 on effects | never set, so the cost rule "duration at least 1 unless applied once" was dead | OpenMW sets it in code (`HardcodedFlags` in loadmgef.cpp), not in the ESM | fixed (needs data rebuild) | tools/convert/build_game.py `APPLIED_ONCE` |
 | Drain Health / Fatigue on actors lowers current only | lowered current and maximum | wrong rule | fixed | source/magic.cpp |
 | Drain Magicka on actors given back at the end, may go below 0 | clamped at 0, never given back | missing undo | fixed | source/magic.cpp |
 | Restore Magicka on actors capped at the maximum | uncapped | missing cap | fixed | source/magic.cpp |
@@ -175,7 +175,7 @@ modifier (the engine only has a fleeing flag), `refdisp` after Charm (exists), `
 | Reflect / Spell Absorption on any effect of another's spell | harmful effects only | extra condition | fixed | source/magic.cpp |
 | Absorb needs an actor caster | self / potion Absorb drained the player alone | no caster check | fixed (dropped) | source/magic.cpp |
 | Cure Corprus ends the Corprus effect only | removed the disease from the list | wrong rule | fixed (`corprusSince` = -2 means cured, saved with it) | source/magic.cpp, world.cpp, session.cpp |
-| Unreflectable effects skip Reflect | not known | flag not exported | open | tools/build_game.py |
+| Unreflectable effects skip Reflect | not known | flag not exported | open | tools/convert/build_game.py |
 | Spells on actors keyed by spell (no stacking, Dispel of actors, Cure on actors) | effects on actors carry no source; Dispel / Cure do nothing there | memory (no per-effect source) | open | source/magic.cpp |
 | Damage / Restore Attribute / Skill on actors; Fortify Maximum Magicka on actors | not kept | would need per-actor damage store | open | source/magic.cpp |
 | Magnitude is an integer roll min + d(max-min+1) | player rolls a float | small | differs on purpose (under 1 point) | source/magic.cpp |

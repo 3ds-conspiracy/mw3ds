@@ -48,7 +48,7 @@ MW3DS_EMU_DIR=C:\Tools\azahar
 ### 3. Install the rest
 
 ```powershell
-powershell -File tools\setup.ps1
+powershell -File tools\build\setup.ps1
 ```
 
 This installs the Python packages, the 3DS toolchain and `makerom`, then checks everything. If something is missing
@@ -57,7 +57,7 @@ it says what and where to get it. Run it again with `-Check` any time to see the
 ### 4. Build
 
 ```powershell
-powershell -File tools\build-cia.ps1
+powershell -File tools\build\build-cia.ps1
 ```
 
 This converts the game data from your Morrowind install, builds the engine and packs both into **`build\mw3ds.cia`**
@@ -66,17 +66,17 @@ This converts the game data from your Morrowind install, builds the engine and p
 After changing only the engine code, skip the conversion:
 
 ```powershell
-powershell -File tools\build-cia.ps1 -SkipConvert
+powershell -File tools\build\build-cia.ps1 -SkipConvert
 ```
 
 ## Running the tests
 
-The tests play the game automatically in Azahar and check the results. Each test is a text file in `tools\tests\`
+The tests play the game automatically in Azahar and check the results. Each test is a text file in `tools\test\cases\`
 listing inputs and checks (go to a place, talk about a topic, expect a journal entry, ...).
 
 ```powershell
-powershell -File tools\run-test.ps1 mq-ch1 -Start "Seyda Neen"   # one test; prints RESULT: PASS or FAIL
-powershell -File tools\run-suite.ps1 -Data out\data              # the 15 main quest chapters, one after another
+powershell -File tools\test\run-test.ps1 mq-ch1 -Start "Seyda Neen"   # one test; prints RESULT: PASS or FAIL
+powershell -File tools\test\run-suite.ps1 -Data out\data              # the 15 main quest chapters, one after another
 ```
 
 They cover the main quest, mechanics such as escorts, strongholds and vampirism, quest and dialogue sweeps, and
@@ -85,22 +85,24 @@ formula tests generated from OpenMW's rules. The game's log is at `<Azahar folde
 ## Troubleshooting
 
 - **"... is not set"**: a path is missing from `.env`. Fill it in and run again.
-- **Something else missing**: run `powershell -File tools\setup.ps1 -Check` to see what.
+- **Something else missing**: run `powershell -File tools\build\setup.ps1 -Check` to see what.
 - **"missing sounds" during the build**: a few sound files the game refers to were not found. The build carries on
   without them; those sounds are silent.
-- **Need to start the data over**: delete the `out` folder and run `tools\build-cia.ps1` again.
+- **Need to start the data over**: delete the `out` folder and run `tools\build\build-cia.ps1` again.
 
 ## How it works
 
 ```
-Your Morrowind install ──▶ tools\*.py (converters) ──▶ out\data ──▶ packed into the CIA ──▶ MW3DS engine on the 3DS
+Your Morrowind install ──▶ tools\convert (converters) ──▶ out\data ──▶ packed into the CIA ──▶ MW3DS engine on the 3DS
 ```
 
 | Folder | What is in it |
 |---|---|
 | `source\`, `include\` | The engine: world and rendering, combat, magic, dialogue, the MWScript interpreter, UI, saves, and the test harness |
-| `tools\` | The converters (Python) and the scripts that set up, build, test and install (PowerShell) |
-| `tools\tests\` | The automated tests |
+| `tools\convert\` | The converters (Python): Morrowind's files to the engine's data; `level.py` runs them all |
+| `tools\build\` | Setup, build and packaging scripts (PowerShell), the CIA's banner and RSF |
+| `tools\test\` | The test runners, quest sweeps, spec test generators and data checks |
+| `tools\test\cases\` | The automated tests |
 | `spec\` | The game's formulas (spell cost, damage, persuasion, alchemy, ...) as documented by OpenMW |
 
 ## Status

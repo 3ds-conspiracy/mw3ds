@@ -1,6 +1,6 @@
 # Findings: world rules
 
-Spec: `spec/world-rules.md`. Oracle: `tools/specgen_world.py`. Written from OpenMW's source only; our
+Spec: `spec/world-rules.md`. Oracle: `tools/test/specgen_world.py`. Written from OpenMW's source only; our
 `source/world.cpp` and `source/session.cpp` were not read, and nothing here has been run (no build, no emulator).
 
 ## Rules
@@ -35,7 +35,7 @@ One heading per rule; OpenMW file:function, GMSTs, quirks. The prose is in `spec
 
 ## Tests written
 
-- `tools/tests/openmw-spec-world.txt` (existing kinds and tokens only):
+- `tools/test/cases/openmw-spec-world.txt` (existing kinds and tokens only):
   - calendar: random date, `HOUR`, `SLEEP:h:2`, then `EXPECT:global:day|month|year|dayspassed` and `hour`; plus the
     set rules (day past month end, month 12+, month set with a day beyond its length, hour past 24 set directly).
   - timescale: `SETGLOBAL:timescale`, a 6 s wait, hour moved by `6 x timescale / 3600` within 25 % (wall clock).
@@ -46,7 +46,7 @@ One heading per rule; OpenMW file:function, GMSTs, quirks. The prose is in `spec
   - followers: a placed actor `FOLLOW`s the player at 100..1500 units, `DOORTO` the Census Office; expects it is in
     that cell exactly when within 800.
   - journal index: `JOURNAL` sets, `EXPECT:journal` reads it back.
-- `tools/tests/openmw-spec-world-hooks.txt` (needs hooks below):
+- `tools/test/cases/openmw-spec-world-hooks.txt` (needs hooks below):
   - leveled lists: `levcandidates`, `levpick` over every real list, level 1..60 and the chance-none boundary,
     plus `levrolls` for the each flag.
   - `JOURNALADD` / `SETJOURNALINDEX` sequences against a model of Journal / SetJournalIndex (index, lines,
@@ -102,7 +102,7 @@ of out\world before the emulator shows it.
 
 | Rule | Our behaviour | Cause | Status | File |
 |---|---|---|---|---|
-| Journal finished / restart / quest names | 0 of 620 quests had a finished or restart flag, and no title | Morrowind.esm has no QSTN / QSTF / QSTR at all: Tribunal.esm and Bloodmoon.esm carry them, replacing the vanilla entries by INAM (725 finished, 3 restart, 558 titles) | fixed (data) | tools/build_game.py `plugin_journal_infos`, `build_journals` |
+| Journal finished / restart / quest names | 0 of 620 quests had a finished or restart flag, and no title | Morrowind.esm has no QSTN / QSTF / QSTR at all: Tribunal.esm and Bloodmoon.esm carry them, replacing the vanilla entries by INAM (725 finished, 3 restart, 558 titles) | fixed (data) | tools/convert/build_game.py `plugin_journal_infos`, `build_journals` |
 | Timescale | the TimeScale global was ignored (read as a GMST, always 30) | `gmstf("timescale")` | fixed | source/world.cpp `timescale()`, rest.cpp, magic.cpp |
 | Calendar | Day / Month / Year / DaysPassed were recomputed from the start date each frame, so a script's `Set day / month / year / dayspassed` was overwritten; `GameHour` past 24 dropped the days | `World::date()` derived, `syncTime` rewrote | fixed: the globals are the calendar, time moving on advances them, sets follow OpenMW's setters (day wraps, month clamps and carries years, hour past 24 moves the day not DaysPassed) | source/world.cpp `setGlobal`, `syncTime`, script.cpp, main.cpp, save.cpp |
 | Gold of other sizes | `AddItem gold_100` made a gold_100 stack (the script path mapped it, the harness / direct adds did not) | mapping lived in script.cpp only | fixed: `addItem` maps gold_005/010/025/100 to gold_001 | source/world.cpp |
@@ -113,13 +113,13 @@ of out\world before the emulator shows it.
 | Followers through doors | everything within 2048 (2D) came, escorts too, hostile ones too, `stayoutside` ignored | simple radius | fixed: follow package / summons only, 800 (3D), `stayoutside`, a follower fighting the player stops and stays | source/session.cpp `finishTravel`, include/world.h `followerTaken` |
 | Disposition | no weapon-drawn term; Charm raised the base disposition for good | missing term; effect applied as a change | fixed: fDispWeaponDrawn when the weapon is out; Charm is a timed effect read by `disposition()` | source/world.cpp, magic.cpp, session.cpp |
 | Disposition crime term | `modCrimeDispositionModifier` (set by witnessed crime) not modelled | crime area | open (crime reaction, outside this pass) | - |
-| Restock quantity | negative counts lost their sign (fill took abs; the converter did `abs` for NPC lines): a merchant ran out | `fillContents`, `npc_items` | fixed: sign kept, shown as `|count|`, a sale never depletes it, stacking keeps the sign, loot takes `|count|`; Data for NPC inventories | source/world.cpp, screens_dialogue.cpp, screens_items.cpp, script.cpp, tools/npcstats.py |
+| Restock quantity | negative counts lost their sign (fill took abs; the converter did `abs` for NPC lines): a merchant ran out | `fillContents`, `npc_items` | fixed: sign kept, shown as `|count|`, a sale never depletes it, stacking keeps the sign, loot takes `|count|`; Data for NPC inventories | source/world.cpp, screens_dialogue.cpp, screens_items.cpp, script.cpp, tools/convert/npcstats.py |
 | Merchant gold reset | reset on opening Barter, and every trade re-armed the 24 h timer (a busy merchant never refilled) | `lastBarter` set on each trade | fixed: on opening dialogue, timer set only by a reset | source/dialogue.cpp, world.cpp `restockGold`, screens_dialogue.cpp |
 | Leveled pick / each flag | same rule | - | matches (candidate rule shared by `pickLeveled` and the `levpick` hook; item `all` = flag 1, `each` = flag 2, creature `all` = flag 1 as the exporter does) | source/game.cpp |
 | Journal / SetJournalIndex | same rules (dedup on heard lines, index only up, finished / restart, empty text writes nothing) | - | matches | source/world.cpp |
 | Journal with an index the quest has no entry for | OpenMW throws (script error); ours moves the index up and goes on | kept running | differs on purpose: a vanilla script naming a missing stage must not abort | source/world.cpp `journalAdd` |
 | Scripted items stack | scripted items stack (one script per item id) | per-id script instances, memory | differs on purpose | source/world.cpp `addItem` |
-| NPC leveled inventory lines | resolved once when the data is built (seeded), not rolled at fill time | converter `npcstats.bind` | differs on purpose: data size; open if exact rolls are wanted | tools/npcstats.py |
+| NPC leveled inventory lines | resolved once when the data is built (seeded), not rolled at fill time | converter `npcstats.bind` | differs on purpose: data size; open if exact rolls are wanted | tools/convert/npcstats.py |
 | Persistent actors | corpse clearing spares essential and scripted actors | the record's Persistent flag is not exported | differs on purpose (needs the flag in the actor export to be exact) | source/world.cpp `respawnCell` |
 | Respawn on cell load | runs for every cell that loads, OpenMW only when the player enters (not for neighbours streaming in) | no such distinction | differs on purpose, harmless | source/world.cpp |
 | Followers of followers | not taken | one level | open (OpenMW recurses) | source/session.cpp |
@@ -141,5 +141,5 @@ the level has hundreds of mudcrabs. The generator now writes ADVANCE for the cal
 
 ## Next emulator batch
 
-Rebuild out\world (journal flags and titles, NPC restock signs), then `python tools/specgen_world.py` (the journal checks
+Rebuild out\world (journal flags and titles, NPC restock signs), then `python tools/test/specgen_world.py` (the journal checks
 read the flags from game_journal_*.json), then run `openmw-spec-world` and `openmw-spec-world-hooks`.

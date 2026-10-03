@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-// Morrowind's look for the menus (game.json "ui", tools/uiassets.py). Everything is optional: what
+// Morrowind's look for the menus (game.json "ui", tools/convert/uiassets.py). Everything is optional: what
 // is missing is drawn plainly.
 struct UiGlyph { u16 x, y, w, h; float advance, bearX, bearY; };
 struct UiPiece { u16 x, y, w, h; };

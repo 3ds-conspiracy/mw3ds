@@ -43,7 +43,7 @@ undecided are under Open questions.
 
 ## Tests written
 
-All in `tools/tests/`, written by what a player does (walk to the object, activate it through the crosshair, take items
+All in `tools/test/cases/`, written by what a player does (walk to the object, activate it through the crosshair, take items
 through the pick-up / inventory); each uses existing tokens only. They have not been run (no emulator in the writing
 step).
 
@@ -146,13 +146,13 @@ New tests: `openmw-spec-activation-equip`, `-beast`, `-bed`, `-pickpocket`, `-kn
 | Locked door / container with its key: unlock, disarm a trap (sound `Disarm Trap`) | A trap fired first, even for a locked door with no key and with the key | `springTrap` ran before the lock check | fixed (`lockGate`) | source/session.cpp |
 | Locked, no key: sound only, no message | Extra "Locked" notice | `notify("Locked")` | fixed | source/session.cpp |
 | Key use has no sound; the trap going off plays `Disarm Trap Fail` | `Open Lock` on the key, `Trap Trigger` on the trap | wrong sound ids | fixed | source/session.cpp, source/combat.cpp |
-| Sounds `Disarm Trap`, `Disarm Trap Fail`, `Open Lock Fail` | Not in the converted data | not in `ENGINE_SOUNDS` | fixed in the converter, needs a data rebuild | tools/build_game.py |
+| Sounds `Disarm Trap`, `Disarm Trap Fail`, `Open Lock Fail` | Not in the converted data | not in `ENGINE_SOUNDS` | fixed in the converter, needs a data rebuild | tools/convert/build_game.py |
 | NPC in combat with the player: `sActorInCombat` message | Nothing | silent return | fixed | source/session.cpp |
 | Knocked-down NPC (not fighting): loot window, no rolls; taking is a theft from them | Talked, or the pickpocket rolls when sneaking | no rule | fixed (theft marks the NPC as owner) | source/session.cpp, source/screens_items.cpp, source/combat.cpp |
 | Werewolf refused by everything but doors | No werewolf form in the engine | whole mechanic missing | partly: refusal hook only (`WEREWOLF`); no transformation or script functions | source/session.cpp |
 | Owned bed: trespass, refused only if someone reports it; werewolf and enemies refused first | Refused at once, no crime, whoever watched | `F_SHOWRESTMENU` | fixed (`bedRefused`) | source/session.cpp, source/script.cpp |
 | Equip broken armor / weapon: `sInventoryMessage1` | Worn | no check | fixed (`canEquip`) | source/screens_items.cpp |
-| Beast races: no full helm, boots, shoes (by body parts) | No check | no part data | fixed, needs a data rebuild | tools/build_game.py, source/screens_items.cpp |
+| Beast races: no full helm, boots, shoes (by body parts) | No check | no part data | fixed, needs a data rebuild | tools/convert/build_game.py, source/screens_items.cpp |
 | Two-hander and shield both worn | The other hand was unequipped | vanilla rule | fixed (user decision: follow OpenMW) | source/screens_items.cpp |
 | Boots and shoes share one slot; shield and light share the left hand | Both worn together | slot table | fixed | source/screens_items.cpp |
 | Script `Equip` is forced (no refusal) | n/a | | fixed (force flag) | source/screens_items.cpp |

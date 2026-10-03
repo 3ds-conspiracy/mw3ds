@@ -106,7 +106,7 @@ void watchdogStart()
 }
 
 // Network copy of the log: every line also goes out as a UDP packet to the PC that built the
-// CIA (tools/serve-cia.js writes them to build/device-log.txt), so a hang on real hardware shows
+// CIA (UDP port 8081), so a hang on real hardware shows
 // where it stopped without taking the SD card out.
 static int s_sock = -1;
 static sockaddr_in s_dest;

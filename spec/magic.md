@@ -107,7 +107,7 @@ target rolls 0..99 below its magnitude, per effect of the spell:
 2026-09-29, this pass:
 4. **Actors had no resistances at all**: an atronach's Resist Fire, a Dunmer's 75 % fire resistance, an Altmer's
    weaknesses, and whatever Weakness or Resist a spell put on them. The converter now writes each actor's constant
-   effects from its own and its race's abilities, diseases and curses (`tools/build_game.py constant_effects`,
+   effects from its own and its race's abilities, diseases and curses (`tools/convert/build_game.py constant_effects`,
    `const_effects`), each actor keeps the spells on it (`Ref::effects`), and `applyEffectToActor` rolls Reflect,
    Absorption and resistance with the actor's own Willpower, Luck and fatigue (`resistRoll`, shared with the player).
 5. **Damage on actors landed all at once** (magnitude x duration); now per second, as for the player. Drain Health on

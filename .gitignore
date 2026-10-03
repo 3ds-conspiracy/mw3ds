@@ -9,15 +9,15 @@ out/
 __pycache__/
 *.pyc
 out/
-tools/tests/chain-*.txt
+tools/test/cases/chain-*.txt
 .env
 
 # test run output
 qrun-*/
-tools/tests/bench-*.txt
+tools/test/cases/bench-*.txt
 
 # private working notes (handoffs, todo)
 internal/
 
-# tools downloaded by tools/setup.ps1
+# tools downloaded by tools/build/setup.ps1
 .tools/

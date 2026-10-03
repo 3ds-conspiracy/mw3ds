@@ -8,7 +8,7 @@
 
 struct World;
 
-// One converted part / item model (data/fp/<name>.fpm, tools/firstperson.py), bones resolved
+// One converted part / item model (data/fp/<name>.fpm, tools/convert/firstperson.py), bones resolved
 // against the first-person skeleton
 struct FpPiece
 {

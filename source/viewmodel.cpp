@@ -1,6 +1,6 @@
 // First-person view model: the player's arms (race skin, sleeves, gauntlets) and the weapon /
 // shield they hold, on the first-person skeleton, animated with Morrowind's first-person groups
-// and drawn in front of the world. Parts come from data/fp (tools/firstperson.py).
+// and drawn in front of the world. Parts come from data/fp (tools/convert/firstperson.py).
 #include "viewmodel.h"
 
 #include <cmath>
