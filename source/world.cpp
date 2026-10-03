@@ -2252,8 +2252,9 @@ int World::refItemCount(const Ref& r, const std::string& id) const
 void World::refAddItem(Ref& r, const std::string& id, int count)
 {
 	std::string l = lower(id);
+	// (a new one joins only a stack that is whole: not a worn one, a filled gem or a part-charged one)
 	for (auto& c : r.contents)
-		if (lower(c.second) == l)
+		if (lower(c.second) == l && c.plain())
 		{
 			c.first += c.first < 0 ? -count : count;       // (a restocking quantity stays one)
 			return;
@@ -2261,23 +2262,54 @@ void World::refAddItem(Ref& r, const std::string& id, int count)
 	r.contents.emplace_back(count, l);
 }
 
+// A whole item into a container (OpenMW's ContainerStore::stacks): onto a stack of the player's (not a restocking
+// one) with the same id and soul when both are whole (no wear, full charge), else a stack of its own
+void World::refAddStack(Ref& r, const InventoryItem& item)
+{
+	bool whole = item.condition < 0 && item.charge < 0.0f;
+	if (whole)
+		for (auto& c : r.contents)
+			if (c.first > 0 && lower(c.second) == item.id && c.soul == item.soul && c.condition < 0 && c.charge < 0.0f)
+			{
+				c.first += item.count;
+				return;
+			}
+	ContentItem c(item.count, item.id);
+	c.condition = item.condition;
+	c.soul = item.soul;
+	c.charge = item.charge;
+	r.contents.push_back(std::move(c));
+}
+
+// Count of a container's stack into the inventory: a plain one as addItem (gold, the item's script), one with wear,
+// a soul or a charge whole (addStack)
+void World::takeStack(const ContentItem& c, int count)
+{
+	if (c.plain())
+		addItem(c.second, count);
+	else
+		addStack({ lower(c.second), count, false, c.condition, c.soul, c.charge });
+}
+
 int World::refRemoveItem(Ref& r, const std::string& id, int count)
 {
 	std::string l = lower(id);
 	int removed = 0;
-	for (size_t i = 0; i < r.contents.size() && removed < count;)
-		if (lower(r.contents[i].second) == l)
-		{
-			int n = std::min(count - removed, stockCount(r.contents[i].first));
-			r.contents[i].first += r.contents[i].first < 0 ? n : -n;
-			removed += n;
-			if (r.contents[i].first == 0)
-				r.contents.erase(r.contents.begin() + i);
+	// (empty soul gems go before filled ones, as World::removeItem)
+	for (int pass = 0; pass < 2 && removed < count; pass++)
+		for (size_t i = 0; i < r.contents.size() && removed < count;)
+			if (lower(r.contents[i].second) == l && r.contents[i].soul.empty() == (pass == 0))
+			{
+				int n = std::min(count - removed, stockCount(r.contents[i].first));
+				r.contents[i].first += r.contents[i].first < 0 ? n : -n;
+				removed += n;
+				if (r.contents[i].first == 0)
+					r.contents.erase(r.contents.begin() + i);
+				else
+					i++;
+			}
 			else
 				i++;
-		}
-		else
-			i++;
 	return removed;
 }
 

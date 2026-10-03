@@ -64,7 +64,7 @@ void Session::containerTake(int i, bool checkOwner)
 	// (what a living, knocked-down NPC carries is theirs: taking it is a theft, with them as the owner)
 	if (checkOwner && (w.ownedByOther(containerRef) || (c.type == "NPC_" && !c.dead)))
 		takeOwned(containerRef, c.contents[i].second, stockCount(c.contents[i].first));
-	w.addItem(c.contents[i].second, stockCount(c.contents[i].first));
+	w.takeStack(c.contents[i], stockCount(c.contents[i].first));   // (its wear, soul and charge come with it)
 	playSound(-1, "Item Misc Up");
 	c.contents.erase(c.contents.begin() + i);
 }
@@ -84,12 +84,6 @@ bool Session::containerPut(int i)
 			notify(w.game.gmst("sbarterdialog12", "You cannot sell or give away conjured items."));
 			return false;
 		}
-	// (what lies in a container is only an id and a count: a soul would be lost, so a filled gem stays)
-	if (!it.soul.empty())
-	{
-		notify("A soul gem holding a soul can not be put away.");
-		return false;
-	}
 	if (c.type == "CONT" && c.obj)
 	{
 		if (c.obj->organic)
@@ -121,17 +115,8 @@ bool Session::containerPut(int i)
 		for (auto& sc : w.scripts)
 			if (sc.item == it.id)
 				sc.running = false;
-	// onto a stack of the same that is the player's (not one the container restocks)
-	bool merged = false;
-	for (auto& e : c.contents)
-		if (e.first > 0 && lower(e.second) == it.id)
-		{
-			e.first += it.count;
-			merged = true;
-			break;
-		}
-	if (!merged)
-		c.contents.emplace_back(it.count, it.id);
+	// onto a stack of the same that is the player's (not one the container restocks), its wear, soul and charge kept
+	w.refAddStack(c, it);
 	playSound(-1, "Item Misc Down");
 	logf("container: put %s x%d into %s", it.id.c_str(), it.count, c.id.c_str());
 	return true;
@@ -189,14 +174,22 @@ void Session::drawContainer()
 	// Morrowind
 	int pick = uiItemGrid(grid, 4, gridY, 312, 170 - gridY, cells);
 	const Object* shown = nullptr;
+	InventoryItem state = { "", 0, false };         // the selected one's wear, soul and charge, for its tip
 	if (putting && grid.selected >= 0 && grid.selected < (int)mine.size())
-		shown = w.game.object(w.inventory[mine[grid.selected]].id);
+	{
+		state = w.inventory[mine[grid.selected]];
+		shown = w.game.object(state.id);
+	}
 	else if (!putting && grid.selected >= 0 && grid.selected < (int)c.contents.size())
-		shown = w.game.object(c.contents[grid.selected].second);
+	{
+		const ContentItem& e = c.contents[grid.selected];
+		state = { lower(e.second), stockCount(e.first), false, e.condition, e.soul, e.charge };
+		shown = w.game.object(e.second);
+	}
 	if (shown)
 	{
 		itemInfo(shown, 176);
-		itemTip(shown, nullptr);
+		itemTip(shown, &state);
 	}
 	bool caught = false;
 	auto take = [&](int i) {

@@ -1,0 +1,54 @@
+# Container stacks keep each item's state (OpenMW ContainerStore: soul, health, enchantment charge): a filled soul gem,
+# a worn weapon and a part-charged enchanted one go into a chest (Beshara, Com_Chest_11_alvur), survive a save / load,
+# and come back as they went in
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Beshara
+3 0 0 0
+0.3 0 0 0 0 GIVE:key_alvur
+60 0 0 0 0 ACTIVATE:Com_Chest_11_alvur
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 GIVE:misc_soulgem_grand
+0.3 0 0 0 0 PLACE:scamp_summon:200
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:scamp_summon
+1 0 0 0
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:scamp_summon
+0.3 0 0 0 0 GIVE:chitin_dagger
+0.3 0 0 0 0 SETITEMHEALTH:chitin_dagger:5
+0.3 0 0 0 0 GIVE:silver_flameblade
+0.3 0 0 0 0 SETITEMCHARGE:silver_flameblade:7
+0.1 0 0 0 0 EXPECT:itemhealth:chitin_dagger:eq:5
+0.1 0 0 0 0 EXPECT:charge:silver_flameblade:ge:6.9
+0.1 0 0 0 0 EXPECT:charge:silver_flameblade:le:7.1
+60 0 0 0 0 PUT:Com_Chest_11_alvur:misc_soulgem_grand
+2 0 0 0
+60 0 0 0 0 PUT:Com_Chest_11_alvur:chitin_dagger
+2 0 0 0
+60 0 0 0 0 PUT:Com_Chest_11_alvur:silver_flameblade
+2 0 0 0
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:0
+0.1 0 0 0 0 EXPECT:count:chitin_dagger:eq:0
+0.1 0 0 0 0 EXPECT:count:silver_flameblade:eq:0
+0.1 0 0 0 0 EXPECT:refitem:Com_Chest_11_alvur,misc_soulgem_grand:eq:1
+0.1 0 0 0 0 EXPECT:refitem:Com_Chest_11_alvur,chitin_dagger:eq:1
+0.1 0 0 0 0 EXPECT:refitem:Com_Chest_11_alvur,silver_flameblade:eq:1
+0.3 0 0 0 0 CHECK:Com_Chest_11_alvur
+1 0 0 0 0 SAVE:containerstate
+0.5 0 0 0 0 LOAD:containerstate
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refitem:Com_Chest_11_alvur,misc_soulgem_grand:eq:1
+60 0 0 0 0 LOOT:Com_Chest_11_alvur:misc_soulgem_grand
+2 0 0 0
+60 0 0 0 0 LOOT:Com_Chest_11_alvur:chitin_dagger
+2 0 0 0
+60 0 0 0 0 LOOT:Com_Chest_11_alvur:silver_flameblade
+2 0 0 0
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:scamp_summon
+0.1 0 0 0 0 EXPECT:itemhealth:chitin_dagger:eq:5
+0.1 0 0 0 0 EXPECT:charge:silver_flameblade:ge:6.9
+0.1 0 0 0 0 EXPECT:charge:silver_flameblade:le:7.1
+0.1 0 0 0 0 EXPECT:refitem:Com_Chest_11_alvur,chitin_dagger:eq:0

@@ -127,6 +127,12 @@ cJSON* World::refState(int i) const
 			cJSON* e = cJSON_CreateArray();
 			cJSON_AddItemToArray(e, cJSON_CreateNumber(it.first));
 			cJSON_AddItemToArray(e, cJSON_CreateString(it.second.c_str()));
+			if (!it.plain())          // [count, id, condition, soul, charge]: a worn, filled or part-charged one
+			{
+				cJSON_AddItemToArray(e, cJSON_CreateNumber(it.condition));
+				cJSON_AddItemToArray(e, cJSON_CreateString(it.soul.c_str()));
+				cJSON_AddItemToArray(e, cJSON_CreateNumber(it.charge));
+			}
 			cJSON_AddItemToArray(c, e);
 		}
 	}
@@ -195,6 +201,9 @@ u32 World::refHash(int i) const
 	{
 		mixi(c.first);
 		mix(c.second.data(), c.second.size());
+		mixi(c.condition);
+		mix(c.soul.data(), c.soul.size());
+		mixf(c.charge);
 	}
 	return h;
 }
@@ -277,7 +286,15 @@ void World::applyRefState(Ref& r, const cJSON* it)
 		r.contents.clear();
 		const cJSON* e;
 		cJSON_ArrayForEach(e, c)
+		{
 			r.contents.emplace_back(cJSON_GetArrayItem(e, 0)->valueint, cJSON_GetArrayItem(e, 1)->valuestring);
+			if (cJSON_GetArraySize(e) >= 5)
+			{
+				r.contents.back().condition = cJSON_GetArrayItem(e, 2)->valueint;
+				r.contents.back().soul = cJSON_GetArrayItem(e, 3)->valuestring;
+				r.contents.back().charge = (float)cJSON_GetArrayItem(e, 4)->valuedouble;
+			}
+		}
 	}
 }
 

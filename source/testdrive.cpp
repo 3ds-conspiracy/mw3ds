@@ -662,10 +662,10 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			ri = w.findRefAnywhere(spaced(id));
 		if (ri < 0)
 			return false;
-		std::string item = lower(arg.substr(comma + 1));
+		std::string item = lower(arg.substr(comma + 1)), item2 = spaced(item);
 		v = 0;
 		for (auto& it : w.refs[ri].contents)
-			if (lower(it.second) == item)
+			if (lower(it.second) == item || lower(it.second) == item2)
 				v += stockCount(it.first);
 		return true;
 	}
@@ -1325,6 +1325,15 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		if (i < 0)
 			return fail(a[1] + " not carried");
 		w.inventory[i].condition = atoi(a[2].c_str());
+		return true;
+	}
+	// SETITEMCHARGE:<id>:<n>: the carried enchanted item's charge left
+	if (verb == "SETITEMCHARGE" && a.size() >= 3)
+	{
+		int i = carried(w, a[1]);
+		if (i < 0)
+			return fail(a[1] + " not carried");
+		w.inventory[i].charge = (float)atof(a[2].c_str());
 		return true;
 	}
 	// USELOCKPICK:<door or container>:<tool> / USEPROBE: the tool is held up to that object (it faces it), one try;

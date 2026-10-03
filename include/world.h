@@ -17,6 +17,17 @@
 struct RefRange { int batch; u32 first, count; };
 struct cJSON;
 
+// One stack in a container's or an actor's contents: (count, id) as the record lists it (a negative count restocks),
+// with the same per-item state an inventory stack carries (InventoryItem): wear, a soul, a charge
+struct ContentItem : std::pair<int, std::string>
+{
+	using std::pair<int, std::string>::pair;
+	int condition = -1;           // -1: as new
+	std::string soul;             // a soul gem's soul (the creature's id)
+	float charge = -1.0f;         // -1: full
+	bool plain() const { return condition < 0 && soul.empty() && charge < 0.0f; }
+};
+
 // AI packages, numbered as GetCurrentAIPackage reports them
 enum { AIPKG_NONE = -1, AIPKG_WANDER = 0, AIPKG_TRAVEL = 1, AIPKG_ESCORT = 2, AIPKG_FOLLOW = 3, AIPKG_ACTIVATE = 4,
 	AIPKG_IDLE = 5 };   // AIPKG_IDLE: the script's package ended and nothing replaced it (OpenMW: an empty sequence, the actor stands)
@@ -77,7 +88,7 @@ struct Ref
 	int doorMesh = -1;            // index into Cell::doors
 	const Object* obj = nullptr;
 
-	std::vector<std::pair<int, std::string>> contents;   // containers: count, item id
+	std::vector<ContentItem> contents;   // containers: count, item id, and each stack's wear / soul / charge
 
 	bool enabled = true;          // Enable / Disable
 	bool pickedUp = false;        // taken into the inventory
@@ -545,6 +556,8 @@ struct World
 	// The same for a container's or an actor's own contents (AddItem / RemoveItem / GetItemCount on them)
 	int refItemCount(const Ref& r, const std::string& id) const;
 	void refAddItem(Ref& r, const std::string& id, int count);
+	void refAddStack(Ref& r, const InventoryItem& item);   // a whole item, its wear / soul / charge kept (OpenMW's stacks())
+	void takeStack(const ContentItem& c, int count);       // count of a container's stack into the inventory, state and all
 	int refRemoveItem(Ref& r, const std::string& id, int count);
 	bool trapSoul(const std::string& creature, int soul);   // fills the smallest gem that holds it
 	int soulValue(const InventoryItem& it) const;

@@ -466,7 +466,9 @@ void Session::drawBarter()
 			: w.refs[goods[items[sel].first].first].contents[goods[items[sel].first].second].second);
 		itemInfo(o, 191, counting ? std::to_string(barterCount) + " of " + std::to_string(have) + ": " + std::to_string(total) + " gold"
 			: std::to_string(items[sel].second) + " gold");
-		itemTip(o, barterSell ? &w.inventory[items[sel].first] : nullptr);
+		const ContentItem* e = barterSell ? nullptr : &w.refs[goods[items[sel].first].first].contents[goods[items[sel].first].second];
+		InventoryItem state = e ? InventoryItem{ lower(e->second), have, false, e->condition, e->soul, e->charge } : InventoryItem{};
+		itemTip(o, barterSell ? &w.inventory[items[sel].first] : &state);
 	}
 	uiConsume(KEY_A | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
 	int focusNone = -1;
@@ -596,7 +598,7 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 			auto& it = holder.contents[items[sel].first];
 			w.removeItem("gold_001", price);
 			m.gold += price;
-			w.addItem(it.second, count);
+			w.takeStack(it, count);             // (a worn or part-charged one, or a filled gem, as it is)
 			// (a restocking quantity, a negative count, is never used up by a sale: OpenMW's removeItem)
 			if (it.first > 0)
 			{
@@ -626,20 +628,41 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 		{
 			InventoryItem& it = w.inventory[items[sel].first];
 			std::string id = it.id;
-			if (it.count <= count)
-				it.equipped = false;
-			w.removeItem(id, count);
+			InventoryItem sold = it;            // the picked stack goes, its wear, soul and charge with it
+			sold.count = count;
+			sold.equipped = false;
+			if (sold.condition < 0 && sold.soul.empty() && sold.charge < 0.0f)
+				w.removeItem(id, count);
+			else
+			{
+				bool worn = it.equipped && it.count <= count;
+				it.count -= count;
+				if (it.count <= 0)
+					w.inventory.erase(w.inventory.begin() + items[sel].first);
+				if (worn)
+					w.refreshStats();
+				if (w.itemCount(id) == 0)
+					for (auto& sc : w.scripts)
+						if (sc.item == id)
+							sc.running = false;
+			}
 			w.addItem("gold_001", price);
 			m.gold -= price;
-			bool stacked = false;
-			for (auto& c : m.contents)
-				if (lower(c.second) == id)
-				{
-					c.first += c.first < 0 ? -count : count;
-					stacked = true;
-				}
-			if (!stacked)
-				m.contents.emplace_back(count, id);
+			if (sold.condition < 0 && sold.soul.empty() && sold.charge < 0.0f)
+			{
+				bool stacked = false;
+				for (auto& c : m.contents)
+					if (lower(c.second) == id && c.plain())
+					{
+						c.first += c.first < 0 ? -count : count;
+						stacked = true;
+						break;
+					}
+				if (!stacked)
+					m.contents.emplace_back(count, id);
+			}
+			else
+				w.refAddStack(m, sold);
 			playSound(-1, "Item Gold Up");
 		}
 	}
