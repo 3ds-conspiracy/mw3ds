@@ -169,6 +169,9 @@ class FirstPerson:
                             p = self.piece(model, slot, beast)
                             if p:
                                 slots[str(slot)] = p
+                if female:
+                    for k, p in races[rid]["m"].items():     # male parts fill the female gaps (as build())
+                        slots.setdefault(k, p)
                 races[rid][sex] = slots
                 heads[rid][sex] = sorted(hl)
                 hairs[rid][sex] = sorted(hr)
@@ -309,6 +312,11 @@ class FirstPerson:
                             p = self.piece(model, slot, beast) if model else None
                             if p:
                                 slots[str(slot)] = p
+                if female:
+                    # Male parts stand in for missing female ones, as in OpenMW (getBodyParts): the
+                    # female Argonian has no forearm, which left a gap between wrist and upper arm
+                    for k, p in entry["m"].items():
+                        slots.setdefault(k, p)
                 entry[sex] = slots
             races[rid] = entry
         items = {}

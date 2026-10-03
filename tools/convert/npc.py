@@ -141,14 +141,17 @@ class NpcBuilder:
 
     def parts(self, npc, race_id, female):
         parts = [None] * len(PART_BONES)
-        for body in self.bodies:
-            part, vampire, flags, kind = body.get("BYDT")[:4]
-            if kind != 0 or vampire or (flags & 1) != female or body.id.lower().endswith(".1st"):
-                continue
-            if (body.zstr("FNAM") or "").lower() != race_id:
-                continue
-            for slot in SKIN_SLOTS.get(part, []):
-                parts[slot] = parts[slot] or body.id
+        # Own sex first, then (women only) male parts for what is still missing, as in OpenMW's
+        # getBodyParts: the female Argonian has no forearm part
+        for sex in ([1, 0] if female else [0]):
+            for body in self.bodies:
+                part, vampire, flags, kind = body.get("BYDT")[:4]
+                if kind != 0 or vampire or (flags & 1) != sex or body.id.lower().endswith(".1st"):
+                    continue
+                if (body.zstr("FNAM") or "").lower() != race_id:
+                    continue
+                for slot in SKIN_SLOTS.get(part, []):
+                    parts[slot] = parts[slot] or body.id
         parts[SLOT_HEAD] = npc.zstr("BNAM")
         parts[SLOT_HAIR] = npc.zstr("KNAM")
         if self.db:
