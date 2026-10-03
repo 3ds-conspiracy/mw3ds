@@ -1,0 +1,126 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-6684:19666:1700:180
+8 0 0 0
+0.3 0 0 0 0 TALK:aeta_wave-breaker
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_banditvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-84814:88249:212:180
+8 0 0 0
+0.3 0 0 0 0 TALK:hentus_yansurnummu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:pants
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_hentuspants
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-8604:-70005:1131:180
+8 0 0 0
+0.3 0 0 0 0 TALK:darvame_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vodunius_Nuccius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_nuccius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 TP:-88019:128164:374:180
+8 0 0 0
+0.3 0 0 0 0 TALK:Vireveri_Darethran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepers_vireveri
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-92608:109064:2428:180
+8 0 0 0
+0.3 0 0 0 0 TALK:din
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_monsterdisease
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-96223:113723:917:180
+8 0 0 0
+0.3 0 0 0 0 TALK:synette_jeline
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lady_in_distress
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_lostring
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:109085:76185:1122:180
+8 0 0 0
+0.3 0 0 0 0 TALK:botrir
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_recoverwidowmaker
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:10
+0.3 0 0 0 0 TP:1145:-56777:1699:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:Dralas_Gilu:sleeperon:1
+0.3 0 0 0 0 TALK:Dralas_Gilu
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepersawake
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 TP:1145:-56777:1699:180
+8 0 0 0
+0.3 0 0 0 0 TALK:Dralas_Gilu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepers_dralas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

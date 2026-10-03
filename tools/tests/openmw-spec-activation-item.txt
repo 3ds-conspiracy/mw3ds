@@ -1,0 +1,42 @@
+# Activating loose items, lights, books and owned things as the player does (spec/activation.md: Items, Books, Ownership). Source: mwclass/*.cpp activate, actiontake.cpp, actionread.cpp, mechanicsmanagerimp.cpp itemTaken.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+# 1. A loose item is taken into the inventory (Census Office, ingred_crab_meat_01, unowned)
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+3 0 0 0
+0.3 0 0 0 0 SNAP:bounty
+60 0 0 0 0 PICKUP:ingred_crab_meat_01
+1 0 0 0
+0.3 0 0 0 0 EXPECT:item:ingred_crab_meat_01:eq:1
+0.1 0 0 0 0 EXPECT:bounty:eq:@
+# 2. A light without the Carry flag (Arrille's lamp, light_com_lamp_02) cannot be taken
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+3 0 0 0
+60 0 0 0 0 PICKUP:light_com_lamp_02
+1 0 0 0
+0.3 0 0 0 0 EXPECT:item:light_com_lamp_02:eq:0
+# 3. A skill book on the ground opens in the book screen and is NOT taken; the skill rises by 1 the first time only (Ainat, BookSkill_Alchemy2)
+0.3 0 0 0 0 GOTO:Ainat
+3 0 0 0
+0.3 0 0 0 0 SNAP:skill:alchemy
+60 0 0 0 0 ACTIVATE:BookSkill_Alchemy2
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:book
+0.1 0 0 0 0 EXPECT:item:BookSkill_Alchemy2:eq:0
+0.1 0 0 0 0 EXPECT:skill:alchemy:eq:@1
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:BookSkill_Alchemy2
+1 0 0 0
+0.3 0 0 0 0 EXPECT:skill:alchemy:eq:@1
+0.5 0 0 0 0 B
+1 0 0 0
+# 4. Taking an owned item in front of its owner is theft: bounty = max(1, int(value x fCrimeStealing)) = 1 for a cup of value 1 (Addammus's Yurt, owner addammus)
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Addammus's_Yurt
+3 0 0 0
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 SETALARM:addammus:100
+60 0 0 0 0 PICKUP:misc_com_wood_cup_01
+1 0 0 0
+0.3 0 0 0 0 EXPECT:item:misc_com_wood_cup_01:eq:1
+0.1 0 0 0 0 EXPECT:bounty:eq:1

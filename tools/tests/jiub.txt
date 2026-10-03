@@ -1,0 +1,7 @@
+3 0 0 0 0 MSG
+0.2 0 0 0 0 CHECK:chargen%name
+5 0 0 0
+0.2 0 0 0 0 CHECK:chargen%name
+5 0 0 0
+0.2 0 0 0 0 CHECK:chargen%name
+1 0 0 0

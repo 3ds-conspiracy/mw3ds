@@ -1,0 +1,81 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOURNAL:B8_All_Hortator:50
+0.3 0 0 0 0 JOURNAL:B8_All_Nerevarine:50
+0.3 0 0 0 0 JOURNAL:B8_MeetVivec:55
+0.3 0 0 0 0 JOIN:nerevarine:5
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:wraithguard
+0.3 0 0 0 0 EQUIP:wraithguard
+1 0 0 0
+0.3 0 0 0 0 EXPECT:global:wraithguardequipped:eq:1
+0.3 0 0 0 0 GOTO:Vemynal,_Hall_of_Torque
+8 0 0 0
+0.3 0 0 0 0 EQUIP:silver_longsword
+180 0 0 0 0 KILL:dagoth_vemyn
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:dead:dagoth_vemyn
+30 0 0 0 0 LOOT:dagoth_vemyn:sunder
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:sunder:ge:1
+0.3 0 0 0 0 EXPECT:journal:C0_Act_C:ge:15
+0.3 0 0 0 0 GOTO:Odrosal,_Tower
+8 0 0 0
+120 0 0 0 0 PICKUP:keening
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:keening:ge:1
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+8 0 0 0
+180 0 0 0 0 ACTIVATE:dagoth_ur_1
+2 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 KNOW:final_questions
+0.3 0 0 0 0 TOPIC:final_questions
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:8
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:12
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:17
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EQUIP:sunder
+120 0 0 0 0 KILL:dagoth_ur_1
+4 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:dead:dagoth_ur_1
+0.3 0 0 0 0 GOTO:Akulakhan's_Chamber
+8 0 0 0
+0.3 0 0 0 0 EQUIP:sunder
+60 0 0 0 0 STRIKE:heart_akulakhan:2
+1 0 0 0
+0.3 0 0 0 0 EQUIP:keening
+90 0 0 0 0 STRIKE:heart_akulakhan:8
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:global:heartdestroyed:eq:1
+120 0 0 0 0 WALKTO:dagoth_destroy_detector
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:20
+0.3 0 0 0 0 EXPECT:global:destroyblight:eq:-1
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+10 0 0 0
+120 0 0 0 0 WALKTO:azura_spirit
+6 0 0 0
+0.3 0 0 0 0 B
+5 0 0 0
+0.3 0 0 0 0 B
+5 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:50
+1 0 0 0

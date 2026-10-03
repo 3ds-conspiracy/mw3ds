@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:p_restore_health_s:2
+0.3 0 0 0 0 DROP:p_restore_health_s
+1 0 0 0
+0.3 0 0 0 0 CHECK:p_restore_health_s
+0.3 0 0 0 0 DOOR:p_restore_health_s
+1 0 0 0
+0.3 0 0 0 0 CHECK:player
+1 0 0 0

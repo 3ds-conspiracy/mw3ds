@@ -1,0 +1,158 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:redoranmurdered:1
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b5_sarethihort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:redoran:9
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b5_redoranhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Varvur_Sarethi
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_rescuesarethi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bralen_Carvaren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_clearsarethi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_Shurinbaal:100
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Arethan_Mandas
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_madmilk
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 REP:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_backdoor1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shurinbaal
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_shurinbaal
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_ClearSarethi:100
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slander
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_honorchallenge
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_FalseIncarnate:100
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Maar_Gan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_maargan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:False_Incarnate
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_falseincarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

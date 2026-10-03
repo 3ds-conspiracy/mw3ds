@@ -1,0 +1,189 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguineamuletnimblearmor:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Nimble_Armor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_nimblearmor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinebeltdeepbiting:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Deep_Biting
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_deepbiting
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguineamuletglibspeech:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Glib_Speech
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_glibspeech
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinelglovesafekeeping:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Safekeeping
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_safekeeping
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguineringredw:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Red_Wisdom
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_red
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinebeltsureflight:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Sureflight
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_sureflight
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinerglovehornyfist:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Horny_Fist
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_hornyfist
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinergloveswiftblade:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Swiftblade
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_swiftblade
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Morag_Tong
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writoran
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_S_Fleetness:100
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Movis_Darys
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_darys
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

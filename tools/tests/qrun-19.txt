@@ -1,0 +1,157 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_JoinUs:100
+0.3 0 0 0 0 JOURNAL:MG_PayDues:100
+0.3 0 0 0 0 JOIN:mages_guild:2
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:unsanctioned_training
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_stopcompetition
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_StopCompetition:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Itermerel's_notes
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_escortscholar2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_StolenReport:100
+0.3 0 0 0 0 JOIN:mages_guild:6
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Staff_of_Magnus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_staffmagnus
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Flowers:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stolen_reports
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_stolenreport
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_StaffMagnus:100
+0.3 0 0 0 0 JOIN:mages_guild:6
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Warlock's_Ring
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_warlocksring
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_BCShrooms:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:fake_soul_gem
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_sabotage
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_spy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_spycatch
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:necromancers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_sharn_necro
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ceramic_bowl
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_bowl
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:mages_guild:2
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Guild_Dues
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_paydues
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

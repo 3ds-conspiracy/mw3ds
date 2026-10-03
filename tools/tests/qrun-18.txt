@@ -1,0 +1,152 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:10
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:hasphat_antabolis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nchuleftingth
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_excavation
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:hasphat_antabolis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Morrowind_history
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:book_onmorrowind
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_Egg_Poachers:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_agents
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_telvanni_agents
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_RatHunt:100
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:egg_poachers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_egg_poachers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dura_gra-Bol
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_orcbounty
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Verethi_Gang
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_verethigang
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sarano_Tomb
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_hungerloose
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_deseledebt
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_Telvanni_agents:100
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:code_book
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_sottilde
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:cave_rat
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_rathunt
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

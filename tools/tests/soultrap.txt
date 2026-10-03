@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:misc_soulgem_petty
+0.3 0 0 0 0 GIVE:misc_soulgem_grand
+0.3 0 0 0 0 PLACE:scamp_summon:200
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:scamp_summon
+1 0 0 0
+0.3 0 0 0 0 CHECK:player
+1 0 0 0

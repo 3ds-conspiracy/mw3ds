@@ -1,0 +1,126 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_Courtesy:70
+0.3 0 0 0 0 GOTO:Ebonheart,_Hawkmoth_Legion_Garrison
+8 0 0 0
+0.3 0 0 0 0 TALK:Frald_the_White
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:courtesy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_courtesy
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_Courtesy:50
+0.3 0 0 0 0 GOTO:Ebonheart,_Hawkmoth_Legion_Garrison
+8 0 0 0
+0.3 0 0 0 0 TALK:Frald_the_White
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:courtesy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_courtesy
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC25_JonHawker:1
+0.3 0 0 0 0 GIVE:ring_wind_unique:1
+0.3 0 0 0 0 JOURNAL:IC25_JonHawker_free:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ring_in_Darkness
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic25_jonhawker
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC29_Crusher:1
+0.3 0 0 0 0 GIVE:warhammer_crusher_unique:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic29_crusher
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC28_Urjorad:1
+0.3 0 0 0 0 GIVE:sc_FiercelyRoastThyEnemy_unique:1
+0.3 0 0 0 0 JOIN:imperial_cult:3
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic28_urjorad
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC26_AmaNin:1
+0.3 0 0 0 0 GIVE:boots_apostle_unique:1
+0.3 0 0 0 0 JOURNAL:IC26_AmaNin_free:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic26_amanin
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC26_AmaNin:1
+0.3 0 0 0 0 GIVE:boots_apostle_unique:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic26_amanin
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC19_Restless_Spirit:40
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Kaye
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic19_restless_spirit
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

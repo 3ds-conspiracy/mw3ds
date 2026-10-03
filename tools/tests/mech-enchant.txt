@@ -1,0 +1,247 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 SETATTR:intelligence:100
+0.3 0 0 0 0 SETATTR:luck:100
+0.3 0 0 0 0 SETATTR:willpower:100
+0.3 0 0 0 0 SETATTR:strength:50
+0.3 0 0 0 0 ROLL:-1
+0.3 0 0 0 0 SETSKILL:mysticism:100
+0.3 0 0 0 0 SETSKILL:restoration:100
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:misc_soulgem_petty
+0.3 0 0 0 0 GIVE:misc_soulgem_common
+0.3 0 0 0 0 GIVE:misc_soulgem_greater
+0.3 0 0 0 0 GIVE:misc_soulgem_grand
+0.3 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:rat:150
+1 0 0 0
+0.3 0 0 0 0 CASTAT:rat:soul%trap
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refsoultrap:rat:eq:1
+30 0 0 0 0 KILL:rat
+1 0 0 0
+0.3 0 0 0 0 EXPECT:dead:rat
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_petty:rat
+0.3 0 0 0 0 PLACE:scamp:250
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:scamp
+1 0 0 0
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_common:scamp
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_greater:none
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_grand:none
+0.3 0 0 0 0 PLACE:golden%saint:300
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:golden%saint
+1 0 0 0
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_grand:golden%saint
+0.3 0 0 0 0 PLACE:dremora:300
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:dremora
+1 0 0 0
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_greater:dremora
+0.3 0 0 0 0 GIVE:expensive_ring_01
+0.3 0 0 0 0 ENCHANT
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:enchant
+0.3 0 0 0 0 ENCHITEM:expensive_ring_01
+0.3 0 0 0 0 ENCHGEM:misc_soulgem_common
+0.3 0 0 0 0 ENCHTYPE:2
+0.3 0 0 0 0 ADDEFFECT:14:50:50:10:2
+0.3 0 0 0 0 SNAP:made
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@0
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_common:scamp
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 ENCHANT
+0.5 0 0 0
+0.3 0 0 0 0 ENCHITEM:expensive_ring_01
+0.3 0 0 0 0 ENCHGEM:misc_soulgem_common
+0.3 0 0 0 0 ENCHTYPE:2
+0.3 0 0 0 0 ADDEFFECT:75:5:5:5:0
+0.3 0 0 0 0 SNAP:count:misc_soulgem_common
+0.3 0 0 0 0 SNAP:count:expensive_ring_01
+0.3 0 0 0 0 SNAP:skillprog:enchant
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@1
+0.3 0 0 0 0 EXPECT:madeeffect:75:2
+0.3 0 0 0 0 EXPECT:count:misc_soulgem_common:eq:@-1
+0.3 0 0 0 0 EXPECT:count:expensive_ring_01:eq:@-1
+0.3 0 0 0 0 EXPECT:skillprog:enchant:eq:@5
+0.3 0 0 0 0 EXPECT:charge:made:eq:100
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 EFFECT:23:20:1
+2 0 0 0
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 SNAP:charge:made
+0.3 0 0 0 0 SNAP:skillprog:enchant
+0.3 0 0 0 0 USEMADE
+3 0 0 0
+0.3 0 0 0 0 EXPECT:health:gt:@10
+0.3 0 0 0 0 EXPECT:charge:made:lt:@0
+0.3 0 0 0 0 EXPECT:skillprog:enchant:gt:@0.09
+0.3 0 0 0 0 EXPECT:skillprog:enchant:lt:@0.11
+0.3 0 0 0 0 GIVE:extravagant_ring_01
+0.3 0 0 0 0 ENCHANT
+0.5 0 0 0
+0.3 0 0 0 0 ENCHITEM:extravagant_ring_01
+0.3 0 0 0 0 ENCHGEM:misc_soulgem_petty
+0.3 0 0 0 0 ENCHTYPE:3
+0.3 0 0 0 0 ADDEFFECT:79:1:1:0:0:strength
+0.3 0 0 0 0 SNAP:made
+0.3 0 0 0 0 SNAP:count:misc_soulgem_petty
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@0
+0.3 0 0 0 0 EXPECT:count:misc_soulgem_petty:eq:@0
+0.3 0 0 0 0 ENCHGEM:misc_soulgem_grand
+0.3 0 0 0 0 ROLL:0
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@1
+0.3 0 0 0 0 EXPECT:madeeffect:79:3
+0.3 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:0
+0.3 0 0 0 0 SETSKILL:enchant:90
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 EQUIPMADE
+1 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@1
+0.3 0 0 0 0 GIVE:iron%longsword
+0.3 0 0 0 0 ENCHANT
+0.5 0 0 0
+0.3 0 0 0 0 ENCHITEM:iron%longsword
+0.3 0 0 0 0 ENCHGEM:misc_soulgem_greater
+0.3 0 0 0 0 ENCHTYPE:1
+0.3 0 0 0 0 ADDEFFECT:14:10:10:1:1
+0.3 0 0 0 0 SNAP:made
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@1
+0.3 0 0 0 0 EXPECT:madeeffect:14:1
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 EQUIPMADE
+0.3 0 0 0 0 PLACE:scamp:200
+1.5 0 0 0
+0.3 0 0 0 0 FACE:scamp
+0.3 0 0 0 0 SNAP:refhealth:scamp
+0.3 0 0 0 0 SNAP:charge:made
+0.3 0 0 0 0 GOD:0
+0.3 0 0 0 0 HIT:scamp
+0.3 0 0 0 0 GOD
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refhealth:scamp:lt:@-9
+0.3 0 0 0 0 EXPECT:charge:made:lt:@0
+30 0 0 0 0 KILL:scamp
+1 0 0 0
+0.3 0 0 0 0 SNAP:charge:made
+0.3 0 0 0 0 SNAP:skillprog:enchant
+0.3 0 0 0 0 RECHARGEMADE
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:made:gt:@0
+0.3 0 0 0 0 EXPECT:skillprog:enchant:gt:@0
+0.3 0 0 0 0 EXPECT:count:misc_soulgem_petty:eq:0
+0.3 0 0 0 0 GIVE:misc_soulgem_common
+0.3 0 0 0 0 PLACE:scamp:250
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:scamp
+1 0 0 0
+0.3 0 0 0 0 GIVE:expensive_ring_01
+0.3 0 0 0 0 GIVE:gold_001:20000
+0.3 0 0 0 0 ENCHANTAT:galbedir
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:enchant
+0.3 0 0 0 0 ENCHITEM:expensive_ring_01
+0.3 0 0 0 0 ENCHGEM:misc_soulgem_common
+0.3 0 0 0 0 ENCHTYPE:2
+0.3 0 0 0 0 ADDEFFECT:75:5:5:5:0
+0.3 0 0 0 0 SNAP:made
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:skillprog:enchant
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@1
+0.3 0 0 0 0 EXPECT:madeeffect:75:2
+0.3 0 0 0 0 EXPECT:gold:lt:@0
+0.3 0 0 0 0 EXPECT:skillprog:enchant:eq:@0
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0
+0.3 0 0 0 0 SNAP:made
+0.3 0 0 0 0 SNAP:charge:made
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 SNAP:effect:79
+1 0 0 0 0 SAVE:ench
+1 0 0 0
+0.5 0 0 0 0 LOAD:ench
+4 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@0
+0.3 0 0 0 0 EXPECT:madeeffect:75:2
+0.3 0 0 0 0 EXPECT:charge:made:eq:@0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@0
+0.3 0 0 0 0 EXPECT:effect:79:eq:@0
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 EFFECT:23:20:1
+2 0 0 0
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 USEMADE
+3 0 0 0
+0.3 0 0 0 0 EXPECT:health:gt:@10
+1 0 0 0
+0.3 0 0 0 0 GIVE:apparatus_a_mortar_01
+0.3 0 0 0 0 GIVE:ingred_saltrice_01
+0.3 0 0 0 0 GIVE:ingred_marshmerrow_01
+0.3 0 0 0 0 SETSKILL:alchemy:60
+0.3 0 0 0 0 SNAP:brewed
+0.3 0 0 0 0 SNAP:skillprog:alchemy
+0.3 0 0 0 0 SNAP:count:ingred_saltrice_01
+0.3 0 0 0 0 BREW:ingred_saltrice_01:ingred_marshmerrow_01
+1 0 0 0
+0.3 0 0 0 0 EXPECT:brewed:eq:@1
+0.3 0 0 0 0 EXPECT:count:ingred_saltrice_01:eq:@-1
+0.3 0 0 0 0 EXPECT:skillprog:alchemy:eq:@2
+0.3 0 0 0 0 EFFECT:23:10:2
+2.5 0 0 0
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 DRINKBREWED
+3 0 0 0
+0.3 0 0 0 0 EXPECT:health:gt:@0
+0.3 0 0 0 0 EXPECT:brewed:eq:0
+0.3 0 0 0 0 SPELLMAKE:estirdalin
+0.3 0 0 0 0 EXPECT:screen:spellmake
+0.3 0 0 0 0 ADDEFFECT:79:5:5:10:0:strength
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:madespells
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:madespells:eq:@1
+0.3 0 0 0 0 EXPECT:gold:lt:@0
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 CASTMADESPELL
+1 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@5
+10 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@0
+0.3 0 0 0 0 SNAP:madespells
+1 0 0 0 0 SAVE:ench2
+1 0 0 0
+0.5 0 0 0 0 LOAD:ench2
+4 0 0 0
+0.3 0 0 0 0 EXPECT:madespells:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 CASTMADESPELL
+1 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@5
+1 0 0 0

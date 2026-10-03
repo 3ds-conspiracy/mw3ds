@@ -1,0 +1,170 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_RunawaySlave:97
+0.3 0 0 0 0 GOTO:Ebonheart,_Argonian_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Im_Kilaya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Reeh-Jah
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_runawayslave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_SlaveMule:114
+0.3 0 0 0 0 GOTO:Ebonheart,_Argonian_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Im_Kilaya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Rabinna
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_slavemule
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Express:20
+0.3 0 0 0 0 GIVE:bk_letterfromllaalam:1
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:J'zhirr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:delivery_for_Llaalam_Dredil
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_express
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_clientlist:1
+0.3 0 0 0 0 JOURNAL:EB_Clients:30
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Bolrin
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:information_gathering
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_clients
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:30
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Canctunian_Ponius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:1000-drake_pledge
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_ponius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:1
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Canctunian_Ponius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:1000-drake_pledge
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_ponius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:1
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Canctunian_Ponius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:1000-drake_pledge
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_ponius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:18
+0.3 0 0 0 0 GIVE:Gold_001:2500
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Canctunian_Ponius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:embezzled_funds
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_ponius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:18
+0.3 0 0 0 0 GIVE:Gold_001:2500
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Canctunian_Ponius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:embezzled_funds
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_ponius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:18
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 GIVE:Gold_001:2500
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Canctunian_Ponius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:embezzled_funds
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_ponius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,170 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:46
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+8 0 0 0
+0.3 0 0 0 0 TALK:divayth_fyr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:potion
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_3_corpruscure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:46
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+8 0 0 0
+0.3 0 0 0 0 TALK:divayth_fyr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:potion
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_3_corpruscure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_RansomMandas:70
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Onyx_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:delyna_mandas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:my_locket
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_ransommandas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:25
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Urshilaku_Nerevarine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b1_unifyurshilaku
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:1
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:curse_of_Dagoth_Ur
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b1_unifyurshilaku
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:40
+0.3 0 0 0 0 GIVE:bonebiter_bow_unique:1
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:initiation_rite
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_1_meetsulmatuul
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:30
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:initiation_rite
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_1_meetsulmatuul
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:1
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Moon-and-Star
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b1_unifyurshilaku
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:10
+0.3 0 0 0 0 GIVE:misc_goblet_dagoth:1
+0.3 0 0 0 0 GIVE:shadow_shield:1
+0.3 0 0 0 0 GIVE:ingred_corprus_weepings_01:1
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Third_trial
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_6_incarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:1
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:False_Gods
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b1_unifyurshilaku
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

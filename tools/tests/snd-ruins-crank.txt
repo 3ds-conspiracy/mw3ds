@@ -1,0 +1,17 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Arkngthand,_Heaven's_Gallery
+6 0 0 0
+0.3 0 0 0 0 TP:3184:-14300:3580:0
+8 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Arkngthand
+0.3 0 0 0 0 EXPECT:loopheld:le:12
+0.3 0 0 0 0 EXPECT:sounddenied:eq:0
+0.3 0 0 0 0 SNAP:soundstarted:Dwemer_Door_Open
+0.3 0 0 0 0 SNAP:soundstarted:Door_Stone_Open
+60 0 0 0 0 ACTIVATE:in_dwrv_crank_arkn
+4 0 0 0
+0.3 0 0 0 0 EXPECT:soundstarted:Dwemer_Door_Open:ge:@1
+0.3 0 0 0 0 EXPECT:soundstarted:Door_Stone_Open:ge:@1
+0.3 0 0 0 0 EXPECT:sounddenied:eq:0
+0.3 0 0 0 0 EXPECT:loopheld:le:12

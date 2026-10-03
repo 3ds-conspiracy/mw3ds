@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ashanammu
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ashanammu
+0.3 0 0 0 0 EXPECT:refwater:slaughterfish:lt:0
+0.3 0 0 0 0 EXPECT:refwater:slaughterfish:gt:-1000
+0.3 0 0 0 0 SHOT
+1 0 0 0

@@ -1,0 +1,234 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specbarter
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:57
+0.1 0 0 0 0 SETATTR:luck:69
+0.1 0 0 0 0 SETSKILL:mercantile:21
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 SETDISP:dratha:65
+0.1 0 0 0 0 EXPECT:barterprice:dratha,150,1:ge:125
+0.1 0 0 0 0 EXPECT:barterprice:dratha,150,1:le:126
+0.1 0 0 0 0 EXPECT:barterprice:dratha,400,0:eq:264
+0.1 0 0 0 0 EXPECT:barterprice:dratha,60,0:eq:39
+0.1 0 0 0 0 EXPECT:barterprice:dratha,5000,0:eq:3300
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,285,0:ge:57.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,285,0:le:60.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,240,0:ge:-2.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,240,0:le:0.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,150,0:ge:-122.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,150,0:le:-119.9900
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:6
+0.1 0 0 0 0 SETATTR:luck:80
+0.1 0 0 0 0 SETSKILL:mercantile:21
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:neloth:50
+0.1 0 0 0 0 EXPECT:barterprice:neloth,150,0:eq:62
+0.1 0 0 0 0 EXPECT:barterprice:neloth,1200,1:eq:1299
+0.1 0 0 0 0 EXPECT:barterprice:neloth,1,1:eq:1
+0.1 0 0 0 0 EXPECT:barterprice:neloth,1200,1:eq:1299
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,75,37,0:ge:-173.0100
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,75,37,0:le:-170.9900
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,1000,950,0:ge:6.9900
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,1000,950,0:le:9.0100
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,75,37,0:ge:-173.0100
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,75,37,0:le:-170.9900
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:29
+0.1 0 0 0 0 SETATTR:luck:67
+0.1 0 0 0 0 SETSKILL:mercantile:57
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:dratha:65
+0.1 0 0 0 0 EXPECT:barterprice:dratha,25,0:eq:18
+0.1 0 0 0 0 EXPECT:barterprice:dratha,1200,0:eq:878
+0.1 0 0 0 0 EXPECT:barterprice:dratha,5000,0:eq:3660
+0.1 0 0 0 0 EXPECT:barterprice:dratha,60,0:eq:43
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,60,0:ge:10.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,60,0:le:13.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,1200,1:ge:26.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,1200,1:le:29.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,360,1:ge:26.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,360,1:le:29.0100
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:74
+0.1 0 0 0 0 SETATTR:luck:17
+0.1 0 0 0 0 SETSKILL:mercantile:93
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 SETDISP:arrille:25
+0.1 0 0 0 0 EXPECT:barterprice:arrille,60,1:eq:42
+0.1 0 0 0 0 EXPECT:barterprice:arrille,150,0:eq:117
+0.1 0 0 0 0 EXPECT:barterprice:arrille,150,1:eq:107
+0.1 0 0 0 0 EXPECT:barterprice:arrille,8,0:eq:6
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,90,1:ge:38.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,90,1:le:41.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,24,1:ge:38.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,24,1:le:41.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,60,0:ge:22.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,60,0:le:25.0100
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:19
+0.1 0 0 0 0 SETATTR:luck:60
+0.1 0 0 0 0 SETSKILL:mercantile:91
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:neloth:40
+0.1 0 0 0 0 EXPECT:barterprice:neloth,60,0:eq:40
+0.1 0 0 0 0 EXPECT:barterprice:neloth,25,0:eq:17
+0.1 0 0 0 0 EXPECT:barterprice:neloth,150,1:eq:122
+0.1 0 0 0 0 EXPECT:barterprice:neloth,1,0:eq:1
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,300,360,1:ge:14.9900
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,300,360,1:le:17.0100
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,75,112,1:ge:-53.0100
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,75,112,1:le:-50.9900
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,20,21,1:ge:62.9900
+0.1 0 0 0 0 EXPECT:hagglechance:neloth,20,21,1:le:65.0100
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:38
+0.1 0 0 0 0 SETATTR:luck:92
+0.1 0 0 0 0 SETSKILL:mercantile:78
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 SETDISP:dratha:90
+0.1 0 0 0 0 EXPECT:barterprice:dratha,1,0:eq:1
+0.1 0 0 0 0 EXPECT:barterprice:dratha,150,1:eq:44
+0.1 0 0 0 0 EXPECT:barterprice:dratha,60,1:eq:17
+0.1 0 0 0 0 EXPECT:barterprice:dratha,8,0:eq:9
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,10,0:ge:-15.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,10,0:le:-12.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,37,0:ge:-15.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,37,0:le:-12.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,950,0:ge:164.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,950,0:le:167.0100
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:77
+0.1 0 0 0 0 SETATTR:luck:87
+0.1 0 0 0 0 SETSKILL:mercantile:19
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 SETDISP:arrille:25
+0.1 0 0 0 0 EXPECT:barterprice:arrille,60,0:eq:22
+0.1 0 0 0 0 EXPECT:barterprice:arrille,5000,0:eq:1834
+0.1 0 0 0 0 EXPECT:barterprice:arrille,8,1:eq:9
+0.1 0 0 0 0 EXPECT:barterprice:arrille,150,0:eq:55
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,37,0:ge:-179.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,37,0:le:-176.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,37,0:ge:-179.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,75,37,0:le:-176.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,1000,500,0:ge:-179.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,1000,500,0:le:-176.9900
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:59
+0.1 0 0 0 0 SETATTR:luck:74
+0.1 0 0 0 0 SETSKILL:mercantile:70
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 SETDISP:arrille:90
+0.1 0 0 0 0 EXPECT:barterprice:arrille,400,1:eq:230
+0.1 0 0 0 0 EXPECT:barterprice:arrille,1,1:eq:1
+0.1 0 0 0 0 EXPECT:barterprice:arrille,5000,1:eq:2877
+0.1 0 0 0 0 EXPECT:barterprice:arrille,1,0:eq:1
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,21,1:ge:110.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,21,1:le:113.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,300,450,1:ge:-5.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,300,450,1:le:-2.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,10,0:ge:-73.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,10,0:le:-70.9900
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:80
+0.1 0 0 0 0 SETATTR:luck:41
+0.1 0 0 0 0 SETSKILL:mercantile:14
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:dratha:10
+0.1 0 0 0 0 EXPECT:barterprice:dratha,1,1:eq:1
+0.1 0 0 0 0 EXPECT:barterprice:dratha,5000,0:eq:1552
+0.1 0 0 0 0 EXPECT:barterprice:dratha,25,0:eq:7
+0.1 0 0 0 0 EXPECT:barterprice:dratha,1200,1:eq:1427
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,800,0:ge:-67.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,800,0:le:-64.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,37,0:ge:-187.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,37,0:le:-184.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,24,1:ge:-51.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,24,1:le:-48.9900
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:95
+0.1 0 0 0 0 SETATTR:luck:85
+0.1 0 0 0 0 SETSKILL:mercantile:34
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 SETDISP:dratha:90
+0.1 0 0 0 0 EXPECT:barterprice:dratha,5000,0:eq:4414
+0.1 0 0 0 0 EXPECT:barterprice:dratha,60,1:eq:37
+0.1 0 0 0 0 EXPECT:barterprice:dratha,150,0:eq:132
+0.1 0 0 0 0 EXPECT:barterprice:dratha,400,1:eq:246
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,90,1:ge:66.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,75,90,1:le:69.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,24,1:ge:66.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,24,1:le:69.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,21,1:ge:114.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,20,21,1:le:117.0100
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:26
+0.1 0 0 0 0 SETATTR:luck:78
+0.1 0 0 0 0 SETSKILL:mercantile:49
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:arrille:65
+0.1 0 0 0 0 EXPECT:barterprice:arrille,1200,0:eq:749
+0.1 0 0 0 0 EXPECT:barterprice:arrille,25,0:eq:15
+0.1 0 0 0 0 EXPECT:barterprice:arrille,400,1:eq:350
+0.1 0 0 0 0 EXPECT:barterprice:arrille,150,0:eq:93
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,10,0:ge:-135.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,20,10,0:le:-132.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,300,150,0:ge:-135.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,300,150,0:le:-132.9900
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,1000,500,0:ge:-135.0100
+0.1 0 0 0 0 EXPECT:hagglechance:arrille,1000,500,0:le:-132.9900
+0.5 0 0 0 0 LOAD:specbarter
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:72
+0.1 0 0 0 0 SETATTR:luck:18
+0.1 0 0 0 0 SETSKILL:mercantile:71
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:dratha:90
+0.1 0 0 0 0 EXPECT:barterprice:dratha,1,0:eq:1
+0.1 0 0 0 0 EXPECT:barterprice:dratha,8,1:eq:4
+0.1 0 0 0 0 EXPECT:barterprice:dratha,1,0:eq:1
+0.1 0 0 0 0 EXPECT:barterprice:dratha,400,0:eq:359
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,1050,1:ge:111.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,1050,1:le:114.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,1050,1:ge:111.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,1000,1050,1:le:114.0100
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,315,1:ge:111.9900
+0.1 0 0 0 0 EXPECT:hagglechance:dratha,300,315,1:le:114.0100

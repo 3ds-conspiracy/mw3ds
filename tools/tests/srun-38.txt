@@ -1,0 +1,98 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescuePilgrim:70
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Madura_Seran
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescuepilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_GnisisBlight:50
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Eggmine
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_gnisisblight
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_Stronghold:130
+0.3 0 0 0 0 GOTO:Gnisis,_Tansumiran_Cave_Dwelling
+8 0 0 0
+0.3 0 0 0 0 TALK:ilasour_tansumiran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:recruit_some_miners
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_WidowLand:10
+0.3 0 0 0 0 GOTO:Gnisis,_Vabdas_Hut
+8 0 0 0
+0.3 0 0 0 0 TALK:widow_vabdas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:husband_was_murdered
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_widowland
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_WidowLand:10
+0.3 0 0 0 0 GOTO:Gnisis,_Vabdas_Hut
+8 0 0 0
+0.3 0 0 0 0 TALK:widow_vabdas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:land_deed
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_widowland
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_BuriedTreasure:10
+0.3 0 0 0 0 GOTO:Hla_Oad,_Murudius_Flaeus's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:Murudius_Flaeus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_buriedtreasure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

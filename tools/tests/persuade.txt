@@ -1,0 +1,15 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOTO:Balmora,_Ra'Virr:_Trader
+3 0 0 0
+0.3 0 0 0 0 DOOR:ra'virr
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+0.5 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+0.5 0 0 0
+0.3 0 0 0 0 PERSUADE:3
+0.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+0.5 0 0 0
+0.3 0 0 0 0 PERSUADE:1
+1 0 0 0

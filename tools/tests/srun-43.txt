@@ -1,0 +1,154 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:45
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_care
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:75
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_care
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Piernette:1
+0.3 0 0 0 0 GIVE:misc_Beluelle_silver_bowl:1
+0.3 0 0 0 0 GOTO:Piernette's_Farmhouse
+8 0 0 0
+0.3 0 0 0 0 TALK:piernette_beluelle
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:missing_silver_bowl
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_piernette
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Piernette:1
+0.3 0 0 0 0 GOTO:Piernette's_Farmhouse
+8 0 0 0
+0.3 0 0 0 0 TALK:piernette_beluelle
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:missing_silver_bowl
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_piernette
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:DA_Azura:10
+0.3 0 0 0 0 GOTO:Rayna_Drolan's_Shack
+8 0 0 0
+0.3 0 0 0 0 TALK:rayna_drolan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_azura
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC27_Oracle_A:10
+0.3 0 0 0 0 GIVE:Adusamsi's_Ring:1
+0.3 0 0 0 0 GIVE:claymore_iceblade_unique:1
+0.3 0 0 0 0 JOURNAL:IC27_Oracle:1
+0.3 0 0 0 0 GOTO:Rotheran,_Arena
+8 0 0 0
+0.3 0 0 0 0 TALK:adusamsi_assurnarairan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic27_oracle_a
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC27_Oracle_A:10
+0.3 0 0 0 0 GIVE:Adusamsi's_Ring:1
+0.3 0 0 0 0 JOURNAL:IC27_Oracle:1
+0.3 0 0 0 0 GOTO:Rotheran,_Arena
+8 0 0 0
+0.3 0 0 0 0 TALK:adusamsi_assurnarairan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic27_oracle_a
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC27_Oracle_A:10
+0.3 0 0 0 0 GIVE:Adusamsi's_Ring:1
+0.3 0 0 0 0 GOTO:Rotheran,_Arena
+8 0 0 0
+0.3 0 0 0 0 TALK:adusamsi_assurnarairan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic27_oracle_a
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_RedoranCookbook:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Cooking_Secrets
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_redorancookbook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,88 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOIN:nerevarine:2
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:manirai
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B4_KillWarLovers:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 EQUIP:silver_longsword
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Ashkhan's_Yurt
+6 0 0 0
+90 0 0 0 0 KILL:ulath-pal
+2 0 0 0 0 MSG
+30 0 0 0 0 LOOT:ulath-pal:war_axe_airan_ammu
+90 0 0 0 0 KILL:ahaz
+2 0 0 0 0 MSG
+30 0 0 0 0 LOOT:ahaz:heart_of_fire
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Ashu-Ahhe's_Yurt
+6 0 0 0
+90 0 0 0 0 KILL:ashu-ahhe
+2 0 0 0 0 MSG
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Ranabi's_Yurt
+6 0 0 0
+90 0 0 0 0 KILL:ranabi
+2 0 0 0 0 MSG
+30 0 0 0 0 LOOT:ranabi:robe_of_erur_dan
+0.3 0 0 0 0 EXPECT:dead:ulath-pal
+0.3 0 0 0 0 EXPECT:dead:ahaz
+0.3 0 0 0 0 EXPECT:dead:ashu-ahhe
+0.3 0 0 0 0 EXPECT:dead:ranabi
+0.3 0 0 0 0 EXPECT:item:war_axe_airan_ammu:ge:1
+0.3 0 0 0 0 EXPECT:item:heart_of_fire:ge:1
+0.3 0 0 0 0 EXPECT:item:robe_of_erur_dan:ge:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:manirai
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B4_KillWarLovers:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B4_KillWarLovers:ge:35
+0.3 0 0 0 0 TOPIC:name_you_Nerevarine
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B4_KillWarLovers:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:manirai
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Seizing_of_the_Erabenimsun
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B4_KillWarLovers:eq:55
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

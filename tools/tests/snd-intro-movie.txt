@@ -1,0 +1,7 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 MOVIE:mw_intro
+2 0 0 0
+0.3 0 0 0 0 EXPECT:movieplaying:eq:1
+8 0 0 0
+0.3 0 0 0 0 EXPECT:movieplaying:eq:1
+1 0 0 0

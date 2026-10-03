@@ -1,0 +1,149 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:CX_BackPath:1
+0.3 0 0 0 0 GIVE:bk_kagrenac'sjournal_excl:1
+0.3 0 0 0 0 GIVE:bk_kagrenac'splans_excl:1
+0.3 0 0 0 0 GIVE:misc_wraithguard_no_equip:1
+0.3 0 0 0 0 GOTO:Corprusarium_Bowels
+8 0 0 0
+0.3 0 0 0 0 TALK:yagrum_bagarn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:mythopoeic_enchantments
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:cx_backpath
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:25
+0.3 0 0 0 0 GOTO:Corprusarium_Bowels
+8 0 0 0
+0.3 0 0 0 0 TALK:yagrum_bagarn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_boots
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_3_corpruscure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_DissaplaMine:70
+0.3 0 0 0 0 GOTO:Dissapla_Mine
+8 0 0 0
+0.3 0 0 0 0 TALK:novor_drethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dissapla_Mine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_dissaplamine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B6_DrenHortator:50
+0.3 0 0 0 0 JOURNAL:HH_WinCamonna:10
+0.3 0 0 0 0 GOTO:Dren_Plantation,_Dren's_Villa
+8 0 0 0
+0.3 0 0 0 0 TALK:Orvas_Dren_Druglord
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Camonna_Tong
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_wincamonna
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:vampclan:3
+0.3 0 0 0 0 JOURNAL:VA_VampCult:70
+0.3 0 0 0 0 GOTO:Druscashti,_Lower_Level
+8 0 0 0
+0.3 0 0 0 0 TALK:volrina_quarra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Brood_of_Lord_Irarak
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampcult
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:extravagant_amulet_01:5
+0.3 0 0 0 0 GIVE:ingred_void_salts_01:2
+0.3 0 0 0 0 GIVE:ingred_daedras_heart_01:1
+0.3 0 0 0 0 GIVE:ingred_vampire_dust_01:1
+0.3 0 0 0 0 GIVE:misc_skull10:1
+0.3 0 0 0 0 JOURNAL:VA_VampAmulet:20
+0.3 0 0 0 0 GOTO:Druscashti,_Lower_Level
+8 0 0 0
+0.3 0 0 0 0 TALK:volrina_quarra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:raw_materials
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampamulet
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC9_Argonian_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Argonian_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Im_Kilaya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic9_argonian_alms
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC9_Argonian_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Argonian_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Im_Kilaya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic9_argonian_alms
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_RunawaySlave:105
+0.3 0 0 0 0 GOTO:Ebonheart,_Argonian_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Im_Kilaya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Reeh-Jah
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_runawayslave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

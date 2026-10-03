@@ -1,0 +1,27 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 PCRACE:breton
+0.3 0 0 0 0 PCSEX:0
+0.3 0 0 0 0 GIVE:chitin%dagger
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+1 0 0 0 0 MSG
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 X SHOT
+0.1 0 0 0 0 X SHOT
+0.1 0 0 0 0 X SHOT
+0.1 0 0 0 0 X SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+0.06 0 0 0 0 SHOT
+1 0 0 0

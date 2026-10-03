@@ -1,0 +1,86 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B3_ZainabBride:35
+0.3 0 0 0 0 GIVE:potion_t_bug_musk_01:1
+0.3 0 0 0 0 GIVE:Gold_001:600
+0.3 0 0 0 0 TP:123964:48296:1042:180
+8 0 0 0
+0.3 0 0 0 0 TALK:savile_imayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:6
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b3_zainabbride
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B3_ZainabBride:30
+0.3 0 0 0 0 GIVE:exquisite_shirt_01:1
+0.3 0 0 0 0 GIVE:exquisite_skirt_01:1
+0.3 0 0 0 0 GIVE:exquisite_shoes_01:1
+0.3 0 0 0 0 TP:123964:48296:1042:180
+8 0 0 0
+0.3 0 0 0 0 TALK:savile_imayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b3_zainabbride
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B3_ZainabBride:25
+0.3 0 0 0 0 TP:123964:48296:1042:180
+8 0 0 0
+0.3 0 0 0 0 TALK:savile_imayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b3_zainabbride
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_RunawaySlave:103
+0.3 0 0 0 0 TP:123964:48296:1042:180
+8 0 0 0
+0.3 0 0 0 0 TALK:savile_imayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Reeh-Jah
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_runawayslave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_InnocentAshlanders:100
+0.3 0 0 0 0 TP:126800:48354:1072:180
+8 0 0 0
+0.3 0 0 0 0 TALK:stentus_tullius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Marsus_Tullius'_hides
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_innocentashlanders
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

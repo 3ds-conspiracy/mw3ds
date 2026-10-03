@@ -1,0 +1,365 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specrepair
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:13
+0.1 0 0 0 0 SETATTR:luck:61
+0.1 0 0 0 0 SETSKILL:armorer:90
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:77.9000
+0.1 0 0 0 0 EXPECT:repairchance:le:77.9400
+0.1 0 0 0 0 EXPECT:repairamount:1.0,84:eq:252
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:18
+0.1 0 0 0 0 SETATTR:luck:45
+0.1 0 0 0 0 SETSKILL:armorer:88
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:94.2800
+0.1 0 0 0 0 EXPECT:repairchance:le:94.3200
+0.1 0 0 0 0 EXPECT:repairamount:0.25,76:eq:57
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:86
+0.1 0 0 0 0 SETATTR:luck:79
+0.1 0 0 0 0 SETSKILL:armorer:48
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:repairchance:ge:56.4175
+0.1 0 0 0 0 EXPECT:repairchance:le:56.4575
+0.1 0 0 0 0 EXPECT:repairamount:0.25,41:eq:30
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:78
+0.1 0 0 0 0 SETATTR:luck:22
+0.1 0 0 0 0 SETSKILL:armorer:70
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:repairchance:ge:69.9800
+0.1 0 0 0 0 EXPECT:repairchance:le:70.0200
+0.1 0 0 0 0 EXPECT:repairamount:0.75,57:eq:128
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:17
+0.1 0 0 0 0 SETATTR:luck:17
+0.1 0 0 0 0 SETSKILL:armorer:24
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:21.9000
+0.1 0 0 0 0 EXPECT:repairchance:le:21.9400
+0.1 0 0 0 0 EXPECT:repairamount:2.0,60:eq:360
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:47
+0.1 0 0 0 0 SETATTR:luck:38
+0.1 0 0 0 0 SETSKILL:armorer:5
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:16.8550
+0.1 0 0 0 0 EXPECT:repairchance:le:16.8950
+0.1 0 0 0 0 EXPECT:repairamount:0.5,51:eq:76
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:68
+0.1 0 0 0 0 SETATTR:luck:19
+0.1 0 0 0 0 SETSKILL:armorer:82
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:72.5400
+0.1 0 0 0 0 EXPECT:repairchance:le:72.5800
+0.1 0 0 0 0 EXPECT:repairamount:2.0,54:eq:324
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:13
+0.1 0 0 0 0 SETATTR:luck:70
+0.1 0 0 0 0 SETSKILL:armorer:14
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:repairchance:ge:19.4925
+0.1 0 0 0 0 EXPECT:repairchance:le:19.5325
+0.1 0 0 0 0 EXPECT:repairamount:1.25,0:eq:1
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:49
+0.1 0 0 0 0 SETATTR:luck:93
+0.1 0 0 0 0 SETSKILL:armorer:72
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:68.9400
+0.1 0 0 0 0 EXPECT:repairchance:le:68.9800
+0.1 0 0 0 0 EXPECT:repairamount:0.25,92:eq:69
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:88
+0.1 0 0 0 0 SETATTR:luck:76
+0.1 0 0 0 0 SETSKILL:armorer:80
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:120.4800
+0.1 0 0 0 0 EXPECT:repairchance:le:120.5200
+0.1 0 0 0 0 EXPECT:repairamount:1.0,18:eq:54
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:78
+0.1 0 0 0 0 SETATTR:luck:97
+0.1 0 0 0 0 SETSKILL:armorer:88
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:84.3800
+0.1 0 0 0 0 EXPECT:repairchance:le:84.4200
+0.1 0 0 0 0 EXPECT:repairamount:0.25,31:eq:23
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:32
+0.1 0 0 0 0 SETATTR:luck:62
+0.1 0 0 0 0 SETSKILL:armorer:91
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:80.3000
+0.1 0 0 0 0 EXPECT:repairchance:le:80.3400
+0.1 0 0 0 0 EXPECT:repairamount:0.75,82:eq:184
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:88
+0.1 0 0 0 0 SETATTR:luck:38
+0.1 0 0 0 0 SETSKILL:armorer:24
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:36.5800
+0.1 0 0 0 0 EXPECT:repairchance:le:36.6200
+0.1 0 0 0 0 EXPECT:repairamount:2.0,75:eq:450
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:41
+0.1 0 0 0 0 SETATTR:luck:74
+0.1 0 0 0 0 SETSKILL:armorer:64
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:94.3550
+0.1 0 0 0 0 EXPECT:repairchance:le:94.3950
+0.1 0 0 0 0 EXPECT:repairamount:0.75,81:eq:182
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:21
+0.1 0 0 0 0 SETATTR:luck:78
+0.1 0 0 0 0 SETSKILL:armorer:93
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:128.6050
+0.1 0 0 0 0 EXPECT:repairchance:le:128.6450
+0.1 0 0 0 0 EXPECT:repairamount:0.75,69:eq:155
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:50
+0.1 0 0 0 0 SETATTR:luck:83
+0.1 0 0 0 0 SETSKILL:armorer:23
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:repairchance:ge:40.8175
+0.1 0 0 0 0 EXPECT:repairchance:le:40.8575
+0.1 0 0 0 0 EXPECT:repairamount:2.0,24:eq:144
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:55
+0.1 0 0 0 0 SETATTR:luck:23
+0.1 0 0 0 0 SETSKILL:armorer:44
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:64.7300
+0.1 0 0 0 0 EXPECT:repairchance:le:64.7700
+0.1 0 0 0 0 EXPECT:repairamount:0.25,65:eq:48
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:65
+0.1 0 0 0 0 SETATTR:luck:60
+0.1 0 0 0 0 SETSKILL:armorer:95
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:repairchance:ge:94.0425
+0.1 0 0 0 0 EXPECT:repairchance:le:94.0825
+0.1 0 0 0 0 EXPECT:repairamount:1.5,83:eq:373
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:53
+0.1 0 0 0 0 SETATTR:luck:66
+0.1 0 0 0 0 SETSKILL:armorer:69
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:repairchance:ge:90.9925
+0.1 0 0 0 0 EXPECT:repairchance:le:91.0325
+0.1 0 0 0 0 EXPECT:repairamount:1.0,79:eq:237
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:50
+0.1 0 0 0 0 SETATTR:luck:31
+0.1 0 0 0 0 SETSKILL:armorer:58
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:52.8600
+0.1 0 0 0 0 EXPECT:repairchance:le:52.9000
+0.1 0 0 0 0 EXPECT:repairamount:0.25,57:eq:42
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:99
+0.1 0 0 0 0 SETATTR:luck:37
+0.1 0 0 0 0 SETSKILL:armorer:93
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:85.2600
+0.1 0 0 0 0 EXPECT:repairchance:le:85.3000
+0.1 0 0 0 0 EXPECT:repairamount:1.5,4:eq:18
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:39
+0.1 0 0 0 0 SETATTR:luck:38
+0.1 0 0 0 0 SETSKILL:armorer:70
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:77.6800
+0.1 0 0 0 0 EXPECT:repairchance:le:77.7200
+0.1 0 0 0 0 EXPECT:repairamount:2.0,94:eq:564
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:80
+0.1 0 0 0 0 SETATTR:luck:36
+0.1 0 0 0 0 SETSKILL:armorer:25
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:36.5800
+0.1 0 0 0 0 EXPECT:repairchance:le:36.6200
+0.1 0 0 0 0 EXPECT:repairamount:1.5,66:eq:297
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:55
+0.1 0 0 0 0 SETATTR:luck:82
+0.1 0 0 0 0 SETSKILL:armorer:45
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:repairchance:ge:66.0175
+0.1 0 0 0 0 EXPECT:repairchance:le:66.0575
+0.1 0 0 0 0 EXPECT:repairamount:1.25,82:eq:307
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:79
+0.1 0 0 0 0 SETATTR:luck:20
+0.1 0 0 0 0 SETSKILL:armorer:14
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:23.8800
+0.1 0 0 0 0 EXPECT:repairchance:le:23.9200
+0.1 0 0 0 0 EXPECT:repairamount:0.75,96:eq:216
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:61
+0.1 0 0 0 0 SETATTR:luck:18
+0.1 0 0 0 0 SETSKILL:armorer:78
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:107.3550
+0.1 0 0 0 0 EXPECT:repairchance:le:107.3950
+0.1 0 0 0 0 EXPECT:repairamount:2.0,70:eq:420
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:33
+0.1 0 0 0 0 SETATTR:luck:73
+0.1 0 0 0 0 SETSKILL:armorer:34
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:repairchance:ge:39.0050
+0.1 0 0 0 0 EXPECT:repairchance:le:39.0450
+0.1 0 0 0 0 EXPECT:repairamount:1.0,20:eq:60
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:81
+0.1 0 0 0 0 SETATTR:luck:36
+0.1 0 0 0 0 SETSKILL:armorer:63
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:repairchance:ge:65.3425
+0.1 0 0 0 0 EXPECT:repairchance:le:65.3825
+0.1 0 0 0 0 EXPECT:repairamount:0.75,95:eq:213
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:36
+0.1 0 0 0 0 SETATTR:luck:66
+0.1 0 0 0 0 SETSKILL:armorer:15
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:repairchance:ge:28.3300
+0.1 0 0 0 0 EXPECT:repairchance:le:28.3700
+0.1 0 0 0 0 EXPECT:repairamount:1.5,82:eq:369
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:51
+0.1 0 0 0 0 SETATTR:luck:90
+0.1 0 0 0 0 SETSKILL:armorer:80
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:75.2600
+0.1 0 0 0 0 EXPECT:repairchance:le:75.3000
+0.1 0 0 0 0 EXPECT:repairamount:0.75,31:eq:69
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:65
+0.1 0 0 0 0 SETATTR:luck:16
+0.1 0 0 0 0 SETSKILL:armorer:53
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:61.0800
+0.1 0 0 0 0 EXPECT:repairchance:le:61.1200
+0.1 0 0 0 0 EXPECT:repairamount:0.5,90:eq:135
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:29
+0.1 0 0 0 0 SETATTR:luck:6
+0.1 0 0 0 0 SETSKILL:armorer:37
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:40.4800
+0.1 0 0 0 0 EXPECT:repairchance:le:40.5200
+0.1 0 0 0 0 EXPECT:repairamount:0.25,40:eq:30
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:38
+0.1 0 0 0 0 SETATTR:luck:74
+0.1 0 0 0 0 SETSKILL:armorer:50
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:76.4800
+0.1 0 0 0 0 EXPECT:repairchance:le:76.5200
+0.1 0 0 0 0 EXPECT:repairamount:0.5,73:eq:109
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:28
+0.1 0 0 0 0 SETATTR:luck:7
+0.1 0 0 0 0 SETSKILL:armorer:73
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:repairchance:ge:86.0425
+0.1 0 0 0 0 EXPECT:repairchance:le:86.0825
+0.1 0 0 0 0 EXPECT:repairamount:0.75,78:eq:175
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:39
+0.1 0 0 0 0 SETATTR:luck:41
+0.1 0 0 0 0 SETSKILL:armorer:11
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:18.9800
+0.1 0 0 0 0 EXPECT:repairchance:le:19.0200
+0.1 0 0 0 0 EXPECT:repairamount:1.5,81:eq:364
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:14
+0.1 0 0 0 0 SETATTR:luck:91
+0.1 0 0 0 0 SETSKILL:armorer:47
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:57.4800
+0.1 0 0 0 0 EXPECT:repairchance:le:57.5200
+0.1 0 0 0 0 EXPECT:repairamount:1.5,98:eq:441
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:96
+0.1 0 0 0 0 SETATTR:luck:22
+0.1 0 0 0 0 SETSKILL:armorer:88
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:repairchance:ge:124.7300
+0.1 0 0 0 0 EXPECT:repairchance:le:124.7700
+0.1 0 0 0 0 EXPECT:repairamount:0.25,48:eq:36
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:79
+0.1 0 0 0 0 SETATTR:luck:86
+0.1 0 0 0 0 SETSKILL:armorer:34
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:repairchance:ge:40.3800
+0.1 0 0 0 0 EXPECT:repairchance:le:40.4200
+0.1 0 0 0 0 EXPECT:repairamount:1.0,81:eq:243
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:40
+0.1 0 0 0 0 SETATTR:luck:55
+0.1 0 0 0 0 SETSKILL:armorer:39
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:repairchance:ge:42.4175
+0.1 0 0 0 0 EXPECT:repairchance:le:42.4575
+0.1 0 0 0 0 EXPECT:repairamount:1.5,44:eq:198
+0.5 0 0 0 0 LOAD:specrepair
+3 0 0 0
+0.1 0 0 0 0 SETATTR:strength:43
+0.1 0 0 0 0 SETATTR:luck:30
+0.1 0 0 0 0 SETSKILL:armorer:70
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:repairchance:ge:77.2800
+0.1 0 0 0 0 EXPECT:repairchance:le:77.3200
+0.1 0 0 0 0 EXPECT:repairamount:0.25,31:eq:23

@@ -1,0 +1,16 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:1
+0.5 0 0 0 0 SCREEN:journal
+0.3 0 0 0 0 EXPECT:screen:journal
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0 0 SCREEN:stats
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0 0 START
+0.3 0 0 0 0 EXPECT:screen:gamemenu
+0.3 0 0 0 0 SHOT
+0.5 0 0 0 0 TAP:160:128
+0.5 0 0 0 0 EXPECT:screen:rest
+0.3 0 0 0 0 SHOT

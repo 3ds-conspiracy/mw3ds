@@ -1,0 +1,15 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 CHECK:galbedir
+0.3 0 0 0 0 JOURNAL:MG_Sabotage:10
+5 0 0 0
+0.3 0 0 0 0 CHECK:galbedir
+20 0 0 0
+0.3 0 0 0 0 CHECK:galbedir
+20 0 0 0
+0.3 0 0 0 0 CHECK:galbedir
+20 0 0 0
+0.3 0 0 0 0 CHECK:galbedir
+1 0 0 0

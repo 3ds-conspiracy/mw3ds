@@ -1,0 +1,149 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_WiseWoman:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:necromancy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_killnecro1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_KillNecro1:100
+0.3 0 0 0 0 JOIN:mages_guild:7
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ash_ghoul
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_soulgem2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 GOTO:Salvel_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:mastrius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampcurse
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:hrisskar_flat-foot
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Fargoth's_hiding_place
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_lookout
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:5
+0.3 0 0 0 0 JOIN:blades:0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:elone
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Blades_Trainers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_elone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_seydaneentaxrecord:1
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+8 0 0 0
+0.3 0 0 0 0 TALK:chargen_class
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_deadtaxman
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+8 0 0 0
+0.3 0 0 0 0 TALK:chargen_captain
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_1_findspymaster
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Suran,_Desele's_House_of_Earthly_Delights
+8 0 0 0
+0.3 0 0 0 0 TALK:daric_bielle
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_bountyhunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Suran,_Desele's_House_of_Earthly_Delights
+8 0 0 0
+0.3 0 0 0 0 TALK:helviane_desele
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:latest_rumors
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_umbra
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 GOTO:Tel_Aruhn,_Plot_and_Plaster
+8 0 0 0
+0.3 0 0 0 0 TALK:Drarayne_Girith
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepers_drarayne
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

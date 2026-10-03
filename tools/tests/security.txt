@@ -1,0 +1,26 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+3 0 0 0
+0.3 0 0 0 0 GIVE:probe_apprentice_01
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.3 0 0 0 0 GIVE:pick_apprentice_01
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.4 0 0 0 0 TOOL:de_p_chest_02_caius
+0.3 0 0 0 0 CHECK:de_p_chest_02_caius
+0.3 0 0 0 0 CHECK:player
+1 0 0 0
+0.3 0 0 0 0 GIVE:pick_apprentice_01
+0.3 0 0 0 0 TOOL:chest_small_02_rndgold
+0.5 0 0 0
+0.3 0 0 0 0 DOOR:chest_small_02_rndgold
+1 0 0 0
+0.3 0 0 0 0 CHECK:player
+1 0 0 0

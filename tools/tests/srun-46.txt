@@ -1,0 +1,129 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_Hostage:50
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Fighter's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_our_cause
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_hostage
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_DissaplaMine:70
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Fighter's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dissapla_Mine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_dissaplamine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_Nchurdamz:90
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Fighter's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nchurdamz
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_nchurdamz
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Potion:10
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Detect_Creatures_Potion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_potion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_WiseWoman:80
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_wisewoman
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:town_Sadrith:15
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:uleni_heleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Gateway_haunting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_sadrith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:town_Sadrith:15
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:uleni_heleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Gateway_haunting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_sadrith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_SadrithMoraDefenses:10
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:arielle_phiencel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:hire_a_wizard
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_sadrithmoradefenses
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

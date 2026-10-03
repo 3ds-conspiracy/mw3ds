@@ -1,0 +1,150 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Felen_Maryon's_staff
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ebonystaff
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:hire_a_wizard
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_sadrithmoradefenses
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:potion_recipe
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_cookbookalchemy
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:angaredhel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hospitality_Papers
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hospitality_papers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:angaredhel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_sadrith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:sinyaramen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mossanon
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_sinyaramen
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:neloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Drake's_Pride
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_drakepride
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:mallam_ryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_spybaladas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_SloadSoap:100
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:arara_uvulas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Staff_of_the_Silver_Dawn
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_silverdawn
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Quarra_Blood_Potion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampblood2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

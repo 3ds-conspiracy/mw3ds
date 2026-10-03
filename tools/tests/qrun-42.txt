@@ -1,0 +1,155 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Tel_Branora,_Upper_Tower:_Therana's_Chamber
+8 0 0 0
+0.3 0 0 0 0 TALK:therana
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ash_Yams
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_aurielbow
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Tel_Mora,_Berwen:_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:berwen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Corprus_Stalker
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_corprusstalker
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:dratha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Flesh_Made_Whole
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_fleshamulet
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mages_Guild_monopoly
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_monopoly
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_councilors
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_telvannibook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mudan-Mul_Egg_Mine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_minecure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_aryonhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:3
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Council
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_baladasally
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_AttackRethan:100
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Banden_Indarys
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_attackindarys
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_RecruitEddie:100
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Raynasa_Rethan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_attackrethan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

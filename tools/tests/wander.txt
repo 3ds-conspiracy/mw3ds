@@ -1,0 +1,4 @@
+3 0 0 0 0 MSG
+60 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Plaza
+60 0 0 0

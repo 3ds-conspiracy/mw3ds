@@ -1,0 +1,220 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 SETATTR:willpower:100
+0.3 0 0 0 0 SETATTR:luck:100
+0.3 0 0 0 0 SETATTR:intelligence:100
+0.3 0 0 0 0 SETATTR:strength:60
+0.3 0 0 0 0 SETATTR:speed:60
+0.3 0 0 0 0 SETATTR:personality:100
+0.3 0 0 0 0 SETSKILL:destruction:45
+0.3 0 0 0 0 SETSKILL:athletics:30
+0.3 0 0 0 0 SETSKILL:longblade:30
+0.3 0 0 0 0 SETSKILL:alchemy:30
+0.3 0 0 0 0 SETSKILL:unarmored:30
+0.3 0 0 0 0 SETSKILL:speechcraft:100
+0.3 0 0 0 0 SETSKILL:mercantile:30
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SPELL:fire_bite
+0.3 0 0 0 0 EXPECT:skill:destruction:eq:45
+0.3 0 0 0 0 EXPECT:attr:willpower:eq:100
+0.5 0 0 0
+0.3 0 0 0 0 SKILLPROG:destruction:0
+0.3 0 0 0 0 SNAP:skillprog:destruction
+0.3 0 0 0 0 CAST:fire%bite
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:skillprog:destruction:eq:@1
+0.3 0 0 0 0 SKILLPROG:destruction:25.8
+0.3 0 0 0 0 SNAP:skill:destruction
+0.3 0 0 0 0 CAST:fire%bite
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:destruction:eq:@0
+0.3 0 0 0 0 EXPECT:skillprog:destruction:gt:26.79
+0.3 0 0 0 0 EXPECT:skillprog:destruction:lt:26.81
+0.3 0 0 0 0 SKILLPROG:destruction:26.7
+0.3 0 0 0 0 SNAP:levelprog
+0.3 0 0 0 0 SNAP:attrups:willpower
+0.3 0 0 0 0 CAST:fire%bite
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:destruction:eq:@1
+0.3 0 0 0 0 EXPECT:skillprog:destruction:eq:0
+0.3 0 0 0 0 EXPECT:levelprog:eq:@1
+0.3 0 0 0 0 EXPECT:attrups:willpower:eq:@1
+0.3 0 0 0 0 SKILLPROG:athletics:38.5
+0.3 0 0 0 0 SNAP:skillprog:athletics
+0.3 0 0 0 0 SNAP:skill:athletics
+0.5 0 0 0
+5 0 1 0
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skillprog:athletics:gt:@0.08
+0.3 0 0 0 0 EXPECT:skillprog:athletics:lt:@0.12
+0.3 0 0 0 0 EXPECT:skill:athletics:eq:@0
+0.3 0 0 0 0 SKILLPROG:athletics:38.7
+0.3 0 0 0 0 SNAP:levelprog
+0.3 0 0 0 0 SNAP:attrups:speed
+0.5 0 0 0
+5 0 -1 0
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:athletics:eq:@1
+0.3 0 0 0 0 EXPECT:levelprog:eq:@0
+0.3 0 0 0 0 EXPECT:attrups:speed:eq:@1
+0.3 0 0 0 0 GIVE:iron%longsword
+0.3 0 0 0 0 EQUIP:iron%longsword
+0.3 0 0 0 0 SKILLPROG:longblade:30.5
+0.3 0 0 0 0 SNAP:skill:longblade
+0.3 0 0 0 0 SNAP:levelprog
+0.3 0 0 0 0 SNAP:attrups:strength
+0.3 0 0 0 0 PLACE:mudcrab:250
+1 0 0 0
+30 0 0 0 0 KILL:mudcrab
+1 0 0 0
+0.3 0 0 0 0 EXPECT:dead:mudcrab
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@1
+0.3 0 0 0 0 EXPECT:levelprog:eq:@1
+0.3 0 0 0 0 EXPECT:attrups:strength:eq:@1
+0.3 0 0 0 0 SNAP:skillprog:alchemy
+0.3 0 0 0 0 GIVE:ingred_ash_yam_01
+0.3 0 0 0 0 EQUIP:ingred_ash_yam_01
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skillprog:alchemy:eq:@0.5
+0.3 0 0 0 0 GIVE:bookskill_long%blade1
+0.3 0 0 0 0 SNAP:skill:longblade
+0.3 0 0 0 0 READ:bookskill_long%blade1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:book
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@1
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 READ:bookskill_long%blade1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@1
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 LEVELPROG:9
+0.3 0 0 0 0 SKILLPROG:destruction:100
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 CAST:fire%bite
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:levelprog:eq:10
+0.3 0 0 0 0 ATTRUPS:speed:5
+0.3 0 0 0 0 ATTRUPS:strength:0
+0.3 0 0 0 0 ATTRUPS:endurance:10
+0.3 0 0 0 0 SNAP:attr:speed
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 SNAP:attr:endurance
+0.3 0 0 0 0 SNAP:level
+0.3 0 0 0 0 SNAP:healthmax
+0.3 0 0 0 0 SLEEP:8:2
+15 0 0 0
+0.3 0 0 0 0 EXPECT:screen:levelup
+0.3 0 0 0 0 SHOT
+1 0 0 0
+0.3 0 0 0 0 LEVELUP:speed:strength:endurance
+1 0 0 0
+0.3 0 0 0 0 EXPECT:level:eq:@1
+0.3 0 0 0 0 EXPECT:attr:speed:eq:@3
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@1
+0.3 0 0 0 0 EXPECT:attr:endurance:eq:@5
+0.3 0 0 0 0 EXPECT:levelprog:eq:0
+0.3 0 0 0 0 EXPECT:attrups:speed:eq:0
+0.3 0 0 0 0 EXPECT:healthmax:gt:@3
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:gold_001:5000
+0.3 0 0 0 0 SETSKILL:longblade:33
+0.3 0 0 0 0 SNAP:skill:longblade
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:levelprog
+0.3 0 0 0 0 SNAP:hour
+0.3 0 0 0 0 TRAIN:elone:longblade
+1 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@1
+0.3 0 0 0 0 EXPECT:levelprog:eq:@1
+0.3 0 0 0 0 EXPECT:gold:lt:@0
+0.3 0 0 0 0 EXPECT:hour:ge:@1.9
+0.3 0 0 0 0 SETSKILL:longblade:62
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 TRAIN:elone:longblade
+1 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:62
+0.3 0 0 0 0 EXPECT:gold:eq:@0
+0.3 0 0 0 0 SETATTR:strength:35
+0.3 0 0 0 0 SETSKILL:longblade:40
+0.3 0 0 0 0 TRAIN:elone:longblade
+1 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:40
+0.3 0 0 0 0 EXPECT:gold:eq:@0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:count:iron%longsword
+0.3 0 0 0 0 SNAP:skillprog:mercantile
+0.3 0 0 0 0 SELL:arrille:iron%longsword
+1 0 0 0
+0.3 0 0 0 0 EXPECT:gold:gt:@0
+0.3 0 0 0 0 EXPECT:count:iron%longsword:eq:@-1
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:count:sc_vitality
+0.3 0 0 0 0 BUY:arrille:sc_vitality
+1 0 0 0
+0.3 0 0 0 0 EXPECT:gold:lt:@0
+0.3 0 0 0 0 EXPECT:count:sc_vitality:eq:@1
+0.3 0 0 0 0 EXPECT:skillprog:mercantile:eq:@0
+0.3 0 0 0 0 SNAP:refdisp:arrille
+0.3 0 0 0 0 SNAP:skillprog:speechcraft
+0.3 0 0 0 0 SETSKILL:speechcraft:95
+0.3 0 0 0 0 SETATTR:personality:100
+60 0 0 0 0 ACTIVATE:arrille
+3 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 EXPECT:skillprog:speechcraft:gt:@0
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0
+0.3 0 0 0 0 SNAP:skill:longblade
+0.3 0 0 0 0 SNAP:skill:destruction
+0.3 0 0 0 0 SNAP:skillprog:athletics
+0.3 0 0 0 0 SNAP:levelprog
+0.3 0 0 0 0 SNAP:level
+0.3 0 0 0 0 SNAP:attr:willpower
+0.3 0 0 0 0 SNAP:attr:endurance
+0.3 0 0 0 0 SNAP:healthmax
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:spells
+0.3 0 0 0 0 SNAP:skillprog:alchemy
+0.3 0 0 0 0 ATTRUPS:agility:3
+0.3 0 0 0 0 SNAP:attrups:agility
+1 0 0 0 0 SAVE:mech
+1 0 0 0
+0.5 0 0 0 0 LOAD:mech
+4 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@0
+0.3 0 0 0 0 EXPECT:skill:destruction:eq:@0
+0.3 0 0 0 0 EXPECT:skillprog:athletics:eq:@0
+0.3 0 0 0 0 EXPECT:skillprog:alchemy:eq:@0
+0.3 0 0 0 0 EXPECT:levelprog:eq:@0
+0.3 0 0 0 0 EXPECT:level:eq:@0
+0.3 0 0 0 0 EXPECT:attr:willpower:eq:@0
+0.3 0 0 0 0 EXPECT:attr:endurance:eq:@0
+0.3 0 0 0 0 EXPECT:attrups:agility:eq:@0
+0.3 0 0 0 0 EXPECT:healthmax:eq:@0
+0.3 0 0 0 0 EXPECT:gold:eq:@0
+0.3 0 0 0 0 EXPECT:spells:eq:@0
+0.3 0 0 0 0 EXPECT:cell:Seyda%Neen,%Arrille
+1 0 0 0
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETSKILL:unarmored:40
+0.3 0 0 0 0 SNAP:skillprog:unarmored
+0.3 0 0 0 0 PLACE:mudcrab:150
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:52:20:20:10:2
+0.3 0 0 0 0 MAKESPELL:frenzy
+0.3 0 0 0 0 CASTAT:mudcrab:mw3ds_test_frenzy
+40 0 0 0
+0.3 0 0 0 0 EXPECT:skillprog:unarmored:gt:@0
+1 0 0 0

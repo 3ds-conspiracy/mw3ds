@@ -1,0 +1,126 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writoran:10
+0.3 0 0 0 0 GOTO:Vivec,_Elven_Nations_Cornerclub
+8 0 0 0
+120 0 0 0 0 KILL:feruren_oran
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writoran
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writsadus:1
+0.3 0 0 0 0 GOTO:Zaintirari
+8 0 0 0
+120 0 0 0 0 KILL:sarayn_sadus
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writsadus
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writsaren:1
+0.3 0 0 0 0 GOTO:Vivec,_Saren_Manor
+8 0 0 0
+120 0 0 0 0 KILL:toris_saren
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writsaren
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writtherana:1
+0.3 0 0 0 0 GOTO:Tel_Branora,_Upper_Tower:_Therana's_Chamber
+8 0 0 0
+120 0 0 0 0 KILL:therana
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writtherana
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writvarro:1
+0.3 0 0 0 0 GOTO:Moonmoth_Legion_Fort,_Interior
+8 0 0 0
+120 0 0 0 0 KILL:larrius_varro
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writvarro
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writvendu:1
+0.3 0 0 0 0 GOTO:Vivec,_Temporary_Telvanni_Housing
+8 0 0 0
+120 0 0 0 0 KILL:ethal_seloth
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writvendu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writvendu:1
+0.3 0 0 0 0 GOTO:Vivec,_Temporary_Telvanni_Housing
+8 0 0 0
+120 0 0 0 0 KILL:idroso_vendu
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writvendu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writvendu:1
+0.3 0 0 0 0 GOTO:Vivec,_Temporary_Telvanni_Housing
+8 0 0 0
+120 0 0 0 0 KILL:ethal_seloth
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writvendu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writvendu:1
+0.3 0 0 0 0 GOTO:Vivec,_Temporary_Telvanni_Housing
+8 0 0 0
+120 0 0 0 0 KILL:idroso_vendu
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writvendu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writvendu:1
+0.3 0 0 0 0 GOTO:Vivec,_Temporary_Telvanni_Housing
+8 0 0 0
+120 0 0 0 0 KILL:ethal_seloth
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writvendu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

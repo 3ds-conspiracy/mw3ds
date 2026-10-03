@@ -1,0 +1,152 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 REP:50
+0.3 0 0 0 0 GOTO:Vivec,_Library_of_Vivec
+8 0 0 0
+0.3 0 0 0 0 TALK:mehra_milo
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_backdoor4
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Miun-Gei:_Enchanter
+8 0 0 0
+0.3 0 0 0 0 TALK:miun_gei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:annoying_fool
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_actor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Office_of_the_Watch
+8 0 0 0
+0.3 0 0 0 0 TALK:tarer_braryn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Apologies
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_apologies
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:silver_longsword:1
+0.3 0 0 0 0 GOTO:Vivec,_Puzzle_Canal,_Center
+8 0 0 0
+0.3 0 0 0 0 TALK:dremora_ttpc
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:silver_longsword
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_puzzlecanal
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:balen_andrano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:change_her_luck
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_bone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_DagothTanis:100
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Treasury
+8 0 0 0
+0.3 0 0 0 0 TALK:faral_retheran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Reynel_Uvirith
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_attackuvirith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_AttackUvirith:100
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Treasury
+8 0 0 0
+0.3 0 0 0 0 TALK:faral_retheran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Raynasa_Rethan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_attackrethan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Treasury
+8 0 0 0
+0.3 0 0 0 0 TALK:faral_retheran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dagoth_Tanis
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_dagothtanis
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_HlaanoSlanders:100
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Treasury
+8 0 0 0
+0.3 0 0 0 0 TALK:faral_retheran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redas_Tomb
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_redastomb
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Treasury
+8 0 0 0
+0.3 0 0 0 0 TALK:faral_retheran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slander
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_hlaanoslanders
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

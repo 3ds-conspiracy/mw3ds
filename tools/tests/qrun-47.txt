@@ -1,0 +1,174 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_DB_Contact:100
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Fleetness
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_fleetness
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguineshoesstalking:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Stalking
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_stalking
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:taros_dral
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sensitive_matters
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_mephala
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinebeltsmiting:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Smiting
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_smiting
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:morag_tong:2
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dark_Brotherhood
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_contact
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguineshoesleaping:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Leaping
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_leaping
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinebeltdenial:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Denial
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_denial
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinebelthewing:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Hewing
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_hewing
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_S_Sublime:100
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Assernerairan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_assernerairan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:morag_tong:8
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Grandmaster
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_grandmaster
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

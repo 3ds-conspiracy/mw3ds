@@ -1,0 +1,36 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:town_Tel_Vos:10
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Ashur-Dan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:ashur-dan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:trade_goods_wanted
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_tel_vos_ashur
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:town_Tel_Vos:10
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sonummu_zabamat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:trade_goods_wanted
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_tel_vos_wise
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

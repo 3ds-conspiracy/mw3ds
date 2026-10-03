@@ -1,0 +1,34 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B3_ZainabBride:22
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sonummu_zabamat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Counsel
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b3_zainabbride
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B3_ZainabBride:1
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:sonummu_zabamat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Counsel
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b3_zainabbride
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

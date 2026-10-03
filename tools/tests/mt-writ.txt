@@ -1,0 +1,23 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 JOIN:morag_tong
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+4 0 0 0
+0.5 0 0 0 0 DOOR:eno_hlaalu
+1 0 0 0 0 TOPIC:Odaishah_Yasalmibaal
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:MT_WritYasalmibaal
+0.3 0 0 0 0 GOTO:Bensiberib_Camp,_Odaishah's_Yurt
+4 0 0 0
+0.3 0 0 0 0 SOULKILL:odaishah_yasalmibaal
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:MT_WritYasalmibaal
+0.3 0 0 0 0 CHECK:global:PCCrimeLevel
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+4 0 0 0
+0.5 0 0 0 0 DOOR:eno_hlaalu
+1 0 0 0 0 TOPIC:Odaishah_Yasalmibaal
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:MT_WritYasalmibaal
+1 0 0 0

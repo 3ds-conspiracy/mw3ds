@@ -1,0 +1,8 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 JOIN:fighters_guild
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+0.3 0 0 0 0 HIT:eydis_fire-eye
+1 0 0 0
+0.3 0 0 0 0 CHECK:global:PCCrimeLevel
+1 0 0 0

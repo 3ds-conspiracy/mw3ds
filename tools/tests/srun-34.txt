@@ -1,0 +1,178 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC1_marshmerrow:1
+0.3 0 0 0 0 GIVE:ingred_marshmerrow_01:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic1_marshmerrow
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC30_Imperial_veteran:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Wulf
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic30_imperial_veteran
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:50
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:ulath-pal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:35
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:name_you_Nerevarine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 JOURNAL:B4_HeartFire:1
+0.3 0 0 0 0 JOURNAL:B4_WarAxe:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 JOURNAL:B4_HeartFire:1
+0.3 0 0 0 0 JOURNAL:B4_WarAxe:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 GIVE:heart_of_fire:1
+0.3 0 0 0 0 JOURNAL:B4_Robe:1
+0.3 0 0 0 0 JOURNAL:B4_WarAxe:1
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 JOURNAL:B4_Robe:1
+0.3 0 0 0 0 GIVE:war_axe_airan_ammu:1
+0.3 0 0 0 0 JOURNAL:B4_HeartFire:1
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:50
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:manirai
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Seizing_of_the_Erabenimsun
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

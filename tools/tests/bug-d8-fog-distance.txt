@@ -1,0 +1,11 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+60 0 0 0 0 ACTIVATE:CharGen_Exit_Door
+6 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
+0.3 0 0 0 0 WEATHER:0
+5 0 0 0
+0.3 0 0 0 0 SHOT
+1 0 0 0

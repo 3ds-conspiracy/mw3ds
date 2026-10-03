@@ -1,0 +1,115 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_WiseWoman:10
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:manirai
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_wisewoman
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_WiseWoman:100
+0.3 0 0 0 0 GOTO:Favel_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:minabibi_assardarainat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_wisewoman
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_WiseWoman:10
+0.3 0 0 0 0 GOTO:Favel_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:minabibi_assardarainat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_wisewoman
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:p_quarrablood_UNIQUE:1
+0.3 0 0 0 0 JOURNAL:VA_VampBlood:20
+0.3 0 0 0 0 GOTO:Galom_Daeus,_Observatory
+8 0 0 0
+0.3 0 0 0 0 TALK:raxle_berne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Quarra_Blood_Potion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampblood
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:2
+0.3 0 0 0 0 SETGLOBAL:vampkills:12
+0.3 0 0 0 0 JOURNAL:VA_VampCountess:50
+0.3 0 0 0 0 GOTO:Galom_Daeus,_Observatory
+8 0 0 0
+0.3 0 0 0 0 TALK:raxle_berne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:future_rewards
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampcountess
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_LlothisCrosier:100
+0.3 0 0 0 0 JOIN:temple:9
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:uvoo_llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Crosier_of_St._Llothis
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_llothiscrosier
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_FelmsCleaver:100
+0.3 0 0 0 0 JOIN:temple:9
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:uvoo_llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cleaver_of_St._Felms
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_felmscleaver
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

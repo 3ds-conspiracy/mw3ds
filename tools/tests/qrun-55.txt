@@ -1,0 +1,120 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_SS_Plutocrats:100
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_goblet
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ss_churchpolice
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nads_Tharen
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_brotherthief
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bitter_Cup
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_bitterbribe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ienith
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_killienith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Canal_South-One
+8 0 0 0
+0.3 0 0 0 0 TALK:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:people_cannot_read
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_literacycampaign
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_TwinLamps1:100
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Canal_South-One
+8 0 0 0
+0.3 0 0 0 0 TALK:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_twinlamps3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Glassworker's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:alarvyne_indalas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:dwarven_limeware
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_shipment
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Plaza
+8 0 0 0
+0.3 0 0 0 0 TALK:cassius_olcinius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_invisible
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

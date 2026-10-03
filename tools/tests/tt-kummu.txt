@@ -1,0 +1,11 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:ingred_muck_01:10
+0.3 0 0 0 0 TP:14595:-33520:800:0
+8 0 0 0
+0.3 0 0 0 0 DOOR:furn_shrine_vivec_cure_02
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:TT_FieldsKummu
+0.3 0 0 0 0 CHECK:player
+1 0 0 0

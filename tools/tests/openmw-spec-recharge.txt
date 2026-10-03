@@ -1,0 +1,405 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specrecharge
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:64
+0.1 0 0 0 0 SETATTR:intelligence:85
+0.1 0 0 0 0 SETATTR:luck:71
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:70.4600
+0.1 0 0 0 0 EXPECT:rechargechance:le:70.5000
+0.1 0 0 0 0 EXPECT:rechargegain:150,30:ge:63.7841
+0.1 0 0 0 0 EXPECT:rechargegain:150,30:le:63.9117
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:90
+0.1 0 0 0 0 SETATTR:intelligence:28
+0.1 0 0 0 0 SETATTR:luck:11
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:77.3400
+0.1 0 0 0 0 EXPECT:rechargechance:le:77.3800
+0.1 0 0 0 0 EXPECT:rechargegain:150,70:ge:135.5933
+0.1 0 0 0 0 EXPECT:rechargegain:150,70:le:135.8648
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:85
+0.1 0 0 0 0 SETATTR:intelligence:78
+0.1 0 0 0 0 SETATTR:luck:90
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:rechargechance:ge:136.9800
+0.1 0 0 0 0 EXPECT:rechargechance:le:137.0200
+0.1 0 0 0 0 EXPECT:rechargegain:30,96:ge:20.9719
+0.1 0 0 0 0 EXPECT:rechargegain:30,96:le:21.0719
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:27
+0.1 0 0 0 0 SETATTR:intelligence:44
+0.1 0 0 0 0 SETATTR:luck:78
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:34.8600
+0.1 0 0 0 0 EXPECT:rechargechance:le:34.9000
+0.1 0 0 0 0 EXPECT:rechargegain:1000,62:ge:1775.7454
+0.1 0 0 0 0 EXPECT:rechargegain:1000,62:le:1779.3005
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:12
+0.1 0 0 0 0 SETATTR:intelligence:51
+0.1 0 0 0 0 SETATTR:luck:1
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:rechargechance:ge:28.9800
+0.1 0 0 0 0 EXPECT:rechargechance:le:29.0200
+0.1 0 0 0 0 EXPECT:rechargegain:150,52:ge:268.6966
+0.1 0 0 0 0 EXPECT:rechargegain:150,52:le:269.2345
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:13
+0.1 0 0 0 0 SETATTR:intelligence:51
+0.1 0 0 0 0 SETATTR:luck:29
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:22.8175
+0.1 0 0 0 0 EXPECT:rechargechance:le:22.8575
+0.1 0 0 0 0 EXPECT:rechargegain:400,68:ge:1189.8325
+0.1 0 0 0 0 EXPECT:rechargegain:400,68:le:1192.2146
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:67
+0.1 0 0 0 0 SETATTR:intelligence:61
+0.1 0 0 0 0 SETATTR:luck:24
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:rechargechance:ge:81.5800
+0.1 0 0 0 0 EXPECT:rechargechance:le:81.6200
+0.1 0 0 0 0 EXPECT:rechargegain:60,89:ge:65.3757
+0.1 0 0 0 0 EXPECT:rechargegain:60,89:le:65.5066
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:75
+0.1 0 0 0 0 SETATTR:intelligence:55
+0.1 0 0 0 0 SETATTR:luck:72
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:81.5300
+0.1 0 0 0 0 EXPECT:rechargechance:le:81.5700
+0.1 0 0 0 0 EXPECT:rechargegain:30,59:ge:21.6545
+0.1 0 0 0 0 EXPECT:rechargegain:30,59:le:21.7545
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:39
+0.1 0 0 0 0 SETATTR:intelligence:26
+0.1 0 0 0 0 SETATTR:luck:45
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:42.5925
+0.1 0 0 0 0 EXPECT:rechargechance:le:42.6325
+0.1 0 0 0 0 EXPECT:rechargegain:30,87:ge:61.1884
+0.1 0 0 0 0 EXPECT:rechargegain:30,87:le:61.3109
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:71
+0.1 0 0 0 0 SETATTR:intelligence:88
+0.1 0 0 0 0 SETATTR:luck:9
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:78.3800
+0.1 0 0 0 0 EXPECT:rechargechance:le:78.4200
+0.1 0 0 0 0 EXPECT:rechargegain:30,46:ge:17.5520
+0.1 0 0 0 0 EXPECT:rechargegain:30,46:le:17.6520
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:45
+0.1 0 0 0 0 SETATTR:intelligence:75
+0.1 0 0 0 0 SETATTR:luck:17
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:rechargechance:ge:61.6800
+0.1 0 0 0 0 EXPECT:rechargechance:le:61.7200
+0.1 0 0 0 0 EXPECT:rechargegain:400,56:ge:362.6840
+0.1 0 0 0 0 EXPECT:rechargegain:400,56:le:363.4100
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:100
+0.1 0 0 0 0 SETATTR:intelligence:39
+0.1 0 0 0 0 SETATTR:luck:8
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:95.1800
+0.1 0 0 0 0 EXPECT:rechargechance:le:95.2200
+0.1 0 0 0 0 EXPECT:rechargegain:60,59:ge:37.1349
+0.1 0 0 0 0 EXPECT:rechargegain:60,59:le:37.2349
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:16
+0.1 0 0 0 0 SETATTR:intelligence:85
+0.1 0 0 0 0 SETATTR:luck:39
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:rechargechance:ge:41.4925
+0.1 0 0 0 0 EXPECT:rechargechance:le:41.5325
+0.1 0 0 0 0 EXPECT:rechargegain:400,64:ge:616.0650
+0.1 0 0 0 0 EXPECT:rechargegain:400,64:le:617.2984
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:60
+0.1 0 0 0 0 SETATTR:intelligence:50
+0.1 0 0 0 0 SETATTR:luck:76
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:rechargechance:ge:77.5800
+0.1 0 0 0 0 EXPECT:rechargechance:le:77.6200
+0.1 0 0 0 0 EXPECT:rechargegain:150,8:ge:15.4139
+0.1 0 0 0 0 EXPECT:rechargegain:150,8:le:15.5139
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:60
+0.1 0 0 0 0 SETATTR:intelligence:69
+0.1 0 0 0 0 SETATTR:luck:75
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:71.1175
+0.1 0 0 0 0 EXPECT:rechargechance:le:71.1575
+0.1 0 0 0 0 EXPECT:rechargegain:400,64:ge:359.5066
+0.1 0 0 0 0 EXPECT:rechargegain:400,64:le:360.2263
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:32
+0.1 0 0 0 0 SETATTR:intelligence:71
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:rechargechance:ge:53.0800
+0.1 0 0 0 0 EXPECT:rechargechance:le:53.1200
+0.1 0 0 0 0 EXPECT:rechargegain:150,74:ge:208.8305
+0.1 0 0 0 0 EXPECT:rechargegain:150,74:le:209.2486
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:16
+0.1 0 0 0 0 SETATTR:intelligence:35
+0.1 0 0 0 0 SETATTR:luck:96
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:rechargechance:ge:32.5800
+0.1 0 0 0 0 EXPECT:rechargechance:le:32.6200
+0.1 0 0 0 0 EXPECT:rechargegain:30,23:ge:21.1156
+0.1 0 0 0 0 EXPECT:rechargegain:30,23:le:21.2156
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:78
+0.1 0 0 0 0 SETATTR:intelligence:35
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:68.7800
+0.1 0 0 0 0 EXPECT:rechargechance:le:68.8200
+0.1 0 0 0 0 EXPECT:rechargegain:400,53:ge:307.8314
+0.1 0 0 0 0 EXPECT:rechargegain:400,53:le:308.4477
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:81
+0.1 0 0 0 0 SETATTR:intelligence:60
+0.1 0 0 0 0 SETATTR:luck:71
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:87.5675
+0.1 0 0 0 0 EXPECT:rechargechance:le:87.6075
+0.1 0 0 0 0 EXPECT:rechargegain:1000,15:ge:171.0861
+0.1 0 0 0 0 EXPECT:rechargegain:1000,15:le:171.4286
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:89
+0.1 0 0 0 0 SETATTR:intelligence:65
+0.1 0 0 0 0 SETATTR:luck:25
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:rechargechance:ge:117.5425
+0.1 0 0 0 0 EXPECT:rechargechance:le:117.5825
+0.1 0 0 0 0 EXPECT:rechargegain:60,69:ge:35.1653
+0.1 0 0 0 0 EXPECT:rechargegain:60,69:le:35.2653
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:95
+0.1 0 0 0 0 SETATTR:intelligence:75
+0.1 0 0 0 0 SETATTR:luck:99
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:104.8925
+0.1 0 0 0 0 EXPECT:rechargechance:le:104.9325
+0.1 0 0 0 0 EXPECT:rechargegain:60,87:ge:49.7057
+0.1 0 0 0 0 EXPECT:rechargegain:60,87:le:49.8057
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:29
+0.1 0 0 0 0 SETATTR:intelligence:38
+0.1 0 0 0 0 SETATTR:luck:97
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:rechargechance:ge:57.8550
+0.1 0 0 0 0 EXPECT:rechargechance:le:57.8950
+0.1 0 0 0 0 EXPECT:rechargegain:30,77:ge:39.8636
+0.1 0 0 0 0 EXPECT:rechargegain:30,77:le:39.9636
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:62
+0.1 0 0 0 0 SETATTR:intelligence:70
+0.1 0 0 0 0 SETATTR:luck:45
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:70.4175
+0.1 0 0 0 0 EXPECT:rechargechance:le:70.4575
+0.1 0 0 0 0 EXPECT:rechargegain:150,71:ge:151.0467
+0.1 0 0 0 0 EXPECT:rechargegain:150,71:le:151.3491
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:76
+0.1 0 0 0 0 SETATTR:intelligence:16
+0.1 0 0 0 0 SETATTR:luck:89
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:70.4600
+0.1 0 0 0 0 EXPECT:rechargechance:le:70.5000
+0.1 0 0 0 0 EXPECT:rechargegain:30,15:ge:6.3348
+0.1 0 0 0 0 EXPECT:rechargegain:30,15:le:6.4348
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:65
+0.1 0 0 0 0 SETATTR:intelligence:80
+0.1 0 0 0 0 SETATTR:luck:22
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:rechargechance:ge:93.5800
+0.1 0 0 0 0 EXPECT:rechargechance:le:93.6200
+0.1 0 0 0 0 EXPECT:rechargegain:400,59:ge:251.8846
+0.1 0 0 0 0 EXPECT:rechargegain:400,59:le:252.3889
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:38
+0.1 0 0 0 0 SETATTR:intelligence:66
+0.1 0 0 0 0 SETATTR:luck:35
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:47.8425
+0.1 0 0 0 0 EXPECT:rechargechance:le:47.8825
+0.1 0 0 0 0 EXPECT:rechargegain:1000,44:ge:918.3808
+0.1 0 0 0 0 EXPECT:rechargegain:1000,44:le:920.2194
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:61
+0.1 0 0 0 0 SETATTR:intelligence:7
+0.1 0 0 0 0 SETATTR:luck:36
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:rechargechance:ge:82.4800
+0.1 0 0 0 0 EXPECT:rechargechance:le:82.5200
+0.1 0 0 0 0 EXPECT:rechargegain:60,21:ge:15.2227
+0.1 0 0 0 0 EXPECT:rechargegain:60,21:le:15.3227
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:69
+0.1 0 0 0 0 SETATTR:intelligence:74
+0.1 0 0 0 0 SETATTR:luck:83
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:rechargechance:ge:115.1050
+0.1 0 0 0 0 EXPECT:rechargechance:le:115.1450
+0.1 0 0 0 0 EXPECT:rechargegain:1000,99:ge:859.0749
+0.1 0 0 0 0 EXPECT:rechargegain:1000,99:le:860.7948
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:51
+0.1 0 0 0 0 SETATTR:intelligence:55
+0.1 0 0 0 0 SETATTR:luck:11
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:rechargechance:ge:70.9675
+0.1 0 0 0 0 EXPECT:rechargechance:le:71.0075
+0.1 0 0 0 0 EXPECT:rechargegain:150,35:ge:73.8827
+0.1 0 0 0 0 EXPECT:rechargegain:150,35:le:74.0306
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:96
+0.1 0 0 0 0 SETATTR:intelligence:26
+0.1 0 0 0 0 SETATTR:luck:31
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:83.4200
+0.1 0 0 0 0 EXPECT:rechargechance:le:83.4600
+0.1 0 0 0 0 EXPECT:rechargegain:1000,35:ge:419.0436
+0.1 0 0 0 0 EXPECT:rechargegain:1000,35:le:419.8826
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:72
+0.1 0 0 0 0 SETATTR:intelligence:18
+0.1 0 0 0 0 SETATTR:luck:53
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:64.7000
+0.1 0 0 0 0 EXPECT:rechargechance:le:64.7400
+0.1 0 0 0 0 EXPECT:rechargegain:60,74:ge:68.5346
+0.1 0 0 0 0 EXPECT:rechargegain:60,74:le:68.6718
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:42
+0.1 0 0 0 0 SETATTR:intelligence:99
+0.1 0 0 0 0 SETATTR:luck:93
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:rechargechance:ge:71.0800
+0.1 0 0 0 0 EXPECT:rechargechance:le:71.1200
+0.1 0 0 0 0 EXPECT:rechargegain:1000,26:ge:365.3165
+0.1 0 0 0 0 EXPECT:rechargegain:1000,26:le:366.0478
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:65
+0.1 0 0 0 0 SETATTR:intelligence:10
+0.1 0 0 0 0 SETATTR:luck:7
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:rechargechance:ge:84.9800
+0.1 0 0 0 0 EXPECT:rechargechance:le:85.0200
+0.1 0 0 0 0 EXPECT:rechargegain:400,60:ge:282.0706
+0.1 0 0 0 0 EXPECT:rechargegain:400,60:le:282.6353
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:88
+0.1 0 0 0 0 SETATTR:intelligence:70
+0.1 0 0 0 0 SETATTR:luck:83
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:rechargechance:ge:110.2800
+0.1 0 0 0 0 EXPECT:rechargechance:le:110.3200
+0.1 0 0 0 0 EXPECT:rechargegain:1000,59:ge:534.3699
+0.1 0 0 0 0 EXPECT:rechargegain:1000,59:le:535.4397
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:66
+0.1 0 0 0 0 SETATTR:intelligence:46
+0.1 0 0 0 0 SETATTR:luck:71
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:65.8200
+0.1 0 0 0 0 EXPECT:rechargechance:le:65.8600
+0.1 0 0 0 0 EXPECT:rechargegain:1000,76:ge:1153.1592
+0.1 0 0 0 0 EXPECT:rechargegain:1000,76:le:1155.4678
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:49
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:luck:76
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:rechargechance:ge:76.5800
+0.1 0 0 0 0 EXPECT:rechargechance:le:76.6200
+0.1 0 0 0 0 EXPECT:rechargegain:150,64:ge:125.2010
+0.1 0 0 0 0 EXPECT:rechargegain:150,64:le:125.4517
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:56
+0.1 0 0 0 0 SETATTR:intelligence:89
+0.1 0 0 0 0 SETATTR:luck:13
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:60.0600
+0.1 0 0 0 0 EXPECT:rechargechance:le:60.1000
+0.1 0 0 0 0 EXPECT:rechargegain:400,69:ge:458.9281
+0.1 0 0 0 0 EXPECT:rechargegain:400,69:le:459.8469
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:20
+0.1 0 0 0 0 SETATTR:intelligence:59
+0.1 0 0 0 0 SETATTR:luck:29
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:rechargechance:ge:27.7400
+0.1 0 0 0 0 EXPECT:rechargechance:le:27.7800
+0.1 0 0 0 0 EXPECT:rechargegain:150,93:ge:502.0191
+0.1 0 0 0 0 EXPECT:rechargegain:150,93:le:503.0241
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:26
+0.1 0 0 0 0 SETATTR:intelligence:8
+0.1 0 0 0 0 SETATTR:luck:51
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:rechargechance:ge:28.5925
+0.1 0 0 0 0 EXPECT:rechargechance:le:28.6325
+0.1 0 0 0 0 EXPECT:rechargegain:150,30:ge:157.1166
+0.1 0 0 0 0 EXPECT:rechargegain:150,30:le:157.4312
+0.5 0 0 0 0 LOAD:specrecharge
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:62
+0.1 0 0 0 0 SETATTR:intelligence:55
+0.1 0 0 0 0 SETATTR:luck:20
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:rechargechance:ge:93.7300
+0.1 0 0 0 0 EXPECT:rechargechance:le:93.7700
+0.1 0 0 0 0 EXPECT:rechargegain:150,99:ge:158.2416
+0.1 0 0 0 0 EXPECT:rechargegain:150,99:le:158.5584

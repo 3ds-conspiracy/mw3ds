@@ -1,0 +1,134 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:1
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:nibani_maesa:localdayspassed:2
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:My_judgement
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_6_incarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Fifth_trial
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_6_incarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_6_incarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:45
+0.3 0 0 0 0 JOURNAL:A1_SleepersAwake:3
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sleepers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_1_meetsulmatuul
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_6_incarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:1
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Zabamund's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:zabamund
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_1_meetsulmatuul
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Deed:30
+0.3 0 0 0 0 GIVE:bk_contract_ralen:1
+0.3 0 0 0 0 GOTO:Vivec,_Alusaron:_Smith
+8 0 0 0
+0.3 0 0 0 0 TALK:alusaron
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:get_that_contract
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_deed
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Deed:15
+0.3 0 0 0 0 GOTO:Vivec,_Alusaron:_Smith
+8 0 0 0
+0.3 0 0 0 0 TALK:alusaron
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:get_that_contract
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_deed
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

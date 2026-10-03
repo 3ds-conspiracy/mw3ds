@@ -1,0 +1,136 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:p_cure_blight_s:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:compassion
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_compassion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:compassion
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_compassion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_Compassion:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:compassion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_compassion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_MaarGan:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Maar_Gan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_maargan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_ThiefTrader:20
+0.3 0 0 0 0 GIVE:silver_staff:1
+0.3 0 0 0 0 GIVE:silver_flameblade:1
+0.3 0 0 0 0 GIVE:silver_war_axe:1
+0.3 0 0 0 0 GIVE:steel_shortsword:1
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:yak_gro-skandar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lucan's_shipment
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_thieftrader
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_ThiefTrader:20
+0.3 0 0 0 0 GIVE:silver_war_axe:1
+0.3 0 0 0 0 GIVE:silver_flameblade:1
+0.3 0 0 0 0 GIVE:steel_shortsword:1
+0.3 0 0 0 0 GIVE:steel_staff:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:yak_gro-skandar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lucan's_shipment
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_thieftrader
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_SixthHouseBase:10
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:galtis_guvron
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ash_statue
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_sixthhousebase
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_DebtStoine:10
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:lirielle_stoine
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_debtstoine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

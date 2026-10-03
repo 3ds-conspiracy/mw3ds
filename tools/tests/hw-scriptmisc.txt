@@ -1,0 +1,16 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora,_Council_Club
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Council_Club
+0.3 0 0 0 0 EXPECT:reflock:rent_balmora_council_door:eq:50
+0.3 0 0 0 0 SETLOCAL:banor_seran:rent:1
+3 0 0 0
+0.3 0 0 0 0 EXPECT:reflock:rent_balmora_council_door:eq:-50
+0.3 0 0 0 0 GOTO:Tel_Vos,_Services_Tower
+5 0 0 0
+0.3 0 0 0 0 ACTIVATE:bk_brownbook426
+8 0 0 0
+0.3 0 0 0 0 EXPECT:scripttarget:councilortopicstelvanni,bk_brownbook426:eq:1
+0.3 0 0 0 0 EXPECT:item:bk_brownbook426:ge:1
+1 0 0 0

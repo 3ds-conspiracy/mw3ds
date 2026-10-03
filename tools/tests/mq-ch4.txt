@@ -1,0 +1,83 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:7
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:20
+0.3 0 0 0 0 JOURNAL:A1_V_VivecInformants:50
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:50
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:60
+0.3 0 0 0 0 JOIN:blades:2
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:Orders
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_2_6thHouse:ge:5
+0.3 0 0 0 0 TOPIC:Sixth_House_base
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_2_6thHouse:ge:7
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Buckmoth_Legion_Fort,_Interior
+6 0 0 0
+60 0 0 0 0 ACTIVATE:raesa_pullia
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House_base
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_2_6thHouse:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ilunibi,_Soul's_Rattle
+6 0 0 0
+0.3 0 0 0 0 EQUIP:silver_longsword
+180 0 0 0 0 ACTIVATE:dagoth_gares
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 TOPIC:Dagoth_Ur
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_2_6thHouse:ge:40
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House_servants
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:our_enemy
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ilunibi_shrine
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_2_6thHouse:ge:48
+0.3 0 0 0 0 TOPIC:Lord's_friendship
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_2_6thHouse:ge:49
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+90 0 0 0 0 KILL:dagoth_gares
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:dead:dagoth_gares
+0.3 0 0 0 0 EXPECT:journal:A2_2_6thHouse:eq:50
+0.3 0 0 0 0 EXPECT:spell:corprus
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_3_CorprusCure:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

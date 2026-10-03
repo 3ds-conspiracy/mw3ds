@@ -1,0 +1,878 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+1 0 0 0 0 SAVE:specworld
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:405
+0.1 0 0 0 0 SETGLOBAL:month:2
+0.1 0 0 0 0 SETGLOBAL:day:30
+0.1 0 0 0 0 SETGLOBAL:dayspassed:416
+0.1 0 0 0 0 HOUR:12.5
+0.1 0 0 0 0 EXPECT:global:day:eq:30
+0.1 0 0 0 0 EXPECT:global:month:eq:2
+0.1 0 0 0 0 EXPECT:global:year:eq:405
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:416
+0.1 0 0 0 0 EXPECT:hour:ge:12.4800
+0.1 0 0 0 0 EXPECT:hour:le:12.5200
+0.3 0 0 0 0 ADVANCE:48
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:3
+0.1 0 0 0 0 EXPECT:global:year:eq:405
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:418
+0.1 0 0 0 0 EXPECT:hour:ge:12.4800
+0.1 0 0 0 0 EXPECT:hour:le:12.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:410
+0.1 0 0 0 0 SETGLOBAL:month:4
+0.1 0 0 0 0 SETGLOBAL:day:30
+0.1 0 0 0 0 SETGLOBAL:dayspassed:14
+0.1 0 0 0 0 HOUR:18.5
+0.1 0 0 0 0 EXPECT:global:day:eq:30
+0.1 0 0 0 0 EXPECT:global:month:eq:4
+0.1 0 0 0 0 EXPECT:global:year:eq:410
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:14
+0.1 0 0 0 0 EXPECT:hour:ge:18.4800
+0.1 0 0 0 0 EXPECT:hour:le:18.5200
+0.3 0 0 0 0 ADVANCE:12
+0.1 0 0 0 0 EXPECT:global:day:eq:31
+0.1 0 0 0 0 EXPECT:global:month:eq:4
+0.1 0 0 0 0 EXPECT:global:year:eq:410
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:15
+0.1 0 0 0 0 EXPECT:hour:ge:6.4800
+0.1 0 0 0 0 EXPECT:hour:le:6.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:412
+0.1 0 0 0 0 SETGLOBAL:month:1
+0.1 0 0 0 0 SETGLOBAL:day:1
+0.1 0 0 0 0 SETGLOBAL:dayspassed:17
+0.1 0 0 0 0 HOUR:23.5
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:1
+0.1 0 0 0 0 EXPECT:global:year:eq:412
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:17
+0.1 0 0 0 0 EXPECT:hour:ge:23.4800
+0.1 0 0 0 0 EXPECT:hour:le:23.5200
+0.3 0 0 0 0 ADVANCE:5
+0.1 0 0 0 0 EXPECT:global:day:eq:2
+0.1 0 0 0 0 EXPECT:global:month:eq:1
+0.1 0 0 0 0 EXPECT:global:year:eq:412
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:18
+0.1 0 0 0 0 EXPECT:hour:ge:4.4800
+0.1 0 0 0 0 EXPECT:hour:le:4.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:410
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:31
+0.1 0 0 0 0 SETGLOBAL:dayspassed:639
+0.1 0 0 0 0 HOUR:18.5
+0.1 0 0 0 0 EXPECT:global:day:eq:31
+0.1 0 0 0 0 EXPECT:global:month:eq:0
+0.1 0 0 0 0 EXPECT:global:year:eq:410
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:639
+0.1 0 0 0 0 EXPECT:hour:ge:18.4800
+0.1 0 0 0 0 EXPECT:hour:le:18.5200
+0.3 0 0 0 0 ADVANCE:24
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:1
+0.1 0 0 0 0 EXPECT:global:year:eq:410
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:640
+0.1 0 0 0 0 EXPECT:hour:ge:18.4800
+0.1 0 0 0 0 EXPECT:hour:le:18.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:415
+0.1 0 0 0 0 SETGLOBAL:month:5
+0.1 0 0 0 0 SETGLOBAL:day:16
+0.1 0 0 0 0 SETGLOBAL:dayspassed:407
+0.1 0 0 0 0 HOUR:18.5
+0.1 0 0 0 0 EXPECT:global:day:eq:16
+0.1 0 0 0 0 EXPECT:global:month:eq:5
+0.1 0 0 0 0 EXPECT:global:year:eq:415
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:407
+0.1 0 0 0 0 EXPECT:hour:ge:18.4800
+0.1 0 0 0 0 EXPECT:hour:le:18.5200
+0.3 0 0 0 0 ADVANCE:1
+0.1 0 0 0 0 EXPECT:global:day:eq:16
+0.1 0 0 0 0 EXPECT:global:month:eq:5
+0.1 0 0 0 0 EXPECT:global:year:eq:415
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:407
+0.1 0 0 0 0 EXPECT:hour:ge:19.4800
+0.1 0 0 0 0 EXPECT:hour:le:19.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:425
+0.1 0 0 0 0 SETGLOBAL:month:5
+0.1 0 0 0 0 SETGLOBAL:day:29
+0.1 0 0 0 0 SETGLOBAL:dayspassed:9
+0.1 0 0 0 0 HOUR:12.5
+0.1 0 0 0 0 EXPECT:global:day:eq:29
+0.1 0 0 0 0 EXPECT:global:month:eq:5
+0.1 0 0 0 0 EXPECT:global:year:eq:425
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:9
+0.1 0 0 0 0 EXPECT:hour:ge:12.4800
+0.1 0 0 0 0 EXPECT:hour:le:12.5200
+0.3 0 0 0 0 ADVANCE:30
+0.1 0 0 0 0 EXPECT:global:day:eq:30
+0.1 0 0 0 0 EXPECT:global:month:eq:5
+0.1 0 0 0 0 EXPECT:global:year:eq:425
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:10
+0.1 0 0 0 0 EXPECT:hour:ge:18.4800
+0.1 0 0 0 0 EXPECT:hour:le:18.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:401
+0.1 0 0 0 0 SETGLOBAL:month:5
+0.1 0 0 0 0 SETGLOBAL:day:30
+0.1 0 0 0 0 SETGLOBAL:dayspassed:274
+0.1 0 0 0 0 HOUR:22.5
+0.1 0 0 0 0 EXPECT:global:day:eq:30
+0.1 0 0 0 0 EXPECT:global:month:eq:5
+0.1 0 0 0 0 EXPECT:global:year:eq:401
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:274
+0.1 0 0 0 0 EXPECT:hour:ge:22.4800
+0.1 0 0 0 0 EXPECT:hour:le:22.5200
+0.3 0 0 0 0 ADVANCE:30
+0.1 0 0 0 0 EXPECT:global:day:eq:2
+0.1 0 0 0 0 EXPECT:global:month:eq:6
+0.1 0 0 0 0 EXPECT:global:year:eq:401
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:276
+0.1 0 0 0 0 EXPECT:hour:ge:4.4800
+0.1 0 0 0 0 EXPECT:hour:le:4.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:414
+0.1 0 0 0 0 SETGLOBAL:month:2
+0.1 0 0 0 0 SETGLOBAL:day:29
+0.1 0 0 0 0 SETGLOBAL:dayspassed:485
+0.1 0 0 0 0 HOUR:6.5
+0.1 0 0 0 0 EXPECT:global:day:eq:29
+0.1 0 0 0 0 EXPECT:global:month:eq:2
+0.1 0 0 0 0 EXPECT:global:year:eq:414
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:485
+0.1 0 0 0 0 EXPECT:hour:ge:6.4800
+0.1 0 0 0 0 EXPECT:hour:le:6.5200
+0.3 0 0 0 0 ADVANCE:2
+0.1 0 0 0 0 EXPECT:global:day:eq:29
+0.1 0 0 0 0 EXPECT:global:month:eq:2
+0.1 0 0 0 0 EXPECT:global:year:eq:414
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:485
+0.1 0 0 0 0 EXPECT:hour:ge:8.4800
+0.1 0 0 0 0 EXPECT:hour:le:8.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:404
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:31
+0.1 0 0 0 0 SETGLOBAL:dayspassed:60
+0.1 0 0 0 0 HOUR:0.5
+0.1 0 0 0 0 EXPECT:global:day:eq:31
+0.1 0 0 0 0 EXPECT:global:month:eq:0
+0.1 0 0 0 0 EXPECT:global:year:eq:404
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:60
+0.1 0 0 0 0 EXPECT:hour:ge:0.4800
+0.1 0 0 0 0 EXPECT:hour:le:0.5200
+0.3 0 0 0 0 ADVANCE:5
+0.1 0 0 0 0 EXPECT:global:day:eq:31
+0.1 0 0 0 0 EXPECT:global:month:eq:0
+0.1 0 0 0 0 EXPECT:global:year:eq:404
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:60
+0.1 0 0 0 0 EXPECT:hour:ge:5.4800
+0.1 0 0 0 0 EXPECT:hour:le:5.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:412
+0.1 0 0 0 0 SETGLOBAL:month:10
+0.1 0 0 0 0 SETGLOBAL:day:13
+0.1 0 0 0 0 SETGLOBAL:dayspassed:304
+0.1 0 0 0 0 HOUR:18.5
+0.1 0 0 0 0 EXPECT:global:day:eq:13
+0.1 0 0 0 0 EXPECT:global:month:eq:10
+0.1 0 0 0 0 EXPECT:global:year:eq:412
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:304
+0.1 0 0 0 0 EXPECT:hour:ge:18.4800
+0.1 0 0 0 0 EXPECT:hour:le:18.5200
+0.3 0 0 0 0 ADVANCE:5
+0.1 0 0 0 0 EXPECT:global:day:eq:13
+0.1 0 0 0 0 EXPECT:global:month:eq:10
+0.1 0 0 0 0 EXPECT:global:year:eq:412
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:304
+0.1 0 0 0 0 EXPECT:hour:ge:23.4800
+0.1 0 0 0 0 EXPECT:hour:le:23.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:419
+0.1 0 0 0 0 SETGLOBAL:month:2
+0.1 0 0 0 0 SETGLOBAL:day:26
+0.1 0 0 0 0 SETGLOBAL:dayspassed:403
+0.1 0 0 0 0 HOUR:18.5
+0.1 0 0 0 0 EXPECT:global:day:eq:26
+0.1 0 0 0 0 EXPECT:global:month:eq:2
+0.1 0 0 0 0 EXPECT:global:year:eq:419
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:403
+0.1 0 0 0 0 EXPECT:hour:ge:18.4800
+0.1 0 0 0 0 EXPECT:hour:le:18.5200
+0.3 0 0 0 0 ADVANCE:30
+0.1 0 0 0 0 EXPECT:global:day:eq:28
+0.1 0 0 0 0 EXPECT:global:month:eq:2
+0.1 0 0 0 0 EXPECT:global:year:eq:419
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:405
+0.1 0 0 0 0 EXPECT:hour:ge:0.4800
+0.1 0 0 0 0 EXPECT:hour:le:0.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:423
+0.1 0 0 0 0 SETGLOBAL:month:11
+0.1 0 0 0 0 SETGLOBAL:day:30
+0.1 0 0 0 0 SETGLOBAL:dayspassed:847
+0.1 0 0 0 0 HOUR:23.5
+0.1 0 0 0 0 EXPECT:global:day:eq:30
+0.1 0 0 0 0 EXPECT:global:month:eq:11
+0.1 0 0 0 0 EXPECT:global:year:eq:423
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:847
+0.1 0 0 0 0 EXPECT:hour:ge:23.4800
+0.1 0 0 0 0 EXPECT:hour:le:23.5200
+0.3 0 0 0 0 ADVANCE:49
+0.1 0 0 0 0 EXPECT:global:day:eq:2
+0.1 0 0 0 0 EXPECT:global:month:eq:0
+0.1 0 0 0 0 EXPECT:global:year:eq:424
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:850
+0.1 0 0 0 0 EXPECT:hour:ge:0.4800
+0.1 0 0 0 0 EXPECT:hour:le:0.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:32
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:1
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:60
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:2
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:1
+0.1 0 0 0 0 SETGLOBAL:day:29
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:2
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:3
+0.1 0 0 0 0 SETGLOBAL:day:0
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:3
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:3
+0.1 0 0 0 0 SETGLOBAL:day:-4
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:3
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:370
+0.1 0 0 0 0 EXPECT:global:day:eq:5
+0.1 0 0 0 0 EXPECT:global:month:eq:0
+0.1 0 0 0 0 EXPECT:global:year:eq:428
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:15
+0.1 0 0 0 0 SETGLOBAL:month:13
+0.1 0 0 0 0 EXPECT:global:day:eq:15
+0.1 0 0 0 0 EXPECT:global:month:eq:1
+0.1 0 0 0 0 EXPECT:global:year:eq:428
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:31
+0.1 0 0 0 0 SETGLOBAL:month:12
+0.1 0 0 0 0 EXPECT:global:day:eq:31
+0.1 0 0 0 0 EXPECT:global:month:eq:0
+0.1 0 0 0 0 EXPECT:global:year:eq:428
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:3
+0.1 0 0 0 0 SETGLOBAL:month:25
+0.1 0 0 0 0 EXPECT:global:day:eq:3
+0.1 0 0 0 0 EXPECT:global:month:eq:1
+0.1 0 0 0 0 EXPECT:global:year:eq:429
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:31
+0.1 0 0 0 0 SETGLOBAL:month:1
+0.1 0 0 0 0 EXPECT:global:day:eq:28
+0.1 0 0 0 0 EXPECT:global:month:eq:1
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:31
+0.1 0 0 0 0 SETGLOBAL:month:3
+0.1 0 0 0 0 EXPECT:global:day:eq:30
+0.1 0 0 0 0 EXPECT:global:month:eq:3
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:0
+0.1 0 0 0 0 SETGLOBAL:day:31
+0.1 0 0 0 0 SETGLOBAL:month:5
+0.1 0 0 0 0 EXPECT:global:day:eq:30
+0.1 0 0 0 0 EXPECT:global:month:eq:5
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:11
+0.1 0 0 0 0 SETGLOBAL:day:30
+0.1 0 0 0 0 SETGLOBAL:dayspassed:100
+0.1 0 0 0 0 SETGLOBAL:gamehour:24.5
+0.1 0 0 0 0 EXPECT:global:day:eq:31
+0.1 0 0 0 0 EXPECT:global:month:eq:11
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:100
+0.1 0 0 0 0 EXPECT:hour:ge:0.4800
+0.1 0 0 0 0 EXPECT:hour:le:0.5200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:11
+0.1 0 0 0 0 SETGLOBAL:day:30
+0.1 0 0 0 0 SETGLOBAL:dayspassed:100
+0.1 0 0 0 0 SETGLOBAL:gamehour:30.0
+0.1 0 0 0 0 EXPECT:global:day:eq:31
+0.1 0 0 0 0 EXPECT:global:month:eq:11
+0.1 0 0 0 0 EXPECT:global:year:eq:427
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:100
+0.1 0 0 0 0 EXPECT:hour:ge:5.9800
+0.1 0 0 0 0 EXPECT:hour:le:6.0200
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 SETGLOBAL:year:427
+0.1 0 0 0 0 SETGLOBAL:month:11
+0.1 0 0 0 0 SETGLOBAL:day:30
+0.1 0 0 0 0 SETGLOBAL:dayspassed:100
+0.1 0 0 0 0 SETGLOBAL:gamehour:49.25
+0.1 0 0 0 0 EXPECT:global:day:eq:1
+0.1 0 0 0 0 EXPECT:global:month:eq:0
+0.1 0 0 0 0 EXPECT:global:year:eq:428
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:100
+0.1 0 0 0 0 EXPECT:hour:ge:1.2300
+0.1 0 0 0 0 EXPECT:hour:le:1.2700
+0.3 0 0 0 0 CLASS:battlemage
+1 0 0 0 0 SAVE:specworld
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 HOUR:8
+0.1 0 0 0 0 SETGLOBAL:timescale:60
+0.1 0 0 0 0 SNAP:hour
+6 0 0 0
+0.1 0 0 0 0 EXPECT:hour:ge:@0.0550
+0.1 0 0 0 0 EXPECT:hour:le:@0.1750
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 HOUR:8
+0.1 0 0 0 0 SETGLOBAL:timescale:1000
+0.1 0 0 0 0 SNAP:hour
+6 0 0 0
+0.1 0 0 0 0 EXPECT:hour:ge:@1.2300
+0.1 0 0 0 0 EXPECT:hour:le:@2.1333
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 HOUR:8
+0.1 0 0 0 0 SETGLOBAL:timescale:360
+0.1 0 0 0 0 SNAP:hour
+6 0 0 0
+0.1 0 0 0 0 EXPECT:hour:ge:@0.4300
+0.1 0 0 0 0 EXPECT:hour:le:@0.8000
+0.5 0 0 0 0 LOAD:specworld
+3 0 0 0
+0.1 0 0 0 0 HOUR:8
+0.1 0 0 0 0 SETGLOBAL:timescale:360
+0.1 0 0 0 0 SNAP:hour
+6 0 0 0
+0.1 0 0 0 0 EXPECT:hour:ge:@0.4300
+0.1 0 0 0 0 EXPECT:hour:le:@0.8000
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specdisp
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:44
+0.1 0 0 0 0 SETDISP:arrille:40
+0.1 0 0 0 0 SNAP:refdisp:arrille
+0.1 0 0 0 0 SETATTR:personality:72
+0.1 0 0 0 0 JOIN:temple:0
+0.1 0 0 0 0 EXPECT:refdisp:arrille:ge:@13
+0.1 0 0 0 0 EXPECT:refdisp:arrille:le:@15
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:80
+0.1 0 0 0 0 SETDISP:neloth:50
+0.1 0 0 0 0 SNAP:refdisp:neloth
+0.1 0 0 0 0 SETATTR:personality:34
+0.1 0 0 0 0 JOIN:mages_guild:2
+0.1 0 0 0 0 JOIN:fighters_guild:2
+0.1 0 0 0 0 EXPECT:refdisp:neloth:ge:@-42
+0.1 0 0 0 0 EXPECT:refdisp:neloth:le:@-40
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:58
+0.1 0 0 0 0 SETDISP:arrille:60
+0.1 0 0 0 0 SNAP:refdisp:arrille
+0.1 0 0 0 0 SETATTR:personality:82
+0.1 0 0 0 0 SETBOUNTY:40
+0.1 0 0 0 0 EXPECT:refdisp:arrille:ge:@11
+0.1 0 0 0 0 EXPECT:refdisp:arrille:le:@13
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:46
+0.1 0 0 0 0 SETDISP:dratha:44
+0.1 0 0 0 0 SNAP:refdisp:dratha
+0.1 0 0 0 0 SETATTR:personality:38
+0.1 0 0 0 0 SETBOUNTY:40
+0.1 0 0 0 0 EXPECT:refdisp:dratha:ge:@-5
+0.1 0 0 0 0 EXPECT:refdisp:dratha:le:@-3
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:70
+0.1 0 0 0 0 SETDISP:neloth:60
+0.1 0 0 0 0 SNAP:refdisp:neloth
+0.1 0 0 0 0 SETATTR:personality:66
+0.1 0 0 0 0 JOIN:redoran:0
+0.1 0 0 0 0 JOIN:thieves_guild:0
+0.1 0 0 0 0 EXPECT:refdisp:neloth:ge:@-6
+0.1 0 0 0 0 EXPECT:refdisp:neloth:le:@-4
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:52
+0.1 0 0 0 0 SETDISP:aryon:60
+0.1 0 0 0 0 SNAP:refdisp:aryon
+0.1 0 0 0 0 SETATTR:personality:62
+0.1 0 0 0 0 JOIN:telvanni:2
+0.1 0 0 0 0 SETBOUNTY:40
+0.1 0 0 0 0 EXPECT:refdisp:aryon:ge:@22
+0.1 0 0 0 0 EXPECT:refdisp:aryon:le:@24
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:60
+0.1 0 0 0 0 SETDISP:dratha:44
+0.1 0 0 0 0 SNAP:refdisp:dratha
+0.1 0 0 0 0 SETATTR:personality:92
+0.1 0 0 0 0 JOIN:telvanni:2
+0.1 0 0 0 0 EXPECT:refdisp:dratha:ge:@33
+0.1 0 0 0 0 EXPECT:refdisp:dratha:le:@35
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:44
+0.1 0 0 0 0 SETDISP:neloth:56
+0.1 0 0 0 0 SNAP:refdisp:neloth
+0.1 0 0 0 0 SETATTR:personality:52
+0.1 0 0 0 0 JOIN:redoran:2
+0.1 0 0 0 0 EXPECT:refdisp:neloth:ge:@-3
+0.1 0 0 0 0 EXPECT:refdisp:neloth:le:@-1
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:34
+0.1 0 0 0 0 SETDISP:dratha:50
+0.1 0 0 0 0 SNAP:refdisp:dratha
+0.1 0 0 0 0 SETATTR:personality:58
+0.1 0 0 0 0 EXPECT:refdisp:dratha:ge:@11
+0.1 0 0 0 0 EXPECT:refdisp:dratha:le:@13
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:40
+0.1 0 0 0 0 SETDISP:arrille:44
+0.1 0 0 0 0 SNAP:refdisp:arrille
+0.1 0 0 0 0 SETATTR:personality:50
+0.1 0 0 0 0 JOIN:imperial_legion:2
+0.1 0 0 0 0 EXPECT:refdisp:arrille:ge:@4
+0.1 0 0 0 0 EXPECT:refdisp:arrille:le:@6
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:50
+0.1 0 0 0 0 SETDISP:neloth:50
+0.1 0 0 0 0 SNAP:refdisp:neloth
+0.1 0 0 0 0 SETATTR:personality:56
+0.1 0 0 0 0 JOIN:imperial_legion:2
+0.1 0 0 0 0 EXPECT:refdisp:neloth:ge:@-4
+0.1 0 0 0 0 EXPECT:refdisp:neloth:le:@-2
+0.5 0 0 0 0 LOAD:specdisp
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:46
+0.1 0 0 0 0 SETDISP:neloth:60
+0.1 0 0 0 0 SNAP:refdisp:neloth
+0.1 0 0 0 0 SETATTR:personality:80
+0.1 0 0 0 0 JOIN:imperial_legion:4
+0.1 0 0 0 0 EXPECT:refdisp:neloth:ge:@7
+0.1 0 0 0 0 EXPECT:refdisp:neloth:le:@9
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specsoul
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_lesser:2
+0.2 0 0 0 0 GIVE:misc_soulgem_azura:3
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:ancestor_guardian_fgdd:250
+0.5 0 0 0 0 SOULKILL:ancestor_guardian_fgdd
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_lesser:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_azura:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:ancestor_guardian_fgdd
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_lesser:2
+0.2 0 0 0 0 GIVE:misc_soulgem_greater:1
+0.2 0 0 0 0 GIVE:misc_soulgem_grand:1
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:skeleton%champion:250
+0.5 0 0 0 0 SOULKILL:skeleton%champion
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_lesser:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_greater:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_greater:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:skeleton%champion
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_greater:2
+0.2 0 0 0 0 GIVE:misc_soulgem_azura:3
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:dagoth%daynil:250
+0.5 0 0 0 0 SOULKILL:dagoth%daynil
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_greater:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_greater:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_azura:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:dagoth%daynil
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_common:1
+0.2 0 0 0 0 GIVE:misc_soulgem_greater:3
+0.2 0 0 0 0 GIVE:misc_soulgem_grand:3
+0.2 0 0 0 0 GIVE:misc_soulgem_azura:3
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:netch_bull_ranched:250
+0.5 0 0 0 0 SOULKILL:netch_bull_ranched
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_common:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_common:netch_bull_ranched
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_greater:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_greater:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_azura:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_petty:3
+0.2 0 0 0 0 GIVE:misc_soulgem_lesser:2
+0.2 0 0 0 0 GIVE:misc_soulgem_common:3
+0.2 0 0 0 0 GIVE:misc_soulgem_grand:1
+0.2 0 0 0 0 GIVE:misc_soulgem_azura:3
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:kwama%queen_abaesen:250
+0.5 0 0 0 0 SOULKILL:kwama%queen_abaesen
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_petty:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_lesser:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:kwama%queen_abaesen
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_common:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_common:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_azura:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_petty:2
+0.2 0 0 0 0 GIVE:misc_soulgem_lesser:2
+0.2 0 0 0 0 GIVE:misc_soulgem_common:1
+0.2 0 0 0 0 GIVE:misc_soulgem_greater:3
+0.2 0 0 0 0 GIVE:misc_soulgem_grand:1
+0.2 0 0 0 0 GIVE:misc_soulgem_azura:2
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:ascended_sleeper:250
+0.5 0 0 0 0 SOULKILL:ascended_sleeper
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_petty:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_lesser:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_common:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_common:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_greater:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_greater:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:ascended_sleeper
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_azura:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_lesser:3
+0.2 0 0 0 0 GIVE:misc_soulgem_common:3
+0.2 0 0 0 0 GIVE:misc_soulgem_azura:2
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:clannfear:250
+0.5 0 0 0 0 SOULKILL:clannfear
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_lesser:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_common:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_common:clannfear
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_common:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_azura:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_petty:3
+0.2 0 0 0 0 GIVE:misc_soulgem_lesser:3
+0.2 0 0 0 0 GIVE:misc_soulgem_greater:3
+0.2 0 0 0 0 GIVE:misc_soulgem_grand:1
+0.2 0 0 0 0 GIVE:misc_soulgem_azura:1
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:netch_betty_ilgn:250
+0.5 0 0 0 0 SOULKILL:netch_betty_ilgn
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_petty:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:netch_betty_ilgn
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_lesser:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_greater:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_greater:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_azura:eq:1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_azura:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_petty:3
+0.2 0 0 0 0 GIVE:misc_soulgem_lesser:2
+0.2 0 0 0 0 GIVE:misc_soulgem_grand:2
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:centurion_spider_tga1:250
+0.5 0 0 0 0 SOULKILL:centurion_spider_tga1
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_petty:eq:3
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_lesser:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:centurion_spider_tga1
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_lesser:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:none
+0.5 0 0 0 0 LOAD:specsoul
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.2 0 0 0 0 GIVE:misc_soulgem_petty:2
+0.2 0 0 0 0 GIVE:misc_soulgem_common:2
+0.2 0 0 0 0 GIVE:misc_soulgem_grand:2
+0.2 0 0 0 0 SPELL:soul_trap
+0.3 0 0 0 0 PLACE:atronach_storm:250
+0.5 0 0 0 0 SOULKILL:atronach_storm
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_petty:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_common:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_common:none
+0.1 0 0 0 0 EXPECT:count:misc_soulgem_grand:eq:2
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:atronach_storm
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:none
+0.3 0 0 0 0 CLASS:battlemage
+1 0 0 0 0 SAVE:specfollow
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:guar:2500
+0.3 0 0 0 0 FOLLOW:guar
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:guar,Seyda%Neen,%Census:eq:0
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:guar:100
+0.3 0 0 0 0 FOLLOW:guar
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:guar,Seyda%Neen,%Census:eq:1
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:mudcrab:1500
+0.3 0 0 0 0 FOLLOW:mudcrab
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:mudcrab,Seyda%Neen,%Census:eq:0
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:guar:100
+0.3 0 0 0 0 FOLLOW:guar
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:guar,Seyda%Neen,%Census:eq:1
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:guar:2500
+0.3 0 0 0 0 FOLLOW:guar
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:guar,Seyda%Neen,%Census:eq:0
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:scamp:2500
+0.3 0 0 0 0 FOLLOW:scamp
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:scamp,Seyda%Neen,%Census:eq:0
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:kwama%forager:100
+0.3 0 0 0 0 FOLLOW:kwama%forager
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:kwama%forager,Seyda%Neen,%Census:eq:1
+0.5 0 0 0 0 LOAD:specfollow
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+8 0 0 0
+1 0 0 0 0 TP:-11056:-72286:200:180
+2 0 0 0
+0.3 0 0 0 0 PLACE:kwama%forager:300
+0.3 0 0 0 0 FOLLOW:kwama%forager
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refcell:kwama%forager,Seyda%Neen,%Census:eq:1
+0.3 0 0 0 0 CLASS:battlemage
+1 0 0 0 0 SAVE:specjournal
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:a1_sleepersawake:eq:0
+0.1 0 0 0 0 JOURNAL:a1_sleepersawake:3
+0.1 0 0 0 0 EXPECT:journal:a1_sleepersawake:eq:3
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:ic12_dinner:eq:0
+0.1 0 0 0 0 JOURNAL:ic12_dinner:1
+0.1 0 0 0 0 EXPECT:journal:ic12_dinner:eq:1
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:ms_vassirdidanat:eq:0
+0.1 0 0 0 0 JOURNAL:ms_vassirdidanat:110
+0.1 0 0 0 0 EXPECT:journal:ms_vassirdidanat:eq:110
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:town_balmora:eq:0
+0.1 0 0 0 0 JOURNAL:town_balmora:30
+0.1 0 0 0 0 EXPECT:journal:town_balmora:eq:30
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:il_damsel:eq:0
+0.1 0 0 0 0 JOURNAL:il_damsel:70
+0.1 0 0 0 0 EXPECT:journal:il_damsel:eq:70
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:eb_bone:eq:0
+0.1 0 0 0 0 JOURNAL:eb_bone:60
+0.1 0 0 0 0 EXPECT:journal:eb_bone:eq:60
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:mv_richtrader:eq:0
+0.1 0 0 0 0 JOURNAL:mv_richtrader:10
+0.1 0 0 0 0 EXPECT:journal:mv_richtrader:eq:10
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:ht_stronghold:eq:0
+0.1 0 0 0 0 JOURNAL:ht_stronghold:20
+0.1 0 0 0 0 EXPECT:journal:ht_stronghold:eq:20
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:mg_escortscholar2:eq:0
+0.1 0 0 0 0 JOURNAL:mg_escortscholar2:70
+0.1 0 0 0 0 EXPECT:journal:mg_escortscholar2:eq:70
+0.5 0 0 0 0 LOAD:specjournal
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:mg_guildmaster:eq:0
+0.1 0 0 0 0 JOURNAL:mg_guildmaster:100
+0.1 0 0 0 0 EXPECT:journal:mg_guildmaster:eq:100

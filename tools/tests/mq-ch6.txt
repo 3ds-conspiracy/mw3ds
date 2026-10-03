@@ -1,0 +1,67 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:9
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:60
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:50
+0.3 0 0 0 0 JOIN:blades:4
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:promoted_to_Operative
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloCaiusGone:ge:5
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_Milo's_Quarters
+6 0 0 0
+60 0 0 0 0 ACTIVATE:bk_notetoamaya
+2 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 TP:31764:-101150:3400:180
+8 0 0 0
+60 0 0 0 0 ACTIVATE:alvela_saram
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:visit_anyone
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ministry_of_Truth,_Holding_Cells
+6 0 0 0
+0.3 0 0 0 0 GIVE:sc_divineintervention
+120 0 0 0 0 ACTIVATE:mehra_milo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Divine_Intervention_scrolls
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:20
+0.3 0 0 0 0 EXPECT:item:sc_divineintervention:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+120 0 0 0 0 WALKTO:mehra_milo
+0.3 0 0 0 0 EXPECT:cell:Holamayan
+60 0 0 0 0 ACTIVATE:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lost_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:eq:50
+0.3 0 0 0 0 EXPECT:item:bk_thelostprophecy:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

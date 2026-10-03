@@ -1,0 +1,143 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 JOURNAL:B4_Robe:1
+0.3 0 0 0 0 GIVE:war_axe_airan_ammu:1
+0.3 0 0 0 0 JOURNAL:B4_HeartFire:1
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_waraxe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:manirai
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_killwarlovers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:2
+0.3 0 0 0 0 GOTO:Galom_Daeus,_Observatory
+8 0 0 0
+0.3 0 0 0 0 TALK:raxle_berne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:an_errand_for_you
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampcountess
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:2
+0.3 0 0 0 0 GOTO:Galom_Daeus,_Observatory
+8 0 0 0
+0.3 0 0 0 0 TALK:raxle_berne
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampblood
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:uvoo_llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Crosier_of_St._Llothis
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_llothiscrosier
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:15
+0.3 0 0 0 0 JOIN:temple:5
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:uvoo_llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cleaver_of_St._Felms
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_felmscleaver
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:uvoo_llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Assantus_Hansar
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_ministryheathen
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:uvoo_llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:food_and_drink
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_supplymonk
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:uvoo_llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lost_Kogoruhn
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_hairshirt
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

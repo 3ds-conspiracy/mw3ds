@@ -1,0 +1,127 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_wanderingpilgrim:30
+0.3 0 0 0 0 TP:-23717:-46522:675:180
+8 0 0 0
+120 0 0 0 0 KILL:nevrasa_dralor
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_wanderingpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_wanderingpilgrim:10
+0.3 0 0 0 0 TP:14594:-33100:1071:180
+8 0 0 0
+120 0 0 0 0 WALKTO:furn_shrine_vivec_cure_02
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_wanderingpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:nibani_maesa
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b1_urshilakukill
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:nibani_maesa
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_failed_nerevarine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Dubdilla,_Uncharted_Caverns,_Lower
+8 0 0 0
+120 0 0 0 0 KILL:winged%twilight_grunda_
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_vampirecure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:hr_honorchallenge:50
+0.3 0 0 0 0 GOTO:Balmora,_Nerano_Manor
+8 0 0 0
+120 0 0 0 0 KILL:ondres_nerano
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_honorchallenge
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_tradermissed:10
+0.3 0 0 0 0 TP:48933:-61965:1288:180
+8 0 0 0
+120 0 0 0 0 KILL:paur_maston
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_tradermissed
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:48933:-61965:1288:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:paur_maston
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:mv_tradermissed:10
+0.3 0 0 0 0 GOTO:Molag_Mar
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_tradermissed
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_traderabandoned:10
+0.3 0 0 0 0 TP:-32488:32112:1680:180
+8 0 0 0
+120 0 0 0 0 KILL:pemenie
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderabandoned
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-32488:32112:1680:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:pemenie
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:mv_traderabandoned:10
+0.3 0 0 0 0 GOTO:Gnaar_Mok
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderabandoned
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

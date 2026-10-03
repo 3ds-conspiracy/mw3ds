@@ -1,0 +1,7 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:p_restore_health_s:2
+0.3 0 0 0 0 GIVE:iron_waraxe
+0.3 0 0 0 0 DROP:p_restore_health_s
+0.3 0 0 0 0 DROP:iron_waraxe
+0.6 0 0 0 0 DOWN
+2 0 0 0

@@ -1,0 +1,57 @@
+# Beast races (Khajiit, Argonian) and their gear (spec/activation.md: Equipping). Source: mwclass/armor.cpp, clothing.cpp canBeEquipped: refused by the item's body parts (a head part is a full helm, a foot part boots / shoes), not its name; open helms are fine.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+3 0 0 0
+# Setup: the gear is carried, the race is a Khajiit
+0.3 0 0 0 0 SETITEM:iron_helmet:1
+0.3 0 0 0 0 SETITEM:steel_helm:1
+0.3 0 0 0 0 SETITEM:chitin_helm:1
+0.3 0 0 0 0 SETITEM:imperial_helmet_armor:1
+0.3 0 0 0 0 SETITEM:iron_boots:1
+0.3 0 0 0 0 SETITEM:netch_leather_boots:1
+0.3 0 0 0 0 SETITEM:common_shoes_01:0
+0.3 0 0 0 0 SETITEM:common_shoes_01:1
+0.3 0 0 0 0 SETITEM:iron_cuirass:1
+0.3 0 0 0 0 SETRACE:Khajiit
+0 0 0 0 0 SETUP-END
+# 1. Which pieces have a head / foot part (1 head, 2 foot, 0 neither)
+0.1 0 0 0 0 EXPECT:armorparts:iron_helmet:eq:1
+0.1 0 0 0 0 EXPECT:armorparts:steel_helm:eq:1
+0.1 0 0 0 0 EXPECT:armorparts:chitin_helm:eq:1
+0.1 0 0 0 0 EXPECT:armorparts:imperial_helmet_armor:eq:0
+0.1 0 0 0 0 EXPECT:armorparts:iron_boots:eq:2
+0.1 0 0 0 0 EXPECT:armorparts:netch_leather_boots:eq:2
+0.1 0 0 0 0 EXPECT:armorparts:common_shoes_01:eq:2
+# 2. A Khajiit is refused full helmets (13), boots (14) and shoes (15); open helms and body armor are fine
+0.3 0 0 0 0 EQUIP:iron_helmet
+0.5 0 0 0 0 EXPECT:message:full_helmets
+0.1 0 0 0 0 EXPECT:equipped:iron_helmet:eq:0
+0.3 0 0 0 0 EQUIP:steel_helm
+0.5 0 0 0 0 EXPECT:equipped:steel_helm:eq:0
+0.3 0 0 0 0 EQUIP:chitin_helm
+0.5 0 0 0 0 EXPECT:equipped:chitin_helm:eq:0
+0.3 0 0 0 0 EQUIP:iron_boots
+0.5 0 0 0 0 EXPECT:message:cannot_wear_boots
+0.1 0 0 0 0 EXPECT:equipped:iron_boots:eq:0
+0.3 0 0 0 0 EQUIP:netch_leather_boots
+0.5 0 0 0 0 EXPECT:equipped:netch_leather_boots:eq:0
+0.3 0 0 0 0 EQUIP:common_shoes_01
+0.5 0 0 0 0 EXPECT:message:cannot_wear_shoes
+0.1 0 0 0 0 EXPECT:equipped:common_shoes_01:eq:0
+0.3 0 0 0 0 EQUIP:imperial_helmet_armor
+0.5 0 0 0 0 EXPECT:equipped:imperial_helmet_armor:eq:1
+0.3 0 0 0 0 EQUIP:iron_cuirass
+0.5 0 0 0 0 EXPECT:equipped:iron_cuirass:eq:1
+# 3. An Argonian the same
+0.3 0 0 0 0 SETRACE:Argonian
+0.3 0 0 0 0 EQUIP:iron_helmet
+0.5 0 0 0 0 EXPECT:equipped:iron_helmet:eq:0
+0.3 0 0 0 0 EQUIP:iron_boots
+0.5 0 0 0 0 EXPECT:equipped:iron_boots:eq:0
+# 4. A Redguard wears all of them
+0.3 0 0 0 0 SETRACE:Redguard
+0.3 0 0 0 0 EQUIP:iron_helmet
+0.5 0 0 0 0 EXPECT:equipped:iron_helmet:eq:1
+0.3 0 0 0 0 EQUIP:iron_boots
+0.5 0 0 0 0 EXPECT:equipped:iron_boots:eq:1

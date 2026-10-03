@@ -1,0 +1,21 @@
+# Sleeping in an owned bed (spec/activation.md: Bed, Ownership). Source: mechanicsmanagerimp.cpp sleepInBed: an owned bed is a trespass (iCrimeTresspass 5), and when someone sees it the sleep is refused (sNotifyMessage64). Shishara Hut in Gnisis, bed active_de_p_bed_04, owner hinammu shishara, who stands in the same room.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Gnisis,_Shishara_Hut
+3 0 0 0
+0.3 0 0 0 0 SETBOUNTY:0
+0 0 0 0 0 SETUP-END
+# 1. The owner sees the player lie down in their bed: bounty 5, the message, no rest screen
+0.3 0 0 0 0 SETALARM:hinammu_shishara:100
+60 0 0 0 0 ACTIVATE:active_de_p_bed_04
+1 0 0 0
+0.3 0 0 0 0 EXPECT:message:someone_else's_bed
+0.1 0 0 0 0 EXPECT:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:5
+# 2. A werewolf is refused (the message) before the bed is looked at
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 WEREWOLF:1
+60 0 0 0 0 ACTIVATE:active_de_p_bed_04
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0

@@ -1,0 +1,14 @@
+# A knocked-down NPC lies open to anyone (spec/activation.md: NPCs). Source: mwclass/npc.cpp Npc::activate: knocked down and not fighting the player gives the loot window, no pickpocket rolls, no talk.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+3 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 REASON:knocking_Arrille_down_needs_a_fight_the_driver_cannot_route_here;_KNOCKDOWN_stands_for_it
+0.3 0 0 0 0 KNOCKDOWN:arrille
+60 0 0 0 0 ACTIVATE:arrille
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:container
+0.1 0 0 0 0 EXPECT:pickpocketing:eq:0
+0.5 0 0 0 0 B
+1 0 0 0

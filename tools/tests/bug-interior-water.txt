@@ -1,0 +1,13 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Aharnabi
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Aharnabi
+0.3 0 0 0 0 EXPECT:refwater:h2o_slaughterfish:lt:0
+0.3 0 0 0 0 EXPECT:refwater:h2o_slaughterfish:gt:-1000
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Ashinabi,_Smuggler_Den
+6 0 0 0
+0.3 0 0 0 0 EXPECT:refwater:slaughterfish:lt:0
+0.3 0 0 0 0 SHOT
+1 0 0 0

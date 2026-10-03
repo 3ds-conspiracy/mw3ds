@@ -1,0 +1,153 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_AbusedHealer:70
+0.3 0 0 0 0 TP:-27637:37811:2060:180
+8 0 0 0
+0.3 0 0 0 0 TALK:sosia_caristiana
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cloudcleaver
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_abusedhealer
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_AbusedHealer:20
+0.3 0 0 0 0 TP:-27637:37811:2060:180
+8 0 0 0
+0.3 0 0 0 0 TALK:sosia_caristiana
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cloudcleaver
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_abusedhealer
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_MissingCompanion:50
+0.3 0 0 0 0 TP:-28461:59905:2631:180
+8 0 0 0
+0.3 0 0 0 0 TALK:drerel_indaren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_missingcompanion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_MissingCompanion:30
+0.3 0 0 0 0 TP:-28461:59905:2631:180
+8 0 0 0
+0.3 0 0 0 0 TALK:drerel_indaren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_missingcompanion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC4_scrib_A:1
+0.3 0 0 0 0 TP:-30816:-26839:1053:180
+8 0 0 0
+0.3 0 0 0 0 TALK:dinok
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:scrib_jelly
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic4_scrib_a
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_TraderAbandoned:90
+0.3 0 0 0 0 TP:-32488:32012:1680:180
+8 0 0 0
+0.3 0 0 0 0 TALK:pemenie
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderabandoned
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_TraderAbandoned:60
+0.3 0 0 0 0 TP:-32488:32012:1680:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:pemenie:pemannoy:2
+0.3 0 0 0 0 TALK:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bounty
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderabandoned
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_TraderAbandoned:50
+0.3 0 0 0 0 TP:-32488:32012:1680:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:pemenie:pemannoy:1
+0.3 0 0 0 0 TALK:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bounty
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderabandoned
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_TraderAbandoned:40
+0.3 0 0 0 0 TP:-32488:32012:1680:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:pemenie:pemannoy:0
+0.3 0 0 0 0 TALK:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bounty
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderabandoned
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_PoorPilgrim:23
+0.3 0 0 0 0 TP:-34765:100265:1971:180
+8 0 0 0
+0.3 0 0 0 0 TALK:fonus_rathryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:help_a_poor_pilgrim
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_poorpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

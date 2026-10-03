@@ -1,0 +1,1483 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:0
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:speceffects
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:agility:57
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:agility
+0.1 0 0 0 0 ADDEFFECT:17:16:16:8:0:agility:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.3 0 0 0 0 CAST:mw3ds_test_e1
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@-16.5
+0.1 0 0 0 0 EXPECT:attr:agility:le:@-15.34
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@
+0.1 0 0 0 0 EXPECT:attr:agility:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:strength:50
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:strength
+0.1 0 0 0 0 ADDEFFECT:79:20:20:8:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e2
+0.3 0 0 0 0 CAST:mw3ds_test_e2
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@19.5
+0.1 0 0 0 0 EXPECT:attr:strength:le:@20.5
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@
+0.1 0 0 0 0 EXPECT:attr:strength:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:endurance:49
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:endurance
+0.1 0 0 0 0 ADDEFFECT:79:28:28:10:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e3
+0.3 0 0 0 0 CAST:mw3ds_test_e3
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@27.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@28.5
+11.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:strength:58
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:strength
+0.1 0 0 0 0 ADDEFFECT:79:26:26:8:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e4
+0.3 0 0 0 0 CAST:mw3ds_test_e4
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@25.5
+0.1 0 0 0 0 EXPECT:attr:strength:le:@26.5
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@
+0.1 0 0 0 0 EXPECT:attr:strength:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:speed:42
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:speed
+0.1 0 0 0 0 ADDEFFECT:17:21:21:10:0:speed:0
+0.1 0 0 0 0 MAKESPELL:e5
+0.3 0 0 0 0 CAST:mw3ds_test_e5
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@-21.5
+0.1 0 0 0 0 EXPECT:attr:speed:le:@-20.29
+11.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@
+0.1 0 0 0 0 EXPECT:attr:speed:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:strength:54
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:strength
+0.1 0 0 0 0 ADDEFFECT:17:56:56:6:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e6
+0.3 0 0 0 0 CAST:mw3ds_test_e6
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:0
+0.1 0 0 0 0 EXPECT:attr:strength:le:0
+7.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@
+0.1 0 0 0 0 EXPECT:attr:strength:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:mediumarmor:52
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:mediumarmor
+0.1 0 0 0 0 ADDEFFECT:83:6:6:6:0:mediumarmor:0
+0.1 0 0 0 0 MAKESPELL:e7
+0.3 0 0 0 0 CAST:mw3ds_test_e7
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:ge:@5.5
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:le:@6.5
+7.5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:ge:@
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:sneak:38
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:sneak
+0.1 0 0 0 0 ADDEFFECT:83:30:30:8:0:sneak:0
+0.1 0 0 0 0 MAKESPELL:e8
+0.3 0 0 0 0 CAST:mw3ds_test_e8
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:sneak:ge:@29.5
+0.1 0 0 0 0 EXPECT:skill:sneak:le:@30.5
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:sneak:ge:@
+0.1 0 0 0 0 EXPECT:skill:sneak:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:mercantile:54
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:mercantile
+0.1 0 0 0 0 ADDEFFECT:83:12:12:8:0:mercantile:0
+0.1 0 0 0 0 MAKESPELL:e9
+0.3 0 0 0 0 CAST:mw3ds_test_e9
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mercantile:ge:@11.5
+0.1 0 0 0 0 EXPECT:skill:mercantile:le:@12.5
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mercantile:ge:@
+0.1 0 0 0 0 EXPECT:skill:mercantile:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:security:35
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:security
+0.1 0 0 0 0 ADDEFFECT:83:17:17:10:0:security:0
+0.1 0 0 0 0 MAKESPELL:e10
+0.3 0 0 0 0 CAST:mw3ds_test_e10
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:security:ge:@16.5
+0.1 0 0 0 0 EXPECT:skill:security:le:@17.5
+11.5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:security:ge:@
+0.1 0 0 0 0 EXPECT:skill:security:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:armorer:55
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:armorer
+0.1 0 0 0 0 ADDEFFECT:21:30:30:6:0:armorer:0
+0.1 0 0 0 0 MAKESPELL:e11
+0.3 0 0 0 0 CAST:mw3ds_test_e11
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:armorer:ge:@-30.5
+0.1 0 0 0 0 EXPECT:skill:armorer:le:@-29.2
+7.5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:armorer:ge:@
+0.1 0 0 0 0 EXPECT:skill:armorer:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:unarmored:30
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:unarmored
+0.1 0 0 0 0 ADDEFFECT:83:26:26:8:0:unarmored:0
+0.1 0 0 0 0 MAKESPELL:e12
+0.3 0 0 0 0 CAST:mw3ds_test_e12
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:unarmored:ge:@25.5
+0.1 0 0 0 0 EXPECT:skill:unarmored:le:@26.5
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:unarmored:ge:@
+0.1 0 0 0 0 EXPECT:skill:unarmored:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:agility:52
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:agility
+0.1 0 0 0 0 ADDEFFECT:22:17:17:0:0:agility:0
+0.1 0 0 0 0 MAKESPELL:e13
+0.3 0 0 0 0 CAST:mw3ds_test_e13
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@-17.5
+0.1 0 0 0 0 EXPECT:attr:agility:le:@-16.33
+5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@-17.5
+0.1 0 0 0 0 EXPECT:attr:agility:le:@-16.33
+0.1 0 0 0 0 ADDEFFECT:74:20:20:0:0:agility:0
+0.1 0 0 0 0 MAKESPELL:e14
+0.3 0 0 0 0 CAST:mw3ds_test_e14
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@
+0.1 0 0 0 0 EXPECT:attr:agility:le:@
+0.1 0 0 0 0 ADDEFFECT:74:20:20:0:0:agility:0
+0.1 0 0 0 0 MAKESPELL:e15
+0.3 0 0 0 0 CAST:mw3ds_test_e15
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@
+0.1 0 0 0 0 EXPECT:attr:agility:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:speed:48
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:speed
+0.1 0 0 0 0 ADDEFFECT:22:22:22:0:0:speed:0
+0.1 0 0 0 0 MAKESPELL:e16
+0.3 0 0 0 0 CAST:mw3ds_test_e16
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@-22.5
+0.1 0 0 0 0 EXPECT:attr:speed:le:@-21.28
+5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@-22.5
+0.1 0 0 0 0 EXPECT:attr:speed:le:@-21.28
+0.1 0 0 0 0 ADDEFFECT:74:25:25:0:0:speed:0
+0.1 0 0 0 0 MAKESPELL:e17
+0.3 0 0 0 0 CAST:mw3ds_test_e17
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@
+0.1 0 0 0 0 EXPECT:attr:speed:le:@
+0.1 0 0 0 0 ADDEFFECT:74:25:25:0:0:speed:0
+0.1 0 0 0 0 MAKESPELL:e18
+0.3 0 0 0 0 CAST:mw3ds_test_e18
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@
+0.1 0 0 0 0 EXPECT:attr:speed:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:strength:37
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:strength
+0.1 0 0 0 0 ADDEFFECT:22:13:13:0:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e19
+0.3 0 0 0 0 CAST:mw3ds_test_e19
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@-13.5
+0.1 0 0 0 0 EXPECT:attr:strength:le:@-12.37
+5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@-13.5
+0.1 0 0 0 0 EXPECT:attr:strength:le:@-12.37
+0.1 0 0 0 0 ADDEFFECT:74:5:5:0:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e20
+0.3 0 0 0 0 CAST:mw3ds_test_e20
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@-8.5
+0.1 0 0 0 0 EXPECT:attr:strength:le:@-7.37
+0.1 0 0 0 0 ADDEFFECT:74:5:5:0:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e21
+0.3 0 0 0 0 CAST:mw3ds_test_e21
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:ge:@-3.5
+0.1 0 0 0 0 EXPECT:attr:strength:le:@-2.37
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:personality:50
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:personality
+0.1 0 0 0 0 ADDEFFECT:22:14:14:0:0:personality:0
+0.1 0 0 0 0 MAKESPELL:e22
+0.3 0 0 0 0 CAST:mw3ds_test_e22
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:personality:ge:@-14.5
+0.1 0 0 0 0 EXPECT:attr:personality:le:@-13.36
+5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:personality:ge:@-14.5
+0.1 0 0 0 0 EXPECT:attr:personality:le:@-13.36
+0.1 0 0 0 0 ADDEFFECT:74:5:5:0:0:personality:0
+0.1 0 0 0 0 MAKESPELL:e23
+0.3 0 0 0 0 CAST:mw3ds_test_e23
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:personality:ge:@-9.5
+0.1 0 0 0 0 EXPECT:attr:personality:le:@-8.36
+0.1 0 0 0 0 ADDEFFECT:74:5:5:0:0:personality:0
+0.1 0 0 0 0 MAKESPELL:e24
+0.3 0 0 0 0 CAST:mw3ds_test_e24
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:personality:ge:@-4.5
+0.1 0 0 0 0 EXPECT:attr:personality:le:@-3.36
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:acrobatics:56
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:acrobatics
+0.1 0 0 0 0 ADDEFFECT:26:10:10:0:0:acrobatics:0
+0.1 0 0 0 0 MAKESPELL:e25
+0.3 0 0 0 0 CAST:mw3ds_test_e25
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:acrobatics:ge:@-10.5
+0.1 0 0 0 0 EXPECT:skill:acrobatics:le:@-9.4
+5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:acrobatics:ge:@-10.5
+0.1 0 0 0 0 EXPECT:skill:acrobatics:le:@-9.4
+0.1 0 0 0 0 ADDEFFECT:78:4:4:0:0:acrobatics:0
+0.1 0 0 0 0 MAKESPELL:e26
+0.3 0 0 0 0 CAST:mw3ds_test_e26
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:acrobatics:ge:@-6.5
+0.1 0 0 0 0 EXPECT:skill:acrobatics:le:@-5.4
+0.1 0 0 0 0 ADDEFFECT:78:4:4:0:0:acrobatics:0
+0.1 0 0 0 0 MAKESPELL:e27
+0.3 0 0 0 0 CAST:mw3ds_test_e27
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:acrobatics:ge:@-2.5
+0.1 0 0 0 0 EXPECT:skill:acrobatics:le:@-1.4
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:lightarmor:32
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:lightarmor
+0.1 0 0 0 0 ADDEFFECT:26:9:9:0:0:lightarmor:0
+0.1 0 0 0 0 MAKESPELL:e28
+0.3 0 0 0 0 CAST:mw3ds_test_e28
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:lightarmor:ge:@-9.5
+0.1 0 0 0 0 EXPECT:skill:lightarmor:le:@-8.41
+5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:lightarmor:ge:@-9.5
+0.1 0 0 0 0 EXPECT:skill:lightarmor:le:@-8.41
+0.1 0 0 0 0 ADDEFFECT:78:12:12:0:0:lightarmor:0
+0.1 0 0 0 0 MAKESPELL:e29
+0.3 0 0 0 0 CAST:mw3ds_test_e29
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:lightarmor:ge:@
+0.1 0 0 0 0 EXPECT:skill:lightarmor:le:@
+0.1 0 0 0 0 ADDEFFECT:78:12:12:0:0:lightarmor:0
+0.1 0 0 0 0 MAKESPELL:e30
+0.3 0 0 0 0 CAST:mw3ds_test_e30
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:lightarmor:ge:@
+0.1 0 0 0 0 EXPECT:skill:lightarmor:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:mediumarmor:34
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:mediumarmor
+0.1 0 0 0 0 ADDEFFECT:26:6:6:0:0:mediumarmor:0
+0.1 0 0 0 0 MAKESPELL:e31
+0.3 0 0 0 0 CAST:mw3ds_test_e31
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:ge:@-6.5
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:le:@-5.44
+5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:ge:@-6.5
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:le:@-5.44
+0.1 0 0 0 0 ADDEFFECT:78:9:9:0:0:mediumarmor:0
+0.1 0 0 0 0 MAKESPELL:e32
+0.3 0 0 0 0 CAST:mw3ds_test_e32
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:ge:@
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:le:@
+0.1 0 0 0 0 ADDEFFECT:78:9:9:0:0:mediumarmor:0
+0.1 0 0 0 0 MAKESPELL:e33
+0.3 0 0 0 0 CAST:mw3ds_test_e33
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:ge:@
+0.1 0 0 0 0 EXPECT:skill:mediumarmor:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:bluntweapon:37
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:bluntweapon
+0.1 0 0 0 0 ADDEFFECT:26:6:6:0:0:bluntweapon:0
+0.1 0 0 0 0 MAKESPELL:e34
+0.3 0 0 0 0 CAST:mw3ds_test_e34
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:ge:@-6.5
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:le:@-5.44
+5 0 0 0
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:ge:@-6.5
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:le:@-5.44
+0.1 0 0 0 0 ADDEFFECT:78:9:9:0:0:bluntweapon:0
+0.1 0 0 0 0 MAKESPELL:e35
+0.3 0 0 0 0 CAST:mw3ds_test_e35
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:ge:@
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:le:@
+0.1 0 0 0 0 ADDEFFECT:78:9:9:0:0:bluntweapon:0
+0.1 0 0 0 0 MAKESPELL:e36
+0.3 0 0 0 0 CAST:mw3ds_test_e36
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:ge:@
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:endurance:44
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:endurance
+0.1 0 0 0 0 ADDEFFECT:22:1:1:10:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e37
+0.3 0 0 0 0 CAST:mw3ds_test_e37
+13 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@-11.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@-8.4
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:speed:52
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:speed
+0.1 0 0 0 0 ADDEFFECT:22:2:2:10:0:speed:0
+0.1 0 0 0 0 MAKESPELL:e38
+0.3 0 0 0 0 CAST:mw3ds_test_e38
+13 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@-21.5
+0.1 0 0 0 0 EXPECT:attr:speed:le:@-18.3
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:armorer:52
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:armorer
+0.1 0 0 0 0 ADDEFFECT:26:1:1:10:0:armorer:0
+0.1 0 0 0 0 MAKESPELL:e39
+0.3 0 0 0 0 CAST:mw3ds_test_e39
+13 0 0 0
+0.1 0 0 0 0 EXPECT:skill:armorer:ge:@-11.5
+0.1 0 0 0 0 EXPECT:skill:armorer:le:@-8.4
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:speechcraft:59
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:speechcraft
+0.1 0 0 0 0 ADDEFFECT:26:4:4:6:0:speechcraft:0
+0.1 0 0 0 0 MAKESPELL:e40
+0.3 0 0 0 0 CAST:mw3ds_test_e40
+9 0 0 0
+0.1 0 0 0 0 EXPECT:skill:speechcraft:ge:@-25.5
+0.1 0 0 0 0 EXPECT:skill:speechcraft:le:@-22.26
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:endurance:38
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:endurance
+0.1 0 0 0 0 ADDEFFECT:79:11:11:6:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e41
+0.3 0 0 0 0 CAST:mw3ds_test_e41
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:79:9:9:16:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e42
+0.3 0 0 0 0 CAST:mw3ds_test_e42
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@19.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@20.5
+6 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@8.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@9.5
+0.3 0 0 0 0 CAST:mw3ds_test_e41
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@19.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@20.5
+0.3 0 0 0 0 CAST:mw3ds_test_e41
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@19.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@20.5
+22 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:endurance:45
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:endurance
+0.1 0 0 0 0 ADDEFFECT:79:11:11:6:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e43
+0.3 0 0 0 0 CAST:mw3ds_test_e43
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:79:13:13:16:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e44
+0.3 0 0 0 0 CAST:mw3ds_test_e44
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@23.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@24.5
+6 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@12.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@13.5
+0.3 0 0 0 0 CAST:mw3ds_test_e43
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@23.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@24.5
+0.3 0 0 0 0 CAST:mw3ds_test_e43
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@23.5
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@24.5
+22 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:unarmored:42
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:unarmored
+0.1 0 0 0 0 ADDEFFECT:83:15:15:6:0:unarmored:0
+0.1 0 0 0 0 MAKESPELL:e45
+0.3 0 0 0 0 CAST:mw3ds_test_e45
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:83:5:5:16:0:unarmored:0
+0.1 0 0 0 0 MAKESPELL:e46
+0.3 0 0 0 0 CAST:mw3ds_test_e46
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:unarmored:ge:@19.5
+0.1 0 0 0 0 EXPECT:skill:unarmored:le:@20.5
+6 0 0 0
+0.1 0 0 0 0 EXPECT:skill:unarmored:ge:@4.5
+0.1 0 0 0 0 EXPECT:skill:unarmored:le:@5.5
+0.3 0 0 0 0 CAST:mw3ds_test_e45
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:unarmored:ge:@19.5
+0.1 0 0 0 0 EXPECT:skill:unarmored:le:@20.5
+0.3 0 0 0 0 CAST:mw3ds_test_e45
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:unarmored:ge:@19.5
+0.1 0 0 0 0 EXPECT:skill:unarmored:le:@20.5
+22 0 0 0
+0.1 0 0 0 0 EXPECT:skill:unarmored:ge:@
+0.1 0 0 0 0 EXPECT:skill:unarmored:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:shortblade:35
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:shortblade
+0.1 0 0 0 0 ADDEFFECT:83:13:13:6:0:shortblade:0
+0.1 0 0 0 0 MAKESPELL:e47
+0.3 0 0 0 0 CAST:mw3ds_test_e47
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:83:12:12:16:0:shortblade:0
+0.1 0 0 0 0 MAKESPELL:e48
+0.3 0 0 0 0 CAST:mw3ds_test_e48
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:shortblade:ge:@24.5
+0.1 0 0 0 0 EXPECT:skill:shortblade:le:@25.5
+6 0 0 0
+0.1 0 0 0 0 EXPECT:skill:shortblade:ge:@11.5
+0.1 0 0 0 0 EXPECT:skill:shortblade:le:@12.5
+0.3 0 0 0 0 CAST:mw3ds_test_e47
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:shortblade:ge:@24.5
+0.1 0 0 0 0 EXPECT:skill:shortblade:le:@25.5
+0.3 0 0 0 0 CAST:mw3ds_test_e47
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:shortblade:ge:@24.5
+0.1 0 0 0 0 EXPECT:skill:shortblade:le:@25.5
+22 0 0 0
+0.1 0 0 0 0 EXPECT:skill:shortblade:ge:@
+0.1 0 0 0 0 EXPECT:skill:shortblade:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:endurance:40
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:endurance
+0.1 0 0 0 0 ADDEFFECT:79:13:13:12:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e49
+0.3 0 0 0 0 CAST:mw3ds_test_e49
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:17:12:12:12:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e50
+0.3 0 0 0 0 CAST:mw3ds_test_e50
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@2.12
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:endurance:58
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:endurance
+0.1 0 0 0 0 ADDEFFECT:79:11:11:12:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e51
+0.3 0 0 0 0 CAST:mw3ds_test_e51
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:17:8:8:12:0:endurance:0
+0.1 0 0 0 0 MAKESPELL:e52
+0.3 0 0 0 0 CAST:mw3ds_test_e52
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@2
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@4.08
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:bluntweapon:53
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:bluntweapon
+0.1 0 0 0 0 ADDEFFECT:83:8:8:12:0:bluntweapon:0
+0.1 0 0 0 0 MAKESPELL:e53
+0.3 0 0 0 0 CAST:mw3ds_test_e53
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:21:18:18:12:0:bluntweapon:0
+0.1 0 0 0 0 MAKESPELL:e54
+0.3 0 0 0 0 CAST:mw3ds_test_e54
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:ge:@-11
+0.1 0 0 0 0 EXPECT:skill:bluntweapon:le:@-8.82
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETSKILL:block:59
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:skill:block
+0.1 0 0 0 0 ADDEFFECT:83:18:18:12:0:block:0
+0.1 0 0 0 0 MAKESPELL:e55
+0.3 0 0 0 0 CAST:mw3ds_test_e55
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:21:9:9:12:0:block:0
+0.1 0 0 0 0 MAKESPELL:e56
+0.3 0 0 0 0 CAST:mw3ds_test_e56
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:skill:block:ge:@8
+0.1 0 0 0 0 EXPECT:skill:block:le:@10.09
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 SNAP:healthmax
+0.1 0 0 0 0 ADDEFFECT:80:5:5:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e57
+0.3 0 0 0 0 CAST:mw3ds_test_e57
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:healthmax:ge:@4.5
+0.1 0 0 0 0 EXPECT:healthmax:le:@5.5
+0.1 0 0 0 0 EXPECT:health:ge:@4.5
+0.1 0 0 0 0 EXPECT:health:le:@5.5
+0.1 0 0 0 0 ADDEFFECT:23:20:20:0:0:-:0
+0.1 0 0 0 0 MAKESPELL:e58
+0.3 0 0 0 0 CAST:mw3ds_test_e58
+2.0 0 0 0
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-20.5
+0.1 0 0 0 0 EXPECT:health:le:@-19.3
+0.1 0 0 0 0 EXPECT:healthmax:ge:@
+0.1 0 0 0 0 EXPECT:healthmax:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ADDEFFECT:23:3:3:5:0:-:0
+0.1 0 0 0 0 MAKESPELL:e59
+0.3 0 0 0 0 CAST:mw3ds_test_e59
+8 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-16.5
+0.1 0 0 0 0 EXPECT:health:le:@-13.35
+5 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-16.5
+0.1 0 0 0 0 EXPECT:health:le:@-13.35
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 SNAP:healthmax
+0.1 0 0 0 0 ADDEFFECT:80:22:22:10:0:-:0
+0.1 0 0 0 0 MAKESPELL:e60
+0.3 0 0 0 0 CAST:mw3ds_test_e60
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:healthmax:ge:@21.5
+0.1 0 0 0 0 EXPECT:healthmax:le:@22.5
+0.1 0 0 0 0 EXPECT:health:ge:@21.5
+0.1 0 0 0 0 EXPECT:health:le:@22.5
+11.5 0 0 0
+0.1 0 0 0 0 EXPECT:healthmax:ge:@
+0.1 0 0 0 0 EXPECT:healthmax:le:@
+0.1 0 0 0 0 EXPECT:health:ge:@
+0.1 0 0 0 0 EXPECT:health:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ADDEFFECT:23:24:24:0:0:-:0
+0.1 0 0 0 0 MAKESPELL:e61
+0.3 0 0 0 0 CAST:mw3ds_test_e61
+2.0 0 0 0
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ADDEFFECT:75:3:3:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e62
+0.3 0 0 0 0 CAST:mw3ds_test_e62
+11 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@22.26
+0.1 0 0 0 0 EXPECT:health:le:@25
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ADDEFFECT:27:6:6:5:0:-:0
+0.1 0 0 0 0 MAKESPELL:e63
+0.3 0 0 0 0 CAST:mw3ds_test_e63
+8 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-31.5
+0.1 0 0 0 0 EXPECT:health:le:@-28.2
+5 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-31.5
+0.1 0 0 0 0 EXPECT:health:le:@-28.2
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 SNAP:healthmax
+0.1 0 0 0 0 ADDEFFECT:80:28:28:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e64
+0.3 0 0 0 0 CAST:mw3ds_test_e64
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:healthmax:ge:@27.5
+0.1 0 0 0 0 EXPECT:healthmax:le:@28.5
+0.1 0 0 0 0 EXPECT:health:ge:@27.5
+0.1 0 0 0 0 EXPECT:health:le:@28.5
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:healthmax:ge:@
+0.1 0 0 0 0 EXPECT:healthmax:le:@
+0.1 0 0 0 0 EXPECT:health:ge:@
+0.1 0 0 0 0 EXPECT:health:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 SNAP:healthmax
+0.1 0 0 0 0 ADDEFFECT:80:33:33:10:0:-:0
+0.1 0 0 0 0 MAKESPELL:e65
+0.3 0 0 0 0 CAST:mw3ds_test_e65
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:healthmax:ge:@32.5
+0.1 0 0 0 0 EXPECT:healthmax:le:@33.5
+0.1 0 0 0 0 EXPECT:health:ge:@32.5
+0.1 0 0 0 0 EXPECT:health:le:@33.5
+11.5 0 0 0
+0.1 0 0 0 0 EXPECT:healthmax:ge:@
+0.1 0 0 0 0 EXPECT:healthmax:le:@
+0.1 0 0 0 0 EXPECT:health:ge:@
+0.1 0 0 0 0 EXPECT:health:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ADDEFFECT:23:13:13:2:0:-:0
+0.1 0 0 0 0 MAKESPELL:e66
+0.3 0 0 0 0 CAST:mw3ds_test_e66
+5 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-27.5
+0.1 0 0 0 0 EXPECT:health:le:@-24.24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-27.5
+0.1 0 0 0 0 EXPECT:health:le:@-24.24
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ADDEFFECT:27:3:3:5:0:-:0
+0.1 0 0 0 0 MAKESPELL:e67
+0.3 0 0 0 0 CAST:mw3ds_test_e67
+8 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-16.5
+0.1 0 0 0 0 EXPECT:health:le:@-13.35
+5 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-16.5
+0.1 0 0 0 0 EXPECT:health:le:@-13.35
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:magicka
+0.1 0 0 0 0 ADDEFFECT:76:60:60:0:0:-:0
+0.1 0 0 0 0 MAKESPELL:e68
+0.3 0 0 0 0 CAST:mw3ds_test_e68
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:ge:@
+0.1 0 0 0 0 EXPECT:magicka:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:magicka
+0.1 0 0 0 0 SNAP:magickamax
+0.1 0 0 0 0 ADDEFFECT:19:16:16:10:0:-:0
+0.1 0 0 0 0 MAKESPELL:e69
+0.3 0 0 0 0 CAST:mw3ds_test_e69
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:ge:@-52.5
+0.1 0 0 0 0 EXPECT:magicka:le:@-49.34
+0.1 0 0 0 0 EXPECT:magickamax:ge:@
+0.1 0 0 0 0 EXPECT:magickamax:le:@
+11.5 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:ge:@-36
+0.1 0 0 0 0 EXPECT:magicka:le:@-34
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:magicka
+0.1 0 0 0 0 SNAP:magickamax
+0.1 0 0 0 0 ADDEFFECT:19:17:17:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e70
+0.3 0 0 0 0 CAST:mw3ds_test_e70
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:ge:@-48.5
+0.1 0 0 0 0 EXPECT:magicka:le:@-45.33
+0.1 0 0 0 0 EXPECT:magickamax:ge:@
+0.1 0 0 0 0 EXPECT:magickamax:le:@
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:ge:@-31
+0.1 0 0 0 0 EXPECT:magicka:le:@-29
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:68
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:magickamax
+0.1 0 0 0 0 ADDEFFECT:84:21:21:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e71
+0.3 0 0 0 0 CAST:mw3ds_test_e71
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:magickamax:ge:@141.8
+0.1 0 0 0 0 EXPECT:magickamax:le:@143.8
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:magickamax:ge:@
+0.1 0 0 0 0 EXPECT:magickamax:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:magicka
+0.1 0 0 0 0 SNAP:magickamax
+0.1 0 0 0 0 ADDEFFECT:81:19:19:10:0:-:0
+0.1 0 0 0 0 MAKESPELL:e72
+0.3 0 0 0 0 CAST:mw3ds_test_e72
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:magickamax:ge:@18.5
+0.1 0 0 0 0 EXPECT:magickamax:le:@19.5
+11.5 0 0 0
+0.1 0 0 0 0 EXPECT:magickamax:ge:@
+0.1 0 0 0 0 EXPECT:magickamax:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:magicka
+0.1 0 0 0 0 SNAP:magickamax
+0.1 0 0 0 0 ADDEFFECT:19:14:14:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e73
+0.3 0 0 0 0 CAST:mw3ds_test_e73
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:ge:@-40.5
+0.1 0 0 0 0 EXPECT:magicka:le:@-37.36
+0.1 0 0 0 0 EXPECT:magickamax:ge:@
+0.1 0 0 0 0 EXPECT:magickamax:le:@
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:ge:@-26
+0.1 0 0 0 0 EXPECT:magicka:le:@-24
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:91:40
+0.1 0 0 0 0 ADDEFFECT:27:17:17:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e74
+0.3 0 0 0 0 CAST:mw3ds_test_e74
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-18
+0.1 0 0 0 0 EXPECT:health:le:@-16.33
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:90:10
+0.1 0 0 0 0 ACTIVE:91:50
+0.1 0 0 0 0 ADDEFFECT:14:10:10:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e75
+0.3 0 0 0 0 CAST:mw3ds_test_e75
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-10
+0.1 0 0 0 0 EXPECT:health:le:@-8.41
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:93:100
+0.1 0 0 0 0 ACTIVE:5:100
+0.1 0 0 0 0 ADDEFFECT:15:18:18:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e76
+0.3 0 0 0 0 CAST:mw3ds_test_e76
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-1
+0.1 0 0 0 0 EXPECT:health:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:91:100
+0.1 0 0 0 0 ADDEFFECT:23:16:16:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e77
+0.3 0 0 0 0 CAST:mw3ds_test_e77
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-17
+0.1 0 0 0 0 EXPECT:health:le:@-15.34
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:91:40
+0.1 0 0 0 0 ACTIVE:93:40
+0.1 0 0 0 0 ADDEFFECT:23:15:15:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e78
+0.3 0 0 0 0 CAST:mw3ds_test_e78
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-10
+0.1 0 0 0 0 EXPECT:health:le:@-8.41
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:91:50
+0.1 0 0 0 0 ACTIVE:93:40
+0.1 0 0 0 0 ACTIVE:6:75
+0.1 0 0 0 0 ADDEFFECT:16:12:12:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e79
+0.3 0 0 0 0 CAST:mw3ds_test_e79
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-1
+0.1 0 0 0 0 EXPECT:health:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:4:100
+0.1 0 0 0 0 ACTIVE:90:120
+0.1 0 0 0 0 ACTIVE:91:50
+0.1 0 0 0 0 ADDEFFECT:14:14:14:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e80
+0.3 0 0 0 0 CAST:mw3ds_test_e80
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-1
+0.1 0 0 0 0 EXPECT:health:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:28:50
+0.1 0 0 0 0 ACTIVE:91:40
+0.1 0 0 0 0 ACTIVE:31:25
+0.1 0 0 0 0 ADDEFFECT:18:10:10:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e81
+0.3 0 0 0 0 CAST:mw3ds_test_e81
+3.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-13
+0.1 0 0 0 0 EXPECT:health:le:@-11.875
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+0.1 0 0 0 0 ACTIVE:91:10
+0.1 0 0 0 0 ADDEFFECT:18:13:13:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e82
+0.3 0 0 0 0 CAST:mw3ds_test_e82
+3.0 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-13.5
+0.1 0 0 0 0 EXPECT:health:le:@-12.37
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:refhealth:scamp
+0.1 0 0 0 0 ADDEFFECT:27:22:22:1:2:-:0
+0.1 0 0 0 0 MAKESPELL:e83
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e83
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:scamp:ge:@-7
+0.1 0 0 0 0 EXPECT:refhealth:scamp:le:@-3.945
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:refhealth:scamp
+0.1 0 0 0 0 ADDEFFECT:16:17:17:1:2:-:0
+0.1 0 0 0 0 MAKESPELL:e84
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e84
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:scamp:ge:@-10
+0.1 0 0 0 0 EXPECT:refhealth:scamp:le:@-6.915
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:refhealth:scamp
+0.1 0 0 0 0 ADDEFFECT:14:12:12:2:2:-:0
+0.1 0 0 0 0 MAKESPELL:e85
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e85
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:scamp:ge:@-13.5
+0.1 0 0 0 0 EXPECT:refhealth:scamp:le:@-10.38
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:refhealth:scamp
+0.1 0 0 0 0 ADDEFFECT:86:3:3:1:2:-:0
+0.1 0 0 0 0 MAKESPELL:e86
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e86
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:scamp:ge:@-4.5
+0.1 0 0 0 0 EXPECT:refhealth:scamp:le:@-1.47
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SETATTR:endurance:38
+0.1 0 0 0 0 SNAP:attr:endurance
+0.1 0 0 0 0 ADDEFFECT:85:5:5:8:2:endurance:0
+0.1 0 0 0 0 MAKESPELL:e87
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e87
+3.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@3.95
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@6
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:endurance:ge:@
+0.1 0 0 0 0 EXPECT:attr:endurance:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:refhealth:scamp
+0.1 0 0 0 0 ADDEFFECT:86:8:8:3:2:-:0
+0.1 0 0 0 0 MAKESPELL:e88
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e88
+7 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:scamp:ge:@-25.5
+0.1 0 0 0 0 EXPECT:refhealth:scamp:le:@-22.26
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SETATTR:agility:45
+0.1 0 0 0 0 SNAP:attr:agility
+0.1 0 0 0 0 ADDEFFECT:85:15:15:8:2:agility:0
+0.1 0 0 0 0 MAKESPELL:e89
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e89
+3.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@13.85
+0.1 0 0 0 0 EXPECT:attr:agility:le:@16
+9.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:agility:ge:@
+0.1 0 0 0 0 EXPECT:attr:agility:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 ADDEFFECT:27:1:1:30:0:-:0
+0.1 0 0 0 0 MAKESPELL:e90
+0.3 0 0 0 0 CAST:mw3ds_test_e90
+2.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:57:100:100:0:0:-:0
+0.1 0 0 0 0 MAKESPELL:e91
+0.3 0 0 0 0 CAST:mw3ds_test_e91
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:effect:27:ge:0
+0.1 0 0 0 0 EXPECT:effect:27:le:0
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 SETATTR:speed:40
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:attr:speed
+0.1 0 0 0 0 ADDEFFECT:79:20:20:25:0:speed:0
+0.1 0 0 0 0 MAKESPELL:e92
+0.3 0 0 0 0 CAST:mw3ds_test_e92
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@19.5
+0.1 0 0 0 0 EXPECT:attr:speed:le:@20.5
+0.1 0 0 0 0 ADDEFFECT:57:100:100:0:0:-:0
+0.1 0 0 0 0 MAKESPELL:e93
+0.3 0 0 0 0 CAST:mw3ds_test_e93
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:@
+0.1 0 0 0 0 EXPECT:attr:speed:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 ADDEFFECT:27:1:1:30:0:-:0
+0.1 0 0 0 0 MAKESPELL:e94
+0.3 0 0 0 0 CAST:mw3ds_test_e94
+2.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:27:ge:0.4900
+0.1 0 0 0 0 EXPECT:effect:27:le:1.5000
+0.1 0 0 0 0 ADDEFFECT:72:1:1:0:0:-:0
+0.1 0 0 0 0 MAKESPELL:e95
+0.3 0 0 0 0 CAST:mw3ds_test_e95
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:effect:27:ge:0
+0.1 0 0 0 0 EXPECT:effect:27:le:0
+0.1 0 0 0 0 SNAP:health
+4 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-0.5
+0.1 0 0 0 0 EXPECT:health:le:@0.5
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:effect:7
+0.1 0 0 0 0 ADDEFFECT:7:34:34:6:0:-:0
+0.1 0 0 0 0 MAKESPELL:e96
+0.3 0 0 0 0 CAST:mw3ds_test_e96
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:7:ge:33.1600
+0.1 0 0 0 0 EXPECT:effect:7:le:34.5000
+0.1 0 0 0 0 ADDEFFECT:7:34:34:20:0:-:0
+0.1 0 0 0 0 MAKESPELL:e97
+0.3 0 0 0 0 CAST:mw3ds_test_e97
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:effect:7:ge:66.3200
+0.1 0 0 0 0 EXPECT:effect:7:le:69
+9 0 0 0
+0.1 0 0 0 0 EXPECT:effect:7:ge:33.1600
+0.1 0 0 0 0 EXPECT:effect:7:le:34.5000
+16 0 0 0
+0.1 0 0 0 0 EXPECT:effect:7:ge:0
+0.1 0 0 0 0 EXPECT:effect:7:le:0
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:effect:94
+0.1 0 0 0 0 ADDEFFECT:94:38:38:6:0:-:0
+0.1 0 0 0 0 MAKESPELL:e98
+0.3 0 0 0 0 CAST:mw3ds_test_e98
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:94:ge:37.5000
+0.1 0 0 0 0 EXPECT:effect:94:le:38.5000
+0.1 0 0 0 0 ADDEFFECT:94:19:19:20:0:-:0
+0.1 0 0 0 0 MAKESPELL:e99
+0.3 0 0 0 0 CAST:mw3ds_test_e99
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:effect:94:ge:56
+0.1 0 0 0 0 EXPECT:effect:94:le:58
+9 0 0 0
+0.1 0 0 0 0 EXPECT:effect:94:ge:18.5000
+0.1 0 0 0 0 EXPECT:effect:94:le:19.5000
+16 0 0 0
+0.1 0 0 0 0 EXPECT:effect:94:ge:0
+0.1 0 0 0 0 EXPECT:effect:94:le:0
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:armor
+0.1 0 0 0 0 ADDEFFECT:3:32:32:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e100
+0.3 0 0 0 0 CAST:mw3ds_test_e100
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@31.5
+0.1 0 0 0 0 EXPECT:armor:le:@32.5
+0.1 0 0 0 0 ADDEFFECT:3:16:16:20:0:-:0
+0.1 0 0 0 0 MAKESPELL:e101
+0.3 0 0 0 0 CAST:mw3ds_test_e101
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@47
+0.1 0 0 0 0 EXPECT:armor:le:@49
+11 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@15.5
+0.1 0 0 0 0 EXPECT:armor:le:@16.5
+16 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@
+0.1 0 0 0 0 EXPECT:armor:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:armor
+0.1 0 0 0 0 ADDEFFECT:3:32:32:10:0:-:0
+0.1 0 0 0 0 MAKESPELL:e102
+0.3 0 0 0 0 CAST:mw3ds_test_e102
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@31.5
+0.1 0 0 0 0 EXPECT:armor:le:@32.5
+0.1 0 0 0 0 ADDEFFECT:3:16:16:20:0:-:0
+0.1 0 0 0 0 MAKESPELL:e103
+0.3 0 0 0 0 CAST:mw3ds_test_e103
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@47
+0.1 0 0 0 0 EXPECT:armor:le:@49
+13 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@15.5
+0.1 0 0 0 0 EXPECT:armor:le:@16.5
+16 0 0 0
+0.1 0 0 0 0 EXPECT:armor:ge:@
+0.1 0 0 0 0 EXPECT:armor:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:effect:97
+0.1 0 0 0 0 ADDEFFECT:97:21:21:10:0:-:0
+0.1 0 0 0 0 MAKESPELL:e104
+0.3 0 0 0 0 CAST:mw3ds_test_e104
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:97:ge:20.5000
+0.1 0 0 0 0 EXPECT:effect:97:le:21.5000
+0.1 0 0 0 0 ADDEFFECT:97:16:16:20:0:-:0
+0.1 0 0 0 0 MAKESPELL:e105
+0.3 0 0 0 0 CAST:mw3ds_test_e105
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:effect:97:ge:36
+0.1 0 0 0 0 EXPECT:effect:97:le:38
+13 0 0 0
+0.1 0 0 0 0 EXPECT:effect:97:ge:15.5000
+0.1 0 0 0 0 EXPECT:effect:97:le:16.5000
+16 0 0 0
+0.1 0 0 0 0 EXPECT:effect:97:ge:0
+0.1 0 0 0 0 EXPECT:effect:97:le:0
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:effect:40
+0.1 0 0 0 0 ADDEFFECT:40:6:13:8:0:-:0
+0.1 0 0 0 0 MAKESPELL:e106
+0.3 0 0 0 0 CAST:mw3ds_test_e106
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:40:ge:5.5000
+0.1 0 0 0 0 EXPECT:effect:40:le:13.5000
+0.1 0 0 0 0 ADDEFFECT:40:6:6:20:0:-:0
+0.1 0 0 0 0 MAKESPELL:e107
+0.3 0 0 0 0 CAST:mw3ds_test_e107
+2.0 0 0 0
+0.1 0 0 0 0 EXPECT:effect:40:ge:11
+0.1 0 0 0 0 EXPECT:effect:40:le:20
+11 0 0 0
+0.1 0 0 0 0 EXPECT:effect:40:ge:5.5000
+0.1 0 0 0 0 EXPECT:effect:40:le:6.5000
+16 0 0 0
+0.1 0 0 0 0 EXPECT:effect:40:ge:0
+0.1 0 0 0 0 EXPECT:effect:40:le:0
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:refflee:scamp
+0.1 0 0 0 0 ADDEFFECT:53:40:40:10:2:-:0
+0.1 0 0 0 0 MAKESPELL:e108
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e108
+3.0 0 0 0
+0.1 0 0 0 0 EXPECT:refflee:scamp:ge:@
+0.1 0 0 0 0 EXPECT:refflee:scamp:le:@
+0.5 0 0 0 0 LOAD:speceffects
+3 0 0 0
+0.1 0 0 0 0 SETATTR:willpower:5
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETATTR:intelligence:100
+0.1 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:refflee:scamp
+0.1 0 0 0 0 ADDEFFECT:53:40:40:10:2:-:0
+0.1 0 0 0 0 MAKESPELL:e109
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e109
+3.0 0 0 0
+0.1 0 0 0 0 EXPECT:refflee:scamp:ge:@
+0.1 0 0 0 0 EXPECT:refflee:scamp:le:@

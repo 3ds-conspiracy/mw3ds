@@ -1,0 +1,7 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EFFECT:11:100:99999
+0.3 0 0 0 0 TP:-16000:-58000:900:200
+20 0 0 0
+0.3 0 0 0 0 CHECK:bk_falljournal_unique
+0.3 0 0 0 0 CHECK:agronian_guy
+1 0 0 0

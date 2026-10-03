@@ -1,0 +1,147 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_SpyBaladas:60
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 TALK:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_language
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_spybaladas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_SpyBaladas:60
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 TALK:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_language
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_spybaladas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescueRagash:40
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 TALK:ragash_gra-shuzgub
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:get_me_out
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescueragash
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_TalosTreason:20
+0.3 0 0 0 0 GOTO:Gnisis,_Barracks
+8 0 0 0
+0.3 0 0 0 0 TALK:arius_rulician
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Talos_Cult
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_talostreason
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC2_Muck:1
+0.3 0 0 0 0 GOTO:Gnisis,_Fort_Darius
+8 0 0 0
+0.3 0 0 0 0 TALK:chaplain_ogrul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:return_your_favor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic2_muck
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC2_Muck:1
+0.3 0 0 0 0 GOTO:Gnisis,_Fort_Darius
+8 0 0 0
+0.3 0 0 0 0 TALK:chaplain_ogrul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:return_your_favor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic2_muck
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC2_Muck:1
+0.3 0 0 0 0 GIVE:p_restore_health_b:4
+0.3 0 0 0 0 GOTO:Gnisis,_Fort_Darius
+8 0 0 0
+0.3 0 0 0 0 TALK:chaplain_ogrul
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic2_muck
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_talostreason:1
+0.3 0 0 0 0 JOURNAL:IL_TalosTreason:10
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:conspiracy_against_the_Emperor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_talostreason
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescueRagash:70
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ragash_gra-Shuzgub
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescueragash
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

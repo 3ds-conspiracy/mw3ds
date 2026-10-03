@@ -1,0 +1,169 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:12
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:60
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:50
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:50
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOIN:nerevarine:0
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:counsel_of_Sul-Matuul
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B1_UnifyUrshilaku:ge:1
+0.3 0 0 0 0 KNOW:need
+0.3 0 0 0 0 TOPIC:need
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:curse_of_Dagoth_Ur
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:False_Gods
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:Moon-and-Star
+0.3 0 0 0 0 TOPIC:Moon-and-Star
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:duty
+0.3 0 0 0 0 TOPIC:duty
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B1_UnifyUrshilaku:ge:25
+0.3 0 0 0 0 TOPIC:Urshilaku_Nerevarine
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B1_UnifyUrshilaku:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sonummu_zabamat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Counsel
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GIVE:exquisite_shoes_01
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:exquisite_shoes
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:4
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Nerano_Ancestral_Tomb
+6 0 0 0
+0.3 0 0 0 0 EQUIP:silver_longsword
+180 0 0 0 0 KILL:calvario
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:dead:calvario
+0.3 0 0 0 0 GIVE:p_cure_common_s
+0.3 0 0 0 0 GIVE:p_cure_blight_s
+0.5 0 0 0 0 EQUIP:p_cure_common_s
+0.5 0 0 0 0 EQUIP:p_cure_blight_s
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:22
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sonummu_zabamat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Counsel
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:25
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GIVE:exquisite_shirt_01
+0.3 0 0 0 0 GIVE:exquisite_skirt_01
+0.3 0 0 0 0 GIVE:exquisite_shoes_01
+0.3 0 0 0 0 GIVE:potion_t_bug_musk_01
+0.3 0 0 0 0 TP:123964:48297:900:180
+8 0 0 0
+60 0 0 0 0 ACTIVATE:savile_imayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:30
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:35
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:falura_llervu
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:some_presents
+0.3 0 0 0 0 TOPIC:some_presents
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:45
+0.3 0 0 0 0 TOPIC:travel_together
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Ashkhan's_Yurt
+15 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:47
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+30 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_bride
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+30 0 0 0 0 ACTIVATE:falura_llervu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:my_bridegroom
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:55
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+30 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_bride
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

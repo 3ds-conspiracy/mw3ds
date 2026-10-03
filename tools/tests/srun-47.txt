@@ -1,0 +1,132 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:extravagant_ring_aund_uni:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_crest
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:extravagant_ring_aund_uni:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:65
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:tusamircil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_crest
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:extravagant_ring_aund_uni:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:65
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:tusamircil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_crest
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:extravagant_ring_aund_uni:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:tusamircil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_crest
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_EscortScholar1:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Tenyeminwe
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_escortscholar1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:VA_VampCurse:70
+0.3 0 0 0 0 GOTO:Salvel_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:mastrius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampcurse
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Lookout:40
+0.3 0 0 0 0 GIVE:Gold_001:300
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:hrisskar_flat-foot
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Fargoth's_hiding_place
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_lookout
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_DeadTaxman:45
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+8 0 0 0
+0.3 0 0 0 0 TALK:chargen_class
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_deadtaxman
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

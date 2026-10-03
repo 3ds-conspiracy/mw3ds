@@ -1,0 +1,11 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:iron_dagger
+0.3 0 0 0 0 WEAR:iron_dagger:20
+0.3 0 0 0 0 GIVE:repair_prongs
+0.3 0 0 0 0 REPAIR
+0.5 0 0 0
+0.2 0 0 0 0 TAP:60:30
+0.5 0 0 0
+0.2 0 0 0 0 TAP:60:30
+1 0 0 0

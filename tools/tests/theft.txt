@@ -1,0 +1,16 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOTO:Balmora,_Ra'Virr:_Trader
+3 0 0 0
+0.3 0 0 0 0 TP:250:-60:5:0
+2 0 0 0
+0.3 0 0 0 0 DOOR:steel_tanto
+1 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 CHECK:global:PCCrimeLevel
+0.3 0 0 0 0 DOOR:active_de_p_bed_10
+1 0 0 0
+0.3 0 0 0 0 JAIL
+4 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 CHECK:global:PCCrimeLevel
+1 0 0 0

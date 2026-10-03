@@ -1,0 +1,116 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:ring_warlock_unique:1
+0.3 0 0 0 0 JOURNAL:MG_WarlocksRing:10
+0.3 0 0 0 0 JOIN:mages_guild:6
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Warlock's_Ring
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_warlocksring
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Sabotage:10
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:ajira:gemindesk:1
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:fake_soul_gem
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_sabotage
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_tiramgadarscredentials:1
+0.3 0 0 0 0 JOURNAL:MG_SpyCatch:10
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_spy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_spycatch
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_4_MuzgobInformant:10
+0.3 0 0 0 0 GIVE:misc_Skull_Llevule:1
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Errand
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_4_muzgobinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_4_MuzgobInformant:1
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Errand
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_4_muzgobinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_Stronghold:200
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guard_against_bandits
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_Stronghold:100
+0.3 0 0 0 0 JOIN:hlaalu:4
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:recruit_some_miners
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

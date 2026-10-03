@@ -1,0 +1,152 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Assemmus'_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:assemmus
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_erabenimsunkill
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Gnisis
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:11111_test_journal
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:124223:48324:1127:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:falura_llervu
+4 0 0 0
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Ashkhan's_Yurt
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b3_zainabbride
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:da_malacath:10
+0.3 0 0 0 0 TP:-65115:22010:417:180
+8 0 0 0
+120 0 0 0 0 KILL:farvyn_oreyn
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_malacath
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:ht_eddieamulet:50
+0.3 0 0 0 0 STARTSCRIPT:fasteddieamulet
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_eddieamulet
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:ht_eddiering:50
+0.3 0 0 0 0 STARTSCRIPT:fasteddiering
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_eddiering
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_poorpilgrim:20
+0.3 0 0 0 0 TP:-34765:100365:1971:180
+8 0 0 0
+120 0 0 0 0 WALKTO:fonus_rathryon
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_poorpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-34765:100365:1971:180
+8 0 0 0
+120 0 0 0 0 KILL:fonus_rathryon
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_poorpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Prison_Cells
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:frelene_acques
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:hr_stronghold:141
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:il_knightshield:11
+0.3 0 0 0 0 GOTO:Ebonheart,_Underground_Caves
+8 0 0 0
+120 0 0 0 0 KILL:furius_acilius
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_knightshield
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

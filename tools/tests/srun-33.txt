@@ -1,0 +1,152 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC9_Argonian_alms:1
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Iulus_Truptor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic9_argonian_alms
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC9_Argonian_alms:1
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Iulus_Truptor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic9_argonian_alms
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC_8_Nord_alms:1
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Iulus_Truptor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic_8_nord_alms
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC_8_Nord_alms:1
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Iulus_Truptor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic_8_nord_alms
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC7_netch:1
+0.3 0 0 0 0 GIVE:ingred_netch_leather_01:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic7_netch
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC6_Rat:1
+0.3 0 0 0 0 GIVE:ingred_rat_meat_01:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic6_rat
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC5_corkbulb:1
+0.3 0 0 0 0 GIVE:ingred_corkbulb_root_01:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic5_corkbulb
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC4_scrib:1
+0.3 0 0 0 0 GIVE:ingred_scrib_jelly_01:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic4_scrib
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC3_willow:1
+0.3 0 0 0 0 GIVE:ingred_willow_anther_01:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic3_willow
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC2_Muck:1
+0.3 0 0 0 0 GIVE:ingred_muck_01:5
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic2_muck
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

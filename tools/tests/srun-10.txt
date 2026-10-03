@@ -1,0 +1,140 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Hannat:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hannat_Zainsubani
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_hannat
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:31
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hannat_Zainsubani
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_11_zainsubaniinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_five_far_stars:1
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_11_zainsubaniinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_words_of_the_wind:1
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_11_zainsubaniinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_Ashland_Hymns:1
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_11_zainsubaniinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_11_zainsubaniinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_11_zainsubaniinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:31
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ashlanders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_11_zainsubaniinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_ArobarKidnap:70
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Arobar_Manor_Bedrooms
+8 0 0 0
+0.3 0 0 0 0 TALK:miner_arobar
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_arobarkidnap
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

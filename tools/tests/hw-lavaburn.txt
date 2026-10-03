@@ -1,0 +1,16 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOTO:Arkngthand,_Land's_Blood_Gallery
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Arkngthand,_Land's_Blood_Gallery
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 EXPECT:health:ge:@0
+90 0 0 0 0 WALKTO:in_lava_1024
+0.3 0 0 0 0 SHOT
+0.5 0 0 0
+0.3 0 0 0 0 CHECK:in_lava_1024
+0.3 0 0 0 0 EXPECT:health:lt:@-1
+0.3 0 0 0 0 EXPECT:health:gt:0
+1 0 0 0

@@ -1,0 +1,15 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-92851:108930:2100:180
+8 0 0 0
+0.3 0 0 0 0 TP:-96223:113723:917:180
+8 0 0 0
+0.3 0 0 0 0 TALK:synette_jeline
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lady_in_distress
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_lostring
+0.3 0 0 0 0 B
+3 0 0 0

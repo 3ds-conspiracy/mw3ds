@@ -1,0 +1,90 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:1
+0.3 0 0 0 0 GIVE:bk_a1_1_caiuspackage
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EXPECT:item:bk_a1_1_caiuspackage:ge:1
+0.3 0 0 0 0 GOTO:Balmora,_South_Wall_Cornerclub
+6 0 0 0
+30 0 0 0 0 ACTIVATE:bacola_closcius
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 KNOW:Caius_Cosades
+0.3 0 0 0 0 TOPIC:Caius_Cosades
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_1_FindSpymaster:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+40 0 0 0 0 DOORTO:outside
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora
+90 0 0 0 0 DOORTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Caius_Cosades'_House
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 TOPIC:report_to_caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_1_FindSpymaster:ge:14
+0.3 0 0 0 0 EXPECT:item:bk_a1_1_caiuspackage:eq:0
+0.3 0 0 0 0 EXPECT:rank:blades:ge:0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_1_FindSpymaster:ge:18
+0.3 0 0 0 0 EXPECT:item:gold_001:ge:200
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_2_AntabolisInformant:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+40 0 0 0 0 DOORTO:outside
+6 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Fighters
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:hasphat_antabolis
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 TOPIC:favor
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_2_AntabolisInformant:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Arkngthand,_Cells_of_Hollow_Hand
+6 0 0 0
+120 0 0 0 0 PICKUP:misc_dwrv_ark_cube00
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:misc_dwrv_ark_cube00:ge:1
+0.3 0 0 0 0 EXPECT:journal:A1_2_AntabolisInformant:ge:7
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+6 0 0 0
+60 0 0 0 0 ACTIVATE:hasphat_antabolis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:favor
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_2_AntabolisInformant:ge:10
+0.3 0 0 0 0 EXPECT:item:misc_dwrv_ark_cube00:eq:0
+0.3 0 0 0 0 TOPIC:sixth_house
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_2_AntabolisInformant:ge:15
+0.3 0 0 0 0 EXPECT:item:bk_a1_2_antabolistocosades:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_2_AntabolisInformant:ge:20
+0.3 0 0 0 0 EXPECT:item:bk_a1_2_antabolistocosades:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

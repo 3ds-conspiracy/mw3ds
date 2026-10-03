@@ -1,0 +1,166 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC1_marshmerrow_not:1
+0.3 0 0 0 0 JOIN:imperial_cult:0
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:Synnolian_Tunifus:localdayspassed:2
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic2_muck
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:imperial_cult:0
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Synnolian_Tunifus
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic1_marshmerrow
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC_8_Nord_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Skyrim_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Heidmir
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic8_heidmir
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC_8_Nord_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Skyrim_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Ingokning
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic8_ingokning
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC_8_Nord_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Skyrim_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Bedraflod
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic8_bedraflod
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC_8_Nord_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Skyrim_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Eiruki_Hearth-Healer
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic8_eiruki
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC_8_Nord_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Skyrim_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:Briring
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic8_briring
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Endusal,_Kagrenac's_study
+8 0 0 0
+0.3 0 0 0 0 TALK:dagoth_endus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dagoth_brandy
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:c2_sunder
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 JOURNAL:B4_HeartFire:1
+0.3 0 0 0 0 JOURNAL:B4_WarAxe:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_robe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:5
+0.3 0 0 0 0 GIVE:heart_of_fire:1
+0.3 0 0 0 0 JOURNAL:B4_Robe:1
+0.3 0 0 0 0 JOURNAL:B4_WarAxe:1
+0.3 0 0 0 0 GIVE:robe_of_erur_dan:1
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:han-ammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:want_to_be_ashkhan
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_heartfire
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

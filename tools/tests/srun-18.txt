@@ -1,0 +1,142 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_belt:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Tiras:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Tiras_Sadus:_General_Merchandise
+8 0 0 0
+0.3 0 0 0 0 TALK:tiras_sadus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_tiras
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_belt:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Tiras:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Tiras_Sadus:_General_Merchandise
+8 0 0 0
+0.3 0 0 0 0 TALK:tiras_sadus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_tiras
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_KoalCave:70
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Tuveso_Beleth:_Smith
+8 0 0 0
+0.3 0 0 0 0 TALK:tuveso_beleth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Koal_Cave
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_koalcave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_ClearSarethi:90
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Right_Wing
+8 0 0 0
+0.3 0 0 0 0 TALK:varvur_sarethi
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_clearsarethi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_SixthHouseBase:10
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Right_Wing
+8 0 0 0
+0.3 0 0 0 0 TALK:varvur_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ash_statue
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_sixthhousebase
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_ArenimTomb:50
+0.3 0 0 0 0 GIVE:amulet_Agustas_unique:1
+0.3 0 0 0 0 GOTO:Arenim_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:Satyana
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_arenimtomb
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_ArenimTomb:50
+0.3 0 0 0 0 GIVE:amulet_Agustas_unique:1
+0.3 0 0 0 0 GOTO:Arenim_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:Satyana
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_arenimtomb
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_CultistVictim:40
+0.3 0 0 0 0 GOTO:Ashalmawia,_Shrine
+8 0 0 0
+0.3 0 0 0 0 TALK:malexa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:escape_from_cultists
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_cultistvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_DB_Carecalmo:10
+0.3 0 0 0 0 GOTO:Ashalmimilkala,_Shrine
+8 0 0 0
+0.3 0 0 0 0 TALK:carecalmo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ultimatum
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_carecalmo
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,5 @@
+3 0 0 0 0 MSG
+0.5 0 0 0 0 GOTO:Balmora,_Ra'Virr:_Trader
+4 0 0 0
+0.1 0 0 0 0 SHOT
+2 0 0 0

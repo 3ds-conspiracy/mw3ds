@@ -1,0 +1,7 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:global:random100
+1 0 0 0
+0.3 0 0 0 0 CHECK:global:random100
+0.3 0 0 0 0 GOTO:Ghostgate,_Tower_of_Dusk
+6 0 0 0
+0.3 0 0 0 0 CHECK:wulf

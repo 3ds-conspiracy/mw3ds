@@ -1,0 +1,11 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Arkngthand,_Heaven's_Gallery
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Arkngthand
+90 0 0 0 0 WALKTO:in_dwrv_corr2_07
+0.3 0 0 0
+0.3 0 0 0 0 FACE:in_dwrv_corr2_07
+1 0 0 0
+0.3 0 0 0 0 EXPECT:target:eq:0
+0.3 0 0 0 0 SHOT

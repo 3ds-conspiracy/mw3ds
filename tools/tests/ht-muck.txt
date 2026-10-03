@@ -1,0 +1,17 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 JOIN:telvanni
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+4 0 0 0
+0.5 0 0 0 0 DOOR:raven_omayn
+1 0 0 0 0 TOPIC:muck
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:HT_Muck
+0.3 0 0 0 0 GIVE:ingred_muck_01:5
+0.5 0 0 0 0 DOOR:raven_omayn
+1 0 0 0 0 TOPIC:muck
+1 0 0 0 0 CHOICE:1
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:HT_Muck
+1 0 0 0

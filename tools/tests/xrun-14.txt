@@ -1,0 +1,140 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:29671:-72938:765:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:tarvyn_faren
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:hh_escortmerchant:50
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_escortmerchant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:tenyeminwe
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:mg_escortscholar1:10
+0.3 0 0 0 0 TP:142120:39665:578:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:tenyeminwe:timer:2
+120 0 0 0 0 WALKTO:gals_arethi
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_escortscholar1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Dissapla_Mine
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:teres_arothan
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:fg_dissaplamine:50
+0.3 0 0 0 0 GOTO:Dissapla_Mine
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:teres_arothan:timer:2
+120 0 0 0 0 WALKTO:novor_drethan
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_dissaplamine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_richtrader:10
+0.3 0 0 0 0 TP:31620:-54761:1073:180
+8 0 0 0
+120 0 0 0 0 KILL:teris_raledran
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_richtrader
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_richtrader:10
+0.3 0 0 0 0 GOTO:Vivec
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_richtrader
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_richtrader:10
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Canalworks
+8 0 0 0
+120 0 0 0 0 WALKTO:in_velothismall_ndoor_agrippina
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_richtrader
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_fakeslave:10
+0.3 0 0 0 0 TP:46161:-45965:1077:180
+8 0 0 0
+120 0 0 0 0 KILL:tul
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_fakeslave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_fakeslave:60
+0.3 0 0 0 0 TP:46161:-45965:1077:180
+8 0 0 0
+120 0 0 0 0 KILL:tul
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_fakeslave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_fakeslave:10
+0.3 0 0 0 0 TP:35703:-39160:997:180
+8 0 0 0
+120 0 0 0 0 WALKTO:sterdecan
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_fakeslave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:7718:186804:890:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:ulyne_henim
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:fg_vas:50
+0.3 0 0 0 0 GOTO:Vas,_Tower
+8 0 0 0
+120 0 0 0 0 KILL:daris_adram
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_vas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

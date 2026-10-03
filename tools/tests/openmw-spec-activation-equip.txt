@@ -1,0 +1,40 @@
+# Equipping as the player does through the inventory (spec/activation.md: Equipping). Source: mwclass/armor.cpp, weapon.cpp, clothing.cpp, light.cpp canBeEquipped, actionequip.cpp. Beast races, broken pieces, two-hander with shield (OpenMW wears both), shared slots.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+3 0 0 0
+# Setup: the pieces are carried, not worn (SETITEM adds without equipping)
+0.3 0 0 0 0 SETITEM:iron_cuirass:1
+0.3 0 0 0 0 SETITEM:iron_shield:1
+0.3 0 0 0 0 SETITEM:iron_claymore:1
+0.3 0 0 0 0 SETITEM:light_com_torch_01:1
+0.3 0 0 0 0 SETITEM:iron_boots:1
+0.3 0 0 0 0 SETITEM:common_shoes_01:0
+0.3 0 0 0 0 SETITEM:common_shoes_01:1
+0 0 0 0 0 SETUP-END
+# 1. A broken armor piece is refused with sInventoryMessage1; mended, it is worn
+0.3 0 0 0 0 SETITEMHEALTH:iron_cuirass:0
+0.3 0 0 0 0 EQUIP:iron_cuirass
+0.5 0 0 0 0 EXPECT:message:broken
+0.1 0 0 0 0 EXPECT:equipped:iron_cuirass:eq:0
+0.3 0 0 0 0 SETITEMHEALTH:iron_cuirass:2000
+0.3 0 0 0 0 EQUIP:iron_cuirass
+0.5 0 0 0 0 EXPECT:equipped:iron_cuirass:eq:1
+# 2. A two-handed weapon and a shield are both worn (OpenMW does not unequip either); the shield's code with the two-hander in hand is 3
+0.3 0 0 0 0 EQUIP:iron_shield
+0.3 0 0 0 0 EQUIP:iron_claymore
+0.5 0 0 0 0 EXPECT:equipped:iron_claymore:eq:1
+0.1 0 0 0 0 EXPECT:equipped:iron_shield:eq:1
+0.1 0 0 0 0 EXPECT:canequip:iron_claymore:eq:2
+0.1 0 0 0 0 EXPECT:canequip:iron_shield:eq:3
+# 3. A carried light takes the left hand: the shield comes off
+0.3 0 0 0 0 EQUIP:light_com_torch_01
+0.5 0 0 0 0 EXPECT:equipped:light_com_torch_01:eq:1
+0.1 0 0 0 0 EXPECT:equipped:iron_shield:eq:0
+0.1 0 0 0 0 EXPECT:equipped:iron_claymore:eq:1
+# 4. Boots and shoes are one slot: shoes take boots off
+0.3 0 0 0 0 EQUIP:iron_boots
+0.5 0 0 0 0 EXPECT:equipped:iron_boots:eq:1
+0.3 0 0 0 0 EQUIP:common_shoes_01
+0.5 0 0 0 0 EXPECT:equipped:common_shoes_01:eq:1
+0.1 0 0 0 0 EXPECT:equipped:iron_boots:eq:0

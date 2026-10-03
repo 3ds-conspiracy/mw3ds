@@ -1,0 +1,147 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:mallam_ryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_gothrenhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_theranahort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_drathahort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:arara_uvulas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_nelothhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_TheranaClothes:10
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slave_rebellion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_slaverebellion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:galos_mathendis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:coded_message
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_fyrmessage
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_FyrMessage:100
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:galos_mathendis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cure_Blight
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_cureblight
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_FyrMessage:100
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:galos_mathendis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Daedra_Skin
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_daedraskin
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:new_clothes
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_theranaclothes
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

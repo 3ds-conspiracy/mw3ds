@@ -1,0 +1,64 @@
+# Activating containers and bodies as the player does (spec/activation.md: Containers). Source: mwclass/container.cpp Container::activate, npc.cpp Npc::activate.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+# 1. Locked chest without its key (Beshara, Com_Chest_11_alvur, lock 30, key_alvur): stays shut, LockedChest sound; with the key: message, opens, key stays
+0.3 0 0 0 0 GOTO:Beshara
+3 0 0 0
+0.3 0 0 0 0 SNAP:soundstarted:LockedChest
+60 0 0 0 0 ACTIVATE:Com_Chest_11_alvur
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.1 0 0 0 0 EXPECT:soundstarted:LockedChest:gt:@
+0.3 0 0 0 0 GIVE:key_alvur
+60 0 0 0 0 ACTIVATE:Com_Chest_11_alvur
+1 0 0 0
+0.3 0 0 0 0 EXPECT:message:used_to_open_lock
+0.1 0 0 0 0 EXPECT:screen:container
+0.1 0 0 0 0 EXPECT:item:key_alvur:eq:1
+0.5 0 0 0 0 B
+1 0 0 0
+# 2. Unlocked trapped chest (Bensamsi, chest_small_01_gold_50, trap "flame"): the first activation burns the player and does not open; the trap is gone, the second opens
+0.3 0 0 0 0 SETHEALTH:1
+0.3 0 0 0 0 GOD:0
+0.3 0 0 0 0 GOTO:Bensamsi
+3 0 0 0
+0.3 0 0 0 0 SNAP:health
+60 0 0 0 0 ACTIVATE:chest_small_01_gold_50
+3 0 0 0
+0.3 0 0 0 0 EXPECT:health:lt:@
+0.1 0 0 0 0 EXPECT:screen:none
+20 0 0 0
+0.3 0 0 0 0 SETHEALTH:1
+0.3 0 0 0 0 SNAP:health
+60 0 0 0 0 ACTIVATE:chest_small_01_gold_50
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reftrap:chest_small_01_gold_50:eq:0
+0.3 0 0 0 0 EXPECT:screen:container
+0.1 0 0 0 0 EXPECT:health:ge:@
+0.5 0 0 0 0 B
+1 0 0 0
+# 3. Locked and trapped chest with its key (Sarys Ancestral Tomb, chest_tomb_large02, lock 10, key_Sarys_chest, trap_shock00): key unlocks and disarms, no damage, opens
+0.3 0 0 0 0 GOTO:Sarys_Ancestral_Tomb
+3 0 0 0
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:key_Sarys_chest
+0.1 0 0 0 0 EXPECT:reftrap:chest_tomb_large02:eq:1
+60 0 0 0 0 ACTIVATE:chest_tomb_large02
+3 0 0 0
+0.3 0 0 0 0 EXPECT:message:used_to_open_lock
+0.1 0 0 0 0 EXPECT:screen:container
+0.1 0 0 0 0 EXPECT:reftrap:chest_tomb_large02:eq:0
+0.5 0 0 0 0 B
+1 0 0 0
+# 4. A body opens as a container once dead (Tel Vos, Aryon); the living talk
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+5 0 0 0
+0.3 0 0 0 0 SOULKILL:aryon
+3 0 0 0
+0.3 0 0 0 0 EXPECT:dead:aryon
+60 0 0 0 0 ACTIVATE:aryon
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:container
+0.5 0 0 0 0 B
+1 0 0 0

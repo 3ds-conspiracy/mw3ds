@@ -1,0 +1,11 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's
+0.3 0 0 0 0 EXPECT:refitem:crate_01_telvos1,hortatorrobe:eq:0
+0.3 0 0 0 0 SOULKILL:aryon
+3 0 0 0
+0.3 0 0 0 0 EXPECT:dead:aryon
+0.3 0 0 0 0 EXPECT:refitem:crate_01_telvos1,hortatorrobe:eq:1
+1 0 0 0

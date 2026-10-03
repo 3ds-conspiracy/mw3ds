@@ -1,0 +1,128 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Apologies:5
+0.3 0 0 0 0 GIVE:bk_Aedra_Tarer_Unique:1
+0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:trebonius_artorius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Apologies
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_apologies
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_RilmsShoes:100
+0.3 0 0 0 0 JOIN:temple:9
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:endryn_llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shoes_of_St._Rilms
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_rilmsshoes
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_DiseaseCarrier:50
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:endryn_llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:leave_Vivec_City
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_diseasecarrier
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_SanctusShrine:70
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:endryn_llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanctus_Shrine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_sanctusshrine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_SanctusShrine:50
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:endryn_llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanctus_Shrine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_sanctusshrine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:unsealededryno1:1
+0.3 0 0 0 0 JOURNAL:HH_BankCourier:50
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_report
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_bankcourier
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_EscortMerchant:70
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Tarvyn_Faren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_escortmerchant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_AshlanderEbony:10
+0.3 0 0 0 0 JOURNAL:B3_ZainabKill:1
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_ashlanderebony
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

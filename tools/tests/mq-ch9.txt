@@ -1,0 +1,62 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:50
+0.3 0 0 0 0 JOIN:nerevarine:1
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:safe_place
+0.3 0 0 0 0 TOPIC:safe_place
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:1
+0.3 0 0 0 0 TOPIC:make_it_safe
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:5
+0.3 0 0 0 0 TOPIC:accompany_you
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Antechamber
+6 0 0 0
+120 0 0 0 0 ACTIVATE:hlireni_indavel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Player_of_the_Game
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:accompany_you
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Inner_Shrine
+8 0 0 0
+180 0 0 0 0 WALKTO:active_dae_sheogorath_ad
+20 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:40
+0.3 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:name_you_Nerevarine
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:eq:50
+0.3 0 0 0 0 EXPECT:item:madstone:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

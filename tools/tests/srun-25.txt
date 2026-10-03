@@ -1,0 +1,156 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_Sottilde:10
+0.3 0 0 0 0 GOTO:Balmora,_South_Wall_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:sottilde
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:code_book
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_sottilde
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_SkoomaCorpse:15
+0.3 0 0 0 0 GIVE:apparatus_a_spipe_tsiya:1
+0.3 0 0 0 0 GOTO:Balmora,_Tsiya's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:tsiya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Skooma_pipe
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_skoomacorpse
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_SlaveMule:102
+0.3 0 0 0 0 GOTO:Balmora,_Vorar_Helas'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:vorar_helas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Relam_Arinith
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_slavemule
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_SlaveMule:102
+0.3 0 0 0 0 GOTO:Balmora,_Vorar_Helas'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:vorar_helas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Relam_Arinith
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_slavemule
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:DA_Sheogorath:30
+0.3 0 0 0 0 GIVE:fork_horripilation_unique:1
+0.3 0 0 0 0 GOTO:Big_Head's_Shack
+8 0 0 0
+0.3 0 0 0 0 TALK:big_head
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Fork_of_Horripilation
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_sheogorath
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:DA_Sheogorath:11
+0.3 0 0 0 0 GOTO:Big_Head's_Shack
+8 0 0 0
+0.3 0 0 0 0 TALK:big_head
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_sheogorath
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:5
+0.3 0 0 0 0 GOTO:Buckmoth_Legion_Fort,_Interior
+8 0 0 0
+0.3 0 0 0 0 TALK:raesa_pullia
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House_base
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_2_6thhouse
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescueKnight:50
+0.3 0 0 0 0 GOTO:Buckmoth_Legion_Fort,_Interior
+8 0 0 0
+0.3 0 0 0 0 TALK:imsin_the_dreamer
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Joncis_Dalomax
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescueknight
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_MaidenToken:70
+0.3 0 0 0 0 GOTO:Buckmoth_Legion_Fort,_Interior
+8 0 0 0
+0.3 0 0 0 0 TALK:imsin_the_dreamer
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:maiden's_token
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_maidentoken
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_Bugrol:20
+0.3 0 0 0 0 GOTO:Caldera,_Bashuk_gra-Bat's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:bashuk_gra-bat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:note_from_Bugrol
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_bugrol
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

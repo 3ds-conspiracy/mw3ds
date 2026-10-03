@@ -1,0 +1,167 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 TALK:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Antecedents_of_Dwemer_Law
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_dwemerlaw
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_ChroniclesNchuleft:1
+0.3 0 0 0 0 JOURNAL:HT_DwemerLaw:100
+0.3 0 0 0 0 JOURNAL:HT_FireAndFaith:100
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:baladas_demnevanni:givenreward:0
+0.3 0 0 0 0 TALK:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chronicles_of_Nchuleft
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_chroniclesnchuleft
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:hortatorvotes:6
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 TALK:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_telvannihort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_nchunaksfireandfaith:1
+0.3 0 0 0 0 JOURNAL:HT_ChroniclesNchuleft:100
+0.3 0 0 0 0 JOURNAL:HT_DwemerLaw:100
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:baladas_demnevanni:givenreward:0
+0.3 0 0 0 0 TALK:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Fire_and_Faith
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_fireandfaith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.3 0 0 0 0 TALK:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dahrk_Mezalf
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_dahrkmezalf
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescuePilgrim:100
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ragash_gra-Shuzgub
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescueragash
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:imperial_legion:0
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:land_deed
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_widowland
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_GnisisBlight:100
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Madura_Seran
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescuepilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescueRagash:100
+0.3 0 0 0 0 JOIN:imperial_legion:0
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_talostreason
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_TalosTreason:100
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Anumidium
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_blueprints
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

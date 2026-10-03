@@ -1,0 +1,147 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC19_Restless_Spirit:1
+0.3 0 0 0 0 GOTO:Hla_Oad,_Okur's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:Okur
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic19_restless_spirit
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:21
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dissident_Priests
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:The_Lost_Prophecy
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:The_Seven_Curses
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lost_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lost_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dagoth_Ur
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

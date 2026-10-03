@@ -1,0 +1,178 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Hanarai_Assutlanipal's_House
+8 0 0 0
+120 0 0 0 0 KILL:hanarai_assutlanipal
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepersawake
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 GOTO:Assemanu,_Shrine
+8 0 0 0
+120 0 0 0 0 KILL:dagoth_hlevul
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepersawake
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Telasero,_Lower_Level
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:sondaale_of_shimmerene
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:fg_telasero:50
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_telasero
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:sonummu_zabamat
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b3_zainabkill
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Zainab_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:sonummu_zabamat
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_failed_nerevarine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:da_azura:10
+0.3 0 0 0 0 TP:29314:197327:897:180
+8 0 0 0
+120 0 0 0 0 KILL:golden%saint_staada
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_azura
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build1_h
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build1_r
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build1_t
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build2_h
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

@@ -1,0 +1,165 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Kurapli's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:kurapli
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:personal_vengeance
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_1_kurapli_zallay
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:50
+0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:50
+0.3 0 0 0 0 JOURNAL:B2_AhemmusaSafe:50
+0.3 0 0 0 0 JOURNAL:B3_ZainabBride:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Erabenimsun_Nerevarine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_all_nerevarine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B5_RedoranHort:50
+0.3 0 0 0 0 JOURNAL:B6_HlaaluHort:50
+0.3 0 0 0 0 JOURNAL:B7_TelvanniHort:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_all_hortator
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lost_prophecies
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_6_incarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B8_All_Hortator:50
+0.3 0 0 0 0 JOURNAL:B8_All_Nerevarine:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Seventh_trial
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_nibani_2_vivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 REP:50
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:nibani_maesa
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_backdoor6
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Alusaron:_Smith
+8 0 0 0
+0.3 0 0 0 0 TALK:alusaron
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:competition
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_deed
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:80
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Fighters_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:senyndie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ahnassi
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi_a
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinebeltimpaling:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Impaling_Thrust
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_impaling
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:threadswebspinner:25
+0.3 0 0 0 0 GIVE:sanguinebeltbalancedarmor:1
+0.3 0 0 0 0 JOIN:morag_tong:0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Balanced_Armor
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_s_balancedarmor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

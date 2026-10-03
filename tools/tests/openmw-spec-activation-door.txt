@@ -1,0 +1,47 @@
+# Activating doors as the player does (spec/activation.md: Doors). Source: mwclass/door.cpp Door::activate.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+# 1. A locked door, no key: nothing opens, only the LockedDoor sound plays, no message, no crime (Fargoth's door, lock 25, owner fargoth)
+0.3 0 0 0 0 GOTO:Seyda_Neen
+3 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 SNAP:soundstarted:LockedDoor
+60 0 0 0 0 DOORTO:Seyda_Neen,_Fargoth's_House
+2 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Fargoth's
+0.1 0 0 0 0 EXPECT:soundstarted:LockedDoor:gt:@
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+# 2. Pick up the real key in the Census Office, use it on the real locked door (lock 45, Key_SN_Warehouse): the message, the door opens, the key stays
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+3 0 0 0
+60 0 0 0 0 PICKUP:Key_SN_Warehouse
+1 0 0 0
+0.3 0 0 0 0 EXPECT:item:Key_SN_Warehouse:eq:1
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+3 0 0 0
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Warehouse
+3 0 0 0
+0.3 0 0 0 0 EXPECT:message:used_to_open_lock
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census_and_Excise_Warehouse
+0.1 0 0 0 0 EXPECT:item:Key_SN_Warehouse:eq:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+# 3. A trapped, locked door with its key: the key unlocks AND disarms; the player is not hurt (Mudan door, lock 100, key_door_Mudan00, trap_shock00)
+0.3 0 0 0 0 GOD:0
+0.3 0 0 0 0 GOTO:Mudan,_Lost_Dwemer_Checkpoint
+3 0 0 0
+0.3 0 0 0 0 GIVE:key_door_Mudan00
+0.3 0 0 0 0 SNAP:health
+60 0 0 0 0 DOORTO:Mudan,_Central_Vault
+4 0 0 0
+0.3 0 0 0 0 EXPECT:message:used_to_open_lock
+0.1 0 0 0 0 EXPECT:cell:Mudan,_Central_Vault
+0.1 0 0 0 0 EXPECT:health:ge:@
+# 4. An unlocked trapped door, no key (Mudan, to Right Tower, trap_shock00): the first activation fires the trap on the player instead of opening
+0.3 0 0 0 0 GOTO:Mudan,_Lost_Dwemer_Checkpoint
+3 0 0 0
+0.3 0 0 0 0 SNAP:health
+60 0 0 0 0 DOORTO:Mudan,_Right_Tower
+4 0 0 0
+0.3 0 0 0 0 EXPECT:health:lt:@
+1 0 0 0

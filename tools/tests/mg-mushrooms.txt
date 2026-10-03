@@ -1,0 +1,25 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:60
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.5 0 0 0 0 DOOR:ranis_athrys
+1 0 0 0 0 TOPIC:join_the_mages_guild
+1 0 0 0 0 CHOICE:1
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 DOOR:ajira
+1 0 0 0 0 TOPIC:mushrooms
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:MG_BCShrooms
+0.3 0 0 0 0 GIVE:ingred_russula_01
+0.3 0 0 0 0 GIVE:ingred_coprinus_01
+0.3 0 0 0 0 GIVE:ingred_bc_bungler's_bane
+0.3 0 0 0 0 GIVE:ingred_bc_hypha_facia
+0.5 0 0 0 0 DOOR:ajira
+1 0 0 0 0 TOPIC:mushrooms
+1 0 0 0 0 CHOICE:1
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:MG_BCShrooms
+1 0 0 0

@@ -1,0 +1,163 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_SS_ChurchPolice:50
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_goblet
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ss_churchpolice
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_BitterBribe:50
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bitter_Cup
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_bitterbribe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_BitterBribe:30
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bitter_Cup
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_bitterbribe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_SS_Yngling:50
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:corruption
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ss_yngling
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_SS_Enamor:10
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:stacey:enamorinchest:1
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Enamor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ss_enamor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_LiteracyCampaign:50
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Canal_South-One
+8 0 0 0
+0.3 0 0 0 0 TALK:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:people_cannot_read
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_literacycampaign
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_TwinLamps3:70
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Canal_South-One
+8 0 0 0
+0.3 0 0 0 0 TALK:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_twinlamps3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_TwinLamps1:70
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Canal_South-One
+8 0 0 0
+0.3 0 0 0 0 TALK:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_twinlamps1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Shipment:20
+0.3 0 0 0 0 GIVE:misc_lw_bowl:5
+0.3 0 0 0 0 GIVE:misc_lw_cup:5
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Glassworker's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:alarvyne_indalas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:dwarven_limeware
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_shipment
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_DeadMen:50
+0.3 0 0 0 0 GIVE:common_ring_danar:1
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Brewers_and_Fishmongers_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:moroni_uvelas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:gone_missing
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_deadmen
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

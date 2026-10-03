@@ -1,0 +1,132 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:6
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:22
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:20
+0.3 0 0 0 0 JOURNAL:A1_4_MuzgobInformant:55
+0.3 0 0 0 0 JOURNAL:A1_6_AddhiranirrInformant:45
+0.3 0 0 0 0 JOURNAL:A1_7HuleeyaInformant:50
+0.3 0 0 0 0 JOURNAL:A1_10_MehraMilo:50
+0.3 0 0 0 0 JOURNAL:A1_V_VivecInformants:50
+0.3 0 0 0 0 JOIN:blades:1
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+0.3 0 0 0 0 STARTSCRIPT:sleepers
+40 0 0 0 0 DOORTO:outside
+6 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+20 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:A1_Dreams:eq:1
+90 0 0 0 0 DOORTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_11_ZainsubaniInformant:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+6 0 0 0
+90 0 0 0 0 ACTIVATE:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:thoughtful_gift
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_11_ZainsubaniInformant:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 PICKUP:bk_ashland_hymns
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:bk_ashland_hymns:ge:1
+90 0 0 0 0 ACTIVATE:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_11_ZainsubaniInformant:ge:31
+0.3 0 0 0 0 TOPIC:Ashlanders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_11_ZainsubaniInformant:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Zabamund's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:zabamund
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:35
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:initiation_rite
+0.3 0 0 0 0 TOPIC:initiation_rite
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Urshilaku,_Juno_Burial
+6 0 0 0
+0.3 0 0 0 0 EQUIP:silver_longsword
+180 0 0 0 0 KILL:wraith_sul_senipul
+2 0 0 0
+0.3 0 0 0 0 EXPECT:dead:wraith_sul_senipul
+30 0 0 0 0 LOOT:wraith_sul_senipul:bonebiter_bow_unique
+1 0 0 0
+0.3 0 0 0 0 EXPECT:item:bonebiter_bow_unique:ge:1
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:initiation_rite
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:45
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:aspect_and_uncertain_parents
+0.3 0 0 0 0 TOPIC:aspect_and_uncertain_parents
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:51
+0.3 0 0 0 0 KNOW:the_moon-and-star
+0.3 0 0 0 0 TOPIC:the_moon-and-star
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:52
+0.3 0 0 0 0 KNOW:lost_prophecies
+0.3 0 0 0 0 TOPIC:lost_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:56
+0.3 0 0 0 0 KNOW:pass_the_test
+0.3 0 0 0 0 TOPIC:pass_the_test
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

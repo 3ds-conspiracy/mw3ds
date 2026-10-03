@@ -1,0 +1,30 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:60
+0.3 0 0 0 0 GIVE:gold_001:500
+0.3 0 0 0 0 GOTO:Balmora,_South_Wall_Cornerclub
+3 0 0 0
+0.5 0 0 0 0 DOOR:habasi
+1 0 0 0 0 TOPIC:join_the_thieves_guild
+1 0 0 0 0 CHOICE:1
+1 0 0 0 0 TOPIC:New-Shoes_Bragor
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:TG_BrotherBragor
+0.3 0 0 0 0 GIVE:misc_dwrv_artifact50
+0.3 0 0 0 0 GOTO:Pelagiad,_Fort_Pelagiad
+4 0 0 0
+0.5 0 0 0 0 DOOR:shadbak_gra-burbug
+1 0 0 0 0 TOPIC:New-Shoes_Bragor
+1 0 0 0 0 CHOICE:2
+1 0 0 0 0 CHOICE:1
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:TG_BrotherBragor
+0.3 0 0 0 0 GOTO:Balmora,_South_Wall_Cornerclub
+4 0 0 0
+0.5 0 0 0 0 DOOR:habasi
+1 0 0 0 0 TOPIC:New-Shoes_Bragor
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:TG_BrotherBragor
+1 0 0 0

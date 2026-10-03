@@ -1,0 +1,27 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Moonmoth_Legion_Fort,_Interior
+8 0 0 0
+0.3 0 0 0 0 TALK:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:forts
+0.3 0 0 0 0 SETDISP:radd_hard-heart:60
+0.3 0 0 0 0 EXPECT:answer:Forts:radd_hard-heart:eq:garrisons
+0.3 0 0 0 0 EXPECT:topiclisted:Forts
+0.3 0 0 0 0 SETDISP:radd_hard-heart:10
+0.3 0 0 0 0 EXPECT:answer:Forts:radd_hard-heart:eq:not_telling_you_that
+0.3 0 0 0 0 EXPECT:topiclisted:Forts
+0.3 0 0 0 0 TOPIC:Forts
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:said:not_telling_you_that
+0.3 0 0 0 0 JOIN:imperial_legion:0
+0.3 0 0 0 0 EXPECT:answer:Service_Refusal:radd_hard-heart:eq:what_is_your_rank
+0.3 0 0 0 0 JOIN:imperial_legion:6
+0.3 0 0 0 0 EXPECT:answer:Service_Refusal:radd_hard-heart:ne:what_is_your_rank
+0.3 0 0 0 0 GOTO:Balmora,_South_Wall_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 WEATHER:1+SETGLOBAL:random100:0
+0.3 0 0 0 0 SETDISP:onlyhestandsthere:50
+0.3 0 0 0 0 EXPECT:answer:Hello:onlyhestandsthere:ne:fair_travels
+1 0 0 0

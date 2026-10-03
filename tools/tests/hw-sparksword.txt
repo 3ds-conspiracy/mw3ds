@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:iron_sparksword
+0.3 0 0 0 0 EQUIP:iron_sparksword
+0.6 0 0 0 0 X
+1.5 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:untextured:eq:0
+1 0 0 0

@@ -1,0 +1,138 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_AshlanderEbony:50
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_ashlanderebony
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_TheExterminator:10
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:edryno_arethi:gameratscured:3
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:game_rats
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_theexterminator
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Unrequited:90
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_General_Goods
+8 0 0 0
+0.3 0 0 0 0 TALK:gadayn_andarys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:deliver_the_potion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_unrequited
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Unrequited:40
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_General_Goods
+8 0 0 0
+0.3 0 0 0 0 TALK:gadayn_andarys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:spoken_to_Eraldil
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_unrequited
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Unrequited:95
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_General_Goods
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:gadayn_andarys:eraldilhere:1
+0.3 0 0 0 0 TALK:gadayn_andarys
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_unrequited
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Unrequited:70
+0.3 0 0 0 0 GIVE:p_lovepotion_unique:1
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Waistworks
+8 0 0 0
+0.3 0 0 0 0 TALK:eraldil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:apology_from_Gadayn
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_unrequited
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Bone:90
+0.3 0 0 0 0 GOTO:Vivec,_Jeanne:_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:jeanne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:terrible_haunting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_bone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Bone:60
+0.3 0 0 0 0 GOTO:Vivec,_Jeanne:_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:jeanne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:terrible_haunting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_bone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Bone:50
+0.3 0 0 0 0 GOTO:Vivec,_Jeanne:_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:jeanne
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_bone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

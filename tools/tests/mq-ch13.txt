@@ -1,0 +1,123 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:25
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOIN:nerevarine:3
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:30000
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+6 0 0 0
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B7_AryonHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+6 0 0 0
+120 0 0 0 0 ACTIVATE:dratha
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B7_DrathaHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+6 0 0 0
+120 0 0 0 0 ACTIVATE:neloth
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B7_NelothHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Tel_Branora,_Upper_Tower:_Therana's_Chamber
+6 0 0 0
+120 0 0 0 0 ACTIVATE:therana
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B7_TheranaHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+6 0 0 0
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B7_BaladasHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Tel_Aruhn,_Upper_Tower
+6 0 0 0
+0.3 0 0 0 0 EQUIP:silver_longsword
+120 0 0 0 0 KILL:gothren
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:dead:gothren
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+6 0 0 0
+120 0 0 0 0 ACTIVATE:aryon
+2 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:global:hortatorvotes:gt:5
+0.3 0 0 0 0 EXPECT:journal:B7_TelvanniHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

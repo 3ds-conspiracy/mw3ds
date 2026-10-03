@@ -1,0 +1,29 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SETGLOBAL:chargenstate:-1
+0.3 0 0 0 0 GIVE:gold_001:1000
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+8 0 0 0
+0.3 0 0 0 0 SETBOUNTY:250+ALARM:chargen_captain+EXPECT:greeting:chargen_captain:pay_the_court_250_gold
+0.3 0 0 0 0 SETBOUNTY:4999+ALARM:chargen_captain+EXPECT:greeting:chargen_captain:you_don't_have_the_4999_gold
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:arrille
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 SETDISP:arrille:40
+0.3 0 0 0 0 SNAP:refdisp:arrille
+0.3 0 0 0 0 ROLL:0+PERSUADE:1
+0.3 0 0 0 0 EXPECT:refdisp:arrille:ge:@5
+0.3 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refdisp:arrille:lt:@
+0.3 0 0 0 0 TALK:arrille
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 ROLL:99+PERSUADE:3
+0.3 0 0 0 0 EXPECT:gold:eq:@
+0.3 0 0 0 0 ROLL:0+PERSUADE:3
+0.3 0 0 0 0 EXPECT:gold:eq:@-10

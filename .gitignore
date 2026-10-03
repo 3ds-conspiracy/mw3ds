@@ -1,0 +1,23 @@
+build/
+*.3dsx
+*.smdh
+*.elf
+*.map
+# converted game data is derived from copyrighted assets; never commit it
+data/
+out/
+__pycache__/
+*.pyc
+out/
+tools/tests/chain-*.txt
+.env
+
+# test run output
+qrun-*/
+tools/tests/bench-*.txt
+
+# private working notes (handoffs, todo)
+internal/
+
+# tools downloaded by tools/setup.ps1
+.tools/

@@ -1,0 +1,136 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_ParalyzedBarbarian:60
+0.3 0 0 0 0 GIVE:p_cure_common_s:1
+0.3 0 0 0 0 TP:-37748:53220:2597:180
+8 0 0 0
+0.3 0 0 0 0 TALK:hisin_deep-raed
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:potion_of_Cure_Common_Disease
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_paralyzedbarbarian
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_ParalyzedBarbarian:60
+0.3 0 0 0 0 TP:-37748:53220:2597:180
+8 0 0 0
+0.3 0 0 0 0 TALK:hisin_deep-raed
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_paralyzedbarbarian
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_GuardGuarHerds:10
+0.3 0 0 0 0 TP:-51947:51512:1773:180
+8 0 0 0
+0.3 0 0 0 0 TALK:drulene_falen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:trouble_with_bandits
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_guardguarherds
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_CultistVictim:50
+0.3 0 0 0 0 TP:-57527:125266:1428:180
+8 0 0 0
+0.3 0 0 0 0 TALK:sason
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_cultistvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC15_Missing_Limeware:1
+0.3 0 0 0 0 TP:-59413:26464:536:180
+8 0 0 0
+0.3 0 0 0 0 TALK:caryarel
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic15_missing_limeware
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_BanditVictim:30
+0.3 0 0 0 0 GIVE:expensive_amulet_aeta:1
+0.3 0 0 0 0 GIVE:expensive_ring_aeta:1
+0.3 0 0 0 0 TP:-6684:19666:1700:180
+8 0 0 0
+0.3 0 0 0 0 TALK:aeta_wave-breaker
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_heirlooms
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_banditvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_BanditVictim:50
+0.3 0 0 0 0 GIVE:expensive_amulet_aeta:1
+0.3 0 0 0 0 GIVE:expensive_ring_aeta:1
+0.3 0 0 0 0 TP:-6684:19666:1700:180
+8 0 0 0
+0.3 0 0 0 0 TALK:aeta_wave-breaker
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_heirlooms
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_banditvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_BanditVictim:11
+0.3 0 0 0 0 TP:-6684:19666:1700:180
+8 0 0 0
+0.3 0 0 0 0 TALK:aeta_wave-breaker
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_banditvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_HentusPants:10
+0.3 0 0 0 0 TP:-87479:92327:1299:180
+8 0 0 0
+0.3 0 0 0 0 TALK:hainab_lasamsi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:pants
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_hentuspants
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,161 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ramoran_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:hlaren_ramoran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nalvilie_Saren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_oldflame
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:redoranmurdered:1
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ramoran_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:hlaren_ramoran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b5_ramoranhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_FoundersHelm:100
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:trouble_with_bandits
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_guardguarherds
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_MudcrabNest:100
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cure_Disease_potion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_courier
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_councilors
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b5_redoranbook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:hostile_mudcrabs
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_mudcrabnest
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_MudcrabNest:100
+0.3 0 0 0 0 JOURNAL:HR_Courier:100
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mathis_Dalobar
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_finddalobar
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_Courier:100
+0.3 0 0 0 0 JOURNAL:HR_FindDalobar:100
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Founder's_Helm
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_foundershelm
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_GuardGuarHerds:100
+0.3 0 0 0 0 JOIN:redoran:3
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Athyn_Sarethi
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_guardsarethi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:redoran:9
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_meetvivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

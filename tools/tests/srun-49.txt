@@ -1,0 +1,126 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B7_GothrenHort:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Tel_Aruhn,_Upper_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:gothren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_gothrenhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B7_GothrenHort:30
+0.3 0 0 0 0 GOTO:Tel_Aruhn,_Upper_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:gothren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_gothrenhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B7_GothrenHort:30
+0.3 0 0 0 0 GOTO:Tel_Aruhn,_Upper_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:gothren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_gothrenhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_VictimRomance:100
+0.3 0 0 0 0 GOTO:Tel_Branora,_Sethan's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:barnand_erelie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Maurrie_Aurmine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_victimromance
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_OutcastAshlanders:100
+0.3 0 0 0 0 GOTO:Tel_Mora,_Berwen:_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:berwen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Girith's_guar_hides
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_outcastashlanders
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_CorprusStalker:10
+0.3 0 0 0 0 GOTO:Tel_Mora,_Berwen:_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:berwen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Corprus_Stalker
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_corprusstalker
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:monopolyvotes:3
+0.3 0 0 0 0 JOURNAL:HT_Monopoly:10
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mages_Guild_monopoly
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_monopoly
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B7_AryonHort:50
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Archmagister_Gothren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b7_aryonhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

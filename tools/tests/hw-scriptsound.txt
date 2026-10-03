@@ -1,0 +1,8 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Sadrith_Mora
+8 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Sadrith_Mora
+0.3 0 0 0 0 EXPECT:refloopvol:sound_boat_hull00,boat_hull:ge:27
+0.3 0 0 0 0 EXPECT:refloopvol:sound_boat_hull00,boat_hull:le:29
+1 0 0 0

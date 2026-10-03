@@ -1,0 +1,155 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:endryn_llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanctus_Shrine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_sanctusshrine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_DagonFel:100
+0.3 0 0 0 0 JOURNAL:TT_AldSotha:100
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:tholer_saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Four_Corners
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_balur
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_DagonFel:100
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:tholer_saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Four_Corners
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_aldsotha
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_StAralor:100
+0.3 0 0 0 0 JOIN:temple:7
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:endryn_llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_dagonfel
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:tholer_saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Gambolpuddy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_alddaedroth
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:temple:8
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:tholer_saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ebony_Mail
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_assarnibibi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:15
+0.3 0 0 0 0 JOIN:temple:5
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+8 0 0 0
+0.3 0 0 0 0 TALK:endryn_llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ihinipalit
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_staralor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Canalworks
+8 0 0 0
+0.3 0 0 0 0 TALK:Relur_Faryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepers_relur
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_BuriedTreasure:100
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Tarvyn_Faren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_escortmerchant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_EscortMerchant:100
+0.3 0 0 0 0 JOIN:hlaalu:0
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Odirniran
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_odirniran
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

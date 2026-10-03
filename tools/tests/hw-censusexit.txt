@@ -1,0 +1,116 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:bk_a1_1_caiuspackage
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 FACE:CharGen_Exit_Door
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 ACTIVATE:CharGen_Exit_Door
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 CHECK:chargen_door_guard
+0.3 0 0 0 0 EXPECT:alive:chargen_door_guard
+0.3 0 0 0 0 CHECK:chargen_captain
+0.3 0 0 0 0 EXPECT:alive:chargen_captain
+0.3 0 0 0 0 CHECK:chargen_class
+0.3 0 0 0 0 EXPECT:alive:chargen_class
+0.3 0 0 0 0 CHECK:chargen_stuff_room
+0.3 0 0 0 0 EXPECT:alive:chargen_stuff_room
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 FACE:CharGen_Exit_Door
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 ACTIVATE:CharGen_Exit_Door
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 CHECK:chargen_door_guard
+0.3 0 0 0 0 EXPECT:alive:chargen_door_guard
+0.3 0 0 0 0 CHECK:chargen_captain
+0.3 0 0 0 0 EXPECT:alive:chargen_captain
+0.3 0 0 0 0 CHECK:chargen_class
+0.3 0 0 0 0 EXPECT:alive:chargen_class
+0.3 0 0 0 0 CHECK:chargen_stuff_room
+0.3 0 0 0 0 EXPECT:alive:chargen_stuff_room
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 FACE:CharGen_Exit_Door
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 ACTIVATE:CharGen_Exit_Door
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 CHECK:chargen_door_guard
+0.3 0 0 0 0 EXPECT:alive:chargen_door_guard
+0.3 0 0 0 0 CHECK:chargen_captain
+0.3 0 0 0 0 EXPECT:alive:chargen_captain
+0.3 0 0 0 0 CHECK:chargen_class
+0.3 0 0 0 0 EXPECT:alive:chargen_class
+0.3 0 0 0 0 CHECK:chargen_stuff_room
+0.3 0 0 0 0 EXPECT:alive:chargen_stuff_room
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 FACE:CharGen_Exit_Door
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 ACTIVATE:CharGen_Exit_Door
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 CHECK:chargen_door_guard
+0.3 0 0 0 0 EXPECT:alive:chargen_door_guard
+0.3 0 0 0 0 CHECK:chargen_captain
+0.3 0 0 0 0 EXPECT:alive:chargen_captain
+0.3 0 0 0 0 CHECK:chargen_class
+0.3 0 0 0 0 EXPECT:alive:chargen_class
+0.3 0 0 0 0 CHECK:chargen_stuff_room
+0.3 0 0 0 0 EXPECT:alive:chargen_stuff_room
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 FACE:CharGen_Exit_Door
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 ACTIVATE:CharGen_Exit_Door
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
+0.3 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 CHECK:chargen_door_guard
+0.3 0 0 0 0 EXPECT:alive:chargen_door_guard
+0.3 0 0 0 0 CHECK:chargen_captain
+0.3 0 0 0 0 EXPECT:alive:chargen_captain
+0.3 0 0 0 0 CHECK:chargen_class
+0.3 0 0 0 0 EXPECT:alive:chargen_class
+0.3 0 0 0 0 CHECK:chargen_stuff_room
+0.3 0 0 0 0 EXPECT:alive:chargen_stuff_room
+0.3 0 0 0 0 SHOT
+3 0 0 0

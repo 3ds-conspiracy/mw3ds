@@ -1,0 +1,93 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Invisible:70
+0.3 0 0 0 0 GOTO:Vivec,_Lucretinaus_Olcinius:_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:lucretinaus_olcinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cassius_Olcinius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_invisible
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Actor:70
+0.3 0 0 0 0 GOTO:Vivec,_Miun-Gei:_Enchanter
+8 0 0 0
+0.3 0 0 0 0 TALK:miun_gei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:annoying_fool
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_actor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Apologies:5
+0.3 0 0 0 0 GIVE:p_cure_common_unique:1
+0.3 0 0 0 0 GOTO:Vivec,_Office_of_the_Watch
+8 0 0 0
+0.3 0 0 0 0 TALK:tarer_braryn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Apologies
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_apologies
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_GuardMerchant:1
+0.3 0 0 0 0 GOTO:Vivec,_Ralen_Tilvur:_Smith
+8 0 0 0
+0.3 0 0 0 0 TALK:ralen_tilvur
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_guardmerchant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Bone:50
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:balen_andrano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:change_her_luck
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_bone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_Bone:40
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Trader
+8 0 0 0
+0.3 0 0 0 0 TALK:balen_andrano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:change_her_luck
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_bone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

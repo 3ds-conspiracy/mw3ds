@@ -1,0 +1,15 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:MV_3_Charming:100
+0.3 0 0 0 0 GOTO:Pelagiad
+8 0 0 0
+0.3 0 0 0 0 EXPECT:journal:mv_3_charming:eq:140
+0.3 0 0 0 0 EXPECT:refcell:nels_llendo,Pelagiad,_Halfway:eq:1
+0.3 0 0 0 0 JOURNAL:MS_Lookout:20
+0.3 0 0 0 0 HOUR:23
+0.3 0 0 0 0 GOTO:Seyda_Neen
+0.3 0 0 0 0 TP:-10600:-71200:300:0
+5 0 0 0
+0.3 0 0 0 0 EXPECT:refforcesneak:fargoth:eq:1
+0.3 0 0 0 0 EXPECT:forcesneak:eq:0
+1 0 0 0

@@ -1,0 +1,21 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:42
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:42
+0.3 0 0 0 0 EXPECT:journalentries:A2_4_MiloGone:eq:1
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:eq:42
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 SNAP:journalentries:A2_4_MiloGone
+0.3 0 0 0 0 TALK:gilvas_barelo
+2 0 0 0
+0.3 0 0 0 0 TOPIC:lost_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:message:journal_has_been_updated
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:eq:50
+0.3 0 0 0 0 EXPECT:journalentries:A2_4_MiloGone:eq:@2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

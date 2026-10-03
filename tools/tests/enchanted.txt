@@ -1,0 +1,15 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GIVE:sunder
+0.5 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GIVE:silver_flameblade
+0.3 0 0 0 0 PLACE:scamp_summon:120
+1 0 0 0
+0.3 0 0 0 0 HIT:scamp_summon
+0.5 0 0 0
+0.3 0 0 0 0 GIVE:sc_almsiviintervention
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+8 0 0 0
+0.3 0 0 0 0 CHECK:player
+1 0 0 0

@@ -1,0 +1,77 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOIN:nerevarine:3
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:8000
+0.3 0 0 0 0 GOTO:Dren_Plantation,_Dren's_Villa
+6 0 0 0
+0.3 0 0 0 0 EQUIP:silver_longsword
+120 0 0 0 0 KILL:orvas_dren_druglord
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:dead:orvas_dren_druglord
+0.3 0 0 0 0 GOTO:Omani_Manor
+6 0 0 0
+90 0 0 0 0 ACTIVATE:velanda_omani
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:Hlaalu_Hortator
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B6_OmaniHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ules_Manor
+6 0 0 0
+90 0 0 0 0 ACTIVATE:nevena_ules
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B6_UlesHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Haunted_Manor
+6 0 0 0
+180 0 0 0 0 ACTIVATE:dram_bero
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B6_BeroHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Yngling_Manor
+6 0 0 0
+90 0 0 0 0 ACTIVATE:yngling_half-troll
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B6_YnglingHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_Curio_Manor
+6 0 0 0
+90 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:8
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:7
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B6_CurioHort:ge:50
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B6_HlaaluHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

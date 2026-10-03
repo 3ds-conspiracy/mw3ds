@@ -1,0 +1,141 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_RedasTomb:100
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Treasury
+8 0 0 0
+0.3 0 0 0 0 TALK:faral_retheran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duel
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_cowarddisgrace
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 GOTO:Vivec,_Redoran_Waistworks
+8 0 0 0
+0.3 0 0 0 0 TALK:Nelmil_Hler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepers_nelmil
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_KillIenith:100
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sjoring_Hard-Heart
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_killhardheart
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_SS_Yngling:100
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:forged_land_deed
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ss_generosity2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:common_glove_l_balmolagmer:1
+0.3 0 0 0 0 GIVE:common_glove_r_balmolagmer:1
+0.3 0 0 0 0 JOURNAL:TG_SS_Enamor:100
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bal_Molagmer
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ss_greedyslaver
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hrundi's_woman
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_hostage
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:arantamo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:little_secret
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_propylon
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:help_us_fight
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_enemyparley
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
+8 0 0 0
+0.3 0 0 0 0 TALK:stacey
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bal_Molagmer
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_ss_generosity1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

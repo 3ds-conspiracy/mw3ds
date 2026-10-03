@@ -1,0 +1,155 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:87
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:85
+0.3 0 0 0 0 GIVE:flamemirror_robe:1
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:85
+0.3 0 0 0 0 GIVE:flamemirror_robe:1
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:83
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:82
+0.3 0 0 0 0 GIVE:ingred_bc_coda_flower:1
+0.3 0 0 0 0 GIVE:ingred_gold_kanet_01:1
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:81
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:80
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:75
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_care
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:Romance_Ahnassi:75
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_care
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

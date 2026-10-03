@@ -1,0 +1,14 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ibar-Dad
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ibar-Dad
+0.3 0 0 0 0 EXPECT:reflocal:Silver%Dagger_Hanin%Cursed,xpos:eq:0
+0.3 0 0 0 0 TP:-2310:-1560:-1150:0
+2 0 0 0
+0.3 0 0 0 0 ACTIVATE:Silver%Dagger_Hanin%Cursed
+6 0 0 0
+0.3 0 0 0 0 EXPECT:reflocal:Silver%Dagger_Hanin%Cursed,xpos:le:-2200
+0.3 0 0 0 0 EXPECT:reflocal:Silver%Dagger_Hanin%Cursed,xpos:ge:-2418
+0.3 0 0 0 0 EXPECT:reflocalfrac:Silver%Dagger_Hanin%Cursed,xpos:eq:0
+1 0 0 0

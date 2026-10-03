@@ -1,0 +1,152 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_DeadTaxman:45
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+8 0 0 0
+0.3 0 0 0 0 TALK:chargen_class
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_deadtaxman
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescueHermit:30
+0.3 0 0 0 0 GOTO:Shashurari_Camp,_Zennammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:zennammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Jocien_Ancois
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescuehermit
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_RescueHermit:50
+0.3 0 0 0 0 GOTO:Shashurari_Camp,_Zennammu's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:jocien_ancois
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_rescuehermit
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_ShishiReport:10
+0.3 0 0 0 0 GOTO:Shishi
+8 0 0 0
+0.3 0 0 0 0 TALK:brerama_selas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shishi_report
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_shishireport
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_BanditVictim:110
+0.3 0 0 0 0 GIVE:Gold_001:150
+0.3 0 0 0 0 GOTO:Shushishi
+8 0 0 0
+0.3 0 0 0 0 TALK:dro'zhirr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_heirlooms
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_banditvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_JoinUs:10
+0.3 0 0 0 0 GOTO:Sulipund
+8 0 0 0
+0.3 0 0 0 0 TALK:llarar_Bereloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_us
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_joinus
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_BountyHunter:80
+0.3 0 0 0 0 GOTO:Suran,_Desele's_House_of_Earthly_Delights
+8 0 0 0
+0.3 0 0 0 0 TALK:daric_bielle
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hides_His_Eyes_is_Haj-Ei
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_bountyhunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_BountyHunter:10
+0.3 0 0 0 0 GOTO:Suran,_Desele's_House_of_Earthly_Delights
+8 0 0 0
+0.3 0 0 0 0 TALK:daric_bielle
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_bountyhunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_BountyHunter:30
+0.3 0 0 0 0 GOTO:Suran,_Suran_Slave_Market
+8 0 0 0
+0.3 0 0 0 0 TALK:dranas_sarathram
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Not_his_real_name
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_bountyhunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_VictimRomance:105
+0.3 0 0 0 0 GOTO:Tel_Aruhn,_Plot_and_Plaster
+8 0 0 0
+0.3 0 0 0 0 TALK:emusette_bracques
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Maurrie_Aurmine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_victimromance
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

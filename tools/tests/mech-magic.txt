@@ -1,0 +1,398 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETATTR:strength:50
+0.3 0 0 0 0 SETSKILL:longblade:50
+0.3 0 0 0 0 SETSKILL:alchemy:50
+0.3 0 0 0 0 FILL
+0.5 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:79:10:10:4:0:strength
+0.3 0 0 0 0 MAKESPELL:e79
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 CAST:mw3ds_test_e79
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:83:10:10:4:0:longblade
+0.3 0 0 0 0 MAKESPELL:e83
+0.3 0 0 0 0 SNAP:skill:longblade
+0.3 0 0 0 0 CAST:mw3ds_test_e83
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:17:10:10:4:0:strength
+0.3 0 0 0 0 MAKESPELL:e17
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 CAST:mw3ds_test_e17
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@-10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:21:10:10:4:0:longblade
+0.3 0 0 0 0 MAKESPELL:e21
+0.3 0 0 0 0 SNAP:skill:longblade
+0.3 0 0 0 0 CAST:mw3ds_test_e21
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@-10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:80:20:20:4:0
+0.3 0 0 0 0 MAKESPELL:e80
+0.3 0 0 0 0 SNAP:healthmax
+0.3 0 0 0 0 CAST:mw3ds_test_e80
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:healthmax:eq:@20
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:healthmax:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:81:20:20:4:0
+0.3 0 0 0 0 MAKESPELL:e81
+0.3 0 0 0 0 SNAP:magickamax
+0.3 0 0 0 0 CAST:mw3ds_test_e81
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:magickamax:eq:@20
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:magickamax:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:82:20:20:4:0
+0.3 0 0 0 0 MAKESPELL:e82
+0.3 0 0 0 0 SNAP:fatiguemax
+0.3 0 0 0 0 CAST:mw3ds_test_e82
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:fatiguemax:eq:@20
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:fatiguemax:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:18:20:20:5:0
+0.3 0 0 0 0 MAKESPELL:e18
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 CAST:mw3ds_test_e18
+3 0 0 0
+0.3 0 0 0 0 EXPECT:health:gt:@-25
+0.3 0 0 0 0 EXPECT:health:lt:@-15
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:health:gt:@-5
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:20:60:60:5:0
+0.3 0 0 0 0 MAKESPELL:e20
+0.3 0 0 0 0 SNAP:fatigue
+0.3 0 0 0 0 CAST:mw3ds_test_e20
+3 0 0 0
+0.3 0 0 0 0 EXPECT:fatigue:gt:@-70
+0.3 0 0 0 0 EXPECT:fatigue:lt:@-40
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:fatigue:gt:@-10
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:75:10:10:3:0
+0.3 0 0 0 0 MAKESPELL:e75
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:23:5:5:4:0
+0.3 0 0 0 0 MAKESPELL:e23
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 CAST:mw3ds_test_e23
+5 0 0 0
+0.3 0 0 0 0 EXPECT:health:lt:@-15
+0.3 0 0 0 0 EXPECT:health:gt:@-25
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 CAST:mw3ds_test_e75
+4 0 0 0
+0.3 0 0 0 0 EXPECT:health:gt:@15
+0.3 0 0 0 0 SETATTR:strength:50
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:22:2:2:3:0:strength
+0.3 0 0 0 0 MAKESPELL:e22
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 CAST:mw3ds_test_e22
+4 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@-6
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:74:10:10:2:0:strength
+0.3 0 0 0 0 MAKESPELL:e74
+0.3 0 0 0 0 CAST:mw3ds_test_e74
+3 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@0
+0.3 0 0 0 0 SETSKILL:longblade:50
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:26:2:2:3:0:longblade
+0.3 0 0 0 0 MAKESPELL:e26
+0.3 0 0 0 0 SNAP:skill:longblade
+0.3 0 0 0 0 CAST:mw3ds_test_e26
+4 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@-6
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:78:10:10:2:0:longblade
+0.3 0 0 0 0 MAKESPELL:e78
+0.3 0 0 0 0 CAST:mw3ds_test_e78
+3 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:10:10:10:3:0
+0.3 0 0 0 0 MAKESPELL:e10
+0.3 0 0 0 0 CAST:mw3ds_test_e10
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:flying:eq:1
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:flying:eq:0
+3 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:0:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:2:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:8:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:11:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:9:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:1:10:10:4:0
+0.3 0 0 0 0 MAKESPELL:p0_2_8_11_9_1
+0.3 0 0 0 0 CAST:mw3ds_test_p0_2_8_11_9_1
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:effect:0:eq:10
+0.3 0 0 0 0 EXPECT:effect:2:eq:10
+0.3 0 0 0 0 EXPECT:effect:8:eq:10
+0.3 0 0 0 0 EXPECT:effect:11:eq:10
+0.3 0 0 0 0 EXPECT:effect:9:eq:10
+0.3 0 0 0 0 EXPECT:effect:1:eq:10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:0:eq:0
+0.3 0 0 0 0 EXPECT:effect:2:eq:0
+0.3 0 0 0 0 EXPECT:effect:8:eq:0
+0.3 0 0 0 0 EXPECT:effect:11:eq:0
+0.3 0 0 0 0 EXPECT:effect:9:eq:0
+0.3 0 0 0 0 EXPECT:effect:1:eq:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:39:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:40:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:41:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:43:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:42:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:3:10:10:4:0
+0.3 0 0 0 0 MAKESPELL:p39_40_41_43_42_3
+0.3 0 0 0 0 CAST:mw3ds_test_p39_40_41_43_42_3
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:effect:39:eq:10
+0.3 0 0 0 0 EXPECT:effect:40:eq:10
+0.3 0 0 0 0 EXPECT:effect:41:eq:10
+0.3 0 0 0 0 EXPECT:effect:43:eq:10
+0.3 0 0 0 0 EXPECT:effect:42:eq:10
+0.3 0 0 0 0 EXPECT:effect:3:eq:10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:39:eq:0
+0.3 0 0 0 0 EXPECT:effect:40:eq:0
+0.3 0 0 0 0 EXPECT:effect:41:eq:0
+0.3 0 0 0 0 EXPECT:effect:43:eq:0
+0.3 0 0 0 0 EXPECT:effect:42:eq:0
+0.3 0 0 0 0 EXPECT:effect:3:eq:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:90:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:91:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:92:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:97:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:68:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:67:10:10:4:0
+0.3 0 0 0 0 MAKESPELL:p90_91_92_97_68_67
+0.3 0 0 0 0 CAST:mw3ds_test_p90_91_92_97_68_67
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:effect:90:eq:10
+0.3 0 0 0 0 EXPECT:effect:91:eq:10
+0.3 0 0 0 0 EXPECT:effect:92:eq:10
+0.3 0 0 0 0 EXPECT:effect:97:eq:10
+0.3 0 0 0 0 EXPECT:effect:68:eq:10
+0.3 0 0 0 0 EXPECT:effect:67:eq:10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:90:eq:0
+0.3 0 0 0 0 EXPECT:effect:91:eq:0
+0.3 0 0 0 0 EXPECT:effect:92:eq:0
+0.3 0 0 0 0 EXPECT:effect:97:eq:0
+0.3 0 0 0 0 EXPECT:effect:68:eq:0
+0.3 0 0 0 0 EXPECT:effect:67:eq:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:64:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:65:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:66:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:59:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:4:10:10:4:0
+0.3 0 0 0 0 ADDEFFECT:5:10:10:4:0
+0.3 0 0 0 0 MAKESPELL:p64_65_66_59_4_5
+0.3 0 0 0 0 CAST:mw3ds_test_p64_65_66_59_4_5
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:effect:64:eq:10
+0.3 0 0 0 0 EXPECT:effect:65:eq:10
+0.3 0 0 0 0 EXPECT:effect:66:eq:10
+0.3 0 0 0 0 EXPECT:effect:59:eq:10
+0.3 0 0 0 0 EXPECT:effect:4:eq:10
+0.3 0 0 0 0 EXPECT:effect:5:eq:10
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:64:eq:0
+0.3 0 0 0 0 EXPECT:effect:65:eq:0
+0.3 0 0 0 0 EXPECT:effect:66:eq:0
+0.3 0 0 0 0 EXPECT:effect:59:eq:0
+0.3 0 0 0 0 EXPECT:effect:4:eq:0
+0.3 0 0 0 0 EXPECT:effect:5:eq:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:90:100:100:5:0
+0.3 0 0 0 0 MAKESPELL:e90
+0.3 0 0 0 0 CAST:mw3ds_test_e90
+1.0 0 0 0
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 EFFECT:14:10:1
+2 0 0 0
+0.3 0 0 0 0 EXPECT:health:eq:@0
+3.5 0 0 0
+0.3 0 0 0 0 EFFECT:27:2:20
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:27:gt:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:72:1:1:0:0
+0.3 0 0 0 0 MAKESPELL:e72
+0.3 0 0 0 0 CAST:mw3ds_test_e72
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:effect:27:eq:0
+0.3 0 0 0 0 SPELL:collywobbles
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:69:1:1:0:0
+0.3 0 0 0 0 MAKESPELL:e69
+0.3 0 0 0 0 SNAP:spells
+0.3 0 0 0 0 CAST:mw3ds_test_e69
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:spells:eq:@-1
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:79:10:10:30:0:strength
+0.3 0 0 0 0 MAKESPELL:e79b
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 CAST:mw3ds_test_e79b
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@10
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:57:100:100:0:0
+0.3 0 0 0 0 MAKESPELL:e57
+0.3 0 0 0 0 CAST:mw3ds_test_e57
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:102:1:1:4:0
+0.3 0 0 0 0 MAKESPELL:e102
+0.3 0 0 0 0 SNAP:effects
+0.3 0 0 0 0 CAST:mw3ds_test_e102
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:refally:scamp_summon:eq:1
+0.3 0 0 0 0 EXPECT:effects:eq:@1
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:effects:eq:@0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:121:1:1:4:0
+0.3 0 0 0 0 MAKESPELL:e121
+0.3 0 0 0 0 CAST:mw3ds_test_e121
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:count:bound_longsword:eq:1
+4.5 0 0 0
+0.3 0 0 0 0 EXPECT:count:bound_longsword:eq:0
+0.3 0 0 0 0 EFFECT:23:10:2
+2.5 0 0 0
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 GIVE:p_restore_health_s
+0.3 0 0 0 0 EQUIP:p_restore_health_s
+3 0 0 0
+0.3 0 0 0 0 EXPECT:health:gt:@5
+0.3 0 0 0 0 EXPECT:count:p_restore_health_s:eq:0
+0.3 0 0 0 0 GIVE:sc_vitality
+0.3 0 0 0 0 SNAP:effects
+0.3 0 0 0 0 CAST:item:sc_vitality
+1 0 0 0
+0.3 0 0 0 0 EXPECT:count:sc_vitality:eq:0
+0.3 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:14:10:10:1:2
+0.3 0 0 0 0 MAKESPELL:t14
+0.3 0 0 0 0 SNAP:refhealth:scamp
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t14
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refhealth:scamp:lt:@-0.01
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:45:1:1:5:2
+0.3 0 0 0 0 MAKESPELL:t45
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t45
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refknock:scamp:gt:0
+4 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:52:100:100:10:2
+0.3 0 0 0 0 MAKESPELL:t52
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t52
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refcombat:scamp:eq:1
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:50:100:100:10:2
+0.3 0 0 0 0 MAKESPELL:t50
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t50
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refcombat:scamp:eq:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:54:100:100:10:2
+0.3 0 0 0 0 MAKESPELL:t54
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t54
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refflee:scamp:eq:1
+0.3 0 0 0 0 PLACE:mudcrab:110
+1 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:86:5:5:1:1
+0.3 0 0 0 0 MAKESPELL:t86
+0.3 0 0 0 0 EFFECT:23:10:1
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:refhealth:mudcrab
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 CASTAT:mudcrab:mw3ds_test_t86
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refhealth:mudcrab:lt:@-4
+0.3 0 0 0 0 EXPECT:health:gt:@4
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:58:1:1:30:1
+0.3 0 0 0 0 MAKESPELL:t58
+0.3 0 0 0 0 CASTAT:mudcrab:mw3ds_test_t58
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refsoultrap:mudcrab:eq:1
+0.3 0 0 0 0 PLACE:fargoth:90
+1 0 0 0
+0.3 0 0 0 0 FACE:fargoth
+0.5 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:44:30:30:1:2
+0.3 0 0 0 0 MAKESPELL:t44
+0.3 0 0 0 0 SNAP:refdisp:fargoth
+0.3 0 0 0 0 CASTAT:fargoth:mw3ds_test_t44
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refdisp:fargoth:gt:@0
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:60:1:1:0:0
+0.3 0 0 0 0 MAKESPELL:e60
+0.3 0 0 0 0 CAST:mw3ds_test_e60
+1.0 0 0 0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:63:1:1:0:0
+0.3 0 0 0 0 MAKESPELL:e63
+0.3 0 0 0 0 CAST:mw3ds_test_e63
+6 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Seyda%Neen
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:61:1:1:0:0
+0.3 0 0 0 0 MAKESPELL:e61
+0.3 0 0 0 0 CAST:mw3ds_test_e61
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda%Neen
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 ADDEFFECT:62:1:1:0:0
+0.3 0 0 0 0 MAKESPELL:e62
+0.3 0 0 0 0 CAST:mw3ds_test_e62
+6 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Seyda%Neen
+1 0 0 0

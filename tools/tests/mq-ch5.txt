@@ -1,0 +1,78 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:8
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:60
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:1
+0.3 0 0 0 0 JOIN:blades:3
+0.3 0 0 0 0 SPELL:corprus
+0.3 0 0 0 0 GIVE:misc_dwrv_artifact50
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:Tel_Fyr
+0.3 0 0 0 0 TOPIC:Tel_Fyr
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_3_CorprusCure:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+6 0 0 0
+90 0 0 0 0 ACTIVATE:divayth_fyr
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_3_CorprusCure:ge:15
+0.3 0 0 0 0 EXPECT:item:misc_dwrv_artifact50:eq:0
+0.3 0 0 0 0 KNOW:corprus_disease
+0.3 0 0 0 0 TOPIC:corprus_disease
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_3_CorprusCure:ge:20
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_3_CorprusCure:ge:25
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Corprusarium_Bowels
+6 0 0 0
+180 0 0 0 0 ACTIVATE:yagrum_bagarn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_boots
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_3_CorprusCure:ge:40
+0.3 0 0 0 0 EXPECT:item:Dwemer_Boots%of%Flying:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+6 0 0 0
+90 0 0 0 0 ACTIVATE:divayth_fyr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:potion
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_3_CorprusCure:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:promoted_to_Operative
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloCaiusGone:ge:5
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,129 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:va_vampmarara:10
+0.3 0 0 0 0 GOTO:Drethan_Ancestral_Tomb
+8 0 0 0
+120 0 0 0 0 KILL:marara
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampmarara
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Rothan_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:mathis_dalobar
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:hr_finddalobar:50
+0.3 0 0 0 0 GOTO:Maar_Gan,_Shrine
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_finddalobar
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:da_molagbal:10
+0.3 0 0 0 0 GOTO:Kora-Dur
+8 0 0 0
+120 0 0 0 0 KILL:daedroth_menta_unique
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_molagbal
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:va_vampcountess:20
+0.3 0 0 0 0 GOTO:Reloth_Ancestral_Tomb
+8 0 0 0
+120 0 0 0 0 KILL:merta
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampcountess
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:sinnammu_mirpal
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b2_ahemmusakill
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:sinnammu_mirpal
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_failed_nerevarine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:sinnammu_mirpal
+4 0 0 0
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Inner_Shrine
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b2_ahemmusasafe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Dubdilla,_Uncharted_Caverns,_Lower
+8 0 0 0
+120 0 0 0 0 KILL:atronach_frost_gwai_uni
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_vampirecure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:nartise_arobar
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:hr_arobarkidnap:50
+0.3 0 0 0 0 TP:142120:39665:578:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:nartise_arobar:timer:2
+120 0 0 0 0 WALKTO:gals_arethi
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_arobarkidnap
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mv_3_charming:90
+0.3 0 0 0 0 GOTO:Pelagiad
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_3_charming
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

@@ -1,0 +1,111 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_DB_Darys:50
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Movis_Darys
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_darys
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_DB_Carecalmo:50
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ultimatum
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_carecalmo
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_False:30
+0.3 0 0 0 0 GOTO:Vivec,_Aurane_Frernis:_Apothecary
+8 0 0 0
+0.3 0 0 0 0 TALK:aurane_frernis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Belan_makes_the_leaflets
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_false
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Gold_kanet_flower:5
+0.3 0 0 0 0 GIVE:ingred_gold_kanet_unique:5
+0.3 0 0 0 0 GOTO:Vivec,_Aurane_Frernis:_Apothecary
+8 0 0 0
+0.3 0 0 0 0 TALK:aurane_frernis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:gold_kanet_flower
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_gold_kanet_flower
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:EB_False:10
+0.3 0 0 0 0 GOTO:Vivec,_Aurane_Frernis:_Apothecary
+8 0 0 0
+0.3 0 0 0 0 TALK:aurane_frernis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:leaflet
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_false
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_7HuleeyaInformant:20
+0.3 0 0 0 0 GOTO:Vivec,_Black_Shalk_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:huleeya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_cult
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_7huleeyainformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_7HuleeyaInformant:1
+0.3 0 0 0 0 JOURNAL:A1_V_VivecInformants:1
+0.3 0 0 0 0 GOTO:Vivec,_Black_Shalk_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:ethys_savil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:filthy_lizard
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_7huleeyainformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

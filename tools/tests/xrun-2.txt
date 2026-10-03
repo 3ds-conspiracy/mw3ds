@@ -1,0 +1,126 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:fg_nchurdamz:1
+0.3 0 0 0 0 TP:143450:-44882:2963:180
+8 0 0 0
+120 0 0 0 0 KILL:larienna_macrina
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_nchurdamz
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writbaladas:1
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+120 0 0 0 0 KILL:baladas_demnevanni
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writbaladas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writbelvayn:1
+0.3 0 0 0 0 GOTO:Shara
+8 0 0 0
+120 0 0 0 0 KILL:tirer_belvayn
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writbelvayn
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writbemis:1
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Ancestral_Vaults
+8 0 0 0
+120 0 0 0 0 KILL:mathyn_bemis
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writbemis
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writbero:1
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Haunted_Manor
+8 0 0 0
+120 0 0 0 0 KILL:dram_bero
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writbero
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writbrilnosu:1
+0.3 0 0 0 0 TP:-42540:-4226:3318:180
+8 0 0 0
+120 0 0 0 0 KILL:brilnosu_llarys
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writbrilnosu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writgalasa:1
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Treasury
+8 0 0 0
+120 0 0 0 0 KILL:galasa_uvayn
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writgalasa
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writguril:10
+0.3 0 0 0 0 GOTO:Vivec,_The_Flowers_of_Gold
+8 0 0 0
+120 0 0 0 0 KILL:guril_retheran
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writguril
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writmavon:10
+0.3 0 0 0 0 GOTO:Vivec,_Telvanni_Tower
+8 0 0 0
+120 0 0 0 0 KILL:mavon_drenim
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writmavon
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writnavil:1
+0.3 0 0 0 0 GOTO:Dren_Plantation,_Dren's_Villa
+8 0 0 0
+120 0 0 0 0 KILL:navil_ienith
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writnavil
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

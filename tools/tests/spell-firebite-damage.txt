@@ -1,0 +1,18 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 PLACE:guar:110
+1 0 0 0
+0.3 0 0 0 0 FACE:guar
+0.3 0 0 0 0 SPELL:fire_bite
+0.3 0 0 0 0 SNAP:refhealth:guar
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 CAST:fire%bite
+2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:eq:@1
+0.3 0 0 0 0 EXPECT:refhealth:guar:le:@-15
+0.3 0 0 0 0 EXPECT:refhealth:guar:ge:@-30
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refhealth:guar:le:@-15
+0.3 0 0 0 0 EXPECT:refhealth:guar:ge:@-30

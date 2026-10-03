@@ -1,0 +1,25 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOTO:Ilunibi,_Soul's_Rattle
+5 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+5 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GOTO:Vivec,_Palace_of_Vivec
+5 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+5 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GOTO:Corprusarium
+5 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+5 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 GOTO:Akulakhan's_Chamber
+6 0 0 0
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 CHECK:heart_akulakhan
+0.3 0 0 0 0 CHECK:dagoth_ur_2
+1 0 0 0

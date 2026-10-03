@@ -1,0 +1,163 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specenchcast
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:73
+0.1 0 0 0 0 EXPECT:enchantcastcost:80:eq:29
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:le:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:44
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:eq:18
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:84
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:eq:5
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:8
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:eq:5
+0.1 0 0 0 0 EXPECT:enchantcastcost:80:eq:20
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:58
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:62
+0.1 0 0 0 0 EXPECT:enchantcastcost:80:eq:41
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:62
+0.1 0 0 0 0 EXPECT:enchantcastcost:12:eq:6
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:32
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:le:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:38
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:39
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:le:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:25
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:76
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:40
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:11
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:16
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:17
+0.1 0 0 0 0 EXPECT:enchantcastcost:12:eq:4
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:78
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:10
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:38
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:le:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:38
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:54
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:67
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:67
+0.1 0 0 0 0 EXPECT:enchantcastcost:12:eq:6
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:26
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:27
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:41
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:42
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:2
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:le:1
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:22
+0.1 0 0 0 0 EXPECT:enchantcastcost:80:eq:70
+0.1 0 0 0 0 EXPECT:enchantcastcost:7:eq:6
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:29
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:29
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:35
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:24
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:ge:14
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:le:15
+0.1 0 0 0 0 EXPECT:enchantcastcost:7:eq:5
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:eq:37
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:67
+0.1 0 0 0 0 EXPECT:enchantcastcost:80:eq:34
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:eq:8
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:eq:8
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:69
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:1:le:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:7:eq:2
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:1
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:7
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:3
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:eq:51
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:eq:20
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:eq:51
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:73
+0.1 0 0 0 0 EXPECT:enchantcastcost:20:eq:7
+0.1 0 0 0 0 EXPECT:enchantcastcost:12:eq:4
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:7:eq:2
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:66
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:21
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:22
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:52
+0.1 0 0 0 0 EXPECT:enchantcastcost:12:eq:5
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:21
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:22
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:95
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:4
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:eq:7
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:le:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:7:eq:1
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:86
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:11
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:12
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:11
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:12
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:11
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:12
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:ge:0
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:le:1
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:56
+0.1 0 0 0 0 EXPECT:enchantcastcost:7:eq:3
+0.1 0 0 0 0 EXPECT:enchantcastcost:7:eq:3
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:1
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:64
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:41
+0.1 0 0 0 0 EXPECT:enchantcastcost:12:eq:8
+0.1 0 0 0 0 EXPECT:enchantcastcost:3:eq:2
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:eq:34
+0.1 0 0 0 0 EXPECT:enchantcastcost:12:eq:8
+0.5 0 0 0 0 LOAD:specenchcast
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:enchant:8
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:ge:50
+0.1 0 0 0 0 EXPECT:enchantcastcost:50:le:51
+0.1 0 0 0 0 EXPECT:enchantcastcost:120:eq:122
+0.1 0 0 0 0 EXPECT:enchantcastcost:33:eq:33
+0.1 0 0 0 0 EXPECT:enchantcastcost:80:eq:81

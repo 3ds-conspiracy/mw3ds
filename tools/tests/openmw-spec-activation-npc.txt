@@ -1,0 +1,18 @@
+# Activating an NPC as the player does (spec/activation.md: Actors). Source: mwclass/npc.cpp Npc::activate.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+3 0 0 0
+# 1. A calm NPC talks
+60 0 0 0 0 ACTIVATE:arrille
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:dialogue
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+# 2. An NPC in combat with the player refuses: the sActorInCombat message, no conversation, no loot window
+0.3 0 0 0 0 ALARM:arrille
+60 0 0 0 0 ACTIVATE:arrille
+1 0 0 0
+0.3 0 0 0 0 EXPECT:message:This_character_is_in_combat
+0.1 0 0 0 0 EXPECT:screen:none

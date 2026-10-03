@@ -1,0 +1,10 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:Potion_Cyro_Whiskey_01
+0.3 0 0 0 0 GIVE:p_restore_health_c
+0.3 0 0 0 0 GIVE:potion_skooma_01
+0.3 0 0 0 0 EXPECT:item:Potion_Cyro_Whiskey_01:ge:1
+0.3 0 0 0 0 SCREEN:inventory
+1 0 0 0
+0.3 0 0 0 0 SHOT
+1 0 0 0

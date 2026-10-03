@@ -1,0 +1,40 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 JOIN:redoran
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+4 0 0 0
+0.5 0 0 0 0 DOOR:neminda
+1 0 0 0 0 TOPIC:hostile_mudcrabs
+1 0 0 0 0 TOPIC:Drulene_Falen
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:HR_MudcrabNest
+0.3 0 0 0 0 GOTO:Ald-ruhn
+5 0 0 0
+0.3 0 0 0 0 TP:-51947:51150:1500:0
+10 0 0 0
+0.5 0 0 0 0 DOOR:drulene_falen
+1 0 0 0 0 TOPIC:hostile_mudcrabs
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:HR_MudcrabNest
+0.3 0 0 0 0 TP:-58900:40000:500:0
+10 0 0 0
+0.3 0 0 0 0 SOULKILL:mudcrab_hrmudcrabnest
+0.3 0 0 0 0 SOULKILL:mudcrab_hrmudcrabnest
+0.5 0 0 0
+0.3 0 0 0 0 TP:-51947:51150:1500:0
+10 0 0 0
+0.5 0 0 0 0 DOOR:drulene_falen
+1 0 0 0 0 TOPIC:hostile_mudcrabs
+1 0 0 0 0 CHOICE:1
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:HR_MudcrabNest
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+5 0 0 0
+0.5 0 0 0 0 DOOR:neminda
+1 0 0 0 0 TOPIC:hostile_mudcrabs
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:HR_MudcrabNest
+1 0 0 0

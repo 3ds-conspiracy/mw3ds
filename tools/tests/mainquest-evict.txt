@@ -1,0 +1,81 @@
+3 0 0 0 0 MSG
+0.5 0 0 0 0 JOURNAL:A1_1_FindSpymaster:10
+0.5 0 0 0 0 GIVE:bk_a1_1_caiuspackage
+0.5 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+3 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:-35:-60:73:180
+1 0 0 0 0 DOOR:caius_cosades
+1 0 0 0 0 TOPIC:report_to_caius_cosades
+1 0 0 0 0 CHOICE:1
+1 0 0 0 0 CHOICE:1
+1 0 0 0 0 TOPIC:orders
+1 0 0 0 0 TOPIC:orders
+1 0 0 0 0 CHOICE:1
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:561:620:-367:180
+1 0 0 0 0 DOOR:hasphat_antabolis
+1 0 0 0 0 TOPIC:favor
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 GOTO:Arkngthand,_Cells_of_Hollow_Hand
+4 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:3519:2700:14726:0
+1 0 0 0 0 DOOR:misc_dwrv_ark_cube00
+1 0 0 0
+0.5 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:561:620:-367:180
+1 0 0 0 0 DOOR:hasphat_antabolis
+1 0 0 0 0 TOPIC:favor
+1 0 0 0 0 TOPIC:sixth_house
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+3 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:-35:-60:73:180
+1 0 0 0 0 DOOR:caius_cosades
+1 0 0 0 0 TOPIC:orders
+1 0 0 0 0 TOPIC:orders
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:488:-1570:-727:180
+1 0 0 0 0 DOOR:sharn_gra-muzgob
+1 0 0 0 0 TOPIC:errand
+1 0 0 0 0 TOPIC:andrano_ancestral_tomb
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 GOTO:Andrano_Ancestral_Tomb
+4 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:2560:4320:13262:0
+1 0 0 0 0 DOOR:misc_skull_llevule
+1 0 0 0
+0.5 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:488:-1570:-727:180
+1 0 0 0 0 DOOR:sharn_gra-muzgob
+1 0 0 0 0 TOPIC:errand
+1 0 0 0 0 TOPIC:nerevarine_cult
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+3 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.5 0 0 0 0 TP:-35:-60:73:180
+1 0 0 0 0 DOOR:caius_cosades
+1 0 0 0 0 TOPIC:orders
+1 0 0 0 0 TOPIC:blades_apprentice
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:ranis_athrys,90:eq:75
+0.3 0 0 0 0 EXPECT:refeffect:estirdalin,28:eq:50
+0.3 0 0 0 0 EXPECT:refeffect:estirdalin,29:eq:25
+0.3 0 0 0 0 EXPECT:refeffect:estirdalin,30:eq:25
+0.3 0 0 0 0 EXPECT:refeffect:estirdalin,94:eq:75

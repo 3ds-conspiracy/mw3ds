@@ -1,0 +1,151 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_BankCourier:100
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Murudius_Flaeus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_buriedtreasure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_report
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_bankcourier
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_SunkenTreasure:100
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ralen_Tilvur
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_guardmerchant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_TheExterminator:100
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_ashlanderebony
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_Odirniran:100
+0.3 0 0 0 0 JOURNAL:HH_EscortMerchant:100
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:game_rats
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_theexterminator
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_AshlanderEbony:100
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Prelude
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_sunkentreasure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_General_Goods
+8 0 0 0
+0.3 0 0 0 0 TALK:gadayn_andarys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:love_letter
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_unrequited
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:freedslavescounter:16
+0.3 0 0 0 0 GOTO:Vivec,_Jobasha's_Rare_Books
+8 0 0 0
+0.3 0 0 0 0 TALK:jobasha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Twin_Lamps
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_twinlamps1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:freedslavescounter:31
+0.3 0 0 0 0 GOTO:Vivec,_Jobasha's_Rare_Books
+8 0 0 0
+0.3 0 0 0 0 TALK:jobasha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Twin_Lamps
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_jobashaabolitionist
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_V_VivecInformants:1
+0.3 0 0 0 0 GOTO:Vivec,_Library_of_Vivec
+8 0 0 0
+0.3 0 0 0 0 TALK:mehra_milo
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_10_mehramilo
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

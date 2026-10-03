@@ -1,0 +1,37 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:IL_ScrapMetal:100
+0.3 0 0 0 0 JOIN:imperial_legion:0
+0.3 0 0 0 0 GOTO:Abernanit
+8 0 0 0
+0.3 0 0 0 0 TALK:Dandsa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:il_damsel:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
+0.3 0 0 0 0 SHOT

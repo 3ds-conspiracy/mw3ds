@@ -1,0 +1,122 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_RentCollector:10
+0.3 0 0 0 0 TP:14354:-56822:456:180
+8 0 0 0
+0.3 0 0 0 0 TALK:llovyn_andus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rent_and_taxes
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_rentcollector
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 TP:160323:-35765:399:180
+8 0 0 0
+0.3 0 0 0 0 TALK:vevrana_aryon
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_StrayedPilgrim:90
+0.3 0 0 0 0 TP:17078:-30864:1106:180
+8 0 0 0
+0.3 0 0 0 0 TALK:thoronor
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:my_friend
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_strayedpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_RentCollector:10
+0.3 0 0 0 0 TP:19584:-42360:492:180
+8 0 0 0
+0.3 0 0 0 0 TALK:rovone_arvel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rent_and_taxes
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_rentcollector
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_StrayedPilgrim:27
+0.3 0 0 0 0 TP:24817:-31814:1298:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:edras_oril:inviso:1
+0.3 0 0 0 0 TALK:edras_oril
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_strayedpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_StrayedPilgrim:27
+0.3 0 0 0 0 TP:24817:-31814:1298:180
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:edras_oril:inviso:1
+0.3 0 0 0 0 TALK:edras_oril
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_strayedpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_StrayedPilgrim:10
+0.3 0 0 0 0 TP:24817:-31814:1298:180
+8 0 0 0
+0.3 0 0 0 0 TALK:edras_oril
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_strayedpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MV_StrayedPilgrim:30
+0.3 0 0 0 0 TP:24817:-31814:1298:180
+8 0 0 0
+0.3 0 0 0 0 TALK:edras_oril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:my_friend
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_strayedpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

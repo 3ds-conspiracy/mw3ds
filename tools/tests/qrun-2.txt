@@ -1,0 +1,136 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-23717:-46622:675:180
+8 0 0 0
+0.3 0 0 0 0 TALK:nevrasa_dralor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_wanderingpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-25655:26272:1763:180
+8 0 0 0
+0.3 0 0 0 0 TALK:bugrol_gro-bagul
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_bugrol
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC4_scrib:1
+0.3 0 0 0 0 TP:-30816:-26839:1053:180
+8 0 0 0
+0.3 0 0 0 0 TALK:dinok
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:scrib_jelly
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic4_scrib_a
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-32488:32012:1680:180
+8 0 0 0
+0.3 0 0 0 0 TALK:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:making_a_deal
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderabandoned
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-34765:100265:1971:180
+8 0 0 0
+0.3 0 0 0 0 TALK:fonus_rathryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:help_a_poor_pilgrim
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_poorpilgrim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-37748:53220:2597:180
+8 0 0 0
+0.3 0 0 0 0 TALK:hisin_deep-raed
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_paralyzedbarbarian
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:5
+0.3 0 0 0 0 JOIN:blades:0
+0.3 0 0 0 0 TP:-40113:35192:1537:180
+8 0 0 0
+0.3 0 0 0 0 TALK:sjorvar_horse-mouth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Blades_Trainers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_sjorvar
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-42088:48040:1749:180
+8 0 0 0
+0.3 0 0 0 0 TALK:rasha
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_traderlate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-55935:77564:1616:180
+8 0 0 0
+0.3 0 0 0 0 TALK:lucan_ostorius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:do_me_a_favor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_thieftrader
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-57527:125266:1428:180
+8 0 0 0
+0.3 0 0 0 0 TALK:sason
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_cultistvictim
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

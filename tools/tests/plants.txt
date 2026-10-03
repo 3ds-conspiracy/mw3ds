@@ -1,0 +1,12 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.5 0 0 0 0 CHECK:flora_bc_mushroom_03
+0.5 0 0 0 0 CHECK:flora_bc_shelffungus_02
+0.5 0 0 0 0 CHECK:flora_bc_mushroom_08
+60 0 0 0 0 ACTIVATE:flora_bc_shelffungus_02
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 SHOT
+1 0 0 0
+0.5 0 0 0 0 CHECK:flora_bc_shelffungus_02
+1 0 0 0

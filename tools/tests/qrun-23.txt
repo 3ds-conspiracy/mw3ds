@@ -1,0 +1,112 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_BankFraud:100
+0.3 0 0 0 0 GOTO:Caldera,_Governor's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Caldera_mining_contracts
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_capturespy
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_CaptureSpy:100
+0.3 0 0 0 0 GOTO:Caldera,_Governor's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:erroneous_documents
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_replacedocs
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_RentCollector:100
+0.3 0 0 0 0 GOTO:Caldera,_Governor's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:shipment_of_ebony
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_ebonydelivery
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC13_rich:1
+0.3 0 0 0 0 JOURNAL:IC13_slave:1
+0.3 0 0 0 0 GOTO:Caldera,_Governor's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:cunius_pelelius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:donate_500_drakes
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic13_fight
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC13_rich:1
+0.3 0 0 0 0 GOTO:Caldera,_Governor's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:olumba_gro-boglar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cunius_Pelelius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic13_rumor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_ReplaceDocs:100
+0.3 0 0 0 0 GOTO:Caldera,_Governor's_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rent_and_taxes
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_rentcollector
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:5
+0.3 0 0 0 0 JOIN:blades:0
+0.3 0 0 0 0 GOTO:Caldera,_Surane_Leoriane's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:surane_leoriane
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Blades_Trainers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_surane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

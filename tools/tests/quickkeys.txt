@@ -1,0 +1,11 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:p_restore_health_s:2
+0.3 0 0 0 0 GIVE:iron dagger
+0.3 0 0 0 0 SPELL:fireball
+0.3 0 0 0 0 QUICKSET:0:inv:p_restore_health_s
+0.3 0 0 0 0 QUICKSET:1:magic:fireball
+0.5 0 0 0 0 ZL+UP
+0.5 0 0 0 0 ZL+RIGHT
+0.5 0 0 0 0 ZL+DOWN
+0.3 0 0 0 0 CHECK:player
+1 0 0 0

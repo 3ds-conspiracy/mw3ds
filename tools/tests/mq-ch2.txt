@@ -1,0 +1,184 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:5
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:22
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:20
+0.3 0 0 0 0 JOIN:blades:0
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_4_MuzgobInformant:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+60 0 0 0 0 ACTIVATE:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:errand
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_4_MuzgobInformant:ge:10
+0.3 0 0 0 0 TOPIC:Andrano_Ancestral_Tomb
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_4_MuzgobInformant:ge:12
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Andrano_Ancestral_Tomb
+6 0 0 0
+180 0 0 0 0 PICKUP:misc_skull_llevule
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:misc_skull_llevule:ge:1
+0.3 0 0 0 0 GIVE:p_cure_common_s
+0.3 0 0 0 0 GIVE:p_cure_blight_s
+0.5 0 0 0 0 EQUIP:p_cure_common_s
+0.5 0 0 0 0 EQUIP:p_cure_blight_s
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+60 0 0 0 0 ACTIVATE:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:errand
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_4_MuzgobInformant:ge:15
+0.3 0 0 0 0 EXPECT:item:misc_skull_llevule:eq:0
+0.3 0 0 0 0 TOPIC:Nerevarine_cult
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_4_MuzgobInformant:ge:20
+0.3 0 0 0 0 EXPECT:item:bk_a1_4_sharnsnotes:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_4_MuzgobInformant:ge:25
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_V_VivecInformants:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Underworks
+6 0 0 0
+120 0 0 0 0 ACTIVATE:addhiranirr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Census_and_Excise_agent
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_6_AddhiranirrInformant:ge:12
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Waistworks
+6 0 0 0
+90 0 0 0 0 ACTIVATE:duvianus_platorius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Addhiranirr
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_6_AddhiranirrInformant:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Underworks
+6 0 0 0
+120 0 0 0 0 ACTIVATE:addhiranirr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Census_and_Excise_agent
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_6_AddhiranirrInformant:ge:30
+0.3 0 0 0 0 TOPIC:Sixth_House_cult
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_6_AddhiranirrInformant:eq:45
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_Black_Shalk_Cornerclub
+6 0 0 0
+60 0 0 0 0 ACTIVATE:huleeya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:friend's_bookstore
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_7HuleeyaInformant:ge:1
+0.3 0 0 0 0 TOPIC:troublesome_fools
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:favel_gobor
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:filthy_lizard
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_7HuleeyaInformant:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:huleeya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_7HuleeyaInformant:ge:18
+0.5 0 0 0 0 B
+2 0 0 0
+90 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+6 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Jobasha's_Rare_Books
+10 0 0 0
+120 0 0 0 0 WALKTO:huleeya
+15 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:A1_7HuleeyaInformant:ge:20
+0.3 0 0 0 0 B
+30 0 0 0 0 ACTIVATE:huleeya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_cult
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_7HuleeyaInformant:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_Library_of_Vivec
+6 0 0 0
+60 0 0 0 0 ACTIVATE:mehra_milo
+2 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_10_MehraMilo:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+30 0 0 0
+120 0 0 0 0 ACTIVATE:mehra_milo
+2 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_10_MehraMilo:ge:20
+0.3 0 0 0 0 TOPIC:Progress_of_Truth
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_10_MehraMilo:ge:30
+0.3 0 0 0 0 TOPIC:Nerevarine_cult
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_10_MehraMilo:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_Hall_of_Justice_Secret_Library
+6 0 0 0
+120 0 0 0 0 PICKUP:bk_progressoftruth
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:bk_progressoftruth:ge:1
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A1_V_VivecInformants:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

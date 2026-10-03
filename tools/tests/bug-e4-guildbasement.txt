@@ -1,0 +1,18 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:60
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 SNAP:healthmax
+90 0 0 0 0 WALKTO:hasphat_antabolis
+0.3 0 0 0 0 EXPECT:health:ge:@
+0.3 0 0 0 0 SHOT
+90 0 0 0 0 WALKTO:eydis_fire-eye
+0.3 0 0 0 0 EXPECT:health:ge:@
+0.3 0 0 0 0 SHOT
+90 0 0 0 0 WALKTO:hasphat_antabolis
+0.3 0 0 0 0 EXPECT:health:ge:@
+0.3 0 0 0 0 SHOT
+90 0 0 0 0 WALKTO:eydis_fire-eye
+0.3 0 0 0 0 EXPECT:health:ge:@
+0.3 0 0 0 0 SHOT

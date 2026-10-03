@@ -1,0 +1,10 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 WEATHER:0
+0.3 0 0 0 0 TP:-39500:34400:1400:90
+8 0 0 0
+0.3 0 0 0 0 EXPECT:refabove:guar:lt:8
+0.3 0 0 0 0 EXPECT:refabove:guar:gt:-8
+0.3 0 0 0 0 SHOT
+1 0 0 0

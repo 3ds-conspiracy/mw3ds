@@ -1,0 +1,147 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_SadrithMoraDefenses:70
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:hire_a_wizard
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_sadrithmoradefenses
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TG_CookbookAlchemy:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:potion_recipe
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_cookbookalchemy
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:VA_VampChild:70
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:sinyaramen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:killed_by_your_kind
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:town_Sadrith:5
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:angaredhel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Gateway_haunting
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_sadrith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:VA_VampChild:1
+0.3 0 0 0 0 GIVE:p_sinyaramen_UNIQUE:1
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:sinyaramen
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:VA_VampChild:70
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+8 0 0 0
+0.3 0 0 0 0 TALK:sinyaramen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vilandon
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:VA_Rimintil:100
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 GIVE:p_quarrablood_UNIQUE:1
+0.3 0 0 0 0 JOURNAL:VA_VampBlood2:10
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Quarra_Blood_Potion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampblood2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_SpyBaladas:71
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:mallam_ryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:three_questions
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_spybaladas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_SlaveRebellion:50
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slave_rebellion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_slaverebellion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

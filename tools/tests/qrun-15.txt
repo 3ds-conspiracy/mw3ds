@@ -1,0 +1,163 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Tuveso_Beleth:_Smith
+8 0 0 0
+0.3 0 0 0 0 TALK:tuveso_beleth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Koal_Cave
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_koalcave
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:bolvyn_venim
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b5_venimhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_Stronghold:200
+0.3 0 0 0 0 JOURNAL:HR_ArobarKidnap:100
+0.3 0 0 0 0 JOURNAL:HR_CalderaDisrupt:100
+0.3 0 0 0 0 JOIN:redoran:8
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:bolvyn_venim
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_archmaster
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Arenim_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:Satyana
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_arenimtomb
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:1
+0.3 0 0 0 0 GOTO:Ashmelech
+8 0 0 0
+0.3 0 0 0 0 TALK:dhaunayne_aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:plan_to_serve_me
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:120
+0.3 0 0 0 0 GOTO:Ashmelech
+8 0 0 0
+0.3 0 0 0 0 TALK:dhaunayne_aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:vampire_hunter
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vamphunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 GOTO:Bal_Ur,_Underground
+8 0 0 0
+0.3 0 0 0 0 TALK:derar_hlervu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lifeless_one
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_vampirecure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:50
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_1_meetsulmatuul
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:50
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:20
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_4_muzgobinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

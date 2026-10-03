@@ -1,0 +1,16 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Andrano_Ancestral_Tomb
+8 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:dead%de%male_tomb01:le:0
+0.1 0 0 0 0 EXPECT:refdying:dead%de%male_tomb01:eq:0
+60 0 0 0 0 WALKTO:dead%de%male_tomb01
+0.3 0 0 0 0 FACE:dead%de%male_tomb01
+1 0 0 0 0 SHOT
+60 0 0 0 0 WALKTO:skeleton
+0.3 0 0 0 0 FACE:skeleton
+0.4 0 0 0 0 SHOT
+0.4 0 0 0 0 SHOT
+0.4 0 0 0 0 SHOT
+0.4 0 0 0 0 SHOT
+2 0 0 0

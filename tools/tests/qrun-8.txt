@@ -1,0 +1,162 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_ElithPalSupply:100
+0.3 0 0 0 0 JOIN:fighters_guild:7
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Eydis_Fire-Eye
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_killcronies
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_KillCronies:100
+0.3 0 0 0 0 JOIN:fighters_guild:7
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sjoring_Hard-Heart
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_killhardheart
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC10_buckmoth_alms:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:baradras
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic10_baradras
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC10_buckmoth_alms:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic10_persius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_BeneranBounty:100
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bandits_in_Suran
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_suranbandits
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_SuranBandits:100
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Elith-Pal_Mine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_elithpalsupply
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vas
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_vas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_Vas:100
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerer_Beneran
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_beneranbounty
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_NchuleftBook:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Detect_Creatures_Potion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_potion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chronicles_of_Nchuleft
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_nchuleftbook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,24 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Vivec,_Puzzle_Canal,_Center
+8 0 0 0
+20 0 0 0 0 ACTIVATE:ac_shrine_puzzlecanal
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:tt_puzzlecanal:eq:0
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 TALK:dremora_ttpc
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:silver_longsword
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:tt_puzzlecanal:eq:50
+0.3 0 0 0 0 EXPECT:count:silver_longsword:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+20 0 0 0 0 ACTIVATE:ac_shrine_puzzlecanal
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:tt_puzzlecanal:ge:100
+1 0 0 0

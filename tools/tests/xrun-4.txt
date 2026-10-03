@@ -1,0 +1,124 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writvendu:1
+0.3 0 0 0 0 GOTO:Vivec,_Temporary_Telvanni_Housing
+8 0 0 0
+120 0 0 0 0 KILL:idroso_vendu
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writvendu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:mt_writyasalmibaal:1
+0.3 0 0 0 0 GOTO:Bensiberib_Camp,_Odaishah's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:odaishah_yasalmibaal
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_writyasalmibaal
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:tt_maargan:30
+0.3 0 0 0 0 GOTO:Maar_Gan,_Shrine
+8 0 0 0
+120 0 0 0 0 KILL:dremora_ttmg
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_maargan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:tt_falseincarnate:1
+0.3 0 0 0 0 TP:53888:-50388:492:180
+8 0 0 0
+120 0 0 0 0 KILL:elvil_vidron
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_falseincarnate
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:tt_diseasecarrier:1
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Pit
+8 0 0 0
+120 0 0 0 0 KILL:tanusea_veloth
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_diseasecarrier
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Dandera_Selaro:_Smith
+8 0 0 0
+120 0 0 0 0 ACTIVATE:bk_pilgrimspath
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_pilgrimspath
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:109085:76285:1122:180
+8 0 0 0
+120 0 0 0 0 KILL:botrir
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_recoverwidowmaker
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:hr_cowarddisgrace:10
+0.3 0 0 0 0 GOTO:Vivec,_Elven_Nations_Cornerclub
+8 0 0 0
+120 0 0 0 0 KILL:brethas_deras
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_cowarddisgrace
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ilunibi,_Soul's_Rattle
+8 0 0 0
+120 0 0 0 0 KILL:dagoth_gares
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_2_6thhouse
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:da_mehrunes:20
+0.3 0 0 0 0 GIVE:Rusty_Dagger_UNIQUE:1
+0.3 0 0 0 0 GOTO:Yasammidan,_Shrine
+8 0 0 0
+120 0 0 0 0 WALKTO:active_dae_mehrunes
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:da_mehrunes
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

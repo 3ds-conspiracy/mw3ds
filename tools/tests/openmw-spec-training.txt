@@ -1,0 +1,136 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:spectraining
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:26
+0.1 0 0 0 0 SETATTR:luck:43
+0.1 0 0 0 0 SETSKILL:mercantile:20
+0.1 0 0 0 0 SETSKILL:speechcraft:43
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 SETDISP:neloth:40
+0.1 0 0 0 0 EXPECT:trainprice:neloth,25:eq:470
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:18
+0.1 0 0 0 0 SETATTR:luck:10
+0.1 0 0 0 0 SETSKILL:mercantile:52
+0.1 0 0 0 0 SETSKILL:spear:94
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 SETDISP:aryon:40
+0.1 0 0 0 0 EXPECT:trainprice:aryon,7:eq:822
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:51
+0.1 0 0 0 0 SETATTR:luck:57
+0.1 0 0 0 0 SETSKILL:mercantile:78
+0.1 0 0 0 0 SETSKILL:mysticism:20
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 SETDISP:aryon:25
+0.1 0 0 0 0 EXPECT:trainprice:aryon,14:eq:141
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:89
+0.1 0 0 0 0 SETATTR:luck:36
+0.1 0 0 0 0 SETSKILL:mercantile:36
+0.1 0 0 0 0 SETSKILL:alteration:75
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 SETDISP:dratha:50
+0.1 0 0 0 0 EXPECT:trainprice:dratha,11:eq:643
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:39
+0.1 0 0 0 0 SETATTR:luck:96
+0.1 0 0 0 0 SETSKILL:mercantile:11
+0.1 0 0 0 0 SETSKILL:mediumarmor:55
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 SETDISP:dratha:25
+0.1 0 0 0 0 EXPECT:trainprice:dratha,2:eq:616
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:42
+0.1 0 0 0 0 SETATTR:luck:44
+0.1 0 0 0 0 SETSKILL:mercantile:40
+0.1 0 0 0 0 SETSKILL:mysticism:57
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:arrille:65
+0.1 0 0 0 0 EXPECT:trainprice:arrille,14:eq:522
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:82
+0.1 0 0 0 0 SETATTR:luck:5
+0.1 0 0 0 0 SETSKILL:mercantile:79
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 SETDISP:arrille:25
+0.1 0 0 0 0 EXPECT:trainprice:arrille,24:eq:703
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:35
+0.1 0 0 0 0 SETATTR:luck:46
+0.1 0 0 0 0 SETSKILL:mercantile:66
+0.1 0 0 0 0 SETSKILL:enchant:37
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:dratha:65
+0.1 0 0 0 0 EXPECT:trainprice:dratha,9:eq:270
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:20
+0.1 0 0 0 0 SETATTR:luck:52
+0.1 0 0 0 0 SETSKILL:mercantile:95
+0.1 0 0 0 0 SETSKILL:alchemy:94
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 SETDISP:neloth:50
+0.1 0 0 0 0 EXPECT:trainprice:neloth,16:eq:652
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:12
+0.1 0 0 0 0 SETATTR:luck:78
+0.1 0 0 0 0 SETSKILL:mercantile:71
+0.1 0 0 0 0 SETSKILL:acrobatics:66
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 SETDISP:arrille:50
+0.1 0 0 0 0 EXPECT:trainprice:arrille,20:eq:532
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:86
+0.1 0 0 0 0 SETATTR:luck:86
+0.1 0 0 0 0 SETSKILL:mercantile:46
+0.1 0 0 0 0 SETSKILL:spear:66
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:neloth:25
+0.1 0 0 0 0 EXPECT:trainprice:neloth,7:eq:687
+0.5 0 0 0 0 LOAD:spectraining
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:65
+0.1 0 0 0 0 SETATTR:luck:63
+0.1 0 0 0 0 SETSKILL:mercantile:89
+0.1 0 0 0 0 SETSKILL:heavyarmor:36
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 SETDISP:aryon:40
+0.1 0 0 0 0 EXPECT:trainprice:aryon,3:eq:259

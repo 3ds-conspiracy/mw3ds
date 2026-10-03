@@ -1,0 +1,172 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+1 0 0 0 0 SAVE:specai
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:dratha:25
+0.1 0 0 0 0 EXPECT:fightterm:dratha,1500.0:eq:47
+0.1 0 0 0 0 EXPECT:fleerating:dratha,1500.0:ge:18.4800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,1500.0:le:18.5200
+0.1 0 0 0 0 EXPECT:fightterm:dratha,3000.0:eq:40
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:le:11.0200
+0.1 0 0 0 0 EXPECT:fightterm:dratha,500.0:eq:52
+0.1 0 0 0 0 EXPECT:fleerating:dratha,500.0:ge:23.4800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,500.0:le:23.5200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:neloth:25
+0.1 0 0 0 0 EXPECT:fightterm:neloth,3000.0:eq:40
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:le:11.0200
+0.1 0 0 0 0 EXPECT:fightterm:neloth,500.0:eq:52
+0.1 0 0 0 0 EXPECT:fleerating:neloth,500.0:ge:23.4800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,500.0:le:23.5200
+0.1 0 0 0 0 EXPECT:fightterm:neloth,6000.0:eq:25
+0.1 0 0 0 0 EXPECT:fleerating:neloth,6000.0:ge:-4.0200
+0.1 0 0 0 0 EXPECT:fleerating:neloth,6000.0:le:-3.9800
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:neloth:65
+0.1 0 0 0 0 EXPECT:fightterm:neloth,3000.0:eq:32
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:le:11.0200
+0.1 0 0 0 0 EXPECT:fightterm:neloth,1500.0:eq:39
+0.1 0 0 0 0 EXPECT:fleerating:neloth,1500.0:ge:18.4800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,1500.0:le:18.5200
+0.1 0 0 0 0 EXPECT:fightterm:neloth,6000.0:eq:17
+0.1 0 0 0 0 EXPECT:fleerating:neloth,6000.0:ge:-4.0200
+0.1 0 0 0 0 EXPECT:fleerating:neloth,6000.0:le:-3.9800
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:neloth:10
+0.1 0 0 0 0 EXPECT:fightterm:neloth,6000.0:eq:28
+0.1 0 0 0 0 EXPECT:fleerating:neloth,6000.0:ge:-4.0200
+0.1 0 0 0 0 EXPECT:fleerating:neloth,6000.0:le:-3.9800
+0.1 0 0 0 0 EXPECT:fightterm:neloth,0.0:eq:58
+0.1 0 0 0 0 EXPECT:fleerating:neloth,0.0:ge:25.9800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,0.0:le:26.0200
+0.1 0 0 0 0 EXPECT:fightterm:neloth,0.0:eq:58
+0.1 0 0 0 0 EXPECT:fleerating:neloth,0.0:ge:25.9800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,0.0:le:26.0200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.1 0 0 0 0 SETDISP:aryon:90
+0.1 0 0 0 0 EXPECT:fightterm:aryon,0.0:eq:42
+0.1 0 0 0 0 EXPECT:fleerating:aryon,0.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,0.0:le:0.0200
+0.1 0 0 0 0 EXPECT:fightterm:aryon,1500.0:eq:34
+0.1 0 0 0 0 EXPECT:fleerating:aryon,1500.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,1500.0:le:0.0200
+0.1 0 0 0 0 EXPECT:fightterm:aryon,0.0:eq:42
+0.1 0 0 0 0 EXPECT:fleerating:aryon,0.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,0.0:le:0.0200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:dratha:65
+0.1 0 0 0 0 EXPECT:fightterm:dratha,3000.0:eq:32
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:le:11.0200
+0.1 0 0 0 0 EXPECT:fightterm:dratha,100.0:eq:46
+0.1 0 0 0 0 EXPECT:fleerating:dratha,100.0:ge:25.4800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,100.0:le:25.5200
+0.1 0 0 0 0 EXPECT:fightterm:dratha,500.0:eq:44
+0.1 0 0 0 0 EXPECT:fleerating:dratha,500.0:ge:23.4800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,500.0:le:23.5200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.1 0 0 0 0 SETDISP:aryon:50
+0.1 0 0 0 0 EXPECT:fightterm:aryon,1500.0:eq:42
+0.1 0 0 0 0 EXPECT:fleerating:aryon,1500.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,1500.0:le:0.0200
+0.1 0 0 0 0 EXPECT:fightterm:aryon,6000.0:eq:20
+0.1 0 0 0 0 EXPECT:fleerating:aryon,6000.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,6000.0:le:0.0200
+0.1 0 0 0 0 EXPECT:fightterm:aryon,6000.0:eq:20
+0.1 0 0 0 0 EXPECT:fleerating:aryon,6000.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,6000.0:le:0.0200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:dratha:50
+0.1 0 0 0 0 EXPECT:fightterm:dratha,0.0:eq:50
+0.1 0 0 0 0 EXPECT:fleerating:dratha,0.0:ge:25.9800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,0.0:le:26.0200
+0.1 0 0 0 0 EXPECT:fightterm:dratha,1500.0:eq:42
+0.1 0 0 0 0 EXPECT:fleerating:dratha,1500.0:ge:18.4800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,1500.0:le:18.5200
+0.1 0 0 0 0 EXPECT:fightterm:dratha,3000.0:eq:35
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:le:11.0200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:dratha:10
+0.1 0 0 0 0 EXPECT:fightterm:dratha,6000.0:eq:28
+0.1 0 0 0 0 EXPECT:fleerating:dratha,6000.0:ge:-4.0200
+0.1 0 0 0 0 EXPECT:fleerating:dratha,6000.0:le:-3.9800
+0.1 0 0 0 0 EXPECT:fightterm:dratha,500.0:eq:55
+0.1 0 0 0 0 EXPECT:fleerating:dratha,500.0:ge:23.4800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,500.0:le:23.5200
+0.1 0 0 0 0 EXPECT:fightterm:dratha,3000.0:eq:43
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:dratha,3000.0:le:11.0200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETDISP:arrille:40
+0.1 0 0 0 0 EXPECT:fightterm:arrille,3000.0:eq:37
+0.1 0 0 0 0 EXPECT:fleerating:arrille,3000.0:ge:13.9800
+0.1 0 0 0 0 EXPECT:fleerating:arrille,3000.0:le:14.0200
+0.1 0 0 0 0 EXPECT:fightterm:arrille,0.0:eq:52
+0.1 0 0 0 0 EXPECT:fleerating:arrille,0.0:ge:28.9800
+0.1 0 0 0 0 EXPECT:fleerating:arrille,0.0:le:29.0200
+0.1 0 0 0 0 EXPECT:fightterm:arrille,1500.0:eq:44
+0.1 0 0 0 0 EXPECT:fleerating:arrille,1500.0:ge:21.4800
+0.1 0 0 0 0 EXPECT:fleerating:arrille,1500.0:le:21.5200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.1 0 0 0 0 SETDISP:aryon:65
+0.1 0 0 0 0 EXPECT:fightterm:aryon,500.0:eq:44
+0.1 0 0 0 0 EXPECT:fleerating:aryon,500.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,500.0:le:0.0200
+0.1 0 0 0 0 EXPECT:fightterm:aryon,3000.0:eq:32
+0.1 0 0 0 0 EXPECT:fleerating:aryon,3000.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,3000.0:le:0.0200
+0.1 0 0 0 0 EXPECT:fightterm:aryon,3000.0:eq:32
+0.1 0 0 0 0 EXPECT:fleerating:aryon,3000.0:ge:-0.0200
+0.1 0 0 0 0 EXPECT:fleerating:aryon,3000.0:le:0.0200
+0.5 0 0 0 0 LOAD:specai
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.1 0 0 0 0 SETDISP:neloth:90
+0.1 0 0 0 0 EXPECT:fightterm:neloth,0.0:eq:42
+0.1 0 0 0 0 EXPECT:fleerating:neloth,0.0:ge:25.9800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,0.0:le:26.0200
+0.1 0 0 0 0 EXPECT:fightterm:neloth,3000.0:eq:27
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:le:11.0200
+0.1 0 0 0 0 EXPECT:fightterm:neloth,3000.0:eq:27
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:ge:10.9800
+0.1 0 0 0 0 EXPECT:fleerating:neloth,3000.0:le:11.0200

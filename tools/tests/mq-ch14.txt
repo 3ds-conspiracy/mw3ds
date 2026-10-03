@@ -1,0 +1,68 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:25
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:50
+0.3 0 0 0 0 JOURNAL:B2_AhemmusaSafe:50
+0.3 0 0 0 0 JOURNAL:B3_ZainabBride:60
+0.3 0 0 0 0 JOURNAL:B4_KillWarLovers:55
+0.3 0 0 0 0 JOURNAL:B5_RedoranHort:70
+0.3 0 0 0 0 JOURNAL:B6_HlaaluHort:50
+0.3 0 0 0 0 JOURNAL:B7_TelvanniHort:50
+0.3 0 0 0 0 JOURNAL:B8_MeetVivec:1
+0.3 0 0 0 0 JOIN:nerevarine:4
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 TP:32874:-99300:1150:180
+8 0 0 0
+120 0 0 0 0 ACTIVATE:danso_indules
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:meet_the_archcanon
+0.3 0 0 0 0 TOPIC:meet_the_archcanon
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B8_All_Hortator:ge:50
+0.3 0 0 0 0 EXPECT:journal:B8_All_Nerevarine:ge:50
+0.3 0 0 0 0 TOPIC:meet_the_archcanon
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+6 0 0 0
+180 0 0 0 0 ACTIVATE:tholer_saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Temple's_doctrine
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_Palace_of_Vivec
+6 0 0 0
+120 0 0 0 0 ACTIVATE:vivec_god
+2 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:8
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:50
+0.3 0 0 0 0 EXPECT:item:wraithguard:ge:1
+0.3 0 0 0 0 TOPIC:defeat_Dagoth_Ur
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:55
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

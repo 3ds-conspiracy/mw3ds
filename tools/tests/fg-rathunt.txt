@@ -1,0 +1,43 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:60
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+0.5 0 0 0 0 DOOR:eydis_fire-eye
+1 0 0 0 0 TOPIC:join_the_fighters_guild
+1 0 0 0 0 CHOICE:1
+1 0 0 0 0 TOPIC:orders
+1 0 0 0 0 TOPIC:cave_rat
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:FG_RatHunt
+0.3 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:10
+0.5 0 0 0 0 GOTO:Balmora,_Drarayne_Thelas'_House
+3 0 0 0
+0.5 0 0 0 0 DOOR:drarayne_thelas
+1 0 0 0 0 TOPIC:cave_rat
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:FG_RatHunt
+0.3 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:10
+0.3 0 0 0 0 SOULKILL:rat_cave_fgrh
+0.5 0 0 0 0 GOTO:Balmora,_Drarayne_Thelas'_Storage
+3 0 0 0
+0.3 0 0 0 0 SOULKILL:rat_cave_fgrh
+0.3 0 0 0 0 SOULKILL:rat_cave_fgrh
+0.5 0 0 0 0 GOTO:Balmora,_Drarayne_Thelas'_House
+3 0 0 0
+0.5 0 0 0 0 DOOR:drarayne_thelas
+1 0 0 0 0 TOPIC:cave_rat
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:FG_RatHunt
+0.3 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:100
+0.5 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+0.5 0 0 0 0 DOOR:eydis_fire-eye
+1 0 0 0 0 TOPIC:cave_rat
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:FG_RatHunt
+0.3 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:105
+1 0 0 0

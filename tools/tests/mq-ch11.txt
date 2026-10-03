@@ -1,0 +1,85 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 JOURNAL:HR_RescueSarethi:100
+0.3 0 0 0 0 JOIN:nerevarine:3
+0.3 0 0 0 0 GIVE:moon_and_star
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+6 0 0 0
+60 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:Redoran_Hortator
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B5_SarethiHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Arobar_Manor_Bedrooms
+6 0 0 0
+60 0 0 0 0 ACTIVATE:miner_arobar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B5_ArobarHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Llethri_Private_Quarters
+6 0 0 0
+60 0 0 0 0 ACTIVATE:garisa_llethri
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B5_LlethriHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Morvayn_Quarters
+6 0 0 0
+60 0 0 0 0 ACTIVATE:brara_morvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B5_MorvaynHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ramoran_Private_Quarters
+6 0 0 0
+60 0 0 0 0 ACTIVATE:hlaren_ramoran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B5_RamoranHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Private_Quarters
+6 0 0 0
+60 0 0 0 0 ACTIVATE:bolvyn_venim
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B5_VenimHort:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Pit
+10 0 0 0
+0.3 0 0 0 0 EQUIP:silver_longsword
+120 0 0 0 0 KILL:bolvyn_venim
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:dead:bolvyn_venim
+0.3 0 0 0 0 EXPECT:journal:B5_VenimHort:ge:50
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+6 0 0 0
+60 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:B5_RedoranHort:ge:50
+0.3 0 0 0 0 EXPECT:item:bk_NerevarineNotice:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

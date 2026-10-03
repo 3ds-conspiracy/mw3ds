@@ -1,0 +1,91 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 LEVEL:10
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:60
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:50
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:50
+0.3 0 0 0 0 JOIN:blades:4
+0.3 0 0 0 0 SPELL:corprus
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:lost_prophecies
+0.3 0 0 0 0 TOPIC:lost_prophecies
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_6_Incarnate:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SLEEP:24:2
+10 0 0 0 0 MSG
+0.3 0 0 0 0 SLEEP:24:2
+10 0 0 0 0 MSG
+30 0 0 0 0 ACTIVATE:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:My_judgement
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_6_Incarnate:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Third_trial
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_6_Incarnate:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 GOTO:Kogoruhn,_Dome_of_Pollock's_Eve
+6 0 0 0
+180 0 0 0 0 PICKUP:misc_goblet_dagoth
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:misc_goblet_dagoth:ge:1
+0.3 0 0 0 0 GOTO:Kogoruhn,_Bleeding_Heart
+6 0 0 0
+180 0 0 0 0 PICKUP:shadow_shield
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:item:shadow_shield:ge:1
+0.3 0 0 0 0 GIVE:ingred_corprus_weepings_01
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+6 0 0 0
+30 0 0 0 0 ACTIVATE:sul-matuul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Third_trial
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:A2_6_Incarnate:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 TP:52060:109300:6400:0
+8 0 0 0
+0.3 0 0 0 0 HOUR:5
+60 0 0 0 0 ACTIVATE:in_ci_door_01
+4 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Cavern_of_the_Incarnate
+0.3 0 0 0 0 HOUR:7
+8 0 0 0
+60 0 0 0 0 ACTIVATE:in_ci_door_01
+8 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Cavern_of_the_Incarnate
+120 0 0 0 0 PICKUP:moon_and_star
+3 0 0 0
+0.3 0 0 0 0 B
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:A2_6_Incarnate:ge:50
+0.3 0 0 0 0 EXPECT:item:moon_and_star:ge:1
+0.3 0 0 0 0 EXPECT:rank:nerevarine:ge:0
+1 0 0 0

@@ -1,0 +1,34 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+40 0 0 0
+0.3 0 0 0 0 EXPECT:unaimable:eq:0
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+20 0 0 0
+0.5 0 0 0 0 EVICT:0
+0.3 0 0 0 0 EXPECT:unaimable:eq:0
+60 0 0 0 0 DOORTO:outside
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:unaimable:eq:0
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:unaimable:eq:0
+60 0 0 0 0 DOORTO:outside
+6 0 0 0
+0.3 0 0 0 0 EXPECT:unaimable:eq:0
+1 0 0 0 0 SAVE:aim
+0.5 0 0 0 0 LOAD:aim
+5 0 0 0
+0.3 0 0 0 0 EXPECT:unaimable:eq:0
+0.3 0 0 0 0 PLACE:dremora:150
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:dremora
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refaimable:dremora:eq:1
+30 0 0 0 0 ACTIVATE:dremora
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 B
+1 0 0 0

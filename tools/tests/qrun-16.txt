@@ -1,0 +1,159 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:50
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:promoted_to_Operative
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milocaiusgone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:5
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:60
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_2_6thhouse
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:14
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sjorvar_Horse-Mouth
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_sjorvar2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Morrowind_history
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:book_history
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_3_corpruscure
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:14
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Surane_Leoriane
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_surane2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:14
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Tyermaillin
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_tyermaillin2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Fast_Eddie
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fast_eddie
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:14
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nine-Toes
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_nine_toes2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:14
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Rithleen
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:blades_rithleen2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

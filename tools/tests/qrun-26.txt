@@ -1,0 +1,161 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_FalseOrdinator:100
+0.3 0 0 0 0 GOTO:Ebonheart,_Hawkmoth_Legion_Garrison
+8 0 0 0
+0.3 0 0 0 0 TALK:Frald_the_White
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Saprius_Entius
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_protectentius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_Courtesy:100
+0.3 0 0 0 0 GOTO:Ebonheart,_Hawkmoth_Legion_Garrison
+8 0 0 0
+0.3 0 0 0 0 TALK:Frald_the_White
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Honthjolf
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_traitorwarrior
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:imperial_legion:0
+0.3 0 0 0 0 GOTO:Ebonheart,_Hawkmoth_Legion_Garrison
+8 0 0 0
+0.3 0 0 0 0 TALK:Frald_the_White
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:courtesy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_courtesy
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_TraitorWarrior:100
+0.3 0 0 0 0 GOTO:Ebonheart,_Hawkmoth_Legion_Garrison
+8 0 0 0
+0.3 0 0 0 0 TALK:Frald_the_White
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slander
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_falseordinator
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC17_Witch_not:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:Kaye:localdayspassed:2
+0.3 0 0 0 0 TALK:Kaye
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic18_silver_staff
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Skull-Crusher
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic29_crusher
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC24_OracleQuest:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ring_in_Darkness
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic25_jonhawker
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC13_rich_not:1
+0.3 0 0 0 0 JOIN:imperial_cult:0
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:Iulus_Truptor:localdayspassed:2
+0.3 0 0 0 0 TALK:Iulus_Truptor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_ponius
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:9
+0.3 0 0 0 0 JOIN:imperial_cult:3
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 TALK:Lalatia_Varian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Oracle's_Quests
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:5
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic24_oraclequest
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC18_Silver_not:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+8 0 0 0
+0.3 0 0 0 0 SETLOCAL:Kaye:localdayspassed:2
+0.3 0 0 0 0 TALK:Kaye
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic19_restless_spirit
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

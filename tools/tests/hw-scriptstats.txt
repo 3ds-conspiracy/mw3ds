@@ -1,0 +1,19 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:MG_Flowers:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+0.3 0 0 0 0 EXPECT:refrank:ajira:ge:0
+0.3 0 0 0 0 SNAP:refrank:ajira
+0.3 0 0 0 0 JOURNAL:MG_StolenReport:100
+0.5 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+3 0 0 0
+0.5 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refrank:ajira:eq:@1
+0.3 0 0 0 0 GOTO:Abaesen-Pulu_Egg_Mine
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refspell:kwama_queen_abaesen,ash-chancre:eq:1
+0.3 0 0 0 0 EXPECT:refspell:kwama_queen_abaesen,levitate:eq:0
+1 0 0 0

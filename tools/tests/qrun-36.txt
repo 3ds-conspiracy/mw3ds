@@ -1,0 +1,135 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Nammu
+8 0 0 0
+0.3 0 0 0 0 TALK:Jon_Hawker
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Divine_Intervention
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic25_jonhawker_free
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Omani_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:velanda_omani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vassir_Didanat_Mine
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_vassirdidanat
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Palansour
+8 0 0 0
+0.3 0 0 0 0 TALK:Ingwold
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_hatandskirt
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Piernette:100
+0.3 0 0 0 0 JOURNAL:IC_guide:1
+0.3 0 0 0 0 GOTO:Pelagiad,_Fort_Pelagiad
+8 0 0 0
+0.3 0 0 0 0 TALK:ygfa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Imperial_Cult
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic0_imperialcult
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MS_Piernette:100
+0.3 0 0 0 0 GOTO:Pelagiad,_Fort_Pelagiad
+8 0 0 0
+0.3 0 0 0 0 TALK:ygfa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Imperial_Cult
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic_guide
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Thieves_Guild
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:romance_ahnassi
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Rotheran,_Arena
+8 0 0 0
+0.3 0 0 0 0 TALK:adusamsi_assurnarairan
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic27_oracle_a
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Cooking_Secrets
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_redorancookbook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:big_helende
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Grandmaster's_Retort
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_grandmasterretort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

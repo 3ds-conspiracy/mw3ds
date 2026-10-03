@@ -1,0 +1,92 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:20
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Apographa
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_FindGiladren:10
+0.3 0 0 0 0 GOTO:Mila-Nipal,_Manat's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:beden_giladren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Beden_Giladren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_findgiladren
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_FindGiladren:70
+0.3 0 0 0 0 GOTO:Mila-Nipal,_Manat's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:beden_giladren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_findgiladren
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_BillCollect:10
+0.3 0 0 0 0 GOTO:Molag_Mar,_Armigers_Stronghold
+8 0 0 0
+0.3 0 0 0 0 TALK:giras_indaram
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:armor_repair_debts
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_billcollect
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_MountKand:100
+0.3 0 0 0 0 GOTO:Molag_Mar,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tharer_rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mount_Kand
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_mountkand
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_CuringTouch:50
+0.3 0 0 0 0 GOTO:Molag_Mar,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tharer_rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lette
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_curingtouch
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

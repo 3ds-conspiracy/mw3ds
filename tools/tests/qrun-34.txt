@@ -1,0 +1,138 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IL_WidowLand:100
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Eggmine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:il_gnisisblight
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Hla_Oad,_Fatleg's_Drop_Off
+8 0 0 0
+0.3 0 0 0 0 TALK:Relam_Arinith
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:doing_some_business
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mv_slavemule
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:20
+0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
+0.3 0 0 0 0 REP:50
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_backdoor5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Holamayan_Monastery
+8 0 0 0
+0.3 0 0 0 0 TALK:gilvas_barelo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevar
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_milogone_books
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 GOTO:Khuul,_Endris_Dilmyn's_Shack
+8 0 0 0
+0.3 0 0 0 0 TALK:Endris_Dilmyn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepers_endris
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:indoril_helmet:1
+0.3 0 0 0 0 GIVE:indoril_cuirass:1
+0.3 0 0 0 0 GIVE:indoril_pauldron_left:1
+0.3 0 0 0 0 GIVE:indoril_pauldron_right:1
+0.3 0 0 0 0 GOTO:Ministry_of_Truth,_Hall_of_Processing
+8 0 0 0
+0.3 0 0 0 0 TALK:grand_inquisitor
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:proper_authorization
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_4_miloprisonsafe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Molag_Mar,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tharer_rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Delvam_Andarys
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_mawia
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:15
+0.3 0 0 0 0 GOTO:Molag_Mar,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tharer_rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Galom_Daeus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_galomdeus
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:TT_CuringTouch:100
+0.3 0 0 0 0 JOIN:temple:0
+0.3 0 0 0 0 GOTO:Molag_Mar,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tharer_rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mount_Kand
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_mountkand
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

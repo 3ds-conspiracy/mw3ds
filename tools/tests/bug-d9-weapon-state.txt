@@ -1,0 +1,26 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:chitin%dagger
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+1 0 0 0 0 MSG
+0.3 0 0 0 0 SNAP:soundstarted:Item_Weapon_Shortblade_Up
+0.1 0 0 0 0 X
+1 0 0 0
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 0 0 0 EXPECT:soundstarted:Item_Weapon_Shortblade_Up:eq:@1
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SNAP:soundstarted:SwishS
+1.5 0 0 0 0 X
+0.3 0 0 0 0 SCREEN:inventory
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 SPELL:fire_bite
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SNAP:magicka
+0.3 0 0 0 0 CAST:fire%bite
+1 0 0 0
+0.3 0 0 0 0 EXPECT:magicka:lt:@0
+0.3 0 0 0 0 SHOT

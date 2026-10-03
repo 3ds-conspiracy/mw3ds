@@ -1,0 +1,20 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SPELL:vampire_blood_aundae
+0.3 0 0 0 0 CHECK:global:pcvampire
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 CHECK:global:gamehour
+0.3 0 0 0 0 A
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 CHECK:player
+0.3 0 0 0 0 CHECK:global:pcvampire
+0.3 0 0 0 0 CHECK:global:vampclan
+0.3 0 0 0 0 CHECK:global:gamehour
+1 0 0 0

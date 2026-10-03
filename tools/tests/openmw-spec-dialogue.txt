@@ -1,0 +1,1199 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specdialogue
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Haunted_Manor
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:8
+0.2 0 0 0 0 JOIN:redoran:5
+0.2 0 0 0 0 JOIN:telvanni:0
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:hh_berosupport:70
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:7
+0.2 0 0 0 0 LEVEL:5
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:garding:80
+0.2 0 0 0 0 EXPECT:greeting:garding:you_want_another_shot_at_me,
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.2 0 0 0 0 JOIN:redoran:0
+0.2 0 0 0 0 JOIN:telvanni:0
+0.2 0 0 0 0 JOURNAL:b7_nelothhort:50
+0.2 0 0 0 0 JOURNAL:ht_drakepride:100
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:neloth:21
+0.2 0 0 0 0 EXPECT:greeting:neloth:you_again!_what_do_you_want_this_t
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Gindrala_Hleran's_House
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:9
+0.2 0 0 0 0 JOIN:redoran:3
+0.2 0 0 0 0 JOIN:sixth_house:0
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:7
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:Dreamer_Talker02:79
+0.2 0 0 0 0 EXPECT:greeting:Dreamer_Talker02:all_is_silence._the_road_is_straig
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Fighters
+8 0 0 0
+0.2 0 0 0 0 JOIN:fighters_guild:9
+0.2 0 0 0 0 JOIN:hlaalu:0
+0.2 0 0 0 0 JOIN:redoran:7
+0.2 0 0 0 0 JOIN:telvanni:2
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:fg_bigbosses:110
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:8
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:sjoring_hard-heart:11
+0.2 0 0 0 0 EXPECT:greeting:sjoring_hard-heart:die,_thief!
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Gnisis,_Lower_Eggmine
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:7
+0.2 0 0 0 0 JOIN:redoran:9
+0.2 0 0 0 0 JOIN:telvanni:6
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:il_gnisisblight:10
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 SETGLOBAL:wearinglegionuni:0
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:lugrub_gro-ogdum:9
+0.2 0 0 0 0 EXPECT:greeting:lugrub_gro-ogdum:darius_says_you_can_be_here,_so_it
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:2
+0.2 0 0 0 0 JOIN:redoran:1
+0.2 0 0 0 0 JOIN:telvanni:3
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:52
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:8
+0.2 0 0 0 0 LEVEL:5
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:ghost_npc_conoon_chodal:70
+0.2 0 0 0 0 EXPECT:greeting:ghost_npc_conoon_chodal:welcome,_incarnate._i_am_conoon_ch
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Waistworks
+8 0 0 0
+0.3 0 0 0 0 TALK:eraldil
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:native_Dunmer_culture
+0.2 0 0 0 0 SETDISP:eraldil:49
+0.2 0 0 0 0 EXPECT:answer:native_Dunmer_culture:eraldil:ne:the_clan_and_family_structures_of
+0.2 0 0 0 0 EXPECT:answer:native_Dunmer_culture:eraldil:ne:native_dunmer_culture_shares_commo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:yak_gro-skandar
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:yak_gro-skandar:100
+0.2 0 0 0 0 EXPECT:answer:get_me_out:yak_gro-skandar:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:yak_gro-skandar:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:6
+0.2 0 0 0 0 JOIN:redoran:6
+0.2 0 0 0 0 JOIN:telvanni:0
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:60
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:ghost_npc_peakstar:50
+0.2 0 0 0 0 EXPECT:greeting:ghost_npc_peakstar:welcome,_incarnate,_moon-and-star
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ashurnibibi,_Shrine
+8 0 0 0
+0.3 0 0 0 0 TALK:joncis_dalomax
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:J'Saddha
+0.2 0 0 0 0 SETDISP:joncis_dalomax:50
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:joncis_dalomax:ne:you_lied_to_me_once,
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:joncis_dalomax:ne:i'm_going_to_look_around_the_ruins
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Ranabi's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:ranabi
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:ranabi:1
+0.2 0 0 0 0 EXPECT:answer:get_me_out:ranabi:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:ranabi:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Right_Wing
+8 0 0 0
+0.3 0 0 0 0 TALK:varvur_sarethi
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:J'Saddha
+0.2 0 0 0 0 SETDISP:varvur_sarethi:100
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:varvur_sarethi:ne:you_lied_to_me_once,
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:varvur_sarethi:ne:i'm_going_to_look_around_the_ruins
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:a2_3_corpruscure:46
+0.2 0 0 0 0 JOURNAL:a2_4_milocaiusgone:5
+0.2 0 0 0 0 KNOW:promoted_to_Operative
+0.2 0 0 0 0 SETDISP:caius_cosades:0
+0.2 0 0 0 0 EXPECT:answer:promoted_to_Operative:caius_cosades:eq:yes._that_makes_you_the_ranking_bl
+0.2 0 0 0 0 EXPECT:topiclisted:promoted_to_Operative
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_St._Delyn_Plaza
+8 0 0 0
+0.2 0 0 0 0 JOIN:redoran:4
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:8
+0.2 0 0 0 0 LEVEL:2
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:cassius_olcinius:60
+0.2 0 0 0 0 EXPECT:greeting:cassius_olcinius:excuse_me,_can_you_help_me?_no,_i'
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.2 0 0 0 0 JOIN:redoran:9
+0.2 0 0 0 0 JOIN:telvanni:4
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:7
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:ghost_npc_ane_teria:1
+0.2 0 0 0 0 EXPECT:greeting:ghost_npc_ane_teria:welcome,_incarnate._i_am_ane_teria
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Saren_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:toris_saren
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:Soul_sickness
+0.2 0 0 0 0 SETDISP:toris_saren:50
+0.2 0 0 0 0 EXPECT:answer:Soul_sickness:toris_saren:eq:now_that_the_devil_is_dead,_and_hi
+0.2 0 0 0 0 EXPECT:topiclisted:Soul_sickness
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+8 0 0 0
+0.2 0 0 0 0 JOIN:redoran:1
+0.2 0 0 0 0 JOIN:telvanni:2
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:5
+0.2 0 0 0 0 SETBOUNTY:150
+0.2 0 0 0 0 SETDISP:alfe_fyr:31
+0.2 0 0 0 0 EXPECT:greeting:alfe_fyr:i_suppose_you_want_to_speak_to_div
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Canalworks
+8 0 0 0
+0.3 0 0 0 0 TALK:j'dhannar
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Dro'Sakhar
+0.2 0 0 0 0 SETDISP:j'dhannar:0
+0.2 0 0 0 0 EXPECT:answer:Dro'Sakhar:j'dhannar:eq:name_knows_nothing_of_this.
+0.2 0 0 0 0 EXPECT:topiclisted:Dro'Sakhar
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:6
+0.2 0 0 0 0 JOIN:imperial_legion:8
+0.2 0 0 0 0 JOIN:telvanni:3
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:il_rescueragash:70
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:7
+0.2 0 0 0 0 SETGLOBAL:wearinglegionuni:0
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:ragash_gra-shuzgub:40
+0.2 0 0 0 0 EXPECT:greeting:ragash_gra-shuzgub:thank_you._don't_think_i_ever_get
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:1
+0.2 0 0 0 0 JOIN:redoran:0
+0.2 0 0 0 0 JOIN:telvanni:5
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:52
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:ghost_npc_idrenie_nerot:80
+0.2 0 0 0 0 EXPECT:greeting:ghost_npc_idrenie_nerot:welcome,_incarnate._i_am_idrenie_n
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:fg_egg_poachers:10
+0.2 0 0 0 0 KNOW:Shulk_Egg_Mine
+0.2 0 0 0 0 SETDISP:eydis_fire-eye:1
+0.2 0 0 0 0 EXPECT:answer:Shulk_Egg_Mine:eydis_fire-eye:eq:i_already_told_you_how_to_get_ther
+0.2 0 0 0 0 EXPECT:topiclisted:Shulk_Egg_Mine
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Council_Club
+8 0 0 0
+0.3 0 0 0 0 TALK:vadusa_sathryon
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:citizens_of_the_Empire
+0.2 0 0 0 0 SETDISP:vadusa_sathryon:51
+0.2 0 0 0 0 EXPECT:answer:citizens_of_the_Empire:vadusa_sathryon:eq:sure._we're_citizens._we_don't_hav
+0.2 0 0 0 0 EXPECT:topiclisted:citizens_of_the_Empire
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:fg_elithpalsupply:100
+0.2 0 0 0 0 JOURNAL:fg_killcronies:15
+0.2 0 0 0 0 KNOW:Eydis_Fire-Eye
+0.2 0 0 0 0 SETDISP:persius_mercius:99
+0.2 0 0 0 0 EXPECT:answer:Eydis_Fire-Eye:persius_mercius:ne:regretably,_you_broke_the_rules_of
+0.2 0 0 0 0 EXPECT:answer:Eydis_Fire-Eye:persius_mercius:ne:eydis_fire-eye_used_to_be_one_of_s
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Antechamber
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:2
+0.2 0 0 0 0 JOIN:redoran:7
+0.2 0 0 0 0 JOIN:telvanni:8
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:hlireni_indavel:29
+0.2 0 0 0 0 EXPECT:greeting:hlireni_indavel:well,_well,_well._what_do_we_have
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Aidanat_Camp,_Abassel's_Yurt
+8 0 0 0
+0.2 0 0 0 0 JOIN:redoran:9
+0.2 0 0 0 0 JOIN:telvanni:4
+0.2 0 0 0 0 JOURNAL:b8_meetvivec:40
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:il_rescuepilgrim:70
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:madura_seran:70
+0.2 0 0 0 0 EXPECT:greeting:madura_seran:thank_you_for_getting_me_to_the_al
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Abebaal_Egg_Mine
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnarra
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Khajiit
+0.2 0 0 0 0 SETDISP:ahnarra:100
+0.2 0 0 0 0 EXPECT:answer:Khajiit:ahnarra:ne:proud_khajiit_come_from_the_desert
+0.2 0 0 0 0 EXPECT:answer:Khajiit:ahnarra:ne:khajiit_love_emperor_very_much,_th
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:neminda:100
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:neminda:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:neminda:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Caldera,_Elmussa_Damori's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:elmussa_damori
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:elmussa_damori:0
+0.2 0 0 0 0 EXPECT:answer:get_me_out:elmussa_damori:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:elmussa_damori:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.3 0 0 0 0 TALK:ghost_npc_peakstar
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:a1_2_antabolisinformant:15
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:little_secret
+0.2 0 0 0 0 SETDISP:ghost_npc_peakstar:0
+0.2 0 0 0 0 EXPECT:answer:little_secret:ghost_npc_peakstar:ne:you're_an_outlander,_maybe_you_don
+0.2 0 0 0 0 EXPECT:answer:little_secret:ghost_npc_peakstar:ne:what_are_the_most_dangerous_places
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.2 0 0 0 0 JOIN:fighters_guild:3
+0.2 0 0 0 0 JOIN:hlaalu:0
+0.2 0 0 0 0 JOIN:telvanni:5
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:fg_alofsfarm:100
+0.2 0 0 0 0 JOURNAL:fg_hungerloose:100
+0.2 0 0 0 0 JOURNAL:fg_killcronies:10
+0.2 0 0 0 0 JOURNAL:fg_orcbounty:100
+0.2 0 0 0 0 JOURNAL:fg_rathunt:105
+0.2 0 0 0 0 JOURNAL:fg_sottilde:100
+0.2 0 0 0 0 JOURNAL:fg_telvanni_agents:100
+0.2 0 0 0 0 JOURNAL:fg_verethigang:100
+0.2 0 0 0 0 SETGLOBAL:pcrace:7
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:150
+0.2 0 0 0 0 SETDISP:eydis_fire-eye:40
+0.2 0 0 0 0 EXPECT:greeting:eydis_fire-eye:._word_on_the_street_is_that_you'v
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Corprusarium_Bowels
+8 0 0 0
+0.2 0 0 0 0 JOIN:redoran:4
+0.2 0 0 0 0 JOURNAL:a2_3_corprussafe:100
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:150
+0.2 0 0 0 0 SETDISP:uupse_fyr:89
+0.2 0 0 0 0 EXPECT:greeting:uupse_fyr:you're_new_here,_aren't_you?_my_na
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:bevadar_bels
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:bevadar_bels:1
+0.2 0 0 0 0 EXPECT:answer:get_me_out:bevadar_bels:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:bevadar_bels:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:2
+0.2 0 0 0 0 JOIN:telvanni:9
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:54
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:8
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:ghost_npc_hort_ledd:41
+0.2 0 0 0 0 EXPECT:greeting:ghost_npc_hort_ledd:welcome,_incarnate._i_am_hort-ledd
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Prison_Cells
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:4
+0.2 0 0 0 0 JOIN:redoran:3
+0.2 0 0 0 0 JOIN:temple:0
+0.2 0 0 0 0 JOURNAL:b8_meetvivec:40
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:il_protectentius:70
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:chargenstate:0
+0.2 0 0 0 0 SETGLOBAL:mt_legitkills:1
+0.2 0 0 0 0 SETGLOBAL:mt_newcrimelevel:0
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 SETGLOBAL:wearingordinatoruni:1
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:ordinator_wander_hp:51
+0.2 0 0 0 0 EXPECT:greeting:ordinator_wander_hp:where_did_you_get_that!_the_armor
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Onyx_Hall
+8 0 0 0
+0.2 0 0 0 0 JOIN:telvanni:0
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:delte_fyr:71
+0.2 0 0 0 0 EXPECT:greeting:delte_fyr:my_name_is_delte_fyr._did_you_want
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Asha-Ahhe_Egg_Mine
+8 0 0 0
+0.3 0 0 0 0 TALK:Thelsa_Dral
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:Thelsa_Dral:100
+0.2 0 0 0 0 EXPECT:answer:get_me_out:Thelsa_Dral:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:Thelsa_Dral:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Abebaal_Egg_Mine
+8 0 0 0
+0.3 0 0 0 0 TALK:eleedal_lei
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:eleedal_lei:100
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:eleedal_lei:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:eleedal_lei:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Maar_Gan,_Huleen's_Hut
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:8
+0.2 0 0 0 0 JOIN:telvanni:9
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:mg_apprentice:40
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:listien_bierles:80
+0.2 0 0 0 0 EXPECT:greeting:listien_bierles:i'm_just_glad_it's_over.
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Storage
+8 0 0 0
+0.3 0 0 0 0 TALK:ordinator_wander_ilpe_1
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Ministry_of_Truth
+0.2 0 0 0 0 SETDISP:ordinator_wander_ilpe_1:99
+0.2 0 0 0 0 EXPECT:answer:Ministry_of_Truth:ordinator_wander_ilpe_1:ne:the_ministry_of_truth_was_hollowed
+0.2 0 0 0 0 EXPECT:answer:Ministry_of_Truth:ordinator_wander_ilpe_1:ne:the_ministry_of_truth_is_a_celesti
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Central_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:rimintil
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:J'Saddha
+0.2 0 0 0 0 SETDISP:rimintil:60
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:rimintil:ne:you_lied_to_me_once,
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:rimintil:ne:i'm_going_to_look_around_the_ruins
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Storage
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:9
+0.2 0 0 0 0 JOIN:imperial_legion:2
+0.2 0 0 0 0 JOIN:redoran:1
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 SETGLOBAL:wearinglegionuni:2
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:saprius_entius:81
+0.2 0 0 0 0 EXPECT:greeting:saprius_entius:who_are_you?_are_you_in_the_imperi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.2 0 0 0 0 JOIN:mages_guild:4
+0.2 0 0 0 0 SETGLOBAL:expmagesguild:2
+0.2 0 0 0 0 KNOW:Guild_Dues
+0.2 0 0 0 0 SETDISP:ranis_athrys:0
+0.2 0 0 0 0 EXPECT:answer:Guild_Dues:ranis_athrys:eq:you_have_been_expelled._i_can't_sa
+0.2 0 0 0 0 EXPECT:answer:Guild_Dues:ranis_athrys:ne:i_have_not_had_word_that_you_were
+0.2 0 0 0 0 EXPECT:answer:Guild_Dues:ranis_athrys:ne:you_were_expelled_some_time_ago._d
+0.2 0 0 0 0 EXPECT:topiclisted:Guild_Dues
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Rothan_Ancestral_Tomb
+8 0 0 0
+0.2 0 0 0 0 JOIN:telvanni:5
+0.2 0 0 0 0 JOURNAL:hr_finddalobar:70
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 LEVEL:4
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:mathis_dalobar:71
+0.2 0 0 0 0 EXPECT:greeting:mathis_dalobar:thanks_for_getting_me_back_to_maar
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+8 0 0 0
+0.2 0 0 0 0 JOIN:redoran:4
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:52
+0.2 0 0 0 0 JOURNAL:b7_aryonhort:55
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:ht_attackindarys:100
+0.2 0 0 0 0 JOURNAL:ht_attackrethan:100
+0.2 0 0 0 0 JOURNAL:ht_baladasally:100
+0.2 0 0 0 0 JOURNAL:ht_minecure:100
+0.2 0 0 0 0 JOURNAL:ht_monopoly:100
+0.2 0 0 0 0 JOURNAL:ht_odirniran:100
+0.2 0 0 0 0 JOURNAL:ht_recruiteddie:100
+0.2 0 0 0 0 JOURNAL:ht_shishi:100
+0.2 0 0 0 0 JOURNAL:ht_wizardspells:100
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 LEVEL:5
+0.2 0 0 0 0 SETBOUNTY:150
+0.2 0 0 0 0 SETDISP:aryon:60
+0.2 0 0 0 0 EXPECT:greeting:aryon:so,_have_you_gathered_the_votes_of
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Eight_Plates
+8 0 0 0
+0.3 0 0 0 0 TALK:meril_hlaano
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:town_balmora:35
+0.2 0 0 0 0 KNOW:bad_people
+0.2 0 0 0 0 SETDISP:meril_hlaano:100
+0.2 0 0 0 0 EXPECT:answer:bad_people:meril_hlaano:ne:bad_people?_if_you're_looking_for
+0.2 0 0 0 0 EXPECT:answer:bad_people:meril_hlaano:ne:bad_people?_what_do_you_mean?_the
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Justice_Offices
+8 0 0 0
+0.3 0 0 0 0 TALK:berel_sala
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:a1_11_zainsubaniinformant:50
+0.2 0 0 0 0 JOURNAL:a1_2_antabolisinformant:10
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:little_secret
+0.2 0 0 0 0 SETDISP:berel_sala:0
+0.2 0 0 0 0 EXPECT:answer:little_secret:berel_sala:ne:faction,_and_i'd_think_twice_about
+0.2 0 0 0 0 EXPECT:answer:little_secret:berel_sala:ne:daedra?_you_know_what_they_are,_ri
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Fighters
+8 0 0 0
+0.2 0 0 0 0 JOIN:fighters_guild:4
+0.2 0 0 0 0 JOURNAL:fg_debtorc:100
+0.2 0 0 0 0 JOURNAL:fg_debtstoine:100
+0.2 0 0 0 0 JOURNAL:fg_khajiitbounty:100
+0.2 0 0 0 0 JOURNAL:fg_killcronies:15
+0.2 0 0 0 0 JOURNAL:fg_silencetaxgirl:100
+0.2 0 0 0 0 JOURNAL:fg_tonguetoad:100
+0.2 0 0 0 0 SETGLOBAL:pcrace:7
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:lorbumol_gro-aglakh:90
+0.2 0 0 0 0 EXPECT:greeting:lorbumol_gro-aglakh:._i_also_heard_you've_been_sent_to
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Storage
+8 0 0 0
+0.2 0 0 0 0 JOIN:imperial_legion:5
+0.2 0 0 0 0 JOIN:redoran:1
+0.2 0 0 0 0 JOIN:telvanni:1
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:il_protectentius:40
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 SETGLOBAL:wearinglegionuni:-1
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:100
+0.2 0 0 0 0 SETDISP:saprius_entius:11
+0.2 0 0 0 0 EXPECT:greeting:saprius_entius:help_me_fight_them!
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Storage
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:1
+0.2 0 0 0 0 JOIN:redoran:4
+0.2 0 0 0 0 JOIN:telvanni:8
+0.2 0 0 0 0 JOURNAL:il_protectentius:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:8
+0.2 0 0 0 0 SETGLOBAL:wearinglegionuni:0
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:saprius_entius:70
+0.2 0 0 0 0 EXPECT:greeting:saprius_entius:shall_we_travel_together_back_to_e
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:yak_gro-skandar
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:yak_gro-skandar:51
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:yak_gro-skandar:ne:you've_been_expelled_from_the_guil
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:yak_gro-skandar:ne:well,_that's_your_choice._let_me_k
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:2
+0.2 0 0 0 0 JOIN:telvanni:9
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:52
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:5
+0.2 0 0 0 0 SETBOUNTY:150
+0.2 0 0 0 0 SETDISP:ghost_npc_erur-dan:80
+0.2 0 0 0 0 EXPECT:greeting:ghost_npc_erur-dan:welcome,_incarnate._i_am_erur-dan.
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:sjoring_hard-heart
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:sjoring_hard-heart:0
+0.2 0 0 0 0 EXPECT:answer:get_me_out:sjoring_hard-heart:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:sjoring_hard-heart:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:nileno_dorvayn
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:nileno_dorvayn:0
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:nileno_dorvayn:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:nileno_dorvayn:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Right_Wing
+8 0 0 0
+0.3 0 0 0 0 TALK:gnaw_tooth
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:da_boethiah:61
+0.2 0 0 0 0 KNOW:Khartag_Point
+0.2 0 0 0 0 SETDISP:gnaw_tooth:49
+0.2 0 0 0 0 EXPECT:answer:Khartag_Point:gnaw_tooth:ne:oh,_khartag_point_has_changed_i_he
+0.2 0 0 0 0 EXPECT:answer:Khartag_Point:gnaw_tooth:ne:glorious_khartag_point!_very_famou
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Warehouse
+8 0 0 0
+0.3 0 0 0 0 TALK:adraria_vandacia
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:adraria_vandacia:49
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:adraria_vandacia:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:adraria_vandacia:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Justice_Offices
+8 0 0 0
+0.3 0 0 0 0 TALK:suryn_athones
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Gentleman_Jim_Stacey
+0.2 0 0 0 0 SETDISP:suryn_athones:100
+0.3 0 0 0 0 TOPIC:Gentleman_Jim_Stacey
+1.5 0 0 0
+0.2 0 0 0 0 EXPECT:said:i've_heard_he_frequents_a_booksell
+0.2 0 0 0 0 EXPECT:topiclisted:Foreign_Quarter
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:engaer
+1.5 0 0 0
+0.2 0 0 0 0 JOIN:telvanni:2
+0.2 0 0 0 0 KNOW:House_Telvanni
+0.2 0 0 0 0 SETDISP:engaer:100
+0.2 0 0 0 0 EXPECT:answer:House_Telvanni:engaer:ne:we_don't_care_about_politics._we_d
+0.2 0 0 0 0 EXPECT:answer:House_Telvanni:engaer:ne:we_live_comfortably._our_wizard-lo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ebonheart,_Grand_Council_Chambers
+8 0 0 0
+0.3 0 0 0 0 TALK:Varus_Vatinius
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:East_Empire_Company
+0.2 0 0 0 0 SETDISP:Varus_Vatinius:0
+0.2 0 0 0 0 EXPECT:answer:East_Empire_Company:Varus_Vatinius:eq:nothing_i_would_tell_to_you._get_l
+0.2 0 0 0 0 EXPECT:answer:East_Empire_Company:Varus_Vatinius:ne:because_of_its_wealth_and_the_favo
+0.2 0 0 0 0 EXPECT:answer:East_Empire_Company:Varus_Vatinius:ne:the_east_empire_company_is_a_monop
+0.2 0 0 0 0 EXPECT:topiclisted:East_Empire_Company
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Ashkhan's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:ahaz
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:ahaz:49
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:ahaz:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:ahaz:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Vorar_Helas'_House
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:2
+0.2 0 0 0 0 JOIN:redoran:1
+0.2 0 0 0 0 JOIN:telvanni:8
+0.2 0 0 0 0 JOURNAL:mv_slavemule:102
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:vorar_helas:0
+0.2 0 0 0 0 EXPECT:greeting:vorar_helas:you_must_be_the_one_relam_arinith
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Pelagiad,_Halfway_Tavern
+8 0 0 0
+0.3 0 0 0 0 TALK:ahnassi
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:fg_verethigang:10
+0.2 0 0 0 0 KNOW:Verethi_Gang
+0.2 0 0 0 0 SETDISP:ahnassi:31
+0.2 0 0 0 0 EXPECT:answer:Verethi_Gang:ahnassi:ne:i've_heard_of_them._they're_holed
+0.2 0 0 0 0 EXPECT:answer:Verethi_Gang:ahnassi:ne:i_know_who_you're_talking_about._l
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Maar_Gan,_Huleen's_Hut
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:4
+0.2 0 0 0 0 JOIN:mages_guild:8
+0.2 0 0 0 0 JOIN:redoran:7
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:8
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:150
+0.2 0 0 0 0 SETDISP:listien_bierles:50
+0.2 0 0 0 0 EXPECT:greeting:listien_bierles:please,_whoever_you_are,_kill_the
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ashurnibibi,_Shrine
+8 0 0 0
+0.3 0 0 0 0 TALK:durgash_gro-rushub
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:J'Saddha
+0.2 0 0 0 0 SETDISP:durgash_gro-rushub:50
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:durgash_gro-rushub:ne:you_lied_to_me_once,
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:durgash_gro-rushub:ne:i'm_going_to_look_around_the_ruins
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:galtis_guvron
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:galtis_guvron:100
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:galtis_guvron:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:galtis_guvron:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Llethri_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:garisa_llethri
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:killing_and_murder
+0.2 0 0 0 0 SETDISP:garisa_llethri:50
+0.2 0 0 0 0 EXPECT:answer:killing_and_murder:garisa_llethri:ne:an_opponent_who_yields_may_not_be
+0.2 0 0 0 0 EXPECT:answer:killing_and_murder:garisa_llethri:ne:cruel_killing_is_scandalous,_and
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Storage
+8 0 0 0
+0.3 0 0 0 0 TALK:ordinator_wander_ilpe_2
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Hall_of_Wisdom
+0.2 0 0 0 0 SETDISP:ordinator_wander_ilpe_2:1
+0.2 0 0 0 0 EXPECT:answer:Hall_of_Wisdom:ordinator_wander_ilpe_2:ne:the_hall_of_wisdom_and_hall_of_jus
+0.2 0 0 0 0 EXPECT:answer:Hall_of_Wisdom:ordinator_wander_ilpe_2:ne:the_hall_of_wisdom_houses_scholars
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ashurnibibi,_Shrine
+8 0 0 0
+0.2 0 0 0 0 JOIN:hlaalu:0
+0.2 0 0 0 0 JOIN:imperial_legion:2
+0.2 0 0 0 0 JOIN:redoran:8
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 SETGLOBAL:wearinglegionuni:0
+0.2 0 0 0 0 LEVEL:3
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:joncis_dalomax:50
+0.2 0 0 0 0 EXPECT:greeting:joncis_dalomax:you're_out_of_uniform._talk_to_me
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Telasero,_Lower_Level
+8 0 0 0
+0.2 0 0 0 0 JOIN:fighters_guild:5
+0.2 0 0 0 0 JOIN:hlaalu:2
+0.2 0 0 0 0 JOIN:redoran:1
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:fg_telasero:70
+0.2 0 0 0 0 SETGLOBAL:pcrace:6
+0.2 0 0 0 0 LEVEL:2
+0.2 0 0 0 0 SETBOUNTY:101
+0.2 0 0 0 0 SETDISP:sondaale_of_shimmerene:50
+0.2 0 0 0 0 EXPECT:greeting:sondaale_of_shimmerene:._it_looked_to_me_like_the_place_w
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Justice_Offices
+8 0 0 0
+0.3 0 0 0 0 TALK:berel_sala
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:Soul_sickness
+0.2 0 0 0 0 SETDISP:berel_sala:1
+0.2 0 0 0 0 EXPECT:answer:Soul_sickness:berel_sala:ne:the_madness_and_bad_dreams_were_se
+0.2 0 0 0 0 EXPECT:answer:Soul_sickness:berel_sala:ne:madness_is_a_sickness_in_the_soul.
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Telvanni_Enchanter
+8 0 0 0
+0.3 0 0 0 0 TALK:audenian_valius
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Hall_of_Justice
+0.2 0 0 0 0 SETDISP:audenian_valius:49
+0.2 0 0 0 0 EXPECT:answer:Hall_of_Justice:audenian_valius:ne:grandmaster_berel_sala,_chief_ordi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Shara
+8 0 0 0
+0.3 0 0 0 0 TALK:tirer_belvayn
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:J'Saddha
+0.2 0 0 0 0 SETDISP:tirer_belvayn:100
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:tirer_belvayn:ne:you_lied_to_me_once,
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:tirer_belvayn:ne:i'm_going_to_look_around_the_ruins
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Canalworks
+8 0 0 0
+0.3 0 0 0 0 TALK:j'dhannar
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:J'Saddha
+0.2 0 0 0 0 SETDISP:j'dhannar:0
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:j'dhannar:ne:you_lied_to_me_once,
+0.2 0 0 0 0 EXPECT:answer:J'Saddha:j'dhannar:ne:i'm_going_to_look_around_the_ruins
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Molag_Mar,_Armigers_Stronghold
+8 0 0 0
+0.3 0 0 0 0 TALK:birer_indaram
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:a1_2_antabolisinformant:7
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:little_secret
+0.2 0 0 0 0 SETDISP:birer_indaram:1
+0.2 0 0 0 0 EXPECT:answer:little_secret:birer_indaram:ne:daedra?_you_know_what_they_are,_ri
+0.2 0 0 0 0 EXPECT:answer:little_secret:birer_indaram:ne:don't_be_in_such_a_hurry_when_you'
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Zabamund's_Yurt
+8 0 0 0
+0.3 0 0 0 0 TALK:zabamund
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Dunmer
+0.2 0 0 0 0 SETDISP:zabamund:31
+0.2 0 0 0 0 EXPECT:answer:Dunmer:zabamund:ne:we_are_the_dunmer,_the_dark-skinne
+0.2 0 0 0 0 EXPECT:answer:Dunmer:zabamund:ne:we_are_the_dark-skinned,_red-eyed
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+8 0 0 0
+0.2 0 0 0 0 JOIN:telvanni:3
+0.2 0 0 0 0 JOURNAL:a2_3_corpruscure:25
+0.2 0 0 0 0 JOURNAL:a2_3_corpruskiller:30
+0.2 0 0 0 0 JOURNAL:a2_4_milogone:50
+0.2 0 0 0 0 JOURNAL:a2_6_incarnate:52
+0.2 0 0 0 0 JOURNAL:b8_backdoor3:1
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 JOURNAL:tt_sanctusshrine:50
+0.2 0 0 0 0 SETGLOBAL:pcrace:5
+0.2 0 0 0 0 LEVEL:5
+0.2 0 0 0 0 SETREP:51
+0.2 0 0 0 0 SETBOUNTY:99
+0.2 0 0 0 0 SETDISP:divayth_fyr:59
+0.2 0 0 0 0 EXPECT:greeting:divayth_fyr:._how_are_you_doing?_bit_of_bad_ne
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Llethri_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:garisa_llethri
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Llethri_Manor
+0.2 0 0 0 0 SETDISP:garisa_llethri:0
+0.2 0 0 0 0 EXPECT:answer:Llethri_Manor:garisa_llethri:eq:nothing_i_would_tell_to_you._get_l
+0.2 0 0 0 0 EXPECT:answer:Llethri_Manor:garisa_llethri:ne:you_are_in_llethri_manor.
+0.2 0 0 0 0 EXPECT:answer:Llethri_Manor:garisa_llethri:ne:you'll_find_it_under-skar._that's
+0.2 0 0 0 0 EXPECT:topiclisted:Llethri_Manor
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Gnisis,_Barracks
+8 0 0 0
+0.3 0 0 0 0 TALK:arius_rulician
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:arius_rulician:0
+0.2 0 0 0 0 EXPECT:answer:get_me_out:arius_rulician:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:arius_rulician:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:arsyn_salas
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Background
+0.2 0 0 0 0 SETDISP:arsyn_salas:99
+0.2 0 0 0 0 EXPECT:answer:Background:arsyn_salas:eq:you_may_call_me
+0.2 0 0 0 0 EXPECT:topiclisted:Background
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Storage
+8 0 0 0
+0.3 0 0 0 0 TALK:ordinator_wander_ilpe_2
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:Ghostgate
+0.2 0 0 0 0 SETDISP:ordinator_wander_ilpe_2:30
+0.2 0 0 0 0 EXPECT:answer:Ghostgate:ordinator_wander_ilpe_2:eq:come,_they_will_make_pilgrimages_t
+0.2 0 0 0 0 EXPECT:topiclisted:Ghostgate
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Underworks
+8 0 0 0
+0.3 0 0 0 0 TALK:addhiranirr
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:a1_6_addhiranirrinformant:30
+0.2 0 0 0 0 JOURNAL:a1_v_vivecinformants:1
+0.2 0 0 0 0 KNOW:Addhiranirr
+0.2 0 0 0 0 SETDISP:addhiranirr:51
+0.2 0 0 0 0 EXPECT:answer:Addhiranirr:addhiranirr:eq:you_have_come_from_caius,_so_of_co
+0.2 0 0 0 0 EXPECT:topiclisted:Addhiranirr
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Eight_Plates
+8 0 0 0
+0.3 0 0 0 0 TALK:traven_marvos
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:traven_marvos:50
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:traven_marvos:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:traven_marvos:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Cavern_of_the_Incarnate
+8 0 0 0
+0.3 0 0 0 0 TALK:ghost_npc_hort_ledd
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:a1_2_antabolisinformant:1
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:little_secret
+0.2 0 0 0 0 SETDISP:ghost_npc_hort_ledd:99
+0.2 0 0 0 0 EXPECT:answer:little_secret:ghost_npc_hort_ledd:ne:daedra?_you_know_what_they_are,_ri
+0.2 0 0 0 0 EXPECT:answer:little_secret:ghost_npc_hort_ledd:ne:d_some_time_in_a_big,_hot_fire._wh
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ashalmawia,_Shrine
+8 0 0 0
+0.3 0 0 0 0 TALK:malexa
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:little_secret
+0.2 0 0 0 0 SETDISP:malexa:50
+0.2 0 0 0 0 EXPECT:answer:little_secret:malexa:ne:how_do_you_recognize_a_daedric_shr
+0.2 0 0 0 0 EXPECT:answer:little_secret:malexa:ne:they_say_they_don't_have_much_of_a
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Caldera,_Surane_Leoriane's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:surane_leoriane
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Nedhelas
+0.2 0 0 0 0 SETDISP:surane_leoriane:100
+0.2 0 0 0 0 EXPECT:answer:Nedhelas:surane_leoriane:ne:nedhelas?_he's_dead._you_should_kn
+0.2 0 0 0 0 EXPECT:answer:Nedhelas:surane_leoriane:ne:you're_the_one_who_took_care_of_ne
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+8 0 0 0
+0.3 0 0 0 0 TALK:neminda
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:price_on_your_head
+0.2 0 0 0 0 SETDISP:neminda:0
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:neminda:ne:well,_that's_your_choice._let_me_k
+0.2 0 0 0 0 EXPECT:answer:price_on_your_head:neminda:ne:pcrank._i'll_take_care_of_everythi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Underworks
+8 0 0 0
+0.3 0 0 0 0 TALK:addhiranirr
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:addhiranirr:50
+0.2 0 0 0 0 EXPECT:answer:get_me_out:addhiranirr:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:addhiranirr:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Black_Shalk_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:huleeya
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Hall_of_Wisdom
+0.2 0 0 0 0 SETDISP:huleeya:30
+0.2 0 0 0 0 EXPECT:answer:Hall_of_Wisdom:huleeya:ne:the_hall_of_wisdom_and_hall_of_jus
+0.2 0 0 0 0 EXPECT:answer:Hall_of_Wisdom:huleeya:ne:the_hall_of_wisdom_houses_scholars
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Library_of_Vivec
+8 0 0 0
+0.3 0 0 0 0 TALK:mehra_milo
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Hall_of_Justice
+0.2 0 0 0 0 SETDISP:mehra_milo:50
+0.2 0 0 0 0 EXPECT:answer:Hall_of_Justice:mehra_milo:ne:grandmaster_berel_sala,_chief_ordi
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:sjoring_hard-heart
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Agrippina_Herrenia
+0.2 0 0 0 0 SETDISP:sjoring_hard-heart:49
+0.2 0 0 0 0 EXPECT:answer:Agrippina_Herrenia:sjoring_hard-heart:ne:you_can_find_agrippina_herrenia's
+0.2 0 0 0 0 EXPECT:answer:Agrippina_Herrenia:sjoring_hard-heart:ne:she's_a_clothier_in_the_foreign_qu
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Indarys_Manor,_Berendas'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:Heniele_Milielle
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:Heniele_Milielle:100
+0.2 0 0 0 0 EXPECT:answer:get_me_out:Heniele_Milielle:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:Heniele_Milielle:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Morvayn_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:brara_morvayn
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:killing_and_murder
+0.2 0 0 0 0 SETDISP:brara_morvayn:100
+0.2 0 0 0 0 EXPECT:answer:killing_and_murder:brara_morvayn:ne:an_opponent_who_yields_may_not_be
+0.2 0 0 0 0 EXPECT:answer:killing_and_murder:brara_morvayn:ne:cruel_killing_is_scandalous,_and
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Corprusarium_Bowels
+8 0 0 0
+0.3 0 0 0 0 TALK:uupse_fyr
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:get_me_out
+0.2 0 0 0 0 SETDISP:uupse_fyr:100
+0.2 0 0 0 0 EXPECT:answer:get_me_out:uupse_fyr:ne:i'll_make_my_escape_as_soon_as_i_c
+0.2 0 0 0 0 EXPECT:answer:get_me_out:uupse_fyr:ne:pcname._i'll_make_my_escape_as_soo
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Odirniran,_Tower
+8 0 0 0
+0.3 0 0 0 0 TALK:vedelea_othril
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Morrowind_lore
+0.2 0 0 0 0 SETDISP:vedelea_othril:51
+0.2 0 0 0 0 EXPECT:answer:Morrowind_lore:vedelea_othril:ne:the_fighters_guild_controls_hiring
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Library_of_Vivec
+8 0 0 0
+0.3 0 0 0 0 TALK:mehra_milo
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:a1_11_zainsubaniinformant:50
+0.2 0 0 0 0 JOURNAL:a1_2_antabolisinformant:7
+0.2 0 0 0 0 JOURNAL:c3_destroydagoth:50
+0.2 0 0 0 0 KNOW:little_secret
+0.2 0 0 0 0 SETDISP:mehra_milo:0
+0.2 0 0 0 0 EXPECT:answer:little_secret:mehra_milo:ne:you're_an_outlander,_maybe_you_don
+0.2 0 0 0 0 EXPECT:answer:little_secret:mehra_milo:ne:what_are_the_most_dangerous_places
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Eight_Plates
+8 0 0 0
+0.3 0 0 0 0 TALK:itermerel
+1.5 0 0 0
+0.2 0 0 0 0 JOURNAL:mg_escortscholar2:10
+0.2 0 0 0 0 KNOW:Itermerel's_notes
+0.2 0 0 0 0 SETDISP:itermerel:51
+0.2 0 0 0 0 EXPECT:answer:Itermerel's_notes:itermerel:eq:it_is_refreshing_to_see_a_young
+0.2 0 0 0 0 EXPECT:answer:Itermerel's_notes:itermerel:ne:i_believe_you_have_a_copy_of_my_no
+0.2 0 0 0 0 EXPECT:answer:Itermerel's_notes:itermerel:ne:you_have_been_very_gracious_to_esc
+0.2 0 0 0 0 EXPECT:topiclisted:Itermerel's_notes
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Venim_Manor_Private_Quarters
+8 0 0 0
+0.3 0 0 0 0 TALK:nidryne_redas
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:House_Redoran
+0.2 0 0 0 0 SETDISP:nidryne_redas:50
+0.2 0 0 0 0 EXPECT:answer:House_Redoran:nidryne_redas:eq:the_redoran_council_hall_is_here_i
+0.2 0 0 0 0 EXPECT:topiclisted:House_Redoran
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Plaza
+8 0 0 0
+0.3 0 0 0 0 TALK:tsrazami
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Dro'Sakhar
+0.2 0 0 0 0 SETDISP:tsrazami:41
+0.2 0 0 0 0 EXPECT:answer:Dro'Sakhar:tsrazami:eq:name_does_not_know_this_person.
+0.2 0 0 0 0 EXPECT:topiclisted:Dro'Sakhar
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+8 0 0 0
+0.3 0 0 0 0 TALK:llunela_hleran
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Gateway
+0.2 0 0 0 0 SETDISP:llunela_hleran:100
+0.2 0 0 0 0 EXPECT:answer:Gateway:llunela_hleran:eq:the_gateway_is_the_official_telvan
+0.2 0 0 0 0 EXPECT:topiclisted:Gateway
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:edryno_arethi
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Sheogorad
+0.2 0 0 0 0 SETDISP:edryno_arethi:100
+0.2 0 0 0 0 EXPECT:answer:Sheogorad:edryno_arethi:ne:her_island-to-island_transport_mus
+0.2 0 0 0 0 EXPECT:answer:Sheogorad:edryno_arethi:ne:sheogorad_is_largely_hostile_and_u
+0.5 0 0 0 0 LOAD:specdialogue
+3 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Haunted_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:garding
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:Dro'Sakhar
+0.2 0 0 0 0 SETDISP:garding:49
+0.2 0 0 0 0 EXPECT:answer:Dro'Sakhar:garding:ne:there's_a_khajiit_in_one_of_the_ho
+0.2 0 0 0 0 EXPECT:answer:Dro'Sakhar:garding:ne:don't_know_that_one._check_over_in

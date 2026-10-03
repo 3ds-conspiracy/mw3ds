@@ -1,0 +1,157 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_EscortScholar2:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:necromancy
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_killnecro2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:mushrooms
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_bcshrooms
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:mages_guild:2
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_us
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_joinus
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Sabotage:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:flowers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_flowers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:hlaalu:0
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ralen_Hlaalo
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_retaliation
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:hlaalu:4
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:hlaalu:0
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alchemical_formulas
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_indesp1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hlaalu_councilors
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b6_hlaalubook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:hlaalu:0
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:say_that_again
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_disguisedarmor
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_IndEsp1:100
+0.3 0 0 0 0 JOIN:hlaalu:0
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Inanius_egg_mine
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_eggmine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

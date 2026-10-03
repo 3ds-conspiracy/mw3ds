@@ -1,0 +1,16 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 JOIN:imperial_cult
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+4 0 0 0
+0.5 0 0 0 0 DOOR:synnolian_tunifus
+1 0 0 0 0 CHOICE:1
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:IC1_marshmerrow
+0.3 0 0 0 0 GIVE:ingred_marshmerrow_01:5
+0.5 0 0 0 0 DOOR:synnolian_tunifus
+1 0 0 0
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CHECK:journal:IC1_marshmerrow
+1 0 0 0

@@ -1,0 +1,228 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build2_r
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build2_t
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build3_h
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build3_r
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build3_t
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build_start_h
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build_start_r
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:strong_build_start_t
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+2 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:sul-matuul
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b1_urshilakukill
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Ashkhan's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:sul-matuul
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_failed_nerevarine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

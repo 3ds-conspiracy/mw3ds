@@ -1,0 +1,20 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's
+0.3 0 0 0 0 SOULKILL:aryon
+3 0 0 0
+0.3 0 0 0 0 EXPECT:dead:aryon
+0.3 0 0 0 0 SNAP:soundstarted:chest%close
+0.3 0 0 0 0 SNAP:soundstarted:chest%open
+30 0 0 0 0 ACTIVATE:aryon
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 EXPECT:soundstarted:chest%open:eq:@0
+0.3 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:soundstarted:chest%close:eq:@0
+0.3 0 0 0 0 EXPECT:soundstarted:chest%open:eq:@0
+1 0 0 0

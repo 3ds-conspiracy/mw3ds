@@ -1,0 +1,110 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_CureBlight:50
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:galos_mathendis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cure_Blight
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_cureblight
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_TheranaClothes:70
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:new_clothes
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_theranaclothes
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_Stronghold:100
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+8 0 0 0
+0.3 0 0 0 0 TALK:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_Stronghold:70
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+8 0 0 0
+0.3 0 0 0 0 TALK:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_Stronghold:55
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+8 0 0 0
+0.3 0 0 0 0 TALK:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_Telasero:70
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Fighter's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sondaale_of_Shimmerene
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_telasero
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_DuniraiSupply:50
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Fighter's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dunirai_Caverns
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_duniraisupply
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

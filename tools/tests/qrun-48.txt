@@ -1,0 +1,143 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_DB_Assernerairan:100
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ald_Sotha
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_aldsotha
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MT_DB_Darys:100
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+8 0 0 0
+0.3 0 0 0 0 TALK:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ultimatum
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mt_db_carecalmo
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Waistworks
+8 0 0 0
+0.3 0 0 0 0 TALK:Alvura_Othrenim
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_sleepers_alvura
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Aurane_Frernis:_Apothecary
+8 0 0 0
+0.3 0 0 0 0 TALK:aurane_frernis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:gold_kanet_flower
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_gold_kanet_flower
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_V_VivecInformants:1
+0.3 0 0 0 0 GOTO:Vivec,_Black_Shalk_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 TALK:huleeya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:friend's_bookstore
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_7huleeyainformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_DestroyTelUvirith:100
+0.3 0 0 0 0 JOURNAL:B6_BeroHort:50
+0.3 0 0 0 0 GOTO:Vivec,_Curio_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dram_Bero
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_berosupport
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_EbonyDelivery:100
+0.3 0 0 0 0 GOTO:Vivec,_Curio_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Velfred_the_Outlaw
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_nordsmugglers
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:B6_BeroHort:50
+0.3 0 0 0 0 JOURNAL:B6_CurioHort:50
+0.3 0 0 0 0 JOURNAL:B6_OmaniHort:50
+0.3 0 0 0 0 JOURNAL:B6_UlesHort:50
+0.3 0 0 0 0 JOURNAL:B6_YnglingHort:50
+0.3 0 0 0 0 GOTO:Vivec,_Curio_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b6_hlaaluhort
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_BeroSupport:100
+0.3 0 0 0 0 GOTO:Vivec,_Curio_Manor
+8 0 0 0
+0.3 0 0 0 0 TALK:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Reynel_Uvirith
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_destroyteluvirith
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

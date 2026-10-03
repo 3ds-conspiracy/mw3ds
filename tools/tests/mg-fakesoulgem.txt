@@ -1,0 +1,33 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_BCShrooms:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.2 0 0 0 0 KNOW:fake_soul_gem
+0.3 0 0 0 0 TOPIC:fake_soul_gem
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:mg_sabotage:ge:10
+0.1 0 0 0 0 EXPECT:count:misc_fakesoulgem:eq:1
+0.1 0 0 0 0 EXPECT:reflocal:ajira,gemindesk:eq:0
+60 0 0 0 0 PUT:de_p_desk_01_galbedir:misc_fakesoulgem
+2 0 0 0
+0.1 0 0 0 0 EXPECT:count:misc_fakesoulgem:eq:0
+0.1 0 0 0 0 EXPECT:refitem:de_p_desk_01_galbedir,misc_fakesoulgem:eq:1
+0.1 0 0 0 0 EXPECT:reflocal:ajira,gemindesk:eq:1
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:fake_soul_gem
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:mg_sabotage:ge:100

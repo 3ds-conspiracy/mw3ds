@@ -1,0 +1,133 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:1
+0.3 0 0 0 0 GOTO:Corprusarium
+8 0 0 0
+0.3 0 0 0 0 TALK:vistha_kai
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_3_corprus_vistha
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:misc_wraithguard_no_equip:1
+0.3 0 0 0 0 REP:30
+0.3 0 0 0 0 GOTO:Corprusarium_Bowels
+8 0 0 0
+0.3 0 0 0 0 TALK:yagrum_bagarn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:mythopoeic_enchantments
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:cx_backpath
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Corprusarium_Bowels
+8 0 0 0
+0.3 0 0 0 0 TALK:uupse_fyr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:corprus_victims
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a2_3_corprussafe
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HH_WinCamonna:50
+0.3 0 0 0 0 GOTO:Dren_Plantation,_Dren's_Villa
+8 0 0 0
+0.3 0 0 0 0 TALK:Orvas_Dren_Druglord
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hlaalu_Hortator
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b6_drenhortator
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Drethan_Ancestral_Tomb
+8 0 0 0
+0.3 0 0 0 0 TALK:marara
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rid_me_of_this_unlife
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampmarara
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Druscashti,_Lower_Level
+8 0 0 0
+0.3 0 0 0 0 TALK:volrina_quarra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:use_to_me
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampcult
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Druscashti,_Lower_Level
+8 0 0 0
+0.3 0 0 0 0 TALK:volrina_quarra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:raw_materials
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampamulet
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC9_Argonian_alms:1
+0.3 0 0 0 0 GOTO:Ebonheart,_Argonian_Mission
+8 0 0 0
+0.3 0 0 0 0 TALK:On_Wan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic9_slave_hiding
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ebonheart,_East_Empire_Company_Hall
+8 0 0 0
+0.3 0 0 0 0 TALK:Bolrin
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:further_assistance
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:eb_clients
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

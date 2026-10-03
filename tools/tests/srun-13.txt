@@ -1,0 +1,129 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_Stronghold:100
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:hire_guards
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_DeseleDebt:10
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_deseledebt
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_KhajiitBounty:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dro'Sakhar
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_khajiitbounty
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_Vas:85
+0.3 0 0 0 0 JOIN:fighters_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vas
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_vas
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_ReturnBook:30
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_returnbook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Apprentice:40
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Huleen's_hut
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_apprentice
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_shoes_2:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Llethri:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Llether_Vari:_Enchanter
+8 0 0 0
+0.3 0 0 0 0 TALK:llether_vari
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_llethri
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_shoes_2:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Llethri:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Llether_Vari:_Enchanter
+8 0 0 0
+0.3 0 0 0 0 TALK:llether_vari
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_llethri
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

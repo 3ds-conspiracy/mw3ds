@@ -1,0 +1,162 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:arara_uvulas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sload_Soap
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_sloadsoap
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_Muck:100
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Black_Jinx
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_blackjinx
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HT_SpyBaladas:100
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:mallam_ryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nchuleft
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_nchuleftkey
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Rimintil
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_rimintil
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+8 0 0 0
+0.3 0 0 0 0 TALK:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:muck
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_muck
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:telvanni:4
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+8 0 0 0
+0.3 0 0 0 0 TALK:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ht_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:15
+0.3 0 0 0 0 JOURNAL:IC14_Delay:1
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Volmyni_Dral's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:Mossanon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:embezzled_funds
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:2
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_promise
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:15
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Volmyni_Dral's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:Mossanon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:embezzled_funds
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_delay
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC14_Ponius:15
+0.3 0 0 0 0 JOURNAL:IC14_Delay:1
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Volmyni_Dral's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:Mossanon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:embezzled_funds
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic14_demand
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall:_Fighter's_Guild
+8 0 0 0
+0.3 0 0 0 0 TALK:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sondaale_of_Shimmerene
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_telasero
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,25 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:silver_flameblade
+0.6 0 0 0 0 X
+1.5 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 PLACE:rat:180
+0.5 0 0 0
+0.1 0 0 0 0 HIT:rat
+0.1 0 0 0 0 SHOT
+0.5 0 0 0 0 PLACE:rat:420
+0.3 0 0 0 0 PLACE:rat:440
+0.3 0 0 0 0 SPELL:fireball
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 CAST:fireball
+0.25 0 0 0 0 SHOT
+2 0 0 0
+0.3 0 0 0 0 START
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:160:176
+0.5 0 0 0
+0.3 0 0 0 0 TAP:57:222
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+0.3 0 0 0 0 B
+1 0 0 0

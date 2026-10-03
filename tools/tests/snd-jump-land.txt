@@ -1,0 +1,14 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+1 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 SNAP:soundstarted:DefaultLand
+0.1 0 0 0 1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:soundstarted:DefaultLand:ge:@1
+0.1 0 0 0 1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:soundstarted:DefaultLand:ge:@2
+1 0 0 0

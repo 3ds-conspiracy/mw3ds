@@ -1,0 +1,137 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:90
+0.3 0 0 0 0 GOTO:Ashmelech
+8 0 0 0
+0.3 0 0 0 0 TALK:dhaunayne_aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:about_my_family
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vampchild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:120
+0.3 0 0 0 0 JOURNAL:VA_VampHunter:60
+0.3 0 0 0 0 GOTO:Ashmelech
+8 0 0 0
+0.3 0 0 0 0 TALK:dhaunayne_aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:vampire_hunter
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vamphunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:1
+0.3 0 0 0 0 JOURNAL:VA_VampChild:120
+0.3 0 0 0 0 JOURNAL:VA_VampHunter:70
+0.3 0 0 0 0 GOTO:Ashmelech
+8 0 0 0
+0.3 0 0 0 0 TALK:dhaunayne_aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:vampire_hunter
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vamphunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 SETGLOBAL:vampclan:1
+0.3 0 0 0 0 JOURNAL:VA_VampHunter:80
+0.3 0 0 0 0 GOTO:Ashmelech
+8 0 0 0
+0.3 0 0 0 0 TALK:dhaunayne_aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:future_rewards
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:va_vamphunter
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:2
+0.3 0 0 0 0 GIVE:bk_a1_4_sharnsnotes:1
+0.3 0 0 0 0 JOURNAL:A1_4_MuzgobInformant:20
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_4_muzgobinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:3
+0.3 0 0 0 0 GIVE:bk_a1_4_sharnsnotes:1
+0.3 0 0 0 0 JOURNAL:A1_4_MuzgobInformant:20
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_4_muzgobinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:bk_a1_2_antabolistocosades:1
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:15
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_2_antabolisinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:4
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:14
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+8 0 0 0
+0.3 0 0 0 0 TALK:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orders
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_1_findspymaster
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

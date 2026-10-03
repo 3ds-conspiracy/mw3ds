@@ -1,0 +1,20 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EFFECT:11:100:99999
+0.3 0 0 0 0 TP:-16000:-58000:900:200
+15 0 0 0
+0.3 0 0 0 0 CHECK:bk_falljournal_unique
+0.3 0 0 0 0 CHECK:agronian_guy
+8 0 0 0
+0.3 0 0 0 0 CHECK:agronian_guy
+0.3 0 0 0 0 GOTO:Caldera,_Ghorak_Manor
+8 0 0 0
+0.3 0 0 0 0 DOOR:scamp_creeper
+2 0 0 0
+0.3 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Palace_of_Vivec
+8 0 0 0
+0.3 0 0 0 0 DOOR:vivec_god
+2 0 0 0
+0.3 0 0 0 0 B
+1 0 0 0

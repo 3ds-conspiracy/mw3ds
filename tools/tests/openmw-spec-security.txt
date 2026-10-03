@@ -1,0 +1,405 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 BOOST:100
+1 0 0 0 0 SAVE:specsecurity
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:13
+0.1 0 0 0 0 SETATTR:luck:62
+0.1 0 0 0 0 SETSKILL:security:85
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:43,1.0:ge:32.0200
+0.1 0 0 0 0 EXPECT:lockchance:43,1.0:le:32.0600
+0.1 0 0 0 0 EXPECT:trapchance:40,1.0:ge:75.0200
+0.1 0 0 0 0 EXPECT:trapchance:40,1.0:le:75.0600
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:14
+0.1 0 0 0 0 SETATTR:luck:77
+0.1 0 0 0 0 SETSKILL:security:68
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:lockchance:41,1.25:ge:44.8394
+0.1 0 0 0 0 EXPECT:lockchance:41,1.25:le:44.8794
+0.1 0 0 0 0 EXPECT:trapchance:0,1.25:ge:85.8394
+0.1 0 0 0 0 EXPECT:trapchance:0,1.25:le:85.8794
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:16
+0.1 0 0 0 0 SETATTR:luck:63
+0.1 0 0 0 0 SETSKILL:security:21
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:63,0.25:ge:-53.4888
+0.1 0 0 0 0 EXPECT:lockchance:63,0.25:le:-53.4487
+0.1 0 0 0 0 EXPECT:trapchance:60,0.25:ge:9.5113
+0.1 0 0 0 0 EXPECT:trapchance:60,0.25:le:9.5512
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:37
+0.1 0 0 0 0 SETATTR:luck:41
+0.1 0 0 0 0 SETSKILL:security:36
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:22,1.25:ge:37.3550
+0.1 0 0 0 0 EXPECT:lockchance:22,1.25:le:37.3950
+0.1 0 0 0 0 EXPECT:trapchance:10,1.25:ge:59.3550
+0.1 0 0 0 0 EXPECT:trapchance:10,1.25:le:59.3950
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:55
+0.1 0 0 0 0 SETATTR:luck:33
+0.1 0 0 0 0 SETSKILL:security:19
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:24,2.0:ge:59.2300
+0.1 0 0 0 0 EXPECT:lockchance:24,2.0:le:59.2700
+0.1 0 0 0 0 EXPECT:trapchance:10,2.0:ge:83.2300
+0.1 0 0 0 0 EXPECT:trapchance:10,2.0:le:83.2700
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:29
+0.1 0 0 0 0 SETATTR:luck:21
+0.1 0 0 0 0 SETSKILL:security:66
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:48,1.25:ge:67.4488
+0.1 0 0 0 0 EXPECT:lockchance:48,1.25:le:67.4887
+0.1 0 0 0 0 EXPECT:trapchance:10,1.25:ge:115.4488
+0.1 0 0 0 0 EXPECT:trapchance:10,1.25:le:115.4887
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:39
+0.1 0 0 0 0 SETATTR:luck:9
+0.1 0 0 0 0 SETSKILL:security:97
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:91,1.25:ge:41.1050
+0.1 0 0 0 0 EXPECT:lockchance:91,1.25:le:41.1450
+0.1 0 0 0 0 EXPECT:trapchance:0,1.25:ge:132.1050
+0.1 0 0 0 0 EXPECT:trapchance:0,1.25:le:132.1450
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:41
+0.1 0 0 0 0 SETATTR:luck:57
+0.1 0 0 0 0 SETSKILL:security:92
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:74,1.0:ge:31.8800
+0.1 0 0 0 0 EXPECT:lockchance:74,1.0:le:31.9200
+0.1 0 0 0 0 EXPECT:trapchance:25,1.0:ge:105.8800
+0.1 0 0 0 0 EXPECT:trapchance:25,1.0:le:105.9200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:58
+0.1 0 0 0 0 SETATTR:luck:64
+0.1 0 0 0 0 SETSKILL:security:51
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:lockchance:39,2.0:ge:81.7300
+0.1 0 0 0 0 EXPECT:lockchance:39,2.0:le:81.7700
+0.1 0 0 0 0 EXPECT:trapchance:25,2.0:ge:120.7300
+0.1 0 0 0 0 EXPECT:trapchance:25,2.0:le:120.7700
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:97
+0.1 0 0 0 0 SETATTR:luck:17
+0.1 0 0 0 0 SETSKILL:security:40
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:69,0.25:ge:-53.7450
+0.1 0 0 0 0 EXPECT:lockchance:69,0.25:le:-53.7050
+0.1 0 0 0 0 EXPECT:trapchance:5,0.25:ge:15.2550
+0.1 0 0 0 0 EXPECT:trapchance:5,0.25:le:15.2950
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:91
+0.1 0 0 0 0 SETATTR:luck:55
+0.1 0 0 0 0 SETSKILL:security:14
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:lockchance:52,0.5:ge:-30.8137
+0.1 0 0 0 0 EXPECT:lockchance:52,0.5:le:-30.7737
+0.1 0 0 0 0 EXPECT:trapchance:40,0.5:ge:21.1863
+0.1 0 0 0 0 EXPECT:trapchance:40,0.5:le:21.2263
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:99
+0.1 0 0 0 0 SETATTR:luck:81
+0.1 0 0 0 0 SETSKILL:security:32
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:lockchance:76,0.25:ge:-59.1731
+0.1 0 0 0 0 EXPECT:lockchance:76,0.25:le:-59.1331
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:ge:16.8269
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:le:16.8669
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:33
+0.1 0 0 0 0 SETATTR:luck:95
+0.1 0 0 0 0 SETSKILL:security:93
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:48,0.25:ge:-26.2000
+0.1 0 0 0 0 EXPECT:lockchance:48,0.25:le:-26.1600
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:ge:21.8000
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:le:21.8400
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:5
+0.1 0 0 0 0 SETATTR:luck:84
+0.1 0 0 0 0 SETSKILL:security:61
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:12,1.0:ge:44.3000
+0.1 0 0 0 0 EXPECT:lockchance:12,1.0:le:44.3400
+0.1 0 0 0 0 EXPECT:trapchance:5,1.0:ge:56.3000
+0.1 0 0 0 0 EXPECT:trapchance:5,1.0:le:56.3400
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:8
+0.1 0 0 0 0 SETATTR:luck:79
+0.1 0 0 0 0 SETSKILL:security:31
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:51,0.5:ge:-34.8200
+0.1 0 0 0 0 EXPECT:lockchance:51,0.5:le:-34.7800
+0.1 0 0 0 0 EXPECT:trapchance:5,0.5:ge:16.1800
+0.1 0 0 0 0 EXPECT:trapchance:5,0.5:le:16.2200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:70
+0.1 0 0 0 0 SETATTR:luck:77
+0.1 0 0 0 0 SETSKILL:security:54
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:38,0.25:ge:-14.3637
+0.1 0 0 0 0 EXPECT:lockchance:38,0.25:le:-14.3238
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:ge:23.6363
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:le:23.6762
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:15
+0.1 0 0 0 0 SETATTR:luck:19
+0.1 0 0 0 0 SETSKILL:security:34
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:7,1.25:ge:41.6050
+0.1 0 0 0 0 EXPECT:lockchance:7,1.25:le:41.6450
+0.1 0 0 0 0 EXPECT:trapchance:25,1.25:ge:48.6050
+0.1 0 0 0 0 EXPECT:trapchance:25,1.25:le:48.6450
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:21
+0.1 0 0 0 0 SETATTR:luck:11
+0.1 0 0 0 0 SETSKILL:security:12
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:80,1.25:ge:-62.7200
+0.1 0 0 0 0 EXPECT:lockchance:80,1.25:le:-62.6800
+0.1 0 0 0 0 EXPECT:trapchance:5,1.25:ge:17.2800
+0.1 0 0 0 0 EXPECT:trapchance:5,1.25:le:17.3200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:20
+0.1 0 0 0 0 SETATTR:luck:31
+0.1 0 0 0 0 SETSKILL:security:16
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:27,0.75:ge:-5.3637
+0.1 0 0 0 0 EXPECT:lockchance:27,0.75:le:-5.3237
+0.1 0 0 0 0 EXPECT:trapchance:25,0.75:ge:21.6363
+0.1 0 0 0 0 EXPECT:trapchance:25,0.75:le:21.6763
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:14
+0.1 0 0 0 0 SETATTR:luck:33
+0.1 0 0 0 0 SETSKILL:security:90
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:18,1.5:ge:97.3000
+0.1 0 0 0 0 EXPECT:lockchance:18,1.5:le:97.3400
+0.1 0 0 0 0 EXPECT:trapchance:5,1.5:ge:115.3000
+0.1 0 0 0 0 EXPECT:trapchance:5,1.5:le:115.3400
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:39
+0.1 0 0 0 0 SETATTR:luck:37
+0.1 0 0 0 0 SETSKILL:security:16
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:29,1.0:ge:5.3550
+0.1 0 0 0 0 EXPECT:lockchance:29,1.0:le:5.3950
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:ge:34.3550
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:le:34.3950
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:39
+0.1 0 0 0 0 SETATTR:luck:16
+0.1 0 0 0 0 SETSKILL:security:40
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:41,2.0:ge:57.7800
+0.1 0 0 0 0 EXPECT:lockchance:41,2.0:le:57.8200
+0.1 0 0 0 0 EXPECT:trapchance:0,2.0:ge:98.7800
+0.1 0 0 0 0 EXPECT:trapchance:0,2.0:le:98.8200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:29
+0.1 0 0 0 0 SETATTR:luck:17
+0.1 0 0 0 0 SETSKILL:security:24
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:91,0.5:ge:-71.3325
+0.1 0 0 0 0 EXPECT:lockchance:91,0.5:le:-71.2925
+0.1 0 0 0 0 EXPECT:trapchance:40,0.5:ge:19.6675
+0.1 0 0 0 0 EXPECT:trapchance:40,0.5:le:19.7075
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:97
+0.1 0 0 0 0 SETATTR:luck:75
+0.1 0 0 0 0 SETSKILL:security:66
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:73,2.0:ge:159.2300
+0.1 0 0 0 0 EXPECT:lockchance:73,2.0:le:159.2700
+0.1 0 0 0 0 EXPECT:trapchance:25,2.0:ge:232.2268
+0.1 0 0 0 0 EXPECT:trapchance:25,2.0:le:232.2732
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:8
+0.1 0 0 0 0 SETATTR:luck:30
+0.1 0 0 0 0 SETSKILL:security:77
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:68,1.0:ge:33.9800
+0.1 0 0 0 0 EXPECT:lockchance:68,1.0:le:34.0200
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:ge:101.9800
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:le:102.0200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:68
+0.1 0 0 0 0 SETATTR:luck:25
+0.1 0 0 0 0 SETSKILL:security:35
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:3,1.0:ge:48.0800
+0.1 0 0 0 0 EXPECT:lockchance:3,1.0:le:48.1200
+0.1 0 0 0 0 EXPECT:trapchance:40,1.0:ge:51.0800
+0.1 0 0 0 0 EXPECT:trapchance:40,1.0:le:51.1200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:21
+0.1 0 0 0 0 SETATTR:luck:39
+0.1 0 0 0 0 SETSKILL:security:31
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:lockchance:96,0.25:ge:-85.0231
+0.1 0 0 0 0 EXPECT:lockchance:96,0.25:le:-84.9831
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:ge:10.9769
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:le:11.0169
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:36
+0.1 0 0 0 0 SETATTR:luck:37
+0.1 0 0 0 0 SETSKILL:security:46
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:lockchance:61,1.5:ge:34.9987
+0.1 0 0 0 0 EXPECT:lockchance:61,1.5:le:35.0388
+0.1 0 0 0 0 EXPECT:trapchance:0,1.5:ge:95.9988
+0.1 0 0 0 0 EXPECT:trapchance:0,1.5:le:96.0387
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:89
+0.1 0 0 0 0 SETATTR:luck:43
+0.1 0 0 0 0 SETSKILL:security:30
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:lockchance:61,1.0:ge:-2.4075
+0.1 0 0 0 0 EXPECT:lockchance:61,1.0:le:-2.3675
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:ge:58.5925
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:le:58.6325
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:96
+0.1 0 0 0 0 SETATTR:luck:13
+0.1 0 0 0 0 SETSKILL:security:100
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:84,0.75:ge:6.3550
+0.1 0 0 0 0 EXPECT:lockchance:84,0.75:le:6.3950
+0.1 0 0 0 0 EXPECT:trapchance:10,0.75:ge:90.3550
+0.1 0 0 0 0 EXPECT:trapchance:10,0.75:le:90.3950
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:54
+0.1 0 0 0 0 SETATTR:luck:75
+0.1 0 0 0 0 SETSKILL:security:55
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:82,2.0:ge:64.5800
+0.1 0 0 0 0 EXPECT:lockchance:82,2.0:le:64.6200
+0.1 0 0 0 0 EXPECT:trapchance:10,2.0:ge:146.5800
+0.1 0 0 0 0 EXPECT:trapchance:10,2.0:le:146.6200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:27
+0.1 0 0 0 0 SETATTR:luck:6
+0.1 0 0 0 0 SETSKILL:security:19
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:lockchance:42,2.0:ge:1.7300
+0.1 0 0 0 0 EXPECT:lockchance:42,2.0:le:1.7700
+0.1 0 0 0 0 EXPECT:trapchance:10,2.0:ge:43.7300
+0.1 0 0 0 0 EXPECT:trapchance:10,2.0:le:43.7700
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:22
+0.1 0 0 0 0 SETATTR:luck:6
+0.1 0 0 0 0 SETSKILL:security:53
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:2,0.5:ge:21.1800
+0.1 0 0 0 0 EXPECT:lockchance:2,0.5:le:21.2200
+0.1 0 0 0 0 EXPECT:trapchance:0,0.5:ge:23.1800
+0.1 0 0 0 0 EXPECT:trapchance:0,0.5:le:23.2200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:15
+0.1 0 0 0 0 SETATTR:luck:77
+0.1 0 0 0 0 SETSKILL:security:49
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:lockchance:85,0.25:ge:-71.9606
+0.1 0 0 0 0 EXPECT:lockchance:85,0.25:le:-71.9206
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:ge:13.0394
+0.1 0 0 0 0 EXPECT:trapchance:10,0.25:le:13.0794
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:50
+0.1 0 0 0 0 SETATTR:luck:92
+0.1 0 0 0 0 SETSKILL:security:62
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 EXPECT:lockchance:43,0.25:ge:-22.7200
+0.1 0 0 0 0 EXPECT:lockchance:43,0.25:le:-22.6800
+0.1 0 0 0 0 EXPECT:trapchance:60,0.25:ge:20.2800
+0.1 0 0 0 0 EXPECT:trapchance:60,0.25:le:20.3200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:89
+0.1 0 0 0 0 SETATTR:luck:52
+0.1 0 0 0 0 SETSKILL:security:24
+0.1 0 0 0 0 SETFATIGUE:1.0
+0.1 0 0 0 0 EXPECT:lockchance:11,1.0:ge:47.7300
+0.1 0 0 0 0 EXPECT:lockchance:11,1.0:le:47.7700
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:ge:58.7300
+0.1 0 0 0 0 EXPECT:trapchance:10,1.0:le:58.7700
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:5
+0.1 0 0 0 0 SETATTR:luck:7
+0.1 0 0 0 0 SETSKILL:security:25
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:53,1.25:ge:-26.3200
+0.1 0 0 0 0 EXPECT:lockchance:53,1.25:le:-26.2800
+0.1 0 0 0 0 EXPECT:trapchance:5,1.25:ge:26.6800
+0.1 0 0 0 0 EXPECT:trapchance:5,1.25:le:26.7200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:91
+0.1 0 0 0 0 SETATTR:luck:62
+0.1 0 0 0 0 SETSKILL:security:62
+0.1 0 0 0 0 SETFATIGUE:0.25
+0.1 0 0 0 0 EXPECT:lockchance:17,1.25:ge:77.4800
+0.1 0 0 0 0 EXPECT:lockchance:17,1.25:le:77.5200
+0.1 0 0 0 0 EXPECT:trapchance:25,1.25:ge:94.4800
+0.1 0 0 0 0 EXPECT:trapchance:25,1.25:le:94.5200
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:72
+0.1 0 0 0 0 SETATTR:luck:80
+0.1 0 0 0 0 SETSKILL:security:6
+0.1 0 0 0 0 SETFATIGUE:0.1
+0.1 0 0 0 0 EXPECT:lockchance:53,1.0:ge:-30.3000
+0.1 0 0 0 0 EXPECT:lockchance:53,1.0:le:-30.2600
+0.1 0 0 0 0 EXPECT:trapchance:5,1.0:ge:22.7000
+0.1 0 0 0 0 EXPECT:trapchance:5,1.0:le:22.7400
+0.5 0 0 0 0 LOAD:specsecurity
+3 0 0 0
+0.1 0 0 0 0 SETATTR:agility:21
+0.1 0 0 0 0 SETATTR:luck:75
+0.1 0 0 0 0 SETSKILL:security:83
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 EXPECT:lockchance:22,0.75:ge:57.8831
+0.1 0 0 0 0 EXPECT:lockchance:22,0.75:le:57.9231
+0.1 0 0 0 0 EXPECT:trapchance:0,0.75:ge:79.8831
+0.1 0 0 0 0 EXPECT:trapchance:0,0.75:le:79.9231

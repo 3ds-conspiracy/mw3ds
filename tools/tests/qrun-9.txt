@@ -1,0 +1,168 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC10_buckmoth_alms:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic10_erranil
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:IC10_buckmoth_alms:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alms_for_the_poor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ic10_edwinna
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Apprentice:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_returnbook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Potion:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_stealbook
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_StealBook:100
+0.3 0 0 0 0 JOIN:mages_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Huleen's_hut
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_apprentice
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_ReturnBook:100
+0.3 0 0 0 0 JOIN:mages_guild:4
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_Tube
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_science
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Science:100
+0.3 0 0 0 0 JOURNAL:MG_Excavation:100
+0.3 0 0 0 0 JOIN:mages_guild:4
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:blueprints
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_mzuleft
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_Bethamez:100
+0.3 0 0 0 0 JOIN:mages_guild:8
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_guildmaster
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:mages_guild:4
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bethamez
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_bethamez
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ienas_Sarandas's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:ienas_sarandas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:overdue_payment
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:10
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_aldruhn
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

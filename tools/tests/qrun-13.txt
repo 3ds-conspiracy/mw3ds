@@ -1,0 +1,154 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:qrun
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:compassion
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_compassion
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_FindTharen:100
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:lloros_sarano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Beden_Giladren
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_findgiladren
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:lloros_sarano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Fedris_Tharen
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_findtharen
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_ClearSarethi:90
+0.3 0 0 0 0 JOIN:redoran:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:lloros_sarano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ash_statue
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_sixthhousebase
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:lloros_sarano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Andasreth
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_lostbanner
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:15
+0.3 0 0 0 0 JOURNAL:TT_MaarGan:100
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+8 0 0 0
+0.3 0 0 0 0 TALK:tuls_valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hassour
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tt_hassour
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:aengoth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Anareren's_Devil_Tanto
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_lootaldruhnmg
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:aengoth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Boethiah's_Pillow_Book
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_badgandosa
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:redoran_master_helm:1
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:aengoth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Master_Helm
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_masterhelm
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:qrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOIN:thieves_guild:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_The_Rat_In_The_Pot
+8 0 0 0
+0.3 0 0 0 0 TALK:aengoth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Darts_of_Judgement
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:tg_dartsjudgement
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

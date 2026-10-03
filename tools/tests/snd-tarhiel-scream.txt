@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EFFECT:11:100:99999
+0.3 0 0 0 0 TP:-16000:-58000:900:200
+0.3 0 0 0 0 EXPECT:soundstarted:vo\w\m\hit_wm006.mp3:eq:0
+20 0 0 0
+0.3 0 0 0 0 EXPECT:soundstarted:vo\w\m\hit_wm006.mp3:ge:1
+0.3 0 0 0 0 EXPECT:soundstarted:vo\w\m\fle_wm005.mp3:ge:1
+0.3 0 0 0 0 EXPECT:sounddenied:eq:0
+1 0 0 0

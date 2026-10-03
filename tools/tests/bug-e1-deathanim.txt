@@ -1,0 +1,17 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:chitin%dagger
+0.3 0 0 0 0 PLACE:mudcrab:110
+1 0 0 0
+0.3 0 0 0 0 FACE:mudcrab
+0.3 0 0 0 0 EXPECT:alive:mudcrab
+30 0 0 0 0 KILL:mudcrab
+0.05 0 0 0 0 EXPECT:dead:mudcrab
+0.05 0 0 0 0 EXPECT:refdying:mudcrab:eq:1
+0.05 0 0 0 0 SHOT
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refdying:mudcrab:eq:1
+4 0 0 0
+0.3 0 0 0 0 EXPECT:refdying:mudcrab:eq:0
+0.3 0 0 0 0 SHOT

@@ -1,0 +1,115 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:10
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:hasphat_antabolis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sixth_House
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_2_antabolisinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:FG_RatHunt:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:cave_rat
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:fg_rathunt
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:1
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 TALK:hasphat_antabolis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Favor
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_2_antabolisinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_StopCompetition:70
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:unsanctioned_training
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_stopcompetition
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:MG_StopCompetition:50
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:unsanctioned_training
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_stopcompetition
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:A1_4_MuzgobInformant:15
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_cult
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_4_muzgobinformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:staff_magnus_unique:1
+0.3 0 0 0 0 JOURNAL:MG_StaffMagnus:10
+0.3 0 0 0 0 JOIN:mages_guild:6
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 TALK:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Staff_of_Magnus
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_staffmagnus
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

@@ -1,0 +1,136 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EFFECT:11:100:99999
+1 0 0 0 0 SAVE:srun
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_amulet:1
+0.3 0 0 0 0 JOURNAL:Town_Aldruhn:45
+0.3 0 0 0 0 JOURNAL:Town_Ald_Bevene:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Bevene_Releth:_Clothier
+8 0 0 0
+0.3 0 0 0 0 TALK:bevene_releth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_bevene
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_amulet:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Bevene:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Bevene_Releth:_Clothier
+8 0 0 0
+0.3 0 0 0 0 TALK:bevene_releth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_bevene
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_pants_2:1
+0.3 0 0 0 0 GIVE:sarandas_shirt_2:1
+0.3 0 0 0 0 JOURNAL:Town_Aldruhn:45
+0.3 0 0 0 0 JOURNAL:Town_Ald_Bivale:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Bivale_Teneran:_Clothier
+8 0 0 0
+0.3 0 0 0 0 TALK:bivale_teneran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_bivale
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_pants_2:1
+0.3 0 0 0 0 GIVE:sarandas_shirt_2:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Bivale:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Bivale_Teneran:_Clothier
+8 0 0 0
+0.3 0 0 0 0 TALK:bivale_teneran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_bivale
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_ring_1:1
+0.3 0 0 0 0 GIVE:sarandas_ring_2:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Daynes:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Daynes_Redothril:_Pawnbroker
+8 0 0 0
+0.3 0 0 0 0 TALK:daynes_redothril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_daynes
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GIVE:sarandas_ring_1:1
+0.3 0 0 0 0 GIVE:sarandas_ring_2:1
+0.3 0 0 0 0 JOURNAL:Town_Ald_Daynes:1
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Daynes_Redothril:_Pawnbroker
+8 0 0 0
+0.3 0 0 0 0 TALK:daynes_redothril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:town_ald_daynes
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_Stronghold:250
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Galsa_Gindu's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:galsa_gindu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:attract_more_settlers
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 LOAD:srun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:HR_Stronghold:150
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Galsa_Gindu's_House
+8 0 0 0
+0.3 0 0 0 0 TALK:galsa_gindu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:hire_guards
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_stronghold
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

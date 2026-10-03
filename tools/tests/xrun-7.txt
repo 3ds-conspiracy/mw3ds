@@ -1,0 +1,125 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
+1 0 0 0 0 SAVE:xrun
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Haunted_Manor
+8 0 0 0
+120 0 0 0 0 KILL:garding
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_berosupport
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Haunted_Manor
+8 0 0 0
+120 0 0 0 0 KILL:garding
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_berosupport
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:hr_billcollect:70
+0.3 0 0 0 0 GOTO:Molag_Mar,_Armigers_Stronghold
+8 0 0 0
+120 0 0 0 0 KILL:giras_indaram
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hr_billcollect
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:han-ammu
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b4_erabenimsunkill
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Erabenimsun_Camp,_Han-Ammu's_Yurt
+8 0 0 0
+120 0 0 0 0 KILL:han-ammu
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:b8_failed_nerevarine
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Mamaea,_Sanctum_of_Black_Hope
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:hannat_zainsubani
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:ms_hannat:1
+0.3 0 0 0 0 TP:-12104:-74572:400:90
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:ms_hannat
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Nchuleftingth,_Lower_Levels
+8 0 0 0
+120 0 0 0 0 ACTIVATE:bk_hanginggardenswasten
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_excavation
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Nchuleftingth,_Lower_Levels
+8 0 0 0
+120 0 0 0 0 WALKTO:bk_hanginggardenswasten
+3 0 0 0 0 MSG
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:mg_excavation
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:18181:-56492:939:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:hides_his_foot
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:hh_twinlamps3:50
+0.3 0 0 0 0 GOTO:Sterdecan's_Farmhouse
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:hh_twinlamps3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0 0 LOAD:xrun
+3 0 0 0
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Vivec,_Black_Shalk_Cornerclub
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:huleeya
+4 0 0 0
+0.3 0 0 0 0 GOTO:Vivec,_Jobasha's_Rare_Books
+8 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 CHECK:journal:a1_7huleeyainformant
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

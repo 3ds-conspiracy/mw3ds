@@ -1,0 +1,47 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:IL_ScrapMetal:100
+0.3 0 0 0 0 JOIN:imperial_legion:0
+0.3 0 0 0 0 GOTO:Moonmoth_Legion_Fort,_Interior
+8 0 0 0
+0.3 0 0 0 0 TALK:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dandsa
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:il_damsel:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 GOTO:Abernanit
+8 0 0 0
+0.3 0 0 0 0 TALK:Dandsa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1.5 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:il_damsel:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SHOT
+30 0 0 0 0 WALKTO:ex_cave_door_01
+40 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:Dandsa:lt:1500
+20 0 0 0 0 DOORTO:outside
+15 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Abernanit
+0.3 0 0 0 0 EXPECT:refdist:Dandsa:lt:1500
+0.3 0 0 0 0 EXPECT:journal:il_damsel:ge:70
+0.3 0 0 0 0 GOTO:Moonmoth_Legion_Fort,_Interior
+8 0 0 0
+0.3 0 0 0 0 TALK:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dandsa
+1.5 0 0 0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:journal:il_damsel:ge:100
+1 0 0 0

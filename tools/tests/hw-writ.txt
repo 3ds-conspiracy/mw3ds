@@ -1,0 +1,28 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOIN:morag_tong
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+4 0 0 0
+0.5 0 0 0 0 DOOR:eno_hlaalu
+1 0 0 0 0 TOPIC:Odaishah_Yasalmibaal
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EXPECT:journal:MT_WritYasalmibaal:ge:10
+0.3 0 0 0 0 EXPECT:item:writ_yasalmibaal:ge:1
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 GOTO:Bensiberib_Camp,_Odaishah's_Yurt
+4 0 0 0
+0.3 0 0 0 0 SOULKILL:odaishah_yasalmibaal
+1 0 0 0
+0.3 0 0 0 0 EXPECT:dead:odaishah_yasalmibaal
+0.3 0 0 0 0 EXPECT:journal:MT_WritYasalmibaal:eq:90
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 PLACE:fargoth:120
+1 0 0 0
+30 0 0 0 0 KILL:arrille
+2 0 0 0
+0.3 0 0 0 0 EXPECT:dead:arrille
+0.3 0 0 0 0 EXPECT:bounty:gt:0
+1 0 0 0
