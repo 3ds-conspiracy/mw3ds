@@ -85,6 +85,19 @@ static const char* creatureAttackGroup(const ActorSet& set, const Actor& a, cons
 	return actorFindGroup(actorSkeleton(set, a.skeleton), "Attack1") >= 0 ? "Attack1" : attackGroup(w);
 }
 
+// At the hit of a melee blow (Attack1h ...), the follow-through by its strength: under 0.33 the small one ("Attack1hS"),
+// under 0.66 the medium one ("Attack1hM"), else the large one the group runs on into (OpenMW's character controller)
+static void attackFollowThrough(ActorSet& set, Actor& a, float strength)
+{
+	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	if (strength >= 0.66f || a.mode != ANIM_ONCE || a.group < 0 || a.group >= (int)sk.groups.size()
+		|| strncmp(sk.groups[a.group].name, "Attack", 6) != 0)
+		return;
+	std::string next = std::string(sk.groups[a.group].name) + (strength < 0.33f ? "S" : "M");
+	if (actorFindGroup(sk, next.c_str()) >= 0)
+		actorPlay(set, a, next.c_str(), ANIM_ONCE);
+}
+
 // First-person animation family of a weapon (tools/convert/firstperson.py group names)
 static const char* vmGroup(const Object* w)
 {
@@ -653,6 +666,9 @@ void Session::npcStrike(int ri)
 	float chance = roundf(attackTermOf(def.skills[weaponSkill(wpn)], def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
 		r.fatigue, r.fatigueMax, w.actorEffect(ri, 117), w.actorEffect(ri, 47)) - playerDefense(helpless));
 	BlowRoll roll = rollBlow(chance, false, false);
+	// (a missed blow follows through as the weakest)
+	if (Actor* a = w.actorOf(ri))
+		attackFollowThrough(*w.actorsOf(ri), *a, roll.lands ? charge : 0.0f);
 	if (!roll.lands)
 	{
 		playSound(ri, charge > 0.6f ? "SwishL" : "SwishM");
@@ -1055,6 +1071,8 @@ void Session::npcCombat(int ri, float dt)
 		}
 		else if (dist <= reach + 40.0f && fabsf(angleDiff(want, r.rot[2])) < 1.0f)
 			npcStrike(ri);
+		else if (a)
+			attackFollowThrough(*set, *a, frand());      // a blow at nothing: a strength all the same
 	}
 	w.syncActor(ri);
 }
@@ -1313,7 +1331,9 @@ void Session::actorGravity(float dt)
 			continue;
 		if (creature && !r.dead && (afloat & 0x10) && w.underWater(r.pos[2]))
 			continue;
-		// The floor under them: every quarter second while standing, every frame while falling
+		// The floor under them: every quarter second while standing, every frame while falling. Under the
+		// feet, as a step measures it (npcStep): the middle alone dropped a walker on a slope by up to 15 units
+		// every quarter second, and the next step lifted them back
 		if (!r.falling)
 		{
 			r.floorCheck -= dt;
@@ -1826,13 +1846,13 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	(void)ranged;
 }
 
-void Session::playerSwing(float charge, const PlayerInput& in)
+float Session::playerSwing(float charge, const PlayerInput& in)
 {
 	// A lockpick or probe in hand works on the lock / trap under the crosshair instead
 	if (InventoryItem* tool = playerToolItem())
 	{
 		useTool(*tool);
-		return;
+		return charge;
 	}
 	InventoryItem* wit = playerWeaponItem();
 	const Object* wpn = wit ? w.game.object(wit->id) : nullptr;
@@ -1869,7 +1889,7 @@ void Session::playerSwing(float charge, const PlayerInput& in)
 	if (target < 0)
 	{
 		logf("combat: swing hits nothing");
-		return;
+		return charge;
 	}
 
 	Ref& t = w.refs[target];
@@ -1899,12 +1919,12 @@ void Session::playerSwing(float charge, const PlayerInput& in)
 		makeHostile(target);
 		if (wasPeaceful && !def.creature && !t.aggressor)
 			crimeSeen(CRIME_ASSAULT, 0, target), reportCrime(target, kBountyAssault);
-		return;
+		return 0.0f;      // (a miss follows through as the weakest blow: OpenMW)
 	}
 	useSkill(skill, 0, roll.skill);
 	blowSound(target, roll);
 	if (!npcShieldsBurn(target))
-		return;
+		return charge;
 	if (wpn)
 	{
 		float dmg = weaponDamage(wpn, attackKind, charge, pa[ATTR_STRENGTH]);
@@ -1925,6 +1945,7 @@ void Session::playerSwing(float charge, const PlayerInput& in)
 			playerHitsNpc(target, dmg * (t.fatigue > 0.0f ? 1.0f : roll.damage), SKILL_HAND_TO_HAND, true, false);
 	}
 	(void)in;
+	return charge;
 }
 
 // Bow, crossbow or thrown weapon: the projectile leaves along the view
@@ -2039,11 +2060,17 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		{
 			swingCount++;
 			if (isRanged(wpn))
+			{
 				playerFire(fmaxf(0.1f, attackCharge));
+				vm.play(VM_FOLLOW, (std::string(vmGroup(wpn)) + "ShootF").c_str());
+			}
 			else
-				playerSwing(fmaxf(0.1f, attackCharge), in);
-			vm.play(VM_FOLLOW, (std::string(vmGroup(wpn)) + (isRanged(wpn) ? "ShootF" : attackKind == 2 ? "ThrustF"
-				: attackKind == 1 ? "SlashF" : "ChopF")).c_str());
+			{
+				// the follow-through by how hard the blow was (small / medium / large)
+				float strength = playerSwing(fmaxf(0.1f, attackCharge), in);
+				vm.playFollow((std::string(vmGroup(wpn)) + (attackKind == 2 ? "ThrustF" : attackKind == 1 ? "SlashF"
+					: "ChopF")).c_str(), strength);
+			}
 		}
 		else if (vm.action == VM_WINDUP)
 			vm.action = VM_IDLE;          // a menu or knockdown cut the wind-up short: the arms must not stay drawn back

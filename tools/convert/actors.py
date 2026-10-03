@@ -84,6 +84,12 @@ def animation_groups(nif):
         hit = next((marks[(gl, k)] for k in ("chop hit", "chop min hit", "chop max attack") if (gl, k) in marks),
                    (start + stop) / 2)
         groups.append({"name": name, "start": start, "stop": stop, "loop_start": hit, "loop_stop": hit})
+        # The medium / small follow-throughs ("Attack1hM" / "Attack1hS"): the runtime cuts over to one at the
+        # hit by the blow's strength (OpenMW)
+        for sfx, size in (("M", "medium"), ("S", "small")):
+            f0, f1 = marks.get((gl, f"chop {size} follow start")), marks.get((gl, f"chop {size} follow stop"))
+            if f0 is not None and f1 is not None and f1 > f0:
+                groups.append({"name": name + sfx, "start": f0, "stop": f1, "loop_start": f0, "loop_stop": f1})
     for name, (gl, k0, kh, k1) in PHASED_GROUPS.items():
         start, hit, stop = marks.get((gl, k0)), marks.get((gl, kh)), marks.get((gl, k1))
         if start is not None and stop is not None and stop > start:

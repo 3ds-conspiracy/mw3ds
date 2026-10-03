@@ -231,7 +231,7 @@ struct Session : ScriptHost
 
 	// combat.cpp
 	void combatUpdate(const PlayerInput& in, float dt, bool menu);
-	void playerSwing(float charge, const PlayerInput& in);
+	float playerSwing(float charge, const PlayerInput& in);   // the blow's strength for its follow-through (0: a miss)
 	void npcCombat(int ref, float dt);
 	void npcStrike(int ref);
 	void npcWander(int ref, float dt);

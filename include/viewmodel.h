@@ -52,6 +52,7 @@ struct ViewModel
 	std::string kind = "Chop";                // Chop / Slash / Thrust (melee), Shoot (ranged)
 	float charge = 0.0f;                      // wind-up: 0..1 between min and max attack
 	float speed = 1.0f;                       // the weapon's speed: the swing's animation plays at this rate
+	std::string followTo;                     // a blow's medium / small follow-through, cut over to at its hit mark
 	bool visible = false;
 
 	bool load(World& w);
@@ -60,6 +61,8 @@ struct ViewModel
 	// Puts the arms together for the race and equipment (cheap when nothing changed)
 	void rebuild(World& w, const std::string& weaponId, const std::string& shieldId);
 	void play(VmAction a, const char* groupName, bool hold = false);
+	// A melee blow's follow-through ("1hChopF"): small / medium / large by its strength, 0..1 (OpenMW)
+	void playFollow(const char* groupName, float strength);
 	// Length of a group in seconds (0 if the skeleton lacks it)
 	float groupLength(const char* groupName) const;
 	bool finished() const;                    // the current one-shot group reached its end

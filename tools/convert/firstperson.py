@@ -48,7 +48,8 @@ def fp_groups(nif):
     """Groups the first-person view plays (names <= 15 characters):
       Idle1h Idle2c Idle2w IdleHH IdleXbow IdleSpell, Walk*/Run* (1h 2c 2w HH),
       <W><Kind> wind-ups: start, min attack (loop start), max attack (loop stop), max attack (stop)
-      <W><Kind>F follow-throughs: min hit, small / medium follow stop (loop), large follow stop
+      <W><Kind>F the blow and the large follow-through: min hit, hit (loop), large follow stop;
+      <W><Kind>FM / FS the medium / small follow-throughs
       <W>Eq / <W>Uneq, BowShoot(F) XbowShoot(F) ThrowShoot(F), Block, Hit1, KnockDown,
       CastSelf / CastTarget / CastTouch (release as loop start), SpellEq / SpellUneq
     where W is 1h, 2c, 2w, HH, Bow, Xbow, Throw and Kind is Chop, Slash, Thrust."""
@@ -81,8 +82,11 @@ def fp_groups(nif):
         for kind in ("chop", "slash", "thrust"):
             k = kind.capitalize()
             add(tag + k, g, f"{kind} start", f"{kind} min attack", f"{kind} max attack", f"{kind} max attack")
-            add(tag + k + "F", g, f"{kind} min hit", f"{kind} small follow stop", f"{kind} medium follow stop",
-                f"{kind} large follow stop")
+            # the blow and the large follow-through (hit mark as the loop), then the medium / small ones alone:
+            # the runtime cuts over at the hit mark by the blow's strength (OpenMW)
+            add(tag + k + "F", g, f"{kind} min hit", f"{kind} hit", f"{kind} hit", f"{kind} large follow stop")
+            add(tag + k + "FM", g, f"{kind} medium follow start", stop=f"{kind} medium follow stop")
+            add(tag + k + "FS", g, f"{kind} small follow start", stop=f"{kind} small follow stop")
     ranged = [("Bow", "bowandarrow"), ("Xbow", "crossbow"), ("Throw", "throwweapon")]
     for tag, g in melee + ranged + [("Spell", "spellcast")]:
         add(tag + "Eq", g, "equip start", stop="equip stop")

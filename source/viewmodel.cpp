@@ -385,6 +385,19 @@ void ViewModel::play(VmAction act, const char* groupName, bool hold)
 	else
 		action = VM_IDLE;
 	charge = 0.0f;
+	followTo.clear();
+}
+
+void ViewModel::playFollow(const char* groupName, float strength)
+{
+	play(VM_FOLLOW, groupName);
+	if (!ready || action != VM_FOLLOW)
+		return;
+	// Under 0.33 the small one, under 0.66 the medium one, else the large one the group itself runs on into
+	// (data without the "FM" / "FS" groups: always the large one)
+	std::string next = std::string(groupName) + (strength < 0.33f ? "S" : "M");
+	if (strength < 0.66f && actorFindGroup(set.skeletons[0], next.c_str()) >= 0)
+		followTo = next;
 }
 
 bool ViewModel::finished() const
@@ -446,7 +459,17 @@ void ViewModel::update(float dt, bool moving, bool running)
 	}
 	default:
 		if (action == VM_FOLLOW)
+		{
 			step = dt * speed;      // the follow-through goes at the weapon's speed too
+			// a weaker blow: at the hit mark, on to its own follow-through
+			const AnimGroup& g = sk.groups[a.group];
+			if (!followTo.empty() && a.time + step >= g.loopStart && g.loopStart < g.stop)
+			{
+				actorPlay(set, a, followTo.c_str(), ANIM_HOLD);
+				followTo.clear();
+				step = 0.0f;
+			}
+		}
 		if (finished())
 		{
 			action = action == VM_UNEQUIP ? VM_NONE : VM_IDLE;
