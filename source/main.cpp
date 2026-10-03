@@ -911,6 +911,16 @@ int main()
 			{
 				chainMode = true;
 				logf("test: chained run (journal setup only raises)");
+				// A bounty the last chapter's driving ran up (a book taken in sight) is paid, as a player would
+				// between chapters: else the first guard's arrest screen holds every step after it
+				if (session->w.bounty > 0)
+				{
+					logf("test: chained run: bounty %d paid", session->w.bounty);
+					session->w.bounty = 0;
+					session->w.arrestDeclined = -1;
+				}
+				if (session->screen == SCR_ARREST)
+					session->closeScreen();
 			}
 			if (first && !s.startScript.empty())
 			{
@@ -974,8 +984,11 @@ int main()
 				}
 				else
 				{
-					session->w.pcRank[s.join] = s.joinRank;
-					logf("test: joined %s at rank %d", s.join.c_str(), s.joinRank);
+					// (chained: never below the rank the last chapter's story gave)
+					auto had = session->w.pcRank.find(s.join);
+					if (!chainMode || had == session->w.pcRank.end() || had->second < s.joinRank)
+						session->w.pcRank[s.join] = s.joinRank;
+					logf("test: joined %s at rank %d", s.join.c_str(), session->w.pcRank[s.join]);
 				}
 			}
 			if (first && !s.cast.empty())
@@ -1142,7 +1155,8 @@ int main()
 				std::string sid = lower(s.spell);
 				if (!session->w.game.spells.count(sid))
 					std::replace(sid.begin(), sid.end(), '_', ' ');    // ids with spaces: "vampire_blood_aundae"
-				ps.spells.push_back(sid);
+				if (std::find(ps.spells.begin(), ps.spells.end(), sid) == ps.spells.end())     // (known once, as AddSpell)
+					ps.spells.push_back(sid);
 				float hp = ps.health;
 				session->w.recomputeStats();
 				ps.health = fminf(ps.healthMax, hp);
@@ -1249,7 +1263,7 @@ int main()
 				}
 			}
 			if (first && !s.give.empty())
-				session->testGive(s.give, s.giveCount);
+				session->testGive(s.give, s.giveCount, chainMode);
 			if (first && !s.place.empty())
 				session->testPlace(s.place, s.placeDist);
 			if (first && !s.hit.empty())

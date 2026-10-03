@@ -623,7 +623,7 @@ struct Session : ScriptHost
 	std::string dateText(bool withHour = true);
 	// test harness (autoinput tokens)
 	void testBoost(int value);
-	void testGive(const std::string& id, int count = 0);   // count 0: one (50 arrows)
+	void testGive(const std::string& id, int count = 0, bool topUp = false);   // count 0: one (50 arrows); topUp: only what's missing
 	void testPlace(const std::string& id, float dist);
 	void testHit(const std::string& id);
 	void testGoto(const std::string& cell);

@@ -5,7 +5,7 @@
 0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:50
 0.3 0 0 0 0 JOURNAL:A2_4_MiloGone:50
 0.3 0 0 0 0 JOIN:blades:4
-0.3 0 0 0 0 SPELL:corprus
+0.3 0 0 0 0 SPELL:corprus_immunity
 0.3 0 0 0 0 GIVE:silver_longsword
 0.3 0 0 0 0 GIVE:Gold_001:3000
 0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt

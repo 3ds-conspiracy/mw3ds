@@ -53,6 +53,8 @@
 0.3 0 0 0 0 B
 60 0 0 0 0 ACTIVATE:sinnammu_mirpal
 1.5 0 0 0
+0.3 0 0 0 0 TOPIC:accompany_you
+1.5 0 0 0
 0.3 0 0 0 0 TOPIC:name_you_Nerevarine
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:eq:50

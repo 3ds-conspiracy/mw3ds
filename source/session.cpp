@@ -2008,7 +2008,7 @@ int Session::testFindRef(const std::string& id)
 	return ref;
 }
 
-void Session::testGive(const std::string& id, int count)
+void Session::testGive(const std::string& id, int count, bool topUp)
 {
 	const Object* o = w.game.object(id);
 	if (!o)
@@ -2019,7 +2019,12 @@ void Session::testGive(const std::string& id, int count)
 		return;
 	}
 	bool ammo = o->type == "WEAP" && o->subtype >= 12;
-	w.addItem(o->id, count > 0 ? count : ammo ? 50 : 1);
+	int want = count > 0 ? count : ammo ? 50 : 1;
+	// (a chained chapter: only up to the count, so an item the last chapter's story handed over isn't doubled)
+	if (topUp)
+		want -= w.itemCount(o->id);
+	if (want > 0)
+		w.addItem(o->id, want);
 	bool wearable = o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH"
 		|| o->type == "LOCK" || o->type == "PROB";
 	for (size_t k = 0; k < w.inventory.size() && wearable; k++)
