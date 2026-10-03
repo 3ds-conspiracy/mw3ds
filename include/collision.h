@@ -36,3 +36,9 @@ bool collisionRaycast(CollisionMesh& mesh, const float a[3], const float b[3], f
 
 // Highest surface directly below (x, y) with zBottom <= z <= zTop.
 bool collisionFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBottom, float* zOut);
+
+// The floor an actor's feet rest on: the highest of collisionFloor under (x, y) and four spots
+// `reach` units around it (as OpenMW's actor box rests on the highest point under it, so on a slope
+// or a ledge's edge the middle is a little above the floor under it)
+bool collisionFootFloor(CollisionMesh& mesh, float x, float y, float reach, float zTop, float zBottom, float* zOut);
+static const float kActorFootReach = 15.0f;

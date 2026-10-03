@@ -1091,22 +1091,7 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	float swimZ = cell.hasWater() && r.type == "NPC_" ? cell.waterZ - kNpcSwimDepth : -1e9f;
 	// the floor under the feet, not under one point: the highest of the middle and four spots around it
 	// (as the player's), so a crack or a hatch's corner under the middle isn't a drop
-	auto footFloor = [&](float* out) {
-		static const float offs[5][2] = { { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
-		bool found = false;
-		for (auto& o : offs)
-		{
-			float z;
-			if (collisionFloor(cell.collision, body[0] + o[0] * 15.0f, body[1] + o[1] * 15.0f, r.pos[2] + 40.0f,
-					r.pos[2] - 300.0f, &z) && (!found || z > *out))
-			{
-				*out = z;
-				found = true;
-			}
-		}
-		return found;
-	};
-	if (!footFloor(&fz))
+	if (!collisionFootFloor(cell.collision, body[0], body[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 300.0f, &fz))
 	{
 		if (swimZ < -1e8f || r.pos[2] > swimZ + 1.0f)
 			return false;
@@ -1345,7 +1330,8 @@ void Session::actorGravity(float dt)
 		for (LoadedCell* l : w.loaded)
 		{
 			float z;
-			if (collisionFloor(l->cell.collision, r.pos[0], r.pos[1], r.pos[2] + 40.0f, r.pos[2] - 6000.0f, &z) && z > best)
+			if (collisionFootFloor(l->cell.collision, r.pos[0], r.pos[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 6000.0f,
+					&z) && z > best)
 				best = z;
 		}
 		// deep water holds people up (swimming); creatures that walk wade through it

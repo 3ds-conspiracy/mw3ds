@@ -2224,15 +2224,22 @@ void Session::monitorActors(float dt)
 			creature = (afloat & 0x20) || ((afloat & 0x10) && w.underWater(r.pos[2]));
 		}
 		bool idle = r.ai != AI_COMBAT && !r.falling && r.knockTimer <= 0.0f && !a->swimming;
-		float floorZ = -1e9f;
+		// (on the floor anywhere from the floor under the middle up to the highest under the feet: a step and
+		// gravity stand them on the latter, as OpenMW's actor box rests on a slope or a ledge's edge)
+		float floorZ = -1e9f, footZ = -1e9f;
 		if (idle)
 			for (LoadedCell* l : w.loaded)
 			{
 				float z;
 				if (collisionFloor(l->cell.collision, r.pos[0], r.pos[1], r.pos[2] + 40.0f, r.pos[2] - 6000.0f, &z) && z > floorZ)
 					floorZ = z;
+				if (collisionFootFloor(l->cell.collision, r.pos[0], r.pos[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 6000.0f,
+						&z) && z > footZ)
+					footZ = z;
 			}
 		float gap = floorZ > -1e8f ? r.pos[2] - floorZ : 0.0f;
+		if (gap > 0.0f)
+			gap = fmaxf(0.0f, r.pos[2] - footZ);
 		bool off = idle && ((floorZ < -1e8f && !creature) || gap < -20.0f || (gap > 8.0f && !creature));
 		wt.off = off ? wt.off + step : 0.0f;
 		if (wt.off >= 2.0f && !wt.toldFloor)

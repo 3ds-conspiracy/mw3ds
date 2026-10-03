@@ -233,6 +233,22 @@ bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBotto
 	return found;
 }
 
+bool collisionFootFloor(CollisionMesh& m, float x, float y, float reach, float zTop, float zBottom, float* zOut)
+{
+	static const float offs[5][2] = { { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+	bool found = false;
+	for (auto& o : offs)
+	{
+		float z;
+		if (collisionFloor(m, x + o[0] * reach, y + o[1] * reach, zTop, zBottom, &z) && (!found || z > *zOut))
+		{
+			*zOut = z;
+			found = true;
+		}
+	}
+	return found;
+}
+
 // Segment a -> b against the mesh: nearest hit as a fraction of the way (Moller-Trumbore), walking
 // the grid cells along the segment
 static const float kEdgeSlack = 1e-3f;
