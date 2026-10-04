@@ -4,7 +4,7 @@
 # (-Chained also keeps each chapter's closing save beside its log: <logs>\chain-mq-chN.sav. -ResumeFrom starts the
 # first chapter from such a save, e.g. -Chained -Tests mq-ch10,mq-ch11 -ResumeFrom <logs>\chain-mq-ch9.sav)
 param([string[]]$Tests = @(), [string]$Data = 'out\world', [string]$Start = 'Seyda Neen', [int]$Wait = 2400, [switch]$Chained,
-      [string]$Emu = '', [string]$App = '', [string]$Logs = '', [string]$ResumeFrom = '')
+      [string]$Emu = '', [string]$App = '', [string]$Logs = '', [string]$ResumeFrom = '', [switch]$Fast)
 . (Join-Path $PSScriptRoot '..\build\env.ps1')
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 if (-not $Emu) { $Emu = Get-MwEnv 'MW3DS_EMU_DIR' 'the Azahar folder' }
@@ -41,7 +41,7 @@ $logs = if ($Logs) { $Logs } else { Join-Path $root 'build\suite-logs' }
 New-Item -ItemType Directory -Force $logs | Out-Null
 $log = Join-Path $Emu 'user\sdmc\3ds\mw3ds\log.txt'
 foreach ($t in $Tests) {
-    $out = & (Join-Path $PSScriptRoot 'run-test.ps1') $t -Data $Data -Start $Start -Wait $Wait -Emu $Emu -App $App
+    $out = & (Join-Path $PSScriptRoot 'run-test.ps1') $t -Data $Data -Start $Start -Wait $Wait -Emu $Emu -App $App -Fast:$Fast
     Copy-Item $log (Join-Path $logs "$t.log") -Force
     if ($Chained -and (Test-Path $chainSave)) { Copy-Item $chainSave (Join-Path $logs "$t.sav") -Force }
     $verdict = $out | Where-Object { $_ -like 'RESULT:*' }

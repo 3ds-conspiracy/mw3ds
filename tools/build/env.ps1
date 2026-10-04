@@ -2,6 +2,10 @@
 # Loads the repo's .env (see .env.example) into the process environment (variables already set win) and
 # provides Get-MwEnv for the settings the scripts need.
 $envFile = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) '.env'
+if (-not (Test-Path $envFile)) {
+    $hint = if (Test-Path "$envFile.txt") { " Found '.env.txt': rename it to '.env' (Explorer hides the .txt; turn on View > File name extensions)." } else { ' Copy .env.example to .env in that folder and fill it in.' }
+    Write-Warning "No .env file at $envFile.$hint"
+}
 if (Test-Path $envFile) {
     foreach ($line in Get-Content $envFile) {
         $line = $line.Trim()

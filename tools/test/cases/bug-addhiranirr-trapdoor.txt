@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Canalworks
+6 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_St._Olms_Underworks
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Underworks
+180 0 0 0 0 WALKTO:addhiranirr
+1 0 0 0

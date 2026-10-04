@@ -3,20 +3,38 @@
 #   tools\test\run-test.ps1 tg-bragor -Data out\world  (the whole island)
 #   tools\test\run-test.ps1 mainquest -Start "Seyda Neen"
 param([Parameter(Mandatory = $true)][string]$Test, [string]$Start = 'Balmora', [string]$Data = 'out\data', [int]$Wait = 300, [string]$App = '',
-      [string]$Emu = '',
+      [string]$Emu = '', [switch]$Fast, [switch]$Native, [string]$Sd = '',
       [string]$Pattern = 'check:|not offered|failed|expelled|crime:|expect:|monitor:|drive: (FAIL|stuck|crosshair miss)|was fighting|script error')
 . (Join-Path $PSScriptRoot '..\build\env.ps1')
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
-if (-not $Emu) { $Emu = Get-MwEnv 'MW3DS_EMU_DIR' 'the Azahar folder' }
+if (-not $Native -and -not $Emu) { $Emu = Get-MwEnv 'MW3DS_EMU_DIR' 'the Azahar folder' }
 $inputs = Get-Content (Join-Path $root "tools\test\cases\$Test.txt")
-& (Join-Path $PSScriptRoot 'run-emu.ps1') -Start $Start -Data $Data -Inputs $inputs -Wait $Wait -App $App -Emu $Emu | Out-Null
-$log = Join-Path $Emu 'user\sdmc\3ds\mw3ds\log.txt'
+if ($Native) {
+    # The game built for the PC (tools\test\native\build.py): same case file, same log lines, no emulator
+    $sd = if ($Sd) { $Sd } else { Join-Path $root 'build\native\sd' }   # -Sd: its own SD folder, so runs can go in parallel
+    $sdApp = Join-Path $sd '3ds\mw3ds'
+    New-Item -ItemType Directory -Force $sdApp | Out-Null
+    Remove-Item (Join-Path $sdApp 'log.txt'), (Join-Path $sdApp 'autocam.txt'), (Join-Path $sdApp 'autoshot') -Force -ErrorAction SilentlyContinue
+    Set-Content (Join-Path $sdApp 'autoinput.txt') $inputs -Encoding ascii
+    Set-Content (Join-Path $sdApp 'start.txt') $Start -Encoding ascii
+    $env:NATIVE_SD = $sd
+    $env:MW3DS_DATA = Join-Path $root $Data
+    $p = Start-Process -FilePath (Join-Path $root 'build\native\mw3ds-native.exe') -WorkingDirectory $root -PassThru -WindowStyle Hidden
+    if (-not $p.WaitForExit($Wait * 1000)) { $p.Kill() }
+    $log = Join-Path $sdApp 'log.txt'
+} else {
+    & (Join-Path $PSScriptRoot 'run-emu.ps1') -Start $Start -Data $Data -Inputs $inputs -Wait $Wait -App $App -Emu $Emu -Fast:$Fast | Out-Null
+    $log = Join-Path $Emu 'user\sdmc\3ds\mw3ds\log.txt'
+}
 "== $Test"
 Select-String -Path $log -Pattern $Pattern | ForEach-Object { $_.Line }
 if (-not (Select-String -Path $log -Pattern 'autoinput: end' -Quiet)) { "(did not reach the end)" }
 # Memory faults the emulator saw (reads / writes of unmapped memory: a crash on hardware), by code address
-$emuLog = Join-Path $Emu 'user\log\azahar_log.txt'
-$faults = Select-String -Path $emuLog -Pattern 'Unmapped\w+ @ \S+ at PC (0x[0-9A-Fa-f]+)|Unreachable code' -ErrorAction SilentlyContinue
+$faults = $null
+if (-not $Native) {
+    $emuLog = Join-Path $Emu 'user\log\azahar_log.txt'
+    $faults = Select-String -Path $emuLog -Pattern 'Unmapped\w+ @ \S+ at PC (0x[0-9A-Fa-f]+)|Unreachable code' -ErrorAction SilentlyContinue
+}
 if ($faults) {
     $pcs = $faults | ForEach-Object { if ($_.Matches[0].Groups[1].Success) { $_.Matches[0].Groups[1].Value } else { 'gpu-unreachable' } } | Group-Object | Sort-Object Count -Descending
     "emulator faults: " + (($pcs | Select-Object -First 5 | ForEach-Object { "$($_.Name) x$($_.Count)" }) -join ', ') + "  (tools\build\addr2line.ps1 <pc>)"
