@@ -29,5 +29,5 @@ if (-not $SkipConvert) {
 # 2. Program + CIA
 "== building the program and the CIA"
 & (Join-Path $PSScriptRoot 'make-cia.ps1')
-if ($LASTEXITCODE -ne 0) { throw 'CIA build failed' }
+if ($LASTEXITCODE -ne 0) { throw 'CIA build failed: see the make / makerom output just above this error' }
 "Built build\mw3ds.cia."

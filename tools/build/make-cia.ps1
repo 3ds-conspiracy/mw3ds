@@ -8,8 +8,14 @@ param([switch]$NoData, [string]$Data = 'out\data', [switch]$NoNetLog)
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 . (Join-Path $PSScriptRoot 'env.ps1')
 Set-Location $root
-& (Join-Path $PSScriptRoot 'make.ps1') | Select-String -Pattern 'error|warning' | ForEach-Object Line
-if ($LASTEXITCODE -ne 0) { exit 1 }
+$makeOut = & (Join-Path $PSScriptRoot 'make.ps1')
+$makeCode = $LASTEXITCODE
+$makeOut | Select-String -Pattern 'error|warning' | ForEach-Object Line
+if ($makeCode -ne 0) {
+    "make failed (exit code $makeCode). Last lines of its output:"
+    $makeOut | Select-Object -Last 30
+    exit 1
+}
 
 if ($NoData) {
     Remove-Item (Join-Path $root 'build\romfs\data') -Recurse -Force -ErrorAction SilentlyContinue

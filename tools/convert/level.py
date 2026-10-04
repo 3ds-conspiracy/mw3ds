@@ -717,7 +717,8 @@ def main():
     game["music"] = [n for n in (convert_sound(arch, m, OUT / "music") for m in MUSIC) if n]
     game["music_battle"] = [n for n in (convert_sound(arch, m, OUT / "music") for m in MUSIC_BATTLE) if n]
     if missing:
-        print(f"  missing sounds: {missing[:8]}{' ...' if len(missing) > 8 else ''}")
+        print(f"  {len(missing)} sounds not found in your Morrowind install (harmless, those play silent): "
+              f"{missing[:8]}{' ...' if len(missing) > 8 else ''}")
     # Sounds a previous level used but this one doesn't
     used = set(game["voices"].values()) | {s["file"] for s in game["sounds"].values()}
     stale = [p for p in sdir.rglob("*.snd") if p.name not in used]
