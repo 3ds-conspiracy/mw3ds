@@ -17,11 +17,14 @@ if (-not (Test-Path (Join-Path $morrowind 'Data Files\Morrowind.esm'))) { throw 
 if (-not (Test-Path (Join-Path $ctr 'makerom.exe'))) { throw "makerom.exe not found in $ctr" }
 if (-not (Get-Command python -ErrorAction SilentlyContinue)) { throw 'python not found on PATH' }
 
+# A CIA left by an earlier failed build must not be mistaken for this one
+Remove-Item (Join-Path $root 'build\mw3ds.cia') -ErrorAction SilentlyContinue
+
 # 1. Convert the game data (make-cia.ps1 builds the program itself)
 if (-not $SkipConvert) {
-    "== converting game data"
+    "== converting game data (python $(python --version 2>&1))"
     if ($Small) { python tools\convert\level.py } else { python tools\convert\level.py --world }
-    if ($LASTEXITCODE -ne 0) { throw 'level.py failed' }
+    if ($LASTEXITCODE -ne 0) { throw "level.py failed (exit code $LASTEXITCODE). Rerun with `$env:MW3DS_TRACE_SOUNDS='1' to see the file it stopped on, and send the whole output." }
 } elseif (-not (Test-Path (Join-Path $root 'out\data'))) {
     throw 'out\data does not exist: run without -SkipConvert first'
 }
