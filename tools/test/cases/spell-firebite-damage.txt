@@ -2,7 +2,7 @@
 0.3 0 0 0 0 GOD
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 FILL
-0.3 0 0 0 0 PLACE:guar:110
+0.3 0 0 0 0 PLACE:guar:80
 1 0 0 0
 0.3 0 0 0 0 FACE:guar
 0.3 0 0 0 0 SPELL:fire_bite

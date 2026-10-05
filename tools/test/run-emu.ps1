@@ -56,6 +56,7 @@ if ($Fast -and (Test-Path $ini)) {
     [IO.File]::WriteAllText($ini, $text)
 }
 
+try {
 Remove-Item (Join-Path $sd 'autoinput.txt') -Force -ErrorAction SilentlyContinue
 $startFile = Join-Path $sd 'start.txt'
 if ($Start) { Set-Content -Path $startFile -Value $Start -Encoding ascii } else { Remove-Item $startFile -Force -ErrorAction SilentlyContinue }
@@ -114,4 +115,7 @@ if (Test-Path $log) { Get-Content $log | Where-Object { $_ -notmatch '^\[\s*\d+\
 
 Remove-Item (Join-Path $sd 'autoshot'), (Join-Path $sd 'autocam.txt'), (Join-Path $sd 'autoinput.txt') -Force -ErrorAction SilentlyContinue
 if (-not $Keep) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
-if ($null -ne $iniBackup) { Start-Sleep -Milliseconds 500; [IO.File]::WriteAllText($ini, $iniBackup) }
+} finally {
+    # -Fast: the ini goes back even if the run failed
+    if ($null -ne $iniBackup) { Start-Sleep -Milliseconds 500; [IO.File]::WriteAllText($ini, $iniBackup) }
+}

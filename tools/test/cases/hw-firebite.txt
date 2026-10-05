@@ -8,7 +8,7 @@
 0.3 0 0 0 0 SPELL:fire_bite
 0.3 0 0 0 0 SNAP:refhealth:mudcrab
 0.3 0 0 0 0 CAST:fire%bite
-0.4 0 0 0
+0.6 0 0 0
 0.2 0 0 0 0 SHOT
 0.3 0 0 0 0 EXPECT:vfxcount:ge:2
 0.8 0 0 0

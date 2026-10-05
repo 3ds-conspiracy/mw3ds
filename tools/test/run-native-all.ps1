@@ -50,9 +50,33 @@ function Finish($slot) {
     if (Test-Path $sdLog) { Copy-Item $sdLog (Join-Path $logDir "$case.log") -Force }
     $pass = $verdict -like 'RESULT: PASS*'
     $warn = if ($verdict -match '(\d+) monitor warnings') { [int]$Matches[1] } else { 0 }
-    if (-not $pass -and $IgnoreWarnings -and $verdict -match '^\(\d+ expectations met, 0 failed, 0 driver failures, \d+ monitor warnings(\)|;)') { $pass = $true }
+    if (-not $pass -and $IgnoreWarnings -and $verdict -match '^RESULT: FAIL \(\d+ expectations met, 0 failed, 0 driver failures, \d+ monitor warnings(\)|;)') { $pass = $true }
+    $detail = $verdict -replace '^RESULT: (PASS|FAIL) ?', ''
+    # Sweep batches (qrun / srun / xrun) try each quest's opener and are judged by how many quests started
+    # (questrun.py --check), not by RESULT: a "topic not offered" there is a finding about that quest. A batch passes
+    # when it starts at least as many quests as the emulator sweep did (build\<prefix>-results.txt), else when none fail.
+    if ($case -match '^(qrun|srun|xrun)-\d+$') {
+        $warn = 0
+        $check = @(python (Join-Path $PSScriptRoot 'questrun.py') --check $case --log (Join-Path $logDir "$case.log") 2>&1)
+        Set-Content (Join-Path $logDir "$case.check.txt") $check
+        $mine = $check | Where-Object { $_ -match "^${case}: (\d+) started, (\d+) not" } | Select-Object -Last 1
+        if ($mine -match ': (\d+) started, (\d+) not') {
+            $started = [int]$Matches[1]; $not = [int]$Matches[2]
+            $base = $null
+            $baseFile = Join-Path $root "build\$($case -replace '-\d+$', '')-results.txt"
+            if (Test-Path $baseFile) {
+                $b = Select-String -Path $baseFile -Pattern "^${case}: (\d+) started, (\d+) not" | Select-Object -Last 1
+                if ($b) { $base = [int]$b.Matches[0].Groups[1].Value }
+            }
+            $pass = if ($null -ne $base) { $started -ge $base } else { $not -eq 0 }
+            $detail = "sweep: $started started, $not not" + $(if ($null -ne $base) { " (emulator sweep: $base started)" } else { ' (no emulator baseline)' })
+        } else {
+            $pass = $false
+            $detail = 'sweep: no check result (' + (($check | Select-Object -Last 1) -as [string]) + ')'
+        }
+    }
     [void]$rows.Add([pscustomobject]@{ case = $case; result = $(if ($pass) { 'PASS' } else { 'FAIL' }); warnings = $warn
-        seconds = [int]((Get-Date) - $slot.started).TotalSeconds; detail = ($verdict -replace '^RESULT: (PASS|FAIL) ?', '') })
+        seconds = [int]((Get-Date) - $slot.started).TotalSeconds; detail = $detail })
     "{0,4}/{1}  {2,-4}  {3}" -f $rows.Count, $total, $(if ($pass) { 'PASS' } else { 'FAIL' }), $case
     $slot.proc = $null
 }
@@ -84,7 +108,7 @@ $mode = if ($IgnoreWarnings) { ', monitor warnings ignored' } else { '' }
 $lines = @("native run ${stamp}: $($passed.Count) of $total passed in $([int]$clock.Elapsed.TotalSeconds) s ($Jobs at a time, data $Data$mode)")
 $lines += ''
 $lines += "SUCCEEDED ($($passed.Count)):"
-$lines += $passed | ForEach-Object { "  $($_.case)" + $(if ($_.warnings) { "  ($($_.warnings) warnings ignored)" } else { '' }) }
+$lines += $passed | ForEach-Object { "  $($_.case)" + $(if ($_.detail -like 'sweep:*') { "  $($_.detail)" } elseif ($_.warnings) { "  ($($_.warnings) warnings ignored)" } else { '' }) }
 if ($failed) { $lines += ''; $lines += "FAILED ($($failed.Count)):"; $lines += $failed | ForEach-Object { "  $($_.case)  $($_.detail)" } }
 Set-Content (Join-Path $resDir 'summary.txt') $lines
 $latest = Join-Path $root 'build\native-results\latest'

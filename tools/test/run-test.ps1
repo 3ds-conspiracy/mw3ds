@@ -13,8 +13,9 @@ if ($Native) {
     # The game built for the PC (tools\test\native\build.py): same case file, same log lines, no emulator
     $sd = if ($Sd) { $Sd } else { Join-Path $root 'build\native\sd' }   # -Sd: its own SD folder, so runs can go in parallel
     $sdApp = Join-Path $sd '3ds\mw3ds'
+    # A clean SD folder every run: saves and settings the case before left behind change what the next one starts in
+    if (Test-Path $sdApp) { Remove-Item $sdApp -Recurse -Force -ErrorAction SilentlyContinue }
     New-Item -ItemType Directory -Force $sdApp | Out-Null
-    Remove-Item (Join-Path $sdApp 'log.txt'), (Join-Path $sdApp 'autocam.txt'), (Join-Path $sdApp 'autoshot') -Force -ErrorAction SilentlyContinue
     Set-Content (Join-Path $sdApp 'autoinput.txt') $inputs -Encoding ascii
     Set-Content (Join-Path $sdApp 'start.txt') $Start -Encoding ascii
     $env:NATIVE_SD = $sd

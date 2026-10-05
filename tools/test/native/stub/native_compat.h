@@ -62,3 +62,15 @@ struct mallinfo_t { int uordblks; };
 
 // ---- the error screen, the crash handler: nothing to install
 #define WRITE_DATA_TO_HANDLER_STACK 0
+
+// ---- rand(): devkitARM's newlib generator (64-bit LCG, starts at seed 1), so a run draws the same numbers as the
+// 3DS does; the PC's libc has another sequence and (on Windows) RAND_MAX 32767
+inline uint64_t& newlib_rand_state() { static uint64_t s = 1; return s; }
+inline int newlib_rand() { uint64_t& s = newlib_rand_state(); s = s * 6364136223846793005ULL + 1; return (int)((s >> 32) & 0x7fffffff); }
+inline void newlib_srand(unsigned seed) { newlib_rand_state() = seed; }
+#undef RAND_MAX
+#define RAND_MAX 0x7fffffff
+#ifdef NATIVE_NEWLIB_RAND
+#define rand() newlib_rand()
+#define srand(seed) newlib_srand(seed)
+#endif

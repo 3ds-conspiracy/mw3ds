@@ -16,6 +16,10 @@ or memory limits. A case that takes minutes on Azahar takes seconds here.
     every texture counts as loaded.
   - There is one thread: the streaming thread is off, and the game's own "no thread, load it now" path runs instead.
   - The log is written to the same `log.txt` format, so the same scripts read it.
+- Numbers match the 3DS on purpose: floating-point fusing is off (`-ffp-contract=off`; the 3DS rounds every
+  operation, and a host-CPU build rounded some `(int)` truncations the other way), and `rand()` is devkitARM's newlib
+  generator (same sequence, `RAND_MAX` 0x7fffffff). Cases that roll unseeded dice (`ROLL:-1`, no `SEED:`) can still
+  pass or fail from run to run on either side: `mech-enchant` did on the emulator too.
 - The case files and their parser are the same as on the emulator. Scripted steps use the fixed `dt = 1/30`, so
   the run does not depend on real time.
 

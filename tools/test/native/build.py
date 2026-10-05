@@ -20,7 +20,8 @@ ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz"
 ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "inftrees", "trees", "uncompr", "zutil"]
 # replaced by native_stubs.cpp (log, linear heap, drawing, the dev updater, screenshots) or main_native.cpp
 SKIP = {"main", "renderer", "log", "devupdate", "screenshot", "linear"}
-CXXFLAGS = ["-O1", "-std=c++17", "-w", "-fno-strict-aliasing", "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
+# no fused multiply-add: the 3DS's VFP rounds every operation, and a host-CPU build would round some differently
+CXXFLAGS = ["-O1", "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
             "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h")]
 
 

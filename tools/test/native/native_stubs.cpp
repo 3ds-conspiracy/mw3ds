@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <chrono>
+#include <map>
 #include <set>
 #include <string>
 #include <sys/stat.h>
@@ -126,12 +127,27 @@ ssize_t decode_utf8(uint32_t* out, const unsigned char* p)
 
 // ---- linear heap: plain memory
 static size_t s_linearUsed = 0;
+static std::map<void*, size_t> s_linearSizes;
 void* linearAlloc(size_t size)
 {
-	s_linearUsed += size;
-	return malloc(size ? size : 1);
+	void* p = malloc(size ? size : 1);
+	if (p)
+	{
+		s_linearUsed += size;
+		s_linearSizes[p] = size;
+	}
+	return p;
 }
-void linearFree(void* p) { free(p); }
+void linearFree(void* p)
+{
+	auto it = s_linearSizes.find(p);
+	if (it != s_linearSizes.end())
+	{
+		s_linearUsed -= it->second;
+		s_linearSizes.erase(it);
+	}
+	free(p);
+}
 size_t linearSpaceFree()
 {
 	size_t total = __ctru_linear_heap_size;
