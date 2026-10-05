@@ -21,7 +21,6 @@ Writes into out/data/:
 import argparse
 import audioop
 import faulthandler
-import os
 import zlib
 import json
 import math
@@ -111,8 +110,7 @@ def convert_sound(arch, path, out_dir, rate=RATE, shard=False):
     out.parent.mkdir(parents=True, exist_ok=True)
     head = out.open("rb").read(12) if out.exists() else b""
     if head[:4] != b"SND2" or struct.unpack_from("<I", head, 4)[0] != rate:
-        if os.environ.get("MW3DS_TRACE_SOUNDS"):
-            print(f"  decoding {src}", flush=True)
+        print(f"  decoding {src}", flush=True)       # the last one printed names the file a hard crash died on
         try:
             dec = miniaudio.decode(arch.read(src), output_format=miniaudio.SampleFormat.SIGNED16,
                                    nchannels=1, sample_rate=rate)

@@ -24,7 +24,7 @@ Remove-Item (Join-Path $root 'build\mw3ds.cia') -ErrorAction SilentlyContinue
 if (-not $SkipConvert) {
     "== converting game data (python $(python --version 2>&1))"
     if ($Small) { python tools\convert\level.py } else { python tools\convert\level.py --world }
-    if ($LASTEXITCODE -ne 0) { throw "level.py failed (exit code $LASTEXITCODE). Rerun with `$env:MW3DS_TRACE_SOUNDS='1' to see the file it stopped on, and send the whole output." }
+    if ($LASTEXITCODE -ne 0) { throw "level.py failed (exit code $LASTEXITCODE). Send the whole output: the last 'decoding' line names the sound file it stopped on." }
 } elseif (-not (Test-Path (Join-Path $root 'out\data'))) {
     throw 'out\data does not exist: run without -SkipConvert first'
 }
