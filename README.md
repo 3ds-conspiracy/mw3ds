@@ -69,6 +69,21 @@ After changing only the engine code, skip the conversion:
 powershell -File tools\build\build-cia.ps1 -SkipConvert
 ```
 
+### Or build in Docker
+
+If you would rather not install MSYS2, devkitPro, Python and `makerom` yourself, Docker can do the whole build.
+You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) and your Morrowind install; no other
+setup. Docker must be running and `docker` must be on your `PATH` (Docker Desktop adds it; open a new terminal
+after installing, or the command is not found). Set `MW3DS_MORROWIND_DIR` in `.env` (step 2), then:
+
+```powershell
+powershell -File tools\docker\build.ps1
+```
+
+The CIA ends up in **`output\mw3ds.cia`** (about 1.1 GB). The first run takes about 30 minutes; Docker keeps the
+finished steps, so a rerun only redoes what changed. Docker Desktop with WSL2 needs a good amount of RAM (8 GB free
+is comfortable). More in [tools/docker/README.md](tools/docker/README.md).
+
 ## Running the tests
 
 The tests play the game automatically in Azahar and check the results. Each test is a text file in `tools\test\cases\`

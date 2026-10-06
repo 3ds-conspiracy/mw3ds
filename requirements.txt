@@ -1,4 +1,5 @@
-numpy
-pillow
-miniaudio
-audioop-lts; python_version >= "3.13"
+numpy==2.5.3
+pillow==12.3.0
+miniaudio==1.71
+audioop-lts==0.2.2; python_version >= "3.13"
+imageio-ffmpeg==0.6.0

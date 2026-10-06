@@ -1,0 +1,13 @@
+out/
+out-vanilla/
+build/
+mods/
+qrun-*/
+.git/
+.env
+*.cia
+*.elf
+*.3dsx
+*.smdh
+build-output.txt
+output/

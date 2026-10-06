@@ -1,4 +1,5 @@
 """Readers for Morrowind's BSA archives and ESM/ESP record files."""
+import os
 import struct
 from pathlib import Path
 
@@ -40,15 +41,22 @@ class Archives:
 
     def __init__(self, bsa_names=("Morrowind.bsa", "Tribunal.bsa", "Bloodmoon.bsa")):
         self.bsas = [BSA(DATA_FILES / n) for n in bsa_names if (DATA_FILES / n).exists()]
+        # Loose files by lowercase backslash path, the way the BSAs name theirs: Morrowind's own names are
+        # case-blind and use backslashes, which a case-sensitive file system (Linux) or a plain Path join gets wrong
+        self.loose = {}
+        for root, _, files in os.walk(DATA_FILES):
+            rel = Path(root).relative_to(DATA_FILES).parts
+            for f in files:
+                self.loose["\\".join(rel + (f,)).lower()] = Path(root) / f
 
     def exists(self, name):
         name = name.lower().replace("/", "\\")
-        return (DATA_FILES / name).exists() or any(name in b.files for b in self.bsas)
+        return name in self.loose or any(name in b.files for b in self.bsas)
 
     def read(self, name):
         name = name.lower().replace("/", "\\")
-        loose = DATA_FILES / name
-        if loose.exists():
+        loose = self.loose.get(name)
+        if loose:
             return loose.read_bytes()
         for b in reversed(self.bsas):
             if name in b.files:

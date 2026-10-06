@@ -11,7 +11,7 @@ __pycache__/
 out/
 tools/test/cases/chain-*.txt
 .env
-
+out-vanilla/
 # test run output
 qrun-*/
 tools/test/cases/bench-*.txt
@@ -21,3 +21,4 @@ internal/
 
 # tools downloaded by tools/build/setup.ps1
 .tools/
+output/
