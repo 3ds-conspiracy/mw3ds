@@ -51,6 +51,14 @@ second. A fleeing actor runs until it is `fFleeDistance` away out of sight. Demo
   until they are within `half extent + 250`.
 - **Activate:** walks to the object and activates it.
 - Walking speed for packages is the walk speed; chasing, fleeing and catching up run (`movement.md`).
+- **Getting unstuck** (`obstacle.cpp`): an actor that has stood in the same spot for a while (1.5 s) evades for a
+  second, each time the next way round, as (right, forward): right and forward, right, right and back, back, left and
+  back, left, left and forward. OpenMW finds its way round with a navigation mesh; we have the path grid only, and the
+  wilds have none. So `npcMoveTo` (`combat.cpp`), stuck for half a second, first looks for an opening: the way nearest
+  the goal, turned up to about 155 degrees, along which a body fits for 200 units (rays at its sides, knee and chest
+  high), keeping to the side it took last; stuck again in the same place, it starts farther round and keeps to the
+  way longer. Only with no opening does it use OpenMW's turn. `issue-20` (Drerel Indaren following the
+  player down from the rock pillars west of Ald'ruhn) tests it.
 
 ## Findings (2026-09-29)
 

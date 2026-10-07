@@ -722,8 +722,22 @@ void Session::npcStrike(int ri)
 	}
 }
 
+// A way a body fits along: rays at both its sides, at knee and chest height, clear for `len` units
+static bool bodyWayClear(World& w, const float pos[3], float dx, float dy, float len)
+{
+	for (float side : { -22.0f, 22.0f })
+		for (float h : { 35.0f, 90.0f })
+		{
+			float a[3] = { pos[0] + dy * side, pos[1] - dx * side, pos[2] + h };
+			float b[3] = { a[0] + dx * len, a[1] + dy * len, a[2] };
+			if (!w.lineOfSight(a, b))
+				return false;
+		}
+	return true;
+}
+
 // Walks toward `target`: straight when nothing is in the way, else along the path grid; steps
-// sideways when stuck. faceMove turns the actor along its way. False when it can't make progress.
+// aside when stuck. faceMove turns the actor along its way. False when it can't make progress.
 bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bool faceMove)
 {
 	Ref& r = w.refs[ri];
@@ -761,14 +775,12 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 		return true;
 	dx /= dist;
 	dy /= dist;
-	// Stuck against something: slide sideways for a moment
+	// Stuck against something: a while along the way chosen when it got stuck (below)
 	if (r.stuckTimer < 0.0f)
 	{
 		r.stuckTimer += dt;
-		float sx = -dy, sy = dx;
-		if (((int)(r.pos[0] + r.pos[1]) & 1) != 0) { sx = -sx; sy = -sy; }
-		dx = (dx + sx * 1.5f) * 0.4f;
-		dy = (dy + sy * 1.5f) * 0.4f;
+		dx = r.evadeWay[0];
+		dy = r.evadeWay[1];
 	}
 	if (faceMove)
 	{
@@ -788,8 +800,41 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 		r.stuckTimer = moved < speed * dt * 0.25f ? r.stuckTimer + dt : 0.0f;
 		if (r.stuckTimer > 0.5f)
 		{
-			r.stuckTimer = -0.7f;
+			// stuck again where it was stuck last: look farther round, and keep to the way longer, each time
+			float sx = r.pos[0] - r.evadeAt[0], sy = r.pos[1] - r.evadeAt[1];
+			r.evadeTries = sx * sx + sy * sy < 150.0f * 150.0f ? std::min(r.evadeTries + 1, 5) : 0;
+			r.evadeAt[0] = r.pos[0];
+			r.evadeAt[1] = r.pos[1];
+			r.stuckTimer = -1.0f - 0.5f * r.evadeTries;
 			r.repathTimer = 0.0f;
+			// OpenMW goes round with its navigation mesh. Here, with no path grid to go round by (the wilds have
+			// none), the opening nearest the goal a body fits through, keeping to the side of the last one: a
+			// follower walked into the gap between two rock pillars near Ald'ruhn again and again
+			bool found = false;
+			for (int k = 1 + r.evadeTries; k <= 6 && !found; k++)
+				for (int s = 0; s < 2 && !found; s++)
+				{
+					float side = s == 0 ? r.evadeSide : -r.evadeSide, c = cosf(k * 0.45f), sn = side * sinf(k * 0.45f);
+					float wx = dx * c + dy * sn, wy = dy * c - dx * sn;     // turned toward that side
+					if (bodyWayClear(w, r.pos, wx, wy, 200.0f))
+					{
+						r.evadeWay[0] = wx;
+						r.evadeWay[1] = wy;
+						r.evadeSide = side;
+						found = true;
+					}
+				}
+			// else OpenMW's evasion (obstacle.cpp), a second each way in turn, as (right, forward): right and
+			// forward, right, right and back, back, left and back, left, left and forward
+			if (!found)
+			{
+				static const float kEvade[7][2] = { { 1, 1 }, { 1, 0 }, { 1, -1 }, { 0, -1 }, { -1, -1 }, { -1, 0 }, { -1, 1 } };
+				r.evadeDir = (r.evadeDir + 1) % 7;
+				const float* e = kEvade[r.evadeDir];
+				float ex = dy * e[0] + dx * e[1], ey = -dx * e[0] + dy * e[1], el = sqrtf(ex * ex + ey * ey);
+				r.evadeWay[0] = ex / el;
+				r.evadeWay[1] = ey / el;
+			}
 		}
 	}
 	return moved > 0.0f;

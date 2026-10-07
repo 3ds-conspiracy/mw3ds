@@ -1,0 +1,39 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:20
+0.3 0 0 0 0 GOTO:Ald'ruhn
+6 0 0 0
+0.3 0 0 0 0 TP:-20450:57431:1700:90
+4 0 0 0
+30 0 0 0 0 ACTIVATE:falanu%indaren
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:eq:10
+0.3 0 0 0 0 TOPIC:wild_nix_hounds
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:eq:20
+0.5 0 0 0 0 CHOICEVAL:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 TP:-28250:59706:2400:270
+4 0 0 0
+30 0 0 0 0 ACTIVATE:drerel%indaren
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:eq:40
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refpkg:drerel%indaren:eq:3
+240 0 0 0 0 WALKTO:falanu%indaren
+0.3 0 0 0 0 SHOT
+60 0 0 0
+0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:ge:50
+0.3 0 0 0 0 EXPECT:refdist:drerel%indaren:lt:700
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:eq:60
+0.3 0 0 0 0 EXPECT:item:bookskill_block3:eq:1
+0.3 0 0 0 0 SHOT

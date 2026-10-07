@@ -145,6 +145,13 @@ struct Ref
 	std::vector<int> path;        // path grid points (global indices) still to walk, next first
 	float repathTimer = 0.0f;
 	float stuckTimer = 0.0f;
+	// Getting unstuck (npcMoveTo): the way being taken, the side the last opening was on (1 right, -1 left), and the last
+	// of OpenMW's evasion ways used (the next is one on; the first is right and forward)
+	float evadeWay[2] = {};
+	float evadeSide = 1.0f;
+	int evadeDir = 6;
+	float evadeAt[2] = {};          // where it last got stuck, and how many times running it has there
+	int evadeTries = 0;
 	float gridUntil = -1.0f;        // World::time until which moves follow the path grid (a ledge cut the straight way)
 	float lastPos[2] = {};
 	bool talkedToPC = false;
