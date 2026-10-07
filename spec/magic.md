@@ -94,6 +94,13 @@ target rolls 0..99 below its magnitude, per effect of the spell:
 - Calm, Frenzy, Demoralize, Rally, Command, Charm, Paralyze, Silence, Sound, Blind, Chameleon, Invisibility,
   Sanctuary, Shield, the elemental shields: read while they last (combat, casting, detection).
 
+## Hit visuals (OpenMW: `spellcasting.cpp`, `Animation::addEffect`)
+
+An effect's hit static (Shield's sphere, Fire Damage's flames) is attached to the target's own node with no offset, and its
+model is built around the actor's feet (about -15 to 150 units tall). A self spell shows it at the caster's feet, a
+touch or target spell at the victim's feet; the 3DS had put them 60 units up (or at the hands for a self spell), so
+Shield's sphere sat half above the body. The area burst stays around the chest. Test: `issue-19` (`vfxheight`).
+
 ## Findings
 
 2026-09-28 (spell cost, chance, school): see above.

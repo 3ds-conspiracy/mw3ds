@@ -107,9 +107,11 @@ void Session::projectileHits(Projectile& p, int victim)
 		}
 		playSound(victim, spellSound(sp, 2));
 		{
-			float at[3] = { victim < 0 ? w.player.feet[0] : w.refs[victim].pos[0], victim < 0 ? w.player.feet[1] : w.refs[victim].pos[1],
-				(victim < 0 ? w.player.feet[2] : w.refs[victim].pos[2]) + 60.0f };
-			spellVfx(sp, 1, at);
+			// the hit visual at the victim's feet (it is modelled around them), the burst around the chest
+			float feet[3] = { victim < 0 ? w.player.feet[0] : w.refs[victim].pos[0], victim < 0 ? w.player.feet[1] : w.refs[victim].pos[1],
+				victim < 0 ? w.player.feet[2] : w.refs[victim].pos[2] };
+			float at[3] = { feet[0], feet[1], feet[2] + 60.0f };
+			spellVfx(sp, 1, feet);
 			areaBurst(sp, 2, at, victim, p.owner);
 		}
 		logf("combat: %s hits %s", sp.name.c_str(), victim < 0 ? "the player" : w.refs[victim].id.c_str());

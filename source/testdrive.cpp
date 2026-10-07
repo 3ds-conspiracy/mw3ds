@@ -368,6 +368,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			v += fpUntextured(p.second);
 		for (auto& p : s.body.pieces)
 			v += fpUntextured(p.second);
+	// how far above the player's feet the first spell visual stands (-999 with none): a self spell's wraps the body from the feet
+	if (what == "vfxheight") { v = s.vfx.empty() ? -999.0f : s.vfx[0].pos[2] - w.player.feet[2]; return true; }
 		return true;
 	}
 	if (what == "resistx") { v = s.resistX(); return true; }
