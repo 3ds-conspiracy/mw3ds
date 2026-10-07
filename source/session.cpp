@@ -53,6 +53,11 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 	w.globals["chargenstate"] = 10.0f;
 	if (!autotest)
 		playMovie("mw_intro");
+	// CharGen's DisablePlayerControls / Jumping / ViewSwitch / VanityMode / Fighting / Magic: the player lies still in
+	// the hold until the walking guard's script (CharGenWalkNPC) gives the controls back after the movement message
+	w.controlsEnabled = false;
+	w.jumpingEnabled = false;
+	w.controlsOff |= 2u | 4u;
 	w.fightingEnabled = false;
 	w.magicEnabled = false;
 	w.menusEnabled = 0;

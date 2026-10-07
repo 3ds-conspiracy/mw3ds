@@ -1,0 +1,30 @@
+# start: Imperial Prison Ship
+2 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Imperial_Prison_Ship
+0.3 0 0 0 0 EXPECT:controls:eq:0
+0.3 0 0 0 0 SNAP:refdist:chargen%name
+2 0 1 0
+1 0 1 0 1
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:chargen%name:le:@2
+0.3 0 0 0 0 EXPECT:refdist:chargen%name:ge:@-2
+0.3 0 0 0 0 SHOT
+8 0 0 0
+0.3 0 0 0 0 EXPECT:controls:eq:0
+8 0 0 0 0 MSG
+4 0 0 0 0 MSG
+2 0 0 0
+0.3 0 0 0 0 EXPECT:controls:eq:1
+0.3 0 0 0 0 SNAP:refdist:chargen%name
+2 0 1 0
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:chargen%name:ne:@
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:jumping:eq:0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.3 0 0 0 0 EXPECT:jumping:eq:0
+1 0 0 0 0 TP:-10650:-71863:190:270
+3 0 0 0 0 MSG
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:jumping:eq:1
