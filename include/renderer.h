@@ -39,6 +39,7 @@ extern C3D_Tex* g_starTexture;
 // Enchanted items' shimmer: dataDir/art/magicitem/caust00..31.t3x, read once (without them a plain tint)
 void rendererLoadCaustics(const char* dataDir);
 int rendererCausticFrames();                    // how many of them were read
+float rendererWaterScroll();                    // how fast water slides: texture repeats a second
 // rendererDrawMesh, with the shimmer of an enchantment in that colour (0xRRGGBB) over it; 0: none
 void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow);
 // A posed actor whose mesh textures are `textures`; viewModel draws it in front of the world

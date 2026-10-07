@@ -302,6 +302,13 @@ static void invalidateState()
 	s_last.valid = false;
 }
 
+static const float kWaterScroll = 0.06f;         // water texture repeats (1024 units) a second
+
+float rendererWaterScroll()
+{
+	return kWaterScroll;
+}
+
 static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 {
 	if (s_last.valid && s_last.tex == tex && s_last.flags == b.flags && s_last.alphaRef == b.alphaRef
@@ -326,8 +333,9 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 
 	if (b.flags & BATCH_SCROLL)
 	{
-		// Clouds drift slowly overhead, water a little faster
-		float speed = mode == DRAW_SKY ? 0.006f : 0.02f;
+		// Clouds drift slowly overhead; water moves faster (Morrowind plays 32 pictures of it at 12 a second, here one
+		// picture slides: at a fiftieth of a repeat a second it looked still)
+		float speed = mode == DRAW_SKY ? 0.006f : kWaterScroll;
 		float s = fmodf(time * speed, 1.0f);
 		setUvOffset(s, s * 0.6f);
 	}
