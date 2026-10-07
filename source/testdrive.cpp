@@ -935,7 +935,7 @@ static int screenByName(const std::string& n)
 		{ "alchemy", SCR_ALCHEMY }, { "recharge", SCR_RECHARGE }, { "persuade", SCR_PERSUADE }, { "spells", SCR_SPELLS },
 		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES },
 		{ "journal", SCR_JOURNAL }, { "gamemenu", SCR_GAMEMENU }, { "map", SCR_MAP },
-		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ },
+		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "options", SCR_OPTIONS },
 	};
 	for (auto& e : names)
 		if (n == e.name)
@@ -1454,7 +1454,13 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	}
 	if (verb == "MOVIE" && a.size() >= 2)
 	{
-		// MOVIE:<name>: plays that movie (the intro movie is skipped in tests); EXPECT movieplaying says if it still runs
+		// MOVIE:<name>: plays that movie (the intro movie is skipped in tests); EXPECT movieplaying says if it still runs.
+		// MOVIE:none: from now on no movie opens, as when the converter could not decode them
+		if (a[1] == "none")
+		{
+			s.testNoMovies = true;
+			return true;
+		}
 		return s.playMovie(a[1]) ? true : fail("no movie " + a[1]);
 	}
 	if (verb == "ALARM" && a.size() >= 2)

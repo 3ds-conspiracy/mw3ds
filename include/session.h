@@ -140,6 +140,7 @@ struct Session : ScriptHost
 	bool ended = false;
 	bool autotest = false;
 	bool testGod = false;
+	bool testNoMovies = false;    // tests: play as if the data had no converted movies
 	int persuadeRoll = -1;        // tests: the die roll a persuasion or an enchanting uses (-1: random)
 	// Monitors (logged "monitor: ...", the harness fails a run on them): someone playing a walk / run cycle
 	// without getting anywhere (the female skeleton bug, dialogue without Idle)

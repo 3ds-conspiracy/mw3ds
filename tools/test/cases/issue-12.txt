@@ -1,0 +1,19 @@
+3 0 0 0 0 MSG
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 TAP:160:222
+1 0 0 0
+0.3 0 0 0 0 EXPECT:movieplaying:eq:1
+0.3 0 0 0 0 A
+0.5 0 0 0 0 EXPECT:movieplaying:eq:0
+0.3 0 0 0 0 MOVIE:none
+0.3 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 TAP:160:222
+1 0 0 0
+0.3 0 0 0 0 EXPECT:movieplaying:eq:0
+0.3 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:notesright:le:335

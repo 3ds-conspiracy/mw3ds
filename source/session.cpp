@@ -84,7 +84,7 @@ bool Session::playMovie(const std::string& name)
 	stopMovie();
 	char path[256];
 	snprintf(path, sizeof(path), "%s/movies/%s.mwv", w.dataDir, stem.c_str());
-	FILE* f = fopen(path, "rb");
+	FILE* f = testNoMovies ? nullptr : fopen(path, "rb");
 	if (!f)
 	{
 		logf("movie: no %s", path);

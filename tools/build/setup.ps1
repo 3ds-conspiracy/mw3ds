@@ -21,8 +21,8 @@ if (-not $py) { Fix 'python 3.10+ (https://www.python.org/downloads/)' }
 else {
     Ok (python --version)
     if ($Check) {
-        python -c "import numpy, PIL, miniaudio" 2>$null
-        if ($LASTEXITCODE -eq 0) { Ok 'numpy, pillow, miniaudio' } else { Fix 'Python packages: run tools\build\setup.ps1 (pip install -r requirements.txt)' }
+        python -c "import numpy, PIL, miniaudio, imageio_ffmpeg" 2>$null
+        if ($LASTEXITCODE -eq 0) { Ok 'numpy, pillow, miniaudio, imageio-ffmpeg' } else { Fix 'Python packages: run tools\build\setup.ps1 (pip install -r requirements.txt)' }
     } else {
         python -m pip install -r requirements.txt
         if ($LASTEXITCODE -ne 0) { Fix 'pip install -r requirements.txt failed' } else { Ok 'Python packages installed' }

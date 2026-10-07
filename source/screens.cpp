@@ -140,8 +140,10 @@ void Session::drawTop()
 	// ran off it)
 	float y = 4;
 	notesRight = 0.0f;
+	// (while a menu pauses the world, short of the "Paused" label in the top right corner)
+	float notesW = worldPaused() ? 384 - uiTextWidth("Paused", 0.5f) - 16 : 384;
 	for (auto& n : notes)
-		for (auto& line : uiWrap(n.text, 384, 0.5f))
+		for (auto& line : uiWrap(n.text, notesW, 0.5f))
 		{
 			float tw = uiTextWidth(line, 0.5f);
 			uiRect(4, y, tw + 8, 16, C2D_Color32(0, 0, 0, 150));
@@ -537,8 +539,12 @@ void Session::drawOptions()
 	}
 	else if (b == 1)
 	{
-		closeScreen();
-		playMovie("mw_credits");
+		// Morrowind's credits are its movie (Video\mw_credits.bik): data converted without it keeps Options open and
+		// says so, rather than dropping back into the game as if the button did nothing
+		if (playMovie("mw_credits"))
+			closeScreen();
+		else
+			notify("The credits movie is missing: Video\\mw_credits.bik was not converted with the game data.");
 	}
 	else if (b == 2 || (in.down & KEY_B))
 		closeScreen();
