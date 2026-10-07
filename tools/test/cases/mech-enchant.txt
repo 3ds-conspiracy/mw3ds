@@ -197,7 +197,6 @@
 3 0 0 0
 0.3 0 0 0 0 EXPECT:health:gt:@10
 1 0 0 0
-0.3 0 0 0 0 SEED:11
 0.3 0 0 0 0 GIVE:apparatus_a_mortar_01
 0.3 0 0 0 0 GIVE:ingred_saltrice_01
 0.3 0 0 0 0 GIVE:ingred_marshmerrow_01
