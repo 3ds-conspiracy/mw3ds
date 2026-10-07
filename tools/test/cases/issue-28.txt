@@ -1,0 +1,24 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:MG_StolenReport:10
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+0.3 0 0 0 0 TPIN:293:-80:-250:180
+0.3 0 0 0 0 FACE:bk_ajira1:mid
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:bk_ajira1:eq:1
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 TPIN:375:-110:-250:225
+0.3 0 0 0 0 FACE:bk_ajira1:mid
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:bk_ajira1:eq:1
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 TPIN:210:-110:-250:135
+0.3 0 0 0 0 FACE:bk_ajira1:mid
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:bk_ajira1:eq:1
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 FACE:com_basket_01_food:mid
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:com_basket_01_food:eq:1

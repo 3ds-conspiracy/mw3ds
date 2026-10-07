@@ -48,6 +48,7 @@ struct ScriptedInput
 	bool drag = false;                // DRAG:dx:dy: a finger dragged that far across the touch screen this step's first frame
 	int dragX = 0, dragY = 0;
 	bool teleport = false;
+	bool tpInside = false;     // TPIN: to that spot in the interior the player is in (TP from inside goes out)
 	float tp[4];            // x y z yawDegrees
 	bool waitMessage = false;   // MSG: wait up to `secs` for a message box, then press A on it
 	std::string topic;          // TOPIC:name (underscores for spaces): pick a dialogue topic
@@ -135,6 +136,11 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		if (sscanf(tok, "TP:%f:%f:%f:%f", &step->tp[0], &step->tp[1], &step->tp[2], &step->tp[3]) == 4)
 		{
 			step->teleport = true;
+			continue;
+		}
+		if (sscanf(tok, "TPIN:%f:%f:%f:%f", &step->tp[0], &step->tp[1], &step->tp[2], &step->tp[3]) == 4)
+		{
+			step->teleport = step->tpInside = true;
 			continue;
 		}
 		if (strcmp(tok, "MSG") == 0)
@@ -1328,7 +1334,7 @@ int main()
 				down = held = KEY_A;
 				inputTime = s.secs;
 			}
-			if (first && s.teleport && session->w.current >= 0 && session->w.cells[session->w.current].interior)
+			if (first && s.teleport && !s.tpInside && session->w.current >= 0 && session->w.cells[session->w.current].interior)
 			{
 				// from inside to world coordinates: out to the exterior cell there (as a door would)
 				int dest = session->w.gridCell((int)floorf(s.tp[0] / 8192.0f), (int)floorf(s.tp[1] / 8192.0f));

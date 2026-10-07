@@ -2984,5 +2984,40 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		if (item >= 0)
 			best = item;
 	}
+	// A container's box reaches well past it (a basket's, a barrel's, turned: OpenMW picks by the meshes' collision
+	// shapes instead): an item the ray reaches is what the crosshair means unless the ray crosses the container's middle
+	// on the way to it. The middle: a column 0.7 of the box's narrower half-width round its centre (a round thing turned
+	// fills about 0.76 of it). Ajira's report lies between two baskets in the Balmora guild
+	if (best >= 0 && w.refs[best].type == "CONT")
+	{
+		const Ref& box = w.refs[best];
+		int item = -1;
+		float itemT = reach;
+		for (int i : w.loadedPickables)
+		{
+			const Ref& r = w.refs[i];
+			if (r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
+				continue;
+			float t = rayBoxEntry(r, eye, dir, itemT);
+			if (t >= 0.0f && t < itemT)
+			{
+				itemT = t;
+				item = i;
+			}
+		}
+		if (item >= 0)
+		{
+			float cx = (box.boxMin[0] + box.boxMax[0]) * 0.5f, cy = (box.boxMin[1] + box.boxMax[1]) * 0.5f;
+			float rc = 0.7f * 0.5f * fminf(box.boxMax[0] - box.boxMin[0], box.boxMax[1] - box.boxMin[1]);
+			// the ray's nearest point to the column's axis before it reaches the item
+			float d2 = dir[0] * dir[0] + dir[1] * dir[1];
+			float t = d2 > 1e-6f ? ((cx - eye[0]) * dir[0] + (cy - eye[1]) * dir[1]) / d2 : 0.0f;
+			t = fmaxf(0.0f, fminf(itemT, t));
+			float px = eye[0] + dir[0] * t - cx, py = eye[1] + dir[1] * t - cy, pz = eye[2] + dir[2] * t;
+			bool crosses = px * px + py * py <= rc * rc && pz >= box.boxMin[2] && pz <= box.boxMax[2];
+			if (!crosses)
+				best = item;
+		}
+	}
 	return best;
 }

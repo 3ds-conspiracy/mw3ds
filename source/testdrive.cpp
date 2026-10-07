@@ -121,7 +121,7 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refabove" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage"
@@ -745,6 +745,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		else if (what == "refsoultrap") v = r.soulTrapUntil > w.time ? 1.0f : 0.0f;
 		else if (what == "refally") v = r.ally ? 1.0f : 0.0f;
 		else if (what == "refdist") v = w.distanceToPlayer(ri);      // 100000: in another interior
+		else if (what == "refaimed") v = s.target == ri ? 1.0f : 0.0f;   // the crosshair is on it
 		else if (what == "refabove")        // units over the floor under it (99999: no floor)
 		{
 			float floorZ = -1e9f;
@@ -1164,8 +1165,11 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		if (ri < 0 || !w.active(ri))
 			return fail(a[1] + " not loaded");
 		const Ref& r = w.refs[ri];
-		float dx = r.pos[0] - w.player.feet[0], dy = r.pos[1] - w.player.feet[1];
-		float dz = r.pos[2] + 80.0f - (w.player.feet[2] + PLAYER_EYE_HEIGHT);
+		// (FACE:<ref>:mid: the middle of its box, as the driver aims at a thing to take it; else a person's chest)
+		bool mid = verb == "FACE" && a.size() >= 3 && a[2] == "mid";
+		float dx = (mid ? (r.boxMin[0] + r.boxMax[0]) * 0.5f : r.pos[0]) - w.player.feet[0];
+		float dy = (mid ? (r.boxMin[1] + r.boxMax[1]) * 0.5f : r.pos[1]) - w.player.feet[1];
+		float dz = (mid ? (r.boxMin[2] + r.boxMax[2]) * 0.5f : r.pos[2] + 80.0f) - (w.player.feet[2] + PLAYER_EYE_HEIGHT);
 		w.player.yaw = atan2f(dx, dy);
 		w.player.pitch = atan2f(dz, fmaxf(1.0f, sqrtf(dx * dx + dy * dy)));
 		if (verb == "CASTAT" && a.size() >= 3)

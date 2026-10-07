@@ -363,7 +363,11 @@ void Session::drawHud()
 	{
 		const Ref& t = w.refs[target];
 		std::string verb = t.dead ? "Search " : t.type == "NPC_" ? "Talk to " : t.type == "DOOR" ? "Open " : "Use ";
-		uiText(6, 172, 0.45f, col::link, "A: " + verb + targetLabel(target));
+		// short of the date under the map (from x 190): a long name ("Ajira's Mushroom Report") ran into it
+		std::string use = "A: " + verb + targetLabel(target);
+		while (use.size() > 3 && uiTextWidth(use, 0.45f) > 180)
+			use = use.substr(0, use.size() - 4) + "...";
+		uiText(6, 172, 0.45f, col::link, use);
 	}
 	if (w.fightingEnabled)
 	{
