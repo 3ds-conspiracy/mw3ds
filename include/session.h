@@ -183,7 +183,8 @@ struct Session : ScriptHost
 	struct Note { std::string text; float until; };
 	std::vector<Note> notes;
 	float notesRight = 0.0f;          // tests: the right edge of the notices drawn last (the top screen is 400 wide)
-	float messageRoom = 0.0f;         // tests: the room between a message box's text and its buttons (< 0: overlap)
+	bool messageSidebar = false;      // a message box with more text than fits above its buttons: buttons on the right
+	int messageTop = 0, messageLeft = 0;   // tests: its first line shown, and the lines below what is shown
 	UiScroll messageScroll;           // a long message box's text, scrolled
 	std::string messageShown;         // the message box that scroll belongs to
 	float aimShift = 0.0f;

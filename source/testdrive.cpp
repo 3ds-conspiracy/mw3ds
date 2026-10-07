@@ -872,7 +872,9 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "brewedvalue") { const Object* o = w.game.object(s.lastBrewed); if (!o) return false; v = (float)o->value; }
 	else if (what == "made") { v = 0; for (auto& id : w.madeItems) v += carried(w, id) >= 0; }
 	else if (what == "notesright") v = s.notesRight;      // the right edge of the notices on the top screen
-	else if (what == "messageroom") v = s.messageRoom;    // room between a message box's text and its buttons
+	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
+	else if (what == "messagetop") v = s.messageTop;      // its first text line shown
+	else if (what == "messageleft") v = s.messageLeft;    // its text lines below what is shown
 	else if (what == "maplocal") v = s.mapLocal;          // the map screen shows the local map
 	else if (what == "mapzoom") v = s.mapZoomIdx;         // its zoom step
 	else if (what == "madespells") { v = 0; for (auto& id : w.madeSpells) for (auto& sp : st.spells) v += lower(sp) == lower(id); }
