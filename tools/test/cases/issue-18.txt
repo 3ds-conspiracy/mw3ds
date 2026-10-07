@@ -1,0 +1,10 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora
+0.3 0 0 0 0 TP:-22322:-9400:760:0
+3 0 0 0 0
+0.3 0 0 0 0 EXPECT:refbox:furn_banner_temple_02:eq:1
+0.3 0 0 0 0 EXPECT:refbox:furn_bannerd_welcome_01:eq:1
+0.3 0 0 0 0 SHOT

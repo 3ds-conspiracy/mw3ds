@@ -133,14 +133,18 @@ def skin_vertices(nif, inst, pos, nrm, skeleton):
     return out_p, out_n
 
 
-def extract_shapes(arch, nif, skeleton=None):
+def extract_shapes(arch, nif, skeleton=None, bind_pose=False):
     """Flattens a NIF into shapes. Rigid shapes come out in the NIF's root space;
     skinned shapes are skipped unless `skeleton` (bone name -> posed matrix) is given,
-    then they come out in skeleton space and are marked "skinned"."""
+    then they come out in skeleton space and are marked "skinned". `bind_pose` draws a skinned
+    shape as the NIF's own nodes hold it (a banner's cloth hangs off bones the game animates;
+    placed as a static it is drawn at rest)."""
     shapes = []
 
     node_world = {}
     walk_nif(nif, lambda b, m, p: node_world.setdefault(b["index"], m))
+    if bind_pose and skeleton is None:
+        skeleton = {nif.get(i)["name"].lower(): m for i, m in node_world.items() if nif.get(i)}
 
     def visit(b, m, props):
         if b["type"] in ("NiRotatingParticles", "NiAutoNormalParticles"):

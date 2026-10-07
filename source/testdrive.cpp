@@ -121,7 +121,7 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refabove" || what == "refwater" || what == "refaimable" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refabove" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage"
@@ -764,6 +764,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	if (what == "equipped")              // equipped:<item>: 1 when worn / held (any of that id), else 0
 	{
 		v = 0;
+		else if (what == "refbox") v = r.hasBox ? 1.0f : 0.0f;       // it has a mesh to aim at (a banner's cloth)
 		for (auto& it : w.inventory)
 			if (it.equipped && (lower(it.id) == lower(arg) || lower(it.id) == lower(spaced(arg))))
 				v = 1;

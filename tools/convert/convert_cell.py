@@ -783,7 +783,7 @@ class Converter:
                         col_pos.append(col[0] @ m[:3, :3].T + m[:3, 3])
                         col_tris.append(col[1] + col_count)
                         col_count += len(col[0])
-                shapes = extract_shapes(self.arch, nif)
+                shapes = extract_shapes(self.arch, nif, bind_pose=True)
                 if swing_door:
                     # Swinging door: kept in object space, drawn with its own transform
                     for s in shapes:
