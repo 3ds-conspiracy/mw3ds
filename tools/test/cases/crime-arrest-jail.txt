@@ -1,0 +1,27 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:4
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 SETALARM:chargen%captain:100
+0.3 0 0 0 0 GIVE:gold_001:1000
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:skillsum
+0.3 0 0 0 0 SNAP:hour
+10 0 0 0 0 PICKUP:Key_SN_Warehouse
+10 0 0 0
+0.3 0 0 0 0 EXPECT:screen:dialogue
+0.3 0 0 0 0 EXPECT:bounty:eq:300
+0.5 0 0 0 0 CHOICEVAL:2
+1 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+4 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 EXPECT:item:key_sn_warehouse:eq:0
+0.3 0 0 0 0 EXPECT:gold:eq:@
+0.3 0 0 0 0 EXPECT:skillsum:lt:@
+0.3 0 0 0 0 EXPECT:hour:gt:@
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
+0.3 0 0 0 0 SHOT

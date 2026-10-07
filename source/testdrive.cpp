@@ -894,6 +894,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "controls") v = w.controlsEnabled ? 1.0f : 0.0f;   // DisablePlayerControls / EnablePlayerControls
 	else if (what == "jumping") v = w.jumpingEnabled ? 1.0f : 0.0f;     // DisablePlayerJumping / EnablePlayerJumping
+	else if (what == "skillsum") { v = 0; for (int k = 0; k < 27; k++) v += st.skills[k]; }   // all 27 skills (jail time)
 	else if (what == "messagetop") v = s.messageTop;      // its first text line shown
 	else if (what == "messageleft") v = s.messageLeft;    // its text lines below what is shown
 	else if (what == "maplocal") v = s.mapLocal;          // the map screen shows the local map

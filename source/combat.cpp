@@ -2122,6 +2122,8 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			updateActorEffects(i, dt);
 		if (r.dead)
 			return;
+		if (w.bounty <= 0)
+			r.alarmed = false;            // the crime is paid for: calm again (OpenMW's crime id)
 		// (the player's rule: fFatigueReturnBase + fFatigueReturnMult x their Endurance a second)
 		if (r.fatigue < r.fatigueMax)
 			r.fatigue = fminf(r.fatigueMax, r.fatigue + (w.game.gmstf("ffatiguereturnbase", 2.5f)
@@ -2489,6 +2491,10 @@ void Session::guardCheck(int ri, float dt)
 	float d = w.distanceToPlayer(ri);
 	if (d > 1500.0f)
 		return;
+	// The last guard to stop the player is fighting them (Resist Arrest's StartCombat): OpenMW's startCombat sends the
+	// other guards after the player too
+	if (arrestingGuard >= 0 && arrestingGuard != ri && w.refs[arrestingGuard].ai == AI_COMBAT && !w.refs[arrestingGuard].dead)
+		w.arrestDeclined = w.bounty;
 	if (w.arrestDeclined == w.bounty)
 	{
 		makeHostile(ri);
@@ -2508,7 +2514,13 @@ void Session::guardCheck(int ri, float dt)
 		if (Actor* a = w.actorOf(ri))
 			actorPlay(*w.actorsOf(ri), *a, "Idle", ANIM_IDLE);
 		arrestingGuard = ri;
-		openScreen(SCR_ARREST);
+		g.alarmed = true;
+		// OpenMW's AiPursue: the guard opens the conversation, and Greeting 0's crime lines decide: pay the fine, go to
+		// jail or resist (its Choice), or, during character creation, let the theft go (PayFine takes the stolen goods
+		// back and clears the bounty). The fixed arrest screen only when no greeting fits
+		forceGreeting(ri);
+		if (screen != SCR_DIALOGUE)
+			openScreen(SCR_ARREST);
 	}
 }
 

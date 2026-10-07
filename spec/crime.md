@@ -34,6 +34,28 @@ Witnesses' responses (disposition and fight raised by the crime; guards pursue w
 
 `Session::crimeBounty` (`formulas.cpp`) is the bounty column; `openmw-spec-crime` tests it.
 
+## Arrest (OpenMW `aipursue.cpp`, `actors.cpp`, `miscextensions.cpp`)
+
+A guard who saw the crime (Alarm 100 or more) is marked *Alarmed* and pursues the player (`AiPursue`): it puts its
+weapon away, runs to the player and, once there with line of sight, opens the conversation itself. Nothing in the
+engine arrests: the guard's Greeting 0 decides, through the dialogue filters (Alarmed, PC crime level, gold, the
+CharGenState global):
+
+- during character creation (`CharGenState` not -1): "We'll let your actions go for now", `PayFine`, `SetPCCrimeLevel 0`;
+- otherwise the court's terms with a Choice: Pay Gold (`RemoveItem Gold_001`, `PayFine`), Go to Jail (`GoToJail`),
+  Resist Arrest (`StartCombat Player`);
+- a bounty past `iCrimeThreshold x iCrimeThresholdMultiplier`: the death warrant line and a fight.
+
+`PayFine` clears the bounty, takes the stolen goods and puts the weapon away; `PayFineThief` (the Thieves Guild) only
+clears the bounty. `GoToJail` clears the bounty and takes the stolen goods too, then `max(1, bounty / iDaysInPrisonMod)`
+days pass. When a guard starts a fight with the player, every guard pursuing them fights too (`startCombat`).
+Paying calms the witnesses again and clears their Alarmed flag (the crime id).
+
+Ours: `Session::guardCheck` (`combat.cpp`) walks the guard over and calls `forceGreeting`; `Ref::alarmed` is the flag
+the Alarmed filter reads (with the bounty still standing); the fixed arrest screen (`drawArrest`) is only for a guard
+with no greeting that fits. `issue-4` (theft during character creation), `crime-arrest-pay`, `crime-arrest-jail` and
+`crime-arrest-resist` test it.
+
 ## Findings (2026-09-29)
 
 1. **Theft bounty** ignored `fCrimeStealing`; it is the value as it stood (the same while the GMST is 1). Now
@@ -46,4 +68,13 @@ Witnesses' responses (disposition and fight raised by the crime; guards pursue w
   permanent only for victims (pickpocket, assault). Ours applies `idispkilling` / `idisptresspass` to witnesses.
 - Witnessing here is "seen by the player's camera within the last second"; OpenMW: line of sight plus an awareness
   (sneak) roll, or hearing for murder.
-- Bounty payment, jail time, stolen goods confiscation and the crime-level GMSTs are not in the spec yet.
+- Guards here come for any bounty within 1500 units; OpenMW's come only if they saw the crime, or on sight once the
+  bounty reaches `iCrimeThreshold`.
+- Confiscated goods are removed; OpenMW moves them to the nearest prison's `stolen_goods` chest.
+- Jail time uses a fixed 100 gold a day rather than `iDaysInPrisonMod`.
+
+## Findings (2026-10-07)
+
+2. **Arrest** was a fixed screen (pay / jail / resist) for every guard. Paying kept the stolen goods, and stealing
+   during character creation could end in jail or a fight, where Morrowind's guard lets it go (issue #4). Now the
+   guard opens the conversation and Greeting 0 decides, as above.

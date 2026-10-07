@@ -32,6 +32,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `world.cpp` | corpses and containers respawning | `mwworld/cellstore.cpp respawn` | unchecked |
 | `world.cpp` | weather, daylight | `mwworld/weather.cpp` | unchecked |
 | `world.cpp` | owned and stolen items | `mechanicsmanagerimp.cpp isAllowedToUse / itemTaken`, `mwworld/cellref.cpp` | partial (`crime.md`) |
+| `combat.cpp` | arrest: the guard comes over and talks, Greeting 0 decides (pay, jail, resist, the character creation pardon) | `aipursue.cpp`, `actors.cpp` (Alarmed, crime id), `miscextensions.cpp OpPayFine / OpGoToJail` | checked 2026-10-07 (`crime.md`, `issue-4`, `crime-arrest-*`) |
 | `world.cpp` | followers taken through doors | `mwworld/actionteleport.cpp getFollowers` | unchecked |
 | `world.cpp` | enable / disable, pick up, add / remove items, stacks | `mwworld/worldimp.cpp`, `containerstore.cpp`, `actiontake.cpp` | unchecked |
 | `world.cpp` | soul trap | `mwmechanics/spelleffects.cpp` (soultrap), `actors.cpp` | unchecked |

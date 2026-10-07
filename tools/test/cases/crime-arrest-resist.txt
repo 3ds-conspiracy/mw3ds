@@ -1,0 +1,20 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:4
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 SETALARM:chargen%captain:100
+10 0 0 0 0 PICKUP:Key_SN_Warehouse
+10 0 0 0
+0.3 0 0 0 0 EXPECT:screen:dialogue
+0.3 0 0 0 0 EXPECT:bounty:eq:300
+0.5 0 0 0 0 CHOICEVAL:3
+1 0 0 0
+0.3 0 0 0 0 B
+3 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:refcombat:chargen%captain:eq:1
+0.3 0 0 0 0 EXPECT:bounty:eq:300
+0.3 0 0 0 0 EXPECT:item:key_sn_warehouse:eq:1
+0.3 0 0 0 0 SHOT

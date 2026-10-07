@@ -66,7 +66,8 @@ static float filterFunction(World& w, const Cond& c, const Ref& speaker, int ref
 		}
 		return 0.0f;
 	}
-	case 49: return speaker.ai == AI_COMBAT ? 1.0f : 0.0f;           // alarmed
+	case 49:                                                         // alarmed: fighting, or a guard come to arrest
+		return speaker.ai == AI_COMBAT || (speaker.alarmed && w.bounty > 0) ? 1.0f : 0.0f;   // (paying clears it)
 	case 62: return speaker.attacked ? 1.0f : 0.0f;                  // attacked
 	case 71:                                                         // should attack: in combat, or fight term >= 100
 		return w.shouldAttackHook ? (w.shouldAttackHook(ref) ? 1.0f : 0.0f)

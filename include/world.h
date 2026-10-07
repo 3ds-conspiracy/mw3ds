@@ -115,6 +115,7 @@ struct Ref
 	bool murdered = false;        // OnMurder pending: the player killed them and it was murder
 	float soulTrapUntil = -1.0f;  // Soultrap on them until this World::time: dying, their soul fills a gem
 	bool aggressor = false;       // started the fight (killing them isn't murder)
+	bool alarmed = false;         // a guard come to arrest the player (OpenMW's Alarmed, for the dialogue filter)
 	bool moved = false;           // pos / rot[2] changed while fighting (placement must follow)
 	int ai = 0;                   // AI_IDLE, AI_COMBAT
 	float attackTimer = 0.0f, hitAt = -1.0f;
