@@ -170,6 +170,7 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 		char bone[33] = {};
 		rd(f, m.tex);
 		rd(f, m.flags); rd(f, m.alphaRef); rd(f, m.kind); rd(f, pad);
+		m.hasMorph = pad;
 		fread(bone, 32, 1, f);
 		rd(f, m.numVerts);
 		rd(f, m.numIndices);
@@ -226,6 +227,23 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 					}
 				m.infCount[v] = n;
 			}
+		}
+		if (m.hasMorph)
+		{
+			// (a bow's string: tools/convert/firstperson.py)
+			u32 nm = 0;
+			rd(f, nm);
+			m.morphs.resize(nm);
+			for (auto& mt : m.morphs)
+			{
+				u32 nk = 0;
+				rd(f, nk);
+				mt.keys.resize(nk * 2);
+				fread(mt.keys.data(), 4, nk * 2, f);
+				mt.delta.resize(m.numVerts * 3);
+				fread(mt.delta.data(), 4, m.numVerts * 3, f);
+			}
+			m.talk[0] = m.talk[1] = m.blink[0] = m.blink[1] = 0.0f;
 		}
 		// Textures: the mesh's own entry in the piece
 		if (m.tex >= 0 && m.tex < (int)ntex)
@@ -483,6 +501,13 @@ void ViewModel::update(float dt, bool moving, bool running)
 	}
 	visible = true;
 	actorAnimate(set, a, step);
+	// The weapon's own animation (a bow's string drawing back and let go) runs on a timeline that starts where the
+	// first-person group's equip does: the string is fully back at the "shoot max attack" mark
+	a.driveMorph = true;
+	a.driveT = a.time;
+	int eq = actorFindGroup(sk, (group + "Eq").c_str());
+	if (eq >= 0)
+		a.driveT -= sk.groups[eq].start;
 }
 
 void ViewModel::draw(const float eye[3], float yaw, float pitch, bool deform)

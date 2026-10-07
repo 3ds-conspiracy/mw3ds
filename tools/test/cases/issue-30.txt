@@ -1,0 +1,15 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:30
+0.3 0 0 0 0 GIVE:long%bow
+0.3 0 0 0 0 GIVE:iron%arrow:20
+0.3 0 0 0 0 EQUIP:long%bow
+0.3 0 0 0 0 EQUIP:iron%arrow
+0.3 0 0 0 0 EXPECT:bowstring:eq:0
+1.5 0 0 0 0 X
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 0 0 0 SHOT
+1.6 0 0 0 0 X
+0.1 0 0 0 0 X+EXPECT:bowstring:ge:0.9
+0.1 0 0 0 0 X+SHOT
+1 0 0 0

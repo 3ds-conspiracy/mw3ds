@@ -680,6 +680,15 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 	a.poseSerial++;
 }
 
+float actorMorphWeight(const Actor& a)
+{
+	float best = 0.0f;
+	for (auto& m : a.meshes)
+		for (auto& mt : m.morphs)
+			best = fmaxf(best, sampleWeight(mt.keys, a.driveT));
+	return best;
+}
+
 void actorDeform(ActorSet& set, Actor& a)
 {
 	// Skins are redone only for a new pose, head morphs only when the mouth or eyes moved
@@ -744,7 +753,9 @@ void actorDeform(ActorSet& set, Actor& a)
 		{
 			// Head: mouth follows voice loudness over the "Talk" range, else the blink range
 			float t;
-			if (a.talkLevel > 0.01f)
+			if (a.driveMorph)
+				t = a.driveT;
+			else if (a.talkLevel > 0.01f)
 				t = m.talk[0] + (m.talk[1] - m.talk[0]) * fminf(1.0f, a.talkLevel * 2.0f);
 			else if (a.blinkTime >= 0.0f)
 				t = m.blink[0] + (m.blink[1] - m.blink[0]) * (a.blinkTime / 0.3f);

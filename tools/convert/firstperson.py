@@ -12,6 +12,8 @@ Writes data/fp/ (zlib-wrapped like the cells):
                     i32 tex, u8 flags, u8 alpha_ref, u8 kind (0 rigid, 1 skinned), u8 0,
                     char bone[32] (rigid: bone it rides, "" = root), u32 num_vertices, u32 num_indices,
                     vertices (24 bytes: f32 pos[3], f32 uv[2], u8 rgba[4]), u16 indices (pad to 4),
+                    (the u8 after kind: 1 when the mesh morphs, its morphs last: u32 count, per morph u32 n,
+                    n x (f32 t, f32 weight), f32 delta[num_vertices * 3])
                     kind 1: u32 palette size, per entry: char bone[32], f32 skin_to_bone[12];
                             per vertex u8 index[4], u8 weight[4]
 Rigid positions are in their bone's space, skinned ones in skin space; bones are named, so a
@@ -228,6 +230,12 @@ class FirstPerson:
             if mirror:
                 m["tris"] = m["tris"].reshape(-1, 3)[:, [0, 2, 1]].ravel()
             m["bone"] = bone or ""
+            # A bow's string: the shape morphs between key times the weapon's own timeline holds (the engine plays
+            # it from the first-person group's time; the weights are those of NiGeomMorpherController)
+            md = raw.get("morph")
+            if md and md["relative"] and len(md["morphs"]) > 1:
+                m["morph"] = [(mo["keys"], np.array(mo["vectors"]).reshape(-1, 3) @ local[:3, :3].T)
+                              for mo in md["morphs"][1:]]
         # Lighting baked in skeleton space at the idle pose
         from convert_cell import bake_colors
         m["colors"] = bake_colors(s, [], AMBIENT, SUN, SUN_DIR)
@@ -425,7 +433,7 @@ def write_piece(path, meshes):
             n = len(m["pos"])
             tris = np.asarray(m["tris"]).ravel()
             f.write(struct.pack("<iBBBB", texs.index(m["tex"]) if m["tex"] else -1, m["flags"], m["alpha_ref"],
-                                m["kind"], 0))
+                                m["kind"], 1 if m.get("morph") else 0))
             f.write(m["bone"].encode("latin-1")[:31].ljust(32, b"\x00"))
             f.write(struct.pack("<II", n, len(tris)))
             v = np.zeros(n, dtype=[("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4)])
@@ -440,3 +448,11 @@ def write_piece(path, meshes):
                     f.write(bname.encode("latin-1")[:31].ljust(32, b"\x00"))
                     f.write(struct.pack("<12f", *mat))
                 f.write(np.concatenate([m["vidx"], m["vw"]], axis=1).astype(np.uint8).tobytes())
+            if m.get("morph"):
+                # per morph: u32 n, n x (f32 t, f32 weight), f32 delta[num_vertices * 3]
+                f.write(struct.pack("<I", len(m["morph"])))
+                for keys, delta in m["morph"]:
+                    f.write(struct.pack("<I", len(keys)))
+                    for t, wt in keys:
+                        f.write(struct.pack("<ff", t, wt))
+                    f.write(np.asarray(delta, dtype="<f4").tobytes())

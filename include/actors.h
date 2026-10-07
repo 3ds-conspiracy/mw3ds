@@ -92,6 +92,8 @@ struct Actor
 	float rate = 1.0f;                 // animation speed: walk / run cycles follow how fast the actor moves
 	float lastXY[2] = { 1e9f, 1e9f };  // where it stood last frame
 	bool showWeapon = false;
+	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
+	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline
 };
 
 struct ActorSet
@@ -126,6 +128,8 @@ void actorsFree(ActorSet& set);
 void actorAnimate(ActorSet& set, Actor& a, float dt);
 // Rewrites animated vertex positions (skinned meshes, morphing heads). Call after C3D_FrameBegin.
 void actorDeform(ActorSet& set, Actor& a);
+// The largest weight any of an actor's driven morphs (a bow's string) holds at its drive time: 0 at rest, 1 drawn
+float actorMorphWeight(const Actor& a);
 // Group index by name, or -1
 int actorFindGroup(const Skeleton& sk, const char* name);
 // Starts a group; false when the skeleton doesn't have it
