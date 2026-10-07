@@ -1269,11 +1269,11 @@ void World::relocate(int ri, int cell, const float pos[3], float yaw)
 	if (r.spawnedRef)
 		r.cell = cell;
 	r.at = cell == r.cell ? -1 : cell;
-	bool listed = false;
-	for (int s : spawned)
-		listed |= s == ri;
-	if (r.at >= 0 && !listed)
+	auto listed = std::find(spawned.begin(), spawned.end(), ri);
+	if (r.at >= 0 && listed == spawned.end())
 		spawned.push_back(ri);
+	else if (r.at < 0 && !r.spawnedRef && listed != spawned.end())
+		spawned.erase(listed);              // back in its own cell: listed there again (not twice)
 	if (newPlace && r.actor >= 0 && cells[cell].live)
 		attachSpawned(ri);
 	else if (r.actor >= 0)
@@ -1676,20 +1676,34 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 			a.ref += lc.refBase;
 	for (auto& d : l->cell.doors)
 		d.ref += lc.refBase;
+	// (one that stands in another cell now keeps its mesh and place there: its entries here go unused, and
+	// that cell's, when it is loaded too, are left alone)
 	for (size_t k = 0; k < l->actors.actors.size(); k++)
 		if (l->actors.actors[k].ref >= 0)
-			w.refs[l->actors.actors[k].ref].anim = k;
+		{
+			if (w.refs[l->actors.actors[k].ref].at >= 0)
+				l->actors.actors[k].ref = -1;
+			else
+				w.refs[l->actors.actors[k].ref].anim = k;
+		}
 	// Cell::actors lists the cell's NPCs in reference order
 	int cylinder = 0;
 	for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
 		if (w.refs[i].actor >= 0 && cylinder < (int)l->cell.actors.size())
-			w.refs[i].cellActor = cylinder++;
+		{
+			if (w.refs[i].at >= 0)
+				l->cell.actors[cylinder].radius = 0.0f;
+			else
+				w.refs[i].cellActor = cylinder;
+			cylinder++;
+		}
 	for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
 	{
 		if (w.refs[i].at >= 0)
 		{
-			w.detachActor(i);              // it stands in another cell now
-			continue;
+			if (!w.cells[w.refs[i].at].live)
+				w.refs[i].anim = w.refs[i].cellActor = -1;
+			continue;                      // it stands in another cell now
 		}
 		if (w.refs[i].relib)
 		{
@@ -1854,6 +1868,8 @@ static void unloadLevelCell(World& w, int index)
 	{
 		w.refs[i].savedIndices.clear();
 		w.refs[i].savedCol.clear();          // the collision goes too; hidden again when it loads
+		if (w.refs[i].at >= 0)
+			continue;                        // standing in another cell: drawn there
 		w.refs[i].anim = w.refs[i].cellActor = -1;
 		w.refs[i].ai = AI_IDLE;
 	}
@@ -1903,6 +1919,36 @@ bool World::enterCell(int index)
 	return ok;
 }
 
+// Outdoors an actor on its way somewhere (following, escorting, travelling) who walked over into a cell that
+// stays loaded goes on in that one when its own is freed. OpenMW's World::moveObject puts an actor in the
+// exterior cell under it at every step; here only as the old cell goes, so pacing at a border loads nothing.
+// A follower vanished with the cell it started in, two cells behind the player
+static void handOverWalkers(World& w, int index, const LevelCell& here)
+{
+	const LevelCell& lc = w.cells[index];
+	std::vector<int> walkers;
+	for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
+		if (w.refs[i].at < 0)
+			walkers.push_back(i);
+	for (int i : w.spawned)
+		if (w.placeOf(i) == index)
+			walkers.push_back(i);
+	for (int i : walkers)
+	{
+		Ref& r = w.refs[i];
+		if (r.cell < 0 || r.actor < 0 || r.dead
+			|| (r.aiPackage != AIPKG_FOLLOW && r.aiPackage != AIPKG_ESCORT && r.aiPackage != AIPKG_TRAVEL))
+			continue;
+		int g = w.gridCell((int)floorf(r.pos[0] / 8192.0f), (int)floorf(r.pos[1] / 8192.0f));
+		if (g < 0 || g == index || !w.cells[g].live || abs(w.cells[g].gx - here.gx) > 1 || abs(w.cells[g].gy - here.gy) > 1)
+			continue;
+		// (where it stands and its home stay as they are)
+		float pos[3] = { r.pos[0], r.pos[1], r.pos[2] }, home[3] = { r.home[0], r.home[1], r.home[2] };
+		w.relocate(i, g, pos, r.rot[2]);
+		memcpy(r.home, home, sizeof(home));
+	}
+}
+
 void World::streamExterior(bool all)
 {
 	MARK("streamExterior");
@@ -1924,6 +1970,8 @@ void World::streamExterior(bool all)
 		const LevelCell& l = cells[loaded[i]->index];
 		if (l.interior || abs(l.gx - c.gx) > 1 || abs(l.gy - c.gy) > 1)
 		{
+			if (!l.interior)
+				handOverWalkers(*this, loaded[i]->index, c);
 			unloadLevelCell(*this, loaded[i]->index);
 			freed = true;
 		}

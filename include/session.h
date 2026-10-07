@@ -544,10 +544,6 @@ struct Session : ScriptHost
 	void useQuickKey(int k);           // equips, taking off what held that slot
 	void guardCheck(int ref, float dt);
 	int arrestingGuard = -1;
-	// Jail release: where to go instead when the prison's release spot has no floor (some vanilla
-	// markers point into thin air): outside, at the prison marker
-	int jailFallbackCell = -1;
-	float jailFallback[4] = {};
 	// screens
 	void drawMagic();
 	void drawSpells();

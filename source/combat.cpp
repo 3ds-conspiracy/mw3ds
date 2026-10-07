@@ -48,6 +48,26 @@ static float frand() { return (rand() % 1000) / 1000.0f; }
 
 static bool isRanged(const Object* w) { return w && w->subtype >= WEAP_BOW && w->subtype <= WEAP_THROWN; }
 
+// OpenMW's canFight for a creature that only swims (isPureWaterCreature: it swims, and neither walks, flies nor goes
+// on two legs): it can fight the player only when they wade, a quarter of their height under the surface
+// (World::isWading; the swim depth is 0.9 of it, fSwimHeightScale), or stand in reach and in sight. One that can't
+// doesn't start a fight (Actors::engageCombat), and gives up the one it's in (AiCombat::attack)
+static bool waterCreatureCanFight(World& w, int ri)
+{
+	const Ref& r = w.refs[ri];
+	if (r.type != "CREA" || (w.game.actors[r.actor].afloat & 0x71) != 0x10)
+		return true;
+	const Player& p = w.player;
+	if (w.underWater(p.feet[2] + 95.0f * 0.25f / 0.9f))
+		return true;
+	float reach = kCombatDistance * 0.9f + 40.0f;
+	float dx = p.feet[0] - r.pos[0], dy = p.feet[1] - r.pos[1];
+	if (dx * dx + dy * dy > reach * reach || fabsf(p.feet[2] - r.pos[2]) > reach)
+		return false;
+	float eyeA[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f }, eyeB[3] = { p.feet[0], p.feet[1], playerEyeZ(p) };
+	return w.lineOfSight(eyeA, eyeB);
+}
+
 static int weaponSkill(const Object* w)
 {
 	if (!w)
@@ -869,7 +889,7 @@ void Session::npcCombat(int ri, float dt)
 	const Object* wpn = w.game.object(def.weapon);
 	float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1];
 	float dist = sqrtf(dx * dx + dy * dy);
-	if (dist > kHostileGiveUp || playerDead)
+	if (dist > kHostileGiveUp || playerDead || !waterCreatureCanFight(w, ri))
 	{
 		r.ai = AI_IDLE;
 		r.fleeing = false;
@@ -1085,13 +1105,33 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 {
 	Ref& r = w.refs[ri];
 	float body[3] = { r.pos[0] + dirX * step, r.pos[1] + dirY * step, r.pos[2] + 70.0f };
-	collisionPushSphere(cell.collision, body, 22.0f, true);   // about a person's half width (Morrowind's boxes: 20..29)
-	float fz;
+	// Outdoors the ground and walls past the cell's edge are the next cell's: every loaded cell whose collision
+	// reaches the spot counts, as for the player and gravity (OpenMW moves actors in one physics world, whatever
+	// cell they belong to). A follower stopped dead at the border before, with no floor ahead
+	Cell* around[12] = { &cell };
+	int aroundCount = 1;
+	for (LoadedCell* l : w.loaded)
+		if (&l->cell != &cell && aroundCount < 12 && collisionReaches(l->cell.collision, body[0], body[1], 40.0f))
+			around[aroundCount++] = &l->cell;
+	for (int k = 0; k < aroundCount; k++)
+		collisionPushSphere(around[k]->collision, body, 22.0f, true);   // about a person's half width (Morrowind's boxes: 20..29)
+	float fz = -1e9f;
 	// people swim in deep water, the head out (creatures keep to their depth)
 	float swimZ = cell.hasWater() && r.type == "NPC_" ? cell.waterZ - kNpcSwimDepth : -1e9f;
 	// the floor under the feet, not under one point: the highest of the middle and four spots around it
 	// (as the player's), so a crack or a hatch's corner under the middle isn't a drop
-	if (!collisionFootFloor(cell.collision, body[0], body[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 300.0f, &fz))
+	bool found = false;
+	for (int k = 0; k < aroundCount; k++)
+	{
+		float z;
+		if (collisionFootFloor(around[k]->collision, body[0], body[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 300.0f, &z)
+			&& z > fz)
+		{
+			fz = z;
+			found = true;
+		}
+	}
+	if (!found)
 	{
 		if (swimZ < -1e8f || r.pos[2] > swimZ + 1.0f)
 			return false;
@@ -2114,7 +2154,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			float rating = fightTermOf(i, w.distanceToPlayer(i));        // (formulas.cpp)
 			bool calm = r.calmUntil > w.time || w.actorEffect(i, w.game.actors[r.actor].creature ? 50 : 49) > 0.0f;
 			float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f }, eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
-			if (rating >= 100.0f && !menu && !calm && npcAware(i) && w.lineOfSight(head, eye))
+			if (rating >= 100.0f && !menu && !calm && npcAware(i) && w.lineOfSight(head, eye) && waterCreatureCanFight(w, i))
 			{
 				r.aggressor = true;
 				makeHostile(i);

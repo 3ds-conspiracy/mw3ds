@@ -586,12 +586,14 @@ def main():
                 kind = {"divinemarker": "divine", "templemarker": "temple"}.get(r["id"].lower())
                 if kind:
                     game["markers"][kind].append([*map(float, r["pos"]), float(r["rot"][2])])
-    # Test harness only (GOTO): where a door into each interior cell lands (cell_entries.txt, not game.json)
+    # Test harness only (GOTO): where a door into each interior cell lands (cell_entries.txt, not game.json).
+    # Not a PrisonMarker's: no one lands there (it marks where stolen goods go), and Ebonheart's is outside the
+    # garrison's walls, under every floor
     entries = {}
     for key, rec in db["CELL"].items():
         for r in cell_refs(rec):
             dc = r.get("dest_cell")
-            if dc and r.get("dest") and dc.lower() not in entries:
+            if dc and r.get("dest") and dc.lower() not in entries and r["id"].lower() != "prisonmarker":
                 d = r["dest"]
                 entries[dc.lower()] = f"{dc.lower()}	{d[0]:.0f} {d[1]:.0f} {d[2]:.0f} {d[5]:.3f}"
     (OUT / "cell_entries.txt").write_text("\n".join(entries.values()) + "\n", encoding="latin-1")

@@ -599,17 +599,6 @@ void Session::finishTravel()
 	float eye[3] = { travelPos[0], travelPos[1], travelPos[2] + PLAYER_EYE_HEIGHT };
 	Scene scene = w.scene();
 	playerSpawn(w.player, scene, eye, travelYaw, 0.0f);
-	if (jailFallbackCell >= 0)
-	{
-		int c = jailFallbackCell;
-		jailFallbackCell = -1;
-		if (!w.player.onGround)
-		{
-			logf("jail: no floor at the release spot, released outside instead");
-			teleportPlayer(c, jailFallback, jailFallback[3]);
-			return;
-		}
-	}
 	for (size_t k = 0; k < followers.size(); k++)
 	{
 		// Just ahead of the player, side by side (behind is the door, often a wall)

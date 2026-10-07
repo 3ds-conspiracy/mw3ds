@@ -1530,10 +1530,14 @@ static float call(Ctx& c, const Node& n)
 		return 0.0f;
 	}
 	case F_GETAIPACKAGEDONE: return r && r->aiDone ? 1.0f : 0.0f;
-	// The package running now: -1 when dead or when the last one ended; an actor with a wander distance of its
-	// own has a wander package (OpenMW lists it from the record)
+	// The package running now: -1 when the last one ended, or once dead and the death animation is over (OpenMW:
+	// while it plays the package still counts, so 'GetCurrentAiPackage == 3 ... OnDeath' sees a follower die; the
+	// animation taken as 2 seconds); an actor with a wander distance of its own has a wander package (OpenMW lists
+	// it from the record)
 	case F_GETCURRENTAIPACKAGE:
-		if (!r || r->actor < 0 || r->dead || r->aiPackage == AIPKG_IDLE)
+		if (!r || r->actor < 0 || r->aiPackage == AIPKG_IDLE)
+			return -1.0f;
+		if (r->dead && (r->diedAt < 0.0f || w.gameHour - r->diedAt >= 2.0f * w.timescale() / 3600.0f))
 			return -1.0f;
 		return r->aiPackage == AIPKG_NONE ? (w.game.actors[r->actor].wander > 0 ? (float)AIPKG_WANDER : -1.0f)
 			: (float)r->aiPackage;

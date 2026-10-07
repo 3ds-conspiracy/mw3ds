@@ -42,3 +42,10 @@ bool collisionFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBo
 // or a ledge's edge the middle is a little above the floor under it)
 bool collisionFootFloor(CollisionMesh& mesh, float x, float y, float reach, float zTop, float zBottom, float* zOut);
 static const float kActorFootReach = 15.0f;
+
+// Whether the mesh's grid covers (x, y), give or take `margin` (a query outside it would still look at the edge buckets)
+inline bool collisionReaches(const CollisionMesh& m, float x, float y, float margin)
+{
+	return m.nx > 0 && x >= m.originX - margin && y >= m.originY - margin && x <= m.originX + m.nx * m.cellSize + margin
+		&& y <= m.originY + m.ny * m.cellSize + margin;
+}

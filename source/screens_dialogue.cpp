@@ -935,25 +935,25 @@ void Session::goToJail()
 	snprintf(msg, sizeof(msg), w.game.gmst(days == 1 ? "snotifymessage42" : "snotifymessage43",
 		days == 1 ? "You have been released after %d day." : "You have been released after %d days.").c_str(), days);
 	notify(msg);
-	// Nearest prison (from the last spot outdoors when inside)
+	// Nearest prison (from the last spot outdoors when inside), let out at the marker itself, outdoors
+	// (OpenMW teleportToClosestMarker). Its door destination only says where the stolen goods go: Ebonheart's
+	// lies outside the garrison's walls, under every floor.
 	const float* at = w.cells[w.current].interior ? w.lastOutside : w.player.feet;
 	const GameData::PrisonMarker* best = nullptr;
+	int bestCell = -1;
 	float bestD = 1e30f;
 	for (auto& m : w.game.prisonMarkers)
 	{
 		float dx = m.pos[0] - at[0], dy = m.pos[1] - at[1], d = dx * dx + dy * dy;
-		if (d < bestD && w.cellIndex(m.cell) >= 0)
+		int c = w.gridCell((int)floorf(m.pos[0] / 8192.0f), (int)floorf(m.pos[1] / 8192.0f));
+		if (d < bestD && c >= 0)
 		{
 			bestD = d;
 			best = &m;
+			bestCell = c;
 		}
 	}
 	if (best)
-	{
-		jailFallbackCell = w.gridCell((int)floorf(best->pos[0] / 8192.0f), (int)floorf(best->pos[1] / 8192.0f));
-		memcpy(jailFallback, best->pos, sizeof(best->pos));
-		jailFallback[3] = 0.0f;
-		teleportPlayer(w.cellIndex(best->cell), best->dest, best->dest[3]);
-	}
-	logf("jail: %d days, released in %s", days, best ? best->cell.c_str() : "place");
+		teleportPlayer(bestCell, best->pos, 0.0f);
+	logf("jail: %d days, released outside %s", days, best ? best->cell.c_str() : "nowhere (stays in place)");
 }

@@ -180,7 +180,7 @@ def npc_info(rec, db):
     info["respawn"] = 1 if flags & (0x2 if rec.tag == "CREA" else 0x4) else 0
     info["essential"] = 1 if flags & (0x80 if rec.tag == "CREA" else 0x2) else 0
     if rec.tag == "CREA" and flags & 0x30:
-        info["afloat"] = flags & 0x30                # 0x10 swims, 0x20 flies: not dropped to the floor
+        info["afloat"] = flags & 0x71                # 0x10 swims, 0x20 flies: not dropped to the floor (0x40 walks, 0x1 biped)
     if (flags >> 10) & 3:
         info["blood"] = (flags >> 10) & 3            # 1 skeleton (white), 2 metal (gold sparks); 0 red
     if rec.tag == "CREA" and aidt and len(aidt) >= 12:
