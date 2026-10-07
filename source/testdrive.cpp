@@ -124,7 +124,7 @@ static bool hasArg(const std::string& what)
 		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refabove" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
-		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage"
+		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "regionchance" || what == "regionweather"
@@ -307,6 +307,13 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			v = s.elementalShieldDamage(n[0], (int)n[1], (int)n[2], (int)n[3], n[4] * 100.0f, 100.0f, n[5], (int)n[6]);
 		return true;
 	}
+	// poseevery / skinevery:<distance>: the frames between an actor's poses / re-skins that far from the camera
+	if (what == "poseevery" || what == "skinevery")
+	{
+		float d = (float)atof(arg.c_str());
+		v = (float)(what == "poseevery" ? actorPoseEvery(d * d) : actorSkinEvery(d * d));
+		return true;
+	}
 	if (what == "playerdefense") { v = s.playerDefense(false); return true; }
 	if (what == "runspeedfor" || what == "jumpspeedfor")
 	{
@@ -361,6 +368,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 
 	if (what == "rechargechance") { v = s.rechargeChance(); return true; }
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
+	// how far above the player's feet the first spell visual stands (-999 with none): a self spell's wraps the body from the feet
+	if (what == "vfxheight") { v = s.vfx.empty() ? -999.0f : s.vfx[0].pos[2] - w.player.feet[2]; return true; }
 	if (what == "untextured")           // first-person and body meshes drawn white for lack of a texture
 	{
 		v = 0;
@@ -368,8 +377,6 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			v += fpUntextured(p.second);
 		for (auto& p : s.body.pieces)
 			v += fpUntextured(p.second);
-	// how far above the player's feet the first spell visual stands (-999 with none): a self spell's wraps the body from the feet
-	if (what == "vfxheight") { v = s.vfx.empty() ? -999.0f : s.vfx[0].pos[2] - w.player.feet[2]; return true; }
 		return true;
 	}
 	if (what == "resistx") { v = s.resistX(); return true; }
@@ -619,6 +626,21 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = s.moviePlaying() ? 1.0f : 0.0f;
 		return true;
 	}
+	if (what == "vmmeshes")           // meshes the first-person view model draws now (arms, then what they hold)
+	{
+		v = s.vm.ready && !s.vm.set.actors.empty() ? (float)s.vm.set.actors[0].meshes.size() : 0.0f;
+		return true;
+	}
+	if (what == "bowstring")          // how far back the held bow's string is drawn (0 at rest, 1 fully back)
+	{
+		v = s.vm.ready && !s.vm.set.actors.empty() ? actorMorphWeight(s.vm.set.actors[0]) : 0.0f;
+		return true;
+	}
+	if (what == "swimming")
+	{
+		v = s.w.player.swimming ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "weapondrawn")
 	{
 		v = s.weaponDrawn ? 1.0f : 0.0f;
@@ -626,18 +648,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	// sounddenied: sounds that found every channel busy; loopsounds / loopheld: loops going / holding a channel
 	if (what == "sounddenied")
-	if (what == "swimming")
-	{
-		v = s.w.player.swimming ? 1.0f : 0.0f;
-		return true;
-	}
 	{
 		v = audioDeniedCount();
-	if (what == "vmmeshes")           // meshes the first-person view model draws now (arms, then what they hold)
-	{
-		v = s.vm.ready && !s.vm.set.actors.empty() ? (float)s.vm.set.actors[0].meshes.size() : 0.0f;
-		return true;
-	}
 		return true;
 	}
 	if (what == "loopsounds" || what == "loopheld")
@@ -752,6 +764,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			v = floorZ > -1e8f ? r.pos[2] - floorZ : 99999.0f;
 		}
 		else if (what == "refwater") v = w.here().hasWater() ? r.pos[2] - w.here().waterZ : 99999.0f;   // units over the water here
+		else if (what == "refbox") v = r.hasBox ? 1.0f : 0.0f;       // it has a mesh to aim at (a banner's cloth)
 		else if (what == "refaimable") v = actorAimable(w, ri) ? 1.0f : 0.0f;   // the crosshair finds them where they stand
 		else if (what == "refforcesneak")                                          // ForceSneak on that actor
 		{
@@ -764,7 +777,6 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	if (what == "equipped")              // equipped:<item>: 1 when worn / held (any of that id), else 0
 	{
 		v = 0;
-		else if (what == "refbox") v = r.hasBox ? 1.0f : 0.0f;       // it has a mesh to aim at (a banner's cloth)
 		for (auto& it : w.inventory)
 			if (it.equipped && (lower(it.id) == lower(arg) || lower(it.id) == lower(spaced(arg))))
 				v = 1;
