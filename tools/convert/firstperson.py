@@ -335,11 +335,12 @@ class FirstPerson:
                 m = self.item_model(model)
                 if m:
                     e["model"] = m
-            if rec.tag not in ("WEAP", "ARMO", "CLOT"):
+            if rec.tag not in ("WEAP", "LOCK", "PROB", "ARMO", "CLOT"):
                 if e:
                     items[oid] = e
                 continue
-            if rec.tag == "WEAP" and model:
+            # A lockpick or probe is held on the weapon bone as a weapon is
+            if rec.tag in ("WEAP", "LOCK", "PROB") and model:
                 p = self.piece(model, SLOT_WEAPON)
                 if p:
                     e["slots"] = {str(SLOT_WEAPON): [p, p]}

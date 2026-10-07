@@ -118,11 +118,12 @@ static void attackFollowThrough(ActorSet& set, Actor& a, float strength)
 		actorPlay(set, a, next.c_str(), ANIM_ONCE);
 }
 
-// First-person animation family of a weapon (tools/convert/firstperson.py group names)
-static const char* vmGroup(const Object* w)
+// First-person animation family of a weapon (tools/convert/firstperson.py group names); a lockpick or probe in
+// hand moves as a one-handed weapon does (OpenMW's PickProbe weapon type uses the "1h" short group)
+static const char* vmGroup(const Object* w, bool tool)
 {
 	if (!w)
-		return "HH";
+		return tool ? "1h" : "HH";
 	switch (w->subtype)
 	{
 	case 2: case 4: case 8: return "2c";
@@ -2021,10 +2022,11 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	// (a longer wind-up hits harder). Ranged weapons need ammunition equipped.
 	bool canFight = !menu && w.controlsEnabled && w.fightingEnabled && w.player.knockTimer <= 0.0f;
 	const Object* wpn = playerWeapon();
+	bool tool = playerToolItem() != nullptr;
 	sheatheTimer += dt;
 	auto ready = [&]() {
 		weaponDrawn = true;
-		std::string g = vmGroup(wpn);
+		std::string g = vmGroup(wpn, tool);
 		vm.play(VM_EQUIP, (g + "Eq").c_str());
 		drawTimer = fmaxf(0.3f, vm.groupLength((g + "Eq").c_str()));
 		// The weapon's own "up" sound by its type (OpenMW's weapon type table); raised fists make none
@@ -2069,7 +2071,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				if (isRanged(wpn))
 					playSound(-1, wpn->subtype == WEAP_CROSSBOW ? "crossbowPull" : wpn->subtype == WEAP_BOW ? "bowPull" : "SwishS");
 				vm.speed = fmaxf(0.5f, wpn ? wpn->speed : 1.0f);
-				vm.play(VM_WINDUP, (std::string(vmGroup(wpn)) + (isRanged(wpn) ? "Shoot" : attackKind == 2 ? "Thrust"
+				vm.play(VM_WINDUP, (std::string(vmGroup(wpn, tool)) + (isRanged(wpn) ? "Shoot" : attackKind == 2 ? "Thrust"
 					: attackKind == 1 ? "Slash" : "Chop")).c_str(), true);
 			}
 			attackCharge = fminf(1.0f, attackCharge + dt / (0.8f / fmaxf(0.5f, wpn ? wpn->speed : 1.0f)));
@@ -2088,13 +2090,13 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			if (isRanged(wpn))
 			{
 				playerFire(fmaxf(0.1f, attackCharge));
-				vm.play(VM_FOLLOW, (std::string(vmGroup(wpn)) + "ShootF").c_str());
+				vm.play(VM_FOLLOW, (std::string(vmGroup(wpn, tool)) + "ShootF").c_str());
 			}
 			else
 			{
 				// the follow-through by how hard the blow was (small / medium / large)
 				float strength = playerSwing(fmaxf(0.1f, attackCharge), in);
-				vm.playFollow((std::string(vmGroup(wpn)) + (attackKind == 2 ? "ThrustF" : attackKind == 1 ? "SlashF"
+				vm.playFollow((std::string(vmGroup(wpn, tool)) + (attackKind == 2 ? "ThrustF" : attackKind == 1 ? "SlashF"
 					: "ChopF")).c_str(), strength);
 			}
 		}
@@ -2108,7 +2110,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	if (weaponDrawn && !casting && (putAway || sheatheTimer > 20.0f || (menu && screen != SCR_NONE)) && attackCharge < 0.0f)
 	{
 		weaponDrawn = false;
-		vm.play(VM_UNEQUIP, (std::string(vmGroup(wpn)) + "Uneq").c_str());
+		vm.play(VM_UNEQUIP, (std::string(vmGroup(wpn, tool)) + "Uneq").c_str());
 	}
 
 	float headTrack = w.game.gmstf("fmaxheadtrackdistance", 400.0f);
@@ -2604,7 +2606,8 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	if (!vm.ready)
 		return;
 	const Object* wpn = playerWeapon();
-	vm.group = vmGroup(wpn);
+	InventoryItem* toolItem = playerToolItem();
+	vm.group = vmGroup(wpn, toolItem != nullptr);
 	std::string shield;
 	for (auto& it : w.inventory)
 		if (it.equipped && w.game.object(it.id) && w.game.object(it.id)->type == "ARMO"
@@ -2613,7 +2616,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	bool oneHanded = vm.group == "1h" || vm.group == "HH";
 	bool casting = vm.action == VM_CAST;
 	bool show = weaponDrawn || vm.action == VM_UNEQUIP;
-	vm.rebuild(w, show && !casting && wpn ? wpn->id : "", show && !casting && oneHanded ? shield : "");
+	vm.rebuild(w, show && !casting ? (wpn ? wpn->id : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "");
 	if (weaponDrawn && w.player.knockTimer > 0.0f && vm.action != VM_KNOCKDOWN)
 		vm.play(VM_KNOCKDOWN, "KnockDown");
 	if (blockUntil > w.time && vm.action == VM_IDLE && !shield.empty())

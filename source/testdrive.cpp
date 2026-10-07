@@ -626,6 +626,11 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	if (what == "sounddenied")
 	{
 		v = audioDeniedCount();
+	if (what == "vmmeshes")           // meshes the first-person view model draws now (arms, then what they hold)
+	{
+		v = s.vm.ready && !s.vm.set.actors.empty() ? (float)s.vm.set.actors[0].meshes.size() : 0.0f;
+		return true;
+	}
 		return true;
 	}
 	if (what == "loopsounds" || what == "loopheld")
