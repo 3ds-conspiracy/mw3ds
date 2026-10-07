@@ -689,6 +689,18 @@ float actorMorphWeight(const Actor& a)
 	return best;
 }
 
+u32 actorPoseEvery(float dist2)
+{
+	return dist2 < 1600.0f * 1600.0f ? 1 : dist2 < 3000.0f * 3000.0f ? 2 : 3;
+}
+
+// Re-skin at 30 Hz up close, then every third frame to 3000 units and every fourth beyond (a pose is made at least
+// every third frame there, so these follow it): the wild's creatures and people are seen at those distances
+u32 actorSkinEvery(float dist2)
+{
+	return dist2 < 1600.0f * 1600.0f ? 2 : dist2 < 3000.0f * 3000.0f ? 3 : 4;
+}
+
 void actorDeform(ActorSet& set, Actor& a)
 {
 	// Skins are redone only for a new pose, head morphs only when the mouth or eyes moved

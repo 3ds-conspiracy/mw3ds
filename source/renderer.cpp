@@ -774,9 +774,8 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				float bmax[3] = { a.place[3] + 80.0f, a.place[7] + 80.0f, a.place[11] + 150.0f };
 				if (!boxVisible(fr, bmin, bmax) || dist2 > maxDist * maxDist)
 					continue;
-				// Re-skin at 30 Hz up close, less often the smaller they are on screen
-				u32 every = dist2 < 800.0f * 800.0f ? 2 : dist2 < 1600.0f * 1600.0f ? 3 : dist2 < 3000.0f * 3000.0f ? 6 : 12;
-				if (pass == 0 && !secondEye && ((frame + ai) % every == 0 || !a.deformed))
+				// Re-skin up close often, less often the smaller they are on screen
+				if (pass == 0 && !secondEye && ((frame + ai) % actorSkinEvery(dist2) == 0 || !a.deformed))
 				{
 					actorDeform(l->actors, a);
 					a.deformed = true;
