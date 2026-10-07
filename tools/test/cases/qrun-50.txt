@@ -82,6 +82,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Mages
 8 0 0 0
 0.3 0 0 0 0 TALK:sirilonwe
@@ -97,6 +98,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Mages
 8 0 0 0
 0.3 0 0 0 0 TALK:sirilonwe

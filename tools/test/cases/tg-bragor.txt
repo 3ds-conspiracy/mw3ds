@@ -6,6 +6,8 @@
 0.5 0 0 0 0 DOOR:habasi
 1 0 0 0 0 TOPIC:join_the_thieves_guild
 1 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 SETJOURNALINDEX:TG_VintageBrandy:100
+1 0 0 0 0 TOPIC:jobs
 1 0 0 0 0 TOPIC:New-Shoes_Bragor
 0.5 0 0 0 0 B
 1 0 0 0

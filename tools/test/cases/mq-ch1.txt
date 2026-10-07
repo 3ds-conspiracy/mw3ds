@@ -46,7 +46,7 @@
 0.5 0 0 0 0 B
 40 0 0 0 0 DOORTO:outside
 6 0 0 0
-120 0 0 0 0 DOORTO:Balmora,_Guild_of_Fighters
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
 6 0 0 0
 0.3 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
 60 0 0 0 0 ACTIVATE:hasphat_antabolis

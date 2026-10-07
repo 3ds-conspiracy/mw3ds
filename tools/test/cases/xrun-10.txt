@@ -19,7 +19,13 @@
 0.5 0 0 0 0 LOAD:xrun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-23717:-46522:675:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:nevrasa_dralor
+4 0 0 0
 0.3 0 0 0 0 JOURNAL:mv_wanderingpilgrim:10
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
 0.3 0 0 0 0 TP:14594:-33100:1071:180
 8 0 0 0
 120 0 0 0 0 WALKTO:furn_shrine_vivec_cure_02
@@ -57,6 +63,8 @@
 8 0 0 0
 120 0 0 0 0 KILL:winged%twilight_grunda_
 3 0 0 0 0 MSG
+120 0 0 0 0 KILL:atronach_frost_gwai_uni
+3 0 0 0 0 MSG
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:ms_vampirecure
 0.3 0 0 0 0 B
@@ -93,7 +101,9 @@
 0.3 0 0 0 0 FOLLOW:paur_maston
 4 0 0 0
 0.3 0 0 0 0 JOURNAL:mv_tradermissed:10
-0.3 0 0 0 0 GOTO:Molag_Mar
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 TP:106967:-61827:1080:180
 8 0 0 0
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:mv_tradermissed

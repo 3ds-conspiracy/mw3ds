@@ -4,6 +4,7 @@
 0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
 4 0 0 0
 0.5 0 0 0 0 DOOR:eno_hlaalu
+0.3 0 0 0 0 KNOW:Odaishah_Yasalmibaal
 1 0 0 0 0 TOPIC:Odaishah_Yasalmibaal
 0.5 0 0 0 0 B
 1 0 0 0

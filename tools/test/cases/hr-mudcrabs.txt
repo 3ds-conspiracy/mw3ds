@@ -3,6 +3,7 @@
 0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
 4 0 0 0
 0.5 0 0 0 0 DOOR:neminda
+0.3 0 0 0 0 KNOW:hostile_mudcrabs
 1 0 0 0 0 TOPIC:hostile_mudcrabs
 1 0 0 0 0 TOPIC:Drulene_Falen
 0.5 0 0 0 0 B

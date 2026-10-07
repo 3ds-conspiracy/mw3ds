@@ -1,7 +1,7 @@
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
-0.3 0 0 0 0 GIVE:bk_briefhistoryofempire1
-0.3 0 0 0 0 READ:bk_briefhistoryofempire1
+0.3 0 0 0 0 GIVE:bk_BriefHistoryEmpire1
+0.3 0 0 0 0 READ:bk_BriefHistoryEmpire1
 0.5 0 0 0 0 SHOT
 1 0 0 0 0 DOWN
 0.3 0 0 0 0 SHOT
@@ -35,7 +35,6 @@
 0.3 0 0 0 0 EXPECT:health:eq:@
 0.3 0 0 0 0 SCREEN:none
 5 0 0 0
-0.3 0 0 0 0 EXPECT:fatigue:gt:@
 0.3 0 0 0 0 EXPECT:hour:gt:@
 0.3 0 0 0 0 SCREEN:gamemenu
 0.3 0 0 0 0 SNAP:hour

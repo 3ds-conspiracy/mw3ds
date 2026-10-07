@@ -3,14 +3,17 @@
 0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
 3 0 0 0
 0.5 0 0 0 0 DOOR:nileno_dorvayn
+0.3 0 0 0 0 KNOW:join_House_Hlaalu
 1 0 0 0 0 TOPIC:join_House_Hlaalu
 1 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 KNOW:alchemical_formulas
 1 0 0 0 0 TOPIC:alchemical_formulas
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 CHECK:journal:HH_IndEsp1
 0.3 0 0 0 0 GIVE:bk_AuraneFrernis1
 0.5 0 0 0 0 DOOR:nileno_dorvayn
+0.3 0 0 0 0 KNOW:alchemical_formulas
 1 0 0 0 0 TOPIC:alchemical_formulas
 1 0 0 0 0 CHOICE:1
 0.5 0 0 0 0 B

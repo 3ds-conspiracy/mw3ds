@@ -21,6 +21,8 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 GOTO:Ebonheart,_Argonian_Mission
 8 0 0 0
+0.3 0 0 0 0 MOVETO:rabinna
+3 0 0 0
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:mv_slavemule
 0.3 0 0 0 0 B
@@ -30,6 +32,7 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
 8 0 0 0
+0.3 0 0 0 0 MOVETO:ragash_gra-shuzgub
 0.3 0 0 0 0 FOLLOW:ragash_gra-shuzgub
 4 0 0 0
 0.3 0 0 0 0 JOURNAL:il_rescueragash:50
@@ -104,6 +107,7 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 GOTO:Vivec,_Arena_Storage
 8 0 0 0
+0.3 0 0 0 0 MOVETO:saprius_entius
 0.3 0 0 0 0 FOLLOW:saprius_entius
 4 0 0 0
 0.3 0 0 0 0 JOURNAL:il_protectentius:50

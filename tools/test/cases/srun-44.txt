@@ -10,6 +10,7 @@
 8 0 0 0
 0.3 0 0 0 0 TALK:big_helende
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:hire_a_wizard
 0.3 0 0 0 0 TOPIC:hire_a_wizard
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -25,6 +26,7 @@
 8 0 0 0
 0.3 0 0 0 0 TALK:big_helende
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:potion_recipe
 0.3 0 0 0 0 TOPIC:potion_recipe
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -37,10 +39,12 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:VA_VampChild:70
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
 8 0 0 0
 0.3 0 0 0 0 TALK:sinyaramen
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:killed_by_your_kind
 0.3 0 0 0 0 TOPIC:killed_by_your_kind
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -56,6 +60,7 @@
 8 0 0 0
 0.3 0 0 0 0 TALK:angaredhel
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:Gateway_haunting
 0.3 0 0 0 0 TOPIC:Gateway_haunting
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -84,10 +89,12 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:VA_VampChild:70
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
 8 0 0 0
 0.3 0 0 0 0 TALK:sinyaramen
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:Vilandon
 0.3 0 0 0 0 TOPIC:Vilandon
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -100,12 +107,14 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:VA_Rimintil:100
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 GIVE:p_quarrablood_UNIQUE:1
 0.3 0 0 0 0 JOURNAL:VA_VampBlood2:10
 0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
 8 0 0 0
 0.3 0 0 0 0 TALK:raven_omayn
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:Quarra_Blood_Potion
 0.3 0 0 0 0 TOPIC:Quarra_Blood_Potion
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -122,6 +131,7 @@
 8 0 0 0
 0.3 0 0 0 0 TALK:mallam_ryon
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:three_questions
 0.3 0 0 0 0 TOPIC:three_questions
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -138,6 +148,7 @@
 8 0 0 0
 0.3 0 0 0 0 TALK:felisa_ulessen
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:slave_rebellion
 0.3 0 0 0 0 TOPIC:slave_rebellion
 1.5 0 0 0
 2 0 0 0 0 MSG

@@ -50,6 +50,7 @@
 0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
 8 0 0 0
 120 0 0 0 0 WALKTO:athyn_sarethi
+0.3 0 0 0 0 MOVETO:varvur_sarethi
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:hr_rescuesarethi
@@ -58,8 +59,10 @@
 0.5 0 0 0 0 LOAD:xrun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:ShishiOdirniranFights
 0.3 0 0 0 0 GOTO:Odirniran,_Tower
 8 0 0 0
+120 0 0 0 0 WALKTO:vedelea_othril
 0.3 0 0 0 0 FOLLOW:vedelea_othril
 4 0 0 0
 0.3 0 0 0 0 JOURNAL:hh_odirniran:50
@@ -67,6 +70,7 @@
 8 0 0 0
 0.3 0 0 0 0 SETLOCAL:vedelea_othril:timer:2
 120 0 0 0 0 WALKTO:remasa_othril
+20 0 0 0
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:hh_odirniran
@@ -75,10 +79,12 @@
 0.5 0 0 0 0 LOAD:xrun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 STARTSCRIPT:ShishiOdirniranFights
 0.3 0 0 0 0 JOURNAL:hh_odirniran:50
 0.3 0 0 0 0 GOTO:Odirniran
 8 0 0 0
 120 0 0 0 0 WALKTO:remasa_othril
+0.3 0 0 0 0 MOVETO:vedelea_othril
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:hh_odirniran
@@ -90,6 +96,8 @@
 0.3 0 0 0 0 JOURNAL:mv_richpilgrim:20
 0.3 0 0 0 0 TP:-18472:48652:1482:180
 8 0 0 0
+0.3 0 0 0 0 FOLLOW:viatrix_petilia
+2 0 0 0
 0.3 0 0 0 0 SETLOCAL:viatrix_petilia:timer:721
 120 0 0 0 0 WALKTO:viatrix_petilia
 3 0 0 0 0 MSG
@@ -103,6 +111,8 @@
 0.3 0 0 0 0 JOURNAL:mv_richpilgrim:40
 0.3 0 0 0 0 TP:-18472:48652:1482:180
 8 0 0 0
+0.3 0 0 0 0 FOLLOW:viatrix_petilia
+2 0 0 0
 0.3 0 0 0 0 SETLOCAL:viatrix_petilia:timer:721
 120 0 0 0 0 WALKTO:viatrix_petilia
 3 0 0 0 0 MSG
@@ -116,6 +126,8 @@
 0.3 0 0 0 0 JOURNAL:mv_richpilgrim:50
 0.3 0 0 0 0 TP:-18472:48652:1482:180
 8 0 0 0
+0.3 0 0 0 0 FOLLOW:viatrix_petilia
+2 0 0 0
 0.3 0 0 0 0 SETLOCAL:viatrix_petilia:timer:721
 120 0 0 0 0 WALKTO:viatrix_petilia
 3 0 0 0 0 MSG
@@ -129,6 +141,8 @@
 0.3 0 0 0 0 JOURNAL:mv_richpilgrim:60
 0.3 0 0 0 0 TP:-18472:48652:1482:180
 8 0 0 0
+0.3 0 0 0 0 FOLLOW:viatrix_petilia
+2 0 0 0
 0.3 0 0 0 0 SETLOCAL:viatrix_petilia:timer:721
 120 0 0 0 0 WALKTO:viatrix_petilia
 3 0 0 0 0 MSG

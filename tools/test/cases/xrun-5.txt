@@ -10,6 +10,8 @@
 0.3 0 0 0 0 JOURNAL:eb_deadmen:30
 0.3 0 0 0 0 GOTO:Vivec,_St._Olms_Underworks
 8 0 0 0
+0.3 0 0 0 0 ENABLE:corprus_stalker_danar
+1 0 0 0
 120 0 0 0 0 KILL:corprus_stalker_danar
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
@@ -24,7 +26,11 @@
 0.3 0 0 0 0 FOLLOW:dandsa
 4 0 0 0
 0.3 0 0 0 0 JOURNAL:il_damsel:50
-0.3 0 0 0 0 TP:-12104:-74572:400:90
+120 0 0 0 0 WALKTO:dandsa
+2 0 0 0
+120 0 0 0 0 WALKTO:ex_cave_door_01
+6 0 0 0
+120 0 0 0 0 DOORTO:outside
 8 0 0 0
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:il_damsel
@@ -74,9 +80,14 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:mv_monsterdisease:10
+0.3 0 0 0 0 TP:-92608:109164:2428:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:din
+4 0 0 0
 0.3 0 0 0 0 GOTO:Gnisis,_Temple
 8 0 0 0
 120 0 0 0 0 WALKTO:mehra_drora
+0.3 0 0 0 0 MOVETO:din
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:mv_monsterdisease
@@ -100,6 +111,8 @@
 0.3 0 0 0 0 JOURNAL:mv_missingcompanion:10
 0.3 0 0 0 0 TP:-28461:60005:2631:180
 8 0 0 0
+0.3 0 0 0 0 FOLLOW:drerel_indaren
+4 0 0 0
 120 0 0 0 0 KILL:drerel_indaren
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
@@ -112,6 +125,10 @@
 0.3 0 0 0 0 JOURNAL:mv_missingcompanion:30
 0.3 0 0 0 0 TP:-20252:57730:1909:180
 8 0 0 0
+0.3 0 0 0 0 MOVETO:drerel_indaren
+1 0 0 0
+0.3 0 0 0 0 FOLLOW:drerel_indaren
+4 0 0 0
 120 0 0 0 0 WALKTO:falanu_indaren
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
@@ -123,6 +140,10 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 TP:17078:-30764:1106:180
 8 0 0 0
+0.3 0 0 0 0 MOVETO:edras_oril
+1 0 0 0
+0.3 0 0 0 0 FOLLOW:edras_oril
+4 0 0 0
 120 0 0 0 0 WALKTO:thoronor
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG

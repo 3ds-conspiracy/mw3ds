@@ -1,13 +1,6 @@
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
 0.3 0 0 0 0 GIVE:chitin%dagger
-0.3 0 0 0 0 GIVE:bk_a1_1_caiuspackage
-0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
-6 0 0 0
-1 0 0 0 0 MSG
-60 0 0 0 0 ACTIVATE:CharGen_Exit_Door
-6 0 0 0
-0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Census
 0.3 0 0 0 0 WEATHER:4
 5 0 0 0
 0.3 0 0 0 0 EXPECT:weathernow:eq:4
@@ -15,6 +8,7 @@
 0.3 0 0 0 0 SNAP:soundstarted:Item_Weapon_Shortblade_Up
 0.1 0 0 0 0 X
 1 0 0 0
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1
 0.3 0 0 0 0 EXPECT:soundstarted:Item_Weapon_Shortblade_Up:eq:@1
 0.3 0 0 0 0 EXPECT:sounddenied:eq:0
 0.3 0 0 0 0 EXPECT:loopheld:le:12

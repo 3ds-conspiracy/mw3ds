@@ -3,6 +3,11 @@
 0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
 4 0 0 0
 0.5 0 0 0 0 DOOR:raven_omayn
+1 0 0 0 0 TOPIC:Mouth
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 DOOR:raven_omayn
+1 0 0 0 0 TOPIC:chores
 1 0 0 0 0 TOPIC:muck
 0.5 0 0 0 0 B
 1 0 0 0

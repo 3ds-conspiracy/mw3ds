@@ -5,6 +5,7 @@
 8 0 0 0
 0.3 0 0 0 0 TALK:gilvas_barelo
 1.5 0 0 0
+0.3 0 0 0 0 KNOW:lost_prophecies
 0.3 0 0 0 0 TOPIC:lost_prophecies
 1.5 0 0 0
 0.3 0 0 0 0 CHOICEVAL:1

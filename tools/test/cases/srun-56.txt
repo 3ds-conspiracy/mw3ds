@@ -117,7 +117,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 GIVE:ingred_vampire_dust_01:3
-0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 JOURNAL:VA_VampDust:10
 0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Mages
 8 0 0 0

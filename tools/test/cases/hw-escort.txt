@@ -5,8 +5,9 @@
 0.3 0 0 0 0 JOIN:imperial_legion:0
 0.3 0 0 0 0 GOTO:Moonmoth_Legion_Fort,_Interior
 8 0 0 0
+0.3 0 0 0 0 KNOW:Dandsa
 0.3 0 0 0 0 TALK:radd_hard-heart
-1.5 0 0 0
+4 0 0 0
 0.3 0 0 0 0 TOPIC:Dandsa
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -38,6 +39,7 @@
 0.3 0 0 0 0 EXPECT:journal:il_damsel:ge:70
 0.3 0 0 0 0 GOTO:Moonmoth_Legion_Fort,_Interior
 8 0 0 0
+0.3 0 0 0 0 KNOW:Dandsa
 0.3 0 0 0 0 TALK:radd_hard-heart
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:Dandsa
@@ -45,3 +47,4 @@
 2 0 0 0 0 MSG
 0.3 0 0 0 0 EXPECT:journal:il_damsel:ge:100
 1 0 0 0
+

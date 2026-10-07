@@ -9,7 +9,12 @@
 0.3 0 0 0 0 HOUR:23
 0.3 0 0 0 0 GOTO:Seyda_Neen
 0.3 0 0 0 0 TP:-10600:-71200:300:0
-5 0 0 0
+60 0 0 0 0 WALKTO:active_lookout_unique
+20 0 0 0
+20 0 0 0
+0.3 0 0 0 0 EXPECT:journal:ms_lookout:eq:20
+0.3 0 0 0 0 EXPECT:hour:gt:20
+0.3 0 0 0 0 EXPECT:refdist:fargoth:gt:0
 0.3 0 0 0 0 EXPECT:refforcesneak:fargoth:eq:1
 0.3 0 0 0 0 EXPECT:forcesneak:eq:0
 1 0 0 0

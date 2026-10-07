@@ -5,13 +5,14 @@
 0.5 0 0 0 0 LOAD:srun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
-0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 SETGLOBAL:vampclan:1
 0.3 0 0 0 0 JOURNAL:VA_VampChild:90
 0.3 0 0 0 0 GOTO:Ashmelech
 8 0 0 0
 0.3 0 0 0 0 TALK:dhaunayne_aundae
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:about_my_family
 0.3 0 0 0 0 TOPIC:about_my_family
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -22,14 +23,15 @@
 0.5 0 0 0 0 LOAD:srun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
-0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 SETGLOBAL:vampclan:1
 0.3 0 0 0 0 JOURNAL:VA_VampChild:120
 0.3 0 0 0 0 JOURNAL:VA_VampHunter:60
 0.3 0 0 0 0 GOTO:Ashmelech
 8 0 0 0
 0.3 0 0 0 0 TALK:dhaunayne_aundae
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:vampire_hunter
 0.3 0 0 0 0 TOPIC:vampire_hunter
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -40,14 +42,15 @@
 0.5 0 0 0 0 LOAD:srun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
-0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 SETGLOBAL:vampclan:1
 0.3 0 0 0 0 JOURNAL:VA_VampChild:120
 0.3 0 0 0 0 JOURNAL:VA_VampHunter:70
 0.3 0 0 0 0 GOTO:Ashmelech
 8 0 0 0
 0.3 0 0 0 0 TALK:dhaunayne_aundae
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:vampire_hunter
 0.3 0 0 0 0 TOPIC:vampire_hunter
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -58,13 +61,14 @@
 0.5 0 0 0 0 LOAD:srun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
-0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 SETGLOBAL:vampclan:1
 0.3 0 0 0 0 JOURNAL:VA_VampHunter:80
 0.3 0 0 0 0 GOTO:Ashmelech
 8 0 0 0
 0.3 0 0 0 0 TALK:dhaunayne_aundae
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:future_rewards
 0.3 0 0 0 0 TOPIC:future_rewards
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -80,7 +84,8 @@
 0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
 8 0 0 0
 0.3 0 0 0 0 TALK:caius_cosades
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:Orders
 0.3 0 0 0 0 TOPIC:Orders
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -96,7 +101,8 @@
 0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
 8 0 0 0
 0.3 0 0 0 0 TALK:caius_cosades
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:Orders
 0.3 0 0 0 0 TOPIC:Orders
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -112,7 +118,8 @@
 0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
 8 0 0 0
 0.3 0 0 0 0 TALK:caius_cosades
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:Orders
 0.3 0 0 0 0 TOPIC:Orders
 1.5 0 0 0
 2 0 0 0 0 MSG
@@ -127,7 +134,8 @@
 0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
 8 0 0 0
 0.3 0 0 0 0 TALK:caius_cosades
-1.5 0 0 0
+5 0 0 0
+0.3 0 0 0 0 KNOW:Orders
 0.3 0 0 0 0 TOPIC:Orders
 1.5 0 0 0
 2 0 0 0 0 MSG

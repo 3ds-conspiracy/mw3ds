@@ -1,0 +1,27 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:2
+0.3 0 0 0 0 TP:48933:-61965:1288:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:paur_maston
+4 0 0 0
+0.3 0 0 0 0 GOTO:Molag_Mar
+8 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:paur_maston:lt:400
+120 0 0 0 0 WALKTO:vanjirra
+10 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:paur_maston:lt:400
+0.3 0 0 0 0 TP:-11056:-72286:200:45
+3 0 0 0
+0.3 0 0 0 0 MOVETO:edras_oril
+3 0 0 0
+0.3 0 0 0 0 TP:24817:-31814:1300:270
+3 0 0 0
+0.3 0 0 0 0 MOVETO:edras_oril
+0.3 0 0 0 0 FOLLOW:edras_oril
+0.3 0 0 0 0 TP:24817:-31814:1300:90
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:400
+12 0 1 0
+15 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500

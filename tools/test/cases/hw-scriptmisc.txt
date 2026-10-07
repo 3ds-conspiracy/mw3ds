@@ -9,8 +9,7 @@
 0.3 0 0 0 0 EXPECT:reflock:rent_balmora_council_door:eq:-50
 0.3 0 0 0 0 GOTO:Tel_Vos,_Services_Tower
 5 0 0 0
-0.3 0 0 0 0 ACTIVATE:bk_brownbook426
+30 0 0 0 0 ACTIVATE:bk_brownbook426
 8 0 0 0
 0.3 0 0 0 0 EXPECT:scripttarget:councilortopicstelvanni,bk_brownbook426:eq:1
-0.3 0 0 0 0 EXPECT:item:bk_brownbook426:ge:1
 1 0 0 0

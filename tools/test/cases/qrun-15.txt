@@ -66,6 +66,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 SETGLOBAL:vampclan:1
 0.3 0 0 0 0 GOTO:Ashmelech
 8 0 0 0
@@ -82,6 +83,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 SETGLOBAL:vampclan:1
 0.3 0 0 0 0 JOURNAL:VA_VampChild:120
 0.3 0 0 0 0 GOTO:Ashmelech
@@ -99,6 +101,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 GOTO:Bal_Ur,_Underground
 8 0 0 0
 0.3 0 0 0 0 TALK:derar_hlervu

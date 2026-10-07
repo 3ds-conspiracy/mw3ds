@@ -20,6 +20,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 SETGLOBAL:pcvampire:1
+0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 GOTO:Ald-ruhn,_Llethri_Manor_Bedrooms
 8 0 0 0
 0.3 0 0 0 0 TALK:fathasa_llethri

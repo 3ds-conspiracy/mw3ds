@@ -36,6 +36,8 @@
 0.3 0 0 0 0 JOURNAL:da_molagbal:10
 0.3 0 0 0 0 GOTO:Kora-Dur
 8 0 0 0
+0.3 0 0 0 0 ENABLE:daedroth_menta_unique
+1 0 0 0
 120 0 0 0 0 KILL:daedroth_menta_unique
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
@@ -80,11 +82,13 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+0.3 0 0 0 0 JOURNAL:B2_AhemmusaSafe:40
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
 8 0 0 0
-0.3 0 0 0 0 FOLLOW:sinnammu_mirpal
-4 0 0 0
-0.3 0 0 0 0 GOTO:Ald_Daedroth,_Inner_Shrine
-8 0 0 0
+0.3 0 0 0 0 TALK:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:name_you_Nerevarine
+1.5 0 0 0
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:b2_ahemmusasafe
 0.3 0 0 0 0 B
@@ -92,9 +96,12 @@
 0.5 0 0 0 0 LOAD:xrun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 JOURNAL:ms_vampirecure:30
 0.3 0 0 0 0 GOTO:Dubdilla,_Uncharted_Caverns,_Lower
 8 0 0 0
 120 0 0 0 0 KILL:atronach_frost_gwai_uni
+3 0 0 0 0 MSG
+120 0 0 0 0 KILL:winged%twilight_grunda_
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:ms_vampirecure
@@ -103,16 +110,11 @@
 0.5 0 0 0 0 LOAD:xrun
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
-0.3 0 0 0 0 GOTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+0.3 0 0 0 0 JOURNAL:hr_arobarkidnap:70
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Arobar_Manor_Bedrooms
 8 0 0 0
-0.3 0 0 0 0 FOLLOW:nartise_arobar
-4 0 0 0
-0.3 0 0 0 0 JOURNAL:hr_arobarkidnap:50
-0.3 0 0 0 0 TP:142120:39665:578:180
-8 0 0 0
-0.3 0 0 0 0 SETLOCAL:nartise_arobar:timer:2
-120 0 0 0 0 WALKTO:gals_arethi
-3 0 0 0 0 MSG
+0.3 0 0 0 0 TALK:miner_arobar
+1.5 0 0 0
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:hr_arobarkidnap
 0.3 0 0 0 0 B

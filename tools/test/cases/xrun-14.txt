@@ -43,10 +43,11 @@
 0.3 0 0 0 0 FOLLOW:teres_arothan
 4 0 0 0
 0.3 0 0 0 0 JOURNAL:fg_dissaplamine:50
-0.3 0 0 0 0 GOTO:Dissapla_Mine
-8 0 0 0
+0.3 0 0 0 0 MOVETO:teres_arothan
+4 0 0 0
 0.3 0 0 0 0 SETLOCAL:teres_arothan:timer:2
 120 0 0 0 0 WALKTO:novor_drethan
+15 0 0 0
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
 0.3 0 0 0 0 CHECK:journal:fg_dissaplamine
@@ -58,6 +59,8 @@
 0.3 0 0 0 0 JOURNAL:mv_richtrader:10
 0.3 0 0 0 0 TP:31620:-54761:1073:180
 8 0 0 0
+0.3 0 0 0 0 FOLLOW:teris_raledran
+4 0 0 0
 120 0 0 0 0 KILL:teris_raledran
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
@@ -68,6 +71,10 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:mv_richtrader:10
+0.3 0 0 0 0 TP:31620:-54761:1073:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:teris_raledran
+4 0 0 0
 0.3 0 0 0 0 GOTO:Vivec
 8 0 0 0
 2 0 0 0 0 MSG
@@ -78,8 +85,14 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:mv_richtrader:10
+0.3 0 0 0 0 TP:31620:-54761:1073:180
+8 0 0 0
+0.3 0 0 0 0 FOLLOW:teris_raledran
+4 0 0 0
 0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Canalworks
 8 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
 120 0 0 0 0 WALKTO:in_velothismall_ndoor_agrippina
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG
@@ -116,6 +129,9 @@
 0.3 0 0 0 0 JOURNAL:mv_fakeslave:10
 0.3 0 0 0 0 TP:35703:-39160:997:180
 8 0 0 0
+0.3 0 0 0 0 MOVETO:tul
+0.3 0 0 0 0 FOLLOW:tul
+4 0 0 0
 120 0 0 0 0 WALKTO:sterdecan
 3 0 0 0 0 MSG
 2 0 0 0 0 MSG

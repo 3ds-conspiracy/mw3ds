@@ -1,0 +1,27 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Pelagiad
+8 0 0 0
+0.3 0 0 0 0 TP:23600:-31814:1300:270
+3 0 0 0
+0.3 0 0 0 0 MOVETO:edras_oril
+0.3 0 0 0 0 FOLLOW:edras_oril
+0.3 0 0 0 0 PLACE:guar:150
+0.3 0 0 0 0 FOLLOW:guar
+0.3 0 0 0 0 TP:23600:-31814:1300:90
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:400
+0.3 0 0 0 0 EXPECT:refdist:guar:lt:400
+12 0 1 0
+15 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500
+0.3 0 0 0 0 EXPECT:refdist:guar:lt:500
+12 0 1 0
+15 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500
+0.3 0 0 0 0 EXPECT:refdist:guar:lt:500
+12 0 1 0
+15 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500
+0.3 0 0 0 0 EXPECT:refdist:guar:lt:500
