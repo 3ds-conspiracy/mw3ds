@@ -34,6 +34,7 @@ static std::vector<std::string> split(const std::string& s)
 #include <map>
 #include "screens.h"
 #include "collision.h"
+#include "linear.h"
 
 static std::string squash(const std::string& s)
 {
@@ -1466,6 +1467,20 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	if (verb == "CLOTHVALUE" && a.size() >= 2)
 	{
 		g_dialogueClothValue = atoi(a[1].c_str());
+		return true;
+	}
+	if (verb == "MEMHOLD" && a.size() >= 2)
+	{
+		// MEMHOLD:<KB>: hold that much linear memory (in 256 KB pieces) to play as the device does when it is nearly
+		// full; MEMHOLD:0 lets it go
+		static std::vector<void*> held;
+		for (void* p : held)
+			lockedLinearFree(p);
+		held.clear();
+		for (int kb = atoi(a[1].c_str()); kb > 0; kb -= 256)
+			if (void* p = lockedLinearAlloc(256 * 1024))
+				held.push_back(p);
+		logf("test: holding %d KB of linear memory, %lu KB free", (int)held.size() * 256, linearSpaceFree() / 1024);
 		return true;
 	}
 	if (verb == "MOVIE" && a.size() >= 2)

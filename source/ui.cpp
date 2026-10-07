@@ -86,6 +86,7 @@ static bool loadTex(const std::string& path, C3D_Tex* tex, GPU_TEXTURE_FILTER_PA
 	return true;
 }
 
+static u32 s_fontSum = 0, s_atlasSum = 0;      // uiCheckTheme: the font's and frames' texels as loaded
 struct ArtTex { C3D_Tex tex; bool ok; };
 static std::unordered_map<std::string, ArtTex*> s_art;
 
@@ -140,6 +141,7 @@ void uiFreeTheme()
 			C3D_TexDelete(&p.tex);
 	s_iconPages.clear();
 	s_fontOn = s_atlasOn = false;
+	s_fontSum = s_atlasSum = 0;
 	s_wrapCache.clear();
 }
 
@@ -176,6 +178,39 @@ void uiLoadTheme(const char* dataDir, const UiThemeDef& def)
 	col::count = themeColor("count", col::count);
 	logf("ui: font %s, frames %s (%d pieces), %d icon pages", s_fontOn ? "Magic Cards" : "system",
 		s_atlasOn ? "Morrowind" : "plain", (int)def.pieces.size(), (int)def.iconPages.size());
+}
+
+// The font's and the frames' texels as loaded: the GPU only reads them, so a change means something else wrote into
+// their linear memory (the reported static: every letter and frame noise, the 3D world fine, until a restart)
+static u32 texelSum(const C3D_Tex& t)
+{
+	const u32* p = (const u32*)t.data;
+	u32 n = C3D_TexCalcTotalSize(t.size, t.maxLevel) / 4, h = 2166136261u;
+	for (u32 i = 0; i < n; i++)
+		h = (h ^ p[i]) * 16777619u;
+	return h;
+}
+
+void uiCheckTheme()
+{
+	if (s_fontOn)
+	{
+		u32 h = texelSum(s_fontTex);
+		if (!s_fontSum)
+			s_fontSum = h;
+		else if (h != s_fontSum)
+			monitorOnce("uifont", "the UI font's texture changed in memory (at %p, %lu KB free in linear memory)",
+				s_fontTex.data, linearSpaceFree() / 1024);
+	}
+	if (s_atlasOn)
+	{
+		u32 h = texelSum(s_atlasTex);
+		if (!s_atlasSum)
+			s_atlasSum = h;
+		else if (h != s_atlasSum)
+			monitorOnce("uiatlas", "the UI frames' texture changed in memory (at %p, %lu KB free in linear memory)",
+				s_atlasTex.data, linearSpaceFree() / 1024);
+	}
 }
 
 const UiInput& uiIn()
