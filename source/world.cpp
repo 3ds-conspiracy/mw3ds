@@ -2905,6 +2905,43 @@ bool actorAimable(const World& w, int ri)
 	}
 	return tmin <= tmax;
 }
+// The ray's entry distance into a reference's world bounds (slightly padded for thin items), or -1 for a miss
+static float rayBoxEntry(const Ref& r, const float eye[3], const float dir[3], float maxT)
+{
+	float tmin = 0.0f, tmax = maxT;
+	for (int k = 0; k < 3; k++)
+	{
+		float lo = r.boxMin[k] - 2.0f, hi = r.boxMax[k] + 2.0f;
+		if (fabsf(dir[k]) < 1e-6f)
+		{
+			if (eye[k] < lo || eye[k] > hi)
+				return -1.0f;
+			continue;
+		}
+		float t1 = (lo - eye[k]) / dir[k], t2 = (hi - eye[k]) / dir[k];
+		if (t1 > t2) { float tmp = t1; t1 = t2; t2 = tmp; }
+		tmin = fmaxf(tmin, t1);
+		tmax = fminf(tmax, t2);
+		if (tmin > tmax)
+			return -1.0f;
+	}
+	return tmin;
+}
+
+// Whether the eye is outside a reference's box but within the reach of it
+static bool boxInReach(const Ref& r, const float eye[3], float reach)
+{
+	float d2 = 0.0f;
+	for (int k = 0; k < 3; k++)
+	{
+		float c = fmaxf(r.boxMin[k], fminf(eye[k], r.boxMax[k])) - eye[k];
+		d2 += c * c;
+	}
+	// An eye inside the box is inside the thing (the prison ship's model is one activator 1800 units wide, and its
+	// top deck is inside it): nothing to point at from in there
+	return d2 <= reach * reach && d2 != 0.0f;
+}
+
 
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach)
 {
@@ -2913,42 +2950,38 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	for (int i : w.loadedPickables)
 	{
 		const Ref& r = w.refs[i];
-		// Out of reach of the eye altogether (box farther than the reach): skip the ray test
-		float d2 = 0.0f;
-		for (int k = 0; k < 3; k++)
+		if (!isActivatable(r) || !boxInReach(r, eye, reach))
+			continue;
+		float t = rayBoxEntry(r, eye, dir, bestT);
+		if (t >= 0.0f && t < bestT)
 		{
-			float c = fmaxf(r.boxMin[k], fminf(eye[k], r.boxMax[k])) - eye[k];
-			d2 += c * c;
+			bestT = t;
+			best = i;
 		}
-		if (d2 > reach * reach || !isActivatable(r))
-			continue;
-		// An eye inside the box is inside the thing (the prison ship's model is one activator 1800 units wide,
-		// and its top deck is inside it): nothing to point at from in there
-		if (d2 == 0.0f)
-			continue;
-		// Slab test against the reference's world bounds (slightly padded for thin items)
-		float tmin = 0.0f, tmax = bestT;
-		bool hit = true;
-		for (int k = 0; k < 3 && hit; k++)
+	}
+	// A body's box is a crude one (the Journal of Tarhiel lands where he does): an item whose box lies within the
+	// body's and is on the ray is what the crosshair means, as the body's mesh would let the ray through to it
+	if (best >= 0 && w.refs[best].actor >= 0 && w.refs[best].dead)
+	{
+		const Ref& body = w.refs[best];
+		int item = -1;
+		float itemT = reach;
+		for (int i : w.loadedPickables)
 		{
-			float lo = r.boxMin[k] - 2.0f, hi = r.boxMax[k] + 2.0f;
-			if (fabsf(dir[k]) < 1e-6f)
+			const Ref& r = w.refs[i];
+			if (r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
+			bool inside = true;
+			for (int k = 0; k < 3 && inside; k++)
+				inside = r.boxMax[k] >= body.boxMin[k] && r.boxMin[k] <= body.boxMax[k];
+			float t = inside ? rayBoxEntry(r, eye, dir, itemT) : -1.0f;
+			if (t >= 0.0f && t < itemT)
 			{
-				if (eye[k] < lo || eye[k] > hi)
-					hit = false;
+				itemT = t;
+				item = i;
 				continue;
 			}
-			float t1 = (lo - eye[k]) / dir[k], t2 = (hi - eye[k]) / dir[k];
-			if (t1 > t2) { float tmp = t1; t1 = t2; t2 = tmp; }
-			tmin = fmaxf(tmin, t1);
-			tmax = fminf(tmax, t2);
-			if (tmin > tmax)
-				hit = false;
-		}
-		if (hit && tmin < bestT)
-		{
-			bestT = tmin;
-			best = i;
+		if (item >= 0)
+			best = item;
 		}
 	}
 	return best;

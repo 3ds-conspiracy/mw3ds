@@ -39,7 +39,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `screens_map.cpp` | local map indoors and out, door markers and the name they show | `mwgui/mapwindow.cpp`, `mwworld/worldimp.cpp` (door markers), `mwclass/door.cpp getDestination` | checked 2026-10-07 (`issue-23`, `issue-24`): the marker names the destination cell, as OpenMW; a tap shows it (OpenMW: hover), the buttons and sizes differ (3DS UI, kept) |
 | `world.cpp` | journal entries, quest finished | `mwdialogue/journalimp.cpp`, `quest.cpp` | unchecked |
 | `world.cpp` | date and time, day / month rollover | `mwworld/datetimemanager.cpp` | unchecked |
-| `world.cpp` | what the crosshair picks | `mwworld/worldimp.cpp getFacedObject` (rays the drawn scene) | differs: boxes (cost); boxes now follow their objects |
+| `world.cpp` | what the crosshair picks | `mwworld/worldimp.cpp getFacedObject` (rays the drawn scene) | differs: boxes (cost); boxes now follow their objects; an item inside a body's box is picked before the body (`issue-13`) |
 | `world.cpp` `save.cpp` | objects leaving memory and coming back; saves | (no counterpart: OpenMW keeps cell state) | n/a, guarded by the position monitors |
 | `session.cpp` | activation: doors, locked doors and keys, containers, traps, books, pickpocket | `mwclass/door.cpp`, `container.cpp`, `npc.cpp activate`, `mwworld/action*.cpp` | unchecked |
 | `session.cpp` | barter, training, travel, spells, repair prices | `mwgui/tradewindow.cpp`, `mwmechanics/trading.cpp` ... | checked (`trading-and-services.md`) |
