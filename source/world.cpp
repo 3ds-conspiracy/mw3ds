@@ -2786,8 +2786,7 @@ void World::update(float dt)
 			if (a.ref < 0 || !refs[a.ref].visible() || d2 >= reach * reach)
 				continue;
 			a.pendingDt += dt;
-			u32 every = d2 < 1600.0f * 1600.0f ? 1 : d2 < 3000.0f * 3000.0f ? 3 : 6;
-			if ((frame + k) % every == 0)
+			if ((frame + k) % actorPoseEvery(d2) == 0)
 			{
 				actorAnimate(l->actors, a, a.pendingDt);
 				a.pendingDt = 0.0f;

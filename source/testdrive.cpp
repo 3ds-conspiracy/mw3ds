@@ -124,7 +124,7 @@ static bool hasArg(const std::string& what)
 		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
-		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage"
+		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "regionchance" || what == "regionweather"
@@ -305,6 +305,13 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			v = s.blockChance(n[0], n[1], n[2], n[3] * 100.0f, 100.0f, n[4] != 0.0f, n[5], n[6], n[7], n[8] * 100.0f, 100.0f, n[9]);
 		else                               // magnitude, destruction, willpower, luck, fatigue, resistance, roll
 			v = s.elementalShieldDamage(n[0], (int)n[1], (int)n[2], (int)n[3], n[4] * 100.0f, 100.0f, n[5], (int)n[6]);
+		return true;
+	}
+	// poseevery / skinevery:<distance>: the frames between an actor's poses / re-skins that far from the camera
+	if (what == "poseevery" || what == "skinevery")
+	{
+		float d = (float)atof(arg.c_str());
+		v = (float)(what == "poseevery" ? actorPoseEvery(d * d) : actorSkinEvery(d * d));
 		return true;
 	}
 	if (what == "playerdefense") { v = s.playerDefense(false); return true; }

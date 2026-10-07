@@ -128,8 +128,12 @@ void actorsFree(ActorSet& set);
 void actorAnimate(ActorSet& set, Actor& a, float dt);
 // Rewrites animated vertex positions (skinned meshes, morphing heads). Call after C3D_FrameBegin.
 void actorDeform(ActorSet& set, Actor& a);
+// How rarely (in frames) an actor squared-distance-from-the-camera away is posed and re-skinned: the far ones less
+// often, but never so rarely that an animal across a field moves in jerks
+u32 actorPoseEvery(float dist2);
 // The largest weight any of an actor's driven morphs (a bow's string) holds at its drive time: 0 at rest, 1 drawn
 float actorMorphWeight(const Actor& a);
+u32 actorSkinEvery(float dist2);
 // Group index by name, or -1
 int actorFindGroup(const Skeleton& sk, const char* name);
 // Starts a group; false when the skeleton doesn't have it

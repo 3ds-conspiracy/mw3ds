@@ -1,0 +1,7 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:poseevery:1000:eq:1
+0.3 0 0 0 0 EXPECT:poseevery:2000:le:2
+0.3 0 0 0 0 EXPECT:poseevery:4000:le:3
+0.3 0 0 0 0 EXPECT:skinevery:1200:le:2
+0.3 0 0 0 0 EXPECT:skinevery:2000:le:3
+0.3 0 0 0 0 EXPECT:skinevery:4000:le:4
