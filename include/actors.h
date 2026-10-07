@@ -133,6 +133,7 @@ void actorDeform(ActorSet& set, Actor& a);
 u32 actorPoseEvery(float dist2);
 // The largest weight any of an actor's driven morphs (a bow's string) holds at its drive time: 0 at rest, 1 drawn
 float actorMorphWeight(const Actor& a);
+u32 actorSkinEvery(float dist2);
 // Group index by name, or -1
 int actorFindGroup(const Skeleton& sk, const char* name);
 // Starts a group; false when the skeleton doesn't have it

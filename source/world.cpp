@@ -2904,6 +2904,7 @@ bool actorAimable(const World& w, int ri)
 	}
 	return tmin <= tmax;
 }
+
 // The ray's entry distance into a reference's world bounds (slightly padded for thin items), or -1 for a miss
 static float rayBoxEntry(const Ref& r, const float eye[3], const float dir[3], float maxT)
 {
@@ -2941,7 +2942,6 @@ static bool boxInReach(const Ref& r, const float eye[3], float reach)
 	return d2 <= reach * reach && d2 != 0.0f;
 }
 
-
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach)
 {
 	int best = -1;
@@ -2969,6 +2969,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		{
 			const Ref& r = w.refs[i];
 			if (r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
+				continue;
 			bool inside = true;
 			for (int k = 0; k < 3 && inside; k++)
 				inside = r.boxMax[k] >= body.boxMin[k] && r.boxMin[k] <= body.boxMax[k];
@@ -2977,11 +2978,10 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 			{
 				itemT = t;
 				item = i;
-				continue;
 			}
+		}
 		if (item >= 0)
 			best = item;
-		}
 	}
 	return best;
 }
