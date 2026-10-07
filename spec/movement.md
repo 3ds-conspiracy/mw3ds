@@ -36,6 +36,13 @@ Per second: running `fFatigueRunBase + load x fFatigueRunMult`, swimming (runnin
 fFatigueSwimWalkBase + load x ...Mult`, sneaking `fFatigueSneakBase + load x fFatigueSneakMult`; each jump
 `fFatigueJumpBase + load x fFatigueJumpMult`. Athletics trains per second running (use 0) or swimming (use 1).
 
+## Footsteps
+
+Each step plays by where the walker is (`Npc::getSoundIdFromSndGen`): flying, none; swimming, `Swim Left` / `Swim Right`;
+feet under the water's surface, `FootWaterLeft` / `FootWaterRight`; else on the ground `FootBareLeft` / `FootBareRight`
+(OpenMW picks light, medium or heavy boots by the boots' armor skill; the 3DS always plays the bare ones). The player
+steps every 0.42 s walking and 0.65 s swimming (OpenMW takes them from the animation's sound keys). Test: `issue-27`.
+
 ## Findings (2026-09-29)
 
 1. **Levitation speed** was the run speed x `(0.3 + Levitate / 50)`, at most 2x; OpenMW: `fMinFlySpeed` to

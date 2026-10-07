@@ -1,0 +1,11 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:-12104:-77500:300:0
+3 0 0 0 0
+0.3 0 0 0 0 EXPECT:swimming:eq:1
+0.3 0 0 0 0 SNAP:soundstarted:Swim_Left
+0.3 0 0 0 0 SNAP:soundstarted:Swim_Right
+4 0 1 0 0
+0.3 0 0 0 0 EXPECT:swimming:eq:1
+0.3 0 0 0 0 EXPECT:soundstarted:Swim_Left:ge:@2
+0.3 0 0 0 0 EXPECT:soundstarted:Swim_Right:ge:@2

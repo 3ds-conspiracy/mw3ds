@@ -1051,16 +1051,24 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		a.talkLevel += (level - a.talkLevel) * fminf(1.0f, dt * 20.0f);
 	}
 
-	// Footsteps while walking
+	// Footsteps while walking; OpenMW's Npc::getSoundIdFromSndGen picks the sound: none flying, "Swim" while
+	// swimming, "FootWater" with the feet under the surface, else the ground's
 	float moving = fabsf(in.moveX) + fabsf(in.moveY);
-	if (!menu && !w.player.flying && !w.player.swimming && w.player.onGround && moving > 0.2f)
+	bool wading = false;
+	if (w.current >= 0)
+	{
+		Cell& stepCell = w.here();
+		wading = stepCell.hasWater() && w.player.feet[2] < stepCell.waterZ;
+	}
+	if (!menu && !w.player.flying && (w.player.swimming || w.player.onGround) && moving > 0.2f)
 	{
 		stepTimer -= dt;
 		if (stepTimer <= 0.0f)
 		{
-			playSound(-1, stepLeft ? "FootBareLeft" : "FootBareRight");
+			const char* side = stepLeft ? "Left" : "Right";
+			playSound(-1, std::string(w.player.swimming ? "Swim " : wading ? "FootWater" : "FootBare") + side);
 			stepLeft = !stepLeft;
-			stepTimer = 0.42f;
+			stepTimer = w.player.swimming ? 0.65f : 0.42f;
 		}
 	}
 	else

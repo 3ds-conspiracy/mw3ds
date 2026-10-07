@@ -626,6 +626,11 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	// sounddenied: sounds that found every channel busy; loopsounds / loopheld: loops going / holding a channel
 	if (what == "sounddenied")
+	if (what == "swimming")
+	{
+		v = s.w.player.swimming ? 1.0f : 0.0f;
+		return true;
+	}
 	{
 		v = audioDeniedCount();
 	if (what == "vmmeshes")           // meshes the first-person view model draws now (arms, then what they hold)
