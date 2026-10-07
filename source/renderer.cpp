@@ -14,6 +14,7 @@
 float g_profActorsMs = 0.0f;          // debug profile accumulators, reported by main once a second
 float g_profWorldMs = 0.0f;
 int g_drawnBatches = 0, g_culledBatches = 0;
+int g_farTerrainLayers = 0;           // terrain blend layers drawn past 4000 units (tests)
 int g_skippedDraws = 0;               // draws dropped because the GPU command buffer was nearly full
 
 static DVLB_s* s_dvlb;
@@ -576,8 +577,6 @@ static void drawSkyBodies(const C3D_Mtx& view, bool secondEye)
 static const float kStereoFocus = 120.0f;
 // ... and for the first-person arms and weapon, drawn with half the eye separation
 static const float kViewModelFocus = 30.0f;
-// Terrain texture blend layers (decal batches) are drawn within this distance
-static const float kTerrainLayerDistance = 4000.0f;
 // Actor meshes under kActorDetailTris triangles are skipped past this distance
 static const float kActorDetailDistance = 1800.0f;
 static const u32 kActorDetailTris = 60;
@@ -670,7 +669,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	// units to the side, inside the frustum's margin) reuses the first eye's lists.
 	Frustum fr = makeFrustum(cam, fog ? fogEnd : 0.0f);
 	static std::vector<std::vector<u8>> visible;
-	int shown = 0, total = 0;
+	int shown = 0, total = 0, farLayers = 0;
 	if (!secondEye)
 		visible.resize(w.loaded.size());
 	for (size_t k = 0; k < w.loaded.size() && !secondEye; k++)
@@ -680,13 +679,22 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		for (size_t i = 0; i < cell.batches.size(); i++)
 		{
 			const CellBatch& b = cell.batches[i];
-			// Clutter's own cutoff shrinks with the view; terrain blend layers only near the player
-			// (far chunks show their main texture, mostly under fog anyway)
+			// Clutter's own cutoff shrinks with the view. Terrain blend layers go as far as the land: drawn only
+			// within 4000 units, every chunk past that showed its main texture alone, and chunks met in hard
+			// edges (a grey dirt square on a green hill)
 			float maxDist = b.maxDist * fogScale;
-			if (b.flags & BATCH_DECAL)
-				maxDist = kTerrainLayerDistance * fogScale;
 			visible[k][i] = boxVisible(fr, b.bmin, b.bmax, maxDist);
 			shown += visible[k][i];
+			if (visible[k][i] && (b.flags & BATCH_DECAL))
+			{
+				float d2 = 0.0f;
+				for (int a = 0; a < 3; a++)
+				{
+					float c = fmaxf(b.bmin[a], fminf(cam.pos[a], b.bmax[a])) - cam.pos[a];
+					d2 += c * c;
+				}
+				farLayers += d2 > 4000.0f * 4000.0f;
+			}
 		}
 		total += cell.batches.size();
 	}
@@ -694,6 +702,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	{
 		g_drawnBatches = shown;
 		g_culledBatches = total - shown;
+		g_farTerrainLayers = farLayers;
 	}
 
 	// Opaque batches of all loaded cells sorted by texture and state, so the state cache above

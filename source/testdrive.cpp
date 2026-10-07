@@ -903,6 +903,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
 	else if (what == "waterscroll") v = rendererWaterScroll();       // water's slide, texture repeats a second
+	else if (what == "farlayers") { extern int g_farTerrainLayers; v = (float)g_farTerrainLayers; }   // blend layers past 4000
 	else if (what == "controls") v = w.controlsEnabled ? 1.0f : 0.0f;   // DisablePlayerControls / EnablePlayerControls
 	else if (what == "jumping") v = w.jumpingEnabled ? 1.0f : 0.0f;     // DisablePlayerJumping / EnablePlayerJumping
 	else if (what == "skillsum") { v = 0; for (int k = 0; k < 27; k++) v += st.skills[k]; }   // all 27 skills (jail time)
