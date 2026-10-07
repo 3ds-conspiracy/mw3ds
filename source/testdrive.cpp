@@ -904,6 +904,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
 	else if (what == "linearfree") v = (float)(linearSpaceFree() / 1024);   // KB of linear memory free
 	else if (what == "uiintact") v = uiThemeIntact() ? 1.0f : 0.0f;  // the UI's font and frames still as loaded
+	else if (what == "groundgaps") { extern int g_groundGaps; v = (float)g_groundGaps; }   // cracks in the last SHOT (native only, -1 on the 3DS)
 	else if (what == "missingtex")
 	{
 		// textures of the player's cell that aren't there (drawn plain, in their vertex colours)

@@ -1,0 +1,55 @@
+# Hairline cracks in the ground at cell borders: the GPU's 24-bit floats rounded world-sized vertex positions
+# differently on each side of a border (seen on hardware). The native build rounds like the GPU and counts
+# pixels the ground missed in each shot. Standing beside the cell borders at x 24576 and y -49152, looking down.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 SETWEATHER:0
+0.3 0 0 0 0 TP:24700:-50000:4000:0
+14 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0
+0.3 0 0 0 0 TP:24700:-50000:4000:90
+1 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0
+0.3 0 0 0 0 TP:24700:-50000:4000:180
+1 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0
+0.3 0 0 0 0 TP:24700:-50000:4000:270
+1 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0
+0.3 0 0 0 0 TP:24700:-49300:4000:0
+1 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0
+0.3 0 0 0 0 TP:24700:-49300:4000:90
+1 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0
+0.3 0 0 0 0 TP:24700:-49300:4000:180
+1 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0
+0.3 0 0 0 0 TP:24700:-49300:4000:270
+1 0 0 0
+0.3 0 0 0 0 DOWN
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:groundgaps:le:0

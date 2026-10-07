@@ -15,6 +15,7 @@ float g_profActorsMs = 0.0f;          // debug profile accumulators, reported by
 float g_profWorldMs = 0.0f;
 int g_drawnBatches = 0, g_culledBatches = 0;
 int g_skippedDraws = 0;               // draws dropped because the GPU command buffer was nearly full
+int g_groundGaps = -1;                // cracks in the last saved shot (counted by the native test build; -1 here)
 
 static DVLB_s* s_dvlb;
 static shaderProgram_s s_program;
@@ -28,6 +29,8 @@ static bool s_daylight = false;
 static bool s_formatValid = false;                // vertex format / quantization currently bound
 static bool s_packedBound = false;
 static float s_boundQuant[8];                     // pos offset, pos scale, uv scale
+static C3D_Mtx s_view;                            // of the last rendererDrawWorld, for the extra draws
+static float s_eyeSnap[3] = { 0.0f, 0.0f, 0.0f }; // its camera position on a 64-unit grid
 static float s_uvOffset[2];
 static C3D_Tex s_fogRamp;
 static void initFogRamp();
@@ -77,17 +80,46 @@ void rendererExit()
 
 static void invalidateState();
 
-// Model-view uniform, uploaded only when it changes (skinned parts of an actor share one)
+// Model-view and position offset uniforms, uploaded only when they change (skinned parts of an actor
+// share one).
+// The shader works in 24-bit floats (17 significant bits). Rebuilding world positions there
+// (posOffset + value * posScale, tens of thousands of units) rounded each cell's copy of a shared
+// terrain edge its own way: hairline cracks with the sky showing through on hardware (emulators
+// compute in 32-bit floats). Cell batches quantize on a power-of-two grid with their offset on it
+// (convert_cell.py write_batches), so for them the shader gets the offset less the camera snapped to
+// 64 units, and the snap goes into the matrix. posOffset + value * posScale is then a multiple of the
+// grid step within +-32768 units of the camera: exact in 24 bits, the same in every cell that shares
+// the vertex
+static C3D_Mtx s_mv;                              // as the caller set it
+static float s_batchOffset[3] = { 0.0f, 0.0f, 0.0f };
+static bool s_batchPacked = false;
 static C3D_Mtx s_boundMv;
+static float s_boundOffset[3];
 static bool s_mvValid = false;
+
+static void uploadTransform()
+{
+	bool snap = s_batchPacked && memcmp(&s_mv, &s_view, sizeof(s_mv)) == 0;
+	float shift[3] = { 0.0f, 0.0f, 0.0f };
+	if (snap)
+		memcpy(shift, s_eyeSnap, sizeof(shift));
+	C3D_Mtx m = s_mv;
+	for (int i = 0; i < 4; i++)
+		m.r[i].w = s_mv.r[i].x * shift[0] + s_mv.r[i].y * shift[1] + s_mv.r[i].z * shift[2] + s_mv.r[i].w;
+	float off[3] = { s_batchOffset[0] - shift[0], s_batchOffset[1] - shift[1], s_batchOffset[2] - shift[2] };
+	if (s_mvValid && memcmp(&m, &s_boundMv, sizeof(m)) == 0 && memcmp(off, s_boundOffset, sizeof(off)) == 0)
+		return;
+	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uModelView, &m);
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uPosOffset, off[0], off[1], off[2], 0.0f);
+	s_boundMv = m;
+	memcpy(s_boundOffset, off, sizeof(off));
+	s_mvValid = true;
+}
 
 static void setModelView(const C3D_Mtx& mv)
 {
-	if (s_mvValid && memcmp(&mv, &s_boundMv, sizeof(mv)) == 0)
-		return;
-	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uModelView, &mv);
-	s_boundMv = mv;
-	s_mvValid = true;
+	s_mv = mv;
+	uploadTransform();
 }
 
 static void bindPipeline()
@@ -282,7 +314,6 @@ static bool boxVisible(const Frustum& fr, const float* bmin, const float* bmax, 
 
 enum DrawMode { DRAW_WORLD, DRAW_SKY };
 
-static C3D_Mtx s_view;                            // of the last rendererDrawWorld, for the extra draws
 static C3D_Mtx s_projection;
 static float s_eyeShift = 0.0f, s_farPlane = 1000.0f;
 static float s_time;
@@ -397,10 +428,16 @@ static void bindVertexFormat(const CellBatch& b)
 		b.uvScale[0], b.uvScale[1] };
 	if (!s_formatValid || memcmp(q, s_boundQuant, sizeof(q)) != 0)
 	{
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uPosOffset, q[0], q[1], q[2], 0.0f);
+		// The offset goes up with the model-view (uploadTransform)
 		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uPosScale, q[3], q[4], q[5], 0.0f);
 		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uUvScale, q[6], q[7], 1.0f, 1.0f);
 		memcpy(s_boundQuant, q, sizeof(q));
+	}
+	if (memcmp(s_batchOffset, q, sizeof(s_batchOffset)) != 0 || s_batchPacked != packed)
+	{
+		memcpy(s_batchOffset, q, sizeof(s_batchOffset));
+		s_batchPacked = packed;
+		uploadTransform();
 	}
 	s_formatValid = true;
 }
@@ -636,6 +673,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	s_eyeShift = eyeShift;
 	s_farPlane = farPlane;
 	s_view = view;
+	for (int k = 0; k < 3; k++)
+		s_eyeSnap[k] = floorf(cam.pos[k] / 64.0f) * 64.0f;
+	s_mvValid = false;
 	s_time = time;
 	if (!secondEye)
 		s_glowCount = 0;              // the second eye's glows get their own vertices

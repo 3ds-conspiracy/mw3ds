@@ -161,14 +161,22 @@ def packed_ints(a, width):
 def write_batches(f, batches):
     """Batches of one group (a cell's static batches, one door, or the sky) share one position grid:
     s16 = (pos - offset) / scale, so coplanar terrain layers in different batches quantize identically.
+    The step is a power of two and the offset a multiple of it: terrain corners (multiples of 8) then sit
+    on every cell's grid, and the engine can rebuild positions near the camera exactly in the GPU's
+    24-bit floats (renderer.cpp uploadTransform), so neighbouring cells meet without cracks.
     UVs are s16 scaled per batch. 16 bytes per vertex instead of 24."""
     f.write(struct.pack("<I", len(batches)))
     if not batches:
         return
-    allpos = np.concatenate([b["verts"]["pos"] for b in batches])
+    allpos = np.concatenate([b["verts"]["pos"] for b in batches]).astype(np.float64)
     lo, hi = allpos.min(axis=0), allpos.max(axis=0)
-    scale = np.maximum(hi - lo, 1e-3) / 65534.0
-    offset = lo + 32767.0 * scale
+    scale = 2.0 ** np.ceil(np.log2(np.maximum(hi - lo, 1e-3) / 65534.0))
+    while True:
+        offset = np.round((lo + hi) / 2.0 / scale) * scale
+        over = np.maximum(hi - offset, offset - lo) / scale > 32767.0
+        if not over.any():
+            break
+        scale = np.where(over, scale * 2.0, scale)
     for b in batches:
         v = b["verts"]
         p = v["pos"]

@@ -49,6 +49,7 @@ struct C3D_RenderTarget
 	int w = 0, h = 0;
 	std::vector<u32> color;
 	std::vector<float> depth;
+	std::vector<u8> solid;          // covered by an opaque, depth-writing, not alpha-tested triangle since the last clear
 	int screen = -1, side = -1;
 	C3D_Tex* tex = nullptr;
 };
@@ -63,6 +64,7 @@ static C3D_RenderTarget* newTarget(int w, int h)
 	t->h = h;
 	t->color.assign(w * h, 0xFF000000);
 	t->depth.assign(w * h, 0.0f);
+	t->solid.assign(w * h, 0);
 	s_targets.push_back(t);
 	return t;
 }
@@ -564,7 +566,10 @@ static void clearTarget(C3D_RenderTarget* t, bool color, bool depth, u32 c, floa
 	if (color)
 		std::fill(t->color.begin(), t->color.end(), c);
 	if (depth)
+	{
 		std::fill(t->depth.begin(), t->depth.end(), z);
+		std::fill(t->solid.begin(), t->solid.end(), 0);
+	}
 }
 
 void C3D_RenderTargetClear(C3D_RenderTarget* t, int bits, u32 c, u32 depth)
@@ -670,14 +675,26 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 }
 void C3D_BindProgram(shaderProgram_s*) {}
 
+// The PICA's shader units work in 24-bit floats (16-bit mantissa): uniforms lose their low bits on
+// upload and every multiply and add rounds. Truncated here, which is what showed the cell-border cracks
+// seen on hardware (rounding to nearest hides them)
+static float f24(float v)
+{
+	u32 b;
+	memcpy(&b, &v, 4);
+	b &= ~0x7Fu;
+	memcpy(&v, &b, 4);
+	return v;
+}
+
 void C3D_FVUnifSet(int, int id, float x, float y, float z, float w)
 {
 	if (id < 0 || id >= 96)
 		return;
-	s_unif[id][0] = x;
-	s_unif[id][1] = y;
-	s_unif[id][2] = z;
-	s_unif[id][3] = w;
+	s_unif[id][0] = f24(x);
+	s_unif[id][1] = f24(y);
+	s_unif[id][2] = f24(z);
+	s_unif[id][3] = f24(w);
 }
 void C3D_FVUnifMtx4x4(int, int id, const C3D_Mtx* m)
 {
@@ -856,16 +873,23 @@ static ClipV vertexShader(const u8* v)
 		off += attrSize(s_attr.format[i]) * s_attr.elements[i];
 	}
 	const float (*u)[4] = s_unif;
-	float r0[4] = { u[U_POSOFFSET][0] + in[0][0] * u[U_POSSCALE][0], u[U_POSOFFSET][1] + in[0][1] * u[U_POSSCALE][1],
-		u[U_POSOFFSET][2] + in[0][2] * u[U_POSSCALE][2], 1.0f };
+	// Position and transforms in the PICA's 24-bit floats (f24 above)
+	float r0[4] = { f24(u[U_POSOFFSET][0] + f24(in[0][0] * u[U_POSSCALE][0])),
+		f24(u[U_POSOFFSET][1] + f24(in[0][1] * u[U_POSSCALE][1])), f24(u[U_POSOFFSET][2] + f24(in[0][2] * u[U_POSSCALE][2])),
+		1.0f };
+	auto dp4 = [](const float* m, const float* v)
+	{
+		float s = f24(m[0] * v[0]);
+		s = f24(s + f24(m[1] * v[1]));
+		s = f24(s + f24(m[2] * v[2]));
+		return f24(s + f24(m[3] * v[3]));
+	};
 	float r1[4];
 	for (int i = 0; i < 4; i++)
-		r1[i] = u[U_MODELVIEW + i][0] * r0[0] + u[U_MODELVIEW + i][1] * r0[1] + u[U_MODELVIEW + i][2] * r0[2]
-			+ u[U_MODELVIEW + i][3] * r0[3];
+		r1[i] = dp4(u[U_MODELVIEW + i], r0);
 	ClipV o;
 	for (int i = 0; i < 4; i++)
-		o.p[i] = u[U_PROJECTION + i][0] * r1[0] + u[U_PROJECTION + i][1] * r1[1] + u[U_PROJECTION + i][2] * r1[2]
-			+ u[U_PROJECTION + i][3] * r1[3];
+		o.p[i] = dp4(u[U_PROJECTION + i], r1);
 	o.a[4] = u[U_UVOFFSET][0] + in[1][0] * u[U_UVSCALE][0];
 	o.a[5] = u[U_UVOFFSET][1] + in[1][1] * u[U_UVSCALE][1];
 	o.a[6] = u[U_FOGVEC][0] * r1[0] + u[U_FOGVEC][1] * r1[1] + u[U_FOGVEC][2] * r1[2] + u[U_FOGVEC][3] * r1[3];
@@ -970,8 +994,11 @@ void C3D_DrawElements(int, int count, int type, const void* indices)
 	V4 consts[6];
 	for (int i = 0; i < 6; i++)
 		consts[i] = unpack(s_env[i].color);
+	bool solidDraw = s_depthOn && s_depthWrite && !s_alphaTestOn;
 	auto frag = [&](int x, int y, float z, const float* a) {
 		size_t at = (size_t)y * t->w + x;
+		if (solidDraw)
+			t->solid[at] = 1;
 		if (s_depthOn && !compare(s_depthFunc, z, t->depth[at]))
 			return;
 		V4 prim = { a[0], a[1], a[2], a[3] };
@@ -1199,6 +1226,19 @@ static bool writeShot(const char* path)
 	};
 	blit(top, 0, 0);
 	blit(bottom, 40, 240);
+	// Cracks in the ground: in the lower half of the top screen, pixels no opaque triangle covered (the sky
+	// shows) between two that one did, across or up and down (EXPECT:groundgaps). Leaves and water are
+	// alpha-tested or blended, so their holes don't count
+	extern int g_groundGaps;
+	g_groundGaps = 0;
+	if (top)
+	{
+		auto drawn = [&](int x, int y) { return top->solid[y * top->w + x] != 0; };
+		for (int y = top->h / 2; y < top->h - 1; y++)
+			for (int x = 1; x < top->w - 1; x++)
+				if (!drawn(x, y) && ((drawn(x - 1, y) && drawn(x + 1, y)) || (drawn(x, y - 1) && drawn(x, y + 1))))
+					g_groundGaps++;
+	}
 	u8 header[54] = {};
 	auto put32 = [&](int at, u32 v) { for (int i = 0; i < 4; i++) header[at + i] = (v >> (i * 8)) & 255; };
 	header[0] = 'B';
