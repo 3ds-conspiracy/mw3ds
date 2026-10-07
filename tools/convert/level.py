@@ -20,6 +20,7 @@ Writes into out/data/:
 """
 import argparse
 import audioop
+import faulthandler
 import zlib
 import json
 import math
@@ -109,8 +110,13 @@ def convert_sound(arch, path, out_dir, rate=RATE, shard=False):
     out.parent.mkdir(parents=True, exist_ok=True)
     head = out.open("rb").read(12) if out.exists() else b""
     if head[:4] != b"SND2" or struct.unpack_from("<I", head, 4)[0] != rate:
-        dec = miniaudio.decode(arch.read(src), output_format=miniaudio.SampleFormat.SIGNED16,
-                               nchannels=1, sample_rate=rate)
+        print(f"  decoding {src}", flush=True)       # the last one printed names the file a hard crash died on
+        try:
+            dec = miniaudio.decode(arch.read(src), output_format=miniaudio.SampleFormat.SIGNED16,
+                                   nchannels=1, sample_rate=rate)
+        except Exception as e:       # a damaged file plays silent, like a missing one
+            print(f"  could not decode {src}: {e}", flush=True)
+            return None
         samples = np.frombuffer(dec.samples, dtype="<i2")
         # 'SND2': IMA ADPCM, 4 bits per sample (first sample in the high nibble), a quarter of PCM16
         adpcm, _ = audioop.lin2adpcm(samples.tobytes(), 2, None)
@@ -295,6 +301,7 @@ def door_dest(db, cell_xy, door_id, into_cell):
 
 
 def main():
+    faulthandler.enable()        # a native crash prints where it happened
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-tex", type=int, default=256, help="largest texture edge (texels)")
     ap.add_argument("--towns", default=",".join(TOWNS),
