@@ -265,6 +265,7 @@ void Session::drawClassMethod()
 	{
 		openScreen(SCR_CLASS_QUIZ);
 		quizIndex = 0;
+		quizScroll = UiScroll();
 		quizCounts[0] = quizCounts[1] = quizCounts[2] = 0;
 		if (!w.game.quiz.empty())
 			say(-1, w.game.quiz[0].sound, "");
@@ -349,27 +350,52 @@ void Session::drawClassQuiz()
 	}
 	const QuizQuestion& q = w.game.quiz[quizIndex];
 	header("Question " + std::to_string(quizIndex + 1) + " of " + std::to_string(w.game.quiz.size()));
+	// The question and its three answers; most are taller than the screen, so the page scrolls (drag it, or the
+	// circle pad), and the D-pad's choice is scrolled into view
+	const float top = 22.0f, bottom = 240.0f;
 	std::vector<std::string> ql = uiWrap(q.question, 300, 0.45f);
-	float lh = uiLineHeight(0.45f);
-	for (size_t i = 0; i < ql.size(); i++)
-		uiText(10, 26 + i * lh, 0.45f, col::header, ql[i]);
-	float y = 30 + ql.size() * lh;
+	float lh = uiLineHeight(0.45f), lha = uiLineHeight(0.42f);
+	std::vector<std::string> al[3];
+	float ay[3], ah[3];
+	float content = 4 + ql.size() * lh + 4;
+	for (int a = 0; a < 3; a++)
+	{
+		al[a] = uiWrap(q.answers[a], 288, 0.42f);
+		ay[a] = content;
+		ah[a] = al[a].size() * lha + 6;
+		content += ah[a] + 4;
+	}
 	const UiInput& in = uiIn();
+	bool moved = in.down & (KEY_DOWN | KEY_UP);
 	if (in.down & KEY_DOWN) focus = (focus + 1) % 3;
 	if (in.down & KEY_UP) focus = (focus + 2) % 3;
+	float& sc = quizScroll.scroll;
+	if (in.touching && in.touchY >= top)
+		sc -= in.dragDY;
+	sc += uiStickScroll();
+	if (moved)
+		sc = fminf(fmaxf(sc, ay[focus] + ah[focus] - (bottom - top) + 2), ay[focus] - 2);
+	sc = fmaxf(0.0f, fminf(sc, fmaxf(0.0f, content - (bottom - top))));
+	C2D_Flush();
+	C3D_SetScissor(GPU_SCISSOR_NORMAL, (u32)(240 - bottom), 0, (u32)(240 - top), 320);
+	float y0 = top - sc;
+	for (size_t i = 0; i < ql.size(); i++)
+		uiText(10, y0 + 4 + i * lh, 0.45f, col::header, ql[i]);
 	int answer = -1;
 	for (int a = 0; a < 3; a++)
 	{
-		std::vector<std::string> al = uiWrap(q.answers[a], 288, 0.42f);
-		float h = al.size() * uiLineHeight(0.42f) + 6;
+		float y = y0 + ay[a], h = ah[a];
 		uiRect(4, y, 312, h, a == focus ? col::border : col::textDim);
 		uiRect(5, y + 1, 310, h - 2, a == focus ? col::select : col::panelLight);
-		for (size_t i = 0; i < al.size(); i++)
-			uiText(12, y + 3 + i * uiLineHeight(0.42f), 0.42f, col::text, al[i]);
-		if (uiHit(4, y, 312, h))
+		for (size_t i = 0; i < al[a].size(); i++)
+			uiText(12, y + 3 + i * lha, 0.42f, col::text, al[a][i]);
+		if (uiHit(4, fmaxf(y, top), 312, fminf(y + h, bottom) - fmaxf(y, top)))
 			answer = a;
-		y += h + 4;
+		if (a == focus)
+			quizBottom = y + h;
 	}
+	C2D_Flush();
+	C3D_SetScissor(GPU_SCISSOR_DISABLE, 0, 0, 0, 0);
 	if (in.down & KEY_A)
 		answer = focus;
 	if (answer >= 0)
@@ -377,6 +403,7 @@ void Session::drawClassQuiz()
 		quizCounts[answer]++;
 		quizIndex++;
 		focus = 0;
+		quizScroll = UiScroll();
 		playSound(-1, "Menu Click");
 		if (quizIndex < (int)w.game.quiz.size())
 			say(-1, w.game.quiz[quizIndex].sound, "");
