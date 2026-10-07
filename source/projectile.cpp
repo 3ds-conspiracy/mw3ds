@@ -353,8 +353,9 @@ void Session::drawExtras(const float eye[3], bool secondEye)
 		Mtx_Translate(&model, p.pos[0], p.pos[1], p.pos[2], true);
 		Mtx_RotateZ(&model, -atan2f(p.vel[0], p.vel[1]), true);
 		Mtx_RotateX(&model, atan2f(p.vel[2], h), true);
+		u32 glow = w.game.enchantGlow(p.item);      // an enchanted arrow or dart shimmers in flight
 		for (auto& m : piece->meshes)
-			rendererDrawMesh(m, &model, piece->textures[m.tex]);
+			rendererDrawMeshGlow(m, &model, piece->textures[m.tex], glow);
 	}
 	// Spell visuals of the moment, turning where they were cast / hit
 	for (auto& v : vfx)
@@ -388,8 +389,9 @@ void Session::drawExtras(const float eye[3], bool secondEye)
 		Mtx_Identity(&model);
 		Mtx_Translate(&model, r.pos[0], r.pos[1], r.pos[2], true);
 		Mtx_RotateZ(&model, -r.rot[2], true);
+		u32 glow = w.game.enchantGlow(r.idLower);   // an enchanted one shimmers where it lies
 		for (auto& m : piece->meshes)
-			rendererDrawMesh(m, &model, piece->textures[m.tex]);
+			rendererDrawMeshGlow(m, &model, piece->textures[m.tex], glow);
 	}
 	if (thirdPerson || previewFace)
 		body.draw(w, !secondEye);

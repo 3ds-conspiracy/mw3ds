@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <citro3d.h>
 #include <cmath>
+#include <tex3ds.h>
 #include <cstring>
 
 #include "cell_shbin.h"
@@ -32,6 +33,9 @@ static C3D_Tex s_fogRamp;
 static void initFogRamp();
 static C3D_Tex s_localTex;                        // local map (rendererDrawLocalMap)
 static C3D_RenderTarget* s_localTarget = nullptr;
+static C3D_Tex s_caust[32];                       // enchanted items' shimmer frames (rendererLoadCaustics)
+static int s_caustCount = 0;
+static void drawShimmer(CellBatch b, u32 rgb);
 
 static const float kFovY = 60.0f;
 static const float kNear = 5.0f;
@@ -64,6 +68,9 @@ void rendererExit()
 		s_localTarget = nullptr;
 	}
 	C3D_TexDelete(&s_fogRamp);
+	for (int i = 0; i < s_caustCount; i++)
+		C3D_TexDelete(&s_caust[i]);
+	s_caustCount = 0;
 	shaderProgramFree(&s_program);
 	DVLB_Free(s_dvlb);
 }
@@ -730,6 +737,29 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_LAYERS); k++)
 		draws += drawBatches(w.loaded[k]->cell, w.loaded[k]->cell.batches, 1, &visible[k], time);
 
+	// Enchanted things lying about shimmer: their own triangles in the cell's batches (Ref::ranges)
+	for (size_t k = 0; k < w.loaded.size() && s_caustCount && (g_renderParts & RENDER_OPAQUE); k++)
+	{
+		Cell& cell = w.loaded[k]->cell;
+		const LevelCell& lc = w.cells[w.loaded[k]->index];
+		for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
+		{
+			const Ref& r = w.refs[i];
+			if (!r.obj || r.obj->ench.empty() || r.ranges.empty() || !r.visible())
+				continue;
+			u32 glow = w.game.enchantGlow(r.id);
+			for (auto& rg : r.ranges)
+				if (glow && rg.batch >= 0 && rg.batch < (int)cell.batches.size() && visible[k][rg.batch] && rg.count >= 3)
+				{
+					CellBatch b = cell.batches[rg.batch];
+					b.indices += rg.first;
+					b.numIndices = rg.count;
+					drawShimmer(b, glow);
+					draws++;
+				}
+		}
+	}
+
 	// Swinging doors: object-space meshes with the door's placement and swing angle
 	for (LoadedCell* l : w.loaded)
 		for (auto& d : l->cell.doors)
@@ -809,6 +839,14 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
 					drawBatch(l->cell, b, DRAW_WORLD, time);
 					draws++;
+					// their weapon, enchanted, shimmers
+					const Ref& ar = w.refs[a.ref];
+					if ((m.flags & ACTOR_MESH_WEAPON) && s_caustCount && ar.actor >= 0)
+						if (u32 glow = w.game.enchantGlow(w.game.actors[ar.actor].weapon))
+						{
+							drawShimmer(b, glow);
+							draws++;
+						}
 				}
 			}
 
@@ -883,6 +921,88 @@ void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 	drawBatchTex(tex, b, DRAW_WORLD, s_time);
 }
 
+// ---- Enchanted items: Morrowind's shimmer, the 32 frames of textures\magicitem\caust played over the item and
+// added in the colour of its enchantment's first effect (OpenMW's addEnchantedGlow; it maps them by the view,
+// here by the item's own texture coordinates)
+
+static const float kCaustFps = 20.0f;
+static const float kCaustTiles = 2.0f;           // the 32 x 32 frame repeated twice across the item's texture
+
+void rendererLoadCaustics(const char* dataDir)
+{
+	if (s_caustCount)
+		return;
+	LinearGuard guard;
+	for (int i = 0; i < 32; i++)
+	{
+		char path[256];
+		snprintf(path, sizeof(path), "%s/art/magicitem/caust%02d.t3x", dataDir, i);
+		FILE* f = fopen(path, "rb");
+		if (!f)
+			break;
+		Tex3DS_Texture t = Tex3DS_TextureImportStdio(f, &s_caust[i], nullptr, false);
+		fclose(f);
+		if (!t)
+			break;
+		Tex3DS_TextureFree(t);
+		C3D_TexSetFilter(&s_caust[i], GPU_LINEAR, GPU_LINEAR);
+		s_caustCount = i + 1;
+	}
+	logf("renderer: %d enchantment shimmer frames", s_caustCount);
+}
+
+int rendererCausticFrames()
+{
+	return s_caustCount;
+}
+
+// The second pass over an enchanted batch, under the model view already set: the current frame x the colour
+// (0xRRGGBB), added on the same surface
+static void drawShimmer(CellBatch b, u32 rgb)
+{
+	b.flags = (b.flags & BATCH_TWO_SIDED) | BATCH_BLEND | BATCH_ADDITIVE | BATCH_DECAL;
+	b.alphaRef = 0;
+	b.uvScale[0] *= kCaustTiles;
+	b.uvScale[1] *= kCaustTiles;
+	// stage 2: texture x colour, replacing the lit texture and the fog of stages 0 and 1 (alpha 1: added whole)
+	C3D_TexEnv* env = C3D_GetTexEnv(2);
+	C3D_TexEnvInit(env);
+	C3D_TexEnvSrc(env, C3D_RGB, GPU_TEXTURE0, GPU_CONSTANT);
+	C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);
+	C3D_TexEnvSrc(env, C3D_Alpha, GPU_CONSTANT);
+	C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+	C3D_TexEnvColor(env, 0xFF000000 | ((rgb & 255) << 16) | (rgb & 0xFF00) | ((rgb >> 16) & 255));
+	drawBatchTex(&s_caust[(int)(s_time * kCaustFps) % s_caustCount], b, DRAW_WORLD, s_time);
+	C3D_TexEnvInit(C3D_GetTexEnv(2));
+}
+
+void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow)
+{
+	if (!glow)
+		rendererDrawMesh(m, model, tex);
+	else if (s_caustCount)
+	{
+		rendererDrawMesh(m, model, tex);
+		drawShimmer({ -1, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f }, glow);
+	}
+	else
+	{
+		// without the shimmer's frames in the data: the colour added over the lit texture (a free combiner
+		// stage), pulsing
+		float k = 0.30f + 0.12f * sinf(osGetTime() * 0.004f);
+		u32 r = (u32)(((glow >> 16) & 255) * k), g = (u32)(((glow >> 8) & 255) * k), b = (u32)((glow & 255) * k);
+		C3D_TexEnv* env = C3D_GetTexEnv(2);
+		C3D_TexEnvInit(env);
+		C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS, GPU_CONSTANT);
+		C3D_TexEnvFunc(env, C3D_RGB, GPU_ADD);
+		C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS);
+		C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+		C3D_TexEnvColor(env, 0xFF000000 | (b << 16) | (g << 8) | r);
+		rendererDrawMesh(m, model, tex);
+		C3D_TexEnvInit(C3D_GetTexEnv(2));
+	}
+}
+
 void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel)
 {
 	// The view model's depth is squeezed in front of the world, so arms never sink into walls
@@ -905,23 +1025,7 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 			C3D_Tex* tex = m.tex >= 0 && m.tex < (int)textures.size() ? textures[m.tex] : nullptr;
 			C3D_Mtx model;
 			actorMeshMatrix(a, m, &model);
-			if (m.glow)
-			{
-				// an enchanted item: its colour added over the lit texture (a free combiner stage), pulsing
-				float k = 0.30f + 0.12f * sinf(osGetTime() * 0.004f);
-				u32 r = (u32)(((m.glow >> 16) & 255) * k), g = (u32)(((m.glow >> 8) & 255) * k), b = (u32)((m.glow & 255) * k);
-				C3D_TexEnv* env = C3D_GetTexEnv(2);
-				C3D_TexEnvInit(env);
-				C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS, GPU_CONSTANT);
-				C3D_TexEnvFunc(env, C3D_RGB, GPU_ADD);
-				C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS);
-				C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
-				C3D_TexEnvColor(env, 0xFF000000 | (b << 16) | (g << 8) | r);
-				rendererDrawMesh(m, &model, tex);
-				C3D_TexEnvInit(C3D_GetTexEnv(2));
-			}
-			else
-				rendererDrawMesh(m, &model, tex);
+			rendererDrawMeshGlow(m, &model, tex, m.glow);     // (an enchanted item shimmers)
 		}
 	if (viewModel)
 	{

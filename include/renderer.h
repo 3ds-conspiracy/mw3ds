@@ -36,6 +36,11 @@ extern float g_starAlpha;                         // the star dome: 0 by day
 // The light the player carries (a torch): world position, radius (0: none), colour 0..1
 void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3]);
 extern C3D_Tex* g_starTexture;
+// Enchanted items' shimmer: dataDir/art/magicitem/caust00..31.t3x, read once (without them a plain tint)
+void rendererLoadCaustics(const char* dataDir);
+int rendererCausticFrames();                    // how many of them were read
+// rendererDrawMesh, with the shimmer of an enchantment in that colour (0xRRGGBB) over it; 0: none
+void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow);
 // A posed actor whose mesh textures are `textures`; viewModel draws it in front of the world
 void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel);
 // Additive camera-facing quad (spell bolts); rgba as 0xAABBGGRR

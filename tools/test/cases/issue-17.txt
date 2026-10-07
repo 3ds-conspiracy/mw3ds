@@ -1,0 +1,23 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 EXPECT:shimmerframes:eq:32
+0.3 0 0 0 0 GIVE:fireblade
+0.3 0 0 0 0 EQUIP:fireblade
+0.3 0 0 0 0 EXPECT:equipped:fireblade:eq:1
+0.5 0 0 0 0 X
+2 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 PLACEPC:icebreaker
+1 0 0 0
+40 0 0 0 0 WALKTO:icebreaker
+0.3 0 0 0 0 FACE:icebreaker:mid
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 ALARM:galbedir
+3 0 0 0
+0.3 0 0 0 0 FACE:galbedir
+0.5 0 0 0
+0.3 0 0 0 0 SHOT

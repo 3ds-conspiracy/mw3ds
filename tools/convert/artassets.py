@@ -41,6 +41,13 @@ def build_art(arch, data_files):
             img = Image.open(io.BytesIO(arch.read(path))).convert("RGBA")
             w, h = encode(img, OUT / "art" / "hud" / f"{key}.t3x", True)
             art["hud"][key] = {"file": f"art/hud/{key}.t3x", "w": w, "h": h}
+    # Enchanted items' shimmer: the 32 frames of textures\magicitem\caust (32 x 32), drawn over the item in the
+    # colour of its enchantment's first effect; the engine finds them at art/magicitem/caustNN.t3x
+    for i in range(32):
+        path = rf"textures\magicitem\caust{i:02d}.dds"
+        if arch.exists(path):
+            img = Image.open(io.BytesIO(arch.read(path))).convert("RGB")
+            encode(img, OUT / "art" / "magicitem" / f"caust{i:02d}.t3x", False)
     # Loading screens
     splash_dir = Path(data_files) / "Splash"
     for p in sorted(splash_dir.glob("*.tga")) if splash_dir.exists() else []:

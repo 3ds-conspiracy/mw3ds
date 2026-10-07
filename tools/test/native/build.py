@@ -21,8 +21,8 @@ ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "in
 # replaced by native_stubs.cpp (log, linear heap, the dev updater), native_gpu.cpp (screenshots) or main_native.cpp
 SKIP = {"main", "log", "devupdate", "screenshot", "linear"}
 # renderer.cpp's drawing entry points get a suffix: native_gpu.cpp wraps them so they draw only with NATIVE_DRAW=1
-RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawActor", "rendererDrawGlow", "rendererDrawLocalMap",
-                    "rendererLocalMap"]
+RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGlow", "rendererDrawActor", "rendererDrawGlow",
+                    "rendererDrawLocalMap", "rendererLocalMap"]
 # no fused multiply-add: the 3DS's VFP rounds every operation, and a host-CPU build would round some differently
 CXXFLAGS = ["-O1", "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
             "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h")]

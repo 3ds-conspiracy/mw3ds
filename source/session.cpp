@@ -23,6 +23,7 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 	savePath = savePathIn;
 	loadSettings();
 	audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
+	rendererLoadCaustics(dataDir);
 	std::string savedCell = savePath && startCell.empty() ? World::savedCell(savePath) : "";
 	if (!savedCell.empty())
 	{

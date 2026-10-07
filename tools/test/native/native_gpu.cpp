@@ -1223,6 +1223,7 @@ static bool writeShot(const char* path)
 
 int rendererDrawWorld_sw(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale);
 void rendererDrawMesh_sw(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex);
+void rendererDrawMeshGlow_sw(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow);
 void rendererDrawActor_sw(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel);
 void rendererDrawGlow_sw(const float pos[3], float size, u32 rgba);
 bool rendererDrawLocalMap_sw(World& w, float minX, float minY, float size, float topZ, float depth);
@@ -1236,6 +1237,11 @@ void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 {
 	if (drawFrame())
 		rendererDrawMesh_sw(m, model, tex);
+}
+void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow)
+{
+	if (drawFrame())
+		rendererDrawMeshGlow_sw(m, model, tex, glow);
 }
 void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel)
 {
