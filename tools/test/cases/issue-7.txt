@@ -1,0 +1,68 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SCREEN:classmethod
+0.5 0 0 0
+0.3 0 0 0 0 TAP:160:124
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:classquiz
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:quizbottom:le:240
+0.3 0 0 0 0 A
+0.5 0 0 0
+1 0 0 0

@@ -871,6 +871,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "brewedvalue") { const Object* o = w.game.object(s.lastBrewed); if (!o) return false; v = (float)o->value; }
 	else if (what == "made") { v = 0; for (auto& id : w.madeItems) v += carried(w, id) >= 0; }
+	else if (what == "quizbottom") v = s.quizBottom;      // the class quiz: the bottom of its focused answer
 	else if (what == "maplocal") v = s.mapLocal;          // the map screen shows the local map
 	else if (what == "mapzoom") v = s.mapZoomIdx;         // its zoom step
 	else if (what == "madespells") { v = 0; for (auto& id : w.madeSpells) for (auto& sp : st.spells) v += lower(sp) == lower(id); }
@@ -912,6 +913,7 @@ static int screenByName(const std::string& n)
 		{ "alchemy", SCR_ALCHEMY }, { "recharge", SCR_RECHARGE }, { "persuade", SCR_PERSUADE }, { "spells", SCR_SPELLS },
 		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES },
 		{ "journal", SCR_JOURNAL }, { "gamemenu", SCR_GAMEMENU }, { "map", SCR_MAP },
+		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ },
 	};
 	for (auto& e : names)
 		if (n == e.name)

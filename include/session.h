@@ -182,6 +182,8 @@ struct Session : ScriptHost
 	int target = -1;
 	struct Note { std::string text; float until; };
 	std::vector<Note> notes;
+	UiScroll quizScroll;              // the class quiz's page, when a question and its answers are taller than the screen
+	float quizBottom = 0.0f;          // tests: the bottom of the class quiz's focused answer (the screen is 240 high)
 	float aimShift = 0.0f;
 	int hudEye = 0;                   // the HUD pass drawing now (0 left / mono, 1 right)
 	int hudEyes = 1;                  // passes this frame (2 in 3D)           // this eye's offset of the crosshair / target label (main.cpp, 3D)
