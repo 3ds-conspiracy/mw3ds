@@ -629,6 +629,16 @@ void Session::setName(const std::string& name)
 	logf("chargen: name %s", w.stats.name.c_str());
 }
 
+// The name typed for the spell / enchanted item being made (empty: the keyboard was cancelled, the name stays)
+void Session::setMakeName(const std::string& name)
+{
+	wantMakeName = false;
+	if (name.find_first_not_of(' ') == std::string::npos)
+		return;
+	makeName = name;
+	logf("making: name %s", makeName.c_str());
+}
+
 void Session::openScreen(Screen s)
 {
 	screen = s;

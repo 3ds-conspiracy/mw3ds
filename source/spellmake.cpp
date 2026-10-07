@@ -56,6 +56,10 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 {
 	float cy = y0 + maxRows * 13 + 4;          // the selected one's controls below the rows
 	bool changed = false;
+	// The rows are drawn as list rows in a frame, as the effect list beside them: a framed button 12 high has no
+	// room left for its text
+	if (!fx.empty())
+		uiFrame(136, y0 - 1, 182, std::min((int)fx.size(), maxRows) * 13 + 2);
 	for (size_t k = 0; k < (size_t)maxRows; k++)
 	{
 		if (k >= fx.size())
@@ -68,7 +72,14 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 		if (!(flags & MEF_NO_DURATION))
 			row += " " + std::to_string(e.duration) + "s";
 		row += std::string(" ") + kRangeNames[e.range];
-		if (uiButton(138, y0 + k * 13, 178, 12, row, (int)k == sel))
+		float ry = y0 + k * 13;
+		if ((int)k == sel)
+			uiRect(138, ry, 178, 13, col::select);
+		float scale = 0.4f;
+		while (scale > 0.33f && uiTextWidth(row, scale) > 172)
+			scale -= 0.02f;
+		uiText(141, ry + (13 - uiLineHeight(scale)) / 2, scale, (int)k == sel ? col::textOver : col::text, row);
+		if (uiHit(138, ry, 178, 13))
 			sel = k;
 	}
 	if (sel < 0 || sel >= (int)fx.size())
@@ -97,15 +108,23 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 		sel = fx.empty() ? -1 : 0;
 		return true;
 	}
+	// The - and + are drawn as bars: the font's glyphs sit off centre in a 16 pixel box
+	auto stepButton = [&](float bx, float by, bool plus) {
+		bool hit = uiButton(bx, by, 16, 16, "");
+		uiRect(bx + 5, by + 7, 6, 2, col::text);
+		if (plus)
+			uiRect(bx + 7, by + 5, 2, 6, col::text);
+		return hit;
+	};
 	auto spin = [&](float x, float y, const char* label, int& v, int lo, int hi) {
 		uiText(x, y + 2, 0.38f, col::textDim, label);
-		if (uiButton(x + 22, y, 16, 16, "-") && v > lo)
+		if (stepButton(x + 26, y, false) && v > lo)
 		{
 			v = std::max(lo, v - step);
 			changed = true;
 		}
-		uiTextCentered(x + 49, y + 2, 0.4f, col::text, std::to_string(v));
-		if (uiButton(x + 60, y, 16, 16, "+") && v < hi)
+		uiTextCentered(x + 52, y + 2, 0.4f, col::text, std::to_string(v));
+		if (stepButton(x + 62, y, true) && v < hi)
 		{
 			v = std::min(hi, v + step);
 			changed = true;
@@ -153,6 +172,15 @@ SpellEffect Session::newEffect(const SpellEffect& from, int ranges)
 	return e;
 }
 
+// The bottom row of spellmaking and enchanting: the name (tap: the system keyboard), Buy / Enchant and Close.
+// Returns the button tapped (-1: none)
+int Session::makeButtons(const std::string& buy)
+{
+	int noFocus = -1;
+	return buttonRow({ makeName.empty() ? w.game.gmst("sname", "Name") : makeName, buy, w.game.gmst("sclose", "Close") },
+		noFocus);
+}
+
 void Session::drawSpellmaking()
 {
 	int gold = w.itemCount("gold_001");
@@ -172,15 +200,20 @@ void Session::drawSpellmaking()
 	float cost = 0.0f;
 	int price = spellmakePrice(&cost);
 	uiText(232, 176, 0.38f, col::textDim, "Cost " + std::to_string((int)roundf(cost)));
-	int noFocus = -1;
-	int b = buttonRow({ "Buy (" + std::to_string(price) + ")", w.game.gmst("sclose", "Close") }, noFocus);
+	int b = makeButtons("Buy (" + std::to_string(price) + ")");
 	if (b == 0)
+	{
+		playSound(-1, "Menu Click");
+		wantMakeName = true;
+	}
+	else if (b == 1)
 		spellmakeConfirm();
-	else if (b == 1 || (uiIn().down & KEY_B))
+	else if (b == 2 || (uiIn().down & KEY_B))
 	{
 		playSound(-1, "Menu Click");
 		makeEffects.clear();
 		makeSel = -1;
+		makeName.clear();
 		screen = SCR_DIALOGUE;
 	}
 }
@@ -196,50 +229,51 @@ int Session::spellmakePrice(float* costOut)
 	return barterRef >= 0 && w.refs[barterRef].actor >= 0 ? barterPrice(barterRef, price, true) : price;
 }
 
-// The Buy button: the spell is the player's for the price (false: no effects / not enough gold)
+// The Buy button: the spell is the player's for the price. OpenMW's refusals, in its order (SpellCreationDialog::
+// onBuyButtonClicked): no effects, no name, not enough gold (false: refused)
 bool Session::spellmakeConfirm()
 {
 	float cost = 0.0f;
 	int price = spellmakePrice(&cost);
+	std::string refused;
 	if (makeEffects.empty())
-		return false;
+		refused = w.game.gmst("snotifymessage30", "You have to add at least one effect to a spell.");
+	else if (makeName.empty())
+		refused = w.game.gmst("snotifymessage10", "You have to name the spell before buying it.");
+	else if (price > w.itemCount("gold_001"))
+		refused = w.game.gmst("snotifymessage18", "You don't have enough gold.");
+	if (!refused.empty())
 	{
-		if (price > w.itemCount("gold_001"))
-		{
-			notify(w.game.gmst("snotifymessage18", "You don't have enough gold."));
-			logf("spellmaking: refused: not enough gold for %d", price);
-			return false;
-		}
-		else
-		{
-			SpellDef sp;
-			sp.type = 0;
-			sp.cost = std::max(1, (int)cost);
-			sp.effects = makeEffects;
-			const SpellEffect& f = makeEffects[0];
-			sp.name = effectLabel(f.effect, f.skill, f.attribute);
-			std::string key;
-			for (auto& e : makeEffects)
-				key += std::to_string(e.effect) + "_" + std::to_string(e.skill) + "_" + std::to_string(e.attribute) + "_"
-					+ std::to_string(e.min) + "_" + std::to_string(e.max) + "_" + std::to_string(e.duration) + "_"
-					+ std::to_string(e.range) + "_";
-			sp.id = "mw3ds_spell_" + std::to_string(std::hash<std::string>()(key) % 1000000);
-			if (!w.game.spells.count(sp.id))
-			{
-				w.game.spells[sp.id] = sp;
-				w.madeSpells.push_back(sp.id);
-			}
-			w.stats.spells.push_back(sp.id);
-			w.removeItem("gold_001", price);
-			if (barterRef >= 0)
-				w.refs[barterRef].gold += price;
-			playSound(-1, "Item Gold Down");
-			notify("You made the spell " + sp.name + ".");
-			logf("spellmaking: %s (%s, %zu effects, cost %d, price %d)", sp.id.c_str(), sp.name.c_str(),
-				sp.effects.size(), sp.cost, price);
-			makeEffects.clear();
-			makeSel = -1;
-		}
+		notify(refused);
+		logf("spellmaking: refused: %s", refused.c_str());
+		return false;
 	}
+	SpellDef sp;
+	sp.type = 0;
+	sp.cost = std::max(1, (int)cost);
+	sp.effects = makeEffects;
+	sp.name = makeName;
+	std::string key = makeName + "_";
+	for (auto& e : makeEffects)
+		key += std::to_string(e.effect) + "_" + std::to_string(e.skill) + "_" + std::to_string(e.attribute) + "_"
+			+ std::to_string(e.min) + "_" + std::to_string(e.max) + "_" + std::to_string(e.duration) + "_"
+			+ std::to_string(e.range) + "_";
+	sp.id = "mw3ds_spell_" + std::to_string(std::hash<std::string>()(key) % 1000000);
+	if (!w.game.spells.count(sp.id))
+	{
+		w.game.spells[sp.id] = sp;
+		w.madeSpells.push_back(sp.id);
+	}
+	w.stats.spells.push_back(sp.id);
+	w.removeItem("gold_001", price);
+	if (barterRef >= 0)
+		w.refs[barterRef].gold += price;
+	playSound(-1, "Item Gold Down");
+	notify("You made the spell " + sp.name + ".");
+	logf("spellmaking: %s (%s, %zu effects, cost %d, price %d)", sp.id.c_str(), sp.name.c_str(),
+		sp.effects.size(), sp.cost, price);
+	makeEffects.clear();
+	makeSel = -1;
+	makeName.clear();
 	return true;
 }

@@ -67,6 +67,8 @@ struct Session : ScriptHost
 	int buttonPressed = -1;
 	std::vector<ScriptMenu> pendingMenus;
 	bool wantName = false;            // main loop shows the system keyboard between frames
+	bool wantMakeName = false;        // the same, for the name of the spell / item being made (setMakeName)
+	std::string typedText;            // tests: what the system keyboard returns for a name (TYPE:)
 	int travelCell = -1;              // door to another cell: main loop shows a loading screen, then finishTravel()
 	float travelPos[3] = {}, travelYaw = 0.0f;
 	bool travelToSpawn = false;   // test GOTO into an exterior cell: land at the cell's own spawn spot
@@ -350,6 +352,7 @@ struct Session : ScriptHost
 	bool menuOpen() const { return !messages.empty() || screen != SCR_NONE || dlg.open; }
 	bool worldPaused() const;      // a menu that stops the world (not talk, barter and the services: the NPC keeps moving)
 	void setName(const std::string& name);
+	void setMakeName(const std::string& name);
 	void finishTravel();
 
 	// ScriptHost
@@ -579,6 +582,10 @@ struct Session : ScriptHost
 	std::vector<std::pair<int, int>> merchantGoods(int ref);
 	int enchanterRef = -1, enchantItem = -1, enchantGem = -1, enchantType = -1;
 	std::vector<SpellEffect> makeEffects;        // spellmaking / enchanting: the effects being put together
+	std::string makeName;                        // and the name it gets (OpenMW's name box)
+	std::string makeNameItem;                    // enchanting: the item that name was taken from
+	void syncEnchantName();
+	int makeButtons(const std::string& buy);
 	int makeSel = -1;
 	int effectFlags(int effect);
 	float effectCost(const SpellEffect& e);

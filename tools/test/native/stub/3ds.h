@@ -104,5 +104,6 @@ enum { SWKBD_TYPE_NORMAL, SWKBD_NOTEMPTY_NOTBLANK, SWKBD_BUTTON_CONFIRM, SWKBD_B
 typedef int SwkbdButton;
 inline void swkbdInit(SwkbdState*, int, int, int) {}
 inline void swkbdSetHintText(SwkbdState*, const char*) {}
+inline void swkbdSetInitialText(SwkbdState*, const char*) {}
 inline void swkbdSetValidation(SwkbdState*, int, int, int) {}
 inline SwkbdButton swkbdInputText(SwkbdState*, char* buf, size_t) { strcpy(buf, "Tester"); return SWKBD_BUTTON_CONFIRM; }

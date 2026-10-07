@@ -543,8 +543,24 @@ bool uiButton(float x, float y, float w, float h, const std::string& label, bool
 	uiRect(x, y, w, h, pressed || focused ? col::select : col::panelLight);
 	uiFrame(x, y, w, h, "menu_button_frame", enabled ? col::border : col::textDim);
 	u32 c = !enabled ? col::textDim : pressed ? col::textPressed : focused ? col::textOver : col::text;
+	// The label shrinks to fit the button (its width and its height: the spell effect rows are 12 high), down to
+	// a size still readable; past that it is cut short with ".."
 	float scale = uiTextWidth(label, 0.5f) > w - 6 ? 0.42f : 0.5f;
-	uiTextCentered(x + w / 2, y + (h - uiLineHeight(scale)) / 2, scale, c, label);
+	while (scale > 0.33f && (uiTextWidth(label, scale) > w - 6 || uiLineHeight(scale) > h + 2))
+		scale -= 0.02f;
+	std::string text = label;
+	if (uiTextWidth(text, scale) > w - 6)
+	{
+		while (!text.empty() && uiTextWidth(text + "..", scale) > w - 6)
+		{
+			while (!text.empty() && ((u8)text.back() & 0xC0) == 0x80)   // (a whole UTF-8 character at a time)
+				text.pop_back();
+			if (!text.empty())
+				text.pop_back();
+		}
+		text += "..";
+	}
+	uiTextCentered(x + w / 2, y + (h - uiLineHeight(scale)) / 2, scale, c, text);
 	if (!enabled)
 		return false;
 	return uiHit(x, y, w, h) || (focused && (s_in.down & KEY_A));

@@ -1,0 +1,66 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 SEED:29
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 SETSKILL:enchant:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:gold_001:20000
+0.3 0 0 0 0 SPELLMAKE:estirdalin
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:spellmake
+0.3 0 0 0 0 ADDEFFECT:79:5:5:10:0:strength
+0.3 0 0 0 0 TAP:200:30
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SNAP:madespells
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:madespells:eq:@0
+0.3 0 0 0 0 TYPE:Bull%Strength
+0.3 0 0 0 0 TAP:54:222
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:makename:Bull_Strength
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:madespells:eq:@1
+0.3 0 0 0 0 EXPECT:madespellname:Bull_Strength
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 GIVE:misc_soulgem_common
+0.3 0 0 0 0 PLACE:scamp:250
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:scamp
+1 0 0 0
+0.3 0 0 0 0 EXPECT:soul:misc_soulgem_common:scamp
+0.3 0 0 0 0 GIVE:expensive_ring_01
+0.3 0 0 0 0 ENCHANT
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:enchant
+0.3 0 0 0 0 ENCHITEM:expensive_ring_01
+0.3 0 0 0 0 ENCHGEM:misc_soulgem_common
+0.3 0 0 0 0 ENCHTYPE:2
+0.3 0 0 0 0 ADDEFFECT:75:5:5:5:0
+0.3 0 0 0 0 TAP:200:74
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:makename:Expensive_Ring
+0.3 0 0 0 0 TYPE:Ring%of%Mending
+0.3 0 0 0 0 TAP:54:222
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:makename:Ring_of_Mending
+0.3 0 0 0 0 SNAP:made
+0.3 0 0 0 0 ROLL:0
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:made:eq:@1
+0.3 0 0 0 0 EXPECT:madename:Ring_of_Mending
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0
+1 0 0 0 0 SAVE:issue29
+1 0 0 0
+0.5 0 0 0 0 LOAD:issue29
+4 0 0 0
+0.3 0 0 0 0 EXPECT:madespellname:Bull_Strength
+0.3 0 0 0 0 EXPECT:madename:Ring_of_Mending
+1 0 0 0

@@ -41,6 +41,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `world.cpp` `save.cpp` | objects leaving memory and coming back; saves | (no counterpart: OpenMW keeps cell state) | n/a, guarded by the position monitors |
 | `session.cpp` | activation: doors, locked doors and keys, containers, traps, books, pickpocket | `mwclass/door.cpp`, `container.cpp`, `npc.cpp activate`, `mwworld/action*.cpp` | unchecked |
 | `session.cpp` | barter, training, travel, spells, repair prices | `mwgui/tradewindow.cpp`, `mwmechanics/trading.cpp` ... | checked (`trading-and-services.md`) |
+| `spellmake.cpp` `enchant.cpp` | naming the made spell / item, Buy refusals | `mwgui/spellcreationdialog.cpp`, `mwgui/enchantingdialog.cpp` (`onBuyButtonClicked`, `setItem`) | checked 2026-10-07 (`trading-and-services.md`, `issue-29`) |
 | `session.cpp` `combat.cpp` | combat numbers | `mwmechanics/combat.cpp` ... | checked (`combat.md`); AI choices around them partial |
 | `magic.cpp` | cast chance, cost, resist, reflect, absorb | `spellcasting.cpp`, `spelleffects.cpp` | checked (`magic.md`); the 134 effects one by one unchecked |
 | `rest.cpp` | skill gain, level-up | `npcstats.cpp` | checked (`stats-and-levelling.md`) |

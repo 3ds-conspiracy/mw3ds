@@ -1047,6 +1047,7 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 			return fail(a[1] + " doesn't make spells");
 		s.makeEffects.clear();
 		s.makeSel = -1;
+		s.makeName.clear();
 		s.barterRef = ri;                  // (the spellmaker's barter price)
 		s.screen = SCR_SPELLMAKE;
 		return true;
@@ -1361,6 +1362,12 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	if (verb == "PCNAME" && a.size() >= 2)
 	{
 		w.stats.name = spaced(a[1]);
+		return true;
+	}
+	// TYPE:<text>: what the system keyboard returns when a name is asked for (the made spell's / item's); % for spaces
+	if (verb == "TYPE" && a.size() >= 2)
+	{
+		s.typedText = spaced(a[1]);
 		return true;
 	}
 	// SETITEM:<id>:<n>: the player holds exactly n of the item (Item conditions)
@@ -2118,6 +2125,23 @@ bool TestDriver::expect(Session& s, const std::string& spec)
 			ok &= en->type == ENCH_ONCE + atoi(a[2].c_str());
 		snprintf(got, sizeof(got), "%s", !it ? "no made item carried" : !en ? "no enchantment"
 			: (std::to_string(en->effects.size()) + " effects, type " + std::to_string(en->type - ENCH_ONCE)).c_str());
+	}
+	else if ((what == "makename" || what == "madename" || what == "madespellname") && a.size() >= 2)
+	{
+		// EXPECT:makename:<name>: the name in the spellmaking / enchanting screen; madename: the last enchanted
+		// item carried; madespellname: the last spell made (underscores for spaces)
+		std::string name;
+		const InventoryItem* it = what == "madename" ? lastMade(w) : nullptr;
+		const Object* o = it ? w.game.object(it->id) : nullptr;
+		auto sp = what == "madespellname" && !w.madeSpells.empty() ? w.game.spells.find(w.madeSpells.back()) : w.game.spells.end();
+		if (what == "makename")
+			name = s.makeName;
+		else if (o)
+			name = o->name;
+		else if (sp != w.game.spells.end())
+			name = sp->second.name;
+		ok = name == spaced(a[1]);
+		snprintf(got, sizeof(got), "%.80s", name.empty() ? "no name" : name.c_str());
 	}
 	else if (what == "said" && a.size() >= 2)
 	{

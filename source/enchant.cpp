@@ -64,6 +64,8 @@ void Session::openEnchanting(int enchanter)
 	enchanterRef = enchanter;
 	makeEffects.clear();
 	makeSel = -1;
+	makeName.clear();
+	makeNameItem.clear();
 	enchantItem = enchantGem = -1;
 	enchantType = -1;
 	list2 = UiList();
@@ -74,6 +76,18 @@ void Session::openEnchanting(int enchanter)
 	if (!gems.empty())
 		enchantGem = gems[0];
 	screen = SCR_ENCHANT;
+}
+
+// The new item's name starts as the chosen item's own name, again whenever another item is chosen (OpenMW's
+// EnchantingDialog::setItem); a name typed in is kept while the item stays
+void Session::syncEnchantName()
+{
+	const std::string id = enchantItem >= 0 && enchantItem < (int)w.inventory.size() ? w.inventory[enchantItem].id : "";
+	if (id == makeNameItem)
+		return;
+	const Object* o = id.empty() ? nullptr : w.game.object(id);
+	makeName = o ? o->name : "";
+	makeNameItem = id;
 }
 
 void Session::drawEnchanting()
@@ -149,6 +163,7 @@ void Session::drawEnchanting()
 		playSound(-1, "Menu Click");
 	}
 	effectEditor(makeEffects, makeSel, ranges, 68, 4);
+	syncEnchantName();
 	EnchantCalc c = enchantCalc();
 	char info[96];
 	if (enchanterRef >= 0)
@@ -156,15 +171,21 @@ void Session::drawEnchanting()
 	else
 		snprintf(info, sizeof(info), "Points %.0f/%.0f  Chance %d%%", c.points, c.capacity, std::max(0, (int)c.chance));
 	uiText(162, 50, 0.38f, col::textDim, info);
-	int noFocus = -1;
-	int b = buttonRow({ w.game.gmst("senchanting", "Enchant"), w.game.gmst("sclose", "Close") }, noFocus);
+	int b = makeButtons(w.game.gmst("senchanting", "Enchant"));
 	if (b == 0)
+	{
+		playSound(-1, "Menu Click");
+		wantMakeName = true;
+	}
+	else if (b == 1)
 		enchantConfirm();
-	else if (b == 1 || (uiIn().down & KEY_B))
+	else if (b == 2 || (uiIn().down & KEY_B))
 	{
 		playSound(-1, "Menu Click");
 		makeEffects.clear();
 		makeSel = -1;
+		makeName.clear();
+		makeNameItem.clear();
 		screen = enchanterRef >= 0 ? SCR_DIALOGUE : SCR_INVENTORY;
 	}
 }
@@ -209,12 +230,15 @@ Session::EnchantCalc Session::enchantCalc()
 bool Session::enchantConfirm()
 {
 	const Object* item = enchantItem >= 0 && enchantItem < (int)w.inventory.size() ? w.game.object(w.inventory[enchantItem].id) : nullptr;
+	syncEnchantName();
 	EnchantCalc c = enchantCalc();
 	std::string msg;
 	if (!item || enchantGem < 0)
 		msg = "Choose an item and a soul gem.";
 	else if (makeEffects.empty())
 		msg = w.game.gmst("senchantmentmenu11", "You must add at least one effect to an enchantment.");
+	else if (makeName.empty())
+		msg = w.game.gmst("snotifymessage10", "You have to name the spell before buying it.");   // (OpenMW's wording too)
 	else if (c.points > c.capacity)
 		msg = "The item can't hold that much.";
 	else if (enchantType == 3 && c.soul < w.game.gmstf("isoulamountforconstanteffect", 400))
@@ -336,7 +360,7 @@ void Session::makeEnchantment(float points, int soul, float chance, int price)
 	en.cost = std::max(1, (int)points);
 	en.charge = soul;
 	en.effects = makeEffects;
-	std::string key = bo->id + "_" + std::to_string(enchantType) + "_";
+	std::string key = bo->id + "_" + makeName + "_" + std::to_string(enchantType) + "_";
 	for (auto& e : makeEffects)
 		key += std::to_string(e.effect) + "_" + std::to_string(e.skill) + "_" + std::to_string(e.attribute) + "_"
 			+ std::to_string(e.min) + "_" + std::to_string(e.max) + "_" + std::to_string(e.duration) + "_"
@@ -349,7 +373,7 @@ void Session::makeEnchantment(float points, int soul, float chance, int price)
 	item.ench = en.id;
 	item.magic = true;
 	item.value = bo->value + (int)(points * 10);
-	item.name = bo->name + " of " + effectLabel(makeEffects[0].effect, makeEffects[0].skill, makeEffects[0].attribute);
+	item.name = makeName;
 	item.script.clear();
 	w.game.spells[en.id] = en;
 	w.game.objects[item.id] = item;
@@ -361,5 +385,7 @@ void Session::makeEnchantment(float points, int soul, float chance, int price)
 	notify(w.game.gmst("senchantmentmenu12", "You have successfully created an enchanted item."));
 	makeEffects.clear();
 	makeSel = -1;
+	makeName.clear();
+	makeNameItem.clear();
 	enchantItem = enchantGem = -1;
 }

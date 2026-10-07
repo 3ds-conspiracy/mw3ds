@@ -186,6 +186,7 @@ void Session::drawDialogue()
 		list2 = UiList();
 		makeEffects.clear();
 		makeSel = -1;
+		makeName.clear();
 		barterRef = dlg.ref;               // (the price is their barter offer)
 		screen = SCR_SPELLMAKE;
 		playSound(-1, "Menu Click");

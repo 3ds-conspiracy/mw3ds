@@ -219,6 +219,9 @@
 0.3 0 0 0 0 SPELLMAKE:estirdalin
 0.3 0 0 0 0 EXPECT:screen:spellmake
 0.3 0 0 0 0 ADDEFFECT:79:5:5:10:0:strength
+0.3 0 0 0 0 TYPE:Bull%Strength
+0.3 0 0 0 0 TAP:54:222
+0.5 0 0 0
 0.3 0 0 0 0 SNAP:gold
 0.3 0 0 0 0 SNAP:madespells
 0.3 0 0 0 0 CONFIRM
