@@ -393,6 +393,8 @@ struct World
 	// Outdoors: follows the player across grid cells and loads missing neighbours (all at once, or one
 	// per call to spread the work over frames).
 	void streamExterior(bool all);
+	void retryMissingTextures(float dt);    // loaded cells' textures that failed, tried again every few seconds
+	float retryTimer = 0.0f;
 	int cellIndex(const std::string& name) const;       // by name or file; -1 when the level doesn't include it
 	int gridCell(int gx, int gy) const;                 // exterior cell at that grid position, or -1
 	const std::string& cellName() const { return cells[current].name; }

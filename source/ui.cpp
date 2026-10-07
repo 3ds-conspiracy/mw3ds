@@ -191,6 +191,12 @@ static u32 texelSum(const C3D_Tex& t)
 	return h;
 }
 
+bool uiThemeIntact()
+{
+	return (!s_fontOn || !s_fontSum || texelSum(s_fontTex) == s_fontSum)
+		&& (!s_atlasOn || !s_atlasSum || texelSum(s_atlasTex) == s_atlasSum);
+}
+
 void uiCheckTheme()
 {
 	if (s_fontOn)

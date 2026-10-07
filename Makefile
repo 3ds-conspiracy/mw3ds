@@ -58,7 +58,9 @@ CFLAGS	+=	$(INCLUDE) -D__3DS__
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) \
+			-Wl,--wrap=linearAlloc,--wrap=linearMemAlign,--wrap=linearFree
+# (the linear heap kept from running dry and used under one lock: source/linear.cpp)
 
 LIBS	:= -lcitro2d -lcitro3d -lctru -lz -lm
 

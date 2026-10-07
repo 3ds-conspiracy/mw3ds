@@ -168,6 +168,18 @@ C3D_Tex* TextureCache::recheck(const char* dataDir, const std::string& name)
 	return it->second->ok ? &it->second->tex : nullptr;
 }
 
+C3D_Tex* TextureCache::retry(const char* dataDir, const std::string& name)
+{
+	static const u32 kRoom = 2 * 1024 * 1024;     // free linear memory to try with
+	LinearGuard guard;
+	auto it = entries.find(name);
+	if (it == entries.end())
+		return nullptr;
+	if (!it->second->ok && (it->second->fails < 3 || linearSpaceFree() > kRoom))
+		tryLoad(*this, it->second, dataDir, name);
+	return it->second->ok ? &it->second->tex : nullptr;
+}
+
 void TextureCache::release(const std::string& name)
 {
 	LinearGuard guard;

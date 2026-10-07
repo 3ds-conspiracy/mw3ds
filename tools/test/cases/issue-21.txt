@@ -1,0 +1,12 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 MEMHOLD:13000
+30 0 0 0
+0.3 0 0 0 0 EXPECT:linearfree:lt:20000
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 EXPECT:missingtex:eq:0
+0.3 0 0 0 0 EXPECT:linearfree:lt:20000
+0.3 0 0 0 0 SHOT

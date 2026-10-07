@@ -20,6 +20,8 @@ struct TextureCache
 	void release(const std::string& name);
 	// A texture that failed (linear memory full at the time) is tried again; no count taken. nullptr when still failed
 	C3D_Tex* recheck(const char* dataDir, const std::string& name);
+	// The same past recheck's three tries, while there is room for it now (a loaded cell's textures, now and then)
+	C3D_Tex* retry(const char* dataDir, const std::string& name);
 };
 
 // Batch render-state flags, matching tools/convert/convert_cell.py

@@ -10,6 +10,7 @@
 #include <cstring>
 
 #include "cJSON.h"
+#include "linear.h"
 #include "log.h"
 #include "zfile.h"
 
@@ -1910,9 +1911,17 @@ bool World::enterCell(int index)
 		return cells[index].live != nullptr;
 	}
 	finishStreamJob(*this, true);
+	bool freed = false;
 	for (int i = (int)loaded.size() - 1; i >= 0; i--)
 		if (loaded[i]->index != index)
+		{
 			unloadLevelCell(*this, loaded[i]->index);
+			freed = true;
+		}
+	// The cells just left give their memory back only once the GPU is done with them: now, before this one is
+	// read (a busy town left for a shop had the shop's first textures fail, drawn plain until it was entered again)
+	if (freed)
+		linearReclaim();
 	bool ok = loadLevelCell(*this, index);
 	logf("world: entered %s (%d refs), textures %lu KB, linear free %lu KB", cells[index].name.c_str(),
 		cells[index].refCount, textures.bytes / 1024, linearSpaceFree() / 1024);
@@ -1990,6 +1999,8 @@ void World::streamExterior(bool all)
 			// Never walk around in a cell that isn't there: the player's own cell loads now,
 			// the neighbours follow on the streaming thread (they start past the fog anyway)
 			finishStreamJob(*this, true);
+			if (freed && !cells[ci].live)
+				linearReclaim();              // (the cells freed above: their memory, before this one is read)
 			if (!cells[ci].live && !loadLevelCell(*this, ci))
 				logf("world: failed to load %s", cells[ci].file.c_str());
 			continue;
@@ -1999,6 +2010,20 @@ void World::streamExterior(bool all)
 			startStreamJob(*this, ci);
 		break;
 	}
+}
+
+void World::retryMissingTextures(float dt)
+{
+	// Textures a loaded cell couldn't read (linear memory full when it loaded) are tried again every few seconds:
+	// one stayed plain, in its vertex colours, until the cell was entered again
+	retryTimer += dt;
+	if (retryTimer < 3.0f)
+		return;
+	retryTimer = 0.0f;
+	for (LoadedCell* l : loaded)
+		for (size_t i = 0; i < l->cell.textures.size(); i++)
+			if (!l->cell.textures[i] && !l->cell.textureNames[i].empty())
+				l->cell.textures[i] = textures.retry(dataDir, l->cell.textureNames[i]);
 }
 
 void World::startScriptFor(int ri)

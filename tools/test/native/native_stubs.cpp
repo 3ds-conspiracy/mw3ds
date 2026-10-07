@@ -212,6 +212,7 @@ void* lockedLinearAlloc(size_t size) { return linearAlloc(size); }
 void lockedLinearFree(void* p) { linearFree(p); }
 void deferredTexDelete(C3D_Tex* tex) { C3D_TexDelete(tex); }      // one thread: the GPU is done with it
 void linearRetire() {}
+bool linearReclaim() { return false; }
 
 // ---- nothing to update (drawing and screenshots: native_gpu.cpp)
 void devEmptyTrash() {}

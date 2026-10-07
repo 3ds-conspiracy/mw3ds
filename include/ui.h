@@ -31,6 +31,7 @@ void uiInit();
 // Morrowind's font, window frames and item icons from the converted data (see uitheme.h)
 void uiLoadTheme(const char* dataDir, const UiThemeDef& def);
 void uiCheckTheme();          // monitor: the font's and frames' textures still hold what was loaded
+bool uiThemeIntact();         // ... and the same as a test check
 void uiFreeTheme();
 void uiExit();
 void uiBeginFrame(const UiInput& in);     // clears the per-frame text buffer

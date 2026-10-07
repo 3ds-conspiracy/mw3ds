@@ -902,6 +902,19 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "notesright") v = s.notesRight;      // the right edge of the notices on the top screen
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
+	else if (what == "linearfree") v = (float)(linearSpaceFree() / 1024);   // KB of linear memory free
+	else if (what == "uiintact") v = uiThemeIntact() ? 1.0f : 0.0f;  // the UI's font and frames still as loaded
+	else if (what == "missingtex")
+	{
+		// textures of the player's cell that aren't there (drawn plain, in their vertex colours)
+		v = 0;
+		if (w.current >= 0 && w.cells[w.current].live)
+		{
+			const Cell& c = w.cells[w.current].live->cell;
+			for (size_t i = 0; i < c.textures.size(); i++)
+				v += !c.textures[i] && !c.textureNames[i].empty();
+		}
+	}
 	else if (what == "waterscroll") v = rendererWaterScroll();       // water's slide, texture repeats a second
 	else if (what == "controls") v = w.controlsEnabled ? 1.0f : 0.0f;   // DisablePlayerControls / EnablePlayerControls
 	else if (what == "jumping") v = w.jumpingEnabled ? 1.0f : 0.0f;     // DisablePlayerJumping / EnablePlayerJumping

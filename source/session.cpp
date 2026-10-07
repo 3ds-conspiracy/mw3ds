@@ -995,6 +995,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	// Outdoors: follow the player into other grid cells, loading one missing neighbour per frame
 	profAdd(PROF_OTHER, t);
 	w.streamExterior(false);
+	w.retryMissingTextures(dt);
 	profAdd(PROF_STREAM, t);
 
 	float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };

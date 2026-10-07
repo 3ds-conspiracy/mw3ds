@@ -16,6 +16,9 @@ void* lockedLinearAlloc(size_t size);
 // linearRetire, called after every C3D_FrameBegin (which waits for the GPU to finish).
 void lockedLinearFree(void* p);
 void deferredTexDelete(C3D_Tex* tex);
+// Main thread, between frames: what waits for the GPU is freed now (an empty frame). True if anything was.
+// Before reading a cell in the update that freed others (their memory would otherwise come back only after it)
+bool linearReclaim();
 void linearRetire();
 
 struct LinearGuard

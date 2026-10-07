@@ -1,0 +1,21 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald'ruhn
+10 0 0 0
+0.3 0 0 0 0 MEMHOLD:11000
+30 0 0 0
+0.3 0 0 0 0 EXPECT:linearfree:lt:20000
+0.3 0 0 0 0 EXPECT:uiintact:eq:1
+0.3 0 0 0 0 TP:-16500:53000:2000:0
+20 0 0 0
+0.3 0 0 0 0 EXPECT:linearfree:lt:20000
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 SCREEN:gamemenu
+2 0 0 0
+0.3 0 0 0 0 EXPECT:uiintact:eq:1
+0.3 0 0 0 0 EXPECT:missingtex:eq:0
+0.3 0 0 0 0 EXPECT:linearfree:lt:20000
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0
