@@ -1,0 +1,26 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.3 0 0 0 0 NOTIFY:Release_Identification_has_been_removed_from_your_inventory.
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:message:release_identification_has_been_removed
+0.3 0 0 0 0 EXPECT:notesright:le:396
+0.3 0 0 0 0 MSGBOX:The_Census_and_Excise_Office_needs_to_record_who_you_are_before_you_set_foot_in_Seyda_Neen._Answer_the_clerk's_questions_honestly,_take_your_release_papers_from_the_desk_and_report_to_Captain_Sellus_Gravius_at_the_door._He_will_explain_what_the_Emperor_asks_of_you._If_you_would_rather_not,_you_may_leave_now_and_the_guards_will_look_the_other_way_this_once,_but_you_will_have_no_papers_to_show_anyone_in_Vvardenfell,_and_the_Legion_does_not_forget_a_face.:Yes:No:Ask_about_the_Imperial_Legion:Later:Never
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:messagesidebar:eq:1
+0.3 0 0 0 0 EXPECT:messagetop:eq:0
+0.3 0 0 0 0 EXPECT:messageleft:gt:0
+2 0 0 0 0 STICKDOWN
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:messageleft:eq:0
+0.3 0 0 0 0 EXPECT:messagetop:gt:0
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 MSGBOX:Rest_here_until_morning?:Yes:No
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:messagesidebar:eq:0
+0.3 0 0 0 0 EXPECT:messageleft:eq:0
+0.3 0 0 0 0 A
+1 0 0 0

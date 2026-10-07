@@ -184,6 +184,11 @@ struct Session : ScriptHost
 	std::vector<Note> notes;
 	UiScroll quizScroll;              // the class quiz's page, when a question and its answers are taller than the screen
 	float quizBottom = 0.0f;          // tests: the bottom of the class quiz's focused answer (the screen is 240 high)
+	float notesRight = 0.0f;          // tests: the right edge of the notices drawn last (the top screen is 400 wide)
+	bool messageSidebar = false;      // a message box with more text than fits above its buttons: buttons on the right
+	int messageTop = 0, messageLeft = 0;   // tests: its first line shown, and the lines below what is shown
+	UiScroll messageScroll;           // a long message box's text, scrolled
+	std::string messageShown;         // the message box that scroll belongs to
 	float aimShift = 0.0f;
 	int hudEye = 0;                   // the HUD pass drawing now (0 left / mono, 1 right)
 	int hudEyes = 1;                  // passes this frame (2 in 3D)           // this eye's offset of the crosshair / target label (main.cpp, 3D)
