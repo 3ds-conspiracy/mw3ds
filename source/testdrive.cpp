@@ -871,6 +871,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "brewedvalue") { const Object* o = w.game.object(s.lastBrewed); if (!o) return false; v = (float)o->value; }
 	else if (what == "made") { v = 0; for (auto& id : w.madeItems) v += carried(w, id) >= 0; }
+	else if (what == "notesright") v = s.notesRight;      // the right edge of the notices on the top screen
+	else if (what == "messageroom") v = s.messageRoom;    // room between a message box's text and its buttons
 	else if (what == "maplocal") v = s.mapLocal;          // the map screen shows the local map
 	else if (what == "mapzoom") v = s.mapZoomIdx;         // its zoom step
 	else if (what == "madespells") { v = 0; for (auto& id : w.madeSpells) for (auto& sp : st.spells) v += lower(sp) == lower(id); }
@@ -1370,6 +1372,23 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	if (verb == "TYPE" && a.size() >= 2)
 	{
 		s.typedText = spaced(a[1]);
+		return true;
+	}
+	// NOTIFY:<text>: a notice on the top screen, as a script's or the game's (underscores for spaces)
+	if (verb == "NOTIFY" && a.size() >= 2)
+	{
+		s.notify(spaced(a[1]));
+		return true;
+	}
+	// MSGBOX:<text>:<button>...: a message box with those buttons, as a script's MessageBox
+	if (verb == "MSGBOX" && a.size() >= 3)
+	{
+		MessageState m;
+		m.text = spaced(a[1]);
+		for (size_t k = 2; k < a.size(); k++)
+			m.buttons.push_back(spaced(a[k]));
+		m.fromScript = true;
+		s.messages.push_back(m);
 		return true;
 	}
 	// TOPICLOG:<topic>:<line>: the journal's Topics index has that line about the topic (underscores for spaces)

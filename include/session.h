@@ -182,6 +182,10 @@ struct Session : ScriptHost
 	int target = -1;
 	struct Note { std::string text; float until; };
 	std::vector<Note> notes;
+	float notesRight = 0.0f;          // tests: the right edge of the notices drawn last (the top screen is 400 wide)
+	float messageRoom = 0.0f;         // tests: the room between a message box's text and its buttons (< 0: overlap)
+	UiScroll messageScroll;           // a long message box's text, scrolled
+	std::string messageShown;         // the message box that scroll belongs to
 	float aimShift = 0.0f;
 	int hudEye = 0;                   // the HUD pass drawing now (0 left / mono, 1 right)
 	int hudEyes = 1;                  // passes this frame (2 in 3D)           // this eye's offset of the crosshair / target label (main.cpp, 3D)

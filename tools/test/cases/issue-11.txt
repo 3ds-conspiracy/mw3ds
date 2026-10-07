@@ -1,0 +1,18 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.3 0 0 0 0 NOTIFY:Release_Identification_has_been_removed_from_your_inventory.
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:message:release_identification_has_been_removed
+0.3 0 0 0 0 EXPECT:notesright:le:396
+0.3 0 0 0 0 MSGBOX:The_Census_and_Excise_Office_needs_to_record_who_you_are._Answer_the_clerk's_questions,_take_your_papers_and_report_to_the_Captain_at_the_door,_or_the_guards_will_not_let_you_leave.:Yes:No:Maybe:Later:Never
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:messageroom:ge:0
+1 0 0 0 0 STICKDOWN
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+0.5 0 0 0
+1 0 0 0

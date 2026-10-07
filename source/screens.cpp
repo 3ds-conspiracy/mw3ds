@@ -136,14 +136,19 @@ void Session::drawTop()
 		uiRect(200 + ax - tw / 2 - 5, 133, tw + 10, 18, col::panel);
 		uiTextCentered(200 + ax, 134, 0.55f, w.ownedByOther(target) ? col::health : col::text, label);
 	}
+	// Notices, each wrapped to the screen's width ("Release Identification has been removed from your inventory."
+	// ran off it)
 	float y = 4;
+	notesRight = 0.0f;
 	for (auto& n : notes)
-	{
-		float tw = uiTextWidth(n.text, 0.5f);
-		uiRect(4, y, fminf(tw + 8, 392), 16, C2D_Color32(0, 0, 0, 150));
-		uiText(8, y, 0.5f, col::header, n.text);
-		y += 18;
-	}
+		for (auto& line : uiWrap(n.text, 384, 0.5f))
+		{
+			float tw = uiTextWidth(line, 0.5f);
+			uiRect(4, y, tw + 8, 16, C2D_Color32(0, 0, 0, 150));
+			uiText(8, y, 0.5f, col::header, line);
+			notesRight = fmaxf(notesRight, 8 + tw);
+			y += 18;
+		}
 	if (w.time < subtitleUntil && !subtitle.empty())
 	{
 		std::vector<std::string> lines = uiWrap(subtitle, 380, 0.5f);
@@ -645,13 +650,20 @@ void Session::drawMessage()
 {
 	MessageState& m = messages.front();
 	uiPanel(8, 8, 304, 224);
-	std::vector<std::string> lines = uiWrap(m.text, 284, 0.5f);
-	float lh = uiLineHeight(0.5f);
-	for (size_t i = 0; i < lines.size(); i++)
-		uiText(18, 16 + i * lh, 0.5f, col::text, lines[i]);
-
 	const UiInput& in = uiIn();
 	int n = m.buttons.size();
+	// The text above the buttons; when it is longer than that room it scrolls (drag it, or the circle pad)
+	// instead of running under them
+	float lh = uiLineHeight(0.5f);
+	float room = 224 - n * 30.0f - 4 - 12;
+	if (m.text != messageShown)
+	{
+		messageShown = m.text;
+		messageScroll = UiScroll();
+	}
+	float textH = uiWrap(m.text, 284, 0.5f).size() * lh;
+	uiTextBox(messageScroll, 14, 12, 292, room, m.text, 0.5f, false);
+	messageRoom = 224 - n * 30.0f - (12 + fminf(textH, room));
 	if (in.down & (KEY_DOWN | KEY_RIGHT)) focus = (focus + 1) % n;
 	if (in.down & (KEY_UP | KEY_LEFT)) focus = (focus + n - 1) % n;
 	if (focus >= n) focus = 0;
