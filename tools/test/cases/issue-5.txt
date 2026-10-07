@@ -1,0 +1,18 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.3 0 0 0 0 GIVE:ring_keley
+0.3 0 0 0 0 GIVE:sc_almsiviintervention
+0.3 0 0 0 0 GIVE:iron%dagger
+0.3 0 0 0 0 EQUIP:iron%dagger
+0.5 0 0 0
+0.3 0 0 0 0 EQUIP:ring_keley
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:equipped:ring_keley:eq:1
+0.3 0 0 0 0 EXPECT:equipped:iron%dagger:eq:1
+0.3 0 0 0 0 EXPECT:item:sc_almsiviintervention:eq:1
+0.3 0 0 0 0 SCREEN:inventory
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:screen:inventory
+1 0 0 0
