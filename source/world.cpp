@@ -1715,6 +1715,11 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 		w.syncActor(i);
 		if (!w.refs[i].visible())
 			hideRanges(w, w.refs[i]);
+		// enchanted things lying about shimmer: listed once here, not looked for every frame (renderer.cpp)
+		const Ref& r = w.refs[i];
+		if (r.obj && !r.obj->ench.empty() && !r.ranges.empty())
+			if (u32 glow = w.game.enchantGlow(r.id))
+				l->glowRefs.push_back({ i, glow });
 	}
 	lc.lastUsed = ++w.useTick;
 	for (int i : w.spawned)

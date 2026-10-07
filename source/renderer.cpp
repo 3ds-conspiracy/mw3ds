@@ -745,24 +745,23 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_LAYERS); k++)
 		draws += drawBatches(w.loaded[k]->cell, w.loaded[k]->cell.batches, 1, &visible[k], time);
 
-	// Enchanted things lying about shimmer: their own triangles in the cell's batches (Ref::ranges)
+	// Enchanted things lying about shimmer: their own triangles in the cell's batches (Ref::ranges; the cell lists them
+	// when it loads, LoadedCell::glowRefs)
 	for (size_t k = 0; k < w.loaded.size() && s_caustCount && (g_renderParts & RENDER_OPAQUE); k++)
 	{
 		Cell& cell = w.loaded[k]->cell;
-		const LevelCell& lc = w.cells[w.loaded[k]->index];
-		for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
+		for (auto& g : w.loaded[k]->glowRefs)
 		{
-			const Ref& r = w.refs[i];
-			if (!r.obj || r.obj->ench.empty() || r.ranges.empty() || !r.visible())
+			const Ref& r = w.refs[g.first];
+			if (!r.visible())
 				continue;
-			u32 glow = w.game.enchantGlow(r.id);
 			for (auto& rg : r.ranges)
-				if (glow && rg.batch >= 0 && rg.batch < (int)cell.batches.size() && visible[k][rg.batch] && rg.count >= 3)
+				if (rg.batch >= 0 && rg.batch < (int)cell.batches.size() && visible[k][rg.batch] && rg.count >= 3)
 				{
 					CellBatch b = cell.batches[rg.batch];
 					b.indices += rg.first;
 					b.numIndices = rg.count;
-					drawShimmer(b, glow);
+					drawShimmer(b, g.second);
 					draws++;
 				}
 		}
