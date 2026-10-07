@@ -18,8 +18,11 @@ BUILD = ROOT / "build" / "native"
 ZLIB = BUILD / "zlib"
 ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz"
 ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "inftrees", "trees", "uncompr", "zutil"]
-# replaced by native_stubs.cpp (log, linear heap, drawing, the dev updater, screenshots) or main_native.cpp
-SKIP = {"main", "renderer", "log", "devupdate", "screenshot", "linear"}
+# replaced by native_stubs.cpp (log, linear heap, the dev updater), native_gpu.cpp (screenshots) or main_native.cpp
+SKIP = {"main", "log", "devupdate", "screenshot", "linear"}
+# renderer.cpp's drawing entry points get a suffix: native_gpu.cpp wraps them so they draw only with NATIVE_DRAW=1
+RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawActor", "rendererDrawGlow", "rendererDrawLocalMap",
+                    "rendererLocalMap"]
 # no fused multiply-add: the 3DS's VFP rounds every operation, and a host-CPU build would round some differently
 CXXFLAGS = ["-O1", "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
             "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h")]
@@ -44,8 +47,12 @@ def fetch_zlib():
 def compile_one(src, obj, cxx):
     if obj.exists() and obj.stat().st_mtime > max(src.stat().st_mtime, newest_header()):
         return None
-    cmd = zig("c++" if cxx else "cc", "-c", src.as_posix(), "-o", obj.as_posix(),
-              *(CXXFLAGS if cxx else ["-O2", "-w", "-I", str(ZLIB), "-I", str(ROOT / "include"), "-DNO_FSEEKO"]))
+    flags = CXXFLAGS if cxx else ["-O2", "-w", "-I", str(ZLIB), "-I", str(ROOT / "include"), "-DNO_FSEEKO"]
+    if src.stem == "renderer":
+        flags = flags + [f"-D{n}={n}_sw" for n in RENDERER_RENAMES]
+    if src.stem == "native_gpu":
+        flags = flags + ["-O2"]         # the rasterizer: every pixel of both screens, each frame it draws
+    cmd = zig("c++" if cxx else "cc", "-c", src.as_posix(), "-o", obj.as_posix(), *flags)
     r = subprocess.run(cmd, capture_output=True, text=True)
     return None if r.returncode == 0 else f"{src.name}:\n{r.stderr[:3000]}"
 
@@ -70,6 +77,7 @@ def main():
             jobs.append((s, objdir / (s.stem + ".o"), True))
     jobs.append((HERE / "main_native.cpp", objdir / "main_native.o", True))
     jobs.append((HERE / "native_stubs.cpp", objdir / "native_stubs.o", True))
+    jobs.append((HERE / "native_gpu.cpp", objdir / "native_gpu.o", True))
     jobs.append((ROOT / "source" / "cJSON.c", objdir / "cJSON.o", False))
     for z in ZLIB_SRC:
         jobs.append((ZLIB / (z + ".c"), objdir / ("z_" + z + ".o"), False))

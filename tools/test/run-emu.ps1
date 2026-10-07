@@ -3,7 +3,7 @@
 #   tools\test\run-emu.ps1 -Cams "spawn","x y z yaw pitch",...
 #                                     one top-screen shot per pose, tiled 2-wide -> build\emu-cams.png
 #                                     ("@Cell name" switches cell for the poses after it)
-# Converted game data in out\data (or -Data <folder>) is mirrored onto the emulated SD card first.
+# Converted game data in out\data (or -Data <folder>) is linked onto the emulated SD card first (a junction, no copy).
 #   -Start "Seyda Neen"               start in that cell, skipping character creation
 #   -Emu <folder>                     another Azahar copy (its own SD card and log): a spot check beside a
 #                                     sweep; only that copy's emulator is stopped
@@ -25,21 +25,17 @@ New-Item -ItemType Directory -Force (Join-Path $root 'build') | Out-Null
 Get-Process azahar -ErrorAction SilentlyContinue | Where-Object { $_.Path -and $_.Path.StartsWith($azDir, [StringComparison]::OrdinalIgnoreCase) } | Stop-Process -Force
 New-Item -ItemType Directory -Force $sd | Out-Null
 Remove-Item $log, (Join-Path $sd 'shot*.bmp'), (Join-Path $sd 'autocam.txt'), (Join-Path $sd 'autoshot') -Force -ErrorAction SilentlyContinue
-# The game data on the emulated SD card: the main copy mirrors it; the other copies (-Emu) link to the
-# folder itself (a directory junction: no second 1 GB copy; the game only reads it)
+# The game data on the emulated SD card: every copy links to the folder itself (a directory junction: no second
+# 1 GB copy; the game only reads it). So don't rebuild that folder while an emulator runs.
 $sdData = Join-Path $sd 'data'
 if (Test-Path $data) {
-    if ($azDir -ieq $defaultEmu) {
-        robocopy $data $sdData /MIR /NJH /NJS /NFL /NDL /NP | Out-Null
-    } else {
-        $item = Get-Item $sdData -Force -ErrorAction SilentlyContinue
-        $target = if ($item -and $item.LinkType -eq 'Junction') { @($item.Target)[0] } else { $null }
-        if (-not $target -or ((Resolve-Path $data).Path -ine $target.TrimEnd('\'))) {
-            # rmdir removes only the link (or an old real copy with /s): never the linked folder's files
-            if ($item -and $item.LinkType -eq 'Junction') { cmd /c rmdir "$sdData" | Out-Null }
-            elseif ($item) { cmd /c rmdir /s /q "$sdData" | Out-Null }
-            New-Item -ItemType Junction -Path $sdData -Target (Resolve-Path $data).Path | Out-Null
-        }
+    $item = Get-Item $sdData -Force -ErrorAction SilentlyContinue
+    $target = if ($item -and $item.LinkType -eq 'Junction') { @($item.Target)[0] } else { $null }
+    if (-not $target -or ((Resolve-Path $data).Path -ine $target.TrimEnd('\'))) {
+        # rmdir removes only the link (or an old real copy with /s): never the linked folder's files
+        if ($item -and $item.LinkType -eq 'Junction') { cmd /c rmdir "$sdData" | Out-Null }
+        elseif ($item) { cmd /c rmdir /s /q "$sdData" | Out-Null }
+        New-Item -ItemType Junction -Path $sdData -Target (Resolve-Path $data).Path | Out-Null
     }
 }
 

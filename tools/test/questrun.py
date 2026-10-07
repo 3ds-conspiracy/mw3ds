@@ -199,7 +199,7 @@ def main():
                     m = exact(op, val)
                     steps.append(f"SETLOCAL:{token(who)}:{n.lower()}:{m}")
                 elif t == "1" and fn == "60" and exact(op, val) > 0:
-                    steps.append("SETGLOBAL:pcvampire:1")
+                    steps.append("EFFECT:133:1:99999")   # PC vampire = the Vampirism effect
                 elif t == "1" and fn == "05":
                     steps.append(f"REP:{max(0, int(exact(op, val)))}")
                 elif t == "1" and fn == "64" and op in (">=", ">", "="):

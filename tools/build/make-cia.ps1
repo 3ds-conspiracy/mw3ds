@@ -38,6 +38,9 @@ $args = @('-f', 'cia', '-o', 'build\mw3ds.cia', '-elf', 'mw3ds.elf', '-rsf', 'to
           '-icon', 'mw3ds.smdh', '-banner', 'tools\build\banner.bnr', '-exefslogo', '-target', 't')
 foreach ($k in $defs.Keys) { $args += "-D$k=$($defs[$k])" }
 & (Join-Path (Get-MwEnv 'MW3DS_CTR_TOOLS_DIR' 'the folder with makerom.exe') 'makerom.exe') @args
-if ($LASTEXITCODE -ne 0) { "makerom failed"; exit 1 }
+$makeromCode = $LASTEXITCODE
+# The staged copy of the data is only makerom's input: packed into the CIA, it would be a third 1 GB copy on disk
+Remove-Item (Join-Path $root 'build\romfs\data') -Recurse -Force -ErrorAction SilentlyContinue
+if ($makeromCode -ne 0) { "makerom failed"; exit 1 }
 $cia = Get-Item 'build\mw3ds.cia'
 "built $($cia.FullName) ($([math]::Round($cia.Length / 1MB, 1)) MB)"

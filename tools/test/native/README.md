@@ -12,8 +12,9 @@ or memory limits. A case that takes minutes on Azahar takes seconds here.
 - `native_stubs.cpp` and `stub/` stand in for what the 3DS provided:
   - `sdmc:/3ds/mw3ds/...` maps to a folder (`NATIVE_SD`, default `build/native/sd`); `.../data` maps to the converted
     game data (`MW3DS_DATA`, e.g. `out/world`), read in place.
-  - Rendering, audio playback and the dev updater do nothing. Sound buffers finish the moment they are queued, and
-    every texture counts as loaded.
+  - Audio playback and the dev updater do nothing; sound buffers finish the moment they are queued.
+  - Drawing is off unless a screenshot is wanted (see Screenshots): then `native_gpu.cpp` draws both screens in
+    software. Off, every texture counts as loaded and nothing is read.
   - There is one thread: the streaming thread is off, and the game's own "no thread, load it now" path runs instead.
   - The log is written to the same `log.txt` format, so the same scripts read it.
 - Numbers match the 3DS on purpose: floating-point fusing is off (`-ffp-contract=off`; the 3DS rounds every
@@ -55,6 +56,8 @@ powershell -NoProfile -File tools\test\run-native-all.ps1 -IgnoreWarnings
 | `-Start <cell>` | Start cell (default `Balmora`; use `'Seyda Neen'` for story cases). |
 | `-Wait <sec>` | Give up after this many seconds (default 300). |
 | `-Fast` | Emulator only: no speed cap, no vsync for the run; the ini is put back afterwards. |
+| `-Shots <folder>` | Save each `SHOT` step there as a PNG of both screens (`tools\test\shots.py`). Emulator or native. |
+| `-Draw` | Native: draw even without a `SHOT` step (`NATIVE_DRAW=1`; a case with `SHOT` sets it anyway). |
 
 `run-native-all.ps1` (all cases):
 
@@ -80,6 +83,32 @@ out unless named in `-Filter`.
 - `logs\<case>.log`: the game log of each case.
 - `out\<case>.txt`: what `run-test.ps1` printed for each case.
 
+## Screenshots
+
+With `NATIVE_DRAW=1` (`run-test.ps1 -Native` sets it for a case with a `SHOT` step) the native build draws what the
+3DS draws, in software, and `SHOT` saves the same 400 x 480 BMP as on the 3DS (top screen above, bottom below):
+
+```powershell
+tools\test\run-test.ps1 ui-g1-g9 -Native -Data out\world -Start 'Seyda Neen' -Shots build\shots\ui
+```
+
+`native_gpu.cpp` is a small software GPU: it reads the `.t3x` textures (all five compressions, the tiled formats and
+ETC1 / ETC1A4), runs `renderer.cpp` itself (`build.py` renames its drawing entry points and `native_gpu.cpp` wraps
+them, so they draw only when asked), runs `cell.v.pica` as C++, and draws citro2d's rectangles, triangles and
+images. Only the frames a `SHOT` saves are drawn, so a case with shots takes about as long as one without (a UI case:
+3 s here, 16 s in Azahar). `NATIVE_DRAW=all` draws every frame instead (slow).
+
+Compared with Azahar on the same cases, the 3D world, the HUD, the menus, the world map and the local map match.
+Known differences:
+
+- The shot is the frame drawn right after the `SHOT` step starts; the 3DS build saves the frame before. One frame
+  (1/30 s) apart.
+- Tinted text (all the menu text): native draws it in the theme's colours (gold / tan), as the New 3DS shows it.
+  Azahar draws it white.
+- The 3DS system font is not on the PC: before the Morrowind font is loaded (title, first loading screen) text shows
+  as grey blocks. The Morrowind font is drawn exactly.
+- No mipmaps (distant textures shimmer more); stereo shows the left eye only.
+
 ## What to trust
 
 Compared with the emulator on a few cases, the expectation counts and navigation warps matched.
@@ -88,9 +117,9 @@ Good on native: quest and journal progress, scripts, dialogue, formulas, saves, 
 
 Not checked natively, so use the emulator:
 
-- Missing textures (every texture "loads").
+- Missing textures (with drawing off every texture "loads"; with it on, every file on disk is read in full).
 - Linear memory and heap warnings (the heap here is a stand-in).
-- Crashes from unmapped reads, GPU and rendering behaviour.
+- Crashes from unmapped reads, GPU hangs. Rendering looks right natively (above), but the emulator is the final word.
 - Floor and collision monitor warnings can differ slightly: the PC uses x86 floating point and the 3DS uses ARM, so
   positions drift by a few units. A `monitor:` warning on only one side needs a look, not an automatic fail.
 - Checks that depend on rendering or water data (for example `refwater`) may report `unknown check`.

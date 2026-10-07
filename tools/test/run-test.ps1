@@ -2,8 +2,10 @@
 #   tools\test\run-test.ps1 fg-rathunt                 (starts in Balmora, the Balmora-area data)
 #   tools\test\run-test.ps1 tg-bragor -Data out\world  (the whole island)
 #   tools\test\run-test.ps1 mainquest -Start "Seyda Neen"
+#   tools\test\run-test.ps1 ui-g1-g9 -Native -Shots build\shots\ui   (each SHOT step saved there as a PNG of both screens)
+# -Native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with -Draw.
 param([Parameter(Mandatory = $true)][string]$Test, [string]$Start = 'Balmora', [string]$Data = 'out\data', [int]$Wait = 300, [string]$App = '',
-      [string]$Emu = '', [switch]$Fast, [switch]$Native, [string]$Sd = '',
+      [string]$Emu = '', [switch]$Fast, [switch]$Native, [string]$Sd = '', [switch]$Draw, [string]$Shots = '',
       [string]$Pattern = 'check:|not offered|failed|expelled|crime:|expect:|monitor:|drive: (FAIL|stuck|crosshair miss)|was fighting|script error')
 . (Join-Path $PSScriptRoot '..\build\env.ps1')
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
@@ -20,12 +22,16 @@ if ($Native) {
     Set-Content (Join-Path $sdApp 'start.txt') $Start -Encoding ascii
     $env:NATIVE_SD = $sd
     $env:MW3DS_DATA = Join-Path $root $Data
+    # The software GPU (tools\test\native\native_gpu.cpp) only when something will be looked at: it is slower
+    $env:NATIVE_DRAW = if ($Draw -or ($inputs -match '(^|[\s+])SHOT($|[\s+])')) { '1' } else { '0' }
     $p = Start-Process -FilePath (Join-Path $root 'build\native\mw3ds-native.exe') -WorkingDirectory $root -PassThru -WindowStyle Hidden
     if (-not $p.WaitForExit($Wait * 1000)) { $p.Kill() }
     $log = Join-Path $sdApp 'log.txt'
+    $shotDir = $sdApp
 } else {
     & (Join-Path $PSScriptRoot 'run-emu.ps1') -Start $Start -Data $Data -Inputs $inputs -Wait $Wait -App $App -Emu $Emu -Fast:$Fast | Out-Null
     $log = Join-Path $Emu 'user\sdmc\3ds\mw3ds\log.txt'
+    $shotDir = Join-Path $Emu 'user\sdmc\3ds\mw3ds'
 }
 "== $Test"
 Select-String -Path $log -Pattern $Pattern | ForEach-Object { $_.Line }
@@ -52,3 +58,7 @@ $mon = @(Select-String -Path $log -Pattern 'monitor: ').Count
 $ended = Select-String -Path $log -Pattern 'autoinput: end' -Quiet
 $bad = $fail + $drive + $mon + $(if ($faults) { 1 } else { 0 }) + $(if ($ended) { 0 } else { 1 })
 "RESULT: " + $(if ($bad -eq 0) { 'PASS' } else { 'FAIL' }) + " ($pass expectations met, $fail failed, $drive driver failures, $mon monitor warnings" + $(if ($faults) { ', emulator faults' } else { '' }) + $(if ($ended) { '' } else { ', did not finish' }) + ")" + $(if ($warps) { "; $warps navigation warps" } else { '' }) + $(if ($misses) { "; $misses crosshair misses (activated directly)" } else { '' })
+# SHOT steps as PNG (400 x 480: the top screen above the bottom one)
+if ($Shots) {
+    python (Join-Path $PSScriptRoot 'shots.py') $shotDir $(if ([IO.Path]::IsPathRooted($Shots)) { $Shots } else { Join-Path $root $Shots })
+}

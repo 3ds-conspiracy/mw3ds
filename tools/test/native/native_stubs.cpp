@@ -1,5 +1,5 @@
 // What the 3DS provided and the native test build (tools/test/native) stands in for: the sdmc:/ folder,
-// the log, the linear heap, and the parts that only draw, update the build or watch for hangs.
+// the log, the linear heap, and the parts that update the build or watch for hangs.
 #undef fopen
 #undef stat
 #undef remove
@@ -28,8 +28,6 @@
 #include "devupdate.h"
 #include "linear.h"
 #include "log.h"
-#include "renderer.h"
-#include "screenshot.h"
 
 extern "C" { u32 __ctru_heap_size = 92380U * 1024, __ctru_linear_heap_size = 32768U * 1024; }
 
@@ -212,28 +210,9 @@ LinearGuard::LinearGuard() {}
 LinearGuard::~LinearGuard() {}
 void* lockedLinearAlloc(size_t size) { return linearAlloc(size); }
 void lockedLinearFree(void* p) { linearFree(p); }
-void deferredTexDelete(C3D_Tex* tex) { tex->data = nullptr; }
+void deferredTexDelete(C3D_Tex* tex) { C3D_TexDelete(tex); }      // one thread: the GPU is done with it
 void linearRetire() {}
 
-// ---- nothing to draw, nothing to update
-bool screenshotSave(const char*) { return false; }
+// ---- nothing to update (drawing and screenshots: native_gpu.cpp)
 void devEmptyTrash() {}
 DevUpdateResult devUpdate(const std::function<void(const std::string&, const std::string&)>&) { return DEV_NONE; }
-
-u32 g_renderParts = 0;
-std::vector<SkyBillboard> g_skyBillboards;
-float g_starAlpha = 0;
-C3D_Tex* g_starTexture = nullptr;
-void rendererInit() {}
-void rendererExit() {}
-float rendererStereoPixels(float, float) { return 0; }
-int rendererDrawWorld(World&, const RenderCamera&, float, bool, float) { return 0; }
-void rendererDrawMesh(const ActorMesh&, const C3D_Mtx*, C3D_Tex*) {}
-void rendererSetCarriedLight(const float*, float, const float*) {}
-void rendererDrawActor(Actor&, const std::vector<C3D_Tex*>&, bool) {}
-void rendererDrawGlow(const float*, float, u32) {}
-bool rendererDrawLocalMap(World&, float, float, float, float, float) { return false; }
-C3D_Tex* rendererLocalMap() { return nullptr; }
-void rendererSetDaylight(const float*, const float*, const float*, bool) {}
-float g_profActorsMs = 0.0f, g_profWorldMs = 0.0f;
-int g_drawnBatches = 0, g_culledBatches = 0, g_skippedDraws = 0;
