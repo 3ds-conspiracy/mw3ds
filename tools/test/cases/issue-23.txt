@@ -1,0 +1,23 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+8 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+0.3 0 0 0 0 SCREEN:map
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:maplocal:eq:1
+0.3 0 0 0 0 EXPECT:maptip:none
+0.3 0 0 0 0 TAP:125:85
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:maptip:Balmora
+0.3 0 0 0 0 TAP:125:85
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:maptip:none
+0.3 0 0 0 0 TAP:232:73
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:maptip:Balmora,_Guild_of_Fighters
+0.3 0 0 0 0 TAP:60:150
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:maptip:none
+1 0 0 0

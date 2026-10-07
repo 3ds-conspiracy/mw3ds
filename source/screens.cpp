@@ -347,7 +347,7 @@ void Session::drawHud()
 
 	// Minimap: tap it for the map
 	bool mapOk = !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen);
-	drawMapView(186, 26, 128, 128, 1.0f, false);
+	drawMapView(186, 26, 128, 128, 1.0f, false, w.current >= 0 && w.cells[w.current].interior);
 	if (mapOk && uiHit(186, 26, 128, 128))
 		openScreen(SCR_MAP);
 	uiTextCentered(250, 156, 0.38f, col::textDim, w.cellName().size() > 26 ? w.cellName().substr(0, 25) + "..." : w.cellName());

@@ -444,13 +444,27 @@ void uiCaption(const std::string& title, const std::string& note)
 	uiRect(0, 0, 320, 21, col::panelLight);
 	// A note (gold, magicka, ...) takes the right end; the title centres in what is left
 	float right = 314.0f;
+	float tw = uiTextWidth(title, 0.55f);
 	if (!note.empty())
 	{
-		float nw = uiTextWidth(note, 0.45f);
-		uiTextRight(314, (21.0f - uiLineHeight(0.45f)) / 2.0f, 0.45f, col::textDim, note);
+		// a note too long to sit beside the title ("Seyda Neen, Arrille's Tradehouse") is cut short with ".."
+		std::string text = note;
+		float room = 314.0f - 6.0f - tw - 12.0f;
+		if (uiTextWidth(text, 0.45f) > room)
+		{
+			while (!text.empty() && uiTextWidth(text + "..", 0.45f) > room)
+			{
+				while (!text.empty() && ((u8)text.back() & 0xC0) == 0x80)
+					text.pop_back();
+				if (!text.empty())
+					text.pop_back();
+			}
+			text += "..";
+		}
+		float nw = uiTextWidth(text, 0.45f);
+		uiTextRight(314, (21.0f - uiLineHeight(0.45f)) / 2.0f, 0.45f, col::textDim, text);
 		right = 314.0f - nw - 8.0f;
 	}
-	float tw = uiTextWidth(title, 0.55f);
 	float lh = uiLineHeight(0.55f);
 	float tx = fmaxf(6.0f, (6.0f + right) / 2.0f - tw / 2.0f);
 	uiText(tx, (21.0f - lh) / 2.0f, 0.55f, col::header, title);

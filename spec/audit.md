@@ -36,6 +36,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `world.cpp` | enable / disable, pick up, add / remove items, stacks | `mwworld/worldimp.cpp`, `containerstore.cpp`, `actiontake.cpp` | unchecked |
 | `world.cpp` | soul trap | `mwmechanics/spelleffects.cpp` (soultrap), `actors.cpp` | unchecked |
 | `screens_character.cpp` | journal: topic links in entries and topic pages | `mwgui/journalbooks.cpp`, `journalviewmodel.cpp` | checked 2026-10-07 (`dialogue.md` R25, `issue-26`) |
+| `screens_map.cpp` | local map indoors and out, door markers and the name they show | `mwgui/mapwindow.cpp`, `mwworld/worldimp.cpp` (door markers), `mwclass/door.cpp getDestination` | checked 2026-10-07 (`issue-23`, `issue-24`): the marker names the destination cell, as OpenMW; a tap shows it (OpenMW: hover), the buttons and sizes differ (3DS UI, kept) |
 | `world.cpp` | journal entries, quest finished | `mwdialogue/journalimp.cpp`, `quest.cpp` | unchecked |
 | `world.cpp` | date and time, day / month rollover | `mwworld/datetimemanager.cpp` | unchecked |
 | `world.cpp` | what the crosshair picks | `mwworld/worldimp.cpp getFacedObject` (rays the drawn scene) | differs: boxes (cost); boxes now follow their objects |

@@ -120,6 +120,9 @@ struct Session : ScriptHost
 	int mapZoomIdx = 0;
 	float mapCX = 0.0f, mapCY = 0.0f;
 	bool mapViewSet = false;          // the view has been centred on the player since the screen opened
+	bool mapLocal = false;            // the map screen shows the local map (else the world map)
+	bool mapLocalOutdoors = false;    // and which one it opens on outdoors (indoors: the local map)
+	int mapDoorTip = -1;              // the door marker tapped on the local map: its destination shows
 	float frameDt = 1.0f / 30.0f;     // the last frame's time (D-pad panning)
 	// The 2x-detail map's tiles: read only while the map screen shows the zoomed-in view (up to 2 stay
 	// when out of view, 4 at most, 512 KB each), freed when it closes
@@ -127,13 +130,13 @@ struct Session : ScriptHost
 	MapTileTex mapTiles[4];
 	bool ensureMapTile(int i);
 	void freeMapTiles();
-	// Local map of the interior: rendered from above on arrival (renderer texture), again when the
-	// player changes floor
+	// Local map: the interior rendered from above on arrival (renderer texture), again when the player
+	// changes floor; outdoors (localMapCell -2) the cells round the player, while the map screen shows it
 	int localMapCell = -1;
 	float localMin[2] = {}, localSize = 1.0f, localTopZ = 0.0f;
 	void updateLocalMap();            // inside a frame, before the screens are drawn
 	bool ensureMapTexture();
-	void drawMapView(float x, float y, float vw, float vh, float zoom, bool full);
+	void drawMapView(float x, float y, float vw, float vh, float zoom, bool full, bool local);
 	bool ended = false;
 	bool autotest = false;
 	bool testGod = false;

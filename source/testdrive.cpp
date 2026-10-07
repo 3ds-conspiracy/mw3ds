@@ -871,6 +871,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "brewedvalue") { const Object* o = w.game.object(s.lastBrewed); if (!o) return false; v = (float)o->value; }
 	else if (what == "made") { v = 0; for (auto& id : w.madeItems) v += carried(w, id) >= 0; }
+	else if (what == "maplocal") v = s.mapLocal;          // the map screen shows the local map
+	else if (what == "mapzoom") v = s.mapZoomIdx;         // its zoom step
 	else if (what == "madespells") { v = 0; for (auto& id : w.madeSpells) for (auto& sp : st.spells) v += lower(sp) == lower(id); }
 	else if (what == "effects") v = (float)w.effects.size();
 	else if (what == "brewed") { v = 0; for (auto& id : w.brewed) v += std::max(0, w.itemCount(id)); }
@@ -2131,6 +2133,13 @@ bool TestDriver::expect(Session& s, const std::string& spec)
 			ok &= en->type == ENCH_ONCE + atoi(a[2].c_str());
 		snprintf(got, sizeof(got), "%s", !it ? "no made item carried" : !en ? "no enchantment"
 			: (std::to_string(en->effects.size()) + " effects, type " + std::to_string(en->type - ENCH_ONCE)).c_str());
+	}
+	else if (what == "maptip" && a.size() >= 2)
+	{
+		// EXPECT:maptip:<cell>: the local map shows where the tapped door leads ("none": no door tapped)
+		std::string tip = s.mapDoorTip >= 0 && s.mapDoorTip < (int)w.refs.size() ? w.refs[s.mapDoorTip].destCell : "";
+		ok = a[1] == "none" ? tip.empty() : lower(tip) == lower(spaced(a[1]));
+		snprintf(got, sizeof(got), "%.80s", tip.empty() ? "none" : tip.c_str());
 	}
 	else if (what == "journaltopic" && a.size() >= 2)
 	{

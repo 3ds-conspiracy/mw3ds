@@ -762,6 +762,8 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	{
 		mapViewSet = false;
 		freeMapTiles();
+		mapDoorTip = -1;
+		mapLocal = (w.current >= 0 && w.cells[w.current].interior) || mapLocalOutdoors;
 	}
 	// Every few seconds: cells the player left far behind give their objects' memory back
 	if ((evictTimer -= dt) <= 0.0f)
