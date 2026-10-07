@@ -1,0 +1,17 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SCREEN:map
+0.5 0 0 0 0 EXPECT:mapzoom:eq:0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:174:222
+0.5 0 0 0 0 EXPECT:mapzoom:eq:0
+0.3 0 0 0 0 TAP:214:222
+0.5 0 0 0 0 EXPECT:mapzoom:eq:1
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:mapzoom:eq:4
+0.3 0 0 0 0 TAP:214:222
+0.5 0 0 0 0 EXPECT:mapzoom:eq:4
+0.5 0 0 0 0 SHOT

@@ -558,6 +558,9 @@ bool uiButton(float x, float y, float w, float h, const std::string& label, bool
 	// Morrowind's buttons: framed text that brightens under the pointer and when pressed
 	uiRect(x, y, w, h, pressed || focused ? col::select : col::panelLight);
 	uiFrame(x, y, w, h, "menu_button_frame", enabled ? col::border : col::textDim);
+	// A disabled button greys out: the frame is a picture that ignores the fallback colour, so it is darkened
+	if (!enabled)
+		uiRect(x, y, w, h, C2D_Color32(0, 0, 0, 150));
 	u32 c = !enabled ? col::textDim : pressed ? col::textPressed : focused ? col::textOver : col::text;
 	// The label shrinks to fit the button (its width and its height: the spell effect rows are 12 high), down to
 	// a size still readable; past that it is cut short with ".."
