@@ -369,15 +369,17 @@ static const UiPiece* findPiece(const std::string& name)
 	return it != s_def.pieces.end() ? &it->second : nullptr;
 }
 
-static void drawPiece(const UiPiece& p, float x, float y, float w, float h)
+// part: the top left fraction of the piece that is drawn (1: all of it)
+static void drawPiece(const UiPiece& p, float x, float y, float w, float h, float part = 1.0f)
 {
 	if (w <= 0.0f || h <= 0.0f)
 		return;
-	Tex3DS_SubTexture sub = { p.w, p.h, (float)p.x / s_def.atlasW, 1.0f - (float)p.y / s_def.atlasH,
-		(float)(p.x + p.w) / s_def.atlasW, 1.0f - (float)(p.y + p.h) / s_def.atlasH };
+	float pw = p.w * part, ph = p.h * part;
+	Tex3DS_SubTexture sub = { (u16)pw, (u16)ph, (float)p.x / s_def.atlasW, 1.0f - (float)p.y / s_def.atlasH,
+		(p.x + pw) / s_def.atlasW, 1.0f - (p.y + ph) / s_def.atlasH };
 	C2D_Image img = { &s_atlasTex, &sub };
 	g_uiDraws++;
-	C2D_DrawImageAt(img, x, y, 0.5f, nullptr, w / p.w, h / p.h);
+	C2D_DrawImageAt(img, x, y, 0.5f, nullptr, w / pw, h / ph);
 }
 
 bool uiHasPiece(const char* name)
@@ -903,8 +905,10 @@ int uiItemGrid(UiGrid& grid, float x, float y, float w, float h, const std::vect
 		// Equipped and enchanted items sit on Morrowind's backgrounds
 		bool eq = it.flags & UIGRID_EQUIPPED, magic = it.flags & UIGRID_MAGIC;
 		const char* bg = magic && eq ? "menu_icon_magic_equip" : magic ? "menu_icon_magic" : eq ? "menu_icon_equip" : nullptr;
+		// (Morrowind draws only the top left 44 x 44 of their 64 x 64 pictures, OpenMW's ItemWidget::setItem: the
+		// whole picture put the swirl and the square small, up and to the left of the icon)
 		if (bg && uiHasPiece(bg))
-			uiPiece(bg, cx + 1, cy + 1, cell - 2, cell - 2);
+			drawPiece(*findPiece(bg), cx + 1, cy + 1, cell - 2, cell - 2, 44.0f / 64.0f);
 		else if (eq)
 			uiRect(cx + 1, cy + 1, cell - 2, cell - 2, C2D_Color32(70, 52, 30, 255));
 		// Icons sit inside the inner square (28 px) the selection outlines, so nothing is clipped
