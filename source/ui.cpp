@@ -696,6 +696,83 @@ void uiTextBox(UiScroll& s, float x, float y, float w, float h, const std::strin
 	C3D_SetScissor(GPU_SCISSOR_DISABLE, 0, 0, 0, 0);
 }
 
+int uiLinkTextBox(UiLinkText& t, long revision, float x, float y, float w, float h, const std::string& text,
+	const std::vector<UiLink>& links, float scale, bool keys)
+{
+	float lh = uiLineHeight(scale);
+	if (t.revision != revision)
+	{
+		// word by word, as uiWrap: a word that would pass the right edge starts the next line
+		t.revision = revision;
+		t.words.clear();
+		t.scroll = UiScroll();
+		std::vector<int> linkAt(text.size(), -1);
+		for (auto& l : links)
+			for (size_t k = l.begin; k < l.end && k < text.size(); k++)
+				linkAt[k] = l.id;
+		float space = uiTextWidth(" ", scale), cx = 0.0f, cy = 0.0f;
+		size_t i = 0;
+		while (i < text.size())
+		{
+			if (text[i] == '\n')
+			{
+				cx = 0.0f;
+				cy += lh;
+				i++;
+				continue;
+			}
+			if (text[i] == ' ')
+			{
+				i++;
+				continue;
+			}
+			// a word ends at a space, a line break, or where a link starts or ends ("Balmora," links "Balmora")
+			size_t e = i + 1;
+			while (e < text.size() && text[e] != ' ' && text[e] != '\n' && linkAt[e] == linkAt[i])
+				e++;
+			std::string word = text.substr(i, e - i);
+			float ww = uiTextWidth(word, scale);
+			bool joined = i > 0 && text[i - 1] != ' ' && text[i - 1] != '\n';    // the rest of a word a link split
+			if (!joined && cx > 0.0f && cx + ww > w - 8)
+			{
+				cx = 0.0f;
+				cy += lh;
+			}
+			if (joined && !t.words.empty())
+				cx = t.words.back().x + t.words.back().w;
+			t.words.push_back({ word, cx, cy, ww, linkAt[i] });
+			cx += ww + space;
+			i = e;
+		}
+		t.height = cy + lh;
+	}
+	UiScroll& s = t.scroll;
+	if (keys)
+	{
+		if (s_in.held & KEY_DOWN) s.scroll += 4.0f;
+		if (s_in.held & KEY_UP) s.scroll -= 4.0f;
+	}
+	s.scroll += uiStickScroll();
+	if (s_in.touching && s_in.touchX >= x && s_in.touchX < x + w && s_in.touchY >= y && s_in.touchY < y + h)
+		s.scroll -= s_in.dragDY;
+	s.scroll = fmaxf(0.0f, fminf(s.scroll, fmaxf(0.0f, t.height - h)));
+	int hit = -1;
+	C2D_Flush();
+	C3D_SetScissor(GPU_SCISSOR_NORMAL, (u32)(240 - (y + h)), (u32)(320 - (x + w)), (u32)(240 - y), (u32)(320 - x));
+	for (auto& wd : t.words)
+	{
+		float wy = y + wd.y - s.scroll;
+		if (wy + lh < y || wy > y + h)
+			continue;
+		uiText(x + 4 + wd.x, wy, scale, wd.link >= 0 ? col::link : col::text, wd.text);
+		if (wd.link >= 0 && wy >= y && uiHit(x + 4 + wd.x, wy, wd.w, lh))
+			hit = wd.link;
+	}
+	C2D_Flush();
+	C3D_SetScissor(GPU_SCISSOR_DISABLE, 0, 0, 0, 0);
+	return hit;
+}
+
 void uiTextBoxPictures(UiScroll& s, float x, float y, float w, float h, const std::string& text,
 	UiPicture (*look)(const std::string& key, void* ctx), void* ctx, float scale)
 {

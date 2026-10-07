@@ -35,6 +35,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `world.cpp` | followers taken through doors | `mwworld/actionteleport.cpp getFollowers` | unchecked |
 | `world.cpp` | enable / disable, pick up, add / remove items, stacks | `mwworld/worldimp.cpp`, `containerstore.cpp`, `actiontake.cpp` | unchecked |
 | `world.cpp` | soul trap | `mwmechanics/spelleffects.cpp` (soultrap), `actors.cpp` | unchecked |
+| `screens_character.cpp` | journal: topic links in entries and topic pages | `mwgui/journalbooks.cpp`, `journalviewmodel.cpp` | checked 2026-10-07 (`dialogue.md` R25, `issue-26`) |
 | `world.cpp` | journal entries, quest finished | `mwdialogue/journalimp.cpp`, `quest.cpp` | unchecked |
 | `world.cpp` | date and time, day / month rollover | `mwworld/datetimemanager.cpp` | unchecked |
 | `world.cpp` | what the crosshair picks | `mwworld/worldimp.cpp getFacedObject` (rays the drawn scene) | differs: boxes (cost); boxes now follow their objects |

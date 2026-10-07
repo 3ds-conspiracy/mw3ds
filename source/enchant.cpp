@@ -175,7 +175,7 @@ void Session::drawEnchanting()
 	if (b == 0)
 	{
 		playSound(-1, "Menu Click");
-		wantMakeName = true;
+		wantText = TEXT_MAKENAME;
 	}
 	else if (b == 1)
 		enchantConfirm();

@@ -188,6 +188,12 @@ sets the index to that entry's number only when it is higher than the current on
 up or down. A Journal select condition reads this index. A script-added entry that already exists changes nothing
 but may raise the index and shows the notice only then.
 
+**R25. Topic links in the journal (`mwgui/journalbooks.cpp`, `journalviewmodel.cpp`).** The journal's text (its
+entries, and what was said about a topic) shows the topics the journal has, found as in dialogue (keyword search,
+longest match), as links; following one opens that topic's page. A topic page's own name is not a link. On the 3DS: a
+tap on the link opens the topic in the Topics tab; Back returns to the index. The Search button (ours, not
+OpenMW's) narrows the index to topics whose name holds the text and the entries to those that do. Test: `issue-26`.
+
 ## E. Text substitution (components/interpreter/defines.cpp, dialogue mode)
 
 **R25. Escape characters.** `%` and `^` both start a substitution. After the escape character the following text is

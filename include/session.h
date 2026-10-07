@@ -67,8 +67,9 @@ struct Session : ScriptHost
 	int buttonPressed = -1;
 	std::vector<ScriptMenu> pendingMenus;
 	bool wantName = false;            // main loop shows the system keyboard between frames
-	bool wantMakeName = false;        // the same, for the name of the spell / item being made (setMakeName)
-	std::string typedText;            // tests: what the system keyboard returns for a name (TYPE:)
+	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH };
+	int wantText = TEXT_NONE;         // the same, for the name of the spell / item being made or the journal's search
+	std::string typedText;            // tests: what the system keyboard returns (TYPE:)
 	int travelCell = -1;              // door to another cell: main loop shows a loading screen, then finishTravel()
 	float travelPos[3] = {}, travelYaw = 0.0f;
 	bool travelToSpawn = false;   // test GOTO into an exterior cell: land at the cell's own spawn spot
@@ -162,6 +163,8 @@ struct Session : ScriptHost
 	int invTab = 0;                   // inventory filter: all, weapon, apparel, magic, misc
 	int journalTab = 0;               // journal: 0 the entries, 1 the topics index
 	std::string journalTopic;         // the topic open in the index
+	std::string journalSearch;        // what the index and the entries are narrowed to ("": all)
+	UiLinkText journalText;           // the entries / the open topic, its topics as links
 	UiScroll scroll;
 	int focus = 0;
 	int bookRef = -1, containerRef = -1;
@@ -352,7 +355,8 @@ struct Session : ScriptHost
 	bool menuOpen() const { return !messages.empty() || screen != SCR_NONE || dlg.open; }
 	bool worldPaused() const;      // a menu that stops the world (not talk, barter and the services: the NPC keeps moving)
 	void setName(const std::string& name);
-	void setMakeName(const std::string& name);
+	void setText(bool confirmed, const std::string& text);   // what the keyboard wantText asked for returned
+	std::string textNow();                                     // the text it starts from
 	void finishTravel();
 
 	// ScriptHost

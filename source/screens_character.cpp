@@ -12,56 +12,97 @@
 void Session::drawJournal()
 {
 	header(w.game.gmst("sjournal", "Journal"));
-	// Entries / Topics (L / R or tap)
+	// Entries / Topics (L / R or tap), and Search
 	const UiInput& in = uiIn();
 	int tab = journalTab;
 	if (in.down & (KEY_L | KEY_R)) tab = 1 - tab;
 	if (uiButton(4, 24, 100, 18, "Entries", tab == 0)) tab = 0;
 	if (uiButton(108, 24, 100, 18, w.game.gmst("stopics", "Topics"), tab == 1)) tab = 1;
+	// Search (tap: the system keyboard): the topics whose name holds the text, the entries that do
+	if (uiButton(212, 24, 104, 18, journalSearch.empty() ? "Search" : journalSearch, !journalSearch.empty()))
+	{
+		playSound(-1, "Menu Click");
+		wantText = TEXT_SEARCH;
+	}
 	if (tab != journalTab)
 	{
 		journalTab = tab;
-		scroll = UiScroll();
 		list2 = UiList();
 		journalTopic.clear();
 	}
+	std::string find = lower(journalSearch);
+	auto found = [&](const std::string& text) { return find.empty() || lower(text).find(find) != std::string::npos; };
+	// The topics the journal has are links in its text, and open that topic (OpenMW's JournalBooks); the page is
+	// built and laid out again only when what it shows changes
+	std::vector<std::string> topics, topicKeys;
+	for (auto& t : w.topicLog)
+	{
+		topics.push_back(t.first);
+		topicKeys.push_back(lower(t.first));
+	}
+	auto page = [&](const std::string& key, auto build, size_t skip) {
+		long rev = (long)(std::hash<std::string>()(key + "|" + std::to_string(w.journal.size()) + "|"
+			+ std::to_string(w.topicLog.size())) & 0x7fffffff);
+		std::string text;
+		std::vector<UiLink> links;
+		if (rev != journalText.revision)
+		{
+			text = build();
+			for (auto& m : dialogueFindKeywords(text, topicKeys))
+				if (m.begin >= skip)
+					links.push_back({ m.begin, m.end, m.keyword });
+		}
+		uiPanel(4, 44, 312, 160);
+		int hit = uiLinkTextBox(journalText, rev, 6, 46, 308, 156, text, links);
+		if (hit >= 0 && hit < (int)topics.size())
+		{
+			playSound(-1, "Menu Click");
+			journalTab = 1;
+			journalTopic = topics[hit];
+			list2 = UiList();
+			logf("journal: link to %s", journalTopic.c_str());
+		}
+	};
 	if (journalTab == 0)
 	{
-		std::string text;
-		for (auto it = w.journal.rbegin(); it != w.journal.rend(); ++it)
-		{
-			auto j = w.game.journals.find(it->quest);
-			// the quest's name (its "quest name" INFO); Morrowind.esm has none, and the id is no title
-			std::string title = j != w.game.journals.end() ? j->second.title : "";
-			text += (title.empty() ? "" : title + "\n") + dialogueSubstitute(w, it->text, -1) + "\n\n";
-		}
-		if (text.empty())
-			text = "No entries yet.";
-		uiPanel(4, 44, 312, 160);
-		uiTextBox(scroll, 6, 46, 308, 156, text);
+		page("entries|" + find, [&]() {
+			std::string text;
+			for (auto it = w.journal.rbegin(); it != w.journal.rend(); ++it)
+			{
+				auto j = w.game.journals.find(it->quest);
+				// the quest's name (its "quest name" INFO); Morrowind.esm has none, and the id is no title
+				std::string title = j != w.game.journals.end() ? j->second.title : "";
+				std::string entry = (title.empty() ? "" : title + "\n") + dialogueSubstitute(w, it->text, -1);
+				if (found(entry))
+					text += entry + "\n\n";
+			}
+			if (text.empty())
+				text = find.empty() ? "No entries yet." : "Nothing found.";
+			return text;
+		}, 0);
 	}
 	else if (journalTopic.empty())
 	{
 		// the topics heard about, alphabetically
 		std::vector<std::string> names;
-		for (auto& t : w.topicLog)
-			names.push_back(t.first);
+		for (auto& t : topics)
+			if (found(t))
+				names.push_back(t);
 		if (names.empty())
-			uiTextCentered(160, 110, 0.45f, col::textDim, "No topics yet.");
+			uiTextCentered(160, 110, 0.45f, col::textDim, topics.empty() ? "No topics yet." : "Nothing found.");
 		int pick = uiList(list2, 4, 44, 312, 160, names, 0.45f, true);
 		if (pick >= 0 && pick < (int)names.size())
-		{
 			journalTopic = names[pick];
-			scroll = UiScroll();
-		}
 	}
 	else
 	{
-		std::string text = journalTopic + "\n\n";
-		for (auto& l : w.topicLog[journalTopic])
-			text += l + "\n\n";
-		uiPanel(4, 44, 312, 160);
-		uiTextBox(scroll, 6, 46, 308, 156, text);
+		// the topic's name above what was said about it; the name itself is no link
+		page("topic|" + journalTopic, [&]() {
+			std::string text = journalTopic + "\n\n";
+			for (auto& l : w.topicLog[journalTopic])
+				text += l + "\n\n";
+			return text;
+		}, journalTopic.size());
 	}
 	std::vector<std::string> labels;
 	if (journalTab == 1 && !journalTopic.empty())

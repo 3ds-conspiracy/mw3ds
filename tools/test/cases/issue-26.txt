@@ -1,0 +1,37 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille
+60 0 0 0 0 ACTIVATE:arrille
+2 0 0 0
+0.3 0 0 0 0 EXPECT:screen:dialogue
+1 0 0 0 0 TOPIC:little_advice
+1 0 0 0
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:1
+0.3 0 0 0 0 TOPICLOG:caius_cosades:Arrille%said%he%lives%in%Balmora.
+0.3 0 0 0 0 SCREEN:journal
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:journaltopic:none
+0.3 0 0 0 0 TAP:150:56
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:journaltopic:caius_cosades
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:journal
+0.3 0 0 0 0 EXPECT:journaltopic:none
+0.3 0 0 0 0 TAP:100:52
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:journaltopic:caius_cosades
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 TYPE:advice
+0.3 0 0 0 0 TAP:264:32
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:100:52
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:journaltopic:little_advice
+1 0 0 0

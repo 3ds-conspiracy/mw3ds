@@ -158,7 +158,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "MOVIE:", "BARTER:", "BARTERSEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:" })
+				"CASTAT:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "MOVIE:", "BARTER:", "BARTERSEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -1445,21 +1445,24 @@ int main()
 				lastTick = svcGetSystemTick();
 			}
 		}
-		// The name of the spell / item being made: the system keyboard, starting from the name it has now
-		if (session->wantMakeName)
+		// The name of the spell / item being made, or the journal's search: the system keyboard, starting from the
+		// text there now (a name can't be left blank; an empty search shows everything again)
+		if (session->wantText)
 		{
 			if (session->autotest)
-				session->setMakeName(session->typedText);
+				session->setText(true, session->typedText);
 			else
 			{
 				SwkbdState kb;
-				char name[32] = {};
+				char text[32] = {};
+				bool search = session->wantText == Session::TEXT_SEARCH;
 				swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, 31);
-				swkbdSetHintText(&kb, session->screen == SCR_ENCHANT ? "Name the item" : "Name the spell");
-				swkbdSetInitialText(&kb, session->makeName.c_str());
-				swkbdSetValidation(&kb, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
-				SwkbdButton button = swkbdInputText(&kb, name, sizeof(name));
-				session->setMakeName(button == SWKBD_BUTTON_CONFIRM ? name : "");
+				swkbdSetHintText(&kb, search ? "Search" : session->screen == SCR_ENCHANT ? "Name the item" : "Name the spell");
+				swkbdSetInitialText(&kb, session->textNow().c_str());
+				if (!search)
+					swkbdSetValidation(&kb, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
+				SwkbdButton button = swkbdInputText(&kb, text, sizeof(text));
+				session->setText(button == SWKBD_BUTTON_CONFIRM, text);
 				lastTick = svcGetSystemTick();
 			}
 		}

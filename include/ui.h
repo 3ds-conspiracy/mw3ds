@@ -95,6 +95,13 @@ int uiItemGrid(UiGrid& grid, float x, float y, float w, float h, const std::vect
 struct UiScroll { float scroll = 0.0f; };
 void uiTextBox(UiScroll& s, float x, float y, float w, float h, const std::string& text, float scale = 0.5f,
 	bool keys = true);
+// A scrolling page of text whose spans are links (the journal's topics): drawn in the link colour, the id of the one
+// tapped is returned (-1: none). The words are laid out again only when `revision` changes
+struct UiLink { size_t begin, end; int id; };
+struct UiLinkWord { std::string text; float x, y, w; int link; };
+struct UiLinkText { UiScroll scroll; long revision = -1; float height = 0.0f; std::vector<UiLinkWord> words; };
+int uiLinkTextBox(UiLinkText& t, long revision, float x, float y, float w, float h, const std::string& text,
+	const std::vector<UiLink>& links, float scale = 0.5f, bool keys = true);
 // A scrolling page of text with pictures: lines "[[img:<key>]]" draw the picture look(key) gives
 // (file, w, h; empty file: left out), scaled to fit the width
 struct UiPicture { std::string file; int w = 0, h = 0; };

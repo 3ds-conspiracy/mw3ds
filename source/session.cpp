@@ -629,14 +629,31 @@ void Session::setName(const std::string& name)
 	logf("chargen: name %s", w.stats.name.c_str());
 }
 
-// The name typed for the spell / enchanted item being made (empty: the keyboard was cancelled, the name stays)
-void Session::setMakeName(const std::string& name)
+// What was typed on the system keyboard: the name of the spell / enchanted item being made (a cancel keeps the
+// name), or the journal's search (empty: everything again)
+void Session::setText(bool confirmed, const std::string& text)
 {
-	wantMakeName = false;
-	if (name.find_first_not_of(' ') == std::string::npos)
+	int kind = wantText;
+	wantText = TEXT_NONE;
+	if (!confirmed)
 		return;
-	makeName = name;
-	logf("making: name %s", makeName.c_str());
+	bool blank = text.find_first_not_of(' ') == std::string::npos;
+	if (kind == TEXT_MAKENAME && !blank)
+	{
+		makeName = text;
+		logf("making: name %s", makeName.c_str());
+	}
+	else if (kind == TEXT_SEARCH)
+	{
+		journalSearch = blank ? "" : text;
+		list2 = UiList();
+		logf("journal: search \"%s\"", journalSearch.c_str());
+	}
+}
+
+std::string Session::textNow()
+{
+	return wantText == TEXT_SEARCH ? journalSearch : makeName;
 }
 
 void Session::openScreen(Screen s)

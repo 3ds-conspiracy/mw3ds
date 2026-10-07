@@ -1370,6 +1370,12 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		s.typedText = spaced(a[1]);
 		return true;
 	}
+	// TOPICLOG:<topic>:<line>: the journal's Topics index has that line about the topic (underscores for spaces)
+	if (verb == "TOPICLOG" && a.size() >= 3)
+	{
+		w.topicLog[lower(spaced(a[1]))].push_back(spaced(a[2]));
+		return true;
+	}
 	// SETITEM:<id>:<n>: the player holds exactly n of the item (Item conditions)
 	if (verb == "SETITEM" && a.size() >= 3)
 	{
@@ -2125,6 +2131,12 @@ bool TestDriver::expect(Session& s, const std::string& spec)
 			ok &= en->type == ENCH_ONCE + atoi(a[2].c_str());
 		snprintf(got, sizeof(got), "%s", !it ? "no made item carried" : !en ? "no enchantment"
 			: (std::to_string(en->effects.size()) + " effects, type " + std::to_string(en->type - ENCH_ONCE)).c_str());
+	}
+	else if (what == "journaltopic" && a.size() >= 2)
+	{
+		// EXPECT:journaltopic:<topic>: the topic open in the journal's Topics index ("none": the index itself)
+		ok = a[1] == "none" ? s.journalTopic.empty() : lower(s.journalTopic) == lower(spaced(a[1]));
+		snprintf(got, sizeof(got), "%.80s", s.journalTopic.empty() ? "none" : s.journalTopic.c_str());
 	}
 	else if ((what == "makename" || what == "madename" || what == "madespellname") && a.size() >= 2)
 	{
