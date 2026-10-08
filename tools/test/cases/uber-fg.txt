@@ -1,0 +1,1859 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:12
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:76:5
+0.3 0 0 0 0 GIVE:daedric%katana
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:p_levitation_e:300
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:300
+0.3 0 0 0 0 GIVE:sc_icarianflight:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:10
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+30 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Fighters_Guild
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:fighters_guild:ge:0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:cave_rat
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@-22089,-13637,806
+30 0 0 0 0 WALKTO:@-22087,-13134,504
+30 0 0 0 0 WALKTO:@-21935,-12844,504
+30 0 0 0 0 WALKTO:@-21573,-12654,484
+30 0 0 0 0 WALKTO:@-21100,-12784,310
+30 0 0 0 0 WALKTO:@-20834,-12774,287
+30 0 0 0 0 WALKTO:@-20450,-12758,152
+30 0 0 0 0 WALKTO:@-20241,-13185,164
+30 0 0 0 0 WALKTO:@-20300,-13862,160
+30 0 0 0 0 WALKTO:@-20067,-14119,180
+30 0 0 0 0 WALKTO:@-20032,-14880,192
+30 0 0 0 0 WALKTO:@-19658,-14887,272
+30 0 0 0 0 WALKTO:@-19346,-14888,272
+30 0 0 0 0 WALKTO:@-19014,-14896,272
+30 0 0 0 0 WALKTO:@-18708,-14878,182
+30 0 0 0 0 WALKTO:@-18382,-14974,168
+60 0 0 0 0 WALKTO:@-18288,-14864,325
+120 0 0 0 0 DOORTO:Balmora,_Drarayne_Thelas'_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Drarayne_Thelas'_House
+60 0 0 0 0 ACTIVATE:drarayne_thelas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:cave_rat
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 KILL:rat_cave_fgrh
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Drarayne_Thelas'_Storage
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Drarayne_Thelas'_Storage
+60 0 0 0 0 KILL:rat_cave_fgrh
+2 0 0 0
+60 0 0 0 0 KILL:rat_cave_fgrh
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:rat_cave_fgrh
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@-22089,-13637,806
+30 0 0 0 0 WALKTO:@-22087,-13134,504
+30 0 0 0 0 WALKTO:@-21935,-12844,504
+30 0 0 0 0 WALKTO:@-21573,-12654,484
+30 0 0 0 0 WALKTO:@-21100,-12784,310
+30 0 0 0 0 WALKTO:@-20834,-12774,287
+30 0 0 0 0 WALKTO:@-20450,-12758,152
+30 0 0 0 0 WALKTO:@-20241,-13185,164
+30 0 0 0 0 WALKTO:@-20300,-13862,160
+30 0 0 0 0 WALKTO:@-20067,-14119,180
+30 0 0 0 0 WALKTO:@-20032,-14880,192
+30 0 0 0 0 WALKTO:@-19658,-14887,272
+30 0 0 0 0 WALKTO:@-19346,-14888,272
+30 0 0 0 0 WALKTO:@-19014,-14896,272
+30 0 0 0 0 WALKTO:@-18708,-14878,182
+30 0 0 0 0 WALKTO:@-18382,-14974,168
+60 0 0 0 0 WALKTO:@-18288,-14864,325
+120 0 0 0 0 DOORTO:Balmora,_Drarayne_Thelas'_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Drarayne_Thelas'_House
+60 0 0 0 0 ACTIVATE:drarayne_thelas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:cave_rat
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:cave_rat
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_RatHunt:ge:105
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-rathunt
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:egg_poachers
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Shulk_Egg_Mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Egg_Poachers:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@-31585,-27707,792
+120 0 0 0 0 DOORTO:Shulk_Egg_Mine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shulk_Egg_Mine
+120 0 0 0 0 DOORTO:Shulk_Egg_Mine,_Queen's_Lair
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shulk_Egg_Mine,_Queen's_Lair
+120 0 0 0 0 KILL:sevilo_othan
+2 0 0 0
+120 0 0 0 0 KILL:daynila_valas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:sevilo_othan
+0.1 0 0 0 0 EXPECT:dead:daynila_valas
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:egg_poachers
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Egg_Poachers:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-eggpoachers
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_agents
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Telvanni_agents:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-22994,17207,2577
+120 0 0 0 0 KILL:alveleg
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:alveleg
+# (Alveleg runs downhill: fly back up to the cave's door before going in)
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-22994,17207,2577
+# (let the levitation run out: DOORTO while levitating at this door loops until its timeout)
+50 0 0 0
+0.5 0 0 0 0 FACE:@-23107,17313
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ashanammu
+120 0 0 0 0 KILL:alynu_aralen
+2 0 0 0
+120 0 0 0 0 KILL:sathasa_nerothren
+2 0 0 0
+120 0 0 0 0 KILL:fothyna_herothran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:alynu_aralen
+0.1 0 0 0 0 EXPECT:dead:sathasa_nerothren
+0.1 0 0 0 0 EXPECT:dead:fothyna_herothran
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_agents
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Telvanni_agents:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-telvanni
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:code_book
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Sottilde:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-16623,-15619,305
+120 0 0 0 0 DOORTO:Balmora,_South_Wall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_South_Wall_Cornerclub
+60 0 0 0 0 ACTIVATE:sottilde
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:code_book
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Sottilde:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_sottildescodebook:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:code_book
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Sottilde:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-sottilde
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DeseleDebt:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:selvil_sareloth
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Suran
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Suran
+120 0 0 0 0 WALKTO:@53891,-49976,297
+120 0 0 0 0 DOORTO:Suran,_Desele's
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Suran,_Desele's_House_of_Earthly_Delights
+120 0 0 0 0 WALKTO:@-415,-472,261
+120 0 0 0 0 WALKTO:@-512,-700,261
+120 0 0 0 0 WALKTO:@-300,-768,200
+120 0 0 0 0 WALKTO:@0,-768,5
+120 0 0 0 0 WALKTO:@0,-480,5
+60 0 0 0 0 ACTIVATE:helviane_desele
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DeseleDebt:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DeseleDebt:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-deseledebt
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dura_gra-Bol
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_OrcBounty:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Dura_gra-Bol's_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Dura_gra-Bol's_House
+120 0 0 0 0 KILL:dura_gra-bol
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dura_gra-bol
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dura_gra-Bol
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_OrcBounty:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:fighters_guild:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-orcbounty
+# Vivec: Lorbumol gro-Aglakh's contracts (Balmora Mages Guild guide to Vivec, the Plaza holds both guilds)
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Vivec
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Fighters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Juicedaw_Feather_Ring
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DebtOrc:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 WALKTO:@22208,-82432,2131
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Plaza
+60 0 0 0 0 ACTIVATE:nar_gro-shagramph
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Juicedaw_Feather_Ring
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DebtOrc:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Juicedaw_Feather_Ring
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DebtOrc:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-debtorc
+# Tongue-Toad (Ald'ruhn, through the Vivec Mages Guild guide)
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Tongue-Toad
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_TongueToad:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_The_Rat_In_The_Pot
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_The_Rat_In_The_Pot
+60 0 0 0 0 ACTIVATE:tongue_toad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Tongue-Toad
+1 0 0 0
+0.3 0 0 0 0 TOPIC:kill_me
+1 0 0 0
+0.3 0 0 0 0 CHOICEVAL:4
+1 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_TongueToad:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Tongue-Toad
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_TongueToad:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-tonguetoad
+# Dro'Sakhar in St. Olms
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dro'Sakhar
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_KhajiitBounty:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 WALKTO:@32493,-80125,1876
+120 0 0 0 0 FLYTO:@36502,-95728,674
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Canal_South-Two
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Canal_South-Two
+120 0 0 0 0 KILL:dro'sakhar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dro'sakhar
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dro'Sakhar
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_KhajiitBounty:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-khajiitbounty
+# Lirielle Stoine's debt (Ald'ruhn, through the Vivec Mages Guild guide)
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DebtStoine:ge:5
+0.3 0 0 0 0 TOPIC:debt_money
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DebtStoine:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_The_Rat_In_The_Pot
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_The_Rat_In_The_Pot
+60 0 0 0 0 ACTIVATE:lirielle_stoine
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DebtStoine:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DebtStoine:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:fighters_guild:ge:4
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-debtstoine
+# Adraria Vandacia (Seyda Neen, the Vivec silt strider)
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Adraria_Vandacia
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_SilenceTaxgirl:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 WALKTO:@27299,-80199,1893
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-9844,-72456,735
+120 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Warehouse
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census_and_Excise_Warehouse
+120 0 0 0 0 KILL:adraria_vandacia
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:adraria_vandacia
+60 0 0 0 0 ACTIVATE:imperial_guard
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Adraria_Vandacia
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_SilenceTaxgirl:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-silencetaxgirl
+# Rufinus Alleius (Ebonheart, flown from the Foreign Quarter's west walkway)
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Rufinus_Alleius
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_SilenceMagistrate:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 WALKTO:@27299,-80199,1893
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@9802,-101914,1392
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Grand_Council_Chambers
+120 0 0 0 0 DOORTO:Ebonheart,_Imperial_Commission
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Imperial_Commission
+120 0 0 0 0 KILL:rufinus_alleius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:rufinus_alleius
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+60 0 0 0 0 ACTIVATE:lorbumol_gro-aglakh
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Rufinus_Alleius
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_SilenceMagistrate:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:fighters_guild:ge:6
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-silencemagistrate
+# Sadrith Mora: Hrundi's contracts (Vivec Mages Guild guide to Wolverine Hall)
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Sadrith
+3 0 0 0
+# (a cell name with a colon can't be a token: walk to the guild's door in the hall, then the nearest hall door)
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2550,4156,13888
+120 0 0 0 0 WALKTO:@2480,4134,13888
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Nchurdamz
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Nchurdamz:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@142608,-45280,2672
+60 0 0 0 0 ACTIVATE:larienna_macrina
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:explore_together
+1 0 0 0
+0.3 0 0 0 0 CHOICEVAL:3
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Nchurdamz:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:larienna_macrina
+120 0 0 0 0 DOORTO:Nchurdamz
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Nchurdamz,_Interior
+# (the chest is trapped: the first touch springs the trap, the second opens it)
+60 0 0 0 0 ACTIVATE:dwrv_chest10
+1 0 0 0
+120 0 0 0 0 LOOT:dwrv_chest10:key_fg_nchur
+0.1 0 0 0 0 EXPECT:item:key_fg_nchur:ge:1
+120 0 0 0 0 KILL:daedroth_fg_nchur
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:daedroth_fg_nchur
+0.1 0 0 0 0 EXPECT:journal:FG_Nchurdamz:ge:90
+0.3 0 0 0 0 ESCORT:-
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nchurdamz
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Nchurdamz:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-nchurdamz
+# FG_DissaplaMine: Teres Arothan back to Novor Drethan
+60 0 0 0 0 ACTIVATE:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dissapla_Mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DissaplaMine:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@80024,58827,1226
+120 0 0 0 0 DOORTO:Dissapla_Mine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dissapla_Mine
+60 0 0 0 0 ACTIVATE:novor_drethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dissapla_Mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DissaplaMine:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:teres_arothan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICEVAL:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DissaplaMine:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:teres_arothan
+120 0 0 0 0 WALKTO:novor_drethan
+10 0 0 0
+0.3 0 0 0 0 ESCORT:-
+0.1 0 0 0 0 EXPECT:journal:FG_DissaplaMine:ge:70
+60 0 0 0 0 ACTIVATE:novor_drethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dissapla_Mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DissaplaMine:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dissapla_Mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_DissaplaMine:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-dissaplamine
+# FG_CorprusStalker (Tel Mora, the Sadrith Mora boat) and FG_TenimBounty (Shallit)
+60 0 0 0 0 ACTIVATE:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Corprus_Stalker
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_CorprusStalker:ge:10
+0.3 0 0 0 0 TOPIC:Rels_Tenim
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_TenimBounty:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@142120,39500,278
+60 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 DOORTO:Tel_Mora,_Berwen
+3 0 0 0
+60 0 0 0 0 ACTIVATE:berwen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Corprus_Stalker
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_CorprusStalker:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# (levitate up to its floor first: a KILL from below swings through Berwen, who stands in the way)
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 WALKTO:@66,1,411
+120 0 0 0 0 KILL:corprus_stalker_fgcs
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:corprus_stalker_fgcs
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+# (the levitation runs out over the stair well: down to Berwen)
+50 0 0 0
+60 0 0 0 0 ACTIVATE:berwen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Corprus_Stalker
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_CorprusStalker:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# BLOCKED (round 3, agents6 still): FG_TenimBounty. Repro in internal/uber/fg.md.
+# Earlier note: FG_TenimBounty. Rels Tenim is in Shallit on a part of the cave the entrance side doesn't reach: its
+# path grid has two parts, joined only by a drop from the upper tunnel (772,1744,466) to the lower one, and levitating
+# up from below meets a ceiling everywhere tried. See internal/uber/fg.md. Without it Hrundi's later orders
+# (Dunirai sujamma, Telasero, Engaer, Pudai) are never offered.
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Corprus_Stalker
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_CorprusStalker:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-corprusstalker
+# FG_Vas: Percius Mercius (Ald'ruhn), via the Sadrith Mora Mages Guild guide
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2560,3880,14400
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Fighters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Fighters
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Vas
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Vas:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-vas10
+# FG_Vas: Ulyne Henim and the necromancer
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@0,95000,3000
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@3000,125000,3000
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@5500,155000,3000
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@7730,186380,600
+60 0 0 0 0 ACTIVATE:ulyne_henim
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:fight_together
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Vas:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vas,_Entry_Level
+3 0 0 0
+120 0 0 0 0 DOORTO:Vas,_Tower
+3 0 0 0
+0.3 0 0 0 0 ESCORT:ulyne_henim
+120 0 0 0 0 WALKTO:@5000,4000,13468
+0.3 0 0 0 0 ESCORT:-
+120 0 0 0 0 KILL:daris_adram
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:daris_adram
+60 0 0 0 0 ACTIVATE:ulyne_henim
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Vas:ge:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vas
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Vas:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-vas
+# FG_BeneranBounty: Sargon
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Nerer_Beneran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_BeneranBounty:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@0,95000,3000
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-4000,125000,3000
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-6500,150000,2000
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-7474,171118,397
+60 0 0 0
+0.5 0 0 0 0 FACE:@-7288,171126
+0.7 0 1 0
+1 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sargon
+4 0 0 0
+120 0 0 0 0 KILL:gavesu_arelas
+2 0 0 0
+60 0 0 0 0 ACTIVATE:door_cavern_doors10
+2 0 0 0
+120 0 0 0 0 KILL:llero_lloran
+2 0 0 0
+120 0 0 0 0 KILL:milynea_andrethi
+2 0 0 0
+120 0 0 0 0 KILL:nerer_beneran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:nerer_beneran
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerer_Beneran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_BeneranBounty:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-beneranbounty
+# FG_SuranBandits: Avon Oran in Suran, Daldur Sarys in Saturan
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:bandits_in_Suran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_SuranBandits:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.5 0 0 0 0 SLEEP:2
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:selvil_sareloth
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Suran
+3 0 0 0
+120 0 0 0 0 DOORTO:Suran,_Oran_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:avon_oran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bandits_in_Suran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_SuranBandits:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@63584,-45893,1121
+30 0 0 0
+120 0 0 0 0 DOORTO:Saturan
+3 0 0 0
+120 0 0 0 0 KILL:daldur_sarys
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:daldur_sarys
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+40 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@53891,-49976,297
+30 0 0 0
+120 0 0 0 0 DOORTO:Suran,_Oran_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:avon_oran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bandits_in_Suran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_SuranBandits:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-suranbandits
+# FG_ElithPalSupply: flin for Dangor
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Elith-Pal_Mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_ElithPalSupply:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@6000,58000,11000
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@18000,64000,18800
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@44000,79000,18800
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@58475,84698,1008
+5 0 0 0
+120 0 0 0 0 DOORTO:Elith-Pal_Mine
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 ACTIVATE:dangor
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:flin
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_ElithPalSupply:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Elith-Pal_Mine
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_ElithPalSupply:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-elithpal
+# FG_AlofsFarm: Eydis' Protector contracts (Balmora), first Alof and the Orcs
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:navam_veran
+60 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Orcs_at_a_Daedric_ruin
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_AlofsFarm:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-22359,-13699,504
+120 0 0 0 0 WALKTO:@-22364,-13345,504
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@17270,-34295,565
+30 0 0 0
+120 0 0 0 0 DOORTO:Alof's_Farmhouse
+3 0 0 0
+60 0 0 0 0 ACTIVATE:alof_the_easterner
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orcs_at_a_Daedric_ruin
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_AlofsFarm:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@30201,-22259,1688
+30 0 0 0
+60 0 0 0 0 WALKTO:@30287,-22047,1465
+0.5 0 0 0 0 FACE:@30294,-21918
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ashunartes,_Shrine
+120 0 0 0 0 KILL:burub_gra-bamog
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:burub_gra-bamog
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Orcs_at_a_Daedric_ruin
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_AlofsFarm:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-alofsfarm
+# FG_VerethiGang (Mannammu) and FG_HungerLoose (Sarano Ancestral Tomb): Eydis' last two Protector contracts
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Verethi_Gang
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_VerethiGang:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-22359,-13699,504
+120 0 0 0 0 WALKTO:@-22364,-13345,504
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@6756,-64166,266
+30 0 0 0
+120 0 0 0 0 DOORTO:Mannammu
+3 0 0 0
+120 0 0 0 0 KILL:dovres_verethi
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dovres_verethi
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Verethi_Gang
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_VerethiGang:ge:100
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Sarano_Tomb
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_HungerLoose:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-22359,-13699,504
+120 0 0 0 0 WALKTO:@-22364,-13345,504
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@15200,-28300,900
+70 0 0 0
+120 0 0 0 0 WALKTO:@14814,-28305,871
+120 0 0 0 0 DOORTO:Sarano_Ancestral_Tomb
+3 0 0 0
+90 0 0 0 0 PICKUP:key_sarano_tomb
+2 0 0 0
+120 0 0 0 0 KILL:hunger_fghl
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:hunger_fghl
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:eydis_fire-eye
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sarano_Tomb
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_HungerLoose:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-protector
+# Advancement to Guardian, then FG_KillCronies starts: Percius (Ald'ruhn), Eydis (Balmora) and Lorbumol (Vivec)
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:selvil_sareloth
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Ald
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Fighters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Fighters
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:fighters_guild:ge:7
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Eydis_Fire-Eye
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_KillCronies:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-killcronies10
+# FG_KillCronies: Eydis Fire-Eye in the Balmora Guild of Fighters
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:navam_veran
+60 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Balmora
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Fighters
+120 0 0 0 0 KILL:eydis_fire-eye
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:eydis_fire-eye
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Eydis_Fire-Eye
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_KillCronies:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-killeydis
+# FG_KillCronies: Lorbumol gro-Aglakh in the Vivec Guild of Fighters
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Fighters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+120 0 0 0 0 KILL:lorbumol_gro-aglakh
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:lorbumol_gro-aglakh
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lorbumol_gro-Aglakh
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_KillCronies:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-killcronies
+# FG_KillHardHeart: Sjoring Hard-Heart in the Vivec Guild of Fighters, Percius makes us Guildmaster
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sjoring_Hard-Heart
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_KillHardHeart:ge:10
+0.1 0 0 0 0 EXPECT:item:Key_Persius%Mercius:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Fighters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Fighters
+120 0 0 0 0 KILL:sjoring_hard-heart
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:sjoring_hard-heart
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:persius_mercius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sjoring_Hard-Heart
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_KillHardHeart:ge:100
+0.1 0 0 0 0 EXPECT:rank:fighters_guild:ge:9
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-fg-killhardheart
