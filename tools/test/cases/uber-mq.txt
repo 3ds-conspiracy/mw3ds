@@ -1944,7 +1944,7 @@
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Ahemmusa_Camp,_Wise_Woman's_Yurt
 0.3 0 0 0 0 SAVE:uber-mq-b2-20
-# BLOCKED (steps: ACTIVATE:sinnammu_mirpal, TOPIC:accompany_you, CHOICE:1, B, B, then walk her out): escort Sinnammu out of her yurt: with her following, DOORTO:outside stops at -11 687 -356 (458 from the door, 167 up) and a Telekinesis + FACE + A does nothing; without her it works (repro: LOAD uber-mq-b2-5, WALKTO:@-19,370,-356, DOORTO:outside passes; after accompany_you + CHOICE:1 it is stuck). Basics checked: fatigue 266/400, no screen, no levitation, 5 s wait did not help. Probably the follower stands in the doorway. Then: escort her over the water to Ald Daedroth (journal 40), statue in the Inner Shrine, name you Nerevarine (50).
+# (the escort of Sinnammu to the statue: at the end of the case)
 # B3_ZainabBride: Divine Intervention out of the yurt (a follower-free exit), fly from Sadrith Mora to Zainab camp; a high disposition gives the choice path (task: kill Calvario)
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 5 0 0 0
@@ -2036,7 +2036,7 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SAVE:uber-mq-b3-5
-# BLOCKED: Nerano Ancestral Tomb door (ex_velothi_loaddoor_01 at 72654 117488 873): the terrain there is ~290 units higher (landing at 72480 117492 stands at 1099, the door xy at 1164), so FLYTO to the exit spot lands on the hill above and DOORTO is stuck '(9 away, -291 up)'. Basics checked: levitation over (waited 150 s), fatigue 366/400. Repro: LOAD uber-mq-b3-5, 5 levitation + 4 speed potions, WALKTO:@76300,83000,800, FLYTO:@72480,117492,884, wait 150, DOORTO:Nerano_Ancestral_Tomb. Next: KILL calvario, Kaushad Nerevarine CHOICE:1 (journal 22), Sonummu Counsel (25), shirt/skirt/shoes at Milie Hastien (Balmora), Telvanni bug musk at Bildren Areleth (Tel Aruhn), Savile Imayn something_special, escort Falura Llervu to Zainab (journal 60).
+# (the Nerano tomb, Calvario, the clothes, Falura: at the end of the case)
 # B4_KillWarLovers: Divine Intervention (Sadrith Mora), fly to the Erabenimsun camp
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 5 0 0 0
@@ -3113,4 +3113,1050 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SAVE:uber-mq-b8hort
-# B8_MeetVivec / Dagoth Ur: BLOCKED behind B2 and B3. Danso Indules ('meet the archcanon', Vivec Temple canton; walk lines from the Foreign Quarter plaza via uberroute) needs B1..B4 all >= 50 (Nerevarine of every tribe: B2 escort Sinnammu and B3 Zainab's bride are BLOCKED above) and the three Hortators (done).
+# the rest of the Ahemmusa and Zainab quests, played last so the earlier route stays as it was (every random roll shifts later followers)
+# B2 rest: fly from the Urshilaku camp as before to the Ahemmusa camp, Wise Woman's yurt
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+60 0 0 0 0 WALKTO:@-27409,149391,704
+60 0 0 0 0 WALKTO:@-27400,149000,780
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@6016,119872,1504
+8 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@52026,109388,6146
+8 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@95198,134070,921
+40 0 0 0
+120 0 0 0 0 DOORTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+5 0 0 0
+# B2_AhemmusaSafe rest: Sinnammu follows out of her yurt, over the water (swim the route, she follows; wait for her at the door), then the statue: 'accompany you', 'name you Nerevarine'
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:mark
+3 0 0 0
+120 0 0 0 0 ACTIVATE:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:accompany_you
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+# she can stall at the camp's rim: walk up to her first
+60 0 0 0 0 WALKTO:@94809,134585,1000
+0.3 0 0 0 0 ESCORT:sinnammu_mirpal
+120 0 0 0 0 WALKTO:@95198,134070,921:dive
+120 0 0 0 0 WALKTO:@94997,134526,869:dive
+120 0 0 0 0 WALKTO:@94406,134974,877:dive
+400 0 0 0 0 WALKTO:@94463,135393,902:dive
+400 0 0 0 0 WALKTO:@94759,136086,914:dive
+120 0 0 0 0 WALKTO:@94940,136624,821:dive
+120 0 0 0 0 WALKTO:@95575,137085,622:dive
+120 0 0 0 0 WALKTO:@96000,137472,480:dive
+120 0 0 0 0 WALKTO:@96000,137984,328:dive
+120 0 0 0 0 WALKTO:@96000,138496,216:dive
+120 0 0 0 0 WALKTO:@96000,139008,152:dive
+120 0 0 0 0 WALKTO:@96256,139520,88:dive
+120 0 0 0 0 WALKTO:@96768,140544,0:dive
+120 0 0 0 0 WALKTO:@96768,141056,0:dive
+120 0 0 0 0 WALKTO:@96768,141568,0:dive
+120 0 0 0 0 WALKTO:@96768,142080,0:dive
+120 0 0 0 0 WALKTO:@96768,143104,0:dive
+120 0 0 0 0 WALKTO:@96768,143616,0:dive
+120 0 0 0 0 WALKTO:@96768,144128,0:dive
+120 0 0 0 0 WALKTO:@96768,144640,0:dive
+120 0 0 0 0 WALKTO:@96768,145152,0:dive
+120 0 0 0 0 WALKTO:@96768,145664,0:dive
+120 0 0 0 0 WALKTO:@96768,146176,0:dive
+120 0 0 0 0 WALKTO:@96768,146688,0:dive
+120 0 0 0 0 WALKTO:@96768,147200,0:dive
+120 0 0 0 0 WALKTO:@96768,147712,0:dive
+120 0 0 0 0 WALKTO:@96768,148224,0:dive
+120 0 0 0 0 WALKTO:@96512,148736,0:dive
+120 0 0 0 0 WALKTO:@96512,149248,0:dive
+120 0 0 0 0 WALKTO:@96512,149760,0:dive
+120 0 0 0 0 WALKTO:@96512,150272,0:dive
+120 0 0 0 0 WALKTO:@96512,150784,0:dive
+120 0 0 0 0 WALKTO:@96512,151296,0:dive
+120 0 0 0 0 WALKTO:@96512,151808,0:dive
+120 0 0 0 0 WALKTO:@96512,152320,0:dive
+120 0 0 0 0 WALKTO:@96512,152832,0:dive
+120 0 0 0 0 WALKTO:@96512,153344,0:dive
+120 0 0 0 0 WALKTO:@96512,153856,0:dive
+120 0 0 0 0 WALKTO:@96512,154368,0:dive
+120 0 0 0 0 WALKTO:@96512,154880,0:dive
+120 0 0 0 0 WALKTO:@96512,155392,0:dive
+120 0 0 0 0 WALKTO:@96256,155904,0:dive
+120 0 0 0 0 WALKTO:@95744,156416,0:dive
+120 0 0 0 0 WALKTO:@95488,156928,0:dive
+120 0 0 0 0 WALKTO:@95488,157440,0:dive
+120 0 0 0 0 WALKTO:@95488,157952,0:dive
+120 0 0 0 0 WALKTO:@95232,158464,0:dive
+120 0 0 0 0 WALKTO:@94720,158976,0:dive
+120 0 0 0 0 WALKTO:@94208,159488,0:dive
+120 0 0 0 0 WALKTO:@93696,160000,0:dive
+120 0 0 0 0 WALKTO:@93184,160512,0:dive
+120 0 0 0 0 WALKTO:@92928,161024,0:dive
+120 0 0 0 0 WALKTO:@92928,161536,0:dive
+120 0 0 0 0 WALKTO:@92672,162048,0:dive
+120 0 0 0 0 WALKTO:@92160,162560,0:dive
+120 0 0 0 0 WALKTO:@91904,163072,0:dive
+120 0 0 0 0 WALKTO:@91904,163584,0:dive
+120 0 0 0 0 WALKTO:@91904,164096,0:dive
+120 0 0 0 0 WALKTO:@91904,164608,0:dive
+120 0 0 0 0 WALKTO:@91904,165120,0:dive
+120 0 0 0 0 WALKTO:@91904,165632,0:dive
+120 0 0 0 0 WALKTO:@91648,166144,16:dive
+120 0 0 0 0 WALKTO:@91904,166400,200:dive
+120 0 0 0 0 WALKTO:@91904,166912,328:dive
+120 0 0 0 0 WALKTO:@92546,167127,401:dive
+120 0 0 0 0 WALKTO:@92946,167017,593:dive
+120 0 0 0 0 WALKTO:@93698,167557,976:dive
+120 0 0 0 0 WALKTO:@94062,167445,1122:dive
+120 0 0 0 0 WALKTO:@94329,167852,1277:dive
+0.3 0 0 0 0 ESCORT:-
+150 0 0 0
+0.3 0 0 0 0 CAST:telekinesis
+1 0 0 0
+0.3 0 0 0 0 FACE:@94553,167771
+0.3 0 0 0 0 A
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Daedroth,_Outer_Shrine
+10 0 0 0
+0.3 0 0 0 0 ESCORT:sinnammu_mirpal
+120 0 0 0 0 DOORTO:Ald_Daedroth,_Inner_Shrine
+0.3 0 0 0 0 ESCORT:-
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Daedroth,_Inner_Shrine
+30 0 0 0
+0.3 0 0 0 0 ESCORT:sinnammu_mirpal
+120 0 0 0 0 WALKTO:@4471,3620,-22
+0.3 0 0 0 0 ESCORT:-
+20 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:40
+120 0 0 0 0 ACTIVATE:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:accompany_you
+1 0 0 0
+0.3 0 0 0 0 TOPIC:name_you_Nerevarine
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:50
+0.3 0 0 0 0 SAVE:uber-mq-b2
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ahemmusa_Camp,_Wise_Woman's_Yurt
+# B3_ZainabBride: Divine Intervention out of the yurt (a follower-free exit), fly from Sadrith Mora to Zainab camp; a high disposition gives the choice path (task: kill Calvario)
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Wolverine_Hall
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@76766,83714,859:beside
+30 0 0 0
+120 0 0 0 0 DOORTO:Zainab_Camp,_Ashkhan's_Yurt
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Zainab_Camp,_Ashkhan's_Yurt
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:mark
+3 0 0 0
+# B3_ZainabBride rest: Nerano tomb (west of the ramp), clothes at Elegnan (Tel Mora), musk at Bildren (Tel Aruhn), Savile's cage, Falura by strider and an escort
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+60 0 0 0 0 WALKTO:@76000,84300,757
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@72300,117488,900
+30 0 0 0
+120 0 0 0 0 DOORTO:Nerano_Ancestral_Tomb
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Nerano_Ancestral_Tomb
+180 0 0 0 0 KILL:calvario
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:calvario
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Zainab_Camp,_Ashkhan's_Yurt
+120 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:22
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+120 0 0 0 0 DOORTO:Zainab_Camp,_Wise_Woman's_Yurt
+5 0 0 0
+120 0 0 0 0 ACTIVATE:sonummu_zabamat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Counsel
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:25
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b3-25
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+120 0 0 0 0 WALKTO:@76000,84300,757
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@109353,116544,584:beside
+30 0 0 0
+120 0 0 0 0 DOORTO:Tel_Mora,_Elegnan|_Clothier
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora,_Elegnan|_Clothier
+60 0 0 0 0 ACTIVATE:elegnan
+1.5 0 0 0
+0.3 0 0 0 0 BUY:elegnan:exquisite_shirt_01
+0.3 0 0 0 0 BUY:elegnan:exquisite_skirt_01
+0.3 0 0 0 0 BUY:elegnan:exquisite_shoes_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:exquisite_shirt_01:ge:1
+0.1 0 0 0 0 EXPECT:item:exquisite_skirt_01:ge:1
+0.1 0 0 0 0 EXPECT:item:exquisite_shoes_01:ge:1
+0.3 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@126336,48000,1064:beside
+30 0 0 0
+120 0 0 0 0 DOORTO:Tel_Aruhn,_Bildren_Areleth|_Apothecary
+5 0 0 0
+60 0 0 0 0 ACTIVATE:bildren_areleth
+1.5 0 0 0
+0.3 0 0 0 0 BUY:bildren_areleth:potion_t_bug_musk_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:potion_t_bug_musk_01:ge:1
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+120 0 0 0 0 ACTIVATE:savile_imayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:30
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:35
+0.3 0 0 0 0 TOPIC:something_special
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b3-40
+60 0 0 0 0 ACTIVATE:ex_t_door_slavepod_01
+3 0 0 0
+120 0 0 0 0 ACTIVATE:falura_llervu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:some_presents
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:45
+0.3 0 0 0 0 TOPIC:travel_together
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:falura_llervu
+120 0 0 0 0 WALKTO:@124058,48060,830
+120 0 0 0 0 WALKTO:@123785,48424,781
+120 0 0 0 0 WALKTO:@124021,48786,812
+120 0 0 0 0 WALKTO:@123648,49152,936
+120 0 0 0 0 WALKTO:@123136,49152,976
+120 0 0 0 0 WALKTO:@122624,48896,1120
+120 0 0 0 0 WALKTO:@122112,48640,1296
+120 0 0 0 0 WALKTO:@121600,48128,1320
+120 0 0 0 0 WALKTO:@121600,47616,1232
+120 0 0 0 0 WALKTO:@121600,47104,1096
+120 0 0 0 0 WALKTO:@121600,46592,952
+120 0 0 0 0 WALKTO:@121600,46080,792
+120 0 0 0 0 WALKTO:@121856,45568,744
+120 0 0 0 0 WALKTO:@122368,45056,704
+120 0 0 0 0 WALKTO:@122624,44544,656
+120 0 0 0 0 WALKTO:@123513,44148,478
+120 0 0 0 0 WALKTO:@123682,43770,421
+120 0 0 0 0 WALKTO:@123903,43200,285
+120 0 0 0 0 WALKTO:@123773,42678,95
+120 0 0 0 0 WALKTO:@124142,42487,47
+120 0 0 0 0 WALKTO:@124560,42192,112
+120 0 0 0 0 WALKTO:@124605,41669,137
+120 0 0 0 0 WALKTO:@123999,41272,99
+120 0 0 0 0 WALKTO:@123457,41270,129
+120 0 0 0 0 WALKTO:@123182,40787,100
+0.3 0 0 0 0 ESCORT:-
+120 0 0 0 0 ACTIVATE:daynas_darys
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:daynas_darys:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 ESCORT:falura_llervu
+120 0 0 0 0 WALKTO:@100663,114039,157
+120 0 0 0 0 WALKTO:@100214,113967,201
+120 0 0 0 0 WALKTO:@99772,113936,174
+120 0 0 0 0 WALKTO:@99235,113752,226
+120 0 0 0 0 WALKTO:@98436,113455,244
+120 0 0 0 0 WALKTO:@97792,113408,192
+120 0 0 0 0 WALKTO:@97280,113408,408
+120 0 0 0 0 WALKTO:@96768,113152,536
+120 0 0 0 0 WALKTO:@96256,113664,632
+120 0 0 0 0 WALKTO:@95744,113664,656
+120 0 0 0 0 WALKTO:@95232,113664,800
+120 0 0 0 0 WALKTO:@94720,113664,936
+120 0 0 0 0 WALKTO:@94208,113664,960
+120 0 0 0 0 WALKTO:@93696,113664,944
+120 0 0 0 0 WALKTO:@93184,113664,864
+120 0 0 0 0 WALKTO:@92672,113152,880
+120 0 0 0 0 WALKTO:@92160,112640,864
+120 0 0 0 0 WALKTO:@91648,112128,872
+120 0 0 0 0 WALKTO:@91136,111616,872
+120 0 0 0 0 WALKTO:@90624,111104,856
+120 0 0 0 0 WALKTO:@90112,110592,816
+120 0 0 0 0 WALKTO:@89600,110080,824
+120 0 0 0 0 WALKTO:@89344,109568,912
+120 0 0 0 0 WALKTO:@89344,109056,984
+120 0 0 0 0 WALKTO:@89344,108544,976
+120 0 0 0 0 WALKTO:@89344,108032,1032
+120 0 0 0 0 WALKTO:@89600,107520,1048
+120 0 0 0 0 WALKTO:@89600,107008,1032
+120 0 0 0 0 WALKTO:@89600,106496,968
+120 0 0 0 0 WALKTO:@89600,105984,880
+120 0 0 0 0 WALKTO:@89600,105472,872
+120 0 0 0 0 WALKTO:@89600,104960,904
+120 0 0 0 0 WALKTO:@89600,104448,880
+120 0 0 0 0 WALKTO:@89600,103936,784
+120 0 0 0 0 WALKTO:@89088,103424,736
+120 0 0 0 0 WALKTO:@88576,102912,728
+120 0 0 0 0 WALKTO:@88320,102400,768
+120 0 0 0 0 WALKTO:@88320,101888,712
+120 0 0 0 0 WALKTO:@88832,101376,704
+120 0 0 0 0 WALKTO:@88832,100864,736
+120 0 0 0 0 WALKTO:@88832,100352,752
+120 0 0 0 0 WALKTO:@88320,99840,792
+120 0 0 0 0 WALKTO:@88320,99328,816
+120 0 0 0 0 WALKTO:@88320,98816,856
+120 0 0 0 0 WALKTO:@88064,98304,856
+120 0 0 0 0 WALKTO:@88064,97792,864
+120 0 0 0 0 WALKTO:@87808,97280,848
+120 0 0 0 0 WALKTO:@87808,96768,816
+120 0 0 0 0 WALKTO:@87808,96256,800
+120 0 0 0 0 WALKTO:@87296,95744,808
+120 0 0 0 0 WALKTO:@86784,95232,760
+120 0 0 0 0 WALKTO:@86272,94720,744
+120 0 0 0 0 WALKTO:@85760,94208,728
+120 0 0 0 0 WALKTO:@85248,93696,712
+120 0 0 0 0 WALKTO:@84736,93184,768
+120 0 0 0 0 WALKTO:@84224,92672,856
+120 0 0 0 0 WALKTO:@83712,92160,840
+120 0 0 0 0 WALKTO:@83712,91648,840
+120 0 0 0 0 WALKTO:@83712,91136,808
+120 0 0 0 0 WALKTO:@83712,90624,936
+120 0 0 0 0 WALKTO:@83968,90112,992
+120 0 0 0 0 WALKTO:@83968,89600,1048
+120 0 0 0 0 WALKTO:@83968,89088,1080
+120 0 0 0 0 WALKTO:@83968,88576,1112
+120 0 0 0 0 WALKTO:@83712,88064,1120
+120 0 0 0 0 WALKTO:@83200,87808,1040
+120 0 0 0 0 WALKTO:@82688,87296,984
+120 0 0 0 0 WALKTO:@82176,86784,984
+120 0 0 0 0 WALKTO:@81664,86784,992
+120 0 0 0 0 WALKTO:@81152,86784,1056
+120 0 0 0 0 WALKTO:@80640,86784,1056
+120 0 0 0 0 WALKTO:@80128,86784,1016
+120 0 0 0 0 WALKTO:@79616,86272,960
+120 0 0 0 0 WALKTO:@78981,85905,892
+120 0 0 0 0 WALKTO:@78531,86114,785
+120 0 0 0 0 WALKTO:@78194,85785,788
+120 0 0 0 0 WALKTO:@78162,85201,779
+120 0 0 0 0 WALKTO:@77823,84872,806
+120 0 0 0 0 WALKTO:@77433,84323,776
+120 0 0 0 0 WALKTO:@76868,84058,779
+120 0 0 0 0 WALKTO:@76766,83714,776
+0.3 0 0 0 0 ESCORT:-
+10 0 0 0
+120 0 0 0 0 DOORTO:Zainab_Camp,_Ashkhan's_Yurt
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Zainab_Camp,_Ashkhan's_Yurt
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:47
+120 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_bride
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:falura_llervu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:my_bridegroom
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:55
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:kaushad
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_bride
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b3
+# B8_MeetVivec: Danso Indules (Vivec, Temple canton) wants the four Nerevarine notices and the three Hortator ones
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@27581,-79746,3008
+120 0 0 0 0 WALKTO:@27592,-80719,3008
+120 0 0 0 0 WALKTO:@27581,-81378,3008
+120 0 0 0 0 WALKTO:@28133,-81533,3008
+120 0 0 0 0 WALKTO:@28880,-81510,3008
+120 0 0 0 0 WALKTO:@29291,-81527,3008
+120 0 0 0 0 WALKTO:@29877,-81524,3008
+120 0 0 0 0 WALKTO:@29863,-81047,3009
+120 0 0 0 0 WALKTO:@29229,-80967,2904
+120 0 0 0 0 WALKTO:@28679,-80950,2517
+120 0 0 0 0 WALKTO:@28302,-80944,2252
+120 0 0 0 0 WALKTO:@27939,-80938,1996
+120 0 0 0 0 WALKTO:@27288,-80952,1792
+120 0 0 0 0 WALKTO:@27353,-81510,1792
+120 0 0 0 0 WALKTO:@28002,-81836,1792
+120 0 0 0 0 WALKTO:@28447,-81797,1792
+120 0 0 0 0 WALKTO:@28901,-81773,1792
+120 0 0 0 0 WALKTO:@29304,-81826,1792
+120 0 0 0 0 WALKTO:@29905,-81859,1793
+120 0 0 0 0 WALKTO:@29839,-81377,1793
+120 0 0 0 0 WALKTO:@30447,-81330,1764
+120 0 0 0 0 WALKTO:@31382,-81265,1208
+120 0 0 0 0 WALKTO:@31949,-81267,872
+120 0 0 0 0 WALKTO:@32530,-81279,576
+120 0 0 0 0 WALKTO:@32768,-81657,576
+120 0 0 0 0 WALKTO:@32634,-82209,576
+120 0 0 0 0 WALKTO:@31713,-82175,576
+120 0 0 0 0 WALKTO:@30498,-82128,576
+120 0 0 0 0 WALKTO:@29900,-82198,576
+120 0 0 0 0 WALKTO:@29861,-82906,768
+120 0 0 0 0 WALKTO:@29842,-83410,768
+120 0 0 0 0 WALKTO:@29853,-83850,768
+120 0 0 0 0 WALKTO:@29906,-84445,576
+120 0 0 0 0 WALKTO:@30667,-84487,576
+120 0 0 0 0 WALKTO:@31662,-84413,576
+120 0 0 0 0 WALKTO:@32011,-84762,576
+120 0 0 0 0 WALKTO:@32077,-85382,576
+120 0 0 0 0 WALKTO:@32060,-85895,576
+120 0 0 0 0 WALKTO:@32071,-86654,576
+120 0 0 0 0 WALKTO:@32125,-87196,576
+120 0 0 0 0 WALKTO:@32081,-87813,576
+120 0 0 0 0 WALKTO:@32115,-88423,576
+120 0 0 0 0 WALKTO:@32127,-89095,576
+120 0 0 0 0 WALKTO:@31620,-89393,576
+120 0 0 0 0 WALKTO:@31364,-89785,720
+120 0 0 0 0 WALKTO:@31389,-90475,697
+120 0 0 0 0 WALKTO:@31756,-90889,576
+120 0 0 0 0 WALKTO:@32117,-91284,576
+120 0 0 0 0 WALKTO:@32078,-91795,576
+120 0 0 0 0 WALKTO:@32088,-92332,576
+120 0 0 0 0 WALKTO:@32190,-93317,576
+120 0 0 0 0 WALKTO:@32075,-94334,576
+120 0 0 0 0 WALKTO:@32133,-94805,576
+120 0 0 0 0 WALKTO:@32114,-95326,576
+120 0 0 0 0 WALKTO:@31673,-95797,576
+120 0 0 0 0 WALKTO:@31667,-96420,767
+120 0 0 0 0 WALKTO:@31661,-96895,778
+120 0 0 0 0 WALKTO:@31743,-97496,667
+120 0 0 0 0 WALKTO:@30908,-97590,576
+120 0 0 0 0 WALKTO:@30876,-98304,576
+120 0 0 0 0 WALKTO:@30745,-98939,576
+120 0 0 0 0 WALKTO:@30818,-99783,576
+120 0 0 0 0 WALKTO:@30742,-100513,576
+120 0 0 0 0 WALKTO:@30718,-101251,576
+120 0 0 0 0 WALKTO:@30684,-101831,576
+120 0 0 0 0 WALKTO:@30691,-102526,576
+120 0 0 0 0 WALKTO:@30643,-102983,576
+120 0 0 0 0 WALKTO:@31135,-103196,576
+120 0 0 0 0 WALKTO:@31892,-103252,576
+120 0 0 0 0 WALKTO:@32682,-103045,576
+120 0 0 0 0 WALKTO:@32768,-102115,1069
+120 0 0 0 0 WALKTO:@32768,-101548,1054
+120 0 0 0 0 WALKTO:@32846,-100853,1054
+120 0 0 0 0 WALKTO:@32849,-99883,1054
+120 0 0 0 0 WALKTO:@32857,-99311,1054
+120 0 0 0 0 ACTIVATE:danso_indules
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:meet_the_archcanon
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+60 0 0 0 0 WALKTO:@-1150,356,-640
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+2 0 0 0
+0.3 0 0 0 0 EQUIP:daedric_longsword
+180 0 0 0 0 ACTIVATE:tholer_saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Temple's_doctrine
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:30
+0.1 0 0 0 0 EXPECT:item:key_vivec_secret:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b8a
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Palace_of_Vivec
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Palace_of_Vivec
+120 0 0 0 0 ACTIVATE:vivec_god
+2 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:50
+0.1 0 0 0 0 EXPECT:item:wraithguard:ge:1
+0.3 0 0 0 0 TOPIC:defeat_Dagoth_Ur
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B8_MeetVivec:ge:55
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b8
+# Red Mountain (19 levitation potions left: three short flights): Recall to the Zainab Mark, fly to Odrosal first
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Zainab_Camp,_Ashkhan's_Yurt
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+120 0 0 0 0 WALKTO:@76000,84300,757
+# IC30_Imperial_veteran first: Wulf lies in the Ghostgate Tower of Dusk (Vivec's 'business' enabled him)
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@19715,38795,1369:beside
+5 0 0 0
+120 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Tower_of_Dusk
+60 0 0 0 0 ACTIVATE:wulf
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ghostgate
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IC30_Imperial_veteran:ge:1
+0.1 0 0 0 0 EXPECT:item:lucky_coin:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@26314,60728,11270:beside
+5 0 0 0
+120 0 0 0 0 DOORTO:Odrosal,_Dwemer_Training_Academy
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Odrosal,_Dwemer_Training_Academy
+0.3 0 0 0 0 EQUIP:wraithguard
+1 0 0 0
+0.3 0 0 0 0 EQUIP:daedric_longsword
+# the corridor's doors are locked (20): Dagoth Odros holds the key, pick them
+60 0 0 0 0 WALKTO:@-120,-250,0
+0.3 0 0 0 0 USELOCKPICK:door_dwrv_inner00:pick_grandmaster
+2 0 0 0
+60 0 0 0 0 WALKTO:@-221,-433,0
+0.3 0 0 0 0 USELOCKPICK:door_dwrv_inner00:pick_grandmaster
+2 0 0 0
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 DOORTO:Odrosal,_Tower
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Odrosal,_Tower
+120 0 0 0 0 PICKUP:keening
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:keening:ge:1
+0.3 0 0 0 0 SAVE:uber-mq-b9a
+120 0 0 0 0 DOORTO:Odrosal,_Dwemer_Training_Academy
+5 0 0 0
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@3181,87848,9398:beside
+5 0 0 0
+120 0 0 0 0 DOORTO:Vemynal,_Outer_Fortress
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vemynal,_Outer_Fortress
+120 0 0 0 0 DOORTO:Vemynal,_Hall_of_Torque
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vemynal,_Hall_of_Torque
+0.3 0 0 0 0 EQUIP:daedric_longsword
+300 0 0 0 0 KILL:dagoth_vemyn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dagoth_vemyn
+60 0 0 0 0 LOOT:dagoth_vemyn:sunder
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:sunder:ge:1
+0.1 0 0 0 0 EXPECT:journal:C0_Act_C:ge:15
+0.3 0 0 0 0 SAVE:uber-mq-b9b
+120 0 0 0 0 DOORTO:Vemynal,_Outer_Fortress
+5 0 0 0
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@19432,70400,11880:beside
+5 0 0 0
+0.3 0 0 0 0 CAST:telekinesis
+1 0 0 0
+0.3 0 0 0 0 FACE:@19020,70382
+0.3 0 0 0 0 A
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Outer_Facility
+0.3 0 0 0 0 EQUIP:daedric_longsword
+300 0 0 0 0 DOORTO:Dagoth_Ur,_Inner_Facility
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Inner_Facility
+300 0 0 0 0 DOORTO:Dagoth_Ur,_Lower_Facility
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Lower_Facility
+300 0 0 0 0 DOORTO:Dagoth_Ur,_Facility_Cavern
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Facility_Cavern
+0.3 0 0 0 0 SAVE:uber-mq-b9c
+180 0 0 0 0 ACTIVATE:dagoth_ur_1
+2 0 0 0
+0.3 0 0 0 0 TOPIC:parting_words
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:final_questions
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EQUIP:sunder
+300 0 0 0 0 KILL:dagoth_ur_1
+4 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dagoth_ur_1
+0.3 0 0 0 0 SAVE:uber-mq-b9d
+300 0 0 0 0 DOORTO:Akulakhan's_Chamber
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Akulakhan's_Chamber
+0.3 0 0 0 0 EQUIP:sunder
+120 0 0 0 0 STRIKE:heart_akulakhan:2
+1 0 0 0
+0.3 0 0 0 0 EQUIP:keening
+120 0 0 0 0 STRIKE:heart_akulakhan:8
+3 0 0 0
+0.1 0 0 0 0 EXPECT:global:heartdestroyed:eq:1
+120 0 0 0 0 WALKTO:dagoth_destroy_detector
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:20
+0.1 0 0 0 0 EXPECT:global:destroyblight:eq:-1
+0.3 0 0 0 0 SAVE:uber-mq-b9e
+0.3 0 0 0 0 EQUIP:keening
+300 0 0 0 0 KILL:dagoth_ur_2
+3 0 0 0
+120 0 0 0 0 WALKTO:@0,1166,1728
+0.3 0 0 0 0 CAST:telekinesis
+1 0 0 0
+0.3 0 0 0 0 FACE:@0,896
+0.3 0 0 0 0 A
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Facility_Cavern
+120 0 0 0 0 WALKTO:@4019,5065,14149
+0.3 0 0 0 0 FACE:@4037,5302
+0.5 0 1 0
+0.1 0 1 0 1
+1 0 1 0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:50
+# Azura's farewell holds the player for a while, as the Incarnate movie did: wait it out
+60 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b9
+# IC30 end: Lalatia Varian (Ebonheart, Imperial Chapels) hears the tale of the lucky coin; leave the facility first (no Intervention inside)
+300 0 0 0 0 DOORTO:Dagoth_Ur,_Lower_Facility
+5 0 0 0
+300 0 0 0 0 DOORTO:Dagoth_Ur,_Inner_Facility
+5 0 0 0
+300 0 0 0 0 DOORTO:Dagoth_Ur,_Outer_Facility
+5 0 0 0
+300 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart
+120 0 0 0 0 DOORTO:Ebonheart,_Imperial_Chapels
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Imperial_Chapels
+60 0 0 0 0 ACTIVATE:lalatia_varian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Wulf
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IC30_Imperial_veteran:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-end
+# BLOCKED (resources, not an engine fault): the four Morag Tong writs (Varro, Baladas, Bero, Therana) need MT_WritNavil, MT_WritBemis and MT_WritBrilnosu done (uber-mt.txt lines 1..873: join with Eno Hlaalu and the writs up to Navil) and now C3_DestroyDagoth 50. That chain flies 84 levitation + 88 speed potions (Zaintirari, Dagon Fel, Yasammidan, Ashalmimilkala ...); this case ends with 0 levitation potions (600 at the start, 19 left at Vivec; raising the header to 760 breaks the Balmora / Vivec flights of the first part, tried). Needs a bigger, re-tuned potion supply or travel-service routes for those legs.
