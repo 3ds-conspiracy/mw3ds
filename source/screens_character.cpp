@@ -27,11 +27,13 @@ void Session::drawJournal()
 		wantText = TEXT_SEARCH;
 	}
 	// one tap on the X empties the search again
-	if (searching && uiButton(298, 24, 18, 18, "X", false))
+	if (searching && uiButton(298, 24, 18, 18, "", false))
 	{
 		playSound(-1, "Menu Click");
 		journalSearch.clear();
 	}
+	if (searching)       // (the letter drawn by hand: the glyph sits a pixel right of a centred X)
+		uiText(298 + (18 - uiTextWidth("X", 0.5f)) / 2 - 1.0f, 24 + (18 - uiLineHeight(0.5f)) / 2, 0.5f, col::text, "X");
 	if (tab != journalTab)
 	{
 		journalTab = tab;
