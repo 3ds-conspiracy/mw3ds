@@ -1623,20 +1623,91 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SAVE:uber-ic-ring2
-# IC28_Urjorad: Lalatia sends the player to the Daedric shrine of Ashalmimilkala (south of Gnaar Mok)
+# IC28_Urjorad: Ashalmimilkala (Daedric shrine south of Gnaar Mok): avenge Urjorad, kill Carecalmo and Meryaran
 60 0 0 0 0 ACTIVATE:lalatia_varian
 1.5 0 0 0
 0.1 0 0 0 0 EXPECT:journal:IC28_Urjorad:ge:1
 0.3 0 0 0 0 B
+0.3 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@20120,-103250,170
+60 0 0 0 0 ACTIVATE:nevosi_hlan
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:nevosi_hlan:Hla
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Hla_Oad
+60 0 0 0 0 ACTIVATE:baleni_salavel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:baleni_salavel:Gnaar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnaar_Mok
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-63700,-11000,300
+60 0 0 0 0 WALKTO:@-63600,-10000,320
+60 0 0 0 0 WALKTO:@-63553,-9640,384
+0.3 0 0 0 0 FACE:@-63540,-9505
+0.5 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ashalmimilkala,_Shrine
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 EQUIP:claymore_iceblade_unique
+120 0 0 0 0 WALKTO:@2350,749,-1168
+120 0 0 0 0 KILL:carecalmo
+120 0 0 0 0 KILL:meryaran
+0.1 0 0 0 0 EXPECT:dead:carecalmo:ge:1
+0.1 0 0 0 0 EXPECT:dead:meryaran:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Imperial_Chapels
+60 0 0 0 0 ACTIVATE:lalatia_varian
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IC28_Urjorad:ge:55
+0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 1 0 0 0
-0.3 0 0 0 0 B
-# BLOCKED (world, agents6): repro tools/test/cases/zz-open-ashal-door.txt (levitation from the exit spot is capped by a roof, on foot a wall at y -9633 stops 129 short of the door). Old note: the shrine door (ex_dae_door_load_oval @-63540,-9505,334) cannot be reached: every flight to its exit spot
-# ends hovering 'no clear spot to come down beside it' and the player settles on rock at 171-366 from which the door is out of reach
-# (see internal/uber/ic.md, p17-tried.src). Carecalmo, Meryaran and the Scroll of Fiercely Roast Thy Enemy are inside.
 0.3 0 0 0 0 SAVE:uber-ic-urjorad
 # IC30_Imperial_veteran: BLOCKED (driver): Wulf (Ghostgate, Tower of Dusk, lying at -522,742,-122) can't be activated: 'hidden from here,
 # and no spot round it where the crosshair finds it' (also FACE:wulf:mid + A from four sides: no talk). Repro: tools/test/cases/zz-open-wulf-ghostgate.txt
+# (Primate comes after IC29 below)
 # Primate: advancement with Iulus (rank 9)
 120 0 0 0 0 WALKTO:@926,-260,-490
 60 0 0 0 0 ACTIVATE:iulus_truptor
@@ -1648,3 +1719,95 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SAVE:uber-ic-primate
+# IC29_Crusher: Skull-Crusher (Hilbongard's forge under the Omaren Ancestral Tomb, east of Sadrith Mora)
+60 0 0 0 0 ACTIVATE:lalatia_varian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Skull-Crusher
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IC29_Crusher:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Grand_Council_Chambers
+120 0 0 0 0 DOORTO:Ebonheart,_Imperial_Commission
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Imperial_Commission
+60 0 0 0 0 ACTIVATE:tuvene_arethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_Daedric_ruin
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Halls_of_the_Dead
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IC29_Crusher:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Imperial_Chapels
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@20120,-103250,170
+60 0 0 0 0 ACTIVATE:nevosi_hlan
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:nevosi_hlan:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@28294,-79745,3358
+120 0 0 0 0 FLYTO:@28294,-79745,3358
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+120 0 0 0 0 WALKTO:@-254,8,5
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-25589,-12831,1122
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:danar_dalomo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_Daedric_ruin
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IC29_Crusher:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# BLOCKED (world): the forge door in the Omaren Ancestral Tomb (@10756,-4748,-291, exit spot 10584,-4568,-171) is not reachable: the path grid's chain ends at point 50 (8331,-3984,-52, ceiling 123 above), east of it the floor drops to the -1194 pit whose ceiling is -868. Repro: tools/test/cases/zz-open-omaren-forge.txt (Omaren door exit spot: fly 166400,38500,300 then WALKTO 166683,38021,292).
+0.3 0 0 0 0 SAVE:uber-ic-crusher1
