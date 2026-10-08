@@ -1,0 +1,1239 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:99:100
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:p_levitation_e:350
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:350
+0.3 0 0 0 0 GIVE:sc_icarianflight:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:20
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
+0.3 0 0 0 0 GIVE:p_restore_magicka_e:40
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 SPELL:ondusi's_open_door
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+30 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Morag_Tong
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritOran:ge:10
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 WALKTO:@1080,-660,-128
+0.3 0 0 0 0 FACE:@960,-644
+0.3 0 0 0 0 CAST:ondusi's%open%door
+2 0 0 0
+0.3 0 0 0 0 FACE:@960,-644
+0.5 0 0 0
+0.3 0 0 0 0 A
+1.5 0 0 0
+0.3 0 0 0 0 A
+1.5 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+90 0 0 0 0 FLYTO:@23732,-84349,1885
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Elven_Nations_Cornerclub
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Elven_Nations_Cornerclub
+120 0 0 0 0 KILL:feruren_oran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:feruren_oran
+0.1 0 0 0 0 EXPECT:journal:MT_WritOran:ge:80
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 ACTIVATE:ordinator_wander
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:4
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Feruren_Oran
+1 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Morag_Tong
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritOran:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mt-oran
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Writ
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Toris_Saren
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Odaishah_Yasalmibaal
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritSaren:ge:10
+0.1 0 0 0 0 EXPECT:journal:MT_WritYasalmibaal:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@33922,-87194,1792
+120 0 0 0 0 WALKTO:@33936,-87948,1792
+120 0 0 0 0 WALKTO:@33344,-87943,1997
+120 0 0 0 0 WALKTO:@32768,-87942,2045
+120 0 0 0 0 WALKTO:@32041,-87930,1928
+120 0 0 0 0 WALKTO:@31794,-87231,1792
+120 0 0 0 0 WALKTO:@31525,-86916,1822
+120 0 0 0 0 WALKTO:@31011,-86925,2048
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Redoran_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Saren_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Saren_Manor
+120 0 0 0 0 KILL:toris_saren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:toris_saren
+0.1 0 0 0 0 EXPECT:journal:MT_WritSaren:ge:80
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Redoran
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@108467,25856,336
+12 0 0 0
+60 0 0 0 0 WALKTO:@108505,25820,300
+0.3 0 0 0 0 FACE:@108500,25469
+0.5 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Bensiberib_Camp,_Odaishah's_Yurt
+120 0 0 0 0 KILL:odaishah_yasalmibaal
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:odaishah_yasalmibaal
+0.1 0 0 0 0 EXPECT:journal:MT_WritYasalmibaal:ge:80
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Toris_Saren
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Odaishah_Yasalmibaal
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritSaren:ge:100
+0.1 0 0 0 0 EXPECT:journal:MT_WritYasalmibaal:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mt-saren
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Writ
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Idroso_Vendu
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Sarayn_Sadus
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritVendu:ge:10
+0.1 0 0 0 0 EXPECT:journal:MT_WritSadus:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Telvanni_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Temporary_Telvanni_Housing
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Temporary_Telvanni_Housing
+120 0 0 0 0 KILL:idroso_vendu
+2 0 0 0
+120 0 0 0 0 KILL:ethal_seloth
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:idroso_vendu
+0.1 0 0 0 0 EXPECT:dead:ethal_seloth
+0.1 0 0 0 0 EXPECT:journal:MT_WritVendu:ge:80
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@36898,-88548,1792
+2 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+120 0 0 0 0 FLYTO:@102887,8349,1454
+120 0 0 0 0 DOORTO:Zaintirari
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Zaintirari
+120 0 0 0 0 WALKTO:@-382,1093,150
+0.3 0 0 0 0 FACE:@-436,1015
+0.5 0 0 0
+0.3 0 0 0 0 A
+1.5 0 0 0
+0.3 0 0 0 0 A
+1.5 0 0 0
+120 0 0 0 0 KILL:sarayn_sadus
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:sarayn_sadus
+0.1 0 0 0 0 EXPECT:journal:MT_WritSadus:ge:80
+120 0 0 0 0 KILL:dils_heladren
+2 0 0 0
+120 0 0 0 0 KILL:nelvon_radas
+2 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Idroso_Vendu
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Sarayn_Sadus
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritVendu:ge:100
+0.1 0 0 0 0 EXPECT:journal:MT_WritSadus:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mt-sadus
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:special_duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dark_Brotherhood
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Contact:ge:10
+0.3 0 0 0 0 TOPIC:Writ
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Guril_Retheran
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Galasa_Uvayn
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritGuril:ge:10
+0.1 0 0 0 0 EXPECT:journal:MT_WritGalasa:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Redoran_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_The_Flowers_of_Gold
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_The_Flowers_of_Gold
+120 0 0 0 0 KILL:guril_retheran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:guril_retheran
+0.1 0 0 0 0 EXPECT:journal:MT_WritGuril:ge:80
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Waistworks
+3 0 0 0
+5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue
+0.3 0 0 0 0 CHOICE:4
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Miun-Gei
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Miun-Gei
+60 0 0 0 0 ACTIVATE:miun_gei
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dark_Brotherhood
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Contact:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Plaza
+60 0 0 0 0 ACTIVATE:tsrazami
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dark_Brotherhood
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Contact:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Treasury
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Treasury
+120 0 0 0 0 KILL:galasa_uvayn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:galasa_uvayn
+0.1 0 0 0 0 EXPECT:journal:MT_WritGalasa:ge:80
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dark_Brotherhood
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Contact:ge:100
+0.1 0 0 0 0 EXPECT:item:sc_inasismysticfinger:ge:2
+0.3 0 0 0 0 TOPIC:Guril_Retheran
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Galasa_Uvayn
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritGuril:ge:100
+0.1 0 0 0 0 EXPECT:journal:MT_WritGalasa:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mt-galasa
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:special_duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Fleetness
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_S_Fleetness:ge:10
+0.3 0 0 0 0 TOPIC:Writ
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Mavon_Drenim
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Tirer_Belvayn
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritMavon:ge:10
+0.1 0 0 0 0 EXPECT:journal:MT_WritBelvayn:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@2507,-56048,1570
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Pelagiad,_Halfway_Tavern
+120 0 0 0 0 KILL:hrordis
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:hrordis
+60 0 0 0 0 LOOT:hrordis:sanguinebeltfleetness
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:sanguinebeltfleetness:ge:1
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+6 0 0 0
+0.1 0 0 0
+0.3 0 0 0
+1 0 0 0
+0.3 0 0 0
+0.5 0 0 0
+1 0 0 0
+# the Pelagiad guards did not greet in time: the bounty is paid at the first Vivec ordinator greeting (Arena Waistworks)
+0.1 0 0 0 0 EXPECT:bounty:le:1040
+0.1 0 0 0 0 EXPECT:item:sanguinebeltfleetness:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Fleetness
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_S_Fleetness:ge:100
+0.1 0 0 0 0 EXPECT:item:sanguinebeltfleetness:eq:0
+0.3 0 0 0 0 TOPIC:special_duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Movis_Darys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Darys:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mt-fleetness
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Telvanni_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Telvanni_Tower
+120 0 0 0 0 KILL:mavon_drenim
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:mavon_drenim
+0.1 0 0 0 0 EXPECT:journal:MT_WritMavon:ge:80
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:movis_darys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Morag_Tong
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Darys:ge:50
+0.1 0 0 0 0 EXPECT:item:sanguinebeltdenial:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 WALKTO:@1278,377,-640
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Khuul
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Khuul
+120 0 0 0 0 ACTIVATE:talmeni_drethan
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:talmeni_drethan:Dagon
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagon_Fel
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+0.1 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@25131,170035,650
+120 0 0 0 0 DOORTO:Shara
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shara
+120 0 0 0 0 KILL:tirer_belvayn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:tirer_belvayn
+0.1 0 0 0 0 EXPECT:journal:MT_WritBelvayn:ge:80
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Movis_Darys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Darys:ge:100
+0.3 0 0 0 0 TOPIC:Mavon_Drenim
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Tirer_Belvayn
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritMavon:ge:100
+0.1 0 0 0 0 EXPECT:journal:MT_WritBelvayn:ge:100
+0.3 0 0 0 0 TOPIC:Sanguine_Denial
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_S_Denial:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:4
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mt-darys
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:special_duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ultimatum
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Carecalmo:ge:10
+0.3 0 0 0 0 TOPIC:Writ
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Mathyn_Bemis
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Brilnosu_Llarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritBemis:ge:10
+0.1 0 0 0 0 EXPECT:journal:MT_WritBrilnosu:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@23732,-84349,1885
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Canalworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Canalworks
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Ancestral_Vaults
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Ancestral_Vaults
+60 0 0 0 0 WALKTO:@-540,-320,-128
+0.3 0 0 0 0 FACE:@-640,-320
+0.5 0 0 0
+0.3 0 0 0 0 A
+1.5 0 0 0
+120 0 0 0 0 KILL:mathyn_bemis
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:mathyn_bemis
+0.1 0 0 0 0 EXPECT:journal:MT_WritBemis:ge:80
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Canalworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-21590,-14510,934
+2 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-42540,-4626,3018
+120 0 0 0 0 KILL:brilnosu_llarys
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:brilnosu_llarys
+0.1 0 0 0 0 EXPECT:journal:MT_WritBrilnosu:ge:80
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mathyn_Bemis
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Brilnosu_Llarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritBemis:ge:100
+0.1 0 0 0 0 EXPECT:journal:MT_WritBrilnosu:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mt-brilnosu
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Writ
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Ienith
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritNavil:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@22682,-55810,1068
+120 0 0 0 0 DOORTO:Dren_Plantation,_Dren's_Villa
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dren_Plantation,_Dren's_Villa
+120 0 0 0 0 PICKUP:key_dren_manor
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_dren_manor:ge:1
+120 0 0 0 0 KILL:navil_ienith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:navil_ienith
+120 0 0 0 0 KILL:orvas%dren%druglord
+2 0 0 0
+60 0 0 0 0 WALKTO:@3600,3300,15429
+3 0 0 0
+120 0 0 0 0 KILL:ranes_ienith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:ranes_ienith
+0.1 0 0 0 0 EXPECT:journal:MT_WritNavil:ge:80
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ienith
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_WritNavil:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:6
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mt-navil
+# BLOCKED: writs Varro, Baladas, Bero, Therana need C3_DestroyDagoth 50 (main quest, out of reach here).
+# MT_DB_Carecalmo: Almsivi to Vivec, fly to Balmora then to the Ashalmimilkala gateway, walk into the alcove
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-21590,-14510,934
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-63700,-11000,300
+60 0 0 0 0 WALKTO:@-63600,-10000,320
+60 0 0 0 0 WALKTO:@-63553,-9640,384
+0.3 0 0 0 0 FACE:@-63540,-9505
+0.5 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ashalmimilkala,_Shrine
+120 0 0 0 0 ACTIVATE:carecalmo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ultimatum
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Carecalmo:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:carecalmo
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:carecalmo
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ultimatum
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Carecalmo:ge:100
+0.3 0 0 0 0 TOPIC:special_duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Sublime_Wisdom
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_S_Sublime:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mt-carecalmo
+# MT_S_Sublime: Almsivi to Vivec, fly to Balmora, Mages Guild guide to Ald-ruhn, strider to Khuul, fly to Yasammidan
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-21590,-14510,934
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+120 0 0 0 0 WALKTO:@1278,377,-640
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Khuul
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Khuul
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-118220,115894,445
+60 0 0 0 0 WALKTO:@-118220,115894,445
+0.3 0 0 0 0 FACE:@-118403,116192
+0.5 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Yasammidan,_Shrine
+120 0 0 0 0 KILL:anel_rethelas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:anel_rethelas
+60 0 0 0 0 LOOT:anel_rethelas:sanguineringsublimew
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:sanguineringsublimew:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanguine_Sublime_Wisdom
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_S_Sublime:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:7
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mt-sublime
+# MT_DB_Assernerairan: Almsivi lands at the Vivec temple, fly down to the Underworks grating (canal level)
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:special_duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Assernerairan
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Assernerairan:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+60 0 0 0 0 FLYTO:@32958,-95380,-251
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Underworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Underworks
+120 0 0 0 0 DOORTO:Assernerairan,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Assernerairan,_Shrine
+120 0 0 0 0 KILL:durus_marius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:durus_marius
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Assernerairan
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_Assernerairan:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:7
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mt-assernerairan
+# MT_DB_AldSotha: fly to the Daedric ruin (Ald Sotha), enter by hand from the exit spot, kill Severa Magia; then the Grandmaster (slay Eno)
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:special_duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Ald_Sotha
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_AldSotha:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@55618,-73029,107
+60 0 0 0 0 WALKTO:@55618,-73029,107
+0.3 0 0 0 0 FACE:@55454,-72746
+0.5 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Upper_Level
+120 0 0 0 0 DOORTO:Ald_Sotha,_Lower_Level
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Lower_Level
+120 0 0 0 0 KILL:severa%magia
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:severa%magia
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ald_Sotha
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_DB_AldSotha:ge:100
+0.1 0 0 0 0 EXPECT:item:daedric%dagger_mtas:ge:1
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:8
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mt-aldsotha
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Grandmaster
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MT_Grandmaster:ge:20
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:eno_hlaalu
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:eno_hlaalu
+0.1 0 0 0 0 EXPECT:journal:MT_Grandmaster:ge:20
+0.1 0 0 0 0 EXPECT:rank:morag_tong:ge:9
+# BLOCKED: writs Varro, Baladas, Bero, Therana need C3_DestroyDagoth 50 (main quest, out of reach here).
