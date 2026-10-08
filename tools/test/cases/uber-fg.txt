@@ -1523,6 +1523,18 @@
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
 60 0 0 0 0 ACTIVATE:dangor
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:flin
