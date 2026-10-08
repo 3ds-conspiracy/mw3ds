@@ -1,0 +1,2154 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:8:2000
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:p_levitation_e:400
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:700
+0.3 0 0 0 0 GIVE:p_restore_magicka_q:150
+0.3 0 0 0 0 GIVE:sc_icarianflight:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:20
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 SPELL:dispel
+0.3 0 0 0 0 SPELL:cure_blight_target
+0.3 0 0 0 0 GOTO:Balmora,_Temple
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+30 0 0 0 0 ACTIVATE:feldrelo_sadri
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Temple
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:temple:ge:0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Seven_Graces
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SevenGraces:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-24813,-10273,1077
+120 0 0 0 0 DOORTO:Balmora,_Nalcarya
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Nalcarya
+60 0 0 0 0 ACTIVATE:nalcarya_of_white_haven
+1.5 0 0 0
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_muck_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:p_levitation_s
+0.1 0 0 0 0 EXPECT:item:ingred_muck_01:ge:10
+0.1 0 0 0 0 EXPECT:item:p_levitation_s:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-22593,-12122,644
+120 0 0 0 0 DOORTO:Balmora,_The_Razor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:thorek
+1.5 0 0 0
+0.3 0 0 0 0 BUY:thorek:silver_longsword
+0.1 0 0 0 0 EXPECT:item:silver_longsword:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-join
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+180 0 0 0 0 DOORTO:Gnisis,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Temple
+60 0 0 0 0 ACTIVATE:mehra_drora
+1.5 0 0 0
+0.3 0 0 0 0 BUY:mehra_drora:ingred_dreugh_wax_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:zanmulk_sammalamus
+1.5 0 0 0
+0.3 0 0 0 0 BUY:zanmulk_sammalamus:p_cure_common_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_cure_common_s:ge:1
+0.1 0 0 0 0 EXPECT:item:ingred_dreugh_wax_01:ge:1
+60 0 0 0 0 ACTIVATE:ac_shrine_gnisis
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MaskVivec:ge:100
+0.3 0 0 0 0 SAVE:uber-tt-maskvivec
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@-87692,79258,109
+120 0 0 0 0 DOORTO:Koal_Cave
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Koal_Cave
+60 0 0 0 0 ACTIVATE:ac_shrine_koalcave
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_RuddyMan:ge:100
+0.3 0 0 0 0 SAVE:uber-tt-ruddyman
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@41906,-84350,1883
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Telvanni_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Enchanter
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Telvanni_Enchanter
+60 0 0 0 0 ACTIVATE:audenian_valius
+1.5 0 0 0
+0.3 0 0 0 0 BUY:audenian_valius:misc_soulgem_petty
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_soulgem_petty:ge:1
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+120 0 0 0 0 WALKTO:@44092,-87008,1872
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@31704,-105740,1115
+40 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Puzzle_Canal,_Level_3
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Puzzle_Canal,_Level_3
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+3 0 0 0 1
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Puzzle_Canal,_Center
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Puzzle_Canal,_Center
+70 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:0
+3 0 1 0 0 DOWN
+45 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:puzzle_canal_bridge_a:eq:1
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+4 0 0 0 0 R
+0.3 0 0 0 0 FACE:@0,5592
+3 0 1 0 0 R
+0.1 0 0 0 0 EXPECT:playerz:gt:400
+120 0 0 0 0 FLYTO:@5500,5500,330:400
+60 0 0 0 0 ACTIVATE:dremora_ttpc
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:silver_longsword
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_PuzzleCanal:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:ac_shrine_puzzlecanal
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_PuzzleCanal:ge:100
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Temple
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33096,-106550,1968
+60 0 0 0 0 ACTIVATE:ac_shrine_palace
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_PalaceVivec:ge:100
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@31856,-102150,1096
+60 0 0 0 0 ACTIVATE:ac_shrine_stopmoon
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_StopMoon:ge:100
+0.3 0 0 0 0 SAVE:uber-tt-stopmoon
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+400 0 0 0 0 FLYTO:@14595,-33100,1100:6000
+60 0 0 0 0 ACTIVATE:furn_shrine_vivec_cure_02
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_FieldsKummu:ge:100
+0.3 0 0 0 0 SAVE:uber-tt-kummu
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+400 0 0 0 0 FLYTO:@19715,38300,1300:10000
+400 0 0 0 0 FLYTO:@24439,45200,4600
+60 0 0 0 0 ACTIVATE:furn_shrine_vivec_cure_03
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Ghostgate:ge:100
+0.3 0 0 0 0 SAVE:uber-tt-ghostgate
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@19715,38300,1300:6000
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+3 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Seven_Graces
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SevenGraces:ge:100
+0.3 0 0 0 0 SAVE:uber-tt-sevengraces
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:leave_Vivec_City
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_DiseaseCarrier:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@34100,-86914,2130
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+60 0 0 0 0 WALKTO:@34634,-86914,2130
+120 0 0 0 0 DOORTO:Vivec,_Arena_Pit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Pit
+60 0 0 0 0 ACTIVATE:tanusea%veloth
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:leave_Vivec_City
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_DiseaseCarrier:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-tanusea
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:leave_Vivec_City
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_DiseaseCarrier:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Sanctus_Shrine
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SanctusShrine:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-diseasecarrier
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@35600,-74100,110
+60 0 0 0 0 ACTIVATE:ano%andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano%andaram:Molag_Mar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+120 0 0 0 0 DOORTO:Molag_Mar,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar,_Temple
+60 0 0 0 0 ACTIVATE:tharer%rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals%arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals%arethi:Tel_Mora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 DOORTO:Tel_Mora,_Jolda
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora,_Jolda
+60 0 0 0 0 ACTIVATE:jolda
+1.5 0 0 0
+0.3 0 0 0 0 BUY:jolda:p_cure_common_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_cure_common_s:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:lette
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Swamp_Fever
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_CuringTouch:ge:50
+0.3 0 0 0 0 SAVE:uber-tt-lette
+120 0 0 0 0 ACTIVATE:tonas%telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas%telvani:Dagon_Fel
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagon_Fel
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanctus_Shrine
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SanctusShrine:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagon_Fel
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@12342,174400,1850:6000
+200 0 0 0 0 FLYTO:@12342,174091,1850
+60 0 0 0 0 ACTIVATE:ac_sanctus_shrine_triolith
+2 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SanctusShrine:ge:50
+0.3 0 0 0 0 SAVE:uber-tt-sanctus
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sanctus_Shrine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SanctusShrine:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-sanctus100
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@35600,-74100,110
+60 0 0 0 0 ACTIVATE:ano%andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano%andaram:Molag_Mar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Molag_Mar,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar,_Temple
+60 0 0 0 0 ACTIVATE:tharer%rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lette
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_CuringTouch:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Mount_Kand
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MountKand:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-mountkand-start
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@93713,-39313,6424
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Mount_Kand,_Cavern
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mount_Kand,_Cavern
+0.3 0 0 0 0 USE:p_night-eye_q
+60 0 0 0 0 ACTIVATE:atronach_flame_ttmk
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:riddle
+1 0 0 0
+0.3 0 0 0 0 CHOICE:4
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MountKand:ge:25
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:atronach_frost_ttmk
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:riddle
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MountKand:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:atronach_storm_ttmk
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:riddle
+1 0 0 0
+0.3 0 0 0 0 CHOICE:3
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MountKand:ge:75
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:ac_mount_kand_triolith
+2 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MountKand:ge:100
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Molag_Mar,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar,_Temple
+60 0 0 0 0 ACTIVATE:tharer%rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mount_Kand
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Delvam_Andarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Mawia:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-mountkand
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@127813,-81139,129
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Mawia
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mawia
+120 0 0 0 0 KILL:delvam%andarys
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:delvam%andarys
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Molag_Mar,_Temple
+3 0 0 0
+60 0 0 0 0 ACTIVATE:tharer%rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Delvam_Andarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Mawia:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-mawia
+60 0 0 0 0 ACTIVATE:tharer%rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:dilami%androm
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:dilami%androm:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@28300,-79744,3470
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia%fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia%fauseius:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@19715,38300,1300:10000
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+120 0 0 0 0 DOORTO:Ghostgate,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-markghost
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@-8472,55150,2852:10000
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+60 0 0 0 0 DOORTO:Ald-ruhn,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:compassion
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Compassion:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-compassion-start
+# BLOCKED (engine/data): TT_Compassion needs Bulfim gra-Shugharz in Maelkashishi, Shrine (cure him with the potion Tuls
+# gives, or he must die). Neither exterior door (Shrine at -43037,108706,1068; Forgotten Galleries at -41279,108709,3511)
+# can be reached: the stairs end on a landing, the gap to the entry is a pit, a running jump lands on a rock ledge, and
+# levitating over the door ends on the ruin's roof ("no clear spot to come down"). See internal/uber/tt.md finding 6.
+# Everything after Adept (Curate needs 5 more Temple reputation) hangs on Tuls Valen's chain, so the line stops here.
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@-44500,108650,740:10000
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+20 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:0
+60 0 0 0 0 WALKTO:@-44318,108658,704
+60 0 0 0 0 WALKTO:@-43925,108666,1029
+60 0 0 0 0 WALKTO:@-43428,108680,1174
+120 0 0 0 0 DOORTO:Maelkashishi,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maelkashishi,_Shrine
+3 0 0 0
+60 0 0 0 0 WALKTO:bulfim_gra_shugarz
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CASTAT:bulfim_gra_shugarz:cure_blight_target
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Compassion:ge:50
+0.3 0 0 0 0 SAVE:uber-tt-bulfim
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@-8472,55150,2852:10000
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+60 0 0 0 0 DOORTO:Ald-ruhn,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:compassion
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Compassion:ge:110
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-compassion
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:False_Incarnate
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_FalseIncarnate:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:selvil%sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil%sareloth:Suran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Suran
+120 0 0 0 0 ACTIVATE:elvil%vidron
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:False_Incarnate
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_FalseIncarnate:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:False_Incarnate
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_FalseIncarnate:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-falseinc
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Maar_Gan
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MaarGan:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Maar_Gan
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar_Gan
+120 0 0 0 0 DOORTO:Maar_Gan,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar_Gan,_Shrine
+60 0 0 0 0 ACTIVATE:dremora_ttmg
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:taunt_the_Daedra
+1 0 0 0
+0.3 0 0 0 0 TOPIC:taunt_the_Daedra
+1 0 0 0
+0.3 0 0 0 0 TOPIC:taunt_the_Daedra
+1 0 0 0
+0.3 0 0 0 0 TOPIC:taunt_the_Daedra
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MaarGan:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 KILL:dremora_ttmg
+1 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dremora_ttmg
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Maar_Gan
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MaarGan:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-maargan
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Hassour
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Hassour:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:selvil%sareloth
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-19246,-38402,370
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Hassour
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Hassour
+
+120 0 0 0 0 DOORTO:Hassour,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Hassour,_Shrine
+120 0 0 0 0 KILL:dagoth%fovon
+1 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dagoth%fovon
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tuls%valen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hassour
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Hassour:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-hassour
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Shoes_of_St._Rilms
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_RilmsShoes:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@55618,-73029,107
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Ald_Sotha,_Upper_Level
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Upper_Level
+120 0 0 0 0 DOORTO:Ald_Sotha,_Lower_Level
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Lower_Level
+120 0 0 0 0 DOORTO:Ald_Sotha,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Shrine
+120 0 0 0 0 KILL:llandrale%varam
+0.3 0 0 0 0 USELOCKPICK:com_chest_11_aldsotha:pick_grandmaster
+0.3 0 0 0 0 USELOCKPICK:com_chest_11_aldsotha:pick_grandmaster
+60 0 0 0 0 LOOT:com_chest_11_aldsotha:shoes_of_st._rilms
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:shoes_of_st._rilms:ge:1
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shoes_of_St._Rilms
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_RilmsShoes:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-rilms
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ihinipalit
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_StAralor:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@32724,-95010,-250
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Underworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Delyn_Underworks
+120 0 0 0 0 DOORTO:Ihinipalit,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ihinipalit,_Shrine
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 KILL:bjadmund
+1 0 0 0
+0.1 0 0 0 0 EXPECT:dead:bjadmund
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ihinipalit
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_StAralor:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-ihinipalit
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@35600,-74100,110
+60 0 0 0 0 ACTIVATE:ano%andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano%andaram:Molag_Mar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+25 0 0 0
+120 0 0 0 0 DOORTO:Molag_Mar,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar,_Temple
+60 0 0 0 0 ACTIVATE:tharer%rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Galom_Daeus
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_GalomDeus:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@53156,-47746,1117:5000
+25 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@68950,6204,1363:5000
+25 0 0 0
+120 0 0 0 0 DOORTO:Galom_Daeus,_Entry
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Galom_Daeus,_Entry
+120 0 0 0 0 DOORTO:Galom_Daeus,_Observatory
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Galom_Daeus,_Observatory
+120 0 0 0 0 KILL:reberio
+120 0 0 0 0 KILL:clasomo
+120 0 0 0 0 KILL:raxle%berne
+1 0 0 0
+0.1 0 0 0 0 EXPECT:dead:raxle%berne
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tharer%rotheloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Galom_Daeus
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_GalomDeus:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-galom
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:dilami%androm
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:dilami%androm:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:endryn%llethan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_archcanon_private:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Four_Corners
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_DagonFel:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-saryoni
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@28300,-79744,3470
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia%fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia%fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-24813,-10273,1077
+120 0 0 0 0 DOORTO:Balmora,_Nalcarya
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Nalcarya
+60 0 0 0 0 ACTIVATE:nalcarya_of_white_haven
+1.5 0 0 0
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_daedras_heart_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_daedras_heart_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_daedras_heart_01
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_daedras_heart_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ingred_daedras_heart_01:ge:4
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals%arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals%arethi:Tel_Mora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas%telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas%telvani:Dagon_Fel
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagon_Fel
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@45508,178000,1700
+25 0 0 0
+30 0 0 0 0 ACTIVATE:active_dae_malacath_df
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_DagonFel:ge:100
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Four_Corners
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_AldSotha:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-dagonfel
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@55618,-73029,107
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Ald_Sotha,_Upper_Level
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Upper_Level
+120 0 0 0 0 DOORTO:Ald_Sotha,_Lower_Level
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald_Sotha,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Shrine
+120 0 0 0 0 KILL:llandrale%varam
+# DRIVER BUG (agents7): ACTIVATE:active_dae_mehrunes_as gets stuck 272 away/504 up at 4886 4008 13440 (repro zz-uber-tt-a from uber-tt-dagonfel). Old FACE route kept.
+0.3 0 0 0 0 FACE:@4626,4088
+2 0 1 0
+0.6 0 -1 0
+0.3 0 0 0 0 FACE:active_dae_mehrunes_as:mid
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_AldSotha:ge:100
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Four_Corners
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_BalUr:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-aldsotha
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@56125,-37766,800:3000
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+25 0 0 0
+120 0 0 0 0 DOORTO:Bal_Ur,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Bal_Ur,_Shrine
+120 0 0 0 0 DOORTO:Bal_Ur,_Underground
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Bal_Ur,_Underground
+120 0 0 0 0 KILL:golden%saint
+60 0 0 0 0 WALKTO:@3534,-3600,-256
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+30 0 0 0 0 FLYTO:@3529,-3700,50
+60 0 0 0 0 ACTIVATE:active_dae_molagbal2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_BalUr:ge:100
+0.3 0 0 0 0 SAVE:uber-tt-balur
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Four_Corners
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Gambolpuddy
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_AldDaedroth:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-aldd-start
+# BLOCKED: TT_AldDaedroth (Fourth Corner). Gambolpuddy (extravagant_rt_art_wild) lies on a pillow at 608,-2378,1008 in Ald Daedroth,
+# Antechamber (route: Dagon Fel strider, FLYTO @94329,167852,1277, DOORTO Outer Shrine > Inner Shrine > Antechamber). PICKUP walks up to
+# 70 units away: "hidden from here, and no spot round it where the crosshair finds it" (target misc_uni_pillow_01). Basics: no screen
+# open, not levitating, fatigue fine. Repro: zz-uber-tt-b.txt from checkpoint uber-tt-balur. Blocks Four Corners, Master, Ebony Mail, Patriarch.
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@28300,-79744,3470
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+30 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia%fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia%fauseius:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple
+60 0 0 0 0 ACTIVATE:danoso%andrano
+1.5 0 0 0
+0.3 0 0 0 0 BUY:danoso%andrano:p_cure_common_s
+0.3 0 0 0 0 BUY:danoso%andrano:p_cure_common_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_cure_common_s:ge:2
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@19715,38300,1300:10000
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+30 0 0 0
+120 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+120 0 0 0 0 DOORTO:Ghostgate,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Assantus_Hansar
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MinistryHeathen:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 FLYTO:@21774,35026,1958
+120 0 0 0 0 ACTIVATE:assantushansar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:disease
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Droops
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MinistryHeathen:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Assantus_Hansar
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_MinistryHeathen:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-ministry
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:food_and_drink
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SupplyMonk:ge:10
+0.1 0 0 0 0 EXPECT:item:food_kwama_egg_01:ge:4
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals%arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals%arethi:Tel_Mora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas%telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas%telvani:Dagon_Fel
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagon_Fel
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@39815,154464,929
+30 0 0 0
+60 0 0 0 0 ACTIVATE:sendus%sathis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:food_and_drink
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SupplyMonk:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:food_and_drink
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_SupplyMonk:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-supplymonk
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lost_Kogoruhn
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_HairShirt:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@2628,118400,1450:5000
+30 0 0 0
+120 0 0 0 0 KILL:feril%salmyn
+1 0 0 0
+0.1 0 0 0 0 EXPECT:dead:feril%salmyn
+60 0 0 0 0 LOOT:feril%salmyn:expensive_shirt_hair
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:expensive_shirt_hair:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lost_Kogoruhn
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_HairShirt:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-hairshirt
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cleaver_of_St._Felms
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_FelmsCleaver:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@33527,74814,14975:16000
+30 0 0 0
+120 0 0 0 0 DOORTO:Tureynulal,_Kagrenac's_Library
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tureynulal,_Kagrenac's_Library
+120 0 0 0 0 DOORTO:Tureynulal,_Bladder_of_Clovis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tureynulal,_Bladder_of_Clovis
+120 0 0 0 0 KILL:mendel%eves
+1 0 0 0
+60 0 0 0 0 LOOT:mendel%eves:cleaverstfelms
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:cleaverstfelms:ge:1
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cleaver_of_St._Felms
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_FelmsCleaver:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-felms
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Crosier_of_St._Llothis
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_LlothisCrosier:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@19432,70400,11880:12500
+30 0 0 0
+60 0 0 0 0 ACTIVATE:ex_dwrv_crank_dagoth
+8 0 0 0
+120 0 0 0 0 DOORTO:Dagoth_Ur,_Outer_Facility
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Outer_Facility
+120 0 0 0 0 DOORTO:Dagoth_Ur,_Inner_Facility
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Inner_Facility
+120 0 0 0 0 DOORTO:Dagoth_Ur,_Inner_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Inner_Tower
+120 0 0 0 0 PICKUP:crosierstllothis
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:crosierstllothis:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Temple
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:uvoo%llaren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Crosier_of_St._Llothis
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_LlothisCrosier:ge:100
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-llothis
+# BLOCKED: Master is reached here (Uvoo's advancement), but the Ebony Mail (Saryoni) needs the Four Corners, which wait for
+# TT_AldDaedroth (see BLOCKED above): Saryoni's duties answer "complete the Pilgrimages of the Four Corners" first. Patriarch follows the Mail.
