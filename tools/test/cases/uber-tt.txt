@@ -1623,11 +1623,7 @@
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Shrine
 120 0 0 0 0 KILL:llandrale%varam
-# DRIVER BUG (agents7): ACTIVATE:active_dae_mehrunes_as gets stuck 272 away/504 up at 4886 4008 13440 (repro zz-uber-tt-a from uber-tt-dagonfel). Old FACE route kept.
-0.3 0 0 0 0 FACE:@4626,4088
-2 0 1 0
-0.6 0 -1 0
-0.3 0 0 0 0 FACE:active_dae_mehrunes_as:mid
+60 0 0 0 0 ACTIVATE:active_dae_mehrunes_as
 0.3 0 0 0 0 A
 1 0 0 0
 0.1 0 0 0 0 EXPECT:journal:TT_AldSotha:ge:100
@@ -1713,10 +1709,127 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SAVE:uber-tt-aldd-start
-# BLOCKED: TT_AldDaedroth (Fourth Corner). Gambolpuddy (extravagant_rt_art_wild) lies on a pillow at 608,-2378,1008 in Ald Daedroth,
-# Antechamber (route: Dagon Fel strider, FLYTO @94329,167852,1277, DOORTO Outer Shrine > Inner Shrine > Antechamber). PICKUP walks up to
-# 70 units away: "hidden from here, and no spot round it where the crosshair finds it" (target misc_uni_pillow_01). Basics: no screen
-# open, not levitating, fatigue fine. Repro: zz-uber-tt-b.txt from checkpoint uber-tt-balur. Blocks Four Corners, Master, Ebony Mail, Patriarch.
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@28300,-79744,3470
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+30 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia%fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia%fauseius:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals%arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals%arethi:Tel_Mora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas%telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas%telvani:Dagon_Fel
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagon_Fel
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@94329,167852,1277
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+30 0 0 0
+120 0 0 0 0 DOORTO:Ald_Daedroth,_Outer_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Daedroth,_Outer_Shrine
+120 0 0 0 0 DOORTO:Ald_Daedroth,_Inner_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Daedroth,_Inner_Shrine
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+120 0 0 0 0 DOORTO:Ald_Daedroth,_Antechamber
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Daedroth,_Antechamber
+60 0 0 0 0 WALKTO:@600,-2370,1008
+120 0 0 0 0 PICKUP:extravagant_rt_art_wild
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:extravagant_rt_art_wild:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Daedroth,_Inner_Shrine
+120 0 0 0 0 ACTIVATE:active_dae_sheogorath_ad
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_AldDaedroth:ge:100
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+4 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-aldd
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Four_Corners
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-fourcorners
 60 0 0 0 0 DOORTO:outside
 3 0 0 0
 0.3 0 0 0 0 USE:p_fortify_speed_e
@@ -1811,7 +1924,8 @@
 3 0 0 0
 0.3 0 0 0 0 USE:p_fortify_speed_e
 0.3 0 0 0 0 USE:p_levitation_e
-60 0 0 0 0 FLYTO:@21774,35026,1958
+60 0 0 0 0 FLYTO:@21774,35026,1958:low
+1 0 0 0
 120 0 0 0 0 ACTIVATE:assantushansar
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:disease
@@ -2150,5 +2264,117 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SAVE:uber-tt-llothis
-# BLOCKED: Master is reached here (Uvoo's advancement), but the Ebony Mail (Saryoni) needs the Four Corners, which wait for
-# TT_AldDaedroth (see BLOCKED above): Saryoni's duties answer "complete the Pilgrimages of the Four Corners" first. Patriarch follows the Mail.
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+4 0 0 0
+180 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+30 0 0 0 0 WALKTO:@27300,-79745,3264
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@33463,-99500,1141
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:dispel
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_High_Fane
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Ebony_Mail
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Assarnibibi:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-ebonymail-start
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@35600,-74100,110
+60 0 0 0 0 ACTIVATE:ano%andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano%andaram:Molag_Mar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@120194,-28235,4104:beside
+70 0 0 0
+120 0 0 0 0 ACTIVATE:ac_shrine_assarnibibi
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Assarnibibi:ge:100
+0.1 0 0 0 0 EXPECT:item:ebon_plate_cuirass_unique:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_q
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_High_Fane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-assarnibibi
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ebony_Mail
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_Assarnibibi:ge:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-ebonymail
+60 0 0 0 0 ACTIVATE:tholer%saryoni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:Temple:ge:9
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-tt-patriarch
