@@ -1,0 +1,1598 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:p_levitation_e:40
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:40
+0.3 0 0 0 0 GIVE:sc_icarianflight:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:10
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 GIVEPOTION:pick_grandmaster:3
+0.3 0 0 0 0 GIVEPOTION:p_invisibility_e:6
+0.3 0 0 0 0 GIVEPOTION:p_chameleon_e:6
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+5.1 0 0 0
+0.3 0 0 0 0 LEGIT
+30 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_mages_guild
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:mages_guild:ge:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+30 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:mushrooms
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_BCShrooms:ge:10
+0.3 0 0 0 0 BUY:ajira:ingred_heather_01
+0.3 0 0 0 0 BUY:ajira:ingred_willow_anther_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+120 0 0 0 0 DOORTO:Balmora,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Temple
+60 0 0 0 0 ACTIVATE:dralval_andrano
+1.5 0 0 0
+0.3 0 0 0 0 BUY:dralval_andrano:ingred_bc_hypha_facia
+0.3 0 0 0 0 BUY:dralval_andrano:ingred_bc_bungler's_bane
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:llathyno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 BUY:llathyno_hlaalu:ingred_stoneflower_petals_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@-5062,-18284,1129
+120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:peragon
+1.5 0 0 0
+0.3 0 0 0 0 BUY:peragon:ingred_russula_01
+0.3 0 0 0 0 BUY:peragon:ingred_gold_kanet_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Caldera
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ernand_thierry
+1.5 0 0 0
+0.3 0 0 0 0 BUY:ernand_thierry:ingred_coprinus_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:emelia_duronia
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:emelia_duronia:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:mushrooms
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_BCShrooms:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-bcshrooms
+30 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:bet_with_Galbedir
+1 0 0 0
+0.3 0 0 0 0 TOPIC:fake_soul_gem
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Sabotage:ge:10
+0.1 0 0 0 0 EXPECT:item:misc_fakesoulgem:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 PUT:de_p_desk_01_galbedir:misc_fakesoulgem
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refitem:de_p_desk_01_galbedir,misc_fakesoulgem:eq:1
+30 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:fake_soul_gem
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Sabotage:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:flowers
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Flowers:ge:10
+0.3 0 0 0 0 TOPIC:flowers
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Flowers:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ceramic_bowl
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Bowl:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-flowers
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-22211,-15053,537
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 FLYTO:@-22378,-15203,641
+1 0 0 0 0 FACE:@-22212,-15206
+1.2 0 1 0
+60 0 0 0 0 ACTIVATE:hlaalu_loaddoor_%02
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Ra'Virr
+60 0 0 0 0 ACTIVATE:ra'virr
+1.5 0 0 0
+0.3 0 0 0 0 BUY:ra'virr:misc_de_bowl_orange_green_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_de_bowl_orange_green_01:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ceramic_bowl
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Bowl:ge:100
+0.3 0 0 0 0 TOPIC:stolen_reports
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_StolenReport:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 PICKUP:bk_ajira1
+2 0 0 0
+60 0 0 0 0 PICKUP:bk_ajira2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_ajira1:ge:1
+0.1 0 0 0 0 EXPECT:item:bk_ajira2:ge:1
+60 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stolen_reports
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_StolenReport:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mg-stolenreport
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:mages_guild:ge:2
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:join_us
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_JoinUs:ge:10
+0.3 0 0 0 0 TOPIC:guild_dues
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_PayDues:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-22211,-15053,537
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@39537,-3760,1345
+120 0 0 0 0 DOORTO:Sulipund
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sulipund
+7 0 0 0
+120 0 0 0 0 ACTIVATE:llarar_bereloth
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:join_us
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_JoinUs:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@35575,-8519,1324
+120 0 0 0 0 DOORTO:Punabi
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Punabi
+120 0 0 0 0 ACTIVATE:manwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guild_dues
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_PayDues:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_us
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_JoinUs:ge:100
+0.3 0 0 0 0 TOPIC:guild_dues
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_PayDues:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-paydues
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:unsanctioned_training
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_StopCompetition:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-22211,-15053,537
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 FLYTO:@-16623,-15619,305
+120 0 0 0 0 DOORTO:Balmora,_South_Wall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_South_Wall
+60 0 0 0 0 ACTIVATE:onlyhestandsthere
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:unsanctioned_training
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_StopCompetition:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:unsanctioned_training
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_StopCompetition:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-stopcompetition
+# MG_EscortScholar2: Itermerel walks with the player from Balmora's Eight Plates to Pelagiad (road past Fort Moonmoth; legs kept off rocks and over 2500 from path grids, see internal/uber/mg.md)
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Itermerel's_notes
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar2:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-22211,-15053,537
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 FLYTO:@-21792,-12087,882
+120 0 0 0 0 DOORTO:Balmora,_Eight_Plates
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Eight_Plates
+60 0 0 0 0 ACTIVATE:itermerel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar2:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 ESCORT:itermerel
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-21792,-12087,882
+120 0 0 0 0 WALKTO:@-21775,-11516,488
+120 0 0 0 0 WALKTO:@-22049,-11902,488
+120 0 0 0 0 WALKTO:@-22192,-12871,504
+120 0 0 0 0 WALKTO:@-22364,-13345,504
+120 0 0 0 0 WALKTO:@-22370,-14056,504
+120 0 0 0 0 WALKTO:@-22751,-14642,504
+120 0 0 0 0 WALKTO:@-23105,-15387,504
+120 0 0 0 0 WALKTO:@-23160,-16328,504
+120 0 0 0 0 WALKTO:@-23319,-16785,504
+120 0 0 0 0 WALKTO:@-22726,-17222,443
+120 0 0 0 0 WALKTO:@-22725,-17831,403
+120 0 0 0 0 WALKTO:@-22592,-18619,409
+120 0 0 0 0 WALKTO:@-21878,-19035,271
+120 0 0 0 0 WALKTO:@-21250,-19429,235
+120 0 0 0 0 WALKTO:@-20697,-19830,216
+120 0 0 0 0 WALKTO:@-20262,-19842,288
+120 0 0 0 0 WALKTO:@-19455,-19839,237
+120 0 0 0 0 WALKTO:@-18902,-19844,216
+120 0 0 0 0 WALKTO:@-18498,-19842,288
+120 0 0 0 0 WALKTO:@-17718,-19823,212
+120 0 0 0 0 WALKTO:@-17075,-19815,224
+120 0 0 0 0 WALKTO:@-16560,-19792,310
+120 0 0 0 0 WALKTO:@-16128,-19712,320
+120 0 0 0 0 WALKTO:@-14000,-19300,400
+120 0 0 0 0 WALKTO:@-13568,-19200,320
+120 0 0 0 0 WALKTO:@-13056,-19200,328
+120 0 0 0 0 WALKTO:@-12544,-19200,384
+120 0 0 0 0 WALKTO:@-12032,-19200,424
+120 0 0 0 0 WALKTO:@-11520,-18944,496
+120 0 0 0 0 WALKTO:@-11008,-18944,584
+120 0 0 0 0 WALKTO:@-10496,-18944,600
+120 0 0 0 0 WALKTO:@-10000,-18800,680
+120 0 0 0 0 WALKTO:@-4400,-22000,912
+120 0 0 0 0 WALKTO:@-4300,-22400,816
+120 0 0 0 0 WALKTO:@-4000,-22900,712
+120 0 0 0 0 WALKTO:@-3800,-23400,680
+120 0 0 0 0 WALKTO:@-3800,-23900,728
+120 0 0 0 0 WALKTO:@-4000,-24400,968
+120 0 0 0 0 WALKTO:@-4300,-24900,1072
+120 0 0 0 0 WALKTO:@-4864,-25344,784
+120 0 0 0 0 WALKTO:@-5376,-25856,568
+120 0 0 0 0 WALKTO:@-5700,-26200,600
+120 0 0 0 0 WALKTO:@-5120,-26112,648
+120 0 0 0 0 WALKTO:@-4608,-26624,920
+120 0 0 0 0 WALKTO:@-4096,-27136,1024
+120 0 0 0 0 WALKTO:@-3584,-27392,1040
+120 0 0 0 0 WALKTO:@-3072,-27648,1016
+120 0 0 0 0 WALKTO:@-2700,-28100,912
+120 0 0 0 0 WALKTO:@-2048,-28400,704
+120 0 0 0 0 WALKTO:@-1536,-28672,560
+120 0 0 0 0 WALKTO:@-1024,-29184,464
+120 0 0 0 0 WALKTO:@-600,-29600,456
+120 0 0 0 0 WALKTO:@-500,-30100,552
+120 0 0 0 0 WALKTO:@-900,-30500,472
+120 0 0 0 0 WALKTO:@-1280,-30720,416
+120 0 0 0 0 WALKTO:@-1792,-31232,384
+120 0 0 0 0 WALKTO:@-2300,-31150,304
+120 0 0 0 0 WALKTO:@-2816,-31300,328
+120 0 0 0 0 WALKTO:@-3328,-31600,392
+120 0 0 0 0 WALKTO:@-3840,-32256,448
+120 0 0 0 0 WALKTO:@-4352,-32768,464
+120 0 0 0 0 WALKTO:@-4864,-33280,456
+120 0 0 0 0 WALKTO:@-5376,-33792,464
+120 0 0 0 0 WALKTO:@-5888,-33792,456
+120 0 0 0 0 WALKTO:@-6400,-34304,504
+120 0 0 0 0 WALKTO:@-6912,-34816,520
+120 0 0 0 0 WALKTO:@-7424,-35328,520
+120 0 0 0 0 WALKTO:@-7424,-35840,528
+120 0 0 0 0 WALKTO:@-7936,-36352,512
+120 0 0 0 0 WALKTO:@-8448,-36864,568
+120 0 0 0 0 WALKTO:@-8704,-37376,608
+120 0 0 0 0 WALKTO:@-8704,-37888,624
+120 0 0 0 0 WALKTO:@-8704,-38400,576
+120 0 0 0 0 WALKTO:@-8704,-38912,560
+120 0 0 0 0 WALKTO:@-8192,-39424,488
+120 0 0 0 0 WALKTO:@-8192,-39936,456
+120 0 0 0 0 WALKTO:@-8192,-40448,432
+120 0 0 0 0 WALKTO:@-8192,-40960,432
+120 0 0 0 0 WALKTO:@-8192,-41472,392
+120 0 0 0 0 WALKTO:@-8192,-41984,384
+120 0 0 0 0 WALKTO:@-8192,-42496,376
+120 0 0 0 0 WALKTO:@-8192,-43008,328
+120 0 0 0 0 WALKTO:@-8192,-43520,320
+120 0 0 0 0 WALKTO:@-8192,-44032,400
+120 0 0 0 0 WALKTO:@-8192,-44416,480
+120 0 0 0 0 WALKTO:@-8192,-44800,512
+120 0 0 0 0 WALKTO:@-8192,-45184,456
+120 0 0 0 0 WALKTO:@-8192,-45568,392
+120 0 0 0 0 WALKTO:@-8448,-45824,248
+120 0 0 0 0 WALKTO:@-8448,-46208,184
+120 0 0 0 0 WALKTO:@-8448,-46592,160
+120 0 0 0 0 WALKTO:@-8448,-46976,200
+120 0 0 0 0 WALKTO:@-8448,-47360,264
+120 0 0 0 0 WALKTO:@-8448,-47744,328
+120 0 0 0 0 WALKTO:@-8448,-48128,352
+120 0 0 0 0 WALKTO:@-8192,-48384,376
+120 0 0 0 0 WALKTO:@-8064,-48768,440
+120 0 0 0 0 WALKTO:@-7808,-49024,488
+120 0 0 0 0 WALKTO:@-7552,-49408,560
+120 0 0 0 0 WALKTO:@-7296,-49792,624
+120 0 0 0 0 WALKTO:@-7040,-50048,664
+120 0 0 0 0 WALKTO:@-6784,-50304,688
+120 0 0 0 0 WALKTO:@-6784,-50688,696
+120 0 0 0 0 WALKTO:@-6528,-51072,736
+120 0 0 0 0 WALKTO:@-6272,-51328,768
+120 0 0 0 0 WALKTO:@-6016,-51584,792
+120 0 0 0 0 WALKTO:@-5888,-51968,808
+120 0 0 0 0 WALKTO:@-5632,-52224,800
+120 0 0 0 0 WALKTO:@-5376,-52480,776
+120 0 0 0 0 WALKTO:@-5120,-52736,752
+120 0 0 0 0 WALKTO:@-4864,-52992,752
+120 0 0 0 0 WALKTO:@-4608,-53248,784
+120 0 0 0 0 WALKTO:@-4352,-53504,800
+120 0 0 0 0 WALKTO:@-4096,-53760,784
+120 0 0 0 0 WALKTO:@-3840,-54016,752
+120 0 0 0 0 WALKTO:@-3584,-54272,736
+120 0 0 0 0 WALKTO:@-3328,-54528,728
+120 0 0 0 0 WALKTO:@-3584,-54784,816
+120 0 0 0 0 WALKTO:@-3712,-55168,936
+120 0 0 0 0 WALKTO:@-3968,-55424,992
+120 0 0 0 0 WALKTO:@-4096,-55808,968
+120 0 0 0 0 WALKTO:@-4096,-56192,952
+120 0 0 0 0 WALKTO:@-3840,-56576,992
+120 0 0 0 0 WALKTO:@-3584,-56832,1072
+120 0 0 0 0 WALKTO:@-3200,-56960,1104
+120 0 0 0 0 WALKTO:@-2816,-57088,1032
+120 0 0 0 0 WALKTO:@0,-56324,1182
+120 0 0 0 0 WALKTO:@515,-56316,1252
+120 0 0 0 0 WALKTO:@980,-56125,1292
+120 0 0 0 0 WALKTO:@1410,-56275,1382
+120 0 0 0 0 WALKTO:@1749,-56630,1430
+120 0 0 0 0 WALKTO:@2448,-56540,1497
+120 0 0 0 0 WALKTO:@2507,-56048,1570
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Pelagiad,_Halfway_Tavern
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar2:ge:70
+0.1 0 0 0 0 ESCORT:-
+60 0 0 0 0 ACTIVATE:itermerel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Itermerel's_notes
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_itermerelsnotes:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Itermerel's_notes
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar2:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-escortscholar2
+# MG_KillNecro2: Ranis sends the player to kill Tashpi Ashibael in Maar Gan; she is let go and Ranis is told a lie
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:necromancy
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_KillNecro2:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Maar
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar_Gan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Maar_Gan,_Tashpi_Ashibael's_Hut
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar_Gan,_Tashpi_Ashibael's_Hut
+60 0 0 0 0 ACTIVATE:tashpi_ashibael
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:necromancy
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_KillNecro2:ge:40
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_KillNecro2:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:necromancy
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_KillNecro2:ge:100
+0.1 0 0 0 0 EXPECT:item:sc_elementalburstfire:ge:2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-killnecro2
+# MG_SpyCatch: Ranis suspects a Telvanni spy; Tiram Gadar in Vivec's hall points to Trebonius, whose letter is the proof
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_spy
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_SpyCatch:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:tiram_gadar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_spy
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:trebonius_artorius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:credentials
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_SpyCatch:ge:80
+0.1 0 0 0 0 EXPECT:item:bk_tiramgadarscredentials:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_spy
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_SpyCatch:ge:100
+0.1 0 0 0 0 EXPECT:item:sc_summongoldensaint:ge:2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-spycatch
+# MG_Sharn_Necro: learn necromancers from the necromancy topic, lift Sharn's Legions of the Dead from her locked chest unseen (invisible, chameleon, sneaking), she teaches a spell
+60 0 0 0 0 ACTIVATE:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:necromancy
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+3 0 0 0
+0.3 0 0 0 0 USE:p_invisibility_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 SNEAK:1
+60 0 0 0 0 WALKTO:de_r_chest_01_sharn
+0.3 0 0 0 0 USELOCKPICK:de_r_chest_01_sharn:pick_grandmaster
+2 0 0 0
+60 0 0 0 0 LOOT:de_r_chest_01_sharn:bk_sharnslegionsofthedead
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_sharnslegionsofthedead:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SNEAK:0
+60 0 0 0 0 ACTIVATE:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:necromancers
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Sharn_Necro:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+# the invisibility and chameleon run out: until they do, nobody talks to the player
+3 0 0 0 0 SLEEP:6
+3 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-sharn
+# Ranis advances the player to Magician; MG_NchuleftBook: Edwinna wants Chronicles of Nchuleft, bought from Dorisa Darvel in Balmora (guild supply chest gives restore magicka potions)
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:mages_guild:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 LOOT:com_chest_02_mg_supply:p_restore_magicka_s
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_restore_magicka_s:ge:3
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Chronicles_of_Nchuleft
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_NchuleftBook:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_s
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Dorisa_Darvel
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Dorisa_Darvel
+60 0 0 0 0 ACTIVATE:dorisa_darvel
+1.5 0 0 0
+0.3 0 0 0 0 BUY:dorisa_darvel:bk_chroniclesnchuleft
+0.1 0 0 0 0 EXPECT:item:bk_chroniclesnchuleft:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chronicles_of_Nchuleft
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_NchuleftBook:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-nchuleft
+# MG_Potion: Edwinna sends the player to Skink in Sadrith Mora for a Detect Creatures potion
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Detect_Creatures_Potion
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Potion:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Detect_Creatures_Potion
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Potion:ge:50
+0.1 0 0 0 0 EXPECT:item:p_detect_creatures_s:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Detect_Creatures_Potion
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Potion:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-potion
+# MG_StealBook: Edwinna wants Chimarvamidium from Sirilonwe's locked chest in the Vivec guild, lifted unseen; lent to Edwinna
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_StealBook:ge:10
+0.1 0 0 0 0 EXPECT:item:sc_ondusisunhinging:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_invisibility_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 SNEAK:1
+60 0 0 0 0 WALKTO:@640,230,-512
+0.3 0 0 0 0 FACE:@514,238
+1 0 0 0
+0.3 0 0 0 0 USELOCKPICK:de_p_chest_02_sirilonwe:pick_grandmaster
+2 0 0 0
+60 0 0 0 0 LOOT:de_p_chest_02_sirilonwe:BookSkill_Heavy%Armor3
+2 0 0 0
+0.3 0 0 0 0 SNEAK:0
+0.1 0 0 0 0 EXPECT:item:BookSkill_Heavy%Armor3:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+3 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_StealBook:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-stealbook
+# MG_Apprentice: Huleen's hut in Maar Gan, scamp killed, Listien found behind the locked door
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Huleen's_hut
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Apprentice:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# the stairs up from Edwinna's floor stall the walker: Recall and the guide bring the player up to the door
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Maar
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar_Gan
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Maar_Gan,_Huleen's_Hut
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar_Gan,_Huleen's_Hut
+0.3 0 0 0 0 EQUIP:iron_longsword
+120 0 0 0 0 KILL:scamp_mg_apprentice
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:scamp_mg_apprentice
+60 0 0 0 0 WALKTO:@-64,420,-512
+0.3 0 0 0 0 USELOCKPICK:in_r_s_door_01:pick_grandmaster
+2 0 0 0
+60 0 0 0 0 ACTIVATE:listien_bierles
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Scamp
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Apprentice:ge:40
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Huleen's_hut
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Apprentice:ge:100
+0.1 0 0 0 0 EXPECT:item:sc_fifthbarrier:ge:2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-apprentice
+# MG_ReturnBook: Edwinna lends Chimarvamidium back, Sirilonwe is given it, Edwinna rewards with amulets (levitation lets the player up Edwinna's stairs to the guide)
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_ReturnBook:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:sirilonwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_ReturnBook:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chimarvamidium
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_ReturnBook:ge:100
+0.1 0 0 0 0 EXPECT:item:amulet_of_almsivi_intervention:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-returnbook
+# MG_Science: Edwinna wants a Dwemer tube; one lies under a basket in Vorar Helas' house (Balmora): pick the lock, take basket then tube, kill Vorar unseen
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_tube
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Science:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-22211,-15053,537
+60 0 0 0 0 WALKTO:@-15250,-13195,558
+0.3 0 0 0 0 USELOCKPICK:hlaalu_loaddoor_%02:pick_grandmaster
+2 0 0 0
+60 0 0 0 0 DOORTO:Balmora,_Vorar_Helas'_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Vorar_Helas'_House
+60 0 0 0 0 PICKUP:misc_com_basket_01
+2 0 0 0
+60 0 0 0 0 PICKUP:misc_dwrv_artifact60
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_artifact60:ge:1
+0.3 0 0 0 0 EQUIP:iron_longsword
+60 0 0 0 0 KILL:vorar_helas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:vorar_helas
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_tube
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Science:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-science
+# MG_Excavation: Edwinna sends the player to Senilias in Nchuleftingth (east of Suran, walked from the Suran strider); crank 3 opens the Test of Pattern; Anes Vendu's body has the report
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:excavation_report
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Excavation:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-22211,-15053,537
+120 0 0 0 0 WALKTO:@-22032,-14951,477
+120 0 0 0 0 WALKTO:@-21331,-14907,325
+120 0 0 0 0 WALKTO:@-20728,-14925,153
+120 0 0 0 0 WALKTO:@-20490,-15593,160
+120 0 0 0 0 WALKTO:@-20379,-16304,160
+120 0 0 0 0 WALKTO:@-20552,-16956,337
+120 0 0 0 0 WALKTO:@-21007,-17162,488
+120 0 0 0 0 WALKTO:@-21285,-17705,535
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Suran
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 WALKTO:@53159,-48229,400
+120 0 0 0 0 WALKTO:@53159,-48868,563
+120 0 0 0 0 WALKTO:@53545,-49250,385
+120 0 0 0 0 WALKTO:@54035,-49239,169
+120 0 0 0 0 WALKTO:@54240,-49912,176
+120 0 0 0 0 WALKTO:@54104,-50371,168
+120 0 0 0 0 WALKTO:@54421,-50855,160
+120 0 0 0 0 WALKTO:@54394,-51255,176
+120 0 0 0 0 WALKTO:@54857,-51245,319
+120 0 0 0 0 WALKTO:@55351,-51243,545
+120 0 0 0 0 WALKTO:@55511,-51828,713
+120 0 0 0 0 WALKTO:@55506,-52334,905
+120 0 0 0 0 WALKTO:@55074,-53111,880
+120 0 0 0 0 WALKTO:@54668,-53648,880
+120 0 0 0 0 WALKTO:@54283,-54071,880
+120 0 0 0 0 WALKTO:@54446,-54631,1024
+120 0 0 0 0 WALKTO:@54625,-55451,1160
+120 0 0 0 0 WALKTO:@54654,-56360,1208
+120 0 0 0 0 WALKTO:@54591,-56798,1210
+120 0 0 0 0 WALKTO:@54236,-57192,1210
+120 0 0 0 0 WALKTO:@53409,-57216,1082
+120 0 0 0 0 WALKTO:@53760,-57600,968
+120 0 0 0 0 WALKTO:@54272,-58112,896
+120 0 0 0 0 WALKTO:@54784,-58624,800
+120 0 0 0 0 WALKTO:@55040,-59136,736
+120 0 0 0 0 WALKTO:@55296,-59648,696
+120 0 0 0 0 WALKTO:@55808,-60160,664
+120 0 0 0 0 WALKTO:@56320,-60672,464
+120 0 0 0 0 WALKTO:@56832,-60928,320
+120 0 0 0 0 WALKTO:@57344,-61184,224
+120 0 0 0 0 WALKTO:@57856,-61440,192
+120 0 0 0 0 WALKTO:@58368,-61952,192
+120 0 0 0 0 WALKTO:@58880,-62208,208
+120 0 0 0 0 WALKTO:@59392,-62208,224
+120 0 0 0 0 WALKTO:@59904,-62208,224
+120 0 0 0 0 WALKTO:@60416,-62208,224
+120 0 0 0 0 WALKTO:@60928,-62208,224
+120 0 0 0 0 WALKTO:@61440,-61952,248
+120 0 0 0 0 WALKTO:@61952,-61696,312
+120 0 0 0 0 WALKTO:@62464,-61184,432
+120 0 0 0 0 WALKTO:@62976,-60672,440
+120 0 0 0 0 WALKTO:@63488,-60416,456
+120 0 0 0 0 WALKTO:@64000,-60160,608
+120 0 0 0 0 WALKTO:@64512,-59648,640
+120 0 0 0 0 WALKTO:@65024,-59648,640
+120 0 0 0 0 WALKTO:@65536,-59392,624
+120 0 0 0 0 WALKTO:@66048,-58880,632
+120 0 0 0 0 WALKTO:@66560,-58368,632
+120 0 0 0 0 WALKTO:@66816,-57856,640
+120 0 0 0 0 WALKTO:@66816,-57344,720
+120 0 0 0 0 WALKTO:@66816,-56832,760
+120 0 0 0 0 WALKTO:@66816,-56320,728
+120 0 0 0 0 WALKTO:@66816,-55808,664
+120 0 0 0 0 WALKTO:@66816,-55296,632
+120 0 0 0 0 WALKTO:@66816,-54784,616
+120 0 0 0 0 WALKTO:@66816,-54272,616
+120 0 0 0 0 WALKTO:@67072,-53760,608
+120 0 0 0 0 WALKTO:@67072,-53248,616
+120 0 0 0 0 WALKTO:@67072,-52736,600
+120 0 0 0 0 WALKTO:@67072,-52224,616
+120 0 0 0 0 WALKTO:@67072,-51712,624
+120 0 0 0 0 WALKTO:@67072,-51200,640
+120 0 0 0 0 WALKTO:@67072,-50688,672
+120 0 0 0 0 WALKTO:@67328,-50176,664
+120 0 0 0 0 WALKTO:@67840,-49664,704
+120 0 0 0 0 WALKTO:@68352,-49152,728
+120 0 0 0 0 WALKTO:@68864,-48640,728
+120 0 0 0 0 WALKTO:@69120,-48128,768
+120 0 0 0 0 WALKTO:@69120,-47616,824
+120 0 0 0 0 WALKTO:@69120,-47104,928
+120 0 0 0 0 WALKTO:@68608,-46592,944
+120 0 0 0 0 WALKTO:@68096,-46080,968
+120 0 0 0 0 WALKTO:@67584,-45568,992
+120 0 0 0 0 WALKTO:@67072,-45056,992
+120 0 0 0 0 WALKTO:@66560,-44544,1032
+120 0 0 0 0 WALKTO:@66048,-44032,1120
+120 0 0 0 0 WALKTO:@65536,-43520,1112
+120 0 0 0 0 WALKTO:@65280,-43008,1096
+120 0 0 0 0 WALKTO:@65024,-42496,1128
+120 0 0 0 0 WALKTO:@65024,-41984,1168
+120 0 0 0 0 WALKTO:@64768,-41472,1200
+120 0 0 0 0 WALKTO:@64768,-40960,1208
+120 0 0 0 0 WALKTO:@64768,-40448,1280
+120 0 0 0 0 WALKTO:@64768,-39936,1376
+120 0 0 0 0 WALKTO:@64256,-39424,1464
+120 0 0 0 0 WALKTO:@63744,-38912,1544
+120 0 0 0 0 WALKTO:@63232,-38400,1640
+120 0 0 0 0 WALKTO:@62976,-37888,1672
+120 0 0 0 0 WALKTO:@62976,-37376,1696
+120 0 0 0 0 WALKTO:@63232,-36864,1720
+120 0 0 0 0 WALKTO:@63488,-36352,1736
+120 0 0 0 0 WALKTO:@63744,-35840,1712
+120 0 0 0 0 WALKTO:@64256,-35328,1704
+120 0 0 0 0 WALKTO:@64768,-34816,1528
+120 0 0 0 0 WALKTO:@65280,-34304,1280
+120 0 0 0 0 WALKTO:@65792,-33792,1048
+120 0 0 0 0 WALKTO:@66304,-33280,968
+120 0 0 0 0 WALKTO:@66816,-33024,1401
+120 0 0 0 0 WALKTO:@67328,-32768,1650
+120 0 0 0 0 WALKTO:@67840,-32768,1624
+120 0 0 0 0 WALKTO:@68352,-33024,992
+120 0 0 0 0 WALKTO:@68864,-33024,928
+120 0 0 0 0 WALKTO:@69376,-33024,856
+120 0 0 0 0 WALKTO:@69888,-33024,832
+120 0 0 0 0 WALKTO:@70400,-33024,824
+120 0 0 0 0 WALKTO:@70912,-32768,848
+120 0 0 0 0 WALKTO:@71168,-32256,816
+120 0 0 0 0 WALKTO:@71168,-31744,760
+120 0 0 0 0 WALKTO:@71680,-31232,752
+120 0 0 0 0 WALKTO:@72192,-30720,752
+120 0 0 0 0 WALKTO:@72704,-30208,776
+120 0 0 0 0 WALKTO:@73216,-29696,800
+120 0 0 0 0 WALKTO:@73216,-29184,840
+120 0 0 0 0 WALKTO:@73216,-28672,848
+120 0 0 0 0 WALKTO:@72960,-28160,840
+120 0 0 0 0 WALKTO:@72960,-27648,808
+120 0 0 0 0 WALKTO:@72960,-27136,864
+120 0 0 0 0 WALKTO:@72960,-26624,888
+120 0 0 0 0 WALKTO:@72960,-26112,912
+120 0 0 0 0 WALKTO:@72960,-25600,984
+120 0 0 0 0 WALKTO:@72960,-25088,1024
+120 0 0 0 0 WALKTO:@72960,-24576,1032
+120 0 0 0 0 WALKTO:@73216,-24064,1056
+120 0 0 0 0 WALKTO:@73216,-23552,1032
+120 0 0 0 0 WALKTO:@73216,-23040,1064
+120 0 0 0 0 WALKTO:@73472,-22528,1080
+120 0 0 0 0 WALKTO:@73472,-22016,1024
+120 0 0 0 0 WALKTO:@73472,-21504,1024
+120 0 0 0 0 WALKTO:@73728,-20992,1000
+120 0 0 0 0 WALKTO:@74240,-20480,992
+120 0 0 0 0 WALKTO:@74240,-19968,872
+120 0 0 0 0 WALKTO:@74752,-19456,856
+120 0 0 0 0 WALKTO:@74752,-18944,760
+120 0 0 0 0 WALKTO:@74752,-18432,696
+120 0 0 0 0 WALKTO:@74752,-17920,712
+120 0 0 0 0 WALKTO:@74752,-17408,760
+120 0 0 0 0 WALKTO:@74752,-16896,776
+120 0 0 0 0 WALKTO:@74752,-16384,768
+120 0 0 0 0 WALKTO:@74752,-15872,776
+120 0 0 0 0 WALKTO:@75264,-15360,744
+120 0 0 0 0 WALKTO:@75776,-14848,768
+120 0 0 0 0 WALKTO:@76288,-14336,752
+120 0 0 0 0 WALKTO:@76800,-13824,680
+120 0 0 0 0 WALKTO:@77312,-13312,520
+120 0 0 0 0 WALKTO:@77824,-13056,536
+120 0 0 0 0 WALKTO:@78336,-13056,520
+120 0 0 0 0 WALKTO:@78848,-12544,408
+120 0 0 0 0 WALKTO:@79360,-12288,408
+120 0 0 0 0 WALKTO:@79872,-12544,488
+120 0 0 0 0 WALKTO:@80384,-12544,584
+120 0 0 0 0 WALKTO:@80896,-12544,656
+120 0 0 0 0 WALKTO:@81408,-12544,624
+120 0 0 0 0 WALKTO:@81920,-13056,616
+120 0 0 0 0 WALKTO:@82432,-13312,648
+120 0 0 0 0 WALKTO:@82944,-13312,616
+120 0 0 0 0 WALKTO:@83456,-13568,648
+120 0 0 0 0 WALKTO:@83968,-14080,656
+120 0 0 0 0 WALKTO:@84480,-14592,672
+120 0 0 0 0 WALKTO:@84992,-15104,680
+120 0 0 0 0 WALKTO:@85504,-15616,680
+120 0 0 0 0 WALKTO:@86016,-16128,680
+120 0 0 0 0 WALKTO:@86272,-16640,688
+120 0 0 0 0 WALKTO:@86272,-17152,712
+120 0 0 0 0 WALKTO:@86528,-17664,840
+120 0 0 0 0 WALKTO:@86432,-17888,1056
+60 0 0 0 0 WALKTO:@86280,-17740,940
+2 0 0 0
+0.3 0 0 0 0 FACE:door_dwrv_load00:mid
+0.5 0 0 0
+0.1 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+3 0 0 0
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Nchuleftingth,_Upper_Levels
+0.3 0 0 0 0 EQUIP:iron_longsword
+60 0 0 0 0 ACTIVATE:senilias_cadiusus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:excavation_report
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Anes_Vendu
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Excavation:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Nchuleftingth,_Test_of_Pattern
+3 0 0 0
+60 0 0 0 0 ACTIVATE:in_dwrv_crank_nchuleft_03
+8 0 0 0
+120 0 0 0 0 DOORTO:Nchuleftingth,_Lower_Levels
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Nchuleftingth,_Lower_Levels
+120 0 0 0 0 LOOT:anes_vendu:bk_seniliasreport
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_seniliasreport:ge:1
+120 0 0 0 0 DOORTO:Nchuleftingth,_Test_of_Pattern
+3 0 0 0
+120 0 0 0 0 DOORTO:Nchuleftingth,_Upper_Levels
+3 0 0 0
+60 0 0 0 0 ACTIVATE:senilias_cadiusus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:excavation_report
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Excavation:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:excavation_report
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Excavation:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-excavation
+# MG_Mzuleft: Edwinna wants Dwemer blueprints; strider to Khuul, boat to Dagon Fel, walk to Mzuleft (door: FACE the door, press A)
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:blueprints
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Mzuleft:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Khuul
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:talmeni_drethan
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:talmeni_drethan:Dagon_Fel
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 WALKTO:@62664,184401,103
+120 0 0 0 0 WALKTO:@62674,184015,208
+120 0 0 0 0 WALKTO:@62674,183468,209
+120 0 0 0 0 WALKTO:@62314,183220,207
+120 0 0 0 0 WALKTO:@61717,183195,66
+120 0 0 0 0 WALKTO:@61287,183204,138
+120 0 0 0 0 WALKTO:@60661,183267,219
+120 0 0 0 0 WALKTO:@59909,182941,273
+120 0 0 0 0 WALKTO:@59693,182515,330
+120 0 0 0 0 WALKTO:@58906,181947,329
+120 0 0 0 0 WALKTO:@58254,181868,511
+120 0 0 0 0 WALKTO:@57984,181463,648
+120 0 0 0 0 WALKTO:@57478,181108,832
+3 0 0 0
+60 0 0 0 0 WALKTO:@54274,175971,1546
+2 0 0 0
+0.3 0 0 0 0 FACE:door_dwrv_load00:mid
+0.5 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mzuleft
+0.3 0 0 0 0 EQUIP:iron_longsword
+120 0 0 0 0 PICKUP:misc_dwrv_artifact10
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_artifact10:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:blueprints
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Mzuleft:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-mzuleft
+# MG_Bethamez: Gnisis (strider from Ald'ruhn), lockpick the eggmine door, Lower Eggmine, Bethamez: the plans lie there. The step '2 0 1 0' gets past a beam at the arrival spot
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Bethamez
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Bethamez:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 WALKTO:@-86272,89344,336
+120 0 0 0 0 WALKTO:@-85760,89344,464
+120 0 0 0 0 WALKTO:@-85248,89344,544
+120 0 0 0 0 WALKTO:@-84736,89088,392
+120 0 0 0 0 WALKTO:@-84224,89088,384
+120 0 0 0 0 WALKTO:@-83712,89600,640
+120 0 0 0 0 WALKTO:@-83200,89600,704
+120 0 0 0 0 WALKTO:@-82688,89600,744
+120 0 0 0 0 WALKTO:@-82176,89856,872
+120 0 0 0 0 WALKTO:@-81664,89856,928
+120 0 0 0 0 WALKTO:@-81152,90112,1008
+120 0 0 0 0 WALKTO:@-80640,90112,1008
+120 0 0 0 0 WALKTO:@-80128,90368,1024
+120 0 0 0 0 WALKTO:@-79616,90624,1040
+120 0 0 0 0 WALKTO:@-79104,91136,1328
+120 0 0 0 0 WALKTO:@-78848,91648,1560
+120 0 0 0 0 WALKTO:@-79104,91904,1768
+120 0 0 0 0 WALKTO:@-79616,91392,1896
+120 0 0 0 0 WALKTO:@-80128,91392,1968
+120 0 0 0 0 WALKTO:@-80640,91904,2064
+120 0 0 0 0 WALKTO:@-80896,92416,2216
+120 0 0 0 0 WALKTO:@-80896,92928,2216
+120 0 0 0 0 WALKTO:@-80987,93307,2307
+3 0 0 0
+2 0 0 0
+0.3 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
+2 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Eggmine
+3 0 0 0
+0.3 0 0 0 0 EQUIP:iron_longsword
+120 0 0 0 0 DOORTO:Gnisis,_Lower_Eggmine
+3 0 0 0
+2 0 1 0
+60 0 0 0 0 WALKTO:@1778,-5183,385
+60 0 0 0 0 WALKTO:@1878,-4891,381
+60 0 0 0 0 WALKTO:@1811,-4601,386
+60 0 0 0 0 WALKTO:@1826,-4393,380
+60 0 0 0 0 WALKTO:@2040,-4320,397
+60 0 0 0 0 WALKTO:@2233,-4419,383
+60 0 0 0 0 WALKTO:@2496,-4388,327
+60 0 0 0 0 WALKTO:@2688,-4245,223
+60 0 0 0 0 WALKTO:@2887,-4222,138
+60 0 0 0 0 WALKTO:@3143,-4247,132
+60 0 0 0 0 WALKTO:@3234,-4437,125
+60 0 0 0 0 WALKTO:@3342,-4630,129
+60 0 0 0 0 WALKTO:@3535,-4773,128
+60 0 0 0 0 WALKTO:@3647,-4932,126
+60 0 0 0 0 WALKTO:@3653,-5176,136
+120 0 0 0 0 DOORTO:Gnisis,_Bethamez
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Bethamez
+120 0 0 0 0 PICKUP:misc_dwrv_artifact20
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_artifact20:ge:1
+3 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Bethamez
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Bethamez:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-mg-bethamez
+# MG_Guildmaster: Ranis advancement to Master Wizard (Wizard's Staff bought for 5000), Edwinna sends the player to Trebonius, duel in the Vivec Arena Pit
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:ranis_athrys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:mages_guild:ge:6
+0.3 0 0 0 0 TOPIC:Wizard's_Staff
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony_wizard's_staff:ge:1
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:mages_guild:ge:7
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:mages_guild:ge:8
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:edwinna_elbert
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Guildmaster:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:trebonius_artorius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Arch-Mage
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_Guildmaster:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Waistworks
+0.3 0 0 0 0 EQUIP:iron_longsword
+120 0 0 0 0 DOORTO:Vivec,_Arena_Pit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Pit
+120 0 0 0 0 KILL:trebonius_artorius
+3 0 0 0
+0.1 0 0 0 0 EXPECT:dead:trebonius_artorius
+0.1 0 0 0 0 EXPECT:journal:MG_Guildmaster:ge:100
+0.1 0 0 0 0 EXPECT:rank:mages_guild:ge:9
+0.3 0 0 0 0 SAVE:uber-mg-archmage
