@@ -1794,25 +1794,11 @@
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Ashalmawia,_Shrine,_Sunken_Vaults
 120 0 0 0 0 WALKTO:@4027,5023,-2362
-# BLOCKED: Gordol (3651,3659,-2969) not reachable by blast: the old WALKTO @4036,5023,-2830 now sticks at the ledge z-2362 (or with :dive reaches him, 2 nav warps), hrblast "0 caught" from the ledge, from 100 units away with :dive. Basics: fatigue 399, no paralysis/levitation. Repro: LOAD uber-hr-guardarobar? see p16.src
-# Gordol sits inside a ruin whose walls are solid in our collision (see the notes): lightning area spell from the ledge
-1 0 0 0
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 CASTAT:gordol:mw3ds_test_hrblast
-4 0 0 0
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 CASTAT:gordol:mw3ds_test_hrblast
-4 0 0 0
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 USE:p_restore_magicka_e
-0.3 0 0 0 0 CASTAT:gordol:mw3ds_test_hrblast
-4 0 0 0
-# exp dead:gordol
+120 0 0 0 0 WALKTO:@3750,3700,-2969:dive
+0.3 0 0 0 0 EQUIP:silver%longsword
+120 0 0 0 0 KILL:gordol
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:gordol
 0.3 0 0 0 0 USE:p_restore_magicka_e
 5 0 0 0
 0.3 0 0 0 0 CAST:recall
@@ -1874,8 +1860,8 @@
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:Ashalmawia
 1 0 0 0
-# j HR_CultElimination 100
-# exp item:ebony%spear_hrce_unique:ge:1
+0.1 0 0 0 0 EXPECT:journal:HR_CultElimination:ge:100
+0.1 0 0 0 0 EXPECT:item:ebony%spear_hrce_unique:ge:1
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 1 0 0 0
