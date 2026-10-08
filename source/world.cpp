@@ -3182,5 +3182,50 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		if (item >= 0)
 			best = item;
 	}
+	// An item lying on another item (the Gambolpuddy on a pillow in Ald Daedroth): the lower item's box covers the upper
+	// one, and the ray reaches the upper first on the mesh's top, as OpenMW's nearest hit would. An item whose box starts
+	// in the top half of the picked item's, centred over it, and is on the ray, is what the crosshair means
+	if (best >= 0 && w.refs[best].actor < 0 && isItemType(w.refs[best].type))
+	{
+		const Ref& low = w.refs[best];
+		float midZ = (low.boxMin[2] + low.boxMax[2]) * 0.5f;
+		int upper = -1;
+		float upperT = reach;
+		for (int i : w.loadedPickables)
+		{
+			const Ref& r = w.refs[i];
+			if (i == best || r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
+				continue;
+			bool over = r.boxMin[2] >= midZ && r.boxMax[2] > low.boxMax[2];
+			for (int k = 0; k < 2 && over; k++)
+			{
+				float c = (r.boxMin[k] + r.boxMax[k]) * 0.5f;
+				over = c >= low.boxMin[k] && c <= low.boxMax[k];
+			}
+			// or one lying within it (the ring in the pillow's box: a pillow's box is mostly its cushion's dip)
+			bool within = true;
+			for (int k = 0; k < 3 && within; k++)
+				within = r.boxMin[k] >= low.boxMin[k] - 2.0f && r.boxMax[k] <= low.boxMax[k] + 2.0f;
+			// (only a small one in a big misc thing's box, twenty times less: a key lying on a note is its own pick)
+			if (within)
+			{
+				float vl = 1.0f, vr = 1.0f;
+				for (int k = 0; k < 3; k++)
+				{
+					vl *= fmaxf(low.boxMax[k] - low.boxMin[k], 1.0f);
+					vr *= fmaxf(r.boxMax[k] - r.boxMin[k], 1.0f);
+				}
+				within = vl >= 20.0f * vr && low.type == "MISC";
+			}
+			float t = within ? rayBoxEntry(r, eye, dir, upperT) : -1.0f;
+			if (t >= 0.0f && t < upperT)
+			{
+				upperT = t;
+				upper = i;
+			}
+		}
+		if (upper >= 0)
+			best = upper;
+	}
 	return best;
 }

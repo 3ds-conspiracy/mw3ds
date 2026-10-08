@@ -1,0 +1,14 @@
+# TT_AldDaedroth: the Gambolpuddy (extravagant_rt_art_wild) lies on a pillow (misc_uni_pillow_01) in Ald Daedroth,
+# Antechamber. The pillow's box covers it and worldPick kept the pillow (the nearer entry): PICKUP failed "hidden from
+# here". OpenMW picks by the meshes: the item lying on top of another item is hit first.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Antechamber
+4 0 0 0
+0.3 0 0 0 0 TPIN:560:-2330:1008:0
+2 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 PICKUP:extravagant_rt_art_wild
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:extravagant_rt_art_wild:ge:1
