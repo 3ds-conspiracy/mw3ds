@@ -94,6 +94,8 @@ def distant_statics(db, arch, sun_dir, sun, ambient):
                 b = nif.get(r)
                 if b is not None and "rotation" in b:
                     b["rotation"] = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+                    b["translation"] = [0.0, 0.0, 0.0]      # the root transform does not count (see convert_cell.load_nif)
+                    b["scale"] = 1.0
             P, N, C, T, base = [], [], [], [], 0
             for s in extract_shapes(arch, nif):
                 if s.get("skinned") or s["flags"] & 1 or len(s["tris"]) == 0:     # blended: glass, smoke

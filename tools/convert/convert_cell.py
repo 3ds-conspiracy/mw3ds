@@ -656,12 +656,17 @@ class Converter:
         if key not in self.nif_cache:
             try:
                 nif = Nif(self.arch.read("meshes\\" + key))
-                # A placed object's root node rotation doesn't count (as in the game): some Dwemer
-                # corridor pieces carry a 90 degree one, which turned them and left holes in the floor
+                # A placed object's root node transform doesn't count (as in the game: the reference's own
+                # position and turn stand in for it): some Dwemer corridor pieces carry a 90 degree rotation,
+                # which turned them and left holes in the floor, and ex_dae_ruin_01 a 1018 unit drop that
+                # buried the Daedric ruins' tower base and walled the exit spot of their doors in solid stone
+                # (an anvil's -32..32 box sits on its repair hammer at +32 only without its root's 32)
                 for r in nif.roots:
                     b = nif.get(r)
                     if b is not None and "rotation" in b:
                         b["rotation"] = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+                        b["translation"] = [0.0, 0.0, 0.0]
+                        b["scale"] = 1.0
                 self.nif_cache[key] = nif
             except Exception as e:
                 print(f"  skip mesh {model}: {e}")

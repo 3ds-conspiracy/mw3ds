@@ -1,0 +1,21 @@
+# The Daedric ruins' door exit spot (Ashalmimilkala, Maelkashishi) is open floor in front of the entry hall, not
+# inside the ruin's stone: ex_dae_ruin_01's root node carries a 1018 unit drop that the game ignores (a placed
+# object's root transform is replaced by the reference's), which sank the tower base and left the exit spot in a
+# closed block. A player walks out of the door and down the stairs to the land, and back up to the door.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ashalmimilkala,_Shrine
+4 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-63600,-10650,0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:playery:lt:-10500
+60 0 0 0 0 WALKTO:@-63550,-9645,362
+0.3 0 0 0 0 FACE:@-63545,-9610
+0.5 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ashalmimilkala,_Shrine
+
