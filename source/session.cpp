@@ -1130,11 +1130,18 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		rendererSetCarriedLight(at, radius, rgb);
 	}
 	// spell visuals age and go
+	// A hit visual is attached to its target's own node (OpenMW: Animation::addEffect), so it goes where the target goes
 	for (size_t i = 0; i < vfx.size();)
 		if ((vfx[i].age += dt) >= vfx[i].life)
 			vfx.erase(vfx.begin() + i);
 		else
+		{
+			if (vfx[i].follow == -1)
+				memcpy(vfx[i].pos, w.player.feet, sizeof(vfx[i].pos));
+			else if (vfx[i].follow >= 0 && vfx[i].follow < (int)w.refs.size())
+				memcpy(vfx[i].pos, w.refs[vfx[i].follow].pos, sizeof(vfx[i].pos));
 			i++;
+		}
 	if (!playerDead && w.stats.health <= 0.0f)
 		playerDies();
 	// fades back to clear after travel; scripts can hold it (FadeOut) or bring it back slowly (FadeIn)

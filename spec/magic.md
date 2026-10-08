@@ -100,7 +100,9 @@ target rolls 0..99 below its magnitude, per effect of the spell:
 An effect's hit static (Shield's sphere, Fire Damage's flames) is attached to the target's own node with no offset, and its
 model is built around the actor's feet (about -15 to 150 units tall). A self spell shows it at the caster's feet, a
 touch or target spell at the victim's feet; the 3DS had put them 60 units up (or at the hands for a self spell), so
-Shield's sphere sat half above the body. The area burst stays around the chest. Test: `issue-19` (`vfxheight`).
+Shield's sphere sat half above the body. The area burst stays around the chest. Being attached to the actor's node, the
+visual also moves with the actor: the 3DS keeps a self, touch or target hit visual on its target's feet every frame
+(it used to stay where the spell was cast). Test: `issue-19` (`vfxheight`, `vfxdist`).
 
 ## Findings
 

@@ -451,6 +451,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
 	// how far above the player's feet the first spell visual stands (-999 with none): a self spell's wraps the body from the feet
 	if (what == "vfxheight") { v = s.vfx.empty() ? -999.0f : s.vfx[0].pos[2] - w.player.feet[2]; return true; }
+	// how far (flat) the first spell visual stands from the player (-999 with none): a self spell's travels with the caster
+	if (what == "vfxdist") { v = s.vfx.empty() ? -999.0f : hypotf(s.vfx[0].pos[0] - w.player.feet[0], s.vfx[0].pos[1] - w.player.feet[1]); return true; }
 	if (what == "untextured")           // first-person and body meshes drawn white for lack of a texture
 	{
 		v = 0;

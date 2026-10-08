@@ -1155,7 +1155,7 @@ void Session::beginCast(const SpellDef& sp, int school, bool animate)
 		// Hit visuals are modelled around the actor's feet (OpenMW attaches them to the actor's own node), so a
 		// self spell's sits there: its Shield sphere then wraps the whole body
 		float feet[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] };
-		spellVfx(sp, away ? 0 : 1, away ? hand : feet);
+		spellVfx(sp, away ? 0 : 1, away ? hand : feet, away ? -2 : -1);
 	}
 	castDef = sp;
 	castSchool = school;
@@ -1338,7 +1338,7 @@ void Session::releaseSpell(const SpellDef& sp, int school)
 			{
 				applyEffectToActor(who, e, true, (float)sp.cost, (float)castChance(sp), sp.name);
 				playSound(who, spellSound(sp, 2));
-				spellVfx(sp, 1, w.refs[who].pos);
+				spellVfx(sp, 1, w.refs[who].pos, who);
 			}
 		}
 	}

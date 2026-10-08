@@ -235,10 +235,10 @@ struct Session : ScriptHost
 	void updateSky();
 	float ambientTimer = 3.0f;                     // until the region's next ambient sound
 	// Spell visuals: a static's piece at a spot for a moment, turning (cast at the hand, hit on the target)
-	struct Vfx { std::string piece; float pos[3]; float age, life, spin; };
+	struct Vfx { std::string piece; float pos[3]; float age, life, spin; int follow; };   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
 	std::vector<Vfx> vfx;
-	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f);
-	void spellVfx(const SpellDef& sp, int kind, const float pos[3]);   // kind 0 cast, 1 hit, 2 area                              // the sun, the moons and the stars for the renderer
+	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2);
+	void spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow = -2);   // kind 0 cast, 1 hit, 2 area                              // the sun, the moons and the stars for the renderer
 	C3D_Tex* skyTex(const std::string& name);      // acquired once, kept
 	std::unordered_map<std::string, C3D_Tex*> skyTextures;
 	int restInterruptAt = -1;                    // sleeping outdoors: the hour (restDone) a creature comes

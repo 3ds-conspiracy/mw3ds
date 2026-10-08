@@ -111,7 +111,7 @@ void Session::projectileHits(Projectile& p, int victim)
 			float feet[3] = { victim < 0 ? w.player.feet[0] : w.refs[victim].pos[0], victim < 0 ? w.player.feet[1] : w.refs[victim].pos[1],
 				victim < 0 ? w.player.feet[2] : w.refs[victim].pos[2] };
 			float at[3] = { feet[0], feet[1], feet[2] + 60.0f };
-			spellVfx(sp, 1, feet);
+			spellVfx(sp, 1, feet, victim < 0 ? -1 : victim);
 			areaBurst(sp, 2, at, victim, p.owner);
 		}
 		logf("combat: %s hits %s", sp.name.c_str(), victim < 0 ? "the player" : w.refs[victim].id.c_str());
@@ -277,7 +277,7 @@ void Session::updateProjectiles(float dt)
 	}
 }
 
-void Session::spawnVfx(const std::string& staticId, const float pos[3], float life)
+void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow)
 {
 	auto it = w.game.firstPerson.vfx.find(lower(staticId));
 	if (it == w.game.firstPerson.vfx.end() || vfx.size() >= 12)
@@ -288,10 +288,11 @@ void Session::spawnVfx(const std::string& staticId, const float pos[3], float li
 	v.age = 0.0f;
 	v.life = life;
 	v.spin = 1.5f;
+	v.follow = follow;
 	vfx.push_back(v);
 }
 
-void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3])
+void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow)
 {
 	for (auto& e : sp.effects)
 	{
@@ -301,7 +302,7 @@ void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3])
 		const std::string& id = kind == 0 ? me->second.cvfx : kind == 1 ? me->second.hvfx : me->second.avfx;
 		if (!id.empty())
 		{
-			spawnVfx(id, pos);
+			spawnVfx(id, pos, 1.2f, follow);
 			return;                                    // one visual a spell (the first effect's)
 		}
 	}
