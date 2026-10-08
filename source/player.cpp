@@ -147,6 +147,25 @@ void playerSpawn(Player& p, Scene& scene, const float eye[3], float yaw, float p
 	p.landedFall = 0.0f;
 }
 
+// The body hanging on a face too steep to be a floor: the low sphere pushed out of it in 3D, and the sideways part of
+// that taken, so the next fall step clears the face
+static void slideOffSteepFace(Player& p, Scene& scene)
+{
+	for (float lift : { 0.0f, kStepUp * 0.5f })
+	{
+		float c[3] = { p.feet[0], p.feet[1], p.feet[2] + kRadius + lift }, c0[3] = { c[0], c[1], c[2] };
+		pushSphere(scene, c, kRadius + 6.0f, false);
+		float sx = c[0] - c0[0], sy = c[1] - c0[1], len = sqrtf(sx * sx + sy * sy);
+		if (len > 0.05f)
+		{
+			float move = fmaxf(len, 2.0f) / len;
+			p.feet[0] += sx * move;
+			p.feet[1] += sy * move;
+			return;
+		}
+	}
+}
+
 void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 {
 	PlayerInput in = inRaw;
@@ -336,6 +355,7 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 
 	// Never through a surface: the chest and the head go straight from where they were (a push out of
 	// something the legs slipped into can otherwise throw the body through the wall behind it)
+	float endZ = p.feet[2];
 	for (float h : { kStepUp + kRadius, kHeight - kRadius })
 	{
 		float a[3] = { start[0], start[1], start[2] + h }, b[3] = { p.feet[0], p.feet[1], p.feet[2] + h }, t;
@@ -349,6 +369,10 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 			p.feet[2] = start[2];
 			p.onGround = startOnGround;
 			p.vz = fminf(p.vz, 0.0f);
+			// Falling onto a face steeper than the floor test takes (a ridge between two rocks): the body would hang
+			// there for ever, so it is pushed aside off the face, as OpenMW's actors slide down a slope too steep to stand on
+			if (!startOnGround && !levitating && endZ < start[2] - 0.01f)
+				slideOffSteepFace(p, scene);
 			break;
 		}
 	}

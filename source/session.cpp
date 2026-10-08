@@ -2062,12 +2062,13 @@ void Session::testGive(const std::string& id, int count, bool topUp)
 		want -= w.itemCount(o->id);
 	if (want > 0)
 		w.addItem(o->id, want);
-	bool wearable = o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH"
-		|| o->type == "LOCK" || o->type == "PROB";
+	// (lockpicks and probes are only added: equipping one would replace the weapon in hand, and OpenMW never equips on
+	// add; USELOCKPICK / USEPROBE / EQUIP hold one when a case needs it)
+	bool wearable = o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH";
 	for (size_t k = 0; k < w.inventory.size() && wearable; k++)
 		if (lower(w.inventory[k].id) == lower(o->id))
 			equipItem(k, true);
-	logf("test: gave and equipped %s", o->id.c_str());
+	logf("test: gave %s%s", o->id.c_str(), wearable ? " and equipped it" : "");
 }
 
 void Session::testPlace(const std::string& id, float dist)

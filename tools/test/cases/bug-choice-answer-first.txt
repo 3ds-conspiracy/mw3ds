@@ -1,0 +1,25 @@
+# A Choice answer takes the first fitting info, as OpenMW and the original game (spec/dialogue.md R19b): Milyn
+# Faram's Odirniran, after "Listen to what he has to say." (choice 2), gives the journal-50 "happier here" line and
+# Goodbye, not the scroll reward (a bug of the original game, UESP; only the Morrowind Patch Project mod changes it)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 JOIN:telvanni:0
+0.3 0 0 0 0 SETDEAD:remasa%othril:1
+0.3 0 0 0 0 JOURNALADD:ht_odirniran:30
+0.3 0 0 0 0 GOTO:Odirniran,_Tower
+0.3 0 0 0 0 SETDISP:milyn_faram:90
+6 0 0 0
+0.3 0 0 0 0 KNOW:Odirniran
+0.3 0 0 0 0 TALK:milyn_faram
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Odirniran:eq:50
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Odirniran:eq:50
+0.1 0 0 0 0 EXPECT:item:sc_summondaedroth_hto:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

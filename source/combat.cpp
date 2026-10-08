@@ -761,7 +761,10 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 			// back into Balmora whenever a hill hid the player he followed
 			const float* end = w.pathPoints[r.path.back()].pos;
 			float ex = end[0] - target[0], ey = end[1] - target[1];
-			if (ex * ex + ey * ey > 600.0f * 600.0f)
+			// (kept when the straight way has failed and the route's last point sees the target: the strider
+			// platform at Gnisis ends in a cliff, and the grid's way down is the ramp 2000 units off)
+			float e[3] = { end[0], end[1], end[2] + 50.0f };
+			if (ex * ex + ey * ey > 600.0f * 600.0f && !(w.time < r.gridUntil && w.lineOfSight(e, b)))
 				r.path.clear();
 		}
 	}
@@ -1402,6 +1405,30 @@ bool Session::npcSayTopic(int ri, const char* voiceTopic)
 
 static const float kActorGravity = 627.0f;      // as the player's (player.cpp)
 
+// Outdoors: a neighbouring exterior cell (of the 8 round the actor's) that exists but isn't loaded, with the actor
+// within 2048 units of the edge it shares. Nothing is known about the ground there, so nobody starts to fall
+static bool actorFloorMaybeUnloaded(World& w, const Ref& r)
+{
+	if (w.current < 0 || w.cells[w.current].interior)
+		return false;
+	const float kReach = 2048.0f;
+	int gx = (int)floorf(r.pos[0] / 8192.0f), gy = (int)floorf(r.pos[1] / 8192.0f);
+	float fx = r.pos[0] - gx * 8192.0f, fy = r.pos[1] - gy * 8192.0f;      // 0..8192 inside their cell
+	for (int dx = -1; dx <= 1; dx++)
+		for (int dy = -1; dy <= 1; dy++)
+		{
+			if (!dx && !dy)
+				continue;
+			if ((dx < 0 && fx > kReach) || (dx > 0 && fx < 8192.0f - kReach) || (dy < 0 && fy > kReach)
+				|| (dy > 0 && fy < 8192.0f - kReach))
+				continue;
+			int g = w.gridCell(gx + dx, gy + dy);
+			if (g >= 0 && !w.cells[g].live)
+				return true;
+		}
+	return false;
+}
+
 void Session::actorGravity(float dt)
 {
 	for (int i : w.loadedActors)
@@ -1465,6 +1492,12 @@ void Session::actorGravity(float dt)
 				}
 				continue;
 			}
+			// The floor they stand on may be in a cell not loaded (yet, or any more) next to theirs: the Gnisis
+			// strider platform's collision comes from the cell north of the caravaner's. OpenMW keeps an actor
+			// still while the cell under it isn't loaded; so here when the drop is over 400 and one of the 8
+			// neighbours within reach of the actor is missing
+			if (r.pos[2] - best > 400.0f && actorFloorMaybeUnloaded(w, r))
+				continue;
 			r.falling = true;
 			r.fallVz = 0.0f;
 			r.fallTop = r.pos[2];
@@ -1552,6 +1585,134 @@ void Session::allyFight(int ri, float dt)
 			if (a)
 				actorPlay(*set, *a, creatureAttackGroup(*set, *a, nullptr), ANIM_ONCE);
 			damageNpc(foe, dmg, false);
+		}
+	}
+	w.syncActor(ri);
+}
+
+// StartCombat on another actor (not the player): OpenMW gives it a combat package with that actor as the target. It
+// walks up to its foe and swings (hit chance, damage and armor as for a blow on the player, no block or crit), the
+// foe takes up the fight against it, and a death ends it. The player's own fights come first (AI_COMBAT: npcCombat)
+void Session::npcDuel(int ri, float dt)
+{
+	Ref& r = w.refs[ri];
+	const int fi = r.duelFoe;
+	if (fi < 0 || fi >= (int)w.refs.size() || w.refs[fi].dead || w.refs[fi].actor < 0 || !w.sameSpace(fi, ri))
+	{
+		r.duelFoe = -1;
+		r.hitAt = -1.0f;
+		if (Actor* a = w.actorOf(ri))
+			a->showWeapon = false;
+		return;
+	}
+	Ref& f = w.refs[fi];
+	const ActorDef& def = w.game.actors[r.actor];
+	const ActorDef& fdef = w.game.actors[f.actor];
+	const Object* wpn = w.game.object(def.weapon);
+	if (wpn && (wpn->type != "WEAP" || isRanged(wpn)))
+		wpn = nullptr;
+	Actor* a = w.actorOf(ri);
+	ActorSet* set = w.actorsOf(ri);
+	if (f.duelFoe < 0 && f.ai != AI_COMBAT)
+		f.duelFoe = ri;                                  // whoever is struck back at takes up the fight
+	if (r.knockTimer > 0.0f)
+	{
+		r.knockTimer -= dt;
+		if (r.knockTimer <= 0.0f && a)
+			actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		return;
+	}
+	float dx = f.pos[0] - r.pos[0], dy = f.pos[1] - r.pos[1], dist = sqrtf(dx * dx + dy * dy);
+	float diff = angleDiff(atan2f(dx, dy), r.rot[2]);
+	r.rot[2] += fmaxf(-kTurnSpeed * dt, fminf(kTurnSpeed * dt, diff));
+	r.moved = true;
+	if (a)
+		a->showWeapon = wpn != nullptr;
+	float reach = def.creature ? kCombatDistance * 0.9f : weaponReach(wpn);
+	bool attacking = r.hitAt >= 0.0f;
+	if (!attacking && (dist > reach * 0.9f || fabsf(f.pos[2] - r.pos[2]) >= 180.0f))
+	{
+		npcMoveTo(ri, f.pos, actorRunSpeed(ri), dt, false);
+		if (a && !actorPlay(*set, *a, "RunForward", ANIM_LOOP))
+			actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
+	}
+	else
+	{
+		if (a && a->mode == ANIM_LOOP)
+			actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		r.attackTimer -= dt;
+		if (!attacking && r.attackTimer <= 0.0f && fabsf(diff) < 0.6f)
+		{
+			float windup = 0.35f, length = 1.0f;
+			if (a && actorPlay(*set, *a, def.creature ? creatureAttackGroup(*set, *a, wpn) : attackGroup(wpn), ANIM_ONCE))
+			{
+				const AnimGroup& g = actorSkeleton(*set, a->skeleton).groups[a->group];
+				windup = g.loopStart - g.start;
+				length = g.stop - g.start;
+			}
+			r.hitAt = w.time + windup;
+			r.attackTimer = length + 0.4f + frand() * 0.8f / fmaxf(0.5f, wpn ? wpn->speed : 1.0f);
+		}
+	}
+	if (r.hitAt >= 0.0f && w.time >= r.hitAt)
+	{
+		r.hitAt = -1.0f;
+		if (dist <= reach + 40.0f && fabsf(angleDiff(atan2f(dx, dy), r.rot[2])) < 1.0f)
+		{
+			float charge = frand();
+			r.fatigue -= w.game.gmstf("ffatigueattackbase", 2.0f) + (wpn ? wpn->weight : 0.0f) * charge * w.game.gmstf("fweaponfatiguemult", 0.25f);
+			float chance = roundf(attackTermOf(def.skills[weaponSkill(wpn)], def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
+				r.fatigue, r.fatigueMax, w.actorEffect(ri, 117), w.actorEffect(ri, 47))
+				- npcDefense(fi, f.knockTimer > 0.0f || w.actorEffect(fi, 45) > 0.0f));
+			BlowRoll roll = rollBlow(chance, false, false);
+			if (a)
+				attackFollowThrough(*set, *a, roll.lands ? charge : 0.0f);
+			if (!roll.lands)
+				playSound(ri, charge > 0.6f ? "SwishL" : "SwishM");
+			else
+			{
+				blowSound(fi, roll);
+				bool fatigueOnly = false;
+				float dmg;
+				if (def.creature && !def.attack.empty())
+				{
+					const auto& at = def.attack[rand() % def.attack.size()];
+					dmg = (at.first + (at.second - at.first) * charge) * roll.damage;
+				}
+				else if (wpn)
+					dmg = weaponDamage(wpn, npcAttackKind(wpn), charge, def.attributes[ATTR_STRENGTH]) * roll.damage;
+				else    // fists tire (health only on someone down)
+				{
+					float lo = w.game.gmstf("fminhandtohandmult", 0.1f), hi = w.game.gmstf("fmaxhandtohandmult", 0.5f);
+					dmg = def.skills[SKILL_HAND_TO_HAND] * (lo + (hi - lo) * charge);
+					if (f.knockTimer > 0.0f)
+						dmg *= w.game.gmstf("fhandtohandhealthper", 0.1f);
+					else
+						fatigueOnly = true;
+				}
+				if (!fatigueOnly)
+				{
+					if (f.knockTimer > 0.0f && w.actorEffect(fi, 45) <= 0.0f)
+						dmg *= w.game.gmstf("fcombatkodamagemult", 1.5f);
+					dmg = fmaxf(1.0f, applyArmor(dmg, fdef.armor + w.actorEffect(fi, 3)));
+				}
+				logf("combat: %s hits %s for %.1f%s", r.id.c_str(), f.id.c_str(), dmg, fatigueOnly ? " fatigue" : "");
+				if (!fatigueOnly && f.health - dmg <= 0.0f)
+				{
+					f.health = 0.0f;
+					killNpc(fi, false);              // (a duel's death is nobody's murder)
+				}
+				else
+					damageNpc(fi, dmg, fatigueOnly);
+			}
+		}
+		else if (a)
+			attackFollowThrough(*set, *a, frand());
+		if (f.dead)
+		{
+			r.duelFoe = -1;
+			if (a)
+				a->showWeapon = false;
 		}
 	}
 	w.syncActor(ri);
@@ -2336,7 +2497,9 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			float rating = fightTermOf(i, w.distanceToPlayer(i));        // (formulas.cpp)
 			bool calm = r.calmUntil > w.time || w.actorEffect(i, w.game.actors[r.actor].creature ? 50 : 49) > 0.0f;
 			float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f }, eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
-			if (rating >= 100.0f && !menu && !calm && npcAware(i) && w.lineOfSight(head, eye) && waterCreatureCanFight(w, i))
+			if (r.duelFoe >= 0 && !menu)
+				npcDuel(i, dt);
+			else if (rating >= 100.0f && !menu && !calm && npcAware(i) && w.lineOfSight(head, eye) && waterCreatureCanFight(w, i))
 			{
 				r.aggressor = true;
 				makeHostile(i);

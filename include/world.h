@@ -115,6 +115,7 @@ struct Ref
 	bool murdered = false;        // OnMurder pending: the player killed them and it was murder
 	float soulTrapUntil = -1.0f;  // Soultrap on them until this World::time: dying, their soul fills a gem
 	bool aggressor = false;       // started the fight (killing them isn't murder)
+	int duelFoe = -1;             // StartCombat on another actor: the ref it fights (not saved; -1: none)
 	bool alarmed = false;         // a guard come to arrest the player (OpenMW's Alarmed, for the dialogue filter)
 	bool moved = false;           // pos / rot[2] changed while fighting (placement must follow)
 	int ai = 0;                   // AI_IDLE, AI_COMBAT
@@ -190,6 +191,8 @@ struct ScriptInstance
 	std::vector<float> locals;
 	int ref = -1;                 // owning reference; -1 for global scripts
 	int target = -1;              // a global script's implicit reference (ref->StartScript): its calls without one act on it
+	std::string targetCell;       // that reference while its cell is out of memory: cell file + index in it (targetIndex),
+	int targetIndex = -1;         // bound again (target) when the script next runs
 	std::string item;             // item id for scripts carried in the inventory
 	bool running = true;
 	bool activated = false;       // OnActivate pending for this frame
@@ -213,6 +216,7 @@ struct ActiveEffect
 	std::string source;
 	int ref = -1;                     // summons: the creature, gone when the effect ends
 	std::string item, prev;           // bound items: the item given, and what it replaced
+	float applied = 0;                // Fortify Maximum Magicka: the points it added to the maximum (taken off again as is)
 };
 struct JournalLine { std::string quest; int index; std::string text; };
 
@@ -275,6 +279,7 @@ struct LevelCell
 	int pathBase = 0, pathCount = 0;  // its path grid points are World::pathPoints[pathBase ..)
 	bool refsLoaded = false;          // its objects are in memory (read when needed; evictCells drops far ones)
 	u32 lastUsed = 0;                 // World::useTick when last read or loaded
+	float freedAt = -1e9f;            // World::time when its geometry was last freed
 	float sea = 0.0f;                 // exterior: share of its ground under open water (converter)
 	bool noSleep = false;             // resting is illegal here (waiting only, or a bed)
 	std::string region;               // exterior: its region (lowercase id)

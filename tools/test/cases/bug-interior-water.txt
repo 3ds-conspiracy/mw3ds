@@ -8,6 +8,7 @@
 0.3 0 0 0 0 SHOT
 0.3 0 0 0 0 GOTO:Ashinabi,_Smuggler_Den
 6 0 0 0
-0.3 0 0 0 0 EXPECT:refwater:slaughterfish:lt:0
+# (a fish nearest the player may wade on a ledge a few units above the surface: floating means far above)
+0.3 0 0 0 0 EXPECT:refwater:slaughterfish:lt:8
 0.3 0 0 0 0 SHOT
 1 0 0 0

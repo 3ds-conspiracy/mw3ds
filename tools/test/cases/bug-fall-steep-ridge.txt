@@ -1,0 +1,23 @@
+# Dropped onto the ridge between two Ascadian Isles rocks (terrain_rock_ai_08 / _10) the body must slide off it, not hang in the air
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 TP:-7380:-46250:2000:0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:100
+0.3 0 0 0 0 TP:-7380:-46250:1500:0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:100
+0.3 0 0 0 0 TP:-7320:-46250:2000:0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:100
+0.3 0 0 0 0 TP:-7320:-46250:1500:0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:100
+0.3 0 0 0 0 TP:-7440:-46250:2000:0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:100
+0.3 0 0 0 0 TP:-7440:-46250:1500:0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:100

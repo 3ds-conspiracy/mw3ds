@@ -82,6 +82,7 @@ target rolls 0..99 below its magnitude, per effect of the spell:
   until restored. Absorb attribute / skill: the target is damaged, the caster fortified.
 - **Fortify** health / magicka / fatigue: raise the maximum and current while it lasts. Fortify Maximum Magicka: 0.1 x
   magnitude added to the magicka multiplier.
+  Ours adds the points when it begins and takes off the same points when it ends, whatever Intelligence did meanwhile.
 - **Cure** Common / Blight disease and **Remove Curse** purge those spell types; Cure Corprus ends the Corprus effect only (the disease stays on the list); Cure
   Poison / Paralyzation end those effects.
 - **Dispel:** each active *spell* (not potions, enchantments or abilities) goes whole with magnitude percent chance, one

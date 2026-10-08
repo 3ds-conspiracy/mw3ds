@@ -212,3 +212,28 @@ being negative (restocking) makes the result negative. Gold always joins `gold_0
 **Add** (`ContainerStore::add`): stacks as above, otherwise a new stack. **Remove** by id takes from stacks in order
 until the count is met; a stack removed down to 0 is empty and disappears; the count removed is returned (can be
 less than asked). The weight cache is dropped on any change. A selected enchanted item is deselected when removed.
+
+## 9. A placed object's root node
+
+A placed object takes its position, turn and scale from its reference. The root node's own transform in the model
+file does not count: the reference's stands in for it (rotation and translation both). Evidence in the game data:
+`furn_anvil00` has a root offset of +32 and a box of -32..+32 around it, and the `repair_*` tools lie on an anvil at its
+reference height +32, its top without the offset (+64 with it); `ex_dae_ruin_01` has a root offset of -1018 and is
+placed with `ex_dae_ruin_entry.max`, `ex_dae_ruin_stair01_short` and the pillars at fixed distances (stairs -258,
+pillars +672) that fit only without it (the entry hall floor, the door and the stairs then meet at the land's height).
+The converter (`convert_cell.py load_nif`, `distant.py`) therefore zeroes the root's rotation, translation and scale
+for placed objects. Models loaded for actors, worn armor and first person are not placed objects and keep theirs.
+
+## 10. Cells at a border, actors over an unloaded cell, followers off a cliff
+
+- OpenMW changes the player's cell only on crossing into another one, and unloads the cells outside the range
+  around it; it has no pause on the line. Ours loads a ring of one cell round the player's, so pacing on a border
+  freed the row behind and loaded the row ahead at each crossing. The cell the player was in stays the current one
+  until they are 512 units past its edge (or farther than a neighbour away); the monitor "<cell> was freed and
+  loaded again within 3 s" shows any such thrash.
+- OpenMW's actors stand in cells that exist as a whole; ours load the ring one cell a frame. An actor that finds
+  no floor within 400 units of it does not start to fall while a neighbouring exterior cell within 2048 units of
+  it is not loaded: the Gnisis strider platform's collision is in the cell north of the caravaner's.
+- A follower that cannot walk straight at the player (the player stands below the cliff the strider platform ends
+  in) goes by the path grid even when the route ends 600 units or more from the player, as long as its last point
+  sees the player. OpenMW paths over its navigation mesh to the player wherever they are.

@@ -255,6 +255,7 @@ struct Session : ScriptHost
 	void npcWander(int ref, float dt);
 	bool npcTalkStand(int ref, float dt);
 	void npcPackage(int ref, float dt);          // travel / follow / escort / activate packages
+	void npcDuel(int ref, float dt);              // StartCombat on another actor: it walks up to its foe and fights it
 	void allyFight(int ref, float dt);            // summoned creatures go for whoever fights the player
 	bool npcStep(int ref, Cell& cell, float dirX, float dirY, float step);
 	void makeHostile(int ref);

@@ -83,6 +83,14 @@ Test: `openmw-spec-movement` (generated): run speed from Speed and Athletics; ju
 running and fatigue (`Session::runSpeedFor`, `jumpSpeedFor`). EXPECT kinds `npcwalk:<id>` / `npcrun:<id>` exist for
 hand-written checks.
 
+## Steep faces (2026-10-07, uber bug 68)
+
+The floor test takes only faces up to 60 degrees as floor; steeper ones are walls. A body falling onto the ridge
+between two steep faces (Ascadian Isles, `terrain_rock_ai_08` / `_10`) found no floor and its fall step was refused by
+the never-through-a-surface check, so it hung in the air for good. Now such a refused fall step pushes the low body
+sphere out of the face in 3D and takes the sideways part: the body slides off the ridge and lands, as OpenMW's
+actors slide down a slope too steep to stand on (`bug-fall-steep-ridge`).
+
 ## Open
 
 - Slow Fall: OpenMW scales the fall and the inertia by `1 - 0.005 x magnitude` each physics step; ours quarters

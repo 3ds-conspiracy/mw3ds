@@ -1,0 +1,17 @@
+# StartCombat naming another actor than the player: Rothis Nethan and Brethas Deras (the Arena duel of HR_CowardDisgrace,
+# vivecArenaScript: Rothis StartCombat Brethas) fight each other, the target fights back, and one dies
+0.3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Waistworks
+3 0 0 0
+0.3 0 0 0 0 JOURNAL:HR_CowardDisgrace:50
+0.3 0 0 0 0 STARTSCRIPT:vivecArenaScript
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Pit
+3 0 0 0
+60 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Pit
+0.1 0 0 0 0 EXPECT:refhealth:rothis%nethan:lt:100
+0.1 0 0 0 0 EXPECT:refhealth:brethas%deras:lt:113
+30 0 0 0
+0.1 0 0 0 0 EXPECT:dead:rothis%nethan
+0.1 0 0 0 0 EXPECT:alive:brethas%deras

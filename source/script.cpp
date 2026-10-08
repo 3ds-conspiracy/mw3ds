@@ -1056,18 +1056,35 @@ static float call(Ctx& c, const Node& n)
 		auto dead = w.deadCounts.find(lower(argStr(c, n, 0)));
 		return dead != w.deadCounts.end() ? (float)dead->second : 0.0f;
 	}
-	// StartCombat target: only the player can be fought here, so another actor as the target leaves them be
-	// (rather than turning them on the player)
+	// StartCombat target: the player, or another actor (OpenMW starts an AiCombat package on it): the actor goes for that
+	// one, who fights back unless already busy with a fight
 	case F_STARTCOMBAT:
-		if (r && r->actor >= 0 && !r->dead && lower(argStr(c, n, 0)) == "player")
+		if (r && r->actor >= 0 && !r->dead)
 		{
-			r->aggressor = true;
-			c.host.startCombat(ref);
+			std::string to = lower(argStr(c, n, 0));
+			if (to == "player")
+			{
+				r->aggressor = true;
+				c.host.startCombat(ref);
+			}
+			else
+			{
+				int t = w.findRef(to);
+				if (t >= 0 && t != ref && w.refs[t].actor >= 0 && !w.refs[t].dead)
+				{
+					r->duelFoe = t;
+					if (w.refs[t].duelFoe < 0)
+						w.refs[t].duelFoe = ref;
+				}
+			}
 		}
 		return 0.0f;
 	case F_STOPCOMBAT:
 		if (r && r->actor >= 0)
+		{
+			r->duelFoe = -1;
 			c.host.stopCombat(ref);
+		}
 		return 0.0f;
 	case F_SETHELLO:
 		if (r && r->actor >= 0)
@@ -1801,7 +1818,15 @@ void scriptsRun(World& w, ScriptHost& host, float dt)
 			int ref = w.scripts[i].ref;
 			if (ref >= 0 && w.scripts[i].item.empty() && (!w.active(ref) || w.refs[ref].pickedUp))
 				continue;
-			// (a global script started on an object runs with it as its reference)
+			// (a global script started on an object runs with it as its reference; one whose cell went out of
+			// memory is read back, as a saved game's are)
+			if (w.scripts[i].target < 0 && !w.scripts[i].targetCell.empty())
+			{
+				int tc = w.cellIndex(w.scripts[i].targetCell);
+				if (tc >= 0 && w.ensureRefs(tc) && w.scripts[i].targetIndex < w.cells[tc].refCount)
+					w.scripts[i].target = w.cells[tc].refBase + w.scripts[i].targetIndex;
+				w.scripts[i].targetCell.clear();
+			}
 			Ctx c{ w, host, (int)i, ref >= 0 || !w.scripts[i].item.empty() ? ref : w.scripts[i].target, dt };
 			exec(c, w.scripts[i].script->body);
 			// OnActivate lasts one frame; OnPCAdd / OnPCEquip stay set until the script clears them

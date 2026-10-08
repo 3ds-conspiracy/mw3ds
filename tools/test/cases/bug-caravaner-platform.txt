@@ -1,0 +1,13 @@
+# An actor whose cell stays loaded keeps standing on a platform whose collision is in a cell that is freed (uber bug 11):
+# the Gnisis caravaner (punibi yahaz, 1043 up on the strider platform) fell to the ground at 348 when the player went
+# south and the cell north of his dropped out
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:-86650:89300:1060:180
+8 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:punibi_yahaz:lt:300
+0.3 0 0 0 0 TP:-86650:80500:1500:180
+8 0 0 0
+0.3 0 0 0 0 TP:-86650:89300:1060:180
+8 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:punibi_yahaz:lt:300

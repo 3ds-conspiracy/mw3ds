@@ -1,6 +1,7 @@
 1 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
 0.3 0 0 0 0 GIVE:pick_apprentice_01
+0.3 0 0 0 0 EQUIP:pick_apprentice_01
 0.3 0 0 0 0 X
 1 0 0 0
 0.3 0 0 0 0 EXPECT:weapondrawn:eq:1

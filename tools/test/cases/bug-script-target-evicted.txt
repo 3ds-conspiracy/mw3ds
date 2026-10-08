@@ -1,0 +1,25 @@
+# A global script started on an object (ref->StartScript) whose cell goes out of memory: the object's slot was freed
+# but the script kept the number, so saving read cells[-1] and crashed (uber-hh, uber-hr: strlen in scriptState),
+# and the slot reused by another cell pointed the script at the wrong object. Now the script keeps the object by cell
+# file + index and finds it again when its cell is back.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 STARTSCRIPT:arethanmandasscript:fargoth
+1 0 0 0
+0.1 0 0 0 0 EXPECT:scripttarget:arethanmandasscript,fargoth:eq:1
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+3 0 0 0
+0.3 0 0 0 0 EVICT:0
+1 0 0 0
+0.3 0 0 0 0 TP:31000:-81000:1400:0
+2 0 0 0
+0.3 0 0 0 0 SAVE:bug-script-target
+2 0 0 0
+0.3 0 0 0 0 TP:-11000:-71000:600:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:scripttarget:arethanmandasscript,fargoth:eq:1
+0.3 0 0 0 0 LOAD:bug-script-target
+4 0 0 0
+0.3 0 0 0 0 TP:-11000:-71000:600:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:scripttarget:arethanmandasscript,fargoth:eq:1

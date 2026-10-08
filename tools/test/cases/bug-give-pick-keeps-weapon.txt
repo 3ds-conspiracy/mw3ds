@@ -1,0 +1,10 @@
+# GIVE of a lockpick only adds it: the weapon in hand stays equipped (uber mq, bug 83; OpenMW never equips on add)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:silver_longsword
+0.3 0 0 0 0 GIVE:pick_apprentice_01
+1 0 0 0
+0.3 0 0 0 0 EXPECT:equipped:silver_longsword:eq:1
+0.3 0 0 0 0 EXPECT:equipped:pick_apprentice_01:eq:0
+0.3 0 0 0 0 EXPECT:item:pick_apprentice_01:ge:1

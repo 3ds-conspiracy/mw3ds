@@ -302,16 +302,21 @@ cJSON* World::scriptState(const ScriptInstance& s) const
 {
 	cJSON* o = cJSON_CreateObject();
 	cJSON_AddStringToObject(o, "name", s.script->name.c_str());
-	cJSON_AddNumberToObject(o, "ref", s.ref >= 0 ? s.ref - cells[refs[s.ref].cell].refBase : -1);
-	if (s.ref >= 0)
+	cJSON_AddNumberToObject(o, "ref", s.ref >= 0 && refs[s.ref].cell >= 0 ? s.ref - cells[refs[s.ref].cell].refBase : -1);
+	if (s.ref >= 0 && refs[s.ref].cell >= 0)
 	{
 		cJSON_AddStringToObject(o, "ref_c", cells[refs[s.ref].cell].file.c_str());
 		cJSON_AddStringToObject(o, "ref_id", refs[s.ref].idLower.c_str());
 	}
-	if (s.target >= 0 && s.target < (int)refs.size())        // a global script's reference (cell file, index in it)
+	if (s.target >= 0 && s.target < (int)refs.size() && refs[s.target].cell >= 0)   // a global script's reference (cell file, index in it)
 	{
 		cJSON_AddStringToObject(o, "tgt_c", cells[refs[s.target].cell].file.c_str());
 		cJSON_AddNumberToObject(o, "tgt_i", s.target - cells[refs[s.target].cell].refBase);
+	}
+	else if (s.target < 0 && !s.targetCell.empty())          // its cell is out of memory: as kept
+	{
+		cJSON_AddStringToObject(o, "tgt_c", s.targetCell.c_str());
+		cJSON_AddNumberToObject(o, "tgt_i", s.targetIndex);
 	}
 	cJSON_AddStringToObject(o, "item", s.item.c_str());
 	cJSON_AddNumberToObject(o, "running", s.running);

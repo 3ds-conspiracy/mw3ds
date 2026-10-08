@@ -545,6 +545,9 @@ void World::despawn(int ri)
 			spawned.erase(spawned.begin() + k);
 			break;
 		}
+	for (auto& s : scripts)
+		if (s.target == ri)
+			s.target = -1;
 	refs[ri] = Ref();
 	refs[ri].cell = -1;
 	freeRefs.push_back({ ri, 1 });
@@ -1415,6 +1418,14 @@ void World::evictCell(int c)
 	kept.reserve(scripts.size());
 	for (auto& s : scripts)
 	{
+		// a global script started on one of them (ref->StartScript) keeps it by cell file + index: the slot is freed
+		// and reused by other cells, so the number alone would point at another object or at nothing
+		if (s.target >= first && s.target < last)
+		{
+			s.targetCell = lc.file;
+			s.targetIndex = s.target - first;
+			s.target = -1;
+		}
 		if (s.ref >= first && s.ref < last)
 		{
 			if (s.item.empty())
@@ -1671,6 +1682,10 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 	w.respawnCell(index);               // before it is live: revived actors come in standing
 	lc.live = l;
 	w.loaded.push_back(l);
+	// A cell that comes back within a few seconds of being freed: the border between two cells thrashes it
+	if (!lc.interior && w.time - lc.freedAt < 3.0f)
+		monitorOnce(("cellthrash:" + lc.file).c_str(), "%s was freed and loaded again within %.1f s", lc.file.c_str(),
+			w.time - lc.freedAt);
 	// Cell files number references within the cell
 	for (auto& a : l->actors.actors)
 		if (a.ref >= 0)
@@ -1895,6 +1910,7 @@ static void unloadLevelCell(World& w, int index)
 		}
 	delete lc.live;
 	lc.live = nullptr;
+	lc.freedAt = w.time;
 	w.rebuildLoadedLists();
 }
 
@@ -1971,7 +1987,19 @@ void World::streamExterior(bool all)
 	// Walked into another grid cell?
 	int gx = (int)floorf(player.feet[0] / 8192.0f), gy = (int)floorf(player.feet[1] / 8192.0f);
 	int under = gridCell(gx, gy);
+	// Just over the line into a next-door cell, the cell the player was in stays "current": a player pacing on a border
+	// freed the row of cells behind and loaded the row ahead on every crossing (uber bug 39). Past 512 units, or
+	// farther than a neighbour, it changes
+	bool nearEdge = false;
 	if (under >= 0 && under != current)
+	{
+		const LevelCell& cur = cells[current];
+		float ox = fmaxf(fmaxf(cur.gx * 8192.0f - player.feet[0], player.feet[0] - (cur.gx + 1) * 8192.0f), 0.0f);
+		float oy = fmaxf(fmaxf(cur.gy * 8192.0f - player.feet[1], player.feet[1] - (cur.gy + 1) * 8192.0f), 0.0f);
+		nearEdge = abs(cells[under].gx - cur.gx) <= 1 && abs(cells[under].gy - cur.gy) <= 1 && ox < 512.0f && oy < 512.0f
+			&& cur.live;
+	}
+	if (under >= 0 && under != current && !nearEdge)
 	{
 		current = under;
 		logf("world: outside in %s (%d %d)", cells[current].name.c_str(), gx, gy);

@@ -244,7 +244,7 @@ static void shiftStat(int& value, int& below, int by)
 }
 
 // Adds (sign 1) or removes (sign -1) a lasting effect's change to the player's numbers
-static void applyFortify(World& w, const ActiveEffect& a, float sign)
+static void applyFortify(World& w, ActiveEffect& a, float sign)
 {
 	PlayerStats& s = w.stats;
 	float m = a.magnitude * sign;
@@ -265,7 +265,10 @@ static void applyFortify(World& w, const ActiveEffect& a, float sign)
 		break;
 	case EFF_FORTIFY_MAX_MAGICKA:
 	{
-		float extra = m * 0.1f * s.attributes[ATTR_INTELLIGENCE];
+		// The points added are remembered: Intelligence may have changed by the time it ends (a Fortify Intelligence
+		// that began later), and taking off a different amount left the maximum lower (or higher) for good
+		float extra = sign > 0 ? m * 0.1f * s.attributes[ATTR_INTELLIGENCE] : -a.applied;
+		a.applied = sign > 0 ? extra : 0.0f;
 		s.magickaMax += extra;
 		s.magicka = fminf(s.magickaMax, s.magicka + (sign > 0 ? extra : 0.0f));
 		break;

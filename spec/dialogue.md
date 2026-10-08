@@ -157,6 +157,13 @@ rebuilt afterwards. `Goodbye` (script command) closes the choice state and flags
 Leaving ("goodbyeSelected") makes persuasion's PERMANENT part of the disposition change stick, clamped so the derived
 disposition stays within 0-100 and not below what intimidate leaves; the temporary part and Charm are dropped.
 
+**R19b. Which info answers a choice (as OpenMW and the original game).** The first info of the topic that fits
+with the choice number set answers, whether or not it tests Choice. A plain info listed before the Choice infos can
+win: Milyn Faram's "Odirniran" question sets HT_Odirniran to 50, so after "Listen to what he has to say" (Choice 2)
+the "so much happier here" line (Journal >= 50) answers and the scroll reward (journal 60) is never reached. UESP lists
+this as a bug of the original game, fixed only by the Morrowind Patch Project mod; we keep it. Test:
+`bug-choice-answer-first` (expects the original game's line).
+
 **R20. Voiced reactions (`say`).** For Hello, Attack, Hit, Flee, Thief etc.: refused when the actor is already
 speaking, an NPC is swimming, or the actor is knocked down. Otherwise the topic is searched with choice 0 (not -1),
 the live talked-to flag, and no Info Refusal fallback; a match shows the subtitle, plays the sound, runs the script.

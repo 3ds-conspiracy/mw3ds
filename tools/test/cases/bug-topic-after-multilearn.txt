@@ -1,0 +1,20 @@
+# An answer that ends in a Continue choice (Nibani Maesa, Nerevarine prophecies) blocks the topic list until the choice
+# is taken, as in OpenMW (uber mq, bug 82: not an engine bug, the driver must press Continue: CHOICE:1 before the next TOPIC, which the driver
+# refuses to ask while the choice is open)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:45
+0.3 0 0 0 0 GOTO:Urshilaku_Camp,_Wise_Woman's_Yurt
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nerevarine_prophecies
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:eq:45
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 TOPIC:aspect_and_uncertain_parents
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:A2_1_MeetSulMatuul:ge:51

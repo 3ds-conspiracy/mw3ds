@@ -1,0 +1,23 @@
+# Standing on the border of two exterior cells does not free and load the cells beyond over and over (uber bug 39):
+# at the (-3,12) / (-3,13) border near Maar Gan "loading ext_m3_14 now" repeated every frame
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:-20480:106488:2320:0
+4 0 0 0
+0.3 0 0 0 0 TP:-20480:106504:2320:0
+1 0 0 0
+0.3 0 0 0 0 TP:-20480:106488:2320:0
+1 0 0 0
+0.3 0 0 0 0 TP:-20480:106504:2320:0
+1 0 0 0
+0.3 0 0 0 0 TP:-20480:106488:2320:0
+1 0 0 0
+0.3 0 0 0 0 TP:-20480:106504:2320:0
+1 0 0 0
+0.3 0 0 0 0 TP:-20480:106488:2320:0
+1 0 0 0
+0.3 0 0 0 0 TP:-20480:106504:2320:0
+1 0 0 0
+0.3 0 0 0 0 TP:-20480:106488:2320:0
+1 0 0 0
+3 0 0 0

@@ -1,0 +1,14 @@
+# A follower left on the Gnisis plateau comes down by the path grid when the player is below the cliff (uber bugs
+# 41 / 87): Deval Beleth stayed at the platform's edge (-86800,89297,1030), in sight of the player on the ground,
+# because the grid route he found ended 2000 units from the player and was dropped as leading away
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 TP:-86650:89300:1060:0
+5 0 0 0
+0.3 0 0 0 0 PLACE:guar:200
+0.3 0 0 0 0 FOLLOW:guar
+2 0 0 0
+0.3 0 0 0 0 TP:-86650:88300:100:180
+120 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:guar:lt:600

@@ -1,0 +1,20 @@
+# Max magicka comes back to what it was once Fortify Maximum Magicka and Fortify Intelligence have both ended, whatever
+# order they began and ended in (uber hr, bug 35: 150 read 121 later)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 EXPECT:magickamax:eq:150
+0.3 0 0 0 0 ADDEFFECT:84:10:10:20:0
+0.3 0 0 0 0 MAKESPELL:fmm
+0.3 0 0 0 0 ADDEFFECT:79:30:30:60:0:intelligence
+0.3 0 0 0 0 MAKESPELL:fint
+0.3 0 0 0 0 CAST:mw3ds_test_fmm
+2 0 0 0
+0.3 0 0 0 0 CAST:mw3ds_test_fint
+2 0 0 0
+0.3 0 0 0 0 SNAP:magickamax
+25 0 0 0
+0.3 0 0 0 0 SNAP:magickamax
+45 0 0 0
+0.3 0 0 0 0 EXPECT:magickamax:eq:150

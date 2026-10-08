@@ -114,6 +114,14 @@ Armor hit 0, Block 0, weapon hit 0, spell cast 0, Alchemy 0 / ingredient 1, Ench
 strike 3, Acrobatics jump 0 / fall 1, Mercantile 0 / bribe 1, Security trap 0 / lock 1, Sneak avoid notice 0 /
 pickpocket 1, Speechcraft 0 / fail 1, Armorer 0, Athletics run 0 / swim 1.
 
+## Fights between two actors (StartCombat)
+
+`StartCombat <actor>` on a script's actor gives it a combat package with that actor as the target (the player is only
+one possible target). It walks up to the target and swings; the target takes up the fight against it unless it is
+already in one. A blow rolls the attack term less the target's evasion, the weapon's (or creature attack's) damage,
+then armor with a floor of 1; a death ends the fight (it is nobody's murder). `StopCombat` clears it. Not covered:
+blocking, critical hits, spells and flight between actors; the fight is not kept in a save.
+
 ## Findings
 
 2026-09-29 (earlier): armor rating ignored the armor skill and Unarmored (fixed for the player, `Session::playerArmor`,
