@@ -3630,7 +3630,7 @@
 0.3 0 0 0 0 SAVE:uber-hh-literacy
 
 # NOTE: Sinsibadon (Borug's tower) and the Zainsipilu fights are flaky run to run (driver stuck on the ledge at -1874,1647,526 below Borug; KILL fervas_reloro timeout): see internal/uber/hh.md
-# BLOCKED after lamp5: TwinLamps1 30+ (Galyn Arvel in Ald Velothi reached by Ald-ruhn strider -> Khuul + flight; J'Saddha at Ashalmawia -78265,125280,1893 has no walkable route to Ald Velothi: uberroute finds none even at slope 3, a straight escort walk climbs the mountain and he stays; journal 70 needs him within 300 of Galyn) and TwinLamps3 (needs TwinLamps1 100). See internal/uber/hh.md
+# (was blocked, now played below from lamp5) TwinLamps1 30+ (Galyn Arvel in Ald Velothi reached by Ald-ruhn strider -> Khuul + flight; J'Saddha at Ashalmawia -78265,125280,1893 has no walkable route to Ald Velothi: uberroute finds none even at slope 3, a straight escort walk climbs the mountain and he stays; journal 70 needs him within 300 of Galyn) and TwinLamps3 (needs TwinLamps1 100). See internal/uber/hh.md
 # HH_TwinLamps: free 16 slaves with the keys of Zainsipilu (Snadir), Kudanat and Sinsibadon (Borug), then Jobasha and Ilmeni Dren
 # HH_TwinLamps prelude: free slaves (>15) with the slave keys: Zainsipilu, Kudanat, Sinsibadon
 0.3 0 0 0 0 CAST:recall
@@ -3979,12 +3979,6 @@
 0.3 0 0 0 0 USE:p_fortify_speed_e
 0.3 0 0 0 0 USE:p_fortify_speed_e
 0.3 0 0 0 0 USE:p_fortify_speed_e
-0.3 0 0 0 0 USE:p_fortify_speed_e
-0.3 0 0 0 0 USE:p_fortify_speed_e
-0.3 0 0 0 0 USE:p_fortify_speed_e
-0.3 0 0 0 0 USE:p_levitation_e
-0.3 0 0 0 0 USE:p_levitation_e
-0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
@@ -4003,3 +3997,161 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Khuul
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Khuul
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-88700,128300,62:beside
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+2 0 0 0
+60 0 0 0 0 ACTIVATE:galyn_arvel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps1:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@-78229,125194,1905:beside
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+60 0 0 0 0 ACTIVATE:j_saddha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps1:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:j_saddha
+120 0 0 0 0 WALKTO:@-78542,124767,1868
+120 0 0 0 0 WALKTO:@-79095,124654,1868
+120 0 0 0 0 WALKTO:@-79347,124398,1594
+120 0 0 0 0 WALKTO:@-79992,123941,1569
+120 0 0 0 0 WALKTO:@-80424,123935,1484
+120 0 0 0 0 WALKTO:@-81263,123552,1353
+120 0 0 0 0 WALKTO:@-81664,123648,1384
+120 0 0 0 0 WALKTO:@-83623,123123,1052
+120 0 0 0 0 WALKTO:@-84219,123987,1341
+120 0 0 0 0 WALKTO:@-84770,124587,1280
+120 0 0 0 0 WALKTO:@-85568,124794,996
+120 0 0 0 0 WALKTO:@-85992,125557,602
+60 0 0 0 0 ACTIVATE:sadal_doren
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:sadal_doren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:sadal_doren
+120 0 0 0 0 WALKTO:@-86087,126019,450
+120 0 0 0 0 WALKTO:@-86223,126573,399
+120 0 0 0 0 WALKTO:@-86828,126753,432
+120 0 0 0 0 WALKTO:@-87362,126750,432
+120 0 0 0 0 WALKTO:@-87628,127156,432
+120 0 0 0 0 WALKTO:@-88123,127384,175
+120 0 0 0 0 WALKTO:@-88140,127877,53
+120 0 0 0 0 WALKTO:@-88725,128044,54
+120 0 0 0 0 WALKTO:@-88700,128300,62
+40 0 0 0
+5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps1:ge:70
+3 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@22884,-81730,1792
+2 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@29088,-95765,676
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Canal_South-One
+3 0 0 0
+60 0 0 0 0 ACTIVATE:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+1 0 0 0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps1:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-lamp100
+60 0 0 0 0 ACTIVATE:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps3:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-lamp310
+# BLOCKED: HH_TwinLamps3 10-100 (Hides-His-Foot at Dren Plantation 18181,-56792,639 to Sterdecan's Farm 34770,-38050,680). Frinnius Posuceius
+# (taunted + killed first) and Manos Othreleth (guard) attack the slave; with the murder witnessed Neetinei / Hides-His-Foot fight the player and he dies or
+# stalls on the walk (Manos at 25088,-44800 on the route). Three tries; repro: build/uber/hh/p_t3c.txt from checkpoint uber-hh-lamp100 (zz.sh lamp100 p_t3c.txt). See internal/uber/hh.md.
+
