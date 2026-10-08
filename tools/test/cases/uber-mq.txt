@@ -14,12 +14,15 @@
 0.3 0 0 0 0 GIVE:sc_divineintervention:10
 0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
 0.3 0 0 0 0 GIVE:p_invisibility_e:10
-0.3 0 0 0 0 GIVE:p_restore_magicka_e:40
+0.3 0 0 0 0 GIVE:p_restore_magicka_e:100
 0.3 0 0 0 0 GIVE:p_cure_common_s:10
 0.3 0 0 0 0 GIVE:p_cure_blight_s:10
 0.3 0 0 0 0 SPELL:mark
 0.3 0 0 0 0 SPELL:recall
 0.3 0 0 0 0 SPELL:telekinesis
+# an area bolt for the duel with Bolvyn Venim (his armour reduces every blow to 1; lightning goes through it)
+0.3 0 0 0 0 ADDEFFECT:15:100:100:1:2:-:25
+0.3 0 0 0 0 MAKESPELL:hrblast
 # The arrival: what Sellus Gravius's "duties" gives at the end of character creation (the -Start skips it)
 0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:1
 0.3 0 0 0 0 GIVE:bk_a1_1_caiuspackage
@@ -610,7 +613,12 @@
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Urshilaku,_Astral_Burial
 120 0 0 0 0 WALKTO:@3093,6300,12801:dive
-120 0 0 0 0 DOORTO:Urshilaku,_Karma_Burial
+# the door sits on a ledge above the water: Telekinesis reaches it
+0.3 0 0 0 0 CAST:telekinesis
+1 0 0 0
+0.3 0 0 0 0 FACE:@3093,6393
+0.3 0 0 0 0 A
+3 0 0 0
 3 0 0 0
 120 0 0 0 0 WALKTO:@1631,-42,17
 120 0 0 0 0 WALKTO:@1056,-32,-50
@@ -1582,7 +1590,7 @@
 0.3 0 0 0 0 SAVE:uber-mq-a2-6f
 # the Cavern of the Incarnate: wait inside to dawn, two flights (the levitation lasts one leg), the door opens at 6..8
 0.1 0 0 0 0 EXPECT:hour:ge:0
-0.3 0 0 0 0 SLEEPUNTIL:6
+0.3 0 0 0 0 SLEEPUNTIL:5
 3 0 0 0
 0.1 0 0 0 0 EXPECT:hour:ge:0
 120 0 0 0 0 DOORTO:outside
@@ -2048,6 +2056,9 @@
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
 120 0 0 0 0 FLYTO:@109740,-3908,634
 100 0 0 0
 120 0 0 0 0 DOORTO:Erabenimsun_Camp,_Wise_Woman's_Yurt
@@ -2376,5 +2387,730 @@
 1 0 0 0
 0.1 0 0 0 0 EXPECT:bounty:eq:0
 0.3 0 0 0 0 SAVE:uber-mq-b6
-# BLOCKED (B7 Telvanni Hortator, driver): the Telvanni upper towers need a levitating climb inside a shaft. In Therana's chamber (Tel Branora, Upper Tower: Therana's Chamber; Therana at 188 1545 -691, the doors at z -1232) and Neloth's tower (Tel Naga) ACTIVATE / WALKTO / FLYTO get 'stuck ... 487 up' or FLYTO logs 'can't climb (a ceiling)' once at the ceiling (-598); a held R straight from the doors does not rise (ceiling right above them). Basics checked: levitation on (40 s), fatigue 400/400. Repro: LOAD uber-mq-b6, Recall (Erabenimsun Mark), fly to the Tel Branora exit spot 126852,-101680,2366, DOORTO the Upper Tower and Therana's Chamber, 2 levitation potions, ACTIVATE:therana. Journal steps: Telvanni_Hortator, PERSUADE:5 x3, CHOICE:2 (tell your story), the topic again (chain-13 / mq-ch13). Aryon (Tel Vos), Dratha (Tel Mora), Gothren (Tel Aruhn, kill), Baladas (Gnisis) not tried.
-# NOT PLAYED: B5 Redoran Hortator needs the Redoran quest HR_RescueSarethi (the Redoran line); B8 Nerevarine (Nibani, needs all three hortators), the Vivec / Dagoth Ur steps.
+# B7_TelvanniHort: Recall to the Erabenimsun Mark, then Therana (Tel Branora); shaft as in uber-ht
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Erabenimsun_Camp,_Wise_Woman's_Yurt
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@126852,-101680,2366
+200 0 0 0
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora,_Upper_Tower
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+60 0 0 0 0 WALKTO:@-173,1066,-1216
+0.3 0 0 0 0 USE:p_levitation_e
+0.9 0 0 0 0 R
+0.2 0 0 0
+60 0 0 0 0 WALKTO:@-181,1185,-719
+60 0 0 0 0 WALKTO:@-182,1529,-719
+60 0 0 0 0 WALKTO:@120,1435,-694
+120 0 0 0 0 ACTIVATE:therana
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B7_TheranaHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# Neloth (Tel Naga): Recall to the Erabenimsun Mark, fly to Sadrith Mora; Great Hall shaft as in uber-ht
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Erabenimsun_Camp,_Wise_Woman's_Yurt
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148572,36092,1526
+150 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Great_Hall
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@2,965,128
+1.0 0 0 0 0 R
+0.2 0 0 0
+30 0 0 0 0 WALKTO:@-5,1143,385
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Upper_Tower
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@245,479,-873
+2.7 0 0 0 0 R
+0.2 0 0 0
+1 0 0 0 0 FACE:@246,703
+1.5 0 1 0
+0.5 0 0 0
+120 0 0 0 0 ACTIVATE:neloth
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B7_NelothHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# Gothren (Tel Aruhn): killed, as in uber-ht
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@126225,45887,3715
+60 0 0 0
+120 0 0 0 0 DOORTO:Tel_Aruhn,_Upper_Tower
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Aruhn,_Upper_Tower
+120 0 0 0 0 KILL:gothren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:gothren
+0.3 0 0 0 0 EQUIP:daedric_longsword
+# Dratha (Tel Mora): the upper door
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@107868,118635,2862
+100 0 0 0
+120 0 0 0 0 DOORTO:Tel_Mora,_Upper_Tower
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora,_Upper_Tower
+120 0 0 0 0 ACTIVATE:dratha
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B7_DrathaHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# Baladas (Gnisis): Almsivi Intervention (Ald-ruhn), the Mages Guild guide to Gnisis, the locked summoning-room door
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+120 0 0 0 0 WALKTO:@3072,4096,512
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+2 0 0 0
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B7_BaladasHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# Aryon (Tel Vos), last: Recall to the Erabenimsun Mark, fly to his chambers
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Erabenimsun_Camp,_Wise_Woman's_Yurt
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@85731,117960,5081:beside
+200 0 0 0
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon's_Chambers
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B7_AryonHort:ge:50
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Telvanni_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:global:hortatorvotes:gt:5
+0.1 0 0 0 0 EXPECT:journal:B7_TelvanniHort:ge:50
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b7
+# B5_RedoranHort: Almsivi Intervention to Ald-ruhn; Athyn Sarethi's Hortator topic starts HR_RescueSarethi (a Nerevarine cannot join Redoran: Neminda calls him a fraud); steps from uber-hr
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Sarethi_Manor
+120 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HR_RescueSarethi:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Venim_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Right_Wing
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Venim_Manor_Right_Wing
+# the key lies under Malsa's note on the bench (the note first), with Malsa Ules and Varvur looking on: unseen (Chameleon 200: no observer's roll can beat it)
+0.3 0 0 0 0 USE:p_invisibility_e
+0.3 0 0 0 0 USE:p_invisibility_e
+0.3 0 0 0 0 SNEAK:1
+120 0 0 0 0 PICKUP:bk_notetomalsa
+1 0 0 0
+120 0 0 0 0 PICKUP:key_venimmanor
+1 0 0 0
+0.3 0 0 0 0 SNEAK:0
+0.1 0 0 0 0 EXPECT:item:key_venimmanor:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:varvur_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Varvur_Sarethi
+1 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HR_RescueSarethi:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:varvur_sarethi
+# a walk to each door first: the walk waits for Varvur, a DOORTO alone goes through without him
+120 0 0 0 0 WALKTO:@-80,496,112
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Venim_Manor_Entrance
+120 0 0 0 0 WALKTO:@0,-51,-22
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 WALKTO:@-1464,-96,16
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Sarethi_Manor
+# past Athyn, so Varvur, a few steps behind, stops beside his father
+120 0 0 0 0 WALKTO:@143,1700,-368
+0.3 0 0 0 0 ESCORT:-
+120 0 0 0 0 WALKTO:@250,2400,-368
+8 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HR_RescueSarethi:ge:70
+60 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Varvur_Sarethi
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HR_RescueSarethi:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-mq-b5a
+60 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B5_SarethiHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Guard_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Guard_Quarters
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Private_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Private_Quarters
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Manor_Bedrooms
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Manor_Bedrooms
+60 0 0 0 0 ACTIVATE:miner_arobar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B5_ArobarHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Private_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Private_Quarters
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Guard_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Guard_Quarters
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Llethri_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Private_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Llethri_Private_Quarters
+60 0 0 0 0 ACTIVATE:garisa_llethri
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B5_LlethriHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Llethri_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Redoran_Council_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Redoran_Council_Hall
+120 0 0 0 0 DOORTO:Ald-ruhn,_Morvayn_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Morvayn_Quarters
+60 0 0 0 0 ACTIVATE:brara_morvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B5_MorvaynHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Redoran_Council_Hall
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Redoran_Council_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ramoran_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Ramoran_Manor
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ramoran_Private_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Ramoran_Private_Quarters
+60 0 0 0 0 ACTIVATE:hlaren_ramoran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B5_RamoranHort:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ramoran_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Ramoran_Manor
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Venim_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Private_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Venim_Manor_Private_Quarters
+60 0 0 0 0 ACTIVATE:bolvyn_venim
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B5_VenimHort:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:mark
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Venim_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Vivec
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@27600,-79745,3264
+120 0 0 0 0 WALKTO:@27420,-79745,3072
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@36542,-88450,1882
+20 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Arena_Pit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Pit
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CASTAT:bolvyn_venim:mw3ds_test_hrblast
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CASTAT:bolvyn_venim:mw3ds_test_hrblast
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CASTAT:bolvyn_venim:mw3ds_test_hrblast
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CASTAT:bolvyn_venim:mw3ds_test_hrblast
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CASTAT:bolvyn_venim:mw3ds_test_hrblast
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CASTAT:bolvyn_venim:mw3ds_test_hrblast
+3 0 0 0
+0.1 0 0 0 0 EXPECT:dead:bolvyn_venim
+0.1 0 0 0 0 EXPECT:journal:B5_VenimHort:ge:50
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Entrance
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Sarethi_Manor
+60 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B5_RedoranHort:ge:50
+0.1 0 0 0 0 EXPECT:item:bk_nerevarinenotice:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b5
+# B8_All_Hortator: Nibani Maesa (Urshilaku camp), by the Ald-ruhn strider to Maar Gan
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Maar_Gan
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar_Gan
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-27400,149000,780
+30 0 0 0
+120 0 0 0 0 WALKTO:@-27096,151333,800
+0.3 0 0 0 0 CAST:telekinesis
+1 0 0 0
+0.3 0 0 0 0 FACE:@-26992,151768
+1 0 1 0
+0.3 0 0 0 0 A
+3 0 0 0
+60 0 0 0 0 ACTIVATE:nibani_maesa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Redoran_Hortator
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B8_All_Hortator:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mq-b8hort
+# B8_MeetVivec / Dagoth Ur: BLOCKED behind B2 and B3. Danso Indules ('meet the archcanon', Vivec Temple canton; walk lines from the Foreign Quarter plaza via uberroute) needs B1..B4 all >= 50 (Nerevarine of every tribe: B2 escort Sinnammu and B3 Zainab's bride are BLOCKED above) and the three Hortators (done).
