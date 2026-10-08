@@ -107,7 +107,7 @@ def combined_route(db, a, b, slope, spacing=256.0, climb=1.0):
         n = ("t", ix, iy)
         if n not in tpos:
             x, y = x0 + ix * spacing, y0 + iy * spacing
-            tpos[n] = None if cell_of(x, y) in town else (x, y, max(h(x, y), -400.0))
+            tpos[n] = (x, y, max(h(x, y), -400.0))      # (also in the towns' cells: their grids leave gaps; dearer there)
         return tpos[n]
 
     def where(n):
@@ -165,10 +165,16 @@ def combined_route(db, a, b, slope, spacing=256.0, climb=1.0):
             if cur[0] == "t" and nb[0] == "t" and abs(pn[2] - pc[2]) / run > slope and max(pn[2], pc[2]) > 0:
                 continue                                    # too steep to walk (under the water: swim)
             c = cost[cur] + run * (4.0 if pn[2] < 0 else 1.0) + climb * abs(pn[2] - pc[2])
+            if (cur[0] == "t" and cell_of(pc[0], pc[1]) in town) or (nb[0] == "t" and cell_of(pn[0], pn[1]) in town):
+                c += run * 2.0                                # land inside a town's cell: its grid is the better way
             if c < cost.get(nb, 1e18):
                 cost[nb], came[nb] = c, cur
                 heapq.heappush(todo, (c + math.hypot(pn[0] - gq[0], pn[1] - gq[1]), nb))
     if goal not in cost:
+        # where the search got to: the node it reached nearest the goal (a wall of slope, or a gap between graphs)
+        near = min(cost, key=lambda n: math.hypot(where(n)[0] - gq[0], where(n)[1] - gq[1]))
+        print("no route: %d nodes reached, nearest the goal %s at %.0f, %.0f, %.0f (%.0f away)" % (
+            len(cost), near, *where(near), math.hypot(where(near)[0] - gq[0], where(near)[1] - gq[1])), file=sys.stderr)
         return None
     out = [goal]
     while out[-1] != start:

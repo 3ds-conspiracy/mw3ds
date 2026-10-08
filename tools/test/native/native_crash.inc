@@ -10,6 +10,7 @@ __declspec(dllimport) unsigned short __stdcall RtlCaptureStackBackTrace(unsigned
 }
 static long __stdcall ncFilter(NcPointers *p)
 {
+	fflush(0);                  // (the game log is flushed twice a second, not per line)
 	char *base = (char *)GetModuleHandleA(0);
 	FILE *f = fopen("native_crash.txt", "a");
 	if (!f)
@@ -24,7 +25,78 @@ static long __stdcall ncFilter(NcPointers *p)
 		fclose(f);
 	return 0;
 }
-static void nativeCrashInstall() { SetUnhandledExceptionFilter(ncFilter); }
+// NATIVE_PROF=1: a sampling profiler. A thread suspends the main thread every millisecond or so, reads its instruction
+// pointer and counts it; every few seconds and at the end native_prof.txt lists "offset count" (hex offset from the exe's base, sampled rips), which
+//   python tools/test/native/pdbsym.py <exe> --prof native_prof.txt
+// turns into a table by function. Self time only.
+extern "C" {
+__declspec(dllimport) void *__stdcall GetCurrentThread();
+__declspec(dllimport) void *__stdcall GetCurrentProcess();
+__declspec(dllimport) int __stdcall DuplicateHandle(void *, void *, void *, void **, unsigned long, int, unsigned long);
+__declspec(dllimport) void *__stdcall CreateThread(void *, unsigned long long, unsigned long (__stdcall *)(void *), void *, unsigned long, unsigned long *);
+__declspec(dllimport) unsigned long __stdcall SuspendThread(void *);
+__declspec(dllimport) unsigned long __stdcall ResumeThread(void *);
+__declspec(dllimport) int __stdcall GetThreadContext(void *, void *);
+__declspec(dllimport) void __stdcall Sleep(unsigned long);
+}
+#include <unordered_map>
+static void *ncProfMain;
+static volatile int ncProfStop;
+static unsigned long long ncProfBase;
+static std::unordered_map<unsigned long long, unsigned> *ncProfHits;
+static volatile int ncProfLock;
+static void ncProfDump();
+static unsigned long __stdcall ncProfRun(void *)
+{
+	alignas(16) static unsigned char ctx[1232];
+	int rounds = 0;
+	while (!ncProfStop)
+	{
+		Sleep(1);
+		if (++rounds % 2000 == 0)           // (the run's runner may end the process: written as it goes)
+			ncProfDump();
+		if (SuspendThread(ncProfMain) == (unsigned long)-1)
+			continue;
+		memset(ctx, 0, sizeof(ctx));
+		*(unsigned long *)(ctx + 0x30) = 0x100001;          // CONTEXT_CONTROL
+		if (GetThreadContext(ncProfMain, ctx))
+		{
+			unsigned long long rip = *(unsigned long long *)(ctx + 0xF8);
+			ResumeThread(ncProfMain);
+			while (__sync_lock_test_and_set(&ncProfLock, 1))
+				;
+			(*ncProfHits)[rip - ncProfBase]++;
+			__sync_lock_release(&ncProfLock);
+		}
+		else
+			ResumeThread(ncProfMain);
+	}
+	return 0;
+}
+static void ncProfDump()
+{
+	while (__sync_lock_test_and_set(&ncProfLock, 1))
+		;
+	FILE *f = fopen("native_prof.txt", "w");
+	if (f)
+	{
+		for (auto &h : *ncProfHits)
+			fprintf(f, "%llx %u\n", h.first, h.second);
+		fclose(f);
+	}
+	__sync_lock_release(&ncProfLock);
+}
+static void nativeCrashInstall()
+{
+	SetUnhandledExceptionFilter(ncFilter);
+	if (getenv("NATIVE_PROF") && !ncProfHits)
+	{
+		ncProfHits = new std::unordered_map<unsigned long long, unsigned>();
+		ncProfBase = (unsigned long long)GetModuleHandleA(0);
+		DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &ncProfMain, 0, 0, 2);
+		CreateThread(0, 0, ncProfRun, 0, 0, 0);
+	}
+}
 
 // NATIVE_GUARD=1: every operator new gets its own pages with a no-access page right behind it, and a freed block is
 // decommitted and its address never reused: a use after free or an overrun then faults at the access, and ncFilter

@@ -3,6 +3,7 @@ faults) lists offsets from the exe's base; this reads the public symbols straigh
 exe (MSF 7.0, S_PUB32 records) and names the function each offset falls in. No debugger or LLVM tools needed.
 
   python tools/test/native/pdbsym.py build/native/mw3ds-native.exe 194bd0 1760b1 ...
+  python tools/test/native/pdbsym.py build/native/mw3ds-native.exe --prof native_prof.txt [rows]   (NATIVE_PROF=1 samples)
 Use the exe that crashed: offsets from another build mean nothing.
 """
 import bisect
@@ -61,6 +62,21 @@ while i + 4 <= len(recs):
 syms.sort()
 addrs = [a for a, _ in syms]
 print("%d public symbols" % len(syms))
+if len(sys.argv) > 3 and sys.argv[2] == "--prof":
+    # native_prof.txt ("offset count" lines, NATIVE_PROF=1): self samples by function, biggest first
+    by = {}
+    total = 0
+    for line in open(sys.argv[3]):
+        a, n = line.split()
+        a = int(a, 16)
+        k = bisect.bisect_right(addrs, a) - 1
+        name = syms[k][1] if k >= 0 else "?"
+        by[name] = by.get(name, 0) + int(n)
+        total += int(n)
+    for name, n in sorted(by.items(), key=lambda kv: -kv[1])[:int(sys.argv[4]) if len(sys.argv) > 4 else 40]:
+        print("%6.2f%% %7d  %s" % (100.0 * n / total, n, name))
+    print("total %d samples" % total)
+    sys.exit(0)
 for h in sys.argv[2:]:
     a = int(h, 16)
     k = bisect.bisect_right(addrs, a) - 1

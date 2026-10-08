@@ -2432,6 +2432,15 @@ int TestDriver::findTarget(Session& s, const std::string& verb, const std::strin
 		return r >= 0 && s.w.active(r) ? r : -1;
 	}
 	std::string want = lower(spaced(arg));
+	// DOORTO:<cell>@<n>: the n-th door going there in the ranking below (0 = the best, as without it; 1 = the next): for a cell
+	// with several doors to one place that lead to different parts of it (Therana's Chamber: a closed vestibule, and the hall)
+	int nth = 0;
+	size_t at = want.rfind('@');
+	if (at != std::string::npos && at + 1 < want.size() && isdigit((unsigned char)want[at + 1]))
+	{
+		nth = atoi(want.c_str() + at + 1);
+		want.resize(at);
+	}
 	bool outside = want == "outside";
 	// the door whose destination is exactly that cell first, else one that starts so; of those the one nearest by the
 	// route a player would walk (the path grid), else in 3D (a door on another floor is not "near": a stair or a ceiling
@@ -2455,6 +2464,7 @@ int TestDriver::findTarget(Session& s, const std::string& verb, const std::strin
 	int found = -1;
 	float best = 1e30f;
 	bool bestExact = false;
+	std::vector<std::pair<double, int>> ranked;
 	for (const Cand& c : cands)
 	{
 		float d = c.d3;
@@ -2472,12 +2482,18 @@ int TestDriver::findTarget(Session& s, const std::string& verb, const std::strin
 			logf("drive: DOORTO candidate %s (%d) at %.0f %.0f %.0f: 3D %.0f, ranked %.0f, lock %d%s", r.id.c_str(), c.i, r.pos[0], r.pos[1],
 				r.pos[2], sqrtf(c.d3), sqrtf(d), r.lockLevel, r.trap.empty() ? "" : ", trapped");
 		}
+		ranked.push_back({ (c.exact ? 0.0 : 1e14) + d, c.i });
 		if ((c.exact && !bestExact) || (c.exact == bestExact && d < best))
 		{
 			best = d;
 			bestExact = c.exact;
 			found = c.i;
 		}
+	}
+	if (nth > 0 && !ranked.empty())
+	{
+		std::sort(ranked.begin(), ranked.end());
+		found = ranked[std::min((size_t)nth, ranked.size() - 1)].second;
 	}
 	if (found >= 0)
 		id = s.w.refs[found].id + " -> " + (s.w.refs[found].destCell.empty() ? "outside" : s.w.refs[found].destCell);
@@ -3038,9 +3054,24 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		if (bx * bx + by * by < 40.0f * 40.0f)
 			dist = want;
 	}
+	// a big statue (Mehrunes Dagon's in Ald Sotha: a box 570 wide and 700 high, its origin 440 above the floor): its mesh stops
+	// us at its foot, far from the origin. Standing at the box, on a floor within its height, is at the statue
+	bool atStatue = false;
+	if (kind == ACTIVATE && !pointGoal && r.type == "ACTI" && r.hasBox && r.boxMax[0] - r.boxMin[0] > 400.0f && dist > want)
+	{
+		float bx = fmaxf(r.boxMin[0] - p.feet[0], fmaxf(0.0f, p.feet[0] - r.boxMax[0]));
+		float by = fmaxf(r.boxMin[1] - p.feet[1], fmaxf(0.0f, p.feet[1] - r.boxMax[1]));
+		if (bx * bx + by * by < 60.0f * 60.0f && p.feet[2] >= r.boxMin[2] - 80.0f && p.feet[2] <= r.boxMax[2])
+		{
+			dist = want;
+			atStatue = true;
+		}
+	}
 	// on another floor (ruins, towers): not there yet, however close it looks from above. Things to
 	// activate count as reached within Morrowind's activation reach (iMaxActivateDist 192) in 3D.
 	float dz = r.pos[2] - p.feet[2];
+	if (atStatue)
+		dz = 0.0f;
 	// (a planned spot outdoors: its height is the land's, give or take a rock: there by the map, within 400 up or down)
 	bool otherFloor = kind == ACTIVATE ? dist * dist + dz * dz > 190.0f * 190.0f && fabsf(dz) > 160.0f
 		: fabsf(dz) > (pointGoal ? 400.0f : 160.0f);
@@ -3277,7 +3308,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 						logf("drive: stuck diagnostics: fatigue %.0f of %.0f, effects:%s, screen %d, swimming %d, levitate %.0f", w.stats.fatigue, w.stats.fatigueMax,
 							fx.empty() ? " none" : fx.c_str(), (int)s.screen, (int)p.swimming, p.levitate);
 					}
-					char why[160];
+char why[160];
 					snprintf(why, sizeof(why), "stuck at %.0f %.0f %.0f (%.0f away, %.0f up), no warp in a LEGIT run", p.feet[0], p.feet[1],
 						p.feet[2], dist, dz);
 					fail(why);
@@ -3389,7 +3420,12 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			if (lineTimer <= 0.0f)
 				logf("drive: %s is in the way to %s, stepping aside", w.refs[s.target].id.c_str(), id.c_str());
 			lineTimer += dt;
-			in.moveX = fmodf(lineTimer, 1.6f) < 0.8f ? -1.0f : 1.0f;
+			// (a short step either way does not clear a big one, a queen: after 3 s walk round it, facing the target, one way for
+			// 6 s then the other, as a player goes round to another side)
+			if (lineTimer < 3.0f)
+				in.moveX = fmodf(lineTimer, 1.6f) < 0.8f ? -1.0f : 1.0f;
+			else
+				in.moveX = fmodf(lineTimer - 3.0f, 12.0f) < 6.0f ? -1.0f : 1.0f;
 			return true;
 		}
 		lineTimer = 0.0f;

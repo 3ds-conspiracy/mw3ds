@@ -181,7 +181,16 @@ void logf(const char* fmt, ...)
 	if (s_log)
 	{
 		fprintf(s_log, "[%8llu] %s\n", t, line);
-		fflush(s_log);
+		// (a flush is a system write, about a millisecond with a virus scanner watching: a fifth of a run went to them. Now the
+		// verdict lines at once, the rest each half second of real time; a crash flushes all in ncFilter, a killed run loses
+		// under half a second)
+		static std::chrono::steady_clock::time_point last;
+		auto now = std::chrono::steady_clock::now();
+		if (strncmp(line, "expect:", 7) == 0 || now - last > std::chrono::milliseconds(500))
+		{
+			fflush(s_log);
+			last = now;
+		}
 	}
 }
 void monitorOnce(const char* key, const char* fmt, ...)

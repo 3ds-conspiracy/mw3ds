@@ -61,7 +61,7 @@ if ($faults) {
 $pass = @(Select-String -Path $log -Pattern 'expect: PASS').Count
 $fail = @(Select-String -Path $log -Pattern 'expect: FAIL').Count
 $drive = @(Select-String -Path $log -Pattern 'drive: FAIL').Count
-$warps = @(Select-String -Path $log -Pattern 'drive: stuck').Count
+$warps = @(Select-String -Path $log -Pattern 'drive: stuck at .*warped').Count
 $misses = @(Select-String -Path $log -Pattern 'drive: crosshair miss').Count
 $mon = @(Select-String -Path $log -Pattern 'monitor: ').Count
 $ended = Select-String -Path $log -Pattern 'autoinput: end' -Quiet

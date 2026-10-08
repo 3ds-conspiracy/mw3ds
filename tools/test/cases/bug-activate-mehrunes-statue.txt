@@ -1,0 +1,11 @@
+# TT_AldSotha: the Mehrunes Dagon statue (active_dae_mehrunes_as) in Ald Sotha, Shrine. ACTIVATE walked to a spot 272 away
+# and 504 below it and stalled there. Activating it is the check.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ald_Sotha,_Shrine
+4 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Sotha,_Shrine
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:active_dae_mehrunes_as
+1 0 0 0
