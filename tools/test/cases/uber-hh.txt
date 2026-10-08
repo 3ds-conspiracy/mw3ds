@@ -1,0 +1,4005 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:84:50
+0.3 0 0 0 0 GIVE:p_restore_magicka_e:40
+0.3 0 0 0 0 GIVE:pick_grandmaster:5
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 GIVE:exquisite_shirt_01
+0.3 0 0 0 0 GIVE:exquisite_pants_01
+0.3 0 0 0 0 GIVE:exquisite_shoes_01
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:p_levitation_e:230
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:230
+0.3 0 0 0 0 GIVE:sc_cureblight_ranged:6
+0.3 0 0 0 0 GIVE:sc_icarianflight:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:10
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 EQUIP:exquisite_shirt_01
+0.3 0 0 0 0 EQUIP:exquisite_pants_01
+0.3 0 0 0 0 EQUIP:exquisite_shoes_01
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 GOTO:Balmora,_Hlaalu_Council_Manor
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+0.1 0 0 0 0 EXPECT:magicka:ge:150
+30 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:join_house_hlaalu
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:hlaalu:ge:0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:say_that_again
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_DisguisedArmor:ge:10
+0.1 0 0 0 0 EXPECT:item:bonemold_gah-julan_hhda:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+0.3 0 0 0 0 SAVE:uber-hh-join
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Redoran_Council_Entrance
+0.3 0 0 0 0 EQUIP:bonemold_gah-julan_hhda
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:neminda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orphan_of_arnesia
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_DisguisedArmor:ge:50
+0.1 0 0 0 0 EXPECT:item:bk_nemindasorders:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orphan_of_arnesia
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_DisguisedArmor:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-disguisedarmor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:alchemical_formulas
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp1:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Aurane_Frernis:_Apothecary
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Aurane_Frernis:_Apothecary
+2 0 0 0 0 FACE:bk_auranefrernis2:mid
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 TAP:60:222
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_auranefrernis2:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:alchemical_formulas
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp1:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 ACTIVATE:hlaalu%guard_outside
+1.5 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-hh-indesp1
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:inanius_egg_mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EggMine:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Suran
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 FLYTO:@53585,-56098,1571
+120 0 0 0 0 DOORTO:Suran,_Oran_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Suran,_Oran_Manor
+60 0 0 0 0 ACTIVATE:avon_oran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:inanius_egg_mine
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EggMine:ge:200
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 FLYTO:@63616,-57264,1123
+120 0 0 0 0 DOORTO:Inanius_Egg_Mine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Inanius_Egg_Mine
+120 0 0 0 0 WALKTO:@-533,2858,130
+# the queen's hall is past a flooded tunnel with no path grid: swim it by hand (look down, swim on)
+60 0 0 0 0 WALKTO:@135,2324,248
+2 0 0 0 0 FACE:@512,2176
+2 0 1 0
+2 0 0 0 0 FACE:@768,2176
+0.6 0 0 0 0 DOWN
+3 0 1 0
+2 0 0 0 0 FACE:@1280,2900
+3 0 1 0
+2 0 0 0 0 FACE:@1280,3400
+3 0 1 0
+2 0 0 0 0 FACE:@1300,3900
+3 0 1 0
+2 0 0 0 0 FACE:@1792,4224
+3 0 1 0
+60 0 0 0 0 WALKTO:@2045,4193,127
+180 0 0 0 0 KILL:kwama%queen_hhem
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:kwama%queen_hhem
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:inanius_egg_mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EggMine:ge:210
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-eggmine
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:guar_hides
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp2:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Upper_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Foreign_Quarter_Upper_Waistworks
+120 0 0 0 0 ACTIVATE:rolasa_oren
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:guar_hides
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp2:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guar_hides
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp2:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-indesp2
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:bivale_teneran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp3:ge:10
+0.1 0 0 0 0 EXPECT:item:bk_ordersforbivaleteneran:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Bivale_Teneran:_Clothier
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Bivale_Teneran:_Clothier
+60 0 0 0 0 ACTIVATE:bivale_teneran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:scroll
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp3:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bivale_teneran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp3:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-indesp3
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ralen_hlaalo
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Retaliation:ge:10
+0.1 0 0 0 0 EXPECT:item:key_hlaalo_manor:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalo_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalo_Manor
+60 0 0 0 0 ACTIVATE:uryne_nirith
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ralen_hlaalo
+1 0 0 0
+0.3 0 0 0 0 TOPIC:murderer's_description
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Retaliation:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:falvel_arenim
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:murderer's_description
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Retaliation:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# the club's door is up a stair under a walkway: DOORTO alone climbed onto the door's top (see notes)
+120 0 0 0 0 WALKTO:@-21161,-16810,617
+2 0 0 0 0 FACE:@-21163,-16673
+1.2 0 1 0
+120 0 0 0 0 DOORTO:Balmora,_Council_Club
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Council_Club
+60 0 0 0 0 ACTIVATE:thanelen_velas
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:thanelen_velas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:thanelen_velas
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ralen_hlaalo
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Retaliation:ge:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-hh-retaliation
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp4:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# (the Foreign Quarter's boat is at the canton's foot with no walk down from the plaza; the plaza top is under
+# arches: go out on the waistworks' walkway and fly from there)
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@17770,-101194,560:2400
+60 0 0 0 0 WALKTO:@17770,-101194,560
+2 0 0 0
+120 0 0 0 0 DOORTO:Ebonheart,_East_Empire_Company_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_East_Empire_Company_Hall
+# the driver's walk stalls at the shut inner door before Ponius's room (see notes): open it by hand
+60 0 0 0 0 WALKTO:@720,772,0
+2 0 0 0 0 FACE:@1065,765
+0.3 0 0 0 0 A
+1 0 0 0
+1.5 0 1 0
+120 0 0 0 0 ACTIVATE:canctunian_ponius
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp4:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@1925,38290,2898
+120 0 0 0 0 DOORTO:Sudanit_Mine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sudanit_Mine
+120 0 0 0 0 ACTIVATE:darns_tedalen
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:darns_tedalen
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:darns_tedalen
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_IndEsp4:ge:110
+0.1 0 0 0 0 EXPECT:item:glass_cuirass:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-hh-indesp4
+60 0 0 0 0 ACTIVATE:nileno_dorvayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:hlaalu:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+90 0 0 0 0 WALKTO:@27581,-79746,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@27939,-80938,1996
+90 0 0 0 0 WALKTO:@27288,-80952,1792
+90 0 0 0 0 WALKTO:@27353,-81510,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29839,-81377,1793
+90 0 0 0 0 WALKTO:@30447,-81330,1764
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@31949,-81267,872
+90 0 0 0 0 WALKTO:@32530,-81279,576
+90 0 0 0 0 WALKTO:@32768,-81657,576
+90 0 0 0 0 WALKTO:@32634,-82209,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24054,-87389,571
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24341,-81920,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@22500,-81686,1787
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Curio_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Curio_Manor
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Crassius:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 DROP:exquisite_shirt_01
+0.3 0 0 0 0 DROP:exquisite_pants_01
+0.3 0 0 0 0 DROP:exquisite_shoes_01
+0.3 0 0 0 0 DROP:bonemold_gah-julan_hhda
+1 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Crassius:ge:100
+0.1 0 0 0 0 EXPECT:rank:hlaalu:ge:4
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 PICKUP:exquisite_shirt_01
+60 0 0 0 0 PICKUP:exquisite_pants_01
+60 0 0 0 0 PICKUP:exquisite_shoes_01
+60 0 0 0 0 PICKUP:bonemold_gah-julan_hhda
+0.3 0 0 0 0 EQUIP:exquisite_shirt_01
+0.3 0 0 0 0 EQUIP:exquisite_pants_01
+0.3 0 0 0 0 EQUIP:exquisite_shoes_01
+0.3 0 0 0 0 EQUIP:bonemold_gah-julan_hhda
+0.1 0 0 0 0 EXPECT:equipped:exquisite_shirt_01:eq:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-hh-crassius
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22867,-81740,1787
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Edryno_Arethi's_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_report
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BankCourier:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Treasury
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Vaults
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Vaults
+60 0 0 0 0 ACTIVATE:baren_alen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_report
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BankCourier:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_report
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BankCourier:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-bankcourier
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:murudius_flaeus
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BuriedTreasure:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# two legs: one batch of potions lasts 60 s, short of the whole way
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-8604,-70205,831
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-47573,-39512,185
+# the exit spot lies under a thatch roof: land on it, then step off it to the east
+30 0 0 0 0 WALKTO:@-47300,-39450,185
+120 0 0 0 0 DOORTO:Hla_Oad,_Murudius_Flaeus's_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Hla_Oad,_Murudius_Flaeus's_House
+60 0 0 0 0 ACTIVATE:murudius_flaeus
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:debt_money
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BuriedTreasure:ge:50
+0.1 0 0 0 0 EXPECT:item:key_murudius_01:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# the chest is under the dock by Fadila's house: off the dock into the water and swim under it
+60 0 0 0 0 WALKTO:@-47573,-39512,185
+2 0 0 0 0 FACE:@-47573,-40000
+1.5 0 1 0
+2 0 0 0 0 FACE:com_chest_02_hhbt
+2 0 1 0
+2 0 0 0 0 FACE:com_chest_02_hhbt
+2 0 1 0
+2 0 0 0 0 FACE:com_chest_02_hhbt:mid
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 X
+1 0 0 0
+0.3 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:gold:ge:@800
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:murudius_flaeus
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BuriedTreasure:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-buriedtreasure
+# HH_EscortMerchant: Tarvyn to the Halfway Tavern (strider to Seyda Neen, then the road; Tarvyn stalls at (-635,-64140): walk to him and on east)
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:tarvyn_faren
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EscortMerchant:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@29400,-73000,450
+60 0 0 0 0 ACTIVATE:tarvyn_faren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EscortMerchant:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:tarvyn_faren
+60 0 0 0 0 WALKTO:@29952,-72960,450
+60 0 0 0 0 WALKTO:@30464,-72960,450
+6 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 ACTIVATE:adondasi_sadalvel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:adondasi_sadalvel:Seyda
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 ESCORT:tarvyn_faren
+90 0 0 0 0 WALKTO:@-8398,-69510,697
+6 0 0 0
+90 0 0 0 0 WALKTO:@-7936,-69376,496
+6 0 0 0
+90 0 0 0 0 WALKTO:@-7424,-69632,248
+6 0 0 0
+90 0 0 0 0 WALKTO:@-6912,-69632,160
+6 0 0 0
+90 0 0 0 0 WALKTO:@-6400,-69632,120
+6 0 0 0
+90 0 0 0 0 WALKTO:@-5888,-69632,120
+6 0 0 0
+90 0 0 0 0 WALKTO:@-5376,-69632,168
+6 0 0 0
+90 0 0 0 0 WALKTO:@-4864,-69632,296
+6 0 0 0
+90 0 0 0 0 WALKTO:@-4352,-69632,384
+6 0 0 0
+90 0 0 0 0 WALKTO:@-3840,-69632,448
+6 0 0 0
+90 0 0 0 0 WALKTO:@-3328,-69632,568
+6 0 0 0
+90 0 0 0 0 WALKTO:@-2816,-69888,768
+6 0 0 0
+90 0 0 0 0 WALKTO:@-2304,-69888,888
+6 0 0 0
+90 0 0 0 0 WALKTO:@-1792,-69632,928
+6 0 0 0
+90 0 0 0 0 WALKTO:@-1280,-69632,992
+6 0 0 0
+90 0 0 0 0 WALKTO:@-768,-69376,1176
+6 0 0 0
+90 0 0 0 0 WALKTO:@-256,-68864,1224
+6 0 0 0
+90 0 0 0 0 WALKTO:@256,-68352,1080
+6 0 0 0
+90 0 0 0 0 WALKTO:@512,-67840,1032
+6 0 0 0
+90 0 0 0 0 WALKTO:@768,-67328,992
+6 0 0 0
+90 0 0 0 0 WALKTO:@768,-66816,904
+6 0 0 0
+90 0 0 0 0 WALKTO:@512,-66304,640
+6 0 0 0
+90 0 0 0 0 WALKTO:@0,-65792,488
+6 0 0 0
+90 0 0 0 0 WALKTO:@-256,-65280,488
+6 0 0 0
+90 0 0 0 0 WALKTO:@-256,-64768,464
+6 0 0 0
+90 0 0 0 0 WALKTO:@-768,-64256,376
+4 0 0 0
+30 0 0 0 0 WALKTO:@-635,-64140,375
+4 0 0 0
+30 0 0 0 0 WALKTO:@-300,-64000,380
+6 0 0 0
+30 0 0 0 0 WALKTO:@-300,-63000,380
+8 0 0 0
+30 0 0 0 0 WALKTO:@-38,-62640,442
+5 0 0 0
+30 0 0 0 0 WALKTO:@223,-62280,938
+5 0 0 0
+30 0 0 0 0 WALKTO:@484,-61920,567
+5 0 0 0
+30 0 0 0 0 WALKTO:@746,-61560,630
+5 0 0 0
+30 0 0 0 0 WALKTO:@1008,-61200,692
+5 0 0 0
+30 0 0 0 0 WALKTO:@1269,-60840,755
+5 0 0 0
+30 0 0 0 0 WALKTO:@1531,-60480,817
+5 0 0 0
+30 0 0 0 0 WALKTO:@1793,-60120,880
+5 0 0 0
+30 0 0 0 0 WALKTO:@2054,-59760,942
+5 0 0 0
+30 0 0 0 0 WALKTO:@2316,-59400,1005
+5 0 0 0
+30 0 0 0 0 WALKTO:@2578,-59041,1068
+5 0 0 0
+30 0 0 0 0 WALKTO:@2935,-59063,1060
+5 0 0 0
+30 0 0 0 0 WALKTO:@2928,-58648,1214
+5 0 0 0
+30 0 0 0 0 WALKTO:@2598,-58388,1290
+5 0 0 0
+30 0 0 0 0 WALKTO:@2547,-58007,1361
+5 0 0 0
+30 0 0 0 0 WALKTO:@2620,-57745,1423
+5 0 0 0
+30 0 0 0 0 WALKTO:@2693,-57483,1486
+5 0 0 0
+30 0 0 0 0 WALKTO:@2473,-57431,1494
+5 0 0 0
+30 0 0 0 0 WALKTO:@2254,-57380,1502
+5 0 0 0
+30 0 0 0 0 WALKTO:@2101,-57116,1501
+5 0 0 0
+30 0 0 0 0 WALKTO:@2274,-56828,1499
+5 0 0 0
+30 0 0 0 0 WALKTO:@2448,-56540,1497
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:tarvyn_faren:lt:700
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+5 0 0 0
+0.3 0 0 0 0 ESCORT:-
+0.1 0 0 0 0 EXPECT:cell:Pelagiad,_Halfway_Tavern
+0.1 0 0 0 0 EXPECT:journal:HH_EscortMerchant:ge:70
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:tarvyn_faren
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EscortMerchant:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-escortmerchant
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Odirniran:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@29400,-73000,450
+60 0 0 0 0 WALKTO:@29952,-72960,450
+60 0 0 0 0 WALKTO:@30464,-72960,450
+6 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 ACTIVATE:adondasi_sadalvel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:adondasi_sadalvel:Molag
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@145004,-58823,973
+60 0 0 0 0 DOORTO:Odirniran
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Odirniran
+60 0 0 0 0 ACTIVATE:remasa_othril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Odirniran:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-od30
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+2 0 0 0
+120 0 0 0 0 DOORTO:Odirniran,_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Odirniran,_Tower
+120 0 0 0 0 KILL:milyn_faram
+0.1 0 0 0 0 EXPECT:dead:milyn_faram
+60 0 0 0 0 KILL:dremora
+60 0 0 0 0 KILL:dremora
+60 0 0 0 0 WALKTO:@-1622,3462,-1408
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+2 0 0 0
+60 0 0 0 0 ACTIVATE:vedelea_othril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Odirniran:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:vedelea_othril
+120 0 0 0 0 DOORTO:Odirniran
+60 0 0 0 0 WALKTO:@-424,3500,-1280
+8 0 0 0
+0.3 0 0 0 0 ESCORT:-
+60 0 0 0 0 ACTIVATE:remasa_othril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Odirniran:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Odirniran:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-odirniran
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:game_rats
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TheExterminator:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_yinglingbasement:ge:1
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@38750,-93305,2133
+60 0 0 0 0 WALKTO:@38444,-93305,2133
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Yngling_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Yngling_Manor
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Yngling_Manor_Basement
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Yngling_Manor_Basement
+120 0 0 0 0 KILL:rat_cave_hhte2
+120 0 0 0 0 KILL:rat_cave_hhte2
+120 0 0 0 0 KILL:rat_cave_hhte2
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:game_rats
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TheExterminator:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-exterminator
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_AshlanderEbony:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+0.3 0 0 0 0 SAVE:uber-hh-aeel
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@76861,84068,859
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+60 0 0 0 0 DOORTO:Zainab_Camp,_Ashibaal's_Yurt
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Zainab_Camp,_Ashibaal's_Yurt
+60 0 0 0 0 ACTIVATE:ashibaal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_AshlanderEbony:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ebony_trade
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_AshlanderEbony:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-ashlanderebony
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:prelude
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_SunkenTreasure:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@29400,-73000,450
+60 0 0 0 0 WALKTO:@29952,-72960,450
+60 0 0 0 0 WALKTO:@30464,-72960,450
+6 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 ACTIVATE:adondasi_sadalvel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:adondasi_sadalvel:Molag
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Molag_Mar
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@94682,-95974,317:beside
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+60 0 0 0 0 DOORTO:Prelude_Shipwreck,_Upper_Level
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Prelude_Shipwreck,_Upper_Level
+120 0 0 0 0 DOORTO:Prelude_Shipwreck,_Lower_Level
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Prelude_Shipwreck,_Lower_Level
+120 0 0 0 0 LOOT:com_chest_02_gshipwreck:daedric%wakizashi_hhst
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:prelude
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_SunkenTreasure:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-sunkentreasure
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ralen_tilvur
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_GuardMerchant:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Ralen_Tilvur:_Smith
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Ralen_Tilvur:_Smith
+60 0 0 0 0 ACTIVATE:ralen_tilvur
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_GuardMerchant:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:drarel_andus
+0.1 0 0 0 0 EXPECT:dead:drarel_andus
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Edryno_Arethi's_House
+60 0 0 0 0 ACTIVATE:edryno_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:ralen_tilvur
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_GuardMerchant:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-hh-guardmerchant
+# HH_BankFraud (Crassius business -> Odral Helvi in Caldera -> Tenisi Lladri in the Vaults -> Odral). Mark now at Curio Manor
+# (the Governor's Hall inner door shuts again: open it by hand before Odral)
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Curio_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Curio_Manor
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BankFraud:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Caldera
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Caldera,_Governor's_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera,_Governor's_Hall
+120 0 0 0 0 WALKTO:@-317,490,384
+2 0 0 0 0 FACE:@309,489
+0.3 0 0 0 0 A
+1 0 0 0
+1.5 0 1 0
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_orders
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BankFraud:ge:10
+0.1 0 0 0 0 EXPECT:item:bk_treasuryorders:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Curio_Manor
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22867,-81740,1787
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Treasury
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Vaults
+3 0 0 0
+60 0 0 0 0 ACTIVATE:tenisi_lladri
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_orders
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BankFraud:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Caldera
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Caldera,_Governor's_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@-317,490,384
+2 0 0 0 0 FACE:@309,489
+0.3 0 0 0 0 A
+1 0 0 0
+1.5 0 1 0
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sealed_orders
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BankFraud:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Curio_Manor
+0.3 0 0 0 0 SAVE:uber-hh-bankfraud
+# HH_CaptureSpy: Odral -> Elmussa Damori (bribed, gives the key) -> contracts from her chest -> Odral (truth)
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Caldera
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Caldera,_Governor's_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@-317,490,384
+2 0 0 0 0 FACE:@309,489
+0.3 0 0 0 0 A
+1 0 0 0
+1.5 0 1 0
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:caldera_mining_contracts
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_CaptureSpy:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Caldera,_Elmussa_Damori's_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera,_Elmussa_Damori's_House
+60 0 0 0 0 ACTIVATE:elmussa_damori
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:caldera_mining_contracts
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_CaptureSpy:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 LOOT:com_chest_01_elmussa:bk_calderaminingcontract
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_calderaminingcontract:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Caldera,_Governor's_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@-317,490,384
+2 0 0 0 0 FACE:@309,489
+0.3 0 0 0 0 A
+1 0 0 0
+1.5 0 1 0
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:caldera_mining_contracts
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_CaptureSpy:ge:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-capturespy
+# HH_ReplaceDocs: Odral's fake deed swapped into the chest in the Hlaalu Records, old deed back to Odral
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:erroneous_documents
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_ReplaceDocs:ge:10
+0.1 0 0 0 0 EXPECT:item:bk_landdeedfake_hhrd:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22867,-81740,1787
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Treasury
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Records
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Records
+60 0 0 0 0 PUT:chest_small_02_hhrd:bk_landdeedfake_hhrd
+1 0 0 0
+60 0 0 0 0 LOOT:chest_small_02_hhrd:bk_landdeed_hhrd
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_landdeed_hhrd:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Caldera
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Caldera,_Governor's_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@-317,490,384
+2 0 0 0 0 FACE:@309,489
+0.3 0 0 0 0 A
+1 0 0 0
+1.5 0 1 0
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:erroneous_documents
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_ReplaceDocs:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-replacedocs
+# HH_RentCollector: both farmers taunted and killed (Llovyn Andus, Manat Varnan-Adda), Odral pays 110
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:rent_and_taxes
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_RentCollector:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22867,-81740,1787
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@14354,-57022,300
+60 0 0 0 0 ACTIVATE:llovyn_andus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rent_and_taxes
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_RentCollector:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:llovyn_andus
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:llovyn_andus
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@29334,-46069,800
+60 0 0 0 0 ACTIVATE:manat_varnan-adda
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rent_and_taxes
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:manat_varnan-adda
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:manat_varnan-adda
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Caldera
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Caldera,_Governor's_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@-317,490,384
+2 0 0 0 0 FACE:@309,489
+0.3 0 0 0 0 A
+1 0 0 0
+1.5 0 1 0
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rent_and_taxes
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_RentCollector:ge:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-rentcollector
+# HH_EbonyDelivery: the Crassius branch (ebony to Segunivus Mantedius at Fort Buckmoth, Odral arrested)
+60 0 0 0 0 ACTIVATE:odral_helvi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:shipment_of_ebony
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EbonyDelivery:ge:10
+0.1 0 0 0 0 EXPECT:item:ingred_raw_ebony_01:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:shipment_of_ebony
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EbonyDelivery:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@-13564,43062,2674
+120 0 0 0 0 DOORTO:Buckmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Buckmoth_Legion_Fort,_Interior
+120 0 0 0 0 ACTIVATE:segunivus_mantedius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:shipment_of_ebony
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EbonyDelivery:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:shipment_of_ebony
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_EbonyDelivery:ge:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-ebonydelivery
+# HH_NordSmugglers: Velfred (west of Hla Oad) talked round, Crassius pays 1000
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:velfred_the_outlaw
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_NordSmugglers:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22867,-81740,1787
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# three legs: Vivec -> Seyda Neen -> Hla Oad -> Velfred (one batch of potions lasts 60 s)
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-8604,-70205,831
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-47573,-39512,185
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-54732,-44600,400
+60 0 0 0 0 ACTIVATE:velfred
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:respect_house_hlaalu
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_NordSmugglers:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:velfred_the_outlaw
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_NordSmugglers:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-nordsmugglers
+# HH_Stronghold to 100: Dondos Driler (Balmora), deed from Baren Alen, contract from Duke Vedam Dren, 5+ days of waiting (SLEEP 24 x N, 3 s apart), Durbul gro-Rush on the Odai Plateau
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22867,-81740,1787
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Treasury
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Vaults
+3 0 0 0
+60 0 0 0 0 ACTIVATE:baren_alen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:land_deed
+1 0 0 0
+0.3 0 0 0 0 BUY:baren_alen:bk_stronghold_ld_hlaalu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_stronghold_ld_hlaalu:ge:1
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Treasury
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# (this exit of the waistworks is under an arch: walk to the open walkway before flying)
+60 0 0 0 0 WALKTO:@22884,-81730,1792
+2 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@9802,-101914,1392
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Grand_Council_Chambers
+120 0 0 0 0 ACTIVATE:vedam_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:construction_contract
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_stronghold_c_hlaalu:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:55
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-35423,-36700,1950
+120 0 0 0 0 ACTIVATE:durbul_gro-rush
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-25619,-12568,1104
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Hlaalu_Council_Manor
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+10 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:100
+0.3 0 0 0 0 SAVE:uber-hh-stronghold100
+# HH_DestroyIndarysManor: advancement with Crassius (rank 6), Banden Indarys killed
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:hlaalu:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:banden_indarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_DestroyIndarysManor:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@23926,-84338,1788
+90 0 0 0 0 WALKTO:@23771,-84855,1787
+90 0 0 0 0 WALKTO:@23767,-85471,1425
+90 0 0 0 0 WALKTO:@23752,-86539,792
+90 0 0 0 0 WALKTO:@23711,-87303,571
+90 0 0 0 0 WALKTO:@24576,-87153,571
+90 0 0 0 0 WALKTO:@24576,-86472,571
+90 0 0 0 0 WALKTO:@24576,-85899,571
+90 0 0 0 0 WALKTO:@25027,-85903,691
+90 0 0 0 0 WALKTO:@25426,-85911,801
+90 0 0 0 0 WALKTO:@26162,-85918,576
+90 0 0 0 0 WALKTO:@26098,-85364,576
+90 0 0 0 0 WALKTO:@26085,-84843,576
+90 0 0 0 0 WALKTO:@26538,-84385,576
+90 0 0 0 0 WALKTO:@27898,-84442,576
+90 0 0 0 0 WALKTO:@29001,-84418,576
+90 0 0 0 0 WALKTO:@29906,-84445,576
+90 0 0 0 0 WALKTO:@29853,-83850,768
+90 0 0 0 0 WALKTO:@29842,-83410,768
+90 0 0 0 0 WALKTO:@29861,-82906,768
+90 0 0 0 0 WALKTO:@29900,-82198,576
+90 0 0 0 0 WALKTO:@30498,-82128,576
+90 0 0 0 0 WALKTO:@31713,-82175,576
+90 0 0 0 0 WALKTO:@32294,-82254,576
+90 0 0 0 0 WALKTO:@32741,-81920,576
+90 0 0 0 0 WALKTO:@32765,-81283,576
+90 0 0 0 0 WALKTO:@32250,-81275,703
+90 0 0 0 0 WALKTO:@31382,-81265,1208
+90 0 0 0 0 WALKTO:@30664,-81268,1635
+90 0 0 0 0 WALKTO:@30096,-81366,1792
+90 0 0 0 0 WALKTO:@29905,-81859,1793
+90 0 0 0 0 WALKTO:@29304,-81826,1792
+90 0 0 0 0 WALKTO:@28901,-81773,1792
+90 0 0 0 0 WALKTO:@28447,-81797,1792
+90 0 0 0 0 WALKTO:@28002,-81836,1792
+90 0 0 0 0 WALKTO:@27606,-81751,1792
+90 0 0 0 0 WALKTO:@27297,-81258,1792
+90 0 0 0 0 WALKTO:@27703,-80945,1831
+90 0 0 0 0 WALKTO:@28302,-80944,2252
+90 0 0 0 0 WALKTO:@28679,-80950,2517
+90 0 0 0 0 WALKTO:@29229,-80967,2904
+90 0 0 0 0 WALKTO:@29863,-81047,3009
+90 0 0 0 0 WALKTO:@29877,-81524,3008
+90 0 0 0 0 WALKTO:@29291,-81527,3008
+90 0 0 0 0 WALKTO:@28880,-81510,3008
+90 0 0 0 0 WALKTO:@28133,-81533,3008
+90 0 0 0 0 WALKTO:@27581,-81378,3008
+90 0 0 0 0 WALKTO:@27592,-80719,3008
+90 0 0 0 0 WALKTO:@27559,-80095,3008
+90 0 0 0 0 WALKTO:@27869,-79738,3071
+90 0 0 0 0 WALKTO:@28077,-79745,3173
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-35364,79659,1829
+120 0 0 0 0 DOORTO:Indarys_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Indarys_Manor
+120 0 0 0 0 KILL:banden_indarys
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:banden_indarys
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:banden_indarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_DestroyIndarysManor:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-indarys
+# HH_BeroSupport: Crassius business -> Dram Bero's hidden manor in St. Olms (locked secret door: lockpick), duel with Garding in the Arena Pit
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BeroSupport:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22225,-82392,2043
+90 0 0 0 0 WALKTO:@22216,-81920,1803
+90 0 0 0 0 WALKTO:@22867,-81740,1787
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@38750,-93305,2133
+60 0 0 0 0 WALKTO:@38444,-93305,2133
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Plaza
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Haunted_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Haunted_Manor
+30 0 0 0 0 WALKTO:@805,-351,-512
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Haunted_Manor
+3 0 0 0
+120 0 0 0 0 ACTIVATE:dram_bero
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:support_on_the_council
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BeroSupport:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@24304,-84621,1787
+90 0 0 0 0 WALKTO:@24297,-85252,1787
+90 0 0 0 0 WALKTO:@24279,-85892,1787
+90 0 0 0 0 WALKTO:@25128,-85885,2040
+90 0 0 0 0 WALKTO:@25693,-85884,2039
+90 0 0 0 0 WALKTO:@26189,-85894,1928
+90 0 0 0 0 WALKTO:@26461,-85105,1792
+90 0 0 0 0 WALKTO:@26860,-84798,1792
+90 0 0 0 0 WALKTO:@28080,-84820,1792
+90 0 0 0 0 WALKTO:@28856,-84797,1792
+90 0 0 0 0 WALKTO:@29397,-84776,1792
+90 0 0 0 0 WALKTO:@30196,-84827,1792
+90 0 0 0 0 WALKTO:@30625,-84848,1792
+90 0 0 0 0 WALKTO:@31473,-84809,1792
+90 0 0 0 0 WALKTO:@31743,-85174,1792
+90 0 0 0 0 WALKTO:@31748,-85856,1792
+90 0 0 0 0 WALKTO:@32765,-85878,2045
+90 0 0 0 0 WALKTO:@33232,-85895,2021
+90 0 0 0 0 WALKTO:@33658,-85881,1907
+90 0 0 0 0 WALKTO:@33900,-85056,1792
+90 0 0 0 0 WALKTO:@34283,-84784,1792
+90 0 0 0 0 WALKTO:@35387,-84818,1792
+90 0 0 0 0 WALKTO:@36323,-84815,1792
+90 0 0 0 0 WALKTO:@36743,-84826,1792
+90 0 0 0 0 WALKTO:@37603,-84813,1792
+90 0 0 0 0 WALKTO:@38341,-84809,1792
+90 0 0 0 0 WALKTO:@38953,-84800,1792
+90 0 0 0 0 WALKTO:@39169,-85885,1792
+90 0 0 0 0 WALKTO:@39182,-86667,1792
+90 0 0 0 0 WALKTO:@38474,-86916,2048
+240 0 0 0 0 DOORTO:Vivec,_Arena_Pit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Pit
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 KILL:garding
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BeroSupport:ge:70
+120 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@36532,-88638,1793
+90 0 0 0 0 WALKTO:@36323,-89015,1792
+90 0 0 0 0 WALKTO:@35614,-89033,1792
+90 0 0 0 0 WALKTO:@34996,-88996,1792
+90 0 0 0 0 WALKTO:@35005,-89687,2016
+90 0 0 0 0 WALKTO:@35013,-90112,2063
+90 0 0 0 0 WALKTO:@35029,-90880,1928
+90 0 0 0 0 WALKTO:@35600,-91153,1792
+90 0 0 0 0 WALKTO:@36245,-91208,1792
+90 0 0 0 0 WALKTO:@36842,-91215,1792
+90 0 0 0 0 WALKTO:@37614,-91175,1792
+90 0 0 0 0 WALKTO:@38829,-91201,1792
+90 0 0 0 0 WALKTO:@39162,-91444,1792
+90 0 0 0 0 WALKTO:@39145,-91908,1792
+90 0 0 0 0 WALKTO:@39173,-92962,1792
+90 0 0 0 0 WALKTO:@38926,-93310,1828
+90 0 0 0 0 WALKTO:@38487,-93349,2048
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Plaza
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Haunted_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Olms_Haunted_Manor
+30 0 0 0 0 WALKTO:@805,-351,-512
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Haunted_Manor
+3 0 0 0
+120 0 0 0 0 ACTIVATE:dram_bero
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:support_on_the_council
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BeroSupport:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@22959,-81717,1787
+90 0 0 0 0 WALKTO:@23555,-81706,1787
+90 0 0 0 0 WALKTO:@24061,-81727,1787
+90 0 0 0 0 WALKTO:@24319,-82533,1787
+90 0 0 0 0 WALKTO:@24291,-83123,1787
+90 0 0 0 0 WALKTO:@24304,-84037,1787
+90 0 0 0 0 WALKTO:@24304,-84621,1787
+90 0 0 0 0 WALKTO:@24297,-85252,1787
+90 0 0 0 0 WALKTO:@24279,-85892,1787
+90 0 0 0 0 WALKTO:@25128,-85885,2040
+90 0 0 0 0 WALKTO:@25693,-85884,2039
+90 0 0 0 0 WALKTO:@26189,-85894,1928
+90 0 0 0 0 WALKTO:@26461,-85105,1792
+90 0 0 0 0 WALKTO:@26860,-84798,1792
+90 0 0 0 0 WALKTO:@28080,-84820,1792
+90 0 0 0 0 WALKTO:@28856,-84797,1792
+90 0 0 0 0 WALKTO:@29397,-84776,1792
+90 0 0 0 0 WALKTO:@30196,-84827,1792
+90 0 0 0 0 WALKTO:@30625,-84848,1792
+90 0 0 0 0 WALKTO:@31473,-84809,1792
+90 0 0 0 0 WALKTO:@31743,-85174,1792
+90 0 0 0 0 WALKTO:@31748,-85856,1792
+90 0 0 0 0 WALKTO:@32765,-85878,2045
+90 0 0 0 0 WALKTO:@33232,-85895,2021
+90 0 0 0 0 WALKTO:@33658,-85881,1907
+90 0 0 0 0 WALKTO:@33900,-85056,1792
+90 0 0 0 0 WALKTO:@34283,-84784,1792
+90 0 0 0 0 WALKTO:@35387,-84818,1792
+90 0 0 0 0 WALKTO:@36323,-84815,1792
+90 0 0 0 0 WALKTO:@36743,-84826,1792
+90 0 0 0 0 WALKTO:@37603,-84813,1792
+90 0 0 0 0 WALKTO:@38341,-84809,1792
+90 0 0 0 0 WALKTO:@38953,-84800,1792
+90 0 0 0 0 WALKTO:@39169,-85885,1792
+90 0 0 0 0 WALKTO:@39182,-86667,1792
+90 0 0 0 0 WALKTO:@38474,-86916,2048
+240 0 0 0 0 DOORTO:Vivec,_Arena_Pit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Pit
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 KILL:garding
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BeroSupport:ge:70
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+90 0 0 0 0 WALKTO:@38474,-86916,2048
+90 0 0 0 0 WALKTO:@38937,-86896,1828
+90 0 0 0 0 WALKTO:@39164,-88198,1792
+90 0 0 0 0 WALKTO:@39152,-88773,1792
+90 0 0 0 0 WALKTO:@38183,-88980,1792
+90 0 0 0 0 WALKTO:@37491,-89010,1792
+90 0 0 0 0 WALKTO:@36774,-89008,1792
+90 0 0 0 0 WALKTO:@36323,-89015,1792
+90 0 0 0 0 WALKTO:@35614,-89033,1792
+90 0 0 0 0 WALKTO:@34996,-88996,1792
+90 0 0 0 0 WALKTO:@35005,-89687,2016
+90 0 0 0 0 WALKTO:@35013,-90112,2063
+90 0 0 0 0 WALKTO:@35029,-90880,1928
+90 0 0 0 0 WALKTO:@35600,-91153,1792
+90 0 0 0 0 WALKTO:@36245,-91208,1792
+90 0 0 0 0 WALKTO:@36842,-91215,1792
+90 0 0 0 0 WALKTO:@37614,-91175,1792
+90 0 0 0 0 WALKTO:@38829,-91201,1792
+90 0 0 0 0 WALKTO:@39162,-91444,1792
+90 0 0 0 0 WALKTO:@39145,-91908,1792
+90 0 0 0 0 WALKTO:@39173,-92962,1792
+90 0 0 0 0 WALKTO:@38926,-93310,1828
+90 0 0 0 0 WALKTO:@38487,-93349,2048
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Haunted_Manor
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Haunted_Manor
+3 0 0 0
+120 0 0 0 0 ACTIVATE:dram_bero
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:support_on_the_council
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_BeroSupport:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Curio_Manor
+0.3 0 0 0 0 SAVE:uber-hh-berosupport
+# HH_Stronghold to 200: cure the Shurdan-Raplay queen (scroll of cure blight), recruit Ilasour Tansumiran in Gnisis, second build phase
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.3 0 0 0 0 TOPIC:egg_mining
+1 0 0 0
+0.3 0 0 0 0 TOPIC:shurdan-raplay
+1 0 0 0
+0.3 0 0 0 0 TOPIC:recruit_some_miners
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-29483,-40127,1063
+120 0 0 0 0 DOORTO:Shurdan-Raplay_Egg_Mine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shurdan-Raplay_Egg_Mine
+120 0 0 0 0 WALKTO:kwama%queen_shurdan
+2 0 0 0 0 FACE:kwama%queen_shurdan:mid
+0.3 0 0 0 0 CAST:item:sc_cureblight_ranged
+2 0 0 0
+2 0 0 0 0 FACE:kwama%queen_shurdan:mid
+0.3 0 0 0 0 CAST:item:sc_cureblight_ranged
+2 0 0 0
+2 0 0 0 0 FACE:kwama%queen_shurdan:mid
+0.3 0 0 0 0 CAST:item:sc_cureblight_ranged
+2 0 0 0
+2 0 0 0 0 FACE:kwama%queen_shurdan:mid
+0.3 0 0 0 0 CAST:item:sc_cureblight_ranged
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:140
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-55935,77364,1330
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-85722,95189,1088
+120 0 0 0 0 DOORTO:Gnisis,_Tansumiran_Cave_Dwelling
+3 0 0 0
+120 0 0 0 0 ACTIVATE:ilasour_tansumiran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:recruit_some_miners
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:150
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:170
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+10 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:200
+0.3 0 0 0 0 SAVE:uber-hh-stronghold200
+# HH_DestroyTelUvirith: Crassius advancement to rank 7, Reynel Uvirith killed in Tel Uvirith (three flights, SLEEP:1 between)
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:hlaalu:ge:7
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:reynel_uvirith
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_DestroyTelUvirith:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@43863,-56300,400
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@65117,-21600,2300
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@87282,10177,2279
+120 0 0 0 0 DOORTO:Tel_Uvirith,_Tower_Lower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Uvirith,_Tower_Lower
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 KILL:reynel_uvirith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:reynel_uvirith
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:crassius_curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:reynel_uvirith
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_DestroyTelUvirith:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-teluvirith
+# HH_WinSaryoni: Duke Dren's business; Berel Sala killed in the Vivec Justice Offices, bounty paid to an Ordinator in the Hlaalu plaza
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@9802,-101914,1392
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+120 0 0 0 0 ACTIVATE:vedam_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@31731,-97517,664
+60 0 0 0 0 WALKTO:@31731,-97517,664
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:Vivec,_Justice_Offices
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Justice_Offices
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 KILL:berel_sala
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:berel_sala
+0.1 0 0 0 0 EXPECT:bounty:ge:1000
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 ACTIVATE:ordinator%wander
+1.5 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@9802,-101914,1392
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+120 0 0 0 0 ACTIVATE:vedam_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:control_the_ordinators
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_WinSaryoni:ge:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-winsaryoni
+# HH_WinCamonna: Duke Dren's second business; Orvas Dren killed in Dren's Villa, bounty paid, rank raised to the top
+120 0 0 0 0 ACTIVATE:vedam_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:camonna_tong
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_WinCamonna:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@22682,-55810,1068
+60 0 0 0 0 WALKTO:@22682,-55810,1068
+2 0 0 0
+120 0 0 0 0 DOORTO:Dren_Plantation,_Dren's_Villa
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dren_Plantation,_Dren's_Villa
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 KILL:orvas_dren_druglord
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:orvas_dren_druglord
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@9802,-101914,1392
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+120 0 0 0 0 ACTIVATE:vedam_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:camonna_tong
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_WinCamonna:ge:110
+0.1 0 0 0 0 EXPECT:rank:hlaalu:ge:9
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-wincamonna
+
+# HH_Stronghold 210-300: guard against bandits (Flaenia Amiulusus sells Fjorgeir's contract), Maros Gimayn killed in Zainsipilu, Rethan Manor finished
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.3 0 0 0 0 TOPIC:guard_against_bandits
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:210
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Fighters
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flaenia_amiulusus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guard_against_bandits
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:220
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# (the guild's door is under an overhang: fly from the Council Manor's front)
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-35037,-35100,1810
+120 0 0 0 0 ACTIVATE:fjorgeir
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guard_against_bandits
+1 0 0 0
+0.3 0 0 0 0 TOPIC:fight_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:250
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-28684,-51472,1175
+120 0 0 0 0 DOORTO:Zainsipilu
+3 0 0 0
+120 0 0 0 0 KILL:maros_gimayn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:maros_gimayn
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 ACTIVATE:dondos_driler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guard_against_bandits
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:270
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+1 0 0 0 0 SLEEP:24
+3 0 0 0
+10 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_Stronghold:ge:300
+0.3 0 0 0 0 SAVE:uber-hh-stronghold300
+
+# HH_LiteracyCampaign: Ilmeni Dren (St. Delyn) asks for two primers for Vala Catraso's school in the Ald'ruhn Mages Guild:
+# the Annotated Anuad lies in the Council Manor (free to take), the ABCs are bought from Codus Callonus in Ald'ruhn
+60 0 0 0 0 PICKUP:bk_annotatedanuad
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_annotatedanuad:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@22884,-81730,1792
+2 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@29088,-95765,676
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Canal_South-One
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Delyn_Canal_South-One
+60 0 0 0 0 ACTIVATE:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:people_cannot_read
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_LiteracyCampaign:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 DOORTO:Ald-ruhn,_Codus_Callonus:_Bookseller
+3 0 0 0
+60 0 0 0 0 ACTIVATE:codus_callonus
+1.5 0 0 0
+0.3 0 0 0 0 BUY:codus_callonus:bk_abcs
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_abcs:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:vala_catraso
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:people_cannot_read
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_LiteracyCampaign:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@22884,-81730,1792
+2 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@29088,-95765,676
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Canal_South-One
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_St._Delyn_Canal_South-One
+60 0 0 0 0 ACTIVATE:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:people_cannot_read
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_LiteracyCampaign:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-literacy
+
+# NOTE: Sinsibadon (Borug's tower) and the Zainsipilu fights are flaky run to run (driver stuck on the ledge at -1874,1647,526 below Borug; KILL fervas_reloro timeout): see internal/uber/hh.md
+# BLOCKED after lamp5: TwinLamps1 30+ (Galyn Arvel in Ald Velothi reached by Ald-ruhn strider -> Khuul + flight; J'Saddha at Ashalmawia -78265,125280,1893 has no walkable route to Ald Velothi: uberroute finds none even at slope 3, a straight escort walk climbs the mountain and he stays; journal 70 needs him within 300 of Galyn) and TwinLamps3 (needs TwinLamps1 100). See internal/uber/hh.md
+# HH_TwinLamps: free 16 slaves with the keys of Zainsipilu (Snadir), Kudanat and Sinsibadon (Borug), then Jobasha and Ilmeni Dren
+# HH_TwinLamps prelude: free slaves (>15) with the slave keys: Zainsipilu, Kudanat, Sinsibadon
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-28684,-51472,1175
+120 0 0 0 0 DOORTO:Zainsipilu
+3 0 0 0
+120 0 0 0 0 KILL:darvala_romothran
+1 0 0 0
+120 0 0 0 0 KILL:aranwen
+1 0 0 0
+120 0 0 0 0 KILL:snadir
+1 0 0 0
+120 0 0 0 0 KILL:agrob_gra-bogharz
+1 0 0 0
+120 0 0 0 0 KILL:nistacey
+1 0 0 0
+60 0 0 0 0 LOOT:snadir:key_zainsipiluslaves_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_zainsipiluslaves_01:ge:1
+60 0 0 0 0 ACTIVATE:haran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:muz-ra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:ahnisa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:bahdrashi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:anjari
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-slaves1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+2 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Hlaalu_Council_Manor
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-28196,19490,1675
+120 0 0 0 0 DOORTO:Kudanat
+3 0 0 0
+120 0 0 0 0 KILL:falion
+1 0 0 0
+120 0 0 0 0 KILL:throknolf_the_craven
+1 0 0 0
+120 0 0 0 0 KILL:tandasea_salas
+1 0 0 0
+120 0 0 0 0 KILL:murag_gro-atumph
+1 0 0 0
+120 0 0 0 0 KILL:ulenea_beloren
+1 0 0 0
+120 0 0 0 0 KILL:vianis_tiragrius
+1 0 0 0
+120 0 0 0 0 KILL:nalur_indrano
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-kudanat
+60 0 0 0 0 WALKTO:@1015,3752,-575
+1 0 0 0 0 FACE:key_kudanatslaves_01:mid
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_kudanatslaves_01:ge:1
+60 0 0 0 0 ACTIVATE:ra'sava
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:adharanji
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:heedul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:oleen-gei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:ah-meesei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-slaves2
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@22884,-81730,1792
+2 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@64423,-72615,100
+120 0 0 0 0 DOORTO:Sinsibadon
+3 0 0 0
+# Dridyn first: his Wearying Touch drains the fatigue of a long fight
+120 0 0 0 0 KILL:dridyn_berethi
+1 0 0 0
+120 0 0 0 0 KILL:borug_gro-lazgarn
+1 0 0 0
+120 0 0 0 0 KILL:herd
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-sinsibadon
+60 0 0 0 0 LOOT:borug_gro-lazgarn:key_sinsibadonslaves_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_sinsibadonslaves_01:ge:1
+60 0 0 0 0 ACTIVATE:ahdni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:kaasha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:j'jarsha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:am-ra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:wusha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:on-wazei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:ahdni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-slaves3
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Jobasha's_Rare_Books
+3 0 0 0
+60 0 0 0 0 ACTIVATE:jobasha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:twin_lamps
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps1:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-hh-lamp5
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@22884,-81730,1792
+2 0 0 0
+1 0 0 0 0 SLEEP:1
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@29088,-95765,676
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Canal_South-One
+3 0 0 0
+60 0 0 0 0 ACTIVATE:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+1 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps1:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
