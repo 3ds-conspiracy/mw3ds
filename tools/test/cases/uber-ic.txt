@@ -1601,6 +1601,8 @@
 0.3 0 0 0 0 FACE:@1088,192
 0.3 0 0 0 0 CAST:item:sc_ondusisunhinging
 2 0 0 0
+0.3 0 0 0 0 CAST:item:sc_ondusisunhinging
+2 0 0 0
 60 0 0 0 0 ACTIVATE:adusamsi%assurnarairan
 1.5 0 0 0
 0.1 0 0 0 0 EXPECT:journal:IC27_Oracle_A:ge:10

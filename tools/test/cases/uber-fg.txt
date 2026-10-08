@@ -1328,6 +1328,11 @@
 120 0 0 0 0 KILL:daldur_sarys
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:daldur_sarys
+120 0 0 0 0 KILL:dothiel
+120 0 0 0 0 KILL:vevos_nerethi
+120 0 0 0 0 KILL:muk_gro-dula
+120 0 0 0 0 KILL:ilver_aralas
+120 0 0 0 0 KILL:tiela
 60 0 0 0 0 DOORTO:outside
 3 0 0 0
 40 0 0 0

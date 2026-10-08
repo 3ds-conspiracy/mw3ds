@@ -1509,6 +1509,8 @@
 0.1 0 0 0 0 EXPECT:dead:suryn_athones
 60 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
 3 0 0 0
+30 0 0 0 0 WALKTO:@700,1900,-128
+3 0 0 0
 60 0 0 0 0 DOORTO:Vivec,_Temple
 3 0 0 0
 0.1 0 0 0 0 EXPECT:bounty:eq:0
