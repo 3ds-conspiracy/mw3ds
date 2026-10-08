@@ -1517,6 +1517,361 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 0.3 0 0 0 0 SAVE:uber-mg-bethamez
+# Skink's chain (Sadrith Mora) before the Guildmaster line. The Ald'ruhn guild keeps restore magicka potions in its supply chest for members: the MG_WiseWoman ghost takes more magicka than the player has
+60 0 0 0 0 LOOT:com_chest_02_mg_supply:p_restore_magicka_s
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_restore_magicka_s:ge:8
+# MG_EscortScholar1: Skink (Sadrith Mora) asks the player to take Tenyeminwe from Dirty Muriel's to the Telvanni docks; back by Divine Intervention
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Mage
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Tenyeminwe
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar1:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Dirty_Muriel's_Cornerclub
+3 0 0 0
+60 0 0 0 0 ACTIVATE:tenyeminwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar1:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 ESCORT:tenyeminwe
+120 0 0 0 0 WALKTO:@152258,29900,536
+120 0 0 0 0 WALKTO:@151826,30161,536
+120 0 0 0 0 WALKTO:@151715,30646,550
+120 0 0 0 0 WALKTO:@151487,31117,544
+120 0 0 0 0 WALKTO:@150671,31379,622
+120 0 0 0 0 WALKTO:@150028,31996,657
+120 0 0 0 0 WALKTO:@149441,31963,526
+120 0 0 0 0 WALKTO:@148982,32161,526
+120 0 0 0 0 WALKTO:@148553,32319,550
+120 0 0 0 0 WALKTO:@148068,32768,382
+120 0 0 0 0 WALKTO:@147462,33488,389
+120 0 0 0 0 WALKTO:@147023,34146,598
+120 0 0 0 0 WALKTO:@146941,34697,545
+120 0 0 0 0 WALKTO:@146242,35054,512
+120 0 0 0 0 WALKTO:@145766,35401,592
+120 0 0 0 0 WALKTO:@145380,35911,389
+120 0 0 0 0 WALKTO:@144976,35916,325
+120 0 0 0 0 WALKTO:@144481,35995,294
+120 0 0 0 0 WALKTO:@143904,35896,330
+120 0 0 0 0 WALKTO:@143329,35914,434
+120 0 0 0 0 WALKTO:@142756,35942,459
+120 0 0 0 0 WALKTO:@142213,36483,328
+120 0 0 0 0 WALKTO:@142179,36982,236
+120 0 0 0 0 WALKTO:@142208,37443,189
+120 0 0 0 0 WALKTO:@142150,37560,189
+0.3 0 0 0 0 ESCORT:-
+10 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar1:ge:70
+60 0 0 0 0 ACTIVATE:tenyeminwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar1:ge:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:sc_summonflameatronach:ge:1
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 ACTIVATE:Ex_imp_loaddoor_02
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Imperial_Shrine
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall@2
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Tenyeminwe
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_EscortScholar1:ge:100
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Vampires_of_Vvardenfell
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_VampVol2:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-escortscholar1
+# MG_VampVol2: Skink wants Vampires of Vvardenfell, volume 2: Jobasha's Rare Books in Vivec sells it (Foreign Quarter Upper then Lower Waistworks)
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Vivec
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Upper_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Jobasha's_Rare_Books
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Jobasha's_Rare_Books
+60 0 0 0 0 ACTIVATE:jobasha
+1.5 0 0 0
+0.3 0 0 0 0 BUY:jobasha:bk_vampiresofvvardenfell2
+0.1 0 0 0 0 EXPECT:item:bk_vampiresofvvardenfell2:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Upper_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+3 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Sadrith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Mage
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vampires_of_Vvardenfell
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_VampVol2:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-vampvol2
+# MG_WiseWoman: Skink wants a meeting with a Wise Woman: Sinnammu Mirpal (Ahemmusa) sends her apprentice Minabibi, who needs the angry ghost in Favel Ancestral Tomb laid first (a spell made by Uleni Heleran, Fire Damage: a ghost shrugs off the iron sword)
+60 0 0 0 0 ACTIVATE:uleni_heleran
+1.5 0 0 0
+0.3 0 0 0 0 SPELLMAKE:uleni_heleran
+0.5 0 0 0
+0.3 0 0 0 0 ADDEFFECT:14:40:40:1:2
+0.3 0 0 0 0 TAP:200:30
+0.3 0 0 0 0 TYPE:Ghost%Burn
+0.3 0 0 0 0 TAP:54:222
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:madespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+1 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_WiseWoman:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@152284,29872,655
+120 0 0 0 0 WALKTO:@152258,29900,536
+120 0 0 0 0 WALKTO:@151826,30161,536
+120 0 0 0 0 WALKTO:@151715,30646,550
+120 0 0 0 0 WALKTO:@151487,31117,544
+120 0 0 0 0 WALKTO:@150671,31379,622
+120 0 0 0 0 WALKTO:@150028,31996,657
+120 0 0 0 0 WALKTO:@149441,31963,526
+120 0 0 0 0 WALKTO:@148982,32161,526
+120 0 0 0 0 WALKTO:@148553,32319,550
+120 0 0 0 0 WALKTO:@148068,32768,382
+120 0 0 0 0 WALKTO:@147462,33488,389
+120 0 0 0 0 WALKTO:@147023,34146,598
+120 0 0 0 0 WALKTO:@146941,34697,545
+120 0 0 0 0 WALKTO:@146242,35054,512
+120 0 0 0 0 WALKTO:@145766,35401,592
+120 0 0 0 0 WALKTO:@145380,35911,389
+120 0 0 0 0 WALKTO:@144976,35916,325
+120 0 0 0 0 WALKTO:@144481,35995,294
+120 0 0 0 0 WALKTO:@143904,35896,330
+120 0 0 0 0 WALKTO:@143329,35914,434
+120 0 0 0 0 WALKTO:@142756,35942,459
+120 0 0 0 0 WALKTO:@142213,36483,328
+120 0 0 0 0 WALKTO:@142179,36982,236
+120 0 0 0 0 WALKTO:@142208,37443,189
+120 0 0 0 0 WALKTO:@142150,37560,189
+60 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@94264,134918,951
+120 0 0 0 0 DOORTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ahemmusa_Camp,_Wise_Woman
+60 0 0 0 0 ACTIVATE:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_WiseWoman:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@67946,132854,886
+120 0 0 0 0 DOORTO:Favel_Ancestral_Tomb
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Favel_Ancestral_Tomb
+60 0 0 0 0 ACTIVATE:minabibi_assardarainat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_WiseWoman:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 WALKTO:ancestor_mg_wisewoman
+0.3 0 0 0 0 FACE:ancestor_mg_wisewoman
+0.3 0 0 0 0 CASTMADESPELL
+3 0 0 0
+0.3 0 0 0 0 FACE:ancestor_mg_wisewoman
+0.3 0 0 0 0 CASTMADESPELL
+3 0 0 0
+0.3 0 0 0 0 FACE:ancestor_mg_wisewoman
+0.3 0 0 0 0 CASTMADESPELL
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 FACE:ancestor_mg_wisewoman
+0.3 0 0 0 0 CASTMADESPELL
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 FACE:ancestor_mg_wisewoman
+0.3 0 0 0 0 CASTMADESPELL
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 USE:p_restore_magicka_s
+0.3 0 0 0 0 FACE:ancestor_mg_wisewoman
+0.3 0 0 0 0 CASTMADESPELL
+3 0 0 0
+0.1 0 0 0 0 EXPECT:dead:ancestor_mg_wisewoman
+60 0 0 0 0 ACTIVATE:minabibi_assardarainat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_WiseWoman:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@94264,134918,951
+120 0 0 0 0 DOORTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+3 0 0 0
+60 0 0 0 0 ACTIVATE:sinnammu_mirpal
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_WiseWoman:ge:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 ACTIVATE:Ex_imp_loaddoor_02
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall@2
+3 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_WiseWoman:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:minabibi_assardarainat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:arrange_a_meeting
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MG_WiseWoman:ge:110
+0.1 0 0 0 0 EXPECT:item:ancestor's_ring:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-mg-wisewoman
+# back to Ald'ruhn for Edwinna's Guildmaster line
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# BLOCKED: MG_KillNecro1 (Telura Ulver in Shal) and so SoulGem2, VampireCure; Ajira's Staff of Magnus and Warlock's Ring: see internal/uber/mg.md (HOPTO over 85000+ units lands 6000 short: '40 jumps and not there'; the Vivec strider/boat docks are not reachable from the canton)
 # MG_Guildmaster: Ranis advancement to Master Wizard (Wizard's Staff bought for 5000), Edwinna sends the player to Trebonius, duel in the Vivec Arena Pit
 60 0 0 0 0 ACTIVATE:erranil
 1.5 0 0 0
