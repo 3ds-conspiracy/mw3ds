@@ -3723,9 +3723,15 @@ bool TestDriver::expect(Session& s, const std::string& spec)
 	}
 	else if (what == "journaltopic" && a.size() >= 2)
 	{
-		// EXPECT:journaltopic:<topic>: the topic open in the journal's Topics index ("none": the index itself)
-		ok = a[1] == "none" ? s.journalTopic.empty() : lower(s.journalTopic) == lower(spaced(a[1]));
+		// EXPECT:journaltopic:<topic>: the topic open in the journal's Topics index ("none": the index itself, "any": some topic)
+		ok = a[1] == "none" ? s.journalTopic.empty() : a[1] == "any" ? !s.journalTopic.empty() : lower(s.journalTopic) == lower(spaced(a[1]));
 		snprintf(got, sizeof(got), "%.80s", s.journalTopic.empty() ? "none" : s.journalTopic.c_str());
+	}
+	else if (what == "journalsearch" && a.size() >= 2)
+	{
+		// EXPECT:journalsearch:<text>: what the journal's search holds ("none": nothing, all shown)
+		ok = a[1] == "none" ? s.journalSearch.empty() : lower(s.journalSearch) == lower(spaced(a[1]));
+		snprintf(got, sizeof(got), "%.80s", s.journalSearch.empty() ? "none" : s.journalSearch.c_str());
 	}
 	else if ((what == "makename" || what == "madename" || what == "madespellname") && a.size() >= 2)
 	{

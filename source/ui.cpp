@@ -766,6 +766,7 @@ int uiLinkTextBox(UiLinkText& t, long revision, float x, float y, float w, float
 		t.revision = revision;
 		t.words.clear();
 		t.scroll = UiScroll();
+		t.sel = -1;
 		std::vector<int> linkAt(text.size(), -1);
 		for (auto& l : links)
 			for (size_t k = l.begin; k < l.end && k < text.size(); k++)
@@ -816,18 +817,59 @@ int uiLinkTextBox(UiLinkText& t, long revision, float x, float y, float w, float
 	if (s_in.touching && s_in.touchX >= x && s_in.touchX < x + w && s_in.touchY >= y && s_in.touchY < y + h)
 		s.scroll -= s_in.dragDY;
 	s.scroll = fmaxf(0.0f, fminf(s.scroll, fmaxf(0.0f, t.height - h)));
+	// The buttons choose a link: it starts on the first one in view, LEFT / RIGHT step through them (the page
+	// scrolls to the one chosen) and A opens it
+	if (keys)
+	{
+		std::vector<int> starts;                       // the first word of each link
+		for (size_t i = 0; i < t.words.size(); i++)
+			if (t.words[i].link >= 0 && !(i > 0 && t.words[i - 1].link == t.words[i].link))
+				starts.push_back((int)i);
+		auto inView = [&](int i) { float wy = t.words[i].y - s.scroll; return wy >= 0.0f && wy + lh <= h; };
+		int cur = -1;
+		for (size_t k = 0; k < starts.size(); k++)
+			if (starts[k] == t.sel)
+				cur = (int)k;
+		if (cur < 0 || !inView(t.sel))
+		{
+			cur = -1;
+			for (size_t k = 0; k < starts.size() && cur < 0; k++)
+				if (inView(starts[k]))
+					cur = (int)k;
+		}
+		int step = ((s_in.down & KEY_RIGHT) ? 1 : 0) - ((s_in.down & KEY_LEFT) ? 1 : 0);
+		if (step != 0 && !starts.empty())
+		{
+			int n = (int)starts.size();
+			cur = cur < 0 ? (step > 0 ? 0 : n - 1) : (cur + step + n) % n;
+			float wy = t.words[starts[cur]].y;
+			if (wy < s.scroll)
+				s.scroll = wy;
+			else if (wy + lh > s.scroll + h)
+				s.scroll = wy + lh - h;
+			s.scroll = fmaxf(0.0f, fminf(s.scroll, fmaxf(0.0f, t.height - h)));
+		}
+		t.sel = cur >= 0 ? starts[cur] : -1;
+	}
 	int hit = -1;
 	C2D_Flush();
 	C3D_SetScissor(GPU_SCISSOR_NORMAL, (u32)(240 - (y + h)), (u32)(320 - (x + w)), (u32)(240 - y), (u32)(320 - x));
-	for (auto& wd : t.words)
+	bool inChosen = false;                             // within the words of the link chosen with the keys
+	for (size_t i = 0; i < t.words.size(); i++)
 	{
+		const UiLinkWord& wd = t.words[i];
+		inChosen = keys && t.sel >= 0 && wd.link >= 0 && ((int)i == t.sel || (inChosen && t.words[i - 1].link == wd.link));
 		float wy = y + wd.y - s.scroll;
 		if (wy + lh < y || wy > y + h)
 			continue;
-		uiText(x + 4 + wd.x, wy, scale, wd.link >= 0 ? col::link : col::text, wd.text);
+		if (inChosen)
+			uiRect(x + 3 + wd.x, wy, wd.w + 2, lh, col::select);
+		uiText(x + 4 + wd.x, wy, scale, inChosen ? col::textOver : wd.link >= 0 ? col::link : col::text, wd.text);
 		if (wd.link >= 0 && wy >= y && uiHit(x + 4 + wd.x, wy, wd.w, lh))
 			hit = wd.link;
 	}
+	if (keys && hit < 0 && (s_in.down & KEY_A) && t.sel >= 0 && t.sel < (int)t.words.size())
+		hit = t.words[t.sel].link;
 	C2D_Flush();
 	C3D_SetScissor(GPU_SCISSOR_DISABLE, 0, 0, 0, 0);
 	return hit;

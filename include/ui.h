@@ -101,7 +101,7 @@ void uiTextBox(UiScroll& s, float x, float y, float w, float h, const std::strin
 // tapped is returned (-1: none). The words are laid out again only when `revision` changes
 struct UiLink { size_t begin, end; int id; };
 struct UiLinkWord { std::string text; float x, y, w; int link; };
-struct UiLinkText { UiScroll scroll; long revision = -1; float height = 0.0f; std::vector<UiLinkWord> words; };
+struct UiLinkText { UiScroll scroll; long revision = -1; float height = 0.0f; std::vector<UiLinkWord> words; int sel = -1; };   // sel: the word the link chosen with the keys starts at
 int uiLinkTextBox(UiLinkText& t, long revision, float x, float y, float w, float h, const std::string& text,
 	const std::vector<UiLink>& links, float scale = 0.5f, bool keys = true);
 // A scrolling page of text with pictures: lines "[[img:<key>]]" draw the picture look(key) gives

@@ -19,10 +19,18 @@ void Session::drawJournal()
 	if (uiButton(4, 24, 100, 18, "Entries", tab == 0)) tab = 0;
 	if (uiButton(108, 24, 100, 18, w.game.gmst("stopics", "Topics"), tab == 1)) tab = 1;
 	// Search (tap: the system keyboard): the topics whose name holds the text, the entries that do
-	if (uiButton(212, 24, 104, 18, journalSearch.empty() ? "Search" : journalSearch, !journalSearch.empty()))
+	// (A belongs to the text's links and the topic index, so neither the tabs nor Search answer it)
+	bool searching = !journalSearch.empty();
+	if (uiButton(212, 24, searching ? 82 : 104, 18, searching ? journalSearch : "Search", searching) && !(in.down & KEY_A))
 	{
 		playSound(-1, "Menu Click");
 		wantText = TEXT_SEARCH;
+	}
+	// one tap on the X empties the search again
+	if (searching && uiButton(298, 24, 18, 18, "X", false))
+	{
+		playSound(-1, "Menu Click");
+		journalSearch.clear();
 	}
 	if (tab != journalTab)
 	{
@@ -108,7 +116,12 @@ void Session::drawJournal()
 	if (journalTab == 1 && !journalTopic.empty())
 		labels.push_back(w.game.gmst("sback", "Back"));
 	labels.push_back(w.game.gmst("sclose", "Close"));
-	int b = buttonRow(labels, focus);
+	// the buttons below are for touch and B: the D-pad and A choose and open the links above
+	int b = -1;
+	float bw = (312.0f - (labels.size() - 1) * 4.0f) / labels.size();
+	for (size_t i = 0; i < labels.size(); i++)
+		if (uiButton(4 + i * (bw + 4), 208, bw, 28, labels[i], false))
+			b = (int)i;
 	if (journalTab == 1 && !journalTopic.empty() && (b == 0 || (in.down & KEY_B)))
 		journalTopic.clear();
 	else if (b == (int)labels.size() - 1 || (in.down & KEY_B))
