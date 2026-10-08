@@ -30,6 +30,16 @@ Mirrors the OpenMW wiki page *Research:Movement*. Rules read from OpenMW's `mwcl
 
 Moving, the take-off goes along the move direction at 0.707 of that, up and forward.
 
+In the air (OpenMW's `CharacterController::updateState` and `MovementSolver`): the take-off's speed along the ground
+is kept until landing (inertia), and the pad adds only `min(1, fJumpMoveBase + fJumpMoveMult x Acrobatics / 100)` of
+the run speed on top. A standing jump has no inertia. Landing, swimming, levitating and doors / travel end it. This is
+what makes the speedrunners' jump (Fortify Speed, Scroll of Icarian Flight, run and jump) cover whole cells.
+
+## Levitation
+
+Levitate is read while it lasts (`Player::levitate`): flying where the view points at `fMinFlySpeed` to
+`fMaxFlySpeed` by Speed + Levitate, up with R / B, down with L, with collision like walking.
+
 ## Fatigue spent moving
 
 Per second: running `fFatigueRunBase + load x fFatigueRunMult`, swimming (running / walking) `fFatigueSwimRunBase /
@@ -55,11 +65,31 @@ steps every 0.42 s walking and 0.65 s swimming (OpenMW takes them from the anima
 5. **NPC arrows and thrown weapons** flew at a fixed 2500 / 1000; now `fProjectileMin/MaxSpeed`,
    `fThrownWeaponMin/MaxSpeed` by the draw, as the player's.
 
+## Findings (2026-10-07, while planning the uber quest tests)
+
+6. **Levitate went through walls.** The effect switched on the free fly mode (`Player::flying`): a fixed 300
+   units/s, no collision, through any wall. Now only `Player::levitate` (the collision-checked path, the
+   `fMinFlySpeed` / `fMaxFlySpeed` speed of finding 1). Test: `bug-levitate-noclip` (the player flew 1210 units
+   backwards through the Balmora guild's entrance wall before; stops after 118 now).
+7. **Jumps had no momentum.** A running jump went straight up at the full jump speed and the pad steered the whole
+   run speed in the air; standing still in the air stopped dead. Now the 45-degree take-off, inertia until landing,
+   and `fJumpMoveBase` / `fJumpMoveMult` air control. Test: `bug-jump-momentum` (29 units covered before, 3222 after).
+   The "falling for over 3 s" monitor now leaves a jump's flight alone (an Icarian Flight jump is long).
+8. **Levitating in the water** stayed at the surface: swimming won over levitation. OpenMW's flying actors fly in
+   and out of the water. Now levitation wins (`Player::swimming` cleared while levitating). Test:
+   `bug-levitate-water`.
+
 Test: `openmw-spec-movement` (generated): run speed from Speed and Athletics; jump speed from Acrobatics, Jump, load,
 running and fatigue (`Session::runSpeedFor`, `jumpSpeedFor`). EXPECT kinds `npcwalk:<id>` / `npcrun:<id>` exist for
 hand-written checks.
 
 ## Open
+
+- Slow Fall: OpenMW scales the fall and the inertia by `1 - 0.005 x magnitude` each physics step; ours quarters
+  gravity and caps the fall at 200 units/s, and leaves the inertia alone.
+- Slopes: OpenMW keeps the inertia while sliding on a steep slope; ours ends it on any ground.
+- Past the edge of the map: OpenMW has empty exterior cells with water everywhere; ours has no cell there (no water,
+  no floor). An Icarian jump west from Seyda Neen landed 115000 units out, in "Wilderness".
 
 - The player moves by the Circle Pad's tilt (full tilt = run); OpenMW has a walk / run toggle. The swim speed uses the
   run speed.

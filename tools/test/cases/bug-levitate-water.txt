@@ -1,0 +1,11 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:1
+0.3 0 0 0 0 TP:15844:-71480:-95:0
+3 0 0 0
+0.1 0 0 0 0 EXPECT:swimming:eq:1
+0.1 0 0 0 0 SNAP:playerz
+0.5 0 0 0 0 EQUIP:p_levitation_e
+1 0 0 0
+3 0 0 0 0 R
+0.1 0 0 0 0 EXPECT:playerz:gt:@300

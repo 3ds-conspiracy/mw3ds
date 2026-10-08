@@ -272,8 +272,8 @@ static void applyFortify(World& w, const ActiveEffect& a, float sign)
 	}
 	default: break;          // attack, shield, jump, levitate, swift swim are read while active
 	}
-	if (a.effect == EFF_LEVITATE)
-		w.player.flying = sign > 0;
+	// (Levitate is read while active too: Player::levitate, with collision. It used to switch on the free fly mode,
+	// which went through walls at a fixed speed.)
 }
 
 float World::effectTotal(int effect) const
@@ -505,8 +505,46 @@ bool Session::instantEffect(int effect, float magnitude)
 		return true;
 	case EFF_DIVINE_INTERVENTION: case EFF_ALMSIVI_INTERVENTION:
 	{
-		// The nearest Imperial shrine / Tribunal temple marker (from inside: from the last spot outdoors)
-		const float* from = w.cells[w.current].interior ? w.lastOutside : w.player.feet;
+		// The nearest Imperial shrine / Tribunal temple marker. From inside: the exterior spot of the nearest door
+		// that leads out, counting interiors door by door (OpenMW's getClosestMarker); the last spot outdoors when
+		// no way out is found
+		const float* from = w.player.feet;
+		if (w.cells[w.current].interior)
+		{
+			from = w.lastOutside;
+			std::vector<int> seen, now = { w.current };
+			bool found = false;
+			while (!found && !now.empty())
+			{
+				std::vector<int> next;
+				for (int c : now)
+					seen.push_back(c);
+				// the doors of cells not in memory are read from the data (OpenMW follows the cells' records)
+				std::vector<int> idx;
+				for (int c : now)
+					if (w.ensureRefs(c))
+						for (int i = w.cells[c].refBase; i < w.cells[c].refBase + w.cells[c].refCount; i++)
+							idx.push_back(i);
+				for (size_t k = 0; k < idx.size() && !found; k++)
+				{
+					const Ref& d = w.refs[idx[k]];
+					if (d.type != "DOOR" || !d.hasDest || d.destUnconverted)
+						continue;
+					if (d.destHasGrid)
+					{
+						from = d.destPos;
+						found = true;
+					}
+					else
+					{
+						int c = w.cellIndex(d.destCell);
+						if (c >= 0 && std::find(seen.begin(), seen.end(), c) == seen.end() && std::find(next.begin(), next.end(), c) == next.end())
+							next.push_back(c);
+					}
+				}
+				now = next;
+			}
+		}
 		const auto& list = effect == EFF_DIVINE_INTERVENTION ? w.game.divineMarkers : w.game.templeMarkers;
 		int best = -1, bestCell = -1;
 		float bestD = 1e30f;
@@ -657,6 +695,26 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 		break;
 	// Minds: calm stops a fight, frenzy starts one, demoralize makes them flee, rally stops that. The Humanoid
 	// ones (odd ids) touch only NPCs, the Creature ones only creatures (OpenMW's modifyAiSetting)
+	// Cure Common / Blight Disease takes every disease of that type off them (OpenMW's removeSpells on the actor's
+	// spell list): the record's own go on noSpells so GetCommonDisease / GetBlightDisease read 0
+	case EFF_CURE_COMMON_DISEASE: case EFF_CURE_BLIGHT_DISEASE:
+	{
+		int type = e.effect == EFF_CURE_COMMON_DISEASE ? 3 : 2;
+		std::vector<std::string> ids = r.spells;
+		for (const std::vector<std::string>* list : { &def.spells, &def.diseases })
+			for (auto& id : *list)
+				ids.push_back(lower(id));
+		for (auto& id : ids)
+		{
+			auto sp = w.game.spells.find(id);
+			if (sp == w.game.spells.end() || sp->second.type != type)
+				continue;
+			r.spells.erase(std::remove(r.spells.begin(), r.spells.end(), id), r.spells.end());
+			if (std::find(r.noSpells.begin(), r.noSpells.end(), id) == r.noSpells.end())
+				r.noSpells.push_back(id);
+		}
+		return;
+	}
 	case EFF_CALM_HUMANOID: case EFF_CALM_CREATURE:
 		if ((e.effect & 1) == (def.creature ? 1 : 0))
 			return;
@@ -1131,6 +1189,8 @@ void Session::finishCast()
 			"Spell Failure Destruction", "Spell Failure Illusion", "Spell Failure Mysticism", "Spell Failure Restoration" };
 		playSound(-1, failure[school >= 0 && school < 6 ? school : 2]);
 		notify("You failed casting the spell.");
+		if (testLegit)
+			monitorOnce(("legitcastfail:" + sp.id).c_str(), "%s failed its cast roll (chance %d%%) in a LEGIT run", sp.id.c_str(), (int)castChance(sp));
 		return;
 	}
 	if (sp.type != 5)

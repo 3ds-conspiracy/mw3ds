@@ -461,6 +461,7 @@ bool World::saveGame(const char* path) const
 	cJSON_AddItemToObject(st, "attr_ups", cJSON_CreateIntArray(stats.attrSkillUps, 8));
 	cJSON_AddItemToObject(st, "attr_damage", floats(stats.attrDamage, 8));
 	cJSON_AddItemToObject(st, "skill_damage", floats(stats.skillDamage, 27));
+	cJSON_AddItemToObject(root, "last_outside", floats(lastOutside, 3));    // (jail / Intervention from inside)
 	if (markCell >= 0)
 	{
 		cJSON* mark = cJSON_AddObjectToObject(root, "mark");
@@ -834,6 +835,8 @@ bool World::applySave(const char* path)
 	memset(stats.skillDamage, 0, sizeof(stats.skillDamage));
 	readFloats(cJSON_GetObjectItem(st, "attr_damage"), stats.attrDamage, 8);
 	readFloats(cJSON_GetObjectItem(st, "skill_damage"), stats.skillDamage, 27);
+	memset(lastOutside, 0, sizeof(lastOutside));
+	readFloats(cJSON_GetObjectItem(root, "last_outside"), lastOutside, 3);
 	markCell = -1;
 	if (const cJSON* mark = cJSON_GetObjectItem(root, "mark"))
 	{

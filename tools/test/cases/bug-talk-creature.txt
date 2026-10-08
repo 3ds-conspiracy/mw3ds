@@ -1,0 +1,10 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Caldera,_Ghorak_Manor
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:scamp_creeper
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B

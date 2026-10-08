@@ -1,0 +1,12 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SPELL:rilm's_gift
+0.3 0 0 0 0 JOURNAL:IL_GnisisBlight:10
+0.3 0 0 0 0 GOTO:Gnisis,_Lower_Eggmine
+6 0 0 0
+90 0 0 0 0 WALKTO:@1978,-3269,344
+30 0 0 0 0 WALKTO:@1920,-3240,344
+0.3 0 0 0 0 CASTAT:kwama%queen_gnisis:rilm's_gift
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_GnisisBlight:ge:50

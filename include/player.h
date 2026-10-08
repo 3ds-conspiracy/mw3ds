@@ -41,6 +41,9 @@ struct Player
 	float swimFactor = 0.6f;  // of the run speed, in water
 	float sneakFactor = 0.4f; // of the run speed, sneaking
 	float jumpSpeed = 330.0f; // take-off speed
+	float airControl = 1.0f;  // in the air, the share of the run speed the pad still steers (fJumpMoveBase / Mult)
+	float inertia[2] = { 0.0f, 0.0f };   // a running jump's take-off along the ground, kept until landing (OpenMW)
+	bool jumpFlight = false;  // in the air since a jump (not a fall off a ledge)
 	bool jumpedNow = false;   // set by the jump this frame (fatigue)
 	float swimBoost = 0.0f;   // Swift Swim's magnitude (percent faster in the water)
 	bool fits = false;        // the body had room where it stood at the end of the last update

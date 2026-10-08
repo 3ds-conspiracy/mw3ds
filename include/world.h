@@ -152,6 +152,11 @@ struct Ref
 	int evadeDir = 6;
 	float evadeAt[2] = {};          // where it last got stuck, and how many times running it has there
 	int evadeTries = 0;
+	// A follower held up on its way to the one it follows (npcPackage): it keeps to that one's footsteps until
+	// trailUntil (World::time); trailSeq is the footstep it walks to, trailTimer the time until it looks again
+	float trailUntil = 0.0f, trailTimer = 0.0f, trailBlind = 0.0f;
+	unsigned trailSeq = 0;
+	float trailGoal[3] = {};
 	float gridUntil = -1.0f;        // World::time until which moves follow the path grid (a ledge cut the straight way)
 	float lastPos[2] = {};
 	bool talkedToPC = false;

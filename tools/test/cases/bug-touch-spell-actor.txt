@@ -1,0 +1,14 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SPELL:cure_common_disease_other
+0.3 0 0 0 0 GOTO:Tel_Mora
+6 0 0 0
+120 0 0 0 0 ACTIVATE:lette
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CASTAT:lette:cure_common_disease_other
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TT_CuringTouch:ge:50

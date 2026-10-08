@@ -150,10 +150,7 @@ void Session::drawDialogue()
 	if (travels && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("stravel", "Travel"))
 		&& !serviceRefused())
 	{
-		barterRef = dlg.ref;
-		list2 = UiList();
-		screen = SCR_TRAVEL;
-		playSound(-1, "Menu Click");
+		openTravel();
 		return;
 	}
 	if (travels)
@@ -866,6 +863,46 @@ int Session::travelPrice(int ref, const TravelDest& d)
 	return travelPriceFor(ref, sqrtf(dx * dx + dy * dy + dz * dz), followers, w.cells[w.current].interior);
 }
 
+// The dialogue's Travel button: the speaker's destinations
+void Session::openTravel()
+{
+	barterRef = dlg.ref;
+	list2 = UiList();
+	screen = SCR_TRAVEL;
+	playSound(-1, "Menu Click");
+}
+
+// The travel list's Go on destination `sel`: pay, and leave next frame (finishTravel). False if refused.
+bool Session::travelGo(int sel)
+{
+	const ActorDef& def = w.game.actors[w.refs[barterRef].actor];
+	const TravelDest& d = def.travel[sel];
+	int price = travelPrice(barterRef, d);
+	int dest = d.hasGrid ? w.gridCell(d.grid[0], d.grid[1]) : w.cellIndex(d.cell);
+	if (w.itemCount("gold_001") < price)
+	{
+		notify("You don't have enough gold.");
+		return false;
+	}
+	if (dest < 0)
+	{
+		notify(d.cell + " is not converted yet.");
+		return false;
+	}
+	w.removeItem("gold_001", price);
+	w.refs[barterRef].gold += price;
+	// OpenMW: whole hours of the flat distance from the player, and only from outdoors
+	float dx = d.pos[0] - w.player.feet[0], dy = d.pos[1] - w.player.feet[1];
+	if (!w.cells[w.current].interior)
+		w.gameHour += (float)(int)(sqrtf(dx * dx + dy * dy) / w.game.gmstf("ftraveltimemult", 16000.0f));
+	travelCell = dest;
+	memcpy(travelPos, d.pos, sizeof(travelPos));
+	travelYaw = d.rot[2];
+	logf("travel: %s to %s for %d gold", def.name.c_str(), d.cell.c_str(), price);
+	closeScreen();
+	return true;
+}
+
 void Session::drawTravel()
 {
 	const Ref& r = w.refs[barterRef];
@@ -879,29 +916,7 @@ void Session::drawTravel()
 	int sel = list2.selected < (int)def.travel.size() ? list2.selected : -1;
 	int b = buttonRow({ "Go", w.game.gmst("sdone", "Done") }, focus);
 	if (b == 0 && sel >= 0)
-	{
-		const TravelDest& d = def.travel[sel];
-		int price = travelPrice(barterRef, d);
-		int dest = d.hasGrid ? w.gridCell(d.grid[0], d.grid[1]) : w.cellIndex(d.cell);
-		if (gold < price)
-			notify("You don't have enough gold.");
-		else if (dest < 0)
-			notify(d.cell + " is not converted yet.");
-		else
-		{
-			w.removeItem("gold_001", price);
-			w.refs[barterRef].gold += price;
-			// OpenMW: whole hours of the flat distance from the player, and only from outdoors
-			float dx = d.pos[0] - w.player.feet[0], dy = d.pos[1] - w.player.feet[1];
-			if (!w.cells[w.current].interior)
-				w.gameHour += (float)(int)(sqrtf(dx * dx + dy * dy) / w.game.gmstf("ftraveltimemult", 16000.0f));
-			travelCell = dest;
-			memcpy(travelPos, d.pos, sizeof(travelPos));
-			travelYaw = d.rot[2];
-			logf("travel: %s to %s for %d gold", def.name.c_str(), d.cell.c_str(), price);
-			closeScreen();
-		}
-	}
+		travelGo(sel);
 	else if (b == 1 || (uiIn().down & KEY_B))
 	{
 		barterRef = -1;

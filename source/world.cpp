@@ -2900,8 +2900,10 @@ static bool isActivatable(const Ref& r)
 		return false;                      // nameless activators are script triggers ("chargen stuff room")
 	if (t == "NPC_" || t == "DOOR" || t == "CONT" || t == "ACTI")
 		return true;
+	// a creature, alive or dead, is something to point at (OpenMW's focus): the body to search, or one with words of its own
+	// to talk to (Krazzt at the Puzzle Canal, Creeper); one with nothing to say does nothing (Session::activate)
 	if (t == "CREA")
-		return r.dead;                     // search the body
+		return true;
 	if (t == "LIGH")
 		return (r.obj->flags & 2) != 0;    // only carryable lights
 	return isItemType(t);
@@ -3047,6 +3049,32 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 			if (!crosses)
 				best = item;
 		}
+	}
+	// An activator is the same (the darts lying on the bed in the Llethri guard quarters): its box covers what lies on it,
+	// where OpenMW picks by the mesh's collision shape. An item whose box lies within the activator's and is on the ray
+	// is what the crosshair means
+	if (best >= 0 && w.refs[best].type == "ACTI")
+	{
+		const Ref& box = w.refs[best];
+		int item = -1;
+		float itemT = reach;
+		for (int i : w.loadedPickables)
+		{
+			const Ref& r = w.refs[i];
+			if (r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
+				continue;
+			bool inside = true;
+			for (int k = 0; k < 3 && inside; k++)
+				inside = r.boxMax[k] >= box.boxMin[k] && r.boxMin[k] <= box.boxMax[k];
+			float t = inside ? rayBoxEntry(r, eye, dir, itemT) : -1.0f;
+			if (t >= 0.0f && t < itemT)
+			{
+				itemT = t;
+				item = i;
+			}
+		}
+		if (item >= 0)
+			best = item;
 	}
 	return best;
 }

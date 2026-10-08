@@ -84,7 +84,7 @@ void Session::fireProjectile(int owner, const float from[3], const float dir[3],
 void Session::wearLauncher(const Projectile& p)
 {
 	InventoryItem* bow = playerWeaponItem();
-	if (p.owner < 0 && bow && !testGod && p.weapon != p.item && lower(bow->id) == p.weapon)
+	if (p.owner < 0 && bow && !(testGod && testGodBlows) && p.weapon != p.item && lower(bow->id) == p.weapon)
 		wearItem(bow, 0.0f);
 }
 

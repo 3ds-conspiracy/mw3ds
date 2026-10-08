@@ -140,6 +140,8 @@ struct Session : ScriptHost
 	bool ended = false;
 	bool autotest = false;
 	bool testGod = false;
+	bool testGodBlows = true;     // GOD:2 clears it: the player still can't die, but blows roll, hurt and wear as usual
+	bool testLegit = false;       // LEGIT: from here a test may do only what a player can (uber quest tests)
 	bool testNoMovies = false;    // tests: play as if the data had no converted movies
 	int persuadeRoll = -1;        // tests: the die roll a persuasion or an enchanting uses (-1: random)
 	// Monitors (logged "monitor: ...", the harness fails a run on them): someone playing a walk / run cycle
@@ -648,6 +650,8 @@ struct Session : ScriptHost
 	int testFindRef(const std::string& id);         // as written, else with '_' read as spaces (the one PLACE moved, even dead)
 	int testPlaced = -1;                            // the actor PLACE last put in front of the player
 	int travelPrice(int ref, const TravelDest& d);
+	void openTravel();                              // the dialogue's Travel button (barterRef = the speaker)
+	bool travelGo(int sel);                         // the travel list's Go: pay and leave (false: refused)
 	// Objects kept in memory: beyond this many, the cells used longest ago leave (World::evictCells)
 	static const int kRefBudget = 20000;
 	float evictTimer = 0.0f;

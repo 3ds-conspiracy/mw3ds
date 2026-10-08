@@ -545,6 +545,7 @@ void Session::finishTravel()
 {
 	int dest = travelCell;
 	travelCell = -1;
+	w.player.inertia[0] = w.player.inertia[1] = 0.0f;     // (a jump's take-off doesn't come along: doors, travel)
 	// Voices of the cell we leave stop with it
 	for (auto& r : w.refs)
 		if (r.voiceChannel >= 0)
@@ -875,6 +876,8 @@ void Session::update(const PlayerInput& inRaw, float dt)
 			+ w.game.gmstf("fswimrunbase", 0.5f));
 		w.player.sneakFactor = walk * w.game.gmstf("fsneakspeedmultiplier", 0.75f) / fmaxf(1.0f, run);
 		bool running = sqrtf(in.moveX * in.moveX + in.moveY * in.moveY) > 0.75f;      // (full tilt)
+		// in the air the pad steers fJumpMoveBase + fJumpMoveMult x Acrobatics / 100 of the run speed, at most all of it
+		w.player.airControl = fminf(1.0f, w.game.gmstf("fjumpmovebase", 0.5f) + w.game.gmstf("fjumpmovemult", 0.5f) * st.skills[20] / 100.0f);
 		w.player.jumpSpeed = jumpSpeedFor(st.skills[20], w.effectTotal(9), load, running, fatigueTermOf(st.fatigue, st.fatigueMax));
 	}
 	if (w.current >= 0 && !w.cells[w.current].interior)
@@ -1385,6 +1388,7 @@ void Session::useDoor(int ref)
 			w.player.vz = 0.0f;
 			w.player.fallTop = w.player.feet[2];   // a door isn't a fall
 			w.player.landedFall = 0.0f;
+			w.player.inertia[0] = w.player.inertia[1] = 0.0f;
 			fade = 1.0f;
 		}
 		else
@@ -2353,7 +2357,9 @@ void Session::monitorActors(float dt)
 			if (collisionFloor(l->cell.collision, p.feet[0], p.feet[1], p.feet[2] + 30.0f, p.feet[2] - 100000.0f, &z) && z > floorZ)
 				floorZ = z;
 		}
-		if ((floorZ < -1e8f || playerAirT >= 3.0f) && !toldFall)
+		// (a jump may hang in the air much longer, over open sea too: Scroll of Icarian Flight)
+		bool flight = p.jumpFlight && p.feet[2] > 0.0f;
+		if (((floorZ < -1e8f && !flight) || (playerAirT >= 3.0f && !p.jumpFlight)) && !toldFall)
 		{
 			toldFall = true;
 			logf("monitor: the player is %s at %.0f %.0f %.0f in %s (%.1f s in the air, vz %.0f)",

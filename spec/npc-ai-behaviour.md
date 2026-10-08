@@ -59,6 +59,12 @@ second. A fleeing actor runs until it is `fFleeDistance` away out of sight. Demo
   high), keeping to the side it took last; stuck again in the same place, it starts farther round and keeps to the
   way longer. Only with no opening does it use OpenMW's turn. `issue-20` (Drerel Indaren following the
   player down from the rock pillars west of Ald'ruhn) tests it.
+- **Footsteps (follow, outdoors):** the player's position is noted every 120 units walked (48 kept, cleared by a
+  jump over 700 units). A follower with no path grid route that has lost sight of the player for a second, or made no
+  headway for a second, walks those footsteps for up to 10 s: the one nearest it first, then on in order, looking
+  ahead to the next two it can see once it has reached one. Held up outdoors this way it may step down a ledge of up
+  to 250 units (OpenMW's actors fall off a ledge they walk to; ours otherwise refuse a step down over 48). No
+  OpenMW source rule: a stand-in for its navigation mesh. `bug-follow-rock-walk` tests it.
 
 ## Findings (2026-09-29)
 

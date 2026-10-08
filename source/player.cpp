@@ -182,13 +182,21 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 	bool startOnGround = p.onGround;
 
 	// Horizontal: move in sub-steps no longer than half the radius, resolving each
-	bool levitating = p.levitate > 0.0f && !p.swimming;
+	// (levitating wins over swimming: OpenMW's flying actors fly out of the water too)
+	bool levitating = p.levitate > 0.0f;
 	float levSpeed = p.flySpeed;
 	float speed = levitating ? levSpeed * fmaxf(0.3f, cosf(p.pitch))
 		: p.runSpeed * (p.swimming ? p.swimFactor * (1.0f + p.swimBoost / 100.0f) * fmaxf(0.3f, cosf(p.pitch))
 			: p.sneaking ? p.sneakFactor : 1.0f);
 	speed *= p.loadSpeed;
 	float dx = dirX * speed * dt, dy = dirY * speed * dt;
+	// In the air after a jump (OpenMW's CharacterController and MovementSolver): the pad steers only airControl of
+	// the run speed, on top of the take-off's own speed along the ground, which lasts until landing
+	if (!p.onGround && !levitating && !p.swimming)
+	{
+		dx = (dirX * speed * p.airControl + p.inertia[0]) * dt;
+		dy = (dirY * speed * p.airControl + p.inertia[1]) * dt;
+	}
 	int steps = (int)ceilf(fmaxf(fabsf(dx), fabsf(dy)) / (kRadius * 0.5f));
 	if (steps < 1)
 		steps = 1;
@@ -214,6 +222,9 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 		p.onGround = false;
 		p.fallTop = p.feet[2];
 		p.landedFall = 0.0f;
+		p.inertia[0] = p.inertia[1] = 0.0f;
+		p.jumpFlight = false;
+		p.swimming = false;
 	}
 	// In the water: swim where the view points (down when looking down, B up), no gravity; the surface
 	// (the head just out) and the bottom hold the body; a floor above swimming depth is a shore
@@ -232,15 +243,23 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 		p.fallTop = p.feet[2];
 		p.landedFall = 0.0f;
 		p.swimming = !(bottom && floorZ > surface + 1.0f);
+		p.inertia[0] = p.inertia[1] = 0.0f;
+		p.jumpFlight = false;
 	}
 	else
 	{
 		// Vertical: gravity, landing, stepping up ledges and down stairs
 		if (in.jump && p.onGround)
 		{
-			p.vz = p.jumpSpeed;
+			// standing: straight up at the jump speed; moving: along the move at 45 degrees, 0.707 of it each way
+			// (OpenMW's CharacterController::updateState)
+			float len = sqrtf(dirX * dirX + dirY * dirY);
+			p.vz = len > 0.01f ? p.jumpSpeed * 0.707f : p.jumpSpeed;
+			p.inertia[0] = len > 0.01f ? dirX / len * p.jumpSpeed * 0.707f : 0.0f;
+			p.inertia[1] = len > 0.01f ? dirY / len * p.jumpSpeed * 0.707f : 0.0f;
 			p.onGround = false;
 			p.jumpedNow = true;
+			p.jumpFlight = true;
 		}
 		p.vz = p.slowFall ? fmaxf(p.vz - kGravity * 0.25f * dt, -200.0f) : fmaxf(p.vz - kGravity * dt, -3000.0f);
 		float newZ = p.feet[2] + p.vz * dt;
@@ -272,6 +291,12 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 		{
 			p.feet[2] = newZ;
 			p.onGround = false;
+		}
+		// Landed (or in the water below): the take-off's speed is spent
+		if (p.onGround)
+		{
+			p.inertia[0] = p.inertia[1] = 0.0f;
+			p.jumpFlight = false;
 		}
 		// How high a fall starts (Slow Fall and flying don't count)
 		if (p.onGround || p.slowFall || p.flying)

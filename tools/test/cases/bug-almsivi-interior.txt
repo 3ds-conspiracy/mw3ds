@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:2
+0.3 0 0 0 0 GOTO:Ghostgate,_Tower_of_Dawn_Lower_Level
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+4 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn

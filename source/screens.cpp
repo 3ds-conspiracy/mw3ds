@@ -362,7 +362,9 @@ void Session::drawHud()
 	if (target >= 0)
 	{
 		const Ref& t = w.refs[target];
-		std::string verb = t.dead ? "Search " : t.type == "NPC_" ? "Talk to " : t.type == "DOOR" ? "Open " : "Use ";
+		// (a creature alive: "Talk to" one with words of its own, else only its name, as OpenMW shows it)
+		bool talks = t.type == "CREA" && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));
+		std::string verb = t.dead ? "Search " : t.type == "NPC_" || talks ? "Talk to " : t.type == "CREA" ? "" : t.type == "DOOR" ? "Open " : "Use ";
 		// short of the date under the map (from x 190): a long name ("Ajira's Mushroom Report") ran into it
 		std::string use = "A: " + verb + targetLabel(target);
 		while (use.size() > 3 && uiTextWidth(use, 0.45f) > 180)

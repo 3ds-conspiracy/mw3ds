@@ -1,0 +1,14 @@
+# Arkngthand's front is a vault door (arkn_door00/01) that the crank at the foot of the stairs turns open for 14 s;
+# until then the doors behind it (door_dwrv_double00/01, 250 units in) are out of reach. A player turns the crank first.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Arkngthand,_Hall_of_Centrifuge
+4 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:in_dwrv_crank_arkn
+6 0 0 0
+60 0 0 0 0 DOORTO:Arkngthand,_Hall_of_Centrifuge
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Arkngthand,_Hall_of_Centrifuge

@@ -330,3 +330,24 @@ D21 = F18, D23 = F19, J5 = F25, J7 = F20.
 | C28 | NPC archer aim | extra aim error before the roll | low | skipped (low) |
 | C29 | weaponless bipedal creatures | attack list, not hand-to-hand | low | skipped (low) |
 | C30 | GBAC mode | ours only (optional) | low | differs |
+
+## Movement and physics (`player.cpp`, `magic.cpp`; OpenMW `mwphysics/movementsolver.cpp`, `mwmechanics/character.cpp`)
+
+| # | Rule | Difference | Conf | Status |
+|---|---|---|---|---|
+| P1 | Levitate | switched on the free fly mode: fixed 300 units/s, no collision (through walls) | high | fixed (`bug-levitate-noclip`) |
+| P2 | Jump | moving jumps went straight up at full speed; no 45-degree take-off, no inertia in the air | high | fixed (`bug-jump-momentum`) |
+| P3 | Air control | the pad steered the whole run speed in the air; OpenMW `fJumpMoveBase + fJumpMoveMult x Acrobatics / 100` | high | fixed (`bug-jump-momentum`) |
+| P4 | Levitate in water | swimming won: a levitating player couldn't rise out of the water | high | fixed (`bug-levitate-water`) |
+| P5 | Slow Fall | OpenMW scales fall and inertia by 1 - 0.005 x magnitude per step; ours quarters gravity, caps at 200 | medium | unverified |
+
+| B1 | Intervention from an interior | used the last spot outdoors, which saves dropped: after LOAD inside, the wrong town. Now the exterior spot of the nearest way out is found door by door (OpenMW getClosestMarker), and the last spot outdoors is saved | high | fixed (`bug-intervention-load`) |
+| B1b | Intervention from a chain of interiors | the door walk saw only cells whose objects were in memory, so two interiors deep it fell back to the last spot outdoors (wrong town). Each cell's doors are now read from the data when needed | high | fixed (`bug-almsivi-interior`) |
+| B2 | Cure Common / Blight Disease on an actor | had no effect on NPCs / creatures (the Gnisis kwama queen stayed blighted); now every disease of that type leaves its spell list | high | fixed (`bug-cure-actor-disease`) |
+| B3 | Items lying on an activator | the crosshair stopped at the activator's box (darts on a bed, Llethri Guard Quarters); OpenMW picks by collision shapes. Now an item within the activator's box on the ray wins, as for containers | medium | fixed (`bug-pick-on-activator`) |
+| B4 | Locked door message; Open Lock vs lock level | OpenMW's locked door gives only the LockedDoor sound (empty FailedAction message); Open succeeds when magnitude >= lock level and Ondusi's Open Door is fixed 50, so a lock-60 door stays shut. Engine already matches: not a bug | low | matches OpenMW |
+
+| B5 | Followers outdoors stall behind rocks and ledges | walked straight at the player and stopped for good at a rock or a ledge (Itermerel near -2458,-31767, Madura Seran near -86702,118217, Tarvyn Faren near 17176,-67410); OpenMW steers with a navigation mesh. Now a held-up follower walks the player's footsteps and may step down a ledge | high | fixed (`bug-follow-rock-walk`) |
+| C1 | Ashlander yurt doors (Mila-Nipal, Manat's Yurt; Bensiberib) "inside the yurt's collision" | the door mesh sits about 330 units from the door reference's own position (the model is offset inside the tent); DOORTO walks at the reference position and climbs the tent. Standing at the door mesh the crosshair finds it and the door opens. Engine collision and picking are right; the driver must aim at the door's box, not its origin | medium | open (driver: testdrive.cpp DOORTO; case `bug-yurt-doorto` fails until then) |
+| C2 | Arkngthand's outer doors can't be targeted | the two statics arkn_door00 / arkn_door01 are a vault door that the crank `in_dwrv_crank_arkn` (script Arkn_doors) swings open for 14 s; the activator doors lie 250 units behind it. Engine matches the game: turn the crank, then the doors can be reached | low | matches OpenMW (`bug-arkngthand-crank`) |
+| C3 | Telvayn Ancestral Tomb exit spot "covered by a rock" | walking from the exit spot to the door works (the spot lies on the entrance mesh's base, terrain 1365). Only a levitation landing on the entrance's roof gets stuck, as a player's would | low | not an engine bug |

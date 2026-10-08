@@ -1,0 +1,15 @@
+# A follower outdoors keeps to the player's footsteps when a rock hides the player (uber bugs 40 / 67): Itermerel
+# stood by terrain_rocks_ai_02 (-2333,-31869) and stalled there for good when the player walked round it
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 TP:-2250:-31500:700:180
+5 0 0 0
+0.3 0 0 0 0 PLACE:guar:200
+0.3 0 0 0 0 FOLLOW:guar
+0.3 0 0 0 0 LEGIT
+2 0 0 0
+60 0 0 0 0 WALKTO:@-2700,-31500,700
+60 0 0 0 0 WALKTO:@-3000,-31800,700
+20 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:guar:lt:400

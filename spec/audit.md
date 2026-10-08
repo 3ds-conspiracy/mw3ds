@@ -50,7 +50,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `rest.cpp` | skill gain, level-up | `npcstats.cpp` | checked (`stats-and-levelling.md`) |
 | `rest.cpp` | skill books | `mwworld/actionread.cpp` | unchecked |
 | `rest.cpp` | resting: who may rest, interruptions, regeneration per hour | `mwgui/waitdialog.cpp`, `mechanicsmanagerimp.cpp rest`, `mwmechanics/actors.cpp` | partial (regeneration numbers in `stats-and-levelling.md`) |
-| `player.cpp` `collision.cpp` | walking, steps, slopes, swimming, falling | `mwphysics/movementsolver.cpp`, `physicssystem.cpp` | partial (speeds in `movement.md`) |
+| `player.cpp` `collision.cpp` | walking, steps, slopes, swimming, falling, jumps, levitation | `mwphysics/movementsolver.cpp`, `physicssystem.cpp`, `mwmechanics/character.cpp` | partial (speeds, jump momentum, levitation in `movement.md`; slopes and Slow Fall open) |
 | `pathfind.cpp` | NPC routes, path grids | `mwmechanics/pathfinding.cpp`, `pathgrid.cpp`, `aipackage.cpp` | unchecked |
 | `renderer.cpp` | enchanted items' shimmer (held, NPCs' weapons, lying about, dropped, in flight) | `components/sceneutil` `addEnchantedGlow`, `projectilemanager.cpp` | differs: the frames follow the item's own texture coordinates (OpenMW: the view), 20 a second; checked by eye (`issue-17` shots) |
 | `combat.cpp` | getting unstuck (`npcMoveTo`) | `mwmechanics/obstacle.cpp` | differs: OpenMW's evasion order kept, an opening looked for first (no navigation mesh here; `npc-ai-behaviour.md`, `issue-20`) |

@@ -1,0 +1,9 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Llethri_Guard_Quarters
+6 0 0 0
+0.3 0 0 0 0 ACTIVE:40:300
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 PICKUP:dart_uniq_judgement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:dart_uniq_judgement:ge:1

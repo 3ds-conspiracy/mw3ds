@@ -1,0 +1,17 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:2
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+4 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+0.3 0 0 0 0 SAVE:zz-almsivi
+1 0 0 0
+0.3 0 0 0 0 LOAD:zz-almsivi
+4 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis

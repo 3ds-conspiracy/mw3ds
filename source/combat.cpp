@@ -754,6 +754,16 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 			r.path.clear();
 		else if (!w.findPath(r.pos, target, r.path))
 			r.path.clear();
+		else
+		{
+			// a grid route that ends far from the target (the wilds have no grid: the nearest town's points were
+			// what it found) leads away: straight then, going round what's in the way as below. Itermerel turned
+			// back into Balmora whenever a hill hid the player he followed
+			const float* end = w.pathPoints[r.path.back()].pos;
+			float ex = end[0] - target[0], ey = end[1] - target[1];
+			if (ex * ex + ey * ey > 600.0f * 600.0f)
+				r.path.clear();
+		}
 	}
 	float goal[3] = { target[0], target[1], target[2] };
 	while (!r.path.empty())
@@ -1186,8 +1196,13 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	fz = fmaxf(fz, swimZ);
 	// A step goes down stairs and slopes, not over an edge: dropping more than a stair's height in one
 	// step (the prison ship's guard walked into the stairwell opening and ended up inside the stairs)
-	if (fz < r.pos[2] - 48.0f && fz > swimZ + 0.5f)
+	// (a follower held up outdoors, going where the player went, steps down a ledge as the player did: OpenMW's
+	// actors fall off one where they walk)
+	float maxDrop = r.trailUntil > w.time && !w.cells[w.placeOf(ri)].interior ? 250.0f : 48.0f;
+	if (fz < r.pos[2] - maxDrop && fz > swimZ + 0.5f)
+	{
 		return false;
+	}
 	if (Actor* a = w.actorOf(ri))
 		a->swimming = fz <= swimZ + 0.5f;
 	float moved[3] = { body[0] - r.pos[0], body[1] - r.pos[1], fz - r.pos[2] };
@@ -1568,6 +1583,119 @@ static void aiSettle(Ref& r)
 	r.wandering = false;
 }
 
+// The player's recent footsteps: a point every 120 units walked, numbered as they come. A follower that is held up
+// (the player out of sight behind a rock, or a ledge in the straight way) goes along them, the way the player went
+// (OpenMW steers with a navigation mesh; the wilds have none here)
+static const int kTrailMax = 48;
+static float sTrail[kTrailMax][3];
+static unsigned sTrailNum[kTrailMax];
+static int sTrailCount = 0, sTrailHead = 0;      // points kept, and the slot of the next one
+static unsigned sTrailNext = 1;
+static float sTrailStamp = -1.0f;
+
+static int trailSlot(int back)                   // 0: the newest
+{
+	return (sTrailHead - 1 - back + 2 * kTrailMax) % kTrailMax;
+}
+
+static void trailRecord(const World& w)
+{
+	if (w.time == sTrailStamp)
+		return;
+	sTrailStamp = w.time;
+	const float* p = w.player.feet;
+	if (sTrailCount > 0)
+	{
+		const float* last = sTrail[trailSlot(0)];
+		float dx = p[0] - last[0], dy = p[1] - last[1], d2 = dx * dx + dy * dy;
+		if (d2 < 120.0f * 120.0f)
+			return;
+		if (d2 > 700.0f * 700.0f)      // a jump (door, teleport): not a way anyone can follow
+			sTrailCount = 0;
+	}
+	memcpy(sTrail[sTrailHead], p, sizeof(float) * 3);
+	sTrailNum[sTrailHead] = sTrailNext++;
+	sTrailHead = (sTrailHead + 1) % kTrailMax;
+	sTrailCount = std::min(sTrailCount + 1, kTrailMax);
+}
+
+// The footstep with this number (null when it is gone, or not made yet)
+static const float* trailFind(unsigned num)
+{
+	if (sTrailCount == 0 || num >= sTrailNext || num + sTrailCount < sTrailNext)
+		return nullptr;
+	int slot = trailSlot((int)(sTrailNext - 1 - num));
+	return sTrailNum[slot] == num ? sTrail[slot] : nullptr;
+}
+
+// The follower's goal toward `who` (the player). Held up (out of sight, or no headway for a second), it walks the
+// player's footsteps from the one nearest it, skipping on to the farthest of the next two it can see once past one; else straight
+static const float* followGoal(World& w, Ref& r, const float* who, float dt)
+{
+	r.trailTimer -= dt;
+	bool on = r.trailUntil > w.time;
+	if (r.trailTimer > 0.0f)
+		return on ? r.trailGoal : who;
+	r.trailTimer = 0.3f;
+	float a[3] = { r.pos[0], r.pos[1], r.pos[2] + 50.0f }, b[3] = { who[0], who[1], who[2] + 50.0f };
+	if (!on)
+	{
+		// held up: no headway for a second, or the player out of sight for as long (and no path grid route to go by)
+		bool seen = w.lineOfSight(a, b);
+		r.trailBlind = seen ? 0.0f : r.trailBlind + 0.3f;
+		if (!r.path.empty() || (r.chaseStill < 1.0f && r.trailBlind < 1.0f))
+			return who;
+		r.trailBlind = 0.0f;
+		r.trailUntil = w.time + 10.0f;
+		r.trailSeq = 0;
+		on = true;
+	}
+	// the next footstep to walk to: the one after the nearest, or after the last reached
+	unsigned want = 0;
+	if (r.trailSeq == 0)
+	{
+		float best = 600.0f * 600.0f;
+		for (int k = 0; k < sTrailCount; k++)
+		{
+			const float* p = sTrail[trailSlot(k)];
+			float dx = p[0] - r.pos[0], dy = p[1] - r.pos[1], d2 = dx * dx + dy * dy;
+			if (d2 < best)
+			{
+				best = d2;
+				want = sTrailNum[trailSlot(k)] + (d2 > 70.0f * 70.0f ? 0 : 1);
+			}
+		}
+	}
+	else
+	{
+		const float* cur = trailFind(r.trailSeq);
+		float dx = cur ? cur[0] - r.pos[0] : 0.0f, dy = cur ? cur[1] - r.pos[1] : 0.0f;
+		float reach = r.chaseStill >= 1.0f ? 200.0f : 70.0f;       // held up near it counts as there
+		want = cur && dx * dx + dy * dy > reach * reach ? r.trailSeq : r.trailSeq + 1;
+	}
+	const float* p = trailFind(want);
+	if (!p)
+	{
+		r.trailUntil = 0.0f;         // the footsteps run out: on to the player
+		r.trailSeq = 0;
+		return who;
+	}
+	bool reached = r.trailSeq != 0 && want != r.trailSeq;      // the last one is behind it: look ahead
+	r.trailSeq = want;
+	for (unsigned n = want + 1; n <= want + 2 && reached; n++)
+	{
+		const float* q = trailFind(n);
+		float c[3] = { q ? q[0] : 0.0f, q ? q[1] : 0.0f, q ? q[2] + 50.0f : 0.0f };
+		if (q && w.lineOfSight(a, c) && fabsf(q[2] - r.pos[2]) < 60.0f)
+		{
+			p = q;
+			r.trailSeq = n;
+		}
+	}
+	memcpy(r.trailGoal, p, sizeof(r.trailGoal));
+	return r.trailGoal;
+}
+
 // Travel to a spot, follow someone, escort the player to a spot (waiting when they fall behind), or
 // walk up to something and use it. Duration counts game hours; then GetAIPackageDone reports 1.
 void Session::npcPackage(int ri, float dt)
@@ -1576,6 +1704,7 @@ void Session::npcPackage(int ri, float dt)
 	Actor* a = w.actorOf(ri);
 	ActorSet* set = w.actorsOf(ri);
 	aiSettle(r);
+	trailRecord(w);
 	if (r.aiDuration > 0.0f && r.aiActive && w.gameHour - r.aiStart >= r.aiDuration)
 		aiFinish(w, r);
 	// Where they're headed: the destination, or whoever they follow / escort / activate
@@ -1642,7 +1771,7 @@ void Session::npcPackage(int ri, float dt)
 		}
 		if (who && !near(who, 256.0f))
 		{
-			goal = who;
+			goal = r.aiTarget == "player" ? followGoal(w, r, who, dt) : who;
 			// running to catch up: from 450 units away, until within 325 (a dead zone, as in OpenMW, so they don't flip)
 			bool wasRunning = a && a->mode == ANIM_LOOP && a->group == actorFindGroup(actorSkeleton(*set, a->skeleton), "RunForward");
 			if (!near(who, wasRunning ? 325.0f : 450.0f))
@@ -1666,7 +1795,7 @@ void Session::npcPackage(int ri, float dt)
 		else if (hasDest && who && !elsewhere)
 			r.escortWaiting = true;
 		else if (elsewhere && who && !near(who, 180.0f))
-			goal = who;
+			goal = r.aiTarget == "player" ? followGoal(w, r, who, dt) : who;
 		break;
 	case AIPKG_ACTIVATE:
 	{
@@ -1820,7 +1949,7 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	// harness GOD: one blow (armor and resistances still apply), but not where the script runs the fight
 	// (the Heart of Lorkhan resets its health and counts Sunder and Keening hits)
 	bool scripted = t.script >= 0 && w.scripts[t.script].script && w.scripts[t.script].script->scriptedHits;
-	if (testGod && !fatigueOnly && !scripted)
+	if (testGod && testGodBlows && !fatigueOnly && !scripted)
 		damage = fmaxf(damage, t.health * 4.0f + 50.0f);
 	// OpenMW: a blow on someone not in combat who fails to notice the player (the awareness check) is a critical
 	// strike in melee (fCombatCriticalStrikeMult), and x fCombatKODamageMult at range; on someone knocked down, x
@@ -1973,7 +2102,7 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 	bool aware = npcAware(target);
 	float chance = roundf(attackTermOf(s.skills[skill], pa[ATTR_AGILITY], pa[ATTR_LUCK], s.fatigue, s.fatigueMax,
 		w.effectTotal(117), w.effectTotal(47)) - npcDefense(target, !aware || t.knockTimer > 0.0f));
-	if (testGod)
+	if (testGod && testGodBlows)
 		chance = 100.0f;
 	// GBAC leaves sneak attacks (vanilla's x4) and plain weapons on the immune to vanilla
 	bool sneakAttack = !aware;
@@ -1985,7 +2114,11 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 	if (!hit)
 	{
 		addIndicator("Miss (" + std::to_string((int)fmaxf(0.0f, chance)) + "%)", 0xffffff);
-		if (wit && !testGod)
+		// uber quest tests give the player skills and Fortify Attack enough that no blow can miss: one that does is a
+		// broken hit chance (or a test whose setup fell short)
+		if (testLegit)
+			monitorOnce(("legitmiss:" + t.id).c_str(), "the player's blow at %s missed (chance %d%%) in a LEGIT run", t.id.c_str(), (int)chance);
+		if (wit && !(testGod && testGodBlows))
 			wearItem(wit, 0.0f);          // a miss still wears the weapon by 1 (OpenMW's reduceWeaponCondition)
 		bool wasPeaceful = t.ai != AI_COMBAT;
 		makeHostile(target);

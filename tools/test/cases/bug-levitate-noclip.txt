@@ -1,0 +1,17 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_s:2
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 SNAP:playerx
+0.3 0 0 0 0 SNAP:playery
+0.5 0 0 0 0 EQUIP:p_levitation_s
+1 0 0 0
+0.1 0 0 0 0 EXPECT:levitating:eq:1
+4 0 -1 0
+0.1 0 0 0 0 EXPECT:levitating:eq:1
+0.1 0 0 0 0 EXPECT:playerx:ge:@-200
+0.1 0 0 0 0 EXPECT:playerx:le:@200
+0.1 0 0 0 0 EXPECT:playery:ge:@-200
+0.1 0 0 0 0 EXPECT:playery:le:@200
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
