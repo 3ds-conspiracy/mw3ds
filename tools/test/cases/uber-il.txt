@@ -1,0 +1,1732 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:13
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 GIVE:daedric%katana
+0.3 0 0 0 0 EQUIP:daedric%katana
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:p_levitation_e:160
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:100
+0.3 0 0 0 0 GIVE:sc_icarianflight:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:20
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:30
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 SPELL:rilm's_gift
+0.3 0 0 0 0 GOTO:Gnisis,_Madach_Tradehouse
+5.4 0 0 0
+0.3 0 0 0 0 GIVE:pick_apprentice_01:1
+0.3 0 0 0 0 EQUIP:daedric%katana
+0.3 0 0 0 0 LEGIT
+# ---- Join the Legion with General Darius (Gnisis, Madach Tradehouse)
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Imperial_Legion
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:imperial_legion:ge:0
+0.1 0 0 0 0 EXPECT:item:imperial_chain_cuirass:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 EQUIP:imperial_chain_cuirass
+0.3 0 0 0 0 CAST:mark
+3 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+# ---- IL_WidowLand: the land deed
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:land_deed
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_WidowLand:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-92889,91807,1116
+3 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Vabdas_Hut
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Vabdas_Hut
+60 0 0 0 0 ACTIVATE:widow_vabdas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:land_deed
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_WidowLand:ge:30
+0.3 0 0 0 0 TOPIC:husband_was_murdered
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_WidowLand:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-80987,93307,2307
+3 0 0 0
+60 0 0 0 0 ACTIVATE:vatollia_apo
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Eggmine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_gnisis_eggmine:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Eggmine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Eggmine
+120 0 0 0 0 DOORTO:Gnisis,_Lower_Eggmine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Lower_Eggmine
+# Lugrub gro-Ogdum greets: "I'm gonna count to ten", then attacks; he dies attacking us
+30 0 0 0 0 ACTIVATE:lugrub_gro-ogdum
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+12 0 0 0
+90 0 0 0 0 KILL:lugrub_gro-ogdum
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:lugrub_gro-ogdum
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 DOORTO:Gnisis,_Underground_Stream
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Underground_Stream
+60 0 0 0 0 ACTIVATE:ancestor_ghost_vabdas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lugrub_gro-Ogdum
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_WidowLand:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 WALKTO:@1784,5098,6
+3 0 0 0
+# the axe lies at the bottom of the pool: swim over, look down, dive
+60 0 0 0 0 WALKTO:@2283,5440,-95
+3 0 0 0
+0.3 0 0 0 0 FACE:@2553,5440
+1.5 0 0 0 0 DOWN
+2.7 0 1 0
+60 0 0 0 0 PICKUP:lugrub's_axe
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:lugrub's_axe:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Madach_Tradehouse
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:land_deed
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 TOPIC:proof
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_WidowLand:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lugrub_gro-Ogdum
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_WidowLand:ge:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-widowland
+# ---- IL_GnisisBlight: cure the kwama queen in the Gnisis Eggmine
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Eggmine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_GnisisBlight:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-80987,93307,2307
+3 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Eggmine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Eggmine
+120 0 0 0 0 DOORTO:Gnisis,_Lower_Eggmine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Lower_Eggmine
+90 0 0 0 0 WALKTO:@1978,-3269,344
+3 0 0 0
+30 0 0 0 0 WALKTO:@1920,-3240,344
+3 0 0 0
+# (Cure Blight on another actor works now: touch the queen with Rilm's Gift)
+0.3 0 0 0 0 CASTAT:kwama%queen_gnisis:rilm's_gift
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_GnisisBlight:ge:50
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Madach_Tradehouse
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Eggmine
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_GnisisBlight:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-gnisisblight
+# ---- IL_RescuePilgrim: buy Madura Seran free from the outcast Ashlanders, lead her to Ald Velothi
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Madura_Seran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescuePilgrim:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-88101,118887,1695
+3 0 0 0
+# (the camp's path grid is down in the valley: step up to the yurt's door by hand)
+15 0 0 0
+0.3 0 0 0 0 FACE:@-87736,118892
+0.3 0 1 0
+1 0 0 0
+0.3 0 0 0 0 FACE:ex_ashl_door_02:mid
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Aidanat_Camp,_Abassel's_Yurt
+60 0 0 0 0 ACTIVATE:abassel_asserbassalit
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Madura_Seran
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescuePilgrim:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:madura_seran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescuePilgrim:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:madura_seran
+# (she must be close when we go out: followers come through the door at the distance they had inside)
+30 0 0 0 0 WALKTO:@10,-102,-111
+3 0 0 0
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+2 0 0 0
+0.3 0 0 0 0 FACE:madura_seran
+0.3 0 0 0 0 SHOT
+# walked by hand in short legs (the walk driver heads for a far path grid point, and she can't keep up)
+0.3 0 0 0 0 FACE:@-88050,118400
+0.9 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-87600,118150
+1.0 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-87146,118193
+0.9 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-86800,118050
+0.7 0 1 0
+3.5 0 0 0
+0.3 0 0 0 0 FACE:@-86400,118250
+0.9 0 1 0
+3.5 0 0 0
+0.3 0 0 0 0 FACE:@-86120,118497
+0.7 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-85600,119000
+1.4 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-85152,119520
+1.3 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-85250,120000
+0.9 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-85329,120402
+0.8 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-85500,120950
+1.1 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-85664,121472
+1.1 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-86050,121750
+0.9 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-86454,122006
+0.9 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-86600,122400
+0.8 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-86688,122784
+0.8 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-86508,123004
+0.5 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-86048,123464
+1.3 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-85450,123480
+1.2 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-84903,123497
+1.1 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-84500,123750
+0.9 0 1 0
+2.5 0 0 0
+0.3 0 0 0 0 FACE:@-84219,123987
+0.7 0 1 0
+2.5 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:madura_seran:lt:500
+120 0 0 0 0 DOORTO:Ald_Velothi,_Outpost
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald_Velothi,_Outpost
+5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescuePilgrim:ge:70
+0.3 0 0 0 0 ESCORT:-
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Madach_Tradehouse
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Madura_Seran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescuePilgrim:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-rescuepilgrim
+# ---- IL_RescueRagash: talk Baladas Demnevanni into freeing Ragash, lead her out of Arvs-Drelen
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Ragash_gra-Shuzgub
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueRagash:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+# (the door's exit spot is under a tree: land in the open just south of it)
+120 0 0 0 0 FLYTO:@-87600,95350,1310
+3 0 0 0
+# (the walk driver would climb round over the door: step up to it by hand)
+0.3 0 0 0 0 FACE:@-87775,95560
+0.4 0 1 0
+1 0 0 0
+0.3 0 0 0 0 A
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+# (the inner door: the driver opens it and then stands stuck in its swing; open it and walk through by hand)
+0.3 0 0 0 0 FACE:@3635,6320
+0.6 0 1 0
+0.5 0 0 0
+0.3 0 0 0 0 A
+1.5 0 0 0
+0.3 0 0 0 0 FACE:@3640,6150
+0.3 0 1 0
+1 0 0 0
+# Baladas lives on the top floor, behind the locked door of the summoning room: its key lies in a side room
+90 0 0 0 0 WALKTO:@3056,5381,256
+3 0 0 0
+0.3 0 0 0 0 FACE:@2940,5440
+0.25 0 1 0
+0.3 0 0 0
+0.3 0 0 0 0 A
+2 0 0 0
+0.3 0 0 0 0 FACE:@2900,5450
+0.2 0 1 0
+0.4 0 0 0
+0.3 0 0 0 0 FACE:@2850,5493
+0.2 0 1 0
+0.4 0 0 0
+0.3 0 0 0 0 FACE:@2736,5594
+0.3 0 1 0
+0.5 0 0 0
+# (the key lies on a table under a sheet of paper: take the paper first)
+60 0 0 0 0 PICKUP:sc_paper%plain
+2 0 0 0
+60 0 0 0 0 PICKUP:key_summoning_room
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_summoning_room:ge:1
+0.3 0 0 0 0 FACE:@2734,5593
+0.2 0 1 0
+0.5 0 0 0
+0.3 0 0 0 0 FACE:@2900,5450
+0.4 0 1 0
+0.5 0 0 0
+0.3 0 0 0 0 FACE:@3056,5381
+0.3 0 1 0
+0.5 0 0 0
+60 0 0 0 0 WALKTO:@3056,5381,256
+3 0 0 0
+90 0 0 0 0 WALKTO:@3584,5888,256
+3 0 0 0
+60 0 0 0 0 WALKTO:@3840,5376,256
+3 0 0 0
+60 0 0 0 0 WALKTO:@3840,4400,256
+3 0 0 0
+60 0 0 0 0 WALKTO:@3840,4224,256
+3 0 0 0
+0.3 0 0 0 0 SHOT
+90 0 0 0 0 WALKTO:@3080,3592,512
+3 0 0 0
+30 0 0 0 0 WALKTO:@3072,3840,512
+3 0 0 0
+30 0 0 0 0 WALKTO:@3153,4096,512
+3 0 0 0
+0.3 0 0 0 0 SHOT
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Ragash_gra-Shuzgub
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueRagash:ge:40
+0.1 0 0 0 0 EXPECT:item:key_arvs-drelen_cell:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 WALKTO:@4352,4096,769
+3 0 0 0
+60 0 0 0 0 WALKTO:@4352,3840,752
+3 0 0 0
+60 0 0 0 0 WALKTO:@4309,3587,625
+3 0 0 0
+60 0 0 0 0 WALKTO:@4096,3328,512
+3 0 0 0
+60 0 0 0 0 WALKTO:@3328,4096,512
+3 0 0 0
+90 0 0 0 0 WALKTO:@3153,4096,512
+3 0 0 0
+90 0 0 0 0 WALKTO:@3080,3592,512
+3 0 0 0
+90 0 0 0 0 WALKTO:@3840,4224,256
+3 0 0 0
+90 0 0 0 0 WALKTO:@3840,5376,256
+3 0 0 0
+90 0 0 0 0 WALKTO:@3584,5888,256
+3 0 0 0
+60 0 0 0 0 WALKTO:@3584,6272,128
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 WALKTO:@2971,6416,0
+3 0 0 0
+0.3 0 0 0 0 FACE:@2940,6464
+0.3 0 0 0 0 A
+1.5 0 0 0
+0.3 0 0 0 0 FACE:@2870,6450
+0.2 0 1 0
+0.3 0 0 0
+0.3 0 0 0 0 FACE:@2700,6400
+0.3 0 1 0
+0.3 0 0 0
+0.3 0 0 0 0 FACE:@2590,6320
+0.3 0 1 0
+0.3 0 0 0
+0.3 0 0 0 0 FACE:@2563,6208
+0.3 0 0 0 0 A
+1.5 0 0 0
+0.3 0 0 0 0 SHOT
+120 0 0 0 0 ACTIVATE:ragash_gra-shuzgub
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:get_me_out
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueRagash:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:ragash_gra-shuzgub
+120 0 0 0 0 WALKTO:@3640,6560,128
+3 0 0 0
+3 0 0 0
+60 0 0 0 0 WALKTO:@3650,6720,128
+3 0 0 0
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:ragash_gra-shuzgub:lt:300
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:ragash_gra-shuzgub:lt:600
+8 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueRagash:ge:70
+0.3 0 0 0 0 ESCORT:-
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Madach_Tradehouse
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ragash_gra-Shuzgub
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueRagash:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-rescueragash
+# ---- IL_TalosTreason: two legionaries in the Gnisis barracks worship Talos
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_TalosTreason:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Barracks
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Barracks
+60 0 0 0 0 ACTIVATE:oritius_maro
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Talos_Cult
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_TalosTreason:ge:20
+0.1 0 0 0 0 EXPECT:item:key_oritius:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:ex_r_trapdoor_01
+2 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 ACTIVATE:arius_rulician
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Talos_Cult
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_TalosTreason:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+30 0 0 0 0 USELOCKPICK:chest_small_il_talos:pick_apprentice_01
+2 0 0 0
+60 0 0 0 0 LOOT:chest_small_il_talos:bk_talostreason
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_talostreason:ge:1
+60 0 0 0 0 ACTIVATE:in_r_trapdoor_01
+2 0 0 0
+40 0 0 0 0 WALKTO:@-338,-20,-128
+3 0 0 0
+# (the barracks door: the driver's DOORTO stops 100 short of it)
+0.3 0 0 0 0 FACE:@-356,-129
+0.5 0 1 0
+0.3 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Madach_Tradehouse
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Madach_Tradehouse
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Talos_Cult
+1 0 0 0
+0.3 0 0 0 0 TOPIC:conspiracy_against_the_Emperor
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_TalosTreason:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Barracks
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 EQUIP:daedric%katana
+60 0 0 0 0 KILL:oritius_maro
+2 0 0 0
+60 0 0 0 0 ACTIVATE:ex_r_trapdoor_01
+2 0 0 0
+60 0 0 0 0 KILL:arius_rulician
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:arius_rulician
+0.1 0 0 0 0 EXPECT:dead:oritius_maro
+60 0 0 0 0 ACTIVATE:in_r_trapdoor_01
+2 0 0 0
+40 0 0 0 0 WALKTO:@-338,-20,-128
+3 0 0 0
+# (the barracks door: the driver's DOORTO stops 100 short of it)
+0.3 0 0 0 0 FACE:@-356,-129
+0.5 0 1 0
+0.3 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Madach_Tradehouse
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Madach_Tradehouse
+60 0 0 0 0 ACTIVATE:general_darius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:conspiracy_against_the_Emperor
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_TalosTreason:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-talostreason
+# ---- Imsin the Dreamer (Buckmoth Legion Fort): IL_Smuggler
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@-13564,43062,2674
+3 0 0 0
+60 0 0 0 0 DOORTO:Buckmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Buckmoth_Legion_Fort,_Interior
+0.3 0 0 0 0 CAST:mark
+3 0 0 0
+60 0 0 0 0 ACTIVATE:imsin_the_dreamer
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Drinar_Varyon
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Smuggler:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+100 0 0 0 0 FLYTO:@-14442,55387,2455
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Drinar_Varyon's_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Drinar_Varyon's_House
+0.3 0 0 0 0 SHOT
+# (the Dwemer piece sits among a shelf of pots the crosshair can't get past: take the other way out and put Drinar down)
+60 0 0 0 0 KILL:drinar_varyon
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:drinar_varyon
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+100 0 0 0 0 FLYTO:@-13564,43062,2674
+3 0 0 0
+60 0 0 0 0 DOORTO:Buckmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Buckmoth_Legion_Fort,_Interior
+60 0 0 0 0 WALKTO:@515,739,-128
+3 0 0 0
+0.3 0 0 0 0 A
+1.5 0 0 0
+60 0 0 0 0 WALKTO:@-542,566,-512
+3 0 0 0
+60 0 0 0 0 ACTIVATE:imsin_the_dreamer
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Drinar_Varyon
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Smuggler:ge:200
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-smuggler
+# BLOCKED: IL_RescueKnight (and so IL_MaidenToken): Ashurnibibi, Shrine: the entrance pocket (150,-1280,-755) is walled in, no walk, jump or swim leaves it (repro/knight-shrine.src, internal/uber/il.md).
+# ---- Radd Hard-Heart (Moonmoth Legion Fort): IL_ScrapMetal
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+200 0 0 0 0 FLYTO:@-5062,-18284,1129
+3 0 0 0
+60 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:scrap_metal
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_ScrapMetal:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-24813,-10273,1077
+3 0 0 0
+20 0 0 0 0 WALKTO:@-24813,-10273,1077
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Nalcarya_of_White_Haven|_Fine_Alchemist
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Nalcarya_of_White_Haven|_Fine_Alchemist
+60 0 0 0 0 ACTIVATE:nalcarya_of_white_haven
+1.5 0 0 0
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+0.1 0 0 0 0 EXPECT:item:ingred_scrap_metal_01:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+6 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+20 0 0 0 0 WALKTO:@-24813,-10373,1077
+3 0 0 0
+120 0 0 0 0 FLYTO:@-5062,-18284,1129
+3 0 0 0
+60 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:scrap_metal
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_ScrapMetal:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-scrapmetal
+# ---- IL_RescueHermit: free Jocien Ancois from the Mabrigash with a better man
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Jocien_Ancois
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueHermit:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5100,-18260,975
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5140,-18220,1000
+3 0 0 0
+0.3 0 0 0 0 SLEEP:8
+1 0 0 0
+0.3 0 0 0 0 CAST:mark
+3 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+20 0 0 0 0 WALKTO:@-5062,-18340,1129
+3 0 0 0
+120 0 0 0 0 FLYTO:@50000,-12000,300
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+250 0 0 0 0 FLYTO:@85040,-3510,715
+3 0 0 0
+60 0 0 0 0 DOORTO:Shashurari_Camp,_Zennammu's_Yurt
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shashurari_Camp,_Zennammu's_Yurt
+60 0 0 0 0 ACTIVATE:zennammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Jocien_Ancois
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueHermit:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+2 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+20 0 0 0 0 WALKTO:@85040,-3600,715
+3 0 0 0
+120 0 0 0 0 FLYTO:@109700,-4300,564
+3 0 0 0
+60 0 0 0 0 ACTIVATE:assaba-bentus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Jocien_Ancois
+1 0 0 0
+0.3 0 0 0 0 TOPIC:mabrigash
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueHermit:ge:25
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:assaba-bentus
+60 0 0 0 0 WALKTO:@109527,-3810,552
+3 0 0 0
+60 0 0 0 0 WALKTO:@108780,-3797,557
+3 0 0 0
+60 0 0 0 0 WALKTO:@108322,-3268,577
+3 0 0 0
+60 0 0 0 0 WALKTO:@108337,-2679,594
+3 0 0 0
+60 0 0 0 0 WALKTO:@108564,-2123,568
+3 0 0 0
+60 0 0 0 0 WALKTO:@108476,-1552,566
+3 0 0 0
+60 0 0 0 0 WALKTO:@108324,-798,563
+3 0 0 0
+60 0 0 0 0 WALKTO:@107792,-57,585
+3 0 0 0
+60 0 0 0 0 WALKTO:@107264,0,584
+3 0 0 0
+60 0 0 0 0 WALKTO:@106752,512,544
+3 0 0 0
+60 0 0 0 0 WALKTO:@105728,1024,544
+3 0 0 0
+60 0 0 0 0 WALKTO:@105216,1280,560
+3 0 0 0
+60 0 0 0 0 WALKTO:@104704,1280,584
+3 0 0 0
+60 0 0 0 0 WALKTO:@104192,1280,584
+3 0 0 0
+60 0 0 0 0 WALKTO:@103680,1280,552
+3 0 0 0
+60 0 0 0 0 WALKTO:@103168,1280,504
+3 0 0 0
+60 0 0 0 0 WALKTO:@102656,1280,504
+3 0 0 0
+60 0 0 0 0 WALKTO:@102144,1280,520
+3 0 0 0
+60 0 0 0 0 WALKTO:@101632,1280,528
+3 0 0 0
+60 0 0 0 0 WALKTO:@101120,1024,528
+3 0 0 0
+60 0 0 0 0 WALKTO:@100608,1024,544
+3 0 0 0
+60 0 0 0 0 WALKTO:@100096,1024,568
+3 0 0 0
+60 0 0 0 0 WALKTO:@99584,768,608
+3 0 0 0
+60 0 0 0 0 WALKTO:@99072,768,608
+3 0 0 0
+60 0 0 0 0 WALKTO:@98560,768,592
+3 0 0 0
+60 0 0 0 0 WALKTO:@98048,512,576
+3 0 0 0
+60 0 0 0 0 WALKTO:@97536,256,552
+3 0 0 0
+60 0 0 0 0 WALKTO:@97024,0,552
+3 0 0 0
+60 0 0 0 0 WALKTO:@96512,-256,536
+3 0 0 0
+60 0 0 0 0 WALKTO:@96000,-256,480
+3 0 0 0
+60 0 0 0 0 WALKTO:@95488,-256,464
+3 0 0 0
+60 0 0 0 0 WALKTO:@94976,-256,480
+3 0 0 0
+60 0 0 0 0 WALKTO:@94464,-256,512
+3 0 0 0
+60 0 0 0 0 WALKTO:@93952,-256,512
+3 0 0 0
+60 0 0 0 0 WALKTO:@93440,256,504
+3 0 0 0
+60 0 0 0 0 WALKTO:@92928,768,456
+3 0 0 0
+60 0 0 0 0 WALKTO:@92416,768,464
+3 0 0 0
+60 0 0 0 0 WALKTO:@91904,1024,448
+3 0 0 0
+60 0 0 0 0 WALKTO:@91392,1280,456
+3 0 0 0
+60 0 0 0 0 WALKTO:@90880,1280,504
+3 0 0 0
+60 0 0 0 0 WALKTO:@90368,1536,488
+3 0 0 0
+60 0 0 0 0 WALKTO:@89856,1536,504
+3 0 0 0
+60 0 0 0 0 WALKTO:@89344,1536,512
+3 0 0 0
+60 0 0 0 0 WALKTO:@88832,1536,520
+3 0 0 0
+60 0 0 0 0 WALKTO:@88320,1280,528
+3 0 0 0
+60 0 0 0 0 WALKTO:@87808,768,576
+3 0 0 0
+60 0 0 0 0 WALKTO:@87296,256,632
+3 0 0 0
+60 0 0 0 0 WALKTO:@87040,-256,624
+3 0 0 0
+60 0 0 0 0 WALKTO:@86784,-768,624
+3 0 0 0
+60 0 0 0 0 WALKTO:@86784,-1280,616
+3 0 0 0
+60 0 0 0 0 WALKTO:@86528,-1792,616
+3 0 0 0
+60 0 0 0 0 WALKTO:@86016,-2304,616
+3 0 0 0
+60 0 0 0 0 WALKTO:@85504,-2816,600
+3 0 0 0
+60 0 0 0 0 WALKTO:@84992,-3328,624
+3 0 0 0
+60 0 0 0 0 WALKTO:@85040,-3510,715
+3 0 0 0
+60 0 0 0 0 WALKTO:@85344,-3536,640
+3 0 0 0
+60 0 0 0 0 WALKTO:@85430,-3560,640
+3 0 0 0
+6 0 0 0
+60 0 0 0 0 WALKTO:@85344,-3536,640
+3 0 0 0
+15 0 0 0
+15 0 0 0
+0.3 0 0 0 0 ESCORT:-
+60 0 0 0 0 DOORTO:Shashurari_Camp,_Zennammu's_Yurt
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shashurari_Camp,_Zennammu's_Yurt
+3 0 0 0
+60 0 0 0 0 ACTIVATE:zennammu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Jocien_Ancois
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueHermit:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+3 0 0 0
+60 0 0 0 0 ACTIVATE:jocien_ancois
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueHermit:ge:70
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 SLEEP:8
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5100,-18180,1003
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5060,-18140,1003
+3 0 0 0
+60 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Jocien_Ancois
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueHermit:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-rescuehermit
+# ---- IL_Damsel: Dandsa is held in Abernanit, a cave on an island off Gnaar Mok
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dandsa
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Vivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:ano_andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano_andaram:Hla_Oad
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:baleni_salavel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:baleni_salavel:Gnaar_Mok
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+150 0 0 0 0 WALKTO:@-52422,23030,90
+3 0 0 0
+0.3 0 0 0 0 SHOT
+60 0 0 0 0 DOORTO:Abernanit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Abernanit
+150 0 0 0 0 ACTIVATE:dandsa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 ESCORT:dandsa
+150 0 0 0 0 DOORTO:outside
+3 0 0 0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:70
+0.3 0 0 0 0 ESCORT:-
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+3 0 0 0
+0.3 0 0 0 0 SLEEP:21
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5100,-18180,1003
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5060,-18140,1003
+3 0 0 0
+60 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dandsa
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-damsel
+# ---- IL_GiantNetch: kill the breeding netch north of Gnaar Mok
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:breeding_netch
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_GiantNetch:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Vivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:ano_andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano_andaram:Hla_Oad
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:baleni_salavel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:baleni_salavel:Gnaar_Mok
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+150 0 0 0 0 KILL:netch_betty_ilgn
+2 0 0 0
+150 0 0 0 0 KILL:netch_bull_ilgn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:netch_betty_ilgn
+0.1 0 0 0 0 EXPECT:dead:netch_bull_ilgn
+0.3 0 0 0 0 SLEEP:8
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5100,-18180,1003
+3 0 0 0
+20 0 0 0 0 WALKTO:@-5060,-18140,1003
+3 0 0 0
+60 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:radd_hard-heart
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:breeding_netch
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_GiantNetch:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-giantnetch
+# BLOCKED: IL_Necromancer: Dagon Fel tower is reachable by levitation (FLYTO to the exit spot, then FACE:door_dwrv_load00:mid, 0.4 s forward, FACE again, A) and Hlora, Minedhel, Gilse die, but door_dwrv_loadup00 (3505,1641,15363) to Sorkvild's level is never under the crosshair (see internal/uber/il.md, repro/necro-tower.src).
+# ---- Round 3: Frald the White, Varus Vatinius (Ebonheart)
+# ---- Frald the White (Ebonheart, Hawkmoth Legion Garrison): IL_Courtesy
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Vivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:ano_andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano_andaram:Ebonheart
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+10 0 0 0 0 WALKTO:@8750,-100650,1384
+3 0 0 0
+60 0 0 0 0 FLYTO:@14074,-100394,1264
+3 0 0 0
+60 0 0 0 0 DOORTO:Ebonheart,_Hawkmoth_Legion_Garrison
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Hawkmoth_Legion_Garrison
+60 0 0 0 0 ACTIVATE:frald_the_white
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:courtesy
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Courtesy:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+2 0 0 0
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Ald
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Codus_Callonus:_Bookseller
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Codus_Callonus:_Bookseller
+60 0 0 0 0 ACTIVATE:codus_callonus
+1.5 0 0 0
+0.3 0 0 0 0 BUY:codus_callonus:bk_redbookofriddles
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_redbookofriddles:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+20 0 0 0 0 WALKTO:@-13093,56807,2676
+3 0 0 0
+100 0 0 0 0 FLYTO:@4000,47000,3000
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+100 0 0 0 0 FLYTO:@12000,42500,3000
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+150 0 0 0 0 FLYTO:@19715,38795,1369
+3 0 0 0
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Tower_of_Dusk
+60 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dusk_Lower_Level
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Tower_of_Dusk_Lower_Level
+60 0 0 0 0 ACTIVATE:salyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:courtesy
+1 0 0 0
+0.3 0 0 0 0 TOPIC:riddle
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:3
+1 0 0 0
+0.3 0 0 0 0 CHOICE:3
+1 0 0 0
+0.3 0 0 0 0 CHOICE:3
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Courtesy:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-courtesy-riddle
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Vivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:ano_andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano_andaram:Ebonheart
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+10 0 0 0 0 WALKTO:@8750,-100650,1384
+3 0 0 0
+60 0 0 0 0 FLYTO:@14074,-100394,1264
+3 0 0 0
+60 0 0 0 0 DOORTO:Ebonheart,_Hawkmoth_Legion_Garrison
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Hawkmoth_Legion_Garrison
+60 0 0 0 0 ACTIVATE:frald_the_white
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:courtesy
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Courtesy:ge:100
+0.1 0 0 0 0 EXPECT:item:bookskill_speechcraft3:ge:1
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Honthjolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_TraitorWarrior:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-courtesy
+# ---- IL_TraitorWarrior: Honthjolf in Aharnabi
+40 0 0 0 0 WALKTO:@768,2500,384
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:nevosi_hlan
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:nevosi_hlan:Tel_Branora
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+20 0 0 0 0 WALKTO:@119300,-102000,160
+3 0 0 0
+100 0 0 0 0 FLYTO:@140000,-83000,2000
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+100 0 0 0 0 FLYTO:@160256,-64800,257
+3 0 0 0
+60 0 0 0 0 DOORTO:Aharnabi
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Aharnabi
+150 0 0 0 0 KILL:honthjolf
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:honthjolf
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+2 0 0 0
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Vivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:ano_andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano_andaram:Ebonheart
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+10 0 0 0 0 WALKTO:@8750,-100650,1384
+3 0 0 0
+60 0 0 0 0 FLYTO:@14074,-100394,1264
+3 0 0 0
+60 0 0 0 0 DOORTO:Ebonheart,_Hawkmoth_Legion_Garrison
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Hawkmoth_Legion_Garrison
+60 0 0 0 0 ACTIVATE:frald_the_white
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Honthjolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_TraitorWarrior:ge:100
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:slander
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_FalseOrdinator:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-traitorwarrior
+# ---- IL_FalseOrdinator: Suryn Athones (Vivec, Justice Offices)
+40 0 0 0 0 WALKTO:@768,2500,384
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+2 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:Vivec,_Justice_Offices
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Justice_Offices
+90 0 0 0 0 KILL:suryn_athones
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:suryn_athones
+60 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+10 0 0 0 0 WALKTO:@8750,-100650,1264
+3 0 0 0
+60 0 0 0 0 FLYTO:@14074,-100394,1264
+3 0 0 0
+60 0 0 0 0 DOORTO:Ebonheart,_Hawkmoth_Legion_Garrison
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Hawkmoth_Legion_Garrison
+60 0 0 0 0 ACTIVATE:frald_the_white
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slander
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_FalseOrdinator:ge:100
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Saprius_Entius
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_ProtectEntius:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-falseordinator
+# BLOCKED: IL_ProtectEntius 50+: Saprius Entius follows to Vivec Foreign Quarter (gondola) but the gondola dock has no land route to the strider Ano Andaram (uberroute: no route; swimming stops at 29621,-76451), so he cannot be led to Ebonheart (repro/entius-fq.src, repro/entius-escort.src). Kill the Ordinators only after Saprius has killed the first himself (attacking the unprovoked one is a murder he witnesses and he turns on you).
+# ---- advancement to Knight Protector (Frald), then Varus Vatinius (Grand Council Chambers)
+60 0 0 0 0 ACTIVATE:frald_the_white
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:imperial_legion:ge:7
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+40 0 0 0 0 WALKTO:@768,2500,384
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+10 0 0 0 0 WALKTO:@14500,-100800,1554
+3 0 0 0
+60 0 0 0 0 FLYTO:@9199,-100617,1415
+3 0 0 0
+60 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Grand_Council_Chambers
+60 0 0 0 0 ACTIVATE:varus_vatinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Lord's_Mail
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_KnightShield:ge:10
+0.1 0 0 0 0 EXPECT:item:key_ebon_tomb:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+90 0 0 0 0 DOORTO:Ebonheart,_Imperial_Commission
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Imperial_Commission
+40 0 0 0 0 WALKTO:@-1024,560,-128
+3 0 0 0
+30 0 0 0 0 USELOCKPICK:in_impsmall_d_hidden_01:pick_apprentice_01
+2 0 0 0
+30 0 0 0 0 USELOCKPICK:in_impsmall_d_hidden_01:pick_apprentice_01
+2 0 0 0
+30 0 0 0 0 USELOCKPICK:in_impsmall_d_hidden_01:pick_apprentice_01
+2 0 0 0
+0.3 0 0 0 0 EQUIP:daedric%katana
+120 0 0 0 0 DOORTO:Ebonheart,_Underground_Caves
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Underground_Caves
+150 0 0 0 0 KILL:furius_acilius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:furius_acilius
+0.3 0 0 0 0 LOOT:furius_acilius:lords_cuirass_unique
+0.1 0 0 0 0 EXPECT:item:lords_cuirass_unique:ge:1
+120 0 0 0 0 DOORTO:Ebonheart,_Imperial_Commission
+3 0 0 0
+90 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Grand_Council_Chambers
+60 0 0 0 0 ACTIVATE:varus_vatinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lord's_Mail
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_KnightShield:ge:50
+0.3 0 0 0 0 TOPIC:orders
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Chrysamere
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_KnightShield:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-lordsmail
+# ---- IL_KnightShield part 2: Chrysamere from Draramu Hloran (Abanabi)
+60 0 0 0 0 WALKTO:@577,157,-128
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+10 0 0 0 0 WALKTO:@10200,-100626,1472
+3 0 0 0
+60 0 0 0 0 FLYTO:@20233,-103000,200
+3 0 0 0
+120 0 0 0 0 ACTIVATE:nevosi_hlan
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:nevosi_hlan:Sadrith_Mora
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+10 0 0 0 0 WALKTO:@141800,38700,330
+3 0 0 0
+90 0 0 0 0 FLYTO:@139500,30000,2500
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+1 0 0 0
+90 0 0 0 0 FLYTO:@136898,21455,175
+3 0 0 0
+60 0 0 0 0 DOORTO:Abanabi
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Abanabi
+150 0 0 0 0 KILL:draramu_hloran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:draramu_hloran
+0.3 0 0 0 0 LOOT:draramu_hloran:claymore_chrysamere_unique
+0.1 0 0 0 0 EXPECT:item:claymore_chrysamere_unique:ge:1
+0.3 0 0 0 0 SAVE:uber-il-chrysamere-got
+# ---- return Chrysamere to Varus Vatinius
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+2 0 0 0
+60 0 0 0 0 ACTIVATE:selvil_sareloth
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:selvil_sareloth:Vivec
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:ano_andaram
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:ano_andaram:Ebonheart
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+3 0 0 0
+30 0 0 0 0 WALKTO:@9199,-100617,1415
+3 0 0 0
+60 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Grand_Council_Chambers
+60 0 0 0 0 ACTIVATE:varus_vatinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Chrysamere
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_KnightShield:ge:100
+0.1 0 0 0 0 EXPECT:rank:imperial_legion:ge:8
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-il-knightshield
+# ---- IL_Grandmaster: duel with Varus Vatinius in the Vivec Arena
+60 0 0 0 0 ACTIVATE:varus_vatinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:duel
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_Grandmaster:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+2 0 0 0
+120 0 0 0 0 ACTIVATE:talsi_uvayn
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:talsi_uvayn:Vivec,_Arena
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+150 0 0 0 0 DOORTO:Vivec,_Arena_Pit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Arena_Pit
+150 0 0 0 0 KILL:varus_vatinius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:varus_vatinius
+0.1 0 0 0 0 EXPECT:journal:IL_Grandmaster:ge:100
