@@ -1,0 +1,33 @@
+# Dren Plantation: the player assaults and kills Frinnius Posuceius in front of the slaves. OpenMW scales the fight a crime
+# stirs in a witness by its Alarm / 100 (reportCrime), and the slaves have Alarm 0: they do not turn on the player.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 SETSKILL:longblade:100
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 JOURNAL:HH_TwinLamps3:10
+0.3 0 0 0 0 TP:18000:-56700:700:0
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 WALKTO:@18181,-56792,639
+5 0 0 0
+60 0 0 0 0 ACTIVATE:frinnius_posuceius
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:frinnius_posuceius
+2 0 0 0
+10 0 0 0
+0.1 0 0 0 0 EXPECT:dead:frinnius_posuceius
+0.1 0 0 0 0 EXPECT:refcombat:neetinei:eq:0
+0.1 0 0 0 0 EXPECT:refcombat:hides_his_foot:eq:0

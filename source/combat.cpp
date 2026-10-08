@@ -2600,7 +2600,14 @@ void Session::crimeSeen(int kind, int value, int victim)
 		if (lower(def.cls) == "guard")
 			continue;                        // guards arrest instead
 		int base = r.fight >= 0 ? r.fight : def.fight;
-		float term = fmaxf(0.0f, fminf(fightTerm, 100.0f - base));
+		// OpenMW's reportCrime: the urge to attack scales with the witness's Alarm / 100 (a pickpocket victim
+		// with Alarm 0 counts as 100, other pickpocket witnesses as 0); an assault's witnesses use
+		// iFightAttacking, its victim iFightAttack
+		float alarmTerm = 0.01f * (float)(r.alarm >= 0 ? r.alarm : def.alarm);
+		if (kind == CRIME_PICKPOCKET)
+			alarmTerm = i == victim ? (alarmTerm == 0.0f ? 1.0f : alarmTerm) : 0.0f;
+		float kindFight = kind == CRIME_ASSAULT && i != victim ? w.game.gmstf("ifightattacking", 50.0f) : fightTerm;
+		float term = fmaxf(0.0f, fminf(kindFight * alarmTerm, 100.0f - base));
 		if (i == victim || base + term >= 100.0f)
 		{
 			if (base + term >= 100.0f)

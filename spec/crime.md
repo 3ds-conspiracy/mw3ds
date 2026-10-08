@@ -81,8 +81,9 @@ with no greeting that fits. `issue-4` (theft during character creation), `crime-
 
 ## Findings (2026-10-08)
 
-3. **Witness fight** (open, `zz-open-witness-alarm`): one term per kind for every witness, so slaves with Alarm 0 turn on
-   the player who assaults or kills in front of them. OpenMW scales the fight term by the witness's Alarm / 100, uses
-   `iFightAttacking` for a witness of an assault (`iFightAttack` for the victim), and skips witnesses already in combat with
-   the victim (`canReportCrime`). Tried (Alarm scaling, and the skip alone) and each shifted the committed `uber-fg` and `uber-hh`
-   timelines (tuned on witnesses that attack), so none of it is in.
+3. **Witness fight** (fixed, `bug-witness-alarm`): `crimeSeen` used one fight term per kind for every witness, so slaves
+   with Alarm 0 turned on the player who assaulted or killed in front of them. Now the term is scaled by the witness's
+   Alarm / 100 (a pickpocket victim with Alarm 0 counts as 100, other pickpocket witnesses as 0), a witness of an assault
+   uses `iFightAttacking` (the victim `iFightAttack`), and witnesses already in combat are skipped (as before).
+   Not done: the disposition and distance biases OpenMW adds to the term. `uber-fg` and `uber-hh` were re-tuned on the
+   new rule (a longer speed potion run in the Elith-Pal Mine; walking up to Galyn Arvel so J'Saddha is in range).
