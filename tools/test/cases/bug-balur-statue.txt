@@ -1,0 +1,17 @@
+# Molag Bal's statue in Bal Ur (TT_BalUr): its box holds the plinth and steps, so a player standing at it has the eye
+# inside the box, and worldPick refused any pick there ("hidden from here"). An activator box under 1200 across that
+# holds the eye is picked by its middle (spec/audit-findings.md T1). The check is the ACTIVATE itself: before the fix
+# it fails "hidden from here" / stuck; the quest step it starts needs more than the pick (uber-tt plays it).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 JOURNALADD:tt_balur:10
+0.3 0 0 0 0 GOTO:Bal_Ur,_Underground
+4 0 0 0
+0.3 0 0 0 0 SETDEAD:golden%saint:1
+0.3 0 0 0 0 TPIN:3529:-3600:-200:180
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@3529,-3700,50
+60 0 0 0 0 ACTIVATE:active_dae_molagbal2
+1 0 0 0

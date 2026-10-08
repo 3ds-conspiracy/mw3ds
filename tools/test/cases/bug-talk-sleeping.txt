@@ -1,0 +1,10 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ghostgate,_Tower_of_Dusk
+2 0 0 0
+0.3 0 0 0 0 ENABLE:wulf
+0.3 0 0 0 0 LEGIT
+# Wulf lies in his bed: the player can still talk to a sleeping NPC (OpenMW)
+60 0 0 0 0 ACTIVATE:wulf
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue

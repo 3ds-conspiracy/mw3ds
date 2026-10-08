@@ -91,6 +91,23 @@ the never-through-a-surface check, so it hung in the air for good. Now such a re
 sphere out of the face in 3D and takes the sideways part: the body slides off the ridge and lands, as OpenMW's
 actors slide down a slope too steep to stand on (`bug-fall-steep-ridge`).
 
+## Walls in the air (2026-10-08, uber bug 105)
+
+A body in the air that meets a surface loses its take-off speed along the ground: OpenMW's solver clips the velocity
+at what it hits and gravity goes on. Our never-through-a-surface check undoes a refused step but used to keep the
+inertia of a running jump, so an Icarian Flight jump (speed 5000, 160 units a frame) pushed into a cliff face every
+frame, every step undone, and the player hung at 57900,-15670,2670 for good. A refused step in the air now clears
+the inertia, so the body drops (`zz-open-icarian-hop-hang`, needs the uber-mg checkpoint).
+
+## Places that looked closed (2026-10-08, uber bugs 46, IL_RescueKnight, IC29)
+
+Checked with the player code on the baked collision (`tools/test/physim`, a flood over run / jump / swim / levitate
+moves): Shallit's upper tunnel is reached by levitating up the rocks at x 300-700 on the entrance side, not straight up
+(`bug-shallit-upper-tunnel`); Ashurnibibi, Shrine's pocket opens into a flooded cave whose way on is a dive under an
+arch (x 700-1000, y -1670, z -950; a swim at the surface is stopped by the arch); Omaren's forge door is a flight low over
+the pit (`FLYTO:@x,y,z:<cruise>` with a cruise just above the ledge: the default of 1500 above climbs into the big rocks
+of the cavern roof). None is a collision fault.
+
 ## Open
 
 - Slow Fall: OpenMW scales the fall and the inertia by `1 - 0.005 x magnitude` each physics step; ours quarters

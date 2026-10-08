@@ -3002,6 +3002,44 @@ static bool boxInReach(const Ref& r, const float eye[3], float reach)
 	return d2 <= reach * reach && d2 != 0.0f;
 }
 
+// Whether the eye is inside a reference's box
+static bool eyeInsideBox(const Ref& r, const float eye[3])
+{
+	for (int k = 0; k < 3; k++)
+		if (eye[k] < r.boxMin[k] || eye[k] > r.boxMax[k])
+			return false;
+	return true;
+}
+
+// The ray's entry into the middle of a reference's box (the inner 40% of it across, all of it in height), or -1
+static float rayCoreEntry(const Ref& r, const float eye[3], const float dir[3], float maxT)
+{
+	float tmin = 0.0f, tmax = maxT;
+	for (int k = 0; k < 3; k++)
+	{
+		float lo = r.boxMin[k], hi = r.boxMax[k];
+		if (k < 2)
+		{
+			float mid = (lo + hi) * 0.5f, half = (hi - lo) * 0.2f;
+			lo = mid - half;
+			hi = mid + half;
+		}
+		if (fabsf(dir[k]) < 1e-6f)
+		{
+			if (eye[k] < lo || eye[k] > hi)
+				return -1.0f;
+			continue;
+		}
+		float t1 = (lo - eye[k]) / dir[k], t2 = (hi - eye[k]) / dir[k];
+		if (t1 > t2) { float tmp = t1; t1 = t2; t2 = tmp; }
+		tmin = fmaxf(tmin, t1);
+		tmax = fminf(tmax, t2);
+		if (tmin > tmax)
+			return -1.0f;
+	}
+	return tmin;
+}
+
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach)
 {
 	int best = -1;
@@ -3009,7 +3047,35 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	for (int i : w.loadedPickables)
 	{
 		const Ref& r = w.refs[i];
-		if (!isActivatable(r) || !boxInReach(r, eye, reach))
+		if (!isActivatable(r))
+			continue;
+		// A hatch in the ceiling (Sorkvild's, over the hall at Dagon Fel): its box reaches down round the player, so the eye is
+		// inside it. OpenMW picks by the mesh, which looks overhead: looking steeply up at a door whose origin is above the eye
+		// is that hatch, as near as the origin is
+		if (r.type == "DOOR" && r.pos[2] > eye[2] && dir[2] > 0.7f && eye[2] > r.boxMin[2] && eye[2] < r.boxMax[2]
+			&& eye[0] >= r.boxMin[0] && eye[0] <= r.boxMax[0] && eye[1] >= r.boxMin[1] && eye[1] <= r.boxMax[1])
+		{
+			float t = r.pos[2] - eye[2];
+			if (t < bestT && t <= reach)
+			{
+				bestT = t;
+				best = i;
+			}
+			continue;
+		}
+		// A big statue (Molag Bal's at Bal Ur: a box 580 x 975 round its plinth and steps) is stood beside, with the eye
+		// inside its box. OpenMW picks by the mesh, which is only the statue: point at the middle part of the box then
+		if (r.type == "ACTI" && eyeInsideBox(r, eye) && r.boxMax[0] - r.boxMin[0] <= 1200.0f && r.boxMax[1] - r.boxMin[1] <= 1200.0f)
+		{
+			float t = rayCoreEntry(r, eye, dir, bestT);
+			if (t >= 0.0f && t < bestT && t <= reach)
+			{
+				bestT = t;
+				best = i;
+			}
+			continue;
+		}
+		if (!boxInReach(r, eye, reach))
 			continue;
 		float t = rayBoxEntry(r, eye, dir, bestT);
 		if (t >= 0.0f && t < bestT)
@@ -3066,6 +3132,18 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		}
 		if (item >= 0)
 		{
+			// An item lying on the container (the ash statue on the crates in Morvayn Manor): its box is in the top half of the
+			// container's and over its middle, so the ray reaches it first on the mesh's top, as OpenMW's nearest hit would
+			const Ref& it = w.refs[item];
+			float midZ = (box.boxMin[2] + box.boxMax[2]) * 0.5f;
+			bool onTop = it.boxMin[2] >= midZ && it.boxMax[2] <= box.boxMax[2] + 40.0f;
+			for (int k = 0; k < 2 && onTop; k++)
+			{
+				float c = (it.boxMin[k] + it.boxMax[k]) * 0.5f;
+				onTop = c >= box.boxMin[k] && c <= box.boxMax[k];
+			}
+			if (onTop)
+				return item;
 			float cx = (box.boxMin[0] + box.boxMax[0]) * 0.5f, cy = (box.boxMin[1] + box.boxMax[1]) * 0.5f;
 			float rc = 0.7f * 0.5f * fminf(box.boxMax[0] - box.boxMin[0], box.boxMax[1] - box.boxMin[1]);
 			// the ray's nearest point to the column's axis before it reaches the item

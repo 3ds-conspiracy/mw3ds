@@ -369,6 +369,11 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 			p.feet[2] = start[2];
 			p.onGround = startOnGround;
 			p.vz = fminf(p.vz, 0.0f);
+			// In the air a surface stops the body's own speed too (OpenMW's solver clips the velocity at what it hits):
+			// the take-off speed of a huge jump (Icarian Flight) kept pushing into a cliff face, every step undone, and
+			// the player hung there for good
+			if (!startOnGround && !levitating)
+				p.inertia[0] = p.inertia[1] = 0.0f;
 			// Falling onto a face steeper than the floor test takes (a ridge between two rocks): the body would hang
 			// there for ever, so it is pushed aside off the face, as OpenMW's actors slide down a slope too steep to stand on
 			if (!startOnGround && !levitating && endZ < start[2] - 0.01f)

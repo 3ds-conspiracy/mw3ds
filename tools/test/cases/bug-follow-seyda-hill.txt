@@ -1,0 +1,24 @@
+# A follower on the Seyda Neen strider platform comes down the hill after the player walking east (uber bug 26 /
+# HH_EscortMerchant): Tarvyn Faren stayed at the platform's foot (-8410,-69484,582) for good
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 TP:-8398:-69510:700:90
+5 0 0 0
+0.3 0 0 0 0 PLACE:guar:150
+0.3 0 0 0 0 FOLLOW:guar
+0.3 0 0 0 0 LEGIT
+2 0 0 0
+90 0 0 0 0 WALKTO:@-7936,-69376,496
+6 0 0 0
+90 0 0 0 0 WALKTO:@-7424,-69632,248
+6 0 0 0
+90 0 0 0 0 WALKTO:@-6912,-69632,160
+6 0 0 0
+90 0 0 0 0 WALKTO:@-6400,-69632,120
+6 0 0 0
+90 0 0 0 0 WALKTO:@-5888,-69632,120
+6 0 0 0
+90 0 0 0 0 WALKTO:@-5376,-69632,168
+30 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:guar:lt:600

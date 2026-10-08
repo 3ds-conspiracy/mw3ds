@@ -32,7 +32,7 @@ Unaware = not in combat and failing OpenMW's awareness check:
     y = (observer's Sneak + 0.2 Agility + 0.1 Luck - Blind) x their fatigue term x (fSneakViewMult in front, fSneakNoViewMult behind)
     noticed when the observer's roll (0..99, rerolled every 5 seconds) >= x - y
 
-Not sneaking, the sneak term is 0, so only Chameleon or Invisibility can keep the player unnoticed. Detection for
+Not sneaking, the sneak term is 0, so only Chameleon or Invisibility can keep the player unnoticed. Chameleon 200 is not proof against a sharp observer: with y above 100 (Berwen: Sneak 47, Agility 65, Luck 40, y = 120) a roll of 80 or more still notices, so a theft in her shop is seen about one roll in five; a weak observer (y under 101) can never notice it. The observer's Blind lowers y. Detection for
 crime and the sneak indicator also needs line of sight. The Sneak skill trains every `fSneakUseDelay` seconds while
 someone within `fSneakUseDist` has the player in sight and nobody has noticed them.
 

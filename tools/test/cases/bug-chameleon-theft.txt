@@ -1,0 +1,28 @@
+# Chameleon 200 and a theft in front of the owner (uber bug 108, spec/combat.md Awareness). OpenMW's awarenessCheck: not sneaking,
+# x = Chameleon = 200; an observer notices when roll >= x - y, y = (Sneak + 0.2 Agility + 0.1 Luck - Blind) x fatigue term x 1.5 in
+# front. A weak observer (Addammus, autocalculated stats) can never reach it, so the theft goes unseen and the bounty stays 0. A sharp
+# one (Berwen, Sneak 47, Agility 65, Luck 40: y = 120) still sees it on a roll of 80 or more: the uber tests' "Berwen saw it" is the rule
+# and not a bug. Guard case: it passed before the change too.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GIVE:p_chameleon_e:10
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Addammus's_Yurt
+3 0 0 0
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 SETALARM:addammus:100
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.3 0 0 0 0 USE:p_chameleon_e
+0.1 0 0 0 0 EXPECT:detectchance:ge:200
+60 0 0 0 0 PICKUP:misc_com_wood_cup_01
+12 0 0 0
+0.3 0 0 0 0 EXPECT:item:misc_com_wood_cup_01:eq:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0

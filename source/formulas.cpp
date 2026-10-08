@@ -257,7 +257,7 @@ bool Session::awarenessCheck(int ri)
 	if (w.effectTotal(39) > 0.0f)
 		x += 100.0f;
 	const ActorDef& def = w.game.actors[r.actor];
-	float obsTerm = def.skills[19] + 0.2f * def.attributes[ATTR_AGILITY] + 0.1f * def.attributes[ATTR_LUCK];
+	float obsTerm = def.skills[19] + 0.2f * def.attributes[ATTR_AGILITY] + 0.1f * def.attributes[ATTR_LUCK] - w.actorEffect(ri, 47);   // (minus Blind on them)
 	// facing: the angle between where they look and the player
 	float fx = sinf(r.rot[2]), fy = cosf(r.rot[2]);
 	float flat = sqrtf(dx * dx + dy * dy);

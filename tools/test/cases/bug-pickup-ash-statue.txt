@@ -1,0 +1,14 @@
+# HR_MorvaynManor: the ash statue (misc_6th_ash_hrmm) lies on a stack of two crates in Morvayn Manor. The crate's box
+# covers the statue, and worldPick kept the crate: PICKUP failed "hidden from here, no spot round it". OpenMW picks by
+# the meshes, so the statue, which the ray reaches first, is what the crosshair means.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Morvayn_Manor
+4 0 0 0
+0.3 0 0 0 0 TPIN:3190:3560:14432:0
+2 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 PICKUP:misc_6th_ash_hrmm
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_6th_ash_hrmm:ge:1

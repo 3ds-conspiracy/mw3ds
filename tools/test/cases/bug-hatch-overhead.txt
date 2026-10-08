@@ -1,0 +1,10 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Dagon_Fel,_Sorkvild's_Tower
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+# Sorkvild's hatch is in the hall ceiling: stand under it, look up, and take it
+90 0 0 0 0 WALKTO:@3518,1689,15184
+60 0 0 0 0 ACTIVATE:door_dwrv_loadup00
+3 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:15400

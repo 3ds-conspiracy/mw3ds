@@ -31,6 +31,7 @@ enum { SKILL_BLOCK = 0, SKILL_MEDIUM_ARMOR = 2, SKILL_HEAVY_ARMOR = 3, SKILL_BLU
        SKILL_AXE = 6, SKILL_SPEAR = 7, SKILL_SECURITY = 18, SKILL_SNEAK = 19, SKILL_LIGHT_ARMOR = 21, SKILL_SHORT_BLADE = 22,
        SKILL_MARKSMAN = 23, SKILL_MERCANTILE = 24, SKILL_HAND_TO_HAND = 26, SKILL_UNARMORED = 17 };
 
+static float trailHeightNear(float x, float y);     // (below: the player's footsteps)
 static const float kCombatDistance = 128.0f;      // fCombatDistance: reach 1.0 weapons
 static const float kTurnSpeed = 6.0f;              // radians per second
 static const float kHostileGiveUp = 5000.0f;
@@ -1206,6 +1207,14 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	{
 		return false;
 	}
+	// A drop of more than a stair that lands well under the heights the player walked at that spot is a dead-end ledge below
+	// the way (OpenMW's navigation mesh would not route a follower into it), not a short cut: they keep to the way instead
+	if (fz < r.pos[2] - 48.0f && fz > swimZ + 0.5f && r.trailUntil > w.time)
+	{
+		float th = trailHeightNear(body[0], body[1]);
+		if (th > -1e8f && fz < th - 45.0f)
+			return false;
+	}
 	if (Actor* a = w.actorOf(ri))
 		a->swimming = fz <= swimZ + 0.5f;
 	float moved[3] = { body[0] - r.pos[0], body[1] - r.pos[1], fz - r.pos[2] };
@@ -1789,6 +1798,28 @@ static const float* trailFind(unsigned num)
 	return sTrailNum[slot] == num ? sTrail[slot] : nullptr;
 }
 
+// The height of the player's way at (x, y): the nearest point of the line through the recent footsteps, within 150 units across
+// (-1e9 when it is further, or there are no footsteps)
+static float trailHeightNear(float x, float y)
+{
+	float bestD = 150.0f * 150.0f, bestZ = -1e9f;
+	for (int k = 0; k + 1 < sTrailCount; k++)
+	{
+		const float* a = sTrail[trailSlot(k)];
+		const float* b = sTrail[trailSlot(k + 1)];
+		float ex = b[0] - a[0], ey = b[1] - a[1], len2 = ex * ex + ey * ey;
+		float t = len2 > 1.0f ? ((x - a[0]) * ex + (y - a[1]) * ey) / len2 : 0.0f;
+		t = fmaxf(0.0f, fminf(1.0f, t));
+		float dx = a[0] + ex * t - x, dy = a[1] + ey * t - y, d2 = dx * dx + dy * dy;
+		if (d2 < bestD)
+		{
+			bestD = d2;
+			bestZ = a[2] + (b[2] - a[2]) * t;
+		}
+	}
+	return bestZ;
+}
+
 // The follower's goal toward `who` (the player). Held up (out of sight, or no headway for a second), it walks the
 // player's footsteps from the one nearest it, skipping on to the farthest of the next two it can see once past one; else straight
 static const float* followGoal(World& w, Ref& r, const float* who, float dt)
@@ -1820,9 +1851,12 @@ static const float* followGoal(World& w, Ref& r, const float* who, float dt)
 		{
 			const float* p = sTrail[trailSlot(k)];
 			float dx = p[0] - r.pos[0], dy = p[1] - r.pos[1], d2 = dx * dx + dy * dy;
-			if (d2 < best)
+			// nearest counting height twice over: a footstep on the slope the follower stands above is the one to
+			// walk to, not one beyond the ledge below that happens to be nearer on the map
+			float dz = (p[2] - r.pos[2]) * 2.0f, d3 = d2 + dz * dz;
+			if (d3 < best)
 			{
-				best = d2;
+				best = d3;
 				want = sTrailNum[trailSlot(k)] + (d2 > 70.0f * 70.0f ? 0 : 1);
 			}
 		}
