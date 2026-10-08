@@ -21,3 +21,7 @@ internal/
 
 # tools downloaded by tools/build/setup.ps1
 .tools/
+
+# native test build crash traces (tools/test/native/native_crash.inc) and shell crash dumps
+native_crash.txt
+*.stackdump

@@ -1,0 +1,11 @@
+# Sneaking lowers the eye; the driver's aim must follow it, or PICKUP's crosshair sweep misses (driver bugs 8 / 37, uber hr / tg)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 SNEAK:1
+60 0 0 0 0 PICKUP:Key_SN_Warehouse
+1 0 0 0
+0.3 0 0 0 0 EXPECT:item:key_sn_warehouse:eq:1

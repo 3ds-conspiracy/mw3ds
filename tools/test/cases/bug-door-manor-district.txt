@@ -1,0 +1,10 @@
+# DOORTO into Ald-ruhn's Manor District and back out must not stick inside (driver bug 85, uber hr)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Entrance
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+60 0 0 0 0 DOORTO:outside
+0.3 0 0 0 0 EXPECT:notcell:Manor

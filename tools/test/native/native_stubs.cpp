@@ -21,6 +21,7 @@
 #include <dirent.h>
 #include <direct.h>
 #include <io.h>
+#include "native_crash.inc"
 
 #include <3ds.h>
 #include <citro3d.h>
@@ -202,7 +203,7 @@ void logExit()
 	s_log = nullptr;
 }
 void watchdogStart() {}
-void crashHandlerInstall(int) {}
+void crashHandlerInstall(int) { nativeCrashInstall(); }
 
 // ---- linear lock: one thread
 void linearLockInit() {}

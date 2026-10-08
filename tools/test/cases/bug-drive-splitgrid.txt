@@ -1,0 +1,12 @@
+# A cave whose path grid is split in two pieces (Urshilaku Astral Burial): findPath has no route from the arrival ledge
+# to the far piece, so the walk used to go straight and drop off the ledge. Now it follows the start's piece and
+# crosses by sight (log: "split path grid"). Driver bug 78 (uber mq).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Urshilaku,_Astral_Burial
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@3169,5761,12721
+0.3 0 0 0 0 EXPECT:playerz:ge:12650
+0.3 0 0 0 0 EXPECT:playery:ge:5600

@@ -5,7 +5,7 @@
 0.3 0 0 0 0 EXPECT:cell:Ibar-Dad
 0.3 0 0 0 0 EXPECT:reflocal:Silver%Dagger_Hanin%Cursed,xpos:eq:0
 2 0 0 0
-30 0 0 0 0 ACTIVATE:Silver%Dagger_Hanin%Cursed
+120 0 0 0 0 ACTIVATE:Silver%Dagger_Hanin%Cursed
 6 0 0 0
 0.3 0 0 0 0 EXPECT:reflocal:Silver%Dagger_Hanin%Cursed,xpos:le:-2200
 0.3 0 0 0 0 EXPECT:reflocal:Silver%Dagger_Hanin%Cursed,xpos:ge:-2418

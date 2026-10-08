@@ -241,7 +241,7 @@ step("PLACE:fargoth:90")     # right in front, nothing nearer to catch the bolt
 wait(1)
 step("FACE:fargoth")      # the bolt goes where the crosshair is: at Fargoth, not at whatever stands nearer
 wait(0.5)
-spell("t44", "44:30:30:1:2")
+spell("t44", "44:30:30:10:2")          # 10 s: still running when the check reads the disposition 2 s later
 snap("refdisp:fargoth")
 step("CASTAT:fargoth:mw3ds_test_t44")
 wait(2)

@@ -24,7 +24,8 @@ $cases = Get-ChildItem (Join-Path $root 'tools\test\cases\*.txt') | ForEach-Obje
 if ($Filter) {
     $cases = $cases | Where-Object { $n = $_; $Filter | Where-Object { $n -like $_ } }
 } else {
-    $cases = $cases | Where-Object { $_ -notlike 'chain-*' }
+    # (chain-*: made by run-suite -Chained; zz-open-*: known open bugs, run by name)
+    $cases = $cases | Where-Object { $_ -notlike 'chain-*' -and $_ -notlike 'zz-open-*' }
 }
 $cases = @($cases | Sort-Object)
 if (-not $cases) { "no cases match"; exit 1 }

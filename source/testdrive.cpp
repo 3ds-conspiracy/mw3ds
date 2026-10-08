@@ -1,5 +1,6 @@
 // Test driver: see include/testdrive.h
 #include <3ds.h>
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include "testdrive.h"
@@ -117,7 +118,7 @@ static float doorWalkRank(Session& s, const Ref& r, float d3)
 	return d3 + 1e12f;
 }
 
-static int findRef(Session& s, const std::string& id)
+static int findRef(Session& s, const std::string& id, bool byWalk = true)
 {
 	int ri = s.testFindRef(id);
 	if (ri < 0)
@@ -148,7 +149,7 @@ static int findRef(Session& s, const std::string& id)
 				return;
 			float dx = c.pos[0] - pf[0], dy = c.pos[1] - pf[1], dz = c.pos[2] - pf[2], d = dx * dx + dy * dy + dz * dz;
 			// (shared door ids: the one the player can walk to soonest, not the one nearest through a wall or a floor)
-			if (c.type == "DOOR" && d < 1e11f)
+			if (byWalk && c.type == "DOOR" && d < 1e11f)
 				d = doorWalkRank(s, c, d);
 			if (d < best)
 			{
@@ -631,13 +632,20 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			if (ri < 0 && w.refs[i].type == "DOOR" && w.refs[i].hasDest && lower(w.refs[i].destCell) == dest)
 				ri = i;
 		});
+		const bool byDest = ri >= 0;
 		if (ri < 0)
 			ri = findRef(s, arg);
 		if (ri < 0)
 			ri = w.findRefAnywhere(spaced(arg));
 		if (ri < 0)
 			return false;
-		v = (float)w.refs[ri].lockLevel;
+		// (several share the id: the most locked one, so a case names the door it means whichever the player stands nearer)
+		int most = ri;
+		w.forLoadedRefs([&](int i) {
+			if (!byDest && w.refs[i].idLower == w.refs[ri].idLower && abs(w.refs[i].lockLevel) > abs(w.refs[most].lockLevel))
+				most = i;
+		});
+		v = (float)w.refs[most].lockLevel;
 		return true;
 	}
 	if (what == "scripttarget")
@@ -1506,13 +1514,22 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	// ROLL holds the die
 	if ((verb == "USELOCKPICK" || verb == "USEPROBE") && a.size() >= 3)
 	{
-		int ri = findRef(s, a[1]), ti = carried(w, a[2]);
+		// the one in the crosshair when it has that id (shared door ids), else the nearest in 3D: a tool is held up to what is
+		// in front of the player, not to the door the shortest walk leads to
+		int ri = findRef(s, a[1], false), ti = carried(w, a[2]);
+		if (s.target >= 0 && s.target < (int)w.refs.size() && (w.refs[s.target].idLower == lower(a[1]) || w.refs[s.target].idLower == lower(spaced(a[1]))))
+			ri = s.target;
 		if (ri < 0)
 			return fail(a[1] + " not loaded");
 		if (ti < 0)
 			return fail(a[2] + " not carried");
 		if (!w.inventory[ti].equipped)
 			s.equipItem(ti, true);
+		{
+			const Ref& t = w.refs[ri];
+			logf("drive: %s on %s at %.0f %.0f %.0f (%s%d)", a[0].c_str(), t.id.c_str(), t.pos[0], t.pos[1], t.pos[2],
+				(t.type == "DOOR" || t.type == "CONT") ? "lock " : "not a door or container, lock ", t.lockLevel);
+		}
 		int was = s.target;
 		s.target = ri;
 		s.useTool(w.inventory[ti]);
@@ -1890,6 +1907,109 @@ bool TestDriver::playerToken(const std::string& tok)
 	return false;
 }
 
+// The path grid of a cave can be split in two pieces with no link between them: findPath then has no route. A player
+// walks as far as the grid goes and then crosses by sight: to the point of the goal's piece that can be seen from a
+// point of the start's piece (a gap, a step down), else along the start's piece to the point nearest the goal.
+static void gridPiece(World& w, int from, std::vector<char>& in)
+{
+	in.assign(w.pathPoints.size(), 0);
+	std::vector<int> todo(1, from);
+	in[from] = 1;
+	while (!todo.empty())
+	{
+		int c = todo.back();
+		todo.pop_back();
+		for (int nb : w.pathPoints[c].links)
+		{
+			if (nb < 0 || nb >= (int)in.size() || in[nb] || w.pathPoints[nb].cell < 0 || !w.cells[w.pathPoints[nb].cell].live)
+				continue;
+			in[nb] = 1;
+			todo.push_back(nb);
+		}
+	}
+}
+
+static float gridDist(const float* a, const float* b)
+{
+	float dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
+	return sqrtf(dx * dx + dy * dy + dz * dz);
+}
+
+static bool splitGridPath(Session& s, const float from[3], const float to[3], std::vector<int>& path)
+{
+	World& w = s.w;
+	int st = w.nearestPathPoint(from), gl = w.nearestPathPoint(to);
+	if (st < 0 || gl < 0 || st == gl)
+		return false;
+	std::vector<char> inS, inG;
+	gridPiece(w, st, inS);
+	gridPiece(w, gl, inG);
+	std::vector<std::pair<float, int>> sp, gp;
+	for (size_t i = 0; i < inS.size(); i++)
+	{
+		if (inS[i])
+			sp.push_back({ gridDist(w.pathPoints[i].pos, to), (int)i });
+		if (inG[i])
+			gp.push_back({ gridDist(w.pathPoints[i].pos, to), (int)i });
+	}
+	std::sort(sp.begin(), sp.end());
+	std::sort(gp.begin(), gp.end());
+	// (the goal's points nearest the goal first; for each the start's points nearest to it, seen from one another)
+	int bestA = -1, bestB = -1;
+	for (size_t k = 0; k < gp.size() && k < 12 && bestA < 0; k++)
+	{
+		const float* b = w.pathPoints[gp[k].second].pos;
+		std::vector<std::pair<float, int>> near;
+		for (size_t i = 0; i < sp.size(); i++)
+			near.push_back({ gridDist(w.pathPoints[sp[i].second].pos, b), sp[i].second });
+		std::sort(near.begin(), near.end());
+		for (size_t j = 0; j < near.size() && j < 40; j++)
+		{
+			const float* a = w.pathPoints[near[j].second].pos;
+			float pa[3] = { a[0], a[1], a[2] + 50.0f }, pb[3] = { b[0], b[1], b[2] + 50.0f };
+			if (near[j].first < 3000.0f && fabsf(a[2] - b[2]) < 1500.0f && w.lineOfSight(pa, pb))
+			{
+				bestA = near[j].second;
+				bestB = gp[k].second;
+				break;
+			}
+		}
+	}
+	std::vector<int> head, tail;
+	if (bestA >= 0)
+	{
+		if (!w.findPath(from, w.pathPoints[bestA].pos, head))
+			head.clear();
+		// (the end of the goal's piece nearest the goal on the map and in height: not the pool under a door's ledge)
+		int end = bestB;
+		float endCost = 1e30f;
+		for (size_t i = 0; i < inG.size(); i++)
+		{
+			const float* q = w.pathPoints[i].pos;
+			float c = hypotf(q[0] - to[0], q[1] - to[1]) + 2.0f * fabsf(q[2] - to[2]);
+			if (inG[i] && c < endCost)
+			{
+				endCost = c;
+				end = (int)i;
+			}
+		}
+		if (!w.findPath(w.pathPoints[bestB].pos, w.pathPoints[end].pos, tail))
+			tail.clear();
+		path = head;
+		path.push_back(bestB);
+		for (int t : tail)
+			if (t != bestB)
+				path.push_back(t);
+		logf("drive: split path grid: crossing from point %d to %d by sight", bestA, bestB);
+		return true;
+	}
+	// (a cave only: outdoors the grid is patchy, the land between is open, and the straight walk is the better guess)
+	if (w.current < 0 || !w.cells[w.current].interior || sp.empty() || !w.findPath(from, w.pathPoints[sp[0].second].pos, path))
+		return false;
+	logf("drive: split path grid: along the start's piece to point %d, nearest the goal", sp[0].second);
+	return true;
+}
+
 // The grid route for a walk. World::findPath snaps both ends to the nearest grid point up to 2500 away, a goal in plain
 // sight included, so a walk to a spot would first head for a point far off its way. A route is kept only when it
 // helps: its last points on another floor than the goal (a walkway above a door, a stair landing) are dropped, and a
@@ -1900,7 +2020,10 @@ static bool planPath(Session& s, const float from[3], const float to[3], bool sp
 	if (!w.findPath(from, to, path))
 	{
 		path.clear();
-		return false;
+		// the grid is in two pieces (Urshilaku Karma Burial): no route from here to the goal's piece
+		if (!splitGridPath(s, from, to, path))
+			return false;
+		return true;
 	}
 	// trailing points stacked over or under the goal (a walkway above a door) lead to the wrong floor: drop them. Only
 	// those near it on the map: a route that climbs a ramp to a door set higher or lower than its origin is kept whole
@@ -1927,6 +2050,32 @@ static bool planPath(Session& s, const float from[3], const float to[3], bool sp
 		}
 	}
 	return true;
+}
+
+// Hovering over a floor it can stand on (a levitating player at the foot of a stair, in a hall): collision floor within
+// 60 units under the feet. Outdoors the land is not in the cells' collision: no floor found counts as hanging in the air.
+static bool standsOnFloor(Session& s)
+{
+	const Player& p = s.w.player;
+	Scene sc = s.w.scene();
+	for (Cell* c : sc.cells)
+	{
+		float fz;
+		if (collisionFloor(c->collision, p.feet[0], p.feet[1], p.feet[2] + 30.0f, p.feet[2] - 60.0f, &fz))
+			return true;
+	}
+	return false;
+}
+
+// Whether the crosshair is on that reference now, from the view as it is this frame (the session's own pick of last frame is
+// the view before the driver turned it)
+static bool aimsAt(Session& s, int ref)
+{
+	const Player& p = s.w.player;
+	float cp = cosf(p.pitch);
+	float eye[3] = { p.feet[0], p.feet[1], playerEyeZ(p) };
+	float dir[3] = { sinf(p.yaw) * cp, cosf(p.yaw) * cp, sinf(p.pitch) };
+	return worldPick(s.w, eye, dir, 192.0f + s.w.effectTotal(59) * 22.0f) == ref;
 }
 
 // An escort fallen behind (ESCORT:<npc>): the player stands and lets them catch up, as a player waits. Not when they
@@ -2027,10 +2176,14 @@ bool TestDriver::start(Session& s, const std::string& token)
 		}
 		cruise = a.size() >= 3 ? (float)atof(a[2].c_str()) : fmaxf(p.feet[2], goal[2]) + 1500.0f;
 		phase = climbs = hops = 0;
+		outTimer = 0.0f;
+		outTries = 0;
 		inAir = false;
 		phaseTimer = elapsed = progressTimer = 0.0f;
 		memcpy(progressAt, p.feet, sizeof(progressAt));
 		lastGoal = 1e9f;
+		// seconds the leg needs at fly speed (up, over, down), a third more for detours, and a margin
+		flyAllow = ((hypotf(goal[0] - p.feet[0], goal[1] - p.feet[1]) + 2.0f * fmaxf(0.0f, cruise - p.feet[2])) / fmaxf(1.0f, p.flySpeed)) * 1.35f + 30.0f;
 		logf("drive: %s %s from %.0f %.0f %.0f (Acrobatics %d, Fortify Skill %.0f, Levitate %.0f)", verb.c_str(), id.c_str(), p.feet[0],
 			p.feet[1], p.feet[2], s.w.stats.skills[20], s.w.effectTotal(83), p.levitate);
 		return true;
@@ -2038,6 +2191,26 @@ bool TestDriver::start(Session& s, const std::string& token)
 	if ((verb == "WALKTO" || verb == "KILL" || verb == "ACTIVATE" || verb == "PICKUP" || verb == "DOORTO" || verb == "LOOT"
 		|| verb == "PUT" || verb == "STRIKE") && a.size() >= 2)
 	{
+		// a talk left open (an answer like "travel together" ends with the dialogue still up): a player says goodbye before
+		// walking off, and every walk would time out under it
+		if (s.dlg.open && s.screen == SCR_DIALOGUE && !retrying)
+		{
+			// (a guard's crime greeting is answered first, as a player would: pay the fine when there is gold for it)
+			int pay = -1;
+			for (size_t i = 0; i < s.dlg.choices.size() && pay < 0; i++)
+				if (s.dlg.choices[i].second == 1)
+					pay = (int)i;
+			if (s.testLegit && s.w.bounty > 0 && pay >= 0 && s.w.itemCount("gold_001") >= s.w.bounty)
+			{
+				logf("drive: paying the fine (%d) of the crime greeting left open before %s %s", s.w.bounty, verb.c_str(), a[1].c_str());
+				dialogueChoose(s.dlg, s.w, s, s.dlg.choices[pay].second);
+			}
+			if (s.dlg.open && s.screen == SCR_DIALOGUE)
+			{
+				logf("drive: closing a talk left open before %s %s", verb.c_str(), a[1].c_str());
+				s.closeScreen();
+			}
+		}
 		// PUT:<container>:<item>: open it as LOOT does, then put the carried item in (the Inventory page's tap)
 		strikeFor = verb == "STRIKE" ? (a.size() >= 3 ? (float)atof(a[2].c_str()) : 5.0f) : 0.0f;
 		lootItem = (verb == "LOOT" || verb == "PUT") && a.size() >= 3 ? lower(a[2]) : "";
@@ -2142,8 +2315,15 @@ int TestDriver::findTarget(Session& s, const std::string& verb, const std::strin
 		{
 			const Ref& r = s.w.refs[c.i];
 			d = doorWalkRank(s, r, c.d3);
-			logf("drive: DOORTO candidate %s (%d) at %.0f %.0f %.0f: 3D %.0f, ranked %.0f", r.id.c_str(), c.i, r.pos[0], r.pos[1],
-				r.pos[2], sqrtf(c.d3), sqrtf(d));
+			// a locked door the player can't open (no key, lock still on) after the doors that open: stacked doors to one
+			// place are often a locked upper door and the open one below
+			if (r.lockLevel > 0 && (r.key.empty() || s.w.itemCount(r.key) <= 0))
+				d += 1e13f;
+			// the character generation doors are shut by their scripts until the intro is done: the ordinary doors first
+			if (r.idLower.compare(0, 7, "chargen") == 0)
+				d += 1e13f;
+			logf("drive: DOORTO candidate %s (%d) at %.0f %.0f %.0f: 3D %.0f, ranked %.0f, lock %d%s", r.id.c_str(), c.i, r.pos[0], r.pos[1],
+				r.pos[2], sqrtf(c.d3), sqrtf(d), r.lockLevel, r.trap.empty() ? "" : ", trapped");
 		}
 		if ((c.exact && !bestExact) || (c.exact == bestExact && d < best))
 		{
@@ -2197,6 +2377,13 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 	{
 		// up to the cruising height
 		in.up = true;
+		// out from under an overhang (a bridge, an eave): a stretch sideways, a different way each time
+		if (outTimer > 0.0f)
+		{
+			outTimer -= dt;
+			p.yaw = atan2f(dx, dy) + outTries * 1.5708f;
+			in.moveY = 1.0f;
+		}
 		if (p.feet[2] >= cruise)
 		{
 			logf("drive: FLYTO %s: at %.0f up after %.1f s, %.0f to go", id.c_str(), p.feet[2], elapsed, dist);
@@ -2204,13 +2391,22 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 			progressTimer = 0.0f;
 			memcpy(progressAt, p.feet, sizeof(progressAt));
 		}
-		else if (progressTimer >= 2.0f)
+		else if (p.feet[2] >= progressAt[2] + 20.0f)
 		{
-			if (p.feet[2] < progressAt[2] + 20.0f)
+			progressTimer = 0.0f;
+			memcpy(progressAt, p.feet, sizeof(progressAt));
+		}
+		else if (progressTimer >= 3.0f && outTimer <= 0.0f)
+		{
+			// no rise at all in 3 s: a ceiling over us. Step out from under it (toward the goal, then the other ways round);
+			// four ways tried without a rise is a roof the flight can't get out from under
+			if (++outTries > 4)
 			{
 				fail("can't climb (a ceiling): fly out of the building first");
 				return false;
 			}
+			logf("drive: FLYTO %s: no rise at %.0f %.0f %.0f, stepping out sideways (way %d)", id.c_str(), p.feet[0], p.feet[1], p.feet[2], outTries);
+			outTimer = 4.0f;
 			progressTimer = 0.0f;
 			memcpy(progressAt, p.feet, sizeof(progressAt));
 		}
@@ -2396,6 +2592,29 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		return updateFly(s, in, dt);
 	if (kind == HOP)
 		return updateHop(s, in, dt);
+	// A guard's crime greeting (pay the fine / go to jail / resist) that opens on its own during a step that is not
+	// a talk with that guard: in a LEGIT run pay it if there is gold for it, close the dialogue and carry on
+	if (s.testLegit && s.dlg.open && s.screen == SCR_DIALOGUE && s.dlg.ref >= 0 && s.dlg.ref != ref && s.dlg.ref < (int)w.refs.size()
+		&& w.refs[s.dlg.ref].actor >= 0 && lower(w.game.actors[w.refs[s.dlg.ref].actor].cls) == "guard")
+	{
+		const std::string who = w.refs[s.dlg.ref].idLower;
+		int pay = -1;
+		for (size_t i = 0; i < s.dlg.choices.size() && pay < 0; i++)
+			if (s.dlg.choices[i].second == 1)
+				pay = (int)i;
+		if (w.bounty > 0 && pay >= 0 && w.itemCount("gold_001") >= w.bounty)
+		{
+			logf("drive: %s's crime greeting during %s: paying the fine (%d)", who.c_str(), id.c_str(), w.bounty);
+			dialogueChoose(s.dlg, w, s, s.dlg.choices[pay].second);
+			return true;
+		}
+		if (s.dlg.choices.empty() && w.bounty <= 0)
+		{
+			logf("drive: closing %s's talk, back to %s", who.c_str(), id.c_str());
+			s.closeScreen();
+			return true;
+		}
+	}
 	if (kind == LOOTWAIT)
 	{
 		// the container (or body) screen is open: take the item as a tap on it does
@@ -2436,6 +2655,14 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		}
 		else if (takeTimer > 1.5f)
 		{
+			// the press found nothing (the body's small pick box moved off the crosshair): look and press again, as a player does
+			if (++talkTries <= 3)
+			{
+				logf("drive: %s: nothing opened, again", id.c_str());
+				kind = ACTIVATE;
+				lookTimer = 0.0f;
+				return true;
+			}
 			logf("drive: FAIL loot %s: it didn't open", id.c_str());
 			kind = NONE;
 		}
@@ -2445,7 +2672,8 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	{
 		// a person: the talk opens, or the press found nothing (they stepped off the crosshair): look and press again
 		takeTimer += dt;
-		if (s.menuOpen())
+		// (someone in combat with the player refuses to talk, with the sActorInCombat message: nothing to press again)
+		if (s.menuOpen() || w.refs[ref].ai == AI_COMBAT)
 		{
 			kind = NONE;
 			return false;
@@ -2643,13 +2871,19 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		p.yaw = atan2f(gx - p.feet[0], gy - p.feet[1]);
 		p.pitch = 0.0f;
 		in.moveY = 1.0f;
+		// swimming: the stroke follows the view (a flooded tunnel, a sunken door): look down or up to the way's depth
+		if (p.swimming && p.levitate <= 0.0f && fabsf(gz - p.feet[2]) > 60.0f)
+		{
+			float hd = hypotf(gx - p.feet[0], gy - p.feet[1]);
+			p.pitch = fmaxf(-0.9f, fminf(0.9f, atan2f(gz - p.feet[2], fmaxf(hd, 1.0f))));
+		}
 		// still levitating (a flight's potion not run out): down (L) or up (R) to the way's height, as a player would
 		if (p.levitate > 0.0f)
 		{
 			in.down = gz < p.feet[2] - 30.0f;
 			in.up = gz > p.feet[2] + 30.0f;
 			// the way is at or below us and we hang in the air: come down first (L), or the walk climbs onto roofs
-			if (in.down && !p.onGround && elapsed < 15.0f)
+			if (in.down && !p.onGround && elapsed < 15.0f && !standsOnFloor(s))
 				in.moveY = 0.0f;
 			// close to a door (a tower's or a temple's) and still hovering: land at its floor first, as a player does before the
 			// last steps, or the walk stops short of it and the crosshair passes over its top (Ghostgate, Vivec)
@@ -2717,14 +2951,20 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 					sidestepTimer = 1.0f;
 				}
 				else if (stuckTries == 3)
+				{
 					in.jump = true;
+					in.moveY = 0.0f;      // (from standing: a running jump is a 45 degree hop, half as high; OpenMW)
+				}
 				else if (s.testLegit && stuckTries <= 12)
 				{
 					// LEGIT (no warp to fall back on): keep working round it as a player would, wider each time:
 					// left, right, a running jump, by turns (a shrub, a rock, a rail)
 					int round = (stuckTries - 1) / 3, step = (stuckTries - 1) % 3;
 					if (step == 2)
+					{
 						in.jump = true;
+						in.moveY = 0.0f;
+					}
 					else
 					{
 						sidestep = step == 0 ? -1.0f : 1.0f;
@@ -2789,7 +3029,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	}
 	// there, and the crosshair already on it (last frame's aim): press A with the aim left as it is (moving it now
 	// would put the press on whatever the new aim finds)
-	if (kind == ACTIVATE && s.target == ref && !s.menuOpen())
+	if (kind == ACTIVATE && s.target == ref && !s.menuOpen() && aimsAt(s, ref))
 	{
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
@@ -2843,10 +3083,10 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	// ACTIVATE: look at its middle, then press A on what the crosshair finds. Something in front of the middle (a gem
 	// lying on the desk, a basket before the book): look over the rest of it, as a player moves the crosshair
 	float cz = (r.boxMin[2] + r.boxMax[2]) * 0.5f;
-	float eyeZ = p.feet[2] + PLAYER_EYE_HEIGHT;
+	float eyeZ = playerEyeZ(p);      // (sneaking lowers the eye: aim from where it is)
 	p.pitch = atan2f(cz - eyeZ, fmaxf(dist, 1.0f));
 	lookTimer += dt;
-	if (lookTimer > 0.3f && s.target != ref)
+	if (lookTimer > 0.3f && !aimsAt(s, ref))
 	{
 		static const float kAim[][3] = { { 0.5f, 0.5f, 0.85f }, { 0.2f, 0.5f, 0.5f }, { 0.8f, 0.5f, 0.5f }, { 0.5f, 0.2f, 0.5f },
 			{ 0.5f, 0.8f, 0.5f }, { 0.2f, 0.2f, 0.85f }, { 0.8f, 0.8f, 0.85f }, { 0.2f, 0.8f, 0.85f }, { 0.8f, 0.2f, 0.85f },
@@ -2858,7 +3098,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		p.yaw = atan2f(hx, hy);
 		p.pitch = atan2f(az - eyeZ, fmaxf(sqrtf(hx * hx + hy * hy), 1.0f));
 	}
-	if (s.target == ref && !s.menuOpen())
+	if (!s.menuOpen() && aimsAt(s, ref))
 	{
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
@@ -2892,7 +3132,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			}
 			if (fz < -1e8f)
 				continue;
-			float eye[3] = { cx, cy, fz + PLAYER_EYE_HEIGHT };
+			float eye[3] = { cx, cy, fz + PLAYER_EYE_HEIGHT - p.eyeDrop };
 			for (const float* f : kLook)
 			{
 				float d[3] = { r.boxMin[0] + (r.boxMax[0] - r.boxMin[0]) * f[0] - eye[0], r.boxMin[1] + (r.boxMax[1] - r.boxMin[1]) * f[1] - eye[1],

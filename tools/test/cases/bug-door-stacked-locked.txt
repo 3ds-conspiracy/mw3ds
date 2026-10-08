@@ -1,0 +1,18 @@
+# Two doors to Nalcarya's shop stand one over the other in Balmora: the lower opens, the upper (lock 10) does not. A player
+# hovering at the upper one's height got the locked one by walk rank and the press did nothing. Locked doors come last.
+# Driver bug 13 (uber il).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:3
+0.3 0 0 0 0 GOTO:Balmora
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-24813,-10273,1077
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Nalcarya_of_White_Haven|_Fine_Alchemist
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Nalcarya_of_White_Haven|_Fine_Alchemist

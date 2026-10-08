@@ -940,7 +940,15 @@ int main()
 			}
 			if (first && !s.startScript.empty())
 			{
-				session->w.startGlobalScript(s.startScript);
+				// STARTSCRIPT:name:ref: started on an object, as ref->StartScript does
+				std::string nm = s.startScript, on;
+				size_t colon = nm.find(':');
+				if (colon != std::string::npos)
+				{
+					on = nm.substr(colon + 1);
+					nm = nm.substr(0, colon);
+				}
+				session->w.startGlobalScript(nm, on.empty() ? -1 : session->w.findRef(on));
 				logf("test: started script %s", s.startScript.c_str());
 			}
 			if (first && !s.saveAs.empty())
@@ -1056,7 +1064,10 @@ int main()
 				}
 				session->brewPotion();
 			}
-			if (first && s.sleep > 0)
+			// (a rest still running from the step before, whose seconds were shorter: not started over)
+			if (first && s.sleep > 0 && session->restDone >= 0 && session->screen == SCR_REST)
+				logf("drive: SLEEP %d ignored: a rest is still running (%d of %d hours)", s.sleep, session->restDone, session->restTotal);
+			else if (first && s.sleep > 0)
 			{
 				session->openRest(false);
 				session->startRest(s.sleep);
@@ -1080,7 +1091,9 @@ int main()
 				ww.setWeatherHere(s.weather);
 				logf("test: weather %d in %s", s.weather, ww.cells[ww.current].region.c_str());
 			}
-			if (first && s.persuade >= 0 && session->dlg.open)
+			if (first && s.persuade >= 0 && session->dlg.open && !session->dlg.choices.empty())
+				logf("drive: FAIL persuade %d ignored: a choice is open (%d choices): answer it first (CHOICE)", s.persuade, (int)session->dlg.choices.size());
+			else if (first && s.persuade >= 0 && session->dlg.open)
 				session->persuade(s.persuade);
 			if (first && !s.tool.empty())
 			{
@@ -1350,6 +1363,9 @@ int main()
 						by.empty() ? "" : "; named by ", by.empty() ? "" : (by + ", who had no answer").c_str(),
 						dialogueFindInfo(session->w, *t, session->dlg.ref, -1) ? "the speaker has an answer" : "no answer from the speaker");
 				}
+				if (!session->dlg.choices.empty())
+					logf("drive: FAIL topic %s ignored: a choice is open (%d choices): answer it first (CHOICE)", s.topic.c_str(),
+						(int)session->dlg.choices.size());
 				// (LEGIT: not asked; a player has no way to)
 				if (listed || !t || !session->testLegit)
 					dialogueTopic(session->dlg, session->w, *session, s.topic);
@@ -1411,9 +1427,13 @@ int main()
 					session->w.controlsEnabled, session->target >= 0 ? session->w.refs[session->target].id.c_str() : "-",
 					(int)session->pendingMenus.size());
 			}
-			if (driver.busy() && inputTime >= s.secs)
+			// (a flight takes as long as its distance needs: the step's seconds are a guess, FLYTO knows better)
+			float stepSecs = s.secs;
+			if (driver.busy() && driver.kind == TestDriver::FLY && driver.flyAllow > stepSecs)
+				stepSecs = driver.flyAllow;
+			if (driver.busy() && inputTime >= stepSecs)
 				driver.fail("timeout");
-			if (inputTime >= s.secs || (stepBlocking && !driver.busy()))
+			if (inputTime >= stepSecs || (stepBlocking && !driver.busy()))
 			{
 				stepBlocking = false;
 				inputIndex++;

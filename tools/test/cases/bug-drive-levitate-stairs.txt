@@ -1,0 +1,16 @@
+# A levitating WALKTO that has to go down a stair from the floor it hovers over must walk on (driver, uber ic): the
+# "hold forward while coming down" rule applies only when really hanging in the air, not at floor level
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:10
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+6 0 0 0
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:8:400
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+3 0 0 0
+16 0 0 0 0 WALKTO:@926,-260,-490
+0.3 0 0 0 0 EXPECT:playerz:lt:-300

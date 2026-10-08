@@ -1,0 +1,10 @@
+# FLYTO's own time comes from its distance: a long leg under a short step time still arrives (driver bug 58, uber ic)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:4
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 LEGIT
+6 0 0 0 0 FLYTO:@-12104,-64000,300
+0.3 0 0 0 0 EXPECT:playery:gt:-65000

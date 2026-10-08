@@ -39,7 +39,7 @@ struct TestDriver
 	std::string id;
 	int ref = -1;
 	std::vector<int> path;           // path grid points still to walk through
-	float progressAt[2] = { 0, 0 };
+	float progressAt[3] = { 0, 0, 0 };
 	float progressTimer = 0.0f, swingTimer = 0.0f, lookTimer = 0.0f, elapsed = 0.0f;
 	int stuckTries = 0;
 	bool doorTried = false;
@@ -61,6 +61,9 @@ struct TestDriver
 	// FLYTO (levitating: climb to `cruise`, straight there, down) and HOPTO (running jumps, steered in the air)
 	int phase = 0, climbs = 0, hops = 0;
 	float cruise = 0.0f, phaseTimer = 0.0f;
+	float outTimer = 0.0f;           // FLYTO: seconds left of a stretch sideways out from under an overhang
+	int outTries = 0;
+	float flyAllow = 0.0f;           // FLYTO: seconds the leg may take (from its distance), beyond the step's own
 	float aim[3] = { 0, 0, 0 };     // FLYTO: the spot asked for (goal moves around it when a roof is in the way)
 	bool inAir = false;
 	// LEGIT: the target hidden from where we stand (behind a basket): walk round it and try again (three sides)

@@ -1,0 +1,20 @@
+# A guard's crime greeting that opens during a walk is answered as a player would (pay the fine, close it) and the walk
+# goes on (uber ht, bug 96): no "stuck", no CHOICE:1 needed
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:4
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+0.3 0 0 0 0 SETALARM:chargen%captain:100
+0.3 0 0 0 0 GIVE:gold_001:1000
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 LEGIT
+10 0 0 0 0 PICKUP:Key_SN_Warehouse
+60 0 0 0 0 WALKTO:@1175,-611,192
+# (the greeting can open as the walk ends: the next move answers it first)
+60 0 0 0 0 WALKTO:@1522,-271,192
+2 0 0 0
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:gold:eq:@-300
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census

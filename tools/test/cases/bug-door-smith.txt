@@ -1,0 +1,10 @@
+# DOORTO from Ald-ruhn's Council Hall to Tuveso Beleth's smithy (door on the lower floor) must get there (uber hr, bug 86)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Hall
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Ald-ruhn,_Tuveso_Beleth:_Smith
+3 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ald-ruhn,_Tuveso_Beleth:_Smith
