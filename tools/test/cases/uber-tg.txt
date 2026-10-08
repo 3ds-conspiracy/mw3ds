@@ -1188,7 +1188,7 @@
 120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Tel_Branora,_Upper_Tower
-120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower@1
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Tel_Branora,_Upper_Tower:_Therana's_Chamber
 62 0 0 0
@@ -1207,10 +1207,10 @@
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 SNEAK:1
-# BLOCKED: after DOORTO into Therana's Chamber (feet -175,1204,-1230) PICKUP:ebony_staff_caper stalls at -173,1327,-1161 (501 up) even with levitation 75; the same pickup passes from a GOTO start in cases/bug-pickup-therana (different path-grid piece)
-# 60 0 0 0 0 PICKUP:ebony_staff_caper
+# (DOORTO ...@1: the second door of the two to the Chamber leads to the hall; the first to a closed vestibule)
+60 0 0 0 0 PICKUP:ebony_staff_caper
 1 0 0 0
-# 0.1 0 0 0 0 EXPECT:item:ebony_staff_caper:ge:1
+0.1 0 0 0 0 EXPECT:item:ebony_staff_caper:ge:1
 0.3 0 0 0 0 SNEAK:0
 0.1 0 0 0 0 EXPECT:bounty:eq:0
 0.3 0 0 0 0 USE:p_restore_magicka_e
