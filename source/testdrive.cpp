@@ -11,6 +11,7 @@
 #include "log.h"
 #include "audio.h"
 
+extern const char* g_playerBlock;
 // Where SNAP:moved was taken (EXPECT:moved measures from it)
 static float s_movedFrom[2] = { 0.0f, 0.0f };
 
@@ -2019,6 +2020,26 @@ static bool splitGridPath(Session& s, const float from[3], const float to[3], st
 // sight included, so a walk to a spot would first head for a point far off its way. A route is kept only when it
 // helps: its last points on another floor than the goal (a walkway above a door, a stair landing) are dropped, and a
 // walk to a spot goes straight unless the route still ends near it.
+// Where a walk to a thing ends: its origin, but for a door whose origin sits well outside its own mesh (an Ashlander yurt's:
+// the model is placed 336 units from the reference, inside the tent) the middle of its box, where the door shows (other
+// doors keep their origin: a cave door's box takes in the rock round it)
+static void walkTarget(const Ref& r, bool activate, float out[3])
+{
+	out[0] = r.pos[0];
+	out[1] = r.pos[1];
+	out[2] = r.pos[2];
+	if (activate && r.type == "DOOR" && r.boxMax[0] > r.boxMin[0])
+	{
+		float ox = fmaxf(r.boxMin[0] - r.pos[0], fmaxf(0.0f, r.pos[0] - r.boxMax[0]));
+		float oy = fmaxf(r.boxMin[1] - r.pos[1], fmaxf(0.0f, r.pos[1] - r.boxMax[1]));
+		if (ox * ox + oy * oy > 100.0f * 100.0f)
+		{
+			out[0] = (r.boxMin[0] + r.boxMax[0]) * 0.5f;
+			out[1] = (r.boxMin[1] + r.boxMax[1]) * 0.5f;
+		}
+	}
+}
+
 static bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path)
 {
 	World& w = s.w;
@@ -3166,7 +3187,9 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		if (path.empty() && repathTimer > 3.0f)
 		{
 			repathTimer = 0.0f;
-			if (planPath(s, p.feet, r.pos, pointGoal, path))
+			float to[3];
+			walkTarget(r, kind == ACTIVATE && !pointGoal, to);
+			if (planPath(s, p.feet, to, pointGoal, path))
 				logf("drive: route to %s found, %d path points", id.c_str(), (int)path.size());
 		}
 		// the next path point on the way (passed ones dropped), else straight at it
@@ -3307,6 +3330,16 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 							fx += " " + std::to_string(e.effect) + "(" + std::to_string((int)e.magnitude) + ")";
 						logf("drive: stuck diagnostics: fatigue %.0f of %.0f, effects:%s, screen %d, swimming %d, levitate %.0f", w.stats.fatigue, w.stats.fatigueMax,
 							fx.empty() ? " none" : fx.c_str(), (int)s.screen, (int)p.swimming, p.levitate);
+						logf("drive: stuck diagnostics: target at %.0f %.0f %.0f, last pushed back by %s", r.pos[0], r.pos[1], r.pos[2], g_playerBlock);
+						// who stands close (a person in the way of a doorway shows here)
+						for (int i : w.loadedActors)
+						{
+							const Ref& a = w.refs[i];
+							float ex = a.pos[0] - p.feet[0], ey = a.pos[1] - p.feet[1];
+							if (a.visible() && !a.dead && ex * ex + ey * ey < 250.0f * 250.0f && fabsf(a.pos[2] - p.feet[2]) < 200.0f)
+								logf("drive: stuck diagnostics: %s at %.0f %.0f %.0f, %.0f away, ai %d, package %d", a.id.c_str(), a.pos[0], a.pos[1], a.pos[2],
+									hypotf(ex, ey), a.ai, a.aiPackage);
+						}
 					}
 char why[160];
 					snprintf(why, sizeof(why), "stuck at %.0f %.0f %.0f (%.0f away, %.0f up), no warp in a LEGIT run", p.feet[0], p.feet[1],

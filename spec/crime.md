@@ -78,3 +78,11 @@ with no greeting that fits. `issue-4` (theft during character creation), `crime-
 2. **Arrest** was a fixed screen (pay / jail / resist) for every guard. Paying kept the stolen goods, and stealing
    during character creation could end in jail or a fight, where Morrowind's guard lets it go (issue #4). Now the
    guard opens the conversation and Greeting 0 decides, as above.
+
+## Findings (2026-10-08)
+
+3. **Witness fight** (open, `zz-open-witness-alarm`): one term per kind for every witness, so slaves with Alarm 0 turn on
+   the player who assaults or kills in front of them. OpenMW scales the fight term by the witness's Alarm / 100, uses
+   `iFightAttacking` for a witness of an assault (`iFightAttack` for the victim), and skips witnesses already in combat with
+   the victim (`canReportCrime`). Tried (Alarm scaling, and the skip alone) and each shifted the committed `uber-fg` and `uber-hh`
+   timelines (tuned on witnesses that attack), so none of it is in.

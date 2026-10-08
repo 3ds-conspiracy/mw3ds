@@ -1,0 +1,12 @@
+# Nerano Ancestral Tomb (B3 Zainab): the door (72654,117488,873) is real and stands at the ground (777), inside the
+# covered ramp of ex_velothi_entrance_02, whose roof is at 1100..1200. The ramp opens to the west (x < 72500). Landing
+# on the roof (FLYTO:@72480,117492 ends on it) leaves DOORTO "-291 up"; landing west of the ramp and walking in works.
+# Not an engine fault: this guards the walk in from the west.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 TP:72300:117488:900:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+90 0 0 0 0 DOORTO:Nerano_Ancestral_Tomb
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Nerano_Ancestral_Tomb

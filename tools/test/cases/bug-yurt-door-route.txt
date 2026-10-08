@@ -1,0 +1,12 @@
+# Inside the Wise Woman's yurt (Ahemmusa camp) the walk to the door went by the door reference's own grid point, 336 units
+# north of where the door shows, so DOORTO:outside wandered up the yurt and stalled (Q16). The walk plans to the door's box.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Wise_Woman's_Yurt
+4 0 0 0
+0.3 0 0 0 0 TPIN:-154:697:-356:0+LEGIT
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ahemmusa_Camp
+0.1 0 0 0 0 EXPECT:notcell:Ahemmusa_Camp,_Wise_Woman's_Yurt
