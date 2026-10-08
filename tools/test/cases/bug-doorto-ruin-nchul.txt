@@ -1,0 +1,12 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Nchuleftingth,_Upper_Levels
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# DOORTO out of a Daedric / Dwemer ruin and back in at its entrance door: the door has to come under the crosshair
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 1 0
+60 0 0 0 0 DOORTO:Nchuleftingth,_Upper_Levels
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Nchuleftingth,_Upper_Levels

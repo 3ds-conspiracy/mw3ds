@@ -25,3 +25,4 @@ internal/
 # native test build crash traces (tools/test/native/native_crash.inc) and shell crash dumps
 native_crash.txt
 *.stackdump
+/sd/

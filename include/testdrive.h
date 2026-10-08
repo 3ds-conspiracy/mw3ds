@@ -42,6 +42,20 @@ struct TestDriver
 	float progressAt[3] = { 0, 0, 0 };
 	float progressTimer = 0.0f, swingTimer = 0.0f, lookTimer = 0.0f, elapsed = 0.0f;
 	int stuckTries = 0;
+	bool hoverOn = false;            // ACTIVATE / WALK, levitating over it: coming down at hoverSpot, beside what holds us up
+	float hoverTimer = 0.0f, hoverZ = 0.0f, hoverSpot[2] = { 0, 0 };
+	float descTimer = 0.0f, descZ = 0.0f;   // ACTIVATE, levitating at the door: the descent to its floor, given up when held up (descGaveUp)
+	bool descGaveUp = false;
+	// LEGIT, stuck: a route found by trying the player's own steps (walk, running jump, dive) heading by heading, as a player
+	// would feel their way out of a pocket whose way out is a dive under an arch; the grid has no points under water
+	struct SwimLeg { float pos[3]; bool swim, jump; float yaw, pitch, seconds; };   // (the heading held for `seconds`, ending at pos)
+	std::vector<SwimLeg> swimRoute;
+	int floodTries = 0;
+	bool diveOk = false;             // WALKTO:<where>:dive: when stuck, feel a way out by trial steps (swimming, jumping)
+	bool lowFly = false;             // FLYTO:@x,y,z:low: a low cruise for caves and halls, trying lower before higher when blocked
+	float legTimer = 0.0f;
+	bool legJumped = false;
+	float followWait = 0.0f;             // ACTIVATE of a door: seconds waited for an unnamed follower left behind
 	bool doorTried = false;
 	int doorLast = -1;               // the inner door last opened on the way (another one is tried; the same only if a trap ate the press)
 	float lineTimer = 0.0f;          // KILL: seconds spent stepping aside from someone in the line to the target

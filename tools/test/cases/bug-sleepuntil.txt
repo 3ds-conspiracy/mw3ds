@@ -1,0 +1,15 @@
+# SLEEPUNTIL:h rests until the clock next reads game hour h, like the rest menu's hour picker, so cases need not
+# hand-tune SLEEP:n from the logged hour. Sleeps to 6, then to 2, then to 2 again (a full day, not none).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 SNAP:hour
+30 0 0 0 0 SLEEPUNTIL:6
+3 0 0 0
+0.1 0 0 0 0 EXPECT:hour:ge:6
+0.1 0 0 0 0 EXPECT:hour:lt:6.99
+30 0 0 0 0 SLEEPUNTIL:2
+3 0 0 0
+0.1 0 0 0 0 EXPECT:hour:ge:2
+0.1 0 0 0 0 EXPECT:hour:lt:2.99

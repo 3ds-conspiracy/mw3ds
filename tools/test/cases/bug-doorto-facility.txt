@@ -1,0 +1,18 @@
+# The Dagoth Ur Outer Facility door (Red Mountain, 19020 70382 11878) stands behind two scripted gate leaves
+# (dagoth_door00 / 01, Dagoth_doors script) that a crank 1300 units south (ex_dwrv_crank_dagoth) swings open. DOORTO without
+# the crank stops 300 short, as a player does: not a driver bug. The crank first, then the door (uber tt, S2).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 TP:19900:70400:11800:0
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:ex_dwrv_crank_dagoth
+8 0 0 0
+60 0 0 0 0 DOORTO:Dagoth_Ur,_Outer_Facility
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Dagoth_Ur,_Outer_Facility

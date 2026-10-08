@@ -1,0 +1,24 @@
+# ACTIVATE:assantushansar on the Ghostgate plateau (21774 35026 1958) right after the FLYTO that ends 196 over him with the
+# levitation still running: the walk went off the plateau by the grid's route and timed out (uber tt, chained run). The
+# player now comes down beside the ledge that holds him up. Needs the NPC enabled (setup). S2.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:8
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:4
+0.3 0 0 0 0 JOURNAL:TT_MinistryHeathen:10
+0.3 0 0 0 0 GOTO:Ghostgate,_Tower_of_Dusk
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 ENABLE:assantushansar
+5 0 0 0
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 FLYTO:@21774,35026,1958
+120 0 0 0 0 ACTIVATE:assantushansar
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:talking:eq:1

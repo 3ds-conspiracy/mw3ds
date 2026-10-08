@@ -1,0 +1,22 @@
+# Shallit: the upper tunnel (and with it Rels Tenim's end of the cave) is reached by levitating up the rocks at x 300-700
+# on the entrance side, not straight up (the tube's belly closes that): walking on from the tunnel's end along its grid
+# (uber-fg FG_TenimBounty)
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e
+0.3 0 0 0 0 GIVE:p_levitation_e
+0.3 0 0 0 0 GIVE:p_levitation_e
+0.3 0 0 0 0 GOTO:Shallit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shallit
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 WALKTO:@260,1512,-117
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@453,1469,292:292
+120 0 0 0 0 FLYTO:@577,1560,551:551
+120 0 0 0 0 FLYTO:@710,1682,520:625
+0.1 0 0 0 0 EXPECT:playerz:ge:400
+180 0 0 0 0 WALKTO:@-1228,-1054,74
+180 0 0 0 0 WALKTO:@441,-1154,-145
+0.1 0 0 0 0 EXPECT:playery:le:-1000

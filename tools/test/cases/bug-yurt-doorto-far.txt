@@ -1,0 +1,12 @@
+# Manat's Yurt at Mila-Nipal, DOORTO from the yurt's skirt (HR_FindGiladren): a walk to the flap ended on the tent's
+# slope (feet 1721), and DOORTO said "hidden from here, no spot round it". It passed once, then stopped finding the door.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Mila-Nipal,_Manat's_Yurt
+4 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 TPIN:-43661:87477:1721:0+LEGIT
+120 0 0 0 0 DOORTO:Mila-Nipal,_Manat's_Yurt
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mila-Nipal,_Manat's_Yurt

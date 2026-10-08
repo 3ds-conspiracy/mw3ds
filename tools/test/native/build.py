@@ -25,7 +25,7 @@ SKIP = {"main", "log", "devupdate", "screenshot", "linear"}
 RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGlow", "rendererDrawActor", "rendererDrawGlow",
                     "rendererDrawLocalMap", "rendererLocalMap"]
 # no fused multiply-add: the 3DS's VFP rounds every operation, and a host-CPU build would round some differently
-CXXFLAGS = ["-O1", "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
+CXXFLAGS = [os.environ.get("MW3DS_NATIVE_OPT", "-O1"), "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
             "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h")]
 
 

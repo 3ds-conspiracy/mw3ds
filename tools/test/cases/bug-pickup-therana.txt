@@ -1,0 +1,17 @@
+# PICKUP:ebony_staff_caper in Therana's Chamber (Tel Branora): the staff stands 500 above the only walkable piece of the path
+# grid (a ramp ending over a shaft): the walk needs a Levitation potion (the quest gives p_levitation_q), as a player. Guards the levitating walk.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:6
+0.3 0 0 0 0 GOTO:Tel_Branora,_Upper_Tower:_Therana's_Chamber
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora,_Upper_Tower:_Therana's_Chamber
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 SNEAK:1
+60 0 0 0 0 PICKUP:ebony_staff_caper
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony_staff_caper:ge:1

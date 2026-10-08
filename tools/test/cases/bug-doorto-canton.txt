@@ -1,0 +1,21 @@
+# DOORTO the Vivec canton door Ex_V_cantondoor_01 (to Hlaalu Plaza): the FLYTO before it ended on a platform over the door
+# and the walk off it stuck. Driver bug (uber tg, S2).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:8
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:4
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@22208,-82432,2131
+0.3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Hlaalu_Plaza

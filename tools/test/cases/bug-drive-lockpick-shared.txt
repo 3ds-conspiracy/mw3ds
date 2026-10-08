@@ -1,0 +1,17 @@
+# Two doors share the id in_velothismall_ndoor_01 in Vivec's Hall of Wisdom: one unlocked (5312 2624), Milo's (5116 2816,
+# lock 20). USELOCKPICK held the pick to the nearest in 3D (the unlocked one), so Milo's stayed locked. Now a locked one
+# of the shared id comes first. Driver bug (uber mq, Handoff 4).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:pick_grandmaster:1
+0.3 0 0 0 0 GOTO:Vivec,_Hall_of_Wisdom
+3 0 0 0
+0.3 0 0 0 0 ROLL:0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@5254,2753,13034
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+2 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Milo's_Quarters
+10 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Milo's_Quarters

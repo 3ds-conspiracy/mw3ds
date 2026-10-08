@@ -87,6 +87,7 @@ struct ScriptedInput
 	int persuade = -1;                // PERSUADE:k: in a talk, admire 0 / intimidate 1 / taunt 2 / bribe 3..5
 	int weather = -1;                 // WEATHER:k: the current region's weather becomes k (at once)
 	int level = 0;                    // LEVEL:n: the player's level becomes n
+	int sleepUntil = -1;              // SLEEPUNTIL:h: rest until game hour h comes round (the rest menu's hour picker)
 	int sleep = 0, sleepForce = 0;    // SLEEP:h[:1|2]: sleep h hours here (1: a creature is sure to come, 2: none comes)
 	std::string moveTo;               // MOVETO:id: that reference moves 200 in front of the player (PositionCell)
 	int effect = -1, effectMag = 0, effectSecs = 0, effectAttr = -1;   // EFFECT:id:magnitude:seconds[:attribute]
@@ -194,6 +195,8 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		if (sscanf(tok, "WEATHER:%d", &step->weather) == 1)
 			continue;
 		if (sscanf(tok, "LEVEL:%d", &step->level) == 1)
+			continue;
+		if (sscanf(tok, "SLEEPUNTIL:%d", &step->sleepUntil) == 1)
 			continue;
 		if (sscanf(tok, "SLEEP:%d:%d", &step->sleep, &step->sleepForce) >= 1)
 			continue;
@@ -1064,13 +1067,22 @@ int main()
 				}
 				session->brewPotion();
 			}
+			// SLEEPUNTIL:h: whole hours from now to the next time the clock reads h (a full day when it already does)
+			int sleepHours = s.sleep;
+			if (first && s.sleepUntil >= 0)
+			{
+				int now = (int)floorf(fmodf(session->w.gameHour, 24.0f));
+				sleepHours = ((s.sleepUntil % 24) - now + 24) % 24;
+				if (sleepHours == 0)
+					sleepHours = 24;
+			}
 			// (a rest still running from the step before, whose seconds were shorter: not started over)
-			if (first && s.sleep > 0 && session->restDone >= 0 && session->screen == SCR_REST)
-				logf("drive: SLEEP %d ignored: a rest is still running (%d of %d hours)", s.sleep, session->restDone, session->restTotal);
-			else if (first && s.sleep > 0)
+			if (first && sleepHours > 0 && session->restDone >= 0 && session->screen == SCR_REST)
+				logf("drive: SLEEP %d ignored: a rest is still running (%d of %d hours)", sleepHours, session->restDone, session->restTotal);
+			else if (first && sleepHours > 0)
 			{
 				session->openRest(false);
-				session->startRest(s.sleep);
+				session->startRest(sleepHours);
 				if (s.sleepForce == 2)
 					session->restInterruptAt = -1;     // 2: nothing comes
 				else if (s.sleepForce && session->restInterruptList.empty())

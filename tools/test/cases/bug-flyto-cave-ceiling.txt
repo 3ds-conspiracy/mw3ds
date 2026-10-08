@@ -1,0 +1,16 @@
+# FLYTO inside a cave (Omaren Ancestral Tomb, east of Sadrith Mora) cruised 1500 over the start and met the roof: a low
+# cruise inside (driver queue Q2). The forge door at 10756,-4748,-291 lies past a drop the grid ends before.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SEED:2
+0.3 0 0 0 0 GIVE:p_levitation_e:6
+0.3 0 0 0 0 GOTO:Omaren_Ancestral_Tomb
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Omaren_Ancestral_Tomb
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 WALKTO:@8331,-3984,-52:dive
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@10584,-4568,-171:low
+0.1 0 0 0 0 EXPECT:playerx:ge:10000

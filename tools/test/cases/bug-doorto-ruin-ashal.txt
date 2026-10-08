@@ -1,0 +1,12 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ashalmimilkala,_Shrine
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# DOORTO out of a Daedric / Dwemer ruin and back in at its entrance door: the door has to come under the crosshair
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+3 0 1 0
+60 0 0 0 0 DOORTO:Ashalmimilkala,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ashalmimilkala,_Shrine

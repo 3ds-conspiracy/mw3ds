@@ -1,0 +1,11 @@
+# Q1 (dive): the walker finds a way out by trial steps when stuck. Fails on an exe without it. Was: Ashurnibibi, Shrine: the door lands in a pocket; a player walks out of it and on to the hall (uber-il IL_RescueKnight)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Ashurnibibi,_Shrine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ashurnibibi,_Shrine
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 WALKTO:@2291,-1492,-760:dive
+0.1 0 0 0 0 EXPECT:playerx:ge:1800
+60 0 0 0 0 WALKTO:rolfish_gra-dugul:dive
+0.1 0 0 0 0 EXPECT:playerx:ge:3000

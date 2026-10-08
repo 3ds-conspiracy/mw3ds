@@ -1,0 +1,17 @@
+# A lockpick in the weapon slot (USELOCKPICK equips it, as OpenMW) made KILL swing with nothing: the Ald Daedroth fight
+# of the Mages Guild run froze under the witches' hits. KILL takes the best carried weapon back in hand first, as a player
+# would (driver queue Q6). Fails on an exe without it: the mudcrab is never killed.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GIVE:chitin%dagger
+0.3 0 0 0 0 GIVE:pick_apprentice_01
+0.3 0 0 0 0 EQUIP:chitin%dagger
+0.3 0 0 0 0 EQUIP:pick_apprentice_01
+0.3 0 0 0 0 PLACE:mudcrab:110
+1 0 0 0
+0.3 0 0 0 0 FACE:mudcrab
+0.3 0 0 0 0 EXPECT:alive:mudcrab
+30 0 0 0 0 KILL:mudcrab
+0.05 0 0 0 0 EXPECT:dead:mudcrab
