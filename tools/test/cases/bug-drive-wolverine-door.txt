@@ -1,0 +1,18 @@
+# DOORTO:outside from the Wolverine Hall lobby (entered from a guild) must take a door the player can walk to, not one
+# that is nearer in a straight line but hidden or on another floor; same pick for ACTIVATE:<door id> (uber bugs 75, 76)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall
+4 0 0 0
+0.1 0 0 0 0 LEGIT
+40 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall|_Fighter's_Guild
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall|_Fighter's_Guild
+40 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall$
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall$
+90 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Sadrith_Mora,_Wolverine_Hall
+0.1 0 0 0 0 EXPECT:cell:Wolverine_Hall$

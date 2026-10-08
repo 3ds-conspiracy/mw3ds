@@ -1,0 +1,33 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:10
+0.3 0 0 0 0 GIVE:p_levitation_c:4
+0.3 0 0 0 0 GIVE:sc_icarianflight:3
+2 0 0 0
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.1 0 0 0 0 EXPECT:attr:speed:ge:180
+0.1 0 0 0 0 SNAP:moved
+30 0 0 0 0 HOPTO:@-10000,-72830,300
+0.1 0 0 0 0 EXPECT:moved:ge:2000
+0.3 0 0 0 0 CAST:item:sc_icarianflight
+1 0 0 0
+0.1 0 0 0 0 EXPECT:skill:acrobatics:ge:1000
+0.1 0 0 0 0 SNAP:moved
+0.1 0 0 0 0 FACE:@60000,-72000
+0.4 0 1 0
+0.1 0 1 0 1
+20 0 0 0
+0.1 0 0 0 0 EXPECT:moved:ge:20000
+0.1 0 0 0 0 EXPECT:levitating:eq:0
+0.3 0 0 0 0 USE:p_levitation_c
+0.3 0 0 0 0 USE:p_levitation_c
+0.1 0 0 0 0 SNAP:moved
+30 0 0 0 0 FLYTO:@100500,-71400,534
+0.1 0 0 0 0 EXPECT:moved:ge:2000

@@ -1,0 +1,18 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+0.1 0 0 0 0 SNAP:gold
+30 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Caldera
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera,_Guild_of_Mages
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera

@@ -1,0 +1,12 @@
+# An Ashlander yurt's door mesh sits ~330 units from the door reference's own position (inside the tent), so
+# DOORTO has to aim at the door's box, not at the reference origin: a player walks to the flap on the outside.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Mila-Nipal,_Manat's_Yurt
+4 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Mila-Nipal,_Manat's_Yurt
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mila-Nipal,_Manat's_Yurt

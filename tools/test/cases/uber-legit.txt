@@ -1,0 +1,23 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 GIVE:Gold_001:500
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 PLACE:mudcrab:150
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+30 0 0 0 0 KILL:mudcrab
+0.1 0 0 0 0 EXPECT:dead:mudcrab
+30 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 BUY:ajira:p_levitation_s
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_levitation_s:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0

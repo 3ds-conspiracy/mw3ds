@@ -100,6 +100,7 @@ struct ScriptedInput
 	float stickY = 0.0f;              // STICKDOWN / STICKUP: the C-stick pushed down (1) / up (-1) in a menu's text pane
 	bool shot = false;                // SHOT: a screenshot (shot_step_NN.bmp) as this step starts
 	bool chain = false;               // CHAIN: from here JOURNAL setup only raises (chained chapter runs)
+	bool legit = false;               // LEGIT: from here only a player's own actions (TestDriver::playerToken)
 	std::vector<std::string> actions; // GOD / WALKTO / KILL / ACTIVATE / PICKUP / EQUIP / EXPECT (testdrive.h)
 	std::string startScript;          // STARTSCRIPT:name: a global script an earlier chapter would have started
 	std::string saveAs, loadFrom;     // SAVE:name / LOAD:name: sdmc:/3ds/mw3ds/test_<name>.sav (the sweeps
@@ -108,6 +109,9 @@ struct ScriptedInput
 
 // How far (pixels) a finger may wander between press and release and still tap
 static const int kTapSlop = 12;
+
+// Set by the first LEGIT step: every later token must be a player's own action (uber quest tests)
+static bool s_legitParsed = false;
 
 static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 {
@@ -126,6 +130,10 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (char* c = tok; *c; c++)
 			if (*c == '%')
 				*c = ' ';
+		if (strcmp(tok, "LEGIT") == 0)
+			step->legit = s_legitParsed = true;
+		else if (s_legitParsed && !TestDriver::playerToken(tok))
+			logf("drive: FAIL %s: not a player action (after LEGIT)", tok);
 		if (sscanf(tok, "TAP:%d:%d", tapX, tapY) == 2)
 			continue;
 		if (sscanf(tok, "DRAG:%d:%d", &step->dragX, &step->dragY) == 2)
@@ -161,10 +169,10 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			step->startScript = tok + 12;
 		if (strncmp(tok, "LOAD:", 5) == 0)
 			step->loadFrom = tok + 5;
-		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
+		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "MOVIE:", "BARTER:", "BARTERSEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:" })
+				"CASTAT:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -212,10 +220,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			continue;
 		if (strncmp(tok, "SPELL:", 6) == 0)
 		{
-			step->spell = tok + 6;
-			for (auto& ch : step->spell)
-				if (ch == '_')
-					ch = ' ';
+			step->spell = tok + 6;       // (the id as given: a '_' is read as a space only when no spell has the id so)
 			continue;
 		}
 		if (strncmp(tok, "MOVETO:", 7) == 0)
@@ -913,6 +918,11 @@ int main()
 				session->goToJail();
 			if (first && s.shot)
 				stepShot = true;
+			if (first && s.legit)
+			{
+				session->testLegit = true;
+				logf("test: LEGIT: from here only what a player can do");
+			}
 			if (first && s.chain)
 			{
 				chainMode = true;
@@ -999,8 +1009,22 @@ int main()
 			}
 			if (first && !s.cast.empty())
 			{
-				session->w.stats.selectedSpell = s.cast;
-				session->castSpell();
+				if (session->testLegit && !TestDriver::canCast(*session, s.cast))
+					logf("drive: FAIL cast %s: not a known spell or a carried item (LEGIT)", s.cast.c_str());
+				else
+				{
+					// the id as given when there is such a spell (or item), else with '_' as spaces
+					std::string sel = s.cast;
+					if (sel.compare(0, 5, "item:") != 0 && !session->w.game.spells.count(lower(sel)))
+					{
+						std::string sp = lower(sel);
+						std::replace(sp.begin(), sp.end(), '_', ' ');
+						if (session->w.game.spells.count(sp))
+							sel = sp;
+					}
+					session->w.stats.selectedSpell = sel;
+					session->castSpell();
+				}
 			}
 			if (first && !s.soulKill.empty())
 			{
@@ -1326,7 +1350,9 @@ int main()
 						by.empty() ? "" : "; named by ", by.empty() ? "" : (by + ", who had no answer").c_str(),
 						dialogueFindInfo(session->w, *t, session->dlg.ref, -1) ? "the speaker has an answer" : "no answer from the speaker");
 				}
-				dialogueTopic(session->dlg, session->w, *session, s.topic);
+				// (LEGIT: not asked; a player has no way to)
+				if (listed || !t || !session->testLegit)
+					dialogueTopic(session->dlg, session->w, *session, s.topic);
 			}
 			if (s.waitMessage && !session->messages.empty())
 			{
@@ -1513,7 +1539,7 @@ int main()
 		// Death screen asked to load the last save: start the session over from it
 		if (loaded && session->wantReload)
 		{
-			bool testGodKept = session->testGod;
+			bool testGodKept = session->testGod, testGodBlowsKept = session->testGodBlows, testLegitKept = session->testLegit;
 			drawLoading(top, bottom, "Loading...");
 			std::string path = session->reloadPath.empty() ? kSavePath : session->reloadPath;
 			logf("reload from %s, heap used %d KB", path.c_str(), mallinfo().uordblks / 1024);
@@ -1537,6 +1563,8 @@ int main()
 			// a test reload: still a test (and still invincible if it was)
 			session->autotest = !autoinput.empty();
 			session->testGod = testGodKept;
+			session->testGodBlows = testGodBlowsKept;
+			session->testLegit = testLegitKept;
 			lastTick = svcGetSystemTick();
 			continue;
 		}

@@ -1,0 +1,5 @@
+# WALKTO:@x,y,z far from the path grid goes straight (log: "WALKTO ..., straight"), not first to a grid point up to 2500 away (driver bug 66)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+60 0 0 0 0 WALKTO:@-12104,-72800,273

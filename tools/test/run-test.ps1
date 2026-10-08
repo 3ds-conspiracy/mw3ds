@@ -3,9 +3,9 @@
 #   tools\test\run-test.ps1 tg-bragor -Data out\world  (the whole island)
 #   tools\test\run-test.ps1 mainquest -Start "Seyda Neen"
 #   tools\test\run-test.ps1 ui-g1-g9 -Native -Shots build\shots\ui   (each SHOT step saved there as a PNG of both screens)
-# -Native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with -Draw.
+# -Saves <folder>: keep test_*.sav checkpoints there between native runs. -Exe: another native build (build.py with MW3DS_NATIVE_BUILD). -Native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with -Draw.
 param([Parameter(Mandatory = $true)][string]$Test, [string]$Start = 'Balmora', [string]$Data = 'out\data', [int]$Wait = 300, [string]$App = '',
-      [string]$Emu = '', [switch]$Fast, [switch]$Native, [string]$Sd = '', [switch]$Draw, [string]$Shots = '',
+      [string]$Emu = '', [switch]$Fast, [switch]$Native, [string]$Sd = '', [string]$Exe = '', [string]$Saves = '', [switch]$Draw, [string]$Shots = '',
       [string]$Pattern = 'check:|not offered|failed|expelled|crime:|expect:|monitor:|drive: (FAIL|stuck|crosshair miss)|was fighting|script error')
 . (Join-Path $PSScriptRoot '..\build\env.ps1')
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
@@ -21,14 +21,20 @@ if ($Native) {
     # A clean SD folder every run: saves and settings the case before left behind change what the next one starts in
     if (Test-Path $sdApp) { Remove-Item $sdApp -Recurse -Force -ErrorAction SilentlyContinue }
     New-Item -ItemType Directory -Force $sdApp | Out-Null
+    # -Saves <folder>: the uber tests' checkpoints (SAVE:name / LOAD:name) kept across runs, so a long case resumes
+    if ($Saves) {
+        New-Item -ItemType Directory -Force $Saves | Out-Null
+        Copy-Item (Join-Path $Saves 'test_*') $sdApp -ErrorAction SilentlyContinue
+    }
     Set-Content (Join-Path $sdApp 'autoinput.txt') $inputs -Encoding ascii
     Set-Content (Join-Path $sdApp 'start.txt') $Start -Encoding ascii
     $env:NATIVE_SD = $sd
     $env:MW3DS_DATA = Join-Path $root $Data
     # The software GPU (tools\test\native\native_gpu.cpp) only when something will be looked at: it is slower
     $env:NATIVE_DRAW = if ($Draw -or ($inputs -match '(^|[\s+])SHOT($|[\s+])')) { '1' } else { '0' }
-    $p = Start-Process -FilePath (Join-Path $root 'build\native\mw3ds-native.exe') -WorkingDirectory $root -PassThru -WindowStyle Hidden
+    $p = Start-Process -FilePath $(if ($Exe) { $Exe } else { Join-Path $root 'build\native\mw3ds-native.exe' }) -WorkingDirectory $root -PassThru -WindowStyle Hidden
     if (-not $p.WaitForExit($Wait * 1000)) { $p.Kill() }
+    if ($Saves) { Copy-Item (Join-Path $sdApp 'test_*') $Saves -ErrorAction SilentlyContinue }
     $log = Join-Path $sdApp 'log.txt'
     $shotDir = $sdApp
 } else {

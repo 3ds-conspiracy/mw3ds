@@ -1,0 +1,17 @@
+# Cell names with a colon: '|' stands for it in DOORTO / EXPECT:cell; EXPECT:cell is exact or a whole-word start, and
+# a name ending in '$' must match exactly (driver bugs 4)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall$
+0.1 0 0 0 0 EXPECT:notcell:Sadrith_Mora,_Wolverine_Hall|_Imperial_Shrine
+0.1 0 0 0 0 LEGIT
+40 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall|_Fighter's_Guild
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall|_Fighter's_Guild
+0.1 0 0 0 0 EXPECT:notcell:Sadrith_Mora,_Wolverine_Hall|_Imperial_Shrine
+0.1 0 0 0 0 EXPECT:notcell:Sadrith_Mora,_Wolverine_Hall$
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall
+0.1 0 0 0 0 EXPECT:notcell:Sadrith_Mora,_Wolver

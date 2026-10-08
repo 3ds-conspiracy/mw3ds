@@ -139,9 +139,9 @@
 0.3 0 0 0 0 MAKESPELL:e10
 0.3 0 0 0 0 CAST:mw3ds_test_e10
 1.0 0 0 0
-0.3 0 0 0 0 EXPECT:flying:eq:1
+0.3 0 0 0 0 EXPECT:levitating:eq:1
 3.5 0 0 0
-0.3 0 0 0 0 EXPECT:flying:eq:0
+0.3 0 0 0 0 EXPECT:levitating:eq:0
 3 0 0 0
 0.3 0 0 0 0 FILL
 0.3 0 0 0 0 ADDEFFECT:0:10:10:4:0
@@ -365,7 +365,7 @@
 0.3 0 0 0 0 FACE:fargoth
 0.5 0 0 0
 0.3 0 0 0 0 FILL
-0.3 0 0 0 0 ADDEFFECT:44:30:30:10:2
+0.3 0 0 0 0 ADDEFFECT:44:30:30:1:2
 0.3 0 0 0 0 MAKESPELL:t44
 0.3 0 0 0 0 SNAP:refdisp:fargoth
 0.3 0 0 0 0 CASTAT:fargoth:mw3ds_test_t44

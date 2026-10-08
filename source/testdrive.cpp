@@ -7,6 +7,9 @@
 #include "log.h"
 #include "audio.h"
 
+// Where SNAP:moved was taken (EXPECT:moved measures from it)
+static float s_movedFrom[2] = { 0.0f, 0.0f };
+
 static std::string spaced(std::string s)
 {
 	for (auto& c : s)
@@ -15,6 +18,7 @@ static std::string spaced(std::string s)
 	return s;
 }
 
+// Tokens split at every ':'; a '|' inside a part stands for a colon of the name ("Wolverine_Hall|_Mage's_Guild")
 static std::vector<std::string> split(const std::string& s)
 {
 	std::vector<std::string> out;
@@ -23,10 +27,30 @@ static std::vector<std::string> split(const std::string& s)
 	{
 		size_t q = s.find(':', p);
 		out.push_back(s.substr(p, q == std::string::npos ? std::string::npos : q - p));
+		for (auto& c : out.back())
+			if (c == '|')
+				c = ':';
 		if (q == std::string::npos)
 			return out;
 		p = q + 1;
 	}
+}
+
+// A cell name against a wanted start: exact, or the wanted text as a whole-word start of it ("Balmora" is not
+// "Balmoral"; "Wolverine Hall" is the hall and its rooms). A wanted name ending in '$' must match exactly.
+static bool cellNameMatches(const std::string& cell, std::string want)
+{
+	std::string here = lower(cell);
+	want = lower(want);
+	bool exact = !want.empty() && want.back() == '$';
+	if (exact)
+		want.pop_back();
+	if (here == want)
+		return true;
+	if (exact || here.compare(0, want.size(), want) != 0)
+		return false;
+	char next = here[want.size()];
+	return !isalnum((unsigned char)next) || !isalnum((unsigned char)want.back());
 }
 
 // ---- mechanics tests: names, numbers, snapshots
@@ -66,6 +90,33 @@ static int attrIndex(const World& w, const std::string& name)
 	return -1;
 }
 
+// How far a player has to walk to a door: the grid route's length (squared, to compare like a 3D distance squared).
+// A door the grid can't lead to (another floor, behind a wall, hidden under a stair) ranks after every reachable one,
+// nearest in 3D among those.
+static float doorWalkRank(Session& s, const Ref& r, float d3)
+{
+	std::vector<int> route;
+	if (s.w.findPath(s.w.player.feet, r.pos, route) && !route.empty())
+	{
+		const float* q = s.w.pathPoints[route.back()].pos;
+		float ex = q[0] - r.pos[0], ey = q[1] - r.pos[1], ez = q[2] - r.pos[2];
+		float len = sqrtf(ex * ex + ey * ey + ez * ez);
+		if (len < 400.0f)
+		{
+			const float* a = s.w.player.feet;
+			for (int k : route)
+			{
+				const float* b = s.w.pathPoints[k].pos;
+				float sx = b[0] - a[0], sy = b[1] - a[1], sz = b[2] - a[2];
+				len += sqrtf(sx * sx + sy * sy + sz * sz);
+				a = b;
+			}
+			return len * len;
+		}
+	}
+	return d3 + 1e12f;
+}
+
 static int findRef(Session& s, const std::string& id)
 {
 	int ri = s.testFindRef(id);
@@ -80,14 +131,33 @@ static int findRef(Session& s, const std::string& id)
 				ri = i;
 		});
 	}
-	// several share the id (a creature placed again after one died): a living one in the loaded cells
-	if (ri >= 0 && ri != s.testPlaced && s.w.refs[ri].dead)
+	// several share the id (a creature placed again after one died, a field of identical plants, shared door ids): the
+	// nearest living one in the loaded cells, as a player takes the one in front of them (a dead one only if all are)
+	if (ri >= 0 && ri != s.testPlaced)
 	{
 		const std::string want = s.w.refs[ri].idLower;
+		const bool wantDead = s.w.refs[ri].dead;
+		const float* pf = s.w.player.feet;
+		float best = 1e30f;
+		int pick = -1;
 		s.w.forLoadedRefs([&](int i) {
-			if (s.w.refs[i].idLower == want && !s.w.refs[i].dead && s.w.refs[ri].dead)
-				ri = i;
+			const Ref& c = s.w.refs[i];
+			if (c.idLower != want || !s.w.active(i) || (wantDead && !c.dead))
+				return;
+			if (c.dead && !wantDead)
+				return;
+			float dx = c.pos[0] - pf[0], dy = c.pos[1] - pf[1], dz = c.pos[2] - pf[2], d = dx * dx + dy * dy + dz * dz;
+			// (shared door ids: the one the player can walk to soonest, not the one nearest through a wall or a floor)
+			if (c.type == "DOOR" && d < 1e11f)
+				d = doorWalkRank(s, c, d);
+			if (d < best)
+			{
+				best = d;
+				pick = i;
+			}
 		});
+		if (pick >= 0)
+			ri = pick;
 	}
 	return ri;
 }
@@ -216,7 +286,11 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	if (what == "hitchance") { v = s.playerDefense(false); return true; }              // Sanctuary, Chameleon, Invisibility
 	if (what == "detectchance") { v = w.effectTotal(40) + (w.effectTotal(39) > 0.0f ? 100.0f : 0.0f); return true; }
-	if (what == "levitating") { v = w.player.flying && w.effectTotal(10) > 0.0f ? 1.0f : 0.0f; return true; }
+	if (what == "levitating") { v = w.effectTotal(10) > 0.0f ? 1.0f : 0.0f; return true; }
+	// where the player's feet are (SNAP one, then EXPECT it moved at most / at least so much with "@")
+	if (what == "playerx" || what == "playery" || what == "playerz") { v = w.player.feet[what[6] - 'x']; return true; }
+	// how far the player went on the flat since SNAP:moved
+	if (what == "moved") { v = hypotf(w.player.feet[0] - s_movedFrom[0], w.player.feet[1] - s_movedFrom[1]); return true; }
 	if (what == "fallmult") { v = w.effectTotal(11) > 0.0f ? 0.25f : 1.0f; return true; }     // gravity while falling
 	if (what == "swimspeed") { v = w.effectTotal(1); return true; }                           // Swift Swim's magnitude as read
 	if (what == "jumpheight") { v = s.jumpSpeedFor(st.skills[20], w.effectTotal(9), 0.0f, false, 1.0f); return true; }
@@ -980,8 +1054,12 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	auto service = [&](int ri, unsigned flag) {
 		return ri >= 0 && w.refs[ri].actor >= 0 && (w.game.actors[w.refs[ri].actor].services & flag) != 0;
 	};
+	// LEGIT: a service is had through the dialogue of whoever gives it (its buttons), never from across the map
+	auto notTalking = [&](int ri) { return s.testLegit && !s.talkingTo(ri); };
 	if (verb == "SNAP" && a.size() >= 2)
 	{
+		if (a[1] == "moved")
+			memcpy(s_movedFrom, w.player.feet, sizeof(s_movedFrom));
 		float v;
 		std::string arg = a.size() >= 3 ? a[2] : "";
 		if (!numberOf(s, a[1], arg, v))
@@ -1037,6 +1115,8 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		int ri = findRef(s, a[1]);
 		if (!service(ri, 0x10000))
 			return fail(a[1] + " doesn't enchant");
+		if (notTalking(ri))
+			return fail("not talking to " + a[1] + " (LEGIT)");
 		s.openEnchanting(ri);
 		return true;
 	}
@@ -1099,6 +1179,8 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		int ri = findRef(s, a[1]);
 		if (!service(ri, 0x8000))
 			return fail(a[1] + " doesn't make spells");
+		if (notTalking(ri))
+			return fail("not talking to " + a[1] + " (LEGIT)");
 		s.makeEffects.clear();
 		s.makeSel = -1;
 		s.makeName.clear();
@@ -1112,6 +1194,8 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		int k = skillIndex(w, a[2]);
 		if (!service(ri, 0x4000))
 			return fail(a[1] + " doesn't train");
+		if (notTalking(ri))
+			return fail("not talking to " + a[1] + " (LEGIT)");
 		s.barterRef = ri;
 		int best[3];
 		s.trainerSkills(best);
@@ -1126,8 +1210,12 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		int ri = findRef(s, a[1]);
 		if (ri < 0 || !s.isMerchant(ri))
 			return fail(a[1] + " doesn't trade");
+		if (notTalking(ri) && !(s.screen == SCR_BARTER && s.barterRef == ri))
+			return fail("not talking to " + a[1] + " (LEGIT)");
+		// (the trade happens as the Barter screen's; then back to what was open: the dialogue, as its Done button does)
+		Screen before = s.screen;
 		s.openBarter(ri);
-		s.screen = SCR_NONE;
+		s.screen = before;
 		Ref& m = w.refs[ri];
 		int index = -1;
 		const Object* o = nullptr;
@@ -1149,7 +1237,15 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 				}
 			}
 		if (index < 0 || !o)
-			return fail(a[2] + (verb == "SELL" ? " not carried" : " not among their goods"));
+		{
+			// (what they do have, to pick from)
+			std::string have;
+			if (verb == "BUY")
+				for (auto& g : s.merchantGoods(ri))
+					if (have.size() < 300)
+						have += " " + w.refs[g.first].contents[g.second].second;
+			return fail(a[2] + (verb == "SELL" ? " not carried" : " not among their goods (they have:" + have + ")"));
+		}
 		if (!s.merchantTrades(ri, o))
 			return fail(a[1] + " doesn't trade in " + a[2]);
 		int price = s.barterPrice(ri, o->value, verb == "BUY");
@@ -1183,6 +1279,16 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		logf("test: reading %s", a[1].c_str());
 		return true;
 	}
+	// FACE:@x,y: turn to look at that spot (level), as the stick would
+	if (verb == "FACE" && a.size() >= 2 && a[1][0] == '@')
+	{
+		float x, y;
+		if (sscanf(a[1].c_str() + 1, "%f,%f", &x, &y) != 2)
+			return fail("FACE:@x,y wants two numbers");
+		w.player.yaw = atan2f(x - w.player.feet[0], y - w.player.feet[1]);
+		w.player.pitch = 0.0f;
+		return true;
+	}
 	if ((verb == "FACE" || verb == "CASTAT") && a.size() >= 2)
 	{
 		int ri = findRef(s, a[1]);
@@ -1203,6 +1309,8 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 				sp += ":" + a[k];
 			// the id as given when there's such a spell (mw3ds_test_x), else with '_' as spaces ("fire_bite")
 			w.stats.selectedSpell = sp.compare(0, 5, "item:") == 0 || w.game.spells.count(lower(sp)) ? lower(sp) : lower(spaced(sp));
+			if (s.testLegit && !TestDriver::canCast(s, w.stats.selectedSpell))
+				return fail(sp + " isn't a known spell or a carried item (LEGIT)");
 			s.castSpell();
 			logf("test: cast %s at %s", sp.c_str(), a[1].c_str());
 		}
@@ -1652,12 +1760,51 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 			}
 		return fail("no saves of the player's own");
 	}
+	// TRAVEL:<npc>:<destination>: in their dialogue, the Travel button, then Go on the destination whose name starts so
+	// (silt striders, boats, gondolas, the Mages Guild's guides); the move itself happens next frame
+	if (verb == "TRAVEL" && a.size() >= 3)
+	{
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || !s.talkingTo(ri))
+			return fail("not talking to " + a[1]);
+		if (w.refs[ri].actor < 0 || w.game.actors[w.refs[ri].actor].travel.empty())
+			return fail(a[1] + " doesn't take travellers");
+		if (!s.dlg.choices.empty() || s.dlg.goodbye)
+			return fail("the dialogue shows no services now");
+		if (s.serviceRefused())
+			return fail(a[1] + " refuses the service");
+		s.openTravel();
+		const ActorDef& def = w.game.actors[w.refs[ri].actor];
+		std::string want = lower(spaced(a[2])), offered;
+		int sel = -1;
+		for (size_t k = 0; k < def.travel.size(); k++)
+		{
+			offered += (k ? ", " : "") + def.travel[k].cell;
+			if (sel < 0 && lower(def.travel[k].cell).compare(0, want.size(), want) == 0)
+				sel = (int)k;
+		}
+		if (sel < 0)
+		{
+			s.barterRef = -1;
+			s.screen = SCR_DIALOGUE;
+			return fail(a[2] + " not offered (" + offered + ")");
+		}
+		if (!s.travelGo(sel))
+		{
+			s.barterRef = -1;
+			s.screen = SCR_DIALOGUE;
+			return fail("travel to " + def.travel[sel].cell + " refused");
+		}
+		return true;
+	}
 	// BARTER:<ref>: the merchant's Barter screen opens, as the dialogue's Barter button does
 	if (verb == "BARTER" && a.size() >= 2)
 	{
 		int ri = findRef(s, a[1]);
 		if (ri < 0 || !s.isMerchant(ri))
 			return fail(a[1] + " doesn't trade");
+		if (notTalking(ri))
+			return fail("not talking to " + a[1] + " (LEGIT)");
 		s.openBarter(ri);
 		return true;
 	}
@@ -1707,6 +1854,99 @@ static bool compare(float a, const std::string& op, float b)
 	return a == b;
 }
 
+// What a player has on the Magic screen: a spell they know (race and sign spells too), or "item:<id>" carried
+bool TestDriver::canCast(Session& s, const std::string& selected)
+{
+	if (selected.compare(0, 5, "item:") == 0)
+		return s.w.itemCount(lower(selected.substr(5))) > 0;
+	std::vector<std::string> known = s.knownSpells();
+	return std::find(known.begin(), known.end(), lower(selected)) != known.end()
+		|| std::find(known.begin(), known.end(), lower(spaced(selected))) != known.end();
+}
+
+// Tokens a LEGIT run may still use: what a player does with the buttons, the touch screen and the menus, and checks
+// that only look (EXPECT, SNAP, CHECK, PROBE, SHOT). Anything else sets the world up and is refused after LEGIT
+// (an allow list: a new token is refused until it is added here as a player action).
+bool TestDriver::playerToken(const std::string& tok)
+{
+	static const char* const kPlayer[] = {
+		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "TAP", "DRAG", "STICKDOWN",
+		"STICKUP", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT",
+		"EXPECT", "SNAP", "CHECK", "PROBE",
+		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",
+		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE",
+		"ENCHANTAT", "ENCHANT", "ENCHITEM", "ENCHGEM", "ENCHTYPE", "ADDEFFECT", "CONFIRM", "TYPE", "LEVELUP",
+		"EQUIP", "USE", "READ", "DROP", "QUICKSET", "CAST", "CASTAT", "CASTMADESPELL", "USEMADE", "EQUIPMADE",
+		"RECHARGEMADE", "RECHARGE", "REPAIR", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP",
+	};
+	size_t colon = tok.find(':');
+	std::string name = tok.substr(0, colon);
+	// SLEEP:h only: SLEEP:h:1 / :2 decide whether a creature comes
+	if (name == "SLEEP" && colon != std::string::npos && tok.find(':', colon + 1) != std::string::npos)
+		return false;
+	for (const char* k : kPlayer)
+		if (name == k)
+			return true;
+	return false;
+}
+
+// The grid route for a walk. World::findPath snaps both ends to the nearest grid point up to 2500 away, a goal in plain
+// sight included, so a walk to a spot would first head for a point far off its way. A route is kept only when it
+// helps: its last points on another floor than the goal (a walkway above a door, a stair landing) are dropped, and a
+// walk to a spot goes straight unless the route still ends near it.
+static bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path)
+{
+	World& w = s.w;
+	if (!w.findPath(from, to, path))
+	{
+		path.clear();
+		return false;
+	}
+	// trailing points stacked over or under the goal (a walkway above a door) lead to the wrong floor: drop them. Only
+	// those near it on the map: a route that climbs a ramp to a door set higher or lower than its origin is kept whole
+	// (the Vivec cantons: dropping every point by height alone left the walk going straight at a wall)
+	std::vector<int> whole = path;
+	while (!path.empty())
+	{
+		const float* q = w.pathPoints[path.back()].pos;
+		float dx = q[0] - to[0], dy = q[1] - to[1];
+		if (dx * dx + dy * dy > 200.0f * 200.0f || fabsf(q[2] - to[2]) <= (spot ? 250.0f : 150.0f))
+			break;
+		path.pop_back();
+	}
+	if (path.empty())
+		path = whole;
+	if (spot)
+	{
+		const float* q = w.pathPoints[path.back()].pos;
+		float dx = q[0] - to[0], dy = q[1] - to[1];
+		if (dx * dx + dy * dy > 350.0f * 350.0f)
+		{
+			path.clear();
+			return false;
+		}
+	}
+	return true;
+}
+
+// An escort fallen behind (ESCORT:<npc>): the player stands and lets them catch up, as a player waits. Not when they
+// no longer follow (a quest script stopped them: their package is the script's idle, or they wander)
+static bool escortLagging(Session& s, const std::string& escort, float limit, int* who = nullptr)
+{
+	if (escort.empty())
+		return false;
+	int e = findRef(s, escort);
+	if (who)
+		*who = e;
+	if (e < 0 || !s.w.active(e) || s.w.refs[e].dead)
+		return false;
+	int pkg = s.w.refs[e].aiPackage;
+	if (pkg == AIPKG_IDLE || pkg == AIPKG_NONE || pkg == AIPKG_WANDER)
+		return false;
+	float d = s.w.distanceToPlayer(e);
+	return d > limit && d < 20000.0f;
+}
+
 void TestDriver::fail(const char* why)
 {
 	logf("drive: FAIL %s %s: %s", kind == KILL ? "kill" : kind == WALK ? "walk to" : "activate", id.c_str(), why);
@@ -1715,12 +1955,19 @@ void TestDriver::fail(const char* why)
 
 bool TestDriver::start(Session& s, const std::string& token)
 {
+	if (!retrying)
+	{
+		viewTries = talkTries = 0;
+		thenDo.clear();
+	}
 	std::vector<std::string> a = split(token);
 	const std::string& verb = a[0];
 	if (verb == "GOD")
 	{
+		// GOD:2: only kept alive; the player's blows roll, hurt and wear as usual (uber quest tests)
 		s.testGod = a.size() < 2 || a[1] != "0";
-		logf("test: god mode %s", s.testGod ? "on" : "off");
+		s.testGodBlows = a.size() < 2 || a[1] != "2";
+		logf("test: god mode %s", !s.testGod ? "off" : s.testGodBlows ? "on" : "on (kept alive only)");
 		return false;
 	}
 	if (verb == "EXPECT")
@@ -1756,6 +2003,38 @@ bool TestDriver::start(Session& s, const std::string& token)
 		logf("drive: FAIL equip %s: not carried", a[1].c_str());
 		return false;
 	}
+	if (verb == "ESCORT" && a.size() >= 2)
+	{
+		escort = a[1] == "-" ? "" : a[1];
+		logf("drive: escort %s", escort.empty() ? "ended" : escort.c_str());
+		return false;
+	}
+	if ((verb == "FLYTO" || verb == "HOPTO") && a.size() >= 2)
+	{
+		id = a[1];
+		if (a[1][0] != '@' || sscanf(a[1].c_str() + 1, "%f,%f,%f", &goal[0], &goal[1], &goal[2]) != 3)
+		{
+			logf("drive: FAIL %s %s: wants @x,y,z", verb.c_str(), a[1].c_str());
+			return false;
+		}
+		kind = verb == "FLYTO" ? FLY : HOP;
+		memcpy(aim, goal, sizeof(aim));
+		const Player& p = s.w.player;
+		if (kind == HOP && p.levitate > 0.0f)
+		{
+			fail("levitating: no ground to jump from (let it run out, or fly)");
+			return false;
+		}
+		cruise = a.size() >= 3 ? (float)atof(a[2].c_str()) : fmaxf(p.feet[2], goal[2]) + 1500.0f;
+		phase = climbs = hops = 0;
+		inAir = false;
+		phaseTimer = elapsed = progressTimer = 0.0f;
+		memcpy(progressAt, p.feet, sizeof(progressAt));
+		lastGoal = 1e9f;
+		logf("drive: %s %s from %.0f %.0f %.0f (Acrobatics %d, Fortify Skill %.0f, Levitate %.0f)", verb.c_str(), id.c_str(), p.feet[0],
+			p.feet[1], p.feet[2], s.w.stats.skills[20], s.w.effectTotal(83), p.levitate);
+		return true;
+	}
 	if ((verb == "WALKTO" || verb == "KILL" || verb == "ACTIVATE" || verb == "PICKUP" || verb == "DOORTO" || verb == "LOOT"
 		|| verb == "PUT" || verb == "STRIKE") && a.size() >= 2)
 	{
@@ -1766,6 +2045,33 @@ bool TestDriver::start(Session& s, const std::string& token)
 		id = a[1];
 		kind = verb == "WALKTO" ? WALK : (verb == "KILL" || verb == "STRIKE") ? KILL : ACTIVATE;
 		pickup = verb == "PICKUP";
+		if (verb != "WALKTO")
+			retryToken = token;
+		pointGoal = verb == "WALKTO" && a[1][0] == '@';
+		if (pointGoal)
+		{
+			if (sscanf(a[1].c_str() + 1, "%f,%f,%f", &goal[0], &goal[1], &goal[2]) != 3)
+			{
+				fail("WALKTO:@x,y,z wants three numbers");
+				return false;
+			}
+			ref = -1;
+			path.clear();
+			if (planPath(s, s.w.player.feet, goal, true, path))
+				logf("drive: WALKTO %s, %d path points", id.c_str(), (int)path.size());
+			else
+				logf("drive: WALKTO %s, straight", id.c_str());
+			memcpy(progressAt, s.w.player.feet, sizeof(progressAt));
+			progressTimer = swingTimer = lookTimer = elapsed = repathTimer = 0.0f;
+			stuckTries = 0;
+			lastGoal = 1e9f;
+			sidestepTimer = 0.0f;
+			doorTried = false;
+			doorLast = -1;
+			lineTimer = 0.0f;
+			pressA = false;
+			return true;
+		}
 		ref = findTarget(s, verb, a[1]);
 		if (ref < 0)
 		{
@@ -1779,7 +2085,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		}
 		path.clear();
 		const float* t = s.w.refs[ref].pos;
-		if (s.w.findPath(s.w.player.feet, t, path))
+		if (planPath(s, s.w.player.feet, t, false, path))
 			logf("drive: %s %s, %d path points", verb.c_str(), id.c_str(), (int)path.size());
 		else
 			logf("drive: %s %s, straight", verb.c_str(), id.c_str());
@@ -1789,6 +2095,8 @@ bool TestDriver::start(Session& s, const std::string& token)
 		lastGoal = 1e9f;
 		sidestepTimer = 0.0f;
 		doorTried = false;
+		doorLast = -1;
+		lineTimer = 0.0f;
 		pressA = false;
 		return true;
 	}
@@ -1800,13 +2108,16 @@ int TestDriver::findTarget(Session& s, const std::string& verb, const std::strin
 {
 	if (verb != "DOORTO")
 	{
-		int r = s.testFindRef(arg);
+		int r = findRef(s, arg);
 		return r >= 0 && s.w.active(r) ? r : -1;
 	}
 	std::string want = lower(spaced(arg));
 	bool outside = want == "outside";
-	float best = 1e30f;
-	int found = -1;
+	// the door whose destination is exactly that cell first, else one that starts so; of those the one nearest by the
+	// route a player would walk (the path grid), else in 3D (a door on another floor is not "near": a stair or a ceiling
+	// between). Doors the grid can't reach from here come after the reachable ones.
+	struct Cand { int i; bool exact; float d3; };
+	std::vector<Cand> cands;
 	for (size_t i = 0; i < s.w.refs.size(); i++)
 	{
 		const Ref& r = s.w.refs[i];
@@ -1814,20 +2125,265 @@ int TestDriver::findTarget(Session& s, const std::string& verb, const std::strin
 			continue;
 		if (r.idLower == "prisonmarker")      // the jail's drop-off mark, no door anyone can use
 			continue;
-		bool match = outside ? r.destHasGrid || r.destCell.empty() : lower(r.destCell).compare(0, want.size(), want) == 0;
+		bool match = outside ? r.destHasGrid || r.destCell.empty() : cellNameMatches(r.destCell, want);
 		if (!match)
 			continue;
-		float dx = r.pos[0] - s.w.player.feet[0], dy = r.pos[1] - s.w.player.feet[1];
-		float d = dx * dx + dy * dy;
-		if (d < best)
+		bool exact = !outside && lower(r.destCell) == want;
+		float dx = r.pos[0] - s.w.player.feet[0], dy = r.pos[1] - s.w.player.feet[1], dz = r.pos[2] - s.w.player.feet[2];
+		cands.push_back({(int)i, exact, dx * dx + dy * dy + dz * dz});
+	}
+	int found = -1;
+	float best = 1e30f;
+	bool bestExact = false;
+	for (const Cand& c : cands)
+	{
+		float d = c.d3;
+		if (cands.size() > 1)
+		{
+			const Ref& r = s.w.refs[c.i];
+			d = doorWalkRank(s, r, c.d3);
+			logf("drive: DOORTO candidate %s (%d) at %.0f %.0f %.0f: 3D %.0f, ranked %.0f", r.id.c_str(), c.i, r.pos[0], r.pos[1],
+				r.pos[2], sqrtf(c.d3), sqrtf(d));
+		}
+		if ((c.exact && !bestExact) || (c.exact == bestExact && d < best))
 		{
 			best = d;
-			found = (int)i;
+			bestExact = c.exact;
+			found = c.i;
 		}
 	}
 	if (found >= 0)
 		id = s.w.refs[found].id + " -> " + (s.w.refs[found].destCell.empty() ? "outside" : s.w.refs[found].destCell);
 	return found;
+}
+
+// FLYTO: levitating, as a player flies: up (R) to the cruising height, straight at the spot, then down (L). A wall in
+// the way: climb higher (three times at most). Levitation running out on the way: a fall, and the leg fails.
+bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
+{
+	Player& p = s.w.player;
+	float dx = goal[0] - p.feet[0], dy = goal[1] - p.feet[1];
+	float dist = sqrtf(dx * dx + dy * dy);
+	if (p.levitate <= 0.0f)
+	{
+		if (phase == 2 && p.onGround)
+		{
+			logf("drive: flew to %s in %.1f s (%.0f off)", id.c_str(), elapsed, dist);
+			kind = NONE;
+			return false;
+		}
+		fail("not levitating (or it ran out on the way)");
+		return false;
+	}
+	p.pitch = 0.0f;
+	if (elapsed <= dt)
+	{
+		float left = 0.0f;
+		for (const ActiveEffect& e : s.w.effects)
+			if (e.effect == 10)
+				left = fmaxf(left, e.remaining);
+		float need = (dist + fmaxf(0.0f, cruise - p.feet[2]) + fmaxf(0.0f, cruise - goal[2])) / fmaxf(1.0f, p.flySpeed);
+		if (need > left)
+		{
+			char why[120];
+			snprintf(why, sizeof(why), "levitation runs out first (%.0f s left, the flight takes %.0f s)", left, need);
+			fail(why);
+			return false;
+		}
+	}
+	phaseTimer += dt;
+	progressTimer += dt;
+	if (phase == 0)
+	{
+		// up to the cruising height
+		in.up = true;
+		if (p.feet[2] >= cruise)
+		{
+			logf("drive: FLYTO %s: at %.0f up after %.1f s, %.0f to go", id.c_str(), p.feet[2], elapsed, dist);
+			phase = 1;
+			progressTimer = 0.0f;
+			memcpy(progressAt, p.feet, sizeof(progressAt));
+		}
+		else if (progressTimer >= 2.0f)
+		{
+			if (p.feet[2] < progressAt[2] + 20.0f)
+			{
+				fail("can't climb (a ceiling): fly out of the building first");
+				return false;
+			}
+			progressTimer = 0.0f;
+			memcpy(progressAt, p.feet, sizeof(progressAt));
+		}
+		return true;
+	}
+	if (phase == 1)
+	{
+		// straight at it, at height (the last stretch slows down so a frame's step doesn't overshoot)
+		p.yaw = atan2f(dx, dy);
+		float step = p.flySpeed * p.loadSpeed * dt;
+		in.moveY = dist > step * 2.0f ? 1.0f : fmaxf(0.05f, dist / fmaxf(1.0f, step * 2.0f));
+		if (dist < 40.0f)
+		{
+			logf("drive: FLYTO %s: over it after %.1f s, coming down from %.0f", id.c_str(), elapsed, p.feet[2]);
+			phase = 2;
+			phaseTimer = progressTimer = 0.0f;
+			memcpy(progressAt, p.feet, sizeof(progressAt));
+			return true;
+		}
+		if (progressTimer >= 2.0f)
+		{
+			bool closer = dist < lastGoal - 40.0f;
+			lastGoal = dist;
+			progressTimer = 0.0f;
+			if (!closer)
+			{
+				if (++climbs > 3)
+				{
+					fail("blocked in the air, even higher up");
+					return false;
+				}
+				cruise = p.feet[2] + 800.0f;          // a wall or a tower: go over it
+				phase = 0;
+				logf("drive: FLYTO %s: blocked at %.0f %.0f %.0f, climbing to %.0f", id.c_str(), p.feet[0], p.feet[1], p.feet[2],
+					cruise);
+			}
+		}
+		return true;
+	}
+	// down to the spot's height
+	in.down = true;
+	bool stopped = progressTimer >= 1.0f && p.feet[2] > progressAt[2] - 20.0f;     // (not coming down any more)
+	if (stopped && p.feet[2] > goal[2] + 250.0f && climbs < 12)     // (within 250: the ground, uneven; higher: a roof)
+	{
+		// a roof, an arch or a wall top under us: come down beside it, as a player would drift off its edge
+		climbs++;
+		// beside it: the nearest spot whose column is clear down to the spot's height (no roof over it) and from which
+		// the spot can be seen at ground level (not behind a wall from it)
+		bool found = false;
+		Scene sc = s.w.scene();
+		for (int k = 0; k < 48 && !found; k++)
+		{
+			float ang = k * 0.3927f, rr = 120.0f + 90.0f * (k / 16);
+			float cx = aim[0] + sinf(ang) * rr, cy = aim[1] + cosf(ang) * rr, top = -1e9f;
+			for (Cell* c : sc.cells)
+			{
+				float z;
+				if (collisionFloor(c->collision, cx, cy, p.feet[2] + 50.0f, aim[2] - 300.0f, &z) && z > top)
+					top = z;
+			}
+			float from[3] = { cx, cy, top + 60.0f }, to[3] = { aim[0], aim[1], aim[2] + 60.0f };
+			if (top > aim[2] - 200.0f && top < aim[2] + 150.0f && s.w.lineOfSight(from, to))     // (a door's z is its middle)
+			{
+				goal[0] = cx;
+				goal[1] = cy;
+				found = true;
+			}
+		}
+		if (!found)
+		{
+			// (a covered street: stop here, still levitating; the walk that follows comes down the way, L held)
+			logf("drive: FLYTO %s: no clear spot to come down beside it: stopping at %.0f %.0f %.0f", id.c_str(), p.feet[0], p.feet[1],
+				p.feet[2]);
+			kind = NONE;
+			return false;
+		}
+		cruise = p.feet[2];
+		phase = 1;
+		progressTimer = 0.0f;
+		lastGoal = 1e9f;
+		memcpy(progressAt, p.feet, sizeof(progressAt));
+		logf("drive: FLYTO %s: something under us at %.0f (%.0f over the spot), trying beside it", id.c_str(), p.feet[2], p.feet[2] - goal[2]);
+		return true;
+	}
+	if (p.feet[2] <= goal[2] + 5.0f || stopped)
+	{
+		logf("drive: flew to %s in %.1f s (%.0f off, %.0f up)", id.c_str(), elapsed, dist, p.feet[2] - goal[2]);
+		kind = NONE;
+		return false;
+	}
+	if (progressTimer >= 1.0f)
+	{
+		progressTimer = 0.0f;
+		memcpy(progressAt, p.feet, sizeof(progressAt));
+	}
+	return true;
+}
+
+// HOPTO: the speedrunners' way (Fortify Speed, Jump, run and jump): face the spot, run, jump; in the air steer toward
+// it while the take-off would fall short, back against it while it would carry past. Landed within 200: done, else jump
+// again (40 jumps at most).
+bool TestDriver::updateHop(Session& s, PlayerInput& in, float dt)
+{
+	Player& p = s.w.player;
+	float dx = goal[0] - p.feet[0], dy = goal[1] - p.feet[1];
+	float dist = sqrtf(dx * dx + dy * dy);
+	p.pitch = 0.0f;
+	p.yaw = atan2f(dx, dy);
+	phaseTimer += dt;
+	if (p.onGround || p.swimming)
+	{
+		if (dist < 200.0f && phaseTimer > 0.2f)
+		{
+			logf("drive: hopped to %s in %.1f s, %d jumps (%.0f off)", id.c_str(), elapsed, hops, dist);
+			kind = NONE;
+			return false;
+		}
+		if (hops >= 40)
+		{
+			fail("40 jumps and not there");
+			return false;
+		}
+		// each landing: closer by 50 at least, else something is in the way (three times: give up, the route is wrong)
+		if (inAir)
+		{
+			inAir = false;
+			if (dist > lastGoal - 50.0f && ++climbs >= 3)
+			{
+				fail("blocked: three jumps without getting closer");
+				return false;
+			}
+			lastGoal = fminf(lastGoal, dist);
+		}
+		// a short run-up, then the jump (a running take-off: 45 degrees, OpenMW), unless one jump would carry past it
+		// (Icarian Flight's jump goes cells): then run the rest, as a player would
+		in.moveY = 1.0f;
+		// (in the air the pad can hold back airControl of the run speed for the whole flight, 2 v / g)
+		float v = p.jumpSpeed * 0.707f, range = 2.0f * v * v / 627.0f;
+		float brake = p.runSpeed * p.loadSpeed * p.airControl * 2.0f * v / 627.0f;
+		// (running the rest: a run that stalls half a second, a rock in the way, gets a jump after all)
+		progressTimer += dt;
+		if (progressTimer >= 0.5f)
+		{
+			bool stalled = lastGoal - dist < 20.0f;
+			lastGoal = dist;
+			progressTimer = 0.0f;
+			if (stalled && p.onGround)
+			{
+				logf("drive: hop %d toward %s: the run stalled, jumping (range %.0f, %.0f to go)", hops + 1, id.c_str(), range, dist);
+				in.jump = true;
+				hops++;
+				phaseTimer = 0.0f;
+				return true;
+			}
+		}
+		if (range - brake > dist + 300.0f)
+			return true;
+		if (phaseTimer > 0.15f && p.onGround)
+		{
+			logf("drive: hop %d toward %s: jump speed %.0f (Acrobatics %d), range %.0f, %.0f to go", hops + 1, id.c_str(), p.jumpSpeed, s.w.stats.skills[20], range, dist);
+			in.jump = true;
+			hops++;
+			phaseTimer = 0.0f;
+		}
+		return true;
+	}
+	inAir = true;
+	// in the air: where would the take-off's own speed set us down? (gravity 627, from this height to the spot's)
+	float h = fmaxf(0.0f, p.feet[2] - goal[2]);
+	float tLeft = (p.vz + sqrtf(fmaxf(0.0f, p.vz * p.vz + 2.0f * 627.0f * h))) / 627.0f;
+	float carry = sqrtf(p.inertia[0] * p.inertia[0] + p.inertia[1] * p.inertia[1]) * tLeft;
+	in.moveY = carry > dist + 50.0f ? -1.0f : carry < dist - 50.0f ? 1.0f : 0.0f;
+	return true;
 }
 
 bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
@@ -1836,6 +2392,10 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		return false;
 	elapsed += dt;
 	World& w = s.w;
+	if (kind == FLY)
+		return updateFly(s, in, dt);
+	if (kind == HOP)
+		return updateHop(s, in, dt);
 	if (kind == LOOTWAIT)
 	{
 		// the container (or body) screen is open: take the item as a tap on it does
@@ -1881,6 +2441,50 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		}
 		return kind != NONE;
 	}
+	if (kind == TALKWAIT)
+	{
+		// a person: the talk opens, or the press found nothing (they stepped off the crosshair): look and press again
+		takeTimer += dt;
+		if (s.menuOpen())
+		{
+			kind = NONE;
+			return false;
+		}
+		if (takeTimer > 0.4f)
+		{
+			if (++talkTries > 5)
+			{
+				fail("pressed A five times, no talk opened");
+				return false;
+			}
+			logf("drive: %s: no talk opened, again", id.c_str());
+			kind = ACTIVATE;
+			lookTimer = 0.0f;
+		}
+		return true;
+	}
+	if (kind == DOORWAIT)
+	{
+		// a trapped door: the trap took the press and the door stayed shut; press again (OpenMW: an unlocked trapped
+		// door fires its trap instead of opening, the next activation opens it)
+		takeTimer += dt;
+		if (takeTimer > 0.6f)
+		{
+			kind = NONE;
+			if (!w.active(ref) || w.current != doorCell || s.menuOpen())
+				return false;
+			const Ref& d = w.refs[ref];
+			if (d.disarmed && d.doorTarget == 0.0f && ++talkTries <= 3)
+			{
+				logf("drive: %s: the trap used the press, again", id.c_str());
+				kind = ACTIVATE;
+				lookTimer = 0.0f;
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
 	if (kind == TAKE)
 	{
 		// a book or scroll opened to read: its Take button (the reading screen's own path)
@@ -1915,13 +2519,22 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		}
 		return kind != NONE;
 	}
-	if (ref < 0 || !w.active(ref))
+	if (!pointGoal && (ref < 0 || !w.active(ref)))
 	{
 		fail("gone from the loaded cells");
 		return false;
 	}
-	Ref& r = w.refs[ref];
+	// a spot to walk to stands in for a reference there (WALKTO:@x,y,z)
+	static Ref spot;
+	if (pointGoal)
+	{
+		memcpy(spot.pos, goal, sizeof(goal));
+		memcpy(spot.boxMin, goal, sizeof(goal));
+		memcpy(spot.boxMax, goal, sizeof(goal));
+	}
+	Ref& r = pointGoal ? spot : w.refs[ref];
 	Player& p = w.player;
+	const bool trappedDoor = r.type == "DOOR" && !r.trap.empty() && !r.disarmed;
 	// they came to us: a ForceGreeting (Dagoth Gares) opened their dialogue on the way
 	if ((kind == ACTIVATE || kind == WALK) && s.dlg.open && s.dlg.ref == ref)
 	{
@@ -1948,6 +2561,20 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		pressA = !pressA;                // A on one frame, released the next
 		return true;
 	}
+	// paralysed: nothing moves, however long; said so, and not counted as being stuck
+	if (w.effectTotal(45) > 0.0f)
+	{
+		if (paralysedLog <= 0.0f)
+		{
+			logf("drive: paralysed (%s %s)", kind == KILL ? "killing" : kind == WALK ? "walking to" : "going to", id.c_str());
+			paralysedLog = 5.0f;
+		}
+		paralysedLog -= dt;
+		progressTimer = 0.0f;
+		memcpy(progressAt, p.feet, sizeof(progressAt));
+		return true;
+	}
+	paralysedLog = 0.0f;
 	if (kind == KILL && r.dead)
 	{
 		logf("drive: killed %s in %.1f s", id.c_str(), elapsed);
@@ -1955,25 +2582,51 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		return false;
 	}
 	float tx = r.pos[0], ty = r.pos[1];
+	// a door whose origin sits well outside its own mesh (an Ashlander yurt's: the model is placed 336 units from the
+	// reference, inside the tent): walk to where the door shows, its box's middle (other doors keep their origin: a cave
+	// door's box takes in the rock round it)
+	if (kind == ACTIVATE && !pointGoal && r.type == "DOOR" && r.boxMax[0] > r.boxMin[0])
+	{
+		float ox = fmaxf(r.boxMin[0] - r.pos[0], fmaxf(0.0f, r.pos[0] - r.boxMax[0]));
+		float oy = fmaxf(r.boxMin[1] - r.pos[1], fmaxf(0.0f, r.pos[1] - r.boxMax[1]));
+		if (ox * ox + oy * oy > 100.0f * 100.0f)
+		{
+			tx = (r.boxMin[0] + r.boxMax[0]) * 0.5f;
+			ty = (r.boxMin[1] + r.boxMax[1]) * 0.5f;
+		}
+	}
 	float dx = tx - p.feet[0], dy = ty - p.feet[1];
 	float dist = sqrtf(dx * dx + dy * dy);
-	float want = kind == WALK ? 120.0f : kind == KILL ? 90.0f : 100.0f;
+	float want = kind == WALK ? (pointGoal ? 30.0f : 120.0f) : kind == KILL ? 90.0f : 100.0f;
 	// on another floor (ruins, towers): not there yet, however close it looks from above. Things to
 	// activate count as reached within Morrowind's activation reach (iMaxActivateDist 192) in 3D.
 	float dz = r.pos[2] - p.feet[2];
-	bool otherFloor = kind == ACTIVATE ? dist * dist + dz * dz > 190.0f * 190.0f && fabsf(dz) > 160.0f : fabsf(dz) > 160.0f;
+	// (a planned spot outdoors: its height is the land's, give or take a rock: there by the map, within 400 up or down)
+	bool otherFloor = kind == ACTIVATE ? dist * dist + dz * dz > 190.0f * 190.0f && fabsf(dz) > 160.0f
+		: fabsf(dz) > (pointGoal ? 400.0f : 160.0f);
 	if (dist > want || otherFloor)
 	{
+		// an escort fallen behind: stand and let them catch up, as a player waits (not counted as being stuck)
+		int e = -1;
+		if ((kind == WALK || kind == ACTIVATE) && escortLagging(s, escort, 600.0f, &e))
+		{
+			if ((int)(elapsed / 5.0f) != (int)((elapsed - dt) / 5.0f))
+				logf("drive: waiting for %s (%.0f away, at %.0f %.0f %.0f, ai %d)", escort.c_str(), w.distanceToPlayer(e), w.refs[e].pos[0],
+					w.refs[e].pos[1], w.refs[e].pos[2], (int)w.refs[e].ai);
+			progressTimer = 0.0f;
+			memcpy(progressAt, p.feet, sizeof(progressAt));
+			return true;
+		}
 		// no route yet (the cells ahead were still loading): try again now and then
 		repathTimer += dt;
 		if (path.empty() && repathTimer > 3.0f)
 		{
 			repathTimer = 0.0f;
-			if (w.findPath(p.feet, r.pos, path))
+			if (planPath(s, p.feet, r.pos, pointGoal, path))
 				logf("drive: route to %s found, %d path points", id.c_str(), (int)path.size());
 		}
 		// the next path point on the way (passed ones dropped), else straight at it
-		float gx = tx, gy = ty;
+		float gx = tx, gy = ty, gz = r.pos[2];
 		while (!path.empty())
 		{
 			const PathPoint& pp = w.pathPoints[path.front()];
@@ -1982,6 +2635,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			{
 				gx = pp.pos[0];
 				gy = pp.pos[1];
+				gz = pp.pos[2];
 				break;
 			}
 			path.erase(path.begin());
@@ -1989,6 +2643,24 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		p.yaw = atan2f(gx - p.feet[0], gy - p.feet[1]);
 		p.pitch = 0.0f;
 		in.moveY = 1.0f;
+		// still levitating (a flight's potion not run out): down (L) or up (R) to the way's height, as a player would
+		if (p.levitate > 0.0f)
+		{
+			in.down = gz < p.feet[2] - 30.0f;
+			in.up = gz > p.feet[2] + 30.0f;
+			// the way is at or below us and we hang in the air: come down first (L), or the walk climbs onto roofs
+			if (in.down && !p.onGround && elapsed < 15.0f)
+				in.moveY = 0.0f;
+			// close to a door (a tower's or a temple's) and still hovering: land at its floor first, as a player does before the
+			// last steps, or the walk stops short of it and the crosshair passes over its top (Ghostgate, Vivec)
+			if (kind == ACTIVATE && !pointGoal && r.hasDest && dist < 500.0f && !p.onGround && p.feet[2] > r.pos[2] - 60.0f)
+			{
+				in.down = true;
+				in.up = false;
+				if (dist < 300.0f)
+					in.moveY = 0.0f;
+			}
+		}
 		if (sidestepTimer > 0.0f)
 		{
 			sidestepTimer -= dt;
@@ -2021,11 +2693,22 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 						door = i;
 					}
 				}
-				if (door >= 0 && !doorTried)
+				// (each inner door once: a walk may have several in a row; one whose trap ate the press, again)
+				if (door >= 0 && door != doorLast)
 				{
 					logf("drive: opening %s on the way to %s", w.refs[door].id.c_str(), id.c_str());
+					bool trapped = !w.refs[door].trap.empty() && !w.refs[door].disarmed;
 					s.playerActivate(door);
-					doorTried = true;          // then jump, then warp
+					if (trapped && w.refs[door].doorTarget == 0.0f)
+					{
+						logf("drive: the trap on %s used the press, again", w.refs[door].id.c_str());
+						s.playerActivate(door);
+					}
+					doorLast = door;
+					doorTried = true;
+					progressTimer = 0.0f;
+					memcpy(progressAt, p.feet, sizeof(progressAt));
+					return true;
 				}
 				else if (++stuckTries <= 2)
 				{
@@ -2035,6 +2718,28 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				}
 				else if (stuckTries == 3)
 					in.jump = true;
+				else if (s.testLegit && stuckTries <= 12)
+				{
+					// LEGIT (no warp to fall back on): keep working round it as a player would, wider each time:
+					// left, right, a running jump, by turns (a shrub, a rock, a rail)
+					int round = (stuckTries - 1) / 3, step = (stuckTries - 1) % 3;
+					if (step == 2)
+						in.jump = true;
+					else
+					{
+						sidestep = step == 0 ? -1.0f : 1.0f;
+						sidestepTimer = 1.0f + round * 0.8f;
+					}
+				}
+				else if (s.testLegit)
+				{
+					// LEGIT: no warp past it (a player can't); the run stops being one a player could have played
+					char why[160];
+					snprintf(why, sizeof(why), "stuck at %.0f %.0f %.0f (%.0f away, %.0f up), no warp in a LEGIT run", p.feet[0], p.feet[1],
+						p.feet[2], dist, dz);
+					fail(why);
+					return false;
+				}
 				else
 				{
 					logf("drive: stuck at %.0f %.0f %.0f going to %s (%.0f away, %.0f up), warped", p.feet[0], p.feet[1], p.feet[2],
@@ -2070,12 +2775,44 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		}
 		return true;
 	}
+	// a door with the follower far behind: wait until they are near before going through (they come through behind us)
+	if (kind == ACTIVATE && r.hasDest)
+	{
+		int e = -1;
+		if (escortLagging(s, escort, 800.0f, &e))
+		{
+			if ((int)(elapsed / 5.0f) != (int)((elapsed - dt) / 5.0f))
+				logf("drive: waiting for %s at the door (%.0f away)", escort.c_str(), w.distanceToPlayer(e));
+			progressTimer = 0.0f;
+			return true;
+		}
+	}
+	// there, and the crosshair already on it (last frame's aim): press A with the aim left as it is (moving it now
+	// would put the press on whatever the new aim finds)
+	if (kind == ACTIVATE && s.target == ref && !s.menuOpen())
+	{
+		down |= KEY_A;
+		logf("drive: activated %s (crosshair)", id.c_str());
+		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.type == "NPC_" || r.type == "CREA") ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
+		doorCell = w.current;
+		takeTimer = 0.0f;
+		return kind != NONE;
+	}
 	// there: face it
 	p.yaw = atan2f(dx, dy);
 	if (kind == WALK)
 	{
 		logf("drive: reached %s in %.1f s", id.c_str(), elapsed);
 		kind = NONE;
+		if (!thenDo.empty())
+		{
+			std::string t = thenDo;
+			thenDo.clear();
+			retrying = true;
+			start(s, t);
+			retrying = false;
+			return kind != NONE;
+		}
 		return false;
 	}
 	if (kind == KILL)
@@ -2087,25 +2824,116 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			kind = NONE;
 			return false;
 		}
+		// someone else in the line (the crosshair is on a living person who is not the target): no swing, step aside
+		// until the line is clear, as a player does not hit a bystander
+		if (s.target >= 0 && s.target != ref && (w.refs[s.target].type == "NPC_" || w.refs[s.target].type == "CREA") && !w.refs[s.target].dead)
+		{
+			if (lineTimer <= 0.0f)
+				logf("drive: %s is in the way to %s, stepping aside", w.refs[s.target].id.c_str(), id.c_str());
+			lineTimer += dt;
+			in.moveX = fmodf(lineTimer, 1.6f) < 0.8f ? -1.0f : 1.0f;
+			return true;
+		}
+		lineTimer = 0.0f;
 		// wind up (attack held), then let go: the strike
 		swingTimer += dt;
 		in.attack = fmodf(swingTimer, 0.7f) < 0.4f;
 		return true;
 	}
-	// ACTIVATE: look at its middle, then press A on what the crosshair finds
+	// ACTIVATE: look at its middle, then press A on what the crosshair finds. Something in front of the middle (a gem
+	// lying on the desk, a basket before the book): look over the rest of it, as a player moves the crosshair
 	float cz = (r.boxMin[2] + r.boxMax[2]) * 0.5f;
 	float eyeZ = p.feet[2] + PLAYER_EYE_HEIGHT;
 	p.pitch = atan2f(cz - eyeZ, fmaxf(dist, 1.0f));
 	lookTimer += dt;
+	if (lookTimer > 0.3f && s.target != ref)
+	{
+		static const float kAim[][3] = { { 0.5f, 0.5f, 0.85f }, { 0.2f, 0.5f, 0.5f }, { 0.8f, 0.5f, 0.5f }, { 0.5f, 0.2f, 0.5f },
+			{ 0.5f, 0.8f, 0.5f }, { 0.2f, 0.2f, 0.85f }, { 0.8f, 0.8f, 0.85f }, { 0.2f, 0.8f, 0.85f }, { 0.8f, 0.2f, 0.85f },
+			{ 0.5f, 0.5f, 0.2f }, { 0.2f, 0.5f, 0.2f }, { 0.8f, 0.5f, 0.2f }, { 0.5f, 0.2f, 0.2f }, { 0.5f, 0.8f, 0.2f } };
+		const float* f = kAim[(int)((lookTimer - 0.3f) / 0.08f) % 14];
+		float ax = r.boxMin[0] + (r.boxMax[0] - r.boxMin[0]) * f[0], ay = r.boxMin[1] + (r.boxMax[1] - r.boxMin[1]) * f[1];
+		float az = r.boxMin[2] + (r.boxMax[2] - r.boxMin[2]) * f[2];
+		float hx = ax - p.feet[0], hy = ay - p.feet[1];
+		p.yaw = atan2f(hx, hy);
+		p.pitch = atan2f(az - eyeZ, fmaxf(sqrtf(hx * hx + hy * hy), 1.0f));
+	}
 	if (s.target == ref && !s.menuOpen())
 	{
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
-		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : NONE;
+		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.type == "NPC_" || r.type == "CREA") ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
+		doorCell = w.current;
 		takeTimer = 0.0f;
 		return kind != NONE;
 	}
-	if (lookTimer > 1.0f)
+	if (lookTimer > 1.6f && s.testLegit && viewTries < 3)
+	{
+		// hidden from here: stand on another side of it (a quarter turn round each time) and look again
+		viewTries++;
+		float bx = (r.boxMin[0] + r.boxMax[0]) * 0.5f, by = (r.boxMin[1] + r.boxMax[1]) * 0.5f;
+		float half = fmaxf(r.boxMax[0] - r.boxMin[0], r.boxMax[1] - r.boxMin[1]) * 0.5f;
+		// a spot round it with floor at our height from which the crosshair (worldPick, as the game aims) finds it:
+		// two rings, sixteen ways round, each looked at over the same points of it as the sweep above
+		static const float kLook[][3] = { { 0.5f, 0.5f, 0.85f }, { 0.5f, 0.5f, 0.5f }, { 0.3f, 0.5f, 0.7f }, { 0.7f, 0.5f, 0.7f },
+			{ 0.5f, 0.3f, 0.7f }, { 0.5f, 0.7f, 0.7f } };
+		float base = atan2f(p.feet[0] - bx, p.feet[1] - by), sx = 0.0f, sy = 0.0f, reach = 192.0f + w.effectTotal(59) * 22.0f;
+		bool found = false;
+		Scene sc = w.scene();
+		for (int k = 0; k < 32 && !found; k++)
+		{
+			float ang = base + 0.3927f * (k % 16) * (viewTries == 2 ? -1.0f : 1.0f), rad = half + (k < 16 ? 70.0f : 130.0f);
+			float cx = bx + sinf(ang) * rad, cy = by + cosf(ang) * rad, fz = -1e9f;
+			for (Cell* c : sc.cells)
+			{
+				float z;
+				if (collisionFloor(c->collision, cx, cy, p.feet[2] + 60.0f, p.feet[2] - 60.0f, &z) && z > fz)
+					fz = z;
+			}
+			if (fz < -1e8f)
+				continue;
+			float eye[3] = { cx, cy, fz + PLAYER_EYE_HEIGHT };
+			for (const float* f : kLook)
+			{
+				float d[3] = { r.boxMin[0] + (r.boxMax[0] - r.boxMin[0]) * f[0] - eye[0], r.boxMin[1] + (r.boxMax[1] - r.boxMin[1]) * f[1] - eye[1],
+					r.boxMin[2] + (r.boxMax[2] - r.boxMin[2]) * f[2] - eye[2] };
+				float len = sqrtf(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+				if (len < 1.0f)
+					continue;
+				for (float& c : d)
+					c /= len;
+				if (worldPick(w, eye, d, reach) == ref)
+				{
+					sx = cx;
+					sy = cy;
+					found = true;
+					break;
+				}
+			}
+		}
+		if (!found)
+		{
+			fail("hidden from here, and no spot round it where the crosshair finds it");
+			return false;
+		}
+		char walk[96];
+		snprintf(walk, sizeof(walk), "WALKTO:@%.0f,%.0f,%.0f", sx, sy, p.feet[2]);
+		logf("drive: %s hidden from here (the crosshair is on %s): trying from another side", id.c_str(),
+			s.target >= 0 ? w.refs[s.target].id.c_str() : "nothing");
+		std::string again = retryToken;
+		retrying = true;
+		start(s, walk);
+		retrying = false;
+		thenDo = again;
+		return true;
+	}
+	if (lookTimer > 1.6f && s.testLegit)
+	{
+		std::string why = std::string("the crosshair is on ") + (s.target >= 0 ? w.refs[s.target].id : "nothing") + ", no direct activation in a LEGIT run";
+		fail(why.c_str());
+		return false;
+	}
+	if (lookTimer > 1.0f && !s.testLegit)
 	{
 		// (a player couldn't have: counted apart in the verdict, as warps are)
 		logf("drive: crosshair miss: on %s, not %s: activating it directly", s.target >= 0 ? w.refs[s.target].id.c_str() : "nothing",
@@ -2174,8 +3002,7 @@ bool TestDriver::expect(Session& s, const std::string& spec)
 	}
 	else if ((what == "cell" || what == "notcell") && a.size() >= 2)
 	{
-		std::string here = lower(w.cellName()), want = lower(spaced(a[1]));
-		ok = (here.compare(0, want.size(), want) == 0) == (what == "cell");
+		ok = cellNameMatches(w.cellName(), spaced(a[1])) == (what == "cell");
 		snprintf(got, sizeof(got), "%.80s", w.cellName().c_str());
 	}
 	else if (what == "spell" && a.size() >= 2)

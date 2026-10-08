@@ -119,9 +119,9 @@ expect("skill:longblade:eq:@0")
 # ---- Levitate: up while it lasts
 spell("e10", "10:10:10:3:0")
 cast("e10")
-expect("flying:eq:1")
+expect("levitating:eq:1")
 wait(3.5)
-expect("flying:eq:0")
+expect("levitating:eq:0")
 wait(3)
 
 # ---- effects read while they last (movement, stealth, sight, resistances)

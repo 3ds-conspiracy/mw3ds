@@ -1,0 +1,9 @@
+# A paralysed player: a driver walk waits ("drive: paralysed"), it is not "stuck" (no jump, no warp), and goes on once
+# the paralysis ends (driver bug 69)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SNAP:moved
+0.3 0 0 0 0 ACTIVE:45:100:14
+40 0 0 0 0 WALKTO:@-11800,-74572,273
+0.1 0 0 0 0 EXPECT:moved:ge:150

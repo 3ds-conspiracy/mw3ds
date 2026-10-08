@@ -2,6 +2,7 @@
 Compiles with zig (python -m ziglang) against the stand-in 3DS headers in tools/test/native/stub, and
 zlib from its source (fetched once into build/native/zlib).
     python tools/test/native/build.py            # rebuilds what changed
+    MW3DS_NATIVE_BUILD=build/native-x python ...   # another build folder (a second session's own build)
 """
 import io
 import os
@@ -14,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).parent
-BUILD = ROOT / "build" / "native"
+BUILD = ROOT / os.environ.get("MW3DS_NATIVE_BUILD", "build/native")
 ZLIB = BUILD / "zlib"
 ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz"
 ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "inftrees", "trees", "uncompr", "zutil"]
