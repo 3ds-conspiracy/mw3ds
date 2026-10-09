@@ -159,6 +159,8 @@ struct Ref
 	unsigned trailSeq = 0;
 	float trailGoal[3] = {};
 	float gridUntil = -1.0f;        // World::time until which moves follow the path grid (a ledge cut the straight way)
+	bool straightWay = false;       // npcMoveTo's last way was the straight one (else the grid's)
+	float straightZ = 0.0f;         // its height when it last changed between the two
 	float lastPos[2] = {};
 	bool talkedToPC = false;
 	int disposition = 50;

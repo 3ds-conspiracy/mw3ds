@@ -1,0 +1,12 @@
+# start: Imperial Prison Ship
+2 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Imperial_Prison_Ship
+8 0 0 0
+8 0 0 0 0 MSG
+4 0 0 0 0 MSG
+2 0 0 0
+90 0 0 0 0 WALKTO:@195,100,170
+40 0 0 0
+0.3 0 0 0 0 EXPECT:reflocal:chargen%boat%guard%2,state:eq:-1
+0.3 0 0 0 0 EXPECT:refdist:chargen%boat%guard%2:le:300
+0.3 0 0 0 0 SHOT

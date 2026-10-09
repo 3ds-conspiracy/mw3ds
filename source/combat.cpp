@@ -751,7 +751,22 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 		r.repathTimer = 0.8f + frand() * 0.4f;
 		float a[3] = { r.pos[0], r.pos[1], r.pos[2] + 50.0f }, b[3] = { target[0], target[1], target[2] + 50.0f };
 		// straight when nothing is in the way, unless an edge stopped the straight way lately
-		if (w.time >= r.gridUntil && w.lineOfSight(a, b))
+		bool straight = w.time >= r.gridUntil && w.lineOfSight(a, b);
+		if (straight != r.straightWay)
+		{
+			// A script's AITravel that lost sight of its spot on a straight way that took it down while the spot is above,
+			// or up while it is below: the grid's way for a while, as for an edge, not the straight way again once the
+			// spot shows (OpenMW's AiTravel keeps to its path from the start). From the top of the stairs on the prison
+			// ship the guard saw the upper deck across the stairwell, went straight down the stairs, lost it at the foot,
+			// and the grid took him up again, for good
+			float rise = target[2] - r.straightZ, went = r.pos[2] - r.straightZ;
+			if (!straight && r.aiPackage == AIPKG_TRAVEL && r.ai != AI_COMBAT && fabsf(rise) >= 40.0f && fabsf(went) >= 24.0f
+				&& went * rise < 0.0f)
+				r.gridUntil = w.time + 15.0f;
+			r.straightWay = straight;
+			r.straightZ = r.pos[2];
+		}
+		if (straight)
 			r.path.clear();
 		else if (!w.findPath(r.pos, target, r.path))
 			r.path.clear();
