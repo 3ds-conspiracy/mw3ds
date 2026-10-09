@@ -619,9 +619,17 @@ void Session::drawSaves()
 			deletingSave = false;
 		else
 		{
+			// (a solid box over the list, and its two buttons inside it, not across the whole screen as a button row)
+			uiRect(20, 70, 280, 100, C2D_Color32(0, 0, 0, 255));
 			uiPanel(20, 70, 280, 100);
 			uiTextBox(scroll, 26, 76, 268, 50, "Delete " + saveList[list.selected].title + "?", 0.5f, false);
-			int yn = buttonRow({ "Yes", "No" }, focus, 130.0f);
+			if (uiIn().down & (KEY_LEFT | KEY_RIGHT))
+				focus = 1 - focus;
+			int yn = -1;
+			static const char* kAnswer[2] = { "Yes", "No" };
+			for (int i = 0; i < 2; i++)
+				if (uiButton(34 + i * 132, 132, 120, 28, kAnswer[i], i == focus))
+					yn = i;
 			if (yn == 0)
 			{
 				remove(saveList[list.selected].path.c_str());

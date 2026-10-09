@@ -1,0 +1,18 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SCREEN:saves
+0.5 0 0 0
+0.3 0 0 0 0 TAP:40:222
+0.5 0 0 0
+0.3 0 0 0 0 TAP:160:40
+0.5 0 0 0
+0.3 0 0 0 0 TAP:210:222
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:deletingsave:eq:1
+0.3 0 0 0 0 TAP:308:146
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:deletingsave:eq:1
+0.3 0 0 0 0 TAP:226:146
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:deletingsave:eq:0

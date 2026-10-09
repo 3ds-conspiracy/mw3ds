@@ -465,6 +465,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		}
 		return true;
 	}
+	if (what == "deletingsave") { v = s.deletingSave ? 1.0f : 0.0f; return true; }    // the Saves screen asks "Delete ...?"
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
 	// how far above the player's feet the first spell visual stands (-999 with none): a self spell's wraps the body from the feet
 	if (what == "vfxheight") { v = s.vfx.empty() ? -999.0f : s.vfx[0].pos[2] - w.player.feet[2]; return true; }
