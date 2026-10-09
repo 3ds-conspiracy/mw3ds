@@ -3040,6 +3040,19 @@ static float rayCoreEntry(const Ref& r, const float eye[3], const float dir[3], 
 	return tmin;
 }
 
+// The renderer places a door by Rx(-rot x) Ry(-rot y) Rz(-rot z) and swings it by Rz(-doorAngle) after those, so the swing
+// axis is the door's own up turned by its x and y rotation: upright for most doors, flipped for one laid upside down
+// (Nchurdamz's Dwemer doors, trapdoor lids) and level for a slave pod's lid. Rodrigues' turn about it
+void doorSwing(const Ref& r, float angle, const float in[3], float out[3])
+{
+	float k[3] = { -sinf(r.rot[1]), sinf(r.rot[0]) * cosf(r.rot[1]), cosf(r.rot[0]) * cosf(r.rot[1]) };
+	float c = cosf(angle), s = sinf(angle);
+	float kv = k[0] * in[0] + k[1] * in[1] + k[2] * in[2];
+	float kx[3] = { k[1] * in[2] - k[2] * in[1], k[2] * in[0] - k[0] * in[2], k[0] * in[1] - k[1] * in[0] };
+	for (int i = 0; i < 3; i++)
+		out[i] = in[i] * c + kx[i] * s + k[i] * kv * (1.0f - c);
+}
+
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach)
 {
 	int best = -1;
@@ -3075,9 +3088,25 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 			}
 			continue;
 		}
-		if (!boxInReach(r, eye, reach))
+		// An animated door turned open is where it is drawn, not where its box stands closed: the ray is turned back
+		// about the door's origin by the door's own turn (the renderer turns the door by -doorAngle about its own up
+		// axis), which leaves the distance along it unchanged. Aiming at the empty doorway then picks nothing
+		const float* e = eye;
+		const float* d = dir;
+		float eyeDoor[3], dirDoor[3];
+		if (r.type == "DOOR" && r.doorAngle != 0.0f)
+		{
+			float rel[3] = { eye[0] - r.pos[0], eye[1] - r.pos[1], eye[2] - r.pos[2] };
+			doorSwing(r, r.doorAngle, rel, eyeDoor);
+			for (int k = 0; k < 3; k++)
+				eyeDoor[k] += r.pos[k];
+			doorSwing(r, r.doorAngle, dir, dirDoor);
+			e = eyeDoor;
+			d = dirDoor;
+		}
+		if (!boxInReach(r, e, reach))
 			continue;
-		float t = rayBoxEntry(r, eye, dir, bestT);
+		float t = rayBoxEntry(r, e, d, bestT);
 		if (t >= 0.0f && t < bestT)
 		{
 			bestT = t;

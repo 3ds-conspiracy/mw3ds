@@ -620,6 +620,8 @@ struct World
 
 // Nearest activatable reference along the view ray within reach, or -1.
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach);
+// A vector turned by `angle` about a door's own swing axis (its local up, tilted with the door: a slave pod's lid)
+void doorSwing(const Ref& r, float angle, const float in[3], float out[3]);
 // Whether the crosshair can find an actor where it stands: a look from 100 units off (on the player's side)
 // at its middle (worked out from its position) meets its box; what stands in front of it doesn't count
 bool actorAimable(const World& w, int ri);
