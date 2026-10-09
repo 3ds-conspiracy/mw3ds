@@ -26,7 +26,6 @@
 #include <3ds.h>
 #include <citro3d.h>
 #include "audio.h"
-#include "devupdate.h"
 #include "linear.h"
 #include "log.h"
 
@@ -167,7 +166,6 @@ void logInit()
 	::_mkdir((sdRoot() + "/3ds/mw3ds").c_str());
 	s_log = ::fopen((sdRoot() + "/3ds/mw3ds/log.txt").c_str(), "w");
 }
-bool netEnsure() { return false; }
 void logSetHook(void (*hook)(const char*)) { s_hook = hook; }
 void logf(const char* fmt, ...)
 {
@@ -224,5 +222,3 @@ void linearRetire() {}
 bool linearReclaim() { return false; }
 
 // ---- nothing to update (drawing and screenshots: native_gpu.cpp)
-void devEmptyTrash() {}
-DevUpdateResult devUpdate(const std::function<void(const std::string&, const std::string&)>&) { return DEV_NONE; }

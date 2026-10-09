@@ -6,7 +6,6 @@
 // file survives crashes and the emulator being killed.
 void logInit();
 // The socket service, started once for the log and the dev updater
-bool netEnsure();
 void logf(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
 // "monitor: ..." for something an engine-side check found (tests count these lines): each key once per run,
 // however often it happens (a missing texture used in a hundred cells is one line). Any thread.

@@ -20,7 +20,7 @@ ZLIB = BUILD / "zlib"
 ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz"
 ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "inftrees", "trees", "uncompr", "zutil"]
 # replaced by native_stubs.cpp (log, linear heap, the dev updater), native_gpu.cpp (screenshots) or main_native.cpp
-SKIP = {"main", "log", "devupdate", "screenshot", "linear"}
+SKIP = {"main", "log", "screenshot", "linear"}
 # renderer.cpp's drawing entry points get a suffix: native_gpu.cpp wraps them so they draw only with NATIVE_DRAW=1
 RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGlow", "rendererDrawActor", "rendererDrawGlow",
                     "rendererDrawLocalMap", "rendererLocalMap"]

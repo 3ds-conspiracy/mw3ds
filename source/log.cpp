@@ -1,7 +1,6 @@
 #include "log.h"
 
 #include <3ds.h>
-#include <arpa/inet.h>
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -11,8 +10,6 @@
 #include <new>
 #include <set>
 #include <string>
-#include <netinet/in.h>
-#include <sys/socket.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -115,31 +112,11 @@ void watchdogStart()
 	threadCreate(watchdogThread, nullptr, 8 * 1024, 0x3F, -2, true);
 }
 
-static u32* s_socBuf = nullptr;
-
 void logInit()
 {
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/mw3ds", 0777);
 	s_log = fopen("sdmc:/3ds/mw3ds/log.txt", "w");
-}
-
-// Sockets for the dev update check (devupdate.cpp); the log itself never goes out on the network
-bool netEnsure()
-{
-	if (s_socBuf)
-		return true;
-	const u32 size = 0x100000;
-	s_socBuf = (u32*)memalign(0x1000, size);
-	if (!s_socBuf)
-		return false;
-	if (R_FAILED(socInit(s_socBuf, size)))
-	{
-		free(s_socBuf);
-		s_socBuf = nullptr;
-		return false;
-	}
-	return true;
 }
 
 static void (*s_hook)(const char* line) = nullptr;
@@ -206,12 +183,6 @@ void logf(const char* fmt, ...)
 
 void logExit()
 {
-	if (s_socBuf)
-	{
-		socExit();
-		free(s_socBuf);
-		s_socBuf = nullptr;
-	}
 	if (s_log)
 		fclose(s_log);
 	s_log = nullptr;

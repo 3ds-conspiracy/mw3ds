@@ -59,7 +59,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `screens_items.cpp` | quick keys | `mwgui/quickkeysmenu.cpp` | unchecked |
 | `screens_character.cpp` | class quiz, generated class, birthsign and race effects at creation | `mwgui/class.cpp`, `mwmechanics/mechanicsmanagerimp.cpp` (buildPlayer) | partial (creation stats in `stats-and-levelling.md`) |
 | `actors.cpp` `audio.cpp` | which animation / sound plays | `mwmechanics/character.cpp`, `mwsound` | partial: footstep sounds (`movement.md`), hit visuals (`magic.md`); the rest unchecked (mostly engine) |
-| `renderer.cpp` `cell.cpp` `distant.cpp` `linear.cpp` `zfile.cpp` `log.cpp` `ui.cpp` `devupdate.cpp` `testdrive.cpp` `main.cpp` `screenshot.cpp` | | | n/a |
+| `renderer.cpp` `cell.cpp` `distant.cpp` `linear.cpp` `zfile.cpp` `log.cpp` `ui.cpp` `testdrive.cpp` `main.cpp` `screenshot.cpp` | | | n/a |
 
 ## Script functions by OpenMW file
 

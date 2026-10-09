@@ -11,7 +11,6 @@
 
 #include "audio.h"
 #include "linear.h"
-#include "devupdate.h"
 #include "log.h"
 #include "player.h"
 #include "renderer.h"
@@ -734,27 +733,6 @@ int main()
 	C3D_RenderTarget* bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 	rendererInit();
 	uiInit();
-	// Development builds bring their data and code up to date from the PC first (devupdate.h)
-	DevUpdateResult dev = devUpdate([&](const std::string& text, const std::string& detail) {
-		drawLoading(top, bottom, text.c_str(), detail.c_str());
-	});
-	if (dev == DEV_RELAUNCH || dev == DEV_QUIT)
-	{
-		// The system closes this build and starts the new one
-		for (int i = 0; i < 600 && aptMainLoop(); i++)
-			gspWaitForVBlank();
-		uiExit();
-		rendererExit();
-		C2D_Fini();
-		C3D_Fini();
-		if (romfs)
-			romfsExit();
-		irrstExit();
-		logExit();
-		gfxExit();
-		return 0;
-	}
-	devEmptyTrash();
 	// A CIA with its data inside uses that (whatever an older copy left on the card); the dev build and
 	// the program-only CIA read the card's
 	const char* dataDir = romfs && stat("romfs:/data/game.json", &st) == 0 ? kRomfsDataDir
