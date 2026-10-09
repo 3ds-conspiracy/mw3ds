@@ -4,6 +4,7 @@
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
 0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 GIVE:silver_longsword
 0.3 0 0 0 0 GIVE:Gold_001:50000
 0.3 0 0 0 0 GIVE:p_levitation_e:40
 0.3 0 0 0 0 GIVE:p_fortify_speed_e:40
@@ -928,10 +929,12 @@
 120 0 0 0 0 DOORTO:Maar_Gan,_Huleen's_Hut
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Maar_Gan,_Huleen's_Hut
-0.3 0 0 0 0 EQUIP:iron_longsword
+0.3 0 0 0 0 EQUIP:silver_longsword
 120 0 0 0 0 KILL:scamp_mg_apprentice
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:scamp_mg_apprentice
+0.3 0 0 0 0 EQUIP:iron_longsword
+40 0 0 0
 60 0 0 0 0 WALKTO:@-64,420,-512
 0.3 0 0 0 0 USELOCKPICK:in_r_s_door_01:pick_grandmaster
 2 0 0 0

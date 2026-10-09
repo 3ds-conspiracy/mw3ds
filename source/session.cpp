@@ -1240,7 +1240,8 @@ void Session::activate(int ref)
 	}
 	// Creatures that trade or have words of their own are talked to like people (Creeper, the mudcrab
 	// merchant, Vivec, Yagrum Bagarn); other living creatures do nothing
-	bool talkingCreature = r.type == "CREA" && r.actor >= 0 && r.ai != AI_COMBAT
+	// (one that is only running away still is: OpenMW bug 7631, Creeper and the mudcrab merchant hit and fleeing)
+	bool talkingCreature = r.type == "CREA" && r.actor >= 0 && (r.ai != AI_COMBAT || r.fleeing)
 		&& ((w.game.actors[r.actor].services & 0x3FFFF) || w.game.speakers.count(r.idLower));
 	if (r.type == "CREA" && !r.dead)
 		logf("activate: creature %s: services %x, speaker %d, ai %d -> %s", r.idLower.c_str(),

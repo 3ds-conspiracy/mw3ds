@@ -1,0 +1,33 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:42
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 GOTO:Caldera,_Ghorak_Manor
+6 0 0 0
+0.3 0 0 0 0 GIVE:gold_001:500
+60 0 0 0 0 ACTIVATE:scamp_creeper
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 BARTER:scamp_creeper
+0.3 0 0 0 0 EXPECT:screen:barter
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 SNAP:refhealth:scamp_creeper
+60 0 0 0 0 STRIKE:scamp_creeper:3
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refhealth:scamp_creeper:eq:@0
+0.3 0 0 0 0 ADDEFFECT:14:20:20:1:2
+0.3 0 0 0 0 MAKESPELL:zapcreeper
+0.5 0 0 0 0 FACE:scamp_creeper
+0.3 0 0 0 0 CAST:mw3ds_test_zapcreeper
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refhealth:scamp_creeper:lt:@0
+0.3 0 0 0 0 EXPECT:refflee:scamp_creeper:eq:1
+60 0 0 0 0 ACTIVATE:scamp_creeper
+2 0 0 0
+0.3 0 0 0 0 EXPECT:talking
+0.3 0 0 0 0 SHOT

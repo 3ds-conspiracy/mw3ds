@@ -2239,8 +2239,10 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	if (knockedDown)
 		damage *= w.game.gmstf("fcombatkodamagemult", 1.5f);
 	const float rawDamage = fatigueOnly ? 0.0f : damage;       // knockdown judges the blow before armor
+	// (+ Shield); OpenMW: armor leaves at least 1, but a blow that Resist Normal Weapons took down to nothing does none
+	// (Creeper's "immune to normal weapons": an ordinary dagger does not scratch him)
 	if (!fatigueOnly)
-		damage = fmaxf(1.0f, applyArmor(damage, def.armor + w.actorEffect(target, 3)));   // (+ Shield); OpenMW: at least 1
+		damage = damage > 0.0f ? fmaxf(1.0f, applyArmor(damage, def.armor + w.actorEffect(target, 3))) : 0.0f;
 	damage *= difficultyScale(false);
 	logf("combat: player hits %s for %.1f%s", t.id.c_str(), damage, fatigueOnly ? " fatigue" : "");
 	{
