@@ -82,6 +82,12 @@ fTravelTimeMult)` hours, outdoors only. Test: `openmw-spec-travel`.
    effect, an item "<item> of <first effect>", and an unnamed spell could be bought. Now the typed name, with OpenMW's
    refusals. The made spell's / item's id now hashes the name too, so the same effects under two names are two spells.
 
+9. **Loose items a merchant owns were not for sale** (issue #41): `merchantGoods` listed the merchant's inventory and
+   the containers they own in the cell, but not the items lying about with them as owner (Codus Callonus' books on his
+   shelves). OpenMW's `TradeWindow::setPtr` takes the actor, `getContainersOwnedBy` and `getItemsOwnedBy` (every
+   enabled item reference in the active cells owned by them). Buying one takes it out of the world as a purchase, not a
+   theft. Test: `issue-41`.
+
 ## Open
 
 - Followers are counted as loaded actors following the player; OpenMW counts the player's followers and their followers

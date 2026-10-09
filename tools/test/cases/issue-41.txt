@@ -1,0 +1,21 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GOTO:Ald-ruhn
+2 0 0 0
+0.3 0 0 0 0 GIVE:gold_001:500
+60 0 0 0 0 DOORTO:Ald-ruhn,_Codus_Callonus:_Bookseller
+3 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ald-ruhn,_Codus_Callonus
+0.3 0 0 0 0 EXPECT:item:bk_ashland_hymns:eq:0
+60 0 0 0 0 ACTIVATE:codus_callonus
+1.5 0 0 0
+0.3 0 0 0 0 BARTER:codus_callonus
+0.3 0 0 0 0 EXPECT:screen:barter
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 BARTERSEL:bk_ashland_hymns
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:item:bk_ashland_hymns:eq:1
+0.3 0 0 0 0 EXPECT:gold:lt:@0

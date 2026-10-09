@@ -597,7 +597,8 @@ struct Session : ScriptHost
 	bool barterTrade(bool sell, int index, int price, int from = -1, int count = 1);   // count items bought (from's
 	                                                                                    // contents: the merchant's or a
 	                                                                                    // chest of theirs) / sold
-	std::vector<std::pair<int, int>> merchantGoods(int ref);
+	std::vector<std::pair<int, int>> merchantGoods(int ref);   // (reference, index into its contents; -1: the reference is the item itself, lying in the shop)
+	ContentItem merchantGood(const std::pair<int, int>& g);    // the stack a merchantGoods entry stands for
 	int enchanterRef = -1, enchantItem = -1, enchantGem = -1, enchantType = -1;
 	std::vector<SpellEffect> makeEffects;        // spellmaking / enchanting: the effects being put together
 	std::string makeName;                        // and the name it gets (OpenMW's name box)

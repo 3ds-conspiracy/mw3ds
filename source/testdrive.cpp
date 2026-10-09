@@ -1240,25 +1240,27 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 			o = index >= 0 ? w.game.object(w.inventory[index].id) : nullptr;
 		}
 		int from = -1;
+		bool found = verb == "SELL" && index >= 0;
 		if (verb == "BUY")
 			for (auto& g : s.merchantGoods(ri))
 			{
-				const std::string& id = w.refs[g.first].contents[g.second].second;
+				std::string id = s.merchantGood(g).second;
 				if (lower(id) == lower(a[2]) || lower(id) == lower(spaced(a[2])))
 				{
 					from = g.first;
 					index = g.second;
 					o = w.game.object(id);
+					found = true;
 				}
 			}
-		if (index < 0 || !o)
+		if (!found || !o)
 		{
 			// (what they do have, to pick from)
 			std::string have;
 			if (verb == "BUY")
 				for (auto& g : s.merchantGoods(ri))
 					if (have.size() < 300)
-						have += " " + w.refs[g.first].contents[g.second].second;
+						have += " " + s.merchantGood(g).second;
 			return fail(a[2] + (verb == "SELL" ? " not carried" : " not among their goods (they have:" + have + ")"));
 		}
 		if (!s.merchantTrades(ri, o))
@@ -1853,7 +1855,7 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		else
 			for (auto& g : s.merchantGoods(s.barterRef))
 			{
-				const std::string& id = w.refs[g.first].contents[g.second].second;
+				std::string id = s.merchantGood(g).second;
 				if (!s.merchantTrades(s.barterRef, w.game.object(id)))
 					continue;
 				if (lower(id) == want || lower(id) == want2)

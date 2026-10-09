@@ -408,14 +408,14 @@ void Session::drawBarter()
 	if (!barterSell)
 		for (auto& g : merchantGoods(barterRef))
 		{
-			const Ref& holder = w.refs[g.first];
-			const Object* o = w.game.object(holder.contents[g.second].second);
+			ContentItem good = merchantGood(g);
+			const Object* o = w.game.object(good.second);
 			if (!merchantTrades(barterRef, o))
 				continue;
 			int price = barterPrice(barterRef, o->value, true);
 			items.emplace_back((int)goods.size(), price);
 			goods.push_back(g);
-			UiGridItem c = gridItem(o, holder.contents[g.second].second, stockCount(holder.contents[g.second].first), false);
+			UiGridItem c = gridItem(o, good.second, stockCount(good.first), false);
 			if (price > gold)
 				c.flags |= UIGRID_DIM;
 			cells.push_back(c);
@@ -445,7 +445,7 @@ void Session::drawBarter()
 	int have = 0;
 	if (sel >= 0)
 		have = barterSell ? w.inventory[items[sel].first].count
-			: stockCount(w.refs[goods[items[sel].first].first].contents[goods[items[sel].first].second].first);
+			: stockCount(merchantGood(goods[items[sel].first]).first);
 	if (!counting || sel < 0)
 		barterCount = 0;
 	else
@@ -461,11 +461,11 @@ void Session::drawBarter()
 	if (sel >= 0)
 	{
 		const Object* o = w.game.object(barterSell ? w.inventory[items[sel].first].id
-			: w.refs[goods[items[sel].first].first].contents[goods[items[sel].first].second].second);
+			: merchantGood(goods[items[sel].first]).second);
 		itemInfo(o, 191, counting ? std::to_string(barterCount) + " of " + std::to_string(have) + ": " + std::to_string(total) + " gold"
 			: std::to_string(items[sel].second) + " gold");
-		const ContentItem* e = barterSell ? nullptr : &w.refs[goods[items[sel].first].first].contents[goods[items[sel].first].second];
-		InventoryItem state = e ? InventoryItem{ lower(e->second), have, false, e->condition, e->soul, e->charge } : InventoryItem{};
+		ContentItem e = barterSell ? ContentItem() : merchantGood(goods[items[sel].first]);
+		InventoryItem state = !barterSell ? InventoryItem{ lower(e.second), have, false, e.condition, e.soul, e.charge } : InventoryItem{};
 		itemTip(o, barterSell ? &w.inventory[items[sel].first] : &state);
 	}
 	uiConsume(KEY_A | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
@@ -557,8 +557,10 @@ void Session::openBarter(int ref)
 }
 
 // count items bought (index into the merchant's goods) or sold (into the inventory) for price in all
-// What a merchant sells: their own goods and what lies in the containers they own in the same cell
-// (Morrowind keeps most shop stock in the shopkeeper's chests): (reference, index into its contents)
+// What a merchant sells: their own goods, what lies in the containers they own in the same cell (Morrowind keeps
+// most shop stock in the shopkeeper's chests) and the loose items they own there, the books on their shelves (OpenMW's
+// TradeWindow::setPtr: the actor, getContainersOwnedBy, getItemsOwnedBy): (reference, index into its contents; -1:
+// the reference is the item itself)
 std::vector<std::pair<int, int>> Session::merchantGoods(int ref)
 {
 	std::vector<std::pair<int, int>> out;
@@ -573,7 +575,32 @@ std::vector<std::pair<int, int>> Session::merchantGoods(int ref)
 		for (size_t k = 0; k < c.contents.size(); k++)
 			out.emplace_back(i, (int)k);
 	});
+	// the loose items they own in the cell: not taken, and not an object of another kind that merely has an owner
+	static const char* kItemTypes[] = { "BOOK", "ALCH", "INGR", "WEAP", "ARMO", "CLOT", "MISC", "LOCK", "PROB", "REPA", "APPA" };
+	w.forLoadedRefs([&](int i) {
+		const Ref& c = w.refs[i];
+		if (i == ref || !c.visible() || c.owner.empty() || w.placeOf(i) != place || lower(c.owner) != m.idLower)
+			return;
+		for (const char* t : kItemTypes)
+			if (c.type == t)
+			{
+				out.emplace_back(i, -1);
+				return;
+			}
+	});
 	return out;
+}
+
+ContentItem Session::merchantGood(const std::pair<int, int>& g)
+{
+	const Ref& h = w.refs[g.first];
+	if (g.second >= 0)
+		return h.contents[g.second];
+	ContentItem it(h.count > 0 ? h.count : 1, h.idLower);
+	it.condition = h.dropState.condition;
+	it.soul = h.dropState.soul;
+	it.charge = h.dropState.charge;
+	return it;
 }
 
 bool Session::barterTrade(bool sell, int index, int price, int from, int count)
@@ -590,6 +617,21 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 			notify(barterSell ? "The merchant can't afford that." : "You don't have enough gold.");
 			logf("barter: refused: %s", barterSell ? "the merchant can't afford it" : "not enough gold");
 			return false;
+		}
+		else if (!barterSell && items[sel].first < 0)
+		{
+			// a loose item of theirs from the shop floor: it leaves the cell with the buyer, no theft (OpenMW's
+			// ContainerItemModel::removeItem takes it from the world)
+			w.removeItem("gold_001", price);
+			m.gold += price;
+			if (count >= std::max(1, holder.count))
+				w.pickUp(from);
+			else
+			{
+				w.addItem(holder.idLower, count);
+				holder.count -= count;
+			}
+			playSound(-1, "Item Gold Down");
 		}
 		else if (!barterSell)
 		{
