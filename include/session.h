@@ -457,6 +457,9 @@ struct Session : ScriptHost
 	void mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist);
 	void greetings(float dt);
 	std::string targetLabel(int ref);
+	std::vector<std::string> targetPopupLines(int ref);    // the name over the crosshair, wrapped to fit the top screen
+	std::vector<std::string> targetPromptLines(int ref, float* scale = nullptr);   // "A: Open <name>" on the bottom screen: one or two lines, at that scale
+	int promptRows = 1;                                    // the lines it took last (the attack hint under it moves down for two)
 
 	// screens (screens.cpp)
 	void drawHud();

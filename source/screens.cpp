@@ -130,11 +130,16 @@ void Session::drawTop()
 	}
 	if (target >= 0 && !menuOpen())
 	{
-		std::string label = targetLabel(target);
-		float tw = uiTextWidth(label, 0.55f);
-		uiRect(200 + ax - tw / 2 - 6, 132, tw + 12, 20, col::border);
-		uiRect(200 + ax - tw / 2 - 5, 133, tw + 10, 18, col::panel);
-		uiTextCentered(200 + ax, 134, 0.55f, w.ownedByOther(target) ? col::health : col::text, label);
+		// (a long name, "Hut Door - Ald-ruhn, Tiras Sadus: General Merchandise", wraps over lines inside the screen)
+		std::vector<std::string> lines = targetPopupLines(target);
+		float lh = uiLineHeight(0.55f), tw = 0.0f;
+		for (auto& l : lines)
+			tw = fmaxf(tw, uiTextWidth(l, 0.55f));
+		float h = lines.size() * lh + 2;
+		uiRect(200 + ax - tw / 2 - 6, 132, tw + 12, h + 2, col::border);
+		uiRect(200 + ax - tw / 2 - 5, 133, tw + 10, h, col::panel);
+		for (size_t i = 0; i < lines.size(); i++)
+			uiTextCentered(200 + ax, 134 + i * lh, 0.55f, w.ownedByOther(target) ? col::health : col::text, lines[i]);
 	}
 	// Notices, each wrapped to the screen's width ("Release Identification has been removed from your inventory."
 	// ran off it)
@@ -361,16 +366,16 @@ void Session::drawHud()
 
 	if (target >= 0)
 	{
-		const Ref& t = w.refs[target];
-		// (a creature alive: "Talk to" one with words of its own, else only its name, as OpenMW shows it)
-		bool talks = t.type == "CREA" && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));
-		std::string verb = t.dead ? "Search " : t.type == "NPC_" || talks ? "Talk to " : t.type == "CREA" ? "" : t.type == "DOOR" ? "Open " : "Use ";
-		// short of the date under the map (from x 190): a long name ("Ajira's Mushroom Report") ran into it
-		std::string use = "A: " + verb + targetLabel(target);
-		while (use.size() > 3 && uiTextWidth(use, 0.45f) > 180)
-			use = use.substr(0, use.size() - 4) + "...";
-		uiText(6, 172, 0.45f, col::link, use);
+		// two lines for a long name, a little smaller and higher, and the attack hint below them moves down
+		float s = 0.45f;
+		std::vector<std::string> use = targetPromptLines(target, &s);
+		promptRows = (int)use.size();
+		float lh = uiLineHeight(s);
+		for (size_t i = 0; i < use.size(); i++)
+			uiText(6, (use.size() > 1 ? 166 : 172) + i * lh, s, col::link, use[i]);
 	}
+	else
+		promptRows = 1;
 	if (w.fightingEnabled)
 	{
 		bool xbox = g_controlLayout == CONTROLS_XBOX;
@@ -379,7 +384,7 @@ void Session::drawHud()
 		// Leave the quick key strip (from x 190) clear
 		while (hint.size() > 3 && uiTextWidth(hint, 0.38f) > 180)
 			hint = hint.substr(0, hint.size() - 4) + "...";
-		uiText(6, 190, 0.38f, col::textDim, hint);
+		uiText(6, promptRows > 1 ? 192 : 190, 0.38f, col::textDim, hint);
 	}
 	drawQuickStrip();
 	uiTextCentered(250, 168, 0.38f, col::textDim, dateText());
@@ -870,4 +875,46 @@ void Session::itemTip(const Object* o, const InventoryItem* it)
 			tip.emplace_back(buf, col::text);
 		}
 	}
+}
+
+// The crosshair name for the top screen: wrapped within 340 pixels, so "Hut Door - Ald-ruhn, Tiras Sadus: General
+// Merchandise" shows whole (it ran off both edges of the 400-pixel screen)
+std::vector<std::string> Session::targetPopupLines(int ref)
+{
+	return uiWrap(targetLabel(ref), 340.0f, 0.55f);
+}
+
+// What A does to what is aimed at, for the bottom screen: short of the date under the map (from x 190), so within 180
+// pixels, over two lines at most, the second cut with ".." when even that is not enough
+std::vector<std::string> Session::targetPromptLines(int ref, float* scale)
+{
+	const Ref& t = w.refs[ref];
+	// (a creature alive: "Talk to" one with words of its own, else only its name, as OpenMW shows it)
+	bool talks = t.type == "CREA" && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));
+	std::string verb = t.dead ? "Search " : t.type == "NPC_" || talks ? "Talk to " : t.type == "CREA" ? "" : t.type == "DOOR" ? "Open " : "Use ";
+	std::string use = "A: " + verb + targetLabel(ref);
+	// one line at the usual size; else two, a little smaller, and smaller still before anything is cut
+	float s = 0.45f;
+	std::vector<std::string> lines = uiWrap(use, 180.0f, s);
+	for (float step : { 0.42f, 0.36f })
+		if (lines.size() > 1)
+		{
+			s = step;
+			lines = uiWrap(use, 180.0f, s);
+			if (lines.size() <= 2)
+				break;
+		}
+	if (scale)
+		*scale = s;
+	if (lines.size() > 2)
+	{
+		std::string rest;
+		for (size_t i = 1; i < lines.size(); i++)
+			rest += (i > 1 ? " " : "") + lines[i];
+		lines.resize(2);
+		lines[1] = rest;
+	}
+	while (lines.size() == 2 && lines[1].size() > 3 && uiTextWidth(lines[1], s) > 180.0f)
+		lines[1] = lines[1].substr(0, lines[1].size() - 4) + "...";
+	return lines;
 }

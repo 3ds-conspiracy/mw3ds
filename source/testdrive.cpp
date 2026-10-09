@@ -448,6 +448,23 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	if (what == "skillneed") { int k = skillIndex(w, arg); if (k < 0) return false; v = s.skillNeed(k); return true; }
 
 	if (what == "rechargechance") { v = s.rechargeChance(); return true; }
+	// the crosshair name's widest line in pixels (-1: nothing aimed at), and its lines; the bottom prompt's lines
+	if (what == "popupwidth" || what == "popuplines" || what == "promptlines")
+	{
+		if (s.target < 0)
+			v = -1.0f;
+		else if (what == "promptlines")
+			v = (float)s.targetPromptLines(s.target).size();
+		else
+		{
+			std::vector<std::string> lines = s.targetPopupLines(s.target);
+			v = what == "popuplines" ? (float)lines.size() : 0.0f;
+			if (what == "popupwidth")
+				for (auto& l : lines)
+					v = fmaxf(v, uiTextWidth(l, 0.55f));
+		}
+		return true;
+	}
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
 	// how far above the player's feet the first spell visual stands (-999 with none): a self spell's wraps the body from the feet
 	if (what == "vfxheight") { v = s.vfx.empty() ? -999.0f : s.vfx[0].pos[2] - w.player.feet[2]; return true; }
