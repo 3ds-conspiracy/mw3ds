@@ -315,12 +315,11 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 			for (auto& s : fit->second.slots)
 				if (s.first >= 0 && s.first < 32 && s.first != 25 && s.first != 10)
 				{
+					// A part the item names without a model still covers that slot: the bare wrist goes under a
+					// gauntlet (OpenMW's reserveIndividualPart)
 					const std::string& pc = female && !s.second.second.empty() ? s.second.second : s.second.first;
-					if (!pc.empty())
-					{
-						part[s.first] = pc;
-						glow[s.first] = w.game.enchantGlow(it.id);
-					}
+					part[s.first] = pc;
+					glow[s.first] = pc.empty() ? 0 : w.game.enchantGlow(it.id);
 				}
 		}
 	if (!weaponId.empty())
