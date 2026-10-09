@@ -4944,6 +4944,30 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		ok = (int)s.screen == screenByName(a[1]);
 		snprintf(got, sizeof(got), "screen %d", (int)s.screen);
 	}
+	else if ((what == "doorpick" || what == "doorpickclosed") && a.size() >= 2)
+	{
+		// EXPECT:doorpick:<door>: the crosshair, aimed from the player's eyes at the middle of the door as it is drawn now
+		// (turned about its origin by its opening angle), picks that door; doorpickclosed: aimed at where it stood closed,
+		// it does not (an open door is activated where it is, not where it was)
+		int ri = findRef(s, a[1], false);
+		if (ri < 0)
+			return false;
+		const Ref& r = w.refs[ri];
+		float mid[3], to[3];
+		for (int k = 0; k < 3; k++)
+			mid[k] = (r.boxMin[k] + r.boxMax[k]) * 0.5f - r.pos[k];
+		if (what == "doorpick")
+			doorSwing(r, -r.doorAngle, mid, mid);       // (drawn turned by -doorAngle about its own up: renderer.cpp)
+		for (int k = 0; k < 3; k++)
+			to[k] = r.pos[k] + mid[k];
+		float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+		float d[3] = { to[0] - eye[0], to[1] - eye[1], to[2] - eye[2] }, len = sqrtf(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+		for (int k = 0; k < 3; k++)
+			d[k] /= len > 0.0f ? len : 1.0f;
+		int hit = worldPick(w, eye, d, 1000.0f);
+		ok = what == "doorpick" ? hit == ri : hit != ri;
+		snprintf(got, sizeof(got), "door angle %.2f, picked %s", r.doorAngle, hit < 0 ? "nothing" : hit == ri ? "the door" : w.refs[hit].id.c_str());
+	}
 	else if (what == "bodygroup" && a.size() >= 2)
 	{
 		// EXPECT:bodygroup:<group>: in third person, the player's body plays a group whose name starts with it
