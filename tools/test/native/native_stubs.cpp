@@ -167,8 +167,7 @@ void logInit()
 	::_mkdir((sdRoot() + "/3ds/mw3ds").c_str());
 	s_log = ::fopen((sdRoot() + "/3ds/mw3ds/log.txt").c_str(), "w");
 }
-void logNetStart(const char*) {}
-bool logNetEnsure() { return false; }
+bool netEnsure() { return false; }
 void logSetHook(void (*hook)(const char*)) { s_hook = hook; }
 void logf(const char* fmt, ...)
 {

@@ -3,8 +3,7 @@
 #   -NoData   the program only (~2 MB): the game reads its data from sdmc:/3ds/mw3ds/data
 #             (the whole island copied there by card reader); no Wi-Fi update checks either
 #   -Data out\world  pack that data (default out\data, the Balmora area)
-#   -NoNetLog  the game doesn't send its log lines over Wi-Fi (release / performance builds)
-param([switch]$NoData, [string]$Data = 'out\data', [switch]$NoNetLog)
+param([switch]$NoData, [string]$Data = 'out\data')
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 . (Join-Path $PSScriptRoot 'env.ps1')
 Set-Location $root
@@ -22,12 +21,6 @@ if ($NoData) {
 } else {
     robocopy (Join-Path $root $Data) (Join-Path $root 'build\romfs\data') /MIR /NJH /NJS /NFL /NDL /NP | Out-Null
 }
-# Where the game sends its log lines (UDP port 8081 on this PC)
-$ip = (Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway -and $_.NetAdapter.Status -eq 'Up' } |
-       Select-Object -First 1).IPv4Address.IPAddress
-Remove-Item (Join-Path $root 'build\romfs\loghost.txt') -Force -ErrorAction SilentlyContinue
-if ($ip -and -not $NoNetLog) { Set-Content (Join-Path $root 'build\romfs\loghost.txt') "$ip 8081" -Encoding ascii }
-
 $defs = @{
     APP_TITLE = 'MW3DS'; APP_PRODUCT_CODE = 'CTR-P-MW3D'; APP_UNIQUE_ID = '0xF3D50'
     APP_ROMFS = 'build/romfs'; APP_CATEGORY = 'Application'; APP_USE_ON_SD = 'true'; APP_ENCRYPTED = 'false'

@@ -5,10 +5,8 @@
 // Append-only log at sdmc:/3ds/mw3ds/log.txt. Flushed every line so the
 // file survives crashes and the emulator being killed.
 void logInit();
-// Also send every line over UDP to "host port" read from hostFile (no file: no network log)
-void logNetStart(const char* hostFile);
 // The socket service, started once for the log and the dev updater
-bool logNetEnsure();
+bool netEnsure();
 void logf(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
 // "monitor: ..." for something an engine-side check found (tests count these lines): each key once per run,
 // however often it happens (a missing texture used in a hundred cells is one line). Any thread.

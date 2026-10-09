@@ -115,11 +115,6 @@ void watchdogStart()
 	threadCreate(watchdogThread, nullptr, 8 * 1024, 0x3F, -2, true);
 }
 
-// Network copy of the log: every line also goes out as a UDP packet to the PC that built the
-// CIA (UDP port 8081), so a hang on real hardware shows
-// where it stopped without taking the SD card out.
-static int s_sock = -1;
-static sockaddr_in s_dest;
 static u32* s_socBuf = nullptr;
 
 void logInit()
@@ -129,7 +124,8 @@ void logInit()
 	s_log = fopen("sdmc:/3ds/mw3ds/log.txt", "w");
 }
 
-bool logNetEnsure()
+// Sockets for the dev update check (devupdate.cpp); the log itself never goes out on the network
+bool netEnsure()
 {
 	if (s_socBuf)
 		return true;
@@ -144,27 +140,6 @@ bool logNetEnsure()
 		return false;
 	}
 	return true;
-}
-
-void logNetStart(const char* hostFile)
-{
-	FILE* f = fopen(hostFile, "r");
-	if (!f)
-		return;
-	char host[64] = {};
-	int port = 0;
-	int n = fscanf(f, "%63s %d", host, &port);
-	fclose(f);
-	if (n != 2)
-		return;
-	if (!logNetEnsure())
-		return;
-	s_sock = socket(AF_INET, SOCK_DGRAM, 0);
-	memset(&s_dest, 0, sizeof(s_dest));
-	s_dest.sin_family = AF_INET;
-	s_dest.sin_port = htons(port);
-	inet_aton(host, &s_dest.sin_addr);
-	logf("log: also sent to %s:%d", host, port);
 }
 
 static void (*s_hook)(const char* line) = nullptr;
@@ -219,14 +194,6 @@ void logf(const char* fmt, ...)
 		if (main)
 			g_mainAt = savedAt;
 	}
-	if (s_sock >= 0)
-	{
-		char packet[560];
-		int len = snprintf(packet, sizeof(packet), "[%8llu] %s", t, line);
-		if (len >= (int)sizeof(packet))
-			len = sizeof(packet) - 1;
-		sendto(s_sock, packet, len, 0, (sockaddr*)&s_dest, sizeof(s_dest));
-	}
 	// Only on the main thread: the hook draws (a loading screen), and a line from the streaming
 	// thread drawing at the same time as the main thread hung the game
 	if (s_hook && !s_inHook && threadGetCurrent() == nullptr)
@@ -239,9 +206,6 @@ void logf(const char* fmt, ...)
 
 void logExit()
 {
-	if (s_sock >= 0)
-		close(s_sock);
-	s_sock = -1;
 	if (s_socBuf)
 	{
 		socExit();

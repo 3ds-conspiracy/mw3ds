@@ -943,7 +943,7 @@ DevUpdateResult devUpdate(const Progress& progress)
 		logf("dev: update skipped (B held)");
 		return DEV_NONE;
 	}
-	if (!logNetEnsure())
+	if (!netEnsure())
 		return DEV_NONE;
 	std::string mine;
 	bool devTitle = readFile("romfs:/buildid.txt", mine);
