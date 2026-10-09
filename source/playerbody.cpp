@@ -187,29 +187,121 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 	logf("playerbody: %d meshes on skeleton %d, %d pieces kept", (int)a.meshes.size(), skel, (int)pieces.size());
 }
 
-void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sneaking, bool weaponOut)
+// Where a blow's wind-up holds, as a share of the way from the group's start to its hit: the min and max attack marks
+// of base_anim.nif's chop / shoot text keys (the exported group keeps only start, hit and stop). The wind-up plays to
+// the min mark, then on toward the max mark as the blow is drawn back (OpenMW's character controller)
+static void windupMarks(const char* group, float& lo, float& hi)
+{
+	static const struct { const char* name; float lo, hi; } kMarks[] = {
+		{ "Attack1h", 0.17f, 0.5f }, { "AttackHH", 0.2f, 0.5f }, { "Attack2c", 0.25f, 0.66f }, { "Attack2w", 0.22f, 0.45f },
+		{ "AttackBow", 0.64f, 0.92f }, { "AttackXbow", 0.6f, 0.6f }, { "AttackThrow", 0.39f, 0.61f } };
+	lo = 0.2f;
+	hi = 0.5f;
+	for (auto& m : kMarks)
+		if (strcmp(group, m.name) == 0)
+		{
+			lo = m.lo;
+			hi = m.hi;
+		}
+}
+
+void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sneaking, bool weaponOut, const BodyAct& act)
 {
 	if (!ready || set.actors.empty())
 		return;
 	Actor& a = set.actors[0];
-	// What they are doing
-	const char* want = swimming ? (speed > 10.0f ? "SwimForward" : "Idle")
-		: sneaking ? (speed > 10.0f ? "SneakForward" : "Idle")
-		: speed > 200.0f ? "RunForward" : speed > 10.0f ? "WalkForward" : "Idle";
-	if (strcmp(want, group) != 0)
+	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	// A new blow or cast takes the whole body (one group at a time here: no upper-body layer); a blow let go plays on
+	// from where its wind-up held
+	if (act.action != BODY_NONE && (act.action != acting || actGroup != act.group))
 	{
-		if (actorPlay(set, a, want, strcmp(want, "Idle") == 0 ? ANIM_IDLE : ANIM_LOOP) || strcmp(want, "Idle") == 0)
-			group = want;
-		else if (actorPlay(set, a, "WalkForward", ANIM_LOOP))
-			group = "WalkForward";
+		bool letGo = acting == BODY_WINDUP && act.action == BODY_STRIKE && actGroup == act.group && a.mode == ANIM_HOLD;
+		if (letGo)
+			a.mode = ANIM_ONCE;
+		else if (!actorPlay(set, a, act.group, act.action == BODY_WINDUP ? ANIM_HOLD : ANIM_ONCE))
+			logf("playerbody: no %s group", act.group);
+		else
+		{
+			// from the start (a blow seen first at its release, the view changed mid-blow: from the max attack mark)
+			float lo, hi;
+			windupMarks(act.group, lo, hi);
+			const AnimGroup& g = sk.groups[a.group];
+			a.time = act.action == BODY_STRIKE ? g.start + (g.loopStart - g.start) * hi : g.start;
+		}
+		acting = act.action;
+		actGroup = act.group;
+		followCut = false;
+		group = "";
 	}
-	actorAnimate(set, a, dt);
+	else if (act.action == BODY_NONE && acting == BODY_WINDUP)
+	{
+		acting = BODY_NONE;                     // the wind-up was cut short (a menu, a knockdown)
+		group = "";
+	}
+	else if (act.action == BODY_NONE)
+		acting = BODY_NONE;                     // a blow or cast already going plays out (ANIM_ONCE)
+	bool busy = a.mode == ANIM_ONCE || (a.mode == ANIM_HOLD && acting == BODY_WINDUP);
+	float step = dt;
+	if (busy && a.mode == ANIM_HOLD)
+	{
+		// Drawn back: at the weapon's speed toward the hold point the charge sets, held there
+		float lo, hi;
+		windupMarks(actGroup.c_str(), lo, hi);
+		const AnimGroup& g = sk.groups[a.group];
+		float hold = g.start + (g.loopStart - g.start) * (lo + (hi - lo) * act.charge);
+		a.time = fmaxf(a.time, fminf(a.time + dt * act.speed, hold));
+		step = 0.0f;
+	}
+	else if (busy && strncmp(actGroup.c_str(), "Attack", 6) == 0)
+	{
+		step = dt * act.speed;
+		// At the hit, a weaker blow cuts over to its small / medium follow-through (OpenMW: under 0.33 small,
+		// under 0.66 medium, else the large one the group runs on into)
+		const AnimGroup& g = sk.groups[a.group];
+		if (!followCut && strcmp(g.name, actGroup.c_str()) == 0 && a.time + step >= g.loopStart)
+		{
+			followCut = true;
+			std::string next = actGroup + (act.strength < 0.33f ? "S" : "M");
+			if (act.strength < 0.66f && actorFindGroup(sk, next.c_str()) >= 0)
+			{
+				actorPlay(set, a, next.c_str(), ANIM_ONCE);
+				step = 0.0f;
+			}
+		}
+	}
+	if (!busy)
+	{
+		// Walking and standing; with a weapon out, its ready stance when the skeleton has one ("Idle1h", "WalkForward2c")
+		const char* want = swimming ? (speed > 10.0f ? "SwimForward" : "Idle")
+			: sneaking ? (speed > 10.0f ? "SneakForward" : "Idle")
+			: speed > 200.0f ? "RunForward" : speed > 10.0f ? "WalkForward" : "Idle";
+		if (strcmp(want, group) != 0 || weaponOut != stanceOut)
+		{
+			stanceOut = weaponOut;
+			std::string stance = weaponOut && !swimming && act.stance[0] ? std::string(want) + act.stance : "";
+			if (!stance.empty() && actorFindGroup(sk, stance.c_str()) >= 0 && actorPlay(set, a, stance.c_str(), ANIM_LOOP))
+				group = want;
+			else if (actorPlay(set, a, want, strcmp(want, "Idle") == 0 ? ANIM_IDLE : ANIM_LOOP) || strcmp(want, "Idle") == 0)
+				group = want;
+			else if (actorPlay(set, a, "WalkForward", ANIM_LOOP))
+				group = "WalkForward";
+		}
+	}
+	actorAnimate(set, a, step);
 	// Place: at the feet, turned to the view, the race's size
 	const Player& p = w.player;
 	float c = cosf(-p.yaw), s = sinf(-p.yaw);
 	float place[12] = { c, -s, 0, p.feet[0], s, c, 0, p.feet[1], 0, 0, 1, p.feet[2] };
 	memcpy(a.place, place, sizeof(place));
-	(void)weaponOut;
+}
+
+const char* PlayerBody::playing() const
+{
+	if (!ready || set.actors.empty())
+		return "";
+	const Actor& a = set.actors[0];
+	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	return a.group >= 0 && a.group < (int)sk.groups.size() ? sk.groups[a.group].name : "";
 }
 
 void PlayerBody::draw(World& w, bool deform)

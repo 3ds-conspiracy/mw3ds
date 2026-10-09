@@ -223,19 +223,21 @@ float Session::difficultyScale(bool toPlayer) const
 	return fmaxf(0.0f, 1.0f + x);
 }
 
-// Third person: the camera 220 units behind and a little above the head, pulled in front of walls;
-// the face preview looks at the player's face from in front
+// Third person: the camera orbits a point just above the head, 220 units back along the view, pulled in front of
+// walls: looking up swings it down behind the player, looking down swings it up over them, and the player stays in the
+// middle of the view (OpenMW's third-person camera: the focal point minus the view direction times the distance).
+// The face preview looks at the player's face from in front
 void Session::viewCamera(RenderCamera& cam)
 {
 	if (!thirdPerson && !previewFace)
 		return;
 	const Player& p = w.player;
 	float fx = sinf(p.yaw), fy = cosf(p.yaw);
-	float head[3] = { p.feet[0], p.feet[1], p.feet[2] + (previewFace ? 118.0f : 100.0f) };
+	float head[3] = { p.feet[0], p.feet[1], p.feet[2] + (previewFace ? 118.0f : 120.0f) };
 	float want = previewFace ? 70.0f : 220.0f;
 	float dir = previewFace ? 1.0f : -1.0f;       // the preview stands in front, facing back
 	float cp = cosf(p.pitch), sp = sinf(p.pitch);
-	float to[3] = { head[0] + dir * fx * cp * want, head[1] + dir * fy * cp * want, head[2] - dir * sp * want + (previewFace ? 0.0f : 20.0f) };
+	float to[3] = { head[0] + dir * fx * cp * want, head[1] + dir * fy * cp * want, head[2] - sp * want };
 	// walls between the head and the camera pull it in
 	float best = 1.0f;
 	for (LoadedCell* l : w.loaded)

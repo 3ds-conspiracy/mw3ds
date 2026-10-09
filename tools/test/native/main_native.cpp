@@ -895,6 +895,7 @@ int main()
 			in.jump = s.jump && first;
 			down = first ? s.keys : 0;
 			held = s.keys;
+			in.togglePov = down & KEY_SELECT;
 			in.sheathe = (held & KEY_ZL) && (down & KEY_X);
 			if (held & KEY_ZL)
 			{

@@ -2479,11 +2479,13 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			{
 				playerFire(fmaxf(0.1f, attackCharge));
 				vm.play(VM_FOLLOW, (std::string(vmGroup(wpn, tool)) + "ShootF").c_str());
+				blowStrength = 1.0f;
 			}
 			else
 			{
 				// the follow-through by how hard the blow was (small / medium / large)
 				float strength = playerSwing(fmaxf(0.1f, attackCharge), in);
+				blowStrength = strength;        // (the body seen from outside follows through the same way)
 				vm.playFollow((std::string(vmGroup(wpn, tool)) + (attackKind == 2 ? "ThrustF" : attackKind == 1 ? "SlashF"
 					: "ChopF")).c_str(), strength);
 			}
@@ -3041,12 +3043,28 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	{
 		thirdPerson = !thirdPerson;
 		thirdDistance = 0.0f;
+		body.acting = BODY_NONE;              // a blow or cast under way when the view changes starts afresh
 	}
 	previewFace = screen == SCR_RACE;          // character creation: the face being chosen
 	if (thirdPerson || previewFace)
 	{
 		body.rebuild(w, weaponDrawn);
 		float speed = sqrtf(in.moveX * in.moveX + in.moveY * in.moveY) * w.player.runSpeed * w.player.loadSpeed;
-		body.update(w, dt, speed, w.player.swimming, w.player.sneaking, weaponDrawn);
+		// The arms do what the first-person ones do: a blow by the weapon's NPC group (a lockpick or probe swings as a
+		// one-handed weapon), a cast by its first effect's range, as NPCs do (npcCastSpell)
+		BodyAct act;
+		act.group = !wpn && toolItem ? "Attack1h" : attackGroup(wpn);
+		act.action = vm.action == VM_WINDUP ? BODY_WINDUP : vm.action == VM_FOLLOW ? BODY_STRIKE : BODY_NONE;
+		if (vm.action == VM_CAST)
+		{
+			int range = castDef.effects.empty() ? 0 : castDef.effects[0].range;
+			act.action = BODY_CAST;
+			act.group = range == 2 ? "CastTarget" : range == 1 ? "CastTouch" : "CastSelf";
+		}
+		act.charge = vm.charge;
+		act.speed = vm.speed;
+		act.strength = blowStrength;
+		act.stance = vm.group == "Bow" || vm.group == "Throw" ? "1h" : vm.group == "Xbow" ? "2c" : vm.group.c_str();
+		body.update(w, dt, speed, w.player.swimming, w.player.sneaking, weaponDrawn, act);
 	}
 }

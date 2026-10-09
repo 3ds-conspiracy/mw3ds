@@ -1,0 +1,35 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SEED:36
+0.3 0 0 0 0 GIVE:iron%dagger
+0.3 0 0 0 0 GOTO:Balmora
+1 0 0 0
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:bodygroup:Idle+SHOT
+0.5 0 0 0 0 UP
+0.1 0 0 0 0 SHOT
+1 0 0 0 0 DOWN
+0.1 0 0 0 0 SHOT
+0.5 0 0 0 0 UP
+0.6 0 0 -1
+0.1 0 0 0 0 SHOT
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.6 0 0 0 0 X
+0.1 0 0 0 0 X+EXPECT:bodygroup:Attack1h+SHOT
+0.1 0 0 0
+0.05 0 0 0 0 EXPECT:bodygroup:Attack1h+SHOT
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bodygroup:Idle
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SPELL:fire_bite
+0.3 0 0 0 0 CAST:fire%bite
+0.3 0 0 0 0 EXPECT:bodygroup:CastTouch+SHOT
+3 0 0 0
+0.3 0 0 0 0 ADDEFFECT:3:20:20:30:0
+0.3 0 0 0 0 MAKESPELL:shieldme
+0.3 0 0 0 0 CAST:mw3ds_test_shieldme
+0.3 0 0 0 0 EXPECT:bodygroup:CastSelf+SHOT
+3 0 0 0

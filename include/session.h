@@ -102,6 +102,7 @@ struct Session : ScriptHost
 	PlayerBody body;
 	bool thirdPerson = false, previewFace = false;
 	float thirdDistance = 0.0f;               // eased camera distance (walls pull it in)
+	float blowStrength = 1.0f;                // the last blow let go (0..1): the body's follow-through
 	void viewCamera(RenderCamera& cam);
 	// repairing: -1 = with a repair tool (inventory index repairTool), else the smith's ref
 	int repairRef = -1, repairTool = -1;

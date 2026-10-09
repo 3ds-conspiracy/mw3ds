@@ -3905,6 +3905,14 @@ bool TestDriver::expect(Session& s, const std::string& spec)
 		ok = (int)s.screen == screenByName(a[1]);
 		snprintf(got, sizeof(got), "screen %d", (int)s.screen);
 	}
+	else if (what == "bodygroup" && a.size() >= 2)
+	{
+		// EXPECT:bodygroup:<group>: in third person, the player's body plays a group whose name starts with it
+		// ("Attack1h" also takes its follow-throughs "Attack1hM" / "Attack1hS")
+		const char* g = s.thirdPerson ? s.body.playing() : "";
+		ok = g[0] && strncmp(g, a[1].c_str(), a[1].size()) == 0;
+		snprintf(got, sizeof(got), "%s", !s.thirdPerson ? "first person" : g[0] ? g : "no group");
+	}
 	else
 	{
 		bool arg = hasArg(what);
