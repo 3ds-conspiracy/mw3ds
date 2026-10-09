@@ -1,5 +1,7 @@
 #pragma once
 
+#include <3ds.h>
+
 // Append-only log at sdmc:/3ds/mw3ds/log.txt. Flushed every line so the
 // file survives crashes and the emulator being killed.
 void logInit();
@@ -23,6 +25,16 @@ extern volatile unsigned g_mainFrames;
 extern const char* volatile g_workerAt;     // the streaming thread's mark
 #define MARK(where) (g_mainAt = (where))
 void watchdogStart();
+// A finer mark for a scope (a file read, a save write) on this thread's watchdog variable, the old
+// one back when it ends: a hang inside an SD operation names itself in watchdog.txt. Main or
+// streaming thread only (any other thread would write over the streaming thread's mark)
+struct MarkScope
+{
+	const char* volatile* at;
+	const char* saved;
+	MarkScope(const char* now) : at(threadGetCurrent() ? &g_workerAt : &g_mainAt), saved(*at) { *at = now; }
+	~MarkScope() { *at = saved; }
+};
 // Crashes (data / prefetch aborts, running out of memory, std::terminate) write crash.txt with where
 // the threads were; install on each thread (slot 0 main, 1 streaming)
 void crashHandlerInstall(int slot);

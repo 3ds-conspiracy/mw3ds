@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <citro3d.h>
 #include <cmath>
-#include <tex3ds.h>
 #include <cstring>
 
 #include "cell_shbin.h"
@@ -979,19 +978,12 @@ void rendererLoadCaustics(const char* dataDir)
 {
 	if (s_caustCount)
 		return;
-	LinearGuard guard;
 	for (int i = 0; i < 32; i++)
 	{
 		char path[256];
 		snprintf(path, sizeof(path), "%s/art/magicitem/caust%02d.t3x", dataDir, i);
-		FILE* f = fopen(path, "rb");
-		if (!f)
+		if (!texImportFile(&s_caust[i], path))
 			break;
-		Tex3DS_Texture t = Tex3DS_TextureImportStdio(f, &s_caust[i], nullptr, false);
-		fclose(f);
-		if (!t)
-			break;
-		Tex3DS_TextureFree(t);
 		C3D_TexSetFilter(&s_caust[i], GPU_LINEAR, GPU_LINEAR);
 		s_caustCount = i + 1;
 	}

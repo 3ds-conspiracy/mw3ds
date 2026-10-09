@@ -33,8 +33,9 @@ struct __attribute__((packed)) BatchHeader
 	u32 numVerts, numIndices;
 };
 
-static bool loadTexture(C3D_Tex* tex, const char* path)
+bool texImportFile(C3D_Tex* tex, const char* path)
 {
+	MarkScope mark("texture read");
 	FILE* f = fopen(path, "rb");
 	if (!f)
 		return false;
@@ -43,6 +44,13 @@ static bool loadTexture(C3D_Tex* tex, const char* path)
 	if (!t3x)
 		return false;
 	Tex3DS_TextureFree(t3x);
+	return true;
+}
+
+static bool loadTexture(C3D_Tex* tex, const char* path)
+{
+	if (!texImportFile(tex, path))
+		return false;
 	C3D_TexSetFilter(tex, GPU_LINEAR, GPU_LINEAR);
 	C3D_TexSetFilterMipmap(tex, GPU_LINEAR);
 	return true;
@@ -126,40 +134,62 @@ static bool readBatches(FILE* f, std::vector<CellBatch>& out, Cell& cell, u32 ve
 	return true;
 }
 
+// Holds a TextureCache's own lock for a scope (the map and the entries are shared between the
+// main and the streaming thread). Taken before any linear-heap lock, never after one.
+struct CacheGuard
+{
+	LightLock* l;
+	CacheGuard(LightLock* lock) : l(lock) { LightLock_Lock(l); }
+	~CacheGuard() { LightLock_Unlock(l); }
+};
+
 // A failed texture is tried again up to 3 times: the first failure is often linear memory full at that
-// moment, and a cached failure kept the weapon or hair white for good
+// moment, and a cached failure kept the weapon or hair white for good.
+// Called with the cache's lock held; the SD read runs without it (the main thread takes it for
+// first-person pieces, the sky and the retries, and waited out the streaming thread's reads). The
+// texture loads into a copy that goes in under the lock. The caller holds a reference, so the entry
+// outlives the read; when both threads loaded it meanwhile, the second copy is dropped
 static void tryLoad(TextureCache& c, TextureCache::Entry* e, const char* dataDir, const std::string& name)
 {
 	char path[256];
 	snprintf(path, sizeof(path), "%s", shardedPath(dataDir, "tex", name).c_str());
-	e->ok = loadTexture(&e->tex, path);
+	C3D_Tex tex = {};
+	LightLock_Unlock(&c.lock);
+	bool ok = loadTexture(&tex, path);
+	LightLock_Lock(&c.lock);
 	if (e->ok)
+	{
+		if (ok)
+			C3D_TexDelete(&tex);      // never drawn
+		return;
+	}
+	if (ok)
+	{
+		e->tex = tex;
+		e->ok = true;
 		c.bytes += C3D_TexCalcTotalSize(e->tex.size, e->tex.maxLevel);
+	}
 	else if (e->fails++ == 0)
 		logf("cell: texture failed: %s", path);
 }
 
 C3D_Tex* TextureCache::acquire(const char* dataDir, const std::string& name)
 {
-	LinearGuard guard;            // the map and the texture memory are shared with the streaming thread
-	auto it = entries.find(name);
-	if (it == entries.end())
-	{
-		Entry* e = new Entry();
-		e->refs = 0;
-		e->fails = 0;
+	CacheGuard guard(&lock);      // not the linear heap's lock: every allocation in the game waited on it
+	Entry*& slot = entries[name];
+	if (!slot)
+		slot = new Entry();       // (zeroed: not loaded, no references, no failures)
+	Entry* e = slot;
+	// The reference first: the load lets go of the lock, and the other thread may release the name meanwhile
+	e->refs++;
+	if (!e->ok && e->fails < 3)
 		tryLoad(*this, e, dataDir, name);
-		it = entries.emplace(name, e).first;
-	}
-	else if (!it->second->ok && it->second->fails < 3)
-		tryLoad(*this, it->second, dataDir, name);
-	it->second->refs++;
-	return it->second->ok ? &it->second->tex : nullptr;
+	return e->ok ? &e->tex : nullptr;
 }
 
 C3D_Tex* TextureCache::recheck(const char* dataDir, const std::string& name)
 {
-	LinearGuard guard;
+	CacheGuard guard(&lock);
 	auto it = entries.find(name);
 	if (it == entries.end())
 		return nullptr;
@@ -171,7 +201,7 @@ C3D_Tex* TextureCache::recheck(const char* dataDir, const std::string& name)
 C3D_Tex* TextureCache::retry(const char* dataDir, const std::string& name)
 {
 	static const u32 kRoom = 2 * 1024 * 1024;     // free linear memory to try with
-	LinearGuard guard;
+	CacheGuard guard(&lock);
 	auto it = entries.find(name);
 	if (it == entries.end())
 		return nullptr;
@@ -182,7 +212,7 @@ C3D_Tex* TextureCache::retry(const char* dataDir, const std::string& name)
 
 void TextureCache::release(const std::string& name)
 {
-	LinearGuard guard;
+	CacheGuard guard(&lock);
 	auto it = entries.find(name);
 	if (it == entries.end() || --it->second->refs > 0)
 		return;
@@ -206,6 +236,7 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 	}
 	std::string p = cellPath(dataDir, name, ext.c_str());
 	const char* path = p.c_str();
+	MarkScope mark("cell read");
 	FILE* f = zopen(path);
 	if (!f)
 	{

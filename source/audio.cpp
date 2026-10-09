@@ -187,6 +187,7 @@ static CachedSound* load(const std::string& file)
 		it->second.lastUse = osGetTime();
 		return &it->second;
 	}
+	MarkScope mark("sound read");
 	std::string path = shardedPath(s_dataDir, "snd", file);
 	FILE* f = fopen(path.c_str(), "rb");
 	if (!f)
@@ -234,6 +235,7 @@ static CachedSound* load(const std::string& file)
 
 float audioDuration(const std::string& file)
 {
+	MarkScope mark("sound probe");
 	std::string path = shardedPath(s_dataDir, "snd", file);
 	FILE* f = fopen(path.c_str(), "rb");
 	if (!f)
@@ -344,6 +346,7 @@ static bool openTrack()
 {
 	if (s_playlist.empty())
 		return false;
+	MarkScope mark("music open");
 	for (size_t tries = 0; tries < s_playlist.size(); tries++)
 	{
 		std::string path = s_dataDir + "/music/" + s_playlist[s_track % s_playlist.size()];
@@ -369,6 +372,7 @@ static bool openTrack()
 
 static bool fillStream(int i)
 {
+	MarkScope mark("music read");
 	u32 got = 0;
 	while (got < kStreamSamples)
 	{

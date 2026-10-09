@@ -753,6 +753,7 @@ bool World::saveGame(const char* path) const
 	memcpy(packed.data(), "MWZ1", 4);
 	u32 raw32 = rawLen;
 	memcpy(packed.data() + 4, &raw32, 4);
+	MarkScope mark("save write");
 	FILE* f = ok ? fopen(tmp.c_str(), "wb") : nullptr;
 	ok = f && fwrite(packed.data(), 1, 8 + packedLen, f) == 8 + packedLen;
 	if (f)

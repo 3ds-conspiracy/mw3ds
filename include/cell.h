@@ -14,6 +14,10 @@ struct TextureCache
 	struct Entry { C3D_Tex tex; bool ok; int refs; int fails; };
 	std::unordered_map<std::string, Entry*> entries;
 	u32 bytes = 0;
+	// Its own lock, not the linear heap's: a texture load reads the SD card, and the main thread
+	// blocked on every allocation while the streaming thread sat in a read (stalls outdoors)
+	LightLock lock;
+	TextureCache() { LightLock_Init(&lock); }
 
 	// Loads <dataDir>/textures/<name> the first time; nullptr when it can't be read
 	C3D_Tex* acquire(const char* dataDir, const std::string& name);

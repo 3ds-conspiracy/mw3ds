@@ -5,8 +5,9 @@
 
 // libctru's linear heap (GPU-visible memory) has no lock of its own. Outdoor cells load on a
 // second thread (World::streamExterior) while the main thread frees cells and plays sounds, so
-// every allocation and free of linear memory goes through these, or holds a LinearGuard around
-// library calls that allocate it (texture imports, C3D_TexDelete).
+// every allocation and free of linear memory goes through these (the libraries' calls too: the
+// allocators are wrapped, see linear.cpp). Never hold a LinearGuard across a file read: the other
+// thread waits on it at its next allocation, and the main thread at every frame (linearRetire).
 void linearLockInit();
 void* lockedLinearAlloc(size_t size);
 
@@ -20,6 +21,12 @@ void deferredTexDelete(C3D_Tex* tex);
 // Before reading a cell in the update that freed others (their memory would otherwise come back only after it)
 bool linearReclaim();
 void linearRetire();
+
+// Imports a .t3x file with no lock held (the wrapped allocators lock for each allocation only).
+// Imports used to run under a LinearGuard: the streaming thread reading a cell's textures from the
+// SD card held up the main thread every frame, seconds at a time on hardware (outdoors, Ald-ruhn
+// worst). Every .t3x load goes through here. In cell.cpp (built natively too)
+bool texImportFile(C3D_Tex* tex, const char* path);
 
 struct LinearGuard
 {

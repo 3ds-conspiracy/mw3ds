@@ -22,36 +22,46 @@ const char* volatile g_mainAt = "start";
 const char* volatile g_workerAt = "idle";
 volatile unsigned g_mainFrames = 0;
 
+static void watchdogNote(const char* fmt, ...)
+{
+	// Its own file first: the stuck thread may hold the log file (a flush that never returns), and
+	// then this thread stops in logf after this line
+	char line[256];
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(line, sizeof(line), fmt, args);
+	va_end(args);
+	if (FILE* f = fopen("sdmc:/3ds/mw3ds/watchdog.txt", "a"))
+	{
+		fprintf(f, "[%8llu] %s\n", osGetTime() % 100000000ULL, line);
+		fclose(f);
+	}
+	logf("watchdog: %s", line);
+}
+
 static void watchdogThread(void*)
 {
 	unsigned last = 0;
 	int still = 0;
-	bool told = false;
 	for (;;)
 	{
 		svcSleepThread(1000000000LL);
 		unsigned f = g_mainFrames;
 		if (f != last)
 		{
+			// Recovery lands in watchdog.txt too: a stall that ran again and a freeze that needed
+			// the power button now read apart
+			if (still >= 4)
+				watchdogNote("ran again after %d s", still);
 			last = f;
 			still = 0;
-			if (told)
-				logf("watchdog: running again");
-			told = false;
 			continue;
 		}
-		if (++still >= 4 && !told)
-		{
-			// Its own file first: the log's lock may be held by the stuck thread
-			if (FILE* f = fopen("sdmc:/3ds/mw3ds/watchdog.txt", "a"))
-			{
-				fprintf(f, "[%8llu] no frame for %d s, main at %s, streaming at %s\n",
-					osGetTime() % 100000000ULL, still, g_mainAt, g_workerAt);
-				fclose(f);
-			}
-			logf("watchdog: no frame for %d s, main thread at %s, streaming at %s", still, g_mainAt, g_workerAt);
-			told = true;
-		}
+		// Keeps writing while the game is down (every 30 s): the last line's count says how long it
+		// hung, and a mark that changes between lines says it is stuck in a loop, not one wait
+		if (++still == 4 || (still > 4 && still % 30 == 0))
+			watchdogNote("no frame for %d s, main at %s, streaming at %s, linear free %lu KB",
+				still, g_mainAt, g_workerAt, (unsigned long)(linearSpaceFree() / 1024));
 	}
 }
 
@@ -198,8 +208,16 @@ void logf(const char* fmt, ...)
 	unsigned long long t = osGetTime() % 100000000ULL;
 	if (s_log)
 	{
+		// Every line flushes to the SD card: marked, so a write that never returns (a wedged
+		// card) names itself in watchdog.txt instead of the mark of whatever logged
+		const char* savedAt = g_mainAt;
+		bool main = threadGetCurrent() == nullptr;
+		if (main)
+			g_mainAt = "log write";
 		fprintf(s_log, "[%8llu] %s\n", t, line);
 		fflush(s_log);
+		if (main)
+			g_mainAt = savedAt;
 	}
 	if (s_sock >= 0)
 	{

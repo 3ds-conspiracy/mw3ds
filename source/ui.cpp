@@ -72,15 +72,8 @@ void uiBeginFrame(const UiInput& in)
 
 static bool loadTex(const std::string& path, C3D_Tex* tex, GPU_TEXTURE_FILTER_PARAM filter)
 {
-	FILE* f = fopen(path.c_str(), "rb");
-	if (!f)
+	if (!texImportFile(tex, path.c_str()))
 		return false;
-	LinearGuard guard;
-	Tex3DS_Texture t = Tex3DS_TextureImportStdio(f, tex, nullptr, false);
-	fclose(f);
-	if (!t)
-		return false;
-	Tex3DS_TextureFree(t);
 	C3D_TexSetFilter(tex, filter, filter);
 	C3D_TexSetWrap(tex, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
 	return true;

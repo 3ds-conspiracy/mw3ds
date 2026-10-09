@@ -17,17 +17,10 @@ bool Session::ensureMapTexture()
 		return mapLoaded;
 	char path[256];
 	snprintf(path, sizeof(path), "%s/%s", w.dataDir, m.file.c_str());
-	if (FILE* f = fopen(path, "rb"))
+	if (texImportFile(&mapTex, path))
 	{
-		LinearGuard guard;
-		Tex3DS_Texture t = Tex3DS_TextureImportStdio(f, &mapTex, nullptr, false);
-		fclose(f);
-		if (t)
-		{
-			Tex3DS_TextureFree(t);
-			C3D_TexSetFilter(&mapTex, GPU_LINEAR, GPU_NEAREST);
-			mapLoaded = true;
-		}
+		C3D_TexSetFilter(&mapTex, GPU_LINEAR, GPU_NEAREST);
+		mapLoaded = true;
 	}
 	if (!mapLoaded)
 	{
@@ -45,17 +38,8 @@ bool Session::ensureMapTile(int i)
 		return t.loaded;
 	char path[256];
 	snprintf(path, sizeof(path), "%s/%s", w.dataDir, w.game.map.tiles[i].file.c_str());
-	if (FILE* f = fopen(path, "rb"))
-	{
-		LinearGuard guard;
-		Tex3DS_Texture tx = Tex3DS_TextureImportStdio(f, &t.tex, nullptr, false);
-		fclose(f);
-		if (tx)
-		{
-			Tex3DS_TextureFree(tx);
-			t.loaded = true;
-		}
-	}
+	if (texImportFile(&t.tex, path))
+		t.loaded = true;
 	if (!t.loaded)
 	{
 		t.failed = true;
