@@ -1,0 +1,11 @@
+# A hillside steeper than 46 degrees west of Gnisis (uphill from -87660,95851 at yaw -76): the player can't walk up it,
+# OpenMW's sMaxSlope. With the old 60 degree floor test the same 3 s walk climbed from 1350 to about 2100
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 TP:-87660:95851:1450:-76
+2 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:lt:1400
+3 0 1 0
+0.1 0 0 0 0 EXPECT:playerz:lt:1450

@@ -1,0 +1,11 @@
+# Falling by the Arvs-Drelen door at Gnisis with the pad held into the rock face: the fall goes on straight down and lands
+# near 1320. It hung in the air at about 1405 for good: the never-through-a-surface check undid the fall along with the
+# push into the face (uber-ht, the walk to Arvs-Drelen). The slide down the face takes the body past 3 s in the air: the
+# "falling" monitor warning is expected here
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 TP:-87954:96197:1754:-150
+3 0 1 0
+0.1 0 0 0 0 EXPECT:playerz:lt:1380

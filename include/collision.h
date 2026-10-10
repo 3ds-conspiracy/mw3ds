@@ -34,8 +34,12 @@ bool collisionPushSphere(CollisionMesh& mesh, float center[3], float radius, boo
 // First hit of the segment a -> b: *t = fraction of the way (0..1)
 bool collisionRaycast(CollisionMesh& mesh, const float a[3], const float b[3], float* t);
 
-// Highest surface directly below (x, y) with zBottom <= z <= zTop.
-bool collisionFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBottom, float* zOut);
+// Highest surface directly below (x, y) with zBottom <= z <= zTop. A surface steeper than maxSlope degrees is a
+// wall, not a floor (60 for placing things and resting actors; the player walks on kWalkSlope). A limit under 60
+// is for the land only: objects (stair ramps, rocks) keep 60
+bool collisionFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope = 60.0f);
+// The steepest land the player walks on: OpenMW's Constants::sMaxSlope (46 degrees); steeper slides as a wall
+static const float kWalkSlope = 46.0f;
 
 // The floor an actor's feet rest on: the highest of collisionFloor under (x, y) and four spots
 // `reach` units around it (as OpenMW's actor box rests on the highest point under it, so on a slope

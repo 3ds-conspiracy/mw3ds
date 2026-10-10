@@ -196,8 +196,25 @@ bool collisionPushSphere(CollisionMesh& m, float c[3], float r, bool horizontalO
 	return touched;
 }
 
-bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBottom, float* zOut)
+// A triangle of the land (terrain.py's collision: corners on the 128-unit vertex grid, one quad across), not of an
+// object (vertices are stored quantized: within a unit)
+static bool landTriangle(const float* a, const float* b, const float* c)
 {
+	for (const float* v : { a, b, c })
+		for (int k = 0; k < 2; k++)
+		{
+			float g = v[k] * (1.0f / 128.0f);
+			if (fabsf(g - roundf(g)) > 0.01f)
+				return false;
+		}
+	return fabsf(a[0] - b[0]) < 130.0f && fabsf(a[1] - b[1]) < 130.0f && fabsf(a[0] - c[0]) < 130.0f && fabsf(a[1] - c[1]) < 130.0f
+		&& fabsf(b[0] - c[0]) < 130.0f && fabsf(b[1] - c[1]) < 130.0f;
+}
+
+bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope)
+{
+	// the normal's z against its length, squared: cos(maxSlope)^2 (a hot path: the usual limits as constants)
+	float minZ2 = maxSlope == 60.0f ? 0.25f : maxSlope == kWalkSlope ? 0.48255f : cosf(maxSlope * 0.017453293f) * cosf(maxSlope * 0.017453293f);
 	bool found = false;
 	float best = zBottom;
 	forTrianglesIn(m, x, y, x, y, [&](u32 t) {
@@ -208,13 +225,15 @@ bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBotto
 		float det = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1]);
 		if (fabsf(det) < 1e-4f)
 			return;   // vertical wall
-		// Steeper than 60 degrees is a wall too (a leaning one would otherwise be climbed): the
-		// normal's z (det is twice the XY-projected area) against its length
+		// Steeper than maxSlope is a wall too (a leaning one would otherwise be climbed): the
+		// normal's z against its length
 		float e1[3], e2[3];
 		sub(b, a, e1);
 		sub(c, a, e2);
 		float n[3] = { e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0] };
-		if (n[2] * n[2] < 0.25f * dot(n, n))
+		// A walking limit under 60 is for the land only; objects keep 60 degrees: a stair's collision is often a steep
+		// ramp, which OpenMW's stepper climbs a step at a time (its stair hacks), and our floor test has no stepper
+		if (n[2] * n[2] < minZ2 * dot(n, n) && (maxSlope >= 60.0f || landTriangle(a, b, c) || n[2] * n[2] < 0.25f * dot(n, n)))
 			return;
 		float l1 = ((b[1] - c[1]) * (x - c[0]) + (c[0] - b[0]) * (y - c[1])) / det;
 		float l2 = ((c[1] - a[1]) * (x - c[0]) + (a[0] - c[0]) * (y - c[1])) / det;

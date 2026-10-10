@@ -91,6 +91,24 @@ the never-through-a-surface check, so it hung in the air for good. Now such a re
 sphere out of the face in 3D and takes the sideways part: the body slides off the ridge and lands, as OpenMW's
 actors slide down a slope too steep to stand on (`bug-fall-steep-ridge`).
 
+## Steepest walkable ground (2026-10-09)
+
+The player walks on ground up to 46 degrees (OpenMW's `Constants::sMaxSlope`, used by its movement solver's
+`isWalkableSlope` and the stepper); anything steeper is a wall it slides down. Ours took 60 degrees for every floor,
+so the player walked up hills OpenMW stops at. Now the player's floor test uses 46 (`kWalkSlope`); placing items,
+snapping things to the ground and the floor resting actors stand on keep 60. Step height is 34 in both
+(`sStepSizeUp`, `kStepUp`).
+
+## Falling against a face (2026-10-09)
+
+Falling with the pad held into a rock face, the chest went into the face, so the never-through-a-surface check undid
+the step, fall and push together, and the body hung in the air for good (Gnisis, by the Arvs-Drelen door). OpenMW's
+solver clips the velocity at what it hits and gravity goes on. Now such a refused step in the air falls straight down
+from where it was: only a face under the feet stops it (a ledge the body already straddles does not), a walkable one
+lands it, and one too steep to stand on holds the feet while the body slides off, the slide growing with the fall speed
+(`bug-fall-against-face`). Levitating and swimming keep the 60 degree floor test: a flier meeting a steep slope rises
+along it, as OpenMW's solver slides it along what it hits.
+
 ## Walls in the air (2026-10-08, uber bug 105)
 
 A body in the air that meets a surface loses its take-off speed along the ground: OpenMW's solver clips the velocity

@@ -147,12 +147,15 @@ int main(int argc, char** argv)
 		float eye[3] = { start[0], start[1], start[2] + PLAYER_EYE_HEIGHT };
 		playerSpawn(p, scene, eye, seconds * 0, 0);
 		p.yaw = atof(argv[7]) * 3.14159265f / 180.0f;
-		for (int f = 0; f < 60 * 3; f++)
+		// PHYSIM_DT: the frame time (the game's fixed test step is 1/30 s)
+		float fdt = getenv("PHYSIM_DT") ? (float)atof(getenv("PHYSIM_DT")) : 1.0f / 60.0f;
+		int frames = (int)(3.0f / fdt);
+		for (int f = 0; f < frames; f++)
 		{
 			PlayerInput in = {};
 			in.moveY = 1.0f;
-			playerUpdate(p, scene, in, 1.0f / 60.0f);
-			if (f % 10 == 0)
+			playerUpdate(p, scene, in, fdt);
+			if (f % (int)(10 * (1.0f / 60.0f) / fdt + 0.5f > 0 ? (int)((1.0f / 6.0f) / fdt + 0.5f) : 1) == 0)
 				printf("  %.0f %.0f %.0f %s block %s\n", p.feet[0], p.feet[1], p.feet[2], p.onGround ? "ground" : "air",
 					g_playerBlock);
 		}

@@ -17,7 +17,7 @@ static const float kKnockDrop = 90.0f;      // ... and while knocked down
 // so low ledges are climbed instead of blocking.
 static const float kBodySpheres[] = { kStepUp + kRadius, 84.0f, kHeight - kRadius };
 
-static bool sampleFloor(Scene& scene, const float feet[3], float zTop, float zBottom, float* zOut)
+static bool sampleFloor(Scene& scene, const float feet[3], float zTop, float zBottom, float* zOut, float maxSlope = kWalkSlope)
 {
 	static const float offsets[5][2] = { {0, 0}, {1, 0}, {-1, 0}, {0, 1}, {0, -1} };
 	bool found = false;
@@ -25,7 +25,7 @@ static bool sampleFloor(Scene& scene, const float feet[3], float zTop, float zBo
 		for (auto& o : offsets)
 		{
 			float z;
-			if (collisionFloor(cell->collision, feet[0] + o[0] * kRadius * 0.7f, feet[1] + o[1] * kRadius * 0.7f, zTop, zBottom, &z)
+			if (collisionFloor(cell->collision, feet[0] + o[0] * kRadius * 0.7f, feet[1] + o[1] * kRadius * 0.7f, zTop, zBottom, &z, maxSlope)
 				&& (!found || z > *zOut))
 			{
 				*zOut = z;
@@ -148,8 +148,9 @@ void playerSpawn(Player& p, Scene& scene, const float eye[3], float yaw, float p
 }
 
 // The body hanging on a face too steep to be a floor: the low sphere pushed out of it in 3D, and the sideways part of
-// that taken, so the next fall step clears the face
-static void slideOffSteepFace(Player& p, Scene& scene)
+// that taken, so the next fall step clears the face. At least minMove a frame: a slide down such a face gathers speed
+// (OpenMW's solver turns the fall along the face), so it is passed the sideways share of the fall speed
+static void slideOffSteepFace(Player& p, Scene& scene, float minMove = 2.0f)
 {
 	for (float lift : { 0.0f, kStepUp * 0.5f })
 	{
@@ -158,7 +159,7 @@ static void slideOffSteepFace(Player& p, Scene& scene)
 		float sx = c[0] - c0[0], sy = c[1] - c0[1], len = sqrtf(sx * sx + sy * sy);
 		if (len > 0.05f)
 		{
-			float move = fmaxf(len, 2.0f) / len;
+			float move = fmaxf(len, fminf(minMove, kRadius)) / len;
 			p.feet[0] += sx * move;
 			p.feet[1] += sy * move;
 			return;
@@ -232,7 +233,9 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 		float vz = in.moveY * sinf(p.pitch) * levSpeed + ((in.jump || in.up) ? levSpeed : 0.0f)
 			- (in.down ? levSpeed : 0.0f);
 		float newZ = p.feet[2] + vz * dt, floorZ;
-		if (sampleFloor(scene, p.feet, p.feet[2] + kStepUp, newZ - 1.0f, &floorZ) && floorZ >= newZ)
+		// (a flier meeting a slope steeper than the walking limit rises along it, as OpenMW's solver slides the
+		// velocity along what it hits; our sideways push alone held it against the ridge: 60 degrees, as before)
+		if (sampleFloor(scene, p.feet, p.feet[2] + kStepUp, newZ - 1.0f, &floorZ, 60.0f) && floorZ >= newZ)
 			newZ = floorZ;
 		float up[3] = { p.feet[0], p.feet[1], newZ };
 		if (newZ <= p.feet[2] || bodyFits(scene, up))
@@ -255,7 +258,7 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 			vz = p.runSpeed * p.swimFactor;
 		float newZ = fminf(surface, p.feet[2] + vz * dt);
 		float floorZ;
-		bool bottom = sampleFloor(scene, p.feet, p.feet[2] + kStepUp, newZ - 1.0f, &floorZ) && floorZ >= newZ;
+		bool bottom = sampleFloor(scene, p.feet, p.feet[2] + kStepUp, newZ - 1.0f, &floorZ, 60.0f) && floorZ >= newZ;   // (swimming: as before)
 		p.feet[2] = bottom ? floorZ : newZ;
 		p.vz = 0.0f;
 		p.onGround = true;
@@ -282,7 +285,10 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 		}
 		p.vz = p.slowFall ? fmaxf(p.vz - kGravity * 0.25f * dt, -200.0f) : fmaxf(p.vz - kGravity * dt, -3000.0f);
 		float newZ = p.feet[2] + p.vz * dt;
-		float snapBelow = (p.onGround && p.vz <= 0.0f) ? kStepUp : 0.0f;
+		// (on the ground, the feet follow it down a step's height a frame, or as much as a walkable slope drops over this
+		// frame's move if that is more: a fast runner, 50 units a frame, went airborne off every dip and over the edge)
+		float moved = hypotf(p.feet[0] - start[0], p.feet[1] - start[1]);
+		float snapBelow = (p.onGround && p.vz <= 0.0f) ? fmaxf(kStepUp, moved * 1.04f) : 0.0f;
 		float floorZ;
 		bool floor = sampleFloor(scene, p.feet, p.feet[2] + kStepUp, newZ - snapBelow - 1.0f, &floorZ);
 		if (floor && floorZ > p.feet[2] + 1.0f && p.fits)
@@ -355,7 +361,54 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 
 	// Never through a surface: the chest and the head go straight from where they were (a push out of
 	// something the legs slipped into can otherwise throw the body through the wall behind it)
+	auto crosses = [&](const float to[3]) {
+		for (float h : { kStepUp + kRadius, kHeight - kRadius })
+		{
+			float a[3] = { start[0], start[1], start[2] + h }, b[3] = { to[0], to[1], to[2] + h }, t;
+			for (Cell* cell : scene.cells)
+				if (collisionRaycast(cell->collision, a, b, &t))
+					return true;
+		}
+		return false;
+	};
 	float endZ = p.feet[2];
+	if (!startOnGround && !levitating && !p.swimming && endZ < start[2] - 0.01f && crosses(p.feet))
+	{
+		// Falling with the pad (or a jump's speed) pushing the chest into a wall face: the push is refused, the fall
+		// goes on straight down (OpenMW's solver clips the velocity at what it hits and gravity goes on). Undoing the
+		// whole step held the body in the air against the face for good (Gnisis, by the Arvs-Drelen door). Straight
+		// down only what is under the feet stops it (any face not upright): a ledge the body already straddles
+		// (higher than a step over the feet) does not. A face too steep to stand on holds the feet, and the body slides
+		// off it
+		float down[3] = { start[0], start[1], endZ }, floorZ;
+		// (from a step above the feet: a body sunk a little into a slope finds that slope, not the land below it, and does
+		// not drop through it)
+		bool hit = sampleFloor(scene, down, start[2] + kStepUp, endZ - 1.0f, &floorZ, 89.0f) && floorZ >= endZ;
+		if (hit)
+			down[2] = floorZ;
+		float walkZ;
+		bool landed = hit && sampleFloor(scene, down, floorZ + 1.0f, floorZ - 1.0f, &walkZ);
+		p.feet[0] = down[0];
+		p.feet[1] = down[1];
+		p.feet[2] = down[2];
+		p.inertia[0] = p.inertia[1] = 0.0f;
+		if (landed)
+		{
+			p.landedFall = fmaxf(0.0f, p.fallTop - down[2]);
+			p.vz = 0.0f;
+			p.onGround = true;
+			p.jumpFlight = false;
+		}
+		else
+		{
+			p.onGround = false;
+			// (the fall speed kept: a slide down a face too steep to stand on gathers speed, as in OpenMW)
+			if (hit)
+				slideOffSteepFace(p, scene, fmaxf(2.0f, fabsf(p.vz) * dt * 0.7f));
+		}
+		p.fits = bodyFits(scene, p.feet);
+		return;
+	}
 	for (float h : { kStepUp + kRadius, kHeight - kRadius })
 	{
 		float a[3] = { start[0], start[1], start[2] + h }, b[3] = { p.feet[0], p.feet[1], p.feet[2] + h }, t;
