@@ -3571,6 +3571,15 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		kind = NONE;
 		return false;
 	}
+	// v2 kit: a container that opened itself as we came near (Jeanne's chest: its script activates it within 128): the
+	// item is put in or taken from the open screen, as a player would
+	if (s.kitV2() && kind == ACTIVATE && !lootItem.empty() && s.screen == SCR_CONTAINER && s.containerRef == ref)
+	{
+		logf("drive: %s opened on the way", id.c_str());
+		kind = LOOTWAIT;
+		takeTimer = 0.0f;
+		return true;
+	}
 	// killing: a conversation that opened on its own (ForceGreeting: Dagoth Gares's speech) is left, as a
 	// player says goodbye and fights on
 	if (kind == KILL && s.dlg.open && s.screen == SCR_DIALOGUE)

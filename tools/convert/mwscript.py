@@ -177,6 +177,7 @@ class Compiler:
         self.globals = globals_          # lowercase global names (a dict gives their types: 's' 'l' 'f')
         self.locals = []                 # [(type, name)]
         self.leftovers = []              # lines with tokens an expression didn't read (check_rest)
+        self.pending_ref = None          # X->( ... ): the reference the next function inside takes
 
     # ---- types: OpenMW divides whole numbers as whole numbers (int / int), anything with a float as floats ----
     def local_type(self, name):
@@ -280,6 +281,16 @@ class Compiler:
         if kind in ("str", "id"):
             # explicit reference: X->Func args
             if i + 2 < len(toks) and toks[i + 1] == ("op", "->"):
+                # X->( OnDeath == 1 ) (Jeanne's ghost in boneScript): OpenMW keeps the reference over the parenthesis
+                # for the first function inside it (ExprParser::parseSpecial)
+                if toks[i + 2] == ("op", "("):
+                    self.pending_ref = text.lower()
+                    a, i = self.expr(toks, i + 3)
+                    self.pending_ref = None
+                    i = self.skip_commas(toks, i)
+                    if i < len(toks) and toks[i] == ("op", ")"):
+                        i += 1
+                    return a, i
                 return self.call(toks, i + 2, text.lower())
             # remote variable: X.var
             if i + 2 < len(toks) and toks[i + 1] == ("op", ".") and toks[i + 2][0] == "id":
@@ -291,7 +302,8 @@ class Compiler:
                 return ["l", name], i + 1
             if name in self.globals:
                 return ["g", name], i + 1
-            return self.call(toks, i, None)
+            ref, self.pending_ref = self.pending_ref, None
+            return self.call(toks, i, ref)
         raise ScriptError(f"unexpected {text!r}")
 
     def call(self, toks, i, ref):

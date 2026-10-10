@@ -3110,6 +3110,27 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 			best = i;
 		}
 	}
+	// A person standing before such a statue, within its middle part (Derar Hlervu in front of Molag Bal's at Bal Ur): the
+	// statue's mesh is behind him, so the ray meets him first, as OpenMW's mesh pick does. Someone on the ray short of the
+	// statue's origin is what the crosshair means
+	if (best >= 0 && w.refs[best].type == "ACTI" && eyeInsideBox(w.refs[best], eye))
+	{
+		const Ref& statue = w.refs[best];
+		float originT = (statue.pos[0] - eye[0]) * dir[0] + (statue.pos[1] - eye[1]) * dir[1] + (statue.pos[2] - eye[2]) * dir[2];
+		float actorT = fminf(reach, originT);
+		for (int i : w.loadedPickables)
+		{
+			const Ref& r = w.refs[i];
+			if (r.actor < 0 || !isActivatable(r) || !boxInReach(r, eye, reach))
+				continue;
+			float t = rayBoxEntry(r, eye, dir, actorT);
+			if (t >= 0.0f && t < actorT)
+			{
+				actorT = t;
+				best = i;
+			}
+		}
+	}
 	// A body's box is a crude one (the Journal of Tarhiel lands where he does): an item whose box lies within the
 	// body's and is on the ray is what the crosshair means, as the body's mesh would let the ray through to it
 	if (best >= 0 && w.refs[best].actor >= 0 && w.refs[best].dead)

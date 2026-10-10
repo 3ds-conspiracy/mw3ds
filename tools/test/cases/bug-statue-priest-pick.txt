@@ -1,0 +1,17 @@
+# The crosshair on Derar Hlervu, the priest standing in front of Molag Bal's statue under Bal Ur, named the statue: the
+# statue's box is 580 x 975, the player stands inside it, and its middle part (what the pick aims at then) took the priest
+# with it. OpenMW picks by the meshes, so the priest in front of the statue is what the crosshair finds (A Cure for
+# Vampirism: he gives the stage-20 topic).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Bal_Ur,_Underground
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@3512,-3742,-250
+0.5 0 0 0 0 FACE:derar%hlervu
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refaimed:derar%hlervu:eq:1
+60 0 0 0 0 ACTIVATE:derar%hlervu
+2 0 0 0 0 UNTIL:talking
+0.1 0 0 0 0 EXPECT:talking

@@ -1,0 +1,31 @@
+# A teleport door to elsewhere in the same cell (the trapdoor between the shack and the cave in Fatleg's Drop Off, Hla Oad)
+# moved the player and left a follower behind: Rabinna stayed in the cave, 7000 units off. OpenMW's ActionTeleport
+# takes the followers within 800 along on every teleport door, the same cell or another.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GOTO:Hla_Oad,_Fatleg's_Drop_Off
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:In_De_Shack_Trapdoor
+3 0 0 0
+120 0 0 0 0 WALKTO:@10650,4300,13940
+60 0 0 0 0 ACTIVATE:relam%arinith
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:doing_some_business
+2 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:10
+0.3 0 0 0 0 TOPIC:deliver_this_slave
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:rabinna
+0.3 0 0 0 0 ESCORT:rabinna
+120 0 0 0 0 WALKTO:@11594,5400,14310
+30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
+60 0 0 0 0 ACTIVATE:In_De_Shack_Trapdoor_01
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:rabinna:lt:400

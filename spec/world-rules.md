@@ -149,6 +149,9 @@ GMSTs: `fSoulgemMult`.
   in combat with the player gets its combat stopped and is *not* moved this time. Others are moved to the same
   position in the destination cell.
 - A water-walking effect that cannot be used on the new spot is removed.
+- Every teleport door counts, also one to elsewhere in the same cell (the trapdoor between the shack and the cave of
+  Fatleg's Drop Off, Hla Oad): ours took followers only on a change of cell, and left Rabinna behind
+  (`bug-follower-trapdoor`; fixed 2026-10-10, `Session::useDoor`).
 
 GMSTs: none.
 

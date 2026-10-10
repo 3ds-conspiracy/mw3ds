@@ -1397,6 +1397,25 @@ void Session::useDoor(int ref)
 		}
 		if (dest == w.current)
 		{
+			// Followers within 800 come along to elsewhere in the same cell too (OpenMW's ActionTeleport, every
+			// teleport door: Rabinna up the trapdoor of Fatleg's Drop Off), by the rule of a door to another cell
+			std::vector<int> followers;
+			for (int i : w.loadedActors)
+				if (w.followsPlayer(i) && w.refs[i].aiPackage != AIPKG_ESCORT)
+				{
+					Ref& f = w.refs[i];
+					float* stay = f.script >= 0 ? w.scripts[f.script].local("stayoutside") : nullptr;
+					float dx = f.pos[0] - w.player.feet[0], dy = f.pos[1] - w.player.feet[1], dz = f.pos[2] - w.player.feet[2];
+					if (!followerTaken(dx * dx + dy * dy + dz * dz, stay && *stay == 1.0f, !w.cells[w.placeOf(i)].interior,
+						!w.cells[dest].interior))
+						continue;
+					if (f.ai == AI_COMBAT)
+					{
+						f.ai = AI_IDLE;
+						continue;
+					}
+					followers.push_back(i);
+				}
 			memcpy(w.player.feet, r.destPos, sizeof(r.destPos));
 			w.player.yaw = r.destRot[2];
 			w.player.pitch = 0.0f;
@@ -1404,6 +1423,15 @@ void Session::useDoor(int ref)
 			w.player.fallTop = w.player.feet[2];   // a door isn't a fall
 			w.player.landedFall = 0.0f;
 			w.player.inertia[0] = w.player.inertia[1] = 0.0f;
+			for (size_t k = 0; k < followers.size(); k++)
+			{
+				// just ahead of the player, side by side, as a door to another cell sets them down
+				float back = -72.0f, side = ((int)k - (int)followers.size() / 2) * 64.0f + (k % 2 ? 40.0f : -40.0f);
+				float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
+				float pos[3] = { w.player.feet[0] - fx * back + fy * side, w.player.feet[1] - fy * back - fx * side,
+					w.player.feet[2] };
+				w.relocate(followers[k], w.placeOf(followers[k]), pos, w.player.yaw);
+			}
 			fade = 1.0f;
 		}
 		else
