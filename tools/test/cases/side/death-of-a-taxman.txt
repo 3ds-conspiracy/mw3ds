@@ -1,0 +1,100 @@
+# Death of a Taxman (MV_DeadTaxman), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Seyda Neen.
+# Processus Vitellius lies dead west of town with the tax money and the tax record. The honest way: the gold to
+# Socucius Ergalla, ask around town, Thavere Vedrano in the lighthouse, then Foryn Gilnith, who did it: not believed, he
+# fights and dies, and his ring for Processus goes back to Thavere before Socucius pays the 500.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 FLYTO:@-19517,-67530,182:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 LOOT:processus%vitellius:bk_seydaneentaxrecord
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:ge:10
+0.1 0 0 0 0 EXPECT:item:bk_seydaneentaxrecord:ge:1
+60 0 0 0 0 FLYTO:@-10600,-71900,200:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Census_and_Excise_Office
+60 0 0 0 0 ACTIVATE:chargen%class
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:20
+# ("Yes, I found 200 septims on his body.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:48
+0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:ge:48
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (out the way we came in: DOORTO picks the front hall's door, whose way from Socucius's room the grid splits)
+120 0 0 0 0 ACTIVATE:chargen%door%exit
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+# (anyone in town: Fargoth sends us on to Thavere)
+60 0 0 0 0 ACTIVATE:fargoth
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:50
+0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Seyda_Neen,_Lighthouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Lighthouse
+60 0 0 0 0 ACTIVATE:thavere%vedrano
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:seen_him_get_angry
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:60
+0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+120 0 0 0 0 DOORTO:Seyda_Neen,_Foryn_Gilnith's_Shack
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Foryn_Gilnith's_Shack
+60 0 0 0 0 ACTIVATE:foryn%gilnith
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:70
+# ("Sorry, that is no excuse for murder, and your punishment has been decided.": he fights)
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:85
+0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:eq:85
+0.3 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 KILL:foryn%gilnith
+0.1 0 0 0 0 EXPECT:dead:foryn_gilnith
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 LOOT:foryn%gilnith:exquisite_ring_processus
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:exquisite_ring_processus:ge:1
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+120 0 0 0 0 DOORTO:Seyda_Neen,_Lighthouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Lighthouse
+60 0 0 0 0 ACTIVATE:thavere%vedrano
+0.3 0 0 0 0 TOPIC:Processus'_Ring
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:90
+0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:ge:90
+0.1 0 0 0 0 EXPECT:item:p_restore_health_s:ge:2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+120 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Census_and_Excise_Office
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:chargen%class
+0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
+2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:eq:100
+0.1 0 0 0 0 EXPECT:gold:eq:@500
+0.3 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

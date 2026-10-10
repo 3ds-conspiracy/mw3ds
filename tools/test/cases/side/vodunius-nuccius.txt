@@ -1,0 +1,40 @@
+# Vodunius Nuccius (MS_Nuccius), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Seyda Neen.
+# Darvame Hleran, the caravaner, mentions him; he sells his cursed ring for the 100 drakes of his passage home, and leaves.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# (his "little advice" names him and sends us to her: the topic is learned from it)
+60 0 0 0 0 ACTIVATE:vodunius%nuccius
+0.3 0 0 0 0 TOPIC:little_advice
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:darvame%hleran
+0.3 0 0 0 0 TOPIC:Vodunius_Nuccius
+2 0 0 0 0 UNTIL:journal:MS_Nuccius:ge:1
+0.1 0 0 0 0 EXPECT:journal:MS_Nuccius:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:vodunius%nuccius
+0.3 0 0 0 0 TOPIC:Vodunius_Nuccius
+2 0 0 0 0 UNTIL:talkready
+# ("Here's 100 drakes. Give me the ring.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_Nuccius:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_Nuccius:eq:100
+0.1 0 0 0 0 EXPECT:item:Nuccius_Ring:ge:1
+0.1 0 0 0 0 EXPECT:gold:eq:@-100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

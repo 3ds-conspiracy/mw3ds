@@ -1,0 +1,28 @@
+# Fargoth's Ring (MS_FargothRing), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Seyda Neen.
+# The ring is in the barrel by Fargoth's house that the Census Office's guards keep; Fargoth asks for it on "ring".
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 LOOT:chargen%barrel%fatigue:ring_keley
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:ring_keley:ge:1
+60 0 0 0 0 ACTIVATE:fargoth
+0.3 0 0 0 0 TOPIC:ring
+2 0 0 0 0 UNTIL:journal:MS_FargothRing:ge:10
+0.1 0 0 0 0 EXPECT:journal:MS_FargothRing:ge:10
+# ("Yes, I found it! Here take it.")
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:journal:MS_FargothRing:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_FargothRing:eq:100
+0.1 0 0 0 0 EXPECT:item:ring_keley:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
