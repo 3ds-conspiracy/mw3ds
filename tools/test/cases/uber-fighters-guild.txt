@@ -949,9 +949,8 @@
 3 0 0 0
 120 0 0 0 0 DOORTO:Vas,_Tower
 3 0 0 0
-0.3 0 0 0 0 ESCORT:ulyne_henim
+# (we run on ahead of Ulyne and kill Daris before she gets there: she is not in the blow)
 120 0 0 0 0 WALKTO:@5000,4000,13468
-0.3 0 0 0 0 ESCORT:-
 120 0 0 0 0 KILL:daris_adram
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:daris_adram

@@ -676,6 +676,19 @@
 120 0 0 0 0 KILL:navil_ienith
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:navil_ienith
+# (Orvas Dren is on the villa's top floor: stairs up the west side, across the second floor, up the east side, round the third; walked in short legs because the ring's speed overshoots the stair tops)
+60 0 0 0 0 WALKTO:@3600,3010,15428
+60 0 0 0 0 WALKTO:@3300,3010,15520
+60 0 0 0 0 WALKTO:@3150,3010,15684
+60 0 0 0 0 WALKTO:@3150,3200,15684
+60 0 0 0 0 WALKTO:@3724,3200,15684
+60 0 0 0 0 WALKTO:@3724,3010,15684
+60 0 0 0 0 WALKTO:@3596,3010,15800
+60 0 0 0 0 WALKTO:@3468,3010,15940
+60 0 0 0 0 WALKTO:@3340,3010,15940
+60 0 0 0 0 WALKTO:@3103,3181,15941
+60 0 0 0 0 WALKTO:@3311,3534,15941
+60 0 0 0 0 WALKTO:@3796,3497,15941
 120 0 0 0 0 KILL:orvas%dren%druglord
 2 0 0 0
 60 0 0 0 0 WALKTO:@3600,3300,15429

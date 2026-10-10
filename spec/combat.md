@@ -151,6 +151,10 @@ and NPCs, `tools/convert/npcstats.py armor_rating`).
     the 3DS is not measured.
 14. Arrows stayed in bodies 25% of the time whatever the GMST, enchanted ones too.
 
+15. **`OnPCHitMe`**: a blow of the player's that lands on an actor whose script declares the local sets it to 1 (the script clears it
+    itself). We never set it, so Synette Jeline's ambush (The Lady's Ring, `MV_LostRing` stage 40) could not finish. Test:
+    `side/the-ladys-ring`.
+
 Test: `openmw-spec-combat` (generated): attack term, the player's defense, knockdown odds, fall damage, block chance,
 elemental shield damage.
 

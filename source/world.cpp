@@ -316,6 +316,9 @@ static void appendRefs(World& w, int cellIndex, ParsedRefs& p)
 		}
 	for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
 		w.startScriptFor(i);
+	if (w.postChargen)
+		for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
+			w.postChargenRef(w.refs[i]);
 	// Leveled creatures: each spot's pick for the player's level when the cell was first seen (the same
 	// pick every time the cell is read again); nothing there when the list says so
 	auto lvl = w.cellLevel.find(lc.file);
@@ -1496,6 +1499,29 @@ int World::evictCells(int budget, const std::function<bool(int)>& inUse)
 		evicted++;
 	}
 	return evicted;
+}
+
+// What character creation's scripts leave behind that later play needs: the Census and Excise Office's inner door, which the
+// guard's CharGenDoorGuardTalker unlocks once the player has the papers (Socucius Ergalla is behind it), and the scripts as they
+// end: the people's "state" at -1 (CharGenClassNPC then lets Socucius Ergalla talk, at 0 an A on him started the class menu over),
+// the one-shot doors and messages "done"
+void World::postChargenRef(Ref& r)
+{
+	static const char* const kDone[][2] = { { "chargen class", "state" }, { "chargen name", "state" }, { "chargen dock guard", "state" },
+		{ "chargen boat guard 2", "state" }, { "chargen captain", "state" }, { "chargen door guard", "done" }, { "chargen captain", "done" },
+		{ "chargen exit door", "done" }, { "chargen door captain", "done" }, { "chargen_shipdoor", "done" }, { "chargendoorjournal", "done" },
+		{ "chargen_bed", "done" }, { "chargen barrel fatigue", "done" }, { "chargen dagger", "done" } };
+	if (r.idLower.compare(0, 7, "chargen") != 0)
+		return;
+	if (r.idLower == "chargen door hall" && r.lockLevel > 0)
+		r.lockLevel = -r.lockLevel;
+	for (const auto& d : kDone)
+		if (r.idLower == d[0])
+		{
+			float* v = r.script >= 0 ? scripts[r.script].local(d[1]) : nullptr;
+			if (v)
+				*v = strcmp(d[1], "state") == 0 ? -1.0f : 1.0f;
+		}
 }
 
 bool World::ensureRefs(int cellIndex)

@@ -569,6 +569,10 @@ struct World
 	int findRef(const std::string& id) const;            // by object id, case-insensitive; loaded cells first
 	int findRefAnywhere(const std::string& id);          // also reads cells that hold it (scripts)
 	bool ensureRefs(int cell);                           // reads a cell's objects if not yet
+	// A game that starts past character creation: what its scripts leave behind is set on each object as its cell is read in
+	// (the Census Office's inner door unlocked, the people's "state" at the end), without reading cells ahead of the player
+	bool postChargen = false;
+	void postChargenRef(Ref& r);
 	int findActorRef(int actor) const;
 	void setEnabled(int ref, bool enabled);
 	void pickUp(int ref);

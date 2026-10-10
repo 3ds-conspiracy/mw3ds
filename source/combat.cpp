@@ -2250,6 +2250,10 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 		snprintf(n, sizeof(n), "%.0f", damage);
 		addIndicator(n, fatigueOnly && t.fatigue > 0.0f ? 0x33cc4c : 0xff334c);
 	}
+	// A blow of the player's on someone whose script has OnPCHitMe sets it (OpenMW: the script clears it itself)
+	if (t.script >= 0)
+		if (float* hitMe = w.scripts[t.script].local("onpchitme"))
+			*hitMe = 1.0f;
 	damageNpc(target, damage, fatigueOnly);
 	if (t.dead)
 		return;

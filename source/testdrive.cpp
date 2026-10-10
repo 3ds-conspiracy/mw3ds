@@ -4013,7 +4013,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				};
 				// LEGIT: an attacker in the way (fighting us, not another actor; close, at our height): fight it first
 				int attacker = -1;
-				if (s.testLegit)
+				if (s.testLegit && s.kitV2())     // (a case on the old kit walks on past one who attacks, as before)
 				{
 					float ad = 200.0f;
 					for (int i : w.loadedActors)
@@ -4077,7 +4077,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				}
 				// held back by a swinging door (opened on the way, it swings into us): back off a moment and let it open, as
 				// a player steps back from a door opening toward them (a closed one near is opened first, below)
-				if (strcmp(g_playerBlock, "door") == 0 && backTries < 2 && (door < 0 || door == doorLast))
+				if (s.kitV2() && strcmp(g_playerBlock, "door") == 0 && backTries < 2 && (door < 0 || door == doorLast))
 				{
 					logf("drive: the door swings into us on the way to %s: backing off it", id.c_str());
 					backTries++;
