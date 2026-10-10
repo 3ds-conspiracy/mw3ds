@@ -125,7 +125,7 @@ bool Session::containerPut(int i)
 void Session::drawContainer()
 {
 	Ref& c = w.refs[containerRef];
-	std::string title = c.obj ? c.obj->name : c.id;
+	std::string title = c.obj ? c.obj->name.str() : c.id.str();
 	// Two pages (L / R, as Barter's Buy / Sell): what it holds, to take, and the player's items, to put in. Pockets
 	// being picked take nothing back (OpenMW: no reverse pickpocket)
 	bool canPut = !pickpocketing;
@@ -311,7 +311,7 @@ void Session::drawInventory()
 	{
 		const InventoryItem& qi = w.inventory[index[grid.selected]];
 		const Object* qo = w.game.object(qi.id);
-		assignQuickKey("inv:" + qi.id, qo ? qo->name : qi.id);
+		assignQuickKey("inv:" + qi.id, qo ? qo->name.str() : qi.id);
 	}
 	int pick = uiItemGrid(grid, 4, 45, 312, 132, cells);
 	uiText(6, 178, 0.36f, col::textDim, kQuickHint);
@@ -471,7 +471,7 @@ void Session::drawMagic()
 	{
 		const std::string& qid = ids[list.selected];
 		const Object* io = qid.compare(0, 5, "item:") == 0 ? w.game.object(qid.substr(5)) : nullptr;
-		assignQuickKey("magic:" + qid, io ? io->name : w.game.spells[qid].name);
+		assignQuickKey("magic:" + qid, io ? io->name.str() : w.game.spells[qid].name);
 		if (io)
 		{
 			const InventoryItem* ii = nullptr;
@@ -498,7 +498,7 @@ void Session::drawMagic()
 	{
 		w.stats.selectedSpell = ids[sel];
 		const Object* io = ids[sel].compare(0, 5, "item:") == 0 ? w.game.object(ids[sel].substr(5)) : nullptr;
-		notify((io ? io->name : w.game.spells[ids[sel]].name) + " is ready (" + castHint() + ").");
+		notify((io ? io->name.str() : w.game.spells[ids[sel]].name) + " is ready (" + castHint() + ").");
 		closeScreen();
 	}
 	else if (b == 1 || (uiIn().down & KEY_B))
@@ -544,7 +544,7 @@ void Session::useQuickKey(int k)
 			return;
 		}
 		w.stats.selectedSpell = id;
-		notify((io ? io->name : w.game.spells[id].name) + " is ready (" + castHint() + ").");
+		notify((io ? io->name.str() : w.game.spells[id].name) + " is ready (" + castHint() + ").");
 		return;
 	}
 	std::string id = q.compare(0, 4, "inv:") == 0 ? q.substr(4) : q;
@@ -558,7 +558,7 @@ void Session::useQuickKey(int k)
 	const Object* o = w.game.object(id);
 	if (idx < 0 || !o)
 	{
-		notify("You have no " + (o ? o->name : id) + ".");
+		notify("You have no " + (o ? o->name.str() : id) + ".");
 		return;
 	}
 	if ((o->type == "ALCH" || o->type == "INGR") && !o->effects.empty())

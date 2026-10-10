@@ -68,7 +68,7 @@ int buttonRow(const std::vector<std::string>& labels, int& focus, float y, float
 UiGridItem gridItem(const Object* o, const std::string& id, int count, bool equipped)
 {
 	u32 flags = (equipped ? UIGRID_EQUIPPED : 0) | (o && o->magic ? UIGRID_MAGIC : 0);
-	return { o ? o->iconIx : -1, count, flags, o ? o->name : id };
+	return { o ? o->iconIx : -1, count, flags, o ? o->name.str() : id };
 }
 
 // Morrowind's inventory filters: All, Weapon, Apparel, Magic, Misc
@@ -294,7 +294,7 @@ void Session::drawQuickStrip()
 		uiRect(x, y, 16, 16, col::panel);
 		if (!q.empty() && !(o && uiIcon(o->iconIx, x, y, 16.0f)))
 		{
-			std::string name = isSpell ? (w.game.spells.count(id) ? w.game.spells[id].name : id) : o ? o->name : id;
+			std::string name = isSpell ? (w.game.spells.count(id) ? w.game.spells[id].name : id) : o ? o->name.str() : id;
 			uiTextCentered(x + 8, y + 8 - uiLineHeight(0.34f) / 2, 0.34f, isSpell ? col::link : col::textDim, name.substr(0, 3));
 		}
 		uiFrame(x, y, 16, 16);
@@ -338,7 +338,7 @@ void Session::drawHud()
 	float by = 75;
 	uiRect(6, by, 36, 36, col::panel);
 	if (!(wo && uiIcon(wo->iconIx, 8, by + 2)))
-		uiTextCentered(24, by + 18 - uiLineHeight(0.36f) / 2, 0.36f, col::textDim, wo ? wo->name.substr(0, 3) : "Fist");
+		uiTextCentered(24, by + 18 - uiLineHeight(0.36f) / 2, 0.36f, col::textDim, wo ? wo->name.str().substr(0, 3) : "Fist");
 	uiFrame(6, by, 36, 36);
 	uiText(48, by + 1, 0.42f, col::text, wo ? wo->name : "Hand-to-hand");
 	std::string spell = s.selectedSpell.empty() ? "" : w.game.spells[s.selectedSpell].name;
@@ -473,9 +473,9 @@ void Session::drawOptions()
 {
 	header(w.game.gmst("soptions", "Options"));
 	const UiInput& in = uiIn();
-	// focus: 0..2 the bars, 3..5 the toggles (3D, combat rules, hit numbers), 6..8 the buttons along the bottom
-	if (in.down & KEY_DOWN) focus = focus >= 6 ? 0 : focus >= 3 ? 6 : focus + 1;
-	else if (in.down & KEY_UP) focus = focus == 0 ? 6 : focus >= 6 ? 3 : focus >= 3 ? 2 : focus - 1;
+	// focus: 0..2 the bars, 3..5 the toggles (3D, combat rules, hit numbers), 6 gyro aim, 7..9 the buttons along the bottom
+	if (in.down & KEY_DOWN) focus = focus >= 7 ? 0 : focus == 6 ? 7 : focus >= 3 ? 6 : focus + 1;
+	else if (in.down & KEY_UP) focus = focus == 0 ? 7 : focus >= 7 ? 6 : focus == 6 ? 3 : focus >= 3 ? 2 : focus - 1;
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_RIGHT)) focus = focus == 5 ? 3 : focus + 1;
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_LEFT)) focus = focus == 3 ? 5 : focus - 1;
 	bool changed = false;
@@ -484,7 +484,7 @@ void Session::drawOptions()
 	const int lo[3] = { -100, 0, 0 }, hi[3] = { 100, 100, 100 }, step[3] = { 10, 10, 10 };
 	for (int i = 0; i < 3; i++)
 	{
-		float y = 34 + i * 44;
+		float y = 28 + i * 38;
 		uiText(20, y, 0.45f, i == focus ? col::header : col::text, names[i] + std::string(": ") + std::to_string(*vals[i]));
 		float bx = 20, bw = 280, by = y + 18;
 		uiRect(bx, by, bw, 8, col::panel);
@@ -507,14 +507,14 @@ void Session::drawOptions()
 		}
 	}
 	const char* stereo = stereoMode == STEREO_OFF ? "3D: Off" : "3D: On";
-	if (uiButton(4, 170, 100, 26, stereo, focus == 3) || (focus == 3 && (in.down & KEY_A)))
+	if (uiButton(4, 142, 100, 26, stereo, focus == 3) || (focus == 3 && (in.down & KEY_A)))
 	{
 		stereoMode = stereoMode == STEREO_OFF ? STEREO_ON : STEREO_OFF;
 		changed = true;
 	}
 	// Combat: vanilla, or Glancing Blows and Crits (misses glance, crits; the same average damage)
 	const char* rules = combatMode == COMBAT_GBAC ? "Glance+Crit" : "Vanilla hits";
-	if (uiButton(110, 170, 100, 26, rules, focus == 4) || (focus == 4 && (in.down & KEY_A)))
+	if (uiButton(110, 142, 100, 26, rules, focus == 4) || (focus == 4 && (in.down & KEY_A)))
 	{
 		combatMode = combatMode == COMBAT_GBAC ? COMBAT_VANILLA : COMBAT_GBAC;
 		notify(combatMode == COMBAT_GBAC ? "Glancing blows and crits: misses glance for half damage, strong hits can crit."
@@ -522,11 +522,24 @@ void Session::drawOptions()
 		changed = true;
 	}
 	// Hit & Miss Indicators: damage numbers and misses by the crosshair
-	if (uiButton(216, 170, 100, 26, hitIndicators ? "Numbers: On" : "Numbers: Off", focus == 5)
+	if (uiButton(216, 142, 100, 26, hitIndicators ? "Numbers: On" : "Numbers: Off", focus == 5)
 		|| (focus == 5 && (in.down & KEY_A)))
 	{
 		hitIndicators = !hitIndicators;
 		notify(hitIndicators ? "Hit and miss numbers on." : "Hit and miss numbers off.");
+		changed = true;
+	}
+	// Gyro aim: turning the console turns the view (off, half, as far, twice as far as it turned)
+	static const int kGyroSteps[4] = { 0, 50, 100, 200 };
+	char gyro[40];
+	snprintf(gyro, sizeof(gyro), g_gyroAim > 0 ? "Gyro aim: %.1fx" : "Gyro aim: Off", g_gyroAim / 100.0f);
+	if (uiButton(4, 174, 312, 26, gyro, focus == 6) || (focus == 6 && (in.down & KEY_A)))
+	{
+		int k = 0;
+		while (k < 3 && kGyroSteps[k] != g_gyroAim)
+			k++;
+		g_gyroAim = kGyroSteps[(k + 1) % 4];
+		notify(g_gyroAim > 0 ? "Gyro aim on: turn the 3DS to aim." : "Gyro aim off.");
 		changed = true;
 	}
 	if (changed)
@@ -534,15 +547,15 @@ void Session::drawOptions()
 		audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
 		saveSettings();
 	}
-	// Controls, Credits, Close (focus 4..6: D-pad left / right between them)
+	// Controls, Credits, Close (focus 7..9: D-pad left / right between them)
 	int b = -1;
 	const char* row[3] = { "Controls", "Credits", "Close" };
 	for (int i = 0; i < 3; i++)
-		if (uiButton(4 + i * 106, 208, 100, 28, i == 2 ? w.game.gmst("sclose", "Close") : row[i], focus == 6 + i)
-			|| (focus == 6 + i && (in.down & KEY_A)))
+		if (uiButton(4 + i * 106, 208, 100, 28, i == 2 ? w.game.gmst("sclose", "Close") : row[i], focus == 7 + i)
+			|| (focus == 7 + i && (in.down & KEY_A)))
 			b = i;
-	if (focus >= 6 && (in.down & KEY_RIGHT)) focus = focus == 8 ? 6 : focus + 1;
-	else if (focus >= 6 && (in.down & KEY_LEFT)) focus = focus == 6 ? 8 : focus - 1;
+	if (focus >= 7 && (in.down & KEY_RIGHT)) focus = focus == 9 ? 7 : focus + 1;
+	else if (focus >= 7 && (in.down & KEY_LEFT)) focus = focus == 7 ? 9 : focus - 1;
 	if (b == 0)
 	{
 		closeScreen();
@@ -564,8 +577,8 @@ void Session::drawOptions()
 // What each button does
 void Session::drawControls()
 {
-	bool xbox = g_controlLayout == CONTROLS_XBOX;
-	header(xbox ? "Controls (Xbox layout)" : "Controls (classic layout)");
+	bool xbox = g_controlLayout == CONTROLS_XBOX, goldenEye = g_controlLayout == CONTROLS_GOLDENEYE;
+	header(xbox ? "Controls (Xbox layout)" : goldenEye ? "Controls (GoldenEye layout)" : "Controls (classic layout)");
 	static const char* kXbox[][2] = {
 		{ "Circle Pad / C-Stick", "Move / look" }, { "A", "Activate: talk, open, take" },
 		{ "R (hold, release)", "Wind up, strike" }, { "X", "Ready / put away the weapon" }, { "L", "Cast the selected spell" },
@@ -578,19 +591,28 @@ void Session::drawControls()
 		{ "B", "Jump (swim up in water)" }, { "ZR (hold)", "Run / walk" }, { "L (hold)", "Sneak" },
 		{ "ZL + D-Pad", "Quick keys" }, { "SELECT", "First / third person" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Inventory, magic, map, stats" } };
+	// One stick (an Old 3DS without the C-stick): the pad walks and turns, R held stands still and aims
+	static const char* kGoldenEye[][2] = {
+		{ "Circle Pad", "Walk (up, down), turn" }, { "R / ZR (hold)", "Stand still, aim with the pad" },
+		{ "D-Pad", "Strafe, look up / down" }, { "A", "Activate: talk, open, take" },
+		{ "X (hold, release)", "Ready weapon, wind up, strike" }, { "Y", "Cast the selected spell" },
+		{ "B", "Jump (tap), run (hold)" }, { "L (hold)", "Sneak" }, { "ZL + D-Pad / X", "Quick keys / put weapon away" },
+		{ "SELECT", "First / third person" }, { "START", "Menu: save, rest, options" },
+		{ "Touch screen", "Inventory, magic, map, stats" } };
 	float y = 30;
-	int n = xbox ? sizeof(kXbox) / sizeof(kXbox[0]) : sizeof(kClassic) / sizeof(kClassic[0]);
+	int n = xbox ? sizeof(kXbox) / sizeof(kXbox[0]) : goldenEye ? sizeof(kGoldenEye) / sizeof(kGoldenEye[0])
+		: sizeof(kClassic) / sizeof(kClassic[0]);
 	for (int i = 0; i < n; i++)
 	{
-		const char* const* l = xbox ? kXbox[i] : kClassic[i];
+		const char* const* l = xbox ? kXbox[i] : goldenEye ? kGoldenEye[i] : kClassic[i];
 		uiText(14, y, 0.42f, col::header, l[0]);
 		uiText(140, y, 0.42f, col::text, l[1]);
 		y += 13.5f;
 	}
-	// Y: the other layout; A / B: back to Options
-	if (uiButton(40, 208, 130, 28, xbox ? "Y: Use classic" : "Y: Use Xbox") || (uiIn().down & KEY_Y))
+	// Y: the next layout (Xbox, classic, GoldenEye); A / B: back to Options
+	if (uiButton(40, 208, 130, 28, xbox ? "Y: Use classic" : goldenEye ? "Y: Use Xbox" : "Y: Use GoldenEye") || (uiIn().down & KEY_Y))
 	{
-		g_controlLayout = xbox ? CONTROLS_CLASSIC : CONTROLS_XBOX;
+		g_controlLayout = xbox ? CONTROLS_CLASSIC : goldenEye ? CONTROLS_XBOX : CONTROLS_GOLDENEYE;
 		saveSettings();
 	}
 	else if (uiButton(180, 208, 100, 28, w.game.gmst("sclose", "Close"), true) || (uiIn().down & (KEY_A | KEY_B)))

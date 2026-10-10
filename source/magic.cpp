@@ -1084,7 +1084,7 @@ void Session::castItem(const std::string& itemId)
 	if (sp.type == ENCH_USE)
 		useSkill(9, 1);                   // Enchant: using a magic item (SKDT use 1)
 	SpellDef named = sp;
-	named.name = o ? o->name : sp.id;
+	named.name = o ? o->name.str() : sp.id;
 	logf("magic: %s cast from %s", sp.id.c_str(), itemId.c_str());
 	beginCast(named, spellSchool(sp), false);     // (OpenMW plays no animation for an enchanted item)
 }

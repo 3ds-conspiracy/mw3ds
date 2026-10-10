@@ -271,7 +271,7 @@ void Session::drawRecharge()
 			{
 				const Object* o = w.game.object(w.inventory[i].id);
 				items.push_back(i);
-				rows.push_back((o ? o->name : w.inventory[i].id) + "   " + std::to_string((int)w.chargeOf(w.inventory[i]))
+				rows.push_back((o ? o->name.str() : w.inventory[i].id) + "   " + std::to_string((int)w.chargeOf(w.inventory[i]))
 					+ "/" + std::to_string(en->charge));
 			}
 	if (rows.empty())
@@ -369,7 +369,7 @@ void Session::makeEnchantment(float points, int soul, float chance, int price)
 	en.id = "mw3ds_ench_" + std::to_string(h);
 	Object item = *bo;
 	item.id = "mw3ds_item_" + std::to_string(h);
-	item.iconBase = bo->iconBase.empty() ? bo->id : bo->iconBase;
+	item.iconBase = bo->iconBase.empty() ? Atom(bo->id) : bo->iconBase;
 	item.ench = en.id;
 	item.magic = true;
 	item.value = bo->value + (int)(points * 10);

@@ -11,6 +11,7 @@
 
 #include "audio.h"
 #include "linear.h"
+#include "memstat.h"
 #include "log.h"
 #include "player.h"
 #include "renderer.h"
@@ -27,9 +28,10 @@ extern "C" u32 __ctru_heap_size, __ctru_linear_heap_size;
 static const char* kSdDataDir = "sdmc:/3ds/mw3ds/data";
 static const char* kRomfsDataDir = "romfs:/data";
 
-#define DISPLAY_TRANSFER_FLAGS \
+// (inFormat: the render target's colour format, RGBA8, or RGB565 on an Old 3DS)
+#define DISPLAY_TRANSFER_FLAGS(inFormat) \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
-	GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
+	GX_TRANSFER_IN_FORMAT(inFormat) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
 	GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
 // ---- Test harness
@@ -105,7 +107,14 @@ struct ScriptedInput
 	std::string startScript;          // STARTSCRIPT:name: a global script an earlier chapter would have started
 	std::string saveAs, loadFrom;     // SAVE:name / LOAD:name: sdmc:/3ds/mw3ds/test_<name>.sav (the sweeps
 	                                  // start every quest from the same state)
+	int layout = -1;                  // CONTROLS:classic|xbox|goldeneye: the button layout from this step on
+	int gyroAim = -1;                 // GYROAIM:<percent>|off: gyro aim's sensitivity from this step on (0 off)
+	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
+	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned
 };
+
+// The layout the scripted run plays with (classic unless a CONTROLS: step chose another)
+static int s_testLayout = CONTROLS_CLASSIC;
 
 // How far (pixels) a finger may wander between press and release and still tap
 static const int kTapSlop = 12;
@@ -118,7 +127,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 	static const struct { const char* name; u32 key; } names[] = {
 		{ "A", KEY_A }, { "B", KEY_B }, { "X", KEY_X }, { "Y", KEY_Y }, { "L", KEY_L }, { "R", KEY_R },
 		{ "UP", KEY_DUP }, { "DOWN", KEY_DDOWN }, { "LEFT", KEY_DLEFT }, { "RIGHT", KEY_DRIGHT },
-		{ "SELECT", KEY_SELECT }, { "START", KEY_START }, { "ZL", KEY_ZL },
+		{ "SELECT", KEY_SELECT }, { "START", KEY_START }, { "ZL", KEY_ZL }, { "ZR", KEY_ZR },
 	};
 	u32 keys = 0;
 	char buf[1024];
@@ -153,6 +162,24 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		}
 		if (strcmp(tok, "MSG") == 0)
 			step->waitMessage = true;
+		if (sscanf(tok, "GYRO:%f:%f", &step->gyroYaw, &step->gyroPitch) >= 1)
+			continue;
+		if (strncmp(tok, "GYROAIM:", 8) == 0)
+		{
+			step->gyroAim = strcmp(tok + 8, "off") == 0 ? 0 : atoi(tok + 8);
+			continue;
+		}
+		if (strncmp(tok, "SKIN:", 5) == 0)
+		{
+			step->skin = strcmp(tok + 5, "cpu") == 0 ? 0 : 1;
+			continue;
+		}
+		if (strncmp(tok, "CONTROLS:", 9) == 0)
+		{
+			step->layout = strcmp(tok + 9, "goldeneye") == 0 ? CONTROLS_GOLDENEYE : strcmp(tok + 9, "xbox") == 0 ? CONTROLS_XBOX
+				: CONTROLS_CLASSIC;
+			continue;
+		}
 		if (strcmp(tok, "JAIL") == 0)
 			step->jail = true;
 		if (strcmp(tok, "SHOT") == 0)
@@ -379,6 +406,7 @@ static std::vector<ScriptedInput> loadAutoinput()
 	{
 		ScriptedInput s = {};
 		s.tapX = s.tapY = -1;
+		s.layout = s.gyroAim = s.skin = -1;
 		char keys[1024] = {};
 		int n = sscanf(line, "%f %f %f %f %d %1023s", &s.secs, &s.moveX, &s.moveY, &s.lookX, &s.jump, keys);
 		if (n >= 4)
@@ -436,11 +464,90 @@ static float readStickScroll()
 	return fabsf(cs.dy) > 20 ? fmaxf(-1.0f, fminf(1.0f, -cs.dy / 150.0f)) : 0.0f;
 }
 
-// Two button layouts (Options > Controls; START and SELECT the same in both):
+// GoldenEye (Options > Controls): one stick, for an Old 3DS without the C-stick and ZL / ZR. The Circle Pad walks
+// (up / down) and turns (left / right); holding R (or ZR) roots the player and the pad aims instead, at half speed.
+// D-pad left / right strafe, up / down look; X attack, Y cast, B jump (a tap) or run (held), L sneak, ZL + D-pad
+// quick keys (ZL: Circle Pad Pro / New 3DS), ZL + X put away. Device and scripted runs both come through here;
+// dt: the frame's seconds (B's tap or hold)
+static void goldenEyeInput(PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt)
+{
+	static float bHeld = 0.0f;
+	const float kTap = 0.25f;           // B let go before this: a jump; held past it: running
+	in.moveX = in.moveY = 0.0f;
+	if (held & (KEY_R | KEY_ZR))
+	{
+		in.lookX += padX * 0.5f;
+		in.lookY += padY * 0.5f;
+	}
+	else
+	{
+		in.lookX += padX;
+		in.moveY = padY;
+	}
+	if (held & KEY_ZL)
+	{
+		if (down & KEY_DUP) in.quick = 0;
+		if (down & KEY_DRIGHT) in.quick = 1;
+		if (down & KEY_DDOWN) in.quick = 2;
+		if (down & KEY_DLEFT) in.quick = 3;
+	}
+	else
+	{
+		if (held & KEY_DRIGHT) in.moveX += 1.0f;
+		if (held & KEY_DLEFT)  in.moveX -= 1.0f;
+		if (held & KEY_DUP)    in.lookY += 1.0f;
+		if (held & KEY_DDOWN)  in.lookY -= 1.0f;
+		in.up = held & KEY_DUP;              // (flying: D-pad up / down rise and sink)
+		in.down = held & KEY_DDOWN;
+	}
+	if (held & KEY_B)
+		bHeld += dt;
+	in.jump = (up & KEY_B) && bHeld < kTap;
+	in.fast = (held & KEY_B) && bHeld >= kTap;
+	if (!(held & KEY_B))
+		bHeld = 0.0f;
+	in.togglePov = down & KEY_SELECT;
+	in.sheathe = (held & KEY_ZL) && (down & KEY_X);
+	in.attack = (held & KEY_X) && !(held & KEY_ZL);
+	in.cast = down & KEY_Y;
+	in.sneak = held & KEY_L;
+}
+
+// Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
+// The sensor runs only while it is on; a slow drift under kDeadZone a second is no turn
+static void gyroInput(PlayerInput& in)
+{
+	static bool on = false;
+	static float toDps = 0.0f;
+	if ((g_gyroAim > 0) != on)
+	{
+		on = g_gyroAim > 0;
+		if (on)
+		{
+			HIDUSER_EnableGyroscope();
+			if (R_FAILED(HIDUSER_GetGyroscopeRawToDpsCoefficient(&toDps)))
+				toDps = 0.0f;
+		}
+		else
+			HIDUSER_DisableGyroscope();
+	}
+	if (!on)
+		return;
+	const float kDeadZone = 2.5f;
+	angularRate r;
+	hidGyroRead(&r);
+	// The console's axes: y up through it (turning left / right), x across it (tilting the top toward or away)
+	float yaw = -r.y * toDps, pitch = r.x * toDps;
+	in.gyroYaw = fabsf(yaw) > kDeadZone ? yaw * g_gyroAim / 100.0f : 0.0f;
+	in.gyroPitch = fabsf(pitch) > kDeadZone ? pitch * g_gyroAim / 100.0f : 0.0f;
+}
+
+// Three button layouts (Options > Controls; START and SELECT the same in all):
 //   Xbox (Morrowind on the Xbox): R attack, L cast, X ready / put away the weapon, Y jump, B run,
 //     ZL sneak (down when levitating), ZR up when levitating, D-pad quick keys
 //   Classic: X attack, Y cast, B jump, ZR run, L sneak, ZL + D-pad quick keys, D-pad look, ZL + X put away
-static PlayerInput readInput(u32 held, u32 down)
+//   GoldenEye: see goldenEyeInput
+static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 {
 	circlePosition cp, cs;
 	hidCircleRead(&cp);
@@ -451,6 +558,12 @@ static PlayerInput readInput(u32 held, u32 down)
 	in.lookX = fabsf(cs.dx) > 20 ? cs.dx / 150.0f : 0.0f;
 	in.lookY = fabsf(cs.dy) > 20 ? cs.dy / 150.0f : 0.0f;
 	in.quick = -1;
+	gyroInput(in);
+	if (g_controlLayout == CONTROLS_GOLDENEYE)
+	{
+		goldenEyeInput(in, in.moveX, in.moveY, held, down, up, dt);
+		return in;
+	}
 	if (g_controlLayout == CONTROLS_XBOX)
 	{
 		if (down & KEY_DUP) in.quick = 0;
@@ -705,11 +818,16 @@ int main()
 	APT_CheckNew3DS(&isNew3ds);
 	if (isNew3ds)
 		osSetSpeedupEnable(true);
+	g_old3ds = !isNew3ds;           // the Old 3DS profile: view, budgets, frame rate (session.h)
+	// The Old 3DS's one game core is busy drawing: cells stream in on the system core (30% of it may be ours)
+	if (g_old3ds)
+		g_sysCoreThreads = R_SUCCEEDED(APT_SetAppCpuTimeLimit(30));
 
 	gfxInitDefault();
 	// GPU commands of a whole frame (both eyes, bottom screen): overflowing it is a panic, so it is
-	// generous, the renderer stops drawing near the end and 3D backs off when one eye uses too much
-	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE * 8);   // room for both eyes of a busy town
+	// generous, the renderer stops drawing near the end and 3D backs off when one eye uses too much.
+	// An Old 3DS (3D off unless asked, a shorter view) gets half: 1 MB of linear memory back
+	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE * (isNew3ds ? 8 : 4));   // room for both eyes of a busy town
 	C2D_Init(4096);
 	C2D_Prepare();
 	irrstInit();
@@ -717,18 +835,23 @@ int main()
 	crashHandlerInstall(0);
 	watchdogStart();
 	linearLockInit();
-	logf("MW3DS start, %s, heap %lu KB, linear %lu KB", isNew3ds ? "New 3DS" : "Old 3DS",
-		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024);
+	logf("MW3DS start, %s, heap %lu KB, linear %lu KB, memory mode %lu%s", isNew3ds ? "New 3DS" : "Old 3DS",
+		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, (unsigned long)osGetApplicationMemType(),
+		g_sysCoreThreads ? ", cells stream on the system core" : "");
 	bool romfs = R_SUCCEEDED(romfsInit());
 	struct stat st;
 	logf("memory: %s, heap %lu KB, linear %lu KB (%lu KB free)", isNew3ds ? "New 3DS" : "Old 3DS",
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, linearSpaceFree() / 1024);
 
-	C3D_RenderTarget* top = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetOutput(top, GFX_TOP, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
+	// The top screen's colour buffer: 16-bit on an Old 3DS (half the buffer and the copy to the screen each frame;
+	// Morrowind's muted colours show no banding to speak of), 32-bit on a New 3DS
+	GPU_COLORBUF colorFmt = isNew3ds ? GPU_RB_RGBA8 : GPU_RB_RGB565;
+	u32 transfer = isNew3ds ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8) : DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565);
+	C3D_RenderTarget* top = C3D_RenderTargetCreate(240, 400, colorFmt, GPU_RB_DEPTH24_STENCIL8);
+	C3D_RenderTargetSetOutput(top, GFX_TOP, GFX_LEFT, transfer);
 	// Right eye for stereo 3D (only drawn while the 3D mode is on)
-	C3D_RenderTarget* topRight = C3D_RenderTargetCreate(240, 400, GPU_RB_RGBA8, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetOutput(topRight, GFX_TOP, GFX_RIGHT, DISPLAY_TRANSFER_FLAGS);
+	C3D_RenderTarget* topRight = C3D_RenderTargetCreate(240, 400, colorFmt, GPU_RB_DEPTH24_STENCIL8);
+	C3D_RenderTargetSetOutput(topRight, GFX_TOP, GFX_RIGHT, transfer);
 	bool stereoOn = false;
 	C3D_RenderTarget* bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 	rendererInit();
@@ -806,6 +929,7 @@ int main()
 		}
 	}
 	session->savePath = kSavePath;      // test runs still save (at the end of scripted input)
+	memoryReserveTake();
 	logf("load %s in %llu ms, linear free %lu KB, heap used %d KB", loaded ? "ok" : "FAILED",
 		osGetTime() - loadStart, linearSpaceFree() / 1024, mallinfo().uordblks / 1024);
 
@@ -849,9 +973,10 @@ int main()
 		touchPosition tp;
 		hidTouchRead(&tp);
 		bool touching = held & KEY_TOUCH;
+		// The scripted tests press the classic buttons, or the layout a CONTROLS: step chose
 		if (session->autotest)
-			g_controlLayout = CONTROLS_CLASSIC;     // the scripted tests press the classic buttons
-		PlayerInput in = readInput(held, down);
+			g_controlLayout = s_testLayout;
+		PlayerInput in = readInput(held, down, up, dt);
 		bool autoShotNow = false;
 
 		if (inputIndex < autoinput.size() && loaded)
@@ -884,6 +1009,40 @@ int main()
 			{
 				if (held & KEY_DUP) in.lookY += 1.0f;
 				if (held & KEY_DDOWN) in.lookY -= 1.0f;
+			}
+			// CONTROLS:goldeneye: the step's stick is the Circle Pad and its keys the buttons, through that layout;
+			// GYRO:yaw:pitch: the console turning that fast, through gyro aim's switch and sensitivity
+			if (first && s.layout >= 0)
+			{
+				s_testLayout = g_controlLayout = s.layout;
+				logf("test: controls %s", s.layout == CONTROLS_GOLDENEYE ? "goldeneye" : s.layout == CONTROLS_XBOX ? "xbox" : "classic");
+			}
+			if (first && s.skin >= 0)
+			{
+				g_gpuSkinning = s.skin == 1;
+				logf("test: actors loaded from here skinned on the %s", s.skin ? "GPU" : "CPU");
+			}
+			if (first && s.gyroAim >= 0)
+			{
+				g_gyroAim = s.gyroAim;
+				logf("test: gyro aim %d%%", g_gyroAim);
+			}
+			if (g_controlLayout == CONTROLS_GOLDENEYE)
+			{
+				PlayerInput ge = {};
+				ge.quick = -1;
+				ge.lookX = s.lookX;
+				static u32 lastHeld = 0;
+				u32 released = first ? lastHeld & ~held : 0;
+				lastHeld = held;
+				goldenEyeInput(ge, s.moveX, s.moveY, held, down, released, dt);
+				ge.jump |= s.jump && first;
+				in = ge;
+			}
+			if (g_gyroAim > 0)
+			{
+				in.gyroYaw = s.gyroYaw * g_gyroAim / 100.0f;
+				in.gyroPitch = s.gyroPitch * g_gyroAim / 100.0f;
 			}
 			if (first && !s.door.empty())
 			{
@@ -1544,6 +1703,9 @@ int main()
 			MARK("after update");
 			extern float g_profWorldMs;
 			g_profWorldMs += (svcGetSystemTick() - updStart) * 1000.0f / SYSCLOCK_ARM11;
+			// `new` ran out and spent the reserve: memory back before the next allocation finds none
+			if (g_memoryLow)
+				session->relieveMemory();
 		}
 
 		// Death screen asked to load the last save: start the session over from it
@@ -1679,6 +1841,9 @@ int main()
 		float fogScale = 1.0f;
 		if (loaded && !session->w.cells[session->w.current].interior)
 			fogScale = session->viewScale * session->w.weatherFogScale();
+		// (the horizon: distant land as far as the weather lets one see, not shortened with the detailed view; under
+		// water no farther than the murk)
+		rendererSetHorizon(loaded ? session->w.weatherFogScale() : 0.0f);
 		if (loaded)
 			session->w.drawScale = fogScale;
 
@@ -1711,6 +1876,7 @@ int main()
 				}
 				outdoors = true;
 				fogScale *= 0.15f;
+				rendererSetHorizon(0.0f);
 			}
 			rendererSetDaylight(land, sky, dayFog, outdoors);
 			if (outdoors)
@@ -1785,6 +1951,13 @@ int main()
 		C3D_FrameEnd(0);
 		if (trace)
 			logf("frame %d: submitted", traced++);
+		// The frame rate the session asks for (an Old 3DS: 30 or 20, Session::adaptView)
+		static int capNow = 60;
+		if (loaded && session->frameCap != capNow)
+		{
+			capNow = session->frameCap;
+			C3D_FrameRate((float)capNow);
+		}
 		if (loaded)
 		{
 			session->noteRenderCost(C3D_GetProcessingTime(), C3D_GetDrawingTime(), stereoOn, eyeCmd);
@@ -1820,6 +1993,16 @@ int main()
 				(int)(cmdPeak * 100.0f), g_skippedDraws ? " (buffer full: draws skipped)" : "");
 			cmdPeak = 0.0f;
 			g_skippedDraws = 0;
+			// The heap: the most used so far and, every few seconds, the biggest block left (fragmentation)
+			heapNote(mallinfo().uordblks);
+			static int heapSecs = 0;
+			if (++heapSecs >= 5)
+			{
+				heapSecs = 0;
+				logf("heap: %dKB used, %uKB peak, %uKB in the biggest free block, %dKB in holes, %d objects in memory",
+					mallinfo().uordblks / 1024, (unsigned)(heapHighWater() / 1024), (unsigned)(heapLargestBlock() / 1024),
+					mallinfo().fordblks / 1024, session->w.refsInMemory());
+			}
 			uiCheckTheme();                   // the UI's textures still as loaded (a monitor)
 			frames = 0;
 			statTick = now;

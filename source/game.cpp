@@ -242,10 +242,34 @@ std::string GameData::gmst(const char* name, const char* fallback) const
 	return it == gmstText.end() ? fallback : it->second;
 }
 
+// Numeric GMSTs are read by name a few hundred times a frame (movement, AI, combat, magic): a lowercase copy and a
+// hash lookup each, real time on an Old 3DS. The answer is kept by the name's address (the callers pass string
+// literals; the text is compared too, for any that don't) until the game data changes (g_gameGeneration). Main
+// thread only: the streaming thread looks them up as before
 float GameData::gmstf(const char* name, float fallback) const
 {
+	struct Slot { const char* ptr; const GameData* data; u32 gen; bool found; float value; char text[40]; };
+	static Slot s_slots[256];
+	bool cache = !threadGetCurrent() && strlen(name) < sizeof(s_slots[0].text);
+	Slot* slot = nullptr;
+	if (cache)
+	{
+		slot = &s_slots[((uintptr_t)name >> 2) & 255];
+		if (slot->ptr == name && slot->data == this && slot->gen == g_gameGeneration && strcmp(slot->text, name) == 0)
+			return slot->found ? slot->value : fallback;
+	}
 	auto it = gmstNum.find(lower(name));
-	return it == gmstNum.end() ? fallback : it->second;
+	bool found = it != gmstNum.end();
+	if (cache)
+	{
+		slot->ptr = name;
+		slot->data = this;
+		slot->gen = g_gameGeneration;
+		slot->found = found;
+		slot->value = found ? it->second : 0.0f;
+		strcpy(slot->text, name);
+	}
+	return found ? it->second : fallback;
 }
 
 const Topic* GameData::topic(const std::string& name) const
@@ -314,6 +338,7 @@ static void convertCall(const cJSON* j, Node& n, const Script* scope)
 	n.func = scriptFunctionId(n.b);
 	const cJSON* args = cJSON_GetArrayItem(j, 3);
 	const cJSON* a;
+	n.kids.reserve(cJSON_GetArraySize(args));       // (the trees' vectors sized exactly: doubling wasted a third)
 	cJSON_ArrayForEach(a, args)
 	{
 		n.kids.emplace_back();
@@ -389,6 +414,7 @@ static void convertStatement(const cJSON* j, Node& n, const Script* scope)
 	{
 		n.kind = N_IF;
 		const cJSON* branch;
+		n.kids.reserve(cJSON_GetArraySize(cJSON_GetArrayItem(j, 1)) * 2 + 1);
 		cJSON_ArrayForEach(branch, cJSON_GetArrayItem(j, 1))
 		{
 			n.kids.emplace_back();
@@ -420,6 +446,7 @@ static void convertBlock(const cJSON* list, Node& n, const Script* scope)
 {
 	n.kind = N_BLOCK;
 	const cJSON* s;
+	n.kids.reserve(cJSON_GetArraySize(list));
 	cJSON_ArrayForEach(s, list)
 	{
 		n.kids.emplace_back();
@@ -644,7 +671,7 @@ bool gameLoad(GameData& g, const char* path)
 	forSection(root, "objects", [&](const cJSON* it) {
 		Object o;
 		o.id = str(it, "id"); o.type = str(it, "type"); o.name = str(it, "name"); o.script = str(it, "script");
-		o.icon = str(it, "icon"); o.iconIx = num(it, "ic", -1); o.text = str(it, "text"); o.sound = str(it, "sound");
+		o.icon = str(it, "icon"); o.iconIx = num(it, "ic", -1); o.text = Atom::stored(str(it, "text")); o.sound = str(it, "sound");
 		o.openSound = str(it, "open_sound"); o.closeSound = str(it, "close_sound");
 		o.weight = num(it, "weight"); o.value = num(it, "value"); o.armor = num(it, "armor");
 		o.flags = num(it, "flags"); o.scroll = num(it, "scroll") != 0; o.respawn = num(it, "respawn") != 0; o.organic = num(it, "organic") != 0;
@@ -702,6 +729,7 @@ bool gameLoad(GameData& g, const char* path)
 		t.lower = lower(t.name);
 		t.type = num(it, "type");
 		const cJSON* ij;
+		t.infos.reserve(cJSON_GetArraySize(arr(it, "infos")));     // (exactly: a doubled vector of them wasted megabytes)
 		cJSON_ArrayForEach(ij, arr(it, "infos"))
 		{
 			Info info;
@@ -720,10 +748,11 @@ bool gameLoad(GameData& g, const char* path)
 				info.whoSex = num(who, "sex", -1);
 				info.whoRank = num(who, "rank", -1);
 			}
-			info.text = str(ij, "text");
+			info.text = Atom::stored(str(ij, "text"));
 			info.sound = str(ij, "sound");
 			info.disposition = num(ij, "disp");
 			const cJSON* c;
+			info.conds.reserve(cJSON_GetArraySize(arr(ij, "conds")));
 			cJSON_ArrayForEach(c, arr(ij, "conds"))
 			{
 				Cond cond;
@@ -747,7 +776,7 @@ bool gameLoad(GameData& g, const char* path)
 		jn.title = str(it, "title");
 		const cJSON* e;
 		cJSON_ArrayForEach(e, arr(it, "entries"))
-			jn.entries.push_back({ (int)num(e, "index"), str(e, "text"), num(e, "finished") != 0, num(e, "restart") != 0 });
+			jn.entries.push_back({ (int)num(e, "index"), Atom::stored(str(e, "text")), num(e, "finished") != 0, num(e, "restart") != 0 });
 	});
 
 	cJSON_ArrayForEach(it, arr(root, "globals"))
@@ -1211,9 +1240,9 @@ bool gameLoad(GameData& g, const char* path)
 
 	sectionDone();
 	cJSON_Delete(root);
-	logf("game: %d objects, %d scripts, %d topics, %d journals, %d sounds, %d voices",
+	logf("game: %d objects, %d scripts, %d topics, %d journals, %d sounds, %d voices, heap used %d KB (%u KB of texts)",
 		(int)g.objects.size(), (int)g.scripts.size(), (int)g.topics.size(), (int)g.journals.size(),
-		(int)g.sounds.size(), (int)g.voices.size());
+		(int)g.sounds.size(), (int)g.voices.size(), mallinfo().uordblks / 1024, (unsigned)(Atom::poolBytes() / 1024));
 	return true;
 }
 

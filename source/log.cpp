@@ -1,4 +1,5 @@
 #include "log.h"
+#include "memstat.h"
 
 #include <3ds.h>
 #include <cstdarg>
@@ -85,6 +86,9 @@ static u8 s_crashStack[2][0x1000] __attribute__((aligned(8)));
 
 static void outOfMemory()
 {
+	// The reserve first: `new` tries again with it free, and the main loop gives memory back (g_memoryLow)
+	if (memoryReserveSpend())
+		return;
 	crashNote("out of memory (new)", 0, (u32)__builtin_return_address(0), mallinfo().uordblks);
 	for (;;)
 		svcSleepThread(1000000000LL);

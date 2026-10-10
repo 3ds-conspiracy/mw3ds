@@ -2707,9 +2707,9 @@ void Session::strikeEnchantment(int target, const Object* missile)
 	const Object* o = w.game.object(wit->id);
 	for (auto& e : en->effects)
 		if (e.range == 0)
-			applyEffectToPlayer(e, o ? o->name : en->id);
+			applyEffectToPlayer(e, o ? o->name.str() : en->id);
 		else
-			applyEffectToActor(target, e, true, cost, 100.0f, o ? o->name : en->id);
+			applyEffectToActor(target, e, true, cost, 100.0f, o ? o->name.str() : en->id);
 	logf("combat: %s strikes with %s (charge %.0f)", wit->id.c_str(), en->id.c_str(), wit->charge);
 }
 

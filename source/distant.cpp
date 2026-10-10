@@ -23,10 +23,14 @@ int s_x0 = 0, s_y0 = 0, s_nx = 0, s_ny = 0, s_per = 0, s_cols = 0;
 u16* s_indices = nullptr;         // shared by every cell (same layout)
 u32 s_numIndices = 0;
 std::vector<DistantCell> s_cells;
-// Big objects per cell: where each cell's mesh starts in s_statics (the file's STAT section)
+// Big objects per cell: where each cell's mesh starts in s_statics (the file's STAT section). A distant.bin
+// stored as it is (not zlib'd: the converter's current output) stays on the card instead, read a cell at a time
+// from s_file at that offset: the section is ~9 MB, a quarter of an Old 3DS's heap
 struct __attribute__((packed)) StaticVertex { s16 x, y, z; u8 r, g, b, pad; };
 std::vector<u8> s_statics;
 std::unordered_map<long long, size_t> s_staticAt;
+FILE* s_file = nullptr;
+std::vector<u8> s_read;           // one cell's objects, read from s_file
 long long cellKey(int gx, int gy) { return ((long long)gx << 32) ^ (u32)gy; }
 
 void buildStatics(int gx, int gy, CellBatch& b)
@@ -36,10 +40,28 @@ void buildStatics(int gx, int gy, CellBatch& b)
 	auto it = s_staticAt.find(cellKey(gx, gy));
 	if (it == s_staticAt.end())
 		return;
-	const u8* p = s_statics.data() + it->second;
+	const u8* p;
 	u32 nv, ni;
-	memcpy(&nv, p + 8, 4);
-	memcpy(&ni, p + 12, 4);
+	if (s_file)
+	{
+		u8 head[16];
+		if (fseek(s_file, (long)it->second, SEEK_SET) != 0 || fread(head, 1, 16, s_file) != 16)
+			return;
+		memcpy(&nv, head + 8, 4);
+		memcpy(&ni, head + 12, 4);
+		size_t len = 16 + nv * sizeof(StaticVertex) + ni * sizeof(u16);
+		s_read.resize(len);
+		memcpy(s_read.data(), head, 16);
+		if (fread(s_read.data() + 16, 1, len - 16, s_file) != len - 16)
+			return;
+		p = s_read.data();
+	}
+	else
+	{
+		p = s_statics.data() + it->second;
+		memcpy(&nv, p + 8, 4);
+		memcpy(&ni, p + 12, 4);
+	}
 	const StaticVertex* sv = (const StaticVertex*)(p + 16);
 	const u8* ip = p + 16 + nv * sizeof(StaticVertex);
 	Vertex* v = (Vertex*)lockedLinearAlloc(nv * sizeof(Vertex));
@@ -171,6 +193,59 @@ bool buildCell(int gx, int gy, DistantCell& out)
 
 static std::string s_loadedFrom;
 
+// distant.bin stored plain (f just past "MWD1"): the grid into memory, the objects' places only
+static bool distantOpen(FILE* f, const char* path)
+{
+	s32 hdr[2];
+	u32 dims[3];
+	bool ok = fread(hdr, 4, 2, f) == 2 && fread(dims, 4, 3, f) == 3;
+	if (ok)
+	{
+		s_x0 = hdr[0]; s_y0 = hdr[1]; s_nx = dims[0]; s_ny = dims[1]; s_per = dims[2];
+		s_cols = s_nx * s_per + 1;
+		size_t count = (size_t)s_cols * (s_ny * s_per + 1);
+		ok = s_per > 0 && s_per <= 16;
+		if (ok)
+		{
+			s_grid.resize(count);
+			ok = fread(s_grid.data(), sizeof(Sample), count, f) == count;
+		}
+		char tag[4];
+		u32 cells = 0;
+		if (ok && fread(tag, 1, 4, f) == 4 && memcmp(tag, "STAT", 4) == 0 && fread(&cells, 4, 1, f) == 1)
+		{
+			long off = ftell(f);
+			for (u32 k = 0; k < cells; k++)
+			{
+				u8 head[16];
+				if (fseek(f, off, SEEK_SET) != 0 || fread(head, 1, 16, f) != 16)
+					break;
+				s32 g[2];
+				u32 nv, ni;
+				memcpy(g, head, 8);
+				memcpy(&nv, head + 8, 4);
+				memcpy(&ni, head + 12, 4);
+				s_staticAt[cellKey(g[0], g[1])] = off;
+				off += 16 + nv * sizeof(StaticVertex) + ((ni * 2 + 3) & ~3u);
+			}
+		}
+	}
+	if (!ok)
+	{
+		fclose(f);
+		logf("distant: bad %s", path);
+		s_grid.clear();
+		s_staticAt.clear();
+		return false;
+	}
+	s_file = f;
+	buildIndices();
+	s_loadedFrom = path;
+	logf("distant: %d x %d cells from %d %d, %d samples a side, big objects in %d cells (read from the card as needed)",
+		s_nx, s_ny, s_x0, s_y0, s_per, (int)s_staticAt.size());
+	return true;
+}
+
 bool distantLoad(const char* dataDir)
 {
 	char path[256];
@@ -186,6 +261,14 @@ bool distantLoad(const char* dataDir)
 		return true;
 	}
 	distantFree();
+	if (FILE* f = fopen(path, "rb"))
+	{
+		char magic[4] = {};
+		bool plain = fread(magic, 1, 4, f) == 4 && memcmp(magic, "MWD1", 4) == 0;
+		if (plain)
+			return distantOpen(f, path);
+		fclose(f);
+	}
 	size_t size = 0;
 	char* data = zreadAll(path, &size);
 	if (!data)
@@ -248,6 +331,11 @@ bool distantLoad(const char* dataDir)
 
 void distantFree()
 {
+	if (s_file)
+		fclose(s_file);
+	s_file = nullptr;
+	s_read.clear();
+	s_read.shrink_to_fit();
 	s_loadedFrom.clear();
 	for (auto& c : s_cells)
 		freeCell(c);
@@ -291,6 +379,14 @@ void distantUpdate(int gx, int gy, int radius)
 				built++;
 			}
 		}
+}
+
+u32 distantBytes()
+{
+	u32 b = s_numIndices * 2;
+	for (auto& c : s_cells)
+		b += c.batch.numVerts * sizeof(Vertex) + (c.statics.numIndices ? c.statics.numVerts * sizeof(Vertex) + c.statics.numIndices * 2 : 0);
+	return b;
 }
 
 const std::vector<DistantCell>& distantCells()

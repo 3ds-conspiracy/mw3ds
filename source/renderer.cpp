@@ -7,7 +7,9 @@
 #include <cstring>
 
 #include "cell_shbin.h"
+#include "skin_shbin.h"
 #include "linear.h"
+#include "console.h"
 #include "log.h"
 
 float g_profActorsMs = 0.0f;          // debug profile accumulators, reported by main once a second
@@ -20,6 +22,11 @@ static DVLB_s* s_dvlb;
 static shaderProgram_s s_program;
 static int s_uProjection, s_uModelView, s_uUvOffset, s_uFogVec, s_uPosOffset, s_uPosScale, s_uUvScale, s_uTint = -1;
 static int s_uLightPos = -1, s_uLightColor = -1;
+// GPU skinning (skin.v.pica): its own program, the same uniforms in the same registers plus the bone palette
+static DVLB_s* s_skinDvlb;
+static shaderProgram_s s_skinProgram;
+static int s_uBones = -1;
+static bool s_skinReady = false;
 static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
 // Day and night outdoors (World::daylight): tint on the baked light, the sky's, and the fog colour
 static float s_land[3] = { 1, 1, 1 }, s_skyTint[3] = { 1, 1, 1 };
@@ -58,6 +65,22 @@ void rendererInit()
 	s_uTint = shaderInstanceGetUniformLocation(s_program.vertexShader, "tint");
 	s_uLightPos = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos");
 	s_uLightColor = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor");
+	s_skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
+	shaderProgramInit(&s_skinProgram);
+	shaderProgramSetVsh(&s_skinProgram, &s_skinDvlb->DVLE[0]);
+	s_uBones = shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "bones");
+	// The frame's uniforms carry over between the two programs only if they sit in the same registers
+	static const char* const kShared[] = { "projection", "modelView", "uvOffset", "fogVec", "posOffset", "posScale",
+		"uvScale", "tint", "lightPos", "lightColor" };
+	s_skinReady = s_uBones >= 0;
+	for (const char* n : kShared)
+		s_skinReady &= shaderInstanceGetUniformLocation(s_program.vertexShader, n)
+			== shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, n);
+	if (!s_skinReady)
+	{
+		g_gpuSkinning = false;
+		logf("renderer: skin.v.pica's uniforms don't line up with cell.v.pica's: skinning stays on the CPU");
+	}
 	initFogRamp();
 }
 
@@ -75,6 +98,8 @@ void rendererExit()
 	s_caustCount = 0;
 	shaderProgramFree(&s_program);
 	DVLB_Free(s_dvlb);
+	shaderProgramFree(&s_skinProgram);
+	DVLB_Free(s_skinDvlb);
 }
 
 static void invalidateState();
@@ -207,6 +232,15 @@ static void initFogRamp()
 	C3D_TexFlush(&s_fogRamp);
 	C3D_TexSetFilter(&s_fogRamp, GPU_LINEAR, GPU_LINEAR);
 	C3D_TexSetWrap(&s_fogRamp, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
+}
+
+// The horizon's scale of the exterior fog distance (main: the weather's alone): distant land is drawn that far with its
+// own fog ramp, whatever closed the detailed view in (the frame time, an Old 3DS's shorter view). Morrowind's
+// mountains stay on the horizon while the expensive world ends nearer (the MGE way)
+static float s_horizonScale = 0.0f;
+void rendererSetHorizon(float scale)
+{
+	s_horizonScale = scale;
 }
 
 static void setFogVec(float start, float end)
@@ -476,6 +510,63 @@ static int batchPass(const CellBatch& b)
 	return (b.flags & BATCH_BLEND) ? 2 : 0;
 }
 
+// GPU-skinned actor meshes (ActorMesh::gpuSkin) the actor loop queued, drawn with skin.v.pica after it: one switch of
+// program for them all. Each sends its bone palette (3 rows a bone) and draws its packed vertices as they are
+struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; };
+static std::vector<SkinDraw> s_skinQueue;
+
+static int drawSkinQueue(float time)
+{
+	if (s_skinQueue.empty())
+		return 0;
+	int draws = 0;
+	static std::vector<float> pal(kSkinBones * 12);
+	C3D_BindProgram(&s_skinProgram);
+	for (auto& d : s_skinQueue)
+	{
+		const ActorMesh& m = *d.m;
+		if (m.numIndices < 3 || !m.verts || !m.indices)
+			continue;
+		if (C3D_GetCmdBufUsage() > kCmdBufLimit)
+		{
+			g_skippedDraws++;
+			continue;
+		}
+		CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+		for (int k = 0; k < 3; k++)
+			b.posScale[k] = m.posQ;
+		b.uvScale[0] = b.uvScale[1] = m.uvQ;
+		b.stride = CELL_VERTEX_SIZE_PACKED;          // (the scales go up as for a packed cell batch)
+		setModelView(d.mv);
+		setBatchState(batchTexture(*d.cell, b), b, DRAW_WORLD, time);
+		bindVertexFormat(b);
+		C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
+		AttrInfo_Init(attrInfo);
+		AttrInfo_AddLoader(attrInfo, 0, GPU_SHORT, 4);            // v0 = position
+		AttrInfo_AddLoader(attrInfo, 1, GPU_SHORT, 2);            // v1 = texcoord
+		AttrInfo_AddLoader(attrInfo, 2, GPU_UNSIGNED_BYTE, 4);    // v2 = colour
+		AttrInfo_AddLoader(attrInfo, 3, GPU_UNSIGNED_BYTE, 4);    // v3 = palette entries
+		AttrInfo_AddLoader(attrInfo, 4, GPU_UNSIGNED_BYTE, 4);    // v4 = weights
+		s_formatValid = false;                                     // (the next cell batch sets its own up again)
+		actorSkinPalette(*d.a, m, pal.data());
+		for (size_t p = 0; p < m.palBone.size(); p++)
+			for (int r = 0; r < 3; r++)
+			{
+				const float* row = &pal[p * 12 + r * 4];
+				C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uBones + p * 3 + r, row[0], row[1], row[2], row[3]);
+			}
+		C3D_BufInfo* bufInfo = C3D_GetBufInfo();
+		BufInfo_Init(bufInfo);
+		BufInfo_Add(bufInfo, m.verts, 24, 5, 0x43210);
+		C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
+		draws++;
+	}
+	s_skinQueue.clear();
+	C3D_BindProgram(&s_program);
+	s_formatValid = false;
+	return draws;
+}
+
 static int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std::vector<u8>* visible, float time)
 {
 	int draws = 0;
@@ -653,7 +744,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	bindPipeline();
 	bool fog = here.fogEnd > 0.0f;
 	float fogStart = here.fogStart * fogScale, fogEnd = here.fogEnd * fogScale;
-	float farPlane = fog ? fogEnd + 500.0f : kInteriorFar;
+	// (outdoors: the distant land's reach, at least the detailed view's)
+	float horizonEnd = fog && !(here.flags & CELL_INTERIOR) ? fmaxf(fogEnd, here.fogEnd * s_horizonScale) : fogEnd;
+	float farPlane = fog ? horizonEnd + 500.0f : kInteriorFar;
 	float time = w.time;
 
 	C3D_Mtx projection, view;
@@ -763,23 +856,30 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	{
 		int gx = (int)floorf(cam.pos[0] / 8192.0f), gy = (int)floorf(cam.pos[1] / 8192.0f);
 		if (!secondEye)
-			distantUpdate(gx, gy, (int)ceilf(fogEnd / 8192.0f) + 1);
+			distantUpdate(gx, gy, (int)ceilf(horizonEnd / 8192.0f) + 1);
+		// Past the detailed view: its own fog, from where the near fog ends to the horizon
+		bool horizon = horizonEnd > fogEnd + 1.0f;
+		Frustum far = horizon ? makeFrustum(cam, horizonEnd) : fr;
+		if (horizon)
+			setFogVec(fogStart + (horizonEnd - fogEnd), horizonEnd);
 		for (auto& d : distantCells())
 		{
 			int ci = w.gridCell(d.gx, d.gy);
 			if (ci >= 0 && w.cells[ci].live)
 				continue;
-			if (boxVisible(fr, d.batch.bmin, d.batch.bmax, fogEnd + 500.0f))
+			if (boxVisible(far, d.batch.bmin, d.batch.bmax, horizonEnd + 500.0f))
 			{
 				drawBatchTex(nullptr, d.batch, DRAW_WORLD, time);
 				draws++;
 			}
-			if (d.statics.numIndices && boxVisible(fr, d.statics.bmin, d.statics.bmax, fogEnd + 500.0f))
+			if (d.statics.numIndices && boxVisible(far, d.statics.bmin, d.statics.bmax, horizonEnd + 500.0f))
 			{
 				drawBatchTex(nullptr, d.statics, DRAW_WORLD, time);
 				draws++;
 			}
 		}
+		if (horizon)
+			setFogVec(fogStart, fogEnd);
 	}
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_LAYERS); k++)
 		draws += drawBatches(w.loaded[k]->cell, w.loaded[k]->cell.batches, 1, &visible[k], time);
@@ -836,8 +936,11 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	if (!secondEye)
 		frame++;
 	u64 actorStart = svcGetSystemTick();
-	float maxDist = fog ? fminf(fogEnd, kActorViewDistance) : 4000.0f;
+	// (an Old 3DS draws people and creatures to 4000 outdoors: each is a re-skin and a dozen draws)
+	float maxDist = fog ? fminf(fogEnd, g_old3ds ? 4000.0f : kActorViewDistance) : 4000.0f;
+	float detailDist = g_old3ds ? kActorDetailDistance * 0.67f : kActorDetailDistance;
 	for (int pass = 0; pass < 2 && (g_renderParts & RENDER_ACTORS); pass++)
+	{
 		for (LoadedCell* l : w.loaded)
 			for (size_t ai = 0; ai < l->actors.actors.size(); ai++)
 			{
@@ -857,7 +960,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					a.deformed = true;
 				}
 				// Far away, small pieces (rings, belts, hair strands: a few pixels) aren't worth a draw
-				bool far = dist2 > kActorDetailDistance * kActorDetailDistance;
+				bool far = dist2 > detailDist * detailDist;
 				// Skinned meshes are in actor space and share the placement; rigid ones ride their bone
 				C3D_Mtx placeMv;
 				{
@@ -873,6 +976,11 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						continue;
 					if (far && m.numIndices < kActorDetailTris * 3)
 						continue;
+					if (m.gpuSkin)
+					{
+						s_skinQueue.push_back({ &l->cell, &a, &m, placeMv });
+						continue;
+					}
 					if (m.bone >= 0 && m.kind != ACTOR_SKINNED)
 					{
 						C3D_Mtx model, mv;
@@ -895,6 +1003,8 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						}
 				}
 			}
+		draws += drawSkinQueue(time);
+	}
 
 	g_profActorsMs += (svcGetSystemTick() - actorStart) * 1000.0f / SYSCLOCK_ARM11;
 

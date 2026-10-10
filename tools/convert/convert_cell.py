@@ -21,7 +21,7 @@ from pathlib import Path
 
 import numpy as np
 
-from mwfiles import cell_refs
+from mwfiles import OVERLAYS, cell_refs
 from meshes import (FLAG_BLEND, FLAG_DECAL, FLAG_SCROLL, FLAG_TEST, FLAG_TWO_SIDED,
                     collision_triangles, extract_shapes, find_node, ref_matrix)
 from nif import Nif
@@ -55,9 +55,20 @@ EXTERIOR_CHUNK = CHUNK_QUADS * QUAD        # 2048, the terrain chunk size
 WATER_TILE = 1024.0                        # world units per water texture repeat
 SKY_RADIUS = 3000.0
 FOG_START, FOG_END = 1800.0, 6000.0        # exterior view distance; the horizon ring is one cell wide
-# Exterior clutter (references smaller than DETAIL_SIZE across) is batched separately and not drawn
-# past DETAIL_DISTANCE: it is most of the draw calls in a town and nearly invisible in the fog
-DETAIL_SIZE, DETAIL_DISTANCE = 160.0, 2500.0
+# Exterior objects are batched by size and not drawn past a distance that grows with it (size x DETAIL_RANGE, the
+# smallest tier's cutoff for the rest): clutter under 160 units across goes at 2500, a cart at 5000, a house at
+# 10000, the biggest only in the fog. Each tier vanishes at the same size on the screen, about 25 pixels at a full
+# view (less as the view shrinks: the game scales these by its view distance). Small things are most of the draw
+# calls in a town, and the 3DS's CPU pays for every draw call; the GPU is the same on both consoles
+DETAIL_TIERS = ((160.0, 2500.0), (320.0, 5000.0), (640.0, 10000.0))   # (size under, cutoff)
+
+
+def detail_distance(size):
+    """The distance past which an exterior object `size` units across isn't drawn (0: the fog decides)."""
+    for under, dist in DETAIL_TIERS:
+        if size < under:
+            return dist
+    return 0.0
 
 
 def build_grid(pos, tris):
@@ -561,6 +572,8 @@ class Converter:
         tools = Path(__file__).parent
         code = b"".join((tools / f).read_bytes() for f in ("convert_cell.py", "meshes.py", "nif.py", "actors.py",
                         "npc.py", "creature.py", "terrain.py", "textures.py", "mwfiles.py"))
+        # (and the mod folders laid over Data Files: another overlay is other meshes)
+        code += ";".join(str(d) for d in OVERLAYS).encode()
         self.code_hash = hashlib.sha1(code).hexdigest()
         # Skeleton indices are written into .act files: keep the order of earlier runs
         registry = self.cache_dir / "skeletons.json"
@@ -814,8 +827,8 @@ class Converter:
             if rec.tag in ("NPC_", "CREA"):
                 continue
             detail = 0.0
-            if not env["interior"] and allpos and np.linalg.norm(p.max(0) - p.min(0)) < DETAIL_SIZE:
-                detail = DETAIL_DISTANCE
+            if not env["interior"] and allpos:
+                detail = detail_distance(float(np.linalg.norm(p.max(0) - p.min(0))))
             for s in shapes:
                 s["ref"] = ri if rec.tag != "STAT" else None
                 groups.setdefault((s["tex"], s["flags"], s["alpha_ref"], chunk_of(s), detail), []).append(s)

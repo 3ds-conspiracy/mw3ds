@@ -11,6 +11,7 @@
 
 #include "cJSON.h"
 #include "linear.h"
+#include "console.h"
 #include "log.h"
 #include "zfile.h"
 
@@ -512,7 +513,7 @@ void World::attachSpawned(int ri)
 	LoadedCell* l = r.cell >= 0 ? cells[placeOf(ri)].live : nullptr;
 	auto sp = game.spawns.find(r.idLower);
 	const ActorDef* def = r.actor >= 0 ? &game.actors[r.actor] : nullptr;
-	std::string lib = sp != game.spawns.end() ? sp->second.lib : def ? def->lib : "";
+	std::string lib = sp != game.spawns.end() ? sp->second.lib : def ? def->lib.str() : "";
 	int skel = sp != game.spawns.end() ? sp->second.skeleton : def ? def->skel : -1;
 	if (!l || lib.empty() || skel < 0)
 		return;
@@ -1886,10 +1887,14 @@ static void startStreamJob(World& w, int index)
 	j->world = &w;
 	j->parseObjects = !w.cells[index].refsLoaded;
 	j->started = osGetTime();
-	// Below the main thread's priority: it runs while the main thread waits for the GPU
+	// Below the main thread's priority: it runs while the main thread waits for the GPU. An Old 3DS has one core for
+	// the game, so there it goes to the system core (up to 30% of it, APT_SetAppCpuTimeLimit in main) and reads in
+	// parallel; on the game's core if that can't be had
 	s32 prio = 0x30;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	j->thread = threadCreate(streamWorker, j, 64 * 1024, prio + 1, -2, false);
+	j->thread = g_old3ds && g_sysCoreThreads ? threadCreate(streamWorker, j, 64 * 1024, prio + 1, 1, false) : nullptr;
+	if (!j->thread)
+		j->thread = threadCreate(streamWorker, j, 64 * 1024, prio + 1, -2, false);
 	if (!j->thread)
 	{
 		// No thread could be made: load it right here instead

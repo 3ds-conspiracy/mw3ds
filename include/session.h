@@ -21,8 +21,13 @@
 enum { PROF_WORLD, PROF_PLAYER, PROF_STREAM, PROF_AI, PROF_SCRIPTS, PROF_OTHER, PROF_COUNT };
 extern float g_profParts[PROF_COUNT];
 
-enum { CONTROLS_XBOX = 0, CONTROLS_CLASSIC = 1 };
-extern int g_controlLayout;   // button layout (settings.txt controls=xbox|classic)
+#include "console.h"
+
+enum { CONTROLS_XBOX = 0, CONTROLS_CLASSIC = 1, CONTROLS_GOLDENEYE = 2 };
+extern int g_controlLayout;   // button layout (settings.txt controls=xbox|classic|goldeneye)
+// Gyro aim (settings.txt gyroaim=on|off, gyrosens=50|100|200): turning the console turns the view, as far as it
+// turned. The percent of that turn (100: one to one), 0 when off
+extern int g_gyroAim;
 
 enum Screen
 {
@@ -339,9 +344,11 @@ struct Session : ScriptHost
 	float renderCost = 0.0f;          // smoothed per-frame render time (ms) of one eye
 	float eyeCmdUse = 0.0f;           // share of the GPU command buffer one eye's world takes
 	bool stereoCmdRoom = true;
-	// Adaptive view distance outdoors (fog scale), from the frame's CPU / GPU work
-	static constexpr float kMinViewScale = 0.6f;
-	float viewScale = 1.0f, workCost = 0.0f;
+	// Adaptive view distance outdoors (fog scale), from the frame's CPU / GPU work. An Old 3DS starts nearer and may
+	// close in further, and caps the frame rate at 30 or 20 (frameCap: main hands it to C3D_FrameRate)
+	static constexpr float kMinViewScale = 0.6f, kMinViewScaleOld3ds = 0.45f, kMaxViewScaleOld3ds = 0.8f;
+	float viewScale = g_old3ds ? kMaxViewScaleOld3ds : 1.0f, workCost = 0.0f;
+	int frameCap = g_old3ds ? 30 : 60, capFrames = 0;
 	void adaptView(float workMs);
 	float stereoTarget(float slider, float dt);
 	void noteRenderCost(float cpuMs, float gpuMs, bool stereo, float eyeCmd);
@@ -660,11 +667,14 @@ struct Session : ScriptHost
 	int travelPrice(int ref, const TravelDest& d);
 	void openTravel();                              // the dialogue's Travel button (barterRef = the speaker)
 	bool travelGo(int sel);                         // the travel list's Go: pay and leave (false: refused)
-	// Objects kept in memory: beyond this many, the cells used longest ago leave (World::evictCells)
-	static const int kRefBudget = 20000;
+	// Objects kept in memory: beyond this many, the cells used longest ago leave (World::evictCells). An Old 3DS
+	// keeps fewer (a Ref is about 1 KB: 20000 of them were half its heap)
+	static const int kRefBudget = 20000, kRefBudgetOld3ds = 5000;
+	int refBudget() const;
+	void relieveMemory();             // the heap ran out (g_memoryLow): far cells' objects and map tiles go
 	float evictTimer = 0.0f;
 	int mapCell = -1;                 // the cell whose name was last put on the map
 	int corprusShown = 0;             // Corprus level the stats were last computed at
 	bool refInUse(int ri) const;      // something in the session points at that object
-	void evictFarCells(int budget = kRefBudget);
+	void evictFarCells(int budget = -1);   // -1: refBudget()
 };

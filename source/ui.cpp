@@ -80,21 +80,41 @@ static bool loadTex(const std::string& path, C3D_Tex* tex, GPU_TEXTURE_FILTER_PA
 }
 
 static u32 s_fontSum = 0, s_atlasSum = 0;      // uiCheckTheme: the font's and frames' texels as loaded
-struct ArtTex { C3D_Tex tex; bool ok; };
+struct ArtTex { C3D_Tex tex; bool ok; u64 lastUse; };
 static std::unordered_map<std::string, ArtTex*> s_art;
+
+// Pictures not drawn for a few seconds give their linear memory back (a picture is read again when next shown).
+// Kept for ever they added up: every load screen shows a random splash, and a few rounds of travel had them all in
+// memory, a megabyte or more the cells' textures then lacked (on an Old 3DS's 22 MB above all)
+static void artEvict(u64 now)
+{
+	for (auto it = s_art.begin(); it != s_art.end();)
+		if (now - it->second->lastUse > 3000)
+		{
+			if (it->second->ok)
+				deferredTexDelete(&it->second->tex);
+			delete it->second;
+			it = s_art.erase(it);
+		}
+		else
+			++it;
+}
 
 bool uiArt(const std::string& file, int w, int h, float x, float y, float dw, float dh)
 {
+	u64 now = osGetTime();
 	auto it = s_art.find(file);
 	ArtTex* a;
 	if (it == s_art.end())
 	{
+		artEvict(now);
 		a = new ArtTex();
 		a->ok = loadTex(s_artDir + "/" + file, &a->tex, GPU_LINEAR);
 		s_art[file] = a;
 	}
 	else
 		a = it->second;
+	a->lastUse = now;
 	if (!a->ok || w <= 0 || h <= 0)
 		return false;
 	Tex3DS_SubTexture sub = { (u16)w, (u16)h, 0.0f, 1.0f, (float)w / a->tex.width, 1.0f - (float)h / a->tex.height };

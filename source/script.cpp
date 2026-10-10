@@ -709,7 +709,7 @@ static float call(Ctx& c, const Node& n)
 		const Object* o = sp == w.game.spells.end() ? w.game.object(id) : nullptr;
 		if ((sp == w.game.spells.end() && !o) || (!onPlayer && r))
 			return 0.0f;
-		const std::string& name = sp != w.game.spells.end() ? sp->second.name : o->name;
+		std::string name = sp != w.game.spells.end() ? sp->second.name : o->name.str();
 		for (auto& a : w.effects)
 			if (a.source == name)
 				return 1.0f;
@@ -1641,7 +1641,7 @@ static float call(Ctx& c, const Node& n)
 	case F_CLEARINFOACTOR:
 		// (OpenMW) takes the actor's last answer to the topic out of the journal's Topics index
 		if (r && w.currentInfo >= 0)
-			w.topicLogRemoveLast(w.currentTopic, r->actor >= 0 ? w.game.actors[r->actor].name : r->id);
+			w.topicLogRemoveLast(w.currentTopic, r->actor >= 0 ? w.game.actors[r->actor].name : r->id.str());
 		return 0.0f;
 	// Equip item: on the player it is used like from the inventory (added first when missing); an NPC wears
 	// what it carries, so it is given the item when it has none

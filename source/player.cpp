@@ -181,6 +181,10 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 	p.eyeDrop += (drop - p.eyeDrop) * fminf(1.0f, dt * 8.0f);
 	p.yaw += in.lookX * kLookSpeed * dt;
 	p.pitch += in.lookY * kLookSpeed * dt;
+	// Gyro aim: the console's own turn, as far as it turned
+	const float kDegrees = 3.14159265f / 180.0f;
+	p.yaw += in.gyroYaw * kDegrees * dt;
+	p.pitch += in.gyroPitch * kDegrees * dt;
 	p.pitch = fmaxf(-1.5f, fminf(1.5f, p.pitch));
 
 	float sy = sinf(p.yaw), cy = cosf(p.yaw);

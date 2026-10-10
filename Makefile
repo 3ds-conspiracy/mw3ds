@@ -49,7 +49,9 @@ GFXBUILD	:=	$(BUILD)
 #---------------------------------------------------------------------------------
 ARCH	:=	-march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 
-CFLAGS	:=	-g -Wall -O2 -mword-relocations \
+# -O3 and link-time optimisation: inlining and code layout count for more on the Old 3DS (no L2 cache, 268 MHz).
+# No -ffast-math: results must stay those of the native test build (tools/test/native)
+CFLAGS	:=	-g -Wall -O3 -flto=auto -fomit-frame-pointer -fno-math-errno -mword-relocations \
 			-ffunction-sections \
 			$(ARCH)
 
@@ -58,7 +60,7 @@ CFLAGS	+=	$(INCLUDE) -D__3DS__
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
 
 ASFLAGS	:=	-g $(ARCH)
-LDFLAGS	=	-specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) \
+LDFLAGS	=	-specs=3dsx.specs -g -O3 -flto=auto $(ARCH) -Wl,-Map,$(notdir $*.map) \
 			-Wl,--wrap=linearAlloc,--wrap=linearMemAlign,--wrap=linearFree
 # (the linear heap kept from running dry and used under one lock: source/linear.cpp)
 

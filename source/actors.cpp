@@ -10,6 +10,7 @@
 
 #include "cell.h"
 #include "linear.h"
+#include "console.h"
 #include "log.h"
 #include "zfile.h"
 
@@ -206,6 +207,77 @@ bool skeletonsLoad(const char* path)
 	return !g_sharedSkeletons.empty();
 }
 
+bool g_gpuSkinning = true;
+
+// A skinned mesh made ready for the GPU: positions and texture coordinates packed into shorts (scaled by the mesh's
+// largest), the four palette entries and weights beside them, in place of the vertex buffer the CPU rewrote each
+// re-skin (same 24 bytes a vertex). Weights are bytes summing to 255. False (left to the CPU) if no memory
+static bool gpuSkinMesh(ActorMesh& m, const std::vector<u8>& inf)
+{
+	struct __attribute__((packed)) PackedSkinVertex { s16 x, y, z, w; s16 u, v; u8 c[4]; u8 idx[4]; u8 wt[4]; };
+	static_assert(sizeof(PackedSkinVertex) == 24, "skin vertex layout");
+	const u8* in = (const u8*)m.verts;
+	float maxP = 1e-3f, maxUV = 1e-3f;
+	for (u32 v = 0; v < m.numVerts; v++)
+	{
+		float p[5];
+		memcpy(p, in + v * 24, 20);
+		for (int k = 0; k < 3; k++)
+			maxP = fmaxf(maxP, fabsf(p[k]));
+		maxUV = fmaxf(maxUV, fmaxf(fabsf(p[3]), fabsf(p[4])));
+	}
+	PackedSkinVertex* out = (PackedSkinVertex*)lockedLinearAlloc(m.numVerts * sizeof(PackedSkinVertex));
+	if (!out)
+		return false;
+	m.posQ = maxP / 32767.0f;
+	m.uvQ = maxUV / 32767.0f;
+	for (u32 v = 0; v < m.numVerts; v++)
+	{
+		float p[5];
+		memcpy(p, in + v * 24, 20);
+		PackedSkinVertex& o = out[v];
+		o.x = (s16)lroundf(p[0] / m.posQ);
+		o.y = (s16)lroundf(p[1] / m.posQ);
+		o.z = (s16)lroundf(p[2] / m.posQ);
+		o.w = 0;
+		o.u = (s16)lroundf(p[3] / m.uvQ);
+		o.v = (s16)lroundf(p[4] / m.uvQ);
+		memcpy(o.c, in + v * 24 + 20, 4);
+		int sum = 0, best = 0;
+		for (int k = 0; k < 4; k++)
+		{
+			o.wt[k] = inf[v * 8 + 4 + k];
+			o.idx[k] = o.wt[k] && inf[v * 8 + k] < m.palBone.size() ? inf[v * 8 + k] : 0;
+			if (o.idx[k] == 0 && inf[v * 8 + k] >= m.palBone.size())
+				o.wt[k] = 0;
+			sum += o.wt[k];
+			if (o.wt[k] > o.wt[best])
+				best = k;
+		}
+		// (whole: a rounding short of 255 shrank the vertex toward the actor's root)
+		if (sum > 0)
+			o.wt[best] = (u8)(o.wt[best] + 255 - sum);
+		else
+			o.wt[0] = 255;
+	}
+	GSPGPU_FlushDataCache(out, m.numVerts * sizeof(PackedSkinVertex));
+	lockedLinearFree(m.verts);
+	m.verts = out;
+	m.gpuSkin = true;
+	std::vector<float>().swap(m.src);
+	std::vector<u8>().swap(m.infIndex);
+	std::vector<float>().swap(m.infWeight);
+	std::vector<u8>().swap(m.infCount);
+	return true;
+}
+
+void actorSkinPalette(const Actor& a, const ActorMesh& m, float* out)
+{
+	const std::vector<float>& pose = a.skinPose.size() == a.pose.size() ? a.skinPose : a.pose;
+	for (size_t p = 0; p < m.palBone.size(); p++)
+		mul34(&pose[m.palBone[p] * 12], &m.palMat[p * 12], out + p * 12);
+}
+
 // One mesh after its texture: render state, buffers, skinning, morphs
 static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 {
@@ -246,7 +318,15 @@ static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 					}
 				m.infCount[v] = n;
 			}
+			// (a skinned head that also morphs stays on the CPU: the morph rewrites its vertices)
+			if (g_gpuSkinning && !m.hasMorph && pal <= (u32)kSkinBones && gpuSkinMesh(m, inf))
+				set.skinnedGpu++;
+			else
+				set.skinnedCpu++;
 		}
+		// A rigid mesh that doesn't morph is never rewritten: its source positions aren't needed
+		if (m.kind != ACTOR_SKINNED && !m.hasMorph)
+			std::vector<float>().swap(m.src);
 		if (m.hasMorph)
 		{
 			fread(m.talk, 4, 2, f);
@@ -408,7 +488,8 @@ bool actorsLoad(ActorSet& set, const char* path, const char* dataDir, const std:
 		a.blinkTimer = 1.0f + (rand() % 3000) / 1000.0f;
 	}
 	zclose(f);
-	logf("actors: %d actors, %d skeletons, %lu KB", (int)set.actors.size(), (int)set.skeletons.size(), set.bytes / 1024);
+	logf("actors: %d actors, %d skeletons, %lu KB, skinned meshes %lu on the GPU, %lu on the CPU", (int)set.actors.size(),
+		(int)set.skeletons.size(), set.bytes / 1024, set.skinnedGpu, set.skinnedCpu);
 	return true;
 }
 
@@ -698,6 +779,10 @@ u32 actorPoseEvery(float dist2)
 // every third frame there, so these follow it): the wild's creatures and people are seen at those distances
 u32 actorSkinEvery(float dist2)
 {
+	// An Old 3DS (a CPU a third as fast, 30 fps at best): every second frame up close (15 Hz), then every fourth and
+	// every sixth
+	if (g_old3ds)
+		return dist2 < 1600.0f * 1600.0f ? 2 : dist2 < 3000.0f * 3000.0f ? 4 : 6;
 	return dist2 < 1600.0f * 1600.0f ? 2 : dist2 < 3000.0f * 3000.0f ? 3 : 4;
 }
 
@@ -722,7 +807,7 @@ void actorDeform(ActorSet& set, Actor& a)
 	{
 		if (m.kind == ACTOR_SKINNED)
 		{
-			if (!newPose)
+			if (!newPose || m.gpuSkin)
 				continue;
 			// world = place x bone pose x skin-to-bone, blended by the vertex weights
 			size_t pal = m.palBone.size();

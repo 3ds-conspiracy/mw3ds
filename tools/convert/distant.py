@@ -240,8 +240,7 @@ def main():
     y0, y1 = min(y for _, y in land), max(y for _, y in land)
     terrain = Terrain(db, x0 - 1, y0 - 1, x1 + 1, y1 + 1)
     out = OUT / "distant.bin"
-    info = build_distant(db, arch, terrain, EXTERIOR_SUN_DIR, wx["sun"], wx["ambient"], out)
-    level.compress_file(out)
+    info = build_distant(db, arch, terrain, EXTERIOR_SUN_DIR, wx["sun"], wx["ambient"], out)   # (not zlib'd: level.py)
     print(f"distant land: {info['cells']} cells, {info['samples']} samples, {info['static_cells']} cells with "
           f"big objects ({info['static_tris']} triangles), {out.stat().st_size // 1024} KB")
 

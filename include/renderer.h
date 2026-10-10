@@ -44,6 +44,9 @@ float rendererWaterScroll();                    // how fast water slides: textur
 void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow);
 // A posed actor whose mesh textures are `textures`; viewModel draws it in front of the world
 void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel);
+// How far distant land reaches outdoors, as a scale of the cells' fog distance (the weather's; 0: as far as the
+// detailed view, whatever shortened it)
+void rendererSetHorizon(float scale);
 // Additive camera-facing quad (spell bolts); rgba as 0xAABBGGRR
 void rendererDrawGlow(const float pos[3], float size, u32 rgba);
 // Local map: renders the loaded cells seen from above (x/y square from minX, minY, size units wide;

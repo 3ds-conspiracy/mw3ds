@@ -18,6 +18,9 @@ struct PlayerInput
 	bool sneak;           // held: sneak (L, outside fly mode)
 	int quick = -1;       // quick key used this frame (ZL + D-pad: 0 up, 1 right, 2 down, 3 left)
 	bool togglePov = false;  // SELECT: first / third person
+	// Gyro aim: how fast the console turns, degrees a second (sensitivity applied), around its up axis (+ right)
+	// and across (+ up). Turned into view angles one to one, not through the stick's look speed
+	float gyroYaw = 0.0f, gyroPitch = 0.0f;
 };
 
 struct Player

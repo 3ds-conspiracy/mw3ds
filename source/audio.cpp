@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "console.h"
 #include "log.h"
 
 static bool s_enabled = false;
@@ -70,7 +71,10 @@ struct CachedSound
 
 static std::unordered_map<std::string, CachedSound> s_cache;
 static u32 s_cacheBytes = 0;
-static const u32 kCacheLimit = 6 * 1024 * 1024;
+// Decoded sounds kept in linear memory (voices, effects), the least recently used freed past this. An Old 3DS has
+// 22 MB of linear memory for everything (heaps.cpp): its cache is a third as big, or the voices heard on a walk
+// through town took the room the next cells' textures needed
+static const u32 kCacheLimit = 6 * 1024 * 1024, kCacheLimitOld3ds = 2 * 1024 * 1024;
 
 static const int kFxChannels = 23;          // 0..22 effects and voices, 23 music (the DSP has 24)
 static const int kMusicChannel = 23;
@@ -126,6 +130,11 @@ bool audioInit(const char* dataDir)
 }
 
 // A session ending (loading a save): the decoded sounds go, so the next session doesn't load its own on top
+unsigned audioCacheBytes()
+{
+	return s_cacheBytes;
+}
+
 void audioCacheClear()
 {
 	if (!s_enabled)
@@ -163,9 +172,9 @@ static bool inUse(const std::string& file)
 }
 
 // Frees least recently used sounds that aren't playing until `incoming` more bytes fit
-static void evict(u32 incoming)
+static void evict(u32 incoming, u32 limit)
 {
-	while (s_cacheBytes + incoming > kCacheLimit)
+	while (s_cacheBytes + incoming > limit)
 	{
 		auto oldest = s_cache.end();
 		for (auto it = s_cache.begin(); it != s_cache.end(); ++it)
@@ -203,11 +212,17 @@ static CachedSound* load(const std::string& file)
 		return nullptr;
 	}
 	bool adpcm = memcmp(h.magic, "SND2", 4) == 0;
-	evict(h.samples * 2);
+	evict(h.samples * 2, g_old3ds ? kCacheLimitOld3ds : kCacheLimit);
 	CachedSound s;
 	s.samples = h.samples;
 	s.rate = h.rate;
 	s.data = (s16*)lockedLinearAlloc(h.samples * 2);
+	// (linear memory full: every sound not playing goes, then one more try)
+	if (!s.data)
+	{
+		evict(h.samples * 2, 0);
+		s.data = (s16*)lockedLinearAlloc(h.samples * 2);
+	}
 	if (!s.data)
 	{
 		fclose(f);

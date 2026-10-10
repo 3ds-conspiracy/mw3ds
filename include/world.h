@@ -35,17 +35,17 @@ enum { AIPKG_NONE = -1, AIPKG_WANDER = 0, AIPKG_TRAVEL = 1, AIPKG_ESCORT = 2, AI
 // A placed reference in the cell: static data from cells/<cell>.json plus live state
 struct Ref
 {
-	std::string id, idLower, type;
+	Atom id, idLower, type;
 	float pos[3], rot[3], scale = 1.0f;
 	int count = 1;
 	int lockLevel = 0;
 	// Owner: an NPC, or a faction (members from ownerRank up may take it); a set ownerGlobal lets the
 	// player use it (rented beds). Taking it is theft (World::ownedByOther)
-	std::string owner, ownerFaction, ownerGlobal;
+	Atom owner, ownerFaction, ownerGlobal;
 	int ownerRank = 0;
-	std::string trap;             // trap spell (doors / containers): cast on whoever opens it, until disarmed
+	Atom trap;                    // trap spell (doors / containers): cast on whoever opens it, until disarmed
 	bool disarmed = false;        // the trap went off or a probe disarmed it (saved)
-	std::string key;
+	Atom key;
 	int cell = 0;                 // index into World::cells; -1: a free slot (its cell's objects left memory)
 	u32 baseHash = 0;             // refHash as read from the cell file: saves keep only what changed
 	int at = -1;                  // moved to another cell (PositionCell): the cell it stands in now
@@ -61,7 +61,7 @@ struct Ref
 	float startRot[2] = {};       // and its x / y rotation there
 	float boxStart[6] = {};       // its box there (min, max): a moving object's box follows it
 	bool hasDest = false, destEnd = false, destUnconverted = false;
-	std::string destCell;
+	Atom destCell;
 	float chaseStill = 0.0f, chaseWindow = 0.0f, chaseAnchor[2] = {};   // chasing: seconds without getting anywhere
 	bool destHasGrid = false;     // destination is outdoors: the exterior grid cell it lands in
 	int destGrid[2] = {};
@@ -107,7 +107,7 @@ struct Ref
 	int friendlyHits = 0;         // blows from the player while following them (dialogue: Friendly Hit)
 	float diedAt = -1.0f;         // World::gameHour of death (respawning, saved)
 	float lastBarter = -1000.0f;  // game hour of the last trade: a day later their gold is back (saved)
-	std::string levList;          // placed from a leveled list: picked by the player's level when first read
+	Atom levList;                 // placed from a leveled list: picked by the player's level when first read
 	bool relib = false;           // drawn from its mesh library, not the cell's own actor (a leveled pick)
 	float health = 0, healthMax = 0, fatigue = 0, fatigueMax = 0;
 	int gold = 0;

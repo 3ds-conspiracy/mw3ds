@@ -26,10 +26,14 @@ import numpy as np
 from PIL import Image
 
 import envfile  # noqa: F401  (loads .env)
+from mwfiles import OVERLAYS
 
 # Converted data goes here (MW3DS_OUT overrides it, e.g. out/world for a whole-island trial run)
 OUT = Path(os.environ.get("MW3DS_OUT") or Path(__file__).resolve().parents[2] / "out" / "data")
-CACHE = Path(__file__).resolve().parents[2] / "out" / "texture_cache.json"
+# (one per converted data folder: out/data and out/world share the first, as they always have; another folder, say the
+# Old 3DS build's smaller textures, keeps its own so the two don't re-encode each other's)
+CACHE = Path(__file__).resolve().parents[2] / "out" / ("texture_cache.json" if OUT.name in ("data", "world")
+                                                       else f"texture_cache_{OUT.name}.json")
 
 SCREEN_HEIGHT = 240
 FOV_Y = math.radians(60.0)
@@ -138,6 +142,8 @@ class TextureSet:
         migrate_flat(OUT / "textures", OUT / "tex", "*.t3x")
         (OUT / "tex").mkdir(parents=True, exist_ok=True)
         stats = {"count": 0, "encoded": 0, "bytes": 0, "full_bytes": 0, "failed": []}
+        # the mod folders laid over Data Files (mwfiles.OVERLAYS): with others, the same path can be another picture
+        overlay = ";".join(str(d) for d in OVERLAYS)
         wanted = set()
         items = sorted(self.req.items())
         print(f"textures: checking {len(items)} (new or resized ones are encoded with tex3ds; the first run takes a while)",
@@ -152,13 +158,14 @@ class TextureSet:
                 img = None
                 entry = cache.get(name)
                 if not (entry and entry.get("src") == path and entry.get("limit") == limit
-                        and entry.get("want_alpha") == r["alpha"] and tex_path(name).exists()):
+                        and entry.get("want_alpha") == r["alpha"] and entry.get("overlay", "") == overlay
+                        and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(path)))
                     img.load()
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
                     entry = encode_one(tex3ds, img.convert("RGBA"), tex_path(name), limit, r["alpha"])
-                    entry.update({"src": path, "limit": limit, "want_alpha": r["alpha"]})
+                    entry.update({"src": path, "limit": limit, "want_alpha": r["alpha"], "overlay": overlay})
                     cache[name] = entry
                     stats["encoded"] += 1
             except Exception as e:           # missing or unreadable: the cell draws it untextured

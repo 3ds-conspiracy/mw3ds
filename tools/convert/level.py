@@ -649,8 +649,8 @@ def main():
     }
     # Distant land past the loaded cells (tools/convert/distant.py)
     wx = weather(ini, args.weather)
+    # (stored as it is, not zlib'd: the game reads each cell's big objects from the card when it needs them)
     dl = build_distant(db, arch, terrain, EXTERIOR_SUN_DIR, wx["sun"], wx["ambient"], OUT / "distant.bin")
-    compress_file(OUT / "distant.bin")
     print(f"  distant land: {dl['cells']} cells, {dl['samples']} samples")
     print(f"  map: {game['map']['width']} x {game['map']['height']} px, {game['map']['units_per_pixel']:.0f} units per pixel")
     game["ui"], report = build_ui(arch, ini_section(ini, "Font Color"), game["objects"])

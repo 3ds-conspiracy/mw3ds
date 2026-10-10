@@ -65,6 +65,9 @@ static bool cellNameMatches(const std::string& cell, std::string want)
 #include "screens.h"
 #include "collision.h"
 #include "linear.h"
+#include "memstat.h"
+#include "zfile.h"
+#include <malloc.h>
 
 static std::string squash(const std::string& s)
 {
@@ -296,6 +299,9 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	if (what == "levitating") { v = w.effectTotal(10) > 0.0f ? 1.0f : 0.0f; return true; }
 	// where the player's feet are (SNAP one, then EXPECT it moved at most / at least so much with "@")
 	if (what == "playerx" || what == "playery" || what == "playerz") { v = w.player.feet[what[6] - 'x']; return true; }
+	// which way the player looks, in degrees (yaw: + toward east, not wrapped; pitch: + up): SNAP one, EXPECT how far it turned
+	if (what == "yaw") { v = w.player.yaw * 180.0f / 3.14159265f; return true; }
+	if (what == "pitch") { v = w.player.pitch * 180.0f / 3.14159265f; return true; }
 	// how far the player went on the flat since SNAP:moved
 	if (what == "moved") { v = hypotf(w.player.feet[0] - s_movedFrom[0], w.player.feet[1] - s_movedFrom[1]); return true; }
 	if (what == "fallmult") { v = w.effectTotal(11) > 0.0f ? 0.25f : 1.0f; return true; }     // gravity while falling
@@ -1011,6 +1017,13 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
 	else if (what == "linearfree") v = (float)(linearSpaceFree() / 1024);   // KB of linear memory free
+	// The heap (Old 3DS soak runs): KB in use now, the most used so far, the biggest block still to be had; zlib streams
+	// left open; whether the out-of-memory reserve is spent (1) or held (0)
+	else if (what == "heapused") v = (float)(mallinfo().uordblks / 1024);
+	else if (what == "heappeak") { heapNote(mallinfo().uordblks); v = (float)(heapHighWater() / 1024); }
+	else if (what == "heapblock") v = (float)(heapLargestBlock() / 1024);
+	else if (what == "zopen") v = (float)zOpenCount();
+	else if (what == "memorylow") v = memoryReserveHeld() ? 0.0f : 1.0f;
 	else if (what == "uiintact") v = uiThemeIntact() ? 1.0f : 0.0f;  // the UI's font and frames still as loaded
 	else if (what == "groundgaps") { extern int g_groundGaps; v = (float)g_groundGaps; }   // cracks in the last SHOT (native only, -1 on the 3DS)
 	else if (what == "missingtex")
@@ -1163,7 +1176,7 @@ static bool makeTestItem(Session& s, const std::string& base, const std::string&
 	en.name = spaced(id);
 	Object item = *bo;
 	item.id = lower(id);
-	item.iconBase = bo->iconBase.empty() ? bo->id : bo->iconBase;   // (the save rebuilds the item from this base)
+	item.iconBase = bo->iconBase.empty() ? Atom(bo->id) : bo->iconBase;   // (the save rebuilds the item from this base)
 	item.ench = en.id;
 	item.magic = true;
 	item.name = spaced(id);
@@ -1801,7 +1814,7 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	if (verb == "SETDEAD" && a.size() >= 3)
 	{
 		int ri = findRef(s, a[1]);
-		w.deadCounts[ri >= 0 ? w.refs[ri].idLower : lower(a[1])] = atoi(a[2].c_str());
+		w.deadCounts[ri >= 0 ? w.refs[ri].idLower.str() : lower(a[1])] = atoi(a[2].c_str());
 		return true;
 	}
 	// SETTALKED:<npc>:<0|1>: the NPC's real talked-to-player flag (a talk in progress keeps the one it began with)
@@ -2098,7 +2111,7 @@ bool TestDriver::canCast(Session& s, const std::string& selected)
 bool TestDriver::playerToken(const std::string& tok)
 {
 	static const char* const kPlayer[] = {
-		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "TAP", "DRAG", "STICKDOWN",
+		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "ZR", "GYRO", "CONTROLS", "GYROAIM", "TAP", "DRAG", "STICKDOWN",
 		"STICKUP", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT",
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",

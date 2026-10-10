@@ -1,5 +1,6 @@
 #pragma once
 
+#include "atom.h"
 #include "uitheme.h"
 
 #include <3ds/types.h>
@@ -25,7 +26,7 @@ struct Node
 	unsigned char op = 0;
 	int func = 0;              // N_CALL: function id (script.cpp); N_LOCAL: slot or -1 = look up by name
 	float num = 0.0f;
-	std::string a, b;          // N_STR text; N_LOCAL/N_GLOBAL name; N_REMOTE ref + var; N_CALL ref + name
+	Atom a, b;                 // N_STR text; N_LOCAL/N_GLOBAL name; N_REMOTE ref + var; N_CALL ref + name
 	std::vector<Node> kids;    // N_CALL args; N_OP/N_NEG operands; N_SET target, value;
 	                           // N_IF cond, block, cond, block, ..., [else block]; N_WHILE cond, block
 };
@@ -48,7 +49,8 @@ struct SpellEffect { int effect, skill, attribute, min, max, duration, range; in
 
 struct Object
 {
-	std::string id, type, name, script, icon, text, sound, openSound, closeSound;
+	std::string id;
+	Atom type, name, script, icon, text, sound, openSound, closeSound;   // (text, a book's: Atom::stored)
 	int iconIx = -1;                                   // item icon (ui/icons_*.t3x), -1 = none
 	float weight = 0.0f;
 	int value = 0, subtype = -1, armor = 0, flags = 0;
@@ -68,8 +70,8 @@ struct Object
 	int uses = 0;                                      // repair tools
 	float quality = 0.0f;
 	int bookSkill = -1;                                // skill books: the skill the first read raises
-	std::string ench;                                  // enchanted: its enchantment (a SpellDef id)
-	std::string iconBase;                              // enchanted by the player: the item it was made from
+	Atom ench;                                         // enchanted: its enchantment (a SpellDef id)
+	Atom iconBase;                                     // enchanted by the player: the item it was made from
 	int enchant = 0;                                   // enchantment capacity
 	struct IngredientEffect { int effect, skill, attribute; };
 	std::vector<IngredientEffect> ingredient;          // ingredients: their (up to) four effects, for alchemy
@@ -83,7 +85,7 @@ struct Cond
 {
 	char kind;          // '1' function, '2' global, '3' local, '4' journal, '5' item, '6' dead, 'C' not local
 	int func;           // function code for kind '1'
-	std::string name;   // lowercase variable / journal / item name
+	Atom name;          // lowercase variable / journal / item name
 	char op;            // '0' ==, '1' !=, '2' >, '3' >=, '4' <, '5' <=
 	float value;
 };
@@ -93,9 +95,9 @@ struct Info
 	std::vector<int> actors;          // older data: the actors that may say it
 	// Who may say it (lowercase; empty / -1 = anyone): speaker id, race, class, faction ("ffff": none),
 	// cell name prefix, sex, least rank in the faction
-	std::string whoId, whoRace, whoClass, whoFaction, whoCell;
+	Atom whoId, whoRace, whoClass, whoFaction, whoCell;
 	int whoSex = -1, whoRank = -1;
-	std::string text, sound;
+	Atom text, sound;                 // (text: Atom::stored)
 	std::vector<Cond> conds;
 	int disposition = 0;
 	Node script;
@@ -111,7 +113,7 @@ struct Topic
 	std::vector<Info> infos;
 };
 
-struct JournalEntry { int index; std::string text; bool finished; bool restart = false; };
+struct JournalEntry { int index; Atom text; bool finished; bool restart = false; };   // (text: Atom::stored)
 struct Journal { std::string name, title; std::vector<JournalEntry> entries; };
 
 struct ClassDef
@@ -161,21 +163,22 @@ struct TravelDest
 
 struct ActorDef
 {
-	std::string id, name, race, cls, faction, script;
+	std::string id, name;
+	Atom race, cls, faction, script;
 	int rank, female, level, disposition, reputation;
 	int attributes[8] = { 40, 40, 40, 40, 40, 40, 40, 40 };
 	int skills[27] = {};
 	int health = 50, fatigue = 200, gold = 0, fight = 30;
 	unsigned services = 0;
-	std::string weapon;                  // lowercase WEAP id they fight with, "" = hand-to-hand
+	Atom weapon;                         // lowercase WEAP id they fight with, "" = hand-to-hand
 	float armor = 0.0f;                  // armor rating
 	std::vector<TravelDest> travel;      // caravaner / boatman destinations inside the level
 	int wander = 0;                      // AI_W distance: strolls this far from their spot
 	// First AI package when it isn't wandering (AIPKG_*, -1 none): target id, destination, hours
 	int aiPackage = -1;
-	std::string lib;                     // mesh library (drawing it in a cell it wasn't placed in)
+	Atom lib;                            // mesh library (drawing it in a cell it wasn't placed in)
 	int skel = -1;                       // shared skeleton index
-	std::string aiTarget;
+	Atom aiTarget;
 	float aiDest[3] = {}, aiDuration = 0.0f;
 	bool creature = false;
 	std::vector<std::string> spells;     // spell merchants: what they sell (lowercase ids)
@@ -189,7 +192,7 @@ struct ActorDef
 	int soul = 0;                        // creatures: soul size (Soultrap fills a gem that holds it)
 	int resistNormal = 0;                // percent: blows from ordinary weapons do that much less (ghosts)
 	int hello = 30;                      // AI Hello: greets within hello x iGreetDistanceMultiplier (0: never)
-	std::string ammo, shield;            // lowercase ids: arrows / bolts for their bow, the shield they carry
+	Atom ammo, shield;                   // lowercase ids: arrows / bolts for their bow, the shield they carry
 	std::vector<std::string> combatSpells;   // lowercase: harmful spells they cast at the player, heals
 	std::vector<std::string> diseases;       // lowercase: diseases their blows can pass on
 	std::vector<std::pair<int, float>> constEffects;   // effect, magnitude: resistances, shields ... their abilities keep on them

@@ -19,3 +19,4 @@ void distantFree();
 // Keep the cells within `radius` of grid cell (gx, gy) built, free the rest
 void distantUpdate(int gx, int gy, int radius);
 const std::vector<DistantCell>& distantCells();
+u32 distantBytes();                           // linear memory its built cells hold

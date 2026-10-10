@@ -15,6 +15,8 @@
 #include "audio.h"
 #include "linear.h"
 #include "log.h"
+#include "memstat.h"
+#include <malloc.h>
 
 static const float kReach = 192.0f;          // iMaxActivateDist
 
@@ -492,29 +494,62 @@ float Session::stereoTarget(float slider, float dt)
 
 // Outdoors, the fog (and with it what is drawn) closes in while a frame's work runs past 30 fps
 // and eases back out once there is room again; indoors the view stays whole
+//
+// An Old 3DS (a CPU a third as fast) caps the frame rate instead of letting it wander: 30 while a frame's work stays
+// under 30 fps' 33 ms, 20 once it keeps running past, 30 again once it keeps well under. Both are even shares of
+// the screen's 60 Hz: a cap of 24 would show frames for 2 and 3 refreshes in turn, a judder worse than a steady 20.
+// Only past 20 fps' 50 ms does the fog close in (interiors, most of the game, hold 30)
 void Session::adaptView(float workMs)
 {
 	// One long frame (a cell arriving) shouldn't shrink the view: each counts at most as a slow one
-	workCost += (fminf(workMs, 45.0f) - workCost) * 0.1f;
+	workCost += (fminf(workMs, g_old3ds ? 70.0f : 45.0f) - workCost) * 0.1f;
+	float budget = 34.0f, minScale = kMinViewScale, maxScale = 1.0f;
+	if (g_old3ds)
+	{
+		// two seconds past the 30 fps budget: 20; four seconds well under it: 30 again
+		bool slow = frameCap == 30 ? workCost > 31.0f : workCost < 24.0f;
+		capFrames = slow ? capFrames + 1 : 0;
+		if (capFrames >= (frameCap == 30 ? 60 : 80))
+		{
+			frameCap = frameCap == 30 ? 20 : 30;
+			capFrames = 0;
+			logf("view: frame rate capped at %d (frame work %.1f ms)", frameCap, workCost);
+		}
+		budget = frameCap == 30 ? 1000.0f : 47.0f;      // (at 30 the cap gives way first)
+		minScale = kMinViewScaleOld3ds;
+		maxScale = kMaxViewScaleOld3ds;                // (a shorter view outdoors: fewer cells' worth of draws)
+	}
 	if (w.current < 0 || w.cells[w.current].interior)
 	{
-		viewScale = 1.0f;
+		// (indoors the view is whole whatever this says: the Old 3DS keeps its outdoor view for the way out)
+		if (!g_old3ds)
+			viewScale = 1.0f;
 		return;
 	}
-	if (workCost > 34.0f)
-		viewScale = fmaxf(kMinViewScale, viewScale - 0.004f);
-	else if (workCost < 30.0f)
-		viewScale = fminf(1.0f, viewScale + 0.002f);
+	if (workCost > budget)
+		viewScale = fmaxf(minScale, viewScale - 0.004f);
+	else if (workCost < budget - 4.0f)
+		viewScale = fminf(maxScale, viewScale + 0.002f);
 }
 
 static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";
 int g_controlLayout = CONTROLS_XBOX;
+int g_gyroAim = 100;
+static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is off
 
 void Session::loadSettings()
 {
+	// An Old 3DS starts with 3D off (the second eye is the whole scene again on a CPU a third as fast); the Options
+	// toggle still turns it on
+	if (g_old3ds)
+		stereoMode = STEREO_OFF;
+	// ... and the GoldenEye layout: one with no C-stick or ZL / ZR (those need a Circle Pad Pro there)
+	if (g_old3ds)
+		g_controlLayout = CONTROLS_GOLDENEYE;
 	FILE* f = fopen(kSettingsPath, "r");
 	if (!f)
 		return;
+	bool gyroOff = false;
 	char line[64];
 	while (fgets(line, sizeof(line), f))
 	{
@@ -530,8 +565,12 @@ void Session::loadSettings()
 		else if (strncmp(line, "numbers=off", 11) == 0) hitIndicators = false;
 		else if (strncmp(line, "combat=vanilla", 14) == 0) combatMode = COMBAT_VANILLA;
 		else if (strncmp(line, "controls=xbox", 13) == 0) g_controlLayout = CONTROLS_XBOX;
+		else if (strncmp(line, "controls=goldeneye", 18) == 0) g_controlLayout = CONTROLS_GOLDENEYE;
+		else if (strncmp(line, "gyroaim=off", 11) == 0) gyroOff = true;
+		else if (strncmp(line, "gyrosens=", 9) == 0 && atoi(line + 9) > 0) s_gyroSens = atoi(line + 9);
 	}
 	fclose(f);
+	g_gyroAim = gyroOff ? 0 : s_gyroSens;
 }
 
 void Session::saveSettings()
@@ -541,7 +580,10 @@ void Session::saveSettings()
 		return;
 	fprintf(f, "stereo=%s\n", stereoMode == STEREO_OFF ? "off" : "on");
 	fprintf(f, "difficulty=%d\neffects=%d\nmusic=%d\n", difficulty, effectsVolume, musicVolume);
-	fprintf(f, "controls=%s\n", g_controlLayout == CONTROLS_CLASSIC ? "classic" : "xbox");
+	fprintf(f, "controls=%s\n", g_controlLayout == CONTROLS_CLASSIC ? "classic" : g_controlLayout == CONTROLS_GOLDENEYE ? "goldeneye" : "xbox");
+	if (g_gyroAim > 0)
+		s_gyroSens = g_gyroAim;
+	fprintf(f, "gyroaim=%s\ngyrosens=%d\n", g_gyroAim > 0 ? "on" : "off", s_gyroSens);
 	fprintf(f, "combat=%s\n", combatMode == COMBAT_GBAC ? "gbac" : "vanilla");
 	fprintf(f, "numbers=%s\n", hitIndicators ? "on" : "off");
 	fclose(f);
@@ -729,8 +771,33 @@ bool Session::refInUse(int ri) const
 	return false;
 }
 
+extern "C" u32 __ctru_heap_size;
+bool g_old3ds = false;
+bool g_sysCoreThreads = false;
+
+int Session::refBudget() const
+{
+	int budget = g_old3ds ? kRefBudgetOld3ds : kRefBudget;
+	// The heap filling up (past four fifths): fewer still, whatever the console
+	if ((size_t)mallinfo().uordblks > __ctru_heap_size / 5 * 4)
+		budget = std::min(budget, w.refsInMemory() * 3 / 4);
+	return budget;
+}
+
+void Session::relieveMemory()
+{
+	int before = mallinfo().uordblks / 1024;
+	evictFarCells(0);
+	freeMapTiles();
+	memoryReserveTake();
+	logf("memory: the heap ran out: far cells and map tiles freed, %d KB used (was %d KB), reserve %s", mallinfo().uordblks / 1024,
+		before, memoryReserveHeld() ? "taken again" : "still spent");
+}
+
 void Session::evictFarCells(int budget)
 {
+	if (budget < 0)
+		budget = refBudget();
 	int n = w.evictCells(budget, [this](int ri) { return refInUse(ri); });
 	if (n)
 		logf("world: %d cells' objects out of memory, %d objects in memory, %d cells' changes kept",
@@ -901,12 +968,12 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		in.moveX = in.moveY = 0.0f;
 		in.jump = false;
 		if (menu)
-			in.lookX = in.lookY = 0.0f;
+			in.lookX = in.lookY = in.gyroYaw = in.gyroPitch = 0.0f;
 	}
 	if (!w.jumpingEnabled)
 		in.jump = false;
 	if (w.controlsOff & 1u)
-		in.lookX = in.lookY = 0.0f;        // DisablePlayerLooking
+		in.lookX = in.lookY = in.gyroYaw = in.gyroPitch = 0.0f;        // DisablePlayerLooking
 	{
 		bool jumped = in.jump && w.player.onGround && !w.player.flying;
 		Scene scene = w.scene();
@@ -1351,7 +1418,7 @@ int Session::lockGate(int ref, const char* lockedSound)
 	if (locked && key)
 	{
 		const Object* k = w.game.object(r.key);
-		notify((k ? k->name : r.key) + " " + w.game.gmst("skeyused", "was used to open the lock."));
+		notify((k ? k->name.str() : r.key.str()) + " " + w.game.gmst("skeyused", "was used to open the lock."));
 		r.lockLevel = -r.lockLevel;       // (the level is kept for Lock)
 		logf("lock: %s opened with %s", r.id.c_str(), r.key.c_str());
 		if (trapped)
@@ -1451,7 +1518,7 @@ void Session::useDoor(int ref)
 std::string Session::targetLabel(int ref)
 {
 	Ref& r = w.refs[ref];
-	std::string name = r.obj ? r.obj->name : r.id;
+	std::string name = r.obj ? r.obj->name.str() : r.id.str();
 	if (r.actor >= 0)
 		name = w.game.actors[r.actor].name + (r.dead ? " (dead)" : "");
 	if (r.type == "DOOR" && r.hasDest && lower(r.destCell) != lower(w.cellName()))
@@ -1945,7 +2012,9 @@ static std::string for3ds(std::string t)
 	bool xbox = g_controlLayout == CONTROLS_XBOX;
 	const char* swap[][2] = {
 		{ "The LEFT THUMBSTICK moves you, and the RIGHT THUMBSTICK looks around.",
-		  "The Circle Pad moves you, and the C-Stick looks around (the D-Pad looks up and down)." },
+		  g_controlLayout == CONTROLS_GOLDENEYE
+			? "The Circle Pad walks and turns; hold R and it aims instead (the D-Pad steps aside and looks up and down)."
+			: "The Circle Pad moves you, and the C-Stick looks around (the D-Pad looks up and down)." },
 		{ "Press B to use your menus. When you are done with them, press B again to close them.",
 		  "Tap the buttons on the bottom screen to use your menus (START for saves). Press B to close them." },
 		{ "Press the WHITE button to use your journal", "Tap Journal on the bottom screen to use your journal" },
@@ -2434,6 +2503,17 @@ void Session::monitorCellChanged()
 	});
 	std::vector<unsigned long>& m = cellMemory[w.cellName()];
 	m.push_back(linearSpaceFree() / 1024);
+	// what holds linear memory: textures, loaded cells' geometry, their people, distant land, decoded sounds (the rest:
+	// the GPU's command buffer, the UI, sky, effects)
+	u32 geometry = 0, actorBytes = 0;
+	for (LoadedCell* l : w.loaded)
+	{
+		geometry += l->cell.geometryBytes;
+		actorBytes += l->actors.bytes;
+	}
+	logf("cellmem: %s entered, %lu KB linear free (visit %d): textures %lu, cells %lu, actors %lu, distant %lu, sounds %lu KB",
+		w.cellName().c_str(), m.back(), (int)m.size(), (unsigned long)(w.textures.bytes / 1024), (unsigned long)(geometry / 1024),
+		(unsigned long)(actorBytes / 1024), (unsigned long)(distantBytes() / 1024), (unsigned long)(audioCacheBytes() / 1024));
 	size_t n = m.size();
 	if (n >= 4 && m[n - 1] + 64 < m[n - 2] && m[n - 2] + 64 < m[n - 3] && m[n - 3] + 64 < m[n - 4])
 		monitorOnce(("mem:" + w.cellName()).c_str(), "linear memory falls on each visit to %s: %lu, %lu, %lu, %lu KB free at entry",

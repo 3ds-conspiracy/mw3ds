@@ -64,6 +64,11 @@ struct ActorMesh
 	std::vector<float> infWeight;      // per vertex: weight[4]
 	std::vector<u8> infCount;          // influences in use per vertex (sorted strongest first)
 	float talk[2], blink[2];
+	// Skinned on the GPU (skin.v.pica): verts are then 24-byte packed vertices (s16 position x posQ, s16 texture
+	// coordinates x uvQ, colour, four palette entries, four weights) that are never rewritten; src and the
+	// influences are dropped
+	bool gpuSkin = false;
+	float posQ = 1.0f, uvQ = 1.0f;
 	float morphT = -1.0f;              // morph position the vertices hold (-1: none yet)
 	u32 glow = 0;                      // enchanted: a pulsing glow in this colour (0xRRGGBB), 0 none
 	std::vector<MorphTrack> morphs;
@@ -101,6 +106,7 @@ struct ActorSet
 	std::vector<Skeleton> skeletons;
 	std::vector<Actor> actors;
 	u32 bytes = 0;
+	u32 skinnedGpu = 0, skinnedCpu = 0;   // skinned meshes read: drawn by skin.v.pica / re-skinned on the CPU
 };
 
 // A cell's .act: version 3 lists placements whose meshes are in library files (under dataDir), their
@@ -134,6 +140,12 @@ u32 actorPoseEvery(float dist2);
 // The largest weight any of an actor's driven morphs (a bow's string) holds at its drive time: 0 at rest, 1 drawn
 float actorMorphWeight(const Actor& a);
 u32 actorSkinEvery(float dist2);
+// GPU skinning (on unless a test turns it off): skinned meshes with at most kSkinBones palette entries are drawn by
+// skin.v.pica from bone matrices, the rest still re-skinned on the CPU
+extern bool g_gpuSkinning;
+static const int kSkinBones = 25;
+// A GPU-skinned mesh's palette: 12 floats (3x4, actor space) per entry, from the pose its rigid neighbours use
+void actorSkinPalette(const Actor& a, const ActorMesh& m, float* out);
 // Group index by name, or -1
 int actorFindGroup(const Skeleton& sk, const char* name);
 // Starts a group; false when the skeleton doesn't have it

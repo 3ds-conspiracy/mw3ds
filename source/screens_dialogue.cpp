@@ -86,7 +86,7 @@ void Session::drawDialogue()
 		return;
 	}
 	const Ref& speaker = w.refs[dlg.ref];
-	header(speaker.actor >= 0 ? w.game.actors[speaker.actor].name : speaker.id);
+	header(speaker.actor >= 0 ? w.game.actors[speaker.actor].name : speaker.id.str());
 
 	const float tx = 4, ty = 24, tw = 206, th = 212;
 	if (wordsRevision != dlg.revision)

@@ -6,6 +6,7 @@
 // Sound files are 'SND1' 22 kHz mono PCM16 (tools/convert/level.py) under <dataDir>/sound and /music.
 bool audioInit(const char* dataDir);
 void audioExit();
+unsigned audioCacheBytes();                       // decoded sounds held (linear memory)
 void audioCacheClear();                        // decoded sounds freed (a session ending)
 bool audioEnabled();
 
