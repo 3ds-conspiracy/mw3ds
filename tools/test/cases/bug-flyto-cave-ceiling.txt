@@ -7,8 +7,10 @@
 0.3 0 0 0 0 GOTO:Omaren_Ancestral_Tomb
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Omaren_Ancestral_Tomb
-0.3 0 0 0 0 LEGIT
+# (to the start of the flight: the ledge is up a slope too steep to walk since the 46 degree limit, so this walk may warp;
+# the flight is the test, and it is LEGIT)
 120 0 0 0 0 WALKTO:@8331,-3984,-52:dive
+0.3 0 0 0 0 LEGIT
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e

@@ -172,7 +172,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:" })
+				"CASTAT:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -1389,6 +1389,7 @@ int main()
 				p.fallTop = p.feet[2];         // a test teleport isn't a fall
 				p.landedFall = 0.0f;
 			}
+			driver.keepFloating(*session);
 			if (driver.busy())
 				driver.update(*session, in, down, dt);
 			touching = false;
@@ -1424,6 +1425,8 @@ int main()
 				driver.fail("timeout");
 			if (inputTime >= stepSecs || (stepBlocking && !driver.busy()))
 			{
+				if (inputTime >= 15.0f)
+					logf("autoinput: step %zu took %.1f s (limit %.0f)", (size_t)inputIndex, inputTime, stepSecs);
 				stepBlocking = false;
 				inputIndex++;
 				inputTime = 0.0f;
@@ -1647,6 +1650,12 @@ int main()
 			snprintf(path, sizeof(path), "sdmc:/3ds/mw3ds/shot_step_%02d.bmp", stepShots++);
 			logf("stepshot: %s %s", path, screenshotSave(path) ? "saved" : "FAILED");
 		}
+		if (!driver.failShot.empty())
+		{
+			logf("drive: screenshot %s %s", driver.failShot.c_str(), screenshotSave(driver.failShot.c_str()) ? "saved" : "FAILED");
+			driver.failShot.clear();
+		}
+		// MW3DS_FAILFAST=1 (native test runs): the run ends at its first failure; the device build carries on
 
 		if (loaded)
 			session->updateLocalMap();

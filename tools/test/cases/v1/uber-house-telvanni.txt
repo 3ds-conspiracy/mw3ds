@@ -1,0 +1,3541 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:8:300
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:p_levitation_e:420
+0.3 0 0 0 0 GIVE:p_fortify_speed_e:340
+0.3 0 0 0 0 GIVE:sc_icarianflight:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:10
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 SPELL:tower_key
+0.3 0 0 0 0 GIVE:p_restore_magicka_e:400
+0.3 0 0 0 0 GIVE:p_invisibility_e:10
+0.3 0 0 0 0 GIVE:p_restore_fatigue_e:60
+0.3 0 0 0 0 GIVE:p_cure_blight_s:6
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+30 0 0 0 0 ACTIVATE:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mouth
+1 0 0 0
+0.3 0 0 0 0 TOPIC:House_Telvanni
+1 0 0 0
+0.3 0 0 0 0 TOPIC:join_House_Telvanni
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:telvanni:ge:0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:muck
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Muck:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+30 0 0 0 0 ACTIVATE:arara_uvulas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Sload_Soap
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SloadSoap:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:new_clothes
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_TheranaClothes:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+30 0 0 0 0 ACTIVATE:mallam_ryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:three_questions
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SpyBaladas:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+30 0 0 0 0 ACTIVATE:galos_mathendis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:coded_message
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_FyrMessage:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-chores1
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Anis_Seloth
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Anis_Seloth
+60 0 0 0 0 ACTIVATE:anis_seloth
+1.5 0 0 0
+0.3 0 0 0 0 BUY:anis_seloth:ingred_muck_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_muck_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_muck_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_muck_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_muck_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_sload_soap_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_sload_soap_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_sload_soap_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_sload_soap_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_sload_soap_01
+0.3 0 0 0 0 BUY:anis_seloth:ingred_daedra_skin_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ingred_muck_01:ge:5
+0.1 0 0 0 0 EXPECT:item:ingred_sload_soap_01:ge:5
+0.1 0 0 0 0 EXPECT:item:ingred_daedra_skin_01:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 ACTIVATE:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:muck
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Muck:ge:100
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Black_Jinx
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_BlackJinx:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:arara_uvulas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sload_Soap
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SloadSoap:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Staff_of_the_Silver_Dawn
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SilverDawn:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-muck
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+60 0 0 0 0 ACTIVATE:arielle_phiencel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Staff_of_the_Silver_Dawn
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SilverDawn:ge:50
+0.1 0 0 0 0 EXPECT:item:silver_staff_dawn_uniq:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+200 0 0 0
+60 0 0 0 0 ACTIVATE:in_impsmall_trapdoor_01a
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Wolverine_Hall
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@152434,38595,1408
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Morag_Tong
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Morag_Tong_Guild
+60 0 0 0 0 ACTIVATE:alven_salas
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Black_Jinx
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 KILL:alven_salas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:alven_salas
+60 0 0 0 0 LOOT:alven_salas:ring_blackjinx_uniq
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:ring_blackjinx_uniq:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 ACTIVATE:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Black_Jinx
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_BlackJinx:ge:100
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 ACTIVATE:arara_uvulas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Staff_of_the_Silver_Dawn
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SilverDawn:ge:100
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-silverdawn
+60 0 0 0 0 ACTIVATE:raven_omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:telvanni:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Branora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@126852,-101680,2366
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora,_Upper_Tower
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+60 0 0 0 0 WALKTO:@-173,1066,-1216
+0.3 0 0 0 0 USE:p_levitation_e
+0.9 0 0 0 0 R
+0.2 0 0 0
+60 0 0 0 0 WALKTO:@-181,1185,-719
+60 0 0 0 0 WALKTO:@-182,1529,-719
+60 0 0 0 0 WALKTO:@120,1435,-694
+120 0 0 0 0 ACTIVATE:ra'zahr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:new_clothes
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_TheranaClothes:ge:72
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:new_clothes
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_TheranaClothes:ge:100
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:slave_rebellion
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SlaveRebellion:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-theranaclothes
+60 0 0 0 0 WALKTO:@0,-300,360
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Branora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@118112,-89071,719
+120 0 0 0 0 DOORTO:Abebaal_Egg_Mine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Abebaal_Egg_Mine
+200 0 0 0
+120 0 0 0 0 ACTIVATE:eleedal_lei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slave_rebellion
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SlaveRebellion:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 LOOT:crate_02_abebaal:key_abebaalslaves_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_abebaalslaves_01:ge:1
+60 0 0 0 0 WALKTO:@2162,3828,-805
+60 0 0 0 0 WALKTO:@1904,4098,-772
+60 0 0 0 0 WALKTO:@1629,4083,-825
+60 0 0 0 0 WALKTO:@1328,4089,-897
+60 0 0 0 0 WALKTO:@1072,3987,-946
+60 0 0 0 0 WALKTO:@827,3844,-954
+60 0 0 0 0 WALKTO:@503,3859,-948
+60 0 0 0 0 WALKTO:@244,4122,-895
+60 0 0 0 0 WALKTO:@-103,4087,-779
+60 0 0 0 0 WALKTO:@-369,4060,-639
+60 0 0 0 0 WALKTO:@-587,4097,-641
+60 0 0 0 0 WALKTO:@-869,4180,-694
+60 0 0 0 0 WALKTO:@-1196,4146,-639
+60 0 0 0 0 WALKTO:@-1373,4058,-636
+60 0 0 0 0 WALKTO:@-1588,4066,-639
+60 0 0 0 0 WALKTO:@-1845,3870,-631
+60 0 0 0 0 WALKTO:@-1957,3620,-624
+60 0 0 0 0 WALKTO:@-1899,3298,-780
+60 0 0 0 0 WALKTO:@-1963,3022,-873
+60 0 0 0 0 WALKTO:@-2036,2795,-876
+60 0 0 0 0 WALKTO:@-2045,2428,-853
+60 0 0 0 0 WALKTO:@-1935,2260,-913
+120 0 0 0 0 ACTIVATE:eleedal_lei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SlaveRebellion:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:felisa_ulessen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slave_rebellion
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SlaveRebellion:ge:100
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-slaverebellion
+60 0 0 0 0 WALKTO:@0,-300,360
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 WALKTO:@193,-42,-384
+60 0 0 0 0 WALKTO:@-131,-142,-128
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+# (the hill between the strider and Arvs-Drelen is steeper than 46 degrees in places: fly over it, down to the ground
+# south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-87725,95456,1317
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+120 0 0 0 0 WALKTO:@3072,4096,512
+2 0 0 0 0 FACE:@3206,4032
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:tower%key
+2 0 0 0
+0.3 0 0 0 0 A
+2 0 0 0
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:5
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refdisp:baladas_demnevanni:ge:80
+0.3 0 0 0 0 TOPIC:Disappearance_of_the_Dwarves
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SpyBaladas:ge:51
+0.3 0 0 0 0 TOPIC:Dwemer_artifacts
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SpyBaladas:ge:61
+0.3 0 0 0 0 TOPIC:Dwemer_language
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SpyBaladas:ge:71
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 ACTIVATE:mallam_ryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:three_questions
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_SpyBaladas:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Nchuleft
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_NchuleftKey:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-spybaladas
+60 0 0 0 0 WALKTO:@0,-300,360
+60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@124384,15858,492
+120 0 0 0 0 DOORTO:Tower_of_Tel_Fyr,_Onyx_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tower_of_Tel_Fyr,_Onyx_Hall
+120 0 0 0 0 DOORTO:Tower_of_Tel_Fyr,_Hall_of_Fyr
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tower_of_Tel_Fyr,_Hall_of_Fyr
+60 0 0 0 0 WALKTO:@4160,3920,14330
+0.3 0 0 0 0 USE:p_levitation_e
+1.1 0 0 0 0 R
+0.2 0 0 0
+60 0 0 0 0 WALKTO:@4160,4188,14842
+60 0 0 0 0 WALKTO:@4176,4680,14844
+120 0 0 0 0 ACTIVATE:divayth_fyr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:coded_message
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_FyrMessage:ge:50
+0.1 0 0 0 0 EXPECT:item:bk_ResponseFromDivaythFyr:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 ACTIVATE:galos_mathendis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:coded_message
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_FyrMessage:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Cure_Blight
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_CureBlight:ge:10
+0.3 0 0 0 0 TOPIC:patron
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-fyrmessage
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148105,31944,721
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Pierlette
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Pierlette_Rostorard
+120 0 0 0 0 ACTIVATE:pierlette_rostorard
+1.5 0 0 0
+0.3 0 0 0 0 BUY:pierlette_rostorard:p_cure_blight_s
+0.3 0 0 0 0 BUY:pierlette_rostorard:p_cure_blight_s
+0.3 0 0 0 0 BUY:pierlette_rostorard:p_cure_blight_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_cure_blight_s:ge:3
+200 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85335,120167,3738
+120 0 0 0 0 DOORTO:Tel_Vos,_Services_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Services_Tower
+120 0 0 0 0 ACTIVATE:andil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cure_Blight
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_CureBlight:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Council
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_BaladasAlly:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-cureblight1
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@66550,104224,1952
+200 0 0 0
+120 0 0 0 0 DOORTO:Nchuleft
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Nchuleft
+120 0 0 0 0 PICKUP:misc_dwrv_artifact40
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_artifact40:ge:1
+120 0 0 0 0 PICKUP:bk_ChroniclesNchuleft
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_ChroniclesNchuleft:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 ACTIVATE:galos_mathendis
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cure_Blight
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_CureBlight:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Daedra_Skin
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DaedraSkin:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:mallam_ryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Nchuleft
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_NchuleftKey:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-nchuleftkey
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 WALKTO:@193,-42,-384
+60 0 0 0 0 WALKTO:@-131,-142,-128
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+# (the hill between the strider and Arvs-Drelen is steeper than 46 degrees in places: fly over it, down to the ground
+# south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-87725,95456,1317
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+120 0 0 0 0 WALKTO:@3072,4096,512
+2 0 0 0 0 FACE:@3206,4032
+0.3 0 0 0 0 A
+2 0 0 0
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Council
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_BaladasAlly:ge:30
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Antecedents_of_Dwemer_Law
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DwemerLaw:ge:5
+0.3 0 0 0 0 TOPIC:Chronicles_of_Nchuleft
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_ChroniclesNchuleft:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+120 0 0 0 0 ACTIVATE:punibi_yahaz
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:punibi_yahaz:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Arobar_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Arobar_Manor_Entrance
+120 0 0 0 0 ACTIVATE:ethes_evos
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Antecedents_of_Dwemer_Law
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DwemerLaw:ge:50
+0.1 0 0 0 0 EXPECT:item:bk_AntecedantsDwemerLaw:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+120 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+30 0 0 0 0 WALKTO:@-21128,-14037,286
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@5000,-2000,1400
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@27582,11560,780
+40 0 0 0
+180 0 0 0 0 DOORTO:Shishara
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shishara
+0.3 0 0 0 0 USE:p_levitation_e
+180 0 0 0 0 PICKUP:bk_vampiresofvvardenfell1
+2 0 0 0
+180 0 0 0 0 PICKUP:bk_NchunaksFireAndFaith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_NchunaksFireAndFaith:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+180 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+120 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 WALKTO:@193,-42,-384
+60 0 0 0 0 WALKTO:@-131,-142,-128
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+# (the hill between the strider and Arvs-Drelen is steeper than 46 degrees in places: fly over it, down to the ground
+# south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-87725,95456,1317
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+120 0 0 0 0 WALKTO:@3072,4096,512
+2 0 0 0 0 FACE:@3206,4032
+0.3 0 0 0 0 A
+2 0 0 0
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Antecedents_of_Dwemer_Law
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DwemerLaw:ge:100
+0.3 0 0 0 0 TOPIC:Fire_and_Faith
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_FireAndFaith:ge:100
+0.3 0 0 0 0 TOPIC:join_the_Council
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_BaladasAlly:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-baladasally
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Daedra_Skin
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DaedraSkin:ge:100
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 TOPIC:join_the_Council
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_BaladasAlly:ge:100
+0.1 0 0 0 0 EXPECT:rank:Telvanni:ge:4
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-daedraskin
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@107333,119095,1863
+120 0 0 0 0 DOORTO:Tel_Mora,_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora,_Upper_Tower
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:dratha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Flesh_Made_Whole
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_FleshAmulet:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-dratha1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148572,36092,1526
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Great_Hall
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@2,965,128
+1.0 0 0 0 0 R
+0.2 0 0 0
+30 0 0 0 0 WALKTO:@-5,1143,385
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Upper_Tower
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@245,479,-873
+0.75 0 0 0 0 R
+0.2 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_General
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_General_Quarters
+120 0 0 0 0 KILL:berengeval
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:berengeval
+60 0 0 0 0 LOOT:berengeval:amuletfleshmadewhole_uniq
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:amuletfleshmadewhole_uniq:ge:1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@107333,119095,1863
+120 0 0 0 0 DOORTO:Tel_Mora,_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora,_Upper_Tower
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:dratha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Flesh_Made_Whole
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_FleshAmulet:ge:100
+0.1 0 0 0 0 EXPECT:item:Amulet_of_Spell_Absorption:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-fleshamulet
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Sadrith_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Branora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@126852,-101680,2366
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora,_Upper_Tower
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+60 0 0 0 0 WALKTO:@-173,1066,-1216
+0.3 0 0 0 0 USE:p_levitation_e
+0.9 0 0 0 0 R
+0.2 0 0 0
+60 0 0 0 0 WALKTO:@-181,1185,-719
+60 0 0 0 0 WALKTO:@-182,1529,-719
+60 0 0 0 0 WALKTO:@120,1435,-694
+120 0 0 0 0 ACTIVATE:therana
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Auriel's_Bow
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Ash_Yams
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_AurielBow:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-therana1
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+30 0 0 0 0 WALKTO:@-21128,-14037,286
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@5000,-2000,1400
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@21772,38791,1322
+40 0 0 0
+180 0 0 0 0 DOORTO:Ghostgate,_Tower_of_Dawn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ghostgate,_Tower_of_Dawn
+120 0 0 0 0 KILL:ralyn_othravel
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:ralyn_othravel
+4 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 FACE:ralyn_othravel:mid
+60 0 0 0 0 LOOT:ralyn_othravel:ebony_bow_auriel
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony_bow_auriel:ge:1
+0.3 0 0 0 0 USE:p_restore_fatigue_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.3 0 0 0 0 USE:p_restore_fatigue_e
+0.3 0 0 0 0 USE:p_restore_fatigue_e
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:telvanni%guard
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Branora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@126852,-101680,2366
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora,_Upper_Tower
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+60 0 0 0 0 WALKTO:@-173,1066,-1216
+0.3 0 0 0 0 USE:p_levitation_e
+0.9 0 0 0 0 R
+0.2 0 0 0
+60 0 0 0 0 WALKTO:@-181,1185,-719
+60 0 0 0 0 WALKTO:@-182,1529,-719
+60 0 0 0 0 WALKTO:@120,1435,-694
+120 0 0 0 0 ACTIVATE:therana
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ash_Yams
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_AurielBow:ge:100
+0.1 0 0 0 0 EXPECT:item:Daedric_Cuirass_HTAB:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-aurielbow
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148572,36092,1526
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Great_Hall
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@2,965,128
+1.0 0 0 0 0 R
+0.2 0 0 0
+30 0 0 0 0 WALKTO:@-5,1143,385
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Upper_Tower
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@245,479,-873
+2.7 0 0 0 0 R
+0.2 0 0 0
+1 0 0 0 0 FACE:@246,703
+1.5 0 1 0
+0.5 0 0 0
+120 0 0 0 0 ACTIVATE:neloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Drake's_Pride
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DrakePride:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-neloth1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@126267,45966,3300
+120 0 0 0 0 DOORTO:Tel_Aruhn,_Tower_Living
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Aruhn,_Tower_Living_Quarters
+120 0 0 0 0 KILL:senise_thindo
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:senise_thindo
+60 0 0 0 0 LOOT:senise_thindo:exquisite_robe_drake's%pride
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:exquisite_robe_drake's%pride:ge:1
+0.3 0 0 0 0 SAVE:uber-ht-robe
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@146904,38773,623
+8 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 WALKTO:@144859,42228,808
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148572,36092,1526
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Great_Hall
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@2,965,128
+1.0 0 0 0 0 R
+0.2 0 0 0
+30 0 0 0 0 WALKTO:@-5,1143,385
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Upper_Tower
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+30 0 0 0 0 WALKTO:@245,479,-873
+2.7 0 0 0 0 R
+0.2 0 0 0
+1 0 0 0 0 FACE:@246,703
+1.5 0 1 0
+0.5 0 0 0
+120 0 0 0 0 ACTIVATE:neloth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Drake's_Pride
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DrakePride:ge:100
+0.1 0 0 0 0 EXPECT:rank:telvanni:ge:4
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-drakepride
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Mudan-Mul_Egg_Mine
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_MineCure:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@77924,118508,842
+120 0 0 0 0 DOORTO:Mudan-Mul
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mudan-Mul_Egg_Mine
+120 0 0 0 0 WALKTO:@2140,1394,-1303
+20 0 0 0
+120 0 0 0 0 KILL:kwama%worker%blighted
+2 0 0 0
+120 0 0 0 0 KILL:kwama%worker%blighted
+2 0 0 0
+120 0 0 0 0 WALKTO:kwama%queen_mudan
+1 0 0 0
+1 0 0 0 0 CASTAT:kwama%queen_mudan:cure_blight_target
+6 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_MineCure:ge:70
+0.3 0 0 0 0 USE:p_cure_blight_s
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-mine
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mudan-Mul_Egg_Mine
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_MineCure:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-minecure
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:arielle_phiencel
+1.5 0 0 0
+1 0 0 0 0 TAP:266:193
+2 0 0 0
+0.5 0 0 0 0 TAP:100:74
+0.5 0 0 0 0 TAP:78:222
+1 0 0 0
+0.5 0 0 0 0 TAP:238:222
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+200 0 0 0
+120 0 0 0 0 ACTIVATE:in_impsmall_trapdoor_01a
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@152090,38271,1138
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Urtiso
+3 0 0 0
+120 0 0 0 0 ACTIVATE:urtiso_faryon
+1.5 0 0 0
+1 0 0 0 0 TAP:266:165
+2 0 0 0
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.5 0 0 0 0 TAP:78:222
+1 0 0 0
+0.5 0 0 0 0 TAP:238:222
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Wizard_Spells
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Wizard_Spells
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_WizardSpells:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-wizspells
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Odirniran:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Branora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@145004,-58823,973
+40 0 0 0
+180 0 0 0 0 DOORTO:Odirniran
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Odirniran
+0.3 0 0 0 0 SAVE:uber-ht-odirniran1
+180 0 0 0 0 KILL:remasa_othril
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:remasa_othril
+180 0 0 0 0 KILL:haleneri_salor
+2 0 0 0
+180 0 0 0 0 KILL:valyne_vedaren
+2 0 0 0
+180 0 0 0 0 KILL:talmsa_falas
+2 0 0 0
+60 0 0 0 0 WALKTO:@110,3844,-1280
+1 0 0 0 0 FACE:@192,3844
+0.3 0 0 0 0 CAST:tower_key
+2 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+120 0 0 0 0 DOORTO:Odirniran,_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Odirniran,_Tower
+120 0 0 0 0 ACTIVATE:milyn_faram
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Odirniran:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-odirniran2
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Odirniran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Odirniran:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-odirniran
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mages_Guild_monopoly
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Monopoly:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 WALKTO:@193,-42,-384
+60 0 0 0 0 WALKTO:@-131,-142,-128
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Sarethi_Manor
+120 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Mages_Guild_monopoly
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ramoran_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Ramoran_Manor
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ramoran_Private
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Ramoran_Private_Quarters
+120 0 0 0 0 ACTIVATE:hlaren_ramoran
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 TOPIC:appeal_to_fairness
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Monopoly:ge:34
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-monopoly1
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ramoran_Manor
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Manor_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Llethri_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Private
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Llethri_Private_Quarters
+120 0 0 0 0 ACTIVATE:garisa_llethri
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 TOPIC:appeal_to_fairness
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Monopoly:ge:33
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-monopoly2
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Manor_Entrance
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Entrance
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Redoran_Council_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Redoran_Council_Hall
+120 0 0 0 0 DOORTO:Ald-ruhn,_Morvayn_Quarters
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Morvayn_Quarters
+120 0 0 0 0 ACTIVATE:brara_morvayn
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:0
+1 0 0 0
+0.3 0 0 0 0 TOPIC:appeal_to_fairness
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Monopoly:ge:31
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-monopoly3
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mages_Guild_monopoly
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Monopoly:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-monopoly
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shishi
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Shishi:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 WALKTO:@193,-42,-384
+60 0 0 0 0 WALKTO:@-131,-142,-128
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Maar%Gan
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Maar%Gan
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@-28283,123808,917
+40 0 0 0
+180 0 0 0 0 DOORTO:Shishi
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Shishi
+0.3 0 0 0 0 SAVE:uber-ht-shishi1
+240 0 0 0 0 KILL:brerama_selas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:brerama_selas
+180 0 0 0 0 ACTIVATE:in_v_s_trapdoor_01
+1.5 0 0 0
+3 0 0 0
+180 0 0 0 0 ACTIVATE:faves_andas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shishi
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Shishi:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-shishi2
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shishi
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Shishi:ge:100
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-shishi
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mouth
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_RecruitEddie:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+120 0 0 0 0 DOORTO:Balmora,_Fast_Eddie
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Fast_Eddie's_House
+120 0 0 0 0 ACTIVATE:edd_theman
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mouth
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_RecruitEddie:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-eddie1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Mouth
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_RecruitEddie:ge:100
+0.1 0 0 0 0 EXPECT:rank:telvanni:ge:5
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-eddie
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+60 0 0 0 0 WALKTO:@4097,4812,262
+60 0 0 0 0 WALKTO:@3844,4720,254
+60 0 0 0 0 WALKTO:@3843,4969,125
+60 0 0 0 0 WALKTO:@3837,5223,1
+60 0 0 0 0 WALKTO:@3853,5339,11
+60 0 0 0 0 WALKTO:@3952,5353,-4
+60 0 0 0 0 WALKTO:@4253,5350,-127
+60 0 0 0 0 WALKTO:@4359,5232,-127
+60 0 0 0 0 WALKTO:@4354,4954,-255
+60 0 0 0 0 WALKTO:@4221,4841,-256
+60 0 0 0 0 WALKTO:@3955,4827,-382
+60 0 0 0 0 WALKTO:@3838,4956,-382
+60 0 0 0 0 WALKTO:@3830,5169,-507
+60 0 0 0 0 WALKTO:@3827,5342,-511
+60 0 0 0 0 WALKTO:@3839,5768,-512
+60 0 0 0 0 WALKTO:@3816,6267,-512
+60 0 0 0 0 WALKTO:@3887,6386,-512
+60 0 0 0 0 WALKTO:@3880,6701,-479
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:10
+0.3 0 0 0 0 TOPIC:strong_souls
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:20
+0.3 0 0 0 0 TOPIC:construction_contract
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-strong1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Branora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Branora
+120 0 0 0 0 ACTIVATE:nireli_farys
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:nireli_farys:Ebonheart
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@9802,-101914,1392
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart,_Grand_Council_Chambers
+120 0 0 0 0 ACTIVATE:vedam_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:construction_contract
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_stronghold_c_hlaalu:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-strong2
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:arielle_phiencel
+1.5 0 0 0
+1 0 0 0 0 TAP:266:193
+2 0 0 0
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.5 0 0 0 0 TAP:78:222
+1 0 0 0
+0.5 0 0 0 0 TAP:238:222
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+200 0 0 0
+120 0 0 0 0 ACTIVATE:in_impsmall_trapdoor_01a
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@152090,38271,1138
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Urtiso
+3 0 0 0
+120 0 0 0 0 ACTIVATE:urtiso_faryon
+1.5 0 0 0
+1 0 0 0 0 TAP:266:165
+2 0 0 0
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.1 0 0 0 0 DOWN
+0.5 0 0 0 0 TAP:78:222
+1 0 0 0
+0.5 0 0 0 0 TAP:238:222
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-strong3
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:summon_storm_atronach
+3 0 0 0
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:summon_storm_atronach
+3 0 0 0
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1.5 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+1 0 0 0 0 CASTAT:atronach_storm_summon:fire_storm
+2 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+5 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_soulgem_grand:ge:2
+0.3 0 0 0 0 SAVE:uber-ht-strong4
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+60 0 0 0 0 WALKTO:@4097,4812,262
+60 0 0 0 0 WALKTO:@3844,4720,254
+60 0 0 0 0 WALKTO:@3843,4969,125
+60 0 0 0 0 WALKTO:@3837,5223,1
+60 0 0 0 0 WALKTO:@3853,5339,11
+60 0 0 0 0 WALKTO:@3952,5353,-4
+60 0 0 0 0 WALKTO:@4253,5350,-127
+60 0 0 0 0 WALKTO:@4359,5232,-127
+60 0 0 0 0 WALKTO:@4354,4954,-255
+60 0 0 0 0 WALKTO:@4221,4841,-256
+60 0 0 0 0 WALKTO:@3955,4827,-382
+60 0 0 0 0 WALKTO:@3838,4956,-382
+60 0 0 0 0 WALKTO:@3830,5169,-507
+60 0 0 0 0 WALKTO:@3827,5342,-511
+60 0 0 0 0 WALKTO:@3839,5768,-512
+60 0 0 0 0 WALKTO:@3816,6267,-512
+60 0 0 0 0 WALKTO:@3887,6386,-512
+60 0 0 0 0 WALKTO:@3880,6701,-479
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-strong5
+200 0 0 0
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:55
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-strong60
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@115000,27000,800
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+90 0 0 0 0 FLYTO:@85700,11250,1950
+120 0 0 0 0 ACTIVATE:gashnakh_gra-mughol
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+60 0 0 0 0 WALKTO:@4097,4812,262
+60 0 0 0 0 WALKTO:@3844,4720,254
+60 0 0 0 0 WALKTO:@3843,4969,125
+60 0 0 0 0 WALKTO:@3837,5223,1
+60 0 0 0 0 WALKTO:@3853,5339,11
+60 0 0 0 0 WALKTO:@3952,5353,-4
+60 0 0 0 0 WALKTO:@4253,5350,-127
+60 0 0 0 0 WALKTO:@4359,5232,-127
+60 0 0 0 0 WALKTO:@4354,4954,-255
+60 0 0 0 0 WALKTO:@4221,4841,-256
+60 0 0 0 0 WALKTO:@3955,4827,-382
+60 0 0 0 0 WALKTO:@3838,4956,-382
+60 0 0 0 0 WALKTO:@3830,5169,-507
+60 0 0 0 0 WALKTO:@3827,5342,-511
+60 0 0 0 0 WALKTO:@3839,5768,-512
+60 0 0 0 0 WALKTO:@3816,6267,-512
+60 0 0 0 0 WALKTO:@3887,6386,-512
+60 0 0 0 0 WALKTO:@3880,6701,-479
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+200 0 0 0
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:100
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-strong110
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+200 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+200 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+# (the hill between the strider and Arvs-Drelen is steeper than 46 degrees in places: fly over it, down to the ground
+# south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-87725,95456,1317
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+120 0 0 0 0 WALKTO:@3072,4096,512
+2 0 0 0 0 FACE:@3206,4032
+0.3 0 0 0 0 A
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dahrk_Mezalf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DahrkMezalf:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@-61000,113000,1500
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+90 0 0 0 0 FLYTO:@-36144,134750,1552:beside
+120 0 0 0 0 DOORTO:Bthungthumz
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Bthungthumz
+120 0 0 0 0 KILL:dahrk_mezalf
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dahrk_mezalf
+60 0 0 0 0 LOOT:dahrk_mezalf:ring_dahrkmezalf_uniq
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:ring_dahrkmezalf_uniq:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+200 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis
+200 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+# (the hill between the strider and Arvs-Drelen is steeper than 46 degrees in places: fly over it, down to the ground
+# south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-87725,95456,1317
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis,_Arvs-Drelen
+120 0 0 0 0 WALKTO:@3072,4096,512
+2 0 0 0 0 FACE:@3206,4032
+0.3 0 0 0 0 A
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dahrk_Mezalf
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_DahrkMezalf:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-dahrk
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:edd_theman
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Ring_of_Equity
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_EddieRing:ge:10
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148572,36092,1526
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Tel_Naga_Great_Hall
+120 0 0 0 0 KILL:drodos_galen
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:drodos_galen
+60 0 0 0 0 LOOT:drodos_galen:key_nelothtelnaga
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_nelothtelnaga:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 ACTIVATE:edd_theman
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ring_of_Equity
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_EddieRing:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+200 0 0 0
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+1 0 0 0
+120 0 0 0 0 ACTIVATE:edd_theman
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Ring_of_Equity
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_EddieRing:ge:100
+0.1 0 0 0 0 EXPECT:item:ring_equity_uniq:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-eddiering
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+20 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Anis_Seloth
+3 0 0 0
+60 0 0 0 0 ACTIVATE:anis_seloth
+1.5 0 0 0
+0.3 0 0 0 0 BUY:anis_seloth:p_invisibility_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_invisibility_s:ge:1
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ajira
+1.5 0 0 0
+0.3 0 0 0 0 BUY:ajira:p_invisibility_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_invisibility_s:ge:2
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Caldera
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:ernand_thierry
+1.5 0 0 0
+0.3 0 0 0 0 BUY:ernand_thierry:p_invisibility_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_invisibility_s:ge:3
+60 0 0 0 0 ACTIVATE:emelia_duronia
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:emelia_duronia:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:anarenen
+1.5 0 0 0
+0.3 0 0 0 0 BUY:anarenen:p_invisibility_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_invisibility_s:ge:4
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Nalcarya
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Nalcarya_of_White_Haven
+60 0 0 0 0 ACTIVATE:nalcarya_of_white_haven
+1.5 0 0 0
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:p_invisibility_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_invisibility_s:ge:5
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+20 0 0 0
+120 0 0 0 0 ACTIVATE:edd_theman
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Amulet_of_Unity
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_EddieAmulet:ge:10
+0.3 0 0 0 0 TOPIC:Amulet_of_Unity
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_EddieAmulet:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+200 0 0 0
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+1 0 0 0
+120 0 0 0 0 ACTIVATE:edd_theman
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Amulet_of_Unity
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_EddieAmulet:ge:100
+0.1 0 0 0 0 EXPECT:item:amulet_unity_uniq:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-eddies
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Raynasa_Rethan
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_AttackRethan:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-rethan10
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+30 0 0 0 0 WALKTO:@-21128,-14037,286
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-35904,-37056,2016
+120 0 0 0 0 DOORTO:Rethan_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Rethan_Manor
+120 0 0 0 0 KILL:raynasa_rethan
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:raynasa_rethan
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Raynasa_Rethan
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_AttackRethan:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Banden_Indarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_AttackIndarys:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-indarys10
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@148576,28192,1792
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 WALKTO:@2560,3930,14528
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Ald-ruhn
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 WALKTO:@193,-42,-384
+60 0 0 0 0 WALKTO:@-131,-142,-128
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@-35364,79659,1829
+120 0 0 0 0 DOORTO:Indarys_Manor
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Indarys_Manor
+120 0 0 0 0 KILL:banden_indarys
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:banden_indarys
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Banden_Indarys
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_AttackIndarys:ge:100
+0.3 0 0 0 0 TOPIC:chores
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-indarys
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@115000,27000,800
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+90 0 0 0 0 FLYTO:@77420,20170,1984:beside
+120 0 0 0 0 DOORTO:Mzanchend
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mzanchend
+120 0 0 0 0 PICKUP:misc_dwrv_artifact70
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_artifact70:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+60 0 0 0 0 WALKTO:@4097,4812,262
+60 0 0 0 0 WALKTO:@3844,4720,254
+60 0 0 0 0 WALKTO:@3843,4969,125
+60 0 0 0 0 WALKTO:@3837,5223,1
+60 0 0 0 0 WALKTO:@3853,5339,11
+60 0 0 0 0 WALKTO:@3952,5353,-4
+60 0 0 0 0 WALKTO:@4253,5350,-127
+60 0 0 0 0 WALKTO:@4359,5232,-127
+60 0 0 0 0 WALKTO:@4354,4954,-255
+60 0 0 0 0 WALKTO:@4221,4841,-256
+60 0 0 0 0 WALKTO:@3955,4827,-382
+60 0 0 0 0 WALKTO:@3838,4956,-382
+60 0 0 0 0 WALKTO:@3830,5169,-507
+60 0 0 0 0 WALKTO:@3827,5342,-511
+60 0 0 0 0 WALKTO:@3839,5768,-512
+60 0 0 0 0 WALKTO:@3816,6267,-512
+60 0 0 0 0 WALKTO:@3887,6386,-512
+60 0 0 0 0 WALKTO:@3880,6701,-479
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:170
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+200 0 0 0
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:200
+0.3 0 0 0 0 SAVE:uber-ht-strong200
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:telvanni:ge:6
+0.3 0 0 0 0 TOPIC:Advancement
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Magister
+1 0 0 0
+0.3 0 0 0 0 CHOICE:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Archmagister:ge:10
+0.1 0 0 0 0 EXPECT:rank:telvanni:ge:8
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-magister
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 FLYTO:@126225,45887,3715
+120 0 0 0 0 DOORTO:Tel_Aruhn,_Upper_Tower
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Aruhn,_Upper_Tower
+120 0 0 0 0 KILL:gothren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:gothren
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 ACTIVATE:gals_arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals_arethi:Tel_Mora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Mora
+120 0 0 0 0 ACTIVATE:tonas_telvani
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:tonas_telvani:Vos
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vos
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@85731,117960,5081:beside
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Tel_Vos,_Aryon's_Chambers
+120 0 0 0 0 ACTIVATE:aryon
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Magister
+1 0 0 0
+0.1 0 0 0 0 EXPECT:rank:telvanni:ge:9
+0.3 0 0 0 0 TOPIC:Magister
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Archmagister:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-archmagister
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+60 0 0 0 0 WALKTO:@4097,4812,262
+60 0 0 0 0 WALKTO:@3844,4720,254
+60 0 0 0 0 WALKTO:@3843,4969,125
+60 0 0 0 0 WALKTO:@3837,5223,1
+60 0 0 0 0 WALKTO:@3853,5339,11
+60 0 0 0 0 WALKTO:@3952,5353,-4
+60 0 0 0 0 WALKTO:@4253,5350,-127
+60 0 0 0 0 WALKTO:@4359,5232,-127
+60 0 0 0 0 WALKTO:@4354,4954,-255
+60 0 0 0 0 WALKTO:@4221,4841,-256
+60 0 0 0 0 WALKTO:@3955,4827,-382
+60 0 0 0 0 WALKTO:@3838,4956,-382
+60 0 0 0 0 WALKTO:@3830,5169,-507
+60 0 0 0 0 WALKTO:@3827,5342,-511
+60 0 0 0 0 WALKTO:@3839,5768,-512
+60 0 0 0 0 WALKTO:@3816,6267,-512
+60 0 0 0 0 WALKTO:@3887,6386,-512
+60 0 0 0 0 WALKTO:@3880,6701,-479
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:stronghold
+1 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_Animunculi
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:210
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-ht-strong210
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 WALKTO:@0,-300,360
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@115000,27000,800
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_fortify_speed_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+0.3 0 0 0 0 USE:p_levitation_e
+90 0 0 0 0 FLYTO:@68900,6204,1363
+120 0 0 0 0 DOORTO:Galom_Daeus,_Entry
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Galom_Daeus,_Entry
+120 0 0 0 0 DOORTO:Galom_Daeus,_Observatory
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Galom_Daeus,_Observatory
+120 0 0 0 0 PICKUP:bk_SecretsDwemerAnimunculi
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_SecretsDwemerAnimunculi:ge:1
+0.3 0 0 0 0 USE:p_restore_magicka_e
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+3 0 0 0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Chambers
+60 0 0 0 0 WALKTO:@4097,4812,262
+60 0 0 0 0 WALKTO:@3844,4720,254
+60 0 0 0 0 WALKTO:@3843,4969,125
+60 0 0 0 0 WALKTO:@3837,5223,1
+60 0 0 0 0 WALKTO:@3853,5339,11
+60 0 0 0 0 WALKTO:@3952,5353,-4
+60 0 0 0 0 WALKTO:@4253,5350,-127
+60 0 0 0 0 WALKTO:@4359,5232,-127
+60 0 0 0 0 WALKTO:@4354,4954,-255
+60 0 0 0 0 WALKTO:@4221,4841,-256
+60 0 0 0 0 WALKTO:@3955,4827,-382
+60 0 0 0 0 WALKTO:@3838,4956,-382
+60 0 0 0 0 WALKTO:@3830,5169,-507
+60 0 0 0 0 WALKTO:@3827,5342,-511
+60 0 0 0 0 WALKTO:@3839,5768,-512
+60 0 0 0 0 WALKTO:@3816,6267,-512
+60 0 0 0 0 WALKTO:@3887,6386,-512
+60 0 0 0 0 WALKTO:@3880,6701,-479
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House,_Hermitage
+0.3 0 0 0 0 USE:p_levitation_e
+120 0 0 0 0 ACTIVATE:llunela_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Dwemer_Animunculi
+1 0 0 0
+0.3 0 0 0 0 CHOICE:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:270
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+200 0 0 0
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+6 0 0 0 0 SLEEP:24
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HT_Stronghold:ge:300
+0.3 0 0 0 0 SAVE:uber-ht-strong300

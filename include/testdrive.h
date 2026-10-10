@@ -25,6 +25,8 @@
 // A walk that makes no progress for a few seconds jumps once, then gives up with "drive: stuck" and warps next
 // to the target (so one blocked path doesn't sink the rest of a chapter; the log still fails the run).
 #pragma once
+
+extern bool g_testFailed;           // a drive or expect FAIL happened (MW3DS_FAILFAST=1: the run stops at the first)
 #include <string>
 #include <vector>
 #include <3ds/types.h>
@@ -34,7 +36,7 @@ class Session;
 
 struct TestDriver
 {
-	enum Kind { NONE, WALK, KILL, ACTIVATE, SEARCH, TAKE, LOOTWAIT, FLY, HOP, TALKWAIT, DOORWAIT };
+	enum Kind { NONE, WALK, KILL, ACTIVATE, SEARCH, TAKE, LOOTWAIT, FLY, HOP, TALKWAIT, DOORWAIT, UNSEEN, UNTIL };
 	Kind kind = NONE;
 	std::string id;
 	int ref = -1;
@@ -51,6 +53,23 @@ struct TestDriver
 	struct SwimLeg { float pos[3]; bool swim, jump; float yaw, pitch, seconds; };   // (the heading held for `seconds`, ending at pos)
 	std::vector<SwimLeg> swimRoute;
 	int floodTries = 0;
+	float takeoffZ = 0.0f;           // where the flight left the ground (v2: the first 400 above it climbed slowly)
+	bool outAimed = false;           // v2: the step out from under a roof goes to open sky found (outGoal)
+	float outGoal[2] = {};
+	bool crouchTried = false, crouchSet = false;   // v2: crouched once to look under what hid the target
+	bool lookUpTried = false;        // v2: floated up once to look over what hid the target
+	float lookUpTimer = 0.0f, lookUpBase = 0.0f;
+	bool unlockTried = false;        // v2: a locked door in the way had a scroll cast on it
+	bool earlyTried = false;         // v2: pressed already on seeing its prompt from further than the walk's end
+	bool escortLoose = false;        // v2: an escort that stopped coming within 600 is left to catch up (till back in 250)
+	float escortWait = 0.0f, escortBest = 1e9f, escortSince = 0.0f;   // an escort fallen behind: how long, the nearest since
+	float backTimer = 0.0f;          // a swinging door holding us back: backing off it a moment
+	int backTries = 0;
+	int fightRef = -1;               // a walk held up by an attacker in the way: fighting it first
+	float fightTimer = 0.0f;
+	bool floodKeep = false;          // that route was to the next path point: the path is kept
+	int deadEntry = -1;              // a trial route to the goal's piece of a split grid: its point, walked to next
+	float deadGoal[3] = {};
 	bool diveOk = false;             // WALKTO:<where>:dive: when stuck, feel a way out by trial steps (swimming, jumping)
 	bool lowFly = false;             // FLYTO:@x,y,z:low: a low cruise for caves and halls, trying lower before higher when blocked
 	float legTimer = 0.0f;
@@ -60,6 +79,8 @@ struct TestDriver
 	int doorLast = -1;               // the inner door last opened on the way (another one is tried; the same only if a trap ate the press)
 	float lineTimer = 0.0f;          // KILL: seconds spent stepping aside from someone in the line to the target
 	float paralysedLog = 0.0f;       // seconds until "paralysed" is logged again
+	int floatCell = -1;              // FLOAT: the cell it began in (a door ends it)
+	float pressAt[3] = {};           // DOORWAIT: where the player stood at the press
 	int doorCell = -1;               // DOORWAIT: the cell the press was made in
 	bool doorTrapped = false;        // DOORWAIT: the door carried a trap when pressed
 	float sidestep = 0.0f, sidestepTimer = 0.0f, lastGoal = 1e9f;
@@ -67,6 +88,8 @@ struct TestDriver
 	bool pickup = false;             // PICKUP: a book opens to read: Take it (TAKE waits for the screen)
 	float takeTimer = 0.0f;
 	float strikeFor = 0.0f;          // STRIKE: seconds of swings, then done (0: KILL, until dead)
+	bool killUnseen = false;         // KILL:<id>:unseen: no blow while anyone else could report the murder
+	float unseenLimit = 0.0f, unseenTimer = 0.0f;   // UNSEEN:<secs>: waiting for nobody to be watching
 	std::string lootItem;            // LOOT: what to take once its container screen is open
 	bool lootPut = false;            // PUT: lootItem goes from the inventory into the container instead
 	std::string searchVerb, searchArg;          // SEARCH: what to start once the target is in the loaded cells
@@ -96,7 +119,20 @@ struct TestDriver
 	bool update(Session& s, PlayerInput& in, u32& down, float dt);
 	bool busy() const { return kind != NONE; }
 	void fail(const char* why);
-	static bool expect(Session& s, const std::string& spec);
+	static bool expect(Session& s, const std::string& spec, bool quiet = false);
+	std::string untilSpec;           // UNTIL:<check>: the check that ends the step
+	bool flyBegun = false;
+	bool ledAway = false, leading = false;   // KILL:unseen (v2 kit): led the one to kill away once; walking them there now
+	int commandTries = 0;
+	std::string leadEscort;          // the escort to put back after the lead
+	bool underWaited = false;        // FLYTO (v2 kit): held once over something that stopped the descent, till underWait (elapsed)
+	float underWait = -1.0f;
+	float hideUntil = -1.0f;         // HIDE:<secs>: the v2 hide item used again every half second till this World::time
+	float vertDuty = 0.0f;           // v2 kit: the share of frames up / down is pressed while levitating on a walk
+	float floatUntil = -1.0f;
+	bool floatWalk = false;          // that float is the walk's own (stuck below its target): it ends with the walk        // FLOAT:<secs>: the v2 fly item used again every half second till this World::time
+	void keepFloating(Session& s);
+	std::string failShot;            // a screenshot to take as the next frame begins (a driver FAIL)          // v2 kit: the land spell cast once to look again from the floor           // FLYTO: the levitation is on (a cast's lands at its animation's release)
 	static bool canCast(Session& s, const std::string& selected);   // a known spell, or "item:<id>" carried
 	static bool playerToken(const std::string& tok);                 // allowed after LEGIT (a player's own action)
 };

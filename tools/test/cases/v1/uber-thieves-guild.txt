@@ -1776,7 +1776,8 @@
 0.3 0 0 0 0 USE:p_chameleon_e
 0.3 0 0 0 0 SNEAK:1
 1 0 0 0
-120 0 0 0 0 KILL:braynas_hlervu
+# (the blow only once nobody else is within earshot: a murder anyone hears is reported)
+240 0 0 0 0 KILL:braynas_hlervu:unseen
 2 0 0 0
 0.3 0 0 0 0 SNEAK:0
 0.1 0 0 0 0 EXPECT:dead:braynas_hlervu

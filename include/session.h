@@ -141,6 +141,8 @@ struct Session : ScriptHost
 	bool ended = false;
 	bool autotest = false;
 	bool testGod = false;
+	int testKit = 0;              // ENHANCEV2: the v2 test kit (2); the driver's v2 behaviours read kitV2()
+	bool kitV2() const { return testKit >= 2 || w.itemCount("uber_ring") > 0; }   // (also a run resumed from a v2 checkpoint)
 	bool testGodBlows = true;     // GOD:2 clears it: the player still can't die, but blows roll, hurt and wear as usual
 	bool testLegit = false;       // LEGIT: from here a test may do only what a player can (uber quest tests)
 	bool testNoMovies = false;    // tests: play as if the data had no converted movies

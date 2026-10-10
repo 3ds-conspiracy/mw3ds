@@ -27,3 +27,6 @@ native_crash.txt
 *.stackdump
 /sd/
 native_prof.txt
+
+# Scratch repros and probes (run by name: scratch\<case>)
+tools/test/cases/scratch/

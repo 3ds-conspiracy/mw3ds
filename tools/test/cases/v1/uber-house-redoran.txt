@@ -3445,7 +3445,7 @@
 3 0 0 0
 0.1 0 0 0 0 EXPECT:cell:Rethan_Manor
 0.3 0 0 0 0 EQUIP:silver%longsword
-120 0 0 0 0 KILL:raynasa_rethan
+240 0 0 0 0 KILL:raynasa_rethan
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:raynasa_rethan
 0.3 0 0 0 0 USE:p_restore_magicka_e
