@@ -1,4 +1,5 @@
 build/
+!tools/build/
 *.3dsx
 *.smdh
 *.elf
@@ -9,6 +10,7 @@ out/
 __pycache__/
 *.pyc
 out/
+out-vanilla/
 tools/test/cases/chain-*.txt
 .env
 

@@ -2,10 +2,15 @@
 import struct
 from pathlib import Path
 
+import os
+
 from envfile import require
 
 MORROWIND_DIR = Path(require("MW3DS_MORROWIND_DIR", "the folder of your Morrowind install (with Morrowind.ini and Data Files)"))
 DATA_FILES = MORROWIND_DIR / "Data Files"
+# Extra mod folders laid over Data Files (";"-separated, later ones win), each laid out like Data Files
+# (meshes\..., textures\...). Nothing is copied into the Morrowind install.
+OVERLAYS = [Path(p) for p in os.environ.get("MW3DS_OVERLAY_DIRS", "").split(";") if p.strip()]
 
 
 class BSA:
@@ -36,17 +41,20 @@ class BSA:
 
 
 class Archives:
-    """Loose files in Data Files override BSA contents, later BSAs override earlier ones."""
+    """Overlay folders override loose files in Data Files, which override BSA contents; later BSAs override earlier ones."""
 
     def __init__(self, bsa_names=("Morrowind.bsa", "Tribunal.bsa", "Bloodmoon.bsa")):
         self.bsas = [BSA(DATA_FILES / n) for n in bsa_names if (DATA_FILES / n).exists()]
 
     def exists(self, name):
         name = name.lower().replace("/", "\\")
-        return (DATA_FILES / name).exists() or any(name in b.files for b in self.bsas)
+        return any((d / name).exists() for d in OVERLAYS) or (DATA_FILES / name).exists() or any(name in b.files for b in self.bsas)
 
     def read(self, name):
         name = name.lower().replace("/", "\\")
+        for d in reversed(OVERLAYS):
+            if (d / name).exists():
+                return (d / name).read_bytes()
         loose = DATA_FILES / name
         if loose.exists():
             return loose.read_bytes()
@@ -59,6 +67,8 @@ class Archives:
         out = set()
         for b in self.bsas:
             out.update(b.files)
+        for d in OVERLAYS:
+            out.update(str(f.relative_to(d)).lower().replace("/", "\\") for f in d.rglob("*") if f.is_file())
         return out
 
 

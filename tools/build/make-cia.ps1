@@ -3,7 +3,10 @@
 #   -NoData   the program only (~2 MB): the game reads its data from sdmc:/3ds/mw3ds/data
 #             (the whole island copied there by card reader); no Wi-Fi update checks either
 #   -Data out\world  pack that data (default out\data, the Balmora area)
-param([switch]$NoData, [string]$Data = 'out\data')
+#   -Out build\mw3ds-o3ds.cia  write the CIA there (default build\mw3ds.cia)
+# The same program runs on both consoles (it takes its Old 3DS profile on an Old 3DS: 64 MB mode, see source/heaps.cpp);
+# only the data differs (build-cia.ps1 -Old3ds converts with quarter-size textures).
+param([switch]$NoData, [string]$Data = 'out\data', [string]$Out = 'build\mw3ds.cia')
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 . (Join-Path $PSScriptRoot 'env.ps1')
 Set-Location $root
@@ -27,7 +30,7 @@ $defs = @{
     APP_MEMORY_TYPE = 'Application'; APP_SYSTEM_MODE = '64MB'; APP_SYSTEM_MODE_EXT = '124MB'
     APP_CPU_SPEED = '804MHz'; APP_ENABLE_L2_CACHE = 'true'; APP_VERSION_MAJOR = '0'
 }
-$args = @('-f', 'cia', '-o', 'build\mw3ds.cia', '-elf', 'mw3ds.elf', '-rsf', 'tools\build\mw3ds.rsf',
+$args = @('-f', 'cia', '-o', $Out, '-elf', 'mw3ds.elf', '-rsf', 'tools\build\mw3ds.rsf',
           '-icon', 'mw3ds.smdh', '-banner', 'tools\build\banner.bnr', '-exefslogo', '-target', 't')
 foreach ($k in $defs.Keys) { $args += "-D$k=$($defs[$k])" }
 & (Join-Path (Get-MwEnv 'MW3DS_CTR_TOOLS_DIR' 'the folder with makerom.exe') 'makerom.exe') @args
@@ -35,5 +38,5 @@ $makeromCode = $LASTEXITCODE
 # The staged copy of the data is only makerom's input: packed into the CIA, it would be a third 1 GB copy on disk
 Remove-Item (Join-Path $root 'build\romfs\data') -Recurse -Force -ErrorAction SilentlyContinue
 if ($makeromCode -ne 0) { "makerom failed"; exit 1 }
-$cia = Get-Item 'build\mw3ds.cia'
+$cia = Get-Item $Out
 "built $($cia.FullName) ($([math]::Round($cia.Length / 1MB, 1)) MB)"

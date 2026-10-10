@@ -1,0 +1,8 @@
+[submodule "mods/morrowind-optimization-patch"]
+	path = mods/morrowind-optimization-patch
+	url = https://github.com/mop-org/morrowind-optimization-patch.git
+	shallow = true
+[submodule "mods/project-atlas"]
+	path = mods/project-atlas
+	url = https://github.com/MelchiorDahrk/Project-Atlas.git
+	shallow = true
