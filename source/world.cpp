@@ -2080,11 +2080,21 @@ void World::streamExterior(bool all)
 		// An Old 3DS leaves a neighbour unloaded rather than start one with under 5 MB of heap left: a cell read that
 		// runs the heap dry stops the game (the distant land covers the view until memory comes back)
 		static bool noRoomNoted = false;
-		bool room = !g_old3ds || (size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size;
+		// ... or with no free block of 1.5 MB (a heap with room in total but only in small holes: a cell's collision
+		// and object lists are single blocks of several hundred KB). Probed twice a second at most
+		static u64 probedAt = 0;
+		static bool probedRoom = true;
+		if (g_old3ds && osGetTime() - probedAt > 500)
+		{
+			probedAt = osGetTime();
+			probedRoom = (size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= 1536u * 1024u;
+		}
+		bool room = !g_old3ds || probedRoom;
 		if (!room && !noRoomNoted)
 		{
 			noRoomNoted = true;
-			logf("world: %d KB of heap used: the neighbouring cells wait for room", mallinfo().uordblks / 1024);
+			logf("world: %d KB of heap used, biggest free block %u KB: the neighbouring cells wait for room", mallinfo().uordblks / 1024,
+				(unsigned)(heapLargestBlock() / 1024));
 		}
 		if (room)
 			noRoomNoted = false;

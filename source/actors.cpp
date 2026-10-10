@@ -174,6 +174,27 @@ void skeletonEnsure(int i)
 	LightLock_Unlock(&s_skelLock);
 }
 
+int skeletonsTrim(const std::vector<int>& keep)
+{
+	if (s_skelDir.empty())
+		return 0;
+	LightLock_Lock(&s_skelLock);
+	size_t freed = 0;
+	for (size_t i = 0; i < s_skelLoaded.size(); i++)
+	{
+		if (!s_skelLoaded[i] || std::find(keep.begin(), keep.end(), (int)i) != keep.end())
+			continue;
+		Skeleton& sk = g_sharedSkeletons[i];
+		freed += sk.bones.size() * sizeof(SkelBone) + sk.groups.size() * sizeof(AnimGroup);
+		for (auto& t : sk.tracks)
+			freed += t.rot.size() * sizeof(RotKey) + t.trans.size() * sizeof(VecKey) + t.scale.size() * sizeof(ScaleKey);
+		sk = Skeleton();
+		s_skelLoaded[i] = false;
+	}
+	LightLock_Unlock(&s_skelLock);
+	return (int)(freed / 1024);
+}
+
 bool skeletonsLoad(const char* path)
 {
 	// One file per skeleton next to it: only count them now, read each when first needed

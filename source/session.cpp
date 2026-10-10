@@ -862,6 +862,21 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	{
 		evictTimer = 5.0f;
 		evictFarCells();
+		// An Old 3DS lets go of the animation skeletons no loaded actor uses (they are read again when met)
+		if (g_old3ds && !w.streamJob)
+		{
+			std::vector<int> keep;
+			for (LoadedCell* l : w.loaded)
+				for (const Actor& a : l->actors.actors)
+					keep.push_back(a.skeleton);
+			for (const Actor& a : body.set.actors)
+				keep.push_back(a.skeleton);
+			if (body.skel >= 0)
+				keep.push_back(body.skel);
+			int kb = skeletonsTrim(keep);
+			if (kb > 0)
+				logf("memory: %d KB of animation skeletons let go, heap used %d KB", kb, mallinfo().uordblks / 1024);
+		}
 		// Corprus: note when it was caught; a day later it is worse (the numbers follow)
 		bool corprus = w.pcHasCorprus();
 		if (corprus && w.corprusSince < 0.0f)

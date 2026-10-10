@@ -124,6 +124,10 @@ extern std::vector<Skeleton> g_sharedSkeletons;
 void skeletonsFree();                          // a session ending: the shared skeletons freed
 bool skeletonsLoad(const char* path);
 void skeletonEnsure(int i);          // any thread (the streaming one reads cells' actors)
+// Frees the shared skeletons not in `keep` (indices): each is read the first time an actor of its kind is met and, kept for
+// ever, the ones a long walk meets added up to 14 MB, a third of an Old 3DS's heap. Main thread, no cell being streamed
+// (its actors would be reading one), nothing holding a reference into one. Returns the KB freed.
+int skeletonsTrim(const std::vector<int>& keep);
 bool skeletonsLoadInto(const char* path, std::vector<Skeleton>& out);    // any 'MWS1' file
 inline const Skeleton& actorSkeleton(const ActorSet& set, int i)
 {
