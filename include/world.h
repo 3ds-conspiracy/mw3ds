@@ -273,7 +273,7 @@ struct LoadedCell
 // (outdoors) next to it. Exterior cells are 8192-unit grid squares.
 struct LevelCell
 {
-	std::string name, file;
+	Atom name, file;
 	bool interior = true;
 	int gx = 0, gy = 0;               // exterior grid position
 	int refBase = 0, refCount = 0;    // its references are refs[refBase .. refBase + refCount)
@@ -284,7 +284,7 @@ struct LevelCell
 	float freedAt = -1e9f;            // World::time when its geometry was last freed
 	float sea = 0.0f;                 // exterior: share of its ground under open water (converter)
 	bool noSleep = false;             // resting is illegal here (waiting only, or a bed)
-	std::string region;               // exterior: its region (lowercase id)
+	Atom region;                      // exterior: its region (lowercase id)
 };
 
 float angleDelta(float a, float b);    // a - b wrapped into -pi..pi
@@ -410,7 +410,7 @@ struct World
 	float retryTimer = 0.0f;
 	int cellIndex(const std::string& name) const;       // by name or file; -1 when the level doesn't include it
 	int gridCell(int gx, int gy) const;                 // exterior cell at that grid position, or -1
-	const std::string& cellName() const { return cells[current].name; }
+	std::string cellName() const { return cells[current].name; }
 	bool isStartCell() const;
 	// The cell the player is in (an empty stand-in if it failed to load, so nothing crashes)
 	Cell& here() { static Cell none; return current >= 0 && cells[current].live ? cells[current].live->cell : none; }
@@ -472,6 +472,8 @@ struct World
 	std::unordered_set<std::string> clearedInfos;
 	// Set by the session: whether an actor notices the player (dialogue "Detected"), and whether it attacks on sight
 	std::function<bool(int)> awarenessHook, shouldAttackHook;
+	// Set by the session: give heap back now (the streaming thread ran out of memory while the main thread waits for it)
+	std::function<void()> memoryLowHook;
 	int currentInfo = -1;         // the response being said (its result script runs), and its topic's name
 	std::string currentTopic;
 	// ClearInfoActor: that speaker's last line about the topic leaves the Topics index

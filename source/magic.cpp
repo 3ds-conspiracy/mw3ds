@@ -704,7 +704,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 	{
 		int type = e.effect == EFF_CURE_COMMON_DISEASE ? 3 : 2;
 		std::vector<std::string> ids = r.spells;
-		for (const std::vector<std::string>* list : { &def.spells, &def.diseases })
+		for (const std::vector<Atom>* list : { &def.spells, &def.diseases })
 			for (auto& id : *list)
 				ids.push_back(lower(id));
 		for (auto& id : ids)

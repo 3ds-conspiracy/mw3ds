@@ -24,6 +24,7 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 {
 	savePath = savePathIn;
 	loadSettings();
+	w.memoryLowHook = [this]() { relieveMemory(); };
 	audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
 	rendererLoadCaustics(dataDir);
 	std::string savedCell = savePath && startCell.empty() ? World::savedCell(savePath) : "";
@@ -786,12 +787,22 @@ int Session::refBudget() const
 
 void Session::relieveMemory()
 {
+	// (at most a few times a second: while nothing more can go, every frame would scan the cells again)
+	static u64 last = 0;
+	u64 now = osGetTime();
+	if (now - last < 250)
+		return;
+	last = now;
 	int before = mallinfo().uordblks / 1024;
 	evictFarCells(0);
 	freeMapTiles();
 	memoryReserveTake();
-	logf("memory: the heap ran out: far cells and map tiles freed, %d KB used (was %d KB), reserve %s", mallinfo().uordblks / 1024,
-		before, memoryReserveHeld() ? "taken again" : "still spent");
+	int after = mallinfo().uordblks / 1024;
+	static int lastLogged = -1;
+	if (after != lastLogged || memoryReserveHeld())
+		logf("memory: the heap ran out: far cells and map tiles freed, %d KB used (was %d KB), reserve %s", after,
+			before, memoryReserveHeld() ? "taken again" : "still spent");
+	lastLogged = after;
 }
 
 void Session::evictFarCells(int budget)

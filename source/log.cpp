@@ -89,6 +89,13 @@ static void outOfMemory()
 	// The reserve first: `new` tries again with it free, and the main loop gives memory back (g_memoryLow)
 	if (memoryReserveSpend())
 		return;
+	// The streaming thread: wait a little for the main thread to give memory back (g_memoryLow), then try again
+	if (threadGetCurrent())
+	{
+		g_memoryLow = true;
+		svcSleepThread(20000000LL);
+		return;
+	}
 	crashNote("out of memory (new)", 0, (u32)__builtin_return_address(0), mallinfo().uordblks);
 	for (;;)
 		svcSleepThread(1000000000LL);

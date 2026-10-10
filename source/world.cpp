@@ -12,6 +12,9 @@
 #include "cJSON.h"
 #include "linear.h"
 #include "console.h"
+extern "C" u32 __ctru_heap_size;
+#include "memstat.h"
+#include <malloc.h>
 #include "log.h"
 #include "zfile.h"
 
@@ -210,7 +213,7 @@ static bool parseRefs(const World& w, int cellIndex, ParsedRefs& out)
 		if (ref.type == "CONT" || ref.type == "NPC_" || ref.type == "CREA")
 		{
 			unsigned seed = 2166136261u;
-			for (char ch : lc.file)
+			for (char ch : lc.file.view())
 				seed = (seed ^ (u8)ch) * 16777619u;
 			fillContents(w.game, ref, w.stats.level, seed ^ (unsigned)out.refs.size() * 2654435761u);
 		}
@@ -330,7 +333,7 @@ static void appendRefs(World& w, int cellIndex, ParsedRefs& p)
 		if (r.levList.empty())
 			continue;
 		unsigned seed = 2166136261u;
-		for (char ch : lc.file)
+		for (char ch : lc.file.view())
 			seed = (seed ^ (u8)ch) * 16777619u;
 		seed ^= (unsigned)(i - lc.refBase) * 2654435761u;
 		std::string pick = w.game.pickLeveled(r.levList, level, &seed);
@@ -404,7 +407,7 @@ bool World::actorHasSpell(const Ref& r, const std::string& id) const
 	if (r.actor < 0)
 		return false;
 	const ActorDef& a = game.actors[r.actor];
-	for (const std::vector<std::string>* list : { &a.spells, &a.combatSpells, &a.diseases })
+	for (const std::vector<Atom>* list : { &a.spells, &a.combatSpells, &a.diseases })
 		for (auto& s : *list)
 			if (lower(s) == id)
 				return true;
@@ -416,7 +419,7 @@ bool World::actorHasSpellType(const Ref& r, int type) const
 {
 	std::vector<std::string> ids = r.spells;
 	if (r.actor >= 0)
-		for (const std::vector<std::string>* list : { &game.actors[r.actor].spells, &game.actors[r.actor].diseases })
+		for (const std::vector<Atom>* list : { &game.actors[r.actor].spells, &game.actors[r.actor].diseases })
 			for (auto& s : *list)
 				ids.push_back(lower(s));
 	for (auto& id : ids)
@@ -1845,7 +1848,11 @@ static void finishStreamJob(World& w, bool wait)
 	if (!j || (!wait && !j->done))
 		return;
 	MARK("finishStreamJob: join");
-	threadJoin(j->thread, U64_MAX);
+	// (in steps: the streaming thread that runs out of memory waits for the main thread to give some back,
+	// Session::relieveMemory, instead of the two waiting on each other for good)
+	while (threadJoin(j->thread, 100000000ULL) != 0)          // (a timeout is not an R_FAILED result)
+		if (g_memoryLow && w.memoryLowHook)
+			w.memoryLowHook();
 	MARK("finishStreamJob: integrate");
 	threadFree(j->thread);
 	w.streamJob = nullptr;
@@ -1858,8 +1865,8 @@ static void finishStreamJob(World& w, bool wait)
 	if (j->ok && wanted)
 	{
 		integrateLevelCell(w, j->index, j->cell);
-		logf("world: streamed %s in %llu ms (in the background), textures %lu KB, linear free %lu KB",
-			j->file.c_str(), osGetTime() - j->started, w.textures.bytes / 1024, linearSpaceFree() / 1024);
+		logf("world: streamed %s in %llu ms (in the background), textures %lu KB, linear free %lu KB, heap used %d KB",
+			j->file.c_str(), osGetTime() - j->started, w.textures.bytes / 1024, linearSpaceFree() / 1024, mallinfo().uordblks / 1024);
 	}
 	else
 	{
@@ -2070,7 +2077,18 @@ void World::streamExterior(bool all)
 			continue;
 		}
 		// (not in the update that freed cells: their memory comes back after the next frame begins)
-		if (!streamJob && !freed)
+		// An Old 3DS leaves a neighbour unloaded rather than start one with under 5 MB of heap left: a cell read that
+		// runs the heap dry stops the game (the distant land covers the view until memory comes back)
+		static bool noRoomNoted = false;
+		bool room = !g_old3ds || (size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size;
+		if (!room && !noRoomNoted)
+		{
+			noRoomNoted = true;
+			logf("world: %d KB of heap used: the neighbouring cells wait for room", mallinfo().uordblks / 1024);
+		}
+		if (room)
+			noRoomNoted = false;
+		if (!streamJob && !freed && room)
 			startStreamJob(*this, ci);
 		break;
 	}

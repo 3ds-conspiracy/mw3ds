@@ -111,7 +111,12 @@ struct ScriptedInput
 	int gyroAim = -1;                 // GYROAIM:<percent>|off: gyro aim's sensitivity from this step on (0 off)
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
 	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned
+	int frameCap = -1;                // FRAMECAP:on|off: the Old 3DS's 30 / 20 fps cap in a scripted run (off unless a case says on)
 };
+
+// A scripted run steps the game on a fixed clock, so the Old 3DS frame cap only slows it to real time: off, unless a case
+// that measures frame times says FRAMECAP:on
+static bool s_testFrameCap = false;
 
 // The layout the scripted run plays with (classic unless a CONTROLS: step chose another)
 static int s_testLayout = CONTROLS_CLASSIC;
@@ -167,6 +172,11 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		if (strncmp(tok, "GYROAIM:", 8) == 0)
 		{
 			step->gyroAim = strcmp(tok + 8, "off") == 0 ? 0 : atoi(tok + 8);
+			continue;
+		}
+		if (strncmp(tok, "FRAMECAP:", 9) == 0)
+		{
+			step->frameCap = strcmp(tok + 9, "on") == 0 ? 1 : 0;
 			continue;
 		}
 		if (strncmp(tok, "SKIN:", 5) == 0)
@@ -406,7 +416,7 @@ static std::vector<ScriptedInput> loadAutoinput()
 	{
 		ScriptedInput s = {};
 		s.tapX = s.tapY = -1;
-		s.layout = s.gyroAim = s.skin = -1;
+		s.layout = s.gyroAim = s.skin = s.frameCap = -1;
 		char keys[1024] = {};
 		int n = sscanf(line, "%f %f %f %f %d %1023s", &s.secs, &s.moveX, &s.moveY, &s.lookX, &s.jump, keys);
 		if (n >= 4)
@@ -1017,6 +1027,8 @@ int main()
 				s_testLayout = g_controlLayout = s.layout;
 				logf("test: controls %s", s.layout == CONTROLS_GOLDENEYE ? "goldeneye" : s.layout == CONTROLS_XBOX ? "xbox" : "classic");
 			}
+			if (first && s.frameCap >= 0)
+				s_testFrameCap = s.frameCap == 1;
 			if (first && s.skin >= 0)
 			{
 				g_gpuSkinning = s.skin == 1;
@@ -1953,9 +1965,10 @@ int main()
 			logf("frame %d: submitted", traced++);
 		// The frame rate the session asks for (an Old 3DS: 30 or 20, Session::adaptView)
 		static int capNow = 60;
-		if (loaded && session->frameCap != capNow)
+		int capWant = session->autotest && !s_testFrameCap ? 60 : session->frameCap;
+		if (loaded && capWant != capNow)
 		{
-			capNow = session->frameCap;
+			capNow = capWant;
 			C3D_FrameRate((float)capNow);
 		}
 		if (loaded)

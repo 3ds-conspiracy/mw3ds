@@ -129,12 +129,12 @@ bool audioInit(const char* dataDir)
 	return true;
 }
 
-// A session ending (loading a save): the decoded sounds go, so the next session doesn't load its own on top
 unsigned audioCacheBytes()
 {
 	return s_cacheBytes;
 }
 
+// A session ending (loading a save): the decoded sounds go, so the next session doesn't load its own on top
 void audioCacheClear()
 {
 	if (!s_enabled)
@@ -144,6 +144,7 @@ void audioCacheClear()
 	for (auto& c : s_cache)
 		lockedLinearFree(c.second.data);
 	s_cache.clear();
+	s_cacheBytes = 0;          // (left counting the freed sounds, the cache was "full" for the next session)
 }
 
 void audioExit()

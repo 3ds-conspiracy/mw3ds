@@ -1,7 +1,7 @@
 # Perf route (Old 3DS plan): Vivec's Foreign Quarter plaza, its crowd (skinning, AI, scripts) and the canton outside.
 # Read the per-second lines with tools\test\perf.py. Run with and without -Old3ds.
 3 0 0 0 0 MSG
-0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GOD+SEED:1+FRAMECAP:on
 0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Plaza
 10 0 0 0
 15 0 1 0.15

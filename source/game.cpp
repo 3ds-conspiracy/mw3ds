@@ -542,6 +542,8 @@ static void forSection(const cJSON* root, const char* name, Fn fn)
 			fn(it);
 	}
 	sectionDone();
+	// (what the section left behind once its JSON is gone: the Old 3DS's heap budget)
+	logf("game: %s read, heap used %d KB", name, mallinfo().uordblks / 1024);
 }
 
 static const cJSON* section(const cJSON* root, const char* name)

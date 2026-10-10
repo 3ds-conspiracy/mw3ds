@@ -61,7 +61,7 @@ struct Object
 	int lightRadius = 0;                 // lights: how far they reach, and their colour (0..255)
 	u8 lightColor[3] = { 0, 0, 0 };
 	bool magic = false;                                // enchanted
-	std::vector<std::pair<int, std::string>> items;    // container / NPC contents: count, id
+	std::vector<std::pair<int, Atom>> items;           // container / NPC contents: count, id
 	std::vector<SpellEffect> effects;                  // potions, ingredients (first effect)
 	// weapons
 	u8 chop[2] = {}, slash[2] = {}, thrust[2] = {};    // min, max damage
@@ -155,7 +155,7 @@ enum
 
 struct TravelDest
 {
-	std::string cell;                    // display name
+	Atom cell;                           // display name
 	bool hasGrid = false;                // outdoors: grid cell to load
 	int grid[2] = {};
 	float pos[3], rot[3];
@@ -181,7 +181,7 @@ struct ActorDef
 	Atom aiTarget;
 	float aiDest[3] = {}, aiDuration = 0.0f;
 	bool creature = false;
-	std::vector<std::string> spells;     // spell merchants: what they sell (lowercase ids)
+	std::vector<Atom> spells;            // spell merchants: what they sell (lowercase ids)
 	std::vector<std::pair<int, int>> attack;   // creatures: damage min, max of each attack
 	int magicka = 0, flee = 0;           // AI flee rating (0..100)
 	int alarm = 0;                       // AI alarm (0..100): how readily they report crimes
@@ -193,8 +193,8 @@ struct ActorDef
 	int resistNormal = 0;                // percent: blows from ordinary weapons do that much less (ghosts)
 	int hello = 30;                      // AI Hello: greets within hello x iGreetDistanceMultiplier (0: never)
 	Atom ammo, shield;                   // lowercase ids: arrows / bolts for their bow, the shield they carry
-	std::vector<std::string> combatSpells;   // lowercase: harmful spells they cast at the player, heals
-	std::vector<std::string> diseases;       // lowercase: diseases their blows can pass on
+	std::vector<Atom> combatSpells;          // lowercase: harmful spells they cast at the player, heals
+	std::vector<Atom> diseases;              // lowercase: diseases their blows can pass on
 	std::vector<std::pair<int, float>> constEffects;   // effect, magnitude: resistances, shields ... their abilities keep on them
 };
 
@@ -264,12 +264,12 @@ struct MapDef
 
 struct CellDef
 {
-	std::string name, file;
+	Atom name, file;
 	bool interior;
 	int gx = 0, gy = 0;
 	float sea = 0.0f;
 	bool noSleep = false;         // CELL flag: resting here is illegal (only waiting, or in a bed)
-	std::string region;           // exterior: its region (lowercase id)
+	Atom region;                  // exterior: its region (lowercase id)
 };
 
 // A weather (Morrowind.ini [Weather X]): colours [sky, fog, ambient, sun][sunrise, day, sunset, night],
