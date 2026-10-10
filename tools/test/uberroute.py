@@ -5,10 +5,12 @@ First A* over every exterior path grid point in Morrowind.esm, cells joined at t
 them (points within 350 across a border, less than 120 apart in height: World::loadCell). Path grids only cover
 towns and some roads, so where they don't join: one graph of the path grids in the town cells (streets, bridges,
 stairs) and the land's height map (LAND, a 256-unit grid) in the cells without one, joined where they meet; no slope
-steeper than --slope, water dearer (swimming). Rocks, trees and walls are not in the height map: the walker's stuck
-recovery goes round small ones.
+steeper than --slope, water dearer (swimming). The big rocks and emperor parasols placed on the land (OBSTACLES) are kept clear of:
+the land points under them are left out and the legs are only joined where the straight line between them misses
+them (an escort walks straight at the player and stops at a rock the player stepped over). Trees and walls are not
+in it: the walker's stuck recovery goes round small ones.
 
-  python tools/test/uberroute.py [--step 600] [--secs 60] [--slope 0.9] [--climb 1] [--via x,y,z]... -- <x,y,z> <x,y,z>
+  python tools/test/uberroute.py [--step 600] [--secs 60] [--slope 0.9] [--climb 1] [--no-rocks] [--via x,y,z]... -- <x,y,z> <x,y,z>
 """
 import argparse
 import heapq
@@ -18,7 +20,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "convert"))
-from mwfiles import load_db  # noqa: E402
+from mwfiles import load_db, cell_refs  # noqa: E402
 from terrain import land_heights  # noqa: E402
 
 CELL = 8192.0
@@ -78,7 +80,43 @@ def route(pts, links, a, b):
     return [pts[i] for i in reversed(out)], cost[goal]
 
 
-def combined_route(db, a, b, slope, spacing=256.0, climb=1.0):
+# what an escort cannot walk round, by id prefix: radius at scale 1 (a terrain_rock_* is about 400 across; an emperor
+# parasol's stem about 250, its origin high up it; a tree's trunk, with room to pass)
+OBSTACLES = (("terrain_rock", 220.0), ("flora_emp_parasol", 160.0), ("flora_tree", 90.0))
+
+
+def rocks_near(db, a, b):
+    """[(x, y, z, r)]: the big rocks in the cells round the leg a -> b."""
+    gx0, gx1 = int(math.floor(min(a[0], b[0]) / CELL)) - 2, int(math.floor(max(a[0], b[0]) / CELL)) + 2
+    gy0, gy1 = int(math.floor(min(a[1], b[1]) / CELL)) - 2, int(math.floor(max(a[1], b[1]) / CELL)) + 2
+    out = []
+    for key, c in db["CELL"].items():
+        if isinstance(key, tuple) and gx0 <= key[0] <= gx1 and gy0 <= key[1] <= gy1:
+            for r in cell_refs(c):
+                i = (r["id"] or "").lower()
+                for prefix, radius in OBSTACLES:
+                    if i.startswith(prefix):
+                        out.append((*r["pos"], radius * r["scale"]))
+    return out
+
+
+def blocked(rocks, p, q=None):
+    """True when the point p (or the line p -> q) passes within a rock's radius, near its height."""
+    for x, y, z, r in rocks:
+        if q is None:
+            if math.hypot(p[0] - x, p[1] - y) < r and abs(p[2] - z) < 1000:
+                return True
+            continue
+        dx, dy = q[0] - p[0], q[1] - p[1]
+        l2 = dx * dx + dy * dy
+        t = 0.0 if l2 < 1 else max(0.0, min(1.0, ((x - p[0]) * dx + (y - p[1]) * dy) / l2))
+        cx, cy, cz = p[0] + t * dx, p[1] + t * dy, p[2] + t * (q[2] - p[2])
+        if math.hypot(cx - x, cy - y) < r and abs(cz - z) < 1000:
+            return True
+    return False
+
+
+def combined_route(db, a, b, slope, spacing=256.0, climb=1.0, rocks=()):
     """A* over one graph: the path grids where a cell has one (towns: streets, bridges, stairs) and the height map's
     256-unit grid in the cells without (the wilds), joined where they meet. [(x, y, z)], length, or None."""
     gx0, gx1 = int(math.floor(min(a[0], b[0]) / CELL)) - 2, int(math.floor(max(a[0], b[0]) / CELL)) + 2
@@ -133,7 +171,7 @@ def combined_route(db, a, b, slope, spacing=256.0, climb=1.0):
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
                     ix, iy = n[1] + dx, n[2] + dy
-                    if (dx, dy) != (0, 0) and 0 <= ix < nx and 0 <= iy < ny and tnode(ix, iy):
+                    if (dx, dy) != (0, 0) and 0 <= ix < nx and 0 <= iy < ny and (("t", ix, iy) in ends or not blocked(rocks, tnode(ix, iy))):
                         yield ("t", ix, iy)
         yield from edge.get(n, ())
 
@@ -150,6 +188,7 @@ def combined_route(db, a, b, slope, spacing=256.0, climb=1.0):
         return best
 
     start, goal = nearest_node(a), nearest_node(b)
+    ends = {start, goal}             # (these two whatever rocks stand by them)
     gq = where(goal)
     cost, came, todo = {start: 0.0}, {}, [(0.0, start)]
     while todo:
@@ -193,23 +232,27 @@ def main():
     ap.add_argument("--terrain", action="store_true", help="skip the path-grid-only try: the combined graph at once")
     ap.add_argument("--slope", type=float, default=0.9, help="steepest walkable rise per unit (0.9: 42 degrees)")
     ap.add_argument("--climb", type=float, default=1.0, help="cost of a unit up or down against one along (escorts: 4)")
+    ap.add_argument("--no-rocks", action="store_true", help="walk over the big rocks as v1 routes did")
     ap.add_argument("--via", action="append", default=[], help="x,y,z to pass through (more than one: in order)")
     a = ap.parse_args()
     stops = [tuple(float(v) for v in t.split(",")) for t in [a.start, *a.via, a.goal]]
     db = load_db()
     pts, links = grid_points(db)
-    path, length = [], 0.0
+    path, length, rocks = [], 0.0, []
     for p0, p1 in zip(stops, stops[1:]):
+        legrocks = [] if a.no_rocks else rocks_near(db, p0, p1)
+        rocks += legrocks
         r = None if a.terrain else route(pts, links, p0, p1)
         if not r:
-            r = combined_route(db, p0, p1, a.slope, climb=a.climb)
+            r = combined_route(db, p0, p1, a.slope, climb=a.climb, rocks=legrocks)
         if not r:
             sys.exit(f"no route between {p0} and {p1} (path grids or land)")
         path += r[0] if not path else r[0][1:]
         length += r[1]
+    # every --step units, and sooner where the straight line on from the last kept point would cross a rock
     kept = [path[0]]
-    for p in path[1:-1]:
-        if math.dist(p, kept[-1]) >= a.step:
+    for i, p in enumerate(path[1:-1], 1):
+        if math.dist(p, kept[-1]) >= a.step or (rocks and blocked(rocks, kept[-1], path[i + 1])):
             kept.append(p)
     kept.append(path[-1])
     print(f"# route {a.start} -> {a.goal}: {len(path)} path points, {length:.0f} units, {len(kept)} legs", file=sys.stderr)

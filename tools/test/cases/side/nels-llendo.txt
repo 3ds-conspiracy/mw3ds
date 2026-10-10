@@ -1,0 +1,41 @@
+# Nels Llendo (MV_3_Charming), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, south of Pelagiad.
+# The "famed" highwayman on the road asks a man for 50 septims (a woman for a kiss); paid, he leaves for Pelagiad's
+# Halfway Tavern, where his script puts him once we are in Pelagiad.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@6582,-68929,536:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:nels%llendo
+0.3 0 0 0 0 TOPIC:Nels_Llendo
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 TOPIC:proposition
+2 0 0 0 0 UNTIL:talkready
+# ("Fine. Take my money, brigand.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_3_Charming:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_3_Charming:eq:100
+0.1 0 0 0 0 EXPECT:gold:eq:@-50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@2380,-56032,1584:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+30 0 0 0 0 UNTIL:journal:MV_3_Charming:ge:140
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
+60 0 0 0 0 ACTIVATE:nels%llendo
+0.1 0 0 0 0 EXPECT:talking
+0.1 0 0 0 0 EXPECT:journal:MV_3_Charming:eq:140
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

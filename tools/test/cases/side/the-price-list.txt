@@ -1,0 +1,117 @@
+# The Price List (EB_TradeSpy), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Vivec and Ebonheart.
+# Mevure Hlen, a St. Olms clothier, thinks the East Empire Company gouges her; the price list is taken unseen from
+# J'Zhirr's chest in the Company Hall, and she raises our Mercantile. Her greeting names the topic only to someone who
+# has done Dredil's Delivery (as in that case) first.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_ondusisunhinging:5
+0.3 0 0 0 0 GIVE:pick_grandmaster:2
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# (Dredil's Delivery)
+# (to Ebonheart's street, and the castle by its ways: flown to its doors, the flight came down on its roof)
+120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
+60 0 0 0 0 ACTIVATE:llaalam%dredil
+0.3 0 0 0 0 TOPIC:running_an_errand
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:10
+# ("I'll deliver it for you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:20
+0.1 0 0 0 0 EXPECT:item:bk_letterfromllaalam:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Ebonheart
+# (out on the castle's upper floor: down to the Company Hall flying)
+120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ebonheart,_East_Empire_Company_Hall
+10 0 0 0 0 UNTIL:cell:Ebonheart,_East_Empire_Company_Hall
+60 0 0 0 0 ACTIVATE:j'zhirr
+0.3 0 0 0 0 TOPIC:delivery_for_Llaalam_Dredil
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:40
+0.1 0 0 0 0 EXPECT:item:bk_letterfromjzhirr:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Ebonheart
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:llaalam%dredil
+0.3 0 0 0 0 TOPIC:running_an_errand
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:50
+0.1 0 0 0 0 EXPECT:journal:EB_Express:eq:50
+0.1 0 0 0 0 EXPECT:gold:eq:@75
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Ebonheart
+# (The Price List)
+120 0 0 0 0 FLYTO:@36544,-94693,1887:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Tailors
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Tailors
+60 0 0 0 0 ACTIVATE:mevure%hlen
+0.3 0 0 0 0 TOPIC:prices_are_a_bit_high
+2 0 0 0 0 UNTIL:journal:EB_TradeSpy:ge:10
+0.3 0 0 0 0 TOPIC:bureaucracy
+2 0 0 0 0 UNTIL:journal:EB_TradeSpy:ge:20
+# ("Perhaps I can help you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_TradeSpy:ge:30
+0.1 0 0 0 0 EXPECT:journal:EB_TradeSpy:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ebonheart,_East_Empire_Company_Hall
+10 0 0 0 0 UNTIL:cell:Ebonheart,_East_Empire_Company_Hall
+1 0 0 0 0 HIDE:60
+0.3 0 0 0 0 SNEAK:1
+120 0 0 0 0 WALKTO:com_chest_02_jzhirr
+0.3 0 0 0 0 USELOCKPICK:com_chest_02_jzhirr:pick_grandmaster
+120 0 0 0 0 LOOT:com_chest_02_jzhirr:bk_letterfromllaalam2
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SNEAK:0
+0.1 0 0 0 0 EXPECT:item:bk_letterfromllaalam2:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@36544,-94693,1887:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Tailors
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Tailors
+60 0 0 0 0 ACTIVATE:mevure%hlen
+# ("bureaucracy" again first: she names "setting the prices" in it, which she has an answer for only now)
+0.3 0 0 0 0 TOPIC:bureaucracy
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:setting_the_prices
+2 0 0 0 0 UNTIL:journal:EB_TradeSpy:ge:50
+0.1 0 0 0 0 EXPECT:journal:EB_TradeSpy:eq:50
+0.1 0 0 0 0 EXPECT:item:bk_letterfromllaalam2:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

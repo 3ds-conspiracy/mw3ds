@@ -1,0 +1,55 @@
+# Fargoth's Hiding Place (MS_Lookout), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Seyda Neen.
+# Hrisskar Flat-Foot, upstairs in Arrille's Tradehouse, wants Fargoth's hidden gold found. At night (22 to 4) Fargoth,
+# once we are near him, sneaks round the town to a hollow tree stump in the muck pond and leaves 300 gold and a lockpick
+# in it (his script, lookoutScript); opening the stump finds the stash, and Hrisskar takes the gold for 100 and the rest.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Arrille's_Tradehouse
+60 0 0 0 0 ACTIVATE:hrisskar%flat-foot
+0.3 0 0 0 0 TOPIC:recover_some_gold
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Fargoth's_hiding_place
+2 0 0 0 0 UNTIL:journal:MS_Lookout:ge:10
+0.1 0 0 0 0 EXPECT:journal:MS_Lookout:ge:10
+# ("I'll do it.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_Lookout:ge:20
+0.1 0 0 0 0 EXPECT:journal:MS_Lookout:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+# (night first, then the watch from the lighthouse's top as Hrisskar says: Fargoth's walk (lookoutScript, on the lookout
+# spot up there) starts only after 22 with us within 512 of it; he sneaks to four spots, then fills the stump)
+0.3 0 0 0 0 SLEEPUNTIL:22
+3 0 0 0
+0.1 0 0 0 0 EXPECT:hour:ge:22
+120 0 0 0 0 FLYTO:@-12090,-74375,1152
+120 0 0 0 0 UNTIL:global:fargothwalk:ge:2
+120 0 0 0 0 FLYTO:@-12745,-70974,-212:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 LOOT:flora_treestump_unique:gold_001
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:MS_Lookout:ge:40
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Arrille's_Tradehouse
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:hrisskar%flat-foot
+0.3 0 0 0 0 TOPIC:Fargoth's_hiding_place
+2 0 0 0 0 UNTIL:journal:MS_Lookout:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_Lookout:eq:100
+0.1 0 0 0 0 EXPECT:gold:eq:@-200
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

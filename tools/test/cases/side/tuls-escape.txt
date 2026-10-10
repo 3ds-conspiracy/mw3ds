@@ -1,0 +1,66 @@
+# Tul's Escape (MV_FakeSlave), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, near Bal Ur.
+# Tul, an "escaped slave" on the road, wants an abolitionist's house. Not knowing where it is, we ask a local (Drolora
+# Salen: the kindly Redguard is Sterdecan) and walk him there; at the farm he shows himself a bounty hunter. He dies,
+# and Sterdecan gives us a ring.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@46162,-46265,778:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:tul
+2 0 0 0 0 UNTIL:journal:MV_FakeSlave:ge:10
+0.3 0 0 0 0 TOPIC:aid_a_poor_Argonian
+2 0 0 0 0 UNTIL:journal:MV_FakeSlave:ge:25
+# ("I'll help you if I can, although I am unsure where this place is.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_FakeSlave:ge:45
+0.1 0 0 0 0 EXPECT:journal:MV_FakeSlave:eq:45
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:tul
+0.3 0 0 0 0 ESCORT:tul
+60 0 0 0 0 ACTIVATE:drolora%salen
+0.3 0 0 0 0 TOPIC:kindly_Redguard
+2 0 0 0 0 UNTIL:journal:MV_FakeSlave:ge:55
+0.1 0 0 0 0 EXPECT:journal:MV_FakeSlave:eq:55
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (the way to Sterdecan's farm, from tools/test/uberroute.py)
+120 0 0 0 0 WALKTO:@44032,-44032,856
+120 0 0 0 0 WALKTO:@43264,-43520,1048
+120 0 0 0 0 WALKTO:@42496,-43520,968
+120 0 0 0 0 WALKTO:@41984,-43520,936
+120 0 0 0 0 WALKTO:@41216,-43264,856
+120 0 0 0 0 WALKTO:@40448,-43008,728
+120 0 0 0 0 WALKTO:@39936,-42496,688
+120 0 0 0 0 WALKTO:@39424,-41984,760
+120 0 0 0 0 WALKTO:@38656,-41728,928
+120 0 0 0 0 WALKTO:@37888,-41728,920
+120 0 0 0 0 WALKTO:@37120,-41216,856
+120 0 0 0 0 WALKTO:@36608,-40704,744
+120 0 0 0 0 WALKTO:@36096,-40192,728
+120 0 0 0 0 WALKTO:@35704,-39760,698
+0.3 0 0 0 0 ESCORT:-
+20 0 0 0 0 UNTIL:journal:MV_FakeSlave:ge:60
+0.1 0 0 0 0 EXPECT:journal:MV_FakeSlave:eq:60
+120 0 0 0 0 KILL:tul
+0.1 0 0 0 0 EXPECT:dead:tul
+0.1 0 0 0 0 EXPECT:journal:MV_FakeSlave:eq:80
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:sterdecan
+2 0 0 0 0 UNTIL:journal:MV_FakeSlave:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_FakeSlave:eq:100
+0.1 0 0 0 0 EXPECT:item:first_barrier_ring:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

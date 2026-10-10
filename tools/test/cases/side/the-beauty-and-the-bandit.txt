@@ -1,0 +1,64 @@
+# The Beauty and the Bandit (MV_VictimRomance), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Ascadian Isles.
+# Maurrie Aurmine, robbed on the road north-west of Pelagiad, sends her glove to the bandit, Nelos Onmar, in Pelagiad's
+# Halfway Tavern; his note back wins her, and her friend (Emusette Bracques in Tel Aruhn, for a man) gives three potions.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-10021,-42122,356:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:maurrie%aurmine
+2 0 0 0 0 UNTIL:journal:MV_VictimRomance:ge:10
+0.3 0 0 0 0 TOPIC:bandit_nearby
+2 0 0 0 0 UNTIL:journal:MV_VictimRomance:ge:20
+0.3 0 0 0 0 TOPIC:jewels
+2 0 0 0 0 UNTIL:journal:MV_VictimRomance:ge:30
+# ("I will try and find this man, if only for love's sake.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_VictimRomance:ge:40
+0.1 0 0 0 0 EXPECT:item:extravagant_glove_left_maur:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@2380,-56032,1584:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
+60 0 0 0 0 ACTIVATE:nelos%onmar
+0.3 0 0 0 0 TOPIC:Maurrie's_glove
+2 0 0 0 0 UNTIL:journal:MV_VictimRomance:ge:60
+0.1 0 0 0 0 EXPECT:item:bk_notefromnelos:ge:1
+0.1 0 0 0 0 EXPECT:item:extravagant_glove_left_maur:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-10021,-42122,356:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:maurrie%aurmine
+0.3 0 0 0 0 TOPIC:note_from_Nelos
+2 0 0 0 0 UNTIL:journal:MV_VictimRomance:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_VictimRomance:eq:105
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@127149,46752,1575:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Tel_Aruhn,_Plot_and_Plaster
+10 0 0 0 0 UNTIL:cell:Tel_Aruhn,_Plot_and_Plaster
+60 0 0 0 0 ACTIVATE:emusette%bracques
+0.3 0 0 0 0 TOPIC:Maurrie_Aurmine
+2 0 0 0 0 UNTIL:journal:MV_VictimRomance:ge:115
+0.1 0 0 0 0 EXPECT:journal:MV_VictimRomance:eq:115
+0.1 0 0 0 0 EXPECT:item:p_restore_health_e:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

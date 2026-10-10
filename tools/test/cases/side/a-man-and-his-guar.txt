@@ -1,0 +1,97 @@
+# A Man and His Guar (MV_RichTrader), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Ascadian Isles.
+# Teris Raledran and Rollie, his pack guar, are walked to Vivec; Rollie stays outside the city, Teris comes on to
+# Agrippina Herennia's shop in the Foreign Quarter Canalworks and pays 200 with Rollie alive.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@31620,-55061,773:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:teris%raledran
+0.3 0 0 0 0 TOPIC:be_of_some_use
+2 0 0 0 0 UNTIL:journal:MV_RichTrader:ge:10
+# ("Certainly. I can help you...the both of you...get to Vivec.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_RichTrader:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_RichTrader:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:teris%raledran
+0.3 0 0 0 0 ESCORT:teris%raledran
+# (the way to Vivec's Foreign Quarter, from tools/test/uberroute.py)
+120 0 0 0 0 WALKTO:@30976,-55296,776
+120 0 0 0 0 WALKTO:@30208,-55808,728
+120 0 0 0 0 WALKTO:@29696,-56320,696
+120 0 0 0 0 WALKTO:@28928,-56576,696
+120 0 0 0 0 WALKTO:@28416,-57088,688
+120 0 0 0 0 WALKTO:@28160,-57856,648
+120 0 0 0 0 WALKTO:@27648,-58624,672
+120 0 0 0 0 WALKTO:@27136,-59136,784
+120 0 0 0 0 WALKTO:@27136,-59904,840
+120 0 0 0 0 WALKTO:@26880,-60672,896
+120 0 0 0 0 WALKTO:@26624,-61440,848
+120 0 0 0 0 WALKTO:@26624,-62208,792
+120 0 0 0 0 WALKTO:@26368,-62464,776
+120 0 0 0 0 WALKTO:@26368,-63232,864
+120 0 0 0 0 WALKTO:@26368,-64000,904
+120 0 0 0 0 WALKTO:@26624,-64256,960
+120 0 0 0 0 WALKTO:@26624,-65024,1000
+120 0 0 0 0 WALKTO:@26624,-65792,808
+120 0 0 0 0 WALKTO:@26624,-66560,736
+120 0 0 0 0 WALKTO:@26624,-67328,808
+120 0 0 0 0 WALKTO:@26624,-68096,816
+120 0 0 0 0 WALKTO:@26624,-68864,584
+120 0 0 0 0 WALKTO:@26624,-69632,504
+120 0 0 0 0 WALKTO:@27136,-70400,464
+120 0 0 0 0 WALKTO:@27392,-71168,448
+120 0 0 0 0 WALKTO:@27904,-71680,408
+120 0 0 0 0 WALKTO:@28416,-72192,408
+120 0 0 0 0 WALKTO:@28672,-72448,432
+120 0 0 0 0 WALKTO:@29184,-72960,472
+120 0 0 0 0 WALKTO:@29696,-73472,464
+120 0 0 0 0 WALKTO:@29952,-74240,528
+120 0 0 0 0 WALKTO:@29908,-74925,542
+120 0 0 0 0 WALKTO:@29904,-75689,697
+120 0 0 0 0 WALKTO:@29919,-76387,768
+120 0 0 0 0 WALKTO:@29919,-77020,643
+120 0 0 0 0 WALKTO:@29020,-77319,576
+120 0 0 0 0 WALKTO:@28139,-77296,576
+120 0 0 0 0 WALKTO:@27408,-77318,576
+120 0 0 0 0 WALKTO:@26894,-77787,576
+120 0 0 0 0 WALKTO:@28053,-78182,1006
+120 0 0 0 0 WALKTO:@28721,-78169,1403
+120 0 0 0 0 WALKTO:@29429,-78146,1792
+# (in by the canton door by the walkway's end, at 29879,-78335)
+10 0 0 0 0 UNTIL:journal:MV_RichTrader:ge:80
+0.1 0 0 0 0 EXPECT:journal:MV_RichTrader:eq:80
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Canalworks
+# (to Agrippina's door, not in: his script ends the walk when he is within 512 of it, and with us inside the
+# Canalworks and he with them stop)
+120 0 0 0 0 WALKTO:in_velothismall_ndoor_agrippina
+30 0 0 0 0 UNTIL:journal:MV_RichTrader:ge:90
+0.3 0 0 0 0 ESCORT:-
+2 0 0 0 0 UNTIL:screen:dialogue
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:MV_RichTrader:eq:90
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:teris%raledran
+0.3 0 0 0 0 TOPIC:compensation
+2 0 0 0 0 UNTIL:journal:MV_RichTrader:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_RichTrader:eq:100
+0.1 0 0 0 0 EXPECT:gold:eq:@200
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

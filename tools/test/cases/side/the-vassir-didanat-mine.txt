@@ -1,0 +1,36 @@
+# The Vassir-Didanat Mine (MS_VassirDidanat), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Ascadian Isles.
+# The lost ebony mine: its cave door teaches the topic; Velanda Omani, at Omani Manor, pays 2000 for where it is.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-21311,-33875,851:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vassir-Didanat_Cave
+10 0 0 0 0 UNTIL:cell:Vassir-Didanat_Cave
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (at 4000: the default height, 2560, met Fort Pelagiad's battlements on the way and wedged under them; beside, not
+# onto the roof of the upper door: to the door on the ground)
+120 0 0 0 0 FLYTO:@58815,-92703,800:beside:4000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Omani_Manor
+10 0 0 0 0 UNTIL:cell:Omani_Manor
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:velanda%omani
+0.3 0 0 0 0 TOPIC:Vassir_Didanat_Mine
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_VassirDidanat:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_VassirDidanat:eq:100
+0.1 0 0 0 0 EXPECT:gold:eq:@2000
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

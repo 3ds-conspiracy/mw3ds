@@ -1,0 +1,54 @@
+# The Angry Trader (MV_AngryTrader), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, east of Vivec.
+# Tinos Drothan's guards, Alvur Hleran and Dondir, ran off with his raw glass to Beshara cave; both killed and the glass
+# back from Alvur's chest (his key on him), Tinos teaches the most Mercantile (+5). (Stage 30, "found where they were
+# hiding", is set by nothing in the game.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@45991,-73150,1232:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:tinos%drothan
+2 0 0 0 0 UNTIL:journal:MV_AngryTrader:ge:5
+0.3 0 0 0 0 TOPIC:stole_all_my_goods
+2 0 0 0 0 UNTIL:journal:MV_AngryTrader:ge:20
+# ("I can help you recover your goods.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_AngryTrader:ge:23
+0.1 0 0 0 0 EXPECT:journal:MV_AngryTrader:eq:23
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@54280,-80535,904:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Beshara
+10 0 0 0 0 UNTIL:cell:Beshara
+120 0 0 0 0 KILL:alvur%hleran
+120 0 0 0 0 KILL:dondir
+0.1 0 0 0 0 EXPECT:dead:alvur_hleran
+0.1 0 0 0 0 EXPECT:dead:dondir
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 LOOT:alvur%hleran:key_alvur
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 LOOT:com_chest_11_alvur:ingred_raw_glass_tinos
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:ingred_raw_glass_tinos:ge:10
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@45991,-73150,1232:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:tinos%drothan
+0.3 0 0 0 0 TOPIC:stole_all_my_goods
+2 0 0 0 0 UNTIL:journal:MV_AngryTrader:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_AngryTrader:eq:110
+0.1 0 0 0 0 EXPECT:item:ingred_raw_glass_tinos:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

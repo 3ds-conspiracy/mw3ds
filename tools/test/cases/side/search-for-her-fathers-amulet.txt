@@ -1,0 +1,46 @@
+# Search for Her Father's Amulet (MS_ArenimTomb), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, east coast.
+# Satyana, in the Arenim Ancestral Tomb, follows us while we find the key on her father's partner's body and the amulet
+# behind his locked door; near her with it, her script greets us and asks for it.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@150792,-13329,339:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Arenim_Ancestral_Tomb
+10 0 0 0 0 UNTIL:cell:Arenim_Ancestral_Tomb
+120 0 0 0 0 ACTIVATE:satyana
+2 0 0 0 0 UNTIL:journal:MS_ArenimTomb:ge:10
+0.3 0 0 0 0 TOPIC:father's_amulet
+2 0 0 0 0 UNTIL:talkready
+# ("Yes", she follows)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_ArenimTomb:ge:50
+0.1 0 0 0 0 EXPECT:journal:MS_ArenimTomb:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:satyana
+0.3 0 0 0 0 ESCORT:satyana
+120 0 0 0 0 PICKUP:key_arenim
+0.1 0 0 0 0 EXPECT:item:key_arenim:ge:1
+120 0 0 0 0 LOOT:contain_corpse_arenim00:amulet_agustas_unique
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:amulet_agustas_unique:ge:1
+# (her ForceGreeting once she is near: the amulet given)
+20 0 0 0 0 UNTIL:screen:dialogue
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_ArenimTomb:ge:100
+0.3 0 0 0 0 ESCORT:-
+0.1 0 0 0 0 EXPECT:journal:MS_ArenimTomb:eq:100
+0.1 0 0 0 0 EXPECT:item:amulet_agustas_unique:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

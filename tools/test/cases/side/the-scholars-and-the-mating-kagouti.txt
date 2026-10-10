@@ -1,0 +1,72 @@
+# The Scholars and the Mating Kagouti (MV_StrayedPilgrim), played LEGIT on the v2 test kit (ENHANCEV2). Side quest,
+# north of Vivec. Thoronor lost his friend Edras Oril, who hides from a pair of mating kagouti; both killed, Edras
+# follows us back and Thoronor gives an Amulet of Slowfalling.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@17079,-31064,806:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:thoronor
+0.3 0 0 0 0 TOPIC:my_friend
+2 0 0 0 0 UNTIL:journal:MV_StrayedPilgrim:ge:10
+# ("I'll try and find your friend.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_StrayedPilgrim:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_StrayedPilgrim:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@24818,-32015,999:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:edras%oril
+0.3 0 0 0 0 TOPIC:my_friend
+2 0 0 0 0 UNTIL:journal:MV_StrayedPilgrim:ge:24
+# ("I'll get rid of the kagouti.")
+0.3 0 0 0 0 CHOICE:1
+# (his answer says he won't move, 40, before the choice's 25: a quest's stage only ever goes up)
+2 0 0 0 0 UNTIL:journal:MV_StrayedPilgrim:ge:40
+0.1 0 0 0 0 EXPECT:journal:MV_StrayedPilgrim:eq:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:kagouti_mating
+120 0 0 0 0 KILL:kagouti_mating
+60 0 0 0 0 ACTIVATE:edras%oril
+0.3 0 0 0 0 TOPIC:my_friend
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:edras%oril
+0.3 0 0 0 0 ESCORT:edras%oril
+# (back to Thoronor, from tools/test/uberroute.py)
+120 0 0 0 0 WALKTO:@24320,-32768,888
+120 0 0 0 0 WALKTO:@23808,-33280,792
+120 0 0 0 0 WALKTO:@23040,-33280,728
+120 0 0 0 0 WALKTO:@22272,-33024,696
+120 0 0 0 0 WALKTO:@21504,-32512,720
+120 0 0 0 0 WALKTO:@20736,-32512,640
+120 0 0 0 0 WALKTO:@19968,-32512,688
+120 0 0 0 0 WALKTO:@19200,-32256,712
+120 0 0 0 0 WALKTO:@18432,-32000,696
+120 0 0 0 0 WALKTO:@17920,-31488,704
+120 0 0 0 0 WALKTO:@17408,-31232,768
+120 0 0 0 0 WALKTO:@17279,-31064,806
+20 0 0 0 0 UNTIL:journal:MV_StrayedPilgrim:ge:90
+0.3 0 0 0 0 ESCORT:-
+60 0 0 0 0 ACTIVATE:thoronor
+0.3 0 0 0 0 TOPIC:my_friend
+2 0 0 0 0 UNTIL:journal:MV_StrayedPilgrim:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_StrayedPilgrim:eq:100
+0.1 0 0 0 0 EXPECT:item:amulet_of_slowfalling:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

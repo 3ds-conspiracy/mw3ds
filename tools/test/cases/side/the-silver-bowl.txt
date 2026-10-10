@@ -1,0 +1,53 @@
+# The Silver Bowl (MS_Piernette), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Pelagiad.
+# The bowl lies in Ulummusa, a smugglers' cave west of Pelagiad; Ygfa, the healer at Fort Pelagiad, knows whose it is;
+# Piernette Beluelle, on her farm across Lake Hairan, takes it back (and raises our Mercantile).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-11286,-48391,877:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ulummusa
+10 0 0 0 0 UNTIL:cell:Ulummusa
+120 0 0 0 0 PICKUP:misc_beluelle_silver_bowl
+0.1 0 0 0 0 EXPECT:item:misc_beluelle_silver_bowl:ge:1
+0.1 0 0 0 0 EXPECT:journal:MS_Piernette:ge:1
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@6201,-56063,1859:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Pelagiad,_Fort_Pelagiad
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Fort_Pelagiad
+60 0 0 0 0 ACTIVATE:ygfa
+0.3 0 0 0 0 TOPIC:Beluelle's_silver_bowl
+2 0 0 0 0 UNTIL:journal:MS_Piernette:ge:10
+0.1 0 0 0 0 EXPECT:journal:MS_Piernette:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@37222,-60304,948:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Piernette's_Farmhouse
+10 0 0 0 0 UNTIL:cell:Piernette's_Farmhouse
+60 0 0 0 0 ACTIVATE:piernette%beluelle
+0.3 0 0 0 0 TOPIC:missing_silver_bowl
+2 0 0 0 0 UNTIL:talkready
+# ("I found your silver bowl.", then "Yes, of course. Here's the bowl.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_Piernette:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_Piernette:eq:100
+0.1 0 0 0 0 EXPECT:item:misc_beluelle_silver_bowl:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

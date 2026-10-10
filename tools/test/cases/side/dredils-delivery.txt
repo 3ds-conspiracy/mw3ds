@@ -1,0 +1,56 @@
+# Dredil's Delivery (EB_Express), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Ebonheart.
+# Llaalam Dredil, in the Grand Council Chambers, sends a letter to J'Zhirr at the East Empire Company Hall; J'Zhirr's
+# note back earns 75 drakes.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# (to Ebonheart's street, and the castle by its ways: flown to its doors, the flight came down on its roof)
+120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
+60 0 0 0 0 ACTIVATE:llaalam%dredil
+0.3 0 0 0 0 TOPIC:running_an_errand
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:10
+# ("I'll deliver it for you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:20
+0.1 0 0 0 0 EXPECT:item:bk_letterfromllaalam:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Ebonheart
+# (out on the castle's upper floor: down to the Company Hall flying)
+120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ebonheart,_East_Empire_Company_Hall
+10 0 0 0 0 UNTIL:cell:Ebonheart,_East_Empire_Company_Hall
+60 0 0 0 0 ACTIVATE:j'zhirr
+0.3 0 0 0 0 TOPIC:delivery_for_Llaalam_Dredil
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:40
+0.1 0 0 0 0 EXPECT:item:bk_letterfromjzhirr:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Ebonheart
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:llaalam%dredil
+0.3 0 0 0 0 TOPIC:running_an_errand
+2 0 0 0 0 UNTIL:journal:EB_Express:ge:50
+0.1 0 0 0 0 EXPECT:journal:EB_Express:eq:50
+0.1 0 0 0 0 EXPECT:gold:eq:@75
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
