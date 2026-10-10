@@ -2640,6 +2640,9 @@ bool TestDriver::start(Session& s, const std::string& token)
 		lowFly = a.size() >= 3 && a[2] == "low";
 		bool beside = a.size() >= 3 && a[2] == "beside";
 		cruise = lowFly ? fmaxf(p.feet[2], goal[2]) + 120.0f : a.size() >= 3 && !beside ? (float)atof(a[2].c_str()) : fmaxf(p.feet[2], goal[2]) + 1500.0f;
+		// (FLYTO:@x,y,z:beside:<cruise>: both, a long way over high buildings to a door under a roof)
+		if (beside && a.size() >= 4)
+			cruise = (float)atof(a[3].c_str());
 		// FLYTO:@x,y,z:beside (a spot on a roof, a tower top or a ledge): land a few hundred units out, at the nearest place with
 		// clear air down to the spot's height from which it can be seen, and walk the rest (a player does not hover over a roof)
 		if (beside)
@@ -3117,9 +3120,9 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 			progressTimer = 0.0f;
 			if (!closer)
 			{
-				// (v2 kit: 6: the count is shared with the ways down beside the spot, and the kit's lower first climb meets more
-				// ridges on the way: two on the way to Bthungthumz, then one beside it)
-				if (++climbs > (s.kitV2() ? 6 : 3))
+				// (v2 kit: 10: the count is shared with the ways down beside the spot, and the kit's lower first climb meets more
+				// ridges on the way: two on the way to Bthungthumz, then one beside it; four across the island to the Arenim tomb)
+				if (++climbs > (s.kitV2() ? 10 : 3))
 				{
 					fail("blocked in the air, even higher up");
 					return false;
@@ -3986,6 +3989,9 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				{
 					const Ref& d = w.refs[i];
 					if (d.type != "DOOR" || d.hasDest || !d.visible())
+						continue;
+					// (v2 kit: not one open already, or opening: a press shut it again, the East Empire Company's back room)
+					if (s.kitV2() && (d.doorTarget != 0.0f || d.doorAngle != 0.0f))
 						continue;
 					float ex = d.pos[0] - p.feet[0], ey = d.pos[1] - p.feet[1];
 					if (ex * ex + ey * ey < bd && fabsf(d.pos[2] - p.feet[2]) < 200.0f)
