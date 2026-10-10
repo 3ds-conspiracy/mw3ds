@@ -1,0 +1,120 @@
+# An Invisible Son (EB_Invisible), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. Cassius Olcinius, made invisible by the wizard Fevyn Ralen for a 400 septim debt, asks for help; his father Lucretinaus pays the debt (we carry the gold), Fevyn lifts the spell and the father rewards us.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:6
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@27206,-93312,2129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+60 0 0 0 0 ACTIVATE:cassius%olcinius
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:EB_Invisible:ge:10
+0.3 0 0 0 0 TOPIC:made_invisible
+2 0 0 0 0 UNTIL:talkready
+# ("I will try to help you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Invisible:ge:20
+0.1 0 0 0 0 EXPECT:journal:EB_Invisible:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Lucretinaus_Olcinius|_Trader
+10 0 0 0 0 UNTIL:cell:Vivec,_Lucretinaus_Olcinius|_Trader
+60 0 0 0 0 ACTIVATE:lucretinaus%olcinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cassius_Olcinius
+2 0 0 0 0 UNTIL:journal:EB_Invisible:ge:50
+0.1 0 0 0 0 EXPECT:journal:EB_Invisible:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@44092,-87008,1872:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Mage
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Mage
+60 0 0 0 0 ACTIVATE:fevyn%ralen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cassius_Olcinius
+2 0 0 0 0 UNTIL:journal:EB_Invisible:ge:60
+0.1 0 0 0 0 EXPECT:journal:EB_Invisible:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@27206,-93312,2129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Lucretinaus_Olcinius|_Trader
+10 0 0 0 0 UNTIL:cell:Vivec,_Lucretinaus_Olcinius|_Trader
+60 0 0 0 0 ACTIVATE:lucretinaus%olcinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_to_pay
+2 0 0 0 0 UNTIL:journal:EB_Invisible:ge:90
+0.1 0 0 0 0 EXPECT:journal:EB_Invisible:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@44092,-87008,1872:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Mage
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Mage
+60 0 0 0 0 ACTIVATE:fevyn%ralen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:debt_to_pay
+2 0 0 0 0 UNTIL:journal:EB_Invisible:ge:100
+0.1 0 0 0 0 EXPECT:journal:EB_Invisible:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@27206,-93312,2129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Lucretinaus_Olcinius|_Trader
+10 0 0 0 0 UNTIL:cell:Vivec,_Lucretinaus_Olcinius|_Trader
+60 0 0 0 0 ACTIVATE:lucretinaus%olcinius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cassius_Olcinius
+2 0 0 0 0 UNTIL:journal:EB_Invisible:ge:120
+0.1 0 0 0 0 EXPECT:journal:EB_Invisible:ge:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

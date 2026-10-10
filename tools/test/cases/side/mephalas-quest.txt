@@ -1,0 +1,81 @@
+# Mephala's Quest (DA_Mephala), played LEGIT on the v2 test kit (ENHANCEV2).
+# Daedric shrine quest. Taros Dral, Mephala's agent in the hidden area under Vivec's Arena, has us poison the freelancing Balyn Omavel through the pot in his Balmora house (unseen), and Mephala speaks to us at her altar.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+0.3 0 0 0 0 GIVE:sc_divineintervention:3
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@32967,-84716,-259:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Arena_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Underworks
+0.1 0 0 0 0 FLOAT:200
+120 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Canalworks
+120 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Storage
+# (the trapdoor to the hidden area is locked: picked)
+120 0 0 0 0 WALKTO:@1028,-613,-128
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0
+30 0 0 0 0 ACTIVATE:in_velothismall_ndoor_01
+1 0 0 0
+120 0 0 0 0 WALKTO:@1100,-900,-129
+0.3 0 0 0 0 USELOCKPICK:in_v_s_trapdoor_01:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Arena_Hidden_Area
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:taros%dral
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:sensitive_matters
+2 0 0 0 0 UNTIL:talkready
+# ("I would like to help.", then "Excellent. ... Use this poison in his food.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:DA_Mephala:ge:40
+0.1 0 0 0 0 EXPECT:journal:DA_Mephala:ge:40
+0.1 0 0 0 0 EXPECT:item:ingred_treated_bittergreen_uniq:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+# (Balyn Omavel's house in Balmora: the door is locked (picked), and he must not see us at it: the pot is poisoned unseen)
+120 0 0 0 0 FLYTO:@-16501,-12304,570:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 USELOCKPICK:hlaalu_loaddoor_%02_balyn:pick_grandmaster
+1 0 0 0
+1 0 0 0 0 HIDE:150
+120 0 0 0 0 DOORTO:Balmora,_Balyn_Omarel's_House
+10 0 0 0 0 UNTIL:cell:Balmora,_Balyn_Omarel's_House
+60 0 0 0 0 ACTIVATE:active_cauldron_balyn
+2 0 0 0
+0.3 0 0 0 0 A
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:DA_Mephala:ge:50
+# (back down to the hidden area: the doors and the trapdoor are open now)
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@32967,-84716,-259:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Arena_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Underworks
+0.1 0 0 0 0 FLOAT:200
+120 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Canalworks
+120 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Storage
+120 0 0 0 0 WALKTO:@1100,-900,-129
+120 0 0 0 0 DOORTO:Vivec,_Arena_Hidden_Area
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Hidden_Area
+60 0 0 0 0 ACTIVATE:active_velothi_altar_mephala
+5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:DA_Mephala:ge:60
+0.1 0 0 0 0 EXPECT:item:ring_khajiit_unique:ge:1

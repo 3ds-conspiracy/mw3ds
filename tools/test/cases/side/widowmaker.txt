@@ -1,0 +1,47 @@
+# Widowmaker (MV_RecoverWidowmaker), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Azura's Coast. The Nord Botrir lost his axe Widowmaker to a "witch", Iveri Llothri; we kill her, take the axe and give it to him (he teaches axe use; his axe-skill gift is the reward).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@109085,75986,823:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:botrir
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_RecoverWidowmaker:ge:10
+0.3 0 0 0 0 TOPIC:witch_nearby
+2 0 0 0 0 UNTIL:talkready
+# ("I'll help you recover your axe.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_RecoverWidowmaker:ge:30
+0.1 0 0 0 0 EXPECT:journal:MV_RecoverWidowmaker:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@96671,83755,825:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 KILL:iveri_llothri
+120 0 0 0 0 LOOT:iveri_llothri:widowmaker_unique
+0.1 0 0 0 0 EXPECT:dead:iveri_llothri
+0.1 0 0 0 0 EXPECT:item:widowmaker_unique:ge:1
+120 0 0 0 0 FLYTO:@109085,75986,823:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:botrir
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_RecoverWidowmaker:ge:50
+0.3 0 0 0 0 TOPIC:Widowmaker
+2 0 0 0 0 UNTIL:talkready
+# ("Give him the axe": the first button)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_RecoverWidowmaker:ge:80
+0.1 0 0 0 0 EXPECT:journal:MV_RecoverWidowmaker:ge:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

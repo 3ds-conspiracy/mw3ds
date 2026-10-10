@@ -1,0 +1,72 @@
+# The Boy Who Would Be Undead (VA_VampRich), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. Fathasa Llethri of Ald-ruhn asks the vampire (we are one: Berne blood taken, three days passed) to talk her son Sanvyn out of becoming one; he will not be talked round (the story reaches 60), and killing him ends it badly (stage 90). The ring-and-thanks ending needs him to wound us to half health, which a GOD-mode player never allows.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 SPELL:vampire_blood_berne
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@30000,40000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-13190,57048,2660
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.1 0 0 0 0 FLOAT:60
+60 0 0 0 0 WALKTO:@-12353,57603,2680
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Manor_Entrance
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Llethri_Manor_Entrance
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llethri_Manor_Bedrooms
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Llethri_Manor_Bedrooms
+60 0 0 0 0 ACTIVATE:fathasa%llethri
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:because_of_my_son
+2 0 0 0 0 UNTIL:talkready
+# ("I will attempt to convince your son.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampRich:ge:30
+0.1 0 0 0 0 EXPECT:journal:VA_VampRich:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:sanvyn%llethri
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:submit_myself
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:VA_VampRich:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (he cannot be argued out of it, nor goaded into a fight that ends fairly: the dark way out is to kill him, which Fathasa will not forget)
+120 0 0 0 0 KILL:sanvyn_llethri
+0.1 0 0 0 0 EXPECT:dead:sanvyn_llethri
+0.1 0 0 0 0 EXPECT:journal:VA_VampRich:ge:90

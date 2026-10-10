@@ -1,0 +1,83 @@
+# The Blood of the Quarra (VA_VampBlood), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. Raxle Berne, head of the Berne clan at Galom Daeus (we are one of the clan: Berne blood taken), sends the clanless one for a Quarra Blood Potion from the Quarra lair in Druscashti, and then allows us the services of the observatory.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+0.3 0 0 0 0 SPELL:vampire_blood_berne
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@68648,6204,1363:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Galom_Daeus,_Entry
+10 0 0 0 0 UNTIL:cell:Galom_Daeus,_Entry
+120 0 0 0 0 DOORTO:Galom_Daeus,_Observatory
+10 0 0 0 0 UNTIL:cell:Galom_Daeus,_Observatory
+60 0 0 0 0 ACTIVATE:raxle%berne
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:VA_VampBlood:ge:10
+0.3 0 0 0 0 TOPIC:serve_me
+2 0 0 0 0 UNTIL:talkready
+# ("I will serve you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampBlood:ge:20
+0.1 0 0 0 0 EXPECT:journal:VA_VampBlood:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Galom_Daeus,_Entry
+10 0 0 0 0 UNTIL:cell:Galom_Daeus,_Entry
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@10000,70000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-45600,140960,1504:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 DOORTO:Druscashti,_Lower_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Lower_Level
+120 0 0 0 0 WALKTO:dwrv_barrel10_quarra_un
+0.3 0 0 0 0 USELOCKPICK:dwrv_barrel10_quarra_un:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 LOOT:dwrv_barrel10_quarra_un:p_quarrablood_unique
+0.1 0 0 0 0 EXPECT:item:p_quarrablood_unique:ge:1
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@10000,70000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@68648,6204,1363:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Galom_Daeus,_Entry
+10 0 0 0 0 UNTIL:cell:Galom_Daeus,_Entry
+120 0 0 0 0 DOORTO:Galom_Daeus,_Observatory
+10 0 0 0 0 UNTIL:cell:Galom_Daeus,_Observatory
+60 0 0 0 0 ACTIVATE:raxle%berne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Quarra_Blood_Potion
+2 0 0 0 0 UNTIL:journal:VA_VampBlood:ge:50
+0.1 0 0 0 0 EXPECT:journal:VA_VampBlood:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

@@ -1,0 +1,61 @@
+# A Friend in Deed (EB_Deed), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec Foreign Quarter. The smith Alusaron wants the big-order contract of his rival Ralen Tilvur, kept in a locked cellar under Ralen's shop; stolen, it is handed over for a firebite war axe.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Alusaron|_Smith
+10 0 0 0 0 UNTIL:cell:Vivec,_Alusaron|_Smith
+60 0 0 0 0 ACTIVATE:alusaron
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:competition
+2 0 0 0 0 UNTIL:journal:EB_Deed:ge:15
+0.1 0 0 0 0 EXPECT:journal:EB_Deed:ge:15
+0.3 0 0 0 0 TOPIC:big_orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:get_that_contract
+2 0 0 0 0 UNTIL:talkready
+# ("I'll get that contract for you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Deed:ge:30
+0.1 0 0 0 0 EXPECT:journal:EB_Deed:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Ralen_Tilvur|_Smith
+10 0 0 0 0 UNTIL:cell:Vivec,_Ralen_Tilvur|_Smith
+# (unseen, with the hide item: a guard takes stolen goods back)
+1 0 0 0 0 HIDE:90
+# (the cellar door is locked: picked)
+60 0 0 0 0 WALKTO:@261,-240,-128
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 PICKUP:bk_contract_ralen
+0.1 0 0 0 0 EXPECT:item:bk_contract_ralen:ge:1
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Alusaron|_Smith
+10 0 0 0 0 UNTIL:cell:Vivec,_Alusaron|_Smith
+60 0 0 0 0 ACTIVATE:alusaron
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:get_that_contract
+2 0 0 0 0 UNTIL:journal:EB_Deed:ge:50
+0.1 0 0 0 0 EXPECT:journal:EB_Deed:ge:50
+0.1 0 0 0 0 EXPECT:item:firebite_war_axe:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

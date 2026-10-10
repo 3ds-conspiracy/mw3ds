@@ -1,0 +1,57 @@
+# Favors for Orcs (MV_Bugrol), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash and Caldera. The orc Bugrol gro-Bagul, hiding from Caldera's town bosses, has us carry a note to his friend Bashuk gra-Bat, and her note back; his "present" is a diamond.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-25655,26072,1463:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:bugrol%gro-bagul
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_Bugrol:ge:10
+0.3 0 0 0 0 TOPIC:help_me
+2 0 0 0 0 UNTIL:talkready
+# ("Take note from Bugrol.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_Bugrol:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_Bugrol:ge:20
+0.1 0 0 0 0 EXPECT:item:bk_notefrombugrol:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@-10313,19838,1421:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Caldera,_Bashuk_gra-Bat's_House
+10 0 0 0 0 UNTIL:cell:Caldera,_Bashuk_gra-Bat's_House
+60 0 0 0 0 ACTIVATE:bashuk%gra-bat
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_Bugrol:ge:30
+0.3 0 0 0 0 TOPIC:note_from_Bugrol
+2 0 0 0 0 UNTIL:journal:MV_Bugrol:ge:35
+0.1 0 0 0 0 EXPECT:journal:MV_Bugrol:ge:35
+0.1 0 0 0 0 EXPECT:item:bk_notefrombashuk:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-25655,26072,1463:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:bugrol%gro-bagul
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:note_from_Bashuk
+2 0 0 0 0 UNTIL:journal:MV_Bugrol:ge:40
+0.3 0 0 0 0 TOPIC:present
+2 0 0 0 0 UNTIL:journal:MV_Bugrol:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_Bugrol:eq:100
+0.1 0 0 0 0 EXPECT:item:ingred_diamond_01:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

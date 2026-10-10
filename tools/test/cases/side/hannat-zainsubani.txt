@@ -1,0 +1,26 @@
+# Hannat Zainsubani (MS_Hannat), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Mamaea. Hannat Zainsubani is held in the Sanctum of Black Hope: played as far as picking the cell door.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-58095,80000,1814:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Mamaea,_Sanctum_of_Awakening
+10 0 0 0 0 UNTIL:cell:Mamaea,_Sanctum_of_Awakening
+120 0 0 0 0 DOORTO:Mamaea,_Sanctum_of_Black_Hope
+10 0 0 0 0 UNTIL:cell:Mamaea,_Sanctum_of_Black_Hope
+60 0 0 0 0 WALKTO:@7586,-3170,112
+0.3 0 0 0 0 USELOCKPICK:door_cavern_doors00:pick_grandmaster
+1 0 0 0
+30 0 0 0 0 ACTIVATE:door_cavern_doors00
+1 0 0 0
+# BLOCKED: Hannat (7597,-3793,129) stays 'hidden from here, no spot where the crosshair finds him' behind the cell door; then ESCORT out to the Ald Skar Inn's Hassour (stages 1-70)

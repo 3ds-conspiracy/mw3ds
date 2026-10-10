@@ -1,0 +1,24 @@
+# Sheogorath's Quest (DA_Sheogorath), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Daedric shrine quest: Sheogorath in the shrine below Vivec's St. Delyn canton sends us to the mad hermit Big Head for the Fork of Horripilation (stage 10). Played as far as that.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@32724,-95010,-250:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Underworks
+0.1 0 0 0 0 FLOAT:40
+120 0 0 0 0 DOORTO:Ihinipalit,_Shrine
+10 0 0 0 0 UNTIL:cell:Ihinipalit,_Shrine
+60 0 0 0 0 ACTIVATE:active_dae_sheogorath
+60 0 0 0 0 UNTIL:journal:DA_Sheogorath:ge:10
+0.1 0 0 0 0 EXPECT:journal:DA_Sheogorath:ge:10
+# BLOCKED: Big Head's Shack door (Ex_De_Shack_Door, -13916,202171,1783, island north of Ald Redaynia) is never under the crosshair: the driver lands on the roof (z 1894) and finds it hidden from every side (stage 20 and on; the fork, the netch, the spear)

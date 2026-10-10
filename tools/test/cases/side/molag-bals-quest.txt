@@ -1,0 +1,22 @@
+# Molag Bal's Quest (DA_MolagBal), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Daedric shrine quest: Molag Bal in the Yansirramus shrine speaks three times and gives Menta Na's key (stage 10). Played as far as that.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@104373,38146,679:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Yansirramus,_Shrine
+10 0 0 0 0 UNTIL:cell:Yansirramus,_Shrine
+60 0 0 0 0 ACTIVATE:active_dae_molagbal
+60 0 0 0 0 UNTIL:journal:DA_MolagBal:ge:10
+0.1 0 0 0 0 EXPECT:journal:DA_MolagBal:ge:10
+0.1 0 0 0 0 EXPECT:item:key_menta_na:ge:1
+# BLOCKED: the daedroth Menta Na lies deep in the Kora-Dur cave (-4853,-11255,239): KILL stops 'stuck 4400-8800 away' (walking or levitating), FLYTO:low cannot climb at the entrance (stage 20, 30)

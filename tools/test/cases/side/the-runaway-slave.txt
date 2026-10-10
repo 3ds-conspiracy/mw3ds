@@ -1,0 +1,28 @@
+# The Runaway Slave (MV_RunawaySlave), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Molag Amur. The runaway Argonian Reeh-Jah begs to be taken to the Argonian Mission in Ebonheart: played as far as the promise to help (stage 30).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@97575,-1846,703:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:reeh_jah
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_RunawaySlave:ge:10
+0.3 0 0 0 0 TOPIC:must_get_home
+2 0 0 0 0 UNTIL:talkready
+# ("A runaway slave? I'll help you to the Mission.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_RunawaySlave:ge:30
+0.1 0 0 0 0 EXPECT:journal:MV_RunawaySlave:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# BLOCKED: the escort to the Argonian Mission in Ebonheart (~90000 units; or Tel Aruhn, ~50000, for the bounty ending) is not attempted: long escorts over hills stall (stages 97-140)

@@ -1,0 +1,95 @@
+# The Short Unhappy Life of Danar Uvelas (EB_DeadMen), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. Moroni Uvelas' husband Danar is missing (rumours name her); he lies, a corprus stalker now, in the St. Olms Underworks; his ring brought back earns three cure common disease potions.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:2
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# ("latest rumors" first: Daynes Redothril, the Ald-ruhn pawnbroker, names "my trade" and a publican's answer on that names the rumors)
+120 0 0 0 0 FLYTO:@-13053,56965,2682:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
+60 0 0 0 0 ACTIVATE:daynes%redothril
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:learned:my_trade
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
+60 0 0 0 0 ACTIVATE:boderi%farano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:my_trade
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:learned:latest_rumors
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@33931,-93988,1877:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Brewers_and_Fishmongers_Hall
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Brewers_and_Fishmongers_Hall
+60 0 0 0 0 ACTIVATE:moroni%uvelas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:latest_rumors
+2 0 0 0 0 UNTIL:journal:EB_DeadMen:ge:10
+0.3 0 0 0 0 TOPIC:gone_missing
+2 0 0 0 0 UNTIL:talkready
+# ("I will find your husband.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_DeadMen:ge:30
+0.1 0 0 0 0 EXPECT:journal:EB_DeadMen:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@40127,-95298,-252:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Underworks
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 KILL:corprus_stalker_danar
+120 0 0 0 0 LOOT:corprus_stalker_danar:common_ring_danar
+0.1 0 0 0 0 EXPECT:dead:corprus_stalker_danar
+0.1 0 0 0 0 EXPECT:journal:EB_DeadMen:ge:50
+0.1 0 0 0 0 EXPECT:item:common_ring_danar:ge:1
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@33931,-93988,1877:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Brewers_and_Fishmongers_Hall
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Brewers_and_Fishmongers_Hall
+60 0 0 0 0 ACTIVATE:moroni%uvelas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:gone_missing
+2 0 0 0 0 UNTIL:journal:EB_DeadMen:ge:60
+0.1 0 0 0 0 EXPECT:journal:EB_DeadMen:ge:60
+0.1 0 0 0 0 EXPECT:item:p_cure_common_s:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

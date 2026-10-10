@@ -1,0 +1,163 @@
+# For the Love of a Bosmer (EB_Unrequited), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec Hlaalu canton. Gadayn Andarys, an Altmer clerk, loves the Bosmer Eraldil from afar; his dropped love letter (found in the Hlaalu Plaza) starts it, and Eraldil refuses him. He then has us carry her a love potion as an "apology"; she drinks it.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:8
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@22211,-86265,2135:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 PICKUP:bk_letterfromgadayn
+0.1 0 0 0 0 EXPECT:item:bk_letterfromgadayn:ge:1
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_General_Goods
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_General_Goods
+60 0 0 0 0 ACTIVATE:gadayn%andarys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:love_letter
+2 0 0 0 0 UNTIL:talkready
+# ("I will speak to her on your behalf.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Unrequited:ge:20
+0.1 0 0 0 0 EXPECT:journal:EB_Unrequited:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@23732,-84349,1885:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Waistworks
+60 0 0 0 0 ACTIVATE:eraldil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:love_letter
+2 0 0 0 0 UNTIL:journal:EB_Unrequited:ge:40
+0.1 0 0 0 0 EXPECT:journal:EB_Unrequited:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@22211,-86265,2135:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_General_Goods
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_General_Goods
+60 0 0 0 0 ACTIVATE:gadayn%andarys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:spoken_to_Eraldil
+2 0 0 0 0 UNTIL:journal:EB_Unrequited:ge:50
+0.3 0 0 0 0 TOPIC:backup_plan
+2 0 0 0 0 UNTIL:journal:EB_Unrequited:ge:60
+# ("I'll deliver the potion for you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Unrequited:ge:70
+0.1 0 0 0 0 EXPECT:journal:EB_Unrequited:eq:70
+0.1 0 0 0 0 EXPECT:item:p_lovepotion_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@23732,-84349,1885:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Waistworks
+60 0 0 0 0 ACTIVATE:eraldil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:apology_from_Gadayn
+2 0 0 0 0 UNTIL:journal:EB_Unrequited:ge:90
+0.1 0 0 0 0 EXPECT:journal:EB_Unrequited:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@22211,-86265,2135:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_General_Goods
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_General_Goods
+60 0 0 0 0 ACTIVATE:gadayn%andarys
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:deliver_the_potion
+2 0 0 0 0 UNTIL:journal:EB_Unrequited:ge:95
+0.1 0 0 0 0 EXPECT:journal:EB_Unrequited:ge:95
+0.1 0 0 0 0 EXPECT:item:light_ring:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+# (eleven days pass: Eraldil moves into his shop while we are away)
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+1 0 0 0 0 SLEEP:24
+4 0 0 0
+120 0 0 0 0 FLYTO:@22211,-86265,2135:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_General_Goods
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_General_Goods
+60 0 0 0 0 ACTIVATE:gadayn%andarys
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:EB_Unrequited:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

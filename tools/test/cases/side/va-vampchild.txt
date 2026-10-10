@@ -1,0 +1,37 @@
+# A Vampire's Family (VA_VampChild), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. Dhaunayne Aundae, head of the Aundae clan at Ashmelech, asks one of her clan (Aundae blood taken, three days passed) about her lost son: played as far as entering the Ashmelech lair.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 SPELL:vampire_blood_aundae
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@30000,60000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@20000,130000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@18378,157904,986:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ashmelech
+10 0 0 0 0 UNTIL:cell:Ashmelech
+0.1 0 0 0 0 EXPECT:cell:Ashmelech
+# BLOCKED: Dhaunayne Aundae (3697,4611,3200) cannot be reached: the walk stops 'stuck 818 away, 793 up' above her at 3078,5146,3968 (the lair is a tall interior and the route does not come down; FLOAT:60 does not help); then the ring, the Gateway Inn Altmer, Sinyaramen and the grave (stages 10-130) are not played

@@ -1,0 +1,39 @@
+# The Weapon Delivery (MV_ThiefTrader), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash and Ald-ruhn. The trader Lucan Ostorius (a "brother" to a thief's ear) has us carry four weapons to his contact Yak gro-Skandar, who drinks at the Rat in the Pot in Ald-ruhn, and pays.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-55935,77364,1316:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:lucan%ostorius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:do_me_a_favor
+2 0 0 0 0 UNTIL:talkready
+# ("I can help you.": the first button)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_ThiefTrader:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_ThiefTrader:ge:20
+0.1 0 0 0 0 EXPECT:item:steel_shortsword:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@-13071,51975,2182:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_The_Rat_In_The_Pot
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_The_Rat_In_The_Pot
+60 0 0 0 0 ACTIVATE:yak%gro-skandar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Lucan's_shipment
+2 0 0 0 0 UNTIL:journal:MV_ThiefTrader:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_ThiefTrader:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

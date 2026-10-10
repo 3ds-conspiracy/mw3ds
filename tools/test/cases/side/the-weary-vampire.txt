@@ -1,0 +1,51 @@
+# The Weary Vampire (VA_VampMarara), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. Marara, an old vampire in the Drethan Ancestral Tomb near Ald Daedroth, tires of her unlife and asks a fellow vampire (we are one: a Berne's blood taken, three days passed) to end it in a fair fight.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 SPELL:vampire_blood_berne
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@30000,40000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@60000,120000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@67866,154358,157:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Drethan_Ancestral_Tomb
+10 0 0 0 0 UNTIL:cell:Drethan_Ancestral_Tomb
+60 0 0 0 0 ACTIVATE:marara
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:rid_me_of_this_unlife
+2 0 0 0 0 UNTIL:journal:VA_VampMarara:ge:20
+0.3 0 0 0 0 TOPIC:worthy_enough
+2 0 0 0 0 UNTIL:talkready
+# ("Perhaps you will; perhaps not.": the first button, a fight)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampMarara:ge:30
+0.1 0 0 0 0 EXPECT:journal:VA_VampMarara:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:marara
+0.1 0 0 0 0 EXPECT:dead:marara
+0.1 0 0 0 0 EXPECT:journal:VA_VampMarara:ge:100

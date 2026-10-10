@@ -1,0 +1,31 @@
+# The Lady's Ring (MV_LostRing), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash. Synette Jeline, a "dancer", begs us to fetch her ring from the muddy pool; it is bait: she and her bandit Tavynu Tedran attack once the ring is in our hands. Hitting her ends the quest (stage 40).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-96224,113523,618:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:synette%jeline
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lady_in_distress
+2 0 0 0 0 UNTIL:talkready
+# ("It would be my pleasure.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_LostRing:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_LostRing:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 PICKUP:expensive_ring_01_bill
+0.1 0 0 0 0 EXPECT:item:expensive_ring_01_bill:ge:1
+120 0 0 0 0 KILL:synette_jeline
+120 0 0 0 0 KILL:tavynu_tedran
+0.1 0 0 0 0 EXPECT:journal:MV_LostRing:ge:40

@@ -1,0 +1,26 @@
+# Free the Slaves (MS_JobashaAbolitionist), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. The Khajiit bookseller Jobasha rewards those who have freed more than thirty slaves (the Twin Lamps' work): played as far as meeting her.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Jobasha's_Rare_Books
+10 0 0 0 0 UNTIL:cell:Vivec,_Jobasha's_Rare_Books
+60 0 0 0 0 ACTIVATE:jobasha
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Jobasha's_Rare_Books
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# BLOCKED: the reward needs the global FreedSlavesCounter above 30: each slave freed with its owner's key (key_hlormarenslaves_01, key_kudanatslaves_01, key_yakanalitslaves_01, key_sinsibadonslaves_01 ... held by slavers; topic go free, choice 1) adds 1, Eleedal Lei in the Abebaal egg mine 10 (HT_SlaveRebellion): about 30 freed slaves across four camps are not played yet (stages 100)

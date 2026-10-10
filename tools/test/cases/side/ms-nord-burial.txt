@@ -1,0 +1,46 @@
+# A little secret: Olmgerd's burial (MS_Nord_burial), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. Ennbjof, an old Nord sea reaver in the Lizard's Head, trades a tale of Olmgerd's burial and the key to his tomb for a jug of mazte (bought from the publican Manara Othan).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@44092,-87008,1872:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_The_Lizard's_Head
+10 0 0 0 0 UNTIL:cell:Vivec,_The_Lizard's_Head
+60 0 0 0 0 ACTIVATE:manara%othan
+1.5 0 0 0
+0.3 0 0 0 0 BUY:manara%othan:Potion_Local_Brew_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ennbjof
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ennbjof
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:little_secret
+2 0 0 0 0 UNTIL:talkready
+# ("Sure. Here.", then the old man's tale and the key: two Continues)
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_Nord_burial:ge:1
+0.1 0 0 0 0 EXPECT:journal:MS_Nord_burial:ge:1
+0.1 0 0 0 0 EXPECT:item:key_tukushapal_1:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

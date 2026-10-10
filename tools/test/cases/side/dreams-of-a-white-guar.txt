@@ -1,0 +1,54 @@
+# Dreams of a White Guar (MS_WhiteGuar), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Ahemmusa camp. The wise woman Urshamusa Rapli dreams of a white guar that will lead us to the Amulet of Ashamanu (to cure her sick tribe): the guar, found west of the camp, follows us (route planned with uberroute.py) to the spirit Ashamanu, who gives the amulet; the shield of the undaunted is the reward.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@94368,134363,843:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:urshamusa%rapli
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_WhiteGuar:ge:10
+0.3 0 0 0 0 TOPIC:dreams_and_visions
+2 0 0 0 0 UNTIL:talkready
+# ("I will try and find the white guar.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_WhiteGuar:ge:30
+0.1 0 0 0 0 EXPECT:journal:MS_WhiteGuar:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@79107,126069,865:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_WhiteGuar:ge:50
+# (the guar leads: it escorts us to Ashamanu itself, so we only walk there, close behind)
+0.3 0 0 0 0 ESCORT:guar_white_unique
+120 0 0 0 0 WALKTO:@70824,126274,864
+0.3 0 0 0 0 ESCORT:-
+30 0 0 0 0 UNTIL:journal:MS_WhiteGuar:ge:60
+0.1 0 0 0 0 EXPECT:journal:MS_WhiteGuar:ge:60
+120 0 0 0 0 KILL:ashamanu
+120 0 0 0 0 LOOT:ashamanu:amulet%of%ashamanu%(unique)
+0.1 0 0 0 0 EXPECT:dead:ashamanu
+0.1 0 0 0 0 EXPECT:item:amulet%of%ashamanu%(unique):ge:1
+120 0 0 0 0 FLYTO:@94368,134363,843:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:urshamusa%rapli
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:white_guar
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Amulet_of_Ashamanu
+2 0 0 0 0 UNTIL:journal:MS_WhiteGuar:ge:80
+0.1 0 0 0 0 EXPECT:journal:MS_WhiteGuar:ge:80
+0.1 0 0 0 0 EXPECT:item:shield%of%the%undaunted:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

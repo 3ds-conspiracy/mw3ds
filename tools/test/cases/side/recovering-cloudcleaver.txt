@@ -1,0 +1,110 @@
+# Recovering Cloudcleaver (MV_AbusedHealer), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash. Hlormar Wine-Sot, robbed of his axe Cloudcleaver by a "witch", asks us to find her; we walk him north-west (route planned with uberroute.py) to Sosia Caristiana, who tells it differently; we side with Hlormar and kill her.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-23067,26255,1423:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:hlormar%wine-sot
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_AbusedHealer:ge:1
+0.3 0 0 0 0 TOPIC:festering_witch
+2 0 0 0 0 UNTIL:talkready
+# ("I will help you find her.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_AbusedHealer:ge:30
+0.1 0 0 0 0 EXPECT:journal:MV_AbusedHealer:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 ESCORT:hlormar_wine-sot
+90 0 0 0 0 WALKTO:@-23552,26368,1248
+6 0 0 0
+90 0 0 0 0 WALKTO:@-23808,26624,1256
+6 0 0 0
+90 0 0 0 0 WALKTO:@-24064,27136,1288
+6 0 0 0
+90 0 0 0 0 WALKTO:@-24576,27648,1272
+6 0 0 0
+90 0 0 0 0 WALKTO:@-25088,28160,1176
+6 0 0 0
+90 0 0 0 0 WALKTO:@-25088,28672,1200
+6 0 0 0
+90 0 0 0 0 WALKTO:@-25088,29184,1208
+6 0 0 0
+90 0 0 0 0 WALKTO:@-25088,29440,1288
+6 0 0 0
+90 0 0 0 0 WALKTO:@-25088,29696,1360
+6 0 0 0
+90 0 0 0 0 WALKTO:@-25600,30208,1320
+6 0 0 0
+90 0 0 0 0 WALKTO:@-26112,30720,1312
+6 0 0 0
+90 0 0 0 0 WALKTO:@-26368,31232,1312
+6 0 0 0
+90 0 0 0 0 WALKTO:@-26624,31744,1312
+6 0 0 0
+90 0 0 0 0 WALKTO:@-26624,32256,1336
+6 0 0 0
+90 0 0 0 0 WALKTO:@-26880,32768,1392
+6 0 0 0
+90 0 0 0 0 WALKTO:@-26880,33024,1424
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27136,33536,1376
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27136,34048,1336
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27392,34560,1400
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27392,35072,1624
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27392,35584,1816
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27392,36096,1840
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27648,36608,1872
+6 0 0 0
+90 0 0 0 0 WALKTO:@-27648,37120,1784
+6 0 0 0
+0.3 0 0 0 0 ESCORT:-
+60 0 0 0 0 ACTIVATE:sosia%caristiana
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cloudcleaver
+2 0 0 0 0 UNTIL:journal:MV_AbusedHealer:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:hlormar%wine-sot
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Sosia's_offer
+2 0 0 0 0 UNTIL:talkready
+# ("I'll side with you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_AbusedHealer:ge:60
+0.1 0 0 0 0 EXPECT:journal:MV_AbusedHealer:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:sosia_caristiana
+120 0 0 0 0 LOOT:sosia_caristiana:cloudcleaver_unique
+0.1 0 0 0 0 EXPECT:dead:sosia_caristiana
+0.1 0 0 0 0 EXPECT:item:cloudcleaver_unique:ge:1
+60 0 0 0 0 ACTIVATE:hlormar%wine-sot
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Cloudcleaver
+2 0 0 0 0 UNTIL:talkready
+# ("Here's your axe, Hlormar.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_AbusedHealer:ge:85
+0.1 0 0 0 0 EXPECT:journal:MV_AbusedHealer:ge:85
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

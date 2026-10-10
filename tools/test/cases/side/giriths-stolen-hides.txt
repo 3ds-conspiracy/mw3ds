@@ -1,0 +1,59 @@
+# Girith's Stolen Hides (MV_OutcastAshlanders), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Grazelands and Tel Mora. The trader Athanden Girith was robbed of ten guar hides by two outcast Ashlanders (Emul-Ran and Kashtes Ilabael, camped to the east); we kill them, bring the hides back, and his partner Berwen in Tel Mora pays.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@83789,126777,914:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:athanden%girith
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_OutcastAshlanders:ge:10
+0.3 0 0 0 0 TOPIC:robbed_me
+2 0 0 0 0 UNTIL:talkready
+# ("Excellent. Go get those bastard Ashlanders.": the first button)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_OutcastAshlanders:ge:30
+0.1 0 0 0 0 EXPECT:journal:MV_OutcastAshlanders:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@97574,126151,93:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 KILL:emul-ran
+120 0 0 0 0 LOOT:emul-ran:ingred_guar_hide_girith
+120 0 0 0 0 KILL:kashtes_ilabael
+0.1 0 0 0 0 EXPECT:dead:emul-ran
+0.1 0 0 0 0 EXPECT:dead:kashtes_ilabael
+0.1 0 0 0 0 EXPECT:item:ingred_guar_hide_girith:ge:10
+120 0 0 0 0 FLYTO:@83789,126777,914:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:athanden%girith
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Girith's_guar_hides
+2 0 0 0 0 UNTIL:journal:MV_OutcastAshlanders:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_OutcastAshlanders:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 WALKTO:@84500,126500,900
+120 0 0 0 0 FLYTO:@109004,118520,531:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Tel_Mora,_Berwen|_Trader
+10 0 0 0 0 UNTIL:cell:Tel_Mora,_Berwen|_Trader
+60 0 0 0 0 ACTIVATE:berwen
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Girith's_guar_hides
+2 0 0 0 0 UNTIL:journal:MV_OutcastAshlanders:ge:110
+0.1 0 0 0 0 EXPECT:journal:MV_OutcastAshlanders:eq:110
+0.1 0 0 0 0 EXPECT:item:ring_of_hornhand:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

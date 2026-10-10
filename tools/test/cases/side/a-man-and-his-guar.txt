@@ -81,7 +81,7 @@
 120 0 0 0 0 WALKTO:in_velothismall_ndoor_agrippina
 30 0 0 0 0 UNTIL:journal:MV_RichTrader:ge:90
 0.3 0 0 0 0 ESCORT:-
-2 0 0 0 0 UNTIL:screen:dialogue
+3 0 0 0
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none

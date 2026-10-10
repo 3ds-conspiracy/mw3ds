@@ -1,0 +1,81 @@
+# Shashev's Key (VA_Shashev), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. Sirilonwe, a Mages Guild researcher in Vivec, wants her rival Shashev (at the Ald Skar Inn, Ald-ruhn) killed by a vampire, and his key brought back.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:2
+0.3 0 0 0 0 SPELL:vampire_blood_berne
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:sirilonwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:someone_killed
+2 0 0 0 0 UNTIL:journal:VA_Shashev:ge:10
+0.1 0 0 0 0 EXPECT:journal:VA_Shashev:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
+120 0 0 0 0 KILL:shashev
+120 0 0 0 0 LOOT:shashev:key_shashev
+0.1 0 0 0 0 EXPECT:dead:shashev
+0.1 0 0 0 0 EXPECT:item:key_shashev:ge:1
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (a guard saw it: the fine is paid, the stolen key stays ours)
+60 0 0 0 0 ACTIVATE:redoran%guard%male
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:sirilonwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:someone_killed
+2 0 0 0 0 UNTIL:journal:VA_Shashev:ge:100
+0.1 0 0 0 0 EXPECT:journal:VA_Shashev:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

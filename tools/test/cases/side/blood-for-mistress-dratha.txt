@@ -1,0 +1,112 @@
+# Blood for Mistress Dratha (VA_VampBlood2), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. After Murder Rimintil (played first), Raven Omayn asks the dark one for a Quarra Blood Potion; one stands in a barrel on Druscashti's lower level, the Quarra clan's lair.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+0.3 0 0 0 0 SPELL:vampire_blood_berne
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@60000,20000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@144859,42228,944:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 ACTIVATE:raven%omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Rimintil
+2 0 0 0 0 UNTIL:journal:VA_Rimintil:ge:10
+0.1 0 0 0 0 EXPECT:journal:VA_Rimintil:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@86610,118652,5106:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Tel_Vos,_Central_Tower
+10 0 0 0 0 UNTIL:cell:Tel_Vos,_Central_Tower
+120 0 0 0 0 KILL:rimintil
+0.1 0 0 0 0 EXPECT:dead:rimintil
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@144859,42228,944:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 ACTIVATE:raven%omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Rimintil
+2 0 0 0 0 UNTIL:journal:VA_Rimintil:ge:100
+0.1 0 0 0 0 EXPECT:journal:VA_Rimintil:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:raven%omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Quarra_Blood_Potion
+2 0 0 0 0 UNTIL:journal:VA_VampBlood2:ge:10
+0.1 0 0 0 0 EXPECT:journal:VA_VampBlood2:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-45600,140960,1504:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 DOORTO:Druscashti,_Lower_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Lower_Level
+120 0 0 0 0 WALKTO:dwrv_barrel10_quarra_un
+0.3 0 0 0 0 USELOCKPICK:dwrv_barrel10_quarra_un:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 LOOT:dwrv_barrel10_quarra_un:p_quarrablood_unique
+0.1 0 0 0 0 EXPECT:item:p_quarrablood_unique:ge:1
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@144859,42228,944:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 ACTIVATE:raven%omayn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Quarra_Blood_Potion
+2 0 0 0 0 UNTIL:journal:VA_VampBlood2:ge:100
+0.1 0 0 0 0 EXPECT:journal:VA_VampBlood2:eq:100
+0.1 0 0 0 0 EXPECT:item:dwe_jinksword_curse_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

@@ -1,0 +1,69 @@
+# Mysterious Killings in Vivec (town_Vivec), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. Elam Andas, chief of the Order of the Watch, cannot hire us but promises a reward for finding and killing the murderer of seven (the Dreamer Prophet, in the Foreign Quarter Underworks; the sewer is crossed hovering).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:3
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@31731,-97517,664:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+10 0 0 0 0 UNTIL:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:Vivec,_Office_of_the_Watch
+10 0 0 0 0 UNTIL:cell:Vivec,_Office_of_the_Watch
+60 0 0 0 0 ACTIVATE:elam%andas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:talkready
+# ("Sure, tell me what you know": the first button)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:town_Vivec:ge:10
+0.1 0 0 0 0 EXPECT:journal:town_Vivec:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+10 0 0 0 0 UNTIL:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@33519,-81654,-266:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Underworks
+0.1 0 0 0 0 FLOAT:300
+120 0 0 0 0 KILL:dreamer_prophet
+0.1 0 0 0 0 EXPECT:dead:dreamer_prophet
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@31731,-97517,664:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+10 0 0 0 0 UNTIL:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:Vivec,_Office_of_the_Watch
+10 0 0 0 0 UNTIL:cell:Vivec,_Office_of_the_Watch
+60 0 0 0 0 ACTIVATE:elam%andas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:talkready
+# ("Continue", then "I'd like the belt.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:journal:town_Vivec:ge:50
+0.1 0 0 0 0 EXPECT:journal:town_Vivec:ge:50
+0.1 0 0 0 0 EXPECT:item:belt_of_the_armor_of_god:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

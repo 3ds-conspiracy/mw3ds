@@ -1,0 +1,42 @@
+# Kidnapped by Cultists (MV_CultistVictim), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Ald Velothi coast. Sason begs us to find his wife Malexa, held by cultists in the Ashalmawia shrine: played as far as freeing her (her cell door is picked).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-57527,125066,1129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:sason
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_CultistVictim:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@-76190,124509,1572:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ashalmawia,_Shrine
+10 0 0 0 0 UNTIL:cell:Ashalmawia,_Shrine
+60 0 0 0 0 WALKTO:@-727,2028,-512
+0.3 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
+1 0 0 0
+30 0 0 0 0 ACTIVATE:in_dae_door_01
+1 0 0 0
+60 0 0 0 0 ACTIVATE:malexa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:unholy_ritual
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_CultistVictim:ge:50
+0.1 0 0 0 0 EXPECT:journal:MV_CultistVictim:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# BLOCKED: Malexa follows but falls and sticks at -2163 882 -671 on the way to the exit door (ex_dae_door_load_oval 256,4384): 'malexa not coming'; the walk east to Sason (-57527,125066) for stage 100 is not reached

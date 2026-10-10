@@ -1,0 +1,37 @@
+# Azura's Quest (DA_Azura), played LEGIT on the v2 test kit (ENHANCEV2).
+# Daedric shrine quest. Azura in her shrine sends us to the island north of Dagon Fel: kill Sheogorath's golden saint (the priestess is left alone) and bring back his signet ring for Azura's Star.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@161720,-61790,1665:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Shrine_of_Azura
+10 0 0 0 0 UNTIL:cell:Shrine_of_Azura
+60 0 0 0 0 ACTIVATE:active_dae_azura
+60 0 0 0 0 UNTIL:journal:DA_Azura:ge:10
+0.1 0 0 0 0 EXPECT:journal:DA_Azura:ge:10
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@29315,197027,598:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 KILL:golden%saint_staada
+120 0 0 0 0 LOOT:golden%saint_staada:sheogorath's_signet_ring
+0.1 0 0 0 0 EXPECT:dead:golden%saint_staada
+0.1 0 0 0 0 EXPECT:journal:DA_Azura:ge:20
+0.1 0 0 0 0 EXPECT:item:sheogorath's_signet_ring:ge:1
+120 0 0 0 0 FLYTO:@161720,-61790,1665:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Shrine_of_Azura
+10 0 0 0 0 UNTIL:cell:Shrine_of_Azura
+60 0 0 0 0 ACTIVATE:active_dae_azura
+60 0 0 0 0 UNTIL:journal:DA_Azura:ge:30
+0.1 0 0 0 0 EXPECT:journal:DA_Azura:ge:30
+0.1 0 0 0 0 EXPECT:item:misc_soulgem_azura:ge:1

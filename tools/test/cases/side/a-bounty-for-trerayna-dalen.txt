@@ -1,0 +1,33 @@
+# A Bounty for Trerayna Dalen (MS_Trerayna_bounty), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Tel Branora. Mollimo of Cloudrest, Mistress Therana's servant, offers 1000 septims for the death of Trerayna Dalen, a petty annoyance guarded by thugs.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@126838,-101472,2263:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:mollimo%of%cloudrest
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Trerayna_bounty:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@123246,-104767,812:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 KILL:trerayna_dalen
+0.1 0 0 0 0 EXPECT:dead:trerayna_dalen
+120 0 0 0 0 FLYTO:@126838,-101472,2263:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:mollimo%of%cloudrest
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Trerayna_bounty:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

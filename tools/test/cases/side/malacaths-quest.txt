@@ -1,0 +1,41 @@
+# Malacath's Quest (DA_Malacath), played LEGIT on the v2 test kit (ENHANCEV2).
+# Daedric shrine quest. Malacath in the Assurdirapal shrine asks us to kill Farvyn Oreyn, last of Oreyn Bearclaw's line, who lives out in the West Gash, and gives the Helm of Oreyn Bearclaw for it.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@613,174039,514:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Assurdirapal,_Shrine
+10 0 0 0 0 UNTIL:cell:Assurdirapal,_Shrine
+120 0 0 0 0 DOORTO:Assurdirapal,_Inner_Shrine
+10 0 0 0 0 UNTIL:cell:Assurdirapal,_Inner_Shrine
+60 0 0 0 0 ACTIVATE:active_dae_malacath
+60 0 0 0 0 UNTIL:journal:DA_Malacath:ge:10
+0.1 0 0 0 0 EXPECT:journal:DA_Malacath:ge:10
+120 0 0 0 0 DOORTO:Assurdirapal,_Shrine
+10 0 0 0 0 UNTIL:cell:Assurdirapal,_Shrine
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-65116,21710,117:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 KILL:farvyn_oreyn
+0.1 0 0 0 0 EXPECT:dead:farvyn_oreyn
+0.1 0 0 0 0 EXPECT:journal:DA_Malacath:ge:60
+120 0 0 0 0 FLYTO:@613,174039,514:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Assurdirapal,_Shrine
+10 0 0 0 0 UNTIL:cell:Assurdirapal,_Shrine
+120 0 0 0 0 DOORTO:Assurdirapal,_Inner_Shrine
+10 0 0 0 0 UNTIL:cell:Assurdirapal,_Inner_Shrine
+60 0 0 0 0 ACTIVATE:active_dae_malacath
+60 0 0 0 0 UNTIL:journal:DA_Malacath:ge:70
+0.1 0 0 0 0 EXPECT:journal:DA_Malacath:ge:70
+0.1 0 0 0 0 EXPECT:item:helm_bearclaw_unique:ge:1

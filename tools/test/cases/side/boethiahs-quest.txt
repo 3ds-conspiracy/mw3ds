@@ -1,0 +1,24 @@
+# Boethiah's Quest (DA_Boethiah), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Daedric shrine quest, Sheogorad. M'aiq the Liar points us to the lost shrine of Boethiah: played as far as his hint (stage 10).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@76086,177874,335:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:m'aiq
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Shrine_of_Boethiah
+2 0 0 0 0 UNTIL:journal:DA_Boethiah:ge:10
+0.1 0 0 0 0 EXPECT:journal:DA_Boethiah:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# BLOCKED: the shrine's statue lies under the sea off the west coast (active_dae_boethiah_ruin / active_DAE_B_Bo_Head, about -65653,-26934,-2008): talking to it underwater (stages 20, 30), then the orc sculptor Duma gro-Lag in Caldera Ghorak Manor (2000 gold and the book Boethiah's Glory from Jobasha, Vivec), twenty days away for the shrine to be built, Goldbrand (stages 40-70) are not walked yet

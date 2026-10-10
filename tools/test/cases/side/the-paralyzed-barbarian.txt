@@ -1,0 +1,51 @@
+# The Paralyzed Barbarian (MV_ParalyzedBarbarian), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash. Hisin Deep-Raed, a barbarian rooted to the spot by a witch's enchantment, wants a potion of Cure Common Disease (bought from a temple healer in Ald-ruhn) and pays with his family's helm, Icecap.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-37749,53021,2297:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:hisin%deep-raed
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:enchantment
+2 0 0 0 0 UNTIL:talkready
+# ("You have honor...": the first button, a potion)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_ParalyzedBarbarian:ge:40
+0.1 0 0 0 0 EXPECT:journal:MV_ParalyzedBarbarian:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@-13190,57048,2660
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Temple
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Temple
+60 0 0 0 0 ACTIVATE:danoso%andrano
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:danoso_andrano:p_cure_common_s
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:p_cure_common_s:ge:1
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-37749,53021,2297:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:hisin%deep-raed
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:potion_of_Cure_Common_Disease
+2 0 0 0 0 UNTIL:journal:MV_ParalyzedBarbarian:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_ParalyzedBarbarian:ge:100
+0.1 0 0 0 0 EXPECT:item:icecap_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

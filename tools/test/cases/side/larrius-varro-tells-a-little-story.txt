@@ -1,0 +1,132 @@
+# Larrius Varro Tells a Little Story (town_balmora), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Balmora. The Legion Champion Larrius Varro of Fort Moonmoth tells a "little story" of a bloodbath that would wash Balmora clean of five Camonna Tong crooks (a scout, a pawnbroker, a savant, a thief and a smith, at the Council Club); who they are is learned from a Thieves Guild contact, and we kill them.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:9000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+0.3 0 0 0 0 GIVE:sc_divineintervention:3
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-5062,-18284,1129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:larrius%varro
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:little_story
+2 0 0 0 0 UNTIL:talkready
+# (the story: Continue four times)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:town_balmora:ge:15
+0.1 0 0 0 0 EXPECT:journal:town_balmora:ge:15
+0.3 0 0 0 0 TOPIC:bloodbath
+2 0 0 0 0 UNTIL:journal:town_balmora:ge:20
+0.1 0 0 0 0 EXPECT:journal:town_balmora:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the five Camonna Tong at the Balmora Council Club, killed; the club's door is reached hovering over its steps)
+120 0 0 0 0 FLYTO:@-21153,-15875,603
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WALKTO:@-21161,-16810,500
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 DOORTO:Balmora,_Council_Club
+10 0 0 0 0 UNTIL:cell:Balmora,_Council_Club
+120 0 0 0 0 KILL:vadusa_sathryon
+120 0 0 0 0 KILL:marasa_aren
+120 0 0 0 0 KILL:madrale_thirith
+120 0 0 0 0 KILL:sovor_trandel
+120 0 0 0 0 KILL:thanelen_velas
+0.1 0 0 0 0 EXPECT:dead:vadusa_sathryon
+0.1 0 0 0 0 EXPECT:dead:marasa_aren
+0.1 0 0 0 0 EXPECT:dead:madrale_thirith
+0.1 0 0 0 0 EXPECT:dead:thanelen_velas
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (five murders seen, a bounty of 5120 that the guards will not take: straight to the Legion fort)
+120 0 0 0 0 FLYTO:@-5062,-18284,1129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:larrius%varro
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:little_story
+2 0 0 0 0 UNTIL:talkready
+# (the story: Continue four times)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:town_balmora:ge:15
+0.1 0 0 0 0 EXPECT:journal:town_balmora:ge:15
+0.3 0 0 0 0 TOPIC:bloodbath
+2 0 0 0 0 UNTIL:journal:town_balmora:ge:20
+0.1 0 0 0 0 EXPECT:journal:town_balmora:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the five Camonna Tong at the Balmora Council Club, killed; the club's door is reached hovering over its steps)
+120 0 0 0 0 FLYTO:@-21153,-15875,603
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WALKTO:@-21161,-16810,500
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 DOORTO:Balmora,_Council_Club
+10 0 0 0 0 UNTIL:cell:Balmora,_Council_Club
+120 0 0 0 0 KILL:vadusa_sathryon
+120 0 0 0 0 KILL:marasa_aren
+120 0 0 0 0 KILL:madrale_thirith
+120 0 0 0 0 KILL:sovor_trandel
+120 0 0 0 0 KILL:thanelen_velas
+0.1 0 0 0 0 EXPECT:dead:vadusa_sathryon
+0.1 0 0 0 0 EXPECT:dead:marasa_aren
+0.1 0 0 0 0 EXPECT:dead:madrale_thirith
+0.1 0 0 0 0 EXPECT:dead:thanelen_velas
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (five murders seen: a guard collects the fine of 5120)
+120 0 0 0 0 WALKTO:@-21153,-15875,523
+3 0 0 0
+60 0 0 0 0 ACTIVATE:hlaalu%guard_outside
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 FLYTO:@-5062,-18284,1129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:larrius%varro
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:town_balmora:ge:30
+0.1 0 0 0 0 EXPECT:journal:town_balmora:ge:30
+0.1 0 0 0 0 EXPECT:item:ring_surrounding_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

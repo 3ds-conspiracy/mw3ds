@@ -1,0 +1,27 @@
+# Ahnassi, a Special Friend (Romance_Ahnassi), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Pelagiad. The Khajiit thief Ahnassi at the Halfway Tavern befriends us, gives 'Honor Among Thieves', and slowly trades gifts and secrets: played as far as the first gift (stage 1).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@2507,-56048,1570:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
+60 0 0 0 0 ACTIVATE:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Thieves_Guild
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:ge:1
+0.1 0 0 0 0 EXPECT:item:bk_honorthieves:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# BLOCKED: the gifts that follow (flamemirror robe, Elvul's Black Blindfold, the book Confessions of a Dunmer Skooma-Addict for J'Dhannar, the hidden Imperial Commission passage: stages 30-95) are twenty stages of errands, not walked yet

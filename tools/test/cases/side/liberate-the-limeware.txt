@@ -1,0 +1,77 @@
+# Liberate the Limeware (EB_Shipment), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec and Ebonheart. The glassworker Alarvyne Indalas sends us to take the East Empire Company's held-back dwarven limeware (five bowls, five cups) from the Chun-Ook's hold; taken unseen, it earns her 1500 septims.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:2
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@27206,-93312,2129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Glassworker's_Hall
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Glassworker's_Hall
+60 0 0 0 0 ACTIVATE:alarvyne%indalas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:exotic_items
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:dwarven_limeware
+2 0 0 0 0 UNTIL:talkready
+# ("I'll get the limeware for you.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Shipment:ge:20
+0.1 0 0 0 0 EXPECT:journal:EB_Shipment:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Divine Intervention from under the canton roof: the Imperial chapel at Ebonheart)
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+# (aboard the Chun-Ook, unseen: stolen goods would be taken back)
+120 0 0 0 0 FLYTO:@19980,-103260,243:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the trapdoor and the hold door are locked: picked)
+0.3 0 0 0 0 USELOCKPICK:ex_de_ship_trapdoor:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 DOORTO:Chun-Ook,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Chun-Ook,_Upper_Level
+60 0 0 0 0 WALKTO:@-2,700,-105
+0.3 0 0 0 0 USELOCKPICK:in_de_shipdoor_toplevel:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 DOORTO:Chun-Ook,_Lower_Level
+10 0 0 0 0 UNTIL:cell:Chun-Ook,_Lower_Level
+1 0 0 0 0 HIDE:120
+120 0 0 0 0 LOOT:crate_01_limeware_uniqu:misc_lw_bowl
+120 0 0 0 0 LOOT:crate_01_limeware_uniqu:misc_lw_cup
+0.1 0 0 0 0 EXPECT:item:misc_lw_bowl:ge:5
+0.1 0 0 0 0 EXPECT:item:misc_lw_cup:ge:5
+120 0 0 0 0 DOORTO:Chun-Ook,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Chun-Ook,_Upper_Level
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@27206,-93312,2129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Glassworker's_Hall
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Glassworker's_Hall
+60 0 0 0 0 ACTIVATE:alarvyne%indalas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:dwarven_limeware
+2 0 0 0 0 UNTIL:journal:EB_Shipment:ge:40
+0.1 0 0 0 0 EXPECT:journal:EB_Shipment:eq:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

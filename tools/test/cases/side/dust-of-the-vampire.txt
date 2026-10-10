@@ -1,0 +1,141 @@
+# Dust of the Vampire (VA_VampDust), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. After Shashev's Key (played first), Sirilonwe wants three portions of vampire dust (bought from the alchemists Anis Seloth in Sadrith Mora and the Ald-ruhn Mages Guild's Anarenen) and pays an amulet of feeding.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 GIVE:sc_divineintervention:3
+0.3 0 0 0 0 SPELL:vampire_blood_berne
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:sirilonwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:someone_killed
+2 0 0 0 0 UNTIL:journal:VA_Shashev:ge:10
+0.1 0 0 0 0 EXPECT:journal:VA_Shashev:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
+120 0 0 0 0 KILL:shashev
+120 0 0 0 0 LOOT:shashev:key_shashev
+0.1 0 0 0 0 EXPECT:dead:shashev
+0.1 0 0 0 0 EXPECT:item:key_shashev:ge:1
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (a guard saw it: the fine is paid, the stolen key stays ours)
+60 0 0 0 0 ACTIVATE:redoran%guard%male
+1.5 0 0 0
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:sirilonwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:someone_killed
+2 0 0 0 0 UNTIL:journal:VA_Shashev:ge:100
+0.1 0 0 0 0 EXPECT:journal:VA_Shashev:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:sirilonwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vampire_dust
+2 0 0 0 0 UNTIL:journal:VA_VampDust:ge:10
+0.1 0 0 0 0 EXPECT:journal:VA_VampDust:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@148481,40098,1385:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Anis_Seloth|_Alchemist
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Anis_Seloth|_Alchemist
+60 0 0 0 0 ACTIVATE:anis%seloth
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:anis_seloth:ingred_vampire_dust_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:anis_seloth:ingred_vampire_dust_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-14802,53102,2304:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:anarenen
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:anarenen:ingred_vampire_dust_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:ingred_vampire_dust_01:ge:3
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:sirilonwe
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Vampire_dust
+2 0 0 0 0 UNTIL:journal:VA_VampDust:ge:100
+0.1 0 0 0 0 EXPECT:journal:VA_VampDust:eq:100
+0.1 0 0 0 0 EXPECT:item:amulet_gem_feeding:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

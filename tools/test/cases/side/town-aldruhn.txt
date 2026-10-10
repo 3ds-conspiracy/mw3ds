@@ -1,0 +1,180 @@
+# Ald-ruhn's merchants and Ienas Sarandas (Town_Aldruhn and its five merchants' journals), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Ald-ruhn. Five merchants (the pawnbroker Daynes Redothril, Tiras Sadus, Bevene Releth, Llether Vari the enchanter and Bivale Teneran the clothier) each want an overdue payment or the goods back from the gambler Ienas Sarandas; with a sympathetic ear (Speechcraft 70) he gives all the goods back, gives up his house, and each merchant pays.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 SETSKILL:speechcraft:70
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# (each merchant's errand)
+120 0 0 0 0 FLYTO:@-13053,56965,2682:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
+60 0 0 0 0 ACTIVATE:daynes%redothril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Daynes:ge:1
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Daynes:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-11672,56386,2700:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
+60 0 0 0 0 ACTIVATE:tiras%sadus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Tiras:ge:1
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Tiras:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-10937,56505,2684:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Bevene_Releth|_Clothier
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Bevene_Releth|_Clothier
+60 0 0 0 0 ACTIVATE:bevene%releth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Bevene:ge:1
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Bevene:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-13190,57048,2660
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WALKTO:@-12353,57603,2680
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llether_Vari|_Enchanter
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Llether_Vari|_Enchanter
+60 0 0 0 0 ACTIVATE:llether%vari
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Llethri:ge:1
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Llethri:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Bivale_Teneran|_Clothier
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Bivale_Teneran|_Clothier
+60 0 0 0 0 ACTIVATE:bivale%teneran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Bivale:ge:1
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Bivale:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WALKTO:@-13698,55511,2452
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ienas_Sarandas's_House
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ienas_Sarandas's_House
+60 0 0 0 0 ACTIVATE:ienas%sarandas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:overdue_payment
+2 0 0 0 0 UNTIL:talkready
+# ("Offer a sympathetic ear and friendly advice.", then the Continue replies)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:item:sarandas_ring_1:ge:1
+0.1 0 0 0 0 EXPECT:item:sarandas_belt:ge:1
+0.1 0 0 0 0 EXPECT:item:sarandas_amulet:ge:1
+0.1 0 0 0 0 EXPECT:item:sarandas_shoes_2:ge:1
+0.1 0 0 0 0 EXPECT:item:sarandas_shirt_2:ge:1
+0.1 0 0 0 0 EXPECT:journal:Town_Aldruhn:ge:45
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the goods go back, each merchant pays)
+120 0 0 0 0 WALKTO:@-13053,56965,2682
+120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
+60 0 0 0 0 ACTIVATE:daynes%redothril
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Daynes:ge:3
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Daynes:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 WALKTO:@-11672,56386,2700
+120 0 0 0 0 DOORTO:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
+60 0 0 0 0 ACTIVATE:tiras%sadus
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Tiras:ge:3
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Tiras:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 WALKTO:@-10937,56505,2684
+120 0 0 0 0 DOORTO:Ald-ruhn,_Bevene_Releth|_Clothier
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Bevene_Releth|_Clothier
+60 0 0 0 0 ACTIVATE:bevene%releth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Bevene:ge:3
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Bevene:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WALKTO:@-12353,57603,2680
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Llether_Vari|_Enchanter
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Llether_Vari|_Enchanter
+60 0 0 0 0 ACTIVATE:llether%vari
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Llethri:ge:3
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Llethri:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+120 0 0 0 0 DOORTO:Ald-ruhn,_Bivale_Teneran|_Clothier
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Bivale_Teneran|_Clothier
+60 0 0 0 0 ACTIVATE:bivale%teneran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:Town_Ald_Bivale:ge:3
+0.1 0 0 0 0 EXPECT:journal:Town_Ald_Bivale:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District

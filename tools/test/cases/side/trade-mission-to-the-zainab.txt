@@ -1,0 +1,59 @@
+# Trade Mission to the Zainab (town_Tel_Vos), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Tel Vos and the Zainab camp. Aryon's steward Turedus Talanian wants to know what trade goods the Zainab Ashlanders would buy; their wise woman Sonummu Zabamat names cure disease potions, and Turedus pays 100 septims and an amulet of levitating.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@85731,117960,5081:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon's_Chambers
+10 0 0 0 0 UNTIL:cell:Tel_Vos,_Aryon's_Chambers
+60 0 0 0 0 ACTIVATE:turedus%talanian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:talkready
+# ("...": the first button, the errand)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:town_Tel_Vos:ge:10
+0.1 0 0 0 0 EXPECT:journal:town_Tel_Vos:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@78195,84681,885:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Zainab_Camp,_Wise_Woman's_Yurt
+10 0 0 0 0 UNTIL:cell:Zainab_Camp,_Wise_Woman's_Yurt
+60 0 0 0 0 ACTIVATE:sonummu%zabamat
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:trade_goods_wanted
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:town_Tel_Vos_wise:ge:1
+0.1 0 0 0 0 EXPECT:journal:town_Tel_Vos_wise:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@85731,117960,5081:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon's_Chambers
+10 0 0 0 0 UNTIL:cell:Tel_Vos,_Aryon's_Chambers
+60 0 0 0 0 ACTIVATE:turedus%talanian
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:town_Tel_Vos:ge:25
+0.1 0 0 0 0 EXPECT:journal:town_Tel_Vos:ge:25
+0.1 0 0 0 0 EXPECT:item:amulet_of_levitating:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

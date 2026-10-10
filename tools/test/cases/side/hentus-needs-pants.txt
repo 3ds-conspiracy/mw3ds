@@ -1,0 +1,50 @@
+# Hentus Needs Pants (MS_HentusPants), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Gnisis. Hentus Yansurnummu lost his pants to Hainab Lasamsi, who hands them over when asked; Hentus pays in hackle-lo.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-84815,88050,-87:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:hentus%yansurnummu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:pants
+2 0 0 0 0 UNTIL:journal:MS_HentusPants:ge:10
+0.1 0 0 0 0 EXPECT:journal:MS_HentusPants:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@-87479,92127,1000:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:hainab%lasamsi
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:4
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:pants
+2 0 0 0 0 UNTIL:journal:MS_HentusPants:ge:50
+0.1 0 0 0 0 EXPECT:journal:MS_HentusPants:eq:50
+0.1 0 0 0 0 EXPECT:item:common_pants_02_hentus:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@-84815,88050,-87:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:hentus%yansurnummu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:pants
+2 0 0 0 0 UNTIL:talkready
+# ("Give him his pants.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_HentusPants:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_HentusPants:eq:100
+0.1 0 0 0 0 EXPECT:item:ingred_hackle-lo_leaf_01:ge:3
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

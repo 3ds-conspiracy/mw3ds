@@ -1,0 +1,37 @@
+# The Imprisonment of Mastrius (VA_VampCurse), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. The imprisoned vampire Mastrius in the Salvel Ancestral Tomb, locked away by Azura, asks a fellow vampire (a Berne's blood taken, three days passed) to help break the barrier: played as far as entering the tomb.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 SPELL:vampire_blood_berne
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@30000,60000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@70000,90000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@42602,93774,10198:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Salvel_Ancestral_Tomb
+10 0 0 0 0 UNTIL:cell:Salvel_Ancestral_Tomb
+0.1 0 0 0 0 EXPECT:cell:Salvel_Ancestral_Tomb
+# BLOCKED: Mastrius (1286,-3493,581) is not reached: the walk stops 'stuck 723 away' at 1691,-2700,544 (he is held behind Azura's barrier: the talk through it, stages 10-40, needs a crosshair spot that is not found); then his two items: Spell Breaker (a shield in the Dwemer ruin Bthuand, north of the tomb: topic Spell Breaker, stage 55) and a daedra's heart (shops, or Aralen/Arano tombs), then his last request and the fight (stages 50-90)

@@ -1,0 +1,23 @@
+# Pemenie and the Boots of Blinding Speed (MV_TraderAbandoned), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash. Pemenie offers her Boots of Blinding Speed for an escort to Gnaar Mok: played as far as the deal (stage 20).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-32489,31812,1380:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:making_a_deal
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:ge:20
+# BLOCKED: the 50000-unit escort to Gnaar Mok (17153,30966,795) stalls at -5057,23022,1878 behind a ridge (Pemenie 'not coming'); draft with the uberroute legs in internal/side-parked (stages 90, 100)

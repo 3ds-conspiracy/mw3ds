@@ -1,0 +1,93 @@
+# The Quarra Amulet (VA_VampAmulet), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. After The Cult of Lord Irarak (played first, copied here), Volrina Quarra, head of the Quarra clan in Druscashti, wants raw materials for an amulet (five extravagant sapphire amulets, two void salts, a daedra's heart, ectoplasm, a skull, vampire dust): played as far as the task (stage 10).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
+0.3 0 0 0 0 SPELL:vampire_blood_quarra
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 SLEEP:24:2
+3 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11900,-74500,273
+120 0 0 0 0 FLYTO:@30000,60000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@10000,70000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-45600,140960,1504:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 DOORTO:Druscashti,_Lower_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Lower_Level
+60 0 0 0 0 ACTIVATE:volrina%quarra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:use_to_me
+2 0 0 0 0 UNTIL:talkready
+# ("I will do as you ask.": the first button)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampCult:ge:20
+0.1 0 0 0 0 EXPECT:journal:VA_VampCult:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-60000,100000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-99375,110561,1207:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ginith_Ancestral_Tomb
+10 0 0 0 0 UNTIL:cell:Ginith_Ancestral_Tomb
+60 0 0 0 0 ACTIVATE:irarak
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:irarak
+0.1 0 0 0 0 EXPECT:dead:irarak
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-20000,100000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-45600,140960,1504:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 DOORTO:Druscashti,_Lower_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Lower_Level
+60 0 0 0 0 ACTIVATE:volrina%quarra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Brood_of_Lord_Irarak
+2 0 0 0 0 UNTIL:journal:VA_VampCult:ge:120
+0.1 0 0 0 0 EXPECT:journal:VA_VampCult:ge:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:volrina%quarra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:use_to_me
+2 0 0 0 0 UNTIL:journal:VA_VampAmulet:ge:10
+0.1 0 0 0 0 EXPECT:journal:VA_VampAmulet:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# BLOCKED: the "raw materials" topic named by her answer gives no answer once the journal stands at 10 (its list and choice are for stage < 10: a data oddity, the stage-20 choice is never offered after "use to me"); the shopping is not played: extravagant_amulet_01 x5 are sold or carried by one person each (Ald-ruhn, Balmora, Molag Mar, ...), void salts and a daedra's heart by alchemists (Nalcarya in Balmora, Anis Seloth in Sadrith Mora), skulls lie at Ashirbadon, vampire dust in several shops (stages 30-40)

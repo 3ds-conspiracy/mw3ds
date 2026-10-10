@@ -1,0 +1,99 @@
+# Gateway Ghost (town_Sadrith), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Sadrith Mora. The Gateway Inn's prefect Angaredhel wants the haunting of the South Turret bed chamber ended; the Telvanni's Arara Uvulas points to a Conjuration expert, the Mages Guild's Uleni Heleran, who is the prankster and hands over her papers, and Angaredhel pays a ring.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@144071,35904,876:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn
+60 0 0 0 0 ACTIVATE:angaredhel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:journal:town_Sadrith:ge:5
+0.1 0 0 0 0 EXPECT:journal:town_Sadrith:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (the haunting in the South Turret is killed: it comes back, but Angaredhel is told)
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn|_South_Wing
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn|_South_Wing
+120 0 0 0 0 KILL:gateway_haunt
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@144859,42228,944:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House
+60 0 0 0 0 ACTIVATE:arara%uvulas
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Gateway_haunting
+2 0 0 0 0 UNTIL:journal:town_Sadrith:ge:10
+0.1 0 0 0 0 EXPECT:journal:town_Sadrith:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Wolverine Hall's guild rooms lie up its towers: by the Mages Guild guide from Balmora)
+120 0 0 0 0 FLYTO:@-21590,-14510,934:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:masalinie%merian
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Sadrith
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall|_Mage's_Guild
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:arielle%phiencel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Conjuration_expert
+2 0 0 0 0 UNTIL:journal:town_Sadrith:ge:15
+0.1 0 0 0 0 EXPECT:journal:town_Sadrith:ge:15
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:uleni%heleran
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Gateway_haunting
+2 0 0 0 0 UNTIL:journal:town_Sadrith:ge:35
+0.1 0 0 0 0 EXPECT:journal:town_Sadrith:ge:35
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@144071,35904,876:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn
+60 0 0 0 0 ACTIVATE:angaredhel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:work
+2 0 0 0 0 UNTIL:talkready
+# ("Explain what happened, but deliver Uleni's Papers.", then the Fighter Ring)
+0.3 0 0 0 0 CHOICE:3
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:town_Sadrith:ge:50
+0.1 0 0 0 0 EXPECT:journal:town_Sadrith:ge:50
+0.1 0 0 0 0 EXPECT:item:fighter_ring:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

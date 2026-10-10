@@ -1,0 +1,90 @@
+# A Rash of Insults (MS_Apologies), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. Tarer Braryn called Trebonius Artorius a flat-head and has a rash; he sends his book of apology to the Mages Guild and is cured of it, with a little gold.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@31731,-97517,664:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+10 0 0 0 0 UNTIL:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:Vivec,_Office_of_the_Watch
+10 0 0 0 0 UNTIL:cell:Vivec,_Office_of_the_Watch
+60 0 0 0 0 ACTIVATE:tarer%braryn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Apologies
+2 0 0 0 0 UNTIL:talkready
+# ("Sure, why not?")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_Apologies:ge:5
+0.1 0 0 0 0 EXPECT:journal:MS_Apologies:eq:5
+0.1 0 0 0 0 EXPECT:item:bk_aedra_tarer_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+10 0 0 0 0 UNTIL:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Temple canton to the Foreign Quarter by two gondolas)
+60 0 0 0 0 ACTIVATE:talsi%uvayn
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:talsi_uvayn:Vivec,_Arena
+10 0 0 0 0 UNTIL:effect:10:eq:0
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:dalse%adren
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:dalse_adren:Vivec,_Foreign_Quarter
+10 0 0 0 0 UNTIL:effect:10:eq:0
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+60 0 0 0 0 ACTIVATE:trebonius%artorius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Apologies
+2 0 0 0 0 UNTIL:journal:MS_Apologies:ge:10
+0.1 0 0 0 0 EXPECT:journal:MS_Apologies:eq:10
+0.1 0 0 0 0 EXPECT:item:p_cure_common_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (back by the gondolas)
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:devas%irano
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:devas_irano:Vivec,_Arena
+10 0 0 0 0 UNTIL:effect:10:eq:0
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:dalse%adren
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:dalse_adren:Vivec,_Temple
+10 0 0 0 0 UNTIL:effect:10:eq:0
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
+10 0 0 0 0 UNTIL:cell:Vivec,_Hall_of_Justice
+120 0 0 0 0 DOORTO:Vivec,_Office_of_the_Watch
+10 0 0 0 0 UNTIL:cell:Vivec,_Office_of_the_Watch
+60 0 0 0 0 ACTIVATE:tarer%braryn
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Apologies
+2 0 0 0 0 UNTIL:journal:MS_Apologies:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_Apologies:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

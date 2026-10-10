@@ -1,0 +1,101 @@
+# The Bad Actor (EB_Actor), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. The enchanter Miun-Gei wants the pestering Breton peddler Marcel Maurard gone; Marcel dreams of a theatre troupe, which the playwright Crassius Curio (Hlaalu canton) is forming. Told of it, Marcel leaves for good.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Miun-Gei|_Enchanter
+10 0 0 0 0 UNTIL:cell:Vivec,_Miun-Gei|_Enchanter
+60 0 0 0 0 ACTIVATE:miun_gei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:annoying_fool
+2 0 0 0 0 UNTIL:talkready
+# ("I will try and make him leave.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Actor:ge:30
+0.1 0 0 0 0 EXPECT:journal:EB_Actor:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+60 0 0 0 0 ACTIVATE:marcel%maurard
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:line_of_work
+2 0 0 0 0 UNTIL:talkready
+# ("You should leave this area.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:EB_Actor:ge:40
+0.1 0 0 0 0 EXPECT:journal:EB_Actor:ge:40
+0.3 0 0 0 0 TOPIC:theater_troupe
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (the playwright's manor, in the Hlaalu canton, by gondola)
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:devas%irano
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:devas_irano:Vivec,_Hlaalu
+10 0 0 0 0 UNTIL:effect:10:eq:0
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Curio_Manor
+10 0 0 0 0 UNTIL:cell:Vivec,_Curio_Manor
+60 0 0 0 0 ACTIVATE:crassius%curio
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:theater_troupe
+2 0 0 0 0 UNTIL:journal:EB_Actor:ge:60
+0.1 0 0 0 0 EXPECT:journal:EB_Actor:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Hlaalu_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Hlaalu_Plaza
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:aren%maren
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:aren_maren:Vivec,_Foreign_Quarter
+10 0 0 0 0 UNTIL:effect:10:eq:0
+0.5 0 0 0
+0.1 0 0 0 0 FLOAT:60
+60 0 0 0 0 WALKTO:@27299,-80199,1893
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+60 0 0 0 0 ACTIVATE:marcel%maurard
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:theater_troupe
+2 0 0 0 0 UNTIL:journal:EB_Actor:ge:70
+0.1 0 0 0 0 EXPECT:journal:EB_Actor:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Miun-Gei|_Enchanter
+10 0 0 0 0 UNTIL:cell:Vivec,_Miun-Gei|_Enchanter
+60 0 0 0 0 ACTIVATE:miun_gei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:annoying_fool
+2 0 0 0 0 UNTIL:journal:EB_Actor:ge:80
+0.1 0 0 0 0 EXPECT:journal:EB_Actor:ge:80
+0.1 0 0 0 0 EXPECT:item:iron_shardskewer:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
