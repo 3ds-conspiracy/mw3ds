@@ -4,24 +4,20 @@
 0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
 6 0 0 0
 0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
-0.3 0 0 0 0 SETALARM:chargen%captain:100
 0.3 0 0 0 0 GIVE:gold_001:500
 0.3 0 0 0 0 SNAP:gold
-10 0 0 0 0 PICKUP:Key_SN_Warehouse
+60 0 0 0 0 PICKUP:misc_lw_platter
 0.5 0 0 0
 10 0 0 0
 0.3 0 0 0 0 EXPECT:screen:dialogue
 0.3 0 0 0 0 SHOT
 0.3 0 0 0 0 EXPECT:bounty:eq:0
-0.3 0 0 0 0 EXPECT:item:key_sn_warehouse:eq:0
-0.3 0 0 0 0 EXPECT:gold:eq:@
+0.3 0 0 0 0 EXPECT:item:misc_lw_platter:eq:0
 0.3 0 0 0 0 B
 3 0 0 0
 0.3 0 0 0 0 EXPECT:screen:none
 0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
-0.3 0 0 0 0 EXPECT:refcombat:chargen%captain:eq:0
-0.3 0 0 0 0 SHOT
-15 0 0 0
+20 0 0 0
 0.3 0 0 0 0 EXPECT:refcombat:chargen%class:eq:0
 0.3 0 0 0 0 EXPECT:refcombat:chargen%door%guard:eq:0
 0.3 0 0 0 0 EXPECT:refcombat:chargen%captain:eq:0
