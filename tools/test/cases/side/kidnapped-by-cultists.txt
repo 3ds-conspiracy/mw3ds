@@ -1,5 +1,5 @@
 # Kidnapped by Cultists (MV_CultistVictim), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Ald Velothi coast. Sason begs us to find his wife Malexa, held by cultists in the Ashalmawia shrine: played as far as freeing her (her cell door is picked).
+# Side quest, Ald Velothi coast. Sason, a Redoran traveller, begs us to find his wife Malexa, taken by cultists to the Ashalmawia shrine; we free her (her cell door is picked) and lead her out of the shrine (50); the walk east to him is not played.
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -24,6 +24,7 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ashalmawia,_Shrine
 10 0 0 0 0 UNTIL:cell:Ashalmawia,_Shrine
+# (the prison cell door is locked: picked)
 60 0 0 0 0 WALKTO:@-727,2028,-512
 0.3 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
 1 0 0 0
@@ -33,10 +34,41 @@
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:unholy_ritual
 2 0 0 0 0 UNTIL:talkready
+# ("Follow me. I'll get you out of here.")
 0.3 0 0 0 0 CHOICE:1
 2 0 0 0 0 UNTIL:journal:MV_CultistVictim:ge:50
 0.1 0 0 0 0 EXPECT:journal:MV_CultistVictim:ge:50
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-# BLOCKED: Malexa follows but falls and sticks at -2163 882 -671 on the way to the exit door (ex_dae_door_load_oval 256,4384): 'malexa not coming'; the walk east to Sason (-57527,125066) for stage 100 is not reached
+# (her cell's path grid does not join the shrine's: a follower finds no way and walks into the wall. Led out in short
+# legs, the way the walk in came, waiting for her at each)
+0.3 0 0 0 0 ESCORT:malexa
+60 0 0 0 0 WALKTO:@-2633,1351,-756
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-2497,1805,-769
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-2071,2025,-766
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-1645,1946,-623
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-1350,1815,-539
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-966,2028,-512
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-512,2048,-512
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-515,2603,-512
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@-30,3082,-509
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@65,3553,-384
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+60 0 0 0 0 WALKTO:@256,4096,-256
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+10 0 0 0 0 UNTIL:refdist:malexa:lt:400
+0.1 0 0 0 0 EXPECT:refdist:malexa:lt:400
+0.3 0 0 0 0 ESCORT:-
+# BLOCKED: Malexa does not follow down off the shrine's raised platform outside (the walkway south ends in a 430-unit drop the player takes; she sticks on the walkway, her step blocked where the player walks: NPC step collision), so the walk east to Sason (-57527,125066) for stage 100 is not played

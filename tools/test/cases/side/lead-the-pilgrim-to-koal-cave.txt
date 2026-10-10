@@ -1,5 +1,5 @@
-# Lead the Pilgrim to Koal Cave (MV_PoorPilgrim), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Ashlands. The pilgrim Fonus Rathryon asks to be led to Koal Cave on the western shore: played as far as the promise (stage 20).
+# Lead the Pilgrim to Koal Cave (MV_PoorPilgrim), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Ashlands to the west coast. The lost pilgrim Fonus Rathryon pays 150 septims for being led to Koal Cave on the western shore: walked to the Maar Gan silt strider, ridden to Gnisis (a follower near the player travels too), and walked south to the cave (routes planned with uberroute.py).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -15,9 +15,132 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:fonus%rathryon
 1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MV_PoorPilgrim:ge:0
 0.3 0 0 0 0 TOPIC:help_a_poor_pilgrim
 2 0 0 0 0 UNTIL:talkready
+# ("I can escort you to Koal Cave.")
 0.3 0 0 0 0 CHOICE:1
 2 0 0 0 0 UNTIL:journal:MV_PoorPilgrim:ge:20
 0.1 0 0 0 0 EXPECT:journal:MV_PoorPilgrim:ge:20
-# BLOCKED: the 53000-unit escort west to Koal Cave (-87692,79258,109): the uberroute walk stops at the first hill (-42468,96230,2824); draft in internal/side-parked (stages 90, 100)
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:fonus_rathryon
+0.3 0 0 0 0 ESCORT:fonus_rathryon
+90 0 0 0 0 WALKTO:@-22775,101480,1810
+6 0 0 0
+90 0 0 0 0 WALKTO:@-22398,101178,1754
+6 0 0 0
+90 0 0 0 0 WALKTO:@-22382,100660,2026
+6 0 0 0
+90 0 0 0 0 WALKTO:@-22364,100080,2410
+6 0 0 0
+0.3 0 0 0 0 ESCORT:-
+30 0 0 0 0 UNTIL:refdist:fonus_rathryon:lt:300
+60 0 0 0 0 ACTIVATE:daras%aryon
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:daras_aryon:Gnisis
+10 0 0 0 0 UNTIL:cell:Gnisis
+5 0 0 0 0 UNTIL:refdist:fonus_rathryon:lt:600
+0.3 0 0 0 0 ESCORT:fonus_rathryon
+90 0 0 0 0 WALKTO:@-86716,89976,1012
+6 0 0 0
+90 0 0 0 0 WALKTO:@-86279,90066,1029
+6 0 0 0
+90 0 0 0 0 WALKTO:@-86050,90169,1074
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85927,90626,980
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85507,90726,1075
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84700,90506,993
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84570,90389,976
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83860,90112,888
+6 0 0 0
+90 0 0 0 0 WALKTO:@-82927,90179,936
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83326,89991,818
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83781,89325,500
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84137,88887,256
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84897,88404,26
+6 0 0 0
+0.3 0 0 0 0 ESCORT:-
+# (on south over the channel and the hills by the land's heights: the planner snaps to Gnisis' path grid here)
+0.3 0 0 0 0 ESCORT:fonus_rathryon
+90 0 0 0 0 WALKTO:@-84400,88400,48
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84000,88400,32
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84000,88000,-60
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83800,87600,16
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83800,87200,192
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83800,86800,304
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83800,86400,392
+6 0 0 0
+90 0 0 0 0 WALKTO:@-83800,86000,568
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84200,85600,752
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84200,85200,872
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84200,84800,800
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84200,84400,808
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84200,84000,928
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84200,83600,1072
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84400,83400,1264
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84400,83000,1528
+6 0 0 0
+90 0 0 0 0 WALKTO:@-84800,82600,1472
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85200,82200,1232
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85200,81800,1088
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85200,81400,1112
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85200,81000,1280
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85200,80600,1416
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85200,80200,1424
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85400,79800,1232
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85600,79400,968
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85800,79000,736
+6 0 0 0
+90 0 0 0 0 WALKTO:@-85900,78800,600
+6 0 0 0
+90 0 0 0 0 WALKTO:@-86400,78800,250
+6 0 0 0
+90 0 0 0 0 WALKTO:@-87000,78800,60
+6 0 0 0
+90 0 0 0 0 WALKTO:@-87400,79000,30
+6 0 0 0
+90 0 0 0 0 WALKTO:@-87550,79300,20
+6 0 0 0
+90 0 0 0 0 WALKTO:@-87600,79420,40
+6 0 0 0
+0.3 0 0 0 0 ESCORT:-
+60 0 0 0 0 UNTIL:journal:MV_PoorPilgrim:ge:90
+0.1 0 0 0 0 EXPECT:journal:MV_PoorPilgrim:ge:90
+10 0 0 0 0 UNTIL:journal:MV_PoorPilgrim:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_PoorPilgrim:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

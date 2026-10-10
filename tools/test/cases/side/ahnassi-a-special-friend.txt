@@ -1,5 +1,5 @@
-# Ahnassi, a Special Friend (Romance_Ahnassi), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Pelagiad. The Khajiit thief Ahnassi at the Halfway Tavern befriends us, gives 'Honor Among Thieves', and slowly trades gifts and secrets: played as far as the first gift (stage 1).
+# Ahnassi, a Special Friend (Romance_Ahnassi), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Pelagiad. The Khajiit thief Ahnassi at the Halfway Tavern befriends us ('Honor Among Thieves', 1; the gift of friendship, 30), shares gifts and cares: Daren Adryn, the Camonna Tong thug who threatens her, killed in Gnaar Mok (40, 45); her clothes and book (50, 60); her mate J'Dhannar, a skooma addict in St. Olms, given 'Confessions of a Dunmer Skooma-Eater' (65-75); her house's key (80); her friend Senyndie (81); a coda flower and a gold kanet (82, 83); Mavon Drenim's Flamemirror Robe, given her (85, 87); and her last secret (90).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -9,6 +9,8 @@
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:4
+0.3 0 0 0 0 GIVE:pick_grandmaster:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
 120 0 0 0 0 FLYTO:@2507,-56048,1570:beside
@@ -18,10 +20,186 @@
 60 0 0 0 0 ACTIVATE:ahnassi
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:Thieves_Guild
-2 0 0 0 0 UNTIL:talkready
-0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:ge:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:1
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:1
 0.1 0 0 0 0 EXPECT:item:bk_honorthieves:ge:1
+0.3 0 0 0 0 TOPIC:smooth_moves
+2 0 0 0 0 UNTIL:talkready
+# ("Give Ahnassi the gift of friendship.", then "Continue")
+0.3 0 0 0 0 TOPIC:Her_profession
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:30
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:ge:30
+0.3 0 0 0 0 TOPIC:new_friend
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:37
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:37
+# ("Offer to take care of the bad person for Ahnassi.")
+0.3 0 0 0 0 TOPIC:share_a_care
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:40
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:40
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-# BLOCKED: the gifts that follow (flamemirror robe, Elvul's Black Blindfold, the book Confessions of a Dunmer Skooma-Addict for J'Dhannar, the hidden Imperial Commission passage: stages 30-95) are twenty stages of errands, not walked yet
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Daren Adryn, in Nadene Rotheran's shack at Gnaar Mok)
+120 0 0 0 0 FLYTO:@-61276,26515,327:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Gnaar_Mok,_Nadene_Rotheran's_Shack
+10 0 0 0 0 UNTIL:cell:Gnaar_Mok,_Nadene_Rotheran's_Shack
+120 0 0 0 0 KILL:daren%adryn
+0.1 0 0 0 0 EXPECT:dead:daren_adryn
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@2507,-56048,1570:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
+60 0 0 0 0 ACTIVATE:ahnassi
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:share_a_care
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:45
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:45
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:50
+0.1 0 0 0 0 EXPECT:item:extravagant_shirt_02:ge:1
+# ("I don't know, but I will try.")
+0.3 0 0 0 0 TOPIC:share_a_care
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:65
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:65
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (a gold kanet from Peragon at Moonmoth, for later)
+120 0 0 0 0 FLYTO:@-5062,-18284,1129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior
+60 0 0 0 0 ACTIVATE:peragon
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:peragon:ingred_gold_kanet_01
+0.1 0 0 0 0 EXPECT:item:ingred_gold_kanet_01:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the book from Jobasha in Vivec, for J'Dhannar in St. Olms)
+120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Jobasha's_Rare_Books
+10 0 0 0 0 UNTIL:cell:Vivec,_Jobasha's_Rare_Books
+60 0 0 0 0 ACTIVATE:jobasha
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:jobasha:bk_confessions
+0.1 0 0 0 0 EXPECT:item:bk_confessions:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@32958,-95380,-251:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Underworks
+0.1 0 0 0 0 FLOAT:40
+120 0 0 0 0 DOORTO:Vivec,_St._Olms_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Canalworks
+60 0 0 0 0 ACTIVATE:j'dhannar
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:cure_skooma_addict
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:75
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:75
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+# (a coda flower from the temple's planters in Vivec, and the robe from Mavon Drenim's closet, unseen)
+120 0 0 0 0 FLYTO:@31800,-98200,1300:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 PICKUP:ingred_bc_coda_flower
+2 0 0 0 0 UNTIL:item:ingred_bc_coda_flower:ge:1
+120 0 0 0 0 FLYTO:@43450,-86263,2129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Plaza
+120 0 0 0 0 DOORTO:Vivec,_Telvanni_Tower
+10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Tower
+0.3 0 0 0 0 SNEAK:1
+1 0 0 0 0 HIDE:60
+120 0 0 0 0 LOOT:mavon_drenim_closet:flamemirror%robe
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SNEAK:0
+0.1 0 0 0 0 EXPECT:item:flamemirror%robe:eq:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@2507,-56048,1570:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
+60 0 0 0 0 ACTIVATE:ahnassi
+1.5 0 0 0
+# ("Continue": she gives us her house's key and moves there)
+0.3 0 0 0 0 TOPIC:share_a_care
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:80
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:80
+0.1 0 0 0 0 EXPECT:item:key_ahnassi:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@3329,-57660,1646:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Pelagiad,_Ahnassi's_House
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Ahnassi's_House
+10 0 0 0
+60 0 0 0 0 ACTIVATE:ahnassi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:81
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:82
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:83
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:85
+# ("Give Ahnassi the robe as a gift.")
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:87
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:87
+0.1 0 0 0 0 EXPECT:item:ebony_throwing_star:ge:20
+0.3 0 0 0 0 TOPIC:share_a_gift
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:Romance_Ahnassi:ge:90
+0.1 0 0 0 0 EXPECT:journal:Romance_Ahnassi:eq:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

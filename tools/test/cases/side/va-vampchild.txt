@@ -1,5 +1,5 @@
-# A Vampire's Family (VA_VampChild), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Vampire quest. Dhaunayne Aundae, head of the Aundae clan at Ashmelech, asks one of her clan (Aundae blood taken, three days passed) about her lost son: played as far as entering the Ashmelech lair.
+# A Vampire's Family (VA_VampChild), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. Dhaunayne Aundae, head of the Aundae clan at Ashmelech, asks one of her clan (Aundae blood taken, three days passed) about her lost son (10-30, her ring): the Altmer of Sadrith Mora's guild know the ring (50, 60, the potion), Sinyaramen in the Gateway Inn tells of his grandfather Vilandon, a vampire hunter killed by the Quarra Kjeld (70-90); Kjeld is killed in Druscashti, and Dhaunayne grants the clan's services (100, 120).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -9,6 +9,7 @@
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:4
 0.3 0 0 0 0 SPELL:vampire_blood_aundae
 4 0 0 0
 0.3 0 0 0 0 SLEEP:24:2
@@ -34,4 +35,163 @@
 120 0 0 0 0 DOORTO:Ashmelech
 10 0 0 0 0 UNTIL:cell:Ashmelech
 0.1 0 0 0 0 EXPECT:cell:Ashmelech
-# BLOCKED: Dhaunayne Aundae (3697,4611,3200) cannot be reached: the walk stops 'stuck 818 away, 793 up' above her at 3078,5146,3968 (the lair is a tall interior and the route does not come down; FLOAT:60 does not help); then the ring, the Gateway Inn Altmer, Sinyaramen and the grave (stages 10-130) are not played
+# (down through the lair by its path grid; two doors on the way are locked: picked)
+120 0 0 0 0 WALKTO:@2823,7038,4224
+120 0 0 0 0 WALKTO:@2816,6631,4083
+120 0 0 0 0 WALKTO:@2822,6029,3968
+120 0 0 0 0 WALKTO:@3072,5995,3968
+120 0 0 0 0 WALKTO:@3085,5738,3968
+120 0 0 0 0 WALKTO:@3082,5235,3968
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 WALKTO:@3078,5001,3968
+120 0 0 0 0 WALKTO:@3063,4609,3968
+120 0 0 0 0 WALKTO:@3069,4326,3968
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 WALKTO:@2691,4326,3968
+120 0 0 0 0 WALKTO:@2674,4087,3968
+120 0 0 0 0 WALKTO:@2404,4087,3968
+120 0 0 0 0 WALKTO:@2190,4337,3968
+120 0 0 0 0 WALKTO:@1695,4324,3968
+120 0 0 0 0 WALKTO:@1659,4569,3968
+120 0 0 0 0 WALKTO:@1658,4952,4075
+120 0 0 0 0 WALKTO:@1672,5473,4224
+120 0 0 0 0 WALKTO:@1648,5869,4224
+120 0 0 0 0 WALKTO:@1377,5873,4224
+120 0 0 0 0 WALKTO:@1129,5880,4224
+120 0 0 0 0 WALKTO:@650,5887,3968
+120 0 0 0 0 WALKTO:@650,5126,3712
+120 0 0 0 0 WALKTO:@1121,5116,3456
+120 0 0 0 0 WALKTO:@1183,4623,3456
+120 0 0 0 0 WALKTO:@1751,4628,3216
+120 0 0 0 0 WALKTO:@2259,4619,2962
+120 0 0 0 0 WALKTO:@2693,4623,2944
+120 0 0 0 0 WALKTO:@3187,4608,2944
+120 0 0 0 0 WALKTO:@3230,4938,2944
+120 0 0 0 0 WALKTO:@3551,5101,2944
+60 0 0 0 0 ACTIVATE:dhaunayne%aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:plan_to_serve_me
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:10
+0.3 0 0 0 0 TOPIC:about_my_family
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:30
+0.1 0 0 0 0 EXPECT:journal:VA_VampChild:eq:30
+0.1 0 0 0 0 EXPECT:item:extravagant_ring_aund_uni:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@90000,100000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (in by the tower's upper door, a floor over the guild's: the stair up from the ground floor stops the walk)
+120 0 0 0 0 FLYTO:@148576,28192,1792:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall|_Mage's_Guild
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall|_Mage's_Guild
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_crest
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:50
+0.1 0 0 0 0 EXPECT:journal:VA_VampChild:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:tusamircil
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:family_crest
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:66
+0.1 0 0 0 0 EXPECT:journal:VA_VampChild:eq:66
+0.1 0 0 0 0 EXPECT:item:p_sinyaramen_unique:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@144071,35904,876:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn
+# (he speaks to a vampire only for the potion he ordered)
+60 0 0 0 0 ACTIVATE:sinyaramen
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:70
+0.3 0 0 0 0 TOPIC:family_crest
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:killed_by_your_kind
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:80
+0.3 0 0 0 0 TOPIC:Vilandon
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:90
+0.1 0 0 0 0 EXPECT:journal:VA_VampChild:eq:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Kjeld, the Quarra who killed Vilandon, in the Quarra lair at Druscashti)
+120 0 0 0 0 FLYTO:@50000,110000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-45600,140960,1504:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Druscashti,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Druscashti,_Upper_Level
+120 0 0 0 0 KILL:kjeld
+0.1 0 0 0 0 EXPECT:dead:kjeld
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@18378,157904,986:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ashmelech
+10 0 0 0 0 UNTIL:cell:Ashmelech
+120 0 0 0 0 WALKTO:@2823,7038,4224
+120 0 0 0 0 WALKTO:@2816,6631,4083
+120 0 0 0 0 WALKTO:@2822,6029,3968
+120 0 0 0 0 WALKTO:@3072,5995,3968
+120 0 0 0 0 WALKTO:@3085,5738,3968
+120 0 0 0 0 WALKTO:@3082,5235,3968
+120 0 0 0 0 WALKTO:@3078,5001,3968
+120 0 0 0 0 WALKTO:@3063,4609,3968
+120 0 0 0 0 WALKTO:@3069,4326,3968
+120 0 0 0 0 WALKTO:@2691,4326,3968
+120 0 0 0 0 WALKTO:@2674,4087,3968
+120 0 0 0 0 WALKTO:@2404,4087,3968
+120 0 0 0 0 WALKTO:@2190,4337,3968
+120 0 0 0 0 WALKTO:@1695,4324,3968
+120 0 0 0 0 WALKTO:@1659,4569,3968
+120 0 0 0 0 WALKTO:@1658,4952,4075
+120 0 0 0 0 WALKTO:@1672,5473,4224
+120 0 0 0 0 WALKTO:@1648,5869,4224
+120 0 0 0 0 WALKTO:@1377,5873,4224
+120 0 0 0 0 WALKTO:@1129,5880,4224
+120 0 0 0 0 WALKTO:@650,5887,3968
+120 0 0 0 0 WALKTO:@650,5126,3712
+120 0 0 0 0 WALKTO:@1121,5116,3456
+120 0 0 0 0 WALKTO:@1183,4623,3456
+120 0 0 0 0 WALKTO:@1751,4628,3216
+120 0 0 0 0 WALKTO:@2259,4619,2962
+120 0 0 0 0 WALKTO:@2693,4623,2944
+120 0 0 0 0 WALKTO:@3187,4608,2944
+120 0 0 0 0 WALKTO:@3230,4938,2944
+120 0 0 0 0 WALKTO:@3551,5101,2944
+60 0 0 0 0 ACTIVATE:dhaunayne%aundae
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:about_my_family
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:100
+0.1 0 0 0 0 EXPECT:journal:VA_VampChild:eq:100
+0.3 0 0 0 0 TOPIC:Kjeld
+2 0 0 0 0 UNTIL:journal:VA_VampChild:ge:120
+0.1 0 0 0 0 EXPECT:journal:VA_VampChild:eq:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

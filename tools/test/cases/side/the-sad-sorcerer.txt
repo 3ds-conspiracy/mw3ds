@@ -1,5 +1,5 @@
-# The Sad Sorcerer (MS_HatandSkirt), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Palansour cave. Ingwold, stripped by scamps, begs for a potion of levitation: played as far as entering the cave.
+# The Sad Sorcerer (MS_HatandSkirt), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Palansour cave. Ingwold, stripped by scamps, begs for a potion of levitation: one found in the cave is taken up to his ledge (1), given, and the skirt and hat taken (50).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -9,6 +9,7 @@
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
 120 0 0 0 0 FLYTO:@-77565,111226,1113:beside
@@ -16,4 +17,33 @@
 120 0 0 0 0 DOORTO:Palansour
 10 0 0 0 0 UNTIL:cell:Palansour
 0.1 0 0 0 0 EXPECT:cell:Palansour
-# BLOCKED: Ingwold stands on a ledge (1018,-1826,272) about 390 above the floor the driver can reach, behind a cave door (door_cavern_doors00 at 1036,-1691,330): 'stuck below, floating up' hits the ledge's underside; FLYTO:low cannot climb at the entrance; a levitation potion lies at 2223,-760,215 (stages 1-65)
+60 0 0 0 0 PICKUP:p_levitation_c
+2 0 0 0 0 UNTIL:item:p_levitation_c:ge:1
+# (his ledge is 400 over the floor behind a locked door: floated up to the door, picked, in)
+120 0 0 0 0 WALKTO:@1251,-1207,-112
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 WALKTO:@1020,-1610,290
+0.3 0 0 0 0 USELOCKPICK:door_cavern_doors00:pick_grandmaster
+1 0 0 0
+30 0 0 0 0 ACTIVATE:door_cavern_doors00
+1 0 0 0
+120 0 0 0 0 WALKTO:@1030,-1760,300
+60 0 0 0 0 ACTIVATE:ingwold
+1.5 0 0 0
+2 0 0 0 0 UNTIL:journal:MS_HatandSkirt:ge:1
+0.1 0 0 0 0 EXPECT:journal:MS_HatandSkirt:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ingwold
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_HatandSkirt:ge:50
+0.1 0 0 0 0 EXPECT:journal:MS_HatandSkirt:eq:50
+0.1 0 0 0 0 EXPECT:item:extravagant_skirt_02:eq:1
+0.1 0 0 0 0 EXPECT:item:p_levitation_c:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 FLOAT:off

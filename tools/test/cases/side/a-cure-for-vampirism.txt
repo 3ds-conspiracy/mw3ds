@@ -1,5 +1,5 @@
 # A Cure for Vampirism (MS_VampireCure), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Bal Ur. A vampire (a Berne's blood taken, three days passed) asks the Bal Ur priest Derar Hlervu for a cure and is sent to Molag Bal's statue below: played as far as the statue's offer.
+# Side quest, Bal Ur. A vampire (a Berne's blood taken, three days passed) asks the Bal Ur priest Derar Hlervu for a cure and is sent to Molag Bal's statue below (20; he is gone once the statue has spoken: asked first). The statue's errand (30) is played; the Dubdilla kills (40) and the cure (50) are not.
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -33,7 +33,17 @@
 10 0 0 0 0 UNTIL:cell:Bal_Ur,_Shrine
 120 0 0 0 0 DOORTO:Bal_Ur,_Underground
 10 0 0 0 0 UNTIL:cell:Bal_Ur,_Underground
+# (he is in front of the statue: the crosshair finds him from the north side)
+60 0 0 0 0 WALKTO:@3512,-3742,-250
+60 0 0 0 0 ACTIVATE:derar%hlervu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:lifeless_one
+2 0 0 0 0 UNTIL:journal:MS_VampireCure:ge:20
+0.1 0 0 0 0 EXPECT:journal:MS_VampireCure:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
 60 0 0 0 0 ACTIVATE:active_dae_molagbal2
 60 0 0 0 0 UNTIL:journal:MS_VampireCure:ge:30
-0.1 0 0 0 0 EXPECT:journal:MS_VampireCure:ge:30
-# BLOCKED: Derar Hlervu (3512,-3842,-246, topic lifeless one, stage 20) is never under the crosshair: 'hidden from here' after a 38-point walk; Molag Bal wants his daughter Molag Grunda and the atronach Nomeg Gwai killed in the Dubdilla caverns (Lower, 3680,7584,-576): the cave route is not walked yet (stages 40, 50)
+0.1 0 0 0 0 EXPECT:journal:MS_VampireCure:eq:30
+# BLOCKED: Molag Grunda and Nomeg Gwai (40) are at the north end of Dubdilla, Uncharted Caverns, Lower (3680,7584,-576), past flooded passages: the driver's walks and swims stick at rocks under water (from the Caverns' east door at 4865,1559, or the Lower's south door, at 2492,1302); then the statue cures us (50)

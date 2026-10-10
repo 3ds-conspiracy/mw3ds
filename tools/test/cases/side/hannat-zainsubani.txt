@@ -1,5 +1,8 @@
-# Hannat Zainsubani (MS_Hannat), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Mamaea. Hannat Zainsubani is held in the Sanctum of Black Hope: played as far as picking the cell door.
+# Hannat Zainsubani (MS_Hannat), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Mamaea. Hannat is disabled at the start (Startup) until his father Hassour, in Ald-ruhn's Ald Skar Inn, gives
+# the main quest's notes on the Ashlanders (A1_11, Caius's errand: set up here, the book gift bought beforehand). Then he
+# waits in a cell of the Sanctum of Black Hope: the cell door is picked, he follows us out (1), thanks us outside (50, 60),
+# and Hassour rewards us for it (70).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -10,8 +13,30 @@
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:1000
 0.3 0 0 0 0 GIVE:pick_grandmaster:3
+0.3 0 0 0 0 GIVE:bk_ashland_hymns
+0.3 0 0 0 0 JOURNAL:A1_11_ZainsubaniInformant:1
 4 0 0 0
 0.3 0 0 0 0 LEGIT
+120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
+120 0 0 0 0 ACTIVATE:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:business
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:thoughtful_gift
+10 0 0 0 0 UNTIL:journal:A1_11_ZainsubaniInformant:ge:31
+0.3 0 0 0 0 TOPIC:Ashlanders
+10 0 0 0 0 UNTIL:journal:A1_11_ZainsubaniInformant:ge:50
+0.1 0 0 0 0 EXPECT:item:bk_a1_11_zainsubaninotes:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 FLYTO:@-58095,80000,1814:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Mamaea,_Sanctum_of_Awakening
@@ -23,4 +48,49 @@
 1 0 0 0
 30 0 0 0 0 ACTIVATE:door_cavern_doors00
 1 0 0 0
-# BLOCKED: Hannat (7597,-3793,129) stays 'hidden from here, no spot where the crosshair finds him' behind the cell door; then ESCORT out to the Ald Skar Inn's Hassour (stages 1-70)
+60 0 0 0 0 ACTIVATE:hannat%zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:armed_escort
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MS_Hannat:ge:1
+0.1 0 0 0 0 EXPECT:journal:MS_Hannat:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:hannat%zainsubani
+0.3 0 0 0 0 ESCORT:hannat%zainsubani
+# (out the way we came, waiting for him at each door: a follower over 800 units behind stays)
+# (by the way we came in: the nearest door is the other locked cell's)
+120 0 0 0 0 WALKTO:@7015,-2367,99
+120 0 0 0 0 WALKTO:@5995,-1369,95
+120 0 0 0 0 WALKTO:@4381,-1358,613
+120 0 0 0 0 WALKTO:@4031,75,742
+120 0 0 0 0 WALKTO:@3960,520,800
+30 0 0 0 0 UNTIL:refdist:hannat%zainsubani:lt:260
+120 0 0 0 0 DOORTO:Mamaea,_Sanctum_of_Awakening
+10 0 0 0 0 UNTIL:cell:Mamaea,_Sanctum_of_Awakening
+120 0 0 0 0 WALKTO:@5230,3837,538
+30 0 0 0 0 UNTIL:refdist:hannat%zainsubani:lt:260
+120 0 0 0 0 DOORTO:outside
+# (outside: his script thanks us and stops following (50), then he greets us (60))
+20 0 0 0 0 UNTIL:journal:MS_Hannat:ge:50
+0.3 0 0 0 0 ESCORT:-
+20 0 0 0 0 UNTIL:journal:MS_Hannat:ge:60
+0.1 0 0 0 0 EXPECT:journal:MS_Hannat:eq:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
+120 0 0 0 0 ACTIVATE:hassour_zainsubani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Hannat_Zainsubani
+2 0 0 0 0 UNTIL:journal:MS_Hannat:ge:70
+0.1 0 0 0 0 EXPECT:journal:MS_Hannat:eq:70
+0.1 0 0 0 0 EXPECT:item:ring_of_knuckle_luck:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

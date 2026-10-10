@@ -1,5 +1,5 @@
-# Free the Slaves (MS_JobashaAbolitionist), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Vivec. The Khajiit bookseller Jobasha rewards those who have freed more than thirty slaves (the Twin Lamps' work): played as far as meeting her.
+# Free the Slaves (MS_JobashaAbolitionist), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. The Khajiit bookseller Jobasha rewards those who have freed more than thirty slaves (FreedSlavesCounter, kept by the slaves' "go free" answers). Freed here: Eleedal-Lei in the Abebaal egg mine (she frees the rest: ten), and the slaves of Yakanalit, Minabi, Assarnud and Sha-Adnius (six each), each cave's key found lying or taken from its slaver; then Jobasha's gift (100).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -9,8 +9,339 @@
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:4
+0.3 0 0 0 0 GIVE:probe_grandmaster:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
+# (Yakanalit: the key lies on a table under a sheet of paper: the paper taken first)
+120 0 0 0 0 FLYTO:@86281,-87252,673:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Yakanalit
+10 0 0 0 0 UNTIL:cell:Yakanalit
+120 0 0 0 0 PICKUP:sc_paper%plain
+2 0 0 0
+120 0 0 0 0 PICKUP:key_yakanalitslaves_01
+2 0 0 0 0 UNTIL:item:key_yakanalitslaves_01:ge:1
+60 0 0 0 0 ACTIVATE:harassa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ahdri
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ahndahra
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:weer
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:milah
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ahaht
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:global:FreedSlavesCounter:eq:6
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the Abebaal egg mine: the key in a crate there; Eleedal-Lei frees the others)
+120 0 0 0 0 FLYTO:@118112,-89071,719:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Abebaal_Egg_Mine
+10 0 0 0 0 UNTIL:cell:Abebaal_Egg_Mine
+120 0 0 0 0 LOOT:crate_02_abebaal:key_abebaalslaves_01
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:eleedal_lei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:HT_SlaveRebellion:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:global:FreedSlavesCounter:eq:16
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Minabi's bandit lair, behind a trapped and locked door: the key on Chrelm)
+120 0 0 0 0 FLYTO:@73216,-66785,388:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Minabi
+10 0 0 0 0 UNTIL:cell:Minabi
+120 0 0 0 0 WALKTO:@860,1342,610
+0.3 0 0 0 0 USEPROBE:door_cavern_doors10:probe_grandmaster
+1 0 0 0
+0.3 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 DOORTO:Minabi,_Bandit_Lair
+10 0 0 0 0 UNTIL:cell:Minabi,_Bandit_Lair
+120 0 0 0 0 KILL:chrelm
+120 0 0 0 0 LOOT:chrelm:key_minabislaves_01
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:shaba
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:s'raverr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ahjara
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:jeed-ei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:beekatan
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:meen-sa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:global:FreedSlavesCounter:eq:22
+120 0 0 0 0 DOORTO:Minabi
+10 0 0 0 0 UNTIL:cell:Minabi
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Assarnud, far to the north-west: the key on Bazgulub gro-Ulfish)
+120 0 0 0 0 FLYTO:@0,40000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@-71027,95528,174:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Assarnud
+10 0 0 0 0 UNTIL:cell:Assarnud
+# (the pen's door is locked: picked)
+120 0 0 0 0 WALKTO:@-2560,2060,30
+0.3 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 KILL:bazgulub%gro-ulfish
+120 0 0 0 0 LOOT:bazgulub%gro-ulfish:key_assarnudslaves_01
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:huzei
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:akish
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:bun-teemeeta
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ri'darsha
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ra'karim
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ra'mhirr
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:global:FreedSlavesCounter:eq:28
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Sha-Adnius: the key lies in the cave)
+120 0 0 0 0 FLYTO:@-44066,134513,1405:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sha-Adnius
+10 0 0 0 0 UNTIL:cell:Sha-Adnius
+120 0 0 0 0 PICKUP:key_shaadniusslaves_01
+2 0 0 0 0 UNTIL:item:key_shaadniusslaves_01:ge:1
+60 0 0 0 0 ACTIVATE:ri'vassa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:sholani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:tsani
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:han-tulm
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:jeer-maht
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:gih-ja
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+# ("Unlock the slaves' bracers.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:global:FreedSlavesCounter:eq:34
+# (asked again, a freed slave asks whether we are of the Twin Lamps: the topic Jobasha answers)
+60 0 0 0 0 ACTIVATE:gih-ja
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:go_free
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:learned:Twin_Lamps
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@0,40000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
@@ -19,8 +350,10 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Jobasha's_Rare_Books
 60 0 0 0 0 ACTIVATE:jobasha
 1.5 0 0 0
-0.1 0 0 0 0 EXPECT:cell:Vivec,_Jobasha's_Rare_Books
+0.3 0 0 0 0 TOPIC:Twin_Lamps
+2 0 0 0 0 UNTIL:journal:MS_JobashaAbolitionist:ge:100
+0.1 0 0 0 0 EXPECT:journal:MS_JobashaAbolitionist:eq:100
+0.1 0 0 0 0 EXPECT:item:bookskill_armorer1:ge:1
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-# BLOCKED: the reward needs the global FreedSlavesCounter above 30: each slave freed with its owner's key (key_hlormarenslaves_01, key_kudanatslaves_01, key_yakanalitslaves_01, key_sinsibadonslaves_01 ... held by slavers; topic go free, choice 1) adds 1, Eleedal Lei in the Abebaal egg mine 10 (HT_SlaveRebellion): about 30 freed slaves across four camps are not played yet (stages 100)

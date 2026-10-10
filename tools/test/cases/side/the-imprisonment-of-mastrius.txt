@@ -1,5 +1,5 @@
-# The Imprisonment of Mastrius (VA_VampCurse), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Vampire quest. The imprisoned vampire Mastrius in the Salvel Ancestral Tomb, locked away by Azura, asks a fellow vampire (a Berne's blood taken, three days passed) to help break the barrier: played as far as entering the tomb.
+# The Imprisonment of Mastrius (VA_VampCurse), played LEGIT on the v2 test kit (ENHANCEV2).
+# Vampire quest. The imprisoned vampire Mastrius in the Salvel Ancestral Tomb, locked away by Azura, asks a fellow vampire (a Berne's blood taken, three days passed) to help break the barrier (10-40): Spell Breaker from the Dwemer ruin Bthuand (55) and a daedra's heart bought in Sadrith Mora; he drains us to be whole (60, 70), turns on us (90) and is killed.
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -9,6 +9,7 @@
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster:3
 0.3 0 0 0 0 SPELL:vampire_blood_berne
 4 0 0 0
 0.3 0 0 0 0 SLEEP:24:2
@@ -34,4 +35,98 @@
 120 0 0 0 0 DOORTO:Salvel_Ancestral_Tomb
 10 0 0 0 0 UNTIL:cell:Salvel_Ancestral_Tomb
 0.1 0 0 0 0 EXPECT:cell:Salvel_Ancestral_Tomb
-# BLOCKED: Mastrius (1286,-3493,581) is not reached: the walk stops 'stuck 723 away' at 1691,-2700,544 (he is held behind Azura's barrier: the talk through it, stages 10-40, needs a crosshair spot that is not found); then his two items: Spell Breaker (a shield in the Dwemer ruin Bthuand, north of the tomb: topic Spell Breaker, stage 55) and a daedra's heart (shops, or Aralen/Arano tombs), then his last request and the fight (stages 50-90)
+# (the door to his hall is locked: picked)
+120 0 0 0 0 WALKTO:@1691,-2700,544
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0
+60 0 0 0 0 ACTIVATE:mastrius
+1.5 0 0 0
+2 0 0 0 0 UNTIL:journal:VA_VampCurse:ge:10
+0.3 0 0 0 0 TOPIC:my_imprisonment
+2 0 0 0 0 UNTIL:journal:VA_VampCurse:ge:20
+0.3 0 0 0 0 TOPIC:way_to_escape
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampCurse:ge:40
+0.1 0 0 0 0 EXPECT:journal:VA_VampCurse:eq:40
+0.3 0 0 0 0 TOPIC:Spell_Breaker
+2 0 0 0 0 UNTIL:journal:VA_VampCurse:ge:55
+0.1 0 0 0 0 EXPECT:journal:VA_VampCurse:eq:55
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the tomb is inside the Ghostfence: straight up first, then over the fence high, as the flight in came)
+60 0 0 0 0 WALKTO:@42400,93250,10050
+120 0 0 0 0 FLYTO:@42400,93250,15000
+# (Spell Breaker, the shield, in the Dwemer ruin Bthuand to the north)
+120 0 0 0 0 FLYTO:@35968,129104,1008:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Bthuand
+10 0 0 0 0 UNTIL:cell:Bthuand
+120 0 0 0 0 WALKTO:@-347,2303,160
+120 0 0 0 0 WALKTO:@-354,2044,-32
+120 0 0 0 0 WALKTO:@-351,1783,-224
+120 0 0 0 0 WALKTO:@-350,1465,-224
+120 0 0 0 0 WALKTO:@49,1465,-224
+120 0 0 0 0 WALKTO:@52,1105,-224
+120 0 0 0 0 WALKTO:@398,1067,-224
+120 0 0 0 0 WALKTO:@444,708,-224
+120 0 0 0 0 WALKTO:@458,318,-224
+120 0 0 0 0 WALKTO:@918,321,-416
+120 0 0 0 0 WALKTO:@1291,291,-416
+120 0 0 0 0 WALKTO:@1391,-4,-416
+120 0 0 0 0 WALKTO:@1312,-320,-416
+120 0 0 0 0 WALKTO:@1348,-703,-416
+120 0 0 0 0 WALKTO:@1313,-1132,-416
+120 0 0 0 0 WALKTO:@1308,-1456,-416
+120 0 0 0 0 PICKUP:spell_breaker_unique
+2 0 0 0 0 UNTIL:item:spell_breaker_unique:ge:1
+0.1 0 0 0 0 EXPECT:item:spell_breaker_unique:eq:1
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (a daedra's heart, bought from Anis Seloth in Sadrith Mora)
+120 0 0 0 0 FLYTO:@148481,40098,1385:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Anis_Seloth|_Alchemist
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Anis_Seloth|_Alchemist
+60 0 0 0 0 ACTIVATE:anis%seloth
+1.5 0 0 0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:anis_seloth:ingred_daedras_heart_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:ingred_daedras_heart_01:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@70000,90000,3000
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 FLYTO:@42602,93774,10198:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Salvel_Ancestral_Tomb
+10 0 0 0 0 UNTIL:cell:Salvel_Ancestral_Tomb
+60 0 0 0 0 ACTIVATE:mastrius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:way_to_escape
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:item:spell_breaker_unique:eq:0
+0.3 0 0 0 0 TOPIC:one_thing_further
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:VA_VampCurse:ge:70
+0.1 0 0 0 0 EXPECT:journal:VA_VampCurse:eq:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (he drains us whole again and turns on us (90): killed. Stage 100's entry is never set by Morrowind.esm)
+30 0 0 0 0 UNTIL:journal:VA_VampCurse:ge:90
+3 0 0 0 0 A
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:VA_VampCurse:eq:90
+120 0 0 0 0 KILL:mastrius
+0.1 0 0 0 0 EXPECT:dead:mastrius

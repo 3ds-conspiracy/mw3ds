@@ -1,5 +1,5 @@
-# The Dwemer's Bone (EB_Bone), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Vivec. The Redoran trader Balen Andrano gives us a dwarf's bone to hide in the chest of his rival Jeanne: played as far as the bone changing hands (stage 20).
+# The Dwemer's Bone (EB_Bone), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Vivec. The Redoran trader Balen Andrano gives us a dwarf's bone to hide in the chest of his rival Jeanne in the Foreign Quarter; it raises a dwarven ghost in her shop. He pays, Jeanne asks about the haunting, and we kill the ghost for her.
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -25,6 +25,7 @@
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 TOPIC:change_her_luck
 2 0 0 0 0 UNTIL:talkready
+# ("I can help you.", then "change her luck" again for the bone)
 0.3 0 0 0 0 CHOICE:1
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 TOPIC:change_her_luck
@@ -36,4 +37,90 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-# BLOCKED: the bone goes into Jeanne's chest (com_chest_02_jeanne_u, Vivec, Jeanne: Trader, through the Foreign Quarter Canalworks with FLOAT:60 and two picked locks) but PUT stops 'stuck 102 away': the chest is never under the crosshair there (stage 40 and on)
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Canalworks
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 DOORTO:Vivec,_Jeanne|_Trader
+10 0 0 0 0 UNTIL:cell:Vivec,_Jeanne|_Trader
+# (the bone goes in her chest unseen)
+1 0 0 0 0 HIDE:200
+60 0 0 0 0 WALKTO:@420,-64,-256
+0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01_jeanne:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 WALKTO:@740,110,-256
+0.3 0 0 0 0 USELOCKPICK:com_chest_02_jeanne_u:pick_grandmaster
+1 0 0 0
+120 0 0 0 0 PUT:com_chest_02_jeanne_u:misc_dwarfbone_unique
+0.1 0 0 0 0 EXPECT:journal:EB_Bone:eq:40
+# (the chest opened itself as we came near, Jeanne's trap for thieves: she did not see us; it opens once more as the bone goes in)
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Canalworks
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+120 0 0 0 0 FLYTO:@26505,-87552,1890:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Trader
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Trader
+60 0 0 0 0 ACTIVATE:balen%andrano
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:change_her_luck
+2 0 0 0 0 UNTIL:journal:EB_Bone:ge:60
+0.1 0 0 0 0 EXPECT:journal:EB_Bone:eq:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Waistworks
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+# (the bone in her chest and Balen paid: the dwarven ghost walks in Jeanne's shop)
+120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Canalworks
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 DOORTO:Vivec,_Jeanne|_Trader
+10 0 0 0 0 UNTIL:cell:Vivec,_Jeanne|_Trader
+0.3 0 0 0 0 FLOAT:off
+60 0 0 0 0 ACTIVATE:jeanne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:terrible_haunting
+2 0 0 0 0 UNTIL:journal:EB_Bone:ge:80
+0.1 0 0 0 0 EXPECT:journal:EB_Bone:eq:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:dwarven%ghost_jeanne_U
+10 0 0 0 0 UNTIL:journal:EB_Bone:ge:90
+0.1 0 0 0 0 EXPECT:journal:EB_Bone:eq:90
+60 0 0 0 0 ACTIVATE:jeanne
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:terrible_haunting
+2 0 0 0 0 UNTIL:journal:EB_Bone:ge:110
+0.1 0 0 0 0 EXPECT:journal:EB_Bone:eq:110
+0.1 0 0 0 0 EXPECT:item:steel_shardmauler:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

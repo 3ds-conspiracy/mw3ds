@@ -1,5 +1,5 @@
-# Sheogorath's Quest (DA_Sheogorath), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Daedric shrine quest: Sheogorath in the shrine below Vivec's St. Delyn canton sends us to the mad hermit Big Head for the Fork of Horripilation (stage 10). Played as far as that.
+# Sheogorath's Quest (DA_Sheogorath), played LEGIT on the v2 test kit (ENHANCEV2).
+# Daedric shrine quest: Sheogorath in the shrine below Vivec's St. Delyn canton sends us to the mad hermit Big Head for the Fork of Horripilation (stage 10). Big Head gives it up (30, 50); the giant bull netch east of his island is killed with the Fork in hand (60), and Sheogorath trades it for the Spear of Bitter Mercy (70).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -21,4 +21,49 @@
 60 0 0 0 0 ACTIVATE:active_dae_sheogorath
 60 0 0 0 0 UNTIL:journal:DA_Sheogorath:ge:10
 0.1 0 0 0 0 EXPECT:journal:DA_Sheogorath:ge:10
-# BLOCKED: Big Head's Shack door (Ex_De_Shack_Door, -13916,202171,1783, island north of Ald Redaynia) is never under the crosshair: the driver lands on the roof (z 1894) and finds it hidden from every side (stage 20 and on; the fork, the netch, the spear)
+0.3 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Underworks
+0.1 0 0 0 0 FLOAT:40
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (Big Head's door faces east under the awning: land east of it, not on the roof)
+120 0 0 0 0 FLYTO:@-13600,202175,1790:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WALKTO:@-13760,202175,1790
+120 0 0 0 0 DOORTO:Big_Head's_Shack
+10 0 0 0 0 UNTIL:cell:Big_Head's_Shack
+60 0 0 0 0 ACTIVATE:big%head
+1.5 0 0 0
+2 0 0 0 0 UNTIL:journal:DA_Sheogorath:ge:30
+0.1 0 0 0 0 EXPECT:journal:DA_Sheogorath:eq:30
+0.3 0 0 0 0 TOPIC:Fork_of_Horripilation
+2 0 0 0 0 UNTIL:journal:DA_Sheogorath:ge:50
+0.1 0 0 0 0 EXPECT:journal:DA_Sheogorath:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 PICKUP:fork_horripilation_unique
+2 0 0 0 0 UNTIL:item:fork_horripilation_unique:ge:1
+0.3 0 0 0 0 EQUIP:fork_horripilation_unique
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the giant bull netch floats east of the island, enabled by Sheogorath's errand; the deathblow with the Fork in hand)
+120 0 0 0 0 FLYTO:@10200,200664,500:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 KILL:netch_giant_unique
+10 0 0 0 0 UNTIL:journal:DA_Sheogorath:ge:60
+0.1 0 0 0 0 EXPECT:journal:DA_Sheogorath:eq:60
+120 0 0 0 0 FLYTO:@32724,-95010,-250:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Underworks
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Underworks
+0.1 0 0 0 0 FLOAT:40
+120 0 0 0 0 DOORTO:Ihinipalit,_Shrine
+10 0 0 0 0 UNTIL:cell:Ihinipalit,_Shrine
+60 0 0 0 0 ACTIVATE:active_dae_sheogorath
+60 0 0 0 0 UNTIL:journal:DA_Sheogorath:ge:70
+0.1 0 0 0 0 EXPECT:journal:DA_Sheogorath:eq:70
+0.1 0 0 0 0 EXPECT:item:spear_mercy_unique:eq:1
+3 0 0 0 0 A

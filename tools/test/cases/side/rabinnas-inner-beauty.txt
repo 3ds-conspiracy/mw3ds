@@ -1,5 +1,5 @@
-# Rabinna's Inner Beauty (MV_SlaveMule), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Hla Oad to Balmora. The smuggler Relam Arinith has us take his slave Rabinna (who carries moon sugar inside her) to Vorar Helas in Balmora as a debt payment: played as far as entering the smugglers' cave (Fatleg's Drop Off).
+# Rabinna's Inner Beauty (MV_SlaveMule), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Hla Oad to Balmora. The smuggler Relam Arinith has us take his slave Rabinna (who carries moon sugar inside her) to Vorar Helas in Balmora as a debt payment (10-30). She carries moon sugar inside her and Helas would kill her for it (65, 75): we take her to Im-Kilaya at the Argonian Mission in Ebonheart instead, by the Hla Oad boat (95, 114, 115).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -15,5 +15,69 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Hla_Oad,_Fatleg's_Drop_Off
 10 0 0 0 0 UNTIL:cell:Hla_Oad,_Fatleg's_Drop_Off
-0.1 0 0 0 0 EXPECT:cell:Hla_Oad,_Fatleg's_Drop_Off
-# BLOCKED: Relam Arinith (10573,4205,13936) and Rabinna cannot be reached: the walk stops 'stuck 6471 away, 474 up' at 4112,4576,14398 (stage 10-30); then the ~40000-unit escort of Rabinna to Vorar Helas' House in Balmora (-15250,-13195,558), then the moon sugar, the abolitionists and the Argonian Mission branches (stages 40-114): long escorts over hills stall
+# (the smugglers' cave is down the trapdoor in the shack)
+60 0 0 0 0 ACTIVATE:In_De_Shack_Trapdoor
+3 0 0 0
+120 0 0 0 0 WALKTO:@10650,4300,13940
+60 0 0 0 0 ACTIVATE:relam%arinith
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:doing_some_business
+2 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:10
+0.3 0 0 0 0 TOPIC:deliver_this_slave
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:30
+0.1 0 0 0 0 EXPECT:journal:MV_SlaveMule:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (Rabinna tells us what she carries (65), and that Helas will kill her for it: we take her to the Argonian Mission in
+# Ebonheart instead (75, 95))
+60 0 0 0 0 ACTIVATE:rabinna
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Relam_Arinith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:deliver_the_payment
+2 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:65
+0.3 0 0 0 0 TOPIC:hope_of_escape
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:95
+0.1 0 0 0 0 EXPECT:journal:MV_SlaveMule:eq:95
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:rabinna
+0.3 0 0 0 0 ESCORT:rabinna
+# (out with her, and by the Hla Oad boat to Ebonheart: a follower near the player travels too)
+120 0 0 0 0 WALKTO:@11594,5400,14310
+30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
+60 0 0 0 0 ACTIVATE:In_De_Shack_Trapdoor_01
+3 0 0 0
+10 0 0 0 0 UNTIL:refdist:rabinna:lt:400
+120 0 0 0 0 WALKTO:@4100,4600,14480
+30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
+120 0 0 0 0 DOORTO:outside
+5 0 0 0 0 UNTIL:refdist:rabinna:lt:400
+120 0 0 0 0 WALKTO:@-48500,-39500,120
+30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
+60 0 0 0 0 ACTIVATE:baleni%salavel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:baleni%salavel:Ebonheart
+10 0 0 0 0 UNTIL:cell:Ebonheart
+5 0 0 0 0 UNTIL:refdist:rabinna:lt:600
+120 0 0 0 0 WALKTO:@13126,-103215,900
+30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
+120 0 0 0 0 DOORTO:Ebonheart,_Argonian_Mission
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Argonian_Mission
+10 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:114
+0.1 0 0 0 0 EXPECT:journal:MV_SlaveMule:eq:114
+0.3 0 0 0 0 ESCORT:-
+60 0 0 0 0 ACTIVATE:im_kilaya
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Rabinna
+2 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:115
+0.1 0 0 0 0 EXPECT:journal:MV_SlaveMule:eq:115
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

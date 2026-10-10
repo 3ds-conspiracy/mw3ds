@@ -1,5 +1,5 @@
-# Marsus Tullius' Missing Hides (MV_InnocentAshlanders), partial, played LEGIT on the v2 test kit (ENHANCEV2).
-# Side quest, Molag Amur. The trader Marsus Tullius was robbed of a guar hide shipment: played as far as the promise to recover it (stage 30).
+# Marsus Tullius' Missing Hides (MV_InnocentAshlanders), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, Molag Amur. The trader Marsus Tullius was robbed of a guar hide shipment: we promise to recover it (30); the Erabenimsun Tinti and Hairan, who hold it, refuse (75: the friendly ending needs the main quest's standing with the Ashlanders), so it is taken from them, returned (105), and his father in Tel Aruhn pays (115).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:21
 0.3 0 0 0 0 GOD:2
@@ -25,4 +25,43 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-# BLOCKED: the Ashlanders' answer (Tinti, Erabenimsun camp: 'attack on a guar hide trader') needs the main quest's A2_1_MeetSulMatuul 45; the hides, the choice between camps and the reward (stages 60-115) wait for that
+# (Tinti and Hairan at the Erabenimsun camp have them: without the main quest's standing with the Ashlanders they will not
+# give them up (75); taken from them by force, as a player may)
+120 0 0 0 0 FLYTO:@110763,-3800,608:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:tinti
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guar_hide_shipment
+2 0 0 0 0 UNTIL:journal:MV_InnocentAshlanders:ge:75
+0.1 0 0 0 0 EXPECT:journal:MV_InnocentAshlanders:eq:75
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:tinti
+120 0 0 0 0 KILL:hairan
+120 0 0 0 0 LOOT:tinti:ingred_guar_hide_marsus
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 LOOT:hairan:ingred_guar_hide_marsus
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:ingred_guar_hide_marsus:ge:10
+120 0 0 0 0 FLYTO:@95049,19821,752:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:marsus%tullius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:guar_hide_shipment
+2 0 0 0 0 UNTIL:journal:MV_InnocentAshlanders:ge:105
+0.1 0 0 0 0 EXPECT:journal:MV_InnocentAshlanders:eq:105
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (his father Stentus in Tel Aruhn pays for it)
+120 0 0 0 0 FLYTO:@126801,48350,772:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:stentus%tullius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Marsus_Tullius'_hides
+2 0 0 0 0 UNTIL:journal:MV_InnocentAshlanders:ge:115
+0.1 0 0 0 0 EXPECT:journal:MV_InnocentAshlanders:eq:115
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
