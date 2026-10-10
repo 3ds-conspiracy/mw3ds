@@ -30,6 +30,19 @@
 #include "log.h"
 
 extern "C" { u32 __ctru_heap_size = 92380U * 1024, __ctru_linear_heap_size = 32768U * 1024; }
+// NATIVE_OLD3DS=1: the Old 3DS split (source/heaps.cpp): the linear heap the game counts against is smaller
+static struct NativeOld3dsHeaps
+{
+	NativeOld3dsHeaps()
+	{
+		const char* o = getenv("NATIVE_OLD3DS");
+		if (o && o[0] == '1')
+		{
+			__ctru_linear_heap_size = 22U << 20;
+			__ctru_heap_size = 39U << 20;
+		}
+	}
+} s_nativeOld3dsHeaps;
 
 // ---- paths
 static std::string sdRoot()

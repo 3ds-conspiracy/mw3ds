@@ -1,0 +1,9 @@
+# Gyro aim is suspended while a menu is open: turning the console with the inventory up turns nothing
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+1 0 0 0
+0.1 0 0 0 0 SNAP:yaw
+0.3 0 0 0 0 SCREEN:inventory
+2 0 0 0 0 GYRO:45:0
+0.3 0 0 0 0 SCREEN:none
+0.1 0 0 0 0 EXPECT:yaw:ge:@-1+EXPECT:yaw:le:@1

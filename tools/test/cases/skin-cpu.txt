@@ -1,0 +1,15 @@
+# GPU skinning (skin.v.pica) against the CPU's: Arrille, brought in front of the player in his tradehouse, his
+# actor skinned on the CPU. skin-gpu and skin-cpu take the same SHOTs (same seed, same steps):
+#   tools\test\imgdiff.py build\shots\skin-cpu build\shots\skin-gpu
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+SKIN:cpu
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+2 0 0 0
+0.3 0 0 0 0 PLACE:arrille:110
+1 0 0 0
+0.3 0 0 0 0 SHOT
+1.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 PLACE:arrille:250
+1 0 0 0
+0.3 0 0 0 0 SHOT

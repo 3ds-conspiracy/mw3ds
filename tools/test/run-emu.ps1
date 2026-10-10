@@ -8,8 +8,10 @@
 #   -Emu <folder>                     another Azahar copy (its own SD card and log): a spot check beside a
 #                                     sweep; only that copy's emulator is stopped
 #   -Fast                             no speed cap, no vsync (the ini is put back afterwards)
+#   -Old3ds                           the emulator runs as an Old 3DS (is_new_3ds = false: 64 MB, no speedup; the ini is
+#                                     put back afterwards). It checks the memory map and behaviour, not 268 MHz frame times
 param([string[]]$Cams, [string[]]$Inputs, [int]$Wait = 60, [switch]$Keep, [string]$Start, [string]$Data = 'out\data', [string]$App = '',
-      [string]$Emu = '', [switch]$Fast)
+      [string]$Emu = '', [switch]$Fast, [switch]$Old3ds)
 
 . (Join-Path $PSScriptRoot '..\build\env.ps1')
 $root  = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
@@ -39,13 +41,16 @@ if (Test-Path $data) {
     }
 }
 
-# -Fast: the emulator's speed cap and vsync off for this run (the ini is restored after the run)
+# -Fast: the emulator's speed cap and vsync off for this run; -Old3ds: an Old 3DS (the ini is restored after the run)
 $ini = Join-Path $azDir 'user\config\qt-config.ini'
 $iniBackup = $null
-if ($Fast -and (Test-Path $ini)) {
+$iniSet = @()
+if ($Fast) { $iniSet += @(, @('use_vsync', 'false')); $iniSet += @(, @('frame_limit', '900')) }
+if ($Old3ds) { $iniSet += @(, @('is_new_3ds', 'false')) }
+if ($iniSet.Count -and (Test-Path $ini)) {
     $iniBackup = Get-Content $ini -Raw
     $text = $iniBackup
-    foreach ($kv in @(@('use_vsync', 'false'), @('frame_limit', '900'))) {
+    foreach ($kv in $iniSet) {
         $text = $text.Replace("$($kv[0])\default=true", "$($kv[0])\default=false")
         $text = [regex]::Replace($text, "(?m)^$($kv[0])=[^\r\n]*", "$($kv[0])=$($kv[1])")
     }
@@ -112,6 +117,6 @@ if (Test-Path $log) { Get-Content $log | Where-Object { $_ -notmatch '^\[\s*\d+\
 Remove-Item (Join-Path $sd 'autoshot'), (Join-Path $sd 'autocam.txt'), (Join-Path $sd 'autoinput.txt') -Force -ErrorAction SilentlyContinue
 if (-not $Keep) { Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue }
 } finally {
-    # -Fast: the ini goes back even if the run failed
+    # -Fast / -Old3ds: the ini goes back even if the run failed
     if ($null -ne $iniBackup) { Start-Sleep -Milliseconds 500; [IO.File]::WriteAllText($ini, $iniBackup) }
 }

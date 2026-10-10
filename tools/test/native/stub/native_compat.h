@@ -59,8 +59,8 @@ inline CharWidthInfo* fontGetCharWidthInfo(void*, int) { static CharWidthInfo c 
 ssize_t decode_utf8(uint32_t* out, const unsigned char* in);
 
 // ---- heap
-struct mallinfo_t { int uordblks; };
-#define mallinfo() mallinfo_t{ 0 }
+struct mallinfo_t { int uordblks, fordblks; };
+#define mallinfo() mallinfo_t{ 0, 0 }
 
 // ---- the error screen, the crash handler: nothing to install
 #define WRITE_DATA_TO_HANDLER_STACK 0

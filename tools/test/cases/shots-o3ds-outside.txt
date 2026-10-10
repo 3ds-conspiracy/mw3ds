@@ -1,0 +1,24 @@
+# Outdoor screenshots (Old 3DS look check): Seyda Neen, Balmora, Vivec and the Bitter Coast at midday, a few headings
+# each. tools\test\run-test.ps1 shots-o3ds-outside -Old3ds -Data out\o3ds -Start "Seyda Neen" -Shots build\shots\o3-outside
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+HOUR:12
+20 0 0 0
+0.3 0 0 0 0 SHOT
+2 0 0 0.6
+0.3 0 0 0 0 SHOT
+2 0 0 0.6
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Balmora+HOUR:12
+25 0 0 0
+0.3 0 0 0 0 SHOT
+2 0 0 0.6
+0.3 0 0 0 0 SHOT
+6 0 1 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Vivec+HOUR:12
+25 0 0 0
+0.3 0 0 0 0 SHOT
+2 0 0 0.6
+0.3 0 0 0 0 SHOT
+2 0 0 0.6
+0.3 0 0 0 0 SHOT

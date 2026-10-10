@@ -1106,7 +1106,9 @@
 60 0 0 0 0 DOORTO:outside
 3 0 0 0
 30 0 0 0
-120 0 0 0 0 FLYTO:@159100,-30521,2311
+# Holamayan: come down south of the rock's overhang (the Optimization Patch's door has a frame that stops a drop from
+# above onto it), then walk in to the door
+120 0 0 0 0 FLYTO:@159100,-31150,2311
 0.1 0 0 0 0 FLOAT:off
 5 0 0 0 0 UNTIL:effect:10:eq:0
 0.1 0 0 0 0 FLOAT:60
@@ -2610,6 +2612,8 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 0.3 0 0 0 0 SAVE:uber-main-quest-b3-40
+# (to the pod from its north side: from the south its door swings open into the way to Falura)
+60 0 0 0 0 WALKTO:@124234,48221,747
 60 0 0 0 0 ACTIVATE:ex_t_door_slavepod_01
 3 0 0 0
 120 0 0 0 0 ACTIVATE:falura_llervu

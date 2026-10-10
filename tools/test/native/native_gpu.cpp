@@ -721,7 +721,7 @@ void C3D_TexEnvColor(C3D_TexEnv* env, u32 color) { env->color = color; }
 
 // ---- renderer.cpp's shader: uniform slots by name, as cell.v.pica declares them
 enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET, U_POSSCALE, U_UVSCALE, U_TINT, U_LIGHTPOS,
-	U_LIGHTCOLOR };
+	U_LIGHTCOLOR, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone)
 
 DVLB_s* DVLB_ParseFile(u32*, u32) { return new DVLB_s(); }
 void DVLB_Free(DVLB_s* d) { delete d; }
@@ -733,7 +733,7 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 	static const struct { const char* name; int slot; } kSlots[] = { { "projection", U_PROJECTION },
 		{ "modelView", U_MODELVIEW }, { "uvOffset", U_UVOFFSET }, { "fogVec", U_FOGVEC }, { "posOffset", U_POSOFFSET },
 		{ "posScale", U_POSSCALE }, { "uvScale", U_UVSCALE }, { "tint", U_TINT }, { "lightPos", U_LIGHTPOS },
-		{ "lightColor", U_LIGHTCOLOR } };
+		{ "lightColor", U_LIGHTCOLOR }, { "bones", U_BONES } };
 	for (auto& s : kSlots)
 		if (strcmp(s.name, name) == 0)
 			return s.slot;
@@ -931,18 +931,14 @@ static int attrSize(int fmt) { return fmt == GPU_FLOAT ? 4 : fmt == GPU_SHORT ? 
 
 static ClipV vertexShader(const u8* v)
 {
-	float in[3][4] = {};
+	float in[5][4] = {};
 	int off = 0;
-	for (int i = 0; i < s_attr.count && i < 3; i++)
+	for (int i = 0; i < s_attr.count && i < 5; i++)
 	{
 		readAttr(v + off, s_attr.format[i], s_attr.elements[i], in[i]);
 		off += attrSize(s_attr.format[i]) * s_attr.elements[i];
 	}
 	const float (*u)[4] = s_unif;
-	// Position and transforms in the PICA's 24-bit floats (f24 above)
-	float r0[4] = { f24(u[U_POSOFFSET][0] + f24(in[0][0] * u[U_POSSCALE][0])),
-		f24(u[U_POSOFFSET][1] + f24(in[0][1] * u[U_POSSCALE][1])), f24(u[U_POSOFFSET][2] + f24(in[0][2] * u[U_POSSCALE][2])),
-		1.0f };
 	auto dp4 = [](const float* m, const float* v)
 	{
 		float s = f24(m[0] * v[0]);
@@ -950,6 +946,26 @@ static ClipV vertexShader(const u8* v)
 		s = f24(s + f24(m[2] * v[2]));
 		return f24(s + f24(m[3] * v[3]));
 	};
+	// Position and transforms in the PICA's 24-bit floats (f24 above)
+	float r0[4] = { f24(u[U_POSOFFSET][0] + f24(in[0][0] * u[U_POSSCALE][0])),
+		f24(u[U_POSOFFSET][1] + f24(in[0][1] * u[U_POSSCALE][1])), f24(u[U_POSOFFSET][2] + f24(in[0][2] * u[U_POSSCALE][2])),
+		1.0f };
+	// skin.v.pica (five inputs): the bind-pose position blended from four palette bones by their weights
+	if (s_attr.count >= 5)
+	{
+		float p[4] = { f24(in[0][0] * u[U_POSSCALE][0]), f24(in[0][1] * u[U_POSSCALE][1]), f24(in[0][2] * u[U_POSSCALE][2]), 1.0f };
+		float acc[3] = { 0, 0, 0 };
+		for (int k = 0; k < 4; k++)
+		{
+			int b = U_BONES + (int)in[3][k] * 3;
+			float wt = f24(in[4][k] * f24(1.0f / 255.0f));
+			for (int r = 0; r < 3; r++)
+				acc[r] = f24(acc[r] + f24(wt * (b + r < 96 ? dp4(u[b + r], p) : 0.0f)));
+		}
+		r0[0] = acc[0];
+		r0[1] = acc[1];
+		r0[2] = acc[2];
+	}
 	float r1[4];
 	for (int i = 0; i < 4; i++)
 		r1[i] = dp4(u[U_MODELVIEW + i], r0);

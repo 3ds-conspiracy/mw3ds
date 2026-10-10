@@ -1,0 +1,38 @@
+# Old 3DS memory soak (plan 2.5): crosses towns, the wild and interiors again and again; the heap must level off (its
+# peak after the first round no higher than a little over the first), no zlib stream left open, the out-of-memory
+# reserve never spent, a big block still to be had. Each check comes after half a minute standing (the Old 3DS takes
+# ~15 s to stream in all nine cells). Run with -Old3ds (Azahar as an Old 3DS: the 64 MB mode)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GOTO:Balmora
+10 0 1 0.1
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+5 0 1 0.2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+5 0 0 0.3
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Plaza
+10 0 1 0.15
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+5 0 0 0.3
+0.3 0 0 0 0 GOTO:Balmora
+10 0 1 -0.1
+30 0 0 0
+0.5 0 0 0 0 SNAP:heappeak+EXPECT:zopen:eq:0+EXPECT:memorylow:eq:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+5 0 1 0.2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+5 0 0 0.3
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Plaza
+10 0 1 0.15
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Ald_Skar_Inn
+5 0 0 0.3
+0.3 0 0 0 0 GOTO:Balmora
+10 0 1 -0.1
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+5 0 1 0.2
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter_Plaza
+10 0 1 0.15
+0.3 0 0 0 0 GOTO:Balmora
+10 0 1 0.1
+30 0 0 0
+0.5 0 0 0 0 EXPECT:heappeak:le:@1024+EXPECT:zopen:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024

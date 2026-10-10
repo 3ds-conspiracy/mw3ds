@@ -1,0 +1,14 @@
+# Gyro aim (on by default): the console turning 45 degrees a second for 2 s turns the view 90 degrees, one to one
+# (not through the stick's look speed); with GYROAIM:off the same turn does nothing
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+1 0 0 0
+0.1 0 0 0 0 SNAP:yaw+SNAP:pitch
+2 0 0 0 0 GYRO:45:0
+0.1 0 0 0 0 EXPECT:yaw:ge:@85+EXPECT:yaw:le:@95+EXPECT:pitch:ge:@-1+EXPECT:pitch:le:@1
+0.1 0 0 0 0 SNAP:yaw+SNAP:pitch
+1 0 0 0 0 GYRO:0:20
+0.1 0 0 0 0 EXPECT:pitch:ge:@18+EXPECT:pitch:le:@22+EXPECT:yaw:ge:@-1+EXPECT:yaw:le:@1
+0.1 0 0 0 0 GYROAIM:off+SNAP:yaw
+2 0 0 0 0 GYRO:45:0
+0.1 0 0 0 0 EXPECT:yaw:ge:@-1+EXPECT:yaw:le:@1

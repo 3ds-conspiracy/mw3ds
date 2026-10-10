@@ -3,9 +3,10 @@
 #   tools\test\run-test.ps1 tg-bragor -Data out\world  (the whole island)
 #   tools\test\run-test.ps1 mainquest -Start "Seyda Neen"
 #   tools\test\run-test.ps1 ui-g1-g9 -Native -Shots build\shots\ui   (each SHOT step saved there as a PNG of both screens)
+#   tools\test\run-test.ps1 perf-balmora -Old3ds          (Azahar as an Old 3DS; natively, the game takes its Old 3DS profile)
 # -Saves <folder>: keep test_*.sav checkpoints there between native runs. -Exe: another native build (build.py with MW3DS_NATIVE_BUILD). -Native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with -Draw.
 param([Parameter(Mandatory = $true)][string]$Test, [string]$Start = 'Balmora', [string]$Data = 'out\data', [int]$Wait = 300, [string]$App = '',
-      [string]$Emu = '', [switch]$Fast, [switch]$Native, [string]$Sd = '', [string]$Exe = '', [string]$Saves = '', [switch]$Draw, [string]$Shots = '',
+      [string]$Emu = '', [switch]$Fast, [switch]$Native, [string]$Sd = '', [string]$Exe = '', [string]$Saves = '', [switch]$Draw, [string]$Shots = '', [switch]$Old3ds,
       [string]$Pattern = 'check:|not offered|failed|expelled|crime:|expect:|monitor:|drive: (FAIL|stuck|crosshair miss)|was fighting|script error')
 . (Join-Path $PSScriptRoot '..\build\env.ps1')
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
@@ -30,6 +31,8 @@ if ($Native) {
     Set-Content (Join-Path $sdApp 'start.txt') $Start -Encoding ascii
     $env:NATIVE_SD = $sd
     $env:MW3DS_DATA = Join-Path $root $Data
+    # -Old3ds: the game is told it runs on an Old 3DS (its O3DS profile: view, budgets, frame cap)
+    $env:NATIVE_OLD3DS = if ($Old3ds) { '1' } else { '0' }
     # The software GPU (tools\test\native\native_gpu.cpp) only when something will be looked at: it is slower
     $env:NATIVE_DRAW = if ($Draw -or ($inputs -match '(^|[\s+])SHOT($|[\s+])')) { '1' } else { '0' }
     $p = Start-Process -FilePath $(if ($Exe) { $Exe } else { Join-Path $root 'build\native\mw3ds-native.exe' }) -WorkingDirectory $root -PassThru -WindowStyle Hidden
@@ -38,7 +41,7 @@ if ($Native) {
     $log = Join-Path $sdApp 'log.txt'
     $shotDir = $sdApp
 } else {
-    & (Join-Path $PSScriptRoot 'run-emu.ps1') -Start $Start -Data $Data -Inputs $inputs -Wait $Wait -App $App -Emu $Emu -Fast:$Fast | Out-Null
+    & (Join-Path $PSScriptRoot 'run-emu.ps1') -Start $Start -Data $Data -Inputs $inputs -Wait $Wait -App $App -Emu $Emu -Fast:$Fast -Old3ds:$Old3ds | Out-Null
     $log = Join-Path $Emu 'user\sdmc\3ds\mw3ds\log.txt'
     $shotDir = Join-Path $Emu 'user\sdmc\3ds\mw3ds'
 }

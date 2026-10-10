@@ -1,0 +1,16 @@
+# GoldenEye controls: the Circle Pad walks; holding R stands the player still and the pad aims at half speed
+# (left / right turns, up / down looks up and down); letting go of R walks again at once
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:goldeneye
+1 0 0 0
+0.1 0 0 0 0 SNAP:moved
+1.5 0 1 0
+0.1 0 0 0 0 EXPECT:moved:ge:60
+0.1 0 0 0 0 SNAP:moved+SNAP:yaw+SNAP:pitch
+1 1 0.5 0 0 R
+0.1 0 0 0 0 R+EXPECT:moved:le:5+EXPECT:yaw:ge:@46+EXPECT:yaw:le:@57+EXPECT:pitch:ge:@23+EXPECT:pitch:le:@29
+1 -1 0 0 0 R
+0.1 0 0 0 0 R+EXPECT:moved:le:5+EXPECT:yaw:ge:@-3+EXPECT:yaw:le:@3
+0.1 0 0 0 0 SNAP:moved
+1.5 0 1 0
+0.1 0 0 0 0 EXPECT:moved:ge:60

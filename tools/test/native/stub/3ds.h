@@ -28,6 +28,11 @@ inline void hidTouchRead(touchPosition* t) { t->px = t->py = 0; }
 inline void hidCircleRead(circlePosition* c) { c->dx = c->dy = 0; }
 inline void irrstScanInput() {}
 inline void hidCstickRead(circlePosition* c) { c->dx = c->dy = 0; }
+struct angularRate { s16 x, z, y; };
+inline void hidGyroRead(angularRate* r) { r->x = r->y = r->z = 0; }
+inline Result HIDUSER_EnableGyroscope() { return 0; }
+inline Result HIDUSER_DisableGyroscope() { return 0; }
+inline Result HIDUSER_GetGyroscopeRawToDpsCoefficient(float* c) { *c = 1.0f / 14.375f; return 0; }
 inline Result svcGetThreadId(u32* id, u32) { *id = 1; return 0; }
 #define GX_TRANSFER_FLIP_VERT(x) ((x) << 0)
 #define GX_TRANSFER_OUT_TILED(x) ((x) << 1)
@@ -37,14 +42,18 @@ inline Result svcGetThreadId(u32* id, u32) { *id = 1; return 0; }
 #define GX_TRANSFER_SCALING(x) ((x) << 24)
 #define GX_TRANSFER_FMT_RGB8 0
 #define GX_TRANSFER_FMT_RGBA8 1
+#define GX_TRANSFER_FMT_RGB565 2
 #define GX_TRANSFER_SCALE_NO 0
 inline void irrstCstickRead(circlePosition* c) { c->dx = c->dy = 0; }
 inline Result irrstInit() { return 0; }
 inline void irrstExit() {}
 inline bool aptMainLoop() { return true; }
 inline void gspWaitForVBlank() {}
-inline Result APT_CheckNew3DS(bool* b) { *b = true; return 0; }
+// NATIVE_OLD3DS=1 (run-test.ps1 -Old3ds): the game takes its Old 3DS profile
+inline Result APT_CheckNew3DS(bool* b) { const char* o = getenv("NATIVE_OLD3DS"); *b = !(o && o[0] == '1'); return 0; }
 inline void osSetSpeedupEnable(bool) {}
+inline Result APT_SetAppCpuTimeLimit(u32) { return -1; }
+inline u32 osGetApplicationMemType() { const char* o = getenv("NATIVE_OLD3DS"); return o && o[0] == '1' ? 0 : 6; }
 inline u64 osGetTime() { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); }
 #define SYSCLOCK_ARM11 268111856ULL
 inline u64 svcGetSystemTick() { return (u64)(std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count() * SYSCLOCK_ARM11); }

@@ -1,0 +1,10 @@
+# Perf route (Old 3DS plan): Balmora's streets, NPC-dense (skinning, AI, scripts). Read the per-second
+# "profile per frame" / "fps" lines in log.txt; tools\test\perf.py collects them. Run with and without -Old3ds.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GOTO:Balmora
+10 0 0 0
+20 0 1 0.1
+20 0 1 -0.1
+10 0 0 0.4
+10 0 0 0

@@ -1,0 +1,8 @@
+# GoldenEye controls (Old 3DS plan, Part 3): the Circle Pad left / right turns the player, at the look speed
+# (1.8 rad/s: about 206 degrees in 2 s), and leaves them where they stand
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:goldeneye
+1 0 0 0
+0.1 0 0 0 0 SNAP:yaw+SNAP:playerx+SNAP:playery
+2 1 0 0
+0.1 0 0 0 0 EXPECT:yaw:ge:@185+EXPECT:yaw:le:@227+EXPECT:playerx:ge:@-5+EXPECT:playerx:le:@5+EXPECT:playery:ge:@-5+EXPECT:playery:le:@5
