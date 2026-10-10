@@ -306,6 +306,24 @@ void Session::skipChargen()
 {
 	giveItems(w.game.skipChargenItems);
 	w.globals["chargenstate"] = -1.0f;
+	// What character creation's scripts leave behind that later play needs: the Census and Excise Office's inner door,
+	// which the guard's CharGenDoorGuardTalker unlocks once the player has the papers (Socucius Ergalla is behind it)
+	int hall = w.findRefAnywhere("chargen door hall");
+	if (hall >= 0 && w.refs[hall].lockLevel > 0)
+		w.refs[hall].lockLevel = -w.refs[hall].lockLevel;
+	// and the chargen scripts as they end: the people's "state" at -1 (CharGenClassNPC then lets Socucius Ergalla talk,
+	// at 0 an A on him started the class menu over), the one-shot doors and messages "done"
+	static const char* const kDone[][2] = { { "chargen class", "state" }, { "chargen name", "state" }, { "chargen dock guard", "state" },
+		{ "chargen boat guard 2", "state" }, { "chargen captain", "state" }, { "chargen door guard", "done" }, { "chargen captain", "done" },
+		{ "chargen exit door", "done" }, { "chargen door captain", "done" }, { "chargen_shipdoor", "done" }, { "chargendoorjournal", "done" },
+		{ "chargen_bed", "done" }, { "chargen barrel fatigue", "done" }, { "chargen dagger", "done" } };
+	for (const auto& d : kDone)
+	{
+		int ri = w.findRefAnywhere(d[0]);
+		float* v = ri >= 0 && w.refs[ri].script >= 0 ? w.scripts[w.refs[ri].script].local(d[1]) : nullptr;
+		if (v)
+			*v = strcmp(d[1], "state") == 0 ? -1.0f : 1.0f;
+	}
 	w.controlsEnabled = w.jumpingEnabled = w.fightingEnabled = w.magicEnabled = true;
 	w.controlsOff = 0;
 	w.menusEnabled = MENU_STATS | MENU_INVENTORY | MENU_MAGIC | MENU_MAP | MENU_REST;

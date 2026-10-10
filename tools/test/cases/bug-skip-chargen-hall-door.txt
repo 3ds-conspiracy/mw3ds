@@ -1,0 +1,10 @@
+3 0 0 0 0 MSG
+# A game started past character creation (the Seyda Neen start, as every test and the skip option begin) left the
+# Census and Excise Office's inner door locked: only the guard's chargen script (CharGenDoorGuardTalker) unlocks it,
+# once the player has the papers. Socucius Ergalla, behind it, could never be reached (Death of a Taxman); the side
+# case side/death-of-a-taxman walks through it.
+0.3 0 0 0 0 GOD:2
+4 0 0 0
+0.1 0 0 0 0 EXPECT:reflock:chargen_door_hall:lt:0
+# (and Socucius's own script as character creation leaves it: at state 0 an A on him started the class menu over, no talk)
+0.1 0 0 0 0 EXPECT:reflocal:chargen%class,state:eq:-1
