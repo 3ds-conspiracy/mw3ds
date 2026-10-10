@@ -222,3 +222,136 @@ void linearRetire() {}
 bool linearReclaim() { return false; }
 
 // ---- nothing to update (drawing and screenshots: native_gpu.cpp)
+
+// ---- NATIVE_AUDIO=<wav>: a mixer for the ndsp stand-ins. Every frame (nativeAudioFrame, called by the GPU
+// stand-in's C3D_FrameEnd) mixes 1/30 s of every playing channel into a 16-bit stereo WAV at 32768 Hz, so the
+// sound stays in step with the fixed 1/30 s game frames. Off, a queued buffer is finished at once.
+namespace
+{
+const int kDspChannels = 24, kDspQueue = 8, kDspOutRate = 32768, kDspFrameSamples = kDspOutRate / 30;
+struct DspChannel
+{
+	float rate = 32728.0f, mixL = 1.0f, mixR = 1.0f;
+	ndspWaveBuf* queue[kDspQueue];
+	int count = 0;
+	double pos = 0;
+};
+DspChannel s_dsp[kDspChannels];
+FILE* s_wav = nullptr;
+bool s_wavTried = false;
+u32 s_wavBytes = 0;
+
+bool wavOn()
+{
+	if (!s_wavTried)
+	{
+		s_wavTried = true;
+		const char* e = getenv("NATIVE_AUDIO");
+		if (e && *e)
+		{
+			s_wav = fopen(e, "wb");
+			if (s_wav)
+			{
+				u8 header[44] = {};
+				fwrite(header, sizeof(header), 1, s_wav);
+			}
+		}
+	}
+	return s_wav != nullptr;
+}
+}
+
+void nativeDspReset(int ch)
+{
+	if (ch < 0 || ch >= kDspChannels)
+		return;
+	for (int i = 0; i < s_dsp[ch].count; i++)
+		s_dsp[ch].queue[i]->status = NDSP_WBUF_DONE;
+	s_dsp[ch] = DspChannel();
+}
+void nativeDspRate(int ch, float rate)
+{
+	if (ch >= 0 && ch < kDspChannels)
+		s_dsp[ch].rate = rate;
+}
+void nativeDspMix(int ch, const float* mix)
+{
+	if (ch >= 0 && ch < kDspChannels)
+	{
+		s_dsp[ch].mixL = mix[0];
+		s_dsp[ch].mixR = mix[1];
+	}
+}
+bool nativeDspAdd(int ch, ndspWaveBuf* b)
+{
+	if (!wavOn() || ch < 0 || ch >= kDspChannels || s_dsp[ch].count >= kDspQueue)
+		return false;
+	b->status = s_dsp[ch].count == 0 ? NDSP_WBUF_PLAYING : NDSP_WBUF_QUEUED;
+	s_dsp[ch].queue[s_dsp[ch].count++] = b;
+	return true;
+}
+u32 nativeDspPos(int ch)
+{
+	return ch >= 0 && ch < kDspChannels && s_dsp[ch].count ? (u32)s_dsp[ch].pos : 0;
+}
+
+void nativeAudioFrame()
+{
+	if (!wavOn())
+		return;
+	static s16 out[kDspFrameSamples * 2];
+	static float acc[kDspFrameSamples * 2];
+	memset(acc, 0, sizeof(acc));
+	for (auto& c : s_dsp)
+	{
+		double step = c.rate / kDspOutRate;
+		for (int i = 0; i < kDspFrameSamples && c.count; i++)
+		{
+			ndspWaveBuf* b = c.queue[0];
+			const s16* d = (const s16*)b->data_vaddr;
+			u32 n = b->nsamples, p = (u32)c.pos;
+			float f = (float)(c.pos - p);
+			float s0 = d[p], s1 = p + 1 < n ? d[p + 1] : s0;
+			float v = s0 + (s1 - s0) * f;
+			acc[i * 2] += v * c.mixL;
+			acc[i * 2 + 1] += v * c.mixR;
+			c.pos += step;
+			if (c.pos >= n)
+			{
+				if (b->looping)
+					c.pos -= n;
+				else
+				{
+					b->status = NDSP_WBUF_DONE;
+					memmove(c.queue, c.queue + 1, sizeof(c.queue[0]) * (--c.count));
+					c.pos = 0;
+					if (c.count)
+						c.queue[0]->status = NDSP_WBUF_PLAYING;
+				}
+			}
+		}
+	}
+	for (int i = 0; i < kDspFrameSamples * 2; i++)
+		out[i] = (s16)(acc[i] > 32767.0f ? 32767 : acc[i] < -32768.0f ? -32768 : acc[i]);
+	fwrite(out, sizeof(out), 1, s_wav);
+	s_wavBytes += sizeof(out);
+}
+
+void nativeAudioClose()
+{
+	if (!s_wav)
+		return;
+	u8 h[44] = {'R', 'I', 'F', 'F', 0, 0, 0, 0, 'W', 'A', 'V', 'E', 'f', 'm', 't', ' ', 16, 0, 0, 0, 1, 0, 2, 0};
+	auto put32 = [&](int at, u32 v) { for (int i = 0; i < 4; i++) h[at + i] = (v >> (i * 8)) & 255; };
+	put32(4, 36 + s_wavBytes);
+	put32(24, kDspOutRate);
+	put32(28, kDspOutRate * 4);
+	h[32] = 4;
+	h[34] = 16;
+	memcpy(h + 36, "data", 4);
+	put32(40, s_wavBytes);
+	fseek(s_wav, 0, SEEK_SET);
+	fwrite(h, sizeof(h), 1, s_wav);
+	fclose(s_wav);
+	s_wav = nullptr;
+}

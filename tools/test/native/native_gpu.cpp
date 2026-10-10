@@ -34,6 +34,9 @@ static int drawMode()
 	{
 		const char* e = getenv("NATIVE_DRAW");
 		mode = !e || !*e || strcmp(e, "0") == 0 ? 0 : strcmp(e, "all") == 0 ? 2 : 1;
+		const char* v = getenv("NATIVE_VIDEO");
+		if (v && *v && mode == 0)
+			mode = 1;                // a video draws the frames it records
 	}
 	return mode;
 }
@@ -506,13 +509,76 @@ bool C3D_Init(size_t)
 }
 void C3D_Fini() {}
 static bool writeShot(const char* path);
+
+// NATIVE_VIDEO=<out.mp4>[:N]: every Nth frame (both screens, 400 x 480) is drawn and piped to ffmpeg as raw RGB,
+// at 30 / N frames a second: no frame files, so a long run costs the MP4 only. NATIVE_VIDEO_FRAMES=<a>-<b>
+// records only those frames. NATIVE_AUDIO=<wav> (native_stubs.cpp) is mixed a frame at a time to match.
+void nativeAudioFrame();
+void nativeAudioClose();
+static FILE* s_video = nullptr;
+static bool s_videoTried = false, s_videoThis = false;
+static int s_videoEvery = 1, s_videoFrom = 0, s_videoTo = 1 << 30;
+static long s_frameNo = 0;
+static void videoFrame();
+static bool videoOn()
+{
+	if (!s_videoTried)
+	{
+		s_videoTried = true;
+		const char* e = getenv("NATIVE_VIDEO");
+		if (e && *e)
+		{
+			std::string spec = e, out = spec;
+			size_t colon = spec.rfind(':');
+			if (colon != std::string::npos && colon > 1 && atoi(spec.c_str() + colon + 1) > 0)
+			{
+				s_videoEvery = atoi(spec.c_str() + colon + 1);
+				out = spec.substr(0, colon);
+			}
+			const char* r = getenv("NATIVE_VIDEO_FRAMES");
+			if (r && sscanf(r, "%d-%d", &s_videoFrom, &s_videoTo) < 1)
+				s_videoFrom = 0;
+			const char* ff = getenv("NATIVE_FFMPEG");
+			// NATIVE_VIDEO_FPS: the video's own rate (24: frames dropped evenly from the game's 30)
+			const char* vf = getenv("NATIVE_VIDEO_FPS");
+			char rate[32] = "";
+			if (vf && *vf)
+				snprintf(rate, sizeof(rate), "-vf fps=%s ", vf);
+			char cmd[1024];
+			snprintf(cmd, sizeof(cmd), "\"\"%s\" -y -loglevel error -f rawvideo -pix_fmt bgr24 -s 400x480 -r %g -i - %s-c:v libx264 -preset veryfast -crf 26 -pix_fmt yuv420p \"%s\"\"",
+				ff && *ff ? ff : "ffmpeg", 30.0 / s_videoEvery, rate, out.c_str());
+			s_video = popen(cmd, "wb");
+			if (!s_video)
+				logf("native gpu: could not start ffmpeg");
+		}
+	}
+	return s_video != nullptr;
+}
+void nativeVideoClose()
+{
+	if (s_video)
+		pclose(s_video);
+	s_video = nullptr;
+	nativeAudioClose();
+}
+
 bool C3D_FrameBegin(u8)
 {
 	s_drawThisFrame = false;
+	s_videoThis = false;
+	if (videoOn())
+	{
+		s_frameNo++;
+		s_videoThis = s_frameNo % s_videoEvery == 0 && s_frameNo >= s_videoFrom && s_frameNo <= s_videoTo;
+		s_drawThisFrame = s_videoThis;
+	}
 	return true;
 }
 void C3D_FrameEnd(u8)
 {
+	if (s_videoThis)
+		videoFrame();
+	nativeAudioFrame();
 	for (auto& path : s_pendingShots)
 		if (!writeShot(path.c_str()))
 			logf("native gpu: could not write %s", path.c_str());
@@ -1199,7 +1265,8 @@ bool screenshotSave(const char* path)
 	return true;
 }
 
-static bool writeShot(const char* path)
+// Both screens as 400 x 480 RGB rows, bottom row first (BMP order)
+static std::vector<u8> buildImage(const C3D_RenderTarget*& topOut)
 {
 	const C3D_RenderTarget *top = nullptr, *bottom = nullptr;
 	for (auto* t : s_targets)
@@ -1226,6 +1293,24 @@ static bool writeShot(const char* path)
 	};
 	blit(top, 0, 0);
 	blit(bottom, 40, 240);
+	topOut = top;
+	return img;
+}
+
+static void videoFrame()
+{
+	const C3D_RenderTarget* top;
+	std::vector<u8> img = buildImage(top);
+	const int kRow = 400 * 3;
+	for (int y = 479; y >= 0; y--)
+		fwrite(&img[y * kRow], kRow, 1, s_video);
+}
+
+static bool writeShot(const char* path)
+{
+	const C3D_RenderTarget* top;
+	std::vector<u8> img = buildImage(top);
+	const int kW = 400, kH = 480;
 	// Cracks in the ground: in the lower half of the top screen, pixels no opaque triangle covered (the sky
 	// shows) between two that one did, across or up and down (EXPECT:groundgaps). Leaves and water are
 	// alpha-tested or blended, so their holes don't count

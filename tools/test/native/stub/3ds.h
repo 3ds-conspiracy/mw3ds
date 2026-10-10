@@ -21,7 +21,6 @@ enum {
 };
 struct touchPosition { u16 px, py; };
 struct circlePosition { s16 dx, dy; };
-inline void hidScanInput() {}
 inline u32 hidKeysDown() { return 0; }
 inline u32 hidKeysHeld() { return 0; }
 inline u32 hidKeysUp() { return 0; }
@@ -89,14 +88,22 @@ struct ndspWaveBuf { const void* data_vaddr; u32 nsamples; u32 offset; bool loop
 inline Result ndspInit() { return 0; }
 inline void ndspExit() {}
 inline void ndspSetOutputMode(int) {}
-inline void ndspChnReset(int) {}
+// NATIVE_AUDIO=<wav>: channels really play (native_stubs.cpp mixes 1/30 s per frame into the WAV); otherwise
+// a buffer is finished the moment it is queued
+void nativeDspReset(int ch);
+void nativeDspRate(int ch, float rate);
+void nativeDspMix(int ch, const float* mix);
+bool nativeDspAdd(int ch, ndspWaveBuf* b);
+u32 nativeDspPos(int ch);
+inline void ndspChnReset(int ch) { nativeDspReset(ch); }
 inline void ndspChnSetInterp(int, int) {}
-inline void ndspChnSetRate(int, float) {}
+inline void ndspChnSetRate(int ch, float r) { nativeDspRate(ch, r); }
 inline void ndspChnSetFormat(int, int) {}
-inline void ndspChnSetMix(int, float*) {}
-inline void ndspChnWaveBufAdd(int, ndspWaveBuf* b) { b->status = NDSP_WBUF_DONE; }
-inline void ndspChnWaveBufClear(int) {}
-inline u32 ndspChnGetSamplePos(int) { return 0; }
+inline void ndspChnSetMix(int ch, float* m) { nativeDspMix(ch, m); }
+inline void ndspChnWaveBufAdd(int ch, ndspWaveBuf* b) { if (!nativeDspAdd(ch, b)) b->status = NDSP_WBUF_DONE; }
+inline void hidScanInput() {}
+inline void ndspChnWaveBufClear(int ch) { nativeDspReset(ch); }
+inline u32 ndspChnGetSamplePos(int ch) { return nativeDspPos(ch); }
 
 // The on-screen keyboard: never opened in a test (the name is set by the harness)
 struct SwkbdState { int unused; };
