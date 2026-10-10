@@ -1,7 +1,7 @@
 # Same as build-cia.ps1 (converts your Morrowind install and builds the CIA), with the community optimization mods
 # (Morrowind Optimization Patch, Project Atlas) laid over the game files: fewer, bigger batches per frame. The mods are
 # git submodules of this repository (mods\, pinned to a commit each): they are downloaded the first time (needs git and
-# a network, about 860 MB) by `git submodule update --init`, which this script runs. Your Morrowind install is never
+# a network, about 550 MB) by `git submodule update --init`, which this script runs. Your Morrowind install is never
 # modified, and nothing from the mods is part of this repository (a submodule is only a link to the other repository).
 #   tools\build\build-cia-mods.ps1                whole island, New 3DS (out\data, build\mw3ds.cia)
 #   tools\build\build-cia-mods.ps1 -Old3ds        whole island, Old 3DS (out\o3ds, build\mw3ds-o3ds.cia: see build-cia.ps1)

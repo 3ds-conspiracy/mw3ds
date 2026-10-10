@@ -111,12 +111,12 @@ struct ScriptedInput
 	int gyroAim = -1;                 // GYROAIM:<percent>|off: gyro aim's sensitivity from this step on (0 off)
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
 	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned
-	int frameCap = -1;                // FRAMECAP:on|off: the Old 3DS's 30 / 20 fps cap in a scripted run (off unless a case says on)
+	int frameCap = -1;                // FRAMECAP:on|off: the Old 3DS's 30 / 20 fps cap in a scripted run (on unless a case says off)
 };
 
-// A scripted run steps the game on a fixed clock, so the Old 3DS frame cap only slows it to real time: off, unless a case
-// that measures frame times says FRAMECAP:on
-static bool s_testFrameCap = false;
+// A scripted run keeps the Old 3DS frame cap (30 / 20 fps), as the console would run it. A case that only needs the story
+// and not the pacing can say FRAMECAP:off: it steps on a fixed clock, so the cap only slows it to real time
+static bool s_testFrameCap = true;
 
 // The layout the scripted run plays with (classic unless a CONTROLS: step chose another)
 static int s_testLayout = CONTROLS_CLASSIC;

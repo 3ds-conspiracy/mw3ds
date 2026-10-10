@@ -149,7 +149,7 @@ builds.
 The builds above lay two community mods over your game files: the
 [Morrowind Optimization Patch](https://github.com/mop-org/morrowind-optimization-patch) and
 [Project Atlas](https://github.com/MelchiorDahrk/Project-Atlas) (fewer, bigger meshes: fewer draws per frame). They are
-**git submodules** in `mods\`, each pinned to a commit; `git submodule update --init` downloads them (about 860 MB),
+**git submodules** in `mods\`, each pinned to a commit; `git submodule update --init` downloads them (about 550 MB),
 and the build runs it for you. Your Morrowind install is not modified. A submodule is only a link to the other
 repository, so nothing from the mods is part of this one; they keep their own licenses (Atlas: Unlicense; the patch
 repository has no license file).
