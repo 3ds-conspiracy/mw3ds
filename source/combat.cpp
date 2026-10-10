@@ -2291,10 +2291,13 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 			return;
 		if (dist > 1.0f && (dx * fx + dy * fy) / dist < 0.75f)
 			return;
-		// not through a wall or a door (OpenMW's melee hit needs line of sight)
+		// not through a wall or a door (OpenMW's melee hit needs line of sight): chest to chest, or eye to head (over a
+		// counter: a trader behind a bar is hit from across it, the chest line clipped the bar's top)
 		float from[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] + 100.0f };
 		float to[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };
-		if (!w.lineOfSight(from, to))
+		float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+		float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f };
+		if (!w.lineOfSight(from, to) && !w.lineOfSight(eye, head))
 			return;
 		best = dist;
 		target = i;
