@@ -364,6 +364,10 @@ struct World
 	std::unordered_set<int> mapCells;                            // exterior cells the player has been in or ShowMap revealed (mapCellKey)
 	static int mapCellKey(int gx, int gy) { return (gx + 512) * 1024 + (gy + 512); }
 	bool mapCellSeen(int gx, int gy) const { return mapCells.count(mapCellKey(gx, gy)) != 0; }
+	// Interiors' fog of war: kMapFog x kMapFog squares over the local map, 0 seen .. 15 never seen, by lowercase cell
+	// name (saved)
+	static constexpr int kMapFog = 32;
+	std::unordered_map<std::string, std::vector<u8>> mapFog;
 	std::unordered_map<std::string, int> factionReactions;       // "a|b" -> ModFactionReaction total
 	int scriptCell = -1;          // the player's cell when scripts last ran (CellChanged)
 	bool forceSneak = false;      // ForceSneak: the player crouches (scripts)

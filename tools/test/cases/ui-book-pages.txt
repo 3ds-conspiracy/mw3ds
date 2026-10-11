@@ -1,0 +1,61 @@
+# start: Seyda Neen
+# The reading screen: a book as two pages turned by Prev / Next (L / R, the D-pad, taps), a scroll scrolling, Take
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:BookSkill_Alchemy2
+0.3 0 0 0 0 READ:BookSkill_Alchemy2
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:book
+0.3 0 0 0 0 EXPECT:bookpages:gt:4
+0.3 0 0 0 0 EXPECT:bookspread:eq:0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 R
+0.3 0 0 0 0 EXPECT:bookspread:eq:1
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 EXPECT:bookspread:eq:2
+0.3 0 0 0 0 L
+0.3 0 0 0 0 LEFT
+0.3 0 0 0 0 EXPECT:bookspread:eq:0
+0.3 0 0 0 0 L
+0.3 0 0 0 0 EXPECT:bookspread:eq:0
+0.3 0 0 0 0 TAP:194:216
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:bookspread:eq:1
+0.3 0 0 0 0 TAP:125:216
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:bookspread:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 GIVE:bk_EggOfTime
+0.3 0 0 0 0 READ:bk_EggOfTime
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:book
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:281:216
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 GIVE:bk_guide_to_vvardenfell
+0.3 0 0 0 0 READ:bk_guide_to_vvardenfell
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:book
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TOUCH:160:180
+0.3 0 0 0 0 TOUCH:160:80
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 GOTO:Ainat
+3 0 0 0
+60 0 0 0 0 ACTIVATE:BookSkill_Alchemy2
+1 0 0 0
+0.3 0 0 0 0 EXPECT:screen:book
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:item:BookSkill_Alchemy2:eq:1
+0.3 0 0 0 0 TAP:40:216
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:item:BookSkill_Alchemy2:eq:2

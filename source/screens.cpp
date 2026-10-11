@@ -809,6 +809,24 @@ void Session::itemTip(const Object* o, const InventoryItem* it)
 		return;
 	tip.emplace_back(o->name, col::header);
 	char buf[96];
+	std::string typeLabel = w.game.gmst("stype", "Type");
+	if (typeLabel.empty() || typeLabel.back() != ':')
+		typeLabel += ":";
+	// Its kind, as OpenMW's tooltips name it: a weapon's skill, one or two handed for the melee ones ("Type: Long
+	// Blade, Two Handed"); armor's weight class (Light / Medium / Heavy Armor)
+	if (o->type == "WEAP" && o->subtype >= 0 && o->subtype <= WEAP_BOLT)
+	{
+		static const int kSkill[14] = { 22, 5, 5, 4, 4, 4, 7, 6, 6, 23, 23, 23, 23, 23 };
+		std::string kind = typeLabel + " " + skillName(w, kSkill[o->subtype]);
+		if (o->subtype < WEAP_BOW)
+			kind += ", " + (o->subtype == 0 || o->subtype == 1 || o->subtype == 3 || o->subtype == 7
+				? w.game.gmst("sonehanded", "One Handed") : w.game.gmst("stwohanded", "Two Handed"));
+		tip.emplace_back(kind, col::textDim);
+	}
+	else if (o->type == "ARMO" && o->subtype >= 0 && o->subtype < 11)
+	{
+		tip.emplace_back(typeLabel + " " + skillName(w, armorSkill(o)), col::textDim);    // Light / Medium / Heavy Armor
+	}
 	if (o->type == "WEAP")
 	{
 		bool ranged = o->subtype >= WEAP_BOW && o->subtype <= WEAP_BOLT;

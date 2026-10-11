@@ -181,6 +181,11 @@ def parse_font(fnt, tex):
         glyphs[ord(ch)] = [round(x), round(y), round(w), round(h), round(advance, 2), round(kerning, 2),
                            round(size - ascent, 2)]
         line = max(line, h)
+    # The fonts have no curly quotes or long dashes: the slots cp1252 gives them hold other letters (o circumflex,
+    # o umlaut ...). The straight ones stand in, as OpenMW's font loader does
+    for cp, plain in ((0x2018, "'"), (0x2019, "'"), (0x201C, '"'), (0x201D, '"'), (0x2013, "-"), (0x2014, "-")):
+        if ord(plain) in glyphs:
+            glyphs[cp] = glyphs[ord(plain)]
     if ord("A") not in glyphs or ord(" ") not in glyphs:
         return None
     img = Image.new("L", (pow2(tw), pow2(th)), 0)

@@ -612,6 +612,15 @@ bool World::saveGame(const char* path) const
 	cJSON* mc = cJSON_AddArrayToObject(root, "map_cells");
 	for (int k : mapCells)
 		cJSON_AddItemToArray(mc, cJSON_CreateNumber(k));
+	// (one hex digit a square)
+	cJSON* fog = cJSON_AddObjectToObject(root, "map_fog");
+	for (auto& f : mapFog)
+	{
+		std::string hex(f.second.size(), '0');
+		for (size_t k = 0; k < f.second.size(); k++)
+			hex[k] = "0123456789abcdef"[f.second[k] & 15];
+		cJSON_AddStringToObject(fog, f.first.c_str(), hex.c_str());
+	}
 	cJSON* ex = cJSON_AddArrayToObject(root, "expelled");
 	for (auto& f : pcExpelled)
 		cJSON_AddItemToArray(ex, cJSON_CreateString(f.c_str()));
@@ -884,6 +893,18 @@ bool World::applySave(const char* path)
 	cJSON_ArrayForEach(f, cJSON_GetObjectItem(root, "map_known"))
 		if (cJSON_IsString(f))
 			mapKnown.insert(f->valuestring);
+	mapFog.clear();
+	cJSON_ArrayForEach(f, cJSON_GetObjectItem(root, "map_fog"))
+		if (cJSON_IsString(f) && strlen(f->valuestring) == (size_t)(kMapFog * kMapFog))
+		{
+			std::vector<u8>& g = mapFog[f->string];
+			g.resize(kMapFog * kMapFog);
+			for (int k = 0; k < kMapFog * kMapFog; k++)
+			{
+				char c = f->valuestring[k];
+				g[k] = c >= 'a' ? c - 'a' + 10 : c - '0';
+			}
+		}
 	mapCells.clear();
 	cJSON_ArrayForEach(f, cJSON_GetObjectItem(root, "map_cells"))
 		if (cJSON_IsNumber(f))

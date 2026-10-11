@@ -868,19 +868,18 @@ int uiLinkTextBox(UiLinkText& t, long revision, float x, float y, float w, float
 	return hit;
 }
 
-void uiTextBoxPictures(UiScroll& s, float x, float y, float w, float h, const std::string& text,
-	UiPicture (*look)(const std::string& key, void* ctx), void* ctx, float scale)
+// Text with pictures as blocks one under the other: wrapped lines (a paragraph starting with \x01 centred, books'
+// <DIV ALIGN="CENTER">) and the pictures of "[[img:<key>]]", scaled down to the width (pw: the width drawn)
+static std::vector<UiPageBlock> pictureBlocks(const std::string& text, float w, float scale,
+	UiPicture (*look)(const std::string& key, void* ctx), void* ctx)
 {
-	// blocks: wrapped text lines, and pictures
-	struct Block { std::string text; UiPicture pic; float height; bool center = false; };
-	std::vector<Block> blocks;
-	float lh = uiLineHeight(scale), content = 0.0f;
+	std::vector<UiPageBlock> blocks;
+	float lh = uiLineHeight(scale);
 	size_t pos = 0;
 	while (pos <= text.size())
 	{
 		size_t at = text.find("[[img:", pos);
 		std::string part = text.substr(pos, at == std::string::npos ? std::string::npos : at - pos);
-		// paragraph by paragraph: one starting with \x01 is centred (books' <DIV ALIGN="CENTER">)
 		for (size_t ps = 0; ps <= part.size();)
 		{
 			size_t nl = part.find('\n', ps);
@@ -890,8 +889,11 @@ void uiTextBoxPictures(UiScroll& s, float x, float y, float w, float h, const st
 				para.erase(0, 1);
 			for (auto& l : uiWrap(para, w - 8, scale))
 			{
-				blocks.push_back({ l, {}, lh, center });
-				content += lh;
+				UiPageBlock b;
+				b.text = l;
+				b.h = lh;
+				b.center = center;
+				blocks.push_back(b);
 			}
 			if (nl == std::string::npos)
 				break;
@@ -905,12 +907,34 @@ void uiTextBoxPictures(UiScroll& s, float x, float y, float w, float h, const st
 		UiPicture p = look(text.substr(at + 6, end - at - 6), ctx);
 		if (!p.file.empty() && p.w > 0 && p.h > 0)
 		{
-			float k = fminf(1.0f, (w - 8) / p.w);
-			blocks.push_back({ "", p, p.h * k + 4.0f });
-			content += p.h * k + 4.0f;
+			UiPageBlock b;
+			b.pic = p;
+			b.pw = fminf((float)p.w, w - 8);
+			b.h = p.h * b.pw / p.w + 4.0f;
+			blocks.push_back(b);
 		}
 		pos = end + 2;
 	}
+	return blocks;
+}
+
+static void drawPageBlock(const UiPageBlock& b, float x, float by, float w, float scale, u32 color)
+{
+	if (!b.pic.file.empty())
+		uiArt(b.pic.file, b.pic.w, b.pic.h, x + (w - b.pw) / 2, by + 2, b.pw, b.h - 4.0f);
+	else if (b.center)
+		uiText(x + (w - uiTextWidth(b.text, scale)) / 2, by, scale, color, b.text);
+	else
+		uiText(x + 4, by, scale, color, b.text);
+}
+
+void uiTextBoxPictures(UiScroll& s, float x, float y, float w, float h, const std::string& text,
+	UiPicture (*look)(const std::string& key, void* ctx), void* ctx, float scale, u32 color)
+{
+	std::vector<UiPageBlock> blocks = pictureBlocks(text, w, scale, look, ctx);
+	float content = 0.0f;
+	for (auto& b : blocks)
+		content += b.h;
 	if (s_in.held & KEY_DOWN) s.scroll += 4.0f;
 	if (s_in.held & KEY_UP) s.scroll -= 4.0f;
 	s.scroll += uiStickScroll();
@@ -922,22 +946,51 @@ void uiTextBoxPictures(UiScroll& s, float x, float y, float w, float h, const st
 	float by = y - s.scroll;
 	for (auto& b : blocks)
 	{
-		if (by + b.height >= y && by <= y + h)
-		{
-			if (!b.pic.file.empty())
-			{
-				float k = fminf(1.0f, (w - 8) / b.pic.w);
-				uiArt(b.pic.file, b.pic.w, b.pic.h, x + (w - b.pic.w * k) / 2, by + 2, b.pic.w * k, b.pic.h * k);
-			}
-			else if (b.center)
-				uiText(x + (w - uiTextWidth(b.text, scale)) / 2, by, scale, col::text, b.text);
-			else
-				uiText(x + 4, by, scale, col::text, b.text);
-		}
-		by += b.height;
+		if (by + b.h >= y && by <= y + h)
+			drawPageBlock(b, x, by, w, scale, color ? color : col::text);
+		by += b.h;
 	}
 	C2D_Flush();
 	C3D_SetScissor(GPU_SCISSOR_DISABLE, 0, 0, 0, 0);
+}
+
+// (OpenMW's BookFormatter fills a page and starts the next where a line no longer fits, in the same way)
+std::vector<UiPage> uiPaginate(const std::string& text, float w, float h, float scale,
+	UiPicture (*look)(const std::string& key, void* ctx), void* ctx)
+{
+	std::vector<UiPage> pages(1);
+	float y = 0.0f;
+	for (UiPageBlock b : pictureBlocks(text, w, scale, look, ctx))
+	{
+		bool blank = b.pic.file.empty() && b.text.find_first_not_of(' ') == std::string::npos;
+		if (blank && pages.back().empty())
+			continue;
+		if (!b.pic.file.empty() && b.h > h)
+		{
+			b.pw *= (h - 4.0f) / (b.h - 4.0f);
+			b.h = h;
+		}
+		if (y + b.h > h && !pages.back().empty())
+		{
+			pages.emplace_back();
+			y = 0.0f;
+			if (blank)
+				continue;
+		}
+		b.y = y;
+		y += b.h;
+		pages.back().push_back(b);
+	}
+	// (trailing blank lines make no page of their own)
+	while (pages.size() > 1 && pages.back().empty())
+		pages.pop_back();
+	return pages;
+}
+
+void uiDrawPage(const UiPage& page, float x, float y, float w, float scale, u32 color)
+{
+	for (auto& b : page)
+		drawPageBlock(b, x, y + b.y, w, scale, color);
 }
 
 int uiItemGrid(UiGrid& grid, float x, float y, float w, float h, const std::vector<UiGridItem>& items, bool keys)

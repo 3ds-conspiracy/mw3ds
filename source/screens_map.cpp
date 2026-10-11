@@ -61,6 +61,24 @@ void Session::freeMapTiles()
 	}
 }
 
+// An interior's local map: the square round everything in it, a little over (its west and south edges, its side)
+static bool interiorMapArea(const Cell& cell, float* minX, float* minY, float* size)
+{
+	float lo[2] = { 1e9f, 1e9f }, hi[2] = { -1e9f, -1e9f };
+	for (auto& b : cell.batches)
+		for (int k = 0; k < 2; k++)
+		{
+			lo[k] = fminf(lo[k], b.bmin[k]);
+			hi[k] = fmaxf(hi[k], b.bmax[k]);
+		}
+	if (lo[0] > hi[0])
+		return false;
+	*size = fmaxf(hi[0] - lo[0], hi[1] - lo[1]) * 1.04f + 64.0f;
+	*minX = (lo[0] + hi[0] - *size) / 2.0f;
+	*minY = (lo[1] + hi[1] - *size) / 2.0f;
+	return true;
+}
+
 void Session::updateLocalMap()
 {
 	if (w.current < 0 || !w.cells[w.current].live)
@@ -99,18 +117,9 @@ void Session::updateLocalMap()
 	// Again on another floor: what's above the player's head is left out
 	if (localMapCell == w.current && fabsf(w.player.feet[2] - localTopZ + 220.0f) < 300.0f)
 		return;
-	const Cell& cell = w.here();
-	float lo[2] = { 1e9f, 1e9f }, hi[2] = { -1e9f, -1e9f };
-	for (auto& b : cell.batches)
-		for (int k = 0; k < 2; k++)
-		{
-			lo[k] = fminf(lo[k], b.bmin[k]);
-			hi[k] = fmaxf(hi[k], b.bmax[k]);
-		}
-	if (lo[0] > hi[0])
+	float minX, minY, size;
+	if (!interiorMapArea(w.here(), &minX, &minY, &size))
 		return;
-	float size = fmaxf(hi[0] - lo[0], hi[1] - lo[1]) * 1.04f + 64.0f;
-	float minX = (lo[0] + hi[0] - size) / 2.0f, minY = (lo[1] + hi[1] - size) / 2.0f;
 	float topZ = w.player.feet[2] + 220.0f;
 	if (rendererDrawLocalMap(w, minX, minY, size, topZ, 4000.0f))
 	{
@@ -122,6 +131,37 @@ void Session::updateLocalMap()
 	}
 }
 
+// Interior fog of war: the squares within reach of the player come out of it, the nearer the clearer (OpenMW's local
+// map: an explore radius of 0.17 of a fog texture's width, 32 squares to an 8192-unit segment, so about 1350 units).
+// Every frame, over the interior's local map area whether or not its picture has been drawn yet
+void Session::revealLocalMap()
+{
+	if (w.current < 0 || !w.cells[w.current].live || !w.cells[w.current].interior)
+		return;
+	float localMin[2], localSize;
+	if (!interiorMapArea(w.here(), &localMin[0], &localMin[1], &localSize))
+		return;
+	const int n = World::kMapFog;
+	std::vector<u8>& fog = w.mapFog[lower(w.cells[w.current].name)];
+	if (fog.size() != (size_t)(n * n))
+		fog.assign(n * n, 15);
+	const float radius = 0.17f * 31.0f * 8192.0f / 32.0f, square = localSize / n;
+	float gx = (w.player.feet[0] - localMin[0]) / square, gy = (localMin[1] + localSize - w.player.feet[1]) / square;
+	int reach = (int)ceilf(radius / square);
+	for (int j = std::max(0, (int)gy - reach); j <= std::min(n - 1, (int)gy + reach); j++)
+		for (int i = std::max(0, (int)gx - reach); i <= std::min(n - 1, (int)gx + reach); i++)
+		{
+			float dx = (i + 0.5f - gx) * square, dy = (j + 0.5f - gy) * square;
+			float d2 = (dx * dx + dy * dy) / (radius * radius);
+			if (d2 >= 1.0f)
+				continue;
+			u8 level = (u8)(d2 * 15.0f);
+			u8& f = fog[j * n + i];
+			if (level < f)
+				f = level;
+		}
+}
+
 // The player: Morrowind's compass arrow when the theme has it, else a red triangle
 static void drawPlayerArrow(float sx, float sy, float yaw)
 {
@@ -131,6 +171,38 @@ static void drawPlayerArrow(float sx, float sy, float yaw)
 	u32 c = C2D_Color32(255, 60, 40, 255);
 	C2D_DrawTriangle(sx + fx * 8, sy + fy * 8, c, sx - fx * 5 - fy * 5, sy - fy * 5 + fx * 5, c,
 		sx - fx * 5 + fy * 5, sy - fy * 5 - fx * 5, c, 0.6f);
+}
+
+// A frame t pixels thick round x, y, w, h
+static void ringRect(float x, float y, float w, float h, float t, u32 c)
+{
+	uiRect(x, y, w, t, c);
+	uiRect(x, y + h - t, w, t, c);
+	uiRect(x, y + t, t, h - 2 * t, c);
+	uiRect(x + w - t, y + t, t, h - 2 * t, c);
+}
+
+// A map marker as Morrowind draws its door_icon texture: a hollow square, a bright ring between a dark rim outside
+// and in, the middle clear, tinted with the font colour (OpenMW's MarkerWidget: normal, normal_over under the mouse)
+static void drawMapMarker(float cx, float cy, float size, bool lit)
+{
+	float x = roundf(cx - size / 2), y = roundf(cy - size / 2), t = size >= 10.0f ? 2.0f : 1.0f;
+	u32 c = lit ? col::textOver : col::text;
+	u32 dim = C2D_Color32((u8)(((c >> 0) & 0xFF) / 3), (u8)(((c >> 8) & 0xFF) / 3), (u8)(((c >> 16) & 0xFF) / 3), 160);
+	ringRect(x, y, size, size, 1.0f, dim);
+	ringRect(x + 1, y + 1, size - 2, size - 2, t, c);
+	ringRect(x + 1 + t, y + 1 + t, size - 2 - 2 * t, size - 2 - 2 * t, 1.0f, dim);
+}
+
+// A marker's name in a framed box above it (below when there's no room), kept inside the view
+static void drawMapTip(const std::string& name, float mx, float my, float x, float y, float vw)
+{
+	float tw = uiTextWidth(name, 0.45f), lh = uiLineHeight(0.45f);
+	float lx = fminf(fmaxf(mx - tw / 2 - 3, x + 2), x + vw - tw - 8);
+	float ly = my - 8 - lh - 4 < y + 2 ? my + 8 : my - 8 - lh - 4;
+	uiRect(lx, ly, tw + 6, lh + 4, C2D_Color32(0, 0, 0, 200));
+	uiFrame(lx, ly, tw + 6, lh + 4);
+	uiText(lx + 3, ly + 2, 0.45f, col::header, name);
 }
 
 // Detect Animal / Enchantment / Key: what's within the spell's range (magnitude in feet) shows as dots
@@ -183,16 +255,57 @@ static void drawMapPart(C3D_Tex* tex, int texW, int texH, int srcX, int srcY, in
 	C2D_DrawImageAt(img, sx, sy, 0.5f, nullptr, scale, scale);
 }
 
-// full: the map screen (pannable, the unvisited cells dark, detail tiles when zoomed in, labels); not full:
-// the HUD's minimap, always the base picture round the player. local: the local map, else the world map
+// The fog of war over an interior's local map as a 32 x 32 texture (black, its alpha the fog), drawn over the picture
+// smoothed so the edge of what was seen fades. False when there's none for the cell.
+bool Session::drawLocalFog(float ox, float oy, float picture)
+{
+	if (w.current < 0 || !w.cells[w.current].interior)
+		return false;
+	auto it = w.mapFog.find(lower(w.cells[w.current].name));
+	const int n = World::kMapFog;
+	if (it == w.mapFog.end() || it->second.size() != (size_t)(n * n))
+		return false;
+	if (!fogTexReady)
+	{
+		if (!C3D_TexInit(&fogTex, n, n, GPU_RGBA8))
+			return false;
+		C3D_TexSetWrap(&fogTex, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
+		fogTexReady = true;
+	}
+	// The PICA's layout: 8 x 8 tiles in rows from the bottom of the picture, Morton order inside a tile; a texel is
+	// ABGR (alpha in the low byte)
+	u32* data = (u32*)fogTex.data;
+	for (int row = 0; row < n; row++)
+		for (int tx = 0; tx < n; tx++)
+		{
+			int ty = n - 1 - row;
+			int m = (tx & 1) | ((ty & 1) << 1) | ((tx & 2) << 1) | ((ty & 2) << 2) | ((tx & 4) << 2) | ((ty & 4) << 3);
+			int at = ((ty >> 3) * (n >> 3) + (tx >> 3)) * 64 + m;
+			u8 a = (u8)(it->second[row * n + tx] * 17);
+			data[at] = ((u32)8 << 24) | ((u32)7 << 16) | ((u32)6 << 8) | a;
+		}
+	C3D_TexFlush(&fogTex);
+	C3D_TexSetFilter(&fogTex, GPU_LINEAR, GPU_LINEAR);
+	Tex3DS_SubTexture sub = { (u16)n, (u16)n, 0.0f, 1.0f, 1.0f, 0.0f };
+	C2D_Image img = { &fogTex, &sub };
+	C2D_DrawImageAt(img, ox, oy, 0.5f, nullptr, picture / n, picture / n);
+	return true;
+}
+
+// full: the map screen (pannable, the unvisited cells dark, detail tiles when zoomed in, markers whose names show
+// under the finger); not full: the HUD's minimap, always round the player. local: the local map, else the world map
 void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool full, bool local)
 {
 	C2D_Flush();
 	C3D_SetScissor(GPU_SCISSOR_NORMAL, (u32)(240 - (y + vh)), (u32)(320 - (x + vw)), (u32)(240 - y), (u32)(320 - x));
 	uiRect(x, y, vw, vh, C2D_Color32(12, 9, 6, 255));
 	bool outside = w.current >= 0 && !w.cells[w.current].interior;
+	const UiInput& in = uiIn();
 	float ax = 0, ay = 0;
 	bool arrow = false;
+	// The markers in view: where, which (a ref / a label), the name it shows, its size, the square it's under
+	struct Marker { float sx, sy, size; int id; std::string name; };
+	std::vector<Marker> markers;
 	if (!local && ensureMapTexture())
 	{
 		const MapDef& m = w.game.map;
@@ -305,18 +418,23 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 					gx = run;
 				}
 			}
-			for (auto& l : m.labels)
+			// The places the player has been to or learned about, each a marker (OpenMW's global map: a marker a
+			// named place, the bigger the more cells it covers; its name under the mouse)
+			if (mapLabelCells.size() != m.labels.size())
 			{
+				mapLabelCells.assign(m.labels.size(), 0);
+				for (size_t k = 0; k < m.labels.size(); k++)
+					for (auto& c : w.game.cells)
+						mapLabelCells[k] += !c.interior && lower(c.name) == lower(m.labels[k].text);
+			}
+			for (size_t k = 0; k < m.labels.size(); k++)
+			{
+				const MapLabel& l = m.labels[k];
 				float sx, sy;
-				// Only places the player has been to or learned about
-				if (!w.mapKnown.count(lower(l.text)))
+				if (!w.mapKnown.count(lower(l.text)) || !toScreen(l.x, l.y, &sx, &sy))
 					continue;
-				if (toScreen(l.x, l.y, &sx, &sy))
-				{
-					float tw = uiTextWidth(l.text, 0.45f);
-					uiRect(sx - tw / 2 - 3, sy - 8, tw + 6, 16, C2D_Color32(0, 0, 0, 140));
-					uiTextCentered(sx, sy - 8, 0.45f, col::header, l.text);
-				}
+				float size = 8.0f + 2.0f * floorf(sqrtf((float)std::max(1, mapLabelCells[k])) - 1.0f) + (zoom >= 3.0f ? 2.0f : 0.0f);
+				markers.push_back({ sx, sy, size, (int)k, l.text });
 			}
 		}
 		if (outside)
@@ -328,16 +446,33 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 	}
 	else if (local && localMapCell == (outside ? -2 : w.current))
 	{
-		// The whole picture fits the view; zoomed in, it follows the player
+		// The whole picture fits the view at the first zoom step; zoomed in, the map screen opens on the player and
+		// pans (the HUD's follows the player)
 		const float texSize = 256.0f;
-		float s = fminf(vw, vh) / texSize * zoom;
+		float s = fminf(vw, vh) / texSize * zoom, picture = texSize * s;
 		float px = (w.player.feet[0] - localMin[0]) / localSize * texSize;
 		float py = (localMin[1] + localSize - w.player.feet[1]) / localSize * texSize;
-		float ox = x + (vw - texSize * s) / 2.0f, oy = y + (vh - texSize * s) / 2.0f;
-		if (zoom > 1.0f)
+		float cx = px, cy = py;
+		if (full)
 		{
-			ox = fminf(x, fmaxf(x + vw - texSize * s, x + vw / 2 - px * s));
-			oy = fminf(y, fmaxf(y + vh - texSize * s, y + vh / 2 - py * s));
+			if (!mapViewSet)
+			{
+				mapCX = px;
+				mapCY = py;
+				mapViewSet = true;
+			}
+			cx = mapCX;
+			cy = mapCY;
+		}
+		float ox = picture <= vw ? x + (vw - picture) / 2.0f : fminf(x, fmaxf(x + vw - picture, x + vw / 2 - cx * s));
+		float oy = picture <= vh ? y + (vh - picture) / 2.0f : fminf(y, fmaxf(y + vh - picture, y + vh / 2 - cy * s));
+		ox = roundf(ox);
+		oy = roundf(oy);
+		if (full)
+		{
+			// (the view's centre as it ended up, kept on the picture)
+			mapCX = picture <= vw ? texSize / 2 : (x + vw / 2 - ox) / s;
+			mapCY = picture <= vh ? texSize / 2 : (y + vh / 2 - oy) / s;
 		}
 		// (the markers below don't need the picture)
 		if (C3D_Tex* tex = rendererLocalMap())
@@ -346,39 +481,25 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 			C2D_Image img = { tex, &sub };
 			C2D_DrawImageAt(img, ox, oy, 0.5f, nullptr, s, s);
 		}
-		// Doors, as Morrowind marks them. On the map screen a tap on one shows where it leads (Morrowind's
-		// tooltip over the marker; OpenMW's local map: the destination cell's name), a tap elsewhere hides it
-		int tapped = -1;
-		int tip = -1;
-		float tipX = 0.0f, tipY = 0.0f;
+		// Doors, as Morrowind marks them; under the fog of war indoors, as OpenMW draws them (and no name shows)
+		auto fog = !outside ? w.mapFog.find(lower(w.cells[w.current].name)) : w.mapFog.end();
+		const int fn = World::kMapFog;
 		w.forLoadedRefs([&](int i) {
 			const Ref& r = w.refs[i];
 			if (!r.hasDest || !r.visible() || r.destCell.empty())
 				return;
-			float dx = roundf(ox + (r.pos[0] - localMin[0]) / localSize * texSize * s);
-			float dy = roundf(oy + (localMin[1] + localSize - r.pos[1]) / localSize * texSize * s);
+			float tx = (r.pos[0] - localMin[0]) / localSize * texSize, ty = (localMin[1] + localSize - r.pos[1]) / localSize * texSize;
+			float dx = roundf(ox + tx * s), dy = roundf(oy + ty * s);
 			if (dx < x - 6 || dx > x + vw + 6 || dy < y - 6 || dy > y + vh + 6)
 				return;
-			// a gold box with a dark edge (the converted door_icon comes out a faint grey)
-			float half = full ? 5.0f : 3.0f;
-			uiRect(dx - half, dy - half, half * 2, half * 2, C2D_Color32(0, 0, 0, 220));
-			uiRect(dx - half + 1, dy - half + 1, half * 2 - 2, half * 2 - 2, col::header);
-			// a finger-sized place to tap round the small marker
-			if (full && uiHit(dx - 11, dy - 11, 22, 22))
-				tapped = i;
-			if (full && i == mapDoorTip)
+			if (fog != w.mapFog.end() && fog->second.size() == (size_t)(fn * fn))
 			{
-				tip = i;
-				tipX = dx;
-				tipY = dy;
+				int gi = std::max(0, std::min(fn - 1, (int)(tx / texSize * fn))), gj = std::max(0, std::min(fn - 1, (int)(ty / texSize * fn)));
+				if (fog->second[gj * fn + gi] >= 12)
+					return;
 			}
+			markers.push_back({ dx, dy, full ? 10.0f : 8.0f, i, r.destCell });
 		});
-		if (full && uiIn().tapped && uiIn().tapY >= y && uiIn().tapY < y + vh)
-		{
-			mapDoorTip = tapped == mapDoorTip ? -1 : tapped;
-			if (tapped >= 0)
-				playSound(-1, "Menu Click");
-		}
 		drawDetected([&](float mx, float my, float* sx, float* sy) {
 			*sx = ox + (mx - localMin[0]) / localSize * texSize * s;
 			*sy = oy + (localMin[1] + localSize - my) / localSize * texSize * s;
@@ -387,24 +508,45 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 		ax = ox + px * s;
 		ay = oy + py * s;
 		arrow = true;
-		if (tip >= 0 && tip == mapDoorTip)
-		{
-			drawPlayerArrow(ax, ay, w.player.yaw);
-			arrow = false;
-			// the name above the marker, kept inside the view
-			const std::string& name = w.refs[tip].destCell;
-			float tw = uiTextWidth(name, 0.45f), lh = uiLineHeight(0.45f);
-			float lx = fminf(fmaxf(tipX - tw / 2 - 3, x + 2), x + vw - tw - 8);
-			float ly = tipY - 8 - lh - 4 < y + 2 ? tipY + 8 : tipY - 8 - lh - 4;
-			uiRect(lx, ly, tw + 6, lh + 4, C2D_Color32(0, 0, 0, 200));
-			uiFrame(lx, ly, tw + 6, lh + 4);
-			uiText(lx + 3, ly + 2, 0.45f, col::header, name);
-		}
+		// the fog over the picture, the markers under it drawn first
+		for (auto& mk : markers)
+			drawMapMarker(mk.sx, mk.sy, mk.size, false);
+		drawLocalFog(ox, oy, picture);
 	}
 	else
 		uiTextCentered(x + vw / 2, y + vh / 2 - 8, 0.45f, col::textDim, outside && !local ? "No map" : "...");
+	// A marker's name on the map screen: tap it, and it stays until the next tap (a finger dragged on the map pans it)
+	int& pinned = local ? mapDoorTip : mapPlaceTip;
+	if (full && in.tapped && in.tapY >= y && in.tapY < y + vh && in.tapX >= x && in.tapX < x + vw)
+	{
+		int tapped = -1;
+		float best = 1e9f;
+		for (auto& mk : markers)
+		{
+			float reach = fmaxf(11.0f, mk.size / 2 + 4);
+			float ddx = in.tapX - mk.sx, ddy = in.tapY - mk.sy;
+			if (fabsf(ddx) <= reach && fabsf(ddy) <= reach && ddx * ddx + ddy * ddy < best)
+			{
+				best = ddx * ddx + ddy * ddy;
+				tapped = mk.id;
+			}
+		}
+		pinned = tapped == pinned ? -1 : tapped;
+		if (tapped >= 0)
+			playSound(-1, "Menu Click");
+	}
+	if (!local)
+		for (auto& mk : markers)
+			drawMapMarker(mk.sx, mk.sy, mk.size, mk.id == pinned);
+	else
+		for (auto& mk : markers)
+			if (mk.id == pinned)
+				drawMapMarker(mk.sx, mk.sy, mk.size, true);
 	if (arrow)
 		drawPlayerArrow(ax, ay, w.player.yaw);
+	for (auto& mk : markers)
+		if (mk.id == pinned)
+			drawMapTip(mk.name, mk.sx, mk.sy, x, y, vw);
 	C2D_Flush();
 	C3D_SetScissor(GPU_SCISSOR_DISABLE, 0, 0, 0, 0);
 	uiFrame(x, y, vw, vh);
@@ -422,18 +564,20 @@ void Session::drawMap()
 	if ((in.down & KEY_R) && mapZoomIdx < kMapZoomSteps - 1)
 		mapZoomIdx++;
 	float zoom = kMapZooms[mapZoomIdx];
-	if (!mapLocal && mapViewSet)
+	if (mapViewSet)
 	{
+		// (the view's centre is in map pixels on the world map, in local map picture pixels on the local map)
+		float unit = mapLocal ? 184.0f / 256.0f * zoom : zoom;
 		const float panSpeed = 160.0f;                  // screen pixels a second
-		float step = panSpeed * frameDt / zoom;
+		float step = panSpeed * frameDt / unit;
 		if (in.held & KEY_LEFT) mapCX -= step;
 		if (in.held & KEY_RIGHT) mapCX += step;
 		if (in.held & KEY_UP) mapCY -= step;
 		if (in.held & KEY_DOWN) mapCY += step;
 		if (in.touching && in.touchY >= 22 && in.touchY < 206)
 		{
-			mapCX -= in.dragDX / zoom;
-			mapCY -= in.dragDY / zoom;
+			mapCX -= in.dragDX / unit;
+			mapCY -= in.dragDY / unit;
 		}
 	}
 	drawMapView(0, 22, 320, 184, zoom, true, mapLocal);
@@ -447,6 +591,7 @@ void Session::drawMap()
 		if (outside)
 			mapLocalOutdoors = mapLocal;
 		mapDoorTip = -1;
+		mapPlaceTip = -1;
 		mapViewSet = false;
 	}
 	// (the - and + as bars: the font's glyphs sit off centre in a button)

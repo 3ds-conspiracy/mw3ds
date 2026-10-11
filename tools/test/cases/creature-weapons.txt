@@ -1,0 +1,21 @@
+# start: Seyda Neen
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0
+0.3 0 0 0 0 PLACE:skeleton%warrior:600
+0.3 0 0 0 0 PLACE:skeleton%archer:1400
+0.5 0 0 0 0 EXPECT:refweapon:skeleton%warrior:any
+0.3 0 0 0 0 EXPECT:refweapon:skeleton%archer:any
+0.3 0 0 0 0 EXPECT:refweapon:mudcrab:none
+0.3 0 0 0 0 FACE:skeleton%warrior
+1.5 0 0 0
+0.3 0 0 0 0 FACE:skeleton%warrior
+0.1 0 0 0 0 EXPECT:refcombat:skeleton%warrior:eq:1
+0.1 0 0 0 0 SHOT
+0.6 0 0 0
+0.1 0 0 0 0 FACE:skeleton%warrior+SHOT
+0.6 0 0 0
+0.1 0 0 0 0 FACE:skeleton%warrior+SHOT

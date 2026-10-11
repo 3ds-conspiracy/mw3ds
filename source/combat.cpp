@@ -40,6 +40,14 @@ static const float kArmorSlotWeight[11] = { 0.1f, 0.3f, 0.1f, 0.1f, 0.1f, 0.1f, 
 static const float kArmorSlotBaseWeight[11] = { 5, 30, 10, 10, 15, 20, 5, 5, 15, 5, 5 };
 static const float kArcherMinRange = 350.0f, kArcherMaxRange = 1600.0f;
 
+// Light, Medium or Heavy Armor: the piece's weight against its slot's base weight (fLightMaxMod, fMedMaxMod)
+int Session::armorSkill(const Object* o)
+{
+	float wt = o->subtype >= 0 && o->subtype < 11 ? kArmorSlotBaseWeight[o->subtype] : 0.0f;
+	return o->weight <= wt * w.game.gmstf("flightmaxmod", 0.6f) + 0.0005f ? SKILL_LIGHT_ARMOR
+		: o->weight <= wt * w.game.gmstf("fmedmaxmod", 0.9f) + 0.0005f ? SKILL_MEDIUM_ARMOR : SKILL_HEAVY_ARMOR;
+}
+
 static float fatigueTerm(float fatigue, float fatigueMax)
 {
 	return 1.25f - 0.5f * (1.0f - (fatigueMax > 0.0f ? fmaxf(0.0f, fatigue) / fatigueMax : 1.0f));
@@ -155,6 +163,20 @@ static int npcAttackKind(const Object* w)
 	int slash = (w->slash[0] + w->slash[1]) / 2, chop = (w->chop[0] + w->chop[1]) / 2, thrust = (w->thrust[0] + w->thrust[1]) / 2;
 	float roll = frand() * (slash + chop + thrust);
 	return roll <= slash ? 1 : roll <= slash + thrust ? 2 : 0;
+}
+
+// A creature's blow: with the weapon it carries (skeletons, dremora), the weapon's damage for the swing with no Strength
+// bonus (OpenMW's Creature::hit); without one, one of its own attacks between its minimum and maximum
+static float creatureDamage(const ActorDef& def, const Object* wpn, float charge)
+{
+	if (wpn)
+	{
+		int kind = npcAttackKind(wpn);
+		const u8* r = kind == 1 ? wpn->slash : kind == 2 ? wpn->thrust : wpn->chop;
+		return r[0] + (r[1] - r[0]) * charge;
+	}
+	const auto& at = def.attack[rand() % def.attack.size()];
+	return at.first + (at.second - at.first) * charge;
 }
 
 static float applyArmor(float dmg, float armor)
@@ -701,12 +723,8 @@ void Session::npcStrike(int ri)
 	npcStrikeEnchantment(ri, wpn);
 	if (!playerShieldsBurn(ri))
 		return;
-	if (def.creature && !def.attack.empty())
-	{
-		// Creatures: one of their attacks, between its minimum and maximum
-		const auto& at = def.attack[rand() % def.attack.size()];
-		npcHitsPlayer(ri, (at.first + (at.second - at.first) * charge) * roll.damage, false, weaponSkill(nullptr), true);
-	}
+	if (def.creature && (wpn || !def.attack.empty()))
+		npcHitsPlayer(ri, creatureDamage(def, wpn, charge) * roll.damage, false, weaponSkill(wpn), !wpn);
 	else if (wpn)
 		npcHitsPlayer(ri, weaponDamage(wpn, npcAttackKind(wpn), charge, def.attributes[ATTR_STRENGTH]) * roll.damage, false,
 			weaponSkill(wpn));
@@ -1698,11 +1716,8 @@ void Session::npcDuel(int ri, float dt)
 				blowSound(fi, roll);
 				bool fatigueOnly = false;
 				float dmg;
-				if (def.creature && !def.attack.empty())
-				{
-					const auto& at = def.attack[rand() % def.attack.size()];
-					dmg = (at.first + (at.second - at.first) * charge) * roll.damage;
-				}
+				if (def.creature && (wpn || !def.attack.empty()))
+					dmg = creatureDamage(def, wpn, charge) * roll.damage;
 				else if (wpn)
 					dmg = weaponDamage(wpn, npcAttackKind(wpn), charge, def.attributes[ATTR_STRENGTH]) * roll.damage;
 				else    // fists tire (health only on someone down)

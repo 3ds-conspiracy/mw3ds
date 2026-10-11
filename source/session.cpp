@@ -701,6 +701,8 @@ void Session::closeScreen()
 	screen = SCR_NONE;
 	bookRef = containerRef = -1;
 	bookItem.clear();
+	bookPagesOf.clear();
+	bookSpread = 0;
 }
 
 // Per-frame time of each part of the update, summed until main logs them once a second
@@ -760,7 +762,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	w.pcWeaponDrawn = weaponDrawn;
 	w.update(dt);
 	profAdd(PROF_WORLD, t);
-	frameDt = dt;
+	revealLocalMap();
 	// A named place outdoors, once visited, is on the map
 	if (w.current >= 0 && w.current != mapCell)
 	{
@@ -770,6 +772,12 @@ void Session::update(const PlayerInput& inRaw, float dt)
 			w.mapKnown.insert(lower(w.cells[mapCell].name));
 			w.mapCells.insert(World::mapCellKey(w.cells[mapCell].gx, w.cells[mapCell].gy));
 		}
+	}
+	// The journal opens on its newest page
+	if (screen != SCR_JOURNAL)
+	{
+		journalPage = 0;
+		journalPicking = false;
 	}
 	// The map screen starts centred on the player and gives its detail tiles back when it closes
 	if (screen != SCR_MAP)

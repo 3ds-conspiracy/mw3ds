@@ -1032,6 +1032,21 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "messageleft") v = s.messageLeft;    // its text lines below what is shown
 	else if (what == "maplocal") v = s.mapLocal;          // the map screen shows the local map
 	else if (what == "mapzoom") v = s.mapZoomIdx;         // its zoom step
+	else if (what == "mapcx") v = s.mapCX;                // the map view's centre (world map: map pixels, local: picture pixels)
+	else if (what == "mapcy") v = s.mapCY;
+	else if (what == "mapfogseen")                         // the squares of this interior's local map out of the fog
+	{
+		v = 0;
+		auto f = w.current >= 0 ? w.mapFog.find(lower(w.cells[w.current].name)) : w.mapFog.end();
+		if (f != w.mapFog.end())
+			for (u8 level : f->second)
+				v += level < 8;
+	}
+	else if (what == "journalshown") v = (float)s.journalShown.size();   // the journal's entries in its questline and search
+	else if (what == "journalpage") v = s.journalPage;    // the page of them shown (0: the newest)
+	else if (what == "bookpages") v = (float)s.bookPages.size();   // the open book's pages
+	else if (what == "bookspread") v = s.bookSpread;    // its two pages shown (0: pages 1 and 2)
+	else if (what == "journalcat") v = s.journalCat;      // the questline shown (0: all)
 	else if (what == "madespells") { v = 0; for (auto& id : w.madeSpells) for (auto& sp : st.spells) v += lower(sp) == lower(id); }
 	else if (what == "effects") v = (float)w.effects.size();
 	else if (what == "brewed") { v = 0; for (auto& id : w.brewed) v += std::max(0, w.itemCount(id)); }
@@ -2098,7 +2113,7 @@ bool TestDriver::canCast(Session& s, const std::string& selected)
 bool TestDriver::playerToken(const std::string& tok)
 {
 	static const char* const kPlayer[] = {
-		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "TAP", "DRAG", "STICKDOWN",
+		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "TAP", "DRAG", "TOUCH", "STICKDOWN",
 		"STICKUP", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT",
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",
@@ -4773,10 +4788,33 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		snprintf(got, sizeof(got), "%s", !it ? "no made item carried" : !en ? "no enchantment"
 			: (std::to_string(en->effects.size()) + " effects, type " + std::to_string(en->type - ENCH_ONCE)).c_str());
 	}
+	else if (what == "tipline" && a.size() >= 2)
+	{
+		// EXPECT:tipline:<text>: the top screen's tooltip has a line holding that text (underscores for spaces)
+		std::string want = lower(spaced(a[1]));
+		ok = false;
+		for (auto& l : s.tip)
+			ok |= lower(l.first).find(want) != std::string::npos;
+		snprintf(got, sizeof(got), "%.80s", s.tip.empty() ? "no tooltip" : (s.tip[0].first + (s.tip.size() > 1 ? " / " + s.tip[1].first : "")).c_str());
+	}
+	else if (what == "refweapon" && a.size() >= 3)
+	{
+		// EXPECT:refweapon:<ref>:<weapon id or "none">: the weapon that actor fights with
+		int ri = findRef(s, a[1], false);
+		std::string wpn = ri >= 0 && w.refs[ri].actor >= 0 ? w.game.actors[w.refs[ri].actor].weapon : "";
+		ok = a[2] == "any" ? !wpn.empty() : a[2] == "none" ? wpn.empty() : wpn == lower(spaced(a[2]));
+		snprintf(got, sizeof(got), "%.80s", ri < 0 ? "no such ref" : wpn.empty() ? "none" : wpn.c_str());
+	}
 	else if (what == "maptip" && a.size() >= 2)
 	{
-		// EXPECT:maptip:<cell>: the local map shows where the tapped door leads ("none": no door tapped)
-		std::string tip = s.mapDoorTip >= 0 && s.mapDoorTip < (int)w.refs.size() ? w.refs[s.mapDoorTip].destCell : "";
+		// EXPECT:maptip:<cell>: the local map shows where the tapped door leads, the world map the tapped place's name
+		// ("none": no marker tapped)
+		auto name = [&](int id) {
+			if (s.mapLocal)
+				return id >= 0 && id < (int)w.refs.size() ? w.refs[id].destCell : std::string();
+			return id >= 0 && id < (int)w.game.map.labels.size() ? w.game.map.labels[id].text : std::string();
+		};
+		std::string tip = name(s.mapLocal ? s.mapDoorTip : s.mapPlaceTip);
 		ok = a[1] == "none" ? tip.empty() : lower(tip) == lower(spaced(a[1]));
 		snprintf(got, sizeof(got), "%.80s", tip.empty() ? "none" : tip.c_str());
 	}

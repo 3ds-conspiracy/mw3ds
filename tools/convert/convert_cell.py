@@ -549,7 +549,7 @@ class Converter:
         self.db, self.arch, self.textures = db, arch, textures
         objects = db["objects"]
         self.npcs = NpcBuilder(arch, objects, db["RACE"], [r for r in objects.values() if r.tag == "BODY"], db)
-        self.creatures = CreatureBuilder(arch, self.npcs)
+        self.creatures = CreatureBuilder(arch, self.npcs, db)
         self.nif_cache = {}
         self.skeletons, self.skel_index = [], {}     # shared by every cell (cells/skeletons.skl)
         self.dynamic = moving_objects(db)
