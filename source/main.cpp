@@ -863,16 +863,17 @@ int main()
 	APT_CheckNew3DS(&isNew3ds);
 	if (isNew3ds)
 		osSetSpeedupEnable(true);
-	g_old3ds = !isNew3ds;           // the Old 3DS profile: view, budgets, frame rate (session.h)
-	// The Old 3DS's one game core is busy drawing: cells stream in on the system core (30% of it may be ours)
-	if (g_old3ds)
+	// What this console can do: from its CPU and from the heap it got (console.h)
+	consoleProfileInit(isNew3ds, __ctru_heap_size);
+	// A slow CPU's one game core is busy drawing: cells stream in on the system core (30% of it may be ours)
+	if (g_profile.slowCpu)
 		g_sysCoreThreads = R_SUCCEEDED(APT_SetAppCpuTimeLimit(30));
 
 	gfxInitDefault();
 	// GPU commands of a whole frame (both eyes, bottom screen): overflowing it is a panic, so it is
 	// generous, the renderer stops drawing near the end and 3D backs off when one eye uses too much.
-	// An Old 3DS (3D off unless asked, a shorter view) gets half: 1 MB of linear memory back
-	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE * (isNew3ds ? 8 : 4));   // room for both eyes of a busy town
+	// (an Old 3DS's is half: console.cpp)
+	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE * g_profile.cmdBufScale);
 	C2D_Init(4096);
 	C2D_Prepare();
 	irrstInit();
@@ -883,6 +884,8 @@ int main()
 	logf("MW3DS start, %s, heap %lu KB, linear %lu KB, memory mode %lu%s", isNew3ds ? "New 3DS" : "Old 3DS",
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, (unsigned long)osGetApplicationMemType(),
 		g_sysCoreThreads ? ", cells stream on the system core" : "");
+	logf("console: %s CPU, %s heap (%d objects, %u KB of sounds kept)", g_profile.slowCpu ? "slow" : "fast",
+		g_profile.smallHeap ? "small" : "large", g_profile.refBudget, g_profile.soundCacheBytes / 1024);
 	bool romfs = R_SUCCEEDED(romfsInit());
 	struct stat st;
 	logf("memory: %s, heap %lu KB, linear %lu KB (%lu KB free)", isNew3ds ? "New 3DS" : "Old 3DS",
@@ -890,8 +893,8 @@ int main()
 
 	// The top screen's colour buffer: 16-bit on an Old 3DS (half the buffer and the copy to the screen each frame;
 	// Morrowind's muted colours show no banding to speak of), 32-bit on a New 3DS
-	GPU_COLORBUF colorFmt = isNew3ds ? GPU_RB_RGBA8 : GPU_RB_RGB565;
-	u32 transfer = isNew3ds ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8) : DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565);
+	GPU_COLORBUF colorFmt = g_profile.rgb565 ? GPU_RB_RGB565 : GPU_RB_RGBA8;
+	u32 transfer = g_profile.rgb565 ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565) : DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8);
 	C3D_RenderTarget* top = C3D_RenderTargetCreate(240, 400, colorFmt, GPU_RB_DEPTH24_STENCIL8);
 	C3D_RenderTargetSetOutput(top, GFX_TOP, GFX_LEFT, transfer);
 	// Right eye for stereo 3D (only drawn while the 3D mode is on)

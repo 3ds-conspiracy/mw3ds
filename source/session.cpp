@@ -503,9 +503,9 @@ float Session::stereoTarget(float slider, float dt)
 void Session::adaptView(float workMs)
 {
 	// One long frame (a cell arriving) shouldn't shrink the view: each counts at most as a slow one
-	workCost += (fminf(workMs, g_old3ds ? 70.0f : 45.0f) - workCost) * 0.1f;
-	float budget = 34.0f, minScale = kMinViewScale, maxScale = 1.0f;
-	if (g_old3ds)
+	workCost += (fminf(workMs, g_profile.workCap) - workCost) * 0.1f;
+	float budget = 34.0f;
+	if (g_profile.capSteps)
 	{
 		// two seconds past the 30 fps budget: 20; four seconds well under it: 30 again
 		bool slow = frameCap == 30 ? workCost > 31.0f : workCost < 24.0f;
@@ -517,13 +517,12 @@ void Session::adaptView(float workMs)
 			logf("view: frame rate capped at %d (frame work %.1f ms)", frameCap, workCost);
 		}
 		budget = frameCap == 30 ? 1000.0f : 47.0f;      // (at 30 the cap gives way first)
-		minScale = kMinViewScaleOld3ds;
-		maxScale = kMaxViewScaleOld3ds;                // (a shorter view outdoors: fewer cells' worth of draws)
 	}
+	float minScale = g_profile.viewScaleMin, maxScale = g_profile.viewScaleMax;
 	if (w.current < 0 || w.cells[w.current].interior)
 	{
 		// (indoors the view is whole whatever this says: the Old 3DS keeps its outdoor view for the way out)
-		if (!g_old3ds)
+		if (!g_profile.keepViewIndoors)
 			viewScale = 1.0f;
 		return;
 	}
@@ -542,10 +541,10 @@ void Session::loadSettings()
 {
 	// An Old 3DS starts with 3D off (the second eye is the whole scene again on a CPU a third as fast); the Options
 	// toggle still turns it on
-	if (g_old3ds)
+	if (!g_profile.stereoAtStart)
 		stereoMode = STEREO_OFF;
 	// ... and the GoldenEye layout: one with no C-stick or ZL / ZR (those need a Circle Pad Pro there)
-	if (g_old3ds)
+	if (g_profile.goldenEyeAtStart)
 		g_controlLayout = CONTROLS_GOLDENEYE;
 	FILE* f = fopen(kSettingsPath, "r");
 	if (!f)
@@ -595,7 +594,7 @@ void Session::finishTravel()
 {
 	int dest = travelCell;
 	travelCell = -1;
-	if (g_old3ds)
+	if (g_profile.cleanAtDoors)
 		cleanForLoad();
 	w.player.inertia[0] = w.player.inertia[1] = 0.0f;     // (a jump's take-off doesn't come along: doors, travel)
 	// Voices of the cell we leave stop with it
@@ -641,7 +640,7 @@ void Session::finishTravel()
 		notify("Could not load " + w.cells[dest].name + " (out of memory?). See log.txt.");
 		return;
 	}
-	if (g_old3ds && !w.streamJob)
+	if (g_profile.cleanAtDoors && !w.streamJob)
 		trimSkeletons();                 // (the place left: its people's skeletons)
 	if (travelToSpawn)
 	{
@@ -777,12 +776,10 @@ bool Session::refInUse(int ri) const
 }
 
 extern "C" u32 __ctru_heap_size;
-bool g_old3ds = false;
-bool g_sysCoreThreads = false;
 
 int Session::refBudget() const
 {
-	int budget = g_old3ds ? kRefBudgetOld3ds : kRefBudget;
+	int budget = g_profile.refBudget;
 	// The heap filling up (past four fifths): fewer still, whatever the console
 	if ((size_t)mallinfo().uordblks > __ctru_heap_size / 5 * 4)
 		budget = std::min(budget, w.refsInMemory() * 3 / 4);
@@ -908,10 +905,10 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		evictTimer = 5.0f;
 		evictFarCells();
 		// An Old 3DS lets go of the animation skeletons no loaded actor uses (they are read again when met)
-		if (g_old3ds && !w.streamJob)
+		if (g_profile.cleanAtDoors && !w.streamJob)
 			trimSkeletons();
 		// ... and the string pool takes its next block now, while the heap is tidy, not mid-parse
-		if (g_old3ds)
+		if (g_profile.cleanAtDoors)
 			Atom::prefill();
 		// Corprus: note when it was caught; a day later it is worse (the numbers follow)
 		bool corprus = w.pcHasCorprus();

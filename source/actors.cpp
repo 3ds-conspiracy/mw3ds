@@ -810,11 +810,10 @@ u32 actorPoseEvery(float dist2)
 // every third frame there, so these follow it): the wild's creatures and people are seen at those distances
 u32 actorSkinEvery(float dist2)
 {
-	// An Old 3DS (a CPU a third as fast, 30 fps at best): every second frame up close (15 Hz), then every fourth and
-	// every sixth
-	if (g_old3ds)
-		return dist2 < 1600.0f * 1600.0f ? 2 : dist2 < 3000.0f * 3000.0f ? 4 : 6;
-	return dist2 < 1600.0f * 1600.0f ? 2 : dist2 < 3000.0f * 3000.0f ? 3 : 4;
+	// (the console's rates: an Old 3DS, a CPU a third as fast at 30 fps at best, every second frame up close, then
+	// every fourth and every sixth)
+	const unsigned* every = g_profile.skinEvery;
+	return dist2 < 1600.0f * 1600.0f ? every[0] : dist2 < 3000.0f * 3000.0f ? every[1] : every[2];
 }
 
 void actorDeform(ActorSet& set, Actor& a)

@@ -937,8 +937,8 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		frame++;
 	u64 actorStart = svcGetSystemTick();
 	// (an Old 3DS draws people and creatures to 4000 outdoors: each is a re-skin and a dozen draws)
-	float maxDist = fog ? fminf(fogEnd, g_old3ds ? 4000.0f : kActorViewDistance) : 4000.0f;
-	float detailDist = g_old3ds ? kActorDetailDistance * 0.67f : kActorDetailDistance;
+	float maxDist = fog ? fminf(fogEnd, g_profile.actorViewLimit > 0.0f ? g_profile.actorViewLimit : kActorViewDistance) : 4000.0f;
+	float detailDist = kActorDetailDistance * g_profile.actorDetailScale;
 	for (int pass = 0; pass < 2 && (g_renderParts & RENDER_ACTORS); pass++)
 	{
 		for (LoadedCell* l : w.loaded)

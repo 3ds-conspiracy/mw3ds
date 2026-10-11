@@ -1942,7 +1942,7 @@ static void startStreamJob(World& w, int index)
 	// parallel; on the game's core if that can't be had
 	s32 prio = 0x30;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);
-	j->thread = g_old3ds && g_sysCoreThreads ? threadCreate(streamWorker, j, 64 * 1024, prio + 1, 1, false) : nullptr;
+	j->thread = g_sysCoreThreads ? threadCreate(streamWorker, j, 64 * 1024, prio + 1, 1, false) : nullptr;
 	if (!j->thread)
 		j->thread = threadCreate(streamWorker, j, 64 * 1024, prio + 1, -2, false);
 	if (!j->thread)
@@ -2170,12 +2170,12 @@ void World::streamExterior(bool all)
 		static bool probedRoom = true;
 		// (only between jobs: the probe holds the biggest free block for a moment, and the streaming
 		// thread allocating right then failed for nothing — no job starts while one runs anyway)
-		if (g_old3ds && !streamJob && osGetTime() - probedAt > 500)
+		if (g_profile.streamWaitsForBlock && !streamJob && osGetTime() - probedAt > 500)
 		{
 			probedAt = osGetTime();
 			probedRoom = (size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= 1536u * 1024u;
 		}
-		bool room = !g_old3ds || probedRoom;
+		bool room = !g_profile.streamWaitsForBlock || probedRoom;
 		if (!room && !noRoomNoted)
 		{
 			noRoomNoted = true;

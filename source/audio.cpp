@@ -74,7 +74,6 @@ static u32 s_cacheBytes = 0;
 // Decoded sounds kept in linear memory (voices, effects), the least recently used freed past this. An Old 3DS has
 // 22 MB of linear memory for everything (heaps.cpp): its cache is a third as big, or the voices heard on a walk
 // through town took the room the next cells' textures needed
-static const u32 kCacheLimit = 6 * 1024 * 1024, kCacheLimitOld3ds = 2 * 1024 * 1024;
 
 static const int kFxChannels = 23;          // 0..22 effects and voices, 23 music (the DSP has 24)
 static const int kMusicChannel = 23;
@@ -213,7 +212,7 @@ static CachedSound* load(const std::string& file)
 		return nullptr;
 	}
 	bool adpcm = memcmp(h.magic, "SND2", 4) == 0;
-	evict(h.samples * 2, g_old3ds ? kCacheLimitOld3ds : kCacheLimit);
+	evict(h.samples * 2, g_profile.soundCacheBytes);
 	CachedSound s;
 	s.samples = h.samples;
 	s.rate = h.rate;

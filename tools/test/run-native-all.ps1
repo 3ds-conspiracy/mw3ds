@@ -8,8 +8,10 @@
 # Each case gets its own SD folder (build\native\sd-<slot>), so they do not touch each other's logs or saves.
 # -Exe / -SdRoot / -NoLatest: another native build (build.py with MW3DS_NATIVE_BUILD), its own SD folders, and no copy
 # to build\native-results\latest (a second session's run that leaves the first one's alone)
+# -Old3ds: every case with the Old 3DS profile (slow CPU, small heap: include\console.h), as run-test.ps1 -Old3ds
 param([string[]]$Filter = @(), [int]$Jobs = 0, [string]$Data = 'out\world', [string]$Start = 'Seyda Neen', [int]$Wait = 600,
-      [switch]$Build, [switch]$IgnoreWarnings, [string]$Exe = '', [string]$SdRoot = 'build\native', [switch]$NoLatest)
+      [switch]$Build, [switch]$IgnoreWarnings, [string]$Exe = '', [string]$SdRoot = 'build\native', [switch]$NoLatest,
+      [switch]$Old3ds)
 $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 if ($Jobs -le 0) { $Jobs = [Math]::Max(1, [Environment]::ProcessorCount - 2) }
 if (-not $Exe -and ($Build -or -not (Test-Path (Join-Path $root 'build\native\mw3ds-native.exe')))) {
@@ -94,6 +96,7 @@ while ($queue.Count -gt 0 -or @($slots | Where-Object { $_.proc }).Count -gt 0) 
             $sd = Join-Path $root "$SdRoot\sd-$($slot.id)"
             $args = @('-NoProfile', '-File', (Join-Path $PSScriptRoot 'run-test.ps1'), $case, '-Native', '-Sd', $sd,
                       '-Data', $Data, '-Start', ('"' + $Start + '"'), '-Wait', $Wait, '-Exe', $exe)
+            if ($Old3ds) { $args += '-Old3ds' }
             $slot.proc = Start-Process powershell -ArgumentList $args -PassThru -WindowStyle Hidden `
                 -RedirectStandardOutput (Join-Path $outDir "$case.txt") -RedirectStandardError (Join-Path $outDir "$case.err")
         }

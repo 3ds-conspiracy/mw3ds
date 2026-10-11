@@ -346,9 +346,8 @@ struct Session : ScriptHost
 	bool stereoCmdRoom = true;
 	// Adaptive view distance outdoors (fog scale), from the frame's CPU / GPU work. An Old 3DS starts nearer and may
 	// close in further, and caps the frame rate at 30 or 20 (frameCap: main hands it to C3D_FrameRate)
-	static constexpr float kMinViewScale = 0.6f, kMinViewScaleOld3ds = 0.45f, kMaxViewScaleOld3ds = 0.8f;
-	float viewScale = g_old3ds ? kMaxViewScaleOld3ds : 1.0f, workCost = 0.0f;
-	int frameCap = g_old3ds ? 30 : 60, capFrames = 0;
+	float viewScale = g_profile.viewScaleMax, workCost = 0.0f;
+	int frameCap = g_profile.frameCap, capFrames = 0;
 	void adaptView(float workMs);
 	float stereoTarget(float slider, float dt);
 	void noteRenderCost(float cpuMs, float gpuMs, bool stereo, float eyeCmd);
@@ -669,7 +668,6 @@ struct Session : ScriptHost
 	bool travelGo(int sel);                         // the travel list's Go: pay and leave (false: refused)
 	// Objects kept in memory: beyond this many, the cells used longest ago leave (World::evictCells). An Old 3DS
 	// keeps fewer (a Ref is about 1 KB: 20000 of them were half its heap)
-	static const int kRefBudget = 20000, kRefBudgetOld3ds = 5000;
 	int refBudget() const;
 	void relieveMemory(bool force = false);             // the heap ran out (g_memoryLow): far cells' objects and map tiles go
 	int trimSkeletons();              // skeletons no loaded actor uses go (the eviction timer, relieveMemory, a load)
