@@ -10,7 +10,7 @@
 0.3 0 0 0 0 TAP:78:222
 0.5 0 0 0 0 SHOT
 0.3 0 0 0 0 EXPECT:maplocal:eq:1
-0.3 0 0 0 0 TAP:137:58
+0.3 0 0 0 0 TAP:148:55
 0.5 0 0 0 0 SHOT
 0.3 0 0 0 0 EXPECT:maptip:Seyda_Neen,_Indrele_Rathryon's_Shack
 0.3 0 0 0 0 EXPECT:mapzoom:eq:0

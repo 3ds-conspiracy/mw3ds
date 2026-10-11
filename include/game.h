@@ -224,6 +224,7 @@ struct ArtDef
 {
 	std::vector<ArtRef> splash;
 	std::unordered_map<std::string, ArtRef> levelup, bookart, hud;
+	std::unordered_map<std::string, ArtRef> book;   // the reading screen: "book", "scroll", "<button>_<idle|over|pressed>"
 };
 struct ThirdPersonDef
 {

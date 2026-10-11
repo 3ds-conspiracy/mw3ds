@@ -57,7 +57,11 @@ def npc_items(rec):
     resolved to an item."""
     out = []
     npdt = rec.get("NPDT")
-    level = struct.unpack_from("<h", npdt)[0] if npdt else 1
+    # (a creature's NPDT starts with its type, then the level as an int)
+    if rec.tag == "CREA":
+        level = struct.unpack_from("<i", npdt, 4)[0] if npdt and len(npdt) >= 8 else 1
+    else:
+        level = struct.unpack_from("<h", npdt)[0] if npdt else 1
     for t, d in rec.subs:
         if t == "NPCO":
             item = d[4:].split(b"\0", 1)[0].decode("latin-1")

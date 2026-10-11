@@ -129,7 +129,14 @@ struct Session : ScriptHost
 	bool mapLocal = false;            // the map screen shows the local map (else the world map)
 	bool mapLocalOutdoors = false;    // and which one it opens on outdoors (indoors: the local map)
 	int mapDoorTip = -1;              // the door marker tapped on the local map: its destination shows
-	float frameDt = 1.0f / 30.0f;     // the last frame's time (D-pad panning)
+	int mapPlaceTip = -1;             // the place marker tapped on the world map (game.map.labels): its name shows
+	std::vector<int> mapLabelCells;   // game.map.labels: how many exterior cells carry each name (its marker's size)
+	// Interior fog of war (World::mapFog) as a texture over the local map, filled from it each time it is drawn
+	C3D_Tex fogTex;
+	bool fogTexReady = false;
+	void revealLocalMap();            // the squares round the player come out of the fog
+	bool drawLocalFog(float ox, float oy, float picture);
+	float frameDt = 1.0f / 30.0f;     // this frame's time, menus open or not (main.cpp; the map's D-pad panning)
 	// The 2x-detail map's tiles: read only while the map screen shows the zoomed-in view (up to 2 stay
 	// when out of view, 4 at most, 512 KB each), freed when it closes
 	struct MapTileTex { C3D_Tex tex; bool loaded = false, failed = false; };
@@ -179,6 +186,14 @@ struct Session : ScriptHost
 	std::string journalTopic;         // the topic open in the index
 	std::string journalSearch;        // what the index and the entries are narrowed to ("": all)
 	UiLinkText journalText;           // the entries / the open topic, its topics as links
+	// The entries a page at a time (a long journal was slow to lay out and draw whole), narrowed to one questline
+	int journalCat = 0;               // 0 every quest, else 1 + kQuestLines' index (screens_character.cpp)
+	int journalPage = 0;
+	bool journalPicking = false;      // the questline list is open over the page
+	UiList journalCatList;
+	std::vector<int> journalShown;    // w.journal's entries in the questline and the search, newest first
+	std::vector<int> journalCatCount; // entries per questline (0: all)
+	long journalShownKey = -1;        // what journalShown was worked out for
 	UiScroll scroll;
 	int focus = 0;
 	int bookRef = -1, containerRef = -1;
@@ -186,6 +201,10 @@ struct Session : ScriptHost
 	bool pickpocketCaught(float valueTerm);       // Morrowind's pickpocket roll: true = noticed
 	int pickpocketBar(int victim, float valueTerm);   // the roll above is noticed when it is over this (0..75)
 	std::string bookItem;
+	// The book open: its text cut into pages (for the book read, bookPagesOf), the spread shown (pages 2n, 2n + 1)
+	std::vector<UiPage> bookPages;
+	std::string bookPagesOf;
+	int bookSpread = 0;
 	int quizIndex = 0, quizCounts[3] = {};
 	std::string pickedClass;
 
@@ -373,6 +392,7 @@ struct Session : ScriptHost
 	std::vector<std::pair<std::string, u32>> tip;
 	void itemTip(const Object* o, const InventoryItem* it);   // it: that one's wear and charge (nullptr: new)
 	void spellTip(const SpellDef& sp);
+	int armorSkill(const Object* o);      // the armor skill a piece of armor trains: by its weight for its slot
 	std::string effectLine(const SpellEffect& e, bool showRange);   // "Fire Damage 5 to 10 pts for 5 secs on Target"
 	void drawBottom();
 	bool menuOpen() const { return !messages.empty() || screen != SCR_NONE || dlg.open; }

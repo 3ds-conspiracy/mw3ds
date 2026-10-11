@@ -108,4 +108,11 @@ int uiLinkTextBox(UiLinkText& t, long revision, float x, float y, float w, float
 // (file, w, h; empty file: left out), scaled to fit the width
 struct UiPicture { std::string file; int w = 0, h = 0; };
 void uiTextBoxPictures(UiScroll& s, float x, float y, float w, float h, const std::string& text,
-	UiPicture (*look)(const std::string& key, void* ctx), void* ctx, float scale = 0.5f);
+	UiPicture (*look)(const std::string& key, void* ctx), void* ctx, float scale = 0.5f, u32 color = 0);
+// The same text and pictures cut into pages w x h (a book's): a line or picture that doesn't fit starts the next
+// page, blank lines at the top of a page are dropped, a picture taller than a page is shrunk to it
+struct UiPageBlock { std::string text; UiPicture pic; float y = 0.0f, h = 0.0f, pw = 0.0f; bool center = false; };
+typedef std::vector<UiPageBlock> UiPage;
+std::vector<UiPage> uiPaginate(const std::string& text, float w, float h, float scale,
+	UiPicture (*look)(const std::string& key, void* ctx), void* ctx);
+void uiDrawPage(const UiPage& page, float x, float y, float w, float scale, u32 color);

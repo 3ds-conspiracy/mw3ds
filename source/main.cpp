@@ -48,6 +48,7 @@ struct ScriptedInput
 	int tapX = -1, tapY = -1;
 	bool drag = false;                // DRAG:dx:dy: a finger dragged that far across the touch screen this step's first frame
 	int dragX = 0, dragY = 0;
+	int touchX = -1, touchY = -1;     // TOUCH:x:y: a finger held at x, y the whole step (slid there from the last step's)
 	bool teleport = false;
 	bool tpInside = false;     // TPIN: to that spot in the interior the player is in (TP from inside goes out)
 	float tp[4];            // x y z yawDegrees
@@ -149,6 +150,8 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		else if (s_legitParsed && !TestDriver::playerToken(tok))
 			logf("drive: FAIL %s: not a player action (after LEGIT)", tok);
 		if (sscanf(tok, "TAP:%d:%d", tapX, tapY) == 2)
+			continue;
+		if (sscanf(tok, "TOUCH:%d:%d", &step->touchX, &step->touchY) == 2)
 			continue;
 		if (sscanf(tok, "DRAG:%d:%d", &step->dragX, &step->dragY) == 2)
 		{
@@ -1616,6 +1619,22 @@ int main()
 				ui.dragDX = s.dragX;
 				ui.dragDY = s.dragY;
 			}
+			// A finger held (TOUCH): down at the step's spot every frame, slid there from where the step before held it;
+			// a step without one lifts it
+			static int heldX = -1, heldY = -1;
+			if (s.touchX >= 0)
+			{
+				ui.touching = true;
+				ui.touchX = s.touchX;
+				ui.touchY = s.touchY;
+				if (heldX >= 0)
+				{
+					ui.dragDX = s.touchX - heldX;
+					ui.dragDY = s.touchY - heldY;
+				}
+			}
+			heldX = s.touchX;
+			heldY = s.touchY;
 			inputTime += dt;
 			if (first)
 			{
@@ -1749,6 +1768,7 @@ int main()
 				session->toggleGameMenu();
 			u64 updStart = svcGetSystemTick();
 			MARK("session update");
+			session->frameDt = dt;         // (the frame's own time: a menu's panning goes on while the world stands still)
 			session->update(in, session->worldPaused() ? 0.0f : dt);      // (a menu stops the world; the test driver keeps its own clock)
 			MARK("after update");
 			extern float g_profWorldMs;

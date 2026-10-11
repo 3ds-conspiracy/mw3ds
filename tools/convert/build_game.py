@@ -197,7 +197,7 @@ def _npc_info(rec, db):
                      # soul size (NPDT: type, level, 8 attributes, health, magicka, fatigue, soul)
                      "soul": struct.unpack_from("<i", rec.get("NPDT"), 52)[0] if len(rec.get("NPDT") or b"") >= 56 else 0,
                      "resist_normal": normal_weapon_resistance(rec, db)},
-                    **creature_stats(rec, db["SPEL"]))
+                    **creature_stats(rec, db["SPEL"], db))
     npdt = rec.get("NPDT")
     if len(npdt) == 12:           # autocalculated stats
         level, disp, rep, rank = struct.unpack_from("<hbbb", npdt)

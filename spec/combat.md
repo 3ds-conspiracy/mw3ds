@@ -44,7 +44,10 @@ someone within `fSneakUseDist` has the player in sight and nobody has noticed th
   twice (it is both). Then condition and Strength as above.
 - **Hand to hand:** `Hand-to-hand x (fMinHandToHandMult + (fMaxHandToHandMult - fMinHandToHandMult) x swing)` to
   fatigue. On a victim knocked down or paralyzed it goes to health instead, times `fHandtoHandHealthPer`.
-- **Creatures:** their attack's `min + (max - min) x swing` (no Strength term); with a weapon, the weapon rule.
+- **Creatures:** their attack's `min + (max - min) x swing` (no Strength term). Only creatures with the CREA
+  "Weapon and Shield" flag (skeletons, dremora, golden saints) carry a weapon: the best one they hold, chosen as
+  for an NPC. With it, the weapon's chop / slash / thrust `min + (max - min) x swing`, still no Strength term
+  (`Creature::hit`), with their combat skill as the weapon skill. (Their weapons do not wear here.)
 - **Critical strike:** a melee blow by the player on an unaware victim, x `fCombatCriticalStrikeMult`. A missile on an
   unaware victim, and any blow on a knocked-down victim, x `fCombatKODamageMult` instead.
 - **Resist Normal Weapons:** a weapon that is neither silver, magical nor enchanted does `x (1 - min(1, resist -

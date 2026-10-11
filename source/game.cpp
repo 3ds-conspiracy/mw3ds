@@ -1148,6 +1148,8 @@ bool gameLoad(GameData& g, const char* path)
 			g.art.bookart[lower(a->string)] = one(a);
 		cJSON_ArrayForEach(a, cJSON_GetObjectItem(art, "hud"))
 			g.art.hud[lower(a->string)] = one(a);
+		cJSON_ArrayForEach(a, cJSON_GetObjectItem(art, "book"))
+			g.art.book[lower(a->string)] = one(a);
 	}
 	if (const cJSON* sb = cJSON_GetObjectItem(root, "sky_bodies"))
 	{

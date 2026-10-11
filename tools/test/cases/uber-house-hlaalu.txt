@@ -126,7 +126,7 @@
 2 0 0 0 0 FACE:bk_auranefrernis2:mid
 0.3 0 0 0 0 A
 1 0 0 0
-0.3 0 0 0 0 TAP:60:222
+0.3 0 0 0 0 A
 1 0 0 0
 0.1 0 0 0 0 EXPECT:item:bk_auranefrernis2:ge:1
 0.3 0 0 0 0 CAST:recall

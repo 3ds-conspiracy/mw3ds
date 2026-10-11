@@ -3,6 +3,9 @@
 animated-actor path as NPCs (actors.py) with the model file as the skeleton.
 
 Leveled creature references (LEVC) become the lowest-level creature in their list.
+
+Creatures with the "Weapon and Shield" flag (skeletons, dremora, golden saints ...) fight with the weapon they
+carry, as NPCs do: it rides their Weapon Bone and its damage replaces their attacks (OpenMW's Creature::hit).
 """
 import struct
 
@@ -10,7 +13,7 @@ import numpy as np
 
 from meshes import extract_shapes, nif_local, ref_matrix
 from npc import skeleton_pose, text_key_time
-from npcstats import combat_spells
+from npcstats import best_shield, bind, combat_spells, combat_weapon
 
 
 def resolve_leveled(db, lid, depth=0):
@@ -28,7 +31,21 @@ def resolve_leveled(db, lid, depth=0):
     return None
 
 
-def creature_stats(rec, spel=None):
+CREA_WEAPON = 0x4                 # CREA FLAG: "Weapon and Shield", it uses the weapon and shield it carries
+
+
+def creature_weapon(rec, db, skills):
+    """(weapon, ammunition, shield) a creature fights with: only one with the Weapon and Shield flag, chosen
+    from what it carries as for an NPC. Empty strings when it has none."""
+    flag = rec.get("FLAG")
+    if db is None or not flag or not struct.unpack("<i", flag)[0] & CREA_WEAPON:
+        return "", "", ""
+    bind(db)
+    weapon, ammo = combat_weapon(rec, db["objects"], skills)
+    return weapon or "", ammo or "", best_shield(rec, db["objects"]) or ""
+
+
+def creature_stats(rec, spel=None, db=None):
     """Actor fields for game.json (same shape as npcstats.npc_stats plus attack damage)."""
     d = rec.get("NPDT")
     v = struct.unpack_from("<24i", d) if d and len(d) >= 96 else [0, 1] + [30] * 8 + [20, 0, 50, 0, 30, 0, 0, 1, 3, 0, 0, 0, 0, 0]
@@ -38,18 +55,21 @@ def creature_stats(rec, spel=None):
     gold = v[23] if len(v) > 23 else 0
     aidt = rec.get("AIDT")
     aiw = rec.get("AI_W")
-    return {"level": level, "attributes": attrs, "skills": [combat] * 9 + [magic] * 9 + [stealth] * 9,
+    skills = [combat] * 9 + [magic] * 9 + [stealth] * 9
+    weapon, ammo, shield = creature_weapon(rec, db, skills)
+    return {"level": level, "attributes": attrs, "skills": skills,
             "health": max(health, 0), "magicka": max(magicka, 0),
             "fatigue": max(fatigue, 1), "gold": max(gold, 0), "fight": aidt[2] if aidt else 90,
             "flee": aidt[3] if aidt else 0, "combat_spells": combat_spells(rec, spel) if spel else [],
-            "services": 0, "weapon": "", "armor": 0.0, "travel": [],
+            "services": 0, "weapon": weapon, "ammo": ammo, "shield": shield, "armor": 0.0, "travel": [],
             "wander": struct.unpack_from("<H", aiw)[0] if aiw else 0,
             "creature": True, "attack": [a for a in attacks if a[1] > 0] or [[1, 3]]}
 
 
 class CreatureBuilder:
-    def __init__(self, arch, npcs):
+    def __init__(self, arch, npcs, db=None):
         self.arch, self.npcs = arch, npcs          # NpcBuilder: shared NIF cache
+        self.db = db                               # for the weapon a creature fights with
 
     def build(self, rec, ref):
         """(world-space shapes at the idle pose, {"skeleton": path, "place": 4x4}) like NpcBuilder.build."""
@@ -71,6 +91,21 @@ class CreatureBuilder:
             parent = nif.get(parents.get(s["block"], -1))
             s["bone"] = parent["name"].lower() if parent else None
             s["raw"]["node"] = nif_local(nif.get(s["block"]))
+        # The weapon it fights with rides its Weapon Bone, shown only while it fights (as an NPC's)
+        if self.db is not None:
+            d = rec.get("NPDT")
+            v = struct.unpack_from("<24i", d) if d and len(d) >= 96 else None
+            skills = [v[14]] * 9 + [v[15]] * 9 + [v[16]] * 9 if v else [30] * 27
+            wid = creature_weapon(rec, self.db, skills)[0]
+            wrec = self.db["objects"].get(wid.lower()) if wid else None
+            wnif = self.npcs.nif("meshes\\" + wrec.zstr("MODL").lower()) if wrec is not None and wrec.zstr("MODL") else None
+            wbone = pose.get("weapon bone")
+            if wnif is not None and wbone is not None:
+                for s in extract_shapes(self.arch, wnif):
+                    s["bone"], s["mirror"], s["weapon"] = "weapon bone", False, True
+                    s["pos"] = s["pos"] @ wbone[:3, :3].T + wbone[:3, 3]
+                    s["nrm"] = s["nrm"] @ wbone[:3, :3].T
+                    shapes.append(s)
         xscl = rec.get("XSCL")
         scale = struct.unpack("<f", xscl)[0] if xscl else 1.0
         place = ref_matrix(ref) @ np.diag([scale, scale, scale, 1.0])

@@ -738,6 +738,9 @@ void Session::drawSpells()
 		uiTextCentered(160, 100, 0.5f, col::textDim, "Nothing you don't already know");
 	uiList(list2, 4, 24, 312, 176, rows, 0.45f, true);
 	int sel = list2.selected < (int)ids.size() ? list2.selected : -1;
+	// what the chosen spell does, on the top screen as in the Magic menu
+	if (sel >= 0)
+		spellTip(w.game.spells[ids[sel]]);
 	int b = buttonRow({ "Buy", w.game.gmst("sdone", "Done") }, focus);
 	if (b == 0 && sel >= 0)
 	{
