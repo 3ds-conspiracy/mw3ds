@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <deque>
 #include <map>
 #include <queue>
 #include <tuple>
@@ -2450,8 +2451,9 @@ static bool floodRoute(Session& s, const float goal[3], float radius, std::vecto
 {
 	struct Node { Player p; int parent; bool jump; int depth; float yaw, pitch; int frames; };
 	Scene sc = s.w.scene();
-	std::vector<Node> nodes;
-	nodes.reserve(6000);
+	// (a deque: room for 6000 reserved at once was a 726 KB block on the main thread, which an Old 3DS late in a session
+	// didn't have, and a `new` that fails there stops the game)
+	std::deque<Node> nodes;
 	std::map<std::tuple<int, int, int>, int> seen;
 	auto key = [](const Player& p) { return std::make_tuple((int)floorf(p.feet[0] / 64), (int)floorf(p.feet[1] / 64), (int)floorf(p.feet[2] / 48)); };
 	auto cost = [&](const Node& n) {

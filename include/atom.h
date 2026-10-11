@@ -49,6 +49,9 @@ public:
 	bool operator<(const Atom& o) const { return strcmp(p_, o.p_) < 0; }
 
 	static size_t poolBytes();      // what the blocks hold (the log at load)
+	// Takes the next block early, at a quiet moment, so it isn't born mid-parse between transient
+	// allocations (each block is pinned for the run). Session's eviction timer calls it
+	static void prefill();
 
 private:
 	explicit Atom(const char* p, int) : p_(p) {}

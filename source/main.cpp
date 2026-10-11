@@ -405,28 +405,63 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 	return keys;
 }
 
-static std::vector<ScriptedInput> loadAutoinput()
+// One step's line: false if it isn't a step (fewer than the four numbers)
+static bool parseStep(const char* line, ScriptedInput& s)
 {
-	std::vector<ScriptedInput> steps;
+	s = ScriptedInput();
+	s.tapX = s.tapY = -1;
+	s.layout = s.gyroAim = s.skin = s.frameCap = -1;
+	char keys[1024] = {};
+	int n = sscanf(line, "%f %f %f %f %d %1023s", &s.secs, &s.moveX, &s.moveY, &s.lookX, &s.jump, keys);
+	if (n < 4)
+		return false;
+	if (n >= 6)
+		s.keys = parseKeys(keys, &s.tapX, &s.tapY, &s);
+	return true;
+}
+
+// The scripted steps, kept as their lines and each parsed when it is reached (in order, as before). Parsed up front,
+// an uber test's 3,000 steps held 3 MB of heap (forty strings each) that an Old 3DS run then didn't have for the game,
+// and a test ran out of memory sooner than play would
+class ScriptedSteps
+{
+public:
+	std::vector<std::string> lines;
+	size_t size() const { return lines.size(); }
+	bool empty() const { return lines.empty(); }
+	ScriptedInput& operator[](size_t i)
+	{
+		if (i != at_)
+		{
+			parseStep(lines[i].c_str(), cur_);
+			at_ = i;
+		}
+		return cur_;
+	}
+
+private:
+	size_t at_ = (size_t)-1;
+	ScriptedInput cur_;
+};
+
+static ScriptedSteps loadAutoinput()
+{
+	ScriptedSteps steps;
 	FILE* f = fopen("sdmc:/3ds/mw3ds/autoinput.txt", "r");
 	if (!f)
 		return steps;
 	char line[1024];
+	float secs, mx, my, lx;
 	while (fgets(line, sizeof(line), f))
-	{
-		ScriptedInput s = {};
-		s.tapX = s.tapY = -1;
-		s.layout = s.gyroAim = s.skin = s.frameCap = -1;
-		char keys[1024] = {};
-		int n = sscanf(line, "%f %f %f %f %d %1023s", &s.secs, &s.moveX, &s.moveY, &s.lookX, &s.jump, keys);
-		if (n >= 4)
+		if (sscanf(line, "%f %f %f %f", &secs, &mx, &my, &lx) == 4)
 		{
-			if (n >= 6)
-				s.keys = parseKeys(keys, &s.tapX, &s.tapY, &s);
-			steps.push_back(s);
+			size_t n = strlen(line);
+			while (n && (line[n - 1] == '\n' || line[n - 1] == '\r'))
+				line[--n] = 0;
+			steps.lines.push_back(line);
 		}
-	}
 	fclose(f);
+	steps.lines.shrink_to_fit();
 	logf("autoinput: %d steps", (int)steps.size());
 	return steps;
 }
@@ -875,7 +910,7 @@ int main()
 	drawLoading(top, bottom, "Loading...");
 
 	Session* session = new Session();
-	std::vector<ScriptedInput> autoinput = loadAutoinput();
+	ScriptedSteps autoinput = loadAutoinput();
 	session->autotest = !autoinput.empty();
 	u64 loadStart = osGetTime();
 	// sdmc:/3ds/mw3ds/start.txt: name of the cell to start in (e.g. "Seyda Neen"), skipping chargen,
@@ -2006,15 +2041,18 @@ int main()
 				(int)(cmdPeak * 100.0f), g_skippedDraws ? " (buffer full: draws skipped)" : "");
 			cmdPeak = 0.0f;
 			g_skippedDraws = 0;
-			// The heap: the most used so far and, every few seconds, the biggest block left (fragmentation)
+			// The heap: the most used so far and, every few seconds, the biggest block left (fragmentation).
+			// Never probed while a cell loads in the background: the probe briefly holds the biggest free
+			// block (real allocations), and the streaming thread's own allocation then fails for nothing —
+			// a spurious out-of-memory that purged far cells and churned the heap it was watching
 			heapNote(mallinfo().uordblks);
 			static int heapSecs = 0;
-			if (++heapSecs >= 5)
+			if (++heapSecs >= 5 && !session->w.streamJob)
 			{
 				heapSecs = 0;
-				logf("heap: %dKB used, %uKB peak, %uKB in the biggest free block, %dKB in holes, %d objects in memory",
+				logf("heap: %dKB used, %uKB peak, %uKB in the biggest free block, %dKB in holes, %d objects in memory (%d slots)",
 					mallinfo().uordblks / 1024, (unsigned)(heapHighWater() / 1024), (unsigned)(heapLargestBlock() / 1024),
-					mallinfo().fordblks / 1024, session->w.refsInMemory());
+					mallinfo().fordblks / 1024, session->w.refsInMemory(), (int)session->w.refs.size());
 			}
 			uiCheckTheme();                   // the UI's textures still as loaded (a monitor)
 			frames = 0;

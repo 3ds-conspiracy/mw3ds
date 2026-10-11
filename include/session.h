@@ -671,7 +671,11 @@ struct Session : ScriptHost
 	// keeps fewer (a Ref is about 1 KB: 20000 of them were half its heap)
 	static const int kRefBudget = 20000, kRefBudgetOld3ds = 5000;
 	int refBudget() const;
-	void relieveMemory();             // the heap ran out (g_memoryLow): far cells' objects and map tiles go
+	void relieveMemory(bool force = false);             // the heap ran out (g_memoryLow): far cells' objects and map tiles go
+	int trimSkeletons();              // skeletons no loaded actor uses go (the eviction timer, relieveMemory, a load)
+	// A door's loading screen is the moment to give back what the place left behind, before the next one is read into the gaps
+	// (an Old 3DS's heap: far cells' objects, skeletons, decoded sounds, map tiles, the string pool's next block)
+	void cleanForLoad();
 	float evictTimer = 0.0f;
 	int mapCell = -1;                 // the cell whose name was last put on the map
 	int corprusShown = 0;             // Corprus level the stats were last computed at

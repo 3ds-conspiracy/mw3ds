@@ -567,6 +567,26 @@ static const cJSON* section(const cJSON* root, const char* name)
 	return cJSON_GetObjectItemCaseSensitive(s_section, name);
 }
 
+// The long texts gameLoad hands CardText::store, in the same order (objects, dialogue, journal): the card's copy is
+// written again from them. Keep it in step with gameLoad's sections (rewriteEnd checks the walk found the same texts)
+static void storeTexts(const cJSON* root)
+{
+	forSection(root, "objects", [&](const cJSON* it) {
+		CardText::store(str(it, "text"));
+	});
+	forSection(root, "dialogue", [&](const cJSON* it) {
+		const cJSON* ij;
+		cJSON_ArrayForEach(ij, arr(it, "infos"))
+			CardText::store(str(ij, "text"));
+	});
+	forSection(root, "journal", [&](const cJSON* it) {
+		const cJSON* e;
+		cJSON_ArrayForEach(e, arr(it, "entries"))
+			CardText::store(str(e, "text"));
+	});
+	sectionDone();
+}
+
 bool gameLoad(GameData& g, const char* path)
 {
 	g_gameGeneration++;
@@ -588,6 +608,7 @@ bool gameLoad(GameData& g, const char* path)
 		logf("game: JSON parse error near %.40s", cJSON_GetErrorPtr());
 		return false;
 	}
+	CardText::loadBegin();
 
 	const cJSON* it0;
 	g.cellName = str(root, "cell");
@@ -673,7 +694,7 @@ bool gameLoad(GameData& g, const char* path)
 	forSection(root, "objects", [&](const cJSON* it) {
 		Object o;
 		o.id = str(it, "id"); o.type = str(it, "type"); o.name = str(it, "name"); o.script = str(it, "script");
-		o.icon = str(it, "icon"); o.iconIx = num(it, "ic", -1); o.text = Atom::stored(str(it, "text")); o.sound = str(it, "sound");
+		o.icon = str(it, "icon"); o.iconIx = num(it, "ic", -1); o.text = CardText::store(str(it, "text")); o.sound = str(it, "sound");
 		o.openSound = str(it, "open_sound"); o.closeSound = str(it, "close_sound");
 		o.weight = num(it, "weight"); o.value = num(it, "value"); o.armor = num(it, "armor");
 		o.flags = num(it, "flags"); o.scroll = num(it, "scroll") != 0; o.respawn = num(it, "respawn") != 0; o.organic = num(it, "organic") != 0;
@@ -750,7 +771,7 @@ bool gameLoad(GameData& g, const char* path)
 				info.whoSex = num(who, "sex", -1);
 				info.whoRank = num(who, "rank", -1);
 			}
-			info.text = Atom::stored(str(ij, "text"));
+			info.text = CardText::store(str(ij, "text"));
 			info.sound = str(ij, "sound");
 			info.disposition = num(ij, "disp");
 			const cJSON* c;
@@ -778,7 +799,7 @@ bool gameLoad(GameData& g, const char* path)
 		jn.title = str(it, "title");
 		const cJSON* e;
 		cJSON_ArrayForEach(e, arr(it, "entries"))
-			jn.entries.push_back({ (int)num(e, "index"), Atom::stored(str(e, "text")), num(e, "finished") != 0, num(e, "restart") != 0 });
+			jn.entries.push_back({ (int)num(e, "index"), CardText::store(str(e, "text")), num(e, "finished") != 0, num(e, "restart") != 0 });
 	});
 
 	cJSON_ArrayForEach(it, arr(root, "globals"))
@@ -1241,10 +1262,20 @@ bool gameLoad(GameData& g, const char* path)
 	});
 
 	sectionDone();
+	// The card's copy of the long texts didn't match (new data) or couldn't be written: they are walked again
+	if (!CardText::loadEnd())
+		for (int pass = 0; pass < 2; pass++)
+		{
+			CardText::rewriteBegin();
+			storeTexts(root);
+			if (CardText::rewriteEnd())
+				break;
+		}
 	cJSON_Delete(root);
-	logf("game: %d objects, %d scripts, %d topics, %d journals, %d sounds, %d voices, heap used %d KB (%u KB of texts)",
+	logf("game: %d objects, %d scripts, %d topics, %d journals, %d sounds, %d voices, heap used %d KB (%u KB of texts, %u KB of long texts)",
 		(int)g.objects.size(), (int)g.scripts.size(), (int)g.topics.size(), (int)g.journals.size(),
-		(int)g.sounds.size(), (int)g.voices.size(), mallinfo().uordblks / 1024, (unsigned)(Atom::poolBytes() / 1024));
+		(int)g.sounds.size(), (int)g.voices.size(), mallinfo().uordblks / 1024, (unsigned)(Atom::poolBytes() / 1024),
+		(unsigned)(CardText::heapBytes() / 1024));
 	return true;
 }
 

@@ -35,4 +35,9 @@
 0.3 0 0 0 0 GOTO:Balmora
 10 0 1 0.1
 30 0 0 0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+5 0 1 0.2
+0.3 0 0 0 0 GOTO:Balmora
+10 0 1 0.1
+30 0 0 0
 0.5 0 0 0 0 EXPECT:heappeak:le:@1024+EXPECT:zopen:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024

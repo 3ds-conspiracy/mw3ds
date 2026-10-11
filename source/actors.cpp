@@ -12,6 +12,7 @@
 #include "linear.h"
 #include "console.h"
 #include "log.h"
+#include "memstat.h"
 #include "zfile.h"
 
 // ---- 3x4 matrices: rows [r00 r01 r02 tx | r10 r11 r12 ty | r20 r21 r22 tz]
@@ -66,7 +67,9 @@ static bool readBatchBuffers(FILE* f, ActorMesh& m, ActorSet& set, const u8* tin
 	if (m.numIndices & 1)
 		fseek(f, 2, SEEK_CUR);
 	set.bytes += vbytes + ibytes;
-	m.src.resize(m.numVerts * 3);
+	// (tryResize on the heap-side arrays: a fragmented heap fails the mesh cleanly, the cell waits for room)
+	if (!tryResize(m.src, m.numVerts * 3))
+		return false;
 	for (u32 i = 0; i < m.numVerts; i++)
 		memcpy(&m.src[i * 3], (u8*)m.verts + i * 24, 12);
 	return true;
@@ -322,11 +325,12 @@ static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 				rd(f, m.palBone[p]);
 				fread(&m.palMat[p * 12], 4, 12, f);
 			}
-			std::vector<u8> inf(m.numVerts * 8);
+			std::vector<u8> inf;
+			// (fresh vectors: resize zero-fills, as the assigns did)
+			if (!tryResize(inf, m.numVerts * 8) || !tryResize(m.infIndex, m.numVerts * 4)
+				|| !tryResize(m.infWeight, m.numVerts * 4) || !tryResize(m.infCount, m.numVerts))
+				return false;
 			fread(inf.data(), 1, inf.size(), f);
-			m.infIndex.assign(m.numVerts * 4, 0);
-			m.infWeight.assign(m.numVerts * 4, 0.0f);
-			m.infCount.assign(m.numVerts, 0);
 			for (u32 v = 0; v < m.numVerts; v++)
 			{
 				int n = 0;
@@ -359,9 +363,9 @@ static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 			{
 				u32 nk = 0;
 				rd(f, nk);
-				mt.keys.resize(nk * 2);
+				if (!tryResize(mt.keys, nk * 2) || !tryResize(mt.delta, m.numVerts * 3))
+					return false;
 				fread(mt.keys.data(), 4, nk * 2, f);
-				mt.delta.resize(m.numVerts * 3);
 				fread(mt.delta.data(), 4, mt.delta.size(), f);
 			}
 		}
@@ -431,6 +435,12 @@ int actorsAddFromLibrary(ActorSet& set, Cell& cell, TextureCache& cache, const c
 	if (!readLibrary(set, a, std::string(dataDir) + "/" + lib, cell.textureNames, even, &cell, &cache, dataDir)
 		|| a.meshes.empty())
 	{
+		// a read that broke off midway (memory short): the meshes it did load give their buffers back
+		for (auto& m : a.meshes)
+		{
+			lockedLinearFree(m.verts);
+			lockedLinearFree(m.indices);
+		}
 		set.actors.pop_back();
 		return -1;
 	}

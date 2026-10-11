@@ -432,6 +432,132 @@ void World::applyCellState(int c)
 		logf("save: %s: %d saved entries no longer match the data", lc.file.c_str(), skipped);
 }
 
+// A save file: 'MWZ1', the JSON's length, then the JSON zlib-compressed (a save is mostly repetitive JSON, about a
+// tenth of the size). Printed and compressed a piece at a time straight to the file: the whole text and its packed
+// copy were two blocks of 150 KB and more on the main thread at every door, which an Old 3DS's heap late in a session
+// didn't have (and a `new` that fails there stops the game). zlib gets a small window for the same reason.
+namespace
+{
+struct SaveSink
+{
+	FILE* f = nullptr;
+	z_stream z = {};
+	uLong raw = 0;
+	bool ok = true;
+	static u8 out[16 * 1024];
+
+	void drain(int mode)
+	{
+		int rc;
+		do
+		{
+			z.next_out = out;
+			z.avail_out = sizeof(out);
+			rc = deflate(&z, mode);
+			size_t have = sizeof(out) - z.avail_out;
+			if (rc == Z_STREAM_ERROR || (have && fwrite(out, 1, have, f) != have))
+				ok = false;
+		} while (ok && (mode == Z_FINISH ? rc == Z_OK : z.avail_in || !z.avail_out));
+		if (mode == Z_FINISH && rc != Z_STREAM_END)
+			ok = false;
+	}
+	void put(const char* s, size_t n)
+	{
+		if (!ok || !n)
+			return;
+		raw += n;
+		z.next_in = (Bytef*)s;
+		z.avail_in = n;
+		drain(Z_NO_FLUSH);
+	}
+	void put(const char* s) { put(s, strlen(s)); }
+};
+u8 SaveSink::out[16 * 1024];
+
+// A key, escaped as cJSON escapes strings
+void putKey(SaveSink& s, const char* k)
+{
+	s.put("\"", 1);
+	for (const char* c = k; *c; c++)
+	{
+		char e[8] = {};
+		switch (*c)
+		{
+		case '"': strcpy(e, "\\\""); break;
+		case '\\': strcpy(e, "\\\\"); break;
+		case '\b': strcpy(e, "\\b"); break;
+		case '\f': strcpy(e, "\\f"); break;
+		case '\n': strcpy(e, "\\n"); break;
+		case '\r': strcpy(e, "\\r"); break;
+		case '\t': strcpy(e, "\\t"); break;
+		default:
+			if ((unsigned char)*c < 32)
+				snprintf(e, sizeof(e), "\\u%04x", (unsigned)(unsigned char)*c);
+			else
+				e[0] = *c;
+		}
+		s.put(e);
+	}
+	s.put("\"", 1);
+}
+
+// The top levels (the save, its sections, their entries) are walked here; below that each value is printed whole
+void putNode(SaveSink& s, const cJSON* n, int depth)
+{
+	bool obj = cJSON_IsObject(n);
+	if (depth >= 3 || !(obj || cJSON_IsArray(n)))
+	{
+		char* t = cJSON_PrintUnformatted(n);
+		if (!t)
+		{
+			s.ok = false;
+			return;
+		}
+		s.put(t);
+		free(t);
+		return;
+	}
+	s.put(obj ? "{" : "[", 1);
+	for (const cJSON* c = n->child; c && s.ok; c = c->next)
+	{
+		if (c != n->child)
+			s.put(",", 1);
+		if (obj)
+		{
+			putKey(s, c->string ? c->string : "");
+			s.put(":", 1);
+		}
+		putNode(s, c, depth + 1);
+	}
+	s.put(obj ? "}" : "]", 1);
+}
+}
+
+static bool writeSaveFile(const cJSON* root, const char* path)
+{
+	SaveSink s;
+	s.f = fopen(path, "wb");
+	if (!s.f)
+		return false;
+	u32 head[2];
+	memcpy(head, "MWZ1", 4);
+	head[1] = 0;                       // (the length, once known)
+	s.ok = fwrite(head, 4, 2, s.f) == 2 && deflateInit2(&s.z, 6, Z_DEFLATED, 12, 5, Z_DEFAULT_STRATEGY) == Z_OK;
+	if (s.ok)
+	{
+		putNode(s, root, 0);
+		if (s.ok)
+			s.drain(Z_FINISH);
+		deflateEnd(&s.z);
+	}
+	head[1] = (u32)s.raw;
+	if (s.ok)
+		s.ok = fseek(s.f, 4, SEEK_SET) == 0 && fwrite(&head[1], 4, 1, s.f) == 1;
+	if (fclose(s.f) != 0)
+		s.ok = false;
+	return s.ok;
+}
+
 bool World::saveGame(const char* path) const
 {
 	cJSON* root = cJSON_CreateObject();
@@ -740,24 +866,10 @@ bool World::saveGame(const char* path) const
 	for (auto& d : deadCounts)
 		cJSON_AddNumberToObject(dc, d.first.c_str(), d.second);
 
-	char* text = cJSON_PrintUnformatted(root);
-	cJSON_Delete(root);
 	// Write to a temporary file first so a failed write never destroys the previous save
 	std::string tmp = std::string(path) + ".tmp";
-	// Compressed: a save is mostly repetitive JSON (about a tenth of the size)
-	uLong rawLen = strlen(text);
-	uLongf packedLen = compressBound(rawLen);
-	std::vector<u8> packed(8 + packedLen);
-	bool ok = compress2(packed.data() + 8, &packedLen, (const Bytef*)text, rawLen, 6) == Z_OK;
-	free(text);
-	memcpy(packed.data(), "MWZ1", 4);
-	u32 raw32 = rawLen;
-	memcpy(packed.data() + 4, &raw32, 4);
-	MarkScope mark("save write");
-	FILE* f = ok ? fopen(tmp.c_str(), "wb") : nullptr;
-	ok = f && fwrite(packed.data(), 1, 8 + packedLen, f) == 8 + packedLen;
-	if (f)
-		fclose(f);
+	bool ok = writeSaveFile(root, tmp.c_str());
+	cJSON_Delete(root);
 	if (ok)
 	{
 		remove(path);

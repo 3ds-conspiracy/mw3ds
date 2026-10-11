@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdlib>
 
 // The C++ heap, watched and kept from crashing (the Old 3DS has ~40 MB of it):
 // - the biggest single block that can still be had (a heap with room in total but only in small holes is
@@ -15,3 +16,45 @@ void memoryReserveTake();           // sets the reserve aside (again), if the he
 bool memoryReserveSpend();          // out of memory: frees the reserve; false if it was already spent
 bool memoryReserveHeld();
 extern volatile bool g_memoryLow;   // the reserve was spent: give memory back
+
+// A big vector resize that can FAIL instead of waiting forever. On the streaming thread, `new` that
+// runs out sleeps and retries (log.cpp outOfMemory): a cell load wanting one block the fragmented
+// heap cannot give never returned — the long-route freeze. Probing with malloc keeps the failure
+// visible; the caller returns false and the cell waits for room. (Another thread can still take the
+// probed room before the resize lands — rare; that resize then retries under outOfMemory as before.)
+// A failed probe also sets g_heapProbeFailed, so a reader that treats "false" as truncated data (the cell's collision) can tell
+// a memory failure, which fails the load, from a short file. The loader clears it before each cell
+extern volatile bool g_heapProbeFailed;
+template <class V> bool tryResize(V& v, size_t n)
+{
+	if (n <= v.capacity())
+	{
+		v.resize(n);
+		return true;
+	}
+	void* probe = malloc(n * sizeof(typename V::value_type) + 64);
+	if (!probe)
+	{
+		g_heapProbeFailed = true;
+		return false;
+	}
+	free(probe);
+	v.resize(n);
+	return true;
+}
+
+// The same for a reserve (room for n, size unchanged)
+template <class V> bool tryReserve(V& v, size_t n)
+{
+	if (n <= v.capacity())
+		return true;
+	void* probe = malloc(n * sizeof(typename V::value_type) + 64);
+	if (!probe)
+	{
+		g_heapProbeFailed = true;
+		return false;
+	}
+	free(probe);
+	v.reserve(n);
+	return true;
+}

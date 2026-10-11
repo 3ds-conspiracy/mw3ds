@@ -8,8 +8,10 @@
 
 namespace
 {
-// Texts are copied into blocks of this size (a longer one gets a block of its own)
-const size_t kBlock = 64 * 1024;
+// Texts are copied into blocks of this size (a longer one gets a block of its own). Big blocks on
+// purpose: each is pinned for the run, and a new one is born exactly while a new area's cells parse —
+// the fewer and larger they are, the fewer cuts they leave in the Old 3DS heap's free space
+const size_t kBlock = 256 * 1024;
 
 LightLock s_lock = 1;             // unlocked (LightLock_Init sets 1)
 std::unordered_set<std::string_view>* s_set = nullptr;
@@ -78,4 +80,21 @@ Atom Atom::stored(const std::string& s)
 size_t Atom::poolBytes()
 {
 	return s_bytes;
+}
+
+void Atom::prefill()
+{
+	// Called at quiet moments (the eviction timer): the next block is taken while the heap is tidy,
+	// not in the middle of a cell parse where it would land between transients and pin the hole
+	LightLock_Lock(&s_lock);
+	if (s_left < 8 * 1024)
+	{
+		char* block = (char*)malloc(kBlock);
+		if (block)
+		{
+			s_block = block;
+			s_left = kBlock;
+		}
+	}
+	LightLock_Unlock(&s_lock);
 }

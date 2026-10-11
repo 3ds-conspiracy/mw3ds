@@ -24,7 +24,7 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 {
 	savePath = savePathIn;
 	loadSettings();
-	w.memoryLowHook = [this]() { relieveMemory(); };
+	w.memoryLowHook = [this](bool force) { relieveMemory(force); };
 	audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
 	rendererLoadCaustics(dataDir);
 	std::string savedCell = savePath && startCell.empty() ? World::savedCell(savePath) : "";
@@ -595,6 +595,8 @@ void Session::finishTravel()
 {
 	int dest = travelCell;
 	travelCell = -1;
+	if (g_old3ds)
+		cleanForLoad();
 	w.player.inertia[0] = w.player.inertia[1] = 0.0f;     // (a jump's take-off doesn't come along: doors, travel)
 	// Voices of the cell we leave stop with it
 	for (auto& r : w.refs)
@@ -639,6 +641,8 @@ void Session::finishTravel()
 		notify("Could not load " + w.cells[dest].name + " (out of memory?). See log.txt.");
 		return;
 	}
+	if (g_old3ds && !w.streamJob)
+		trimSkeletons();                 // (the place left: its people's skeletons)
 	if (travelToSpawn)
 	{
 		travelToSpawn = false;
@@ -785,18 +789,59 @@ int Session::refBudget() const
 	return budget;
 }
 
-void Session::relieveMemory()
+// The skeletons no loaded actor uses go (read again when met). Returns the KB freed
+int Session::trimSkeletons()
+{
+	std::vector<int> keep;
+	for (LoadedCell* l : w.loaded)
+		for (const Actor& a : l->actors.actors)
+			keep.push_back(a.skeleton);
+	for (const Actor& a : body.set.actors)
+		keep.push_back(a.skeleton);
+	if (body.skel >= 0)
+		keep.push_back(body.skel);
+	int kb = skeletonsTrim(keep);
+	if (kb > 0)
+		logf("memory: %d KB of animation skeletons let go, heap used %d KB", kb, mallinfo().uordblks / 1024);
+	return kb;
+}
+
+void Session::cleanForLoad()
+{
+	int before = mallinfo().uordblks / 1024;
+	w.waitForStream();                 // (no cell streaming: its actors may be reading a skeleton)
+	evictFarCells(0);
+	freeMapTiles();
+	audioCacheClear();
+	trimSkeletons();
+	Atom::prefill();
+	logf("memory: cleaned for the load: heap used %d KB (was %d KB), biggest free block %u KB", mallinfo().uordblks / 1024, before,
+		(unsigned)(heapLargestBlock() / 1024));
+}
+
+void Session::relieveMemory(bool force)
 {
 	// (at most a few times a second: while nothing more can go, every frame would scan the cells again)
 	static u64 last = 0;
 	u64 now = osGetTime();
-	if (now - last < 250)
+	if (!force && now - last < 250)
 		return;
 	last = now;
 	int before = mallinfo().uordblks / 1024;
 	evictFarCells(0);
 	freeMapTiles();
 	memoryReserveTake();
+	// Still spent: the first round freed nothing contiguous (far cells were already gone). Escalate, or
+	// the streaming thread retries its allocation forever against the same holes — the step-631 freeze:
+	// unused skeletons first, then a loaded neighbour's geometry (its collision arrays are the large
+	// single blocks the loader wants; the cell streams back in once there is room)
+	if (!memoryReserveHeld())
+	{
+		trimSkeletons();
+		memoryReserveTake();
+		if (!memoryReserveHeld() && w.dropFarthestLiveNeighbour())
+			memoryReserveTake();
+	}
 	int after = mallinfo().uordblks / 1024;
 	static int lastLogged = -1;
 	if (after != lastLogged || memoryReserveHeld())
@@ -864,19 +909,10 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		evictFarCells();
 		// An Old 3DS lets go of the animation skeletons no loaded actor uses (they are read again when met)
 		if (g_old3ds && !w.streamJob)
-		{
-			std::vector<int> keep;
-			for (LoadedCell* l : w.loaded)
-				for (const Actor& a : l->actors.actors)
-					keep.push_back(a.skeleton);
-			for (const Actor& a : body.set.actors)
-				keep.push_back(a.skeleton);
-			if (body.skel >= 0)
-				keep.push_back(body.skel);
-			int kb = skeletonsTrim(keep);
-			if (kb > 0)
-				logf("memory: %d KB of animation skeletons let go, heap used %d KB", kb, mallinfo().uordblks / 1024);
-		}
+			trimSkeletons();
+		// ... and the string pool takes its next block now, while the heap is tidy, not mid-parse
+		if (g_old3ds)
+			Atom::prefill();
 		// Corprus: note when it was caught; a day later it is worse (the numbers follow)
 		bool corprus = w.pcHasCorprus();
 		if (corprus && w.corprusSince < 0.0f)
@@ -2541,7 +2577,8 @@ void Session::monitorCellChanged()
 		w.cellName().c_str(), m.back(), (int)m.size(), (unsigned long)(w.textures.bytes / 1024), (unsigned long)(geometry / 1024),
 		(unsigned long)(actorBytes / 1024), (unsigned long)(distantBytes() / 1024), (unsigned long)(audioCacheBytes() / 1024));
 	size_t n = m.size();
-	if (n >= 4 && m[n - 1] + 64 < m[n - 2] && m[n - 2] + 64 < m[n - 3] && m[n - 3] + 64 < m[n - 4])
+	// (from the fifth visit on: the first entry always has the most free, the caches that fill after it not yet there)
+	if (n >= 5 && m[n - 1] + 64 < m[n - 2] && m[n - 2] + 64 < m[n - 3] && m[n - 3] + 64 < m[n - 4])
 		monitorOnce(("mem:" + w.cellName()).c_str(), "linear memory falls on each visit to %s: %lu, %lu, %lu, %lu KB free at entry",
 			w.cellName().c_str(), m[n - 4], m[n - 3], m[n - 2], m[n - 1]);
 	if (n > 12)

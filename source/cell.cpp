@@ -8,6 +8,7 @@
 
 #include "linear.h"
 #include "log.h"
+#include "memstat.h"
 #include "zfile.h"
 
 struct __attribute__((packed)) CellHeader
@@ -61,7 +62,9 @@ static bool readBatches(FILE* f, std::vector<CellBatch>& out, Cell& cell, u32 ve
 	u32 count = 0;
 	if (fread(&count, 4, 1, f) != 1)
 		return false;
-	out.reserve(out.size() + count);
+	// (a big interior's are one 160 KB block: if the heap has none, the load fails and waits, rather than `new` stopping the game)
+	if (!tryReserve(out, out.size() + count))
+		return false;
 	for (u32 i = 0; i < count; i++)
 	{
 		BatchHeader bh;
@@ -298,11 +301,24 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 	if (ok && h.version >= 2)
 	{
 		if (!collisionRead(cell.collision, f, h.version))
-			logf("cell: collision data truncated");
+		{
+			// No block of heap for it: the cell fails (a cell without its collision would let the player fall through the
+			// floor) and waits for room; a short file is only logged, as ever
+			if (g_heapProbeFailed)
+			{
+				logf("cell: %s: no free block of heap for its collision, it waits for room", cellFile);
+				ok = false;
+			}
+			else
+				logf("cell: collision data truncated");
+		}
 		u32 numActors = 0;
-		fread(&numActors, 4, 1, f);
-		cell.actors.resize(numActors);
-		fread(cell.actors.data(), sizeof(CellActor), numActors, f);
+		if (ok)
+		{
+			fread(&numActors, 4, 1, f);
+			cell.actors.resize(numActors);
+			fread(cell.actors.data(), sizeof(CellActor), numActors, f);
+		}
 	}
 	if (ok && h.version >= 3)
 	{

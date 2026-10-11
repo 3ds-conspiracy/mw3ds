@@ -130,7 +130,9 @@ static void initActorState(const GameData& g, Ref& ref)
 // data, so the streaming thread can do it; appendRefs (main thread) makes them part of the world.
 struct ParsedRefs
 {
-	std::vector<Ref> refs;
+	// (a deque, as World::refs: a Ref is 832 bytes, and a vector of a town's references doubling as it grew wanted one
+	// free block of 400 KB on the streaming thread, more than an Old 3DS's cut-up heap had late in a long session)
+	std::deque<Ref> refs;
 	std::vector<PathPoint> points;
 	std::vector<std::pair<int, int>> edges;
 };
@@ -245,20 +247,54 @@ static bool parseRefs(const World& w, int cellIndex, ParsedRefs& out)
 	return true;
 }
 
-// A run of n free slots from the ranges evicted cells left, or -1
+// A run of n free slots from the ranges evicted cells left, or -1: the smallest run that fits (the lowest of equals),
+// so long runs stay whole for whole cells and the end of the list stays free to give back
 static int takeSlots(std::vector<std::pair<int, int>>& free, int n)
 {
+	int best = -1;
 	for (size_t k = 0; k < free.size(); k++)
-		if (free[k].second >= n)
-		{
-			int first = free[k].first;
-			free[k].first += n;
-			free[k].second -= n;
-			if (free[k].second == 0)
-				free.erase(free.begin() + k);
-			return first;
-		}
-	return -1;
+		if (free[k].second >= n && (best < 0 || free[k].second < free[best].second))
+			best = (int)k;
+	if (best < 0)
+		return -1;
+	int first = free[best].first;
+	free[best].first += n;
+	free[best].second -= n;
+	if (free[best].second == 0)
+		free.erase(free.begin() + best);
+	return first;
+}
+
+// Slots given back: kept in order and joined to the runs next to them. Without the joining, the runs only ever split
+// (a spawned creature takes one slot out of a cell's run), a cell read again rarely found one long enough, and
+// World::refs grew for good: 44,000 slots of 832 bytes for 6,000 objects over the main quest, an Old 3DS's heap
+static void freeSlots(std::vector<std::pair<int, int>>& free, int first, int n)
+{
+	if (n <= 0)
+		return;
+	auto it = std::lower_bound(free.begin(), free.end(), std::make_pair(first, 0));
+	it = free.insert(it, { first, n });
+	if (it + 1 != free.end() && it->first + it->second == (it + 1)->first)
+	{
+		it->second += (it + 1)->second;
+		free.erase(it + 1);
+	}
+	if (it != free.begin() && (it - 1)->first + (it - 1)->second == it->first)
+	{
+		(it - 1)->second += it->second;
+		free.erase(it);
+	}
+}
+
+// Reference slots given back; a free run at the end of the list goes from it (its memory back to the heap)
+static void freeRefSlots(World& w, int first, int n)
+{
+	freeSlots(w.freeRefs, first, n);
+	if (!w.freeRefs.empty() && w.freeRefs.back().first + w.freeRefs.back().second == (int)w.refs.size())
+	{
+		w.refs.resize(w.freeRefs.back().first);
+		w.freeRefs.pop_back();
+	}
 }
 
 // Adds a cell's parsed references to the world (in slots other cells left, where they fit), starts
@@ -485,16 +521,7 @@ int World::spawnActor(const std::string& id, const float pos[3], float yaw, int 
 	r.fitBox();
 	fillContents(game, r, stats.level, (unsigned)rand());
 	initActorState(game, r);
-	int slot = -1;
-	for (size_t k = 0; k < freeRefs.size(); k++)
-		if (freeRefs[k].second >= 1)
-		{
-			slot = freeRefs[k].first;
-			freeRefs[k].first++;
-			if (--freeRefs[k].second == 0)
-				freeRefs.erase(freeRefs.begin() + k);
-			break;
-		}
+	int slot = takeSlots(freeRefs, 1);
 	if (slot < 0)
 	{
 		slot = refs.size();
@@ -557,7 +584,7 @@ void World::despawn(int ri)
 			s.target = -1;
 	refs[ri] = Ref();
 	refs[ri].cell = -1;
-	freeRefs.push_back({ ri, 1 });
+	freeRefSlots(*this, ri, 1);
 	rebuildScriptIndex();
 	rebuildLoadedLists();
 }
@@ -678,16 +705,7 @@ int World::dropItem(const InventoryItem& it, const float pos[3], float yaw, int 
 	memcpy(r.start, pos, sizeof(r.pos));
 	memcpy(r.boxStart, r.boxMin, sizeof(r.boxMin));
 	memcpy(r.boxStart + 3, r.boxMax, sizeof(r.boxMax));
-	int slot = -1;
-	for (size_t k = 0; k < freeRefs.size(); k++)
-		if (freeRefs[k].second >= 1)
-		{
-			slot = freeRefs[k].first;
-			freeRefs[k].first++;
-			if (--freeRefs[k].second == 0)
-				freeRefs.erase(freeRefs.begin() + k);
-			break;
-		}
+	int slot = takeSlots(freeRefs, 1);
 	if (slot < 0)
 	{
 		slot = refs.size();
@@ -1416,15 +1434,17 @@ void World::evictCell(int c)
 			}
 		refs[i] = Ref();
 		refs[i].cell = -1;
-		freeRefs.push_back({ i, 1 });
+		freeRefSlots(*this, i, 1);
 		spawned.erase(spawned.begin() + k);
 	}
 	int first = lc.refBase, last = lc.refBase + lc.refCount;
-	// Their scripts stop (the locals went into the state); carried items' scripts carry on alone
-	std::vector<ScriptInstance> kept;
-	kept.reserve(scripts.size());
-	for (auto& s : scripts)
+	// Their scripts stop (the locals went into the state); carried items' scripts carry on alone.
+	// Compacted in place: a fresh full-size vector per eviction moved the whole block across the heap
+	// every few seconds, leaving a same-sized hole behind each move (fragmentation the Old 3DS can't afford)
+	size_t keep = 0;
+	for (size_t si = 0; si < scripts.size(); si++)
 	{
+		ScriptInstance& s = scripts[si];
 		// a global script started on one of them (ref->StartScript) keeps it by cell file + index: the slot is freed
 		// and reused by other cells, so the number alone would point at another object or at nothing
 		if (s.target >= first && s.target < last)
@@ -1439,16 +1459,17 @@ void World::evictCell(int c)
 				continue;
 			s.ref = -1;
 		}
-		kept.push_back(std::move(s));
+		if (keep != si)
+			scripts[keep] = std::move(s);
+		keep++;
 	}
-	scripts = std::move(kept);
+	scripts.resize(keep);
 	for (int i = first; i < last; i++)
 	{
 		refs[i] = Ref();
 		refs[i].cell = -1;
 	}
-	if (lc.refCount)
-		freeRefs.push_back({ first, lc.refCount });
+	freeRefSlots(*this, first, lc.refCount);
 	for (int i = lc.pathBase; i < lc.pathBase + lc.pathCount; i++)
 	{
 		// the neighbours' links into these points go too (the slots get reused)
@@ -1463,7 +1484,7 @@ void World::evictCell(int c)
 		pathPoints[i].cell = -1;
 	}
 	if (lc.pathCount)
-		freePaths.push_back({ lc.pathBase, lc.pathCount });
+		freeSlots(freePaths, lc.pathBase, lc.pathCount);
 	logf("world: %s objects out of memory (%d, %s)", lc.file.c_str(), lc.refCount,
 		state.empty() ? "unchanged" : "changes kept");
 	lc.refsLoaded = false;
@@ -1474,6 +1495,7 @@ void World::evictCell(int c)
 int World::evictCells(int budget, const std::function<bool(int)>& inUse)
 {
 	int total = refsInMemory(), evicted = 0;
+	u64 now = osGetTime();
 	while (total > budget)
 	{
 		int best = -1;
@@ -1481,6 +1503,11 @@ int World::evictCells(int budget, const std::function<bool(int)>& inUse)
 		{
 			const LevelCell& lc = cells[c];
 			if (!lc.refsLoaded || lc.live || (int)c == current || (best >= 0 && lc.lastUsed >= cells[best].lastUsed))
+				continue;
+			// ... nor one a script asked for in the last seconds: it would be read straight back. On an Old 3DS
+			// out of heap, a quest script's remote ref read Caius Cosades's house back every few frames as fast
+			// as it went (heap churn on the edge of running out)
+			if (now - lc.askedAt < 10000)
 				continue;
 			bool busy = false;
 			for (int i = lc.refBase; i < lc.refBase + lc.refCount && !busy; i++)
@@ -1530,6 +1557,8 @@ void World::postChargenRef(Ref& r)
 
 bool World::ensureRefs(int cellIndex)
 {
+	if (cellIndex >= 0)
+		cells[cellIndex].askedAt = osGetTime();
 	if (cellIndex < 0 || cells[cellIndex].refsLoaded)
 		return cellIndex >= 0;
 	ParsedRefs p;
@@ -1777,12 +1806,23 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 // linear heap and texture cache)
 static bool readLevelCell(const char* dataDir, const std::string& file, TextureCache& cache, LoadedCell* l)
 {
+	g_heapProbeFailed = false;
 	if (!cellLoad(l->cell, dataDir, (file + ".cel").c_str(), cache))
 	{
 		cellFree(l->cell, cache);
 		return false;
 	}
-	actorsLoad(l->actors, cellPath(dataDir, file, ".act").c_str(), dataDir, l->cell.textureNames);
+	// A missing .act (actors.empty()) still loads the cell, as ever. A read that broke off midway
+	// (linear or heap memory short: readMesh / tryResize said no) frees the partials and fails the
+	// cell cleanly — it waits and is streamed again when there is room. Partial actor sets used to be
+	// kept, and a failed cell's textures and meshes used to leak with the job
+	if (!actorsLoad(l->actors, cellPath(dataDir, file, ".act").c_str(), dataDir, l->cell.textureNames)
+		&& !(l->actors.actors.empty() && l->actors.skeletons.empty()))
+	{
+		actorsFree(l->actors);
+		cellFree(l->cell, cache);
+		return false;
+	}
 	if (threadGetCurrent())
 		g_workerAt = "readLevelCell: actors read";
 	return true;
@@ -1852,7 +1892,7 @@ static void finishStreamJob(World& w, bool wait)
 	// Session::relieveMemory, instead of the two waiting on each other for good)
 	while (threadJoin(j->thread, 100000000ULL) != 0)          // (a timeout is not an R_FAILED result)
 		if (g_memoryLow && w.memoryLowHook)
-			w.memoryLowHook();
+			w.memoryLowHook(false);
 	MARK("finishStreamJob: integrate");
 	threadFree(j->thread);
 	w.streamJob = nullptr;
@@ -1876,7 +1916,10 @@ static void finishStreamJob(World& w, bool wait)
 			cellFree(j->cell->cell, w.textures);
 		}
 		else
+		{
 			logf("world: failed to load %s", j->file.c_str());
+			w.streamRetryAt = osGetTime() + 1500;       // (not the same read again every frame: it failed on memory)
+		}
 		delete j->cell;
 	}
 	delete j;
@@ -1925,8 +1968,10 @@ static void unloadLevelCell(World& w, int index)
 	// The index buffers holding hidden references go away with the geometry
 	for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
 	{
-		w.refs[i].savedIndices.clear();
-		w.refs[i].savedCol.clear();          // the collision goes too; hidden again when it loads
+		// Capacity given back, not kept: a resident ref's empty-but-allocated buffer is a small pinned
+		// block, and thousands of them cut the Old 3DS heap into holes no cell file fits
+		w.refs[i].savedIndices = std::vector<u16>();
+		w.refs[i].savedCol = std::vector<u32>();     // the collision goes too; hidden again when it loads
 		if (w.refs[i].at >= 0)
 			continue;                        // standing in another cell: drawn there
 		w.refs[i].anim = w.refs[i].cellActor = -1;
@@ -1950,6 +1995,36 @@ static void unloadLevelCell(World& w, int index)
 	lc.live = nullptr;
 	lc.freedAt = w.time;
 	w.rebuildLoadedLists();
+}
+
+void World::waitForStream()
+{
+	finishStreamJob(*this, true);
+}
+
+bool World::dropFarthestLiveNeighbour()
+{
+	if (current < 0 || cells[current].interior)
+		return false;
+	int gx = cells[current].gx, gy = cells[current].gy;
+	int best = -1, bestDist = 0;
+	for (LoadedCell* l : loaded)
+	{
+		if (l->index == current)
+			continue;
+		const LevelCell& lc = cells[l->index];
+		int d = abs(lc.gx - gx) + abs(lc.gy - gy);
+		if (d > bestDist)
+		{
+			bestDist = d;
+			best = l->index;
+		}
+	}
+	if (best < 0)
+		return false;
+	logf("memory: unloading %s for its memory (it streams back when there is room)", cells[best].name.c_str());
+	unloadLevelCell(*this, best);
+	return true;
 }
 
 void World::freeAll()
@@ -2072,8 +2147,17 @@ void World::streamExterior(bool all)
 			finishStreamJob(*this, true);
 			if (freed && !cells[ci].live)
 				linearReclaim();              // (the cells freed above: their memory, before this one is read)
-			if (!cells[ci].live && !loadLevelCell(*this, ci))
-				logf("world: failed to load %s", cells[ci].file.c_str());
+			for (int tries = 0; !cells[ci].live && !loadLevelCell(*this, ci); tries++)
+			{
+				// No free block of heap for it: memory given back (far cells, skeletons, a neighbour's geometry), then again
+				if (!g_heapProbeFailed || tries >= 3 || !memoryLowHook)
+				{
+					logf("world: failed to load %s", cells[ci].file.c_str());
+					break;
+				}
+				logf("world: %s waits for heap: giving memory back (try %d)", cells[ci].file.c_str(), tries + 1);
+				memoryLowHook(true);
+			}
 			continue;
 		}
 		// (not in the update that freed cells: their memory comes back after the next frame begins)
@@ -2084,7 +2168,9 @@ void World::streamExterior(bool all)
 		// and object lists are single blocks of several hundred KB). Probed twice a second at most
 		static u64 probedAt = 0;
 		static bool probedRoom = true;
-		if (g_old3ds && osGetTime() - probedAt > 500)
+		// (only between jobs: the probe holds the biggest free block for a moment, and the streaming
+		// thread allocating right then failed for nothing — no job starts while one runs anyway)
+		if (g_old3ds && !streamJob && osGetTime() - probedAt > 500)
 		{
 			probedAt = osGetTime();
 			probedRoom = (size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= 1536u * 1024u;
@@ -2098,7 +2184,7 @@ void World::streamExterior(bool all)
 		}
 		if (room)
 			noRoomNoted = false;
-		if (!streamJob && !freed && room)
+		if (!streamJob && !freed && room && osGetTime() >= streamRetryAt)
 			startStreamJob(*this, ci);
 		break;
 	}

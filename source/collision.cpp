@@ -3,13 +3,16 @@
 
 #include <cmath>
 
+#include "memstat.h"
 #include "planes.h"
 
 // Reads n indices stored as u16 (width 2) or u32 (width 4), padded to 4 bytes; planes of
-// differences in format 7
+// differences in format 7. These arrays are a cell's single biggest heap blocks: tryResize, so a
+// fragmented heap fails the load cleanly (the cell waits) instead of retrying the allocation forever
 static bool readIndices(FILE* f, std::vector<u32>& out, u32 n, u32 width, bool planar)
 {
-	out.resize(n);
+	if (!tryResize(out, n))
+		return false;
 	if (width == 4)
 	{
 		bool ok = fread(out.data(), 4, n, f) == n;
@@ -17,7 +20,9 @@ static bool readIndices(FILE* f, std::vector<u32>& out, u32 n, u32 width, bool p
 			unpackInts((u8*)out.data(), n, 4);
 		return ok;
 	}
-	std::vector<u16> tmp(n);
+	std::vector<u16> tmp;
+	if (!tryResize(tmp, n))
+		return false;
 	bool ok = fread(tmp.data(), 2, n, f) == n;
 	if (planar)
 		unpackInts((u8*)tmp.data(), n, 2);
@@ -34,14 +39,17 @@ bool collisionRead(CollisionMesh& m, FILE* f, u32 version)
 	u32 numVerts = 0, numTris = 0;
 	if (fread(&numVerts, 4, 1, f) != 1)
 		return false;
-	m.verts.resize(numVerts * 3);
+	if (!tryResize(m.verts, numVerts * 3))
+		return false;
 	if (packed)
 	{
 		// Cell format 6: welded vertices as s16 on one grid (offset + value * scale), narrow indices
 		float offset[3], scale[3];
 		fread(offset, 4, 3, f);
 		fread(scale, 4, 3, f);
-		std::vector<s16> q(numVerts * 3);
+		std::vector<s16> q;
+		if (!tryResize(q, numVerts * 3))
+			return false;
 		fread(q.data(), 2, q.size(), f);
 		if (q.size() & 1)
 			fseek(f, 2, SEEK_CUR);
@@ -64,7 +72,8 @@ bool collisionRead(CollisionMesh& m, FILE* f, u32 version)
 		m.cellSize = grid[2];
 		fread(&m.nx, 4, 1, f);
 		fread(&m.ny, 4, 1, f);
-		m.cellStart.resize(m.nx * m.ny + 1);
+		if (!tryResize(m.cellStart, m.nx * m.ny + 1))
+			return false;
 		fread(m.cellStart.data(), 4, m.cellStart.size(), f);
 		if (planar)
 			unpackInts((u8*)m.cellStart.data(), m.cellStart.size(), 4);
@@ -72,7 +81,8 @@ bool collisionRead(CollisionMesh& m, FILE* f, u32 version)
 	}
 	fread(m.verts.data(), 4, numVerts * 3, f);
 	fread(&numTris, 4, 1, f);
-	m.tris.resize(numTris * 3);
+	if (!tryResize(m.tris, numTris * 3))
+		return false;
 	fread(m.tris.data(), 4, numTris * 3, f);
 	float grid[3];
 	fread(grid, 4, 3, f);
@@ -81,9 +91,11 @@ bool collisionRead(CollisionMesh& m, FILE* f, u32 version)
 	m.cellSize = grid[2];
 	fread(&m.nx, 4, 1, f);
 	fread(&m.ny, 4, 1, f);
-	m.cellStart.resize(m.nx * m.ny + 1);
+	if (!tryResize(m.cellStart, m.nx * m.ny + 1))
+		return false;
 	fread(m.cellStart.data(), 4, m.cellStart.size(), f);
-	m.cellTris.resize(m.cellStart.back());
+	if (!tryResize(m.cellTris, m.cellStart.back()))
+		return false;
 	return fread(m.cellTris.data(), 4, m.cellTris.size(), f) == m.cellTris.size();
 }
 

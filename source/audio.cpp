@@ -232,11 +232,21 @@ static CachedSound* load(const std::string& file)
 	}
 	if (adpcm)
 	{
-		std::vector<u8> packed((h.samples + 1) / 2);
-		fread(packed.data(), 1, packed.size(), f);
+		// In pieces through a buffer on the stack: the whole packed sound in one block (150 KB for a long one) was
+		// one of the main thread's biggest heap requests, and an Old 3DS late in a session had no such block left
+		u8 packed[2048];
 		AdpcmState st;
-		const u8* in = packed.data();
-		adpcmDecode(st, in, s.data, h.samples);
+		for (u32 done = 0; done < h.samples;)
+		{
+			u32 n = h.samples - done < 2 * sizeof(packed) ? h.samples - done : 2 * sizeof(packed);
+			size_t bytes = (n + 1) / 2;
+			size_t got = fread(packed, 1, bytes, f);
+			if (got < bytes)
+				memset(packed + got, 0, bytes - got);
+			const u8* in = packed;
+			adpcmDecode(st, in, s.data + done, n);
+			done += n;
+		}
 	}
 	else
 		fread(s.data, 2, h.samples, f);

@@ -15,6 +15,8 @@
 #include <unistd.h>
 
 static FILE* s_log;
+static volatile size_t s_failedSize = 0;        // the last `new` that found no room (operator new below)
+static void* volatile s_failedSite = nullptr;
 
 const char* volatile g_mainAt = "start";
 const char* volatile g_workerAt = "idle";
@@ -65,12 +67,20 @@ static void watchdogThread(void*)
 
 static void crashNote(const char* what, u32 pc, u32 lr, u32 far)
 {
+	char line[256];
+	snprintf(line, sizeof(line), "%s: pc %08lx lr %08lx address %08lx, main at %s, streaming at %s, %s thread", what,
+		(unsigned long)pc, (unsigned long)lr, (unsigned long)far, g_mainAt, g_workerAt, threadGetCurrent() ? "streaming" : "main");
 	if (FILE* f = fopen("sdmc:/3ds/mw3ds/crash.txt", "a"))
 	{
-		fprintf(f, "[%8llu] %s: pc %08lx lr %08lx address %08lx, main at %s, streaming at %s, %s thread\n",
-			osGetTime() % 100000000ULL, what, (unsigned long)pc, (unsigned long)lr, (unsigned long)far, g_mainAt,
-			g_workerAt, threadGetCurrent() ? "streaming" : "main");
+		fprintf(f, "[%8llu] %s\n", osGetTime() % 100000000ULL, line);
 		fclose(f);
+	}
+	// ... and in the log, already open: with the heap gone, fopen (which allocates) can't open crash.txt, and an
+	// Old 3DS run that froze out of memory left no word of it anywhere
+	if (s_log)
+	{
+		fprintf(s_log, "[%8llu] crash: %s\n", osGetTime() % 100000000ULL, line);
+		fflush(s_log);
 	}
 }
 
@@ -88,17 +98,93 @@ static void outOfMemory()
 {
 	// The reserve first: `new` tries again with it free, and the main loop gives memory back (g_memoryLow)
 	if (memoryReserveSpend())
+	{
+		if (s_log)
+		{
+			fprintf(s_log, "[%8llu] memory: out of heap, the reserve spent: a new of %u bytes from %08lx (%s thread, main at %s)\n",
+				osGetTime() % 100000000ULL, (unsigned)s_failedSize, (unsigned long)s_failedSite,
+				threadGetCurrent() ? "streaming" : "main", g_mainAt);
+			fflush(s_log);
+		}
 		return;
+	}
 	// The streaming thread: wait a little for the main thread to give memory back (g_memoryLow), then try again
 	if (threadGetCurrent())
 	{
+		// A long wait is logged so a route that stalls here names itself (the main thread may have
+		// nothing left to give back: Session::relieveMemory escalates while this one waits)
+		static int streak = 0;
+		if (!g_memoryLow)
+			streak = 0;              // the main thread gave some back since the last failure
+		if (++streak % 250 == 0)
+			logf("memory: streaming thread still waiting for heap (%d tries, %d KB used, wants %u KB from %08lx)", streak,
+				mallinfo().uordblks / 1024, (unsigned)(s_failedSize / 1024), (unsigned long)s_failedSite);
 		g_memoryLow = true;
 		svcSleepThread(20000000LL);
 		return;
 	}
-	crashNote("out of memory (new)", 0, (u32)__builtin_return_address(0), mallinfo().uordblks);
+	// (lr: where the `new` was; address: how many bytes it wanted)
+	crashNote("out of memory (new)", 0, (u32)s_failedSite, (u32)s_failedSize);
+	g_mainAt = "out of memory";        // (the watchdog's lines say so from here on)
 	for (;;)
 		svcSleepThread(1000000000LL);
+}
+
+// Every `new` of 128 KB or more, by call site (logged when a site is new or asks for a quarter more than before), and
+// the size and site of the one that ran out: an Old 3DS's heap ends up with megabytes free in holes of a few hundred KB,
+// and these are the requests that can't find room (tools\build\addr2line.ps1 names the site)
+static const size_t kBigNew = 128 * 1024;
+
+static void noteBigNew(size_t n, void* site)
+{
+	static struct { void* site; size_t most; } s_sites[64];
+	static LightLock lock = 1;
+	static bool inside = false;
+	LightLock_Lock(&lock);
+	if (!inside)
+	{
+		inside = true;
+		int k = 0;
+		while (k < 64 && s_sites[k].site && s_sites[k].site != site)
+			k++;
+		if (k < 64 && (!s_sites[k].site || n > s_sites[k].most + s_sites[k].most / 4))
+		{
+			s_sites[k].site = site;
+			s_sites[k].most = n;
+			if (s_log)
+			{
+				fprintf(s_log, "[%8llu] memory: new of %u KB from %08lx (%s thread, main at %s, %u KB used)\n",
+					osGetTime() % 100000000ULL, (unsigned)(n / 1024), (unsigned long)site,
+					threadGetCurrent() ? "streaming" : "main", g_mainAt, (unsigned)(mallinfo().uordblks / 1024));
+				fflush(s_log);
+			}
+		}
+		inside = false;
+	}
+	LightLock_Unlock(&lock);
+}
+
+void* operator new(size_t n)
+{
+	if (n == 0)
+		n = 1;
+	for (;;)
+	{
+		if (void* p = malloc(n))
+		{
+			if (n >= kBigNew)
+				noteBigNew(n, __builtin_return_address(0));
+			return p;
+		}
+		s_failedSize = n;
+		s_failedSite = __builtin_return_address(0);
+		outOfMemory();
+	}
+}
+
+void* operator new[](size_t n)
+{
+	return operator new(n);
 }
 
 static void terminated()

@@ -281,6 +281,7 @@ struct LevelCell
 	int pathBase = 0, pathCount = 0;  // its path grid points are World::pathPoints[pathBase ..)
 	bool refsLoaded = false;          // its objects are in memory (read when needed; evictCells drops far ones)
 	u32 lastUsed = 0;                 // World::useTick when last read or loaded
+	u64 askedAt = 0;                  // osGetTime() when its objects were last read or asked for (ensureRefs)
 	float freedAt = -1e9f;            // World::time when its geometry was last freed
 	float sea = 0.0f;                 // exterior: share of its ground under open water (converter)
 	bool noSleep = false;             // resting is illegal here (waiting only, or a bed)
@@ -472,8 +473,10 @@ struct World
 	std::unordered_set<std::string> clearedInfos;
 	// Set by the session: whether an actor notices the player (dialogue "Detected"), and whether it attacks on sight
 	std::function<bool(int)> awarenessHook, shouldAttackHook;
-	// Set by the session: give heap back now (the streaming thread ran out of memory while the main thread waits for it)
-	std::function<void()> memoryLowHook;
+	// Set by the session: give heap back now (force: not rate limited, the player's own cell is waiting for it); a neighbour
+	// whose load failed on memory waits until streamRetryAt (osGetTime) to be tried again
+	std::function<void(bool)> memoryLowHook;
+	u64 streamRetryAt = 0;
 	int currentInfo = -1;         // the response being said (its result script runs), and its topic's name
 	std::string currentTopic;
 	// ClearInfoActor: that speaker's last line about the topic leaves the Topics index
@@ -522,6 +525,12 @@ struct World
 	// Moves the objects of the cells used longest ago (not loaded, nothing pointing into them: inUse)
 	// out of memory until at most `budget` remain; returns how many cells went
 	int evictCells(int budget, const std::function<bool(int)>& inUse);
+	// Out of memory with nothing else to give (Session::relieveMemory): the farthest loaded neighbour's
+	// geometry goes — its collision arrays are the large single blocks a cell load needs — and the cell
+	// streams back in when there is room. False indoors or with nothing to drop
+	bool dropFarthestLiveNeighbour();
+	// Waits for the cell streaming in the background and takes it in (before anything that can't have it running: a clean-up)
+	void waitForStream();
 	void evictCell(int cell);
 	// save.cpp: one object's save item, its hash (baseHash when unchanged), applying an item; a script
 	// instance's item; a cell's changed objects and scripts as text, and applying stored text

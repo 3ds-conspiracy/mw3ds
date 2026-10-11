@@ -1,6 +1,7 @@
 #pragma once
 
 #include "atom.h"
+#include "cardtext.h"
 #include "uitheme.h"
 
 #include <3ds/types.h>
@@ -50,7 +51,8 @@ struct SpellEffect { int effect, skill, attribute, min, max, duration, range; in
 struct Object
 {
 	std::string id;
-	Atom type, name, script, icon, text, sound, openSound, closeSound;   // (text, a book's: Atom::stored)
+	Atom type, name, script, icon, sound, openSound, closeSound;
+	CardText text;                                     // a book's (read from the card when opened)
 	int iconIx = -1;                                   // item icon (ui/icons_*.t3x), -1 = none
 	float weight = 0.0f;
 	int value = 0, subtype = -1, armor = 0, flags = 0;
@@ -97,7 +99,8 @@ struct Info
 	// cell name prefix, sex, least rank in the faction
 	Atom whoId, whoRace, whoClass, whoFaction, whoCell;
 	int whoSex = -1, whoRank = -1;
-	Atom text, sound;                 // (text: Atom::stored)
+	CardText text;                    // (read from the card when said)
+	Atom sound;
 	std::vector<Cond> conds;
 	int disposition = 0;
 	Node script;
@@ -113,7 +116,7 @@ struct Topic
 	std::vector<Info> infos;
 };
 
-struct JournalEntry { int index; Atom text; bool finished; bool restart = false; };   // (text: Atom::stored)
+struct JournalEntry { int index; CardText text; bool finished; bool restart = false; };   // (text: read from the card when shown)
 struct Journal { std::string name, title; std::vector<JournalEntry> entries; };
 
 struct ClassDef
