@@ -36,9 +36,7 @@ if ($FetchOnly) { return }
 # The converter (tools\convert\mwfiles.py) lays these folders over Data Files; a real environment variable wins over .env
 $env:MW3DS_OVERLAY_DIRS = $dirs -join ';'
 
-$buildArgs = @()
-if ($Small) { $buildArgs += '-Small' }
-if ($SkipConvert) { $buildArgs += '-SkipConvert' }
-if ($Old3ds) { $buildArgs += '-Old3ds' }
+# (a hashtable: an array splat hands '-Old3ds' over as a plain word, and build-cia.ps1 then builds for the New 3DS)
+$buildArgs = @{ Small = $Small; SkipConvert = $SkipConvert; Old3ds = $Old3ds }
 & (Join-Path $PSScriptRoot 'build-cia.ps1') @buildArgs
 exit $LASTEXITCODE

@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "console.h"
 #include "distant.h"
 #include "linear.h"
 #include "log.h"
@@ -246,6 +247,87 @@ static bool distantOpen(FILE* f, const char* path)
 	return true;
 }
 
+// A zlib'd distant.bin (MWZ1, from a converter that packs it) unpacked once to the card, then read from there as the plain
+// file is: reading it into memory needs ~20 MB at once (the unpacked file, then the objects copied out), which an Old
+// 3DS's 41 MB heap can't give after the game data (used on a small heap only). The key file holds the packed size and
+// zlib's closing Adler-32 of the unpacked data, so a new conversion unpacks again. Returns the copy just past "MWD1", or
+// null.
+static FILE* unpackedCopy(const char* path)
+{
+	const char* kCopy = "sdmc:/3ds/mw3ds/distant.bin";
+	const char* kKey = "sdmc:/3ds/mw3ds/distant.key";
+	const char* kTmp = "sdmc:/3ds/mw3ds/distant.tmp";
+	FILE* raw = fopen(path, "rb");
+	if (!raw)
+		return nullptr;
+	char head[8];
+	u32 size = 0;
+	u8 tail[4] = {};
+	bool packed = fread(head, 1, 8, raw) == 8 && memcmp(head, "MWZ1", 4) == 0;
+	long packedSize = 0;
+	if (packed)
+	{
+		memcpy(&size, head + 4, 4);
+		fseek(raw, 0, SEEK_END);
+		packedSize = ftell(raw);
+		packed = packedSize > 12 && fseek(raw, -4, SEEK_END) == 0 && fread(tail, 1, 4, raw) == 4;
+	}
+	fclose(raw);
+	if (!packed)
+		return nullptr;
+	char key[64];
+	snprintf(key, sizeof(key), "%ld %lu %02x%02x%02x%02x", packedSize, (unsigned long)size, tail[0], tail[1], tail[2], tail[3]);
+
+	char had[64] = {};
+	if (FILE* k = fopen(kKey, "rb"))
+	{
+		fread(had, 1, sizeof(had) - 1, k);
+		fclose(k);
+	}
+	if (strcmp(had, key) != 0)
+	{
+		remove(kKey);
+		FILE* in = zopen(path);
+		FILE* out = in ? fopen(kTmp, "wb") : nullptr;
+		static char buf[16 * 1024];
+		u32 done = 0;
+		while (in && out)
+		{
+			size_t got = fread(buf, 1, sizeof(buf), in);
+			if (got == 0 || fwrite(buf, 1, got, out) != got)
+				break;
+			done += got;
+		}
+		bool ok = out && fclose(out) == 0 && done == size;
+		if (in)
+			zclose(in);
+		if (!ok)
+		{
+			remove(kTmp);
+			logf("distant: could not unpack %s to the card (%lu of %lu KB)", path, (unsigned long)done / 1024,
+				(unsigned long)size / 1024);
+			return nullptr;
+		}
+		remove(kCopy);
+		if (rename(kTmp, kCopy) != 0)
+			return nullptr;
+		if (FILE* k = fopen(kKey, "wb"))
+		{
+			fputs(key, k);
+			fclose(k);
+		}
+		logf("distant: unpacked %s to the card (%lu KB)", path, (unsigned long)size / 1024);
+	}
+	FILE* f = fopen(kCopy, "rb");
+	char magic[4] = {};
+	if (f && fread(magic, 1, 4, f) == 4 && memcmp(magic, "MWD1", 4) == 0)
+		return f;
+	if (f)
+		fclose(f);
+	remove(kKey);
+	return nullptr;
+}
+
 bool distantLoad(const char* dataDir)
 {
 	char path[256];
@@ -269,6 +351,9 @@ bool distantLoad(const char* dataDir)
 			return distantOpen(f, path);
 		fclose(f);
 	}
+	// (an Old 3DS: the heap is too small for it in memory; a New 3DS keeps it there, as it always has)
+	if (FILE* f = g_profile.smallHeap ? unpackedCopy(path) : nullptr)
+		return distantOpen(f, path);
 	size_t size = 0;
 	char* data = zreadAll(path, &size);
 	if (!data)
