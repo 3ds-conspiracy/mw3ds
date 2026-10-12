@@ -1,0 +1,24 @@
+# A body lying between the player and a door took the press meant for the door (uber-house-telvanni on the Old 3DS
+# profile: a skeleton killed at the summoning room door in Arvs-Drelen, and on the next visit A opened its body). A dead
+# actor's box is still the standing one; the crosshair meets a body only where it lies (worldPick, kCorpsePickHeight)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+4 0 0 0
+0.3 0 0 0 0 TPIN:3072:4072:512:107
+2 0 0 0
+0.3 0 0 0 0 FACE:@3206,4032
+0.3 0 0 0 0 PLACE:skeleton:70
+1 0 0 0
+30 0 0 0 0 KILL:skeleton
+3 0 0 0
+0.1 0 0 0 0 EXPECT:dead:skeleton
+0.3 0 0 0 0 TPIN:3072:4072:512:107
+2 0 0 0
+0.3 0 0 0 0 FACE:@3206,4032
+0.5 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+# the door is locked: a press on it says so and opens nothing; on the body it opens the body's screen
+0.1 0 0 0 0 EXPECT:screen:none

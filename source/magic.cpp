@@ -152,7 +152,7 @@ static bool resistedBy(int e, int& res, int& weak)
 // caster's (uncapped) chance for the spell, 100 for potions, enchantments and traps (x = ... x 50 / castChance)
 template <class Total>
 static float resistRoll(const World& w, int e, bool noMagnitude, Total total, float willpower, float luck, float fatigue,
-	float fatigueMax, float castChance, bool& resistable)
+	float fatigueMax, float castChance, bool& resistable, int die = -1)
 {
 	int res, weak;
 	resistable = resistedBy(e, res, weak);
@@ -167,7 +167,7 @@ static float resistRoll(const World& w, int e, bool noMagnitude, Total total, fl
 	float x = (willpower + 0.1f * luck) * ft;
 	if (castChance > 0.0f)
 		x *= 50.0f / castChance;
-	float roll = frand() * 100.0f;
+	float roll = die >= 0 ? (float)die : frand() * 100.0f;       // (tests fix the die)
 	if (noMagnitude)
 		roll -= r;
 	if (x <= roll)
@@ -612,7 +612,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 	{
 		bool resistable = false;
 		float res = resistRoll(w, e.effect, (flags & 0x8) != 0, [&](int k) { return w.actorEffect(ri, k); },
-			(float)def.attributes[ATTR_WILLPOWER], (float)def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax, castChance, resistable);
+			(float)def.attributes[ATTR_WILLPOWER], (float)def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax, castChance, resistable, resistDie);
 		if (resistable)
 		{
 			mag *= fmaxf(0.0f, 1.0f - res / 100.0f);

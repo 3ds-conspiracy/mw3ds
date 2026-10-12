@@ -1922,6 +1922,12 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		s.persuadeRoll = atoi(a[1].c_str());       // the die roll persuasion and enchanting use until ROLL:-1
 		return true;
 	}
+	// RESISTROLL:<0..99>: the die a creature or NPC resists the spell effects it is hit by with, until RESISTROLL:-1
+	if (verb == "RESISTROLL" && a.size() >= 2)
+	{
+		s.resistDie = atoi(a[1].c_str());
+		return true;
+	}
 	// SETWEATHER:<id>: this region's weather at once. CHANGEWEATHER:<region>:<id> and MODREGION:<region>:<c0,c1,..>
 	// are the script functions ('%' in the region stands for a space; a short list leaves the rest 0)
 	if (verb == "SETWEATHER" && a.size() >= 2 && w.current >= 0)
@@ -2554,7 +2560,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 {
 	if (!retrying)
 	{
-		viewTries = talkTries = 0;
+		viewTries = talkTries = takeTries = 0;
 		thenDo.clear();
 		ledAway = false;
 		commandTries = 0;
@@ -2765,7 +2771,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			deadEntry = -1;
 			floodKeep = false;
 			fightRef = -1;
-			unlockTried = false;
+			unlockTries = 0;
 			earlyTried = false;
 			if (!retrying)
 			{
@@ -2816,7 +2822,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			deadEntry = -1;
 			floodKeep = false;
 			fightRef = -1;
-			unlockTried = false;
+			unlockTries = 0;
 			earlyTried = false;
 			if (!retrying)
 			{
@@ -3555,6 +3561,14 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			logf("drive: took %s from the reading screen", id.c_str());
 			kind = NONE;
 		}
+		else if (takeTimer > 1.0f && ref >= 0 && w.active(ref) && w.refs[ref].visible() && takeTries < 3 && !s.menuOpen())
+		{
+			// still lying there: the press found nothing (the player drifted, the item just past reach on that frame); a
+			// player presses again
+			takeTries++;
+			logf("drive: %s still there after the press, pressing again", id.c_str());
+			kind = ACTIVATE;
+		}
 		else if (takeTimer > 1.0f)
 			kind = NONE;
 		return kind != NONE;
@@ -4135,11 +4149,12 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 					return true;
 				}
 				// v2 kit: a locked one: unlocked first with what is carried (an Ondusi's Unhinging scroll, aimed at it), as a
-				// player would, then opened (Rotheran's arena: a kill's chase left us on the wrong side of a locked door)
-				else if (s.kitV2() && door >= 0 && door != doorLast && w.refs[door].lockLevel > 0 && !unlockTried
+				// player would, then opened (Rotheran's arena: a kill's chase left us on the wrong side of a locked door). The
+				// scroll's magnitude is a roll: one too weak for the lock ("The lock is too strong") is followed by another
+				else if (s.kitV2() && door >= 0 && door != doorLast && w.refs[door].lockLevel > 0 && unlockTries < 3
 					&& w.itemCount("sc_ondusisunhinging") > 0)
 				{
-					unlockTried = true;
+					unlockTries++;
 					const Ref& d = w.refs[door];
 					float ux = (d.boxMin[0] + d.boxMax[0]) * 0.5f - p.feet[0], uy = (d.boxMin[1] + d.boxMax[1]) * 0.5f - p.feet[1];
 					p.yaw = atan2f(ux, uy);
@@ -4463,6 +4478,8 @@ char why[160];
 	// ACTIVATE: look at its middle, then press A on what the crosshair finds. Something in front of the middle (a gem
 	// lying on the desk, a basket before the book): look over the rest of it, as a player moves the crosshair
 	float cz = (r.boxMin[2] + r.boxMax[2]) * 0.5f;
+	if (r.actor >= 0 && r.dead)
+		cz = fminf(cz, r.boxMin[2] + kCorpsePickHeight * 0.5f);   // a body: where it lies (worldPick)
 	float eyeZ = playerEyeZ(p);      // (sneaking lowers the eye: aim from where it is)
 	p.pitch = atan2f(cz - eyeZ, fmaxf(dist, 1.0f));
 	// still levitating (the flight's potion not run out) and hanging over it: down (L) to its floor first, as a player

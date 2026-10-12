@@ -59,7 +59,7 @@ struct TestDriver
 	bool crouchTried = false, crouchSet = false;   // v2: crouched once to look under what hid the target
 	bool lookUpTried = false;        // v2: floated up once to look over what hid the target
 	float lookUpTimer = 0.0f, lookUpBase = 0.0f;
-	bool unlockTried = false;        // v2: a locked door in the way had a scroll cast on it
+	int unlockTries = 0;             // v2: scrolls cast on a locked door in the way (one rolled too low for the lock: again)
 	bool earlyTried = false;         // v2: pressed already on seeing its prompt from further than the walk's end
 	bool escortLoose = false;        // v2: an escort that stopped coming within 600 is left to catch up (till back in 250)
 	float escortWait = 0.0f, escortBest = 1e9f, escortSince = 0.0f;   // an escort fallen behind: how long, the nearest since
@@ -87,6 +87,7 @@ struct TestDriver
 	bool pressA = false;
 	bool pickup = false;             // PICKUP: a book opens to read: Take it (TAKE waits for the screen)
 	float takeTimer = 0.0f;
+	int takeTries = 0;               // PICKUP: presses that took nothing (the item was just past reach on the press's frame)
 	float strikeFor = 0.0f;          // STRIKE: seconds of swings, then done (0: KILL, until dead)
 	bool killUnseen = false;         // KILL:<id>:unseen: no blow while anyone else could report the murder
 	float unseenLimit = 0.0f, unseenTimer = 0.0f;   // UNSEEN:<secs>: waiting for nobody to be watching

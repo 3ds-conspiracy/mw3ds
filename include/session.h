@@ -159,6 +159,7 @@ struct Session : ScriptHost
 	bool testLegit = false;       // LEGIT: from here a test may do only what a player can (uber quest tests)
 	bool testNoMovies = false;    // tests: play as if the data had no converted movies
 	int persuadeRoll = -1;        // tests: the die roll a persuasion or an enchanting uses (-1: random)
+	int resistDie = -1;           // RESISTROLL: the die (0..99) a creature or NPC resists a spell effect with (-1: random)
 	// Monitors (logged "monitor: ...", the harness fails a run on them): someone playing a walk / run cycle
 	// without getting anywhere (the female skeleton bug, dialogue without Idle)
 	void monitorActors(float dt);

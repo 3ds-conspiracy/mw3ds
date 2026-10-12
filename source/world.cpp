@@ -3111,12 +3111,13 @@ bool actorAimable(const World& w, int ri)
 }
 
 // The ray's entry distance into a reference's world bounds (slightly padded for thin items), or -1 for a miss
-static float rayBoxEntry(const Ref& r, const float eye[3], const float dir[3], float maxT)
+// (top: the box cut off there, a body lying in a standing one)
+static float rayBoxEntry(const Ref& r, const float eye[3], const float dir[3], float maxT, float top = 1e9f)
 {
 	float tmin = 0.0f, tmax = maxT;
 	for (int k = 0; k < 3; k++)
 	{
-		float lo = r.boxMin[k] - 2.0f, hi = r.boxMax[k] + 2.0f;
+		float lo = r.boxMin[k] - 2.0f, hi = k == 2 ? fminf(r.boxMax[k], top) + 2.0f : r.boxMax[k] + 2.0f;
 		if (fabsf(dir[k]) < 1e-6f)
 		{
 			if (eye[k] < lo || eye[k] > hi)
@@ -3251,7 +3252,10 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		}
 		if (!boxInReach(r, e, reach))
 			continue;
-		float t = rayBoxEntry(r, e, d, bestT);
+		// A body lies on the floor in its standing box: OpenMW's pick meets the mesh, low down, and a look over the body
+		// goes on to what is behind it (a skeleton killed before the door at Arvs-Drelen took the press meant for the door)
+		float top = r.actor >= 0 && r.dead ? r.boxMin[2] + kCorpsePickHeight : 1e9f;
+		float t = rayBoxEntry(r, e, d, bestT, top);
 		if (t >= 0.0f && t < bestT)
 		{
 			bestT = t;

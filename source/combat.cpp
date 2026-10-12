@@ -800,6 +800,16 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 			float e[3] = { end[0], end[1], end[2] + 50.0f };
 			if (ex * ex + ey * ey > 600.0f * 600.0f && !(w.time < r.gridUntil && w.lineOfSight(e, b)))
 				r.path.clear();
+			// outdoors, a route that begins by climbing back up over 200 while the target is below leads away too: the
+			// nearest point in sight was up the slope it was coming down. The straight way on, down the ledge that stopped
+			// it as OpenMW's actors walk off one. Halfway down the Gnisis cliff a ledge held a following guar, and it
+			// turned back up for the strider platform's points and stuck at the foot of the rock face
+			else if (!r.path.empty() && !w.cells[w.placeOf(ri)].interior && target[2] < r.pos[2] - 40.0f
+				&& w.pathPoints[r.path.front()].pos[2] > r.pos[2] + 200.0f)
+			{
+				r.path.clear();
+				r.dropUntil = w.time + 3.0f;
+			}
 		}
 	}
 	float goal[3] = { target[0], target[1], target[2] };
@@ -1235,7 +1245,7 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	// step (the prison ship's guard walked into the stairwell opening and ended up inside the stairs)
 	// (a follower held up outdoors, going where the player went, steps down a ledge as the player did: OpenMW's
 	// actors fall off one where they walk)
-	float maxDrop = r.trailUntil > w.time && !w.cells[w.placeOf(ri)].interior ? 250.0f : 48.0f;
+	float maxDrop = (r.trailUntil > w.time || r.dropUntil > w.time) && !w.cells[w.placeOf(ri)].interior ? 250.0f : 48.0f;
 	if (fz < r.pos[2] - maxDrop && fz > swimZ + 0.5f)
 	{
 		return false;

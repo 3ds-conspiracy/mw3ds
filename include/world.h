@@ -161,6 +161,7 @@ struct Ref
 	float gridUntil = -1.0f;        // World::time until which moves follow the path grid (a ledge cut the straight way)
 	bool straightWay = false;       // npcMoveTo's last way was the straight one (else the grid's)
 	float straightZ = 0.0f;         // its height when it last changed between the two
+	float dropUntil = 0.0f;         // World::time until which a step outdoors may go down a ledge (npcMoveTo: the grid's way climbed back)
 	float lastPos[2] = {};
 	bool talkedToPC = false;
 	int disposition = 50;
@@ -639,6 +640,8 @@ struct World
 
 // Nearest activatable reference along the view ray within reach, or -1.
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach);
+// A body lies on the floor: the crosshair meets a dead actor's box only up to this far over its foot (worldPick)
+constexpr float kCorpsePickHeight = 40.0f;
 // A vector turned by `angle` about a door's own swing axis (its local up, tilted with the door: a slave pod's lid)
 void doorSwing(const Ref& r, float angle, const float in[3], float out[3]);
 // Whether the crosshair can find an actor where it stands: a look from 100 units off (on the player's side)
