@@ -1,0 +1,68 @@
+# e2e-alchemy: potions made and used through, LEGIT after the setup, in and around Caldera's Mages Guild: a mortar and
+# an alembic and two ingredients bought from Ernand Thierry, a Water Walking potion brewed (coprinus and a bittercup
+# ampoule pod share it), drunk, and let run out; then stoneflower and kreshweed picked from the plants on the slope
+# east of the town (their leveled picks are seeded per plant), a Fortify Personality potion brewed from them (both
+# have it), drunk, and let run out. Brewing uses the ingredients up and trains Alchemy (80, with Intelligence and Luck
+# 100: a factor of 100, so no brew fails its roll).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETSKILL:alchemy:80
+0.3 0 0 0 0 SETATTR:personality:40
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 TP:-13192:19662:1657:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# 1. The apparatus and the ingredients from Ernand
+120 0 0 0 0 DOORTO:Caldera,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Caldera,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ernand_thierry
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 BUY:ernand_thierry:apparatus_j_mortar_01
+0.3 0 0 0 0 BUY:ernand_thierry:apparatus_j_alembic_01
+0.3 0 0 0 0 BUY:ernand_thierry:ingred_coprinus_01
+0.3 0 0 0 0 BUY:ernand_thierry:ingred_bc_ampoule_pod
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:count:apparatus_j_mortar_01:eq:1
+0.1 0 0 0 0 EXPECT:count:ingred_coprinus_01:eq:1
+0.1 0 0 0 0 EXPECT:count:ingred_bc_ampoule_pod:eq:1
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+# 2. Water Walking brewed, drunk, and run out
+0.3 0 0 0 0 SNAP:skillprog:alchemy
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:count:ingred_coprinus_01:eq:0
+0.1 0 0 0 0 EXPECT:count:ingred_bc_ampoule_pod:eq:0
+0.1 0 0 0 0 EXPECT:skillprog:alchemy:gt:@0
+0.1 0 0 0 0 EXPECT:brewedduration:0:gt:0
+0.3 0 0 0 0 DRINKBREWED
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:2:gt:0
+900 0 0 0 0 UNTIL:effect:2:eq:0
+0.1 0 0 0 0 EXPECT:effect:2:eq:0
+# 3. Out to the plants east of the town: a stoneflower and two kreshweeds picked (walked up to each first: the
+# nearest of an id is the one picked)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@-7450,18270,1200
+60 0 0 0 0 LOOT:flora_stoneflower_01:ingred_stoneflower_petals_01
+120 0 0 0 0 WALKTO:@-7950,17370,1080
+60 0 0 0 0 LOOT:flora_kreshweed_02:ingred_kresh_fiber_01
+120 0 0 0 0 WALKTO:@-7900,19680,1150
+60 0 0 0 0 LOOT:flora_kreshweed_03:ingred_kresh_fiber_01
+0.1 0 0 0 0 EXPECT:count:ingred_stoneflower_petals_01:ge:1
+0.1 0 0 0 0 EXPECT:count:ingred_kresh_fiber_01:ge:1
+# 4. Fortify Personality brewed from them, drunk, and run out: Personality up while it lasts, back to 40 after
+0.3 0 0 0 0 BREW:ingred_kresh_fiber_01:ingred_stoneflower_petals_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:brewedmag:0:gt:0
+0.3 0 0 0 0 DRINKBREWED
+1 0 0 0
+0.1 0 0 0 0 EXPECT:attr:personality:gt:40
+900 0 0 0 0 UNTIL:attr:personality:eq:40
+0.1 0 0 0 0 EXPECT:attr:personality:eq:40

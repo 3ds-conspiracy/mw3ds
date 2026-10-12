@@ -2542,6 +2542,10 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		Ref& r = w.refs[i];
 		if (r.actor < 0 || r.dead || !r.visible())
 			return;
+		// (held in a pose for a side-by-side screenshot, tools/test/sidebyside.py: no AI, no head turning)
+		if (const Actor* fa = w.actorOf(i))
+			if (fa->frozen)
+				return;
 		if (!r.effects.empty() && !menu)
 			updateActorEffects(i, dt);
 		if (r.dead)

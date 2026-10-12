@@ -1,0 +1,41 @@
+# e2e-light: torches bought and burned through, LEGIT after the setup, at Clagius Clanler's in Balmora, at night: two
+# torches bought (210 s of light each), one taken in hand; it burns down while held (OpenMW's updateEquippedLight), and
+# at the end of its time it is gone and the next of the stack is lit, fresh; that one burns out too, and the hand is
+# empty.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 HOUR:22
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 TP:-24136:-14911:643:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# 1. Two torches from Clagius
+120 0 0 0 0 DOORTO:Balmora,_Clagius_Clanler
+10 0 0 0 0 UNTIL:cell:Balmora,_Clagius_Clanler:_Outfitter
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:clagius_clanler
+1.5 0 0 0
+0.3 0 0 0 0 BUY:clagius_clanler:torch
+0.3 0 0 0 0 BUY:clagius_clanler:torch
+0.1 0 0 0 0 EXPECT:count:torch:eq:2
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# 2. One in hand: it burns down
+0.3 0 0 0 0 EQUIP:torch
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:torch:eq:1
+0.1 0 0 0 0 EXPECT:lighttime:torch:gt:200
+60 0 0 0
+0.1 0 0 0 0 EXPECT:lighttime:torch:lt:160
+# 3. Burned out: gone, the second lit fresh
+200 0 0 0 0 UNTIL:count:torch:eq:1
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:count:torch:eq:1
+0.1 0 0 0 0 EXPECT:equipped:torch:eq:1
+0.1 0 0 0 0 EXPECT:lighttime:torch:gt:200
+# 4. The second burned out: no torch, nothing in hand
+230 0 0 0 0 UNTIL:count:torch:eq:0
+0.1 0 0 0 0 EXPECT:count:torch:eq:0
+0.1 0 0 0 0 EXPECT:equipped:torch:eq:0

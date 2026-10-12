@@ -1,0 +1,88 @@
+# e2e-spellmaking: a spell bought, a stronger one made from its effect, cast until the magicka is gone, and the magicka
+# rested back, LEGIT after the setup. All at Estirdalin in Balmora's Mages Guild, who both sells spells and makes them:
+# Feather bought (the spellmaker offers only the effects the player knows), Feather 30 for 30 s on self made (45
+# magicka: three casts from this character's 150), cast
+# again and again (each cast trains Alteration) until a cast is refused for want of magicka, then slept back to full in
+# a bed rented at the Eight Plates (fRestMagicMult x Intelligence an hour: 15, so 10 hours for 138).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETSKILL:alteration:60
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 TP:-22067:-14040:622:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# 1. Feather from Estirdalin
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:estirdalin
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 BUYSPELL:estirdalin:feather
+0.1 0 0 0 0 EXPECT:spell:feather
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+# 2. Made by Estirdalin: Feather 30 for 30 s, on self
+0.3 0 0 0 0 SPELLMAKE:estirdalin
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:spellmake
+0.3 0 0 0 0 ADDEFFECT:8:30:30:30:0
+0.3 0 0 0 0 TAP:200:30
+0.3 0 0 0 0 TYPE:Big%Feather
+0.3 0 0 0 0 TAP:54:222
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:madespells:eq:1
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# 3. Cast until the magicka runs out: each cast takes its cost and lifts the burden; a cast short of magicka is refused
+0.1 0 0 0 0 EXPECT:magickalack:eq:0
+0.3 0 0 0 0 SNAP:skillprog:alteration
+0.3 0 0 0 0 CASTMADESPELL
+2 0 0 0
+0.1 0 0 0 0 EXPECT:magickalack:gt:0
+0.1 0 0 0 0 EXPECT:effect:8:ge:30
+0.1 0 0 0 0 EXPECT:skillprog:alteration:gt:@0
+0.3 0 0 0 0 CASTMADESPELL
+2 0 0 0
+0.3 0 0 0 0 CASTMADESPELL
+2 0 0 0
+0.3 0 0 0 0 CASTMADESPELL
+2 0 0 0
+0.3 0 0 0 0 CASTMADESPELL
+2 0 0 0
+0.3 0 0 0 0 SNAP:magicka
+0.3 0 0 0 0 CASTMADESPELL
+2 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:eq:@0
+# 4. Rested back: sleeping is illegal in the guild (as in all of Balmora's houses), so a bed rented at the Eight Plates
+# (Dulnea Ralaal's Beds, 10 gold), slept in 10 hours, the magicka full again
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Eight_Plates
+10 0 0 0 0 UNTIL:cell:Balmora,_Eight_Plates
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:dulnea_ralaal
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 TOPIC:Beds
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:gold:eq:@-10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (the rented room's door, rent_balmora_eight_door, opens once the bed is paid for; its bed the nearest from there)
+60 0 0 0 0 WALKTO:@892,1076,-369
+60 0 0 0 0 ACTIVATE:active_de_p_bed_14
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:rest
+0.3 0 0 0 0 SLEEP:10
+30 0 0 0 0 UNTIL:screen:none
+1 0 0 0
+0.1 0 0 0 0 EXPECT:magickalack:eq:0

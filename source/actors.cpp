@@ -547,6 +547,9 @@ int actorFindGroup(const Skeleton& sk, const char* name)
 
 bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode)
 {
+	if (a.frozen)
+		return true;
+
 	// Swimming: the water's versions of walking, standing, being hit and dying (when the skeleton has them)
 	if (a.swimming)
 	{
@@ -684,6 +687,8 @@ static int pickIdle(const Skeleton& sk, const Actor& a)
 
 void actorAnimate(ActorSet& set, Actor& a, float dt)
 {
+	if (a.frozen)
+		dt = 0.0f;
 	const Skeleton& sk = actorSkeleton(set, a.skeleton);
 	if (!sk.groups.empty())
 	{

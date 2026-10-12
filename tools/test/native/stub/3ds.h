@@ -32,7 +32,11 @@ struct angularRate { s16 x, z, y; };
 inline void hidGyroRead(angularRate* r) { r->x = r->y = r->z = 0; }
 inline Result HIDUSER_EnableGyroscope() { return 0; }
 inline Result HIDUSER_DisableGyroscope() { return 0; }
-inline Result HIDUSER_GetGyroscopeRawToDpsCoefficient(float* c) { *c = 1.0f / 14.375f; return 0; }
+inline Result HIDUSER_GetGyroscopeRawToDpsCoefficient(float* c) { *c = 14.375f; return 0; }      // (the console's: counts per dps)
+struct accelVector { s16 x, y, z; };
+inline void hidAccelRead(accelVector* v) { v->x = v->z = 0; v->y = -512; }      // lying flat: gravity along -y
+inline Result HIDUSER_EnableAccelerometer() { return 0; }
+inline Result HIDUSER_DisableAccelerometer() { return 0; }
 inline Result svcGetThreadId(u32* id, u32) { *id = 1; return 0; }
 #define GX_TRANSFER_FLIP_VERT(x) ((x) << 0)
 #define GX_TRANSFER_OUT_TILED(x) ((x) << 1)

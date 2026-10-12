@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 
 #include <vector>
 
@@ -69,3 +70,34 @@ inline float playerEyeZ(const Player& p) { return p.feet[2] + PLAYER_EYE_HEIGHT 
 // Places the player so the eye is at `eye`, then drops the feet onto the floor below.
 void playerSpawn(Player& p, Scene& scene, const float eye[3], float yaw, float pitch);
 void playerUpdate(Player& p, Scene& scene, const PlayerInput& in, float dt);
+// The gyroscope's raw counts as degrees a second: HIDUSER_GetGyroscopeRawToDpsCoefficient gives the counts for one
+// degree a second (14.375 on the console's sensor), so the counts are divided by it (a coefficient under 1 would be
+// degrees a second per count, and multiplies)
+inline float gyroRawToDps(float raw, float coeff)
+{
+	return coeff >= 1.0f ? raw / coeff : raw * coeff;
+}
+// Gyro aim's soft threshold (GyroWiki's "tightening"): a turn under `soft` degrees a second is scaled down by how far
+// under it is (a shaking hand's jitter all but gone, a slow aim kept), one over it passes whole; no hard dead zone
+inline float gyroSoften(float rate, float soft)
+{
+	float a = fabsf(rate);
+	return a >= soft || soft <= 0.0f ? rate : rate * (a / soft);
+}
+// Gyro aim in "player space" (JibbSmart's GamepadMotionHelpers, GyroWiki): the turn about the world's up (gravity, from
+// the accelerometer) steers left / right whatever way the console is tilted in the hands, the turn about the console's
+// own left-right axis steers up / down. The 3DS gyroscope and accelerometer share one frame (Azahar's SDL mapping:
+// x right, y out of the bottom screen, z toward the hinge, the accelerometer reading gravity itself, (0, -1, 0) lying
+// flat). gyro: degrees a second; grav: any length. yawRate + turns the view right, pitchRate + up, degrees a second
+inline void gyroPlayerSpace(const float gyro[3], const float grav[3], float& yawRate, float& pitchRate)
+{
+	float gl = sqrtf(grav[0] * grav[0] + grav[1] * grav[1] + grav[2] * grav[2]);
+	float gy = gl > 0.0f ? grav[1] / gl : -1.0f, gz = gl > 0.0f ? grav[2] / gl : 0.0f;
+	// the turn about the world's up (+: to the left), no more than the gyro's own y-z turn, and up to sqrt 2 as much
+	// as the projection (GamepadMotionHelpers' yaw relax factor: a console held at an angle loses none of the turn)
+	float world = -(gy * gyro[1] + gz * gyro[2]);
+	float most = sqrtf(gyro[1] * gyro[1] + gyro[2] * gyro[2]);
+	float turn = fminf(fabsf(world) * 1.41f, most);
+	yawRate = world < 0.0f ? turn : -turn;
+	pitchRate = -gyro[0];
+}

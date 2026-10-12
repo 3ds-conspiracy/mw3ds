@@ -382,6 +382,8 @@ struct Session : ScriptHost
 	// repair (screens.cpp)
 	void drawRepair();
 	void openRepair(int smith, int tool);        // smith: the NPC (-1: the player's own tool, an inventory index)
+	void repairOne(int item);                    // one repair of that inventory item, as the screen's row does
+	bool buySpell(int merchant, const std::string& id);   // the spell merchant's Buy: paid and learned
 	int repairPrice(int ref, const InventoryItem& it);
 	bool isMerchant(int ref);
 	bool merchantTrades(int ref, const Object* o);

@@ -1,0 +1,54 @@
+# e2e-disease: a disease caught and cured, LEGIT after the setup, in Ebonheart: Marked in the Imperial Chapels, flown
+# down to the Underground Caves on the shore, where diseased rats carry Witbane (a common disease: Agility drained); a
+# rat let bite (each bite passes it on with fDiseaseXferChance x 100 in 10000, less the Resist Common Disease) until it
+# is caught; Recalled to the Chapels, Cure Common Disease bought from Synnolian Tunifus and cast, and the disease and its
+# drain gone.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ENHANCEV2
+# (the kit's ring resists common disease 100: a Weakness to Common Disease over it, so the first bite passes it on)
+0.3 0 0 0 0 ACTIVE:32:1000
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 TP:8704:-100681:1393:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# 1. Marked in the Chapels
+120 0 0 0 0 DOORTO:Ebonheart,_Imperial_Chapels
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Imperial_Chapels
+0.5 0 0 0
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+0.1 0 0 0 0 EXPECT:nospell:witbane
+# 2. Down to the caves on the shore below the city (flown: the city stands high over it; its door at 10791,-98014),
+# up to a rat, and bitten until the disease takes
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@10815,-97802,-196
+120 0 0 0 0 DOORTO:Ebonheart,_Underground_Caves
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Underground_Caves
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:attr:agility
+120 0 0 0 0 WALKTO:rat_diseased
+300 0 0 0 0 UNTIL:spell:witbane
+0.1 0 0 0 0 EXPECT:spell:witbane
+0.1 0 0 0 0 EXPECT:attr:agility:lt:@0
+# 3. Recalled to the Chapels: Cure Common Disease bought and cast, the disease gone and Agility back
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Imperial_Chapels
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:synnolian_tunifus
+1.5 0 0 0
+0.3 0 0 0 0 BUYSPELL:synnolian_tunifus:cure_common_disease
+0.1 0 0 0 0 EXPECT:spell:cure_common_disease
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:cure_common_disease
+2 0 0 0
+0.1 0 0 0 0 EXPECT:nospell:witbane
+0.1 0 0 0 0 EXPECT:attr:agility:eq:@0

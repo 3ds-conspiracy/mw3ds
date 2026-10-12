@@ -1,0 +1,56 @@
+# e2e-mercantile: a merchant's purse sold dry and filled again, LEGIT after the setup, at Arrille's in Seyda Neen: ten
+# diamonds (250 each) sold to Arrille (800 gold, buys anything) until he can't pay for another, that sale refused; a day
+# waited in his shop, his purse back to 800 when he is next greeted (fBarterGoldResetDelay after the last reset), and
+# the sale goes through. Haggled sales train Mercantile.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SETSKILL:mercantile:80
+0.3 0 0 0 0 SETATTR:personality:100
+0.3 0 0 0 0 SETATTR:luck:100
+0.3 0 0 0 0 GIVE:ingred_diamond_01:10
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Arrille's_Tradehouse
+0.5 0 0 0
+# 1. Diamonds sold until his gold runs short: the first three haggled up a step (5%) each (Mercantile rises only with an
+# accepted haggle, by how good the bargain was), the rest at his price
+60 0 0 0 0 ACTIVATE:arrille
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:merchantgold:arrille:eq:800
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:skillprog:mercantile
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01:1
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01:1
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01:1
+0.1 0 0 0 0 EXPECT:skillprog:mercantile:gt:@0
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.1 0 0 0 0 EXPECT:gold:gt:@0
+0.1 0 0 0 0 EXPECT:merchantgold:arrille:lt:150
+0.1 0 0 0 0 EXPECT:count:ingred_diamond_01:ge:2
+# (one more: he hasn't the gold, the diamond stays)
+0.3 0 0 0 0 SNAP:count:ingred_diamond_01
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.1 0 0 0 0 EXPECT:count:ingred_diamond_01:eq:@0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# 2. A day waited in the shop (sleeping is not allowed here: waiting); greeted again, his purse is full
+0.3 0 0 0 0 SLEEP:24
+40 0 0 0 0 UNTIL:screen:none
+1 0 0 0
+60 0 0 0 0 ACTIVATE:arrille
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:merchantgold:arrille:eq:800
+0.3 0 0 0 0 SELL:arrille:ingred_diamond_01
+0.1 0 0 0 0 EXPECT:count:ingred_diamond_01:eq:@-1
+0.1 0 0 0 0 EXPECT:merchantgold:arrille:lt:800
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

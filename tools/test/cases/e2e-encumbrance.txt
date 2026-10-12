@@ -1,0 +1,67 @@
+# e2e-encumbrance: carrying too much and getting moving again, LEGIT after the setup, in Balmora: a weak character
+# (Strength 10: fEncumbranceStrMult x 10 = 50 to carry) buys Feather from Estirdalin at the Mages Guild, then a trollbone
+# cuirass (32) and a bonemold cuirass (24) from Meldor next door: over the limit, the player can't move at all; Feather
+# (20) cast, the load is under it and they walk; Feather run out, stuck again; the trollbone cuirass dropped, and they
+# walk.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SETATTR:strength:10
+0.3 0 0 0 0 SETSKILL:alteration:60
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 TP:-22067:-14040:622:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+0.1 0 0 0 0 EXPECT:capacity:eq:50
+# 1. Feather from Estirdalin
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:estirdalin
+1.5 0 0 0
+0.3 0 0 0 0 BUYSPELL:estirdalin:feather
+0.1 0 0 0 0 EXPECT:spell:feather
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# 2. The two cuirasses from Meldor: too much to move
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Meldor
+10 0 0 0 0 UNTIL:cell:Balmora,_Meldor:_Armorer
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:meldor
+1.5 0 0 0
+0.3 0 0 0 0 BUY:meldor:trollbone_cuirass
+0.3 0 0 0 0 BUY:meldor:bonemold_cuirass
+0.1 0 0 0 0 EXPECT:count:trollbone_cuirass:eq:1
+0.1 0 0 0 0 EXPECT:count:bonemold_cuirass:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 FACE:@-128,0
+0.3 0 0 0 0 SNAP:moved
+1.5 0 1 0
+0.1 0 0 0 0 EXPECT:moved:lt:5
+# 3. Feather: the load is under the limit, the player walks (toward the door)
+0.3 0 0 0 0 CAST:feather
+2 0 0 0
+0.1 0 0 0 0 EXPECT:effect:8:ge:20
+0.3 0 0 0 0 FACE:@-128,0
+0.3 0 0 0 0 SNAP:moved
+1 0 1 0
+0.1 0 0 0 0 EXPECT:moved:gt:20
+# 4. Feather run out: stuck again
+30 0 0 0 0 UNTIL:effect:8:eq:0
+0.3 0 0 0 0 FACE:@227,159
+0.3 0 0 0 0 SNAP:moved
+1.5 0 1 0
+0.1 0 0 0 0 EXPECT:moved:lt:5
+# 5. The trollbone cuirass dropped: the player walks (back toward Meldor)
+0.3 0 0 0 0 DROP:trollbone_cuirass
+1 0 0 0
+0.1 0 0 0 0 EXPECT:count:trollbone_cuirass:eq:0
+0.3 0 0 0 0 FACE:@227,159
+0.3 0 0 0 0 SNAP:moved
+1 0 1 0
+0.1 0 0 0 0 EXPECT:moved:gt:20

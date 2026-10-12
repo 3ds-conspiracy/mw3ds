@@ -1,0 +1,77 @@
+# e2e-repair: a weapon worn down in fights and mended both ways, LEGIT after the setup, in Ebonheart: repair prongs
+# bought from Sirollus Saccus (the Hawkmoth garrison's smith, who sells repair tools), the iron longsword worn on the
+# diseased rats of the Underground Caves west of the garrison (a blow wears the weapon by its damage x
+# fWeaponDamageMult), mended with the prongs (each try uses one up, a success mends 3 x quality x the roll and trains
+# Armorer), worn again on the other two rats, and mended to full by Sirollus for gold (Marked beside him at the start, Recalled
+# to him at the end).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 SETSKILL:armorer:50
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 GIVE:iron%longsword
+0.3 0 0 0 0 EQUIP:iron%longsword
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 TP:14074:-100746:832:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# 1. Prongs from Sirollus
+120 0 0 0 0 DOORTO:Ebonheart,_Hawkmoth_Legion_Garrison
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Hawkmoth_Legion_Garrison
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:sirollus_saccus
+1.5 0 0 0
+0.3 0 0 0 0 BUY:sirollus_saccus:repair_prongs
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:count:repair_prongs:eq:1
+0.1 0 0 0 0 EXPECT:itemhealth:iron%longsword:eq:800
+# (marked here, to come back to the smith by Recall)
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+# 2. Down to the Underground Caves (its door on the shore, 10791,-98014): the first rat, the sword worn
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@10815,-97802,-196
+120 0 0 0 0 DOORTO:Ebonheart,_Underground_Caves
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Underground_Caves
+0.5 0 0 0
+120 0 0 0 0 KILL:rat_diseased
+2 0 0 0
+0.1 0 0 0 0 EXPECT:itemhealth:iron%longsword:lt:800
+# 3. Mended with the prongs, a try at a time, to full
+0.3 0 0 0 0 SNAP:skillprog:armorer
+0.3 0 0 0 0 SNAP:tooluses:repair_prongs
+0.3 0 0 0 0 SNAP:itemhealth:iron%longsword
+0.3 0 0 0 0 REPAIRWITH:repair_prongs:iron%longsword
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:itemhealth:iron%longsword:gt:@0
+0.1 0 0 0 0 EXPECT:skillprog:armorer:gt:@0
+0.1 0 0 0 0 EXPECT:tooluses:repair_prongs:lt:@0
+0.3 0 0 0 0 REPAIRWITH:repair_prongs:iron%longsword
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:itemhealth:iron%longsword:eq:800
+# 4. The other two rats: worn again
+120 0 0 0 0 KILL:rat_diseased
+120 0 0 0 0 KILL:rat_diseased
+2 0 0 0
+0.1 0 0 0 0 EXPECT:itemhealth:iron%longsword:lt:800
+# 5. Recalled to Sirollus: mended to full for gold
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Hawkmoth_Legion_Garrison
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:sirollus_saccus
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 REPAIRAT:sirollus_saccus:iron%longsword
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:itemhealth:iron%longsword:eq:800
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

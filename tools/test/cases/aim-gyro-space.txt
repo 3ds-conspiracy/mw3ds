@@ -1,0 +1,20 @@
+# Gyro aim in player space (GamepadMotionHelpers / GyroWiki): the console's turn about the world's up (gravity, from
+# the accelerometer) turns the view left / right however the console is tilted in the hands; a turn about its own
+# left-right axis turns it up / down; a roll turns nothing. 3DS frame (Azahar's SDL mapping): x right, y out of the
+# bottom screen, z toward the hinge; gravity (0,-1,0) lying flat
+1 0 0 0 0 MSG
+# held flat, turned left 10 a second: the view turns left 10
+0.1 0 0 0 0 EXPECT:gyroyaw:0,10,0,0,-1,0:gt:-10.1+EXPECT:gyroyaw:0,10,0,0,-1,0:lt:-9.9
+# held tipped back 45 degrees, turned left 10 a second about the world's up: still 10 (the console's own y alone
+# would give 7)
+0.1 0 0 0 0 EXPECT:gyroyaw:0,7.071,7.071,0,-0.7071,-0.7071:gt:-10.1+EXPECT:gyroyaw:0,7.071,7.071,0,-0.7071,-0.7071:lt:-9.9
+# turned right: the view turns right
+0.1 0 0 0 0 EXPECT:gyroyaw:0,-10,0,0,-1,0:gt:9.9
+# the far edge tipped up (negative x): the view looks up 10
+0.1 0 0 0 0 EXPECT:gyropitch:-10,0,0,0,-1,0:gt:9.9+EXPECT:gyropitch:-10,0,0,0,-1,0:lt:10.1
+# held flat and rolled (about z): no turn
+0.1 0 0 0 0 EXPECT:gyroyaw:0,0,10,0,-1,0:gt:-0.1+EXPECT:gyroyaw:0,0,10,0,-1,0:lt:0.1
+# a turn under 1 a second is softened by how far under it is (no hard dead zone), one over it passes whole
+0.1 0 0 0 0 EXPECT:gyrosoft:0.5,1:gt:0.24+EXPECT:gyrosoft:0.5,1:lt:0.26
+0.1 0 0 0 0 EXPECT:gyrosoft:-0.5,1:lt:-0.24
+0.1 0 0 0 0 EXPECT:gyrosoft:3,1:eq:3

@@ -712,6 +712,28 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 	return true;
 }
 
+// A spell bought from a spell merchant: fSpellValueMult x its cost at their barter price, learned when the gold is there
+bool Session::buySpell(int merchant, const std::string& id)
+{
+	auto it = w.game.spells.find(id);
+	if (it == w.game.spells.end())
+		return false;
+	const SpellDef& sp = it->second;
+	int price = barterPrice(merchant, std::max(1, (int)(sp.cost * w.game.gmstf("fspellvaluemult", 10.0f))), true);
+	if (w.itemCount("gold_001") < price)
+	{
+		notify("You don't have enough gold.");
+		return false;
+	}
+	w.removeItem("gold_001", price);
+	w.refs[merchant].gold += price;          // (OpenMW: services pay into their gold)
+	w.stats.spells.push_back(id);
+	playSound(-1, "Item Gold Down");
+	notify("You learned " + sp.name + ".");
+	logf("spells: bought %s from %s for %d", id.c_str(), w.refs[merchant].id.c_str(), price);
+	return true;
+}
+
 // Spell merchants: fSpellValueMult x spell cost at their barter price
 void Session::drawSpells()
 {
@@ -743,20 +765,7 @@ void Session::drawSpells()
 		spellTip(w.game.spells[ids[sel]]);
 	int b = buttonRow({ "Buy", w.game.gmst("sdone", "Done") }, focus);
 	if (b == 0 && sel >= 0)
-	{
-		const SpellDef& sp = w.game.spells[ids[sel]];
-		int price = barterPrice(barterRef, std::max(1, (int)(sp.cost * w.game.gmstf("fspellvaluemult", 10.0f))), true);
-		if (gold < price)
-			notify("You don't have enough gold.");
-		else
-		{
-			w.removeItem("gold_001", price);
-			w.refs[barterRef].gold += price;          // (OpenMW: services pay into their gold)
-			w.stats.spells.push_back(ids[sel]);
-			playSound(-1, "Item Gold Down");
-			notify("You learned " + sp.name + ".");
-		}
-	}
+		buySpell(barterRef, ids[sel]);
 	else if (b == 1 || (uiIn().down & KEY_B))
 	{
 		barterRef = -1;

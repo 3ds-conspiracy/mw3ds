@@ -1,0 +1,37 @@
+# e2e-persuasion: a merchant talked round and what it buys, LEGIT after the setup, at Arrille's in Seyda Neen: his
+# disposition raised by admiring him and by a bribe (1000 gold), and his asking price for a thing worth 1000 falls
+# with it (OpenMW's getBarterOffer: disposition, Mercantile, Luck and Personality); each persuasion that works trains
+# Speechcraft.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SETSKILL:speechcraft:90
+0.3 0 0 0 0 SETATTR:personality:100
+0.3 0 0 0 0 SETATTR:luck:100
+0.3 0 0 0 0 GIVE:Gold_001:2000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Arrille's_Tradehouse
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:arrille
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:refdisp:arrille
+0.3 0 0 0 0 SNAP:barterprice:arrille,1000,1
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:skillprog:speechcraft
+0.1 0 0 0 0 EXPECT:persuadechance:arrille,5:ge:100
+# 1. Admired (a roll: it may go either way, a few points), then bribed with 1000 (sure at this disposition and
+# Speechcraft: the bribe outweighs the rest)
+0.3 0 0 0 0 PERSUADE:0
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 PERSUADE:5
+2 0 0 0 0 UNTIL:talkready
+# 2. Warmer, cheaper: the bribes paid, Speechcraft trained
+0.1 0 0 0 0 EXPECT:refdisp:arrille:gt:@0
+0.1 0 0 0 0 EXPECT:barterprice:arrille,1000,1:lt:@0
+0.1 0 0 0 0 EXPECT:gold:eq:@-1000
+0.1 0 0 0 0 EXPECT:skillprog:speechcraft:gt:@0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

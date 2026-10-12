@@ -534,7 +534,7 @@ void Session::adaptView(float workMs)
 
 static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";
 int g_controlLayout = CONTROLS_XBOX;
-int g_gyroAim = 100;
+int g_gyroAim = 0;                // gyro aim starts off (until it is tried on the device): Options turns it on
 static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is off
 
 void Session::loadSettings()
@@ -570,7 +570,9 @@ void Session::loadSettings()
 		else if (strncmp(line, "gyrosens=", 9) == 0 && atoi(line + 9) > 0) s_gyroSens = atoi(line + 9);
 	}
 	fclose(f);
-	g_gyroAim = gyroOff ? 0 : s_gyroSens;
+	// (off at every start for now, whatever was saved: gyro aim is still to be tried on the device; the sensitivity is kept)
+	(void)gyroOff;
+	g_gyroAim = 0;
 }
 
 void Session::saveSettings()
@@ -1252,6 +1254,26 @@ void Session::update(const PlayerInput& inRaw, float dt)
 					roll -= a.second;
 				}
 		}
+	}
+	// A held light burns down (OpenMW's updateEquippedLight): its time left (the stack's charge; -1 a fresh one) less the
+	// frame's; one that burns out is gone, and the next of the stack is lit
+	for (size_t i = 0; i < w.inventory.size(); i++)
+	{
+		InventoryItem& it = w.inventory[i];
+		const Object* o = it.equipped ? w.game.object(it.id) : nullptr;
+		if (!o || o->type != "LIGH" || o->lightTime <= 0.0f)
+			continue;
+		float left = (it.charge < 0.0f ? o->lightTime : it.charge) - dt;
+		if (left > 0.0f)
+		{
+			it.charge = left;
+			break;
+		}
+		logf("light: %s burned out", it.id.c_str());
+		it.charge = -1.0f;
+		if (--it.count <= 0)
+			w.inventory.erase(w.inventory.begin() + i);
+		break;
 	}
 	{
 		// A carried light lights the way (the equipped one, held at the hand)

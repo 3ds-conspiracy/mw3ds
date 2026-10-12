@@ -1,0 +1,45 @@
+# e2e-crime: theft and its two ends, LEGIT after the setup, in Meldor's armor shop in Balmora with a Hlaalu guard in the
+# room: Meldor's iron boots (20) taken in the guard's sight, the crime reported, the guard's greeting answered by paying
+# the fine (the gold and the stolen boots go); then his dreugh helm (2250, more than the player carries) taken, and the
+# greeting answered by going to jail: a day for each 100 of the bounty, a skill point lost (or Security / Sneak won) a
+# day, the stolen goods taken, the player let out at the nearest prison's marker outdoors (from Balmora: Moonmoth
+# Legion Fort's). The fine is all the gold that goes: jail takes none.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 TP:-22855:-14103:640:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Balmora,_Meldor
+10 0 0 0 0 UNTIL:cell:Balmora,_Meldor:_Armorer
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+# 1. The boots taken: reported, the guard greets; the fine paid
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 PICKUP:iron%boots
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:20
+3 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue
+0.3 0 0 0 0 CHOICEVAL:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.1 0 0 0 0 EXPECT:gold:eq:@-20
+0.1 0 0 0 0 EXPECT:item:iron%boots:eq:0
+0.3 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# 2. The dreugh helm taken: a bounty over what the player carries; jail
+0.3 0 0 0 0 SNAP:skillsum
+60 0 0 0 0 PICKUP:dreugh_helm
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:2250
+3 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue
+0.3 0 0 0 0 CHOICEVAL:2
+3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.1 0 0 0 0 EXPECT:item:dreugh_helm:eq:0
+0.1 0 0 0 0 EXPECT:skillsum:ne:@0
+0.1 0 0 0 0 EXPECT:gold:eq:@-20
+0.1 0 0 0 0 EXPECT:cell:Moonmoth_Legion_Fort

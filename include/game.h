@@ -61,6 +61,7 @@ struct Object
 	bool organic = false;                // containers: plants and the like (no chest sound when opened)
 	float capacity = -1.0f;              // containers: the weight they hold (-1: data from before it was exported, no limit)
 	int lightRadius = 0;                 // lights: how far they reach, and their colour (0..255)
+	float lightTime = 0.0f;              // lights: the seconds one burns while held (0: for ever, a candle)
 	u8 lightColor[3] = { 0, 0, 0 };
 	bool magic = false;                                // enchanted
 	std::vector<std::pair<int, Atom>> items;           // container / NPC contents: count, id

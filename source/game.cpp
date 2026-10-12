@@ -701,6 +701,7 @@ bool gameLoad(GameData& g, const char* path)
 		if (cJSON_GetObjectItem(it, "capacity"))
 			o.capacity = num(it, "capacity");
 		o.lightRadius = (int)num(it, "radius");
+		o.lightTime = cJSON_GetObjectItem(it, "time") && num(it, "time") > 0 ? (float)num(it, "time") : 0.0f;
 		if (const cJSON* lc = cJSON_GetObjectItem(it, "color"))
 			for (int k = 0; k < 3; k++)
 				if (const cJSON* c = cJSON_GetArrayItem(lc, k))

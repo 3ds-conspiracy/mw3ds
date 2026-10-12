@@ -166,6 +166,17 @@ bool Session::brewPotion()
 		notify("You need a mortar and pestle.");
 		return false;
 	}
+	// only what is carried goes in (the screen offers nothing else; a script or a test could name more)
+	std::vector<std::string> have;
+	for (auto& id : alchemySlots)
+		if (w.itemCount(id) > 0)
+			have.push_back(id);
+	alchemySlots = have;
+	if (alchemySlots.size() < 2)
+	{
+		logf("alchemy: fewer than two ingredients carried");
+		return false;
+	}
 	std::vector<Object::IngredientEffect> shared = commonEffects(w, alchemySlots);
 	std::vector<std::string> used = alchemySlots;
 	float weight = 0.0f;

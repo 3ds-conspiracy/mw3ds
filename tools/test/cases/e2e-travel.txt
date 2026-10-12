@@ -1,0 +1,60 @@
+# e2e-travel: every way a player crosses Vvardenfell in one trip, LEGIT after the setup, from Seyda Neen: Marked by the
+# silt strider; the strider to Balmora (gold, and hours on the road); on foot to the Mages Guild, and its guide to
+# Caldera's guild (gold, no time); Recalled to the mark at Seyda Neen; an Almsivi Intervention scroll to the nearest
+# Temple (from Seyda Neen: outside Vivec's), and a Divine Intervention scroll to the nearest Imperial shrine (from
+# there: Ebonheart's chapels).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GIVE:sc_almsiviintervention
+0.3 0 0 0 0 GIVE:sc_divineintervention
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# 1. Marked beside the silt strider
+120 0 0 0 0 WALKTO:darvame_hleran
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+# 2. The strider to Balmora: paid, and hours pass on the road
+60 0 0 0 0 ACTIVATE:darvame_hleran
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:hour
+0.3 0 0 0 0 TRAVEL:darvame_hleran:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+0.1 0 0 0 0 EXPECT:hour:ne:@0
+# 3. On foot to the Mages Guild; its guide to Caldera: paid, no time on the way
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:masalinie_merian
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:hour
+0.3 0 0 0 0 TRAVEL:masalinie_merian:Caldera
+10 0 0 0 0 UNTIL:cell:Caldera,_Guild_of_Mages
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Caldera,_Guild_of_Mages
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+0.1 0 0 0 0 EXPECT:hour:lt:@0.1
+# 4. Recalled to the mark at Seyda Neen
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen
+# 5. Almsivi Intervention: to the nearest Temple; Divine Intervention: to the nearest Imperial shrine
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec,_Temple
+0.1 0 0 0 0 EXPECT:count:sc_almsiviintervention:eq:0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ebonheart$
+0.1 0 0 0 0 EXPECT:count:sc_divineintervention:eq:0

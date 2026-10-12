@@ -210,7 +210,7 @@ static bool hasArg(const std::string& what)
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft";
 }
 
 // "<a>,<b>" as two numbers
@@ -636,6 +636,39 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		return true;
 	}
 	if (what == "count") { v = (float)std::max(w.itemCount(arg), w.itemCount(spaced(arg))); return true; }
+	if (what == "gyroyaw" || what == "gyropitch")
+	{
+		// gyroyaw / gyropitch:<gx>,<gy>,<gz>,<gravity x>,<y>,<z>: player-space gyro aim's turn of the view (+ right / up)
+		float g[3] = {}, gv[3] = {};
+		sscanf(arg.c_str(), "%f,%f,%f,%f,%f,%f", &g[0], &g[1], &g[2], &gv[0], &gv[1], &gv[2]);
+		float yaw, pitch;
+		gyroPlayerSpace(g, gv, yaw, pitch);
+		v = what == "gyroyaw" ? yaw : pitch;
+		return true;
+	}
+	if (what == "gyrosoft")            // gyrosoft:<rate>,<soft>: gyro aim's soft threshold applied to a turn
+	{
+		float rate, soft;
+		twoNumbers(arg, rate, soft);
+		v = gyroSoften(rate, soft);
+		return true;
+	}
+	if (what == "gyrodps")             // gyrodps:<raw>,<coefficient>: the gyroscope's counts as degrees a second
+	{
+		float raw, coeff;
+		twoNumbers(arg, raw, coeff);
+		v = gyroRawToDps(raw, coeff);
+		return true;
+	}
+	if (what == "lighttime")           // lighttime:<light>: the seconds the carried one has left to burn
+	{
+		int i = carried(w, arg);
+		const Object* o = i >= 0 ? w.game.object(w.inventory[i].id) : nullptr;
+		if (!o || o->type != "LIGH")
+			return false;
+		v = w.inventory[i].charge < 0.0f ? o->lightTime : w.inventory[i].charge;
+		return true;
+	}
 	if (what == "charge")
 	{
 		const InventoryItem* it = arg == "made" ? lastMade(w) : nullptr;
@@ -982,6 +1015,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "healthmax") v = st.healthMax;
 	else if (what == "magicka") v = st.magicka;
 	else if (what == "magickamax") v = st.magickaMax;
+	else if (what == "magickalack") v = st.magickaMax - st.magicka;      // 0: full
 	else if (what == "fatigue") v = st.fatigue;
 	else if (what == "fatiguemax") v = st.fatigueMax;
 	else if (what == "gold") v = (float)w.itemCount("gold_001");
@@ -1280,6 +1314,58 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		s.openEnchanting(ri);
 		return true;
 	}
+	// BUYSPELL:<merchant>:<spell>: the Spells service's Buy (talking to them): one they sell that the player doesn't know
+	if (verb == "BUYSPELL" && a.size() >= 3)
+	{
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || w.refs[ri].actor < 0)
+			return fail(a[1] + " not loaded");
+		if (notTalking(ri))
+			return fail("not talking to " + a[1] + " (LEGIT)");
+		const ActorDef& def = w.game.actors[w.refs[ri].actor];
+		std::string want = lower(spaced(a[2])), id;
+		for (auto& sp : def.spells)
+			if (lower(sp) == want || lower(sp) == lower(a[2]))
+				id = sp;
+		if (id.empty())
+			return fail(a[1] + " doesn't sell " + a[2]);
+		for (auto& k : w.stats.spells)
+			if (lower(k) == lower(id))
+				return fail(a[2] + " is known already");
+		if (!s.buySpell(ri, id))
+			return fail("couldn't buy " + a[2]);
+		return true;
+	}
+	// REPAIRAT:<smith>:<item>: the smith's Repair service on that carried item (talking to them), as its row does
+	// REPAIRWITH:<tool>:<item>: one try with a carried repair tool (a hammer, prongs) on that item, as the tool's screen
+	if ((verb == "REPAIRAT" || verb == "REPAIRWITH") && a.size() >= 3)
+	{
+		int item = carried(w, a[2]);
+		if (item < 0)
+			return fail(a[2] + " not carried");
+		Screen before = s.screen;
+		if (verb == "REPAIRAT")
+		{
+			int ri = findRef(s, a[1]);
+			if (!service(ri, 0x20000))
+				return fail(a[1] + " doesn't repair");
+			if (notTalking(ri))
+				return fail("not talking to " + a[1] + " (LEGIT)");
+			s.openRepair(ri, -1);
+		}
+		else
+		{
+			int tool = carried(w, a[1]);
+			const Object* o = tool >= 0 ? w.game.object(w.inventory[tool].id) : nullptr;
+			if (!o || o->type != "REPA")
+				return fail(a[1] + " isn't a carried repair tool");
+			s.openRepair(-1, tool);
+		}
+		s.repairOne(item);
+		s.screen = before;
+		s.repairTool = -1;
+		return true;
+	}
 	if (verb == "ENCHITEM" && a.size() >= 2)
 	{
 		std::vector<int> items, gems;
@@ -1411,8 +1497,24 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		if (!s.merchantTrades(ri, o))
 			return fail(a[1] + " doesn't trade in " + a[2]);
 		int price = s.barterPrice(ri, o->value, verb == "BUY");
-		bool done = s.barterTrade(verb == "SELL", index, price, from);
-		logf("test: %s %s %s for %d: %s", verb.c_str(), a[1].c_str(), a[2].c_str(), price, done ? "done" : "refused");
+		// BUY / SELL:<npc>:<item>:<steps>: haggled first, as Y / X on the barter screen (each 5% of the price: up when
+		// selling, down when buying); a refused offer is no trade
+		int offer = price;
+		if (a.size() >= 4)
+		{
+			int steps = atoi(a[3].c_str());
+			offer = std::max(1, price + (int)roundf(price * 0.05f * (verb == "SELL" ? steps : -steps)));
+			s.barterRef = ri;
+			s.barterSell = verb == "SELL";
+			if (offer != price && !s.haggleAccepted(price, offer))
+			{
+				logf("test: %s %s %s at %d of %d: offer refused", verb.c_str(), a[1].c_str(), a[2].c_str(), offer, price);
+				s.barterRef = -1;
+				return true;
+			}
+		}
+		bool done = s.barterTrade(verb == "SELL", index, offer, from);
+		logf("test: %s %s %s for %d: %s", verb.c_str(), a[1].c_str(), a[2].c_str(), offer, done ? "done" : "refused");
 		s.barterRef = -1;
 		return true;
 	}
@@ -1439,6 +1541,40 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		s.openScreen(SCR_BOOK);
 		s.bookItem = w.inventory[i].id;
 		logf("test: reading %s", a[1].c_str());
+		return true;
+	}
+	// POSE:<id>:<group>:<at>[:<yaw degrees>]: the actor back where the level placed it (or turned that way), holding that
+	// animation group at that point (0 its start key, 1 its stop key: OpenMW's startPoint), no AI, no head turning. For
+	// side-by-side screenshots with OpenMW (tools/test/sidebyside.py)
+	if (verb == "POSE" && a.size() >= 4)
+	{
+		int ri = findRef(s, a[1]);
+		Actor* ac = ri >= 0 && w.active(ri) ? w.actorOf(ri) : nullptr;
+		ActorSet* set = ri >= 0 ? w.actorsOf(ri) : nullptr;
+		if (!ac || !set)
+			return fail(a[1] + " not loaded");
+		const Skeleton& sk = actorSkeleton(*set, ac->skeleton);
+		int g = -1;
+		for (size_t k = 0; k < sk.groups.size() && g < 0; k++)
+			if (strncasecmp(sk.groups[k].name, a[2].c_str(), sizeof(sk.groups[k].name)) == 0)
+				g = (int)k;
+		if (g < 0)
+			return fail(a[1] + " has no group " + a[2]);
+		Ref& r = w.refs[ri];
+		memcpy(r.pos, r.start, sizeof(r.pos));
+		r.rot[2] = a.size() >= 5 ? (float)atof(a[4].c_str()) / 57.29578f : r.start[3];
+		r.fitBox();
+		r.moved = true;
+		r.wandering = false;
+		w.syncActor(ri);
+		ac->frozen = false;
+		actorPlay(*set, *ac, sk.groups[g].name, ANIM_HOLD);
+		float at = fmaxf(0.0f, fminf(1.0f, (float)atof(a[3].c_str())));
+		ac->time = sk.groups[g].start + at * (sk.groups[g].stop - sk.groups[g].start);
+		ac->headYaw = 0.0f;
+		ac->blinkTime = -1.0f;
+		ac->frozen = true;
+		logf("test: %s holds %.16s at %.2f (%.3f s)", a[1].c_str(), sk.groups[g].name, at, ac->time - sk.groups[g].start);
 		return true;
 	}
 	// FACE:@x,y: turn to look at that spot (level), as the stick would
@@ -2140,7 +2276,7 @@ bool TestDriver::playerToken(const std::string& tok)
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE",
 		"ENCHANTAT", "ENCHANT", "ENCHITEM", "ENCHGEM", "ENCHTYPE", "ADDEFFECT", "CONFIRM", "TYPE", "LEVELUP",
 		"EQUIP", "USE", "READ", "DROP", "QUICKSET", "CAST", "CASTAT", "CASTMADESPELL", "USEMADE", "EQUIPMADE",
-		"RECHARGEMADE", "RECHARGE", "REPAIR", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "UNSEEN", "UNTIL", "FLOAT", "HIDE",
+		"RECHARGEMADE", "RECHARGE", "REPAIR", "REPAIRAT", "REPAIRWITH", "BUYSPELL", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "UNSEEN", "UNTIL", "FLOAT", "HIDE",
 	};
 	size_t colon = tok.find(':');
 	std::string name = tok.substr(0, colon);
@@ -4755,13 +4891,14 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		ok = cellNameMatches(w.cellName(), spaced(a[1])) == (what == "cell");
 		snprintf(got, sizeof(got), "%.80s", w.cellName().c_str());
 	}
-	else if (what == "spell" && a.size() >= 2)
+	// EXPECT:spell:<id>: the player knows it (a disease: has it); nospell: doesn't
+	else if ((what == "spell" || what == "nospell") && a.size() >= 2)
 	{
 		std::string want = lower(spaced(a[1]));
 		bool has = false;
 		for (auto& sp : w.stats.spells)
 			has |= lower(sp) == want || lower(sp) == lower(a[1]);
-		ok = has;
+		ok = has == (what == "spell");
 		snprintf(got, sizeof(got), "%s", has ? "known" : "not known");
 	}
 	// EXPECT:selspell:<id>: that spell is the one ready to cast

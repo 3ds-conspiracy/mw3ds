@@ -113,6 +113,9 @@ struct ScriptedInput
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
 	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned
 	int frameCap = -1;                // FRAMECAP:on|off: the Old 3DS's 30 / 20 fps cap in a scripted run (on unless a case says off)
+	int camSet = -1;                  // CAM:x:y:z:yaw:pitch (1) / CAM:off (0): the view held at that spot (degrees, pitch up positive)
+	float cam[5] = {};
+	int hud = -1;                     // HUD:off (0) / HUD:on (1): the top screen's HUD
 };
 
 // A scripted run keeps the Old 3DS frame cap (30 / 20 fps), as the console would run it. A case that only needs the story
@@ -121,6 +124,11 @@ static bool s_testFrameCap = true;
 
 // The layout the scripted run plays with (classic unless a CONTROLS: step chose another)
 static int s_testLayout = CONTROLS_CLASSIC;
+
+// CAM / HUD:off: a scripted run's view held at a spot, the HUD hidden (side-by-side screenshots with OpenMW,
+// tools/test/sidebyside.py). The player stays where they are, out of the picture
+static bool s_camHeld = false, s_hudOff = false;
+static RenderCamera s_heldCam;
 
 // How far (pixels) a finger may wander between press and release and still tap
 static const int kTapSlop = 12;
@@ -177,6 +185,21 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			step->gyroAim = strcmp(tok + 8, "off") == 0 ? 0 : atoi(tok + 8);
 			continue;
 		}
+		if (sscanf(tok, "CAM:%f:%f:%f:%f:%f", &step->cam[0], &step->cam[1], &step->cam[2], &step->cam[3], &step->cam[4]) == 5)
+		{
+			step->camSet = 1;
+			continue;
+		}
+		if (strcmp(tok, "CAM:off") == 0)
+		{
+			step->camSet = 0;
+			continue;
+		}
+		if (strncmp(tok, "HUD:", 4) == 0)
+		{
+			step->hud = strcmp(tok + 4, "off") == 0 ? 0 : 1;
+			continue;
+		}
 		if (strncmp(tok, "FRAMECAP:", 9) == 0)
 		{
 			step->frameCap = strcmp(tok + 9, "on") == 0 ? 1 : 0;
@@ -212,7 +235,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
+				"CASTAT:", "POSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -562,7 +585,7 @@ static void goldenEyeInput(PlayerInput& in, float padX, float padY, u32 held, u3
 }
 
 // Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
-// The sensor runs only while it is on; a slow drift under kDeadZone a second is no turn
+// The sensor runs only while it is on; the resting offset is taken off and turns under kSoft a second softened
 static void gyroInput(PlayerInput& in)
 {
 	static bool on = false;
@@ -573,21 +596,56 @@ static void gyroInput(PlayerInput& in)
 		if (on)
 		{
 			HIDUSER_EnableGyroscope();
+			HIDUSER_EnableAccelerometer();
 			if (R_FAILED(HIDUSER_GetGyroscopeRawToDpsCoefficient(&toDps)))
 				toDps = 0.0f;
 		}
 		else
+		{
 			HIDUSER_DisableGyroscope();
+			HIDUSER_DisableAccelerometer();
+		}
 	}
 	if (!on)
 		return;
-	const float kDeadZone = 2.5f;
+	const float kSoft = 1.0f;
 	angularRate r;
 	hidGyroRead(&r);
-	// The console's axes: y up through it (turning left / right), x across it (tilting the top toward or away)
-	float yaw = -r.y * toDps, pitch = r.x * toDps;
-	in.gyroYaw = fabsf(yaw) > kDeadZone ? yaw * g_gyroAim / 100.0f : 0.0f;
-	in.gyroPitch = fabsf(pitch) > kDeadZone ? pitch * g_gyroAim / 100.0f : 0.0f;
+	float ax = gyroRawToDps(r.x, toDps), ay = gyroRawToDps(r.y, toDps), az = gyroRawToDps(r.z, toDps);
+	// The sensor reads a little turn while the console is held still: that resting offset is taken off, so a steady
+	// hand doesn't drift the view. It is learned only while all three axes stay within 1.5 a second of it, and slowly
+	// (some 10 s), so a slow, deliberate aim is not mistaken for it
+	static float rest[3] = { 0.0f, 0.0f, 0.0f };
+	float rate[3] = { ax, ay, az };
+	if (fabsf(ax - rest[0]) < 1.5f && fabsf(ay - rest[1]) < 1.5f && fabsf(az - rest[2]) < 1.5f)
+		for (int k = 0; k < 3; k++)
+			rest[k] += (rate[k] - rest[k]) * 0.003f;
+	for (int k = 0; k < 3; k++)
+		rate[k] -= rest[k];
+	// Gravity from the accelerometer, steadied over a few frames
+	static float grav[3] = { 0.0f, -512.0f, 0.0f };
+	accelVector acc;
+	hidAccelRead(&acc);
+	if (acc.x || acc.y || acc.z)
+	{
+		const float a[3] = { (float)acc.x, (float)acc.y, (float)acc.z };
+		for (int k = 0; k < 3; k++)
+			grav[k] += (a[k] - grav[k]) * 0.1f;
+	}
+	// (while the console turns, its axes and gravity go to the log twice a second: the signs are still to be read on
+	// the device)
+	static int logFrames = 0;
+	if (++logFrames >= 30 && (fabsf(rate[0]) > 10.0f || fabsf(rate[1]) > 10.0f || fabsf(rate[2]) > 10.0f))
+	{
+		logFrames = 0;
+		logf("gyro: x %.0f y %.0f z %.0f dps (raw %d %d %d, coefficient %.3f), gravity %.0f %.0f %.0f", rate[0], rate[1],
+			rate[2], r.x, r.y, r.z, toDps, grav[0], grav[1], grav[2]);
+	}
+	// Left / right about the world's up, up / down about the console's left-right axis: player space
+	float yaw, pitch;
+	gyroPlayerSpace(rate, grav, yaw, pitch);
+	in.gyroYaw = gyroSoften(yaw, kSoft) * g_gyroAim / 100.0f;
+	in.gyroPitch = gyroSoften(pitch, kSoft) * g_gyroAim / 100.0f;
 }
 
 // Three button layouts (Options > Controls; START and SELECT the same in all):
@@ -1255,6 +1313,10 @@ int main()
 					session->alchemySlots.push_back(rest.substr(0, c));
 					rest = c == std::string::npos ? "" : rest.substr(c + 1);
 				}
+				// (the screen offers only what is carried: one that isn't is the case's mistake, not a potion)
+				for (auto& id : session->alchemySlots)
+					if (session->w.itemCount(id) <= 0)
+						logf("drive: FAIL BREW: %s not carried", id.c_str());
 				session->brewPotion();
 			}
 			// SLEEPUNTIL:h: whole hours from now to the next time the clock reads h (a full day when it already does)
@@ -1271,7 +1333,9 @@ int main()
 				logf("drive: SLEEP %d ignored: a rest is still running (%d of %d hours)", sleepHours, session->restDone, session->restTotal);
 			else if (first && sleepHours > 0)
 			{
-				session->openRest(false);
+				// (a bed's rest menu already open: its Rest, asleep there even where sleeping is illegal)
+				if (!(session->screen == SCR_REST && session->restBed))
+					session->openRest(false);
 				session->startRest(sleepHours);
 				if (s.sleepForce == 2)
 					session->restInterruptAt = -1;     // 2: nothing comes
@@ -1578,6 +1642,14 @@ int main()
 				down = held = KEY_A;
 				inputTime = s.secs;
 			}
+			if (first && s.camSet >= 0)
+			{
+				s_camHeld = s.camSet == 1;
+				s_heldCam = RenderCamera{ { s.cam[0], s.cam[1], s.cam[2] }, C3D_AngleFromDegrees(s.cam[3]),
+					C3D_AngleFromDegrees(s.cam[4]) };
+			}
+			if (first && s.hud >= 0)
+				s_hudOff = s.hud == 0;
 			if (first && s.teleport && !s.tpInside && session->w.current >= 0 && session->w.cells[session->w.current].interior)
 			{
 				// from inside to world coordinates: out to the exterior cell there (as a door would)
@@ -1830,6 +1902,8 @@ int main()
 			playerEyeZ(session->w.player) }, session->w.player.yaw, session->w.player.pitch };
 		if (loaded)
 			session->viewCamera(cam);            // third person: behind the player
+		if (loaded && s_camHeld)
+			cam = s_heldCam;
 		bool autocamShot = false;
 		if (poseIndex < autocam.size() && loaded)
 		{
@@ -1975,7 +2049,7 @@ int main()
 			float cmdBefore = C3D_GetCmdBufUsage();
 			if (loaded)
 				rendererDrawWorld(session->w, cam, stereoOn ? (eye ? shift : -shift) : 0.0f, eye == 1, fogScale);
-			if (loaded && poseIndex >= autocam.size())
+			if (loaded && poseIndex >= autocam.size() && !s_camHeld)
 				session->drawExtras(cam.pos, eye == 1);
 			if (eye == 0)
 				eyeCmd = C3D_GetCmdBufUsage() - cmdBefore;
@@ -2005,7 +2079,10 @@ int main()
 			extern int g_uiDraws;
 			g_uiDraws = 0;
 			if (loaded)
-				session->drawTop();
+			{
+				if (!s_hudOff)
+					session->drawTop();
+			}
 			else
 				uiTextCentered(200, 110, 0.6f, col::header, "Load failed - see sdmc:/3ds/mw3ds/log.txt");
 			// The same HUD in both eyes: a pass that drew a different number of things is a one-eye element

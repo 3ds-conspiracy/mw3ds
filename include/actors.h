@@ -99,6 +99,7 @@ struct Actor
 	bool showWeapon = false;
 	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
 	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline
+	bool frozen = false;               // held where it is in its group (the test driver's POSE): no time passes, no other group starts
 };
 
 struct ActorSet

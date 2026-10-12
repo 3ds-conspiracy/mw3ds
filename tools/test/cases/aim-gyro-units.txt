@@ -1,0 +1,8 @@
+# Gyro aim's units: the gyroscope's raw counts over HIDUSER_GetGyroscopeRawToDpsCoefficient (counts per degree a
+# second, 14.375 on the console) are degrees a second. Multiplied instead, as the first gyro aim did, a small turn
+# of the console spun the view some 200 times as far, and the sensor's resting offset alone kept it spinning
+1 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:gyrodps:144,14.375:gt:9.9
+0.1 0 0 0 0 EXPECT:gyrodps:144,14.375:lt:10.1
+0.1 0 0 0 0 EXPECT:gyrodps:-1437.5,14.375:eq:-100
+0.1 0 0 0 0 EXPECT:gyrodps:100,0.07:eq:7

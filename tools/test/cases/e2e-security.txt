@@ -1,0 +1,83 @@
+# e2e-security: lockpicks and probes used through, LEGIT after the setup: bought at Arrille's in Seyda Neen, flown to
+# Mannammu (the nearest cave with an unowned locked and trapped chest), the smugglers in the way fought, a trap
+# disarmed with the probe, the lock picked, the chest opened; a locked chest with no trap and a trapped one with no lock
+# after it. Each try wears a use off the tool, and each success trains Security.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 SETSKILL:security:80
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EQUIP:iron_longsword
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# 1. A lockpick and a probe from Arrille, in at his door from Seyda Neen's street
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Arrille's_Tradehouse
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:arrille
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 BUY:arrille:pick_journeyman_01
+0.3 0 0 0 0 BUY:arrille:probe_journeyman_01
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:count:pick_journeyman_01:eq:1
+0.1 0 0 0 0 EXPECT:count:probe_journeyman_01:eq:1
+0.1 0 0 0 0 EXPECT:gold:lt:@0
+# 2. To Mannammu, east along the coast: flown, in at its door (6844,-64292)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@6755,-64165,266
+120 0 0 0 0 DOORTO:Mannammu
+10 0 0 0 0 UNTIL:cell:Mannammu
+0.5 0 0 0
+# 3. The trapped chest on the ledge (724,826): the probe on its Sting trap, then the pick on its lock (10), then opened
+120 0 0 0 0 WALKTO:@640,800,465
+0.3 0 0 0 0 SNAP:skillprog:security
+0.3 0 0 0 0 SNAP:tooluses:probe_journeyman_01
+0.1 0 0 0 0 EXPECT:reftrap:com_chest_11_pos:eq:1
+0.5 0 0 0 0 USEPROBE:com_chest_11_pos:probe_journeyman_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reftrap:com_chest_11_pos:eq:0
+0.1 0 0 0 0 EXPECT:tooluses:probe_journeyman_01:lt:@0
+0.3 0 0 0 0 SNAP:tooluses:pick_journeyman_01
+0.1 0 0 0 0 EXPECT:reflock:com_chest_11_pos:gt:0
+0.5 0 0 0 0 USELOCKPICK:com_chest_11_pos:pick_journeyman_01
+1 0 0 0
+# (its lock is gone: the chest opens below; reflock with two chests of this id reads the one still locked)
+0.1 0 0 0 0 EXPECT:tooluses:pick_journeyman_01:lt:@0
+0.1 0 0 0 0 EXPECT:skillprog:security:gt:@0
+60 0 0 0 0 ACTIVATE:com_chest_11_pos
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 B
+1 0 0 0 0 UNTIL:screen:none
+# 4. The wizard's chest by the barrels (-380,-180): no lock, a Strength Leech trap: the probe only
+120 0 0 0 0 WALKTO:@-430,-120,151
+0.1 0 0 0 0 EXPECT:reftrap:wizard_chest_01_evil:eq:1
+0.5 0 0 0 0 USEPROBE:wizard_chest_01_evil:probe_journeyman_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reftrap:wizard_chest_01_evil:eq:0
+60 0 0 0 0 ACTIVATE:wizard_chest_01_evil
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 B
+1 0 0 0 0 UNTIL:screen:none
+# 5. The chest by the crates (-513,-294): a lock (5), no trap: the pick only
+120 0 0 0 0 WALKTO:@-520,-220,145
+0.1 0 0 0 0 EXPECT:reflock:com_chest_11_pos:gt:0
+0.5 0 0 0 0 USELOCKPICK:com_chest_11_pos:pick_journeyman_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reflock:com_chest_11_pos:le:0
+60 0 0 0 0 ACTIVATE:com_chest_11_pos
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 B
+1 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:tooluses:pick_journeyman_01:gt:0
+0.1 0 0 0 0 EXPECT:bounty:eq:0

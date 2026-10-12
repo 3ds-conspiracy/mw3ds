@@ -523,6 +523,7 @@ def object_entry(rec):
         e["weight"], e["value"], e["flags"] = f32(d), i32(d, 4), i32(d, 20)
         e["sound"] = rec.zstr("SNAM") or ""
         e["radius"], e["color"] = i32(d, 12), list(d[16:19])     # what it lights when carried
+        e["time"] = max(0, i32(d, 8))                               # seconds it burns while held (0 / -1: for ever)
     if t == "DOOR":
         e["open_sound"], e["close_sound"] = rec.zstr("SNAM") or "", rec.zstr("ANAM") or ""
     if t == "CONT":
