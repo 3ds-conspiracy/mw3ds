@@ -3679,6 +3679,9 @@
 120 0 0 0 0 WALKTO:@-88725,128044,54
 120 0 0 0 0 WALKTO:@-88700,128300,62
 120 0 0 0 0 WALKTO:galyn_arvel
+# past Galyn (at -88710,128429) to where he was talked to: J'Saddha's script wants him within 300 of Galyn, and he
+# stops some 250 behind the one he follows; from the south side of Galyn he stopped 400 off
+30 0 0 0 0 WALKTO:@-88681,128468,54
 40 0 0 0
 15 0 0 0 0 UNTIL:journal:HH_TwinLamps1:ge:70
 0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps1:ge:70

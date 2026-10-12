@@ -316,6 +316,7 @@
 0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t14
 2 0 0 0
 0.3 0 0 0 0 EXPECT:refhealth:scamp:lt:@-0.01
+0.3 0 0 0 0 RESISTROLL:99
 0.3 0 0 0 0 FILL
 0.3 0 0 0 0 ADDEFFECT:45:1:1:5:2
 0.3 0 0 0 0 MAKESPELL:t45
@@ -335,12 +336,15 @@
 0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t50
 2 0 0 0
 0.3 0 0 0 0 EXPECT:refcombat:scamp:eq:0
+0.3 0 0 0 0 PLACE:scamp:250
+1 0 0 0
 0.3 0 0 0 0 FILL
 0.3 0 0 0 0 ADDEFFECT:54:100:100:10:2
 0.3 0 0 0 0 MAKESPELL:t54
 0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_t54
 2 0 0 0
 0.3 0 0 0 0 EXPECT:refflee:scamp:eq:1
+0.3 0 0 0 0 RESISTROLL:-1
 0.3 0 0 0 0 PLACE:mudcrab:110
 1 0 0 0
 0.3 0 0 0 0 FILL

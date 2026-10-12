@@ -1,8 +1,12 @@
 # SLEEPUNTIL:h rests until the clock next reads game hour h, like the rest menu's hour picker, so cases need not
 # hand-tune SLEEP:n from the logged hour. Sleeps to 6, then to 2, then to 2 again (a full day, not none).
+# In the Shrine of Azura (rest allowed, no creatures): indoors no creature comes to break the sleep, so the hours
+# don't hang on the interruption roll (outside Seyda Neen a kwama forager woke the player once the data changed).
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:7
 0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Shrine_of_Azura
+3 0 0 0
 0.3 0 0 0 0 LEGIT
 0.3 0 0 0 0 SNAP:hour
 30 0 0 0 0 SLEEPUNTIL:6

@@ -13,7 +13,7 @@
 0.3 0 0 0 0 GIVE:sc_icarianflight:10
 0.3 0 0 0 0 GIVE:sc_divineintervention:10
 0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
-0.3 0 0 0 0 GIVE:sc_ondusisunhinging:5
+0.3 0 0 0 0 GIVE:sc_ondusisunhinging:10
 0.3 0 0 0 0 SPELL:mark
 0.3 0 0 0 0 SPELL:recall
 0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
@@ -1422,6 +1422,13 @@
 0.5 0 0 0
 0.1 0 0 0 0 FLOAT:60
 0.3 0 0 0 0 EQUIP:claymore_iceblade_unique
+# down the shrine by the way that gets there: the grid is in two pieces, and a straight line from the end of the
+# first to the flooded pit (305,1300) met its wall (at 240,1620) when a fight on the way left the player further east
+60 0 0 0 0 WALKTO:@149,2418,-1192
+30 0 0 0 0 WALKTO:@225,2162,-1182
+60 0 0 0 0 WALKTO:@390,1844,-1182
+30 0 0 0 0 WALKTO:@417,1833,-1281
+60 0 0 0 0 WALKTO:@305,1300,-1426
 120 0 0 0 0 WALKTO:@2350,749,-1168
 120 0 0 0 0 KILL:carecalmo
 120 0 0 0 0 KILL:meryaran

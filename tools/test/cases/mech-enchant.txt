@@ -65,6 +65,8 @@
 0.3 0 0 0 0 ENCHGEM:misc_soulgem_common
 0.3 0 0 0 0 ENCHTYPE:2
 0.3 0 0 0 0 ADDEFFECT:75:5:5:5:0
+# the die fixed here: this enchantment is a 39% chance, and the made ring is what the rest checks
+0.3 0 0 0 0 ROLL:0
 0.3 0 0 0 0 SNAP:count:misc_soulgem_common
 0.3 0 0 0 0 SNAP:count:expensive_ring_01
 0.3 0 0 0 0 SNAP:skillprog:enchant

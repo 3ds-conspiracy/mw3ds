@@ -1091,6 +1091,10 @@
 120 0 0 0 0 DOORTO:Tel_Aruhn,_Tower_Living
 10 0 0 0 0 UNTIL:cell:Tel_Aruhn,_Tower_Living_Quarters
 0.5 0 0 0
+# Senise is a floor down: over the shaft (the hub at 4096,4352) and down it on the float (L) first, as a player goes;
+# straight at her from the upper hall met its floor once the collision changed a little (the optimization mods' door jambs)
+60 0 0 0 0 WALKTO:@4096,4352,14849
+5 0 0 0 0 L
 120 0 0 0 0 KILL:senise_thindo
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:senise_thindo
@@ -1106,11 +1110,9 @@
 120 0 0 0 0 DOORTO:outside
 3 0 0 0
 120 0 0 0 0 WALKTO:@146904,38773,623
-8 0 0 0
-0.3 0 0 0 0 CHOICE:1
-2 0 0 0 0 UNTIL:talkready
-0.3 0 0 0 0 B
-0.5 0 0 0 0 B
+# The guard comes to fine us for Senise: waited for until paid (the drive pays a guard's crime greeting in a LEGIT run),
+# not a fixed 8 s and a choice; with the mods he walked in place a while on the way
+30 0 0 0 0 UNTIL:bounty:eq:0
 2 0 0 0 0 UNTIL:screen:none
 0.1 0 0 0 0 EXPECT:bounty:eq:0
 60 0 0 0 0 WALKTO:@144859,42228,808
@@ -1886,10 +1888,13 @@
 120 0 0 0 0 DOORTO:outside
 3 0 0 0
 0.3 0 0 0 0 SAVE:uber-house-telvanni-strong3
-# (v2: soul trap three times, it can be reflected, then the blade: the Fire Storms were reflected too, and the second
-# atronach outlived its casts)
+# (v2: soul trap six times, it can be reflected, then the blade: the Fire Storms were reflected too, and the second
+# atronach outlived its casts; on the Old 3DS profile all three of three casts were reflected once)
 0.3 0 0 0 0 CAST:summon_storm_atronach
 3 0 0 0
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
 1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
 1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
 1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
@@ -1897,6 +1902,9 @@
 2 0 0 0
 0.3 0 0 0 0 CAST:summon_storm_atronach
 3 0 0 0
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
+1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
 1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
 1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap
 1 0 0 0 0 CASTAT:atronach_storm_summon:soul_trap

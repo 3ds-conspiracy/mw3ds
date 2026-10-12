@@ -560,6 +560,8 @@
 # (the barracks door: the driver's DOORTO stops 100 short of it)
 0.3 0 0 0 0 FACE:@-356,-129
 0.17 0 1 0
+# (faced again: Oritius and Arius are at the player's back here, and a blow shoves the aim off the door)
+0.3 0 0 0 0 FACE:@-356,-129
 0.3 0 0 0 0 A
 3 0 0 0
 120 0 0 0 0 DOORTO:Gnisis,_Madach_Tradehouse

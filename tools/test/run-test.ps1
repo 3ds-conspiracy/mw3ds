@@ -15,6 +15,8 @@ $inputs = Get-Content (Join-Path $root "tools\test\cases\$Test.txt")
 # A case that needs its own start cell (character creation on the prison ship) says so on its first line,
 # "# start: <cell>"; the game skips lines that are not steps
 if ($inputs.Count -gt 0 -and $inputs[0] -match '^#\s*start:\s*(.+?)\s*$') { $Start = $Matches[1] }
+# "# console: old" in its first lines: a case for the Old 3DS profile alone (run-native-all leaves it out of New 3DS runs)
+if (@($inputs | Select-Object -First 5) -match '^#\s*console:\s*old\s*$') { $Old3ds = $true }
 if ($Native) {
     # The game built for the PC (tools\test\native\build.py): same case file, same log lines, no emulator
     $sd = if ($Sd) { $Sd } else { Join-Path $root 'build\native\sd' }   # -Sd: its own SD folder, so runs can go in parallel

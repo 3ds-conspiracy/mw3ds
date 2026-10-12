@@ -2,9 +2,15 @@
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 GOTO:Dagon_Fel,_Sorkvild's_Tower
 3 0 0 0
+# Hlora Long-Leg attacks on sight here: set aside, so her blows (two knockdowns once the data changed) and her standing
+# under the hatch are not what the hatch test hangs on
+0.3 0 0 0 0 DISABLE:hlora_long-leg
 0.3 0 0 0 0 LEGIT
 # Sorkvild's hatch is in the hall ceiling: stand under it, look up, and take it
 90 0 0 0 0 WALKTO:@3505,1650,15184
-60 0 0 0 0 ACTIVATE:door_dwrv_loadup00
+# (looked up and pressed by hand, as a player does: ACTIVATE walks at the hatch's origin, 259 overhead, and never
+# stands still under it to look up)
+3 0 0 0 0 UP
+0.3 0 0 0 0 A
 3 0 0 0
 0.1 0 0 0 0 EXPECT:playerz:ge:15400

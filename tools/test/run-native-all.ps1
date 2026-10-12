@@ -30,6 +30,16 @@ if ($Filter) {
     $cases = $cases | Where-Object { $_ -notlike 'chain-*' -and $_ -notlike 'zz-open-*' }
 }
 $cases = @($cases | Sort-Object)
+# A case for one console says so in its first lines, "# console: new" or "# console: old" (issue-32 pins the New 3DS's
+# animation rates, issue-32-old3ds the Old 3DS profile's): left out of a run with the other profile
+$console = if ($Old3ds) { 'old' } else { 'new' }
+$otherConsole = @()
+foreach ($c in $cases) {
+    foreach ($line in @(Get-Content (Join-Path $root "tools\test\cases\$c.txt") -TotalCount 5)) {
+        if ($line -match '^#\s*console:\s*(new|old)\s*$' -and $Matches[1] -ne $console) { $otherConsole += $c }
+    }
+}
+$cases = @($cases | Where-Object { $otherConsole -notcontains $_ })
 if (-not $cases) { "no cases match"; exit 1 }
 
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
@@ -112,6 +122,7 @@ $passed = @($rows | Where-Object { $_.result -eq 'PASS' } | Sort-Object case)
 $failed = @($rows | Where-Object { $_.result -eq 'FAIL' } | Sort-Object case)
 $mode = if ($IgnoreWarnings) { ', monitor warnings ignored' } else { '' }
 $lines = @("native run ${stamp}: $($passed.Count) of $total passed in $([int]$clock.Elapsed.TotalSeconds) s ($Jobs at a time, data $Data$mode)")
+if ($otherConsole) { $lines += "left out, for the other console: $($otherConsole -join ', ')" }
 $lines += ''
 $lines += "SUCCEEDED ($($passed.Count)):"
 $lines += $passed | ForEach-Object { "  $($_.case)" + $(if ($_.detail -like 'sweep:*') { "  $($_.detail)" } elseif ($_.warnings) { "  ($($_.warnings) warnings ignored)" } else { '' }) }

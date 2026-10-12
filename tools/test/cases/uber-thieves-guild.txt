@@ -1248,6 +1248,9 @@
 60 0 0 0 0 KILL:skeleton
 1 0 0 0
 30 0 0 0 0 WALKTO:@4217,4197,14496
+# faced at the locked door (4288,4228): the walk's end leaves the facing to chance, and the lockpick and the press
+# met nothing when it ended a step further on
+0.3 0 0 0 0 FACE:@4288,4228
 0.3 0 0 0 0 EQUIP:pick_grandmaster
 1 0 0 0
 0.5 0 0 0 0 X

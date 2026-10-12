@@ -1,0 +1,10 @@
+# console: old
+# issue-32 on the Old 3DS profile (include/console.h): posed as often as on the New 3DS, re-skinned every 2, 4 and 6
+# frames near, middle and far
+1 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:poseevery:1000:eq:1
+0.3 0 0 0 0 EXPECT:poseevery:2000:le:2
+0.3 0 0 0 0 EXPECT:poseevery:4000:le:3
+0.3 0 0 0 0 EXPECT:skinevery:1200:le:2
+0.3 0 0 0 0 EXPECT:skinevery:2000:le:4
+0.3 0 0 0 0 EXPECT:skinevery:4000:le:6
