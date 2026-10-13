@@ -65,6 +65,8 @@ inline void svcSleepThread(s64 ns) { std::this_thread::sleep_for(std::chrono::na
 inline Result romfsInit() { return -1; }
 inline void romfsExit() {}
 inline void gfxInitDefault() {}
+enum { GSP_RGBA8_OES = 0, GSP_BGR8_OES = 1, GSP_RGB565_OES = 2 };
+inline void gfxInit(int, int, bool) {}
 inline void gfxExit() {}
 inline void gfxSet3D(bool) {}
 inline float osGet3DSliderState() { return 0; }

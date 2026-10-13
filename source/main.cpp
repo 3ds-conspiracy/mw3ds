@@ -28,10 +28,12 @@ extern "C" u32 __ctru_heap_size, __ctru_linear_heap_size;
 static const char* kSdDataDir = "sdmc:/3ds/mw3ds/data";
 static const char* kRomfsDataDir = "romfs:/data";
 
-// (inFormat: the render target's colour format, RGBA8, or RGB565 on an Old 3DS)
-#define DISPLAY_TRANSFER_FLAGS(inFormat) \
+// (inFormat: the render target's colour format, RGBA8, or RGB565 on an Old 3DS; outFormat: the screen's, RGB8, or
+// RGB565 on an Old 3DS: the transfer engine never signals the end of an RGB565 -> RGB8 copy on the console, and the
+// frame waits for it for ever (3dbrew, Transfer Engine; issue #43). Azahar and the native build signal any copy)
+#define DISPLAY_TRANSFER_FLAGS(inFormat, outFormat) \
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
-	GX_TRANSFER_IN_FORMAT(inFormat) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
+	GX_TRANSFER_IN_FORMAT(inFormat) | GX_TRANSFER_OUT_FORMAT(outFormat) | \
 	GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
 
 // ---- Test harness
@@ -1020,7 +1022,12 @@ int main()
 	if (g_profile.slowCpu)
 		g_sysCoreThreads = R_SUCCEEDED(APT_SetAppCpuTimeLimit(30));
 
-	gfxInitDefault();
+	// The Old 3DS's 16-bit colour buffer goes to a 16-bit top screen (see DISPLAY_TRANSFER_FLAGS; its framebuffers
+	// take a third less linear memory too)
+	if (g_profile.rgb565)
+		gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false);
+	else
+		gfxInitDefault();
 	// GPU commands of a whole frame (both eyes, bottom screen): overflowing it is a panic, so it is
 	// generous, the renderer stops drawing near the end and 3D backs off when one eye uses too much.
 	// (an Old 3DS's is half: console.cpp)
@@ -1045,7 +1052,9 @@ int main()
 	// The top screen's colour buffer: 16-bit on an Old 3DS (half the buffer and the copy to the screen each frame;
 	// Morrowind's muted colours show no banding to speak of), 32-bit on a New 3DS
 	GPU_COLORBUF colorFmt = g_profile.rgb565 ? GPU_RB_RGB565 : GPU_RB_RGBA8;
-	u32 transfer = g_profile.rgb565 ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565) : DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8);
+	u32 transfer = g_profile.rgb565 ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565, GX_TRANSFER_FMT_RGB565)
+		: DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGB8);
+	logf("display: top screen %s", g_profile.rgb565 ? "16-bit, copied RGB565 to RGB565" : "24-bit, copied RGBA8 to RGB8");
 	C3D_RenderTarget* top = C3D_RenderTargetCreate(240, 400, colorFmt, GPU_RB_DEPTH24_STENCIL8);
 	C3D_RenderTargetSetOutput(top, GFX_TOP, GFX_LEFT, transfer);
 	// Right eye for stereo 3D (only drawn while the 3D mode is on)
