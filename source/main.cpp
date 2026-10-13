@@ -543,17 +543,31 @@ static float readStickScroll()
 	return fabsf(cs.dy) > 20 ? fmaxf(-1.0f, fminf(1.0f, -cs.dy / 150.0f)) : 0.0f;
 }
 
-// GoldenEye (Options > Controls): one stick, for an Old 3DS without the C-stick and ZL / ZR. The Circle Pad walks
-// (up / down) and turns (left / right); holding R (or ZR) roots the player and the pad aims instead, at half speed.
-// D-pad left / right strafe, up / down look; X attack, Y cast, B jump (a tap) or run (held), L sneak, ZL + D-pad
-// quick keys (ZL: Circle Pad Pro / New 3DS), ZL + X put away. Device and scripted runs both come through here;
-// dt: the frame's seconds (B's tap or hold)
-static void goldenEyeInput(PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt)
+// GoldenEye (Options > Controls): one stick, for an Old 3DS without the C-stick and ZL / ZR, on the Xbox layout's
+// buttons. The Circle Pad walks (up / down) and turns (left / right); an aim button held roots the player and the
+// pad aims instead, up and down too, at half speed (GoldenEye's aim): X held past a tap, R while it winds up the
+// attack, or ZL / ZR (Circle Pad Pro / New 3DS). A tap of X readies or puts away the weapon, when it is let go
+// (a hold aims instead). L cast, Y jump (and rise, levitating), B run (held), SELECT sneak on / off, D-pad quick
+// keys; first / third person is a button on the touch screen. No strafing. Device and scripted runs both come
+// through here, each with its own GoldenEyeState; dt: the frame's seconds (X's tap or hold)
+struct GoldenEyeState
 {
-	static float bHeld = 0.0f;
-	const float kTap = 0.25f;           // B let go before this: a jump; held past it: running
+	float xHeld = 0.0f;               // seconds X has been held
+	bool sneakOn = false;
+};
+static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt)
+{
+	float& xHeld = ge.xHeld;
+	bool& sneakOn = ge.sneakOn;
+	const float kTap = 0.25f;           // X let go before this: ready / put away; held longer: only aimed
+	if (held & KEY_X)
+		xHeld += dt;
+	bool aiming = held & (KEY_X | KEY_R | KEY_ZL | KEY_ZR);   // (X from the press on: a quick let-go readies instead)
+	in.readyToggle = (up & KEY_X) && xHeld < kTap;
+	if (!(held & KEY_X))
+		xHeld = 0.0f;
 	in.moveX = in.moveY = 0.0f;
-	if (held & (KEY_R | KEY_ZR))
+	if (aiming)
 	{
 		in.lookX += padX * 0.5f;
 		in.lookY += padY * 0.5f;
@@ -563,33 +577,17 @@ static void goldenEyeInput(PlayerInput& in, float padX, float padY, u32 held, u3
 		in.lookX += padX;
 		in.moveY = padY;
 	}
-	if (held & KEY_ZL)
-	{
-		if (down & KEY_DUP) in.quick = 0;
-		if (down & KEY_DRIGHT) in.quick = 1;
-		if (down & KEY_DDOWN) in.quick = 2;
-		if (down & KEY_DLEFT) in.quick = 3;
-	}
-	else
-	{
-		if (held & KEY_DRIGHT) in.moveX += 1.0f;
-		if (held & KEY_DLEFT)  in.moveX -= 1.0f;
-		if (held & KEY_DUP)    in.lookY += 1.0f;
-		if (held & KEY_DDOWN)  in.lookY -= 1.0f;
-		in.up = held & KEY_DUP;              // (flying: D-pad up / down rise and sink)
-		in.down = held & KEY_DDOWN;
-	}
-	if (held & KEY_B)
-		bHeld += dt;
-	in.jump = (up & KEY_B) && bHeld < kTap;
-	in.fast = (held & KEY_B) && bHeld >= kTap;
-	if (!(held & KEY_B))
-		bHeld = 0.0f;
-	in.togglePov = down & KEY_SELECT;
-	in.sheathe = (held & KEY_ZL) && (down & KEY_X);
-	in.attack = (held & KEY_X) && !(held & KEY_ZL);
-	in.cast = down & KEY_Y;
-	in.sneak = held & KEY_L;
+	if (down & KEY_DUP) in.quick = 0;
+	if (down & KEY_DRIGHT) in.quick = 1;
+	if (down & KEY_DDOWN) in.quick = 2;
+	if (down & KEY_DLEFT) in.quick = 3;
+	if (down & KEY_SELECT)
+		sneakOn = !sneakOn;
+	in.attack = held & KEY_R;
+	in.cast = down & KEY_L;
+	in.jump = down & KEY_Y;
+	in.fast = held & KEY_B;
+	in.sneak = sneakOn;
 }
 
 // Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
@@ -672,7 +670,8 @@ static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	gyroInput(in);
 	if (g_controlLayout == CONTROLS_GOLDENEYE)
 	{
-		goldenEyeInput(in, in.moveX, in.moveY, held, down, up, dt);
+		static GoldenEyeState state;
+		goldenEyeInput(state, in, in.moveX, in.moveY, held, down, up, dt);
 		return in;
 	}
 	if (g_controlLayout == CONTROLS_XBOX)
@@ -1268,7 +1267,8 @@ int main()
 				static u32 lastHeld = 0;
 				u32 released = first ? lastHeld & ~held : 0;
 				lastHeld = held;
-				goldenEyeInput(ge, s.moveX, s.moveY, held, down, released, dt);
+				static GoldenEyeState state;      // (its own: the console's pass above runs every frame too)
+				goldenEyeInput(state, ge, s.moveX, s.moveY, held, down, released, dt);
 				ge.jump |= s.jump && first;
 				in = ge;
 			}

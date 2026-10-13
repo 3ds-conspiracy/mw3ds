@@ -1119,6 +1119,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "armor") v = s.playerArmor();              // the player's armor rating
 	else if (what == "target") v = s.target >= 0 ? 1.0f : 0.0f;       // something under the crosshair
 	else if (what == "forcesneak") v = w.forceSneak ? 1.0f : 0.0f;    // the player forced to sneak
+	else if (what == "sneaking") v = w.player.sneaking ? 1.0f : 0.0f;  // the player sneaks now
 	else if (what == "unaimable")
 	{
 		// loaded people (and bodies) within 2000 units the crosshair can't find where they stand

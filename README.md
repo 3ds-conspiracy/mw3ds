@@ -108,23 +108,22 @@ The engine finds out which console it is on and, on an Old 3DS, takes a lighter 
 ### Controls
 
 An Old 3DS has no C-stick and no ZL / ZR (without the Circle Pad Pro), so its default layout is **GoldenEye**: one stick
-that walks and turns, and a button that stops you to aim.
+that walks and turns, on the Xbox layout's buttons, and a button that stops you to aim. There is no strafing.
 
 | Button | GoldenEye (Old 3DS default) |
 |---|---|
 | Circle Pad | Walk forward / back, turn left / right |
-| R (hold) | Stand still and aim with the Circle Pad |
-| D-Pad left / right | Step sideways |
-| D-Pad up / down | Look up / down |
+| X (hold), ZL / ZR (hold) | Aim: stand still, the Circle Pad aims (up and down too) |
+| X (tap) | Ready / put away the weapon |
+| R (hold, release) | Wind up (aiming as X does), strike |
+| L | Cast the selected spell |
 | A | Activate: talk, open, take |
-| X (hold, release) | Ready the weapon, wind up, strike |
-| Y | Cast the selected spell |
-| B | Jump (tap), run (hold) |
-| L (hold) | Sneak |
-| ZL + D-Pad / ZL + X | Quick keys / put the weapon away (Circle Pad Pro or New 3DS) |
-| SELECT | First / third person |
+| Y | Jump |
+| B (hold) | Run |
+| SELECT | Sneak on / off |
+| D-Pad | Quick keys |
 | START | Menu: save, rest, options |
-| Touch screen | Inventory, magic, map, stats |
+| Touch screen | Inventory, magic, map, stats; the 1st / 3rd button for first / third person |
 
 **Gyro aim** is on by default on every console: turning the 3DS turns your view by the same angle, for fine aiming.
 Options > Gyro aim cycles off, 0.5x, 1x and 2x. Options > Controls shows the layout and switches between GoldenEye,

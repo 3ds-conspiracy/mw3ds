@@ -1,0 +1,35 @@
+# GoldenEye controls on the Xbox layout's buttons (Old 3DS default): a tap of X readies and puts away the weapon,
+# holding X aims (the player stands still and the Circle Pad turns and looks up and down) and leaves the weapon as it
+# was, SELECT turns sneaking on and off, L casts the selected spell, Y jumps
+# (the Circle Pad's walking and turning, and R's aim: aim-goldeneye, aim-goldeneye-hold)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:goldeneye
+1 0 0 0
+0.1 0 0 0 0 X
+1 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0
+0.1 0 0 0 0 SNAP:moved+SNAP:yaw+SNAP:pitch
+1 1 0.5 0 0 X
+0.1 0 0 0 0 X+EXPECT:moved:le:5+EXPECT:yaw:ge:@46+EXPECT:yaw:le:@57+EXPECT:pitch:ge:@23+EXPECT:pitch:le:@29
+1 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:1
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:0
+0.3 0 0 0 0 BOOST:100+SPELL:fire%bite
+0.1 0 0 0 0 CAST:fire%bite
+2 0 0 0
+0.1 0 0 0 0 SNAP:magicka
+0.1 0 0 0 0 L
+2 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:lt:@0
+0.1 0 0 0 0 SNAP:playerz
+0.1 0 0 0 0 Y
+0.15 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:@10

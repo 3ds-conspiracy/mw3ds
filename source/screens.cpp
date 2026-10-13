@@ -378,7 +378,7 @@ void Session::drawHud()
 		promptRows = 1;
 	if (w.fightingEnabled)
 	{
-		bool xbox = g_controlLayout == CONTROLS_XBOX;
+		bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE;   // (GoldenEye: the Xbox buttons)
 		std::string hint = w.stats.selectedSpell.empty() ? (xbox ? "R: attack (hold to wind up)" : "X: attack (hold to wind up)")
 			: std::string(xbox ? "R: attack   L: cast " : "X: attack   Y: cast ") + w.game.spells[w.stats.selectedSpell].name;
 		// Leave the quick key strip (from x 190) clear
@@ -392,7 +392,17 @@ void Session::drawHud()
 		uiTextRight(314, 181, 0.4f, col::health, "Bounty " + std::to_string(w.bounty));
 	char perf[64];
 	snprintf(perf, sizeof(perf), "%.0f fps", fps);
-	uiTextRight(314, 194, 0.34f, col::textDim, perf);
+	// GoldenEye's SELECT sneaks: first / third person is a button here, beside the quick keys (the frame rate above it,
+	// unless a bounty is shown there)
+	if (g_controlLayout == CONTROLS_GOLDENEYE)
+	{
+		if (uiButton(267, 190, 47, 16, thirdPerson ? "1st" : "3rd"))
+			povTapped = true;
+		if (w.bounty <= 0)
+			uiTextRight(314, 181, 0.34f, col::textDim, perf);
+	}
+	else
+		uiTextRight(314, 194, 0.34f, col::textDim, perf);
 
 	bool inv = w.menusEnabled & MENU_INVENTORY, stats = w.menusEnabled & MENU_STATS;
 	if (uiButton(2, 208, 51, 28, "Items", false, inv))
@@ -591,14 +601,15 @@ void Session::drawControls()
 		{ "B", "Jump (swim up in water)" }, { "ZR (hold)", "Run / walk" }, { "L (hold)", "Sneak" },
 		{ "ZL + D-Pad", "Quick keys" }, { "SELECT", "First / third person" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Inventory, magic, map, stats" } };
-	// One stick (an Old 3DS without the C-stick): the pad walks and turns, R held stands still and aims
+	// One stick (an Old 3DS without the C-stick) on the Xbox buttons: the pad walks and turns; an aim button held
+	// stands still and the pad aims
 	static const char* kGoldenEye[][2] = {
-		{ "Circle Pad", "Walk (up, down), turn" }, { "R / ZR (hold)", "Stand still, aim with the pad" },
-		{ "D-Pad", "Strafe, look up / down" }, { "A", "Activate: talk, open, take" },
-		{ "X (hold, release)", "Ready weapon, wind up, strike" }, { "Y", "Cast the selected spell" },
-		{ "B", "Jump (tap), run (hold)" }, { "L (hold)", "Sneak" }, { "ZL + D-Pad / X", "Quick keys / put weapon away" },
-		{ "SELECT", "First / third person" }, { "START", "Menu: save, rest, options" },
-		{ "Touch screen", "Inventory, magic, map, stats" } };
+		{ "Circle Pad", "Walk (up, down), turn" }, { "X (hold) / ZL / ZR", "Aim: stand still, the pad aims" },
+		{ "X (tap)", "Ready / put away the weapon" }, { "R (hold, release)", "Wind up (aiming), strike" },
+		{ "L", "Cast the selected spell" }, { "A", "Activate: talk, open, take" },
+		{ "Y", "Jump (swim up in water)" }, { "B (hold)", "Run" }, { "SELECT", "Sneak on / off" },
+		{ "D-Pad", "Quick keys" }, { "START", "Menu: save, rest, options" },
+		{ "Touch screen", "Menus; 1st / 3rd person" } };
 	float y = 30;
 	int n = xbox ? sizeof(kXbox) / sizeof(kXbox[0]) : goldenEye ? sizeof(kGoldenEye) / sizeof(kGoldenEye[0])
 		: sizeof(kClassic) / sizeof(kClassic[0]);

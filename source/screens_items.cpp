@@ -513,8 +513,8 @@ void Session::drawInventory()
 static const char* kQuickDir[4] = { "Up", "Right", "Down", "Left" };
 
 // The button that casts, and how a quick key is pressed, in the active layout
-static std::string castHint() { return std::string(g_controlLayout == CONTROLS_XBOX ? "L" : "Y") + " to cast"; }
-static std::string quickKeyName(int k) { return std::string(g_controlLayout == CONTROLS_XBOX ? "D-Pad " : "ZL + ") + kQuickDir[k]; }
+static std::string castHint() { return std::string(g_controlLayout != CONTROLS_CLASSIC ? "L" : "Y") + " to cast"; }
+static std::string quickKeyName(int k) { return std::string(g_controlLayout != CONTROLS_CLASSIC ? "D-Pad " : "ZL + ") + kQuickDir[k]; }
 
 void Session::drawMagic()
 {
