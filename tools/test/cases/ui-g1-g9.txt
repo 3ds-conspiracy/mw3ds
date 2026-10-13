@@ -14,8 +14,8 @@
 0.3 0 0 0 0 QUICKSET:2:inv:p_restore_health_s
 0.3 0 0 0 0 QUICKSET:3:magic:fireball
 0.5 0 0 0 0 SHOT
-0.5 0 0 0 0 TAP:236:200
+0.5 0 0 0 0 TAP:263:192
 0.5 0 0 0 0 EXPECT:item:p_restore_health_s:eq:1
-0.5 0 0 0 0 TAP:255:200
+0.5 0 0 0 0 TAP:293:192
 0.5 0 0 0 0 EXPECT:selspell:fireball
 0.5 0 0 0 0 SHOT

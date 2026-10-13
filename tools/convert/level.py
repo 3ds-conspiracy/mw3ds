@@ -24,6 +24,7 @@ import faulthandler
 import zlib
 import json
 import math
+import os
 import re
 import struct
 import time
@@ -300,6 +301,94 @@ def door_dest(db, cell_xy, door_id, into_cell):
     raise SystemExit(f"door {door_id} not found in exterior {cell_xy}")
 
 
+# ---- Cells on several processes (--jobs): each converts its share into the cell cache (out/cell_cache), then the
+# main pass below runs as it always has and finds them there (a cache hit replays a cell's textures and skeletons in
+# the main pass's order). A cell that needed a skeleton the registry (cell_cache/.../skeletons.json) didn't know
+# has that worker's own numbering in its .act file: its cache entry is dropped and the main pass converts it again.
+_W = {}
+
+
+def _free_mb():
+    """Free physical memory in MB (Windows; None elsewhere)."""
+    try:
+        import ctypes
+
+        class MemStatus(ctypes.Structure):
+            _fields_ = [("len", ctypes.c_ulong), ("load", ctypes.c_ulong), ("total", ctypes.c_ulonglong),
+                        ("avail", ctypes.c_ulonglong), ("tpage", ctypes.c_ulonglong), ("apage", ctypes.c_ulonglong),
+                        ("tvirt", ctypes.c_ulonglong), ("avirt", ctypes.c_ulonglong), ("aext", ctypes.c_ulonglong)]
+        m = MemStatus()
+        m.len = ctypes.sizeof(MemStatus)
+        ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m))
+        return m.avail // (1024 * 1024)
+    except Exception:
+        return None
+
+
+def default_jobs():
+    """As many workers as the threads allow (two left over), and the free memory: about 1.5 GB each."""
+    env = os.environ.get("MW3DS_CONVERT_JOBS")
+    if env:
+        return max(1, int(env))
+    n = max(1, (os.cpu_count() or 2) - 2)
+    free = _free_mb()
+    if free is not None:
+        n = min(n, max(1, (free - 1500) // 1500))
+    return n
+
+
+def _worker_init(max_tex, bounds, walk, weather_name):
+    from convert_cell import cell_file_name
+    db = load_db()
+    arch = Archives()
+    ini = read_ini()
+    textures = TextureSet(arch, max_tex, False)          # (requests only: the main pass encodes them)
+    _W["conv"] = Converter(db, arch, textures)
+    _W["known"] = set(_W["conv"].skel_index)
+    _W["db"], _W["walk"], _W["weather"] = db, walk, weather(ini, weather_name)
+    _W["bounds"], _W["terrain"], _W["file"] = bounds, None, cell_file_name
+
+
+def _worker_cell(item):
+    """One cell into the cache; False when its cache entry had to be dropped (or it failed: the main pass tries it)."""
+    conv = _W["conv"]
+    try:
+        if item[0] == "i":
+            conv.interior(item[1])
+            file = _W["file"](item[1])
+        else:
+            _, gx, gy, walkable, name, file = item
+            if _W["terrain"] is None:
+                x0, y0, x1, y1 = _W["bounds"]
+                _W["terrain"] = Terrain(_W["db"], x0 - 1, y0 - 1, x1 + 1, y1 + 1)
+            conv.exterior_cell(gx, gy, _W["terrain"], _W["walk"], _W["weather"], walkable, name, file, None)
+    except Exception:
+        return False
+    meta_path = conv.cache_dir / (file + ".json")
+    try:
+        meta = json.loads(meta_path.read_text())
+    except Exception:
+        return False
+    if set(meta.get("skeletons", [])) - _W["known"]:
+        meta_path.unlink()
+        return False
+    return True
+
+
+def parallel_cells(items, jobs, max_tex, bounds, walk, weather_name):
+    import multiprocessing
+    t = time.time()
+    print(f"cells on {jobs} processes: {len(items)} (the cache takes them; the main pass follows)", flush=True)
+    ok = 0
+    with multiprocessing.Pool(jobs, initializer=_worker_init, initargs=(max_tex, bounds, walk, weather_name)) as pool:
+        for k, r in enumerate(pool.imap_unordered(_worker_cell, items, chunksize=2)):
+            ok += bool(r)
+            if (k + 1) % 200 == 0:
+                print(f"  {k + 1}/{len(items)} cells, {time.time() - t:.0f}s", flush=True)
+    print(f"cells on {jobs} processes: {ok}/{len(items)} in {time.time() - t:.0f}s "
+          f"({len(items) - ok} left to the main pass)", flush=True)
+
+
 def main():
     faulthandler.enable()        # a native crash prints where it happened
     ap = argparse.ArgumentParser()
@@ -311,6 +400,8 @@ def main():
     ap.add_argument("--margin", type=int, default=1, help="walkable cells beyond the towns' rectangle")
     ap.add_argument("--weather", default="Clear", help="Morrowind.ini weather section for the exterior")
     ap.add_argument("--force", action="store_true", help="re-encode textures and sounds")
+    ap.add_argument("--jobs", type=int, default=0,
+                    help="processes converting cells (0: by threads and free memory; 1: one, as before)")
     ap.add_argument("--world", action="store_true",
                     help="the whole island: every interior, all land walkable (with MW3DS_OUT=out/world to try it)")
     args = ap.parse_args()
@@ -363,6 +454,12 @@ def main():
     start_xy = (int(spawn[0][0] // CELL_SIZE), int(spawn[0][1] // CELL_SIZE)) if spawn else \
         (named[0] if not chargen else None)
 
+    jobs = args.jobs or default_jobs()
+    if jobs > 1:
+        items = [("i", n) for n in interiors if n not in (START_CELL, OFFICE_CELL)]
+        items += [("e", gx, gy, x0 <= gx <= x1 and y0 <= gy <= y1, exterior_name(db, (gx, gy)), exterior_file((gx, gy)))
+                  for gy in range(y0 - 1, y1 + 2) for gx in range(x0 - 1, x1 + 2) if (gx, gy) != start_xy]
+        parallel_cells(items, jobs, args.max_tex, (x0, y0, x1, y1), walk, args.weather)
     cells = []
     print(f"converting {len(interiors)} interiors + {(x1 - x0 + 3) * (y1 - y0 + 3)} exterior cells", flush=True)
     failed = []                            # cells that didn't convert: left out, reported at the end

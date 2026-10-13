@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# A creature fights from its own reach, measured as OpenMW measures it from the edges of both bodies
+# (getDistanceToBounds: the distance less each one's collision box half length; fCombatDistance for a creature's own
+# attack). The guar's "Bounding Box" is 120 long each way of its middle: it stands about 276 from the player's middle
+# when it bites. Ours closed in to 104 (fCombatDistance x 0.9 from the middles), its head through the player
+1 0 0 0 0 TP:-3514:-62273:520:0+HOUR:12
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 GOD:2
+6 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 HOSTILE:guar
+12 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:guar:eq:1
+0.1 0 0 0 0 EXPECT:refdist:guar:gt:200+EXPECT:refdist:guar:lt:300
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:guar:gt:200+EXPECT:refdist:guar:lt:300

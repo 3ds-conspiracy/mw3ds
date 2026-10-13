@@ -1,0 +1,32 @@
+# Saves carry the cells out of memory as the packed blocks they're kept in (version 2: written as they are, not put
+# together and compressed again at every door: a long campaign's autosave took longer and longer). Each save has its
+# own: loading one never keeps another's. Fargoth killed, Seyda Neen pushed out of memory, saved; a save from before
+# loads him alive, the later one dead
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+1 0 0 0 0 SAVE:keptclean
+0.5 0 0 0
+0.3 0 0 0 0 SLAY:fargoth
+1 0 0 0
+0.1 0 0 0 0 EXPECT:dead:fargoth
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+3 0 0 0
+0.3 0 0 0 0 EVICT:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:keptcells:ge:1
+0.3 0 0 0 0 TP:31000:-81000:1400:0
+2 0 0 0
+1 0 0 0 0 SAVE:keptkilled
+0.5 0 0 0
+# the earlier save: Fargoth alive (nothing of the later one's kept cells left over)
+0.5 0 0 0 0 LOAD:keptclean
+4 0 0 0
+0.3 0 0 0 0 TP:-11000:-71000:600:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:alive:fargoth
+# the later one: dead, from Seyda Neen's kept block
+0.5 0 0 0 0 LOAD:keptkilled
+4 0 0 0
+0.3 0 0 0 0 TP:-11000:-71000:600:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:dead:fargoth

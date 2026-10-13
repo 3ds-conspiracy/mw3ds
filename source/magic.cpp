@@ -1295,6 +1295,29 @@ void Session::releaseSpell(const SpellDef& sp, int school)
 		});
 		return best;
 	};
+	// A touch lands as a blow does (OpenMW's getHitContact with fCombatDistance): the nearest within fCombatDistance of
+	// its edge (its collision box half length and the player's taken off), less than that above or below, in front
+	// within the angle whose sine is fCombatAngleXY / 90. It was 200 from its middle: a guar's middle is 120 inside it
+	auto touchTarget = [&]() {
+		const float reach = w.game.gmstf("fcombatdistance", 128.0f);
+		const float cone = cosf(asinf(fminf(1.0f, w.game.gmstf("fcombatanglexy", 60.0f) / 90.0f)));
+		int best = -1;
+		float bestD = 1e9f;
+		float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
+		w.forLoadedActors([&](int i) {
+			const Ref& r = w.refs[i];
+			if (r.actor < 0 || r.dead || !r.visible())
+				return;
+			float dx = r.pos[0] - w.player.feet[0], dy = r.pos[1] - w.player.feet[1];
+			float d = sqrtf(dx * dx + dy * dy), edge = d - actorHalfLength(i) - 28.5f;
+			if (edge < reach && edge < bestD && fabsf(r.pos[2] - w.player.feet[2]) < reach && (d < 1.0f || (dx * fx + dy * fy) / d > cone))
+			{
+				bestD = edge;
+				best = i;
+			}
+		});
+		return best;
+	};
 	int touch = -2, target = -2;
 	for (auto& e : sp.effects)
 	{
@@ -1343,7 +1366,7 @@ void Session::releaseSpell(const SpellDef& sp, int school)
 				continue;                                   // the bolt carries them
 			int& who = e.range == 1 ? touch : target;
 			if (who == -2)
-				who = e.range == 1 ? aim(200.0f, 0.7f) : aim(kTargetRange, 0.97f);
+				who = e.range == 1 ? touchTarget() : aim(kTargetRange, 0.97f);
 			if (who >= 0)
 			{
 				applyEffectToActor(who, e, true, (float)sp.cost, (float)castChance(sp), sp.name);

@@ -1,0 +1,20 @@
+# In third person the player's body swims (OpenMW's swimming movement states: IdleSwim, SwimWalk / SwimRun the way
+# they go). It asked for a "SwimForward" no skeleton has and swam with the land's walk and idle
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 TP:15844:-71480:-95:0
+3 0 0 0
+0.3 0 0 0 0 POV:third
+0 0 0 0 0 SETUP-END
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:swimming:eq:1
+0.1 0 0 0 0 EXPECT:bodygroup:IdleSwim
+1.5 0 1 0
+0.1 0 1 0 0 EXPECT:bodygroup:SwimRunForward
+1.5 0 0.4 0
+0.1 0 0.4 0 0 EXPECT:bodygroup:SwimWalkForward
+# sideways, back: the water's own groups (base_anim's SwimRunRight / SwimWalkBack, exported since 2026-10-13)
+1.5 1 0 0
+0.1 1 0 0 0 EXPECT:bodygroup:SwimRunRight
+1.5 0 -0.4 0
+0.1 0 -0.4 0 0 EXPECT:bodygroup:SwimWalkBack

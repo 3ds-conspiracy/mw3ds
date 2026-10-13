@@ -12,6 +12,7 @@
 .fvec tint                      ; colour scale: day and night outdoors (1 indoors)
 .fvec lightPos                  ; the light the player carries: eye-space xyz, w = 1 / radius squared
 .fvec lightColor                ; its colour (0 = none)
+.fvec ambientAdd                ; added to every vertex's light: Night Eye (OpenMW's ambient + 0.7 x magnitude / 100)
 
 ; Constants
 .constf consts(0.0, 1.0, 0.00392156862, 0.5)
@@ -96,6 +97,7 @@
 	; Colour, as cell.v.pica
 	mul r4, inv255, inclr
 	mul r4, tint, r4
+	add r4.xyz, ambientAdd, r4
 	add r5, -lightPos, r1
 	mov r5.w, consts.x
 	dp3 r6, r5, r5

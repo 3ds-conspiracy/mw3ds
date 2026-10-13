@@ -23,6 +23,19 @@ is what the tests read.
 A victim with negative fatigue has no defense at all. Creatures use their combat / magic / stealth skill for the
 weapon skill.
 
+## Reach (who a blow lands on)
+
+    reach = fCombatDistance x the weapon's reach (people's fists: x fHandToHandReach; a creature's own attack: x 1)
+    distance to bounds = distance between the two origins - each one's collision box half length (getHalfExtents().y:
+                         a creature's "Bounding Box" node, people's base_anim.nif box, 28.5; x scale)
+
+An attacker starts a blow when the distance to bounds is within its action's range (the same reach for melee), and
+the blow lands (`getHitContact`) on a foe whose distance to bounds and height difference are both under the reach, in
+front within the angle whose sine is `fCombatAngleXY / 90` (about 42 degrees). Ours measured from the origins: a
+creature's at `fCombatDistance x 0.9` whatever its size, landing within 40 more and 57 degrees round, and the
+player's fists at 0.7 (`bug-creature-reach`: the guar, 120 long each way of its middle, now fights from about 250
+instead of 104; 2026-10-13). A touch spell's range is `fCombatDistance` from the edges too.
+
 ## Awareness (who counts as unaware)
 
 Unaware = not in combat and failing OpenMW's awareness check:
@@ -87,7 +100,10 @@ weight x swing x fWeaponFatigueBlockMult` fatigue, trains Block, and sounds by t
 
 After a blow with health damage: knocked down when the raw health damage (before armor) is at least `Agility x
 fKnockDownMult` and a roll 0..99 is at least `Agility x iKnockDownOddsMult / 100 + iKnockDownOddsBase`; else a hit
-recovery. Fatigue below 0 knocks out.
+recovery. Fatigue below 0 knocks out, whatever brought it there (`CharacterController::refreshHitRecoilAnims`): the
+actor lies in its KnockOut group's loop for as long as the fatigue stays under 0, then plays the rest (getting up). A
+knocked-down actor plays KnockDown through. Ours knocked out only on a melee hit and got up after 3.5 s whatever the
+fatigue, and counted the time on the floor only in a fight (`bug-knockout-fatigue`, 2026-10-13).
 
 ## Fatigue spent
 
@@ -124,6 +140,10 @@ one possible target). It walks up to the target and swings; the target takes up 
 already in one. A blow rolls the attack term less the target's evasion, the weapon's (or creature attack's) damage,
 then armor with a floor of 1; a death ends the fight (it is nobody's murder). `StopCombat` clears it. Not covered:
 blocking, critical hits, spells and flight between actors; the fight is not kept in a save.
+
+The player's summons and followers fight whoever fights the player the same way (OpenMW gives them a combat package
+against the player's foes): the nearest within 1500. Ours struck at once every 1.2 s from 120 away, never missing
+(`bug-summon-fights`, 2026-10-13).
 
 ## Findings
 

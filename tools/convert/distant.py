@@ -92,7 +92,7 @@ def distant_statics(db, arch, sun_dir, sun, ambient):
             nif = Nif(arch.read("meshes\\" + key))
             for r in nif.roots:
                 b = nif.get(r)
-                if b is not None and "rotation" in b:
+                if b is not None and "rotation" in b and b["type"] not in ("NiTriShape", "NiTriStrips"):
                     b["rotation"] = [1, 0, 0, 0, 1, 0, 0, 0, 1]
                     b["translation"] = [0.0, 0.0, 0.0]      # the root transform does not count (see convert_cell.load_nif)
                     b["scale"] = 1.0

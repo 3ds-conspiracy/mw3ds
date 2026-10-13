@@ -287,13 +287,17 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 		// one ("Idle1h", "WalkForward2c")
 		const char* dir = fabsf(act.moveX) > fabsf(act.moveY) ? (act.moveX < 0.0f ? "Left" : "Right")
 			: act.moveY < 0.0f ? "Back" : "Forward";
-		std::string want = swimming ? (speed > 10.0f ? "SwimForward" : "Idle")
+		// (in the water the same names: actorPlay takes the swimming groups, SwimRunLeft, IdleSwim ... It asked for a
+		// "SwimForward" no skeleton has, and swam with the land's walk and idle)
+		a.swimming = swimming;
+		std::string want = swimming ? (speed <= 10.0f ? "Idle" : std::string(speed > 200.0f ? "Run" : "Walk") + dir)
 			: act.airborne ? "Jump"
 			: speed <= 10.0f ? "Idle"
-			: std::string(sneaking ? "Sneak" : speed > 200.0f ? "Run" : "Walk") + dir;
-		if (want != group || weaponOut != stanceOut)
+			: std::string(act.flying ? "Walk" : sneaking ? "Sneak" : speed > 200.0f ? "Run" : "Walk") + dir;   // (OpenMW: no run or sneak in the air)
+		if (want != group || weaponOut != stanceOut || swimming != swimOut)
 		{
 			stanceOut = weaponOut;
+			swimOut = swimming;
 			std::string stance = weaponOut && !swimming && act.stance[0] ? want + act.stance : "";
 			// (data without the other ways: forward, then walking)
 			std::string forward = want.substr(0, want.size() - strlen(dir)) + "Forward";

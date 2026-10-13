@@ -673,10 +673,12 @@ class Converter:
                 # position and turn stand in for it): some Dwemer corridor pieces carry a 90 degree rotation,
                 # which turned them and left holes in the floor, and ex_dae_ruin_01 a 1018 unit drop that
                 # buried the Daedric ruins' tower base and walled the exit spot of their doors in solid stone
-                # (an anvil's -32..32 box sits on its repair hammer at +32 only without its root's 32)
+                # (an anvil's -32..32 box sits on its repair hammer at +32 only without its root's 32). A root that is
+                # the shape itself keeps its offset, as OpenMW draws it: Contain_crate_01 is one shape moved down 32,
+                # and without it Shushishi's crates floated 32 over the platform's deck
                 for r in nif.roots:
                     b = nif.get(r)
-                    if b is not None and "rotation" in b:
+                    if b is not None and "rotation" in b and b["type"] not in ("NiTriShape", "NiTriStrips"):
                         b["rotation"] = [1, 0, 0, 0, 1, 0, 0, 0, 1]
                         b["translation"] = [0.0, 0.0, 0.0]
                         b["scale"] = 1.0

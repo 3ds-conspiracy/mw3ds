@@ -11,7 +11,8 @@
 0.3 0 0 0 0 HOSTILE:slaughterfish_small
 8 0 0 0
 0.1 0 0 0 0 EXPECT:refcombat:slaughterfish_small:eq:1
-0.1 0 0 0 0 EXPECT:refdist:slaughterfish_small:lt:150
+# (within its reach, from the edges of both bodies: OpenMW getDistanceToBounds)
+0.1 0 0 0 0 EXPECT:refdist:slaughterfish_small:lt:200
 # in the water still: under the surface, off the floor
 0.1 0 0 0 0 EXPECT:refwater:slaughterfish_small:lt:0
 0.1 0 0 0 0 EXPECT:refabovefeet:slaughterfish_small:gt:10

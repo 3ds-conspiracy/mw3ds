@@ -1,0 +1,26 @@
+# Saves made before the packed blocks (version 1: every cell's changes inside the JSON) still load: Fargoth killed,
+# Seyda Neen pushed out of memory, saved the old way, loaded: he is dead, and the cell's changes are kept again packed
+# (a save after it, the new way, still has him dead)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SLAY:fargoth
+1 0 0 0
+0.1 0 0 0 0 EXPECT:dead:fargoth
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+3 0 0 0
+0.3 0 0 0 0 EVICT:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:keptcells:ge:1
+0.3 0 0 0 0 TP:31000:-81000:1400:0
+2 0 0 0
+1 0 0 0 0 SAVEV1:oldformat
+0.5 0 0 0
+0.5 0 0 0 0 LOAD:oldformat
+4 0 0 0
+1 0 0 0 0 SAVE:afterold
+0.5 0 0 0
+0.5 0 0 0 0 LOAD:afterold
+4 0 0 0
+0.3 0 0 0 0 TP:-11000:-71000:600:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:dead:fargoth

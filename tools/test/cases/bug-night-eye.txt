@@ -1,0 +1,17 @@
+# Night Eye lights up the dark (OpenMW's updateAmbient: 0.7 x min(1, magnitude / 100) added to the ambient light, the
+# world and people alike). Ours scaled the time of day's colour, near black at night, so at night it did next to
+# nothing. Seyda Neen at 1 a.m., clear: the same view without and with Night Eye 100
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:1
+1 0 0 0
+0.3 0 0 0 0 TP:-10900:-71000:600:90
+4 0 0 0
+0.3 0 0 0 0 SHOT
+0.5 0 0 0
+0.3 0 0 0 0 ACTIVE:43:100
+1 0 0 0
+0.3 0 0 0 0 SHOT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:shotluma:0:lt:45
+0.1 0 0 0 0 EXPECT:shotluma:1:gt:55

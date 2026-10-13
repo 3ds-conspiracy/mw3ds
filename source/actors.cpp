@@ -587,22 +587,29 @@ bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode)
 	if (a.frozen)
 		return true;
 
-	// Swimming: the water's versions of walking, standing, being hit and dying (when the skeleton has them)
+	// Swimming: the water's versions of walking every way, standing, being hit and dying (when the skeleton has them;
+	// a death while down or out: SwimDeathKnockDown / SwimDeathKnockOut, as OpenMW's hitStateToDeathState, else
+	// SwimDeath). Moving back or sideways in the water played the land groups
 	if (a.swimming)
 	{
-		static const char* kSwim[][2] = { { "WalkForward", "SwimWalkForward" }, { "RunForward", "SwimRunForward" },
+		static const char* kSwim[][3] = { { "WalkForward", "SwimWalkForward" }, { "RunForward", "SwimRunForward" },
+			{ "WalkBack", "SwimWalkBack" }, { "WalkLeft", "SwimWalkLeft" }, { "WalkRight", "SwimWalkRight" },
+			{ "RunBack", "SwimRunBack" }, { "RunLeft", "SwimRunLeft" }, { "RunRight", "SwimRunRight" },
 			{ "Idle", "IdleSwim" }, { "Hit1", "SwimHit1" }, { "Hit2", "SwimHit2" }, { "Hit3", "SwimHit3" },
 			{ "Hit4", "SwimHit4" }, { "Hit5", "SwimHit5" }, { "Death1", "SwimDeath" }, { "Death2", "SwimDeath" },
 			{ "Death3", "SwimDeath" }, { "Death4", "SwimDeath" }, { "Death5", "SwimDeath" },
-			{ "DeathKnockDown", "SwimDeath" }, { "DeathKnockOut", "SwimDeath" },
+			{ "DeathKnockDown", "SwimDeathKnockDown", "SwimDeath" }, { "DeathKnockOut", "SwimDeathKnockOut", "SwimDeath" },
 			{ "KnockDown", "SwimKnockDown" }, { "KnockOut", "SwimKnockOut" },
 			{ "TurnLeft", "SwimTurnLeft" }, { "TurnRight", "SwimTurnRight" } };
 		for (auto& s : kSwim)
 			if (strcasecmp(group, s[0]) == 0)
 			{
-				int sg = actorFindGroup(actorSkeleton(set, a.skeleton), s[1]);
-				if (sg >= 0)
-					group = s[1];
+				for (int k = 1; k < 3 && s[k]; k++)
+					if (actorFindGroup(actorSkeleton(set, a.skeleton), s[k]) >= 0)
+					{
+						group = s[k];
+						break;
+					}
 				break;
 			}
 	}
@@ -768,16 +775,25 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 				a.time = g.start;
 		}
 	}
-	a.blinkTimer -= dt;
-	if (a.blinkTimer <= 0.0f && a.blinkTime < 0.0f)
-		a.blinkTime = 0.0f;
+	// Blinks (OpenMW's HeadAnimationTime): the head's Blink keys played through, every 2 to 7 seconds (2 + a roll of 0..5),
+	// none while talking
+	if (a.talkLevel <= 0.01f)
+	{
+		a.blinkTimer -= dt;
+		if (a.blinkTimer <= 0.0f && a.blinkTime < 0.0f)
+			a.blinkTime = 0.0f;
+	}
 	if (a.blinkTime >= 0.0f)
 	{
 		a.blinkTime += dt;
-		if (a.blinkTime > 0.3f)
+		float len = 0.0f;
+		for (const ActorMesh& m : a.meshes)
+			if (m.hasMorph)
+				len = fmaxf(len, m.blink[1] - m.blink[0]);
+		if (a.blinkTime > len)
 		{
 			a.blinkTime = -1.0f;
-			a.blinkTimer = 2.0f + (rand() % 4000) / 1000.0f;
+			a.blinkTimer = 2.0f + (float)(rand() % 6);
 		}
 	}
 
@@ -831,6 +847,17 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 				float x = out[col], y = out[4 + col];
 				out[col] = c * x - s * y;
 				out[4 + col] = s * x + c * y;
+			}
+		}
+		// ... and tilted up or down to them (around the actor's side axis, after the turn: OpenMW's head pitch)
+		if ((int)i == sk.headBone && a.headPitch != 0.0f)
+		{
+			float c = cosf(a.headPitch), s = sinf(a.headPitch);
+			for (int col = 0; col < 3; col++)
+			{
+				float y = out[4 + col], z = out[8 + col];
+				out[4 + col] = c * y - s * z;
+				out[8 + col] = s * y + c * z;
 			}
 		}
 	}
@@ -930,7 +957,7 @@ void actorDeform(ActorSet& set, Actor& a)
 			else if (a.talkLevel > 0.01f)
 				t = m.talk[0] + (m.talk[1] - m.talk[0]) * fminf(1.0f, a.talkLevel * 2.0f);
 			else if (a.blinkTime >= 0.0f)
-				t = m.blink[0] + (m.blink[1] - m.blink[0]) * (a.blinkTime / 0.3f);
+				t = fminf(m.blink[0] + a.blinkTime, m.blink[1]);
 			else
 				t = m.talk[0];
 			if (t == m.morphT && a.deformed)

@@ -1,0 +1,20 @@
+# Prices hold still while the barter screen is open (OpenMW pauses the world in its menus: no fatigue comes back).
+# Ours ran fatigue's return under the menu, and the price, which counts both sides' fatigue, crept by the second as
+# the cursor sat on an item
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+# tired out first: Damage Fatigue 200 on self
+0.3 0 0 0 0 ADDEFFECT:25:200:200:1:0
+0.3 0 0 0 0 MAKESPELL:tired
+0.3 0 0 0 0 CAST:mw3ds_test_tired
+2 0 0 0
+60 0 0 0 0 ACTIVATE:arrille
+1.5 0 0 0
+0.3 0 0 0 0 BARTER:arrille
+0.3 0 0 0 0 EXPECT:screen:barter
+0.1 0 0 0 0 SNAP:barterprice:arrille,1000,0+SNAP:fatigue
+10 0 0 0
+0.1 0 0 0 0 EXPECT:fatigue:eq:@0
+0.1 0 0 0 0 EXPECT:barterprice:arrille,1000,0:eq:@0

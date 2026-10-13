@@ -136,12 +136,16 @@ struct Ref
 	bool escortWaiting = false;   // escorting: stopped for the escorted one (resumes within 300, stops past 500; OpenMW)         // said its Hello; again only after the player went fGreetDistanceReset away (OpenMW)
 	// combat (combat.cpp)
 	float magicka = 0, magickaMax = 0;
+	float potionTimer = 0.0f;     // a fight: until it weighs a potion against its weapon again (npcDrinkPotion)
 	bool fleeing = false;
 	// Gravity for people: nothing under them (a platform a script took away: Tarhiel) and they fall,
 	// hurt by the landing as the player is
 	bool falling = false;
 	float fallVz = 0.0f, fallTop = 0.0f, floorCheck = 0.0f;
-	float fleeTimer = 0.0f;
+	float fleeTimer = 0.0f;       // until the flee choice is made again (OpenMW's ActionFlee cooldown, 3 s)
+	u8 fleeState = 0;             // fleeing: 0 standing, 1 running blindly away, 2 running to fleeDest (OpenMW's FleeState)
+	float fleeRun = 0.0f;         // seconds run blindly
+	float fleeDest[3] = {};       // the path grid point it runs to
 	float calmUntil = 0.0f;         // Calm: no attack on sight until this time
 	float knockTimer = 0.0f;      // > 0: knocked down (or out) and helpless
 	float boxLift = 0.0f;         // drawn this much above pos: its collision box resting on the slope (World::actorBoxLift)
@@ -510,8 +514,17 @@ struct World
 
 	// Objects of cells that aren't in memory: what changed in each (save-file items), applied when the
 	// cell's objects are read again. Saves read and write the same thing, so loading a save doesn't read
-	// every cell it mentions, and evictCells can drop cells the player left far behind.
-	std::unordered_map<std::string, std::string> cellStates;   // cell file -> {"refs": [...], "scripts": [...]}
+	// every cell it mentions, and evictCells can drop cells the player left far behind. Kept compressed, as
+	// a save writes them: a save copies them as they are, not put together and compressed again each time
+	struct StoredCell
+	{
+		std::vector<u8> z;          // {"refs": [...], "scripts": [...]}, zlib
+		u32 raw = 0;                // its length unpacked
+		bool movedRefs = false;     // holds references moved to another cell ("at"): read on loading
+	};
+	std::unordered_map<std::string, StoredCell> cellStates;   // cell file -> its changes
+	void storeCellState(const std::string& file, const std::string& json);
+	std::string cellStateJson(const StoredCell& s) const;     // "" when it won't unpack
 	std::unordered_map<std::string, int> deadCounts;           // lowercase id -> killed (GetDeadCount)
 	std::vector<std::pair<int, int>> freeRefs, freePaths;      // slot ranges evicted cells left (first, count)
 	u32 useTick = 0;
@@ -542,7 +555,8 @@ struct World
 	int refsInMemory() const;
 	// Moves the objects of the cells used longest ago (not loaded, nothing pointing into them: inUse)
 	// out of memory until at most `budget` remain; returns how many cells went
-	int evictCells(int budget, const std::function<bool(int)>& inUse);
+	// now: not sparing the cells a script asked for in the last seconds (a test's EVICT: the native runs' clock races)
+	int evictCells(int budget, const std::function<bool(int)>& inUse, bool now = false);
 	// Out of memory with nothing else to give (Session::relieveMemory): the farthest loaded neighbour's
 	// geometry goes — its collision arrays are the large single blocks a cell load needs — and the cell
 	// streams back in when there is room. False indoors or with nothing to drop
@@ -591,8 +605,10 @@ struct World
 	// Re-hides disabled / taken references of the current cell (after their state changed wholesale)
 	void refreshHidden();
 	void syncActor(int ref);
-	// Save games (save.cpp): everything that changes while playing, as JSON
-	bool saveGame(const char* path) const;
+	// Save games (save.cpp): everything that changes while playing, as JSON; the cells out of memory follow it as
+	// the compressed blocks they are kept in (version 2). legacy: version 1, every cell inside the JSON (tests: the
+	// old saves still load)
+	bool saveGame(const char* path, bool legacy = false) const;
 	static std::string savedCell(const char* path);     // "" when there is no usable save
 	bool applySave(const char* path);                   // after load(dataDir, savedCell(path))
 	int findRef(const std::string& id) const;            // by object id, case-insensitive; loaded cells first

@@ -37,7 +37,8 @@
 60 0 0 0
 0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:ge:50
 0.3 0 0 0 0 EXPECT:refdist:drerel%indaren:lt:700
-0.3 0 0 0 0 EXPECT:talking
+# (his greeting may come while the player is still on the way, and the walk closes it: the journal at 60 and the
+# book show the talk took place)
 0.3 0 0 0 0 EXPECT:journal:MV_MissingCompanion:eq:60
 0.3 0 0 0 0 EXPECT:item:bookskill_block3:eq:1
 0.3 0 0 0 0 SHOT

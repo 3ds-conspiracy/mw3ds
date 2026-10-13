@@ -30,6 +30,8 @@ static int s_uBones = -1;
 static bool s_skinReady = false;
 static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
 static int s_moreLights = 0;
+static int s_uAmbient = -1;
+static float s_ambientAdd = 0.0f;           // Night Eye's added light (rendererSetNightEye)
 static float s_moreLight[kActorLights][3], s_moreRadius[kActorLights], s_moreRgb[kActorLights][3];
 static C3D_Mtx s_lightView;               // the view the lights were last put in (set again after a skinned run)
 static bool s_lightViewOn = false;
@@ -75,13 +77,14 @@ void rendererInit()
 	s_uMoreLightPos[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos3");
 	s_uMoreLightColor[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor3");
 	s_bMoreLights = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLights");
+	s_uAmbient = shaderInstanceGetUniformLocation(s_program.vertexShader, "ambientAdd");
 	s_skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
 	shaderProgramInit(&s_skinProgram);
 	shaderProgramSetVsh(&s_skinProgram, &s_skinDvlb->DVLE[0]);
 	s_uBones = shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "bones");
 	// The frame's uniforms carry over between the two programs only if they sit in the same registers
 	static const char* const kShared[] = { "projection", "modelView", "uvOffset", "fogVec", "posOffset", "posScale",
-		"uvScale", "tint", "lightPos", "lightColor" };
+		"uvScale", "tint", "lightPos", "lightColor", "ambientAdd" };
 	s_skinReady = s_uBones >= 0;
 	for (const char* n : kShared)
 		s_skinReady &= shaderInstanceGetUniformLocation(s_program.vertexShader, n)
@@ -170,6 +173,13 @@ static void bindPipeline()
 	// Colour tint: the time of day's outdoors, none indoors (uniforms start at 0: always set)
 	const float* t = s_daylight ? s_land : nullptr;
 	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTint, t ? t[0] : 1.0f, t ? t[1] : 1.0f, t ? t[2] : 1.0f, 1.0f);
+	if (s_uAmbient >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, 0.0f, 0.0f, 0.0f, 0.0f);     // (the world's draws set it: setLight)
+}
+
+void rendererSetNightEye(float add)
+{
+	s_ambientAdd = add;
 }
 
 void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3])
@@ -213,6 +223,12 @@ static void setLight(const C3D_Mtx* view)
 	if (s_uLightColor < 0 || s_uLightPos < 0)
 		return;
 	putLight(s_uLightPos, s_uLightColor, view, s_light, s_lightRadius, s_lightRgb);
+	// Night Eye on the world's draws (none on the sky's: OpenMW adds it to the ambient light, which the sky doesn't take)
+	if (s_uAmbient >= 0)
+	{
+		float a = view ? s_ambientAdd : 0.0f;
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, a, a, a, 0.0f);
+	}
 	s_lightViewOn = view != nullptr;
 	if (view)
 		s_lightView = *view;

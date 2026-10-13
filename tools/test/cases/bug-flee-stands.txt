@@ -1,0 +1,35 @@
+# A fleeing actor stands while its foe is out of reach, and runs to a path grid point only when the foe, in sight,
+# comes within its weapon's reach (OpenMW's AiCombat::updateFleeing; the choice made again every 3 s). Ours ran
+# straight away from the player all the time, into the walls indoors, until 3000 away
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:42
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOTO:Caldera,_Ghorak_Manor
+6 0 0 0
+0.3 0 0 0 0 ADDEFFECT:14:20:20:1:2
+0.3 0 0 0 0 MAKESPELL:zapcreeper
+0 0 0 0 0 SETUP-END
+60 0 0 0 0 ACTIVATE:scamp_creeper
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+# back off, out of the reach of fists (128), and zap him
+1.2 0 -1 0
+0.5 0 0 0 0 FACE:scamp_creeper
+0.3 0 0 0 0 CAST:mw3ds_test_zapcreeper
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:refflee:scamp_creeper:eq:1
+0.1 0 0 0 0 EXPECT:refdist:scamp_creeper:gt:200
+# out of reach: he stands
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refrun:scamp_creeper:eq:0+SNAP:refdist:scamp_creeper
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refrun:scamp_creeper:eq:0
+0.1 0 0 0 0 EXPECT:refdist:scamp_creeper:le:@0
+# walk up to him: in reach he runs
+10 0 0 0 0 UNTIL:refrun:scamp_creeper:eq:1+WALKTO:scamp_creeper
+0.1 0 0 0 0 EXPECT:refrun:scamp_creeper:eq:1

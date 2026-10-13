@@ -726,7 +726,7 @@ void C3D_TexEnvColor(C3D_TexEnv* env, u32 color) { env->color = color; }
 
 // ---- renderer.cpp's shader: uniform slots by name, as cell.v.pica declares them
 enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET, U_POSSCALE, U_UVSCALE, U_TINT, U_LIGHTPOS,
-	U_LIGHTCOLOR, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone)
+	U_LIGHTCOLOR, U_AMBIENT, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye)
 // cell.v.pica's two more lights sit where skin.v.pica's palette starts, as on the PICA; bool 0 turns them on
 enum { U_LIGHTPOS2 = U_BONES, U_LIGHTCOLOR2, U_LIGHTPOS3, U_LIGHTCOLOR3, B_MORELIGHTS = 0 };
 static bool s_moreLights = false;
@@ -741,7 +741,7 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 	static const struct { const char* name; int slot; } kSlots[] = { { "projection", U_PROJECTION },
 		{ "modelView", U_MODELVIEW }, { "uvOffset", U_UVOFFSET }, { "fogVec", U_FOGVEC }, { "posOffset", U_POSOFFSET },
 		{ "posScale", U_POSSCALE }, { "uvScale", U_UVSCALE }, { "tint", U_TINT }, { "lightPos", U_LIGHTPOS },
-		{ "lightColor", U_LIGHTCOLOR }, { "bones", U_BONES }, { "lightPos2", U_LIGHTPOS2 }, { "lightColor2", U_LIGHTCOLOR2 },
+		{ "lightColor", U_LIGHTCOLOR }, { "ambientAdd", U_AMBIENT }, { "bones", U_BONES }, { "lightPos2", U_LIGHTPOS2 }, { "lightColor2", U_LIGHTCOLOR2 },
 		{ "lightPos3", U_LIGHTPOS3 }, { "lightColor3", U_LIGHTCOLOR3 }, { "moreLights", B_MORELIGHTS } };
 	for (auto& s : kSlots)
 		if (strcmp(s.name, name) == 0)
@@ -1001,7 +1001,7 @@ static ClipV vertexShader(const u8* v)
 	{
 		float c = in[2][k] / 255.0f * u[U_TINT][k];
 		if (k < 3)
-			c += u[U_LIGHTCOLOR][k] * f1 + (more ? u[U_LIGHTCOLOR2][k] * f2 + u[U_LIGHTCOLOR3][k] * f3 : 0.0f);
+			c += u[U_AMBIENT][k] + u[U_LIGHTCOLOR][k] * f1 + (more ? u[U_LIGHTCOLOR2][k] * f2 + u[U_LIGHTCOLOR3][k] * f3 : 0.0f);
 		o.a[k] = clamp01(c);
 	}
 	o.a[7] = 0.0f;

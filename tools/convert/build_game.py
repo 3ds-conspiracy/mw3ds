@@ -45,8 +45,12 @@ STARTER_GOLD = 100
 
 
 def pick_water_sound(db):
-    """Sound id for the shore ambience: the first SOUN whose file looks like waves / lapping water."""
-    skip = ("underwater", "drip", "splash", "swim", "fall", "boil", "bubbl")
+    """Sound id for the shore ambience: Morrowind's near-water sound, Water Layer (Morrowind.ini's [Water]
+    NearWaterOutdoorID), else the first SOUN whose file looks like waves / lapping water (not a boat's: Boat Hull,
+    boat_waves.wav, is a hull creaking, and the whole coast creaked with it)."""
+    if "water layer" in db["SOUN"]:
+        return "water layer"
+    skip = ("underwater", "drip", "splash", "swim", "fall", "boil", "bubbl", "boat")
     for word in ("wave", "lap", "ocean", "sea", "water"):
         for sid, rec in sorted(db["SOUN"].items()):
             f = (rec.zstr("FNAM") or "").lower()

@@ -17,7 +17,8 @@ BASE = "meshes\\base_anim.nif"
 FEMALE = "meshes\\base_anim_female.nif"
 BEAST = "meshes\\base_animkna.nif"
 EXTRA = ["IdleSwim", "SwimWalkForward", "SwimRunForward", "SwimHit1", "SwimDeath", "SwimKnockDown", "SwimKnockOut",
-         "TurnLeft", "TurnRight", "SwimTurnLeft", "SwimTurnRight",
+         "SwimDeathKnockDown", "SwimDeathKnockOut", "SwimWalkBack", "SwimWalkLeft", "SwimWalkRight", "SwimRunBack",
+         "SwimRunLeft", "SwimRunRight", "TurnLeft", "TurnRight", "SwimTurnLeft", "SwimTurnRight",
          # moving every way (OpenMW's movement states by the direction against the facing), sneaking, jumping
          "WalkBack", "WalkLeft", "WalkRight", "RunBack", "RunLeft", "RunRight",
          "SneakForward", "SneakBack", "SneakLeft", "SneakRight", "Jump",

@@ -56,7 +56,8 @@ def fp_groups(nif):
       <W><Kind>F the blow and the large follow-through: min hit, hit (loop), large follow stop;
       <W><Kind>FM / FS the medium / small follow-throughs
       <W>Eq / <W>Uneq, BowShoot(F) XbowShoot(F) ThrowShoot(F), Block, Hit1, KnockDown,
-      CastSelf / CastTarget / CastTouch (release as loop start), SpellEq / SpellUneq
+      CastSelf / CastTarget / CastTouch (release as loop start), SpellEq / SpellUneq,
+      PickProbe / PickProbeEq / PickProbeUneq (a lockpick or probe)
     where W is 1h, 2c, 2w, HH, Bow, Xbow, Throw and Kind is Chop, Slash, Thrust."""
     keys = next((b["keys"] for b in nif.blocks if b["type"] == "NiTextKeyExtraData"), [])
     marks = {}
@@ -103,6 +104,10 @@ def fp_groups(nif):
     # "shoot follow attach"; OpenMW's CharacterController::handleTextKey)
     add("BowAttach", "bowandarrow", "shoot attach", stop="shoot attach")
     add("XbowFAttach", "crossbow", "shoot follow attach", stop="shoot follow attach")
+    # a lockpick or probe: its own use (a key's turn, no wind-up) and its own draw / put away (OpenMW's PickProbe)
+    add("PickProbe", "pickprobe", "start")
+    add("PickProbeEq", "pickprobe", "equip start", stop="equip stop")
+    add("PickProbeUneq", "pickprobe", "unequip start", stop="unequip stop")
     add("Block", "shield", "block start", "block hit", "block hit", "block stop")
     add("Hit1", "hit1", "start")
     add("KnockDown", "knockdown", "start")

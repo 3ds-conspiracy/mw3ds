@@ -1,0 +1,10 @@
+# By the sea it's the water's sound, not a boat's: the shore ambience took the first sound whose file has "wave" in its
+# name, Boat Hull (boat_waves.wav, a hull creaking in the swell), so the whole coast creaked like a dock with no boat
+# or dock near. Morrowind's water sound is Water Layer (watr_wave.wav: Morrowind.ini's NearWaterOutdoorID)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+# on the beach south of Seyda Neen, nothing wooden in earshot
+0.3 0 0 0 0 TP:-11800:-75500:200:180
+5 0 0 0
+0.1 0 0 0 0 EXPECT:soundstarted:Water%Layer:ge:1
+0.1 0 0 0 0 EXPECT:soundstarted:Boat%Hull:eq:0

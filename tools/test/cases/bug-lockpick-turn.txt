@@ -1,0 +1,14 @@
+# A lockpick (or probe) in hand is used with its own motion, a key's turn (Morrowind's first-person PickProbe group,
+# OpenMW's PickProbe weapon type: no wind-up, played through), not a dagger's chop: our arms wound up and chopped
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:pick_apprentice_01
+0.3 0 0 0 0 EQUIP:pick_apprentice_01
+1 0 0 0
+# out: it comes up with its own draw
+0.2 0 0 0 0 X
+1.5 0 0 0
+# used (held: the draw finishes first)
+1 0 0 0 0 X
+0.1 0 0 0 0 EXPECT:vmgroup:PickProbe
+1.5 0 0 0

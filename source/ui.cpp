@@ -63,11 +63,21 @@ void uiExit()
 	C2D_TextBufDelete(s_buf);
 }
 
+// The buttons drawn this frame and the last (their labels: tests ask what a screen offers)
+static std::vector<std::string> s_buttons, s_lastButtons;
+
+const std::vector<std::string>& uiLastButtons()
+{
+	return s_lastButtons;
+}
+
 void uiBeginFrame(const UiInput& in)
 {
 	s_in = in;
 	s_frame++;
 	C2D_TextBufClear(s_buf);
+	s_lastButtons.swap(s_buttons);
+	s_buttons.clear();
 }
 
 static bool loadTex(const std::string& path, C3D_Tex* tex, GPU_TEXTURE_FILTER_PARAM filter)
@@ -608,6 +618,8 @@ bool uiHit(float x, float y, float w, float h)
 
 bool uiButton(float x, float y, float w, float h, const std::string& label, bool focused, bool enabled)
 {
+	if (s_buttons.size() < 32)
+		s_buttons.push_back(label);
 	bool pressed = enabled && s_in.touching && s_in.touchX >= x && s_in.touchX < x + w && s_in.touchY >= y && s_in.touchY < y + h;
 	// Morrowind's buttons: framed text that brightens under the pointer and when pressed
 	uiRect(x, y, w, h, pressed || focused ? col::select : col::panelLight);

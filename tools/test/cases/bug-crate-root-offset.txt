@@ -1,0 +1,10 @@
+# A model whose root is the shape itself keeps that shape's own offset (OpenMW draws the root's transform; only a root
+# node's offset doesn't count, as the anvil shows): Contain_crate_01 is one shape moved down 32, its box -32..32 about
+# the reference. We dropped it with the node roots' offsets, and Shushishi's crates floated 32 over the platform deck.
+# The lower crate of the stack on the far platform is placed at -760: its bottom at -792, not -760
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Shushishi
+4 0 0 0
+0.1 0 0 0 0 EXPECT:texlow:tx_wood_brown_box:lt:-785
+0.1 0 0 0 0 EXPECT:texlow:tx_wood_brown_box:gt:-800

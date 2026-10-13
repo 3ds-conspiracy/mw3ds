@@ -1,0 +1,22 @@
+# People turn their heads to the player as OpenMW's updateHeadTracking does: at most 30 degrees round (ours went to 57)
+# and up or down to the player's eyes, at most 40 (ours never tilted), within fMaxHeadTrackDistance x
+# fInteriorHeadTrackMult indoors (400 x 0.5). Arrille behind his counter: greeted in front of him first (he turns to
+# the player as he speaks), then the player steps to 60 degrees off his facing, then floats a little over his head
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 TPIN:-257:-111:200:180
+6 0 0 0
+0.1 0 0 0 0 SNAP:refheadyaw:arrille
+0.3 0 0 0 0 TPIN:-127:-186:200:240
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:arrille:lt:200
+0.1 0 0 0 0 EXPECT:refheadyaw:arrille:ge:-31
+0.1 0 0 0 0 EXPECT:refheadyaw:arrille:le:-25
+0.3 0 0 0 0 ACTIVE:10:100
+0.3 0 0 0 0 TPIN:-257:-201:255:180
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:arrille:lt:200
+0.1 0 0 0 0 EXPECT:refheadpitch:arrille:ge:35
+0.1 0 0 0 0 EXPECT:refheadpitch:arrille:le:41

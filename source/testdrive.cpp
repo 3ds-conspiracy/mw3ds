@@ -203,13 +203,13 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "reftorch" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "reftorch" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "texlow" || what == "regionchance" || what == "regionweather"
+		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "texlow" || what == "regionchance" || what == "regionweather"
 		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece";
 }
 
@@ -886,6 +886,19 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 				v = l.volume * (rec != w.game.sounds.end() ? rec->second.volume : 1.0f) * 100.0f;
 		return true;
 	}
+	if (what == "refgap")
+	{
+		// refgap:<a>,<b>: how far apart two actors stand, middle to middle, across
+		size_t comma = arg.find(',');
+		if (comma == std::string::npos)
+			return false;
+		int ra = findRef(s, arg.substr(0, comma)), rb = findRef(s, arg.substr(comma + 1));
+		if (ra < 0 || rb < 0)
+			return false;
+		float dx = w.refs[ra].pos[0] - w.refs[rb].pos[0], dy = w.refs[ra].pos[1] - w.refs[rb].pos[1];
+		v = sqrtf(dx * dx + dy * dy);
+		return true;
+	}
 	if (what == "refitem")
 	{
 		// refitem:<container or actor>,<item>: how many of the item it holds (AddItem / RemoveItem on it)
@@ -972,6 +985,11 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		else if (what == "refknock") v = r.knockTimer;
 		else if (what == "refsidesteps") v = (float)r.sideSteps;     // side steps begun in a fight (OpenMW's combat moves)
 		else if (what == "refidlevoice") v = s.idleVoiceOk(ri) ? 1.0f : 0.0f;   // may say an idle line now
+		else if (what == "refheadyaw" || what == "refheadpitch")      // the head turned / tilted, degrees
+		{
+			const Actor* ha = w.actorOf(ri);
+			v = ha ? (what == "refheadyaw" ? ha->headYaw : ha->headPitch) * 57.29578f : 0.0f;
+		}
 		else if (what == "refsoultrap") v = r.soulTrapUntil > w.time ? 1.0f : 0.0f;
 		else if (what == "refally") v = r.ally ? 1.0f : 0.0f;
 		else if (what == "refdist") v = w.distanceToPlayer(ri);      // 100000: in another interior
@@ -1125,6 +1143,30 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
 	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
 	else if (what == "cellfog") v = arg == "start" ? w.here().fogStart : w.here().fogEnd;    // <start|end>: this cell's fog distance (0: none)
+	else if (what == "keptcells") v = (float)w.cellStates.size();     // cells out of memory with their changes kept
+	else if (what == "savevalid")   // <name>: 1 when test_<name>.sav reads whole (a damaged one is refused)
+		v = World::savedCell(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
+	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
+	{
+		char path[64];
+		snprintf(path, sizeof(path), "sdmc:/3ds/mw3ds/shot_step_%02d.bmp", atoi(arg.c_str()));
+		v = -1.0f;
+		if (FILE* f = fopen(path, "rb"))
+		{
+			// 400 x 480, 24-bit, rows bottom first: the top screen is the last 240 rows (held only while read)
+			const size_t half = 400 * 240 * 3;
+			u8* top = (u8*)malloc(half);
+			if (top && fseek(f, 54 + (long)half, SEEK_SET) == 0 && fread(top, half, 1, f) == 1)
+			{
+				double sum = 0.0;
+				for (size_t i = 0; i < half; i++)
+					sum += top[i];
+				v = (float)(sum / (double)half);
+			}
+			free(top);
+			fclose(f);
+		}
+	}
 	else if (what == "texlow")      // <text>: the lowest point of this cell's batches drawn with a texture whose name has it
 	{
 		const Cell& c = w.here();
@@ -1283,7 +1325,7 @@ static int screenByName(const std::string& n)
 		{ "inventory", SCR_INVENTORY }, { "rest", SCR_REST }, { "barter", SCR_BARTER }, { "levelup", SCR_LEVELUP },
 		{ "training", SCR_TRAINING }, { "spellmake", SCR_SPELLMAKE }, { "enchant", SCR_ENCHANT },
 		{ "alchemy", SCR_ALCHEMY }, { "recharge", SCR_RECHARGE }, { "persuade", SCR_PERSUADE }, { "spells", SCR_SPELLS },
-		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES },
+		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES }, { "death", SCR_DEATH },
 		{ "journal", SCR_JOURNAL }, { "gamemenu", SCR_GAMEMENU }, { "map", SCR_MAP },
 		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "options", SCR_OPTIONS },
 	};
@@ -1790,6 +1832,7 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		float at = fmaxf(0.0f, fminf(1.0f, (float)atof(a[3].c_str())));
 		ac->time = sk.groups[g].start + at * (sk.groups[g].stop - sk.groups[g].start);
 		ac->headYaw = 0.0f;
+		ac->headPitch = 0.0f;
 		ac->blinkTime = -1.0f;
 		ac->frozen = true;
 		logf("test: %s holds %.16s at %.2f (%.3f s; skeleton %d, %.3f - %.3f)", a[1].c_str(), sk.groups[g].name, at,
@@ -2103,6 +2146,48 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 			return fail(a[1] + " not loaded");
 		w.refs[ri].aggressor = true;
 		s.makeHostile(ri);
+		return true;
+	}
+	// REFHEALTH:<id>:<fraction>: that actor's health, a fraction of its maximum (hurt before a fight)
+	if (verb == "REFHEALTH" && a.size() >= 3)
+	{
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || w.refs[ri].actor < 0)
+			return fail(a[1] + " not loaded");
+		w.refs[ri].health = w.refs[ri].healthMax * (float)atof(a[2].c_str());
+		return true;
+	}
+	// REFADDITEM:<id>:<item>[:<count>]: into that actor's or container's own contents (AddItem on it)
+	if (verb == "REFADDITEM" && a.size() >= 3)
+	{
+		int ri = findRef(s, a[1]);
+		std::string id = w.game.object(a[2]) ? a[2] : spaced(a[2]);
+		if (ri < 0)
+			return fail(a[1] + " not loaded");
+		if (!w.game.object(id))
+			return fail("no item " + a[2]);
+		w.refAddItem(w.refs[ri], id, a.size() >= 4 ? atoi(a[3].c_str()) : 1);
+		return true;
+	}
+	if (verb == "TRUNCSAVE" && a.size() >= 3)
+	{
+		// TRUNCSAVE:<name>:<bytes>: the test save sdmc:/3ds/mw3ds/test_<name>.sav cut that much short (a damaged save)
+		std::string p = "sdmc:/3ds/mw3ds/test_" + a[1] + ".sav";
+		FILE* f = fopen(p.c_str(), "rb");
+		if (!f)
+			return fail(p + " missing");
+		std::vector<char> data;
+		char buf[4096];
+		size_t n;
+		while ((n = fread(buf, 1, sizeof(buf), f)) > 0)
+			data.insert(data.end(), buf, buf + n);
+		fclose(f);
+		size_t cut = (size_t)atoi(a[2].c_str());
+		data.resize(data.size() > cut ? data.size() - cut : 0);
+		f = fopen(p.c_str(), "wb");
+		if (!f || fwrite(data.data(), 1, data.size(), f) != data.size())
+			return fail("can't write " + p);
+		fclose(f);
 		return true;
 	}
 	if (verb == "SAYTOPIC" && a.size() >= 3)
@@ -4346,12 +4431,13 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			fightTimer += dt;
 			// v2 kit: someone peaceful the blow would reach (an escort stepping in front): the blow held wound up, not let go,
 			// stepping aside for a clear swing as a player would. Sinnammu Mirpal died to a blow meant for a dreugh
+			// (the blow lands on the nearest one in reach, OpenMW's getHitContact: Session::swingTarget. Any peaceful one in
+			// reach held it, and with a dreugh fought from its own longer reach Sinnammu Mirpal, behind it, held every blow)
 			auto friendInReach = [&]() {
-				bool found = false;
-				if (s.kitV2())
-					for (int i : w.loadedActors)
-						found |= i != fightRef && w.refs[i].ai != AI_COMBAT && s.inSwing(i);
-				return found;
+				if (!s.kitV2())
+					return false;
+				int t = s.swingTarget();
+				return t >= 0 && t != fightRef && w.refs[t].ai != AI_COMBAT;
 			};
 			bool fightOver = f.dead || !f.visible() || f.ai != AI_COMBAT || f.duelFoe >= 0 || fd > 600.0f || fightTimer > 20.0f;
 			if (fightOver && fightHold && friendInReach())
@@ -4373,7 +4459,10 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			handItem(s, true);
 			p.yaw = atan2f(fx, fy);
 			p.pitch = atan2f((f.boxMin[2] + f.boxMax[2]) * 0.5f - playerEyeZ(p), fmaxf(fd, 1.0f));
-			in.moveY = fd > 90.0f ? 1.0f : 0.0f;
+			// (in the water one above or below us out of the blow's reach up or down, OpenMW's isInMeleeReach: swum to
+			// along the pitch, as a player dives after a fish. It stood 90 off and swung at a slaughterfish 150 under it)
+			bool deep = p.swimming && fabsf(f.pos[2] - p.feet[2]) > 90.0f;
+			in.moveY = fd > 90.0f || deep ? 1.0f : 0.0f;
 			in.attack = fmodf(fightTimer, 0.7f) < 0.4f;
 			// (judged facing the way just set: the blow goes from there)
 			if (friendInReach())
@@ -5314,6 +5403,32 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 	{
 		ok = w.stats.selectedSpell == lower(spaced(a[1]));
 		snprintf(got, sizeof(got), "%.80s", w.stats.selectedSpell.c_str());
+	}
+	else if ((what == "button" || what == "nobutton") && a.size() >= 2)
+	{
+		// EXPECT:button:<label> / nobutton:<label>: the screen shows (or doesn't) a button so labelled (% for spaces)
+		std::string want = lower(spaced(a[1])), all;
+		bool found = false;
+		for (const std::string& l : uiLastButtons())
+		{
+			found |= lower(l) == want;
+			all += (all.empty() ? "" : ", ") + l;
+		}
+		ok = what == "button" ? found : !found;
+		snprintf(got, sizeof(got), "%.80s", all.empty() ? "no buttons" : all.c_str());
+	}
+	else if (what == "vmgroup" && a.size() >= 2)
+	{
+		// EXPECT:vmgroup:<group>: the first-person arms play that animation group now (PickProbe, 1hChop ...)
+		const char* g = "";
+		if (s.vm.ready)
+		{
+			const Skeleton& sk = s.vm.set.skeletons[0];
+			int k = s.vm.set.actors[0].group;
+			g = k >= 0 && k < (int)sk.groups.size() ? sk.groups[k].name : "";
+		}
+		ok = lower(g) == lower(a[1]);
+		snprintf(got, sizeof(got), "%s", *g ? g : "none");
 	}
 	else if (what == "following" && a.size() >= 2)
 	{

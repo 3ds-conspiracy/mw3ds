@@ -97,6 +97,7 @@ struct Session : ScriptHost
 	bool playerDead = false;
 	bool weaponDrawn = false;         // weapon (or fists) out: the view model shows it
 	float drawTimer = 0.0f;           // > 0 while the weapon comes out; the wind-up waits for it
+	bool pickQueued = false;          // a press while the lockpick / probe came up: tried once it's up
 	float sheatheTimer = 0.0f;        // seconds without fighting; the weapon goes away after a while
 	int heldLights = 0;               // people's torches lighting the world this frame (rendererSetActorLights)
 	int attackKind = 0;               // 0 chop, 1 slash, 2 thrust: picked when the wind-up starts
@@ -117,6 +118,8 @@ struct Session : ScriptHost
 	void viewCamera(RenderCamera& cam);
 	// repairing: -1 = with a repair tool (inventory index repairTool), else the smith's ref
 	int repairRef = -1, repairTool = -1;
+	int quitSaving = 0;               // Save and quit: "Saving..." shown first (frames), then the save and the quit
+	bool saveUnreadable = false;      // start(): the save asked for is there but won't read (nothing started over it)
 	bool wantReload = false;          // death / Saves screen: main loop restarts the session from a save
 	std::string reloadPath;           // which save (empty = the autosave)
 	std::vector<SaveInfo> saveList;   // Saves screen
@@ -317,6 +320,7 @@ struct Session : ScriptHost
 	void actorGravity(float dt);
 	bool inSwing(int ref, float* dist = nullptr);         // a swing now would reach them
 	int swingTarget();                                   // who a swing now would strike (-1: nobody)
+	void npcKnockUpdate(int ref, float dt);          // down or out: the time on the floor, then up
 	bool idleVoiceOk(int ref);                            // may say an Idle line now (not following or escorting)
 	bool npcSayTopic(int ref, const char* voiceTopic);   // a voiced line of Idle / Attack / Hit / Flee / Thief                  // people with nothing under them fall (and land hard)
 	void damagePlayer(float dmg, bool fatigueOnly);
@@ -344,6 +348,10 @@ struct Session : ScriptHost
 	float actorWalkSpeed(int ref);
 	float normalWeaponResist(int ref);
 	float fleeRatingOf(int ref, float distance);
+	float actorHalfLength(int ref);                      // collision box half length (OpenMW's getHalfExtents().y())
+	float npcWeaponRating(int ref, float distance);      // OpenMW's rateWeapon against the player
+	float npcRestoreRating(int ref, const SpellEffect& e);   // OpenMW's rateEffect for Restore Health / Magicka / Fatigue on self
+	bool npcDrinkPotion(int ref, float distance);
 	float fightTermOf(int ref, float distance);
 	float haggleChance(int merchantRef, int price, int offer, bool selling, int* dOut = nullptr);
 	float walkSpeedFor(int speed);
@@ -620,7 +628,8 @@ struct Session : ScriptHost
 	bool equipItem(int inventoryIndex, bool force = false);           // false: refused (a message says why)
 	void startGameScripts();
 	void givePlayerStartSpells();                 // autocalc PC Start spells (character creation's end)
-	bool deathHaveSave = false;                   // the death screen offers loading it
+	std::string deathSave;                        // the newest of the player's saves when they died ("": none)
+	bool deathAnySave = false;                    // any save to choose from (the game's starting points too)
 	float playerLoad = 0.0f;                      // carried weight / capacity, 0..1 (fatigue costs)
 	int barterCount = 0;                          // barter: how many of the picked stack (0: not choosing yet)
 	bool deletingSave = false;                    // Saves screen: asking before deleting the selected save
@@ -732,5 +741,5 @@ struct Session : ScriptHost
 	int mapCell = -1;                 // the cell whose name was last put on the map
 	int corprusShown = 0;             // Corprus level the stats were last computed at
 	bool refInUse(int ri) const;      // something in the session points at that object
-	void evictFarCells(int budget = -1);   // -1: refBudget()
+	void evictFarCells(int budget = -1, bool now = false);   // -1: refBudget(); now: EVICT (see World::evictCells)
 };

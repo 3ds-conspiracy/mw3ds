@@ -278,28 +278,29 @@ void Session::drawBottom()
 	}
 }
 
-// The four quick keys as small slots above the buttons (Up, Right, Down, Left): the item's icon or the spell's
-// first letters; a tap uses the slot as its D-pad press does
+// The four quick keys as slots under the minimap (Up, Right, Down, Left), big enough to tap: the item's icon or the
+// spell's first letters; a tap uses the slot as its D-pad press does (GoldenEye's D-pad moves: the taps are its quick keys)
 void Session::drawQuickStrip()
 {
 	static const char* dirs[4] = { "U", "R", "D", "L" };
+	const float kSlot = 26.0f;
 	for (int k = 0; k < 4; k++)
 	{
-		float x = 190 + k * 19, y = 192;
+		float x = 190 + k * 30, y = 179;
 		const std::string& q = w.stats.quickKeys[k];
 		bool isSpell = q.compare(0, 6, "magic:") == 0 && q.compare(0, 11, "magic:item:") != 0;
 		std::string id = q.compare(0, 4, "inv:") == 0 ? q.substr(4) : q.compare(0, 11, "magic:item:") == 0 ? q.substr(11)
 			: q.compare(0, 6, "magic:") == 0 ? q.substr(6) : q;
 		const Object* o = q.empty() || isSpell ? nullptr : w.game.object(id);
-		uiRect(x, y, 16, 16, col::panel);
-		if (!q.empty() && !(o && uiIcon(o->iconIx, x, y, 16.0f)))
+		uiRect(x, y, kSlot, kSlot, col::panel);
+		if (!q.empty() && !(o && uiIcon(o->iconIx, x + 1, y + 1, kSlot - 2.0f)))
 		{
 			std::string name = isSpell ? (w.game.spells.count(id) ? w.game.spells[id].name : id) : o ? o->name.str() : id;
-			uiTextCentered(x + 8, y + 8 - uiLineHeight(0.34f) / 2, 0.34f, isSpell ? col::link : col::textDim, name.substr(0, 3));
+			uiTextCentered(x + kSlot / 2, y + kSlot / 2 - uiLineHeight(0.38f) / 2, 0.38f, isSpell ? col::link : col::textDim, name.substr(0, 3));
 		}
-		uiFrame(x, y, 16, 16);
-		uiText(x + 1, y - 1, 0.3f, col::textOver, dirs[k]);
-		if (uiHit(x, y, 16, 16) && w.controlsEnabled && !playerDead)
+		uiFrame(x, y, kSlot, kSlot);
+		uiText(x + 2, y, 0.3f, col::textOver, dirs[k]);
+		if (uiHit(x, y, kSlot, kSlot) && w.controlsEnabled && !playerDead)
 			useQuickKey(k);
 	}
 }
@@ -362,7 +363,7 @@ void Session::drawHud()
 	drawMapView(186, 26, 128, 128, 1.0f, false, w.current >= 0 && w.cells[w.current].interior);
 	if (mapOk && uiHit(186, 26, 128, 128))
 		openScreen(SCR_MAP);
-	uiTextCentered(250, 156, 0.38f, col::textDim, w.cellName().size() > 26 ? w.cellName().substr(0, 25) + "..." : w.cellName());
+	uiTextCentered(250, 155, 0.38f, col::textDim, w.cellName().size() > 26 ? w.cellName().substr(0, 25) + "..." : w.cellName());
 
 	if (target >= 0)
 	{
@@ -381,28 +382,27 @@ void Session::drawHud()
 		bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE;   // (GoldenEye: the Xbox buttons)
 		std::string hint = w.stats.selectedSpell.empty() ? (xbox ? "R: attack (hold to wind up)" : "X: attack (hold to wind up)")
 			: std::string(xbox ? "R: attack   L: cast " : "X: attack   Y: cast ") + w.game.spells[w.stats.selectedSpell].name;
-		// Leave the quick key strip (from x 190) clear
-		while (hint.size() > 3 && uiTextWidth(hint, 0.38f) > 180)
+		// Leave the quick key strip (from x 190) clear, and GoldenEye's 1st / 3rd button (from x 132)
+		float room = g_controlLayout == CONTROLS_GOLDENEYE ? 122.0f : 180.0f;
+		while (hint.size() > 3 && uiTextWidth(hint, 0.38f) > room)
 			hint = hint.substr(0, hint.size() - 4) + "...";
 		uiText(6, promptRows > 1 ? 192 : 190, 0.38f, col::textDim, hint);
 	}
 	drawQuickStrip();
-	uiTextCentered(250, 168, 0.38f, col::textDim, dateText());
+	uiTextCentered(250, 166, 0.36f, col::textDim, dateText());
+	// the bounty on the minimap's foot, the frame rate in its top corner (the strip took their place)
 	if (w.bounty > 0)
-		uiTextRight(314, 181, 0.4f, col::health, "Bounty " + std::to_string(w.bounty));
+	{
+		std::string b = "Bounty " + std::to_string(w.bounty);
+		uiRect(312 - uiTextWidth(b, 0.4f) - 4, 140, uiTextWidth(b, 0.4f) + 4, 13, C2D_Color32(0, 0, 0, 170));
+		uiTextRight(311, 140, 0.4f, col::health, b);
+	}
 	char perf[64];
 	snprintf(perf, sizeof(perf), "%.0f fps", fps);
-	// GoldenEye's SELECT sneaks: first / third person is a button here, beside the quick keys (the frame rate above it,
-	// unless a bounty is shown there)
-	if (g_controlLayout == CONTROLS_GOLDENEYE)
-	{
-		if (uiButton(267, 190, 47, 16, thirdPerson ? "1st" : "3rd"))
-			povTapped = true;
-		if (w.bounty <= 0)
-			uiTextRight(314, 181, 0.34f, col::textDim, perf);
-	}
-	else
-		uiTextRight(314, 194, 0.34f, col::textDim, perf);
+	uiTextRight(312, 27, 0.34f, col::textDim, perf);
+	// GoldenEye's SELECT sneaks: first / third person is a button here, beside the attack hint
+	if (g_controlLayout == CONTROLS_GOLDENEYE && uiButton(132, 188, 50, 17, thirdPerson ? "1st" : "3rd"))
+		povTapped = true;
 
 	bool inv = w.menusEnabled & MENU_INVENTORY, stats = w.menusEnabled & MENU_STATS;
 	if (uiButton(2, 208, 51, 28, "Items", false, inv))
@@ -437,6 +437,17 @@ void Session::toggleGameMenu()
 void Session::drawGameMenu()
 {
 	header("Menu", w.cellName());
+	// Save and quit: "Saving..." on screen first, then the save (a long campaign's takes seconds: it looked frozen)
+	if (quitSaving > 0)
+	{
+		uiTextCentered(160, 110, 0.6f, col::text, "Saving...");
+		if (++quitSaving > 2)
+		{
+			save();
+			wantQuit = true;
+		}
+		return;
+	}
 	const UiInput& in = uiIn();
 	// OpenMW's getRestEnabled: EnableRest has run, or character creation has finished (CharGenState -1)
 	auto cg = w.globals.find("chargenstate");
@@ -471,10 +482,7 @@ void Session::drawGameMenu()
 		openScreen(SCR_OPTIONS);
 	}
 	else if (hit == 4)
-	{
-		save();
-		wantQuit = true;
-	}
+		quitSaving = 1;
 }
 
 // Options: 3D, difficulty, effects and music volume (D-pad up / down picks, left / right or a tap on the
@@ -608,8 +616,8 @@ void Session::drawControls()
 		{ "X (tap)", "Ready / put away the weapon" }, { "R (hold, release)", "Wind up (aiming), strike" },
 		{ "L", "Cast the selected spell" }, { "A", "Activate: talk, open, take" },
 		{ "Y", "Jump (swim up in water)" }, { "B (hold)", "Run" }, { "SELECT", "Sneak on / off" },
-		{ "D-Pad", "Quick keys" }, { "START", "Menu: save, rest, options" },
-		{ "Touch screen", "Menus; 1st / 3rd person" } };
+		{ "D-Pad", "Left / right: strafe; up / down: look" }, { "START", "Menu: save, rest, options" },
+		{ "Touch screen", "Menus, quick keys; 1st / 3rd" } };
 	float y = 30;
 	int n = xbox ? sizeof(kXbox) / sizeof(kXbox[0]) : goldenEye ? sizeof(kGoldenEye) / sizeof(kGoldenEye[0])
 		: sizeof(kClassic) / sizeof(kClassic[0]);
@@ -641,7 +649,7 @@ void Session::drawSaves()
 	if (saveList.empty())
 		uiTextCentered(160, 100, 0.5f, col::textDim, "No saves yet");
 	// Saving mid-chargen would lose the menus the scripts queued, so wait until they're done
-	bool canSave = pendingMenus.empty() && !wantName;
+	bool canSave = pendingMenus.empty() && !wantName && !playerDead;     // (dead: load only)
 	bool canLoad = list.selected >= 0 && list.selected < (int)saveList.size();
 	// (the starting points that come with the game stay)
 	bool canDelete = canLoad && !saveList[list.selected].bundled;
@@ -681,7 +689,7 @@ void Session::drawSaves()
 		}
 		return;
 	}
-	int b = buttonRow({ canSave ? "New save" : "(finish chargen)", "Load", "Delete", "Back" }, focus);
+	int b = buttonRow({ canSave ? "New save" : playerDead ? "(dead)" : "(finish chargen)", "Load", "Delete", "Back" }, focus);
 	if (b == 2 && canDelete)
 	{
 		deletingSave = true;
@@ -701,7 +709,12 @@ void Session::drawSaves()
 		closeScreen();
 	}
 	else if (b == 3 || (uiIn().down & KEY_B))
-		closeScreen();
+	{
+		if (playerDead)
+			openScreen(SCR_DEATH);     // back to the death screen: no way back into the game but a load
+		else
+			closeScreen();
+	}
 }
 
 void Session::drawMessage()

@@ -1,0 +1,22 @@
+# A hurt fighter drinks a healing potion it carries when the potion rates above its weapon (OpenMW's
+# prepareNextAction: ratePotion against rateWeapon; the Restore Health rating climbs steeply as the health goes).
+# NPCs never drank one. Arrille, at a fifth of his health, with a Quality Restore Health potion
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0 0 0 0 0 SETUP-END
+60 0 0 0 0 ACTIVATE:arrille
+1.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 REFADDITEM:arrille:p_restore_health_q:1
+0.3 0 0 0 0 REFHEALTH:arrille:0.2
+0.1 0 0 0 0 SNAP:refhealth:arrille
+0.3 0 0 0 0 HOSTILE:arrille
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:arrille:eq:1
+0.1 0 0 0 0 EXPECT:refitem:arrille,p_restore_health_q:eq:0
+0.1 0 0 0 0 EXPECT:refhealth:arrille:gt:@0

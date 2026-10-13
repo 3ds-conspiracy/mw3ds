@@ -1,0 +1,17 @@
+# GoldenEye controls: the D-pad strafes (left / right) and looks up and down (up / down), as GoldenEye's C buttons; the
+# quick keys are the touch screen's strip (it had the D-pad as quick keys, and nothing strafed)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:goldeneye
+1 0 0 0
+0.1 0 0 0 0 SNAP:yaw+SNAP:pitch+SNAP:playerx+SNAP:playery
+1 0 0 0 0 LEFT
+0.1 0 0 0 0 EXPECT:yaw:ge:@-1+EXPECT:yaw:le:@1
+0.1 0 0 0 0 SNAP:moved
+1 0 0 0 0 RIGHT
+0.1 0 0 0 0 EXPECT:moved:ge:@100
+0.1 0 0 0 0 EXPECT:yaw:ge:@-1+EXPECT:yaw:le:@1
+0.5 0 0 0 0 UP
+0.1 0 0 0 0 EXPECT:pitch:ge:@10
+0.1 0 0 0 0 SNAP:pitch
+0.5 0 0 0 0 DOWN
+0.1 0 0 0 0 EXPECT:pitch:le:@-10

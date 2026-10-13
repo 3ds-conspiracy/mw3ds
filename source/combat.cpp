@@ -12,7 +12,8 @@
 //   knockdown   damage >= agility x fKnockDownMult and a roll >= agility x iKnockDownOddsMult / 100
 //               + iKnockDownOddsBase; fatigue at 0 knocks out
 //   wear        weapons lose damage x fWeaponDamageMult per hit, the struck armor piece what it absorbed
-//   fleeing     below (10 + flee / 2.5) % health an actor runs for a while, then comes back
+//   fleeing     rated (1 - health share) x fAIFleeHealthMult + Flee x fAIFleeFleeMult + distance bias, at 100: stands
+//               until the foe comes within its weapon's reach, then runs to a path grid point; chosen again every 3 s
 //   prices      base value x (buying: 1 - (pc - npc) / 200, selling: 0.5 - (npc - pc) / 200), where
 //               pc = (disposition - 50 + mercantile + luck / 10 + personality / 5) x fatigue term, npc alike
 // Crime: assault and murder add a bounty (killing whoever attacked first, or creatures, is free);
@@ -177,9 +178,21 @@ static const char* vmGroup(const Object* w, bool tool)
 	}
 }
 
-static float weaponReach(const Object* w)
+// Melee reach as OpenMW measures it (getMeleeWeaponReach): fCombatDistance x the weapon's reach, x fHandToHandReach for
+// people's fists, fCombatDistance for a creature's own attack; from the edges of both bodies (getDistanceToBounds: the
+// distance less each one's collision box half length, Session::actorHalfLength; the player's 28.5, base_anim.nif's box)
+static const float kPlayerHalfLength = 28.5f;
+static float meleeReach(World& w, const Object* wpn, bool creature)
 {
-	return (w && !isRanged(w) ? w->reach : 0.7f) * kCombatDistance + 30.0f;
+	if (wpn && wpn->type == "WEAP" && !isRanged(wpn))
+		return kCombatDistance * wpn->reach;
+	return creature ? kCombatDistance : kCombatDistance * w.game.gmstf("fhandtohandreach", 1.0f);
+}
+
+// The hit cone (getHitContact): fCombatAngleXY / 90 is the sine of the widest angle off the attacker's facing
+static float hitAngle(World& w)
+{
+	return asinf(fminf(1.0f, w.game.gmstf("fcombatanglexy", 60.0f) / 90.0f));
 }
 
 // Damage of one blow: attack kind from how the player moves (thrust forward, slash sideways, chop)
@@ -360,6 +373,37 @@ void Session::knockDown(int ri, bool out)
 	logf("combat: %s knocked %s", r.id.c_str(), out ? "out" : "down");
 }
 
+// On the floor (OpenMW's refreshHitRecoilAnims): knocked down, its KnockDown played through (the getting up in it);
+// knocked out, lying in its KnockOut's loop for as long as the fatigue is under 0, then the rest of it (getting up).
+// It was 3.5 s out cold whatever the fatigue
+void Session::npcKnockUpdate(int ri, float dt)
+{
+	Ref& r = w.refs[ri];
+	Actor* a = w.actorOf(ri);
+	const AnimGroup* g = a && a->group >= 0 ? &actorSkeleton(*w.actorsOf(ri), a->skeleton).groups[a->group] : nullptr;
+	if (r.outCold && r.fatigue < 0.0f)
+	{
+		if (g && g->loopStop > g->loopStart && a->time > g->loopStop)
+			a->time = g->loopStart;
+		r.knockTimer = fmaxf(r.knockTimer, 0.5f);
+		return;
+	}
+	if (r.outCold)
+	{
+		// come round: the rest of the group, then up
+		r.outCold = false;
+		if (g)
+			r.knockTimer = fmaxf(0.1f, g->stop - a->time);
+	}
+	r.knockTimer -= dt;
+	if (r.knockTimer <= 0.0f)
+	{
+		r.knockTimer = 0.0f;
+		if (a)
+			actorPlay(*w.actorsOf(ri), *a, "Idle", ANIM_IDLE);
+	}
+}
+
 // ---- NPCs
 
 void Session::makeHostile(int ri)
@@ -532,8 +576,17 @@ void Session::playerDies()
 	for (auto& r : w.refs)
 		r.ai = AI_IDLE;
 	logf("combat: player died");
-	// (the save is read here once: reading it every frame of the screen cost 70 ms a frame)
-	deathHaveSave = savePath && !World::savedCell(savePath).empty();
+	// (the saves are listed here once: reading them every frame of the screen cost 70 ms a frame)
+	deathSave.clear();
+	u64 newest = 0;
+	std::vector<SaveInfo> saves = savesList(dataDir);
+	for (const SaveInfo& sv : saves)
+		if (!sv.bundled && (deathSave.empty() || sv.time > newest))
+		{
+			deathSave = sv.path;
+			newest = sv.time;
+		}
+	deathAnySave = !saves.empty();
 	openScreen(SCR_DEATH);
 }
 
@@ -1060,6 +1113,148 @@ void Session::npcSummonsUpdate()
 	}
 }
 
+// Its collision box's half length (OpenMW's getHalfExtents().y(), what getDistanceToBounds takes off): a creature's
+// "Bounding Box" node, people's base_anim.nif box (28.5), x its scale
+float Session::actorHalfLength(int ri)
+{
+	const Ref& r = w.refs[ri];
+	if (r.actor < 0)
+		return 0.0f;
+	const ActorDef& def = w.game.actors[r.actor];
+	float s = r.scale > 0.0f ? r.scale : 1.0f;
+	if (const Actor* a = w.actorOf(ri))
+		s = sqrtf(a->place[0] * a->place[0] + a->place[4] * a->place[4] + a->place[8] * a->place[8]);
+	return (def.hasBox ? def.box[3] : kPlayerHalfLength) * s;
+}
+
+// ---- What a fighter does next, as OpenMW's prepareNextAction weighs it (aicombataction.cpp): its weapon against its
+// potions (and its spells, below: only the healing ones are weighed so)
+
+// Its weapon against the player (OpenMW's rateWeapon): the blow's mean damage (slash, thrust and chop each weighed by
+// itself; a bow's chop; a throwing weapon's x 2) x (fDamageStrengthBase + Strength x fDamageStrengthMult / 10), less the
+// player's Resist Normal Weapons for a plain one, x the hit chance (0.01 .. 1) x its speed x fAIMeleeWeaponMult
+// (fAIRangeMeleeWeaponMult for a ranged one out of the player's reach). Fists rate 0, and a bow without arrows.
+// (Its wear and the arrows' own rating are left out)
+float Session::npcWeaponRating(int ri, float dist)
+{
+	const Ref& r = w.refs[ri];
+	const ActorDef& def = w.game.actors[r.actor];
+	const Object* wpn = w.game.object(def.weapon);
+	if (!wpn || wpn->type != "WEAP" || wpn->subtype == WEAP_ARROW || wpn->subtype == WEAP_BOLT)
+		return 0.0f;
+	float chop = (wpn->chop[0] + wpn->chop[1]) * 0.5f, rating = chop;
+	float mult = w.game.gmstf("faimeleeweaponmult", 2.0f);
+	if (isRanged(wpn))
+	{
+		if (r.ammo <= 0)
+			return 0.0f;
+		if (wpn->subtype == WEAP_THROWN)
+			rating = chop * 2.0f;
+		const Object* pw = playerWeapon();
+		float foeReach = !pw ? kCombatDistance : isRanged(pw) ? 1e9f : fmaxf(1.0f, pw->reach) * kCombatDistance;
+		if (dist - actorHalfLength(ri) - kPlayerHalfLength >= foeReach)
+			mult = w.game.gmstf("fairangemeleeweaponmult", 5.0f);
+	}
+	else
+	{
+		float slash = (wpn->slash[0] + wpn->slash[1]) * 0.5f, thrust = (wpn->thrust[0] + wpn->thrust[1]) * 0.5f;
+		float sum = slash + thrust + chop;
+		rating = sum > 0.0f ? (slash * slash + thrust * thrust + chop * chop) / sum : 0.0f;
+	}
+	rating *= w.game.gmstf("fdamagestrengthbase", 0.5f)
+		+ def.attributes[ATTR_STRENGTH] * w.game.gmstf("fdamagestrengthmult", 0.1f) * 0.1f;
+	if (!((wpn->flags & 3) || wpn->magic))
+		rating *= 1.0f - fminf(1.0f, (w.effectTotal(98) - w.effectTotal(36)) / 100.0f);
+	int skill = def.skills[weaponSkill(wpn)];
+	if (skill <= 0)
+		return 0.0f;
+	float chance = attackTermOf(skill, def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax,
+		w.actorEffect(ri, 117), w.actorEffect(ri, 47)) - playerDefense(false);
+	rating *= fmaxf(0.01f, fminf(1.0f, chance / 100.0f));
+	return rating * wpn->speed * mult;
+}
+
+// Restore Health / Magicka / Fatigue on self (OpenMW's rateEffect): with p 4 for health, 2 for fatigue, and for magicka
+// 2 when a spell it knows costs more than it has left (and no more than its maximum), else 0; heal = the mean magnitude x
+// the duration, the damage = maximum - now, and over = heal - damage when the damage is under heal and more than half
+// is left (then heal = the damage): (p - 1) / 2 x (damage / maximum + 0.6)^(2p) + p x (heal - 2 over) / maximum - 0.5,
+// x the effect's cost (0.5 x (min + max) x base cost / 10 x duration x fEffectCostMult) x fAIMagicSpellMult. Any other
+// effect rates 0 here (OpenMW weighs fortifies and the rest too: left out)
+float Session::npcRestoreRating(int ri, const SpellEffect& e)
+{
+	if (e.range != 0 || (e.effect != 75 && e.effect != 76 && e.effect != 77))
+		return 0.0f;
+	const Ref& r = w.refs[ri];
+	const ActorDef& def = w.game.actors[r.actor];
+	float now = e.effect == 75 ? r.health : e.effect == 76 ? r.magicka : r.fatigue;
+	float max = e.effect == 75 ? r.healthMax : e.effect == 76 ? r.magickaMax : r.fatigueMax;
+	if (max <= 0.0f)
+		return 0.0f;
+	float p = e.effect == 75 ? 4.0f : 2.0f;
+	if (e.effect == 76)
+	{
+		p = 0.0f;
+		for (const auto& id : def.combatSpells)
+		{
+			auto it = w.game.spells.find(id);
+			if (it != w.game.spells.end() && it->second.type == 0 && it->second.cost > now && it->second.cost < max)
+			{
+				p = 2.0f;
+				break;
+			}
+		}
+	}
+	float dur = fmaxf(1.0f, (float)e.duration);
+	float heal = (e.min + e.max) * 0.5f * dur, damage = fmaxf(max - now, 0.0f), over = 0.0f;
+	if (damage < heal && now > max * 0.5f)
+	{
+		over = heal - damage;
+		heal = damage;
+	}
+	float rating = (p - 1.0f) / 2.0f * powf(damage / max + 0.6f, p * 2.0f) + p * (heal - 2.0f * over) / max - 0.5f;
+	auto me = w.game.magicEffects.find(e.effect);
+	float base = me != w.game.magicEffects.end() ? me->second.cost : 1.0f;
+	float cost = (0.5f * (fmaxf(1.0f, (float)e.min) + fmaxf(1.0f, (float)e.max)) * 0.1f * base * dur
+		+ 0.05f * e.area * base) * w.game.gmstf("feffectcostmult", 0.5f);
+	return rating * cost * w.game.gmstf("faimagicspellmult", 3.0f);
+}
+
+// A potion it carries whose rating beats its weapon's is drunk (OpenMW's ActionPotion: taken when chosen, 0.75 s before
+// the next choice). NPCs never drank one
+bool Session::npcDrinkPotion(int ri, float dist)
+{
+	Ref& r = w.refs[ri];
+	if (r.contents.empty())
+		return false;
+	float best = npcWeaponRating(ri, dist);
+	int pick = -1;
+	for (size_t i = 0; i < r.contents.size(); i++)
+	{
+		const ContentItem& c = r.contents[i];
+		const Object* o = w.game.object(c.second);
+		if (c.first == 0 || !o || o->type != "ALCH")
+			continue;
+		float rating = 0.0f;
+		for (const SpellEffect& e : o->effects)
+			rating += npcRestoreRating(ri, e);
+		if (rating > best)
+		{
+			best = rating;
+			pick = (int)i;
+		}
+	}
+	if (pick < 0)
+		return false;
+	std::string id = r.contents[pick].second;
+	const Object* o = w.game.object(id);
+	w.refRemoveItem(r, id, 1);
+	for (const SpellEffect& e : o->effects)
+		applyEffectToActor(ri, e, false, 0.0f, 100.0f, id);
+	playSound(ri, "Drink");
+	logf("combat: %s drinks %s", r.id.c_str(), id.c_str());
+	return true;
+}
+
 // A spell from the actor's list: heal itself when hurt, else a harmful one at the player
 // (target spells from afar, touch spells up close). Starts the cast; npcCombat releases it.
 void Session::npcCastSpell(int ri)
@@ -1067,7 +1262,7 @@ void Session::npcCastSpell(int ri)
 	Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
 	float dist = w.distanceToPlayer(ri);
-	float reach = weaponReach(nullptr) + 40.0f;
+	float reach = kCombatDistance + actorHalfLength(ri) + kPlayerHalfLength;   // a touch spell's (OpenMW: fCombatDistance)
 	// A summon (when it has none about) or a ward first (half the time: a fight doesn't open with one every time)
 	std::string summon;
 	if (rand() % 2 == 0 && npcSummonSpell(ri, summon))
@@ -1097,33 +1292,59 @@ void Session::npcCastSpell(int ri)
 		logf("combat: %s casts %s", r.id.c_str(), sp.name.c_str());
 		return;
 	}
-	int pick = -1, range = -1;
+	// A healing spell when it rates above its weapon and its best harmful spell in reach (OpenMW's rateSpell: the
+	// effects' ratings x the cast chance; a harmful effect at the player rates its cost x fAIRangeMagicSpellMult on
+	// target, fAIMagicSpellMult on touch, the player's resistances left out). It healed under half its health
+	int pick = -1, range = -1, heal = -1;
+	float healBest = npcWeaponRating(ri, dist), harmBest = 0.0f;
 	for (size_t i = 0; i < def.combatSpells.size(); i++)
 	{
 		auto it = w.game.spells.find(def.combatSpells[i]);
 		if (it == w.game.spells.end() || (it->second.type != 5 && it->second.cost > r.magicka))
 			continue;
 		const SpellDef& sp = it->second;
+		static const int kSchoolSkill[6] = { 11, 13, 10, 12, 14, 15 };
+		float chance = sp.type == 5 ? 100.0f : fmaxf(0.0f, fminf(100.0f, (def.skills[kSchoolSkill[spellSchool(sp)]] * 2.0f
+			+ def.attributes[ATTR_WILLPOWER] / 5.0f + def.attributes[ATTR_LUCK] / 10.0f - sp.cost - w.actorEffect(ri, 48))
+			* fatigueTerm(r.fatigue, r.fatigueMax)));
+		float healRating = 0.0f, harm = 0.0f;
 		for (auto& e : sp.effects)
 		{
-			if (e.effect == 75 && e.range == 0 && r.health < r.healthMax * 0.5f)
+			healRating += npcRestoreRating(ri, e);
+			if (e.range != 0)
 			{
-				pick = i;
-				range = 0;
+				auto me = w.game.magicEffects.find(e.effect);
+				float base = me != w.game.magicEffects.end() ? me->second.cost : 1.0f;
+				// (0x1000: applied once, its duration as it is)
+				float dur = (effectFlags(e.effect) & 0x1000) ? (float)e.duration : fmaxf(1.0f, (float)e.duration);
+				harm += (0.5f * (fmaxf(1.0f, (float)e.min) + fmaxf(1.0f, (float)e.max)) * 0.1f * base * dur + 0.05f * e.area * base)
+					* w.game.gmstf("feffectcostmult", 0.5f)
+					* (e.range == 2 ? w.game.gmstf("fairangemagicspellmult", 5.0f) : w.game.gmstf("faimagicspellmult", 3.0f));
 			}
-			else if (e.range == 2 && dist > reach && range != 0)
+			if (e.range == 2 && dist > reach && range != 0)
 			{
 				pick = i;
 				range = 2;
+				harmBest = fmaxf(harmBest, harm * chance / 100.0f);
 			}
 			else if (e.range == 1 && dist <= reach && range != 0)
 			{
 				pick = i;
 				range = 1;
+				harmBest = fmaxf(harmBest, harm * chance / 100.0f);
 			}
 		}
-		if (range == 0)
-			break;
+		healRating *= chance / 100.0f;
+		if (healRating > healBest)
+		{
+			healBest = healRating;
+			heal = (int)i;
+		}
+	}
+	if (heal >= 0 && healBest > harmBest)
+	{
+		pick = heal;
+		range = 0;
 	}
 	if (pick < 0 || (range == 2 && rand() % 3 == 0))
 		return;
@@ -1188,7 +1409,7 @@ bool Session::combatMove(int ri, Cell& cell, float dist, float facing, bool rang
 	Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
 	Actor* a = w.actorOf(ri);
-	float foeReach = weaponReach(foeWeapon);
+	float foeReach = meleeReach(w, foeWeapon, false) + actorHalfLength(ri) + kPlayerHalfLength;
 	r.combatReact -= dt;
 	if (r.combatReact <= 0.0f)
 	{
@@ -1247,14 +1468,9 @@ void Session::npcCombat(int ri, float dt)
 	if (!cell)
 		return;
 
-	// Knocked down: helpless until they get up
+	// Knocked down: helpless until they get up (npcKnockUpdate)
 	if (r.knockTimer > 0.0f)
-	{
-		r.knockTimer -= dt;
-		if (r.knockTimer <= 0.0f && a)
-			actorPlay(*set, *a, "Idle", ANIM_IDLE);
 		return;
-	}
 
 	// Fleeing: badly hurt actors run for a while, then come back
 	// OpenMW's vanillaRateFlee: Flee 100 and up always flees; else (1 - health share) x fAIFleeHealthMult + Flee x
@@ -1264,7 +1480,8 @@ void Session::npcCombat(int ri, float dt)
 	if (!r.fleeing && fleeRating >= 100.0f)
 	{
 		r.fleeing = true;
-		r.fleeTimer = 1.0f + frand();
+		r.fleeTimer = 3.0f;
+		r.fleeState = 0;
 		npcSayTopic(ri, "Flee");
 		r.hitAt = -1.0f;
 		r.castSpell = -1;
@@ -1272,29 +1489,96 @@ void Session::npcCombat(int ri, float dt)
 	}
 	if (r.fleeing)
 	{
+		// the choice is made again every 3 s (OpenMW's ActionFlee cooldown): still rated 100, keep fleeing
 		r.fleeTimer -= dt;
 		if (r.fleeTimer <= 0.0f)
 		{
-			// the choice again: still rated 100, keep running
 			if (fleeRating >= 100.0f)
-				r.fleeTimer = 1.0f + frand();
+				r.fleeTimer = 3.0f;
 			else
 				r.fleeing = false;
 		}
-		else
+	}
+	if (r.fleeing)
+	{
+		// OpenMW's AiCombat::updateFleeing: it stands until the foe, in sight, comes within the reach of the foe's
+		// weapon (any distance for a bow or a throwing weapon), then runs to a path grid point picked at random among
+		// those its nearest one leads to in that cell (none: away from the foe for 1 s), and stands again there or
+		// once fFleeDistance away out of sight. (OpenMW also counts a spell in hand: our player has no spell stance.)
+		// It ran straight away from the player, all the time, until 3000 away
+		float eyeA[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };
+		float eyeB[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+		bool los = w.lineOfSight(eyeA, eyeB);
+		bool run = false;
+		if (r.fleeState == 0 && los)
 		{
-			float away[3] = { r.pos[0] - dx / fmaxf(dist, 1.0f) * 600.0f, r.pos[1] - dy / fmaxf(dist, 1.0f) * 600.0f, r.pos[2] };
-			if (dist < w.game.gmstf("ffleedistance", 3000.0f))
+			const Object* pw = playerWeapon();
+			float trigger = !pw ? kCombatDistance : isRanged(pw) ? 1000.0f : fmaxf(1.0f, pw->reach) * kCombatDistance;
+			if (trigger >= 1000.0f || dist - actorHalfLength(ri) - kPlayerHalfLength <= trigger)
 			{
-				npcMoveTo(ri, away, actorRunSpeed(ri), dt, true);
-				if (a && !actorPlay(*set, *a, "RunForward", ANIM_LOOP))
-					actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
+				r.fleeState = 1;
+				r.fleeRun = 0.0f;
+				int p0 = w.nearestPathPoint(r.pos);
+				if (p0 >= 0 && !((def.afloat & 0x10) && !(def.afloat & 0x40)))
+				{
+					// the points p0 leads to, in its cell
+					std::vector<int> seen = { p0 }, open = { p0 };
+					while (!open.empty())
+					{
+						int p = open.back();
+						open.pop_back();
+						for (int q : w.pathPoints[p].links)
+							if (w.pathPoints[q].cell == w.pathPoints[p0].cell && std::find(seen.begin(), seen.end(), q) == seen.end())
+							{
+								seen.push_back(q);
+								open.push_back(q);
+							}
+					}
+					if (seen.size() > 1)
+					{
+						memcpy(r.fleeDest, w.pathPoints[seen[1 + rand() % (seen.size() - 1)]].pos, sizeof(r.fleeDest));
+						r.fleeState = 2;
+						r.path.clear();
+						r.repathTimer = 0.0f;
+					}
+				}
 			}
-			else if (a && a->mode == ANIM_LOOP)
-				actorPlay(*set, *a, "Idle", ANIM_IDLE);
-			w.syncActor(ri);
-			return;
 		}
+		if (r.fleeState == 1)
+		{
+			r.fleeRun += dt;
+			if (r.fleeRun < 1.0f)
+			{
+				float ax = -dx / fmaxf(dist, 1.0f), ay = -dy / fmaxf(dist, 1.0f);
+				float diff = angleDiff(atan2f(ax, ay), r.rot[2]);
+				r.rot[2] += fmaxf(-kTurnSpeed * dt, fminf(kTurnSpeed * dt, diff));
+				npcStep(ri, *cell, ax, ay, actorRunSpeed(ri) * dt);
+				run = true;
+			}
+			else
+				r.fleeState = 0;
+		}
+		else if (r.fleeState == 2)
+		{
+			float ex = r.fleeDest[0] - r.pos[0], ey = r.fleeDest[1] - r.pos[1];
+			if ((dist > w.game.gmstf("ffleedistance", 3000.0f) && !los) || ex * ex + ey * ey < 40.0f * 40.0f)
+				r.fleeState = 0;
+			else
+			{
+				npcMoveTo(ri, r.fleeDest, actorRunSpeed(ri), dt, true);
+				run = true;
+			}
+		}
+		if (a)
+		{
+			if (run && !actorPlay(*set, *a, "RunForward", ANIM_LOOP))
+				actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
+			else if (!run && a->mode == ANIM_LOOP)
+				actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		}
+		r.moved = true;
+		w.syncActor(ri);
+		return;
 	}
 
 	// Face the player
@@ -1307,10 +1591,22 @@ void Session::npcCombat(int ri, float dt)
 	bool ranged = isRanged(wpn) && r.ammo > 0;
 	if (wpn && isRanged(wpn) && r.ammo <= 0)
 		wpn = nullptr;                                     // out of arrows: fists
-	float reach = def.creature ? kCombatDistance * 0.9f : weaponReach(wpn);
+	// (from the middles: the reach and both half lengths. It was fCombatDistance x 0.9 for a creature, whatever its size:
+	// a guar, 120 long each way of its middle, bit with its head through the player)
+	const float gap = actorHalfLength(ri) + kPlayerHalfLength, meleeAt = meleeReach(w, wpn, def.creature);
+	float reach = meleeAt + gap;
 	bool attacking = r.hitAt >= 0.0f;
 	float eyeA[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };
 	float eyeB[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+
+	// A potion when one rates above its weapon (npcDrinkPotion), weighed as often as OpenMW's actors choose their next
+	// action, about every blow
+	r.potionTimer -= dt;
+	if (!attacking && r.potionTimer <= 0.0f)
+	{
+		r.potionTimer = 0.75f;
+		npcDrinkPotion(ri, dist);
+	}
 
 	// Spells now and then
 	r.castTimer -= dt;
@@ -1331,7 +1627,9 @@ void Session::npcCombat(int ri, float dt)
 	// that's a chase, which stands still when it gets nowhere, not an idle that flips back each frame)
 	// (one that flies or swims is in reach only within its reach up or down too, as OpenMW measures it to the target's
 	// bounds: it closes in through the air or the water; a cliff racer hovered over the player's head)
-	bool level = ranged || fabsf(w.player.feet[2] - r.pos[2]) < (zMoverTop(w, r, *cell) > -1e8f ? reach : 180.0f);
+	// (up or down OpenMW's isInMeleeReach counts the reach alone, not the bodies' half lengths: a netch 160 over the
+	// player stayed there, its bites short)
+	bool level = ranged || fabsf(w.player.feet[2] - r.pos[2]) < (zMoverTop(w, r, *cell) > -1e8f ? meleeAt : 180.0f);
 	if ((dist > keep || !see || !level) && !attacking)
 	{
 		// Chase: straight at the player, or along the path grid around walls. Can't get any closer (a
@@ -1445,7 +1743,7 @@ void Session::npcCombat(int ri, float dt)
 				{
 					if (e.range == 0 && e.effect == 75)
 						r.health = fminf(r.healthMax, r.health + (e.min + (e.max - e.min) * frand()) * (e.duration > 0 ? e.duration : 1));
-					else if (e.range == 1 && dist <= reach + 60.0f)
+					else if (e.range == 1 && dist <= kCombatDistance + gap)
 						applyEffectToPlayer(e.effect == 86 ? SpellEffect{ 23, e.skill, e.attribute, e.min, e.max, e.duration, 1 } : e, sp.name, ri, (float)sp.cost,
 							chance);
 					else if (e.range == 2)
@@ -1469,7 +1767,9 @@ void Session::npcCombat(int ri, float dt)
 			r.shooting = false;
 			npcFire(ri);
 		}
-		else if (dist <= reach + 40.0f && fabsf(angleDiff(want, r.rot[2])) < 1.0f)
+		// (OpenMW's getHitContact: within the reach of the edges, the height apart under the reach, inside the hit cone.
+		// It was 40 past the reach and 57 degrees round)
+		else if (dist < reach && fabsf(w.player.feet[2] - r.pos[2]) < meleeAt && fabsf(angleDiff(want, r.rot[2])) < hitAngle(w))
 			npcStrike(ri);
 		else if (a)
 			attackFollowThrough(*set, *a, frand());      // a blow at nothing: a strength all the same
@@ -1931,8 +2231,10 @@ void Session::actorGravity(float dt)
 
 // ---- Summoned allies
 
-// The nearest actor fighting the player: walk up and strike it (creature attack damage) every second
-// or so; with nobody to fight, follow the player
+// The nearest actor fighting the player within 1500: fought as any fight between two actors is (npcDuel: its reach
+// from the edges, the wind-up, the blow at the attack's hit with a hit roll and armour), as OpenMW gives the player's
+// followers and summons a combat package against whoever fights the player. It struck at once every 1.2 s from 120
+// away, never missing. With nobody to fight it follows the player
 void Session::allyFight(int ri, float dt)
 {
 	Ref& r = w.refs[ri];
@@ -1954,33 +2256,8 @@ void Session::allyFight(int ri, float dt)
 		npcPackage(ri, dt);
 		return;
 	}
-	Actor* a = w.actorOf(ri);
-	ActorSet* set = w.actorsOf(ri);
-	const Ref& f = w.refs[foe];
-	if (best > 120.0f)
-	{
-		npcMoveTo(ri, f.pos, actorRunSpeed(ri), dt, true);
-		r.moved = true;
-		if (a && a->mode != ANIM_LOOP)
-			actorPlay(*set, *a, "RunForward", ANIM_LOOP);
-	}
-	else
-	{
-		float diff = angleDiff(atan2f(f.pos[0] - r.pos[0], f.pos[1] - r.pos[1]), r.rot[2]);
-		r.rot[2] += fmaxf(-kTurnSpeed * dt, fminf(kTurnSpeed * dt, diff));
-		r.attackTimer -= dt;
-		if (r.attackTimer <= 0.0f)
-		{
-			r.attackTimer = 1.2f;
-			const ActorDef& def = w.game.actors[r.actor];
-			r.attackKind = 0;
-			if (a)
-				actorPlay(*set, *a, blowGroup(*set, *a, r, nullptr).c_str(), ANIM_ONCE);
-			float dmg = def.attack.empty() ? 5.0f : creatureDamage(def, nullptr, frand(), r.attackKind);
-			damageNpc(foe, dmg, false);
-		}
-	}
-	w.syncActor(ri);
+	r.duelFoe = foe;
+	npcDuel(ri, dt);
 }
 
 // StartCombat on another actor (not the player): OpenMW gives it a combat package with that actor as the target. It
@@ -2009,23 +2286,19 @@ void Session::npcDuel(int ri, float dt)
 	if (f.duelFoe < 0 && f.ai != AI_COMBAT)
 		f.duelFoe = ri;                                  // whoever is struck back at takes up the fight
 	if (r.knockTimer > 0.0f)
-	{
-		r.knockTimer -= dt;
-		if (r.knockTimer <= 0.0f && a)
-			actorPlay(*set, *a, "Idle", ANIM_IDLE);
-		return;
-	}
+		return;                                          // (npcKnockUpdate)
 	float dx = f.pos[0] - r.pos[0], dy = f.pos[1] - r.pos[1], dist = sqrtf(dx * dx + dy * dy);
 	float diff = angleDiff(atan2f(dx, dy), r.rot[2]);
 	r.rot[2] += fmaxf(-kTurnSpeed * dt, fminf(kTurnSpeed * dt, diff));
 	r.moved = true;
 	if (a)
 		a->showWeapon = wpn != nullptr;
-	float reach = def.creature ? kCombatDistance * 0.9f : weaponReach(wpn);
+	const float meleeAt = meleeReach(w, wpn, def.creature);
+	float reach = meleeAt + actorHalfLength(ri) + actorHalfLength(fi);   // (npcCombat)
 	bool attacking = r.hitAt >= 0.0f;
 	Cell* cell = w.cellOf(ri);
 	// (one that flies or swims: within its reach up or down too, npcCombat)
-	float level = cell && zMoverTop(w, r, *cell) > -1e8f ? reach : 180.0f;
+	float level = cell && zMoverTop(w, r, *cell) > -1e8f ? meleeAt : 180.0f;
 	if (!attacking && (dist > reach * 0.9f || fabsf(f.pos[2] - r.pos[2]) >= level))
 	{
 		r.sideStep = 0;
@@ -2063,7 +2336,7 @@ void Session::npcDuel(int ri, float dt)
 	if (r.hitAt >= 0.0f && w.time >= r.hitAt)
 	{
 		r.hitAt = -1.0f;
-		if (dist <= reach + 40.0f && fabsf(angleDiff(atan2f(dx, dy), r.rot[2])) < 1.0f)
+		if (dist < reach && fabsf(f.pos[2] - r.pos[2]) < meleeAt && fabsf(angleDiff(atan2f(dx, dy), r.rot[2])) < hitAngle(w))
 		{
 			float charge = frand();
 			r.fatigue -= w.game.gmstf("ffatigueattackbase", 2.0f) + (wpn ? wpn->weight : 0.0f) * charge * w.game.gmstf("fweaponfatiguemult", 0.25f);
@@ -2674,7 +2947,8 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 }
 
 // Whether a swing now would reach this actor: living, in front of the player (within about 40 degrees) within the
-// weapon's reach + 30, on about the same level, and not through a wall or a door (OpenMW's melee hit needs line of
+// weapon's reach of its edge (meleeReach; it was the reach + 30 from its middle: fists 0.7), less than the reach above
+// or below, and not through a wall or a door (OpenMW's melee hit needs line of
 // sight): chest to chest, or eye to head (over a counter: a trader behind a bar is hit from across it, the chest line
 // clipped the bar's top). dist: how far, across
 bool Session::inSwing(int i, float* distOut)
@@ -2683,11 +2957,12 @@ bool Session::inSwing(int i, float* distOut)
 	if (r.actor < 0 || r.dead || !r.visible())
 		return false;
 	InventoryItem* wit = playerWeaponItem();
-	float reach = weaponReach(wit ? w.game.object(wit->id) : nullptr) + 30.0f;
+	const float meleeAt = meleeReach(w, wit ? w.game.object(wit->id) : nullptr, false);
+	float reach = meleeAt + kPlayerHalfLength + actorHalfLength(i);
 	float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
 	float dx = r.pos[0] - w.player.feet[0], dy = r.pos[1] - w.player.feet[1];
 	float dist = sqrtf(dx * dx + dy * dy);
-	if (dist > reach || fabsf(r.pos[2] - w.player.feet[2]) > 150.0f)
+	if (dist >= reach || fabsf(r.pos[2] - w.player.feet[2]) >= meleeAt)
 		return false;
 	if (dist > 1.0f && (dx * fx + dy * fy) / dist < 0.75f)
 		return false;
@@ -2839,7 +3114,8 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	// Fatigue comes back: fFatigueReturnBase + fFatigueReturnMult x endurance per second
 	if (testFatiguePin >= 0.0f)
 		s.fatigue = fminf(s.fatigueMax, testFatiguePin);     // (a spec test holds the level it set)
-	else if (s.fatigue < s.fatigueMax && !testNoFatigueRegen)
+	// (not under a menu: OpenMW pauses the world in them, and the barter screen's prices count fatigue)
+	else if (s.fatigue < s.fatigueMax && !testNoFatigueRegen && !menu)
 		s.fatigue = fminf(s.fatigueMax, s.fatigue + (w.game.gmstf("ffatiguereturnbase", 2.5f)
 			+ w.game.gmstf("ffatiguereturnmult", 0.02f) * s.attributes[ATTR_ENDURANCE]) * dt);
 
@@ -2850,10 +3126,12 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	bool canFight = !menu && w.controlsEnabled && w.fightingEnabled && w.player.knockTimer <= 0.0f;
 	const Object* wpn = playerWeapon();
 	bool tool = playerToolItem() != nullptr;
+	// a lockpick or probe has its own draw, use and put away (OpenMW's PickProbe; the "1h" stance otherwise)
+	bool pickProbe = tool && !wpn && vm.groupLength("PickProbe") > 0.0f;
 	sheatheTimer += dt;
 	auto ready = [&]() {
 		weaponDrawn = true;
-		std::string g = vmGroup(wpn, tool);
+		std::string g = pickProbe ? "PickProbe" : vmGroup(wpn, tool);
 		vm.play(VM_EQUIP, (g + "Eq").c_str());
 		drawTimer = fmaxf(0.3f, vm.groupLength((g + "Eq").c_str()));
 		// The weapon's own "up" sound by its type (OpenMW's weapon type table); raised fists make none
@@ -2882,11 +3160,29 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		if (!weaponDrawn)
 			ready();
 		if (drawTimer > 0.0f)
+		{
+			// (held until it's up: the try follows, even let go the next frame, as a weapon's wind-up started then would)
 			drawTimer -= dt;
+			if (drawTimer <= 0.0f && pickProbe)
+				pickQueued = true;
+		}
 		else if (isRanged(wpn) && !playerAmmo())
 		{
 			if (attackCharge < -0.5f)
 				notify("You have no ammunition equipped.");
+			attackCharge = -0.9f;
+		}
+		else if (pickProbe)
+		{
+			// No wind-up: its animation (a key's turn) played through, the lock or trap tried as it starts, one try a
+			// press (OpenMW's PickProbe: straight to the release, played to its end). It was the dagger's chop
+			if (attackCharge < -0.95f)
+			{
+				vm.play(VM_FOLLOW, "PickProbe");
+				swingCount++;
+				playerSwing(1.0f, in);
+			}
+			pickQueued = false;
 			attackCharge = -0.9f;
 		}
 		else
@@ -2933,16 +3229,29 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			vm.action = VM_IDLE;          // a menu or knockdown cut the wind-up short: the arms must not stay drawn back
 		attackCharge = -1.0f;
 	}
+	else if (pickQueued && pickProbe && canFight && !busy && weaponDrawn)
+	{
+		// let go while it came up: tried once it's up, as a weapon's early let-go still swings when its wind-up gets there
+		if ((drawTimer -= dt) <= 0.0f)
+		{
+			pickQueued = false;
+			vm.play(VM_FOLLOW, "PickProbe");
+			swingCount++;
+			playerSwing(1.0f, in);
+		}
+	}
 	else if (attackCharge < -0.5f && !in.attack)
 		attackCharge = -1.0f;
 	// Put the weapon away after a while without fighting, or when a menu opens
 	if (weaponDrawn && !casting && (putAway || sheatheTimer > 20.0f || (menu && screen != SCR_NONE)) && attackCharge < 0.0f)
 	{
 		weaponDrawn = false;
-		vm.play(VM_UNEQUIP, (std::string(vmGroup(wpn, tool)) + "Uneq").c_str());
+		pickQueued = false;
+		vm.play(VM_UNEQUIP, (std::string(pickProbe ? "PickProbe" : vmGroup(wpn, tool)) + "Uneq").c_str());
 	}
 
 	float headTrack = w.game.gmstf("fmaxheadtrackdistance", 400.0f);
+	float headTrackIn = w.game.gmstf("finteriorheadtrackmult", 0.5f);
 	const bool torches = w.useTorches();
 	w.forLoadedActors([&](int i) {
 		Ref& r = w.refs[i];
@@ -2973,23 +3282,51 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		if (w.bounty <= 0)
 			r.alarmed = false;            // the crime is paid for: calm again (OpenMW's crime id)
 		// (the player's rule: fFatigueReturnBase + fFatigueReturnMult x their Endurance a second)
-		if (r.fatigue < r.fatigueMax)
+		if (r.fatigue < r.fatigueMax && !menu)
 			r.fatigue = fminf(r.fatigueMax, r.fatigue + (w.game.gmstf("ffatiguereturnbase", 2.5f)
 				+ w.game.gmstf("ffatiguereturnmult", 0.02f) * w.game.actors[r.actor].attributes[ATTR_ENDURANCE]) * dt);
-		// People near the player turn their heads to them (fMaxHeadTrackDistance), within what a neck turns
+		// Out cold under 0 fatigue, whatever brought it there (OpenMW: a hit, a Damage Fatigue spell ...), and the time on
+		// the floor for everyone down, in a fight or not (it was counted only in a fight: anyone else stayed down)
+		if (!menu)
+		{
+			if (r.fatigue < 0.0f && r.knockTimer <= 0.0f)
+				knockDown(i, true);
+			if (r.knockTimer > 0.0f)
+			{
+				npcKnockUpdate(i, dt);
+				return;
+			}
+		}
+		// People near the player turn their heads to them (OpenMW's updateHeadTracking): within fMaxHeadTrackDistance
+		// (x fInteriorHeadTrackMult indoors), only when the player is in front of them; the head turns at most 30 degrees
+		// and tilts at most 40 up or down to the player's eyes, easing there at 5 a second. (OpenMW also wants line of
+		// sight and that they noticed the player, and turns them to other people too: left out, for the 3DS's time)
 		if (r.type == "NPC_")
 			if (Actor* ac = w.actorOf(i))
 			{
-				float target = 0.0f;
-				if (w.distanceToPlayer(i) < headTrack)
+				float yaw = 0.0f, pitch = 0.0f;
+				float reach = headTrack * (w.cells[w.current].interior ? headTrackIn : 1.0f);
+				float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1];
+				float dz = playerEyeZ(w.player) - (r.pos[2] + 110.0f);
+				float d = sqrtf(dx * dx + dy * dy + dz * dz);
+				if (w.distanceToPlayer(i) < reach && d > 1.0f)
 				{
-					float diff = angleDiff(atan2f(w.player.feet[0] - r.pos[0], w.player.feet[1] - r.pos[1]), r.rot[2]);
-					if (fabsf(diff) < 1.6f)
-						target = -fmaxf(-1.0f, fminf(1.0f, diff));
+					float diff = angleDiff(atan2f(dx, dy), r.rot[2]);
+					if (fabsf(diff) < 1.5708f)
+					{
+						float up = dz / d;
+						const float kYaw = 0.5236f, kPitch = 0.6981f;
+						yaw = fmaxf(-kYaw, fminf(kYaw, -diff * (1.0f - up * up)));
+						pitch = fmaxf(-kPitch, fminf(kPitch, asinf(up)));
+					}
 				}
-				ac->headYaw += (target - ac->headYaw) * fminf(1.0f, dt * 4.0f);
+				float ease = fminf(1.0f, dt * 5.0f);
+				ac->headYaw += (yaw - ac->headYaw) * ease;
+				ac->headPitch += (pitch - ac->headPitch) * ease;
 				if (fabsf(ac->headYaw) < 0.001f)
 					ac->headYaw = 0.0f;
+				if (fabsf(ac->headPitch) < 0.001f)
+					ac->headPitch = 0.0f;
 			}
 		if (r.ai == AI_IDLE)
 		{
@@ -3459,6 +3796,9 @@ int Session::barterPrice(int ri, int value, bool buying)
 		return 0;                       // OpenMW: a free thing stays free
 	const Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
+	// a creature trades at the thing's own value, both ways (OpenMW's getBarterOffer: Creeper, the Mudcrab)
+	if (def.creature)
+		return value;
 	const PlayerStats& s = w.stats;
 	float disp = (float)w.disposition(ri);
 	float pc = (disp - 50.0f + fminf(100.0f, s.skills[SKILL_MERCANTILE]) + fminf(10.0f, 0.1f * s.attributes[ATTR_LUCK])
@@ -3572,6 +3912,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		act.moveY = in.moveY;
 		// (a jump, or a real fall: not a step down a slope, a frame off the ground)
 		act.airborne = !w.player.swimming && !w.player.flying && !w.player.onGround && (w.player.jumpFlight || w.player.vz < -150.0f);
+		act.flying = (w.player.levitate > 0.0f || w.player.flying) && !w.player.swimming;
 		act.action = vm.action == VM_WINDUP ? BODY_WINDUP : vm.action == VM_FOLLOW ? BODY_STRIKE : BODY_NONE;
 		if (vm.action == VM_CAST)
 		{

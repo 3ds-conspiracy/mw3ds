@@ -35,6 +35,8 @@ extern std::vector<SkyBillboard> g_skyBillboards;
 extern float g_starAlpha;                         // the star dome: 0 by day
 // The light the player carries (a torch): world position, radius (0: none), colour 0..1
 void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3]);
+// Night Eye: light added to everything the world draws, people too (OpenMW: 0.7 x min(1, magnitude / 100) on the ambient)
+void rendererSetNightEye(float add);
 // Torches people hold out near the player (up to kActorLights; the rest: none), lighting the world as the carried
 // light does: world position, radius, colour 0..1 each
 static const int kActorLights = 2;

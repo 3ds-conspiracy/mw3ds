@@ -108,6 +108,7 @@ struct ScriptedInput
 	bool legit = false;               // LEGIT: from here only a player's own actions (TestDriver::playerToken)
 	std::vector<std::string> actions; // GOD / WALKTO / KILL / ACTIVATE / PICKUP / EQUIP / EXPECT (testdrive.h)
 	std::string startScript;          // STARTSCRIPT:name: a global script an earlier chapter would have started
+	bool saveLegacy = false;          // SAVEV1:name: the save in version 1 (every cell inside the JSON: old saves still load)
 	std::string saveAs, loadFrom;     // SAVE:name / LOAD:name: sdmc:/3ds/mw3ds/test_<name>.sav (the sweeps
 	                                  // start every quest from the same state)
 	int layout = -1;                  // CONTROLS:classic|xbox|goldeneye: the button layout from this step on
@@ -236,6 +237,11 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			step->chain = true;
 		if (strncmp(tok, "SAVE:", 5) == 0)
 			step->saveAs = tok + 5;
+		if (strncmp(tok, "SAVEV1:", 7) == 0)
+		{
+			step->saveAs = tok + 7;
+			step->saveLegacy = true;
+		}
 		if (strncmp(tok, "STARTSCRIPT:", 12) == 0)
 			step->startScript = tok + 12;
 		if (strncmp(tok, "LOAD:", 5) == 0)
@@ -243,7 +249,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
+				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "TRUNCSAVE:", "REFHEALTH:", "REFADDITEM:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -577,10 +583,11 @@ static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, floa
 		in.lookX += padX;
 		in.moveY = padY;
 	}
-	if (down & KEY_DUP) in.quick = 0;
-	if (down & KEY_DRIGHT) in.quick = 1;
-	if (down & KEY_DDOWN) in.quick = 2;
-	if (down & KEY_DLEFT) in.quick = 3;
+	// D-pad: left / right strafe, up / down look up and down (the user's GoldenEye; the quick keys are the touch strip's)
+	if (held & KEY_DLEFT) in.moveX -= 1.0f;
+	if (held & KEY_DRIGHT) in.moveX += 1.0f;
+	if (held & KEY_DUP) in.lookY += 1.0f;
+	if (held & KEY_DDOWN) in.lookY -= 1.0f;
 	if (down & KEY_SELECT)
 		sneakOn = !sneakOn;
 	in.attack = held & KEY_R;
@@ -847,8 +854,10 @@ struct LoadingProgress
 	}
 };
 
-// Title screen: new game or any save. Returns the save path, "" for a new game, "quit" on START.
-static std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const char* dataDir)
+// Title screen: new game or any save. Returns the save path, "" for a new game, "quit" on START. notice: shown under
+// the title (a save that wouldn't read)
+static std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const char* dataDir,
+	const char* notice = nullptr)
 {
 	std::vector<SaveInfo> saves = savesList(dataDir);
 	if (saves.empty())
@@ -920,6 +929,8 @@ static std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, 
 		C2D_SceneBegin(top);
 		uiTextCentered(200, 80, 0.9f, col::header, "Morrowind");
 		uiTextCentered(200, 120, 0.5f, col::textDim, "Choose a save on the touch screen, or start a new game");
+		if (notice)
+			uiTextCentered(200, 150, 0.5f, col::health, notice);
 		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
 		C2D_SceneBegin(bottom);
 		uiRect(0, 0, 320, 20, col::panelLight);
@@ -1115,6 +1126,29 @@ int main()
 			startCell.clear();
 		}
 	}
+	// A save that won't read (Session::start's saveUnreadable): the title again to pick another, nothing started that would
+	// autosave over it. False: the player quit there
+	auto retryFromTitle = [&](bool& loadedOut) {
+		while (!loadedOut && session->saveUnreadable)
+		{
+			delete session;
+			session = new Session();
+			session->dataDir = dataDir;
+			std::string pick = titleScreen(top, bottom, dataDir, "That save couldn't be read. Choose another, or a new game.");
+			if (pick == "quit")
+				return false;
+			drawLoading(top, bottom, "Loading...");
+			LoadingProgress progress(top, bottom, "Loading...");
+			loadedOut = session->start(dataDir, "", pick.empty() ? nullptr : pick.c_str());
+			if (loadedOut)
+			{
+				session->vm.load(session->w);
+				uiLoadTheme(dataDir, session->w.game.ui);
+				s_splashes = session->w.game.art.splash;
+			}
+		}
+		return true;
+	};
 	// Normal play: title screen to pick a save (autosave, own saves, bundled starting points) or a new
 	// game. Scripted test runs and start.txt skip it and start fresh.
 	static const char* kSavePath = kAutosavePath;
@@ -1157,6 +1191,21 @@ int main()
 			logf("heap: + ui theme %d KB", mallinfo().uordblks / 1024);
 			s_splashes = session->w.game.art.splash;
 		}
+	}
+	if (!testRun && !retryFromTitle(loaded))
+	{
+		delete session;
+		audioExit();
+		uiExit();
+		rendererExit();
+		C2D_Fini();
+		C3D_Fini();
+		if (romfs)
+			romfsExit();
+		irrstExit();
+		logExit();
+		gfxExit();
+		return 0;
 	}
 	session->savePath = kSavePath;      // test runs still save (at the end of scripted input)
 	memoryReserveTake();
@@ -1326,7 +1375,8 @@ int main()
 			if (first && !s.saveAs.empty())
 			{
 				std::string p = "sdmc:/3ds/mw3ds/test_" + s.saveAs + ".sav";
-				logf("test: saved %s: %s", p.c_str(), session->w.saveGame(p.c_str()) ? "ok" : "FAILED");
+				logf("test: saved %s%s: %s", p.c_str(), s.saveLegacy ? " (version 1)" : "",
+					session->w.saveGame(p.c_str(), s.saveLegacy) ? "ok" : "FAILED");
 			}
 			if (first && !s.loadFrom.empty())
 			{
@@ -1627,7 +1677,7 @@ int main()
 				}
 			}
 			if (first && s.evict >= 0)
-				session->evictFarCells(s.evict);
+				session->evictFarCells(s.evict, true);
 			if (first && !s.check.empty())
 			{
 				int ri = session->testFindRef(s.check);
@@ -1997,6 +2047,8 @@ int main()
 			s_splashes = session->w.game.art.splash;
 				}
 			}
+			if (!testRun && !retryFromTitle(loaded))
+				break;
 			session->savePath = kSavePath;
 			// a test reload: still a test (and still invincible if it was)
 			session->autotest = !autoinput.empty();
@@ -2123,9 +2175,11 @@ int main()
 			float land[3], sky[3], dayFog[3];
 			session->w.daylight(land, sky, dayFog);
 			bool outdoors = !session->w.cells[session->w.current].interior && session->w.game.hasWeather;
-			// Night Eye (magnitude percent) and Light brighten what the player sees
-			float boost = 1.0f + fminf(1.0f, session->w.effectTotal(43) / 100.0f) * 0.8f
-				+ (session->w.effectTotal(41) > 0.0f ? 0.25f : 0.0f);
+			// Night Eye adds light to everything, in the dark too (OpenMW's updateAmbient: the ambient + 0.7 x
+			// min(1, magnitude / 100)); it was a scale on the time of day's colour, near black at night: no help
+			rendererSetNightEye(0.7f * fminf(1.0f, session->w.effectTotal(43) / 100.0f));
+			// Light brightens what the player sees a little
+			float boost = 1.0f + (session->w.effectTotal(41) > 0.0f ? 0.25f : 0.0f);
 			if (boost > 1.0f)
 			{
 				for (int c = 0; c < 3; c++)

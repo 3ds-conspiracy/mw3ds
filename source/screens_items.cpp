@@ -514,7 +514,13 @@ static const char* kQuickDir[4] = { "Up", "Right", "Down", "Left" };
 
 // The button that casts, and how a quick key is pressed, in the active layout
 static std::string castHint() { return std::string(g_controlLayout != CONTROLS_CLASSIC ? "L" : "Y") + " to cast"; }
-static std::string quickKeyName(int k) { return std::string(g_controlLayout != CONTROLS_CLASSIC ? "D-Pad " : "ZL + ") + kQuickDir[k]; }
+// (GoldenEye's D-pad moves: its quick keys are the touch strip's slots)
+static std::string quickKeyName(int k)
+{
+	if (g_controlLayout == CONTROLS_GOLDENEYE)
+		return std::string(kQuickDir[k]) + " (tap its slot)";
+	return std::string(g_controlLayout != CONTROLS_CLASSIC ? "D-Pad " : "ZL + ") + kQuickDir[k];
+}
 
 void Session::drawMagic()
 {

@@ -1,0 +1,9 @@
+# A creature merchant trades at the item's own value, buying and selling (OpenMW's getBarterOffer returns the base
+# price for a creature: Creeper, the Mudcrab). Creeper's offer went through the people's haggling and dropped
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Caldera,_Ghorak_Manor
+6 0 0 0
+0.1 0 0 0 0 EXPECT:barterprice:scamp_creeper,100,0:eq:100
+0.1 0 0 0 0 EXPECT:barterprice:scamp_creeper,100,1:eq:100
+0.1 0 0 0 0 EXPECT:barterprice:scamp_creeper,2500,0:eq:2500

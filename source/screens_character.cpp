@@ -646,24 +646,35 @@ void Session::drawReview()
 
 void Session::drawDeath()
 {
+	// Morrowind and OpenMW: death leads to loading a game, never a getting up again where one fell
 	header("You have died");
 	uiPanel(4, 24, 312, 150);
-	bool haveSave = deathHaveSave;
-	uiTextBox(scroll, 10, 30, 300, 140, haveSave ? "Load your last save, or get up again where you fell."
-		: "There is no save yet. Get up again where you fell.", 0.5f, false);
+	bool haveSave = !deathSave.empty();
+	uiTextBox(scroll, 10, 30, 300, 140, haveSave ? "Load your last save, or choose another."
+		: deathAnySave ? "Choose a save to load." : "There is no save yet. Start over.", 0.5f, false);
 	std::vector<std::string> labels;
 	if (haveSave)
 		labels.push_back("Load last save");
-	labels.push_back("Try again");
+	if (deathAnySave)
+		labels.push_back("Choose a save");
+	else
+		labels.push_back("Start over");
 	int b = buttonRow(labels, focus);
 	if (b >= 0 && labels[b] == "Load last save")
+	{
+		reloadPath = deathSave;
 		wantReload = true;
+	}
+	else if (b >= 0 && labels[b] == "Choose a save")
+	{
+		saveList = savesList(dataDir);
+		list.selected = saveList.empty() ? -1 : 0;
+		openScreen(SCR_SAVES);
+	}
 	else if (b >= 0)
 	{
-		w.stats.health = w.stats.healthMax;
-		w.stats.fatigue = w.stats.fatigueMax;
-		playerDead = false;
-		closeScreen();
+		reloadPath = kAutosavePath;     // (none there: a new game)
+		wantReload = true;
 	}
 }
 

@@ -1,0 +1,19 @@
+# A damaged save is refused whole, never loaded in part: saves of both versions read, and one cut short (its last
+# kept cell's block, or the list of them) reads as no save at all
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SLAY:fargoth
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+3 0 0 0
+0.3 0 0 0 0 EVICT:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:keptcells:ge:1
+1 0 0 0 0 SAVE:whole
+1 0 0 0 0 SAVEV1:wholeold
+1 0 0 0 0 SAVE:damaged
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:savevalid:whole:eq:1
+0.1 0 0 0 0 EXPECT:savevalid:wholeold:eq:1
+0.1 0 0 0 0 EXPECT:savevalid:damaged:eq:1
+0.3 0 0 0 0 TRUNCSAVE:damaged:20
+0.1 0 0 0 0 EXPECT:savevalid:damaged:eq:0

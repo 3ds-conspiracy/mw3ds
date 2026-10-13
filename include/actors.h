@@ -104,6 +104,7 @@ struct Actor
 	s8 loopsLeft = -1;                 // looping group: more times round (LoopGroup's count), -1 for ever
 	float pendingDt = 0.0f;            // animation time owed while it was skipped (far away)
 	float headYaw = 0.0f;             // head turned this far (radians, around the actor's up axis)
+	float headPitch = 0.0f;           // and tilted (radians, up positive), after the turn
 	float rate = 1.0f;                 // animation speed: walk / run cycles follow how fast the actor moves
 	float lastXY[2] = { 1e9f, 1e9f };  // where it stood last frame
 	bool showWeapon = false;

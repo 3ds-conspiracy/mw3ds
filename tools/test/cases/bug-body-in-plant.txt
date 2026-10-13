@@ -1,0 +1,18 @@
+# A body lying among a plant's leaves is what the crosshair finds when pointed at it (OpenMW picks by the meshes). The
+# plant's box is far bigger than its leaves, and ours took the ray from every side: Ralyn Othravel, fallen in the Tower
+# of Dawn's scathecraw bed, could not be looted
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ghostgate,_Tower_of_Dawn
+4 0 0 0
+0.3 0 0 0 0 TPIN:-322:620:300:0
+3 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 PLACE:rat:120
+1 0 0 0
+0.3 0 0 0 0 SLAY:rat
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+30 0 0 0 0 ACTIVATE:rat
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container

@@ -31,7 +31,17 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 	MARK("shimmer frames");
 	rendererLoadCaustics(dataDir);
 	MARK("game data");
-	std::string savedCell = savePath && startCell.empty() ? World::savedCell(savePath) : "";
+	// A save asked for that is there but won't read (damaged, or a newer version): nothing starts, the caller goes back
+	// to the title. A new game in its place autosaved over the player's save at the first door
+	bool asked = savePath && startCell.empty();
+	std::string savedCell = asked ? World::savedCell(savePath) : "";
+	struct stat st;
+	if (asked && savedCell.empty() && stat(savePath, &st) == 0)
+	{
+		logf("save: %s won't read: not started", savePath);
+		saveUnreadable = true;
+		return false;
+	}
 	if (!savedCell.empty())
 	{
 		if (!w.load(dataDir, savedCell))
@@ -43,9 +53,10 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 			notify("Game loaded.");
 			return true;
 		}
-		logf("save: could not continue in %s, starting a new game", savedCell.c_str());
+		logf("save: could not continue in %s: not started", savedCell.c_str());
 		w.freeAll();
-		w = World();
+		saveUnreadable = true;
+		return false;
 	}
 	if (!w.load(dataDir, startCell))
 		return false;
@@ -779,7 +790,12 @@ static void profAdd(int part, u64& since)
 bool Session::refInUse(int ri) const
 {
 	if (ri == target || ri == enemyRef || ri == repairRef || ri == barterRef || ri == bookRef || ri == containerRef
-		|| ri == arrestingGuard || ri == dlg.ref || sayUntil.count(ri) || w.followsPlayer(ri))
+		|| ri == arrestingGuard || ri == dlg.ref || w.followsPlayer(ri))
+		return true;
+	// speaking now (an entry stayed for everyone who ever said a line: a cell where someone once greeted the player was
+	// never let go of, so memory filled with them and saves carried them whole)
+	auto say = sayUntil.find(ri);
+	if (say != sayUntil.end() && w.time < say->second)
 		return true;
 	for (auto& p : projectiles)
 		if (p.owner == ri)
@@ -859,11 +875,14 @@ void Session::relieveMemory(bool force)
 	lastLogged = after;
 }
 
-void Session::evictFarCells(int budget)
+void Session::evictFarCells(int budget, bool now)
 {
 	if (budget < 0)
 		budget = refBudget();
-	int n = w.evictCells(budget, [this](int ri) { return refInUse(ri); });
+	// lines said and done are forgotten (their references' slots go to other cells' objects)
+	for (auto it = sayUntil.begin(); it != sayUntil.end();)
+		it = w.time >= it->second ? sayUntil.erase(it) : std::next(it);
+	int n = w.evictCells(budget, [this](int ri) { return refInUse(ri); }, now);
 	if (n)
 		logf("world: %d cells' objects out of memory, %d objects in memory, %d cells' changes kept",
 			n, w.refsInMemory(), (int)w.cellStates.size());
@@ -2585,7 +2604,9 @@ void Session::monitorActors(float dt)
 			}
 		}
 		bool near = r.aiPackage != AIPKG_TRAVEL && leaderDist < 300.0f;
-		if (!going || near || r.knockTimer > 0.0f || (dlg.open && dlg.ref == i))
+		// (a fleeing actor stands while its foe is out of reach, one held in a pose for a test stands: not stuck)
+		const Actor* held = w.actorOf(i);
+		if (!going || near || r.knockTimer > 0.0f || (r.fleeing && r.fleeState == 0) || (held && held->frozen) || (dlg.open && dlg.ref == i))
 		{
 			wt.moveT = 0.0f;
 			wt.anchorX = r.pos[0];

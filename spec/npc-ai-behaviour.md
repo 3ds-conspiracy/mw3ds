@@ -27,8 +27,36 @@ creature's own fight term against the player is 100.
     rating = (1 - health share) x fAIFleeHealthMult + Flee x fAIFleeFleeMult,
              plus iFightDistanceBase - fFightDistanceMultiplier x distance when the rating isn't 0
 
-An actor flees when the rating reaches 100 and beats its best attack's rating; the choice is made again about every
-second. A fleeing actor runs until it is `fFleeDistance` away out of sight. Demoralize raises Flee; Rally lowers it.
+An actor flees when the rating reaches 100 and beats its best attack's rating; the choice is made again every 3 s
+(`ActionFlee`'s cooldown). Demoralize raises Flee; Rally lowers it.
+
+How it runs (`AiCombat::updateFleeing`): it stands until the foe, in sight, is within the foe's own attack reach
+(`getMaxAttackDistance` of the foe, less both half extents; any distance when that reach is 1000 or more: a bow, a
+throwing weapon, a target spell in hand). Then it picks a path grid point at random among those the point nearest it
+connects to in that cell, runs there, and stands again once there, or once it is `fFleeDistance` away out of sight. With
+no path grid (or a fish) it runs straight away from the foe for 1 s, then stands again.
+
+## Choosing the next action (healing)
+
+`prepareNextAction` rates each option and takes the best, about once per blow: potions (`ratePotion`), on-use enchanted
+items, the weapons carried (`rateWeapon`), and the spells known (`rateSpell`). A potion is drunk at once when chosen,
+then 0.75 s to the next choice.
+
+    rateWeapon = mean damage (melee: (slash^2 + thrust^2 + chop^2) / (slash + thrust + chop); bow: chop; thrown: chop x 2)
+                 x condition x (fDamageStrengthBase + Strength x fDamageStrengthMult / 10) x (1 - foe's Resist Normal
+                 Weapons, for a plain weapon) x hit chance (0.01 .. 1) x speed
+                 x fAIMeleeWeaponMult (fAIRangeMeleeWeaponMult: a ranged one out of the foe's reach)
+    restore effect on self (rateEffect): p = 4 health, 2 fatigue, magicka 2 when a known spell costs more than is left
+                 (but no more than the maximum), else 0
+                 heal = mean magnitude x duration; damage = maximum - current; if damage < heal and more than half is
+                 left: over = heal - damage, heal = damage
+                 rating = (p - 1) / 2 x (damage / maximum + 0.6)^(2p) + p x (heal - 2 over) / maximum - 0.5
+    each effect x its cost (0.5 x (min + max) x base cost / 10 x duration + area x base cost / 20, x fEffectCostMult)
+                 x fAIMagicSpellMult (fAIRangeMagicSpellMult on target); a spell's sum x its cast chance / 100
+
+Here: potions and healing spells are weighed by these against the weapon (and a healing spell against the best harmful
+spell in reach, its cost x the range multiplier x chance). Other potions (fortifies ...), enchanted items and the
+player's resistances in a harmful spell's rating are left out; harmful spells are still picked by range and a timer.
 
 ## Greetings and idle chatter
 
@@ -77,6 +105,16 @@ second. A fleeing actor runs until it is `fFleeDistance` away out of sight. Demo
    wandering / travelling / idle actors.
 4. **Escorts** stopped and started at one distance (500), so they stuttered at the edge; now OpenMW's 450 / 250 wait.
 
+## Findings (2026-10-13, side by side)
+
+5. **Fleeing** ran straight away from the player all the time (into the walls indoors) until 3000 away, choosing again
+   every 1-2 s. Now OpenMW's flee states: standing out of the player's reach, running to a path grid point, 3 s
+   choices. Test `bug-flee-stands` (the scamp Creeper, Caldera: fails before).
+6. **Healing:** NPCs never drank potions, and cast a healing spell under half their health whatever else they had. Now
+   rated as `prepareNextAction` does (above). Tests `bug-npc-drinks-potion` (Arrille at a fifth of his health drinks a
+   Quality Restore Health) and `bug-npc-keeps-potion` (at 95% he keeps it); written with the fix (their set-up steps
+   REFADDITEM / REFHEALTH are new), the build before had no drinking at all.
+
 Test: `openmw-spec-ai` (generated from the actor data): the fight term and the flee rating at several distances and
 dispositions (`Session::fightTermOf`, `fleeRatingOf`). Needs `python tools/test/openmw_specgen.py` on `out/world`.
 
@@ -84,8 +122,9 @@ dispositions (`Session::fightTermOf`, `fleeRatingOf`). Needs `python tools/test/
 
 - The flee decision doesn't weigh the best attack's rating (OpenMW's anti-flee), so an actor with a strong weapon flees
   sooner here.
-- Combat action choice (which weapon or spell, `rateWeapon` / `rateSpell`) is our own: melee or ranged by the record's
-  weapon, spells by a timer.
+- Combat action choice is OpenMW's only for healing (above): which weapon is our own (the record's), harmful spells by
+  range and a timer, no fortify potions or enchanted items.
+- A fleeing actor's trigger counts the player's weapon only (our player has no spell stance).
 - Wander idle animations don't use the package's idle chances (the converter doesn't write them).
 - Guards don't attack fighting creatures on their own.
 - Followers don't use OpenMW's follow distance by size; they keep 180 units.

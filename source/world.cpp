@@ -1440,7 +1440,7 @@ void World::evictCell(int c)
 	LevelCell& lc = cells[c];
 	std::string state = cellStateText(c);
 	if (!state.empty())
-		cellStates[lc.file] = state;
+		storeCellState(lc.file, state);
 	// References placed while playing in this cell go (they aren't kept)
 	for (size_t k = 0; k < spawned.size();)
 	{
@@ -1536,7 +1536,7 @@ void World::evictCell(int c)
 	rebuildScriptIndex();
 }
 
-int World::evictCells(int budget, const std::function<bool(int)>& inUse)
+int World::evictCells(int budget, const std::function<bool(int)>& inUse, bool now_)
 {
 	int total = refsInMemory(), evicted = 0;
 	u64 now = osGetTime();
@@ -1551,7 +1551,7 @@ int World::evictCells(int budget, const std::function<bool(int)>& inUse)
 			// ... nor one a script asked for in the last seconds: it would be read straight back. On an Old 3DS
 			// out of heap, a quest script's remote ref read Caius Cosades's house back every few frames as fast
 			// as it went (heap churn on the edge of running out)
-			if (now - lc.askedAt < 10000)
+			if (now - lc.askedAt < 10000 && !now_)
 				continue;
 			bool busy = false;
 			for (int i = lc.refBase; i < lc.refBase + lc.refCount && !busy; i++)
@@ -3329,6 +3329,37 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 				best = i;
 			}
 		}
+	}
+	// A body lying among a plant's leaves (Ralyn Othravel fallen in the Tower of Dawn's scathecraw bed): the plant's box
+	// is far bigger than its leaves and took the ray from every side. OpenMW's pick meets the meshes: a body the ray
+	// reaches inside the container's box is what the crosshair means
+	if (best >= 0 && w.refs[best].type == "CONT")
+	{
+		const Ref& plant = w.refs[best];
+		float bodyT = reach;
+		int body = -1;
+		for (int i : w.loadedPickables)
+		{
+			const Ref& r = w.refs[i];
+			if (r.actor < 0 || !r.dead || !isActivatable(r) || !boxInReach(r, eye, reach))
+				continue;
+			float t = rayBoxEntry(r, eye, dir, bodyT, r.boxMin[2] + kCorpsePickHeight);
+			if (t < 0.0f || t >= bodyT)
+				continue;
+			bool inside = true;
+			for (int k = 0; k < 3 && inside; k++)
+			{
+				float at = eye[k] + dir[k] * t;
+				inside = at >= plant.boxMin[k] - 1.0f && at <= plant.boxMax[k] + 1.0f;
+			}
+			if (inside)
+			{
+				bodyT = t;
+				body = i;
+			}
+		}
+		if (body >= 0)
+			best = body;
 	}
 	// A body's box is a crude one (the Journal of Tarhiel lands where he does): an item whose box lies within the
 	// body's and is on the ray is what the crosshair means, as the body's mesh would let the ray through to it

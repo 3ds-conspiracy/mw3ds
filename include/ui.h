@@ -35,6 +35,7 @@ bool uiThemeIntact();         // ... and the same as a test check
 void uiFreeTheme();
 void uiExit();
 void uiBeginFrame(const UiInput& in);     // clears the per-frame text buffer
+const std::vector<std::string>& uiLastButtons();    // the labels of the buttons the last whole frame drew
 const UiInput& uiIn();
 void uiConsume(u32 keys);                 // keys handled by gameplay are hidden from widgets this frame
 

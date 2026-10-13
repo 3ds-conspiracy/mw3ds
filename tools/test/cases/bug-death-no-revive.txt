@@ -1,0 +1,26 @@
+# Dead is dead: the death screen offers a save to load, the latest or one chosen, as Morrowind and OpenMW do (their
+# death leads to loading a game). Ours had "Try again", which stood the player up where they fell with full health
+3 0 0 0 0 MSG
+# a save to load first, from the Saves screen
+0.3 0 0 0 0 SCREEN:saves
+0.5 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.3 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SETHEALTH:0
+3 0 0 0
+0.1 0 0 0 0 EXPECT:screen:death
+0.1 0 0 0 0 EXPECT:nobutton:Try%again
+0.1 0 0 0 0 EXPECT:button:Load%last%save
+0.1 0 0 0 0 EXPECT:button:Choose%a%save
+# the saves list from there (no saving while dead); back out of it to the death screen again (no getting up from it)
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:saves
+0.1 0 0 0 0 EXPECT:button:(dead)
+0.3 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:death
+0.1 0 0 0 0 EXPECT:health:le:0

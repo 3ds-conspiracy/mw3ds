@@ -23,6 +23,7 @@ struct BodyAct
 	const char* stance = "";                      // the weapon's family for its ready stance: 1h 2c 2w HH
 	float moveX = 0.0f, moveY = 0.0f;             // the stick against the facing (+y forward): which way they walk
 	bool airborne = false;                        // off the ground (jumping, falling): the jump
+	bool flying = false;                          // levitating: walks, never runs or sneaks (OpenMW)
 };
 
 // The player seen from outside (third-person view, character creation's face preview): the NPC skeleton
@@ -43,6 +44,7 @@ struct PlayerBody
 	std::string actGroup;
 	bool followCut = false;                       // a blow's follow-through was chosen at its hit
 	bool stanceOut = false;                       // the walk / idle was chosen with the weapon out
+	bool swimOut = false;                         // ... and in the water (actorPlay's swimming groups)
 
 	void rebuild(World& w, bool weaponOut);      // (re)dress when race, head, hair or equipment changed
 	// Animation from what the player does; place at feet, facing yaw

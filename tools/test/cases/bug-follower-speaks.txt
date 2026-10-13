@@ -14,10 +14,11 @@
 3 0 0 0
 0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:400
 0.1 0 0 0 0 EXPECT:refidlevoice:edras_oril:eq:0
-# (his Hello said first) the player walks ahead, stops, and he says a line as he comes after: he gains ground
+# the player walks ahead, stops, and he says a line (a Hello: a follower says no idle lines) as he comes after: he
+# gains ground
 4 0 0 0
 4 0 1 0
 0.1 0 0 0 0 EXPECT:refdist:edras_oril:gt:300
-0.1 0 0 0 0 SNAP:refdist:edras_oril+SAYTOPIC:edras_oril:Idle
+0.1 0 0 0 0 SNAP:refdist:edras_oril+SAYTOPIC:edras_oril:Hello
 1.5 0 0 0
 0.1 0 0 0 0 EXPECT:refdist:edras_oril:lt:@-60

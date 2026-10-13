@@ -9,6 +9,7 @@
 .fvec tint                      ; colour scale: day and night outdoors (1 indoors)
 .fvec lightPos                  ; the light the player carries: eye-space xyz, w = 1 / radius squared
 .fvec lightColor                ; its colour (0 = none)
+.fvec ambientAdd                ; added to every vertex's light: Night Eye (OpenMW's ambient + 0.7 x magnitude / 100)
 ; Two more, the same way: torches people near the player hold out (renderer.cpp rendererSetActorLights). Not in
 ; skin.v.pica (its bone palette fills the registers): they light the world, not other people. Set again after each
 ; skinned run (its palette overwrites these registers)
@@ -68,6 +69,7 @@
 	; square roots: rsq of a zero distance hung the GPU)
 	mul r4, inv255, inclr
 	mul r4, tint, r4
+	add r4.xyz, ambientAdd, r4
 	add r5, -lightPos, r1
 	mov r5.w, consts.x
 	dp3 r6, r5, r5

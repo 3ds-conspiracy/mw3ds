@@ -1,0 +1,14 @@
+# Levitating, the player's body walks the way they go, never runs or sneaks (OpenMW's CharacterController: no run or
+# sneak stance while flying); it ran at a full tilt of the pad
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:p_levitation_e:1
+0.3 0 0 0 0 GOTO:Seyda_Neen
+3 0 0 0
+0.3 0 0 0 0 POV:third
+0 0 0 0 0 SETUP-END
+0.5 0 0 0 0 EQUIP:p_levitation_e
+1 0 0 0
+3 0 0 0 0 R
+1.5 0 1 0
+0.1 0 1 0 0 EXPECT:bodygroup:WalkForward

@@ -20,7 +20,9 @@ Layout (little endian):
 Rigid source positions are in the bone's space; skinned ones in the mesh's skin space.
 """
 import bisect
+import os
 import struct
+from pathlib import Path
 
 import numpy as np
 
@@ -311,10 +313,19 @@ def write_mesh(f, m, tex_name=None):
 def write_actor_library(path, meshes, tex_names):
     """'MWL1': one NPC / creature record's meshes (actor space, neutral lighting), shared by every
     placement: u32 version 1, u32 mesh count, meshes as in .act with the texture as u16 length + name."""
-    with open(path, "wb") as f:
+    # (written beside it and swapped in: the cell conversion's worker processes (level.py --jobs) may write the same
+    # record's library at once; the two are the same bytes)
+    tmp = Path(str(path) + f".{os.getpid()}.tmp")
+    with open(tmp, "wb") as f:
         f.write(b"MWL1" + struct.pack("<II", 1, len(meshes)))
         for m, name in zip(meshes, tex_names):
             write_mesh(f, m, name)
+    try:
+        os.replace(tmp, path)
+    except OSError:
+        if not Path(path).exists():
+            raise
+        tmp.unlink()
 
 
 def write_actor_placements(path, actors):
