@@ -1,0 +1,9 @@
+# start: Seyda Neen
+# A Bonelord's robe and hood go as it dies: their nodes' NiVisController switches them off 0.13 s into Death1 (OpenMW
+# plays it on the animation's time). The robe stood on, empty, over the fallen bones.
+1 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 PLACE:bonelord:300
+1 0 0 0 0 POSE:bonelord:idle:0.5
+0.3 0 0 0 0 EXPECT:refhiddenparts:bonelord:eq:0
+0.5 0 0 0 0 POSE:bonelord:death1:0.5
+0.3 0 0 0 0 EXPECT:refhiddenparts:bonelord:ge:2

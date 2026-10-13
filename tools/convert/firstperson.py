@@ -99,6 +99,10 @@ def fp_groups(nif):
     for tag, g in ranged:
         add(tag + "Shoot", g, "shoot start", "shoot min attack", "shoot max attack", "shoot max attack")
         add(tag + "ShootF", g, "shoot release", stop="shoot follow stop")
+    # (marks, no length: the arrow goes on the string at "shoot attach", the next bolt into the crossbow at
+    # "shoot follow attach"; OpenMW's CharacterController::handleTextKey)
+    add("BowAttach", "bowandarrow", "shoot attach", stop="shoot attach")
+    add("XbowFAttach", "crossbow", "shoot follow attach", stop="shoot follow attach")
     add("Block", "shield", "block start", "block hit", "block hit", "block stop")
     add("Hit1", "hit1", "start")
     add("KnockDown", "knockdown", "start")
@@ -421,6 +425,16 @@ class FirstPerson:
                 p = self.piece(model, SLOT_WEAPON)
                 if p:
                     e["slots"] = {str(SLOT_WEAPON): [p, p]}
+                # Bows and crossbows: where the arrow or bolt sits; arrows and bolts: their piece to sit there
+                wtype = struct.unpack_from("<h", rec.get("WPDT"), 8)[0] if rec.tag == "WEAP" and rec.get("WPDT") else -1
+                if wtype in (9, 10):
+                    track = self.arrow_track(model)
+                    if track:
+                        e["arrow"] = track
+                elif wtype in (12, 13):
+                    p = self.ammo_piece(model)
+                    if p:
+                        e["ammo"] = p
             else:
                 slots = {}
                 for slot, male, female in item_parts(rec):

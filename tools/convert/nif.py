@@ -68,11 +68,14 @@ def obj_net(r, b):
 
 
 def bounding_volume(r):
+    """The box of a box volume ({"center", "extents"}: OpenMW's actor collision box), else None."""
     t = r.u32()
     if t == 0:
         r.skip(16)                 # sphere
     elif t == 1:
-        r.skip(60)                 # box: center, 3 axes, extents
+        center = r.floats(3)       # box: center, 3 axes, extents
+        r.skip(36)
+        return {"center": center, "extents": r.floats(3)}
     elif t == 2:
         r.skip(32)                 # capsule
     elif t == 4:
@@ -93,7 +96,9 @@ def av_object(r, b):
     r.skip(12)                     # velocity
     b["properties"] = r.refs()
     if r.boolean():
-        bounding_volume(r)
+        box = bounding_volume(r)
+        if box:
+            b["bounds"] = box
 
 
 def node(r, b):
@@ -360,7 +365,8 @@ def rd_keyframe_data(r, b):
 
 
 def rd_vis_data(r, b):
-    r.skip(5 * r.u32())
+    n = r.u32()
+    b["keys"] = [(r.f32(), r.u8() != 0) for _ in range(n)]
 
 
 def rd_uv_data(r, b):

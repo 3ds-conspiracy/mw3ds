@@ -168,3 +168,7 @@ bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode);
 void actorSetPlacement(Actor& a, float x, float y, float z, float yaw);
 // place x bone pose for a rigid mesh
 void actorMeshMatrix(const Actor& a, const ActorMesh& m, C3D_Mtx* out);
+bool actorMeshShown(const Actor& a, const ActorMesh& m);   // its visibility keys allow it now
+// One of the groups prefix1, prefix2, ... the skeleton has, at random (OpenMW's chooseRandomGroup: Hit1..Hit5,
+// Death1..Death5, a creature's Attack1..3); "" when it has none
+std::string actorRandomGroup(const ActorSet& set, const Actor& a, const char* prefix);

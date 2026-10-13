@@ -191,6 +191,10 @@ struct ActorDef
 	int alarm = 0;                       // AI alarm (0..100): how readily they report crimes
 	int blood = 0;                                     // 0 red, 1 skeleton (white), 2 metal (gold sparks)
 	u8 afloat = 0;                       // creatures: 0x10 swims, 0x20 flies (they don't fall to the floor); 0x40 walks, 0x1 biped
+	// creatures: their model's collision box (center x, y, half extents x, y, the origin's height over its bottom),
+	// rested on the ground under all of it (World::actorBoxLift); hasBox false: the floor under the feet
+	float box[5] = {};
+	bool hasBox = false;
 	bool respawn = false, essential = false;   // come back after dying / their death severs the prophecy
 	bool autocalc = false;               // their spells are the engine's pick (GameData::autoCalcSpells)
 	int soul = 0;                        // creatures: soul size (Soultrap fills a gem that holds it)
@@ -207,6 +211,8 @@ struct FpItem
 {
 	std::unordered_map<int, std::pair<std::string, std::string>> slots;   // body part slot -> male, female piece
 	std::string model;                   // the item's own mesh (arrows in flight)
+	std::string ammo;                    // arrows and bolts: the piece that sits in the bow or crossbow
+	std::vector<float> arrow;            // bows and crossbows: their ArrowBone (3x4 rows, kVfxFps a second of the weapon's time)
 };
 // Third-person pieces (tools/convert/firstperson.py third_person): [female] race -> slot -> piece, the heads and
 // hairs to choose from (body id, piece), and item -> slot -> (male, female piece)

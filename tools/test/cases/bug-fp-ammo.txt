@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# The arrow sits on the bow's string and the bolt in the crossbow, as OpenMW hangs the ammunition on the weapon's
+# ArrowBone: an arrow from "shoot attach" to "shoot release", a bolt from the moment the crossbow is out, gone at
+# "shoot release" and back at "shoot follow attach". The bow was drawn back with nothing on it.
+1 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+0.2 0 0 0 0 GIVE:long_bow
+0.2 0 0 0 0 GIVE:iron_arrow
+0.5 0 0 0 0 VMPOSE:BowShoot:0.05+HUD:off
+0.3 0 0 0 0 EXPECT:vmammo:eq:0
+0.5 0 0 0 0 VMPOSE:BowShoot:0.8
+0.3 0 0 0 0 EXPECT:vmammo:eq:1
+0.5 0 0 0 0 VMPOSE:BowShootF:0.5
+0.3 0 0 0 0 EXPECT:vmammo:eq:0
+0.2 0 0 0 0 GIVE:steel_crossbow
+0.2 0 0 0 0 GIVE:iron_bolt
+0.5 0 0 0 0 VMPOSE:XbowShoot:0.5
+0.3 0 0 0 0 EXPECT:vmammo:eq:1
+0.5 0 0 0 0 VMPOSE:XbowShootF:0.2
+0.3 0 0 0 0 EXPECT:vmammo:eq:0
+0.5 0 0 0 0 VMPOSE:XbowShootF:0.95
+0.3 0 0 0 0 EXPECT:vmammo:eq:1

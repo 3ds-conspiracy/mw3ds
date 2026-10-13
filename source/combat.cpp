@@ -107,11 +107,44 @@ static const char* attackGroup(const Object* w)
 	}
 }
 
-// A creature strikes with its own Attack1; one that has none (biped creatures use the NPC groups) with the
-// group for what it holds, or hand to hand
-static const char* creatureAttackGroup(const ActorSet& set, const Actor& a, const Object* w)
+// With a weapon (or fists) out: the ready stance's version of a movement group when the skeleton has one (OpenMW plays
+// the group with the weapon's short group on: Idle1h, RunForward2c; bows and thrown weapons fall back on 1h,
+// crossbows on 2c)
+static std::string stanceGroup(const ActorSet& set, const Actor& a, const char* base, const Object* w)
 {
-	return actorFindGroup(actorSkeleton(set, a.skeleton), "Attack1") >= 0 ? "Attack1" : attackGroup(w);
+	const char* tag = !w ? "HH" : (w->subtype == 2 || w->subtype == 4 || w->subtype == 8 || w->subtype == WEAP_CROSSBOW) ? "2c"
+		: (w->subtype == 5 || w->subtype == 6) ? "2w" : "1h";
+	std::string g = std::string(base) + tag;
+	return actorFindGroup(actorSkeleton(set, a.skeleton), g.c_str()) >= 0 ? g : std::string(base);
+}
+
+// An NPC's attack type, the more likely the more it does on average (OpenMW's chooseBestAttack): 0 chop, 1 slash, 2
+// thrust; with no weapon, any of them (CharacterController::getRandomAttackType)
+static int npcAttackKind(const Object* w)
+{
+	if (!w)
+		return rand() % 3;
+	int slash = (w->slash[0] + w->slash[1]) / 2, chop = (w->chop[0] + w->chop[1]) / 2, thrust = (w->thrust[0] + w->thrust[1]) / 2;
+	float roll = frand() * (slash + chop + thrust);
+	return roll <= slash ? 1 : roll <= slash + thrust ? 2 : 0;
+}
+
+// The blow an NPC or creature starts, its kind kept in the Ref for the damage at its hit. A creature with its own
+// attacks: one of Attack1..3 at random (OpenMW's chooseRandomAttackAnimation; Creature::hit deals the attack the group
+// names); else (people, biped creatures) the group for what it holds, by its chop / slash / thrust (Attack1h,
+// Attack1hSl, Attack1hTh)
+static std::string blowGroup(const ActorSet& set, const Actor& a, Ref& r, const Object* w)
+{
+	std::string own = actorRandomGroup(set, a, "Attack");
+	if (!own.empty())
+	{
+		r.attackKind = (u8)(own.back() - '1');
+		return own;
+	}
+	r.attackKind = w && isRanged(w) ? 0 : (u8)npcAttackKind(w);
+	static const char* kTag[] = { "", "Sl", "Th" };
+	std::string g = std::string(attackGroup(w)) + kTag[r.attackKind];
+	return actorFindGroup(actorSkeleton(set, a.skeleton), g.c_str()) >= 0 ? g : std::string(attackGroup(w));
 }
 
 // At the hit of a melee blow (Attack1h ...), the follow-through by its strength: under 0.33 the small one ("Attack1hS"),
@@ -157,25 +190,17 @@ static float weaponDamage(const Object* w, int kind, float charge, int strength)
 	return dmg * (0.5f + 0.01f * strength);
 }
 
-// An NPC's attack type, the more likely the more it does on average (OpenMW's chooseBestAttack): 0 chop, 1 slash, 2 thrust
-static int npcAttackKind(const Object* w)
-{
-	int slash = (w->slash[0] + w->slash[1]) / 2, chop = (w->chop[0] + w->chop[1]) / 2, thrust = (w->thrust[0] + w->thrust[1]) / 2;
-	float roll = frand() * (slash + chop + thrust);
-	return roll <= slash ? 1 : roll <= slash + thrust ? 2 : 0;
-}
-
-// A creature's blow: with the weapon it carries (skeletons, dremora), the weapon's damage for the swing with no Strength
-// bonus (OpenMW's Creature::hit); without one, one of its own attacks between its minimum and maximum
-static float creatureDamage(const ActorDef& def, const Object* wpn, float charge)
+// A creature's blow of that kind: with the weapon it carries (skeletons, dremora), the weapon's damage for the swing
+// with no Strength bonus (OpenMW's Creature::hit); without one, that one of its own attacks between its minimum and
+// maximum (the first, if it has fewer)
+static float creatureDamage(const ActorDef& def, const Object* wpn, float charge, int kind)
 {
 	if (wpn)
 	{
-		int kind = npcAttackKind(wpn);
 		const u8* r = kind == 1 ? wpn->slash : kind == 2 ? wpn->thrust : wpn->chop;
 		return r[0] + (r[1] - r[0]) * charge;
 	}
-	const auto& at = def.attack[rand() % def.attack.size()];
+	const auto& at = def.attack[kind >= 0 && kind < (int)def.attack.size() ? kind : 0];
 	return at.first + (at.second - at.first) * charge;
 }
 
@@ -319,6 +344,7 @@ void Session::knockDown(int ri, bool out)
 	if (r.dead || r.knockTimer > 0.0f)
 		return;
 	r.knockTimer = out ? 3.5f : 2.7f;
+	r.outCold = out;
 	r.hitAt = -1.0f;
 	r.castSpell = -1;
 	if (Actor* a = w.actorOf(ri))
@@ -411,14 +437,21 @@ void Session::killNpc(int ri, bool byPlayer)
 	r.ai = AI_IDLE;
 	r.hitAt = -1.0f;
 	r.fleeing = false;
+	bool down = r.knockTimer > 0.0f, out = down && r.outCold;
 	r.knockTimer = 0.0f;
 	if (r.gold > 0)
 		r.contents.emplace_back(r.gold, "gold_001");
 	r.gold = 0;
 	if (Actor* a = w.actorOf(ri))
 	{
+		// One of its deaths at random, or the one from lying down or out (OpenMW's playRandomDeath)
+		ActorSet& set = *w.actorsOf(ri);
+		const char* fromDown = out ? "DeathKnockOut" : down ? "DeathKnockDown" : "";
+		std::string g = fromDown[0] && actorFindGroup(actorSkeleton(set, a->skeleton), fromDown) >= 0 ? fromDown
+			: actorRandomGroup(set, *a, "Death");
+		snprintf(r.deathGroup, sizeof(r.deathGroup), "%s", g.empty() ? "Death1" : g.c_str());
 		a->showWeapon = false;
-		if (!actorPlay(*w.actorsOf(ri), *a, "Death1", ANIM_HOLD))
+		if (!actorPlay(set, *a, r.deathGroup, ANIM_HOLD))
 			logf("combat: %s has no death animation", r.id.c_str());
 	}
 	w.syncActor(ri);
@@ -454,7 +487,11 @@ void Session::damageNpc(int ri, float dmg, bool fatigueOnly)
 	else if (r.fatigue <= 0.0f)
 		knockDown(ri, true);
 	else if (w.actorOf(ri) && r.hitAt < 0.0f && r.knockTimer <= 0.0f)
-		actorPlay(*w.actorsOf(ri), *w.actorOf(ri), "Hit1", ANIM_ONCE);
+	{
+		// one of its hits at random (OpenMW's chooseRandomGroup)
+		std::string g = actorRandomGroup(*w.actorsOf(ri), *w.actorOf(ri), "Hit");
+		actorPlay(*w.actorsOf(ri), *w.actorOf(ri), g.empty() ? "Hit1" : g.c_str(), ANIM_ONCE);
+	}
 }
 
 void Session::damagePlayer(float dmg, bool fatigueOnly)
@@ -724,9 +761,9 @@ void Session::npcStrike(int ri)
 	if (!playerShieldsBurn(ri))
 		return;
 	if (def.creature && (wpn || !def.attack.empty()))
-		npcHitsPlayer(ri, creatureDamage(def, wpn, charge) * roll.damage, false, weaponSkill(wpn), !wpn);
+		npcHitsPlayer(ri, creatureDamage(def, wpn, charge, r.attackKind) * roll.damage, false, weaponSkill(wpn), !wpn);
 	else if (wpn)
-		npcHitsPlayer(ri, weaponDamage(wpn, npcAttackKind(wpn), charge, def.attributes[ATTR_STRENGTH]) * roll.damage, false,
+		npcHitsPlayer(ri, weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage, false,
 			weaponSkill(wpn));
 	else    // fists: GBAC leaves them alone while the player still has fatigue (they only tire)
 	{
@@ -1111,7 +1148,7 @@ void Session::npcCombat(int ri, float dt)
 			if (a && a->mode == ANIM_LOOP)
 				actorPlay(*set, *a, "Idle", ANIM_IDLE);
 		}
-		else if (a && !actorPlay(*set, *a, "RunForward", ANIM_LOOP))
+		else if (a && !actorPlay(*set, *a, stanceGroup(*set, *a, "RunForward", wpn).c_str(), ANIM_LOOP))
 			actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
 	}
 	else
@@ -1120,8 +1157,15 @@ void Session::npcCombat(int ri, float dt)
 		r.chaseWindow = 0.0f;
 		r.chaseAnchor[0] = r.pos[0];
 		r.chaseAnchor[1] = r.pos[1];
-		if (a && a->mode == ANIM_LOOP)
-			actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		if (a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
+		{
+			// ready to strike: the weapon's stance (its idles otherwise, left to run on)
+			std::string idle = stanceGroup(*set, *a, "Idle", wpn);
+			if (idle != "Idle")
+				actorPlay(*set, *a, idle.c_str(), ANIM_LOOP);
+			else if (a->mode == ANIM_LOOP)
+				actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		}
 		r.attackTimer -= dt;
 		if (!attacking && r.attackTimer <= 0.0f && fabsf(diff) < 0.6f && (!ranged || dist > kArcherMinRange * 0.5f))
 		{
@@ -1130,7 +1174,7 @@ void Session::npcCombat(int ri, float dt)
 				a->showWeapon = wpn != nullptr;
 			if (!def.creature && rand() % 100 < (int)w.game.gmstf("ivoiceattackodds", 10.0f))
 				npcSayTopic(ri, "Attack");
-			if (a && actorPlay(*set, *a, def.creature ? creatureAttackGroup(*set, *a, wpn) : attackGroup(wpn), ANIM_ONCE))
+			if (a && actorPlay(*set, *a, blowGroup(*set, *a, r, wpn).c_str(), ANIM_ONCE))
 			{
 				const AnimGroup& g = actorSkeleton(*set, a->skeleton).groups[a->group];
 				windup = g.loopStart - g.start;
@@ -1536,6 +1580,14 @@ void Session::actorGravity(float dt)
 			{
 				// standing; placed a little above the floor (Ganciele Douar), or a step down: onto it
 				float dz = best - r.pos[2];
+				// (a creature's model drawn where its collision box comes to rest: World::actorBoxLift)
+				float lift = w.actorBoxLift(i);
+				if (fabsf(lift - r.boxLift) > 0.5f)
+				{
+					r.boxLift = lift;
+					r.moved = true;
+					w.syncActor(i);
+				}
 				if (dz < -0.5f && !r.dead)
 				{
 					r.pos[2] = best;
@@ -1632,11 +1684,10 @@ void Session::allyFight(int ri, float dt)
 		{
 			r.attackTimer = 1.2f;
 			const ActorDef& def = w.game.actors[r.actor];
-			float dmg = 5.0f;
-			if (!def.attack.empty())
-				dmg = def.attack[0].first + frand() * (def.attack[0].second - def.attack[0].first);
+			r.attackKind = 0;
 			if (a)
-				actorPlay(*set, *a, creatureAttackGroup(*set, *a, nullptr), ANIM_ONCE);
+				actorPlay(*set, *a, blowGroup(*set, *a, r, nullptr).c_str(), ANIM_ONCE);
+			float dmg = def.attack.empty() ? 5.0f : creatureDamage(def, nullptr, frand(), r.attackKind);
 			damageNpc(foe, dmg, false);
 		}
 	}
@@ -1686,18 +1737,25 @@ void Session::npcDuel(int ri, float dt)
 	if (!attacking && (dist > reach * 0.9f || fabsf(f.pos[2] - r.pos[2]) >= 180.0f))
 	{
 		npcMoveTo(ri, f.pos, actorRunSpeed(ri), dt, false);
-		if (a && !actorPlay(*set, *a, "RunForward", ANIM_LOOP))
+		if (a && !actorPlay(*set, *a, stanceGroup(*set, *a, "RunForward", wpn).c_str(), ANIM_LOOP))
 			actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
 	}
 	else
 	{
-		if (a && a->mode == ANIM_LOOP)
-			actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		if (a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
+		{
+			// ready to strike: the weapon's stance (its idles otherwise, left to run on)
+			std::string idle = stanceGroup(*set, *a, "Idle", wpn);
+			if (idle != "Idle")
+				actorPlay(*set, *a, idle.c_str(), ANIM_LOOP);
+			else if (a->mode == ANIM_LOOP)
+				actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		}
 		r.attackTimer -= dt;
 		if (!attacking && r.attackTimer <= 0.0f && fabsf(diff) < 0.6f)
 		{
 			float windup = 0.35f, length = 1.0f;
-			if (a && actorPlay(*set, *a, def.creature ? creatureAttackGroup(*set, *a, wpn) : attackGroup(wpn), ANIM_ONCE))
+			if (a && actorPlay(*set, *a, blowGroup(*set, *a, r, wpn).c_str(), ANIM_ONCE))
 			{
 				const AnimGroup& g = actorSkeleton(*set, a->skeleton).groups[a->group];
 				windup = g.loopStart - g.start;
@@ -1728,9 +1786,9 @@ void Session::npcDuel(int ri, float dt)
 				bool fatigueOnly = false;
 				float dmg;
 				if (def.creature && (wpn || !def.attack.empty()))
-					dmg = creatureDamage(def, wpn, charge) * roll.damage;
+					dmg = creatureDamage(def, wpn, charge, r.attackKind) * roll.damage;
 				else if (wpn)
-					dmg = weaponDamage(wpn, npcAttackKind(wpn), charge, def.attributes[ATTR_STRENGTH]) * roll.damage;
+					dmg = weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage;
 				else    // fists tire (health only on someone down)
 				{
 					float lo = w.game.gmstf("fminhandtohandmult", 0.1f), hi = w.game.gmstf("fmaxhandtohandmult", 0.5f);
@@ -3066,7 +3124,27 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	bool oneHanded = vm.group == "1h" || vm.group == "HH";
 	bool casting = vm.action == VM_CAST;
 	bool show = weaponDrawn || vm.action == VM_UNEQUIP;
-	vm.rebuild(w, show && !casting ? (wpn ? wpn->id : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "");
+	// The arrow or bolt in the bow or crossbow (OpenMW's attachArrow / releaseArrow): an arrow goes on the string at
+	// "shoot attach" and leaves it at "shoot release"; a crossbow holds a bolt from the moment it is drawn, lets it go
+	// at "shoot release", takes the next at "shoot follow attach" and gives it up as it is put away
+	std::string ammoIn;
+	const Object* ammo = show && !casting && wpn ? playerAmmo() : nullptr;
+	if (ammo && ammo != wpn && (vm.group == "Bow" || vm.group == "Xbow") && vm.ready)
+	{
+		const Skeleton& sk = vm.set.skeletons[0];
+		const Actor& arms = vm.set.actors[0];
+		const char* g = arms.group >= 0 && arms.group < (int)sk.groups.size() ? sk.groups[arms.group].name : "";
+		auto mark = [&](const char* name) {
+			int k = actorFindGroup(sk, name);
+			return k >= 0 ? sk.groups[k].start : 0.0f;
+		};
+		bool in = vm.group == "Bow" ? strncmp(g, "BowShoot", 16) == 0 && arms.time >= mark("BowAttach")
+			: strncmp(g, "XbowUneq", 16) != 0 && (strncmp(g, "XbowShootF", 16) != 0 || arms.time >= mark("XbowFAttach"));
+		if (in)
+			ammoIn = ammo->id;
+	}
+	vm.rebuild(w, show && !casting ? (wpn ? wpn->id : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "",
+		ammoIn);
 	if (weaponDrawn && w.player.knockTimer > 0.0f && vm.action != VM_KNOCKDOWN)
 		vm.play(VM_KNOCKDOWN, "KnockDown");
 	if (blockUntil > w.time && vm.action == VM_IDLE && !shield.empty())
@@ -3092,7 +3170,17 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		// The arms do what the first-person ones do: a blow by the weapon's NPC group (a lockpick or probe swings as a
 		// one-handed weapon), a cast by its first effect's range, as NPCs do (npcCastSpell)
 		BodyAct act;
-		act.group = !wpn && toolItem ? "Attack1h" : attackGroup(wpn);
+		// the blow by the kind the player swings (chop, slash, thrust: Attack1h, Attack1hSl, Attack1hTh)
+		static const char* kTag[] = { "", "Sl", "Th" };
+		bodyAttack = std::string(!wpn && toolItem ? "Attack1h" : attackGroup(wpn));
+		if (body.ready && !body.set.actors.empty() && attackKind >= 0 && attackKind < 3 && !isRanged(wpn)
+			&& actorFindGroup(actorSkeleton(body.set, body.set.actors[0].skeleton), (bodyAttack + kTag[attackKind]).c_str()) >= 0)
+			bodyAttack += kTag[attackKind];
+		act.group = bodyAttack.c_str();
+		act.moveX = in.moveX;
+		act.moveY = in.moveY;
+		// (a jump, or a real fall: not a step down a slope, a frame off the ground)
+		act.airborne = !w.player.swimming && !w.player.flying && !w.player.onGround && (w.player.jumpFlight || w.player.vz < -150.0f);
 		act.action = vm.action == VM_WINDUP ? BODY_WINDUP : vm.action == VM_FOLLOW ? BODY_STRIKE : BODY_NONE;
 		if (vm.action == VM_CAST)
 		{

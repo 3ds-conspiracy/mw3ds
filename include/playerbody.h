@@ -21,6 +21,8 @@ struct BodyAct
 	float speed = 1.0f;                           // the weapon's speed: blows play at this rate
 	float strength = 1.0f;                        // a blow let go: small / medium / large follow-through by it
 	const char* stance = "";                      // the weapon's family for its ready stance: 1h 2c 2w HH
+	float moveX = 0.0f, moveY = 0.0f;             // the stick against the facing (+y forward): which way they walk
+	bool airborne = false;                        // off the ground (jumping, falling): the jump
 };
 
 // The player seen from outside (third-person view, character creation's face preview): the NPC skeleton
@@ -36,7 +38,7 @@ struct PlayerBody
 	std::unordered_map<std::string, FpPiece*> pieces;   // bones resolved against this skeleton
 	std::string builtFor, forRace;
 	bool forFemale = false;
-	const char* group = "";                       // the walk / idle group asked for last ("" after a blow or cast)
+	std::string group;                            // the walk / idle group asked for last ("" after a blow or cast)
 	BodyAction acting = BODY_NONE;                // the arms' action being played
 	std::string actGroup;
 	bool followCut = false;                       // a blow's follow-through was chosen at its hit

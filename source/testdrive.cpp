@@ -928,7 +928,10 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		else if (what == "refrun")       // running (its run animation plays), not walking
 		{
 			Actor* ra = w.actorOf(ri);
-			v = ra && ra->group == actorFindGroup(actorSkeleton(*w.actorsOf(ri), ra->skeleton), "RunForward") ? 1.0f : 0.0f;
+			// (RunForward, or its weapon stance's RunForward1h ...)
+			const Skeleton* rs = ra ? &actorSkeleton(*w.actorsOf(ri), ra->skeleton) : nullptr;
+			v = rs && ra->group >= 0 && ra->group < (int)rs->groups.size() && strncmp(rs->groups[ra->group].name, "RunForward", 10) == 0
+				? 1.0f : 0.0f;
 		}
 		else if (what == "refpkg") v = r.aiPackage == AIPKG_IDLE ? -1.0f : (float)r.aiPackage;   // GetCurrentAIPackage
 		else if (what == "refpkgdone") v = r.aiDone ? 1.0f : 0.0f;                              // GetAIPackageDone
@@ -937,7 +940,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		else if (what == "refally") v = r.ally ? 1.0f : 0.0f;
 		else if (what == "refdist") v = w.distanceToPlayer(ri);      // 100000: in another interior
 		else if (what == "refaimed") v = s.target == ri ? 1.0f : 0.0f;   // the crosshair is on it
-		else if (what == "refabove")        // units over the floor under it (99999: no floor)
+		else if (what == "refabove")        // units over the floor under it, as it is drawn (99999: no floor)
 		{
 			float floorZ = -1e9f;
 			for (LoadedCell* l : w.loaded)
@@ -946,7 +949,35 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 				if (collisionFloor(l->cell.collision, r.pos[0], r.pos[1], r.pos[2] + 40.0f, r.pos[2] - 6000.0f, &z) && z > floorZ)
 					floorZ = z;
 			}
-			v = floorZ > -1e8f ? r.pos[2] - floorZ : 99999.0f;
+			v = floorZ > -1e8f ? r.pos[2] + r.boxLift - floorZ : 99999.0f;
+		}
+		else if (what == "refabovefeet")    // units over the highest floor within a foot of it (collisionFootFloor: where it
+		{                                   // stands), as it is drawn (a creature's box lift on top, World::actorBoxLift)
+			float floorZ = -1e9f;
+			for (LoadedCell* l : w.loaded)
+			{
+				float z;
+				if (collisionFootFloor(l->cell.collision, r.pos[0], r.pos[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 6000.0f, &z)
+					&& z > floorZ)
+					floorZ = z;
+			}
+			v = floorZ > -1e8f ? r.pos[2] + r.boxLift - floorZ : 99999.0f;
+		}
+		else if (what == "refhiddenparts")  // meshes of its model its visibility keys hide now (a dead Bonelord's robe)
+		{
+			v = 0.0f;
+			if (const Actor* a = w.actorOf(ri))
+				for (const ActorMesh& m : a->meshes)
+					if (!actorMeshShown(*a, m))
+						v += 1.0f;
+		}
+		else if (what == "refadditive")     // glowing (additive) parts of its model showing now: flames, sparks
+		{
+			v = 0.0f;
+			if (const Actor* a = w.actorOf(ri))
+				for (const ActorMesh& m : a->meshes)
+					if ((m.flags & BATCH_ADDITIVE) && actorMeshShown(*a, m))
+						v += 1.0f;
 		}
 		else if (what == "refwater") v = w.here().hasWater() ? r.pos[2] - w.here().waterZ : 99999.0f;   // units over the water here
 		else if (what == "refbox") v = r.hasBox ? 1.0f : 0.0f;       // it has a mesh to aim at (a banner's cloth)
@@ -1581,6 +1612,17 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	// POSE:<id>:<group>:<at>[:<yaw degrees>]: the actor back where the level placed it (or turned that way), holding that
 	// animation group at that point (0 its start key, 1 its stop key: OpenMW's startPoint), no AI, no head turning. For
 	// side-by-side screenshots with OpenMW (tools/test/sidebyside.py)
+	// POSE:<id>:off: let it go again (its AI, its animations)
+	if (verb == "POSE" && a.size() == 3 && a[2] == "off")
+	{
+		int ri = findRef(s, a[1]);
+		Actor* ac = ri >= 0 && w.active(ri) ? w.actorOf(ri) : nullptr;
+		if (!ac)
+			return fail(a[1] + " not loaded");
+		ac->frozen = false;
+		actorPlay(*w.actorsOf(ri), *ac, "Idle", ANIM_IDLE);
+		return true;
+	}
 	if (verb == "POSE" && a.size() >= 4)
 	{
 		int ri = findRef(s, a[1]);
@@ -5328,6 +5370,20 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		int hit = worldPick(w, eye, d, 1000.0f);
 		ok = what == "doorpick" ? hit == ri : hit != ri;
 		snprintf(got, sizeof(got), "door angle %.2f, picked %s", r.doorAngle, hit < 0 ? "nothing" : hit == ri ? "the door" : w.refs[hit].id.c_str());
+	}
+	else if ((what == "refgroup" || what == "refhasgroup") && a.size() >= 3)
+	{
+		// EXPECT:refgroup:<ref>:<group>: that actor plays a group whose name starts with it;
+		// EXPECT:refhasgroup:<ref>:<group>: its skeleton has that group (the converted data carries it)
+		int ri = findRef(s, a[1]);
+		const Actor* ac = ri >= 0 ? w.actorOf(ri) : nullptr;
+		const Skeleton* sk = ac ? &actorSkeleton(*w.actorsOf(ri), ac->skeleton) : nullptr;
+		const char* g = sk && ac->group >= 0 && ac->group < (int)sk->groups.size() ? sk->groups[ac->group].name : "";
+		if (what == "refgroup")
+			ok = g[0] && strncmp(g, a[2].c_str(), a[2].size()) == 0;
+		else
+			ok = sk && actorFindGroup(*sk, a[2].c_str()) >= 0;
+		snprintf(got, sizeof(got), "%s", !ac ? "not loaded" : what == "refgroup" ? (g[0] ? g : "no group") : ok ? "has it" : "hasn't");
 	}
 	else if (what == "bodygroup" && a.size() >= 2)
 	{

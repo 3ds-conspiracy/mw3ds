@@ -198,7 +198,7 @@ static void windupMarks(const char* group, float& lo, float& hi)
 	lo = 0.2f;
 	hi = 0.5f;
 	for (auto& m : kMarks)
-		if (strcmp(group, m.name) == 0)
+		if (strncmp(group, m.name, strlen(m.name)) == 0)      // (and its slash / thrust: Attack1hSl, Attack1hTh)
 		{
 			lo = m.lo;
 			hi = m.hi;
@@ -282,17 +282,26 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 	}
 	if (!busy)
 	{
-		// Walking and standing; with a weapon out, its ready stance when the skeleton has one ("Idle1h", "WalkForward2c")
-		const char* want = swimming ? (speed > 10.0f ? "SwimForward" : "Idle")
-			: sneaking ? (speed > 10.0f ? "SneakForward" : "Idle")
-			: speed > 200.0f ? "RunForward" : speed > 10.0f ? "WalkForward" : "Idle";
-		if (strcmp(want, group) != 0 || weaponOut != stanceOut)
+		// Walking, running and sneaking the way the stick goes against the facing (OpenMW's movement states: forward,
+		// back, left, right), in the air the jump, standing; with a weapon out, its ready stance when the skeleton has
+		// one ("Idle1h", "WalkForward2c")
+		const char* dir = fabsf(act.moveX) > fabsf(act.moveY) ? (act.moveX < 0.0f ? "Left" : "Right")
+			: act.moveY < 0.0f ? "Back" : "Forward";
+		std::string want = swimming ? (speed > 10.0f ? "SwimForward" : "Idle")
+			: act.airborne ? "Jump"
+			: speed <= 10.0f ? "Idle"
+			: std::string(sneaking ? "Sneak" : speed > 200.0f ? "Run" : "Walk") + dir;
+		if (want != group || weaponOut != stanceOut)
 		{
 			stanceOut = weaponOut;
-			std::string stance = weaponOut && !swimming && act.stance[0] ? std::string(want) + act.stance : "";
+			std::string stance = weaponOut && !swimming && act.stance[0] ? want + act.stance : "";
+			// (data without the other ways: forward, then walking)
+			std::string forward = want.substr(0, want.size() - strlen(dir)) + "Forward";
 			if (!stance.empty() && actorFindGroup(sk, stance.c_str()) >= 0 && actorPlay(set, a, stance.c_str(), ANIM_LOOP))
 				group = want;
-			else if (actorPlay(set, a, want, strcmp(want, "Idle") == 0 ? ANIM_IDLE : ANIM_LOOP) || strcmp(want, "Idle") == 0)
+			else if (actorPlay(set, a, want.c_str(), want == "Idle" ? ANIM_IDLE : ANIM_LOOP) || want == "Idle")
+				group = want;
+			else if (speed > 10.0f && !act.airborne && actorPlay(set, a, forward.c_str(), ANIM_LOOP))
 				group = want;
 			else if (actorPlay(set, a, "WalkForward", ANIM_LOOP))
 				group = "WalkForward";

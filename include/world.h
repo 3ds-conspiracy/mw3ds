@@ -138,9 +138,13 @@ struct Ref
 	float fleeTimer = 0.0f;
 	float calmUntil = 0.0f;         // Calm: no attack on sight until this time
 	float knockTimer = 0.0f;      // > 0: knocked down (or out) and helpless
+	float boxLift = 0.0f;         // drawn this much above pos: its collision box resting on the slope (World::actorBoxLift)
+	bool outCold = false;         // the knockdown under way is a knockout (a death then is DeathKnockOut)
 	float castTimer = 0.0f;       // until the next spell they may cast
 	int castSpell = -1;           // spell being cast (index into ActorDef::combatSpells), fires at hitAt
 	bool shooting = false;        // the pending hitAt releases a projectile instead of a blow
+	u8 attackKind = 0;            // the blow under way: a weapon's 0 chop, 1 slash, 2 thrust; a creature's attack 0..2
+	char deathGroup[16] = "Death1";   // the death it played (a corpse laid down again lies the same way)
 	int ammo = 0;                 // arrows / bolts / throwing weapons left
 	float lastSeen = -100.0f;     // world time they last noticed the player (sneaking)
 	std::vector<int> path;        // path grid points (global indices) still to walk, next first
@@ -525,6 +529,9 @@ struct World
 	// Places `count` of an id `dist` in front of (dir 0), behind (1), left of (2) or right of (3) a spot
 	void placeAt(const std::string& id, int count, float dist, int dir, const float base[3], float yaw);
 	void snapToFloor(float pos[3]);     // down onto the floor below (from a little above), never up
+	// How far above where it stands (the ground under its feet) a creature's model is drawn: its collision box rested on
+	// the highest ground under all of it (0 without a box)
+	float actorBoxLift(int ri);
 	void attachSpawned(int ri);       // its mesh and collision in its (loaded) cell
 	int refsInMemory() const;
 	// Moves the objects of the cells used longest ago (not loaded, nothing pointing into them: inUse)

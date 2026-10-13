@@ -65,7 +65,8 @@ struct ViewModel
 	void free(World& w);
 	FpPiece* piece(World& w, const std::string& name);    // cached; nullptr when missing (or short of memory: retried)
 	// Puts the arms together for the race and equipment (cheap when nothing changed)
-	void rebuild(World& w, const std::string& weaponId, const std::string& shieldId);
+	// ammoId: the arrow or bolt sitting in the bow or crossbow ("" none)
+	void rebuild(World& w, const std::string& weaponId, const std::string& shieldId, const std::string& ammoId = "");
 	void play(VmAction a, const char* groupName, bool hold = false);
 	// A melee blow's follow-through ("1hChopF"): small / medium / large by its strength, 0..1 (OpenMW)
 	void playFollow(const char* groupName, float strength);

@@ -306,7 +306,7 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 static const int kSlots[] = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 25 };
 static const int CLOT_ROBE = 4, CLOT_SKIRT = 7;
 
-void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string& shieldId)
+void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string& shieldId, const std::string& ammoId)
 {
 	if (!ready)
 		return;
@@ -372,9 +372,22 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 			glow[10] = w.game.enchantGlow(shieldId);
 		}
 	}
+	// The arrow or bolt in the bow or crossbow: its piece on the weapon bone, carried along the weapon's ArrowBone
+	const std::vector<float>* arrowTrack = nullptr;
+	std::string ammoPiece;
+	if (!ammoId.empty() && !part[25].empty())
+	{
+		auto wit = fp.items.find(lower(weaponId)), ait = fp.items.find(lower(ammoId));
+		if (wit != fp.items.end() && ait != fp.items.end() && !wit->second.arrow.empty() && !ait->second.ammo.empty())
+		{
+			arrowTrack = &wit->second.arrow;
+			ammoPiece = ait->second.ammo;
+		}
+	}
 	std::string key;
 	for (int s : kSlots)
 		key += part[s] + (glow[s] ? "*|" : "|");
+	key += ammoPiece;
 	u32 now = (u32)osGetTime();
 	if (key == builtFor && !(incomplete && now >= retryAt))
 		return;
@@ -403,6 +416,16 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 			a.meshes.push_back(copy);
 		}
 	}
+	if (FpPiece* p = arrowTrack ? piece(w, ammoPiece) : nullptr)
+		for (auto& m : p->meshes)
+		{
+			ActorMesh copy = m;
+			copy.tex = textures.size();
+			copy.track = *arrowTrack;
+			copy.driven = true;
+			textures.push_back(p->textures[m.tex]);
+			a.meshes.push_back(copy);
+		}
 	a.deformed = false;
 	logf("viewmodel: %d meshes (%s)", (int)a.meshes.size(), key.c_str());
 }

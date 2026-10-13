@@ -97,6 +97,7 @@ struct Session : ScriptHost
 	float drawTimer = 0.0f;           // > 0 while the weapon comes out; the wind-up waits for it
 	float sheatheTimer = 0.0f;        // seconds without fighting; the weapon goes away after a while
 	int attackKind = 0;               // 0 chop, 1 slash, 2 thrust: picked when the wind-up starts
+	std::string bodyAttack;           // the third-person body's group for that blow (Attack1hSl ...)
 	float blockUntil = 0.0f;          // shield raised (view model)
 	float detectTimer = 0.0f, sneakSkillTimer = 0.0f;
 	bool hidden = false;              // sneaking and no one nearby has noticed

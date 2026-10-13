@@ -1311,6 +1311,43 @@ void World::relocate(int ri, int cell, const float pos[3], float yaw)
 	logf("world: %s moved to %s", r.idLower.c_str(), cells[cell].name.c_str());
 }
 
+// OpenMW sweeps an actor's collision box down onto the ground (MovementSolver::traceDown): it comes to rest on the
+// highest ground anywhere under the box, and the origin sits the box's lift above that. A creature's box is its model's
+// "Bounding Box" node (tools/convert/creature.py creature_box); one centred and about square stays axis-aligned (the
+// default "actor collision shape type"), any other turns with the creature (Actor::Actor's RotatingBox). How much
+// higher than the ground under its feet (where it stands: walking, falling and slopes go by that, as before) its model
+// is drawn. Sampled at the box's corners and edges, each counting up to a slope's rise from the feet (45 degrees, at
+// most a stair's 48 units): higher is a rock or a wall beside it, which OpenMW's box is pushed away from, not stood on.
+// (Standing it there instead made the next step search for floor from that much higher: creatures walked up slopes too
+// steep for anyone, and a wandering guar climbed a rock beside it)
+float World::actorBoxLift(int ri)
+{
+	const Ref& r = refs[ri];
+	const ActorDef* def = r.actor >= 0 ? &game.actors[r.actor] : nullptr;
+	if (!def || !def->hasBox)
+		return 0.0f;
+	float s = r.scale > 0.0f ? r.scale : 1.0f;
+	if (const Actor* a = actorOf(ri))
+		s = sqrtf(a->place[0] * a->place[0] + a->place[4] * a->place[4] + a->place[8] * a->place[8]);
+	const float* b = def->box;
+	float ratio = b[3] > 0.0f ? b[2] / b[3] : 0.0f;
+	bool turns = b[0] != 0.0f || b[1] != 0.0f || ratio < 1.0f / 1.1f || ratio > 1.1f;
+	float c = turns ? cosf(r.rot[2]) : 1.0f, sn = turns ? sinf(r.rot[2]) : 0.0f;
+	const float kMaxRise = 48.0f;
+	float ground = r.pos[2], best = ground;
+	for (int i = -1; i <= 1; i++)
+		for (int j = -1; j <= 1; j++)
+		{
+			float lx = (b[0] + i * b[2]) * s, ly = (b[1] + j * b[3]) * s, z;
+			float px = r.pos[0] + c * lx + sn * ly, py = r.pos[1] - sn * lx + c * ly;
+			float rise = fminf(kMaxRise, sqrtf(lx * lx + ly * ly));
+			for (LoadedCell* l : loaded)
+				if (collisionFloor(l->cell.collision, px, py, ground + kMaxRise, ground - 200.0f, &z))
+					best = fmaxf(best, fminf(z, ground + rise));
+		}
+	return best - ground + b[4] * s;
+}
+
 void World::snapToFloor(float pos[3])
 {
 	float best = -1e9f;
@@ -1675,12 +1712,12 @@ void World::syncActor(int ri)
 	if (!a)
 		return;
 	if (r.moved)
-		actorSetPlacement(*a, r.pos[0], r.pos[1], r.pos[2], r.rot[2]);
+		actorSetPlacement(*a, r.pos[0], r.pos[1], r.pos[2] + r.boxLift, r.rot[2]);
 	ActorSet& set = *actorsOf(ri);
 	// a corpse that was already lying there is laid down at once; one that has just died keeps playing its fall
 	int group = a->group;
 	AnimMode mode = a->mode;
-	if (r.dead && actorPlay(set, *a, "Death1", ANIM_HOLD) && (a->group != group || a->mode != mode))
+	if (r.dead && actorPlay(set, *a, r.deathGroup, ANIM_HOLD) && (a->group != group || a->mode != mode))
 		a->time = actorSkeleton(set, a->skeleton).groups[a->group].stop;
 }
 

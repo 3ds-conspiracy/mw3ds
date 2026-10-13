@@ -29,7 +29,10 @@ from npc import MIRROR_X
 
 IDLE_GROUPS = ["Idle"] + [f"Idle{i}" for i in range(2, 10)]
 # Groups the 3DS plays besides the idles (name -> text key group), for combat and chasing
-MOVE_GROUPS = ["RunForward", "WalkForward", "Hit1", "Death1", "KnockDown", "KnockOut"]
+# (hits and deaths: the runtime picks one of those there are at random, OpenMW's chooseRandomGroup; a death while
+# down or out: DeathKnockDown / DeathKnockOut)
+MOVE_GROUPS = ["RunForward", "WalkForward", "Hit1", "Hit2", "Hit3", "Hit4", "Hit5", "Death1", "Death2", "Death3", "Death4",
+               "Death5", "DeathKnockDown", "DeathKnockOut", "KnockDown", "KnockOut"]
 # Attacks: exported name -> text key group ("Chop ..." keys); the runtime picks one by weapon type.
 # The group's hit moment is stored as its loop start.
 ATTACK_GROUPS = {"AttackHH": "handtohand", "Attack1h": "weapononehand", "Attack2c": "weapontwohand",
@@ -70,26 +73,32 @@ def animation_groups(nif):
             groups.append({"name": g, "start": start, "stop": stop,
                            "loop_start": marks.get((gl, "loop start"), start),
                            "loop_stop": marks.get((gl, "loop stop"), stop)})
-    # Creatures attack with Attack1 (its "Hit" key is when the blow lands)
-    if ("attack1", "start") in marks and ("attack1", "stop") in marks:
-        start, stop = marks[("attack1", "start")], marks[("attack1", "stop")]
-        hit = marks.get(("attack1", "hit"), (start + stop) / 2)
-        groups.append({"name": "Attack1", "start": start, "stop": stop, "loop_start": hit, "loop_stop": hit})
+    # Creatures attack with Attack1..3, one at random (its "Hit" key is when the blow lands; OpenMW's Creature::hit
+    # takes the damage of the attack the group names)
+    for k in (1, 2, 3):
+        gl = f"attack{k}"
+        if (gl, "start") in marks and (gl, "stop") in marks:
+            start, stop = marks[(gl, "start")], marks[(gl, "stop")]
+            hit = marks.get((gl, "hit"), (start + stop) / 2)
+            groups.append({"name": f"Attack{k}", "start": start, "stop": stop, "loop_start": hit, "loop_stop": hit})
+    # Weapon blows: chop (Attack1h), slash (Attack1hSl), thrust (Attack1hTh), each from its start to its large
+    # follow-through, the hit as the loop
     for name, gl in ATTACK_GROUPS.items():
-        start = marks.get((gl, "chop start"))
-        stop = next((marks[(gl, k)] for k in ("chop large follow stop", "chop medium follow stop",
-                                               "chop small follow stop") if (gl, k) in marks), None)
-        if start is None or stop is None or stop <= start:
-            continue
-        hit = next((marks[(gl, k)] for k in ("chop hit", "chop min hit", "chop max attack") if (gl, k) in marks),
-                   (start + stop) / 2)
-        groups.append({"name": name, "start": start, "stop": stop, "loop_start": hit, "loop_stop": hit})
-        # The medium / small follow-throughs ("Attack1hM" / "Attack1hS"): the runtime cuts over to one at the
-        # hit by the blow's strength (OpenMW)
-        for sfx, size in (("M", "medium"), ("S", "small")):
-            f0, f1 = marks.get((gl, f"chop {size} follow start")), marks.get((gl, f"chop {size} follow stop"))
-            if f0 is not None and f1 is not None and f1 > f0:
-                groups.append({"name": name + sfx, "start": f0, "stop": f1, "loop_start": f0, "loop_stop": f1})
+        for kind, tag in (("chop", ""), ("slash", "Sl"), ("thrust", "Th")):
+            start = marks.get((gl, f"{kind} start"))
+            stop = next((marks[(gl, k)] for k in (f"{kind} large follow stop", f"{kind} medium follow stop",
+                                                   f"{kind} small follow stop") if (gl, k) in marks), None)
+            if start is None or stop is None or stop <= start:
+                continue
+            hit = next((marks[(gl, k)] for k in (f"{kind} hit", f"{kind} min hit", f"{kind} max attack") if (gl, k) in marks),
+                       (start + stop) / 2)
+            groups.append({"name": name + tag, "start": start, "stop": stop, "loop_start": hit, "loop_stop": hit})
+            # The medium / small follow-throughs ("Attack1hM" / "Attack1hSlS"): the runtime cuts over to one at the
+            # hit by the blow's strength (OpenMW)
+            for sfx, size in (("M", "medium"), ("S", "small")):
+                f0, f1 = marks.get((gl, f"{kind} {size} follow start")), marks.get((gl, f"{kind} {size} follow stop"))
+                if f0 is not None and f1 is not None and f1 > f0:
+                    groups.append({"name": name + tag + sfx, "start": f0, "stop": f1, "loop_start": f0, "loop_stop": f1})
     for name, (gl, k0, kh, k1) in PHASED_GROUPS.items():
         start, hit, stop = marks.get((gl, k0)), marks.get((gl, kh)), marks.get((gl, k1))
         if start is not None and stop is not None and stop > start:
@@ -147,7 +156,8 @@ def actor_mesh(s, skeleton, tex, colors):
     """Runtime mesh record from an NPC part shape (see npc.NpcBuilder.build)."""
     raw = s["raw"]
     n = len(raw["pos"])
-    flags = s["flags"] | (FLAG_WEAPON if s.get("weapon") else 0)
+    # (bit 128 is a flame's rise for the world's meshes, the weapon's for actors: a creature's fire isn't a weapon)
+    flags = (s["flags"] & ~FLAG_WEAPON) | (FLAG_WEAPON if s.get("weapon") else 0)
     mesh = {"tex": tex, "flags": flags, "alpha_ref": s["alpha_ref"], "tris": s["tris"],
             "uv": s["uv"] * [1.0, -1.0] + [0.0, 1.0], "colors": colors, "bone": -1, "kind": 0}
     local = np.identity(4)
@@ -173,6 +183,8 @@ def actor_mesh(s, skeleton, tex, colors):
         local = (MIRROR_X if s.get("mirror") else np.identity(4)) @ raw["node"]
         mesh["pos"] = raw["pos"] @ local[:3, :3].T + local[:3, 3]
         mesh["bone"] = skeleton["index"].get(s.get("bone") or "", -1)
+    if s.get("vis"):
+        mesh["vis"] = s["vis"]
     if "morph" in raw and len(raw["morph"]["morphs"]) > 1:
         md = raw["morph"]
         marks = {text.strip().lower(): t for t, text in raw["text_keys"]}
@@ -193,7 +205,8 @@ def merge_meshes(meshes):
         if m.get("morph") and m["morph"]["morphs"]:
             out.append(m)
             continue
-        key = (m["kind"], m["tex"], m.get("tex_name"), m["flags"], m["alpha_ref"], m["bone"] if m["kind"] == 0 else None)
+        key = (m["kind"], m["tex"], m.get("tex_name"), m["flags"], m["alpha_ref"], m["bone"] if m["kind"] == 0 else None,
+               tuple(m.get("vis") or ()))
         groups.setdefault(key, []).append(m)
     for key, ms in groups.items():
         if len(ms) == 1 or sum(len(m["pos"]) for m in ms) > 65000:
@@ -250,15 +263,16 @@ def write_skeleton_list(f, skeletons):
 
 
 def write_mesh(f, m, tex_name=None):
-    """One actor mesh; in library files (tex_name given) the texture goes by name."""
+    """One actor mesh; in library files (tex_name given) the texture goes by name. The byte after kind: 1 morphs
+    follow, 2 visibility keys follow (after the morphs)."""
     n = len(m["pos"])
     if tex_name is None:
         f.write(struct.pack("<i", m["tex"]))
     else:
         name = tex_name.encode("latin-1")
         f.write(struct.pack("<H", len(name)) + name)
-    f.write(struct.pack("<BBBBiII", m["flags"], m["alpha_ref"], m["kind"],
-                        1 if m.get("morph") and m["morph"]["morphs"] else 0, m["bone"], n, len(m["tris"])))
+    more = (1 if m.get("morph") and m["morph"]["morphs"] else 0) | (2 if m.get("vis") else 0)
+    f.write(struct.pack("<BBBBiII", m["flags"], m["alpha_ref"], m["kind"], more, m["bone"], n, len(m["tris"])))
     v = np.zeros(n, dtype=[("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4)])
     v["pos"], v["uv"], v["color"] = m["pos"], m["uv"], m["colors"]
     f.write(v.tobytes())
@@ -279,6 +293,11 @@ def write_mesh(f, m, tex_name=None):
             for t, wgt in keys:
                 f.write(struct.pack("<2f", t, wgt))
             f.write(np.asarray(delta, dtype="<f4").tobytes())
+    if m.get("vis"):
+        # shown or hidden from each key's time on (its nodes' NiVisController): u32 n, n x (f32 time, f32 shown)
+        f.write(struct.pack("<I", len(m["vis"])))
+        for t, shown in m["vis"]:
+            f.write(struct.pack("<2f", t, 1.0 if shown else 0.0))
 
 
 def write_actor_library(path, meshes, tex_names):

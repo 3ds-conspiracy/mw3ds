@@ -305,7 +305,9 @@ void actorSkinPalette(const Actor& a, const ActorMesh& m, float* out)
 // One mesh after its texture: render state, buffers, skinning, morphs
 static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 {
-		rd(f, m.flags); rd(f, m.alphaRef); rd(f, m.kind); rd(f, m.hasMorph);
+		u8 more = 0;           // 1 morphs follow, 2 visibility keys follow (tools/convert/actors.py write_mesh)
+		rd(f, m.flags); rd(f, m.alphaRef); rd(f, m.kind); rd(f, more);
+		m.hasMorph = more & 1;
 		rd(f, m.bone);
 		rd(f, m.numVerts);
 		rd(f, m.numIndices);
@@ -369,7 +371,36 @@ static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 				fread(mt.delta.data(), 4, mt.delta.size(), f);
 			}
 		}
+		if (more & 2)
+		{
+			u32 nv = 0;
+			rd(f, nv);
+			if (!tryResize(m.vis, nv * 2))
+				return false;
+			fread(m.vis.data(), 4, nv * 2, f);
+		}
 	return true;
+}
+
+std::string actorRandomGroup(const ActorSet& set, const Actor& a, const char* prefix)
+{
+	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	int n = 0;
+	while (actorFindGroup(sk, (std::string(prefix) + std::to_string(n + 1)).c_str()) >= 0)
+		n++;
+	return n ? std::string(prefix) + std::to_string(rand() % n + 1) : std::string();
+}
+
+// Its NiVisController's say at the actor's animation time (a Bonelord's robe goes as it dies): the last key at or
+// before it, the first one before them all
+bool actorMeshShown(const Actor& a, const ActorMesh& m)
+{
+	if (m.vis.empty())
+		return true;
+	float on = m.vis[1];
+	for (size_t k = 0; k + 1 < m.vis.size() && m.vis[k] <= a.time; k += 2)
+		on = m.vis[k + 1];
+	return on > 0.5f;
 }
 
 // 'MWL1' library file: an NPC / creature record's meshes, textures by name (looked up in the cell's list)
@@ -555,7 +586,10 @@ bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode)
 	{
 		static const char* kSwim[][2] = { { "WalkForward", "SwimWalkForward" }, { "RunForward", "SwimRunForward" },
 			{ "Idle", "IdleSwim" }, { "Hit1", "SwimHit1" }, { "Hit2", "SwimHit2" }, { "Hit3", "SwimHit3" },
-			{ "Death1", "SwimDeath" }, { "KnockDown", "SwimKnockDown" }, { "KnockOut", "SwimKnockOut" },
+			{ "Hit4", "SwimHit4" }, { "Hit5", "SwimHit5" }, { "Death1", "SwimDeath" }, { "Death2", "SwimDeath" },
+			{ "Death3", "SwimDeath" }, { "Death4", "SwimDeath" }, { "Death5", "SwimDeath" },
+			{ "DeathKnockDown", "SwimDeath" }, { "DeathKnockOut", "SwimDeath" },
+			{ "KnockDown", "SwimKnockDown" }, { "KnockOut", "SwimKnockOut" },
 			{ "TurnLeft", "SwimTurnLeft" }, { "TurnRight", "SwimTurnRight" } };
 		for (auto& s : kSwim)
 			if (strcasecmp(group, s[0]) == 0)
@@ -924,6 +958,18 @@ void actorMeshMatrix(const Actor& a, const ActorMesh& m, C3D_Mtx* out)
 		mul34(a.place, &(a.skinPose.size() == a.pose.size() ? a.skinPose : a.pose)[m.bone * 12], w);
 	else
 		memcpy(w, a.place, sizeof(w));
+	// further along its track at the weapon's time (an arrow drawn back with the string), samples blended
+	size_t n = m.track.size() / 12;
+	if (m.driven && n > 0)
+	{
+		float f = fmaxf(0.0f, a.driveT) * kVfxFps;
+		size_t i = (size_t)f < n - 1 ? (size_t)f : n - 1, j = i + 1 < n ? i + 1 : i;
+		float k = i == j ? 0.0f : f - i, t[12], base[12];
+		for (int c = 0; c < 12; c++)
+			t[c] = m.track[i * 12 + c] + (m.track[j * 12 + c] - m.track[i * 12 + c]) * k;
+		memcpy(base, w, sizeof(base));
+		mul34(base, t, w);
+	}
 	for (int r = 0; r < 3; r++)
 		out->r[r] = FVec4_New(w[r * 4], w[r * 4 + 1], w[r * 4 + 2], w[r * 4 + 3]);
 	out->r[3] = FVec4_New(0, 0, 0, 1);

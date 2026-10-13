@@ -1,0 +1,44 @@
+# start: Seyda Neen
+# A creature on a slope stands where OpenMW's collision box comes to rest: the box (its model's "Bounding Box") swept
+# down onto the highest ground under it. The guar placed on the hillside north-east of Seyda Neen stands at z 283 in
+# OpenMW 0.51, 29 above the ground under its middle; on the floor under its middle alone its legs were in the hill.
+1 0 0 0 0 TP:-3514:-62273:520:0+HOUR:12
+# (held where it was placed, turned south as it was when OpenMW measured it, while it comes down from Morrowind.esm's 408: left to wander, it may be
+# on a rock by the time it is measured; the emulator streams its cell in late)
+3 0 0 0 0 POSE:guar:idle:0:180
+20 0 0 0 0 UNTIL:refabove:guar:le:36
+1 0 0 0 0
+0.2 0 0 0 0 EXPECT:refabove:guar:ge:22+EXPECT:refabove:guar:le:36
+1 0 0 0 0 POSE:guar:off
+# Then it wanders for a while, never more than a stair (48) over the ground under its feet: the box's corners measured from the guar's own height lifted it a little further each
+# check onto a rock beside it (97 over the ground under its middle after 10 s, and on up)
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49
+1 0 0 0 0 EXPECT:refabovefeet:guar:le:49

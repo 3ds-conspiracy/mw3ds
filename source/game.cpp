@@ -655,6 +655,13 @@ bool gameLoad(GameData& g, const char* path)
 		a.magicka = num(it, "magicka"); a.flee = num(it, "flee"); a.soul = num(it, "soul"); a.resistNormal = num(it, "resist_normal"); a.hello = (int)num(it, "hello", 30); a.alarm = (int)num(it, "alarm", 100);
 		a.respawn = num(it, "respawn") != 0; a.essential = num(it, "essential") != 0; a.blood = (int)num(it, "blood"); a.afloat = (u8)num(it, "afloat");
 		a.autocalc = num(it, "autocalc") != 0;
+		if (const cJSON* bx = cJSON_GetObjectItem(it, "box"))
+			if (cJSON_GetArraySize(bx) >= 5)
+			{
+				for (int k = 0; k < 5; k++)
+					a.box[k] = (float)cJSON_GetArrayItem(bx, k)->valuedouble;
+				a.hasBox = true;
+			}
 		a.ammo = lower(str(it, "ammo")); a.shield = lower(str(it, "shield"));
 		const cJSON* cs;
 		cJSON_ArrayForEach(cs, arr(it, "combat_spells"))
@@ -1222,6 +1229,11 @@ bool gameLoad(GameData& g, const char* path)
 		{
 			FpItem& fi = g.firstPerson.items[lower(item->string)];
 			fi.model = str(item, "model");
+			fi.ammo = str(item, "ammo");
+			const cJSON* row;
+			cJSON_ArrayForEach(row, cJSON_GetObjectItem(item, "arrow"))
+				for (int k = 0; k < 12; k++)
+					fi.arrow.push_back((float)cJSON_GetArrayItem(row, k)->valuedouble);
 			const cJSON* slot;
 			cJSON_ArrayForEach(slot, cJSON_GetObjectItem(item, "slots"))
 				fi.slots[atoi(slot->string)] = { cJSON_GetArrayItem(slot, 0)->valuestring, cJSON_GetArrayItem(slot, 1)->valuestring };

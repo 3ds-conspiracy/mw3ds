@@ -1,0 +1,11 @@
+# start: Seyda Neen
+# The animations OpenMW plays that the converted skeletons lacked: people's Hit2..5 and Death2..5 (one at random), their
+# chop / slash / thrust blows, moving back and to the sides, sneaking, jumping and their weapon stances; a creature's
+# Attack2 / Attack3 (each with its own damage).
+1 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+0.5 0 0 0 0 EXPECT:refhasgroup:fargoth:Hit3+EXPECT:refhasgroup:fargoth:Death4+EXPECT:refhasgroup:fargoth:DeathKnockOut
+0.2 0 0 0 0 EXPECT:refhasgroup:fargoth:Attack1hSl+EXPECT:refhasgroup:fargoth:Attack2wTh+EXPECT:refhasgroup:fargoth:AttackHHSlM
+0.2 0 0 0 0 EXPECT:refhasgroup:fargoth:WalkLeft+EXPECT:refhasgroup:fargoth:SneakBack+EXPECT:refhasgroup:fargoth:Jump
+0.2 0 0 0 0 EXPECT:refhasgroup:fargoth:Idle1h+EXPECT:refhasgroup:fargoth:RunForward2c
+1 0 0 0 0 PLACE:mudcrab:400
+0.2 0 0 0 0 EXPECT:refhasgroup:mudcrab:Attack2

@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# In third person the player's body walks the way they go (OpenMW's movement states by the direction against the
+# facing): to the side and back, not forward whichever way; sneaking; in the air, the jump.
+1 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12+POV:third
+1 -1 0 0 0
+0.3 -1 0 0 0 EXPECT:bodygroup:RunLeft
+1 0 -1 0 0
+0.3 0 -1 0 0 EXPECT:bodygroup:RunBack
+1 1 0 0 0
+0.3 1 0 0 0 EXPECT:bodygroup:RunRight
+0.5 0 0 0 0
+0.2 0 0 0 1
+0.15 0 0 0 0 EXPECT:bodygroup:Jump

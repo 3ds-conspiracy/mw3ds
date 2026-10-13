@@ -974,7 +974,8 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				}
 				for (auto& m : a.meshes)
 				{
-					if (((m.flags & BATCH_BLEND) != 0) != (pass == 1) || ((m.flags & ACTOR_MESH_WEAPON) && !a.showWeapon))
+					if (((m.flags & BATCH_BLEND) != 0) != (pass == 1) || ((m.flags & ACTOR_MESH_WEAPON) && !a.showWeapon)
+						|| !actorMeshShown(a, m))
 						continue;
 					if (far && m.numIndices < kActorDetailTris * 3)
 						continue;
@@ -1171,7 +1172,7 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 	for (int pass = 0; pass < 2; pass++)
 		for (auto& m : a.meshes)
 		{
-			if (((m.flags & BATCH_BLEND) != 0) != (pass == 1))
+			if (((m.flags & BATCH_BLEND) != 0) != (pass == 1) || !actorMeshShown(a, m))
 				continue;
 			C3D_Tex* tex = m.tex >= 0 && m.tex < (int)textures.size() ? textures[m.tex] : nullptr;
 			C3D_Mtx model;

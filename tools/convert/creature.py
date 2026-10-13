@@ -11,7 +11,8 @@ import struct
 
 import numpy as np
 
-from meshes import extract_shapes, nif_local, ref_matrix
+from meshes import extract_shapes, nif_local, ref_matrix, walk_nif
+from nif import Nif, NifError
 from npc import skeleton_pose, text_key_time
 from npcstats import best_shield, bind, combat_spells, combat_weapon
 
@@ -45,6 +46,37 @@ def creature_weapon(rec, db, skills):
     return weapon or "", ammo or "", best_shield(rec, db["objects"]) or ""
 
 
+_arch = None
+
+
+def creature_box(rec):
+    """The creature's collision box: OpenMW takes it from the model's "Bounding Box" node
+    (BulletNifLoader::findBoundingBox: the bounds' center and half extents, the node's own transform left out)
+    and rests the box's bottom on the ground under all of it (MovementSolver::traceDown sweeps the box down).
+    [center x, center y, half x, half y, lift] in model units, lift being how far the origin stands above the
+    box's bottom; None without such a node (OpenMW then builds a box up from the origin)."""
+    global _arch
+    model = rec.zstr("MODL")
+    if not model:
+        return None
+    if _arch is None:
+        from mwfiles import Archives
+        _arch = Archives()
+    path = "meshes\\" + model.lower()
+    if not _arch.exists(path):
+        return None
+    try:
+        nif = Nif(_arch.read(path))
+    except NifError:
+        return None
+    for b in nif.blocks:
+        box = b.get("bounds")
+        if box and b.get("name", "").lower() == "bounding box" and all(e > 0 for e in box["extents"]):
+            (cx, cy, cz), (ex, ey, ez) = box["center"], box["extents"]
+            return [round(float(v), 2) for v in (cx, cy, ex, ey, ez - cz)]
+    return None
+
+
 def creature_stats(rec, spel=None, db=None):
     """Actor fields for game.json (same shape as npcstats.npc_stats plus attack damage)."""
     d = rec.get("NPDT")
@@ -63,7 +95,40 @@ def creature_stats(rec, spel=None, db=None):
             "flee": aidt[3] if aidt else 0, "combat_spells": combat_spells(rec, spel) if spel else [],
             "services": 0, "weapon": weapon, "ammo": ammo, "shield": shield, "armor": 0.0, "travel": [],
             "wander": struct.unpack_from("<H", aiw)[0] if aiw else 0,
-            "creature": True, "attack": [a for a in attacks if a[1] > 0] or [[1, 3]]}
+            # (all three attacks, in order: Attack2 strikes with the second; [[1, 3]] for one with none)
+            "creature": True, "attack": attacks if any(a[1] > 0 for a in attacks) else [[1, 3]], "box": creature_box(rec)}
+
+
+def vis_keys(nif, block, parents):
+    """When a shape shows, from its own and its nodes' NiVisControllers (a Bonelord's robe and hood go at its death):
+    [(time, shown)] on the model's animation timeline, shown only while every one of them is on; None without any."""
+    tracks = []
+    i = block
+    while i is not None and i >= 0:
+        b = nif.get(i)
+        c = nif.get(b.get("controller", -1)) if b else None
+        while c:
+            if c["type"] == "NiVisController" and nif.get(c["data"]) and nif.get(c["data"])["keys"]:
+                tracks.append(nif.get(c["data"])["keys"])
+            c = nif.get(c.get("next_controller", -1))
+        i = parents.get(i)
+    if not tracks:
+        return None
+
+    def at(keys, t):
+        on = keys[0][1]
+        for kt, v in keys:
+            if kt > t:
+                break
+            on = v
+        return on
+    times = sorted({t for k in tracks for t, _ in k})
+    out = []
+    for t in times:
+        on = all(at(k, t) for k in tracks)
+        if not out or out[-1][1] != on:
+            out.append((round(float(t), 4), on))
+    return out
 
 
 class CreatureBuilder:
@@ -79,12 +144,29 @@ class CreatureBuilder:
         if nif is None:
             return [], None
         pose = skeleton_pose(nif, text_key_time(nif, "Idle: Start"))
-        shapes = extract_shapes(self.arch, nif, skeleton=pose)
+        # (with the parts its NiVisControllers show at times: they hide them the rest of the time, vis_keys)
+        shapes = extract_shapes(self.arch, nif, skeleton=pose, vis_hidden=True)
+        rest = {}
+        walk_nif(nif, lambda b, m, p: rest.setdefault(b["index"], m), True)
         parents = {}
         for i, b in enumerate(nif.blocks):
             for c in b.get("children", []):
                 parents[c] = i
         for s in shapes:
+            vis = vis_keys(nif, s.get("block", -1), parents)
+            if vis:
+                s["vis"] = vis
+            if "raw" not in s and s.get("block") is not None:
+                # A particle system (a Flame Atronach's fire): its crossed quads (meshes.particle_shape, placed at
+                # the emitter as the model holds it at rest) ride the node that emits them
+                ctrl = nif.get(nif.get(s["block"]).get("controller", -1))
+                emitter = nif.get(ctrl["emitter"]) if ctrl and "emitter" in ctrl else None
+                at = rest.get(ctrl["emitter"]) if emitter else None
+                if at is not None:
+                    inv = np.linalg.inv(at)
+                    s["raw"] = {"pos": np.asarray(s["pos"]) @ inv[:3, :3].T + inv[:3, 3], "node": np.identity(4)}
+                    s["bone"] = emitter["name"].lower()
+                continue
             if s["skinned"] or "raw" not in s:
                 continue
             # Rigid pieces ride the node they hang from; keep their own transform below it

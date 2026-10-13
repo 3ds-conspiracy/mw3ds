@@ -48,11 +48,23 @@ def nif_local(b):
 
 # ---- NIF -> shapes ----
 
-def walk_nif(nif, visit):
-    """Calls visit(block, world_matrix, properties) for every visible AV object."""
+def has_vis_controller(nif, b):
+    c = nif.get(b.get("controller", -1))
+    while c:
+        if c["type"] == "NiVisController":
+            return True
+        c = nif.get(c.get("next_controller", -1))
+    return False
+
+
+def walk_nif(nif, visit, vis_hidden=False):
+    """Calls visit(block, world_matrix, properties) for every visible AV object. vis_hidden: also those hidden at
+    rest whose NiVisController shows them at times (an animated actor plays them: a Flame Atronach's burning fists)."""
     def walk(idx, parent, props):
         b = nif.get(idx)
-        if b is None or b["type"] == "RootCollisionNode" or b.get("flags", 0) & 1:
+        if b is None or b["type"] == "RootCollisionNode":
+            return
+        if b.get("flags", 0) & 1 and not (vis_hidden and has_vis_controller(nif, b)):
             return
         m = parent @ nif_local(b)
         p = props + [nif.get(i) for i in b.get("properties", []) if nif.get(i)]
@@ -133,7 +145,7 @@ def skin_vertices(nif, inst, pos, nrm, skeleton):
     return out_p, out_n
 
 
-def extract_shapes(arch, nif, skeleton=None, bind_pose=False):
+def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False):
     """Flattens a NIF into shapes. Rigid shapes come out in the NIF's root space;
     skinned shapes are skipped unless `skeleton` (bone name -> posed matrix) is given,
     then they come out in skeleton space and are marked "skinned". `bind_pose` draws a skinned
@@ -142,7 +154,7 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False):
     shapes = []
 
     node_world = {}
-    walk_nif(nif, lambda b, m, p: node_world.setdefault(b["index"], m))
+    walk_nif(nif, lambda b, m, p: node_world.setdefault(b["index"], m), vis_hidden)
     if bind_pose and skeleton is None:
         skeleton = {nif.get(i)["name"].lower(): m for i, m in node_world.items() if nif.get(i)}
 
@@ -213,7 +225,7 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False):
             "raw": raw,
         })
 
-    walk_nif(nif, visit)
+    walk_nif(nif, visit, vis_hidden)
     return shapes
 
 
@@ -275,7 +287,7 @@ def particle_shape(arch, nif, b, props, node_world):
         "pos": pos, "nrm": np.tile([0.0, 0.0, 1.0], (n, 1)), "uv": np.array(uv, dtype=float),
         "vcol": np.tile(np.append(color[:3], 1.0), (n, 1)),
         "tris": np.array(tris, dtype=np.uint32), "tex": tex, "flags": flags, "skinned": False,
-        "alpha_ref": 0, "mat": None, "vcp": {"vertex_mode": 1, "lighting_mode": 0},
+        "alpha_ref": 0, "mat": None, "vcp": {"vertex_mode": 1, "lighting_mode": 0}, "block": b["index"], "name": b["name"],
     }
 
 
