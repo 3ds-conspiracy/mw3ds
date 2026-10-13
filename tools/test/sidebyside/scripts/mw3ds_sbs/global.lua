@@ -162,7 +162,9 @@ local function poseActor(p)
 	if s.face then
 		rot = util.transform.rotateZ(s.face)
 	end
-	a:teleport(a.cell, a.startingPosition, { rotation = rot, onGround = true })
+	-- (a flyer stays at the height Morrowind.esm gives it: onGround would drop it to the floor)
+	local flies = types.Creature.objectIsInstance(a) and types.Creature.record(a).canFly
+	a:teleport(a.cell, a.startingPosition, { rotation = rot, onGround = not flies })
 	a:sendEvent('MW3DS_SBS_Pose', { group = s.group, startKey = s.startKey, stopKey = s.stopKey, at = s.at or 0,
 		index = p.index })
 end

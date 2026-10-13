@@ -188,7 +188,8 @@
 4 0 0 0
 0.3 0 0 0 0 EXPECT:made:eq:@0
 0.3 0 0 0 0 EXPECT:madeeffect:75:2
-0.3 0 0 0 0 EXPECT:charge:made:eq:@0
+# (its charge kept through the save; a few seconds' recharge on top, fMagicItemRechargePerSecond)
+0.3 0 0 0 0 EXPECT:charge:made:ge:@0+EXPECT:charge:made:le:@0.6
 0.3 0 0 0 0 EXPECT:attr:strength:eq:@0
 0.3 0 0 0 0 EXPECT:effect:79:eq:@0
 0.3 0 0 0 0 SNAP:health
@@ -203,7 +204,8 @@
 0.3 0 0 0 0 GIVE:apparatus_a_mortar_01
 0.3 0 0 0 0 GIVE:ingred_saltrice_01
 0.3 0 0 0 0 GIVE:ingred_marshmerrow_01
-0.3 0 0 0 0 SETSKILL:alchemy:60
+# (Alchemy 90: a sure brew (at 100 it gains no progress); at 60 the factor 80 roll failed now and then, as the dice fell)
+0.3 0 0 0 0 SETSKILL:alchemy:90
 0.3 0 0 0 0 SNAP:brewed
 0.3 0 0 0 0 SNAP:skillprog:alchemy
 0.3 0 0 0 0 SNAP:count:ingred_saltrice_01

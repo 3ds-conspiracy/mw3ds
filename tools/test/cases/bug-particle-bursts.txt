@@ -1,0 +1,11 @@
+# A particle system has particles only while it emits and they live on (NiParticleSystemController's emit start and
+# stop): an ancestor ghost's sprays burst as it dies, so at its idle it shows no glowing streak (it did, a bright one,
+# against OpenMW's faint ghost); a Flame Atronach's body fire emits all its timeline and still burns
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Nerano_Ancestral_Tomb
+3 0 0 0
+0.5 0 0 0 0 POSE:ancestor_ghost:idle:0.3
+0.3 0 0 0 0 EXPECT:refadditive:ancestor_ghost:eq:0
+0.5 0 0 0 0 POSE:ancestor_ghost:death1:0.3
+0.3 0 0 0 0 EXPECT:refadditive:ancestor_ghost:ge:1

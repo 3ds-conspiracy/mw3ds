@@ -11,7 +11,7 @@ struct World;
 
 // What the player's arms do, taken from the first-person action (in OpenMW one character controller drives both
 // views): a blow drawn back, let go, or a spell cast
-enum BodyAction { BODY_NONE, BODY_WINDUP, BODY_STRIKE, BODY_CAST };
+enum BodyAction { BODY_NONE, BODY_WINDUP, BODY_STRIKE, BODY_CAST, BODY_DEATH };   // death: its group played once, held
 
 struct BodyAct
 {

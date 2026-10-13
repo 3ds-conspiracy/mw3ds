@@ -872,6 +872,12 @@
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_General
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Tel_Naga_General_Quarters
 0.5 0 0 0
+# on foot for the fight: Berengeval, an archer, backs away from a blade (OpenMW's combat move), and the float carried
+# the driver over him and the root wall beside it, out of reach on the other side. Still, now and then (1 fight in 40
+# in scratch runs) he backs up onto the roots and climbs them into a nook no chase finds its way out of (our actors
+# walk up any slope: no 46-degree limit yet)
+0.1 0 0 0 0 FLOAT:off
+0.5 0 0 0
 120 0 0 0 0 KILL:berengeval
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:berengeval

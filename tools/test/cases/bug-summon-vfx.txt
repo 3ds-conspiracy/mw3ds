@@ -1,0 +1,13 @@
+# A summoned creature arrives in a flash and leaves in one (OpenMW's summoning: VFX_Summon_Start on it as it appears,
+# VFX_Summon_End where it stood when the spell ends). Neither played: the scamp just stood there, then wasn't.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETMAGICKA:200
+0.3 0 0 0 0 ADDEFFECT:102:1:1:3:0
+0.3 0 0 0 0 MAKESPELL:shortscamp
+0.3 0 0 0 0 CAST:mw3ds_test_shortscamp
+3 0 0 0 0 UNTIL:vfxpiece:summon_start:ge:1
+0.1 0 0 0 0 EXPECT:vfxpiece:summon_start:ge:1
+6 0 0 0 0 UNTIL:vfxpiece:summon_end:ge:1
+0.1 0 0 0 0 EXPECT:vfxpiece:summon_end:ge:1

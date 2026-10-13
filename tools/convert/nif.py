@@ -141,7 +141,8 @@ def key_group(r, size):
 
 def time_controller(r, b):
     b["next_controller"] = r.ref()
-    r.skip(2 + 16)                 # flags, frequency, phase, start, stop
+    r.skip(2 + 8)                  # flags, frequency, phase
+    b["start_time"], b["stop_time"] = r.f32(), r.f32()
     b["target"] = r.ref()
 
 
@@ -330,7 +331,9 @@ def rd_particle_system_controller(r, b):
     time_controller(r, b)
     v = r.floats(16)   # speed, var, declination, var, planar angle, var, normal[3], color[4], size, emit start/stop
     b["speed"], b["declination"] = v[0], v[2]
+    b["speed_var"], b["declination_var"] = v[1], v[3]
     b["initial_color"], b["initial_size"] = v[9:13], v[13]
+    b["emit_start"], b["emit_stop"] = v[14], v[15]
     r.skip(1)                              # reset particle system
     b["birth_rate"], b["lifetime"] = r.f32(), r.f32()
     r.skip(4 + 1 + 1)                      # lifetime variation, use birth rate, spawn on death
@@ -493,7 +496,10 @@ def rd_lod_node(r, b):
 
 
 def rd_gravity(r, b):
-    particle_modifier(r, b); r.skip(4 + 4 + 4 + 12 + 12)
+    particle_modifier(r, b)
+    b["decay"], b["force"] = r.f32(), r.f32()
+    b["force_type"] = r.u32()               # 0 wind (along direction), 1 point (toward position)
+    b["position"], b["direction"] = r.floats(3), r.floats(3)
 
 
 def rd_grow_fade(r, b):

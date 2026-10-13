@@ -67,6 +67,8 @@ struct TestDriver
 	int backTries = 0;
 	int fightRef = -1;               // a walk held up by an attacker in the way: fighting it first
 	float fightTimer = 0.0f;
+	bool fightHold = false;          // the attack pressed last frame (kept so while someone peaceful is where the blow would land)
+	bool frontFight = false;         // fighting one who attacks us from in front of what we came to use
 	bool floodKeep = false;          // that route was to the next path point: the path is kept
 	int deadEntry = -1;              // a trial route to the goal's piece of a split grid: its point, walked to next
 	float deadGoal[3] = {};

@@ -66,6 +66,11 @@ static const char* summonCreature(int e)
 	return e == 134 ? "centurion_sphere_summon" : nullptr;
 }
 
+const char* summonCreatureId(int effect)
+{
+	return summonCreature(effect);
+}
+
 static const char* boundItem(int e)
 {
 	switch (e)
@@ -357,6 +362,7 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 		r.aiPackage = AIPKG_FOLLOW;
 		r.aiTarget = "player";
 		w.effects.push_back(a);
+		spawnVfx("vfx_summon_start", r.pos, 1.2f, a.ref, r.rot[2]);     // it arrives in a flash (OpenMW's summoning)
 		return;
 	}
 	// Bound items: in hand (or worn) until the spell ends, instead of what was there
@@ -863,7 +869,12 @@ void Session::endPlayerEffect(size_t i)
 	if (a.effect == EFF_DRAIN_FATIGUE)
 		s.fatigue = fminf(s.fatigueMax, s.fatigue + a.magnitude);
 	if (a.ref >= 0)
-		w.despawn(a.ref);              // the summoned creature goes back
+	{
+		// the summoned creature goes back, in a flash where it stood (OpenMW's VFX_Summon_End)
+		if (a.ref < (int)w.refs.size() && w.refs[a.ref].visible())
+			spawnVfx("vfx_summon_end", w.refs[a.ref].pos, 1.2f, -2, w.refs[a.ref].rot[2]);
+		w.despawn(a.ref);
+	}
 	if (!a.item.empty())
 	{
 		// The bound item vanishes; what it replaced comes back
@@ -1146,13 +1157,8 @@ void Session::beginCast(const SpellDef& sp, int school, bool animate)
 	playSound(-1, spellSound(sp, 0));
 	{
 		// The cast's visual is modelled around the caster's feet, its flames up the arms (OpenMW attaches it to the
-		// actor's own node: playSpellCastingEffects), and a self spell's hit wraps the body from there too
-		bool away = false;
-		for (auto& e : sp.effects)
-			away |= e.range != 0;
+		// actor's own node: playSpellCastingEffects); a self spell's hit wraps the body when it lands (releaseSpell)
 		castVfx(sp, -1);
-		if (!away)
-			spellVfx(sp, 1, w.player.feet, -1, w.player.yaw);
 	}
 	castDef = sp;
 	castSchool = school;
@@ -1248,6 +1254,13 @@ void Session::releaseSpell(const SpellDef& sp, int school)
 		anyTouch |= e.range == 1;
 	}
 	castCount++;
+	// Its self effects land now: their hit wraps the caster (OpenMW's inflict, playEffects)
+	for (auto& e : sp.effects)
+		if (e.range == 0)
+		{
+			spellVfx(sp, 1, w.player.feet, -1, w.player.yaw);
+			break;
+		}
 	// The same spell cast again ends the old copy (OpenMW's addToSpells): one magnitude, a fresh timer
 	for (size_t k = 0; k < w.effects.size();)
 		if (!sp.name.empty() && w.effects[k].source == sp.name)

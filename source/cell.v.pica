@@ -9,6 +9,12 @@
 .fvec tint                      ; colour scale: day and night outdoors (1 indoors)
 .fvec lightPos                  ; the light the player carries: eye-space xyz, w = 1 / radius squared
 .fvec lightColor                ; its colour (0 = none)
+; Two more, the same way: torches people near the player hold out (renderer.cpp rendererSetActorLights). Not in
+; skin.v.pica (its bone palette fills the registers): they light the world, not other people. Set again after each
+; skinned run (its palette overwrites these registers)
+.fvec lightPos2, lightColor2
+.fvec lightPos3, lightColor3
+.bool moreLights                ; on: the two above are added (off: skipped, no cost)
 
 ; Constants
 .constf consts(0.0, 1.0, 0.00392156862, 0.5)
@@ -70,6 +76,24 @@
 	max r6, consts.xxxx, r6
 	mul r7, lightColor, r6
 	add r4.xyz, r4, r7
+	ifu moreLights
+		add r5, -lightPos2, r1
+		mov r5.w, consts.x
+		dp3 r6, r5, r5
+		mul r6, lightPos2.wwww, r6
+		add r6, ones, -r6
+		max r6, consts.xxxx, r6
+		mul r7, lightColor2, r6
+		add r4.xyz, r4, r7
+		add r5, -lightPos3, r1
+		mov r5.w, consts.x
+		dp3 r6, r5, r5
+		mul r6, lightPos3.wwww, r6
+		add r6, ones, -r6
+		max r6, consts.xxxx, r6
+		mul r7, lightColor3, r6
+		add r4.xyz, r4, r7
+	.end
 	mov outclr, r4
 
 	end

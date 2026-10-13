@@ -11,6 +11,24 @@
 
 static const char* kCastNames[4] = { "Cast Once", "Cast When Strikes", "Cast When Used", "Constant Effect" };
 
+// The player's enchanted items that cast when used or when they strike win back fMagicItemRechargePerSecond of charge
+// each second (real time; skipped time counts as its real seconds), up to full (OpenMW's rechargeItems)
+void Session::rechargeItems(float seconds)
+{
+	if (seconds <= 0.0f)
+		return;
+	const float rate = w.game.gmstf("fmagicitemrechargepersecond", 0.05f);
+	for (auto& it : w.inventory)
+	{
+		if (it.charge < 0.0f)
+			continue;                        // (full: never used)
+		const SpellDef* en = w.enchantmentOf(it);
+		if (!en || (en->type != ENCH_USE && en->type != ENCH_STRIKE))
+			continue;
+		it.charge = fminf((float)en->charge, it.charge + rate * seconds);
+	}
+}
+
 // Which cast types an item takes: scrolls once; weapons on strike / when used / constant; armor and
 // clothing when used / constant (bit k = type k)
 static int castTypesFor(const Object* o)

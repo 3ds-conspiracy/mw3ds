@@ -1,0 +1,18 @@
+# People and two-legged creatures step aside in a melee fight (OpenMW's AiCombatStorage::startCombatMove: each
+# reaction, a quarter of the time within reach of the target's weapon, a 0.1 - 0.2 s side step to the left or right;
+# 0.2 s when the target is more than 45 degrees round). A skeleton warrior beside the player never moved but to strike
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0
+0.3 0 0 0 0 GIVE:iron%longsword
+0.3 0 0 0 0 EQUIP:iron%longsword
+0.3 0 0 0 0 PLACE:skeleton%warrior:120
+0.3 0 0 0 0 FACE:skeleton%warrior
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:skeleton%warrior:eq:1
+0.1 0 0 0 0 EXPECT:refsidesteps:skeleton%warrior:ge:2
+0.1 0 0 0 0 EXPECT:refdist:skeleton%warrior:lt:250
+0.3 0 0 0 0 FACE:skeleton%warrior+SHOT

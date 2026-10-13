@@ -213,7 +213,10 @@
 0.3 0 0 0 0 FILL
 0.3 0 0 0 0 ADDEFFECT:52:20:20:10:2
 0.3 0 0 0 0 MAKESPELL:frenzy
+# (a sure cast: the roll is not what this checks)
+0.3 0 0 0 0 SETSKILL:illusion:100
 0.3 0 0 0 0 CASTAT:mudcrab:mw3ds_test_frenzy
-40 0 0 0
+# (a mudcrab lands about one blow in eight: wait for one rather than a fixed while)
+90 0 0 0 0 UNTIL:skillprog:unarmored:gt:@0
 0.3 0 0 0 0 EXPECT:skillprog:unarmored:gt:@0
 1 0 0 0

@@ -1,0 +1,18 @@
+# An enchanted weapon's on-strike spell lands as a spell does (OpenMW's applyOnStrikeEnchantment casts it): its hit
+# shows and sounds on the one struck, and a paralysis freezes them where they stand, their animation held (OpenMW's
+# skipAnim), until it wears off. The steel jinkblade paralyzes for 10 seconds on touch.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 GIVE:steel%jinkblade
+0.3 0 0 0 0 BOOST:100+FILL
+1 0 0 0 0 PLACE:kagouti:120
+0.3 0 0 0 0 FACE:kagouti
+0.8 0 0 0 0 X
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:kagouti,45:gt:0+EXPECT:vfxcount:ge:1
+0.1 0 0 0 0 SNAP:refanimtime:kagouti
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refanimtime:kagouti:eq:@0

@@ -185,6 +185,10 @@ def actor_mesh(s, skeleton, tex, colors):
         mesh["bone"] = skeleton["index"].get(s.get("bone") or "", -1)
     if s.get("vis"):
         mesh["vis"] = s["vis"]
+    if s.get("hand"):
+        mesh["hand"] = s["hand"]
+    if s.get("glow"):
+        mesh["glow"] = s["glow"]
     if "morph" in raw and len(raw["morph"]["morphs"]) > 1:
         md = raw["morph"]
         marks = {text.strip().lower(): t for t, text in raw["text_keys"]}
@@ -206,7 +210,7 @@ def merge_meshes(meshes):
             out.append(m)
             continue
         key = (m["kind"], m["tex"], m.get("tex_name"), m["flags"], m["alpha_ref"], m["bone"] if m["kind"] == 0 else None,
-               tuple(m.get("vis") or ()))
+               tuple(m.get("vis") or ()), m.get("hand"), m.get("glow"))
         groups.setdefault(key, []).append(m)
     for key, ms in groups.items():
         if len(ms) == 1 or sum(len(m["pos"]) for m in ms) > 65000:
@@ -264,7 +268,8 @@ def write_skeleton_list(f, skeletons):
 
 def write_mesh(f, m, tex_name=None):
     """One actor mesh; in library files (tex_name given) the texture goes by name. The byte after kind: 1 morphs
-    follow, 2 visibility keys follow (after the morphs)."""
+    follow, 2 visibility keys follow (after the morphs), 4 a torch (held out at night), 8 a shield (put away then),
+    16 an enchanted glow's colour follows (u32 0xRRGGBB, last)."""
     n = len(m["pos"])
     if tex_name is None:
         f.write(struct.pack("<i", m["tex"]))
@@ -272,6 +277,7 @@ def write_mesh(f, m, tex_name=None):
         name = tex_name.encode("latin-1")
         f.write(struct.pack("<H", len(name)) + name)
     more = (1 if m.get("morph") and m["morph"]["morphs"] else 0) | (2 if m.get("vis") else 0)
+    more |= {"torch": 4, "shield": 8}.get(m.get("hand"), 0) | (16 if m.get("glow") else 0)
     f.write(struct.pack("<BBBBiII", m["flags"], m["alpha_ref"], m["kind"], more, m["bone"], n, len(m["tris"])))
     v = np.zeros(n, dtype=[("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4)])
     v["pos"], v["uv"], v["color"] = m["pos"], m["uv"], m["colors"]
@@ -298,6 +304,8 @@ def write_mesh(f, m, tex_name=None):
         f.write(struct.pack("<I", len(m["vis"])))
         for t, shown in m["vis"]:
             f.write(struct.pack("<2f", t, 1.0 if shown else 0.0))
+    if m.get("glow"):
+        f.write(struct.pack("<I", m["glow"]))
 
 
 def write_actor_library(path, meshes, tex_names):

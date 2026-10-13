@@ -1,0 +1,7 @@
+# Enchanted armour and clothing shimmer on NPCs too (OpenMW's addEnchantedGlow on every enchanted part), not only their
+# weapon: Ilen Faveran in Balmora's temple wears an enchanted Velothian helm and Shield of Light
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora,_Temple
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refglow:ilen%faveran:ge:2

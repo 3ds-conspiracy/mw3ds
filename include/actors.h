@@ -79,6 +79,7 @@ struct ActorMesh
 	std::vector<float> track;
 	std::vector<float> vis;            // shown (1) or hidden (0) from each time on: pairs (time, shown), empty: always shown
 	bool driven = false;               // the track runs on the actor's driveT (an arrow on its bow's ArrowBone) at its bone
+	u8 hand = 0;                       // 1 a torch (shown while the actor holds it out), 2 a shield (put away then)
 	bool billboard = false;
 	float radius = 0.0f;               // with a track: how far its vertices reach from its origin
 };
@@ -106,6 +107,7 @@ struct Actor
 	float rate = 1.0f;                 // animation speed: walk / run cycles follow how fast the actor moves
 	float lastXY[2] = { 1e9f, 1e9f };  // where it stood last frame
 	bool showWeapon = false;
+	bool torchOut = false;             // holds its torch out (night, out of a fight: World::actorTorchOut)
 	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
 	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline
 	bool frozen = false;               // held where it is in its group (the test driver's POSE): no time passes, no other group starts

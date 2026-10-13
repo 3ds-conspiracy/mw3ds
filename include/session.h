@@ -56,6 +56,8 @@ struct Word
 };
 
 // The running game: world state, dialogue, menus, and everything scripts call into.
+const char* summonCreatureId(int effect);    // the creature a summoning effect calls (magic.cpp), nullptr if none
+
 struct Session : ScriptHost
 {
 	Session()
@@ -96,6 +98,7 @@ struct Session : ScriptHost
 	bool weaponDrawn = false;         // weapon (or fists) out: the view model shows it
 	float drawTimer = 0.0f;           // > 0 while the weapon comes out; the wind-up waits for it
 	float sheatheTimer = 0.0f;        // seconds without fighting; the weapon goes away after a while
+	int heldLights = 0;               // people's torches lighting the world this frame (rendererSetActorLights)
 	int attackKind = 0;               // 0 chop, 1 slash, 2 thrust: picked when the wind-up starts
 	std::string bodyAttack;           // the third-person body's group for that blow (Attack1hSl ...)
 	float blockUntil = 0.0f;          // shield raised (view model)
@@ -107,6 +110,7 @@ struct Session : ScriptHost
 	// face preview (previewFace)
 	PlayerBody body;
 	bool thirdPerson = false, previewFace = false;
+	bool deathView = false;       // the view went to third person for the player's death (back in when they live again)
 	bool povTapped = false;       // the HUD's view button (GoldenEye layout: SELECT sneaks), taken as the next frame's SELECT
 	float thirdDistance = 0.0f;               // eased camera distance (walls pull it in)
 	float blowStrength = 1.0f;                // the last blow let go (0..1): the body's follow-through
@@ -266,11 +270,21 @@ struct Session : ScriptHost
 	float ambientTimer = 3.0f;                     // until the region's next ambient sound
 	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
 	// Animation::addEffect), or at a spot (an area burst, blood)
-	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; };   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
+	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; bool loop = false; std::string what; };   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
 	std::vector<Vfx> vfx;
+	// NPCs' and creatures' own summons (OpenMW's AI casts them in a fight): the caster, the creature, when it goes;
+	// a summon being cast (castSpell -2) waits in pendingSummon. Not saved: a load starts with none
+	struct NpcSummon { int caster, creature; float ends; };
+	std::vector<NpcSummon> npcSummons;
+	std::unordered_map<int, std::string> pendingSummon;
+	bool npcSummonSpell(int ri, std::string& spellId);   // a summon (none of its own about) or a ward it may cast now
+	void npcSummonRelease(int ri, const SpellDef& sp);   // the creature comes to fight the player; a ward lands on it
+	void npcSummonsUpdate();                             // they go when their time is up or the caster dies
 	static constexpr int kMaxVfx = 12;             // at once: past it a nearer one takes the farthest one's place
 	static constexpr float kVfxRange = 4096.0f;    // farther from the player none starts (many casters at once: their visuals are the cost)
-	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2, float yaw = 0.0f, float scale = 1.0f);
+	// loop: its animation repeats for all of life (a continuous effect's hit: OpenMW's ContinuousVfx)
+	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2, float yaw = 0.0f, float scale = 1.0f,
+		bool loop = false);
 	// kind 0 cast (every model its effects name), 1 hit, 2 area (each effect of that range with an area, at twice the
 	// area in feet: OpenMW's explodeSpell); range: the effects kind 2 bursts. An effect with none: the VFX_Default one
 	void spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow = -2, float yaw = 0.0f, int range = 2);
@@ -296,9 +310,14 @@ struct Session : ScriptHost
 	void allyFight(int ref, float dt);            // summoned creatures go for whoever fights the player
 	int guardFoe(int ref);                        // a guard's hostile creature in a fight nearby (-1: none)
 	bool npcStep(int ref, Cell& cell, float dirX, float dirY, float step);
+	// In reach in a fight: OpenMW's combat moves (a side step, an archer backing away). True when it moved this frame
+	bool combatMove(int ref, Cell& cell, float dist, float facing, bool ranged, const Object* foeWeapon, float dt);
 	void makeHostile(int ref);
 	void damageNpc(int ref, float dmg, bool fatigueOnly);
 	void actorGravity(float dt);
+	bool inSwing(int ref, float* dist = nullptr);         // a swing now would reach them
+	int swingTarget();                                   // who a swing now would strike (-1: nobody)
+	bool idleVoiceOk(int ref);                            // may say an Idle line now (not following or escorting)
 	bool npcSayTopic(int ref, const char* voiceTopic);   // a voiced line of Idle / Attack / Hit / Flee / Thief                  // people with nothing under them fall (and land hard)
 	void damagePlayer(float dmg, bool fatigueOnly);
 	void killNpc(int ref, bool byPlayer = true);   // byPlayer: murder when a peaceful NPC
@@ -570,6 +589,8 @@ struct Session : ScriptHost
 	bool castBusy() const { return castPending || castLock > 0.0f || castWait > 0.0f; }
 	void strikeEnchantment(int target, const Object* missile = nullptr);   // the player's weapon's (or arrow's) on-strike enchantment
 	void npcStrikeEnchantment(int attacker, const Object* item);           // an NPC's weapon or arrow on the player
+	void strikeEffects(const SpellDef& en, int target);                    // its hit visual and sound on the one struck (-1 the player)
+	void rechargeItems(float seconds);                                     // enchanted items win charge back over time
 	bool playerShieldsBurn(int attacker);   // the player's elemental shields on an attacker (false: it died)
 	void wearLauncher(const Projectile& p);  // a missed / wall-struck shot wears the bow by 1
 	bool npcShieldsBurn(int victim);        // an NPC's elemental shields on the player (false: the player died)

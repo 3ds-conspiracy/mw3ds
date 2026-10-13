@@ -1,0 +1,23 @@
+# A follower who says a line walks on as they say it, and says no idle lines at all (OpenMW: a voice line doesn't
+# stop an AI package; playIdleDialogue skips anyone following or escorting). Escorted to Pelagiad, Tarvyn Faren
+# stood still for each of his lines (his follow lines, his idle lines) and was left behind on the hills
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Pelagiad
+8 0 0 0
+0.3 0 0 0 0 TP:23600:-31814:1300:270
+3 0 0 0
+0.3 0 0 0 0 MOVETO:edras_oril
+0.3 0 0 0 0 FOLLOW:edras_oril
+0.3 0 0 0 0 TP:23600:-31814:1300:90
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:400
+0.1 0 0 0 0 EXPECT:refidlevoice:edras_oril:eq:0
+# (his Hello said first) the player walks ahead, stops, and he says a line as he comes after: he gains ground
+4 0 0 0
+4 0 1 0
+0.1 0 0 0 0 EXPECT:refdist:edras_oril:gt:300
+0.1 0 0 0 0 SNAP:refdist:edras_oril+SAYTOPIC:edras_oril:Idle
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:edras_oril:lt:@-60

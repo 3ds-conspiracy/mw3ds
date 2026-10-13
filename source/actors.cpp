@@ -305,9 +305,10 @@ void actorSkinPalette(const Actor& a, const ActorMesh& m, float* out)
 // One mesh after its texture: render state, buffers, skinning, morphs
 static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 {
-		u8 more = 0;           // 1 morphs follow, 2 visibility keys follow (tools/convert/actors.py write_mesh)
+		u8 more = 0;           // 1 morphs, 2 visibility keys follow; 4 a torch, 8 a shield; 16 a glow follows (actors.py write_mesh)
 		rd(f, m.flags); rd(f, m.alphaRef); rd(f, m.kind); rd(f, more);
 		m.hasMorph = more & 1;
+		m.hand = (more & 4) ? 1 : (more & 8) ? 2 : 0;
 		rd(f, m.bone);
 		rd(f, m.numVerts);
 		rd(f, m.numIndices);
@@ -379,6 +380,8 @@ static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 				return false;
 			fread(m.vis.data(), 4, nv * 2, f);
 		}
+		if (more & 16)
+			rd(f, m.glow);           // enchanted: shimmers in this colour
 	return true;
 }
 
@@ -395,6 +398,9 @@ std::string actorRandomGroup(const ActorSet& set, const Actor& a, const char* pr
 // before it, the first one before them all
 bool actorMeshShown(const Actor& a, const ActorMesh& m)
 {
+	// (the torch while it's held out, the shield while it isn't)
+	if ((m.hand == 1 && !a.torchOut) || (m.hand == 2 && a.torchOut))
+		return false;
 	if (m.vis.empty())
 		return true;
 	float on = m.vis[1];

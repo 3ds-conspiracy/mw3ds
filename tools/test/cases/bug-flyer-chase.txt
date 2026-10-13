@@ -1,0 +1,17 @@
+# A flying creature chases through the air (OpenMW moves an actor that can fly toward its target's height as well,
+# its pitch to the point; nothing drops it to the floor). A cliff racer in the air over the coast north of Seyda Neen went
+# for the player and stood still in the air: every step it took was a drop of more than a stair, refused
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 TP:-19100:-41200:1100:0
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:cliff%racer:gt:400
+0.3 0 0 0 0 HOSTILE:cliff%racer
+10 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:cliff%racer:eq:1
+0.1 0 0 0 0 EXPECT:refdist:cliff%racer:lt:250
+# still in the air (over the floor under it), not walking the ground
+0.1 0 0 0 0 EXPECT:refabovefeet:cliff%racer:gt:10
+0.3 0 0 0 0 FACE:cliff%racer+SHOT

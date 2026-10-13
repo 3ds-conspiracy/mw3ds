@@ -179,8 +179,10 @@ def npc_info(rec, db):
     # NPC_: 0x2 essential, 0x4 respawns; CREA: 0x2 respawns, 0x80 essential
     info["respawn"] = 1 if flags & (0x2 if rec.tag == "CREA" else 0x4) else 0
     info["essential"] = 1 if flags & (0x80 if rec.tag == "CREA" else 0x2) else 0
-    if rec.tag == "CREA" and flags & 0x30:
-        info["afloat"] = flags & 0x71                # 0x10 swims, 0x20 flies: not dropped to the floor (0x40 walks, 0x1 biped)
+    if rec.tag == "CREA" and flags & 0x31:
+        # 0x10 swims, 0x20 flies: not dropped to the floor; 0x40 walks; 0x1 biped (steps aside in a fight: OpenMW's
+        # isBipedal)
+        info["afloat"] = flags & 0x71
     if (flags >> 10) & 3:
         info["blood"] = (flags >> 10) & 3            # 1 skeleton (white), 2 metal (gold sparks); 0 red
     if rec.tag == "CREA" and aidt and len(aidt) >= 12:
@@ -245,9 +247,14 @@ def magic_effects(db):
 APPLIED_ONCE = set(range(0, 14)) | {17, 18, 19, 20, 21} | set(range(28, 37)) | set(range(39, 69)) | set(range(79, 86)) | {89}     | set(range(90, 100)) | {101} | set(range(102, 135)) | set(range(136, 143))
 
 
+# Effects whose hit visual repeats for as long as the effect lasts (OpenMW's ContinuousVfx, 0x20, from the same table):
+# the shields, Levitate, the elemental damages, Drain and Damage Health, Poison, Soultrap
+CONTINUOUS_VFX = {3, 4, 5, 6, 10, 14, 15, 16, 18, 23, 27, 58}
+
+
 def hardcoded_flags(k):
     """What the engine knows about an effect that its record doesn't: 0x4 no duration, 0x8 no magnitude,
-    0x10 harmful, 0x40 / 0x80 / 0x100 castable on self / touch / target."""
+    0x10 harmful, 0x20 its hit visual repeats while it lasts, 0x40 / 0x80 / 0x100 castable on self / touch / target."""
     no_magnitude = {0, 2, 39, 45, 46, 58, 60, 61, 62, 63, 69, 70, 71, 72, 73, 132, 133, 134} | set(range(102, 117))         | set(range(120, 132))
     no_duration = {12, 13, 57, 60, 61, 62, 63, 69, 70, 71, 72, 73}
     harmful = {7, 45, 46, 47, 48, 51, 52, 53, 54, 58, 135, 136} | set(range(14, 39)) | set(range(85, 90))
@@ -255,6 +262,7 @@ def hardcoded_flags(k):
     others_only = {12, 13, 44, 58, 101, 118, 119} | set(range(49, 57)) | set(range(85, 90))
     f = 0
     f |= 0x1000 if k in APPLIED_ONCE else 0
+    f |= 0x20 if k in CONTINUOUS_VFX else 0
     f |= 0x4 if k in no_duration else 0
     f |= 0x8 if k in no_magnitude else 0
     f |= 0x10 if k in harmful else 0

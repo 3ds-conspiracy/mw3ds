@@ -35,6 +35,10 @@ extern std::vector<SkyBillboard> g_skyBillboards;
 extern float g_starAlpha;                         // the star dome: 0 by day
 // The light the player carries (a torch): world position, radius (0: none), colour 0..1
 void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3]);
+// Torches people hold out near the player (up to kActorLights; the rest: none), lighting the world as the carried
+// light does: world position, radius, colour 0..1 each
+static const int kActorLights = 2;
+void rendererSetActorLights(int count, const float pos[][3], const float radius[], const float rgb[][3]);
 extern C3D_Tex* g_starTexture;
 // Enchanted items' shimmer: dataDir/art/magicitem/caust00..31.t3x, read once (without them a plain tint)
 void rendererLoadCaustics(const char* dataDir);

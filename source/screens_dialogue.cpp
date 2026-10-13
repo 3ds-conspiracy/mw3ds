@@ -819,6 +819,7 @@ bool Session::trainSkill(int k)
 	// Exactly one point, counted towards the next level like any increase
 	raiseSkill(k);
 	w.gameHour += 2.0f;
+	rechargeItems(2.0f * 3600.0f / w.timescale());
 	fade = 1.0f;
 	logf("training: skill %d for %d gold", k, price);
 	return true;
@@ -948,7 +949,11 @@ bool Session::travelGo(int sel)
 	// OpenMW: whole hours of the flat distance from the player, and only from outdoors
 	float dx = d.pos[0] - w.player.feet[0], dy = d.pos[1] - w.player.feet[1];
 	if (!w.cells[w.current].interior)
-		w.gameHour += (float)(int)(sqrtf(dx * dx + dy * dy) / w.game.gmstf("ftraveltimemult", 16000.0f));
+	{
+		float hours = (float)(int)(sqrtf(dx * dx + dy * dy) / w.game.gmstf("ftraveltimemult", 16000.0f));
+		w.gameHour += hours;
+		rechargeItems(hours * 3600.0f / w.timescale());
+	}
 	travelCell = dest;
 	memcpy(travelPos, d.pos, sizeof(travelPos));
 	travelYaw = d.rot[2];
@@ -987,6 +992,7 @@ void Session::goToJail()
 {
 	int days = w.bounty / 100 > 1 ? w.bounty / 100 : 1;
 	w.gameHour += 24.0f * days;
+	rechargeItems(24.0f * days * 3600.0f / w.timescale());
 	w.bounty = 0;
 	w.globals["pccrimelevel"] = 0.0f;
 	w.confiscateStolen();

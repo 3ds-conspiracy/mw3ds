@@ -1,0 +1,14 @@
+# NPCs hold their torch out when it's time for torches (OpenMW's updateEquippedLight / World::useTorches: outdoors at
+# night with nothing falling), in place of the shield, and put it away by day. A Redoran guard carries
+# torch_infinite_time: at 10 p.m. in clear weather it's in his hand, at noon it isn't.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald-ruhn
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:22
+1 0 0 0
+0.1 0 0 0 0 EXPECT:wtorches:eq:1+EXPECT:reftorch:redoran%guard%male:eq:1
+0.3 0 0 0 0 HOUR:12
+1 0 0 0
+0.1 0 0 0 0 EXPECT:wtorches:eq:0+EXPECT:reftorch:redoran%guard%male:eq:0

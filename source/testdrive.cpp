@@ -203,14 +203,14 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "reftorch" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece";
+		|| what == "wcolor" || what == "cellfog" || what == "texlow" || what == "regionchance" || what == "regionweather"
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece";
 }
 
 // "<a>,<b>" as two numbers
@@ -475,6 +475,13 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	if (what == "deletingsave") { v = s.deletingSave ? 1.0f : 0.0f; return true; }    // the Saves screen asks "Delete ...?"
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
+	if (what == "vfxpiece")           // vfxpiece:<text>: spell visuals showing now whose static's id has that text
+	{
+		v = 0.0f;
+		for (auto& x : s.vfx)
+			v += x.what.find(lower(arg)) != std::string::npos ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "vmammo")             // 1: an arrow or bolt sits in the first-person bow or crossbow
 	{
 		v = 0.0f;
@@ -963,6 +970,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		else if (what == "refpkg") v = r.aiPackage == AIPKG_IDLE ? -1.0f : (float)r.aiPackage;   // GetCurrentAIPackage
 		else if (what == "refpkgdone") v = r.aiDone ? 1.0f : 0.0f;                              // GetAIPackageDone
 		else if (what == "refknock") v = r.knockTimer;
+		else if (what == "refsidesteps") v = (float)r.sideSteps;     // side steps begun in a fight (OpenMW's combat moves)
+		else if (what == "refidlevoice") v = s.idleVoiceOk(ri) ? 1.0f : 0.0f;   // may say an idle line now
 		else if (what == "refsoultrap") v = r.soulTrapUntil > w.time ? 1.0f : 0.0f;
 		else if (what == "refally") v = r.ally ? 1.0f : 0.0f;
 		else if (what == "refdist") v = w.distanceToPlayer(ri);      // 100000: in another interior
@@ -990,12 +999,44 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			}
 			v = floorZ > -1e8f ? r.pos[2] + r.boxLift - floorZ : 99999.0f;
 		}
-		else if (what == "refhiddenparts")  // meshes of its model its visibility keys hide now (a dead Bonelord's robe)
+		else if (what == "refanimtime")     // where its animation is (seconds on its skeleton's timeline): frozen while paralyzed
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? a->time : -1.0f;
+		}
+		else if (what == "refglow")         // its meshes that shimmer (enchanted armour and clothing)
 		{
 			v = 0.0f;
 			if (const Actor* a = w.actorOf(ri))
 				for (const ActorMesh& m : a->meshes)
-					if (!actorMeshShown(*a, m))
+					v += m.glow ? 1.0f : 0.0f;
+		}
+		else if (what == "refshield")       // something on its Shield Bone shows now (its shield), 1; else 0
+		{
+			v = 0.0f;
+			if (const Actor* a = w.actorOf(ri))
+			{
+				const Skeleton& sk = actorSkeleton(*w.actorsOf(ri), a->skeleton);
+				for (const ActorMesh& m : a->meshes)
+					if (m.bone >= 0 && m.bone < (int)sk.bones.size() && strcasecmp(sk.bones[m.bone].name, "shield bone") == 0
+						&& m.hand != 1 && actorMeshShown(*a, m))
+						v = 1.0f;
+			}
+		}
+		else if (what == "reftorch")        // its torch shows now (held out at night), 1; else 0
+		{
+			v = 0.0f;
+			if (const Actor* a = w.actorOf(ri))
+				for (const ActorMesh& m : a->meshes)
+					if (m.hand == 1 && actorMeshShown(*a, m))
+						v = 1.0f;
+		}
+		else if (what == "refhiddenparts")  // solid meshes of its model its visibility keys hide now (a dead Bonelord's robe;
+		{                                   // not its glowing particle sprays, which show only while they burst)
+			v = 0.0f;
+			if (const Actor* a = w.actorOf(ri))
+				for (const ActorMesh& m : a->meshes)
+					if (!(m.flags & BATCH_ADDITIVE) && !actorMeshShown(*a, m))
 						v += 1.0f;
 		}
 		else if (what == "refadditive")     // glowing (additive) parts of its model showing now: flames, sparks
@@ -1082,6 +1123,22 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = w.weatherColour(k, ch);
 	}
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
+	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
+	else if (what == "cellfog") v = arg == "start" ? w.here().fogStart : w.here().fogEnd;    // <start|end>: this cell's fog distance (0: none)
+	else if (what == "texlow")      // <text>: the lowest point of this cell's batches drawn with a texture whose name has it
+	{
+		const Cell& c = w.here();
+		std::string want = lower(arg);
+		bool any = false;
+		for (const CellBatch& b : c.batches)
+			if (b.tex >= 0 && b.tex < (int)c.textureNames.size() && lower(c.textureNames[b.tex]).find(want) != std::string::npos)
+			{
+				v = any ? fminf(v, b.bmin[2]) : b.bmin[2];
+				any = true;
+			}
+		if (!any)
+			return false;
+	}
 	else if (what == "wwind") v = w.windNow;
 	else if (what == "wstorm") v = w.weatherStorm() ? 1.0f : 0.0f;
 	else if (what == "wprecip") v = w.weatherPrecip() ? 1.0f : 0.0f;
@@ -1641,6 +1698,38 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	// animation group at that point (0 its start key, 1 its stop key: OpenMW's startPoint), no AI, no head turning. For
 	// side-by-side screenshots with OpenMW (tools/test/sidebyside.py)
 	// POSE:<id>:off: let it go again (its AI, its animations)
+	if (verb == "BONES" && a.size() >= 2)
+	{
+		// BONES:<id>: each bone of that actor where its pose has it now (skeleton space), logged
+		int ri = findRef(s, a[1]);
+		Actor* ac = ri >= 0 && w.active(ri) ? w.actorOf(ri) : nullptr;
+		if (!ac)
+			return fail(a[1] + " not loaded");
+		const Skeleton& sk = actorSkeleton(*w.actorsOf(ri), ac->skeleton);
+		logf("test: %s bones in %s at %.3f", a[1].c_str(), sk.groups[ac->group].name, ac->time);
+		for (size_t b = 0; b < sk.bones.size() && (b + 1) * 12 <= ac->pose.size(); b++)
+		{
+			const float* m = &ac->pose[b * 12];
+			logf("test:   %-28s %8.1f %8.1f %8.1f  scale %.2f", sk.bones[b].name, m[3], m[7], m[11],
+				sqrtf(m[0] * m[0] + m[4] * m[4] + m[8] * m[8]));
+		}
+		// and its meshes: bone, flags, shown, where the first vertex is drawn (world)
+		for (size_t k = 0; k < ac->meshes.size(); k++)
+		{
+			const ActorMesh& me = ac->meshes[k];
+			C3D_Mtx mm;
+			actorMeshMatrix(*ac, me, &mm);
+			float p[3] = { me.src.size() >= 3 ? me.src[0] : 0.0f, me.src.size() >= 3 ? me.src[1] : 0.0f, me.src.size() >= 3 ? me.src[2] : 0.0f };
+			float wx = mm.r[0].x * p[0] + mm.r[0].y * p[1] + mm.r[0].z * p[2] + mm.r[0].w;
+			float wy = mm.r[1].x * p[0] + mm.r[1].y * p[1] + mm.r[1].z * p[2] + mm.r[1].w;
+			float wz = mm.r[2].x * p[0] + mm.r[2].y * p[1] + mm.r[2].z * p[2] + mm.r[2].w;
+			logf("test:   mesh %2u bone %-24s flags %02x %s %s verts %lu at %.0f %.0f %.0f", (unsigned)k,
+				me.bone >= 0 && me.bone < (int)sk.bones.size() ? sk.bones[me.bone].name : "(root)", me.flags,
+				actorMeshShown(*ac, me) ? "shown" : "hidden", me.palBone.empty() ? "rigid" : "skinned",
+				(unsigned long)me.numVerts, wx, wy, wz);
+		}
+		return true;
+	}
 	if (verb == "POSE" && a.size() == 3 && a[2] == "off")
 	{
 		int ri = findRef(s, a[1]);
@@ -1654,6 +1743,23 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	if (verb == "POSE" && a.size() >= 4)
 	{
 		int ri = findRef(s, a[1]);
+		// (it goes back to where it was placed: of several with the id, the one placed nearest the player, as the
+		// side-by-side tool's OpenMW half picks it, not the one that has wandered or swum nearest)
+		if (ri >= 0 && ri != s.testPlaced)
+		{
+			const std::string want = w.refs[ri].idLower;
+			const float* pf = w.player.feet;
+			float best = 1e30f;
+			w.forLoadedRefs([&](int i) {
+				const Ref& c = w.refs[i];
+				float dx = c.start[0] - pf[0], dy = c.start[1] - pf[1], dz = c.start[2] - pf[2], d = dx * dx + dy * dy + dz * dz;
+				if (c.idLower == want && !c.dead && w.active(i) && d < best)
+				{
+					best = d;
+					ri = i;
+				}
+			});
+		}
 		Actor* ac = ri >= 0 && w.active(ri) ? w.actorOf(ri) : nullptr;
 		ActorSet* set = ri >= 0 ? w.actorsOf(ri) : nullptr;
 		if (!ac || !set)
@@ -1989,6 +2095,36 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		return true;
 	}
 	// SETHEALTH:<fraction>: the player's Health, a fraction of the maximum
+	if (verb == "HOSTILE" && a.size() >= 2)
+	{
+		// HOSTILE:<id>: that actor goes for the player, as if provoked (its AI's combat with the player)
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || w.refs[ri].actor < 0)
+			return fail(a[1] + " not loaded");
+		w.refs[ri].aggressor = true;
+		s.makeHostile(ri);
+		return true;
+	}
+	if (verb == "SAYTOPIC" && a.size() >= 3)
+	{
+		// SAYTOPIC:<id>:<voice topic>: that actor says a line of Idle / Hello / Attack / Hit / Flee / Thief now
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || w.refs[ri].actor < 0)
+			return fail(a[1] + " not loaded");
+		if (!s.npcSayTopic(ri, a[2].c_str()))
+			return fail(a[1] + " has no " + a[2] + " line");
+		return true;
+	}
+	if (verb == "SLAY" && a.size() >= 2)
+	{
+		// SLAY:<id>: that actor dies where it is (its death as from any blow, nobody's murder)
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || w.refs[ri].actor < 0)
+			return fail(a[1] + " not loaded");
+		w.refs[ri].health = 0.0f;
+		s.killNpc(ri, false);
+		return true;
+	}
 	if (verb == "SETHEALTH" && a.size() >= 2)
 	{
 		w.stats.health = w.stats.healthMax * (float)atof(a[1].c_str());
@@ -4104,7 +4240,9 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	}
 	// v2 kit: the crosshair on it already, its prompt showing ("A: Open ..."): pressed, however far the walk thinks it has
 	// to go (a canton door across its walkway: the walk to its middle stuck 140 off, the prompt up all along)
-	if (s.kitV2() && kind == ACTIVATE && !earlyTried && dist > want && s.target == ref && !s.menuOpen() && aimsAt(s, ref))
+	// (not a door with the escort far behind: the wait for them at the door below comes first; Dandsa was left in Abernanit)
+	if (s.kitV2() && kind == ACTIVATE && !earlyTried && dist > want && s.target == ref && !s.menuOpen() && aimsAt(s, ref)
+		&& !(r.hasDest && escortLagging(s, escort, 800.0f)))
 	{
 		down |= KEY_A;
 		earlyTried = true;
@@ -4206,8 +4344,26 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			const Ref& f = w.refs[fightRef];
 			float fx = f.pos[0] - p.feet[0], fy = f.pos[1] - p.feet[1], fd = hypotf(fx, fy);
 			fightTimer += dt;
-			if (f.dead || !f.visible() || f.ai != AI_COMBAT || f.duelFoe >= 0 || fd > 600.0f || fightTimer > 20.0f)
+			// v2 kit: someone peaceful the blow would reach (an escort stepping in front): the blow held wound up, not let go,
+			// stepping aside for a clear swing as a player would. Sinnammu Mirpal died to a blow meant for a dreugh
+			auto friendInReach = [&]() {
+				bool found = false;
+				if (s.kitV2())
+					for (int i : w.loadedActors)
+						found |= i != fightRef && w.refs[i].ai != AI_COMBAT && s.inSwing(i);
+				return found;
+			};
+			bool fightOver = f.dead || !f.visible() || f.ai != AI_COMBAT || f.duelFoe >= 0 || fd > 600.0f || fightTimer > 20.0f;
+			if (fightOver && fightHold && friendInReach())
 			{
+				// over with the blow still held: turned away from them before it goes
+				p.yaw += 3.14159f;
+				in.attack = true;
+				return true;
+			}
+			if (fightOver)
+			{
+				fightHold = false;
 				logf("drive: %s %s after %.1f s: on to %s", f.id.c_str(), f.dead ? "dead" : "no longer in the way", fightTimer, id.c_str());
 				fightRef = -1;
 				progressTimer = 0.0f;
@@ -4219,6 +4375,13 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			p.pitch = atan2f((f.boxMin[2] + f.boxMax[2]) * 0.5f - playerEyeZ(p), fmaxf(fd, 1.0f));
 			in.moveY = fd > 90.0f ? 1.0f : 0.0f;
 			in.attack = fmodf(fightTimer, 0.7f) < 0.4f;
+			// (judged facing the way just set: the blow goes from there)
+			if (friendInReach())
+			{
+				in.attack = fightHold;      // held stays held (let go now it would reach them), unpressed stays so
+				in.moveX = 1.0f;
+			}
+			fightHold = in.attack;
 			return true;
 		}
 		// a route by trial steps (a dive, a run of jumps): leg by leg
@@ -4876,6 +5039,27 @@ char why[160];
 			return true;
 		}
 	}
+	// v2 kit: one attacking us in the crosshair, between us and it (a skeleton before Dagoth Vemyn's body): fought off
+	// first, as a player would, as on a walk
+	if (s.testLegit && s.kitV2() && s.target >= 0 && s.target != ref)
+	{
+		const Ref& t = w.refs[s.target];
+		if (!t.dead && !t.ally && t.ai == AI_COMBAT && t.duelFoe < 0)
+		{
+			if (!frontFight)
+			{
+				logf("drive: %s attacks us in front of %s: fighting it", t.id.c_str(), id.c_str());
+				fightTimer = 0.0f;
+			}
+			handItem(s, true);
+			fightTimer += dt;
+			in.attack = fmodf(fightTimer, 0.7f) < 0.4f;
+			frontFight = true;
+			lookTimer = 0.0f;
+			return true;
+		}
+	}
+	frontFight = false;
 	lookTimer += dt;
 	if (lookTimer > 0.3f && !aimsAt(s, ref))
 	{

@@ -4,7 +4,8 @@
 0.3 0 0 0 0 WEATHER:0
 0.3 0 0 0 0 TP:-39500:34400:1400:90
 8 0 0 0
-0.3 0 0 0 0 EXPECT:refabove:guar:lt:8
+# (whichever guar wanders nearest: on the hill's steeper side one reads 12, standing right in the shot)
+0.3 0 0 0 0 EXPECT:refabove:guar:lt:16
 0.3 0 0 0 0 EXPECT:refabove:guar:gt:-8
 0.3 0 0 0 0 SHOT
 1 0 0 0

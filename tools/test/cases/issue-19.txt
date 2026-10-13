@@ -10,9 +10,11 @@
 0.1 0 0 0 0 EXPECT:vfxheight:eq:0
 0.2 0 0 0 0 SHOT
 3.5 0 0 0 0
-0.1 0 0 0 0 EXPECT:vfxcount:eq:0
+# (a Shield's bubble lasts its 30 seconds: OpenMW's ContinuousVfx; cast again, it is one bubble, not two)
+0.1 0 0 0 0 EXPECT:vfxcount:eq:1
 0.1 0 0 0 0 CAST:mw3ds_test_shieldme
-0.1 0 0 0 0 EXPECT:vfxcount:ge:1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:vfxcount:eq:1
 0.5 0 1 0 0
 0.1 0 0 0 0 EXPECT:vfxdist:le:8
 0.1 0 0 0 0 SHOT

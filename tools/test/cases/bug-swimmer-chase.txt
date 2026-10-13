@@ -1,0 +1,17 @@
+# A creature that swims chases through the water, up and down too (OpenMW's canActorMoveByZAxis: swimmers in water
+# and flyers move on their pitch toward the target). A slaughterfish on the sea floor 300 under a swimming player
+# came no nearer than straight below them and never bit: every step kept it on the floor
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:160546:54950:-300:0
+2 0 0 0
+1 0 0 0 0 PLACE:slaughterfish_small:500
+0.1 0 0 0 0 ENABLE:slaughterfish_small
+0.1 0 0 0 0 EXPECT:refwater:slaughterfish_small:le:-200
+0.3 0 0 0 0 HOSTILE:slaughterfish_small
+8 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:slaughterfish_small:eq:1
+0.1 0 0 0 0 EXPECT:refdist:slaughterfish_small:lt:150
+# in the water still: under the surface, off the floor
+0.1 0 0 0 0 EXPECT:refwater:slaughterfish_small:lt:0
+0.1 0 0 0 0 EXPECT:refabovefeet:slaughterfish_small:gt:10

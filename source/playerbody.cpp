@@ -229,7 +229,7 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 		bool letGo = acting == BODY_WINDUP && act.action == BODY_STRIKE && actGroup == act.group && a.mode == ANIM_HOLD;
 		if (letGo)
 			a.mode = ANIM_ONCE;
-		else if (!actorPlay(set, a, act.group, act.action == BODY_WINDUP ? ANIM_HOLD : ANIM_ONCE))
+		else if (!actorPlay(set, a, act.group, act.action == BODY_WINDUP || act.action == BODY_DEATH ? ANIM_HOLD : ANIM_ONCE))
 			logf("playerbody: no %s group", act.group);
 		else
 		{
@@ -251,9 +251,9 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 	}
 	else if (act.action == BODY_NONE)
 		acting = BODY_NONE;                     // a blow or cast already going plays out (ANIM_ONCE)
-	bool busy = a.mode == ANIM_ONCE || (a.mode == ANIM_HOLD && acting == BODY_WINDUP);
+	bool busy = a.mode == ANIM_ONCE || (a.mode == ANIM_HOLD && (acting == BODY_WINDUP || acting == BODY_DEATH));
 	float step = dt;
-	if (busy && a.mode == ANIM_HOLD)
+	if (busy && a.mode == ANIM_HOLD && acting == BODY_WINDUP)
 	{
 		// Drawn back: at the weapon's speed toward the hold point the charge sets, held there
 		float lo, hi;

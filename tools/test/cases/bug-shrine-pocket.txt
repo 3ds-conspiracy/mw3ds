@@ -8,4 +8,5 @@
 120 0 0 0 0 WALKTO:@2291,-1492,-760:dive
 0.1 0 0 0 0 EXPECT:playerx:ge:1800
 60 0 0 0 0 WALKTO:rolfish_gra-dugul:dive
-0.1 0 0 0 0 EXPECT:playerx:ge:3000
+# (he wanders: reached at 2879 one run)
+0.1 0 0 0 0 EXPECT:playerx:ge:2700

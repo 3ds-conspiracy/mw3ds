@@ -1,0 +1,18 @@
+# An archer backs away from a melee fighter close to it (OpenMW's AiCombatStorage::startCombatMove: a ranged fighter
+# whose target holds no ranged weapon and stands within 1.5 x that weapon's reach walks backwards, while nothing is
+# behind it and no drop), then shoots. A skeleton archer put 150 in front of a player with a longsword stood there
+# and never shot (it holds fire that close)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0
+0.3 0 0 0 0 GIVE:iron%longsword
+0.3 0 0 0 0 EQUIP:iron%longsword
+0.3 0 0 0 0 PLACE:skeleton%archer:150
+0.3 0 0 0 0 FACE:skeleton%archer
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:skeleton%archer:eq:1
+0.1 0 0 0 0 EXPECT:refdist:skeleton%archer:ge:220
+0.3 0 0 0 0 FACE:skeleton%archer+SHOT

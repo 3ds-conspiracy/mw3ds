@@ -1,0 +1,11 @@
+# A continuous effect's hit visual repeats for as long as it lasts (OpenMW's ContinuousVfx, set in code for the
+# shields, Levitate, elemental damage ...): a Shield spell's bubble is still on the caster 5 seconds on, when it played
+# once and was gone in a second. A self spell's hit lands with the spell, at the release, not as the cast begins.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETMAGICKA:200
+0.3 0 0 0 0 SPELL:shield
+0.3 0 0 0 0 CAST:shield
+5 0 0 0
+0.1 0 0 0 0 EXPECT:vfxcount:ge:1

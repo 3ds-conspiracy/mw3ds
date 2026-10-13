@@ -1,0 +1,21 @@
+# A follower swims after the player: from the beach south of Seyda Neen out to sea and back, Fargoth keeps within
+# follow distance, at swim depth (coverage for the side-by-side checklist: followers swimming)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 TP:-11539:-75891:200:200
+3 0 0 0
+0.3 0 0 0 0 MOVETO:fargoth
+0.3 0 0 0 0 FOLLOW:fargoth
+2 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-11800,-76400,-50
+60 0 0 0 0 WALKTO:@-12100,-77000,-50
+60 0 0 0 0 WALKTO:@-12600,-77600,-50
+0.1 0 0 0 0 EXPECT:swimming:eq:1
+30 0 0 0 0 UNTIL:refdist:fargoth:lt:450
+0.1 0 0 0 0 EXPECT:refdist:fargoth:lt:450
+0.1 0 0 0 0 EXPECT:refwater:fargoth:le:0
+60 0 0 0 0 WALKTO:@-11539,-75891,40
+20 0 0 0 0 UNTIL:refdist:fargoth:lt:450
+0.1 0 0 0 0 EXPECT:refdist:fargoth:lt:450

@@ -1044,8 +1044,15 @@ bool World::sunOn() const
 	return !(h >= c.sunset + c.sunsetDur || h <= c.sunrise);
 }
 
+// Time for torches (OpenMW's World::useTorches): outdoors at night with nothing falling; indoors where the cell's
+// ambient light is dim (its channels add up to 201 or less) and resting there is allowed
 bool World::useTorches() const
 {
+	if (current >= 0 && cells[current].interior)
+	{
+		const LoadedCell* l = cells[current].live;
+		return l && !cells[current].noSleep && l->cell.ambient[0] + l->cell.ambient[1] + l->cell.ambient[2] <= 201;
+	}
 	const WeatherClock& c = game.weatherClock;
 	float h = fmodf(gameHour, 24.0f);
 	return (h < c.sunrise || h > c.sunset + c.sunsetDur) && !weatherPrecip();
@@ -3013,7 +3020,7 @@ void World::update(float dt)
 	updateWeather(dt);
 	// Pose only actors near enough to be drawn (the towns have many more than the office)
 	// and pose the far ones less often (their re-skinning is rarer too, renderer.cpp)
-	float reach = here().fogEnd > 0.0f ? fminf(here().fogEnd * drawScale, kActorViewDistance) + 200.0f : 4200.0f;
+	float reach = here().fogEnd > 0.0f && !(here().flags & CELL_INTERIOR) ? fminf(here().fogEnd * drawScale, kActorViewDistance) + 200.0f : 4200.0f;
 	static u32 frame = 0;
 	frame++;
 	for (LoadedCell* l : loaded)
@@ -3024,6 +3031,9 @@ void World::update(float dt)
 			float dx = a.place[3] - player.feet[0], dy = a.place[7] - player.feet[1];
 			float d2 = dx * dx + dy * dy;
 			if (a.ref < 0 || !refs[a.ref].visible() || d2 >= reach * reach)
+				continue;
+			// (paralyzed, alive: it stands frozen mid-move, its animation's time held: OpenMW's skipAnim)
+			if (!refs[a.ref].dead && !refs[a.ref].effects.empty() && actorEffect(a.ref, 45) > 0.0f)
 				continue;
 			a.pendingDt += dt;
 			if ((frame + k) % actorPoseEvery(d2) == 0)

@@ -1,0 +1,25 @@
+# An escorted NPC follows the player down off a ledge (uber-imperial-legion): leaving Abernanit with Dandsa, she
+# stood at the top of a drop (1278 -1869 268) for good while the player waited below, and the uber passed only
+# when she happened to fall
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 JOURNAL:IL_Damsel:10
+0.3 0 0 0 0 GOTO:Abernanit
+3 0 0 0
+150 0 0 0 0 ACTIVATE:dandsa
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+10 0 0 0 0 UNTIL:journal:IL_Damsel:ge:50
+0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+5 0 0 0 0 UNTIL:following:dandsa
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 ESCORT:dandsa
+150 0 0 0 0 DOORTO:outside
+3 0 0 0
+18 0 0 0 0 UNTIL:journal:IL_Damsel:ge:70
+0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:70

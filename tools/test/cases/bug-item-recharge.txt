@@ -1,0 +1,10 @@
+# Enchanted items that cast when used or when they strike win their charge back over time (OpenMW's rechargeItems:
+# fMagicItemRechargePerSecond, 0.05 a second, real time), and resting counts its hours: a weapon run dry worked again
+# only after a soul gem. The fireblade (50 charge) drained to 2: 20 seconds on it holds 3; an hour's wait adds 3600 /
+# timescale (30) x 0.05 = 6 more.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:fireblade
+0.3 0 0 0 0 SETITEMCHARGE:fireblade:2
+20 0 0 0
+0.1 0 0 0 0 EXPECT:charge:fireblade:ge:2.9+EXPECT:charge:fireblade:le:3.2

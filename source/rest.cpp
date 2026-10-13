@@ -297,6 +297,7 @@ void Session::restHour()
 	if (s.fatigue < s.fatigueMax)
 		s.fatigue = fminf(s.fatigueMax, s.fatigue + 3600.0f * perSecond);
 	updateEffects(3600.0f / w.timescale());
+	rechargeItems(3600.0f / w.timescale());
 	restDone++;
 }
 

@@ -1,0 +1,10 @@
+# A particle spray under wind gravity pointing down falls (OpenMW's GravityAffector: force x 1.6 per second along the
+# direction): a Daedric censer's green mist pours from the censer to the floor (Addadshashanammu's shrine: censers
+# at z 13471 and 13518, floor about 13180). It was drawn rising above the censer, out of sight
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Addadshashanammu,_Shrine
+3 0 0 0
+0.3 0 0 0 0 EXPECT:texlow:tx_greenglow:lt:13300
+0.3 0 0 0 0 EXPECT:texlow:tx_greenglow:gt:13000
+0.3 0 0 0 0 SHOT

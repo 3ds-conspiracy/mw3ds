@@ -22,12 +22,17 @@ static DVLB_s* s_dvlb;
 static shaderProgram_s s_program;
 static int s_uProjection, s_uModelView, s_uUvOffset, s_uFogVec, s_uPosOffset, s_uPosScale, s_uUvScale, s_uTint = -1;
 static int s_uLightPos = -1, s_uLightColor = -1;
+static int s_uMoreLightPos[kActorLights] = { -1, -1 }, s_uMoreLightColor[kActorLights] = { -1, -1 }, s_bMoreLights = -1;
 // GPU skinning (skin.v.pica): its own program, the same uniforms in the same registers plus the bone palette
 static DVLB_s* s_skinDvlb;
 static shaderProgram_s s_skinProgram;
 static int s_uBones = -1;
 static bool s_skinReady = false;
 static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
+static int s_moreLights = 0;
+static float s_moreLight[kActorLights][3], s_moreRadius[kActorLights], s_moreRgb[kActorLights][3];
+static C3D_Mtx s_lightView;               // the view the lights were last put in (set again after a skinned run)
+static bool s_lightViewOn = false;
 // Day and night outdoors (World::daylight): tint on the baked light, the sky's, and the fog colour
 static float s_land[3] = { 1, 1, 1 }, s_skyTint[3] = { 1, 1, 1 };
 static u32 s_dayFog = 0;
@@ -65,6 +70,11 @@ void rendererInit()
 	s_uTint = shaderInstanceGetUniformLocation(s_program.vertexShader, "tint");
 	s_uLightPos = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos");
 	s_uLightColor = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor");
+	s_uMoreLightPos[0] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos2");
+	s_uMoreLightColor[0] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor2");
+	s_uMoreLightPos[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos3");
+	s_uMoreLightColor[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor3");
+	s_bMoreLights = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLights");
 	s_skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
 	shaderProgramInit(&s_skinProgram);
 	shaderProgramSetVsh(&s_skinProgram, &s_skinDvlb->DVLE[0]);
@@ -169,22 +179,51 @@ void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3
 	memcpy(s_lightRgb, rgb, sizeof(s_lightRgb));
 }
 
-// The carried light in this view's eye space (off: no colour)
-static void setLight(const C3D_Mtx* view)
+void rendererSetActorLights(int count, const float pos[][3], const float radius[], const float rgb[][3])
 {
-	if (s_uLightColor < 0 || s_uLightPos < 0)
-		return;
-	if (!view || s_lightRadius <= 0.0f)
+	s_moreLights = count < kActorLights ? count : kActorLights;
+	for (int i = 0; i < s_moreLights; i++)
 	{
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLightColor, 0, 0, 0, 0);
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLightPos, 0, 0, 0, 0);
+		memcpy(s_moreLight[i], pos[i], sizeof(s_moreLight[i]));
+		s_moreRadius[i] = radius[i];
+		memcpy(s_moreRgb[i], rgb[i], sizeof(s_moreRgb[i]));
+	}
+}
+
+// One light in this view's eye space: position (w = 1 / radius squared) and colour (off: no colour)
+static void putLight(int uPos, int uColor, const C3D_Mtx* view, const float pos[3], float radius, const float rgb[3])
+{
+	if (!view || radius <= 0.0f)
+	{
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, uColor, 0, 0, 0, 0);
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, uPos, 0, 0, 0, 0);
 		return;
 	}
 	float e[3];
 	for (int r = 0; r < 3; r++)
-		e[r] = view->r[r].x * s_light[0] + view->r[r].y * s_light[1] + view->r[r].z * s_light[2] + view->r[r].w;
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLightPos, e[0], e[1], e[2], 1.0f / (s_lightRadius * s_lightRadius));
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLightColor, s_lightRgb[0], s_lightRgb[1], s_lightRgb[2], 0.0f);
+		e[r] = view->r[r].x * pos[0] + view->r[r].y * pos[1] + view->r[r].z * pos[2] + view->r[r].w;
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, uPos, e[0], e[1], e[2], 1.0f / (radius * radius));
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, uColor, rgb[0], rgb[1], rgb[2], 0.0f);
+}
+
+// The carried light and people's torches in this view's eye space (none: no view). The torches sit in registers
+// skin.v.pica's palette uses: drawSkinQueue puts them back
+static void setLight(const C3D_Mtx* view)
+{
+	if (s_uLightColor < 0 || s_uLightPos < 0)
+		return;
+	putLight(s_uLightPos, s_uLightColor, view, s_light, s_lightRadius, s_lightRgb);
+	s_lightViewOn = view != nullptr;
+	if (view)
+		s_lightView = *view;
+	if (s_bMoreLights < 0)
+		return;
+	bool more = view && s_moreLights > 0;
+	C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLights, more);
+	if (more)
+		for (int i = 0; i < kActorLights; i++)
+			putLight(s_uMoreLightPos[i], s_uMoreLightColor[i], view, s_moreLight[i], i < s_moreLights ? s_moreRadius[i] : 0.0f,
+				s_moreRgb[i]);
 }
 
 static void setUvOffset(float u, float v)
@@ -373,6 +412,26 @@ float rendererWaterScroll()
 	return kWaterScroll;
 }
 
+// An enchanted actor mesh shimmers: its colour added over the lit texture in the free combiner stage, pulsing (no
+// second draw); glowStage(0) puts the stage back
+static void glowStage(u32 glow)
+{
+	if (!glow)
+	{
+		C3D_TexEnvInit(C3D_GetTexEnv(2));
+		return;
+	}
+	float k = 0.30f + 0.12f * sinf(osGetTime() * 0.004f);
+	u32 r = (u32)(((glow >> 16) & 255) * k), g = (u32)(((glow >> 8) & 255) * k), b = (u32)((glow & 255) * k);
+	C3D_TexEnv* env = C3D_GetTexEnv(2);
+	C3D_TexEnvInit(env);
+	C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS, GPU_CONSTANT);
+	C3D_TexEnvFunc(env, C3D_RGB, GPU_ADD);
+	C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS);
+	C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
+	C3D_TexEnvColor(env, 0xFF000000 | (b << 16) | (g << 8) | r);
+}
+
 static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 {
 	if (s_last.valid && s_last.tex == tex && s_last.flags == b.flags && s_last.alphaRef == b.alphaRef
@@ -558,12 +617,17 @@ static int drawSkinQueue(float time)
 		C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 		BufInfo_Init(bufInfo);
 		BufInfo_Add(bufInfo, m.verts, 24, 5, 0x43210);
+		if (m.glow)
+			glowStage(m.glow);
 		C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
+		if (m.glow)
+			glowStage(0);
 		draws++;
 	}
 	s_skinQueue.clear();
 	C3D_BindProgram(&s_program);
 	s_formatValid = false;
+	setLight(s_lightViewOn ? &s_lightView : nullptr);     // (the palette wrote over the torches' registers)
 	return draws;
 }
 
@@ -937,7 +1001,8 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		frame++;
 	u64 actorStart = svcGetSystemTick();
 	// (an Old 3DS draws people and creatures to 4000 outdoors: each is a re-skin and a dozen draws)
-	float maxDist = fog ? fminf(fogEnd, g_profile.actorViewLimit > 0.0f ? g_profile.actorViewLimit : kActorViewDistance) : 4000.0f;
+	float maxDist = fog && !(here.flags & CELL_INTERIOR)
+		? fminf(fogEnd, g_profile.actorViewLimit > 0.0f ? g_profile.actorViewLimit : kActorViewDistance) : 4000.0f;
 	float detailDist = kActorDetailDistance * g_profile.actorDetailScale;
 	for (int pass = 0; pass < 2 && (g_renderParts & RENDER_ACTORS); pass++)
 	{
@@ -994,7 +1059,11 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					else
 						setModelView(placeMv);
 					CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+					if (m.glow)
+						glowStage(m.glow);         // (enchanted armour and clothing)
 					drawBatch(l->cell, b, DRAW_WORLD, time);
+					if (m.glow)
+						glowStage(0);
 					draws++;
 					// their weapon, enchanted, shimmers
 					const Ref& ar = w.refs[a.ref];

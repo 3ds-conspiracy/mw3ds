@@ -277,6 +277,13 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 	memcpy(cell.ambient, h.ambient, 4);
 	memcpy(cell.fog, h.fog, 4);
 	cell.fogDensity = h.fogDensity;
+	// Indoors the cell's fog density sets how near its fog colour closes in (OpenMW: viewing distance x (1 - density)
+	// to the viewing distance; density 0, none). Shurdan-Raplay's red haze and the shrines' green-grey come from it
+	if ((cell.flags & CELL_INTERIOR) && cell.fogEnd <= 0.0f && cell.fogDensity != 0.0f)
+	{
+		cell.fogStart = kInteriorFogView * (1.0f - cell.fogDensity);
+		cell.fogEnd = kInteriorFogView;
+	}
 
 	u32 numTextures = 0;
 	fread(&numTextures, 4, 1, f);

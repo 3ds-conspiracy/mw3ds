@@ -73,7 +73,8 @@
 0.1 0 0 0 0 EXPECT:refsoultrap:rat_telvanni_unique_2:eq:1
 60 0 0 0 0 KILL:rat_telvanni_unique_2
 2 0 0 0
-0.1 0 0 0 0 EXPECT:charge:made:eq:0
+# (spent; the seconds since win a little back, fMagicItemRechargePerSecond)
+0.1 0 0 0 0 EXPECT:charge:made:lt:1
 0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:rat_telvanni_unique_2
 0.1 0 0 0 0 EXPECT:count:sc_fphyggisgemfeeder:eq:0
 # 5. Recharged from the second rat's soul, Enchant fortified first: the gem goes, the claymore has charge again (the

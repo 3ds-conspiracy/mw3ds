@@ -8,8 +8,9 @@
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ENHANCEV2
-# (the kit's ring resists common disease 100: a Weakness to Common Disease over it, so the first bite passes it on)
-0.3 0 0 0 0 ACTIVE:32:1000
+# (the kit's ring resists common disease 100: a Weakness to Common Disease over it, so the first bite passes it on:
+# fDiseaseXferChance 2.5 x 100 x (1 - (100 - 4100) / 100) = 10250 of 10000; 1000 left it 25% a bite)
+0.3 0 0 0 0 ACTIVE:32:4100
 0.3 0 0 0 0 SPELL:mark
 0.3 0 0 0 0 SPELL:recall
 0.3 0 0 0 0 GIVE:Gold_001:2000

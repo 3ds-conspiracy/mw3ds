@@ -454,6 +454,7 @@ class FirstPerson:
         vfx = {}
         names = [(r.zstr(t) or "").lower() for r in read_records_mgef(self.db) for t in ("CVFX", "BVFX", "HVFX", "AVFX")]
         names += ["vfx_defaultcast", "vfx_defaultbolt", "vfx_defaulthit", "vfx_defaultarea"]
+        names += ["vfx_summon_start", "vfx_summon_end"]      # a summoned creature arriving and leaving (OpenMW)
         for sid in names:
             rec = self.db["objects"].get(sid)
             if sid and sid not in vfx and rec is not None and rec.zstr("MODL"):

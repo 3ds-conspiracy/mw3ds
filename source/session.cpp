@@ -243,7 +243,9 @@ void Session::viewCamera(RenderCamera& cam)
 	float head[3] = { p.feet[0], p.feet[1], p.feet[2] + (previewFace ? 118.0f : 120.0f) };
 	float want = previewFace ? 70.0f : 220.0f;
 	float dir = previewFace ? 1.0f : -1.0f;       // the preview stands in front, facing back
-	float cp = cosf(p.pitch), sp = sinf(p.pitch);
+	// (dead: from behind and above, looking down at the body where it fell)
+	const float pitch = playerDead && deathView ? -0.6f : p.pitch;
+	float cp = cosf(pitch), sp = sinf(pitch);
 	float to[3] = { head[0] + dir * fx * cp * want, head[1] + dir * fy * cp * want, head[2] - sp * want };
 	// walls between the head and the camera pull it in
 	float best = 1.0f;
@@ -262,6 +264,8 @@ void Session::viewCamera(RenderCamera& cam)
 		cam.yaw = p.yaw + 3.14159265f;
 		cam.pitch = 0.0f;
 	}
+	else if (playerDead && deathView)
+		cam.pitch = pitch;
 }
 
 void Session::giveItems(const std::vector<std::pair<int, std::string>>& items)
@@ -1172,6 +1176,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	actorGravity(dt);
 	MARK("effects");
 	updateEffects(dt);
+	rechargeItems(dt);
 	castUpdate(dt);
 	// (a cast, like a blow, plays out before the next: OpenMW has one spellcast animation at a time)
 	if (in.cast && !menu && w.controlsEnabled && !playerDead && w.magicEnabled && vm.action != VM_CAST && vm.action != VM_FOLLOW
@@ -1295,6 +1300,59 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		float at[3] = { w.player.feet[0] + sinf(w.player.yaw) * 20.0f, w.player.feet[1] + cosf(w.player.yaw) * 20.0f,
 			w.player.feet[2] + 100.0f };
 		rendererSetCarriedLight(at, radius, rgb);
+	}
+	{
+		// People holding a torch out light their surroundings as the player's does (Morrowind and OpenMW light the
+		// world with a carried light's own radius and colour): the nearest kActorLights of them to the player, the
+		// light at the left hand. The light is the first carryable one they have (the torch their model holds)
+		struct Held { float d; float pos[3]; float radius; float rgb[3]; };
+		Held best[kActorLights];
+		int n = 0;
+		w.forLoadedActors([&](int i) {
+			const Ref& r = w.refs[i];
+			const Actor* a = r.dead || !r.visible() ? nullptr : w.actorOf(i);
+			if (!a || !a->torchOut)
+				return;
+			bool holds = false;
+			for (const ActorMesh& m : a->meshes)
+				holds |= m.hand == 1;
+			float d = holds ? w.distanceToPlayer(i) : 1e9f;
+			if (d > 4000.0f || (n == kActorLights && d >= best[n - 1].d))
+				return;
+			const Object* npc = w.game.object(r.id);
+			const Object* light = nullptr;
+			for (size_t k = 0; npc && !light && k < npc->items.size(); k++)
+				if (const Object* o = w.game.object(npc->items[k].second))
+					if (o->type == "LIGH" && o->lightRadius > 0 && (o->flags & 2))     // (LHDT 0x2: can be carried)
+						light = o;
+			if (!light)
+				return;
+			Held h;
+			h.d = d;
+			float fx = sinf(r.rot[2]), fy = cosf(r.rot[2]);
+			h.pos[0] = r.pos[0] + fx * 20.0f - fy * 20.0f;
+			h.pos[1] = r.pos[1] + fy * 20.0f + fx * 20.0f;
+			h.pos[2] = r.pos[2] + 100.0f;
+			h.radius = (float)light->lightRadius;
+			for (int k = 0; k < 3; k++)
+				h.rgb[k] = light->lightColor[k] / 255.0f * 0.8f;
+			int at = n < kActorLights ? n++ : n - 1;
+			while (at > 0 && best[at - 1].d > d)
+			{
+				best[at] = best[at - 1];
+				at--;
+			}
+			best[at] = h;
+		});
+		float pos[kActorLights][3], radius[kActorLights], rgb[kActorLights][3];
+		for (int k = 0; k < n; k++)
+		{
+			memcpy(pos[k], best[k].pos, sizeof(pos[k]));
+			radius[k] = best[k].radius;
+			memcpy(rgb[k], best[k].rgb, sizeof(rgb[k]));
+		}
+		heldLights = n;
+		rendererSetActorLights(n, pos, radius, rgb);
 	}
 	// spell visuals age and go
 	// A hit visual is attached to its target's own node (OpenMW: Animation::addEffect), so it goes where the target goes

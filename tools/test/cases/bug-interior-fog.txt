@@ -1,0 +1,14 @@
+# Interiors have their fog (OpenMW's FogManager: from viewing distance 7168 x (1 - the cell's fog density) to 7168, in
+# the cell's fog colour): the Census and Excise Office (density 0.75) fogs from 1792; Shurdan-Raplay Egg Mine's red haze
+# (density 1.2) starts behind the eye, at -1434. Before, interiors had no fog at all
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cellfog:end:eq:7168
+0.1 0 0 0 0 EXPECT:cellfog:start:ge:1791+EXPECT:cellfog:start:le:1793
+0.3 0 0 0 0 GOTO:Shurdan-Raplay_Egg_Mine
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cellfog:end:eq:7168
+0.1 0 0 0 0 EXPECT:cellfog:start:ge:-1435+EXPECT:cellfog:start:le:-1433
+0.3 0 0 0 0 SHOT

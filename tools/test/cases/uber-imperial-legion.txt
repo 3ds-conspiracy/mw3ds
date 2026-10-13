@@ -1008,6 +1008,9 @@
 0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:50
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
+# where she can see us: she starts to follow only on seeing the player (OpenMW's AiFollow), and from where the talk
+# ended something stood between her eyes and the player's (crosshair on her, no follow)
+30 0 0 0 0 WALKTO:@-1497,-4317,419
 5 0 0 0 0 UNTIL:following:dandsa
 0.3 0 0 0 0 ESCORT:dandsa
 150 0 0 0 0 DOORTO:outside

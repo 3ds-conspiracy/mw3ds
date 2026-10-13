@@ -1,0 +1,11 @@
+# NPCs put a ward on themselves in a fight (OpenMW's AI rates a ward it hasn't got on): Ajira in Balmora's Guild of
+# Mages knows Summon Ancestral Ghost and Spell Absorption (Fifth Barrier is beyond her magicka). Turned on the
+# player, she summons her ghost and puts Spell Absorption (67) on. Before, the AI cast only harmful spells and heals
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.3 0 0 0 0 HOSTILE:ajira
+60 0 0 0 0 UNTIL:refeffect:ajira,67:gt:0
+0.1 0 0 0 0 EXPECT:refeffect:ajira,67:gt:0

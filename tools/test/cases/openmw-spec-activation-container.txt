@@ -22,6 +22,8 @@
 0.3 0 0 0 0 GOD:0
 0.3 0 0 0 0 GOTO:Bensamsi
 3 0 0 0
+# (the cave's people out of the way: without god mode its dreamers hit the player between the two health snaps)
+0.3 0 0 0 0 HIDEACTORS:20000
 0.3 0 0 0 0 SNAP:health
 60 0 0 0 0 ACTIVATE:chest_small_01_gold_50
 3 0 0 0

@@ -63,6 +63,12 @@ struct Ref
 	bool hasDest = false, destEnd = false, destUnconverted = false;
 	Atom destCell;
 	float chaseStill = 0.0f, chaseWindow = 0.0f, chaseAnchor[2] = {};   // chasing: seconds without getting anywhere
+	// In reach in a fight (OpenMW's combat moves): next look in, a side step (-1 left, 1 right) and its time left,
+	// backing away (a ranged fighter from a melee one); side steps begun (for tests)
+	float combatReact = 0.0f, sideTimer = 0.0f;
+	s8 sideStep = 0;
+	bool backingUp = false;
+	int sideSteps = 0;
 	bool destHasGrid = false;     // destination is outdoors: the exterior grid cell it lands in
 	int destGrid[2] = {};
 	float destPos[3], destRot[3];

@@ -142,9 +142,15 @@ def combat_weapon(rec, objects, skills):
     return melee, None
 
 
+# Summonings (102-116, 134) and the wards an actor casts on itself in a fight (OpenMW's spellpriority): the shields,
+# Sanctuary, Spell Absorption, Reflect, Fortify Attribute / Health / Fatigue / Attack
+SUMMON_EFFECTS = set(range(102, 117)) | {134}
+WARD_EFFECTS = {3, 4, 5, 6, 42, 67, 68, 79, 80, 82, 117}
+
+
 def combat_spells(rec, spel):
     """Spells from the actor's NPCS list that its combat AI casts: harmful ones at a target or by
-    touch, and self-healing."""
+    touch, self-healing, summonings and wards on itself."""
     out = []
     for t, d in rec.subs:
         if t != "NPCS":
@@ -156,7 +162,8 @@ def combat_spells(rec, spel):
         effects = [struct.unpack_from("<hbbiiiii", e) for tt, e in sp.subs if tt == "ENAM"]
         harm = any(e[0] in HARM_EFFECTS and e[3] in (1, 2) for e in effects)
         heal = any(e[0] in HEAL_EFFECTS and e[3] == 0 for e in effects)
-        if harm or heal:
+        self_cast = any(e[0] in SUMMON_EFFECTS or (e[0] in WARD_EFFECTS and e[3] == 0) for e in effects)
+        if harm or heal or self_cast:
             out.append(sid)
     return out
 

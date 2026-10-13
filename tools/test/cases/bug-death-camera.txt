@@ -1,0 +1,8 @@
+# The player dies: the view goes outside to see the body fall and lie there (OpenMW's useDeathCamera switches to
+# third person; the body plays its death and holds it). It stayed in first person, looking on from where the eyes were.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SETHEALTH:0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bodygroup:Death
+3 0 0 0
+0.1 0 0 0 0 EXPECT:bodygroup:Death

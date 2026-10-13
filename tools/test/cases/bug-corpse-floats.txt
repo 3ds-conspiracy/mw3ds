@@ -1,0 +1,13 @@
+# A corpse in water floats up to the surface (OpenMW's CharacterController raises the dead in water): a slaughterfish
+# killed on the sea floor stayed down there
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:160546:54950:-300:0
+2 0 0 0
+1 0 0 0 0 PLACE:slaughterfish_small:150
+0.1 0 0 0 0 ENABLE:slaughterfish_small
+0.3 0 0 0 0 EXPECT:refwater:slaughterfish_small:le:-150
+0.5 0 0 0 0 SLAY:slaughterfish_small
+0.1 0 0 0 0 EXPECT:dead:slaughterfish_small
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refwater:slaughterfish_small:ge:-60

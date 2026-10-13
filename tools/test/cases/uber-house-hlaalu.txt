@@ -857,7 +857,9 @@
 90 0 0 0 0 WALKTO:@-768,-64256,376
 4 0 0 0
 30 0 0 0 0 WALKTO:@-635,-64140,375
-4 0 0 0
+# (waits for him here: catching up from behind the rock to the south he cut the corner and stood on its edge over the
+# gully, a drop the follower's dead-end ledge rule refuses)
+8 0 0 0
 30 0 0 0 0 WALKTO:@-300,-64000,380
 6 0 0 0
 30 0 0 0 0 WALKTO:@-300,-63000,380
@@ -3392,6 +3394,9 @@
 1 0 0 0
 0.3 0 0 0 0 SAVE:uber-house-hlaalu-kudanat
 # (v2: the driver's pickup; FACE and A from v1's spot missed when the walk stopped a little short of it)
+# (from the side it can be seen from: from where Nalur Indrano's fight ends it is hidden, and the spot round it the
+# driver finds is a few units either side of one where the crosshair just reaches it)
+30 0 0 0 0 WALKTO:@1016,3748,-521
 60 0 0 0 0 PICKUP:key_kudanatslaves_01
 0.1 0 0 0 0 EXPECT:item:key_kudanatslaves_01:ge:1
 60 0 0 0 0 ACTIVATE:ra'sava

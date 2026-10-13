@@ -22,7 +22,7 @@ PART_BONES = [
     "Left Ankle", "Right Knee", "Left Knee", "Right Upper Leg", "Left Upper Leg",
     "Right Clavicle", "Left Clavicle", "Weapon Bone", "Tail",
 ]
-SLOT_HEAD, SLOT_HAIR, SLOT_WEAPON = 0, 1, 25
+SLOT_HEAD, SLOT_HAIR, SLOT_SHIELD, SLOT_WEAPON = 0, 1, 10, 25
 
 # BODY record part type -> slots it fills for skin parts
 SKIN_SLOTS = {2: [2], 3: [3], 4: [4], 5: [6, 7], 6: [8, 9], 7: [11, 12], 8: [13, 14],
@@ -121,6 +121,29 @@ def item_parts(rec):
     return parts
 
 
+_glows = None
+
+
+def enchant_glow(rec):
+    """The colour an enchanted item glows in (0xRRGGBB, its enchantment's first effect's colour, as the game's
+    GameData::enchantGlow), 0 when it isn't enchanted."""
+    global _glows
+    ench = rec.zstr("ENAM") if rec is not None else None
+    if not ench:
+        return 0
+    if _glows is None:
+        from mwfiles import DATA_FILES, read_records
+        rgb, first = {}, {}
+        for r in read_records(DATA_FILES / "Morrowind.esm", {"MGEF", "ENCH"}):
+            if r.tag == "MGEF":
+                c = struct.unpack_from("<iii", r.get("MEDT"), 12)
+                rgb[struct.unpack("<i", r.get("INDX"))[0]] = (min(255, c[0]) << 16) | (min(255, c[1]) << 8) | min(255, c[2])
+            elif r.get("ENAM"):
+                first[r.id.lower()] = struct.unpack_from("<h", r.get("ENAM"))[0]
+        _glows = {k: rgb.get(e, 0) for k, e in first.items()}
+    return _glows.get(ench.lower(), 0)
+
+
 class NpcBuilder:
     def __init__(self, arch, objects, races, bodies, db=None):
         self.arch, self.objects, self.races, self.bodies = arch, objects, races, bodies
@@ -141,6 +164,7 @@ class NpcBuilder:
 
     def parts(self, npc, race_id, female):
         parts = [None] * len(PART_BONES)
+        self.part_items = {}            # slot -> the item record that dresses it (its enchantment's glow)
         # Own sex first, then (women only) male parts for what is still missing, as in OpenMW's
         # getBodyParts: the female Argonian has no forearm part
         for sex in ([1, 0] if female else [0]):
@@ -174,9 +198,11 @@ class NpcBuilder:
             for rec in layer:
                 for slot in {CLOT_ROBE: ROBE_HIDES, CLOT_SKIRT: SKIRT_HIDES}.get(clothing_type(rec), []):
                     parts[slot] = None
+                    self.part_items.pop(slot, None)
                 for slot, male, fem in item_parts(rec):
                     if slot < len(parts):
                         parts[slot] = fem if female and fem else male   # no part id = slot hidden
+                        self.part_items[slot] = rec
         return parts
 
     def build(self, npc, ref):
@@ -199,6 +225,7 @@ class NpcBuilder:
         for slot, pid in enumerate(self.parts(npc, race.id.lower(), female)):
             if pid is None or slot == SLOT_WEAPON:
                 continue
+            first = len(shapes)
             body = self.objects.get(pid.lower())
             model = body.zstr("MODL") if body else None
             nif = self.nif("meshes\\" + model) if model else None
@@ -225,6 +252,32 @@ class NpcBuilder:
                     if mirror:
                         s["tris"] = s["tris"].reshape(-1, 3)[:, [0, 2, 1]].ravel()
                 shapes.append(s)
+            if slot == SLOT_SHIELD:
+                for s in shapes[first:]:
+                    s["hand"] = "shield"          # put away while their torch is out
+            glow = enchant_glow(self.part_items.get(slot))
+            if glow:
+                for s in shapes[first:]:
+                    s["glow"] = glow              # enchanted: it shimmers in its enchantment's colour
+
+        # A torch they carry rides the shield bone, held out at night instead of the shield (OpenMW's
+        # updateEquippedLight); its fire and smoke sprays (particles) sit where the model puts them
+        tbone = bones.get("shield bone")
+        for _, item in npc_items(npc):
+            lrec = self.objects.get(item.lower())
+            if lrec is None or lrec.tag != "LIGH" or not lrec.get("LHDT") or not struct.unpack_from("<I", lrec.get("LHDT"), 20)[0] & 2:
+                continue
+            tnif = self.nif("meshes\\" + lrec.zstr("MODL")) if lrec.zstr("MODL") and tbone is not None else None
+            if tnif is None:
+                continue
+            for s in extract_shapes(self.arch, tnif, vis_hidden=True):
+                if "raw" not in s:
+                    s["raw"] = {"pos": np.asarray(s["pos"]), "node": np.identity(4)}
+                s["bone"], s["mirror"], s["hand"] = "shield bone", False, "torch"
+                s["pos"] = s["pos"] @ tbone[:3, :3].T + tbone[:3, 3]
+                s["nrm"] = s["nrm"] @ tbone[:3, :3].T
+                shapes.append(s)
+            break
 
         # Their best weapon rides the weapon bone; the 3DS shows it only while they fight
         wid = npc_stats(npc, self.db)["weapon"] if self.db else None

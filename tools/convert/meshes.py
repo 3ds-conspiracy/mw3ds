@@ -246,6 +246,21 @@ def particle_color(nif, ctrl):
     return np.array(ctrl["initial_color"])
 
 
+def particle_fall(nif, ctrl, m):
+    """How far (root space, units) wind gravity pulls a particle down over its lifetime: 0 when it doesn't."""
+    if m is None:
+        return 0.0
+    mod = nif.get(ctrl.get("particle_modifier", -1))
+    while mod:
+        if mod["type"] == "NiGravity" and mod["force_type"] == 0:
+            d = m[:3, :3] @ np.array(mod["direction"], dtype=float)
+            n = np.linalg.norm(d)
+            if n > 1e-6:
+                return max(-d[2] / n, 0.0) * 0.5 * mod["force"] * 1.6 * ctrl["lifetime"] ** 2
+        mod = nif.get(mod.get("next_modifier", -1))
+    return 0.0
+
+
 def particle_shape(arch, nif, b, props, node_world):
     """Approximates a particle emitter (candle / torch flame) as three crossed vertical quads
     at the emitter, sized from the particle settings, drawn unlit with the particles' blending."""
@@ -258,7 +273,19 @@ def particle_shape(arch, nif, b, props, node_world):
         return None
     size = max(ctrl["initial_size"], 1.0)
     rise = ctrl["speed"] * ctrl["lifetime"]
-    half_w, height = size, 2 * size + 0.5 * rise
+    half_w, bottom, height = size, -size * 0.5, 2 * size + 0.5 * rise
+    fall = particle_fall(nif, ctrl, node_world.get(b["index"]))
+    if fall > 2 * size:
+        # Wind gravity pulling the spray down (OpenMW's GravityAffector: force x 1.6 per second, along the direction
+        # in the particle node's frame): the quads cover its arc, up at the emitter's speed and down to where the
+        # gravity has it by the end of its life (censers' mist pouring to the floor, fountains, waterfall spray)
+        t, v = ctrl["lifetime"], ctrl["speed"] * math.cos(ctrl["declination"])
+        accel = 2 * fall / (t * t)
+        top = v * v / (2 * accel) if 0 < v < accel * t else max(v * t - fall, 0.0)
+        bottom, height = min(v * t - fall, 0.0) - size * 0.5, top + size
+        # and as wide as the emitter throws it sideways (declination spread: past 90 degrees, every way)
+        spread = ctrl.get("declination_var", 0.0)
+        half_w = size + ctrl["speed"] * t * (1.0 if spread >= math.pi / 2 else math.sin(spread))
     color = particle_color(nif, ctrl)
 
     pos, uv, tris = [], [], []
@@ -266,7 +293,7 @@ def particle_shape(arch, nif, b, props, node_world):
         a = k * math.pi / 3
         dx, dy = math.cos(a) * half_w, math.sin(a) * half_w
         base = len(pos)
-        pos += [(-dx, -dy, -size * 0.5), (dx, dy, -size * 0.5), (dx, dy, height), (-dx, -dy, height)]
+        pos += [(-dx, -dy, bottom), (dx, dy, bottom), (dx, dy, height), (-dx, -dy, height)]
         uv += [(0, 1), (1, 1), (1, 0), (0, 0)]
         tris += [base, base + 1, base + 2, base, base + 2, base + 3]
     pos = np.array(pos, dtype=float)

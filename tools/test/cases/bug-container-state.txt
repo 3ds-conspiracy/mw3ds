@@ -23,7 +23,7 @@
 0.3 0 0 0 0 SETITEMCHARGE:silver_flameblade:7
 0.1 0 0 0 0 EXPECT:itemhealth:chitin_dagger:eq:5
 0.1 0 0 0 0 EXPECT:charge:silver_flameblade:ge:6.9
-0.1 0 0 0 0 EXPECT:charge:silver_flameblade:le:7.1
+0.1 0 0 0 0 EXPECT:charge:silver_flameblade:le:7.8
 60 0 0 0 0 PUT:Com_Chest_11_alvur:misc_soulgem_grand
 2 0 0 0
 60 0 0 0 0 PUT:Com_Chest_11_alvur:chitin_dagger
@@ -50,5 +50,5 @@
 0.1 0 0 0 0 EXPECT:soul:misc_soulgem_grand:scamp_summon
 0.1 0 0 0 0 EXPECT:itemhealth:chitin_dagger:eq:5
 0.1 0 0 0 0 EXPECT:charge:silver_flameblade:ge:6.9
-0.1 0 0 0 0 EXPECT:charge:silver_flameblade:le:7.1
+0.1 0 0 0 0 EXPECT:charge:silver_flameblade:le:7.8
 0.1 0 0 0 0 EXPECT:refitem:Com_Chest_11_alvur,chitin_dagger:eq:0

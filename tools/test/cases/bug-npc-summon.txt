@@ -1,0 +1,14 @@
+# NPCs and creatures that know a summoning spell cast it in a fight (OpenMW's AI rates a summon it hasn't got high):
+# Marayn Dren in Balmora's Guild of Mages knows Summon Least Bonewalker and Summon Skeletal Minion. Turned on the
+# player, a creature of hers comes in a flash beside her; it goes when she dies.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+3 0 0 0
+0.3 0 0 0 0 HOSTILE:marayn%dren
+30 0 0 0 0 UNTIL:vfxpiece:summon_start:ge:1
+0.1 0 0 0 0 EXPECT:vfxpiece:summon_start:ge:1
+0.5 0 0 0 0 SLAY:marayn%dren
+6 0 0 0 0 UNTIL:vfxpiece:summon_end:ge:1
+0.1 0 0 0 0 EXPECT:vfxpiece:summon_end:ge:1

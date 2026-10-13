@@ -3,6 +3,10 @@
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 FILL
 0.3 0 0 0 0 SEED:11
+# (on Balmora's flat streets: from Seyda Neen's start it was put on the beach below the player, out of sight, and
+# whether it found its way up hung on the dice)
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0
 0.3 0 0 0 0 PLACE:ash_slave:700
 1 0 0 0
 0.3 0 0 0 0 SPELL:spark

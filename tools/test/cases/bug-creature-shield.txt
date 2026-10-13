@@ -1,0 +1,9 @@
+# A creature with the Weapon and Shield flag carries its shield on its Shield Bone, shown always unless its weapon is
+# two-handed (OpenMW's CreatureWeaponAnimation, Slot_CarriedLeft): the golden saint in Ald Daedroth's antechamber
+# held none. (The skeleton warrior's random weapon resolves to a claymore here: two-handed, so no shield, as OpenMW.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Antechamber
+3 0 0 0
+0.5 0 0 0 0 POSE:golden%saint:idle:0.3
+0.1 0 0 0 0 EXPECT:refshield:golden%saint:eq:1

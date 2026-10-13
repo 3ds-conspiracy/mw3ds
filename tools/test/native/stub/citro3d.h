@@ -214,6 +214,7 @@ void C3D_TexEnvOpRgb(C3D_TexEnv* env, int o1, int o2 = GPU_TEVOP_RGB_SRC_COLOR, 
 void C3D_TexEnvFunc(C3D_TexEnv* env, int mode, int func);
 void C3D_TexEnvColor(C3D_TexEnv* env, u32 color);
 void C3D_FVUnifSet(int type, int id, float x, float y, float z, float w);
+void C3D_BoolUnifSet(int type, int id, bool value);
 void C3D_FVUnifMtx4x4(int type, int id, const C3D_Mtx* m);
 C3D_AttrInfo* C3D_GetAttrInfo();
 void AttrInfo_Init(C3D_AttrInfo* info);

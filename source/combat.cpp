@@ -778,6 +778,21 @@ void Session::npcStrike(int ri)
 	}
 }
 
+// A creature that moves up and down as well as along (OpenMW's canActorMoveByZAxis: one that flies, or one that swims
+// while it is in water): it goes on its pitch toward its point, nothing drops it to the floor. The highest it goes
+// (a swimmer stays 50 under the surface, as a floating corpse), else a huge number
+static float zMoverTop(World& w, const Ref& r, const Cell& cell)
+{
+	if (r.type != "CREA")
+		return -1e9f;
+	u8 f = w.game.actors[r.actor].afloat;
+	if (f & 0x20)
+		return 1e9f;
+	if ((f & 0x10) && cell.hasWater() && r.pos[2] < cell.waterZ)
+		return cell.waterZ - 50.0f;
+	return -1e9f;
+}
+
 // A way a body fits along: rays at both its sides, at knee and chest height, clear for `len` units
 static bool bodyWayClear(World& w, const float pos[3], float dx, float dy, float len)
 {
@@ -800,6 +815,11 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 	Cell* cell = w.cellOf(ri);
 	if (!cell)
 		return false;
+	// a creature that flies, or swims in water, climbs or sinks toward the target's height too, at its pace (npcStep
+	// keeps it over the floor; a swimmer under the surface)
+	float top = zMoverTop(w, r, *cell);
+	if (top > -1e8f)
+		r.pos[2] += fmaxf(-speed * dt, fminf(speed * dt, fminf(target[2], top) - r.pos[2]));
 	r.repathTimer -= dt;
 	if (r.repathTimer <= 0.0f)
 	{
@@ -891,7 +911,12 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 	float moved = sqrtf((r.pos[0] - before[0]) * (r.pos[0] - before[0]) + (r.pos[1] - before[1]) * (r.pos[1] - before[1]));
 	if (r.stuckTimer >= 0.0f)
 	{
-		r.stuckTimer = moved < speed * dt * 0.25f ? r.stuckTimer + dt : 0.0f;
+		// (or, on a path grid route, going back and forth on one spot, a wall's corner pushing it back as far as it
+		// steps: no headway for a second counts too, as OpenMW's ObstacleCheck judges the distance over a stretch of
+		// time. Leaving Abernanit, Dandsa walked into the rock beside the slope down for good. Off the grid a follower
+		// held up takes the player's footsteps instead, and a chaser held up in a fight stands and casts)
+		bool held = r.chaseStill >= 1.0f && r.ai != AI_COMBAT && !r.path.empty();
+		r.stuckTimer = moved < speed * dt * 0.25f || held ? r.stuckTimer + dt : 0.0f;
 		if (r.stuckTimer > 0.5f)
 		{
 			// stuck again where it was stuck last: look farther round, and keep to the way longer, each time
@@ -934,6 +959,107 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 	return moved > 0.0f;
 }
 
+// A spell for itself the actor knows and can afford (OpenMW's AI rates these in a fight, spellpriority): a summon while
+// no creature of its own is about, else a ward it hasn't got on (a shield, Sanctuary, Reflect, Spell Absorption, a
+// fortify); spellId gets it
+bool Session::npcSummonSpell(int ri, std::string& spellId)
+{
+	static const int kWards[] = { 3, 4, 5, 6, 42, 67, 68, 79, 80, 82, 117 };
+	bool summoned = false;
+	for (const NpcSummon& n : npcSummons)
+		summoned |= n.caster == ri;
+	const Ref& r = w.refs[ri];
+	const ActorDef& def = w.game.actors[r.actor];
+	std::string ward;
+	// (its combat list carries them, tools/convert/npcstats.py combat_spells; a spell merchant's whole list too)
+	std::vector<std::string> ids;
+	for (const Atom& id : def.combatSpells)
+		ids.push_back(lower(id));
+	for (const Atom& id : def.spells)
+		ids.push_back(lower(id));
+	for (const std::string& id : ids)
+	{
+		auto it = w.game.spells.find(id);
+		if (it == w.game.spells.end() || (it->second.type != 5 && it->second.cost > r.magicka))
+			continue;
+		for (const SpellEffect& e : it->second.effects)
+		{
+			if (summonCreatureId(e.effect) && !summoned)
+			{
+				spellId = it->first;
+				return true;
+			}
+			if (ward.empty() && e.range == 0 && std::find(std::begin(kWards), std::end(kWards), e.effect) != std::end(kWards)
+				&& w.actorEffect(ri, e.effect) <= 0.0f)
+				ward = it->first;
+		}
+	}
+	if (ward.empty())
+		return false;
+	spellId = ward;
+	return true;
+}
+
+// The summoned creature comes in a flash beside its caster and goes for the player, for the spell's duration; a ward's
+// effects land on the caster, with their hit
+void Session::npcSummonRelease(int ri, const SpellDef& sp)
+{
+	const Ref& r = w.refs[ri];
+	bool self = false;
+	for (const SpellEffect& e : sp.effects)
+		if (e.range == 0 && !summonCreatureId(e.effect))
+		{
+			applyEffectToActor(ri, e, false, (float)sp.cost, 100.0f, sp.name);
+			self = true;
+		}
+	if (self)
+	{
+		spellVfx(sp, 1, r.pos, ri, r.rot[2]);
+		logf("combat: %s wards itself with %s", r.id.c_str(), sp.name.c_str());
+	}
+	for (const SpellEffect& e : sp.effects)
+	{
+		const char* id = summonCreatureId(e.effect);
+		if (!id)
+			continue;
+		float pos[3] = { r.pos[0] + sinf(r.rot[2]) * 128.0f, r.pos[1] + cosf(r.rot[2]) * 128.0f, r.pos[2] };
+		int ci = w.spawnActor(id, pos, r.rot[2]);
+		if (ci < 0)
+			return;
+		makeHostile(ci);
+		w.refs[ci].aggressor = true;                     // (killing it is no crime)
+		npcSummons.push_back({ ri, ci, w.time + (float)(e.duration > 0 ? e.duration : 30) });
+		spawnVfx("vfx_summon_start", w.refs[ci].pos, 1.2f, ci, w.refs[ci].rot[2]);
+		logf("combat: %s summons %s for %d s", r.id.c_str(), id, e.duration);
+		return;
+	}
+}
+
+// NPCs' summons go when their time is up, when their caster dies or leaves (OpenMW: CasterLinked), or a moment after
+// they fall (their corpse isn't kept: OpenMW disposes of summoned corpses)
+void Session::npcSummonsUpdate()
+{
+	for (size_t k = 0; k < npcSummons.size();)
+	{
+		NpcSummon& n = npcSummons[k];
+		const bool valid = n.creature >= 0 && n.creature < (int)w.refs.size() && n.caster >= 0 && n.caster < (int)w.refs.size();
+		const Ref* c = valid ? &w.refs[n.creature] : nullptr;
+		const bool casterGone = !valid || w.refs[n.caster].dead || !w.active(n.caster);
+		if (c && c->dead && n.ends > w.time + 3.0f)
+			n.ends = w.time + 3.0f;                       // (fallen: gone shortly)
+		if (!valid || w.time >= n.ends || casterGone)
+		{
+			if (c && c->visible() && !c->dead)
+				spawnVfx("vfx_summon_end", c->pos, 1.2f, -2, c->rot[2]);
+			if (valid)
+				w.despawn(n.creature);
+			npcSummons.erase(npcSummons.begin() + k);
+		}
+		else
+			k++;
+	}
+}
+
 // A spell from the actor's list: heal itself when hurt, else a harmful one at the player
 // (target spells from afar, touch spells up close). Starts the cast; npcCombat releases it.
 void Session::npcCastSpell(int ri)
@@ -942,6 +1068,35 @@ void Session::npcCastSpell(int ri)
 	const ActorDef& def = w.game.actors[r.actor];
 	float dist = w.distanceToPlayer(ri);
 	float reach = weaponReach(nullptr) + 40.0f;
+	// A summon (when it has none about) or a ward first (half the time: a fight doesn't open with one every time)
+	std::string summon;
+	if (rand() % 2 == 0 && npcSummonSpell(ri, summon))
+	{
+		const SpellDef& sp = w.game.spells[summon];
+		if (sp.type != 5)
+			r.magicka -= sp.cost;
+		r.castSpell = -2;
+		pendingSummon[ri] = summon;
+		r.shooting = false;
+		float windup = 0.6f;
+		if (Actor* a = w.actorOf(ri))
+		{
+			ActorSet& set = *w.actorsOf(ri);
+			a->showWeapon = false;
+			if (actorPlay(set, *a, "CastSelf", ANIM_ONCE))
+			{
+				const AnimGroup& g = actorSkeleton(set, a->skeleton).groups[a->group];
+				windup = g.loopStart - g.start;
+			}
+		}
+		r.hitAt = w.time + windup;
+		r.attackTimer = windup + 1.0f;
+		static const char* kSchool[6] = { "alteration", "conjuration", "destruction", "illusion", "mysticism", "restoration" };
+		playSound(ri, std::string(kSchool[spellSchool(sp)]) + " cast");
+		castVfx(sp, ri);
+		logf("combat: %s casts %s", r.id.c_str(), sp.name.c_str());
+		return;
+	}
 	int pick = -1, range = -1;
 	for (size_t i = 0; i < def.combatSpells.size(); i++)
 	{
@@ -1021,6 +1176,54 @@ void Session::npcFire(int ri)
 	float hi = thrown ? w.game.gmstf("fthrownweaponmaxspeed", 1000.0f) : w.game.gmstf("fprojectilemaxspeed", 3000.0f);
 	fireProjectile(ri, from, d, lo + (hi - lo) * draw, ammo, def.weapon, draw, "");
 	playSound(ri, wpn->subtype == WEAP_CROSSBOW ? "crossbowShoot" : wpn->subtype == WEAP_BOW ? "bowShoot" : "SwishM");
+}
+
+// Combat moves (OpenMW's AiCombatStorage::startCombatMove, looked at each reaction, 0.25 s, while ready to attack).
+// People and two-legged creatures fighting hand to hand step aside: 0.2 s when the foe has come more than 45 degrees
+// round (`facing`: the turn still to make toward it), else a quarter of the time within reach of the foe's weapon,
+// 0.1 - 0.2 s, left or right. A ranged fighter backs away from a foe holding no ranged weapon within 1.5 x its
+// reach (npcStep keeps it off a drop and out of walls, as OpenMW's rays behind it). Both at run speed (a fight runs)
+bool Session::combatMove(int ri, Cell& cell, float dist, float facing, bool ranged, const Object* foeWeapon, float dt)
+{
+	Ref& r = w.refs[ri];
+	const ActorDef& def = w.game.actors[r.actor];
+	Actor* a = w.actorOf(ri);
+	float foeReach = weaponReach(foeWeapon);
+	r.combatReact -= dt;
+	if (r.combatReact <= 0.0f)
+	{
+		r.combatReact = 0.25f;
+		if (r.sideStep != 0)
+			r.sideTimer = 0.1f + 0.1f * frand();
+		else if ((!def.creature || (def.afloat & 1)) && !ranged)
+		{
+			float len = fabsf(facing) > 0.785398f ? 0.2f : dist <= foeReach && frand() < 0.25f ? 0.1f + 0.1f * frand() : 0.0f;
+			if (len > 0.0f)
+			{
+				r.sideStep = rand() % 2 ? 1 : -1;
+				r.sideTimer = len;
+				r.sideSteps++;
+			}
+		}
+		r.backingUp = ranged && !(foeWeapon && isRanged(foeWeapon)) && dist <= foeReach * 1.5f && !(a && a->swimming);
+	}
+	if (r.sideStep != 0 && (r.sideTimer -= dt) <= 0.0f)
+		r.sideStep = 0;
+	float fx = sinf(r.rot[2]), fy = cosf(r.rot[2]);
+	const char* group = nullptr;
+	if (r.backingUp && npcStep(ri, cell, -fx, -fy, actorRunSpeed(ri) * dt))
+		group = "RunBack";
+	else if (r.sideStep != 0 && npcStep(ri, cell, fy * r.sideStep, -fx * r.sideStep, actorRunSpeed(ri) * dt))
+		group = r.sideStep > 0 ? "RunRight" : "RunLeft";
+	if (!group)
+		return false;
+	if (a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
+	{
+		ActorSet& set = *w.actorsOf(ri);
+		if (!actorPlay(set, *a, group, ANIM_LOOP))
+			actorPlay(set, *a, stanceGroup(set, *a, "RunForward", w.game.object(def.weapon)).c_str(), ANIM_LOOP);
+	}
+	return true;
 }
 
 void Session::npcCombat(int ri, float dt)
@@ -1111,7 +1314,7 @@ void Session::npcCombat(int ri, float dt)
 
 	// Spells now and then
 	r.castTimer -= dt;
-	if (!attacking && r.castTimer <= 0.0f && !def.combatSpells.empty())
+	if (!attacking && r.castTimer <= 0.0f && (!def.combatSpells.empty() || !def.spells.empty()))   // (a summon among its spells)
 	{
 		r.castTimer = 3.0f + frand() * 3.0f;
 		if (w.lineOfSight(eyeA, eyeB))
@@ -1126,11 +1329,15 @@ void Session::npcCombat(int ri, float dt)
 		see = w.lineOfSight(eyeA, eyeB);
 	// in reach only on about the same level (a player on the platform above can't be struck from below:
 	// that's a chase, which stands still when it gets nowhere, not an idle that flips back each frame)
-	bool level = ranged || fabsf(w.player.feet[2] - r.pos[2]) < 180.0f;
+	// (one that flies or swims is in reach only within its reach up or down too, as OpenMW measures it to the target's
+	// bounds: it closes in through the air or the water; a cliff racer hovered over the player's head)
+	bool level = ranged || fabsf(w.player.feet[2] - r.pos[2]) < (zMoverTop(w, r, *cell) > -1e8f ? reach : 180.0f);
 	if ((dist > keep || !see || !level) && !attacking)
 	{
 		// Chase: straight at the player, or along the path grid around walls. Can't get any closer (a
 		// ledge, a gap the grid doesn't cover): stand rather than run in place, and run again once it moves.
+		r.sideStep = 0;
+		r.backingUp = false;
 		npcMoveTo(ri, w.player.feet, actorRunSpeed(ri), dt, false);
 		// progress: how far it really got each second (sliding to and fro against a door or a wall, or the
 		// player walking up to it, doesn't count)
@@ -1157,7 +1364,7 @@ void Session::npcCombat(int ri, float dt)
 		r.chaseWindow = 0.0f;
 		r.chaseAnchor[0] = r.pos[0];
 		r.chaseAnchor[1] = r.pos[1];
-		if (a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
+		if (!combatMove(ri, *cell, dist, diff, ranged, playerWeapon(), dt) && a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
 		{
 			// ready to strike: the weapon's stance (its idles otherwise, left to run on)
 			std::string idle = stanceGroup(*set, *a, "Idle", wpn);
@@ -1189,7 +1396,32 @@ void Session::npcCombat(int ri, float dt)
 	if (r.hitAt >= 0.0f && w.time >= r.hitAt)
 	{
 		r.hitAt = -1.0f;
-		if (r.castSpell >= 0)
+		if (r.castSpell == -2)
+		{
+			// A summon leaves their hands (the same chance as any of their spells; Silence: none)
+			r.castSpell = -1;
+			auto ps = pendingSummon.find(ri);
+			auto sit = ps == pendingSummon.end() ? w.game.spells.end() : w.game.spells.find(ps->second);
+			if (ps != pendingSummon.end())
+				pendingSummon.erase(ps);
+			if (sit != w.game.spells.end())
+			{
+				const SpellDef& sp = sit->second;
+				static const int kSchoolSkill[6] = { 11, 13, 10, 12, 14, 15 };
+				float chance = sp.type == 5 ? 100.0f : (def.skills[kSchoolSkill[spellSchool(sp)]] * 2.0f + def.attributes[ATTR_WILLPOWER] / 5.0f
+					+ def.attributes[ATTR_LUCK] / 10.0f - sp.cost - w.actorEffect(ri, 48)) * fatigueTerm(r.fatigue, r.fatigueMax);
+				if (w.actorEffect(ri, 46) > 0.0f || rand() % 100 >= (int)chance)
+				{
+					playSound(ri, "Spell Failure Conjuration");
+					logf("combat: %s's summon fizzles", r.id.c_str());
+				}
+				else
+					npcSummonRelease(ri, sp);
+			}
+			if (a)
+				a->showWeapon = wpn != nullptr;
+		}
+		else if (r.castSpell >= 0)
 		{
 			// The spell leaves their hands
 			const SpellDef& sp = w.game.spells[def.combatSpells[r.castSpell]];
@@ -1263,6 +1495,17 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 			around[aroundCount++] = &l->cell;
 	for (int k = 0; k < aroundCount; k++)
 		collisionPushSphere(around[k]->collision, body, 22.0f, true);   // about a person's half width (Morrowind's boxes: 20..29)
+	// The player's body is in the way, as a wall is (OpenMW's actors collide with it; they don't shove it): no step
+	// closer than the two bodies' widths (the player's 22, the cylinder they push the player out of, 28). Stepping
+	// aside on the ledge in Abernanit, Alonisea Varys shoved the player off it
+	{
+		const float* pf = w.player.feet;
+		float nx = body[0] - pf[0], ny = body[1] - pf[1], ox = r.pos[0] - pf[0], oy = r.pos[1] - pf[1];
+		float nd = nx * nx + ny * ny;
+		if (nd < 50.0f * 50.0f && nd < ox * ox + oy * oy && pf[2] < r.pos[2] + 128.0f && pf[2] + 128.0f > r.pos[2]
+			&& w.distanceToPlayer(ri) < 1000.0f)
+			return false;
+	}
 	float fz = -1e9f;
 	// people swim in deep water, the head out (creatures keep to their depth)
 	float swimZ = cell.hasWater() && r.type == "NPC_" ? cell.waterZ - kNpcSwimDepth : -1e9f;
@@ -1278,6 +1521,20 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 			fz = z;
 			found = true;
 		}
+	}
+	// A creature that flies, or swims in water, keeps to the air / the water: only kept over the floor (and a swimmer under
+	// the surface), no drop refused (OpenMW drops nothing that moves by Z; it goes on its pitch toward its point,
+	// npcMoveTo). A cliff racer flying over a hill never took a step, a slaughterfish kept to the sea floor
+	float top = zMoverTop(w, r, cell);
+	if (top > -1e8f)
+	{
+		float mx = body[0] - r.pos[0], my = body[1] - r.pos[1];
+		r.pos[0] = body[0];
+		r.pos[1] = body[1];
+		r.pos[2] = fminf(found ? fmaxf(r.pos[2], fz) : r.pos[2], fmaxf(top, found ? fz : -1e9f));
+		r.fitBox();
+		r.moved = true;
+		return mx * mx + my * my > step * step * 0.1f;
 	}
 	if (!found)
 	{
@@ -1317,11 +1574,14 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 // Peaceful NPCs: face the player while talking to them; otherwise stroll to random spots within
 // their wander distance of home, pausing between walks
 // Talking to the player (or saying a line): stand, face them, no walk cycle (whatever the NPC was
-// doing: wandering, a travel / follow / escort package). True when that's what they do this frame.
+// doing: wandering, a travel / follow / escort package; a line said on a follow or escort, on the move). True when
+// that's what they do this frame.
 bool Session::npcTalkStand(int ri, float dt)
 {
 	Ref& r = w.refs[ri];
-	if (!((dlg.open && dlg.ref == ri) || !sayDone(ri)))
+	// (one following or escorting someone says a line on the move: OpenMW's voice lines don't stop an AI package)
+	bool going = r.aiPackage == AIPKG_FOLLOW || r.aiPackage == AIPKG_ESCORT;
+	if (!((dlg.open && dlg.ref == ri) || (!sayDone(ri) && !going)))
 		return false;
 	float want = atan2f(w.player.feet[0] - r.pos[0], w.player.feet[1] - r.pos[1]);
 	float diff = angleDiff(want, r.rot[2]);
@@ -1498,6 +1758,14 @@ bool Session::npcSayTopic(int ri, const char* voiceTopic)
 	return true;
 }
 
+// Idle lines (OpenMW's playIdleDialogue): not from one fighting, following or escorting someone. Tarvyn Faren, escorted
+// to Pelagiad, stopped for his idle lines and was left behind
+bool Session::idleVoiceOk(int ri)
+{
+	const Ref& r = w.refs[ri];
+	return r.ai != AI_COMBAT && r.aiPackage != AIPKG_FOLLOW && r.aiPackage != AIPKG_ESCORT;
+}
+
 // ---- Gravity for people and creatures
 
 static const float kActorGravity = 627.0f;      // as the player's (player.cpp)
@@ -1537,6 +1805,27 @@ void Session::actorGravity(float dt)
 		// (as in OpenMW, where every actor falls unless it flies or is held up by water)
 		bool creature = r.type == "CREA";
 		u8 afloat = w.game.actors[r.actor].afloat;
+		// A corpse in water floats up to where it would swim and stays there (OpenMW's CharacterController: the dead
+		// rise in water): a slaughterfish killed at the bottom comes up to the surface
+		if (r.dead)
+		{
+			float level = -1e9f;
+			for (LoadedCell* l : w.loaded)
+				if (l->cell.hasWater() && r.pos[2] < l->cell.waterZ)
+					level = fmaxf(level, l->cell.waterZ - (creature ? 50.0f : kNpcSwimDepth));
+			if (level > -1e8f)
+			{
+				if (r.pos[2] < level)
+				{
+					r.pos[2] = fminf(level, r.pos[2] + 100.0f * dt);
+					r.fitBox();
+					r.moved = true;
+					w.syncActor(i);
+				}
+				r.falling = false;
+				continue;
+			}
+		}
 		if (creature && !r.dead && (afloat & 0x20))
 			continue;
 		if (creature && !r.dead && (afloat & 0x10) && w.underWater(r.pos[2]))
@@ -1734,15 +2023,21 @@ void Session::npcDuel(int ri, float dt)
 		a->showWeapon = wpn != nullptr;
 	float reach = def.creature ? kCombatDistance * 0.9f : weaponReach(wpn);
 	bool attacking = r.hitAt >= 0.0f;
-	if (!attacking && (dist > reach * 0.9f || fabsf(f.pos[2] - r.pos[2]) >= 180.0f))
+	Cell* cell = w.cellOf(ri);
+	// (one that flies or swims: within its reach up or down too, npcCombat)
+	float level = cell && zMoverTop(w, r, *cell) > -1e8f ? reach : 180.0f;
+	if (!attacking && (dist > reach * 0.9f || fabsf(f.pos[2] - r.pos[2]) >= level))
 	{
+		r.sideStep = 0;
+		r.backingUp = false;
 		npcMoveTo(ri, f.pos, actorRunSpeed(ri), dt, false);
 		if (a && !actorPlay(*set, *a, stanceGroup(*set, *a, "RunForward", wpn).c_str(), ANIM_LOOP))
 			actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
 	}
 	else
 	{
-		if (a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
+		bool stepped = cell && combatMove(ri, *cell, dist, diff, false, w.game.object(fdef.weapon), dt);
+		if (!stepped && a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
 		{
 			// ready to strike: the weapon's stance (its idles otherwise, left to run on)
 			std::string idle = stanceGroup(*set, *a, "Idle", wpn);
@@ -2378,6 +2673,51 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	(void)ranged;
 }
 
+// Whether a swing now would reach this actor: living, in front of the player (within about 40 degrees) within the
+// weapon's reach + 30, on about the same level, and not through a wall or a door (OpenMW's melee hit needs line of
+// sight): chest to chest, or eye to head (over a counter: a trader behind a bar is hit from across it, the chest line
+// clipped the bar's top). dist: how far, across
+bool Session::inSwing(int i, float* distOut)
+{
+	const Ref& r = w.refs[i];
+	if (r.actor < 0 || r.dead || !r.visible())
+		return false;
+	InventoryItem* wit = playerWeaponItem();
+	float reach = weaponReach(wit ? w.game.object(wit->id) : nullptr) + 30.0f;
+	float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
+	float dx = r.pos[0] - w.player.feet[0], dy = r.pos[1] - w.player.feet[1];
+	float dist = sqrtf(dx * dx + dy * dy);
+	if (dist > reach || fabsf(r.pos[2] - w.player.feet[2]) > 150.0f)
+		return false;
+	if (dist > 1.0f && (dx * fx + dy * fy) / dist < 0.75f)
+		return false;
+	float from[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] + 100.0f };
+	float to[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };
+	float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+	float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f };
+	if (!w.lineOfSight(from, to) && !w.lineOfSight(eye, head))
+		return false;
+	if (distOut)
+		*distOut = dist;
+	return true;
+}
+
+// Who a swing now would strike: the nearest actor it would reach
+int Session::swingTarget()
+{
+	int target = -1;
+	float best = 1e9f;
+	w.forLoadedActors([&](int i) {
+		float dist;
+		if (inSwing(i, &dist) && dist <= best)
+		{
+			best = dist;
+			target = i;
+		}
+	});
+	return target;
+}
+
 float Session::playerSwing(float charge, const PlayerInput& in)
 {
 	// A lockpick or probe in hand works on the lock / trap under the crosshair instead
@@ -2395,32 +2735,7 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 		+ (wpn ? wpn->weight : 0.0f) * charge * w.game.gmstf("fweaponfatiguemult", 0.25f)));
 	playSound(-1, charge > 0.66f ? "SwishL" : charge > 0.33f ? "SwishM" : "SwishS");
 
-	// Nearest living NPC in front of the player within reach
-	float reach = weaponReach(wpn) + 30.0f;
-	float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
-	int target = -1;
-	float best = reach;
-	w.forLoadedActors([&](int i) {
-		const Ref& r = w.refs[i];
-		if (r.actor < 0 || r.dead || !r.visible())
-			return;
-		float dx = r.pos[0] - w.player.feet[0], dy = r.pos[1] - w.player.feet[1];
-		float dist = sqrtf(dx * dx + dy * dy);
-		if (dist > best || fabsf(r.pos[2] - w.player.feet[2]) > 150.0f)
-			return;
-		if (dist > 1.0f && (dx * fx + dy * fy) / dist < 0.75f)
-			return;
-		// not through a wall or a door (OpenMW's melee hit needs line of sight): chest to chest, or eye to head (over a
-		// counter: a trader behind a bar is hit from across it, the chest line clipped the bar's top)
-		float from[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] + 100.0f };
-		float to[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };
-		float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
-		float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f };
-		if (!w.lineOfSight(from, to) && !w.lineOfSight(eye, head))
-			return;
-		best = dist;
-		target = i;
-	});
+	int target = swingTarget();
 	if (target < 0)
 	{
 		logf("combat: swing hits nothing");
@@ -2628,10 +2943,25 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	}
 
 	float headTrack = w.game.gmstf("fmaxheadtrackdistance", 400.0f);
+	const bool torches = w.useTorches();
 	w.forLoadedActors([&](int i) {
 		Ref& r = w.refs[i];
 		if (r.actor < 0 || r.dead || !r.visible())
 			return;
+		// A torch is held out when it's time for torches, in place of the shield; in a fight the shield comes back
+		// (OpenMW's updateEquippedLight)
+		if (Actor* ta = w.actorOf(i))
+		{
+			bool out = torches;
+			if (out && r.ai == AI_COMBAT)
+				for (const ActorMesh& m : ta->meshes)
+					if (m.hand == 2)
+					{
+						out = false;
+						break;
+					}
+			ta->torchOut = out;
+		}
 		// (held in a pose for a side-by-side screenshot, tools/test/sidebyside.py: no AI, no head turning)
 		if (const Actor* fa = w.actorOf(i))
 			if (fa->frozen)
@@ -2704,7 +3034,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				}
 			}
 			if (!menu && (rand() % 10000) < w.game.gmstf("fvoiceidleodds", 10.0f) * dt
-				&& w.distanceToPlayer(i) < 1200.0f)
+				&& w.distanceToPlayer(i) < 1200.0f && idleVoiceOk(i))
 				npcSayTopic(i, "Idle");
 			return;
 		}
@@ -2712,7 +3042,10 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			npcCombat(i, dt);
 	});
 	if (!menu)
+	{
 		updateProjectiles(dt);
+		npcSummonsUpdate();
+	}
 }
 
 // ---- Crime
@@ -2812,6 +3145,7 @@ void Session::strikeEnchantment(int target, const Object* missile)
 				applyEffectToPlayer(e, missile->name);
 			else
 				applyEffectToActor(target, e, true, 0.0f, 100.0f, missile->name);
+		strikeEffects(sp->second, target);
 		logf("combat: %s strikes with %s", missile->id.c_str(), sp->second.id.c_str());
 		return;
 	}
@@ -2831,7 +3165,17 @@ void Session::strikeEnchantment(int target, const Object* missile)
 			applyEffectToPlayer(e, o ? o->name.str() : en->id);
 		else
 			applyEffectToActor(target, e, true, cost, 100.0f, o ? o->name.str() : en->id);
+	strikeEffects(*en, target);
 	logf("combat: %s strikes with %s (charge %.0f)", wit->id.c_str(), en->id.c_str(), wit->charge);
+}
+
+// An on-strike enchantment that lands shows and sounds as a spell's hit on whoever it struck (-1 the player): OpenMW
+// casts it (CastSpell::inflict, playEffects)
+void Session::strikeEffects(const SpellDef& en, int target)
+{
+	const bool player = target < 0 || target >= (int)w.refs.size();
+	spellVfx(en, 1, player ? w.player.feet : w.refs[target].pos, player ? -1 : target, player ? w.player.yaw : w.refs[target].rot[2]);
+	playSound(player ? -1 : target, spellSound(en, 2));
 }
 
 // An NPC's or creature's enchanted weapon (or arrow) on a blow at the player: its effects land on the player (Reflect
@@ -2848,6 +3192,7 @@ void Session::npcStrikeEnchantment(int ri, const Object* item)
 			applyEffectToActor(ri, e, false, 0.0f, 100.0f, item->name);
 		else
 			applyEffectToPlayer(e, item->name, ri);
+	strikeEffects(sp->second, -1);
 	logf("combat: %s's %s strikes the player with %s", w.refs[ri].id.c_str(), item->id.c_str(), sp->second.id.c_str());
 }
 
@@ -3188,6 +3533,18 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		vm.action = VM_IDLE;
 	bool moving = fabsf(in.moveX) + fabsf(in.moveY) > 0.2f;
 	vm.update(dt, moving, !w.player.sneaking);
+	// Dead, the view goes outside to see the body fall (OpenMW's useDeathCamera); alive again (a save loaded), back in
+	if (playerDead && !thirdPerson && !deathView)
+	{
+		thirdPerson = deathView = true;
+		thirdDistance = 0.0f;
+		body.acting = BODY_NONE;
+	}
+	else if (!playerDead && deathView)
+	{
+		thirdPerson = deathView = false;
+		body.acting = BODY_NONE;
+	}
 	// The body seen from outside: dressed as the player is, doing what they do
 	if ((in.togglePov || povTapped) && !menuOpen())
 	{
@@ -3226,6 +3583,11 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		act.speed = vm.speed;
 		act.strength = blowStrength;
 		act.stance = vm.group == "Bow" || vm.group == "Throw" ? "1h" : vm.group == "Xbow" ? "2c" : vm.group.c_str();
+		if (playerDead)
+		{
+			act.action = BODY_DEATH;              // falls and lies there (OpenMW's death camera shows it)
+			act.group = "Death1";
+		}
 		body.update(w, dt, speed, w.player.swimming, w.player.sneaking, weaponDrawn, act);
 	}
 }

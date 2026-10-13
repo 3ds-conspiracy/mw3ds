@@ -13,7 +13,7 @@ import numpy as np
 
 from meshes import extract_shapes, nif_local, ref_matrix, walk_nif
 from nif import Nif, NifError
-from npc import skeleton_pose, text_key_time
+from npc import item_parts, skeleton_pose, text_key_time
 from npcstats import best_shield, bind, combat_spells, combat_weapon
 
 
@@ -99,9 +99,47 @@ def creature_stats(rec, spel=None, db=None):
             "creature": True, "attack": attacks if any(a[1] > 0 for a in attacks) else [[1, 3]], "box": creature_box(rec)}
 
 
-def vis_keys(nif, block, parents):
+def key_at(keys, t):
+    """A [(time, shown)] track's state at time t (its first state before its first key)."""
+    on = keys[0][1]
+    for kt, v in keys:
+        if kt > t:
+            break
+        on = v
+    return on
+
+
+def and_keys(a, b):
+    """Two [(time, shown)] tracks as one: shown while both are."""
+    out = []
+    for t in sorted({t for t, _ in a} | {t for t, _ in b}):
+        on = key_at(a, t) and key_at(b, t)
+        if not out or out[-1][1] != on:
+            out.append((round(float(t), 4), on))
+    return out
+
+
+def emission_keys(ctrl, end):
+    """A particle system's [(time, shown)]: from its emit start until its emit stop plus its particles' lifetime;
+    None when it emits over the whole timeline (or past end, the model's own animations' end)."""
+    start, stop = ctrl["emit_start"], ctrl["emit_stop"] + ctrl.get("lifetime", 0.0)
+    begins = start <= ctrl.get("start_time", 0.0) + 0.01
+    lasts = end is None or stop >= end
+    if begins and lasts:
+        return None
+    out = [(0.0, begins)]
+    if not begins:
+        out.append((round(float(start), 4), True))
+    if not lasts:
+        out.append((round(float(stop), 4), False))
+    return out
+
+
+def vis_keys(nif, block, parents, end=None):
     """When a shape shows, from its own and its nodes' NiVisControllers (a Bonelord's robe and hood go at its death):
-    [(time, shown)] on the model's animation timeline, shown only while every one of them is on; None without any."""
+    [(time, shown)] on the model's animation timeline, shown only while every one of them is on; None without any.
+    end: where the model's own animations stop. Past it (a biped creature's NPC groups, animlayers.layered) the shape
+    is as it was before its keys: a Dremora's body, gone at the end of its deaths, is there for its idle and walk."""
     tracks = []
     i = block
     while i is not None and i >= 0:
@@ -128,6 +166,9 @@ def vis_keys(nif, block, parents):
         on = all(at(k, t) for k in tracks)
         if not out or out[-1][1] != on:
             out.append((round(float(t), 4), on))
+    first = all(k[0][1] for k in tracks)
+    if end is not None and out[-1][1] != first:
+        out.append((round(float(end) + 0.5, 4), first))
     return out
 
 
@@ -152,8 +193,10 @@ class CreatureBuilder:
         for i, b in enumerate(nif.blocks):
             for c in b.get("children", []):
                 parents[c] = i
+        # (its own animations end at its last text key)
+        end = max((k[0] for b in nif.blocks if b["type"] == "NiTextKeyExtraData" for k in b.get("keys", [])), default=None)
         for s in shapes:
-            vis = vis_keys(nif, s.get("block", -1), parents)
+            vis = vis_keys(nif, s.get("block", -1), parents, end)
             if vis:
                 s["vis"] = vis
             if "raw" not in s and s.get("block") is not None:
@@ -166,6 +209,12 @@ class CreatureBuilder:
                     inv = np.linalg.inv(at)
                     s["raw"] = {"pos": np.asarray(s["pos"]) @ inv[:3, :3].T + inv[:3, 3], "node": np.identity(4)}
                     s["bone"] = emitter["name"].lower()
+                # It has particles only while it emits and they live on (an ancestor ghost's spray, an atronach's
+                # burst); a fire that emits the whole timeline burns always
+                if ctrl and "emit_start" in ctrl:
+                    burst = emission_keys(ctrl, end)
+                    if burst:
+                        s["vis"] = and_keys(s.get("vis") or [(0.0, True)], burst)
                 continue
             if s["skinned"] or "raw" not in s:
                 continue
@@ -178,7 +227,7 @@ class CreatureBuilder:
             d = rec.get("NPDT")
             v = struct.unpack_from("<24i", d) if d and len(d) >= 96 else None
             skills = [v[14]] * 9 + [v[15]] * 9 + [v[16]] * 9 if v else [30] * 27
-            wid = creature_weapon(rec, self.db, skills)[0]
+            wid, _, sid = creature_weapon(rec, self.db, skills)
             wrec = self.db["objects"].get(wid.lower()) if wid else None
             wnif = self.npcs.nif("meshes\\" + wrec.zstr("MODL").lower()) if wrec is not None and wrec.zstr("MODL") else None
             wbone = pose.get("weapon bone")
@@ -187,6 +236,20 @@ class CreatureBuilder:
                     s["bone"], s["mirror"], s["weapon"] = "weapon bone", False, True
                     s["pos"] = s["pos"] @ wbone[:3, :3].T + wbone[:3, 3]
                     s["nrm"] = s["nrm"] @ wbone[:3, :3].T
+                    shapes.append(s)
+            # Its shield rides its Shield Bone and shows always, a two-handed weapon aside (OpenMW's
+            # CreatureWeaponAnimation, Slot_CarriedLeft: the shield's body part model, getShieldMesh)
+            two_handed = wrec is not None and wrec.get("WPDT") and struct.unpack_from("<h", wrec.get("WPDT"), 8)[0] in (2, 4, 5, 6, 8, 9, 10)
+            srec = self.db["objects"].get(sid.lower()) if sid and not two_handed else None
+            spart = next((m for slot, m, _ in item_parts(srec) if slot == 10 and m), None) if srec is not None else None
+            sbody = self.db["objects"].get(spart.lower()) if spart else None
+            snif = self.npcs.nif("meshes\\" + sbody.zstr("MODL").lower()) if sbody is not None and sbody.zstr("MODL") else None
+            sbone = pose.get("shield bone")
+            if snif is not None and sbone is not None:
+                for s in extract_shapes(self.arch, snif):
+                    s["bone"], s["mirror"] = "shield bone", False
+                    s["pos"] = s["pos"] @ sbone[:3, :3].T + sbone[:3, 3]
+                    s["nrm"] = s["nrm"] @ sbone[:3, :3].T
                     shapes.append(s)
         xscl = rec.get("XSCL")
         scale = struct.unpack("<f", xscl)[0] if xscl else 1.0

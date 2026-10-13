@@ -1,0 +1,19 @@
+# A torch a person holds out lights the world around them, as the player's does (Morrowind and OpenMW: a carried
+# light lights with its own radius and colour, whoever holds it). The Redoran guards in Ald-ruhn at 10 p.m. hold out
+# torch_infinite_time (one stands at -13159 55527, by the Redoran council hall); the ground around them stayed
+# dark. By day nobody's torch is out: no light
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald-ruhn
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:22
+1 0 0 0
+0.3 0 0 0 0 TP:-13159:55127:2400:0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reftorch:redoran%guard%male:eq:1
+0.1 0 0 0 0 EXPECT:torchlights:ge:1
+0.3 0 0 0 0 FACE:redoran%guard%male+SHOT
+0.3 0 0 0 0 HOUR:12
+1 0 0 0
+0.1 0 0 0 0 EXPECT:torchlights:eq:0

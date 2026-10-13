@@ -47,6 +47,9 @@ static const int CELL_VERTEX_SIZE_PACKED = 16;
 
 // Exterior view distance (linear fog, world units); distant land fills in past the loaded 3 x 3
 static const float kExteriorFogStart = 3000.0f, kExteriorFogEnd = 12000.0f;
+// Interiors fog over OpenMW's viewing distance (its default, 7168): from that x (1 - the cell's fog density) to it
+// (FogManager::configure, standard fog)
+static const float kInteriorFogView = 7168.0f;
 // People and creatures further than this are a few pixels tall: not posed or drawn
 static const float kActorViewDistance = 6000.0f;
 
@@ -86,7 +89,7 @@ struct Cell
 	float spawn[3], yaw, pitch;
 	u8 ambient[4], fog[4];
 	float fogDensity;
-	float fogStart = 0, fogEnd = 0;   // linear distance fog; fogEnd 0 = none (interiors)
+	float fogStart = 0, fogEnd = 0;   // linear distance fog; fogEnd 0 = none (an interior of fog density 0)
 	float waterZ = 0;                 // with CELL_WATER
 	float bounds[4] = {};             // walkable area: min x, min y, max x, max y (all 0 = unbounded)
 	std::vector<CellBatch> sky;       // drawn around the camera, before everything else

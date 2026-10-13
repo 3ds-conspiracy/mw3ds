@@ -280,7 +280,7 @@ void Session::updateProjectiles(float dt)
 	}
 }
 
-void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale)
+void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale, bool loop)
 {
 	auto it = w.game.firstPerson.vfx.find(lower(staticId));
 	if (it == w.game.firstPerson.vfx.end())
@@ -303,13 +303,22 @@ void Session::spawnVfx(const std::string& staticId, const float pos[3], float li
 			return;
 		vfx.erase(vfx.begin() + far);
 	}
+	// (a continuous one cast again takes the old one's place: one bubble, not two)
+	if (loop)
+		for (size_t i = 0; i < vfx.size();)
+			if (vfx[i].loop && vfx[i].piece == it->second && vfx[i].follow == follow)
+				vfx.erase(vfx.begin() + i);
+			else
+				i++;
 	// a visual with its own animation lasts as long as that (OpenMW drops a non-looping effect when it has played)
 	FpPiece* piece = vm.piece(w, it->second);
 	Vfx v;
 	v.piece = it->second;
+	v.what = lower(staticId);
 	memcpy(v.pos, pos, sizeof(v.pos));
 	v.age = 0.0f;
-	v.life = piece && piece->length > 0.0f ? piece->length : life;
+	v.life = piece && piece->length > 0.0f && !loop ? piece->length : life;
+	v.loop = loop;
 	v.follow = follow;
 	v.yaw = yaw;
 	v.scale = scale;
@@ -332,7 +341,9 @@ void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3], int fol
 		if (std::find(shown.begin(), shown.end(), one) != shown.end())
 			continue;
 		shown.push_back(one);
-		spawnVfx(one.first, pos, 1.2f, follow, yaw, one.second);
+		// a continuous effect's hit repeats for as long as the effect lasts (OpenMW's ContinuousVfx: a shield's bubble)
+		bool loop = kind == 1 && (me->second.flags & 0x20) && e.duration > 1;
+		spawnVfx(one.first, pos, loop ? (float)e.duration : 1.2f, follow, yaw, one.second, loop);
 		if (kind == 1)
 			return;                                    // one hit visual a spell (the first effect's)
 	}
@@ -422,10 +433,11 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 		// (a piece with no animation of its own swells into place)
 		float grow = v.scale * (piece->length > 0.0f ? 1.0f : 0.6f + 0.4f * fminf(1.0f, v.age / 0.25f));
 		Mtx_Scale(&vm_, grow, grow, grow);
+		float age = v.loop && piece->length > 0.0f ? fmodf(v.age, piece->length) : v.age;   // (a continuous one over and over)
 		for (auto& m : piece->meshes)
 		{
 			C3D_Mtx at;
-			if (fpTrackMatrix(m, vm_, v.age, at))
+			if (fpTrackMatrix(m, vm_, age, at))
 				rendererDrawMesh(m, &at, piece->textures[m.tex]);
 		}
 	}
