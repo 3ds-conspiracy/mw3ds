@@ -715,6 +715,16 @@ static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	return in;
 }
 
+// Clears the 3D screen's target to an 0xRRGGBBAA colour. The GPU's fill writes the value's low bits as they
+// are, so the Old 3DS's 16-bit target (console.h rgb565) takes the colour packed as RGB565: an RGBA8 black
+// fills it blue.
+static void clearTop(C3D_RenderTarget* target, u32 rgba)
+{
+	if (g_profile.rgb565)
+		rgba = ((rgba >> 27) & 0x1F) << 11 | ((rgba >> 18) & 0x3F) << 5 | ((rgba >> 11) & 0x1F);
+	C3D_RenderTargetClear(target, C3D_CLEAR_ALL, rgba, 0);
+}
+
 // Loading screens show one of Morrowind's splash pictures (a new one for each load)
 static std::vector<ArtRef> s_splashes;
 static std::string s_splashFor;
@@ -723,13 +733,18 @@ static int s_splash = -1;
 static void drawLoading(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const char* text,
 	const char* detail = nullptr, float seconds = -1.0f)
 {
+	// (marked: the Old 3DS froze on hardware right after New game, before anything the load logs)
+	const char* savedAt = g_mainAt;
 	UiInput none = {};
+	MARK("loading screen: ui");
 	uiBeginFrame(none);
+	MARK("loading screen: frame begin");
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	MARK("loading screen: draw");
 	linearRetire();
 	C2D_Prepare();
 	C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
-	C2D_TargetClear(top, C2D_Color32(0, 0, 0, 255));
+	clearTop(top, 0x000000FF);
 	C2D_SceneBegin(top);
 	if (!s_splashes.empty())
 	{
@@ -776,7 +791,9 @@ static void drawLoading(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const c
 				break;
 		}
 	}
+	MARK("loading screen: frame end");
 	C3D_FrameEnd(0);
+	g_mainAt = savedAt;
 }
 
 // While a load runs, each log line the main thread writes redraws the loading screen with it
@@ -895,7 +912,7 @@ static std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, 
 		linearRetire();
 		C2D_Prepare();
 		C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
-		C2D_TargetClear(top, C2D_Color32(0, 0, 0, 255));
+		clearTop(top, 0x000000FF);
 		C2D_SceneBegin(top);
 		uiTextCentered(200, 80, 0.9f, col::header, "Morrowind");
 		uiTextCentered(200, 120, 0.5f, col::textDim, "Choose a save on the touch screen, or start a new game");
@@ -916,6 +933,76 @@ static std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, 
 			return result;
 	}
 	return "quit";
+}
+
+// The largest texture edge the data was converted with (level.py --max-tex, game.json "max_tex"); 0 for
+// data converted before it was recorded. game.json is small: its big sections are in game_<name>.json. (It is
+// compressed, MWZ1: read as raw bytes the key was never found, and this said 0 whatever the data)
+static int dataMaxTex(const char* dataDir)
+{
+	std::string path = std::string(dataDir) + "/game.json";
+	char* text = zreadAll(path.c_str());
+	if (!text)
+		return 0;
+	const char* at = strstr(text, "\"max_tex\":");
+	int v = at ? atoi(at + 10) : 0;
+	free(text);
+	return v;
+}
+
+// The largest texture edge an Old 3DS takes (build-cia.ps1 -Old3ds converts with --max-tex 128)
+static const int kOld3dsMaxTex = 128;
+
+// An Old 3DS given the New 3DS's data (build\mw3ds.cia rather than build\mw3ds-o3ds.cia): its textures do
+// not fit the Old 3DS's memory and the first load stops on a black screen. Says which copy to install and
+// waits for START (scripted runs save a picture and go on to quit).
+static void wrongConsoleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, int maxTex)
+{
+	static const char* kLines[] = {
+		"This copy of MW3DS was made for the New 3DS.",
+		"",
+		"Its textures need more memory than an Old 3DS",
+		"or 2DS has, so the game would stop on a black",
+		"screen while loading.",
+		"",
+		"Install the Old 3DS copy instead. On the",
+		"old-3ds branch, build it with",
+		"tools\\build\\build-cia-mods.ps1 -Old3ds",
+		"and install build\\mw3ds-o3ds.cia.",
+	};
+	char detail[64];
+	snprintf(detail, sizeof(detail), "textures up to %d texels (an Old 3DS takes %d)", maxTex, kOld3dsMaxTex);
+	struct stat st;
+	bool scripted = stat("sdmc:/3ds/mw3ds/autoinput.txt", &st) == 0 || stat("sdmc:/3ds/mw3ds/autocam.txt", &st) == 0
+		|| stat("sdmc:/3ds/mw3ds/autoshot", &st) == 0;
+	for (int frame = 1; aptMainLoop(); frame++)
+	{
+		hidScanInput();
+		if (hidKeysDown() & KEY_START)
+			return;
+		UiInput none = {};
+		uiBeginFrame(none);
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		linearRetire();
+		bool shot = scripted && frame == 60;
+		if (shot)
+			logf("wrong console shot: %s", screenshotSave("sdmc:/3ds/mw3ds/shot_console.bmp") ? "saved" : "FAILED");
+		C2D_Prepare();
+		C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+		clearTop(top, 0x000000FF);
+		C2D_SceneBegin(top);
+		uiTextCentered(200, 24, 0.7f, col::header, "Wrong copy for this console");
+		for (size_t i = 0; i < sizeof(kLines) / sizeof(kLines[0]); i++)
+			uiTextCentered(200, 64 + 15 * i, 0.5f, i >= 8 ? col::header : col::text, kLines[i]);
+		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
+		C2D_SceneBegin(bottom);
+		uiTextCentered(160, 40, 0.5f, col::textDim, "MW3DS");
+		uiTextCentered(160, 110, 0.5f, col::text, "Press START to quit");
+		uiTextCentered(160, 200, 0.4f, col::textDim, detail);
+		C3D_FrameEnd(0);
+		if (shot)
+			return;
+	}
 }
 
 int main()
@@ -970,6 +1057,27 @@ int main()
 	const char* dataDir = romfs && stat("romfs:/data/game.json", &st) == 0 ? kRomfsDataDir
 		: stat(kSdDataDir, &st) == 0 ? kSdDataDir : kRomfsDataDir;
 	logf("romfs %s, data dir %s", romfs ? "mounted" : "absent", dataDir);
+	int maxTex = dataMaxTex(dataDir);
+	logf("data: textures up to %d texels%s", maxTex, maxTex ? "" : " (not recorded: converted before max_tex)");
+	// (not for a scripted test run: the native Old 3DS suite runs the New 3DS's data on purpose)
+	bool scriptedRun = stat("sdmc:/3ds/mw3ds/autoinput.txt", &st) == 0;
+	if (!isNew3ds && maxTex > kOld3dsMaxTex && scriptedRun)
+		logf("data made for a New 3DS on an Old 3DS: a scripted run, going on");
+	if (!isNew3ds && maxTex > kOld3dsMaxTex && !scriptedRun)
+	{
+		logf("data made for a New 3DS on an Old 3DS: showing the wrong console screen, then quitting");
+		wrongConsoleScreen(top, bottom, maxTex);
+		uiExit();
+		rendererExit();
+		C2D_Fini();
+		C3D_Fini();
+		if (romfs)
+			romfsExit();
+		irrstExit();
+		logExit();
+		gfxExit();
+		return 0;
+	}
 	audioInit(dataDir);
 	drawLoading(top, bottom, "Loading...");
 
@@ -1019,7 +1127,9 @@ int main()
 			return 0;
 		}
 		logf("title: %s", startSave.empty() ? "new game" : startSave.c_str());
+		MARK("after the title");
 		drawLoading(top, bottom, "Loading...");
+		MARK("loading screen drawn");
 		loadStart = osGetTime();
 	}
 	session->dataDir = dataDir;
@@ -1822,7 +1932,7 @@ int main()
 			linearRetire();
 			C2D_Prepare();
 			C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
-			C2D_TargetClear(top, C2D_Color32(0, 0, 0, 255));
+			clearTop(top, 0x000000FF);
 			C2D_SceneBegin(top);
 			session->movieDraw();
 			C2D_TargetClear(bottom, C2D_Color32(0, 0, 0, 255));

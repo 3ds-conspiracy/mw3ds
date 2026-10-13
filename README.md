@@ -85,7 +85,9 @@ powershell -File tools\build\build-cia-mods.ps1 -Old3ds -SkipConvert
 ```
 
 The Old 3DS data (textures at most 128 texels, a quarter of the memory) goes to `out\o3ds`, the New 3DS data to
-`out\data`: you can have both.
+`out\data`: you can have both. Install the one for your console: an Old 3DS given the New 3DS's CIA shows a screen
+that says so and quits, rather than stopping on a black screen at the first load. (Data converted before 12 October
+2026 carries no mark of its console, so the check lets it through.)
 
 ### 6. Install it
 

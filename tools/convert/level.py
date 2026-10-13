@@ -768,6 +768,8 @@ def main():
             p.write_text(json.dumps({key: dict(chunk) if isinstance(value, dict) else chunk},
                                     separators=(",", ":"), allow_nan=False))
             split.append(p)
+    # The largest texture edge: an Old 3DS refuses data converted for a New 3DS (source/main.cpp dataMaxTex)
+    game["max_tex"] = args.max_tex
     with open(OUT / "game.json", "w") as f:
         json.dump(game, f, separators=(",", ":"), allow_nan=False)
     sizes = {}

@@ -55,6 +55,7 @@ struct C3D_RenderTarget
 	std::vector<u8> solid;          // covered by an opaque, depth-writing, not alpha-tested triangle since the last clear
 	int screen = -1, side = -1;
 	C3D_Tex* tex = nullptr;
+	bool rgb565 = false;            // an Old 3DS's 3D screen: its clear colour comes packed as RGB565
 };
 
 static std::vector<C3D_RenderTarget*> s_targets;
@@ -587,9 +588,11 @@ void C3D_FrameEnd(u8)
 }
 void C3D_FrameDrawOn(C3D_RenderTarget* t) { s_target = t; }
 
-C3D_RenderTarget* C3D_RenderTargetCreate(int width, int height, int, int)
+C3D_RenderTarget* C3D_RenderTargetCreate(int width, int height, int colorFmt, int)
 {
-	return newTarget(height, width);         // made sideways, as the screens are
+	C3D_RenderTarget* t = newTarget(height, width);         // made sideways, as the screens are
+	t->rgb565 = colorFmt == GPU_RB_RGB565;
+	return t;
 }
 
 C3D_RenderTarget* C3D_RenderTargetCreateFromTex(C3D_Tex* tex, int, int, int)
@@ -640,7 +643,9 @@ static void clearTarget(C3D_RenderTarget* t, bool color, bool depth, u32 c, floa
 
 void C3D_RenderTargetClear(C3D_RenderTarget* t, int bits, u32 c, u32 depth)
 {
-	// citro3d's clear colour is 0xRRGGBBAA
+	// citro3d's clear colour is 0xRRGGBBAA; a 16-bit target takes it as RGB565 (the GPU's fill writes the low bits)
+	if (t->rgb565)
+		c = ((c >> 11 & 0x1F) * 255 / 31) << 24 | ((c >> 5 & 0x3F) * 255 / 63) << 16 | ((c & 0x1F) * 255 / 31) << 8 | 0xFF;
 	clearTarget(t, bits != C3D_CLEAR_DEPTH, bits != C3D_CLEAR_COLOR, rgba(c >> 24, (c >> 16) & 255, (c >> 8) & 255, c & 255),
 		(depth & 0xFFFFFF) / 16777215.0f);
 }

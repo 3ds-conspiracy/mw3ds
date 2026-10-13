@@ -23,10 +23,14 @@ static const float kReach = 192.0f;          // iMaxActivateDist
 bool Session::start(const char* dataDir, const std::string& startCell, const char* savePathIn)
 {
 	savePath = savePathIn;
+	MARK("load settings");
 	loadSettings();
 	w.memoryLowHook = [this](bool force) { relieveMemory(force); };
+	MARK("sound volumes");
 	audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
+	MARK("shimmer frames");
 	rendererLoadCaustics(dataDir);
+	MARK("game data");
 	std::string savedCell = savePath && startCell.empty() ? World::savedCell(savePath) : "";
 	if (!savedCell.empty())
 	{
