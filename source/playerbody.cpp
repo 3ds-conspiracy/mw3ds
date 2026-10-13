@@ -211,6 +211,17 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 		return;
 	Actor& a = set.actors[0];
 	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	// Place: at the feet, turned to the view, the race's size
+	const Player& p = w.player;
+	float c = cosf(-p.yaw), s = sinf(-p.yaw);
+	float place[12] = { c, -s, 0, p.feet[0], s, c, 0, p.feet[1], 0, 0, 1, p.feet[2] };
+	memcpy(a.place, place, sizeof(place));
+	// held in a pose for a side-by-side screenshot (the test driver's BODYPOSE): nothing moves on
+	if (a.frozen)
+	{
+		actorAnimate(set, a, 0.0f);
+		return;
+	}
 	// A new blow or cast takes the whole body (one group at a time here: no upper-body layer); a blow let go plays on
 	// from where its wind-up held
 	if (act.action != BODY_NONE && (act.action != acting || actGroup != act.group))
@@ -288,11 +299,6 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 		}
 	}
 	actorAnimate(set, a, step);
-	// Place: at the feet, turned to the view, the race's size
-	const Player& p = w.player;
-	float c = cosf(-p.yaw), s = sinf(-p.yaw);
-	float place[12] = { c, -s, 0, p.feet[0], s, c, 0, p.feet[1], 0, 0, 1, p.feet[2] };
-	memcpy(a.place, place, sizeof(place));
 }
 
 const char* PlayerBody::playing() const

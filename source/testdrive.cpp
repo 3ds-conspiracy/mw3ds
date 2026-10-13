@@ -1595,8 +1595,15 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 				g = (int)k;
 		if (g < 0)
 			return fail(a[1] + " has no group " + a[2]);
+		// (an actor PLACE put in front of the player: back where it was put, at the height the floor gave it)
 		Ref& r = w.refs[ri];
-		memcpy(r.pos, r.start, sizeof(r.pos));
+		if (ri == s.testPlaced)
+		{
+			r.pos[0] = r.home[0];
+			r.pos[1] = r.home[1];
+		}
+		else
+			memcpy(r.pos, r.start, sizeof(r.pos));
 		r.rot[2] = a.size() >= 5 ? (float)atof(a[4].c_str()) / 57.29578f : r.start[3];
 		r.fitBox();
 		r.moved = true;
@@ -1609,7 +1616,92 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		ac->headYaw = 0.0f;
 		ac->blinkTime = -1.0f;
 		ac->frozen = true;
-		logf("test: %s holds %.16s at %.2f (%.3f s)", a[1].c_str(), sk.groups[g].name, at, ac->time - sk.groups[g].start);
+		logf("test: %s holds %.16s at %.2f (%.3f s; skeleton %d, %.3f - %.3f)", a[1].c_str(), sk.groups[g].name, at,
+			ac->time - sk.groups[g].start, ac->skeleton, sk.groups[g].start, sk.groups[g].stop);
+		return true;
+	}
+	// POV:first|third: the view, as SELECT toggles it (side-by-side shots seen from elsewhere want the player's body)
+	if (verb == "POV" && a.size() >= 2)
+	{
+		bool third = a[1] == "third";
+		if (s.thirdPerson != third)
+		{
+			s.thirdPerson = third;
+			s.thirdDistance = 0.0f;
+			s.body.acting = BODY_NONE;
+		}
+		return true;
+	}
+	// VMPOSE:<group>:<at>: the first-person arms hold that group (CastSelf, 1hChop, ...) at that point, 0 its start, 1 its
+	// stop (side-by-side screenshots, tools/test/sidebyside.py). VMPOSE:off lets them go
+	if (verb == "VMPOSE" && a.size() >= 2)
+	{
+		if (!s.vm.ready)
+			return fail("no first-person view model");
+		Actor& arms = s.vm.set.actors[0];
+		arms.frozen = false;
+		if (a[1] == "off")
+		{
+			s.vm.action = VM_NONE;
+			return true;
+		}
+		if (a.size() < 3)
+			return fail("VMPOSE wants a group and a point");
+		const Skeleton& sk = s.vm.set.skeletons[0];
+		int g = -1;
+		for (size_t k = 0; k < sk.groups.size() && g < 0; k++)
+			if (strncasecmp(sk.groups[k].name, a[1].c_str(), sizeof(sk.groups[k].name)) == 0)
+				g = (int)k;
+		if (g < 0)
+			return fail("the first-person skeleton has no group " + a[1]);
+		// a cast: the arms bare, as a cast shows them (viewModelUpdate drops the weapon while the action is a cast);
+		// anything else (1hChop, BowShoot, Block, ...): the weapon (or fists) out, as a blow draws it
+		bool cast = strncasecmp(a[1].c_str(), "Cast", 4) == 0 || strncasecmp(a[1].c_str(), "Spell", 5) == 0;
+		s.vm.play(cast ? VM_CAST : VM_WINDUP, sk.groups[g].name);
+		if (!cast)
+		{
+			s.weaponDrawn = true;
+			s.sheatheTimer = 0.0f;
+		}
+		float at = fmaxf(0.0f, fminf(1.0f, (float)atof(a[2].c_str())));
+		arms.time = sk.groups[g].start + at * (sk.groups[g].stop - sk.groups[g].start);
+		arms.frozen = true;
+		logf("test: arms hold %.16s at %.2f (%.3f s)", sk.groups[g].name, at, arms.time - sk.groups[g].start);
+		return true;
+	}
+	// BODYPOSE:<group>:<at>: the player's body (third person) holds that NPC group (Attack1h, AttackBow, Block, ...) at
+	// that point, the weapon out unless it is a cast (side-by-side screenshots). BODYPOSE:off lets it go
+	if (verb == "BODYPOSE" && a.size() >= 2)
+	{
+		if (!s.body.ready || s.body.set.actors.empty())
+			return fail("no third-person body (POV:third first)");
+		Actor& body = s.body.set.actors[0];
+		body.frozen = false;
+		s.body.acting = BODY_NONE;
+		s.body.group = "";
+		if (a[1] == "off")
+			return true;
+		if (a.size() < 3)
+			return fail("BODYPOSE wants a group and a point");
+		const Skeleton& sk = actorSkeleton(s.body.set, body.skeleton);
+		int g = -1;
+		for (size_t k = 0; k < sk.groups.size() && g < 0; k++)
+			if (strncasecmp(sk.groups[k].name, a[1].c_str(), sizeof(sk.groups[k].name)) == 0)
+				g = (int)k;
+		if (g < 0)
+			return fail("the player's skeleton has no group " + a[1]);
+		if (strncasecmp(a[1].c_str(), "Cast", 4) != 0)
+		{
+			s.weaponDrawn = true;
+			s.sheatheTimer = 0.0f;
+		}
+		actorPlay(s.body.set, body, sk.groups[g].name, ANIM_HOLD);
+		float at = fmaxf(0.0f, fminf(1.0f, (float)atof(a[2].c_str())));
+		body.time = sk.groups[g].start + at * (sk.groups[g].stop - sk.groups[g].start);
+		body.headYaw = 0.0f;
+		body.blinkTime = -1.0f;
+		body.frozen = true;
+		logf("test: body holds %.16s at %.2f (%.3f s)", sk.groups[g].name, at, body.time - sk.groups[g].start);
 		return true;
 	}
 	// FACE:@x,y: turn to look at that spot (level), as the stick would
@@ -1820,6 +1912,12 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		s.testFatiguePin = w.stats.fatigue;     // held there: the checks that follow expect this level
 		return true;
 	}
+	// SETMAGICKA:<points>: the player's Magicka now (above the maximum too: a run of casts for side-by-side shots)
+	if (verb == "SETMAGICKA" && a.size() >= 2)
+	{
+		w.stats.magicka = (float)atof(a[1].c_str());
+		return true;
+	}
 	// SETHEALTH:<fraction>: the player's Health, a fraction of the maximum
 	if (verb == "SETHEALTH" && a.size() >= 2)
 	{
@@ -1861,6 +1959,27 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		return true;
 	}
 	// ENABLE:<ref> / DISABLE:<ref>: the script functions on a reference in the loaded cells
+	// HIDEACTORS:<radius>: every person and creature that near the player disabled (side-by-side spell shots, tools/test/
+	// sidebyside.py: nobody walks through the picture or catches the bolt)
+	if (verb == "HIDEACTORS" && a.size() >= 2)
+	{
+		float r = (float)atof(a[1].c_str());
+		int n = 0;
+		for (LoadedCell* l : w.loaded)
+			for (const Actor& ac : l->actors.actors)
+			{
+				if (ac.ref < 0 || !w.refs[ac.ref].visible())
+					continue;
+				float dx = ac.place[3] - w.player.feet[0], dy = ac.place[7] - w.player.feet[1];
+				if (dx * dx + dy * dy < r * r)
+				{
+					w.setEnabled(ac.ref, false);
+					n++;
+				}
+			}
+		logf("test: %d actors hidden", n);
+		return true;
+	}
 	if ((verb == "ENABLE" || verb == "DISABLE") && a.size() >= 2)
 	{
 		int ri = findRef(s, a[1]);

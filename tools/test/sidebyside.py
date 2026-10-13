@@ -15,17 +15,33 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
     group=name at=f,...   ... holding that animation group at those points (0 its start key, 1 its stop key):
                           one shot per point, "<name>-<n>"
     face=deg              ... turned that way instead of its placed rotation
+    view=fp               first person: the player stands at cam (their feet; pitch 0) and their own arms hold the
+                          group (a spell readied in OpenMW: spell=id, fire bite unless given; fists for the
+                          hand-to-hand and weapon groups, HHChop, 1hSlashF, ...)
+    actor=player          third person: the player's own body stands at from=x,y,z,yaw (seen from cam, nobody
+                          near) and holds the group (Attack1h, ...)
+    weapon=id ammo=id shield=id   the player carries and equips these (fp and actor=player shots)
+    spawn=id [dist=d]     a new actor (a creature) 250 (d) units ahead of the camera, facing it, is the shot's actor
+    cast=id after=t,...   the player casts that spell (level, ahead) and the world stands still t seconds after the
+                          cast began: one shot per t (bolts in flight, cast and hit visuals). The player stands at
+    from=x,y,z,yaw        from= (their feet, degrees), or at cam with view=fp; skills, Willpower and Luck at 100 and
+                          Magicka plenty, so every cast succeeds; 3 seconds between casts for the last one's visuals;
+                          every person and creature within 4000 units hidden
+
+Group names are the 3DS engine's (tools/convert/actors.py, firstperson.py); OPENMW_GROUPS says which Morrowind group and
+text keys each is in OpenMW (CastSelf: spellcast from "self start" to "self stop").
 
 OpenMW runs from build/openmw-0.51 (unpacked from the release installer) with its own config, saves and logs in
 build/openmw-sbs, never the user's. It reads the Morrowind folder from .env (MW3DS_MORROWIND_DIR) and loads
 Morrowind.esm only. The 3DS side runs the case it writes (tools/test/cases/scratch/sbs-<file>.txt, git-ignored)
 natively (build/native-sbs/mw3ds-native.exe when built there, else build/native; --exe another), or in Azahar with --emu.
-Both sides put the player 300 units behind the camera. Writes <out>/pc/<shot>.png, <out>/3ds/<shot>.png and
+Both sides put the player 300 units behind the camera (first person: at it). Writes <out>/pc/<shot>.png, <out>/3ds/<shot>.png and
 <out>/<shot>.png (3DS left, OpenMW right).
 """
 import argparse
 import math
 import os
+import re
 import shlex
 import shutil
 import subprocess
@@ -40,6 +56,41 @@ OPENMW = ROOT / "build" / "openmw-0.51"
 SBS = ROOT / "build" / "openmw-sbs"
 MOD = Path(__file__).resolve().parent / "sidebyside"
 W, H = 400, 240
+SPAWN_DIST = 250         # spawn=: this far ahead of the camera
+# 3DS group -> (Morrowind group, start key, stop key) where the engine splits a group by its text keys
+OPENMW_GROUPS = {
+    "castself": ("spellcast", "self start", "self stop"),
+    "casttarget": ("spellcast", "target start", "target stop"),
+    "casttouch": ("spellcast", "touch start", "touch stop"),
+    "spelleq": ("spellcast", "equip start", "equip stop"),
+    "spelluneq": ("spellcast", "unequip start", "unequip stop"),
+    "block": ("shield", "block start", "block stop"),
+}
+# Melee: third person Attack<W> is chop start to its large follow stop (actors.py); first person <W><Kind> the wind-up
+# to max attack, <W><Kind>F the blow from min hit to the large follow stop (firstperson.py)
+for _tag, _g in (("hh", "handtohand"), ("1h", "weapononehand"), ("2c", "weapontwohand"), ("2w", "weapontwowide")):
+    OPENMW_GROUPS["attack" + _tag] = (_g, "chop start", "chop large follow stop")
+    OPENMW_GROUPS[_tag + "eq"] = (_g, "equip start", "equip stop")
+    OPENMW_GROUPS[_tag + "uneq"] = (_g, "unequip start", "unequip stop")
+    for _k in ("chop", "slash", "thrust"):
+        OPENMW_GROUPS[_tag + _k] = (_g, f"{_k} start", f"{_k} max attack")
+        OPENMW_GROUPS[_tag + _k + "f"] = (_g, f"{_k} min hit", f"{_k} large follow stop")
+
+# Ranged: third person Attack<W> from shoot start to its follow stop (actors.py PHASED_GROUPS); first person <W>Shoot the
+# draw to max attack, <W>ShootF the release to the follow stop
+for _tag, _g in (("bow", "bowandarrow"), ("xbow", "crossbow"), ("throw", "throwweapon")):
+    OPENMW_GROUPS["attack" + _tag] = (_g, "shoot start", "shoot follow stop")
+    OPENMW_GROUPS[_tag + "shoot"] = (_g, "shoot start", "shoot max attack")
+    OPENMW_GROUPS[_tag + "shootf"] = (_g, "shoot release", "shoot follow stop")
+    OPENMW_GROUPS[_tag + "eq"] = (_g, "equip start", "equip stop")
+    OPENMW_GROUPS[_tag + "uneq"] = (_g, "unequip start", "unequip stop")
+OPENMW_GROUPS["idlexbow"] = ("idlecrossbow", None, None)
+
+
+def weapon_stance(s):
+    """A held group with the weapon (or fists) out rather than a spell readied: anything but a cast."""
+    g = s.get("group", "").lower()
+    return bool(g) and not g.startswith(("cast", "spell"))
 
 
 def env_value(key):
@@ -73,9 +124,33 @@ def read_shots(path):
         if len(cam) != 5:
             sys.exit(f"{path}:{n}: cam= wants x,y,z,yaw,pitch")
         base["cam"] = cam
-        points = [float(x) for x in base.pop("at", "0").split(",")]
+        if base.get("view") == "fp" and cam[4] != 0:
+            sys.exit(f"{path}:{n}: a first-person shot looks level (pitch 0)")
+        if "spawn" in base:
+            # a new one, SPAWN_DIST ahead of the camera, facing it
+            base["actor"] = base["spawn"]
+            base.setdefault("face", str((cam[3] + 180.0) % 360.0))
+        if base.get("actor", "").lower() == "player":
+            base["body"] = True
+            del base["actor"]
+            frm = [float(x) for x in base.get("from", "").split(",") if x]
+            if len(frm) != 4:
+                sys.exit(f"{path}:{n}: actor=player wants from=x,y,z,yaw (where the player stands)")
+            base["from"] = frm
+        if "cast" in base:
+            if base.get("view") != "fp" and "from" not in base:
+                sys.exit(f"{path}:{n}: a cast seen from cam wants from=x,y,z,yaw (where the player casts)")
+            frm = [float(x) for x in base["from"].split(",")] if "from" in base else cam[:4]
+            if len(frm) != 4:
+                sys.exit(f"{path}:{n}: from= wants x,y,z,yaw")
+            base["from"] = frm
+            points = [float(x) for x in base.pop("after", "1").split(",")]
+            key = "after"
+        else:
+            points = [float(x) for x in base.pop("at", "0").split(",")]
+            key = "at"
         for i, at in enumerate(points):
-            s = dict(base, at=at)
+            s = dict(base, **{key: at})
             if len(points) > 1:
                 s["name"] = f"{base['name']}-{i:02d}"
             shots.append(s)
@@ -110,10 +185,34 @@ def write_openmw_setup(shots):
         if "actor" in s:
             f.append(f"actor = {lua_str(s['actor'].lower())}")
         if "group" in s:
-            f.append(f"group = {lua_str(s['group'].lower())}")
+            g = s["group"].lower()
+            group, start, stop = OPENMW_GROUPS.get(g, (g, None, None))
+            f.append(f"group = {lua_str(group)}")
+            if start:
+                f.append(f"startKey = {lua_str(start)}, stopKey = {lua_str(stop)}")
             f.append(f"at = {s['at']}")
+        if s.get("view") == "fp":
+            f.append("fp = true")
+        if s.get("body"):
+            fx, fy, fz, fyaw = s["from"]
+            f.append(f"body = true, fromX = {fx}, fromY = {fy}, fromZ = {fz}, fromYaw = {math.radians(fyaw)!r}")
+        if (s.get("view") == "fp" or s.get("body")) and weapon_stance(s):
+            f.append("stance = \"weapon\"")
+        if "weapon" in s:
+            f.append(f"weapon = {lua_str(s['weapon'].lower())}")
+        for k in ("ammo", "shield"):
+            if k in s:
+                f.append(f"{k} = {lua_str(s[k].lower())}")
+        if "spell" in s:
+            f.append(f"spell = {lua_str(s['spell'].lower())}")
         if "face" in s:
             f.append(f"face = {math.radians(float(s['face']))!r}")
+        if "spawn" in s:
+            f.append(f"spawn = {float(s.get('dist', SPAWN_DIST))}")
+        if "cast" in s:
+            fx, fy, fz, fyaw = s["from"]
+            f.append(f"cast = {lua_str(s['cast'].lower())}, after = {s['after']}")
+            f.append(f"fromX = {fx}, fromY = {fy}, fromZ = {fz}, fromYaw = {math.radians(fyaw)!r}")
         lines.append("\t{ " + ", ".join(f) + " },")
     lines.append("}")
     (data / "scripts" / "mw3ds_sbs" / "poses.lua").write_text("\n".join(lines) + "\n")
@@ -233,11 +332,22 @@ def fmt(v):
 
 def write_case(shots, name):
     """The test case: per shot the player behind the camera, the clock, then CAM + HUD:off + POSE, then SHOT."""
+    # (the player a Dark Elf man, as OpenMW's default player: their first-person arms)
     lines = ["# start: Seyda Neen", "# Written by tools/test/sidebyside.py (side-by-side shots with OpenMW)",
-             "0.5 0 0 0 0 FRAMECAP:off"]
-    for s in shots:
+             "0.5 0 0 0 0 FRAMECAP:off+PCRACE:dark_elf+PCSEX:0"]
+    for i, s in enumerate(shots):
+        if "cast" in s:
+            lines += cast_steps(s)
+            continue
+        if s.get("body"):
+            lines += body_steps(s)
+            continue
         x, y, z, yaw, pitch = s["cam"]
-        bx, by = x - math.sin(math.radians(yaw)) * 300, y - math.cos(math.radians(yaw)) * 300
+        fp = s.get("view") == "fp"
+        # (the last point just short of the stop key, as OpenMW can hold it: hold.lua's kLast)
+        at = f"{min(s['at'], 0.998):.3f}"
+        # (first person: the player stands at cam; else 300 behind it, out of the picture)
+        bx, by = (x, y) if fp else (x - math.sin(math.radians(yaw)) * 300, y - math.cos(math.radians(yaw)) * 300)
         setup = []
         if "cell" in s:
             lines.append(f"0.5 0 0 0 0 GOTO:{s['cell'].replace(' ', '_')}")
@@ -247,18 +357,74 @@ def write_case(shots, name):
         if "hour" in s:
             setup.append(f"HOUR:{s['hour']}")
         lines.append("1 0 0 0 0 " + "+".join(setup))
-        view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "HUD:off"]
-        if "actor" in s and "group" in s:
-            pose = f"POSE:{s['actor'].replace(' ', '%')}:{s['group']}:{fmt(s['at'])}"
+        lines += gear(s)
+        if "spawn" in s:
+            # nobody else near, then the creature put there (shown again: the hiding caught it too)
+            sid = s["spawn"].replace(" ", "_")
+            lines += [f"0.3 0 0 0 0 HIDEACTORS:{HIDE_RADIUS}", f"1 0 0 0 0 PLACE:{sid}:{fmt(300 + float(s.get('dist', SPAWN_DIST)))}",
+                      f"0.1 0 0 0 0 ENABLE:{sid}"]
+        if fp:
+            view = ["CAM:off", "POV:first", "HUD:off"] + ([f"VMPOSE:{s['group']}:{at}"] if "group" in s else [])
+        else:
+            view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:first", "HUD:off", "VMPOSE:off"]
+        if not fp and "actor" in s and "group" in s:
+            pose = f"POSE:{s['actor'].replace(' ', '%')}:{s['group']}:{at}"
             if "face" in s:
                 pose += f":{s['face']}"
             view.append(pose)
         lines.append("1 0 0 0 0 " + "+".join(view))
         lines.append("0.5 0 0 0 0 SHOT")
+        if "spawn" in s and (i + 1 == len(shots) or shots[i + 1].get("spawn") != s["spawn"]):
+            lines.append(f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '_')}")
     case = ROOT / "tools" / "test" / "cases" / "scratch" / f"{name}.txt"
     case.parent.mkdir(parents=True, exist_ok=True)
     case.write_text("\n".join(lines) + "\n")
     return case
+
+
+# (every cast succeeds and none runs short of Magicka: global.lua sets the same in OpenMW)
+CAST_SKILLS = ["destruction", "alteration", "illusion", "conjuration", "mysticism", "restoration"]
+# (and nobody near: no one walks through the picture or catches the bolt; global.lua hides the same)
+HIDE_RADIUS = 4000
+
+
+def gear(s):
+    """Steps that GIVE (add and equip) the shot's weapon, ammunition and shield: one GIVE a step."""
+    return [f"0.2 0 0 0 0 GIVE:{s[k].replace(' ', '_')}" for k in ("weapon", "ammo", "shield") if k in s]
+
+
+def body_steps(s):
+    """The player's body in third person at from=, seen from cam, holding the group (BODYPOSE), nobody near."""
+    x, y, z, yaw, pitch = s["cam"]
+    fx, fy, fz, fyaw = s["from"]
+    setup = [f"TP:{fmt(fx)}:{fmt(fy)}:{fmt(fz)}:{fmt(fyaw)}"]
+    if "hour" in s:
+        setup.append(f"HOUR:{s['hour']}")
+    view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:third", "HUD:off", "VMPOSE:off",
+            f"HIDEACTORS:{HIDE_RADIUS}"]
+    at = f"{min(s['at'], 0.998):.3f}"
+    return ["1 0 0 0 0 " + "+".join(setup)] + gear(s) + ["1 0 0 0 0 " + "+".join(view),
+            f"0.5 0 0 0 0 BODYPOSE:{s['group']}:{at}", "0.5 0 0 0 0 SHOT", "0.1 0 0 0 0 BODYPOSE:off"]
+
+
+def cast_steps(s):
+    """A cast shot: the player at from=, the view (theirs, or cam), the spell cast, the world stopped `after` seconds
+    later for the SHOT, then going on long enough for the bolt and its visuals to be gone."""
+    x, y, z, yaw, pitch = s["cam"]
+    fx, fy, fz, fyaw = s["from"]
+    setup = [f"TP:{fmt(fx)}:{fmt(fy)}:{fmt(fz)}:{fmt(fyaw)}"]
+    if "hour" in s:
+        setup.append(f"HOUR:{s['hour']}")
+    fp = s.get("view") == "fp"
+    # (seen from cam, the player is in the picture: their body, in third person)
+    view = ["CAM:off" if fp else f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}",
+            "POV:first" if fp else "POV:third", "HUD:off", "VMPOSE:off", "SETMAGICKA:1000",
+            "SETATTR:willpower:100", "SETATTR:luck:100",
+            f"HIDEACTORS:{HIDE_RADIUS}"]
+    view += [f"SETSKILL:{k}:100" for k in CAST_SKILLS]
+    return ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view),
+            f"{fmt(s['after'])} 0 0 0 0 CAST:{s['cast'].replace(' ', '_')}",
+            "0.1 0 0 0 0 HALT:on", "0.5 0 0 0 0 SHOT", "3 0 0 0 0 HALT:off"]
 
 
 def run_3ds(shots, out, name, emu, data, exe):
@@ -280,7 +446,8 @@ def run_3ds(shots, out, name, emu, data, exe):
     for ln in r.stdout.splitlines():
         if "RESULT" in ln or "FAIL" in ln or "holds" in ln:
             print("3ds:", ln.strip())
-    pngs = sorted(raw.glob("shot_step_*.png"))
+    # (by step number: as text, step 100 would sort before step 99)
+    pngs = sorted(raw.glob("shot_step_*.png"), key=lambda p: [int(t) for t in re.findall(r"\d+", p.stem)])
     if len(pngs) != len(shots):
         print(f"3ds: {len(pngs)} shots for {len(shots)} wanted")
     (out / "3ds").mkdir(parents=True, exist_ok=True)
@@ -313,14 +480,14 @@ def main():
     ap.add_argument("--emu", action="store_true", help="the 3DS side in Azahar rather than the native build")
     ap.add_argument("--data", default="out/world")
     ap.add_argument("--exe", default="", help="another native build")
-    ap.add_argument("--timeout", type=float, default=300)
+    ap.add_argument("--timeout", type=float, default=0, help="seconds for the OpenMW run (default 60 + 15 a shot)")
     a = ap.parse_args()
     shots = read_shots(a.shots)
     out = Path(a.out)
     if not a.pc_only:
         run_3ds(shots, out, "sbs-" + Path(a.shots).stem, a.emu, a.data, a.exe)
     if not a.ds_only:
-        run_openmw(shots, out / "pc", a.timeout)
+        run_openmw(shots, out / "pc", a.timeout or 60 + 15 * len(shots))
     compose(shots, out)
 
 

@@ -953,8 +953,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				float bmax[3] = { a.place[3] + 80.0f, a.place[7] + 80.0f, a.place[11] + 150.0f };
 				if (!boxVisible(fr, bmin, bmax) || dist2 > maxDist * maxDist)
 					continue;
-				// Re-skin up close often, less often the smaller they are on screen
-				if (pass == 0 && !secondEye && ((frame + ai) % actorSkinEvery(dist2) == 0 || !a.deformed))
+				// Re-skin up close often, less often the smaller they are on screen. A pose held for a side-by-side shot
+				// (the test driver's POSE) every time: the native build draws only the frames it saves, so a throttled
+				// re-skin showed the shot before's pose
+				if (pass == 0 && !secondEye && ((frame + ai) % actorSkinEvery(dist2) == 0 || !a.deformed || a.frozen))
 				{
 					actorDeform(l->actors, a);
 					a.deformed = true;

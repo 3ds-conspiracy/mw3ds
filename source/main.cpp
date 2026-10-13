@@ -116,6 +116,7 @@ struct ScriptedInput
 	int camSet = -1;                  // CAM:x:y:z:yaw:pitch (1) / CAM:off (0): the view held at that spot (degrees, pitch up positive)
 	float cam[5] = {};
 	int hud = -1;                     // HUD:off (0) / HUD:on (1): the top screen's HUD
+	int halt = -1;                    // HALT:on (1) / HALT:off (0): the world stands still (no time passes) while the script goes on
 };
 
 // A scripted run keeps the Old 3DS frame cap (30 / 20 fps), as the console would run it. A case that only needs the story
@@ -125,9 +126,9 @@ static bool s_testFrameCap = true;
 // The layout the scripted run plays with (classic unless a CONTROLS: step chose another)
 static int s_testLayout = CONTROLS_CLASSIC;
 
-// CAM / HUD:off: a scripted run's view held at a spot, the HUD hidden (side-by-side screenshots with OpenMW,
-// tools/test/sidebyside.py). The player stays where they are, out of the picture
-static bool s_camHeld = false, s_hudOff = false;
+// CAM / HUD:off / HALT:on: a scripted run's view held at a spot, the HUD hidden, the world standing still
+// (side-by-side screenshots with OpenMW, tools/test/sidebyside.py). The player stays where they are, out of the picture
+static bool s_camHeld = false, s_hudOff = false, s_halt = false;
 static RenderCamera s_heldCam;
 
 // How far (pixels) a finger may wander between press and release and still tap
@@ -200,6 +201,11 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			step->hud = strcmp(tok + 4, "off") == 0 ? 0 : 1;
 			continue;
 		}
+		if (strncmp(tok, "HALT:", 5) == 0)
+		{
+			step->halt = strcmp(tok + 5, "on") == 0 ? 1 : 0;
+			continue;
+		}
 		if (strncmp(tok, "FRAMECAP:", 9) == 0)
 		{
 			step->frameCap = strcmp(tok + 9, "on") == 0 ? 1 : 0;
@@ -235,7 +241,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "POSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
+				"CASTAT:", "POSE:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -1759,6 +1765,8 @@ int main()
 			}
 			if (first && s.hud >= 0)
 				s_hudOff = s.hud == 0;
+			if (first && s.halt >= 0)
+				s_halt = s.halt == 1;
 			if (first && s.teleport && !s.tpInside && session->w.current >= 0 && session->w.cells[session->w.current].interior)
 			{
 				// from inside to world coordinates: out to the exterior cell there (as a door would)
@@ -1951,7 +1959,7 @@ int main()
 			u64 updStart = svcGetSystemTick();
 			MARK("session update");
 			session->frameDt = dt;         // (the frame's own time: a menu's panning goes on while the world stands still)
-			session->update(in, session->worldPaused() ? 0.0f : dt);      // (a menu stops the world; the test driver keeps its own clock)
+			session->update(in, session->worldPaused() || s_halt ? 0.0f : dt);      // (a menu stops the world; the test driver keeps its own clock)
 			MARK("after update");
 			extern float g_profWorldMs;
 			g_profWorldMs += (svcGetSystemTick() - updStart) * 1000.0f / SYSCLOCK_ARM11;
@@ -2142,13 +2150,13 @@ int main()
 		for (int eye = 0; eye < (stereoOn ? 2 : 1); eye++)
 		{
 			C3D_RenderTarget* target3d = eye ? topRight : top;
-			C3D_RenderTargetClear(target3d, C3D_CLEAR_ALL, clear, 0);
+			clearTop(target3d, clear);
 			C3D_FrameDrawOn(target3d);
 			float cmdBefore = C3D_GetCmdBufUsage();
 			if (loaded)
 				rendererDrawWorld(session->w, cam, stereoOn ? (eye ? shift : -shift) : 0.0f, eye == 1, fogScale);
-			if (loaded && poseIndex >= autocam.size() && !s_camHeld)
-				session->drawExtras(cam.pos, eye == 1);
+			if (loaded && poseIndex >= autocam.size())
+				session->drawExtras(cam.pos, eye == 1, !s_camHeld);
 			if (eye == 0)
 				eyeCmd = C3D_GetCmdBufUsage() - cmdBefore;
 

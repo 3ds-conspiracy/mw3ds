@@ -450,6 +450,8 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 		for (auto& m : piece->meshes)
 			rendererDrawMeshGlow(m, &model, piece->textures[m.tex], glow);
 	}
+	if (!arms && !thirdPerson)
+		return;
 	if (thirdPerson || previewFace)
 		body.draw(w, !secondEye);
 	else

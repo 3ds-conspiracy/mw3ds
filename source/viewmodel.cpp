@@ -481,6 +481,13 @@ void ViewModel::update(float dt, bool moving, bool running)
 		return;
 	Actor& a = set.actors[0];
 	const Skeleton& sk = set.skeletons[0];
+	// held in a pose for a side-by-side screenshot (the test driver's VMPOSE): shown, nothing moves on
+	if (a.frozen)
+	{
+		visible = true;
+		actorAnimate(set, a, 0.0f);
+		return;
+	}
 	float step = dt;
 	switch (action)
 	{
