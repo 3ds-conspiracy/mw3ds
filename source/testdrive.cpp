@@ -210,7 +210,7 @@ static bool hasArg(const std::string& what)
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece";
 }
 
 // "<a>,<b>" as two numbers
@@ -816,6 +816,11 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	if (what == "vmmeshes")           // meshes the first-person view model draws now (arms, then what they hold)
 	{
 		v = s.vm.ready && !s.vm.set.actors.empty() ? (float)s.vm.set.actors[0].meshes.size() : 0.0f;
+		return true;
+	}
+	if (what == "vmpiece")            // vmpiece:<text>: 1 if a first-person piece's name has that text (robe_extrav)
+	{
+		v = s.vm.ready && lower(s.vm.builtFor).find(lower(arg)) != std::string::npos ? 1.0f : 0.0f;
 		return true;
 	}
 	if (what == "vmhands")            // the first-person hands (their wrists) in view on the top screen: 0, 1 or 2

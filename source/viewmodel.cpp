@@ -302,8 +302,9 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 	return p;
 }
 
-// Body part slots the arms use (npc.PART_BONES): hands, wrists, shield, forearms, upper arms, weapon
-static const int kSlots[] = { 6, 7, 8, 9, 10, 11, 12, 13, 14, 25 };
+// Body part slots the arms use (npc.PART_BONES): the chest (a robe's first-person sleeves), hands, wrists, shield,
+// forearms, upper arms, weapon
+static const int kSlots[] = { 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 25 };
 static const int CLOT_ROBE = 4, CLOT_SKIRT = 7;
 
 void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string& shieldId, const std::string& ammoId)

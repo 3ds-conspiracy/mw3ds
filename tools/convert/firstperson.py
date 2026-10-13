@@ -438,7 +438,9 @@ class FirstPerson:
             else:
                 slots = {}
                 for slot, male, female in item_parts(rec):
-                    if slot not in ARM_SLOTS:
+                    # Any part with a first-person (".1st") model is drawn in first person, whatever its slot: a
+                    # robe's sleeves are its chest part's (OpenMW's addPartGroup); others only on the arms
+                    if slot not in ARM_SLOTS and not any(p and p.lower() + ".1st" in self.bodies for p in (male, female)):
                         continue
                     pm = self.piece(self.body_model(male), slot) if male and self.body_model(male) else None
                     pf = self.piece(self.body_model(female), slot) if female and self.body_model(female) else pm

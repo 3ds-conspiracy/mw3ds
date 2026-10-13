@@ -34,6 +34,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `world.cpp` | owned and stolen items | `mechanicsmanagerimp.cpp isAllowedToUse / itemTaken`, `mwworld/cellref.cpp` | partial (`crime.md`) |
 | `combat.cpp` | arrest: the guard comes over and talks, Greeting 0 decides (pay, jail, resist, the character creation pardon) | `aipursue.cpp`, `actors.cpp` (Alarmed, crime id), `miscextensions.cpp OpPayFine / OpGoToJail` | checked 2026-10-07 (`crime.md`, `issue-4`, `crime-arrest-*`) |
 | `combat.cpp` | guards go for hostile creatures: a creature in a fight within fAlarmRadius, Fight towards the player 100 or more, not calmed, not following or escorting anyone (`guardFoe`, then the duel) | `actors.cpp engageCombat` | checked 2026-10-12 (`bug-guard-creature`); differs: the creature keeps on the player rather than turning on the nearest foe |
+| `viewmodel.cpp` `firstperson.py` | first-person parts: any part with a ".1st" model, whatever its slot (a robe's sleeves are its chest part's), others only on the arms; a robe reserves the forearms and upper arms | `npcanimation.cpp addPartGroup`, `updateParts` (Slot_Robe) | checked 2026-10-12 (`bug-fp-robe-sleeves`, side by side with OpenMW) |
 | `world.cpp` | followers taken through doors | `mwworld/actionteleport.cpp getFollowers` | unchecked |
 | `world.cpp` | enable / disable, pick up, add / remove items, stacks | `mwworld/worldimp.cpp`, `containerstore.cpp`, `actiontake.cpp` | unchecked |
 | `world.cpp` | soul trap | `mwmechanics/spelleffects.cpp` (soultrap), `actors.cpp` | unchecked |

@@ -64,6 +64,30 @@ local function nextShot()
 	core.sendGlobalEvent('MW3DS_SBS_Setup', { index = index })
 end
 
+-- The shot's worn armor and clothing (wear=), each in its slot by its type
+local kArmorSlots = { 'Helmet', 'Cuirass', 'LeftPauldron', 'RightPauldron', 'Greaves', 'Boots', 'LeftGauntlet',
+	'RightGauntlet', 'CarriedLeft', 'LeftGauntlet', 'RightGauntlet' }
+local kClothingSlots = { 'Pants', 'Boots', 'Shirt', 'Belt', 'Robe', 'RightGauntlet', 'LeftGauntlet', 'Skirt',
+	'RightRing', 'Amulet' }
+local function wear(s)
+	if not s.wear then
+		return
+	end
+	local inv = types.Actor.inventory(self)
+	local eq = types.Actor.getEquipment(self)
+	for _, id in ipairs(s.wear) do
+		local o = inv:find(id)
+		if o then
+			local name = types.Armor.objectIsInstance(o) and kArmorSlots[types.Armor.record(o).type + 1]
+				or types.Clothing.objectIsInstance(o) and kClothingSlots[types.Clothing.record(o).type + 1]
+			if name then
+				eq[types.Actor.EQUIPMENT_SLOT[name]] = o
+			end
+		end
+	end
+	types.Actor.setEquipment(self, eq)
+end
+
 -- fp: the spell readied, then the arms hold the group
 local function updateArms()
 	local s = poses[index]
@@ -72,6 +96,7 @@ local function updateArms()
 	end
 	armsFrames = armsFrames + 1
 	if armsFrames == 1 then
+		wear(s)
 		if s.stance == 'weapon' then
 			-- the shot's weapon in hand (none: fists), its ammunition, the shield
 			local slot = types.Actor.EQUIPMENT_SLOT

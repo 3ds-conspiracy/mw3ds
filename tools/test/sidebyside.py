@@ -21,6 +21,7 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
     actor=player          third person: the player's own body stands at from=x,y,z,yaw (seen from cam, nobody
                           near) and holds the group (Attack1h, ...)
     weapon=id ammo=id shield=id   the player carries and equips these (fp and actor=player shots)
+    wear=id,id,...        armor and clothing the player wears (gauntlets, robes ...), on both sides
     spawn=id [dist=d]     a new actor (a creature) 250 (d) units ahead of the camera, facing it, is the shot's actor
     cast=id after=t,...   the player casts that spell (level, ahead) and the world stands still t seconds after the
                           cast began: one shot per t (bolts in flight, cast and hit visuals). The player stands at
@@ -203,6 +204,8 @@ def write_openmw_setup(shots):
         for k in ("ammo", "shield"):
             if k in s:
                 f.append(f"{k} = {lua_str(s[k].lower())}")
+        if "wear" in s:
+            f.append("wear = { " + ", ".join(lua_str(w.lower()) for w in s["wear"].split(",")) + " }")
         if "spell" in s:
             f.append(f"spell = {lua_str(s['spell'].lower())}")
         if "face" in s:
@@ -389,8 +392,9 @@ HIDE_RADIUS = 4000
 
 
 def gear(s):
-    """Steps that GIVE (add and equip) the shot's weapon, ammunition and shield: one GIVE a step."""
-    return [f"0.2 0 0 0 0 GIVE:{s[k].replace(' ', '_')}" for k in ("weapon", "ammo", "shield") if k in s]
+    """Steps that GIVE (add and equip) the shot's weapon, ammunition, shield and worn items: one GIVE a step."""
+    ids = [s[k] for k in ("weapon", "ammo", "shield") if k in s] + (s["wear"].split(",") if "wear" in s else [])
+    return [f"0.2 0 0 0 0 GIVE:{i.replace(' ', '_')}" for i in ids]
 
 
 def body_steps(s):

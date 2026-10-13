@@ -83,9 +83,13 @@ local function setup(data)
 		local back = util.vector3(-math.sin(s.yaw), -math.cos(s.yaw), 0) * 300
 		player:teleport(s.cell or '', cam + back)
 	end
-	-- the shot's weapon, ammunition and shield (player.lua equips them)
+	-- the shot's weapon, ammunition, shield and worn armor and clothing (player.lua equips them)
 	local inv = types.Actor.inventory(player)
-	for _, id in ipairs({ s.weapon or false, s.ammo or false, s.shield or false }) do
+	local ids = { s.weapon or false, s.ammo or false, s.shield or false }
+	for _, id in ipairs(s.wear or {}) do
+		ids[#ids + 1] = id
+	end
+	for _, id in ipairs(ids) do
 		if id and inv:countOf(id) == 0 then
 			world.createObject(id, id == s.ammo and 50 or 1):moveInto(inv)
 		end

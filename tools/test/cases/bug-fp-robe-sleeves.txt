@@ -1,0 +1,13 @@
+# A robe's sleeves in first person: robes cover the forearms and upper arms (OpenMW's Slot_Robe reserves them) and
+# draw their own first-person model, the chest part's ".1st" (Tarhiel's extravagant robe, C_M_Robe_Extrav_1t.1st).
+# Without it a Fire Bite cast showed fur gauntlets hanging off bare stumps where the forearms were
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:fur_gauntlet_right
+0.3 0 0 0 0 GIVE:fur_gauntlet_left
+0.3 0 0 0 0 GIVE:extravagant_robe_01_t
+0.5 0 0 0 0 POV:first+HUD:off
+0.5 0 0 0 0 VMPOSE:casttarget:0.5
+0.3 0 0 0 0 EXPECT:vmpiece:robe_extrav_1t:eq:1+EXPECT:vmpiece:nordicfur:eq:1+EXPECT:vmhands:eq:2
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 VMPOSE:off
