@@ -41,6 +41,18 @@ foreach ($c in $cases) {
 }
 $cases = @($cases | Where-Object { $otherConsole -notcontains $_ })
 if (-not $cases) { "no cases match"; exit 1 }
+# The longest first (as the last runs timed them; uber-* first when they haven't been timed): a five-minute uber case
+# started last kept the run going long after the others were done
+$took = @{}
+$past = Get-ChildItem (Join-Path $root 'build\native-results') -Directory -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -ne 'latest' } | Sort-Object Name
+foreach ($d in $past) {
+    $csv = Join-Path $d.FullName 'results.csv'
+    if (Test-Path $csv) { foreach ($row in Import-Csv $csv) { $took[$row.case] = [int]$row.seconds } }
+}
+$cases = @($cases | Sort-Object @{ Expression = {
+            if ($took.ContainsKey($_)) { $took[$_] } elseif ($_ -like 'uber-*') { 100000 } else { 5 } }; Descending = $true },
+    @{ Expression = { $_ } })
 
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $resDir = Join-Path $root "build\native-results\$stamp"
