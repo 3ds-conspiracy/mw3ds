@@ -1826,6 +1826,37 @@ void Session::npcDuel(int ri, float dt)
 	w.syncActor(ri);
 }
 
+// Guards go for hostile creatures (OpenMW's engageCombat, as Morrowind does): a creature in a fight within fAlarmRadius
+// of a Guard-class NPC, whose Fight towards the player reaches 100, unless the guard or the creature is calmed or the
+// creature follows or escorts someone. The nearest such creature, or -1
+int Session::guardFoe(int ri)
+{
+	const Ref& r = w.refs[ri];
+	if (lower(w.game.actors[r.actor].cls) != "guard" || w.actorEffect(ri, 49) > 0.0f || r.calmUntil > w.time)
+		return -1;
+	const float radius = w.game.gmstf("falarmradius", 2000.0f);
+	int best = -1;
+	float bestD = radius * radius;
+	for (int ci : w.loadedActors)
+	{
+		const Ref& c = w.refs[ci];
+		if (ci == ri || c.actor < 0 || c.dead || !c.visible() || !w.active(ci) || c.ally || !w.game.actors[c.actor].creature)
+			continue;
+		if (c.ai != AI_COMBAT && c.duelFoe < 0)
+			continue;                        // not fighting anyone
+		if ((c.aiPackage == AIPKG_FOLLOW || c.aiPackage == AIPKG_ESCORT) && !c.aiDone)
+			continue;
+		if (w.actorEffect(ci, 50) > 0.0f || c.calmUntil > w.time || !w.sameSpace(ci, ri))
+			continue;
+		float dx = c.pos[0] - r.pos[0], dy = c.pos[1] - r.pos[1], dz = c.pos[2] - r.pos[2], d = dx * dx + dy * dy + dz * dz;
+		if (d > bestD || fightTermOf(ci, w.distanceToPlayer(ci)) < 100.0f)
+			continue;
+		best = ci;
+		bestD = d;
+	}
+	return best;
+}
+
 // ---- AI packages
 
 // A package that ran its hours or got where it was going is over: GetAIPackageDone reports 1, and OpenMW drops it, so
@@ -2652,6 +2683,8 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				r.aggressor = true;
 				makeHostile(i);
 			}
+			else if (!menu && r.type == "NPC_" && (r.duelFoe = guardFoe(i)) >= 0)
+				npcDuel(i, dt);
 			else if (npcTalkStand(i, dt))
 				;
 			else if (w.bounty > 0 && lower(w.game.actors[r.actor].cls) == "guard" && !menu)

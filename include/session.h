@@ -293,6 +293,7 @@ struct Session : ScriptHost
 	void npcPackage(int ref, float dt);          // travel / follow / escort / activate packages
 	void npcDuel(int ref, float dt);              // StartCombat on another actor: it walks up to its foe and fights it
 	void allyFight(int ref, float dt);            // summoned creatures go for whoever fights the player
+	int guardFoe(int ref);                        // a guard's hostile creature in a fight nearby (-1: none)
 	bool npcStep(int ref, Cell& cell, float dirX, float dirY, float step);
 	void makeHostile(int ref);
 	void damageNpc(int ref, float dmg, bool fatigueOnly);

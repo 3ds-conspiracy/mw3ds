@@ -1,0 +1,13 @@
+# Guards go for hostile creatures that are fighting, within fAlarmRadius (OpenMW's engageCombat: a Guard-class NPC
+# turns aggressive on a creature in combat whose Fight towards the player is 100 or more). A nix-hound set on the
+# player in Balmora: the player stands still (GOD) and the street guard kills it.
+0.3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora
+3 0 0 0
+40 0 0 0 0 WALKTO:hlaalu%guard_outside
+1 0 0 0 0 PLACE:nix-hound:400
+0.5 0 0 0 0 EXPECT:refcombat:nix-hound:eq:1
+20 0 0 0
+0.1 0 0 0 0 EXPECT:dead:nix-hound
