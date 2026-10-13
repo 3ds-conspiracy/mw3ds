@@ -262,11 +262,18 @@ struct Session : ScriptHost
 	void updateWeatherEffects(float dt);
 	void updateSky();
 	float ambientTimer = 3.0f;                     // until the region's next ambient sound
-	// Spell visuals: a static's piece at a spot for a moment, turning (cast at the hand, hit on the target)
-	struct Vfx { std::string piece; float pos[3]; float age, life, spin; int follow; };   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
+	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
+	// Animation::addEffect), or at a spot (an area burst, blood)
+	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; };   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
 	std::vector<Vfx> vfx;
-	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2);
-	void spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow = -2);   // kind 0 cast, 1 hit, 2 area                              // the sun, the moons and the stars for the renderer
+	static constexpr int kMaxVfx = 12;             // at once: past it a nearer one takes the farthest one's place
+	static constexpr float kVfxRange = 4096.0f;    // farther from the player none starts (many casters at once: their visuals are the cost)
+	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2, float yaw = 0.0f, float scale = 1.0f);
+	// kind 0 cast (every model its effects name), 1 hit, 2 area (each effect of that range with an area, at twice the
+	// area in feet: OpenMW's explodeSpell); range: the effects kind 2 bursts. An effect with none: the VFX_Default one
+	void spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow = -2, float yaw = 0.0f, int range = 2);
+	void castVfx(const SpellDef& sp, int caster);  // the cast's visual on its caster (-1 the player), as long as it casts
+	std::string boltPiece(const SpellDef& sp);     // what a bolt of it flies as ("" none: a glow)
 	C3D_Tex* skyTex(const std::string& name);      // acquired once, kept
 	std::unordered_map<std::string, C3D_Tex*> skyTextures;
 	int restInterruptAt = -1;                    // sleeping outdoors: the hour (restDone) a creature comes
@@ -339,7 +346,7 @@ struct Session : ScriptHost
 		const std::string& weapon, float charge, const std::string& spell);
 	void updateProjectiles(float dt);
 	void projectileHits(Projectile& p, int victim);
-	void drawExtras(const float eye[3], bool secondEye = false);
+	void drawExtras(const float eye[3], bool secondEye = false, bool arms = true);
 
 	// Stereo 3D (main.cpp draws each eye): on with the slider in interiors, and outdoors while the
 	// frame has room for a second eye; Settings on the Stats screen can force it on or off

@@ -49,6 +49,8 @@ enum { ACTOR_MESH_WEAPON = 128 };      // mesh flag: the weapon, drawn only whil
 // How the current animation group plays
 enum AnimMode { ANIM_IDLE, ANIM_LOOP, ANIM_ONCE, ANIM_HOLD };   // random idles / repeat / then idle / freeze at end
 
+constexpr float kVfxFps = 20.0f;             // track samples a second (firstperson.py VFX_FPS)
+
 struct ActorMesh
 {
 	int tex;
@@ -72,6 +74,13 @@ struct ActorMesh
 	float morphT = -1.0f;              // morph position the vertices hold (-1: none yet)
 	u32 glow = 0;                      // enchanted: a pulsing glow in this colour (0xRRGGBB), 0 none
 	std::vector<MorphTrack> morphs;
+	// A spell visual's mesh that moves (tools/convert/firstperson.py vfx_tracks): 12 floats (3x4, its space to the
+	// piece's root) kVfxFps times a second; billboard: it turns to face the eye
+	std::vector<float> track;
+	std::vector<float> vis;            // shown (1) or hidden (0) from each time on: pairs (time, shown), empty: always shown
+	bool driven = false;               // the track runs on the actor's driveT (an arrow on its bow's ArrowBone) at its bone
+	bool billboard = false;
+	float radius = 0.0f;               // with a track: how far its vertices reach from its origin
 };
 
 struct Actor

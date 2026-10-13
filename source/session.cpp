@@ -1304,9 +1304,15 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		else
 		{
 			if (vfx[i].follow == -1)
+			{
 				memcpy(vfx[i].pos, w.player.feet, sizeof(vfx[i].pos));
+				vfx[i].yaw = w.player.yaw;
+			}
 			else if (vfx[i].follow >= 0 && vfx[i].follow < (int)w.refs.size())
+			{
 				memcpy(vfx[i].pos, w.refs[vfx[i].follow].pos, sizeof(vfx[i].pos));
+				vfx[i].yaw = w.refs[vfx[i].follow].rot[2];
+			}
 			i++;
 		}
 	if (!playerDead && w.stats.health <= 0.0f)

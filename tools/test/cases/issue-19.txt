@@ -9,7 +9,7 @@
 0.2 0 0 0 0 EXPECT:vfxcount:ge:1
 0.1 0 0 0 0 EXPECT:vfxheight:eq:0
 0.2 0 0 0 0 SHOT
-1.5 0 0 0 0
+3.5 0 0 0 0
 0.1 0 0 0 0 EXPECT:vfxcount:eq:0
 0.1 0 0 0 0 CAST:mw3ds_test_shieldme
 0.1 0 0 0 0 EXPECT:vfxcount:ge:1

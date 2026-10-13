@@ -14,4 +14,5 @@ struct Projectile
 	std::string spell;        // spell id: its target-range effects land on whoever it hits
 	float life = 4.0f;        // seconds before it drops out of the world
 	u32 glow = 0;             // spell bolts: colour (0xAABBGGRR)
+	std::string bolt;         // spell bolts: the piece it flies as ("" a glow of glow's colour)
 };

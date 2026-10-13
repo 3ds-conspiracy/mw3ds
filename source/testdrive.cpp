@@ -203,7 +203,7 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
@@ -475,10 +475,26 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	if (what == "deletingsave") { v = s.deletingSave ? 1.0f : 0.0f; return true; }    // the Saves screen asks "Delete ...?"
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
+	if (what == "vmammo")             // 1: an arrow or bolt sits in the first-person bow or crossbow
+	{
+		v = 0.0f;
+		if (s.vm.ready)
+			for (const ActorMesh& m : s.vm.set.actors[0].meshes)
+				if (m.driven)
+					v = 1.0f;
+		return true;
+	}
 	// how far above the player's feet the first spell visual stands (-999 with none): a self spell's wraps the body from the feet
 	if (what == "vfxheight") { v = s.vfx.empty() ? -999.0f : s.vfx[0].pos[2] - w.player.feet[2]; return true; }
 	// how far (flat) the first spell visual stands from the player (-999 with none): a self spell's travels with the caster
 	if (what == "vfxdist") { v = s.vfx.empty() ? -999.0f : hypotf(s.vfx[0].pos[0] - w.player.feet[0], s.vfx[0].pos[1] - w.player.feet[1]); return true; }
+	// how far (degrees) the first spell visual's facing is off the player's (-999 with none): a cast's faces as the caster does
+	if (what == "vfxyaw") { v = s.vfx.empty() ? -999.0f : fabsf(remainderf(s.vfx[0].yaw - w.player.yaw, 6.2831853f)) * 57.29578f; return true; }
+	// the largest spell visual's scale: an area burst is drawn at twice its area in feet (OpenMW's explodeSpell)
+	if (what == "vfxscale") { v = 0.0f; for (auto& x : s.vfx) v = fmaxf(v, x.scale); return true; }
+	if (what == "bolts") { v = (float)s.projectiles.size(); return true; }    // arrows, bolts and spells in flight
+	// the first projectile flies as a model (1) or a plain glow (0); -1 with none in flight
+	if (what == "boltmodel") { v = s.projectiles.empty() ? -1.0f : s.projectiles[0].bolt.empty() && s.projectiles[0].item.empty() ? 0.0f : 1.0f; return true; }
 	if (what == "untextured")           // first-person and body meshes drawn white for lack of a texture
 	{
 		v = 0;
@@ -898,6 +914,12 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		else if (what == "refdisp") v = (float)w.disposition(ri);
 		else if (what == "refflee") v = r.fleeing ? 1.0f : 0.0f;
 		else if (what == "refcombat") v = r.ai == AI_COMBAT ? 1.0f : 0.0f;
+		else if (what == "refvfx")       // spell visuals kept to it (a cast's while it casts, a hit's)
+		{
+			v = 0.0f;
+			for (auto& x : s.vfx)
+				v += x.follow == ri;
+		}
 		else if (what == "refdying")     // dead, and its fall to the ground still playing
 		{
 			Actor* ra = w.actorOf(ri);

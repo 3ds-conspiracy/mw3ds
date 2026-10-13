@@ -16,7 +16,13 @@ struct FpPiece
 	std::vector<std::string> texNames;       // what each mesh's tex indexes
 	std::vector<C3D_Tex*> textures;
 	u32 bytes = 0;
+	float length = 0.0f;                     // seconds its meshes' tracks run (a spell visual's animation)
 };
+
+// A mesh's place at time t of its track: base x the track's matrix, samples blended; a billboard faces the eye with the
+// track's place and size. A mesh with no track: base. False: shrunk to a speck there (most of a spell visual's pieces
+// are, most of the time: not drawn)
+bool fpTrackMatrix(const ActorMesh& m, const C3D_Mtx& base, float t, C3D_Mtx& out);
 
 // Reads data/fp/<name>.fpm, bones named in it resolved against sk (nullptr when missing)
 struct World;

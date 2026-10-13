@@ -1145,17 +1145,14 @@ void Session::beginCast(const SpellDef& sp, int school, bool animate)
 {
 	playSound(-1, spellSound(sp, 0));
 	{
-		// the cast's visual at the hand (a self spell's shows around the player)
+		// The cast's visual is modelled around the caster's feet, its flames up the arms (OpenMW attaches it to the
+		// actor's own node: playSpellCastingEffects), and a self spell's hit wraps the body from there too
 		bool away = false;
 		for (auto& e : sp.effects)
 			away |= e.range != 0;
-		float cp0 = cosf(w.player.pitch);
-		float hand[3] = { w.player.feet[0] + sinf(w.player.yaw) * cp0 * 40.0f, w.player.feet[1] + cosf(w.player.yaw) * cp0 * 40.0f,
-			playerEyeZ(w.player) - 25.0f };
-		// Hit visuals are modelled around the actor's feet (OpenMW attaches them to the actor's own node), so a
-		// self spell's sits there: its Shield sphere then wraps the whole body
-		float feet[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] };
-		spellVfx(sp, away ? 0 : 1, away ? hand : feet, away ? -2 : -1);
+		castVfx(sp, -1);
+		if (!away)
+			spellVfx(sp, 1, w.player.feet, -1, w.player.yaw);
 	}
 	castDef = sp;
 	castSchool = school;
@@ -1338,7 +1335,7 @@ void Session::releaseSpell(const SpellDef& sp, int school)
 			{
 				applyEffectToActor(who, e, true, (float)sp.cost, (float)castChance(sp), sp.name);
 				playSound(who, spellSound(sp, 2));
-				spellVfx(sp, 1, w.refs[who].pos, who);
+				spellVfx(sp, 1, w.refs[who].pos, who, w.refs[who].rot[2]);
 			}
 		}
 	}
@@ -1362,7 +1359,7 @@ void Session::areaBurst(const SpellDef& sp, int range, const float at[3], int st
 	if (!any)
 		return;
 	playSound(-1, spellSound(sp, 3));
-	spellVfx(sp, 2, at);
+	spellVfx(sp, 2, at, -2, 0.0f, range);
 	const float kUnitsPerFoot = 21.333333f;
 	for (auto& e : sp.effects)
 	{

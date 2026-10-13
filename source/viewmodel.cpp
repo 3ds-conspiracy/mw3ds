@@ -118,6 +118,46 @@ int fpUntextured(const FpPiece* p)
 	return n;
 }
 
+bool fpTrackMatrix(const ActorMesh& m, const C3D_Mtx& base, float t, C3D_Mtx& out)
+{
+	size_t n = m.track.size() / 12;
+	if (n == 0)
+	{
+		out = base;
+		return true;
+	}
+	float f = fmaxf(0.0f, t) * kVfxFps;
+	size_t a = (size_t)f < n - 1 ? (size_t)f : n - 1, b = a + 1 < n ? a + 1 : a;
+	float k = a == b ? 0.0f : f - a;
+	const float* p = &m.track[a * 12];
+	const float* q = &m.track[b * 12];
+	C3D_Mtx tm;
+	Mtx_Identity(&tm);
+	for (int r = 0; r < 3; r++)
+	{
+		tm.r[r].x = p[r * 4 + 0] + (q[r * 4 + 0] - p[r * 4 + 0]) * k;
+		tm.r[r].y = p[r * 4 + 1] + (q[r * 4 + 1] - p[r * 4 + 1]) * k;
+		tm.r[r].z = p[r * 4 + 2] + (q[r * 4 + 2] - p[r * 4 + 2]) * k;
+		tm.r[r].w = p[r * 4 + 3] + (q[r * 4 + 3] - p[r * 4 + 3]) * k;
+	}
+	Mtx_Multiply(&out, &base, &tm);
+	float s = sqrtf(out.r[0].x * out.r[0].x + out.r[1].x * out.r[1].x + out.r[2].x * out.r[2].x);
+	if (s * m.radius < 0.25f)
+		return false;
+	if (!m.billboard)
+		return true;
+	// the place and size it has, turned square to the eye (OpenMW's BillboardCallback)
+	float ax[3][3];
+	rendererViewAxes(ax[0], ax[1], ax[2]);
+	for (int r = 0; r < 3; r++)
+	{
+		out.r[r].x = ax[0][r] * s;
+		out.r[r].y = ax[1][r] * s;
+		out.r[r].z = ax[2][r] * s;
+	}
+	return true;
+}
+
 FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool* missing)
 {
 	char path[256];
@@ -151,7 +191,7 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 		char bone[33] = {};
 		rd(f, m.tex);
 		rd(f, m.flags); rd(f, m.alphaRef); rd(f, m.kind); rd(f, pad);
-		m.hasMorph = pad;
+		m.hasMorph = pad & 1;
 		fread(bone, 32, 1, f);
 		rd(f, m.numVerts);
 		rd(f, m.numIndices);
@@ -225,6 +265,17 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 				fread(mt.delta.data(), 4, m.numVerts * 3, f);
 			}
 			m.talk[0] = m.talk[1] = m.blink[0] = m.blink[1] = 0.0f;
+		}
+		if (pad & 2)
+		{
+			u32 n = 0;
+			rd(f, n);
+			m.track.resize(n * 12);
+			fread(m.track.data(), 4, n * 12, f);
+			m.billboard = (pad & 4) != 0;
+			for (u32 i = 0; i < m.numVerts; i++)
+				m.radius = fmaxf(m.radius, sqrtf(m.src[i * 3] * m.src[i * 3] + m.src[i * 3 + 1] * m.src[i * 3 + 1] + m.src[i * 3 + 2] * m.src[i * 3 + 2]));
+			p->length = fmaxf(p->length, n > 1 ? (n - 1) / kVfxFps : 0.0f);
 		}
 		// Textures: the mesh's own entry in the piece
 		if (m.tex >= 0 && m.tex < (int)ntex)

@@ -49,6 +49,8 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 void rendererSetHorizon(float scale);
 // Additive camera-facing quad (spell bolts); rgba as 0xAABBGGRR
 void rendererDrawGlow(const float pos[3], float size, u32 rgba);
+// The eye's right, up and back directions in the world (of the last rendererDrawWorld): what a billboard turns to
+void rendererViewAxes(float right[3], float up[3], float back[3]);
 // Local map: renders the loaded cells seen from above (x/y square from minX, minY, size units wide;
 // looking down from topZ through depth units) into a 256 x 256 texture. Inside a frame, before the
 // screens are drawn. The texture: rendererLocalMap() (nullptr until the first render).

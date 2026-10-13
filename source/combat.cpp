@@ -955,6 +955,7 @@ void Session::npcCastSpell(int ri)
 	r.attackTimer = windup + 1.0f;
 	static const char* school[6] = { "alteration", "conjuration", "destruction", "illusion", "mysticism", "restoration" };
 	playSound(ri, std::string(school[spellSchool(sp)]) + " cast");
+	castVfx(sp, ri);
 	logf("combat: %s casts %s", r.id.c_str(), sp.name.c_str());
 }
 

@@ -12,8 +12,10 @@ Writes data/fp/ (zlib-wrapped like the cells):
                     i32 tex, u8 flags, u8 alpha_ref, u8 kind (0 rigid, 1 skinned), u8 0,
                     char bone[32] (rigid: bone it rides, "" = root), u32 num_vertices, u32 num_indices,
                     vertices (24 bytes: f32 pos[3], f32 uv[2], u8 rgba[4]), u16 indices (pad to 4),
-                    (the u8 after kind: 1 when the mesh morphs, its morphs last: u32 count, per morph u32 n,
-                    n x (f32 t, f32 weight), f32 delta[num_vertices * 3])
+                    (the u8 after kind, bits: 1 the mesh morphs, its morphs last: u32 count, per morph u32 n,
+                    n x (f32 t, f32 weight), f32 delta[num_vertices * 3]; 2 it moves, after that: u32 n,
+                    n x f32 matrix[12] (3x4 rows, its space to the root, VFX_FPS a second from 0: a spell
+                    visual's node keyframes); 4 it turns to face the eye (a NiBillboardNode))
                     kind 1: u32 palette size, per entry: char bone[32], f32 skin_to_bone[12];
                             per vertex u8 index[4], u8 weight[4]
 Rigid positions are in their bone's space, skinned ones in skin space; bones are named, so a
@@ -29,8 +31,8 @@ import struct
 import numpy as np
 
 from actors import skeleton_export, write_skeleton_list
-from meshes import extract_shapes
-from npc import MIRROR_X, PART_BONES, SKIN_SLOTS, item_parts, skeleton_pose, text_key_time
+from meshes import extract_shapes, walk_nif
+from npc import MIRROR_X, PART_BONES, SKIN_SLOTS, item_parts, quat_matrix, sample, skeleton_pose, text_key_time
 from nif import Nif
 from textures import texels_needed, world_per_repeat
 
@@ -44,6 +46,7 @@ AMBIENT = np.array([0.55, 0.53, 0.5])
 SUN = np.array([0.6, 0.58, 0.55])
 SUN_DIR = np.array([0.15, -0.45, 0.88]) / np.linalg.norm([0.15, -0.45, 0.88])
 TEXEL_BOOST = 2.5            # arms are closer to the eye than anything in the world
+VFX_FPS = 20                 # samples a second of a spell visual's node animation (the engine's kVfxFps)
 
 
 def fp_groups(nif):
@@ -284,22 +287,88 @@ class FirstPerson:
         self.pieces[name] = meshes or None
         return name if meshes else None
 
-    def vfx_model(self, model):
-        """A spell visual's mesh at its root: its shapes, and its particle emitters as the crossed quads
-        meshes.particle_shape makes (most casting / bolt / hit effects are particles only: without these
-        they had no piece and a bolt flew as a plain square)."""
-        name = piece_name(model, "vfx")
+    def ammo_piece(self, model):
+        """An arrow or bolt as it sits in the bow or crossbow: its own mesh on the weapon bone, placed further by
+        the weapon's ArrowBone (arrow_track) at run time."""
+        name = piece_name(model, "ammo")
         if name in self.pieces:
             return name if self.pieces[name] else None
         nif = self.nif("meshes\\" + model)
         meshes = []
         if nif is not None:
             for s in extract_shapes(self.arch, nif):
+                if "raw" in s and not s["skinned"]:
+                    meshes.append(self.mesh_record(s, "weapon bone", False))
+        self.pieces[name] = meshes or None
+        return name if meshes else None
+
+    def arrow_track(self, model):
+        """A bow's or crossbow's "ArrowBone" in the weapon's own space, VFX_FPS times a second over its keyframes
+        (it follows the string back): where OpenMW hangs the ammunition (NpcAnimation::getArrowBone; the skeletons
+        have no "Bip01 Arrow"). Rows of 12 floats (3x4), or None."""
+        nif = self.nif("meshes\\" + model)
+        if nif is None:
+            return None
+        bone = next((b for b in nif.blocks if (b.get("name") or "").lower() == "arrowbone"), None)
+        if bone is None:
+            return None
+        end = 0.0
+        c = nif.get(bone.get("controller", -1))
+        while c:
+            if c["type"] == "NiKeyframeController" and nif.get(c["data"]):
+                d = nif.get(c["data"])
+                for k in ("rotations", "translations", "scales"):
+                    if d.get(k):
+                        end = max(end, d[k][-1][0])
+            c = nif.get(c.get("next_controller", -1))
+        rows = []
+        for i in range(int(end * VFX_FPS) + 2):
+            m = skeleton_pose(nif, i / VFX_FPS)["arrowbone"]
+            rows.append([round(float(v), 3) for v in m[:3, :4].ravel()])
+        return rows
+
+    def vfx_model(self, model):
+        """A spell visual's mesh at its root: its shapes, and its particle emitters as the crossed quads
+        meshes.particle_shape makes (most casting / bolt / hit effects are particles only: without these
+        they had no piece and a bolt flew as a plain square). A shape under a node with keyframes keeps its
+        own space and carries its node's animation (vfx_tracks): an area burst's sphere grows from a speck,
+        a cast's sparks run up the arms."""
+        name = piece_name(model, "vfx")
+        if name in self.pieces:
+            return name if self.pieces[name] else None
+        nif = self.nif("meshes\\" + model)
+        meshes = []
+        if nif is not None:
+            tracks, billboard, emitters = vfx_tracks(nif)
+            for s in extract_shapes(self.arch, nif):
                 if s["skinned"]:
                     continue
-                if "raw" not in s:
+                track, rest = None, None
+                if "raw" in s:
+                    track = tracks.get(s["block"])
+                    rest = s["raw"]["node"]
+                else:
                     s["raw"] = {"pos": np.asarray(s["pos"], dtype=float), "node": np.identity(4)}   # particles: root space
-                meshes.append(self.mesh_record(s, "", False))
+                    e = emitter_of(s, emitters)
+                    if e is not None and e in tracks:
+                        # the quads ride their emitter, upright (they stand at its rest place)
+                        rest = np.identity(4)
+                        track = []
+                        for wm in tracks[e]:
+                            t = np.identity(4)
+                            t[:3, 3] = wm[:3, 3] - emitters[e][:3, 3]
+                            track.append(t)
+                if track is not None:
+                    # textures sized for the shape at its largest
+                    peak = max(track, key=lambda m: abs(np.linalg.det(m[:3, :3])))
+                    loc = np.linalg.inv(rest) if abs(np.linalg.det(rest[:3, :3])) > 1e-12 else np.identity(4)
+                    s["pos"] = np.asarray(s["pos"]) @ (peak @ loc)[:3, :3].T + (peak @ loc)[:3, 3]
+                m = self.mesh_record(s, "", False)
+                if track is not None:
+                    m["pos"] = s["raw"]["pos"]                 # its own space: the track places it
+                    m["track"] = [t[:3, :4] for t in track]
+                    m["billboard"] = s.get("block") in billboard
+                meshes.append(m)
         self.pieces[name] = meshes or None
         return name if meshes else None
 
@@ -364,16 +433,17 @@ class FirstPerson:
                     e["slots"] = slots
             if e:
                 items[oid] = e
-        # Spell visuals: every static a magic effect names, as a piece (drawn where spells are cast and hit)
+        # Spell visuals: every static a magic effect names, as a piece (drawn where spells are cast and hit), and
+        # the ones OpenMW falls back on for an effect that names none (VFX_DefaultBolt: Shock Damage's bolt)
         vfx = {}
-        for r in read_records_mgef(self.db):
-            for t in ("CVFX", "BVFX", "HVFX", "AVFX"):
-                sid = (r.zstr(t) or "").lower()
-                rec = self.db["objects"].get(sid)
-                if sid and sid not in vfx and rec is not None and rec.zstr("MODL"):
-                    p = self.vfx_model(rec.zstr("MODL"))
-                    if p:
-                        vfx[sid] = p
+        names = [(r.zstr(t) or "").lower() for r in read_records_mgef(self.db) for t in ("CVFX", "BVFX", "HVFX", "AVFX")]
+        names += ["vfx_defaultcast", "vfx_defaultbolt", "vfx_defaulthit", "vfx_defaultarea"]
+        for sid in names:
+            rec = self.db["objects"].get(sid)
+            if sid and sid not in vfx and rec is not None and rec.zstr("MODL"):
+                p = self.vfx_model(rec.zstr("MODL"))
+                if p:
+                    vfx[sid] = p
         vfx.update(self.blood())
         return {"races": races, "items": items, "third": self.third_person(objects), "vfx": vfx}
 
@@ -417,6 +487,100 @@ class FirstPerson:
         return sum(p.stat().st_size for p in self.out.glob("*"))
 
 
+def xyz_matrix(x, y, z):
+    """NiKeyframeData's XYZ rotation keys: about X, then Y, then Z."""
+    cx, sx, cy, sy, cz, sz = np.cos(x), np.sin(x), np.cos(y), np.sin(y), np.cos(z), np.sin(z)
+    rx = np.array([[1, 0, 0], [0, cx, -sx], [0, sx, cx]])
+    ry = np.array([[cy, 0, sy], [0, 1, 0], [-sy, 0, cy]])
+    rz = np.array([[cz, -sz, 0], [sz, cz, 0], [0, 0, 1]])
+    return rz @ ry @ rx
+
+
+def vfx_tracks(nif):
+    """A spell visual's node keyframes, sampled VFX_FPS times a second from 0 to the last key.
+    Returns ({block: [4x4 root-space matrix per sample]} for every object under an animated node,
+    {blocks under a NiBillboardNode}, {particle emitter block: its rest root-space matrix}).
+    Billboards turn to face the eye (OpenMW's BillboardCallback): the engine keeps the track's place and size."""
+    keyframes = {}
+    for i, b in enumerate(nif.blocks):
+        c = b.get("controller", -1)
+        while c is not None and c >= 0:
+            cb = nif.get(c)
+            if cb is None:
+                break
+            if cb["type"] == "NiKeyframeController" and nif.get(cb.get("data", -1)):
+                keyframes[i] = nif.get(cb["data"])
+            c = cb.get("next_controller", -1)
+    length = 0.0
+    for kd in keyframes.values():
+        for keys in [kd["translations"], kd["scales"], kd["rotations"]] + (kd["xyz_rotations"] or []):
+            if keys:
+                length = max(length, keys[-1][0])
+
+    def local_at(b, idx, t):
+        kd = keyframes.get(idx)
+        rot = np.array(b["rotation"]).reshape(3, 3)
+        trans, scale = np.array(b["translation"]), b["scale"]
+        if kd:
+            if kd["rotations"]:
+                rot = quat_matrix(sample(kd["rotations"], t, quat=True))
+            elif kd["xyz_rotations"]:
+                rot = xyz_matrix(*[sample(k, t)[0] if k else 0.0 for k in kd["xyz_rotations"]])
+            if kd["translations"]:
+                trans = sample(kd["translations"], t)
+            if kd["scales"]:
+                scale = sample(kd["scales"], t)[0]
+        m = np.identity(4)
+        m[:3, :3] = rot * scale
+        m[:3, 3] = trans
+        return m
+
+    tracks, billboard, emitters = {}, set(), {}
+
+    def walk(idx, parent, t, animated, board, out):
+        b = nif.get(idx)
+        if b is None or "translation" not in b or b["type"] == "RootCollisionNode" or b.get("flags", 0) & 1:
+            return
+        animated = animated or idx in keyframes
+        board = board or b["type"] == "NiBillboardNode"
+        m = parent @ local_at(b, idx, t)
+        if animated:
+            out[idx] = m
+        if board:
+            billboard.add(idx)
+        if b["type"] in ("NiRotatingParticles", "NiAutoNormalParticles"):
+            ctrl = nif.get(b.get("controller", -1))
+            if ctrl and ctrl.get("emitter", -1) >= 0:
+                emitters[idx] = ctrl["emitter"]
+        for c in b.get("children", []):
+            walk(c, m, t, animated, board, out)
+
+    if not keyframes or length <= 0.0:
+        return {}, set(), {}
+    for k in range(int(length * VFX_FPS + 0.999) + 1):
+        out = {}
+        for r in nif.roots:
+            walk(r, np.identity(4), min(k / VFX_FPS, length), False, False, out)
+        for idx, m in out.items():
+            tracks.setdefault(idx, []).append(m)
+    # particles: their emitter node's rest matrix (as particle_shape placed the quads: no keyframes)
+    still = {}
+    walk_nif(nif, lambda b, m, p: still.setdefault(b["index"], m))
+    emitters = {e: still[e] for e in set(emitters.values()) if e in still}
+    return tracks, billboard, emitters
+
+
+def emitter_of(s, emitters):
+    """The emitter a particle shape's quads stand on: particle_shape centres them on its rest place."""
+    c = np.asarray(s["pos"]).mean(axis=0)
+    best, bd = None, 0.5
+    for e, m in emitters.items():
+        d = np.hypot(c[0] - m[0, 3], c[1] - m[1, 3])
+        if d < bd:
+            best, bd = e, d
+    return best
+
+
 def read_records_mgef(db):
     from mwfiles import DATA_FILES, read_records
     return read_records(DATA_FILES / "Morrowind.esm", {"MGEF"})
@@ -432,8 +596,9 @@ def write_piece(path, meshes):
         for m in meshes:
             n = len(m["pos"])
             tris = np.asarray(m["tris"]).ravel()
+            more = (1 if m.get("morph") else 0) | (2 if m.get("track") else 0) | (4 if m.get("billboard") else 0)
             f.write(struct.pack("<iBBBB", texs.index(m["tex"]) if m["tex"] else -1, m["flags"], m["alpha_ref"],
-                                m["kind"], 1 if m.get("morph") else 0))
+                                m["kind"], more))
             f.write(m["bone"].encode("latin-1")[:31].ljust(32, b"\x00"))
             f.write(struct.pack("<II", n, len(tris)))
             v = np.zeros(n, dtype=[("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4)])
@@ -456,3 +621,6 @@ def write_piece(path, meshes):
                     for t, wt in keys:
                         f.write(struct.pack("<ff", t, wt))
                     f.write(np.asarray(delta, dtype="<f4").tobytes())
+            if m.get("track"):
+                f.write(struct.pack("<I", len(m["track"])))
+                f.write(np.asarray(m["track"], dtype="<f4").tobytes())

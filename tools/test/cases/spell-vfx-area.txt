@@ -1,0 +1,15 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 PLACE:mudcrab:300
+1 0 0 0
+0.3 0 0 0 0 FACE:mudcrab
+0.3 0 0 0 0 SPELL:fireball
+0.3 0 0 0 0 SNAP:refhealth:mudcrab
+0.3 0 0 0 0 CAST:fireball
+1.5 0 0 0 0 UNTIL:vfxscale:ge:2
+0.1 0 0 0 0 EXPECT:vfxscale:eq:10
+0.1 0 0 0 0 EXPECT:refhealth:mudcrab:lt:@0
+0.2 0 0 0 0 SHOT

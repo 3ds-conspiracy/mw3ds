@@ -1,0 +1,13 @@
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 PLACE:ash_slave:700
+1 0 0 0
+0.3 0 0 0 0 SPELL:spark
+0.3 0 0 0 0 CASTAT:ash_slave:spark
+2 0 0 0
+12 0 0 0 0 UNTIL:refvfx:ash_slave:ge:1
+0.1 0 0 0 0 EXPECT:refvfx:ash_slave:ge:1
+0.2 0 0 0 0 SHOT

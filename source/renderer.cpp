@@ -1185,6 +1185,14 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 	setModelView(s_view);
 }
 
+void rendererViewAxes(float right[3], float up[3], float back[3])
+{
+	// the view matrix's rotation rows are the camera axes in world space
+	right[0] = s_view.r[0].x; right[1] = s_view.r[0].y; right[2] = s_view.r[0].z;
+	up[0] = s_view.r[1].x; up[1] = s_view.r[1].y; up[2] = s_view.r[1].z;
+	back[0] = s_view.r[2].x; back[1] = s_view.r[2].y; back[2] = s_view.r[2].z;
+}
+
 // Untextured camera-facing quad (spell bolts): size in world units, rgba 0xAABBGGRR
 void rendererDrawGlow(const float pos[3], float size, u32 rgba)
 {

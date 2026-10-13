@@ -3,6 +3,7 @@
 //   marksman hit chance  as melee with the Marksman skill (unaware targets are always hit)
 //   damage  (launcher chop + ammunition chop, by how far the shot was drawn; thrown weapons count
 //           twice) x (0.5 + strength / 100), then armor as for blows
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 
@@ -73,6 +74,8 @@ void Session::fireProjectile(int owner, const float from[3], const float dir[3],
 	{
 		auto it = w.game.spells.find(spell);
 		p.glow = it != w.game.spells.end() ? spellGlow(it->second) : 0xFFFFFFFF;
+		if (it != w.game.spells.end())
+			p.bolt = boltPiece(it->second);
 		p.life = 3.0f;
 	}
 	projectiles.push_back(p);
@@ -111,7 +114,7 @@ void Session::projectileHits(Projectile& p, int victim)
 			float feet[3] = { victim < 0 ? w.player.feet[0] : w.refs[victim].pos[0], victim < 0 ? w.player.feet[1] : w.refs[victim].pos[1],
 				victim < 0 ? w.player.feet[2] : w.refs[victim].pos[2] };
 			float at[3] = { feet[0], feet[1], feet[2] + 60.0f };
-			spellVfx(sp, 1, feet, victim < 0 ? -1 : victim);
+			spellVfx(sp, 1, feet, victim < 0 ? -1 : victim, victim < 0 ? w.player.yaw : w.refs[victim].rot[2]);
 			areaBurst(sp, 2, at, victim, p.owner);
 		}
 		logf("combat: %s hits %s", sp.name.c_str(), victim < 0 ? "the player" : w.refs[victim].id.c_str());
@@ -277,57 +280,97 @@ void Session::updateProjectiles(float dt)
 	}
 }
 
-void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow)
+void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale)
 {
 	auto it = w.game.firstPerson.vfx.find(lower(staticId));
-	if (it == w.game.firstPerson.vfx.end() || vfx.size() >= 12)
+	if (it == w.game.firstPerson.vfx.end())
 		return;
+	// Many casters at once: only those near the player show, the nearest when there are too many
+	auto dist2 = [&](const float* p) {
+		float dx = p[0] - w.player.feet[0], dy = p[1] - w.player.feet[1], dz = p[2] - w.player.feet[2];
+		return dx * dx + dy * dy + dz * dz;
+	};
+	float d2 = dist2(pos);
+	if (d2 > kVfxRange * kVfxRange)
+		return;
+	if ((int)vfx.size() >= kMaxVfx)
+	{
+		size_t far = 0;
+		for (size_t i = 1; i < vfx.size(); i++)
+			if (dist2(vfx[i].pos) > dist2(vfx[far].pos))
+				far = i;
+		if (dist2(vfx[far].pos) <= d2)
+			return;
+		vfx.erase(vfx.begin() + far);
+	}
+	// a visual with its own animation lasts as long as that (OpenMW drops a non-looping effect when it has played)
+	FpPiece* piece = vm.piece(w, it->second);
 	Vfx v;
 	v.piece = it->second;
 	memcpy(v.pos, pos, sizeof(v.pos));
 	v.age = 0.0f;
-	v.life = life;
-	v.spin = 1.5f;
+	v.life = piece && piece->length > 0.0f ? piece->length : life;
 	v.follow = follow;
+	v.yaw = yaw;
+	v.scale = scale;
 	vfx.push_back(v);
 }
 
-void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow)
+void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow, float yaw, int range)
 {
+	static const char* kDefault[3] = { "vfx_defaultcast", "vfx_defaulthit", "vfx_defaultarea" };
+	std::vector<std::pair<std::string, float>> shown;
 	for (auto& e : sp.effects)
 	{
+		if (kind == 2 && (e.range != range || e.area <= 0))
+			continue;
 		auto me = w.game.magicEffects.find(e.effect);
 		if (me == w.game.magicEffects.end())
 			continue;
 		const std::string& id = kind == 0 ? me->second.cvfx : kind == 1 ? me->second.hvfx : me->second.avfx;
-		if (!id.empty())
-		{
-			spawnVfx(id, pos, 1.2f, follow);
-			return;                                    // one visual a spell (the first effect's)
-		}
+		std::pair<std::string, float> one(id.empty() ? std::string(kDefault[kind]) : id, kind == 2 ? e.area * 2.0f : 1.0f);
+		if (std::find(shown.begin(), shown.end(), one) != shown.end())
+			continue;
+		shown.push_back(one);
+		spawnVfx(one.first, pos, 1.2f, follow, yaw, one.second);
+		if (kind == 1)
+			return;                                    // one hit visual a spell (the first effect's)
 	}
 }
 
-// Projectiles, then the player's arms over everything (after rendererDrawWorld)
-void Session::drawExtras(const float eye[3], bool secondEye)
+void Session::castVfx(const SpellDef& sp, int caster)
+{
+	const float* feet = caster < 0 ? w.player.feet : w.refs[caster].pos;
+	spellVfx(sp, 0, feet, caster, caster < 0 ? w.player.yaw : w.refs[caster].rot[2]);
+}
+
+// A bolt flies as its first target effect's bolt model, VFX_DefaultBolt for an effect without one (OpenMW's
+// ProjectileManager::launchMagicBolt); looked up once, when it leaves
+std::string Session::boltPiece(const SpellDef& sp)
+{
+	for (auto& e : sp.effects)
+	{
+		if (e.range != 2)
+			continue;
+		auto me = w.game.magicEffects.find(e.effect);
+		auto pc = w.game.firstPerson.vfx.find(me == w.game.magicEffects.end() || me->second.bvfx.empty() ? std::string("vfx_defaultbolt")
+			: me->second.bvfx);
+		if (pc != w.game.firstPerson.vfx.end())
+			return pc->second;
+	}
+	return "";
+}
+
+// Projectiles, then the player's arms over everything (after rendererDrawWorld); arms false: a view held elsewhere for
+// a side-by-side shot, no arms (the body still, in third person)
+void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 {
 	for (auto& p : projectiles)
 	{
 		if (!p.spell.empty())
 		{
-			// the bolt's own visual when the effect has one, else a glow of its school's colour
-			FpPiece* bolt = nullptr;
-			auto sp = w.game.spells.find(p.spell);
-			if (sp != w.game.spells.end())
-				for (auto& e : sp->second.effects)
-				{
-					auto me = w.game.magicEffects.find(e.effect);
-					if (me == w.game.magicEffects.end() || me->second.bvfx.empty())
-						continue;
-					auto pc = w.game.firstPerson.vfx.find(me->second.bvfx);
-					if (pc != w.game.firstPerson.vfx.end() && (bolt = vm.piece(w, pc->second)))
-						break;
-				}
+			// the bolt's own visual (found when it left), else a glow of its school's colour
+			FpPiece* bolt = p.bolt.empty() ? nullptr : vm.piece(w, p.bolt);
 			if (!bolt)
 			{
 				rendererDrawGlow(p.pos, 9.0f, p.glow);
@@ -339,8 +382,13 @@ void Session::drawExtras(const float eye[3], bool secondEye)
 			Mtx_Translate(&bm, p.pos[0], p.pos[1], p.pos[2], true);
 			Mtx_RotateZ(&bm, -atan2f(p.vel[0], p.vel[1]), true);
 			Mtx_RotateX(&bm, atan2f(p.vel[2], hb), true);
+			float age = bolt->length > 0.0f ? fmodf(3.0f - p.life, bolt->length) : 0.0f;    // its animation over and over
 			for (auto& m : bolt->meshes)
-				rendererDrawMesh(m, &bm, bolt->textures[m.tex]);
+			{
+				C3D_Mtx at;
+				if (fpTrackMatrix(m, bm, age, at))
+					rendererDrawMesh(m, &at, bolt->textures[m.tex]);
+			}
 			continue;
 		}
 		auto it = w.game.firstPerson.items.find(p.item);
@@ -358,20 +406,28 @@ void Session::drawExtras(const float eye[3], bool secondEye)
 		for (auto& m : piece->meshes)
 			rendererDrawMeshGlow(m, &model, piece->textures[m.tex], glow);
 	}
-	// Spell visuals of the moment, turning where they were cast / hit
+	// Spell visuals of the moment, facing as their actor faces (none past kVfxRange from the eye: many casters at once)
 	for (auto& v : vfx)
 	{
+		float dx = v.pos[0] - eye[0], dy = v.pos[1] - eye[1];
+		if (dx * dx + dy * dy > kVfxRange * kVfxRange)
+			continue;
 		FpPiece* piece = vm.piece(w, v.piece);
 		if (!piece)
 			continue;
 		C3D_Mtx vm_;
 		Mtx_Identity(&vm_);
 		Mtx_Translate(&vm_, v.pos[0], v.pos[1], v.pos[2], true);
-		Mtx_RotateZ(&vm_, v.spin * v.age, true);
-		float grow = 0.6f + 0.4f * fminf(1.0f, v.age / 0.25f);
+		Mtx_RotateZ(&vm_, -v.yaw, true);
+		// (a piece with no animation of its own swells into place)
+		float grow = v.scale * (piece->length > 0.0f ? 1.0f : 0.6f + 0.4f * fminf(1.0f, v.age / 0.25f));
 		Mtx_Scale(&vm_, grow, grow, grow);
 		for (auto& m : piece->meshes)
-			rendererDrawMesh(m, &vm_, piece->textures[m.tex]);
+		{
+			C3D_Mtx at;
+			if (fpTrackMatrix(m, vm_, v.age, at))
+				rendererDrawMesh(m, &at, piece->textures[m.tex]);
+		}
 	}
 	// Dropped items, with their own mesh where they lie
 	for (int i : w.spawned)
