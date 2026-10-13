@@ -210,7 +210,7 @@ static bool hasArg(const std::string& what)
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift";
 }
 
 // "<a>,<b>" as two numbers
@@ -660,6 +660,28 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		float yaw, pitch;
 		gyroPlayerSpace(g, gv, yaw, pitch);
 		v = what == "gyroyaw" ? yaw : pitch;
+		return true;
+	}
+	if (what == "gyrodrift")           // gyrodrift:<offset>,<jitter>,<seconds>: a console held still whose sensor rests at
+	{                                  // <offset> degrees a second on its turning axis, with a hand's <jitter>, for that
+		float n[3] = {};               // long at 30 frames a second: how fast the view still turns after (degrees a second)
+		sscanf(arg.c_str(), "%f,%f,%f", &n[0], &n[1], &n[2]);
+		GyroRest rest;
+		float sum = 0.0f;
+		int frames = (int)(n[2] * 30.0f), counted = 0;
+		for (int f = 0; f < frames; f++)
+		{
+			// (a hand's jitter: a few slow wobbles, the same every run)
+			float j = n[1] * (sinf(f * 0.9f) * 0.6f + sinf(f * 0.23f + 1.0f) * 0.4f);
+			float rate[3] = { j * 0.5f, n[0] + j, j * 0.3f };
+			rest.update(rate, 1.0f / 30.0f);
+			if (f >= frames - 30)                       // (the last second's average: the wobble left out)
+			{
+				sum += rate[1];
+				counted++;
+			}
+		}
+		v = counted ? fabsf(sum / counted) : 0.0f;
 		return true;
 	}
 	if (what == "gyrosoft")            // gyrosoft:<rate>,<soft>: gyro aim's soft threshold applied to a turn

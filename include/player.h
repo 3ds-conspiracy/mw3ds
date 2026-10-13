@@ -84,6 +84,49 @@ inline float gyroSoften(float rate, float soft)
 	float a = fabsf(rate);
 	return a >= soft || soft <= 0.0f ? rate : rate * (a / soft);
 }
+// The gyroscope's resting offset (it reads a little turn while the console is held still), learned and taken off so a
+// steady hand doesn't drift the view. Two ways:
+// - held still: every axis wobbling under kStill around its own average of the last moments, for a whole second (a
+//   hand holding the console wobbles that little; an aim moves): the offset follows that average (some 1.5 s), up to
+//   kMost a second (the sensor's are a few). Before, it was learned only near the offset learned so far, starting from
+//   0, so an offset over 1.5 a second was never learned and the view drifted to one side for good
+// - otherwise, while within 1.5 a second of it: slowly (some 10 s), so a slow, deliberate aim is not mistaken for it
+// rate: degrees a second, corrected in place; dt: seconds since the last reading
+struct GyroRest
+{
+	float rest[3] = { 0.0f, 0.0f, 0.0f };
+	float mean[3] = { 0.0f, 0.0f, 0.0f }, wobble[3] = { 0.0f, 0.0f, 0.0f };
+	float still = 0.0f;                          // seconds held still
+	bool started = false;
+	void update(float rate[3], float dt)
+	{
+		const float kStill = 1.0f, kMost = 10.0f;
+		if (!started)
+		{
+			for (int k = 0; k < 3; k++)
+				mean[k] = rate[k];
+			started = true;
+		}
+		float a = fminf(1.0f, dt / 0.25f), learn = fminf(1.0f, dt / 1.5f), slow = fminf(1.0f, dt / 10.0f);
+		bool calm = true, near = true;
+		for (int k = 0; k < 3; k++)
+		{
+			mean[k] += (rate[k] - mean[k]) * a;
+			wobble[k] += (fabsf(rate[k] - mean[k]) - wobble[k]) * a;
+			calm = calm && wobble[k] < kStill && fabsf(mean[k]) < kMost;
+			near = near && fabsf(rate[k] - rest[k]) < 1.5f;
+		}
+		still = calm ? still + dt : 0.0f;
+		for (int k = 0; k < 3; k++)
+		{
+			if (still >= 1.0f)
+				rest[k] += (mean[k] - rest[k]) * learn;
+			else if (near)
+				rest[k] += (rate[k] - rest[k]) * slow;
+			rate[k] -= rest[k];
+		}
+	}
+};
 // Gyro aim in "player space" (JibbSmart's GamepadMotionHelpers, GyroWiki): the turn about the world's up (gravity, from
 // the accelerometer) steers left / right whatever way the console is tilted in the hands, the turn about the console's
 // own left-right axis steers up / down. The 3DS gyroscope and accelerometer share one frame (Azahar's SDL mapping:

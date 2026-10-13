@@ -618,16 +618,13 @@ static void gyroInput(PlayerInput& in)
 	angularRate r;
 	hidGyroRead(&r);
 	float ax = gyroRawToDps(r.x, toDps), ay = gyroRawToDps(r.y, toDps), az = gyroRawToDps(r.z, toDps);
-	// The sensor reads a little turn while the console is held still: that resting offset is taken off, so a steady
-	// hand doesn't drift the view. It is learned only while all three axes stay within 1.5 a second of it, and slowly
-	// (some 10 s), so a slow, deliberate aim is not mistaken for it
-	static float rest[3] = { 0.0f, 0.0f, 0.0f };
+	// The sensor's resting offset taken off (GyroRest)
+	static GyroRest rest;
+	static u64 last = 0;
+	u64 now = osGetTime();
 	float rate[3] = { ax, ay, az };
-	if (fabsf(ax - rest[0]) < 1.5f && fabsf(ay - rest[1]) < 1.5f && fabsf(az - rest[2]) < 1.5f)
-		for (int k = 0; k < 3; k++)
-			rest[k] += (rate[k] - rest[k]) * 0.003f;
-	for (int k = 0; k < 3; k++)
-		rate[k] -= rest[k];
+	rest.update(rate, last ? fminf(0.1f, (now - last) / 1000.0f) : 1.0f / 30.0f);
+	last = now;
 	// Gravity from the accelerometer, steadied over a few frames
 	static float grav[3] = { 0.0f, -512.0f, 0.0f };
 	accelVector acc;

@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# Gyro aim: a console held still (a hand's jitter) whose gyroscope rests at a few degrees a second on its turning axis
+# must not keep turning the view. The resting offset was only learned while the reading stayed within 1.5 of the offset
+# learned so far (0 at the start), so an offset over 1.5 was never learned: the view drifted to one side for good
+0.5 0 0 0 0 EXPECT:gyrodrift:0.8,0.4,20:lt:0.3
+0.1 0 0 0 0 EXPECT:gyrodrift:3,0.4,20:lt:0.3
+0.1 0 0 0 0 EXPECT:gyrodrift:6,0.6,20:lt:0.3
+0.1 0 0 0 0 EXPECT:gyrodrift:-4,0.4,20:lt:0.3
+# (and soon: within 5 s)
+0.1 0 0 0 0 EXPECT:gyrodrift:3,0.4,5:lt:0.5
+# An aim is not an offset: turning the console 8 a second for 3 s with a moving hand's wobble still turns the view
+0.1 0 0 0 0 EXPECT:gyrodrift:8,2.5,3:gt:7
