@@ -70,4 +70,6 @@ struct ViewModel
 	bool releaseReached() const;              // a cast got to its release mark (the spell takes effect)
 	void update(float dt, bool moving, bool running);
 	void draw(const float eye[3], float yaw, float pitch, bool deform = true);
+	// Where a bone of the arms is as draw() shows it, from the eye: x right, y ahead, z up (false without it)
+	bool boneFromEye(const char* name, float out[3]) const;
 };

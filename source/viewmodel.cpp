@@ -24,10 +24,6 @@ static int boneIndex(const Skeleton& sk, const char* name)
 	return -1;
 }
 
-// The Camera bone's orientation at the first Idle1h frame: the view the rig is built around. Later frames' tilt
-// of the camera (it rides the animated head) is taken out of the rig, so the arms are seen from the camera
-static float s_camIdle[9] = { 1, 0, 0, 0, 1, 0, 0, 0, 1 };
-
 bool ViewModel::load(World& w)
 {
 	char path[256];
@@ -44,21 +40,6 @@ bool ViewModel::load(World& w)
 	a.pose.assign(set.skeletons[0].bones.size() * 12, 0.0f);
 	memset(a.place, 0, sizeof(a.place));
 	a.place[0] = a.place[5] = a.place[10] = 1.0f;
-	// The reference camera orientation: the pose at the start of the standing idle
-	{
-		Actor tmp = a;
-		int g = actorFindGroup(set.skeletons[0], "Idle1h");
-		int cb = boneIndex(set.skeletons[0], "camera");
-		if (g >= 0 && cb >= 0)
-		{
-			tmp.group = g;
-			tmp.time = set.skeletons[0].groups[g].start;
-			actorAnimate(set, tmp, 0.0f);
-			for (int r = 0; r < 3; r++)
-				for (int c = 0; c < 3; c++)
-					s_camIdle[r * 3 + c] = tmp.pose[cb * 12 + r * 4 + c];
-		}
-	}
 	ready = true;
 	logf("viewmodel: skeleton %d bones, %d groups", (int)set.skeletons[0].bones.size(), (int)set.skeletons[0].groups.size());
 	return true;
@@ -509,44 +490,53 @@ void ViewModel::update(float dt, bool moving, bool running)
 		a.driveT -= sk.groups[eq].start;
 }
 
+// Where the eye is in the rig: the first-person skeleton's Camera bone, where the animation has it now. The view
+// follows only that bone's place, not its turn (OpenMW's first-person camera tracks the Camera node's position and
+// looks along the player's yaw and pitch): when the head nods in a cast (Self, 26 degrees), the hands come up into
+// view rather than the rig swinging against the nod
+static void rigEye(const Skeleton& sk, const Actor& a, float cp[3])
+{
+	static int cam = -2;
+	if (cam == -2)
+		cam = boneIndex(sk, "camera");
+	cp[0] = cp[1] = cp[2] = 0.0f;
+	if (cam < 0)
+		return;
+	cp[0] = a.pose[cam * 12 + 3];
+	cp[1] = a.pose[cam * 12 + 7];
+	cp[2] = a.pose[cam * 12 + 11];
+}
+
+bool ViewModel::boneFromEye(const char* name, float out[3]) const
+{
+	if (!ready || set.actors.empty())
+		return false;
+	const Actor& a = set.actors[0];
+	const Skeleton& sk = set.skeletons[0];
+	int b = boneIndex(sk, name);
+	if (b < 0 || a.pose.size() < sk.bones.size() * 12)
+		return false;
+	float cp[3];
+	rigEye(sk, a, cp);
+	for (int r = 0; r < 3; r++)
+		out[r] = a.pose[b * 12 + r * 4 + 3] - cp[r];
+	return true;
+}
+
 void ViewModel::draw(const float eye[3], float yaw, float pitch, bool deform)
 {
 	if (!ready || !visible || set.actors[0].meshes.empty())
 		return;
 	Actor& a = set.actors[0];
 	const Skeleton& sk = set.skeletons[0];
-	// The first-person skeleton's Camera bone sits at the eye; the rig turns with the view
-	static int cam = -2;
-	if (cam == -2)
-		cam = boneIndex(sk, "camera");
-	float cp[3] = { 0, 0, 0 };
-	if (cam >= 0)
-	{
-		cp[0] = a.pose[cam * 12 + 3];
-		cp[1] = a.pose[cam * 12 + 7];
-		cp[2] = a.pose[cam * 12 + 11];
-	}
+	// The rig turns with the view
+	float cp[3];
+	rigEye(sk, a, cp);
 	C3D_Mtx m;
 	Mtx_Identity(&m);
 	Mtx_Translate(&m, eye[0], eye[1], eye[2], true);
 	Mtx_RotateZ(&m, -yaw, true);
 	Mtx_RotateX(&m, pitch, true);
-	if (cam >= 0)
-	{
-		// q = idle camera orientation x (current camera orientation)^-1: turns the rig as the camera tilts
-		const float* rc = &a.pose[cam * 12];
-		C3D_Mtx q, mq;
-		Mtx_Identity(&q);
-		for (int r = 0; r < 3; r++)
-		{
-			float row[3];
-			for (int c = 0; c < 3; c++)
-				row[c] = s_camIdle[r * 3] * rc[c * 4] + s_camIdle[r * 3 + 1] * rc[c * 4 + 1] + s_camIdle[r * 3 + 2] * rc[c * 4 + 2];
-			q.r[r] = FVec4_New(row[0], row[1], row[2], 0.0f);
-		}
-		Mtx_Multiply(&mq, &m, &q);
-		m = mq;
-	}
 	Mtx_Translate(&m, -cp[0], -cp[1], -cp[2], true);
 	float place[12] = { m.r[0].x, m.r[0].y, m.r[0].z, m.r[0].w,
 	                    m.r[1].x, m.r[1].y, m.r[1].z, m.r[1].w,

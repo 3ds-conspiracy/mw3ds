@@ -780,6 +780,19 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = s.vm.ready && !s.vm.set.actors.empty() ? (float)s.vm.set.actors[0].meshes.size() : 0.0f;
 		return true;
 	}
+	if (what == "vmhands")            // the first-person hands (their wrists) in view on the top screen: 0, 1 or 2
+	{
+		// the renderer's view: 60 degrees high, 400 x 240, near plane 5
+		const float tanY = tanf(30.0f / 57.29578f), tanX = tanY * 400.0f / 240.0f;
+		v = 0.0f;
+		for (const char* hand : { "bip01 l hand", "bip01 r hand" })
+		{
+			float p[3];
+			if (s.vm.boneFromEye(hand, p) && p[1] > 5.0f && fabsf(p[0]) < p[1] * tanX && fabsf(p[2]) < p[1] * tanY)
+				v += 1.0f;
+		}
+		return true;
+	}
 	if (what == "bowstring")          // how far back the held bow's string is drawn (0 at rest, 1 fully back)
 	{
 		v = s.vm.ready && !s.vm.set.actors.empty() ? actorMorphWeight(s.vm.set.actors[0]) : 0.0f;
