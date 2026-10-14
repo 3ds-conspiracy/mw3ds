@@ -1012,47 +1012,6 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 	return moved > 0.0f;
 }
 
-// A spell for itself the actor knows and can afford (OpenMW's AI rates these in a fight, spellpriority): a summon while
-// no creature of its own is about, else a ward it hasn't got on (a shield, Sanctuary, Reflect, Spell Absorption, a
-// fortify); spellId gets it
-bool Session::npcSummonSpell(int ri, std::string& spellId)
-{
-	static const int kWards[] = { 3, 4, 5, 6, 42, 67, 68, 79, 80, 82, 117 };
-	bool summoned = false;
-	for (const NpcSummon& n : npcSummons)
-		summoned |= n.caster == ri;
-	const Ref& r = w.refs[ri];
-	const ActorDef& def = w.game.actors[r.actor];
-	std::string ward;
-	// (its combat list carries them, tools/convert/npcstats.py combat_spells; a spell merchant's whole list too)
-	std::vector<std::string> ids;
-	for (const Atom& id : def.combatSpells)
-		ids.push_back(lower(id));
-	for (const Atom& id : def.spells)
-		ids.push_back(lower(id));
-	for (const std::string& id : ids)
-	{
-		auto it = w.game.spells.find(id);
-		if (it == w.game.spells.end() || (it->second.type != 5 && it->second.cost > r.magicka))
-			continue;
-		for (const SpellEffect& e : it->second.effects)
-		{
-			if (summonCreatureId(e.effect) && !summoned)
-			{
-				spellId = it->first;
-				return true;
-			}
-			if (ward.empty() && e.range == 0 && std::find(std::begin(kWards), std::end(kWards), e.effect) != std::end(kWards)
-				&& w.actorEffect(ri, e.effect) <= 0.0f)
-				ward = it->first;
-		}
-	}
-	if (ward.empty())
-		return false;
-	spellId = ward;
-	return true;
-}
-
 // The summoned creature comes in a flash beside its caster and goes for the player, for the spell's duration; a ward's
 // effects land on the caster, with their hit
 void Session::npcSummonRelease(int ri, const SpellDef& sp)
@@ -1132,9 +1091,10 @@ float Session::actorHalfLength(int ri)
 
 // Its weapon against the player (OpenMW's rateWeapon): the blow's mean damage (slash, thrust and chop each weighed by
 // itself; a bow's chop; a throwing weapon's x 2) x (fDamageStrengthBase + Strength x fDamageStrengthMult / 10), less the
-// player's Resist Normal Weapons for a plain one, x the hit chance (0.01 .. 1) x its speed x fAIMeleeWeaponMult
-// (fAIRangeMeleeWeaponMult for a ranged one out of the player's reach). Fists rate 0, and a bow without arrows.
-// (Its wear and the arrows' own rating are left out)
+// player's Resist Normal Weapons for a plain one; a bow or crossbow adds its arrows' or bolts' own rating (none: 0); an
+// on-strike enchantment adds its effects' rating (no spell multiplier); x the hit chance (0.01 .. 1) x its speed x
+// fAIMeleeWeaponMult (fAIRangeMeleeWeaponMult for a ranged one out of the player's reach). Fists rate 0, and a ranged
+// weapon under water (either of them). (Its wear is left out: actors' weapons don't wear here)
 float Session::npcWeaponRating(int ri, float dist)
 {
 	const Ref& r = w.refs[ri];
@@ -1142,11 +1102,21 @@ float Session::npcWeaponRating(int ri, float dist)
 	const Object* wpn = w.game.object(def.weapon);
 	if (!wpn || wpn->type != "WEAP" || wpn->subtype == WEAP_ARROW || wpn->subtype == WEAP_BOLT)
 		return 0.0f;
+	if (isRanged(wpn) && r.ammo <= 0)
+		return 0.0f;
+	return npcWeaponRatingOf(ri, wpn, dist);
+}
+
+float Session::npcWeaponRatingOf(int ri, const Object* wpn, float dist)
+{
+	const Ref& r = w.refs[ri];
+	const ActorDef& def = w.game.actors[r.actor];
+	bool ammo = wpn->subtype == WEAP_ARROW || wpn->subtype == WEAP_BOLT, ranged = isRanged(wpn) || ammo;
 	float chop = (wpn->chop[0] + wpn->chop[1]) * 0.5f, rating = chop;
 	float mult = w.game.gmstf("faimeleeweaponmult", 2.0f);
-	if (isRanged(wpn))
+	if (ranged)
 	{
-		if (r.ammo <= 0)
+		if (w.underWater(r.pos[2] + 96.0f) || w.underWater(w.player.feet[2] + 96.0f))
 			return 0.0f;
 		if (wpn->subtype == WEAP_THROWN)
 			rating = chop * 2.0f;
@@ -1163,60 +1133,229 @@ float Session::npcWeaponRating(int ri, float dist)
 	}
 	rating *= w.game.gmstf("fdamagestrengthbase", 0.5f)
 		+ def.attributes[ATTR_STRENGTH] * w.game.gmstf("fdamagestrengthmult", 0.1f) * 0.1f;
-	if (!((wpn->flags & 3) || wpn->magic))
+	if (isRanged(wpn) && wpn->subtype != WEAP_THROWN)
+	{
+		const Object* am = w.game.object(def.ammo);
+		float arrows = am && am->type == "WEAP" && (am->subtype == WEAP_ARROW || am->subtype == WEAP_BOLT) ? npcWeaponRatingOf(ri, am, dist) : 0.0f;
+		if (arrows <= 0.0f)
+			return 0.0f;
+		rating += arrows;
+	}
+	else if (!((wpn->flags & 3) || wpn->magic))
 		rating *= 1.0f - fminf(1.0f, (w.effectTotal(98) - w.effectTotal(36)) / 100.0f);
+	if (!wpn->ench.empty())
+	{
+		auto en = w.game.spells.find(lower(wpn->ench));
+		if (en != w.game.spells.end() && en->second.type == ENCH_STRIKE)
+			rating += npcEffectsRating(ri, en->second.effects, true, false);
+	}
 	int skill = def.skills[weaponSkill(wpn)];
 	if (skill <= 0)
 		return 0.0f;
 	float chance = attackTermOf(skill, def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax,
 		w.actorEffect(ri, 117), w.actorEffect(ri, 47)) - playerDefense(false);
 	rating *= fmaxf(0.01f, fminf(1.0f, chance / 100.0f));
-	return rating * wpn->speed * mult;
+	return ammo ? rating * mult : rating * wpn->speed * mult;
 }
 
-// Restore Health / Magicka / Fatigue on self (OpenMW's rateEffect): with p 4 for health, 2 for fatigue, and for magicka
-// 2 when a spell it knows costs more than it has left (and no more than its maximum), else 0; heal = the mean magnitude x
+// How much an effect is worth to an actor fighting the player (OpenMW's rateEffect, spellpriority.cpp; withEnemy false:
+// a potion, rated with no enemy). 1 x the effect's cost (calcEffectCost, GameSpell), made negative when harmful (then x
+// the player's resistance left: 1 - resist / 100) and negative again aimed at someone else, so a harmful one at the player
+// rates its cost and a heal of the player less than nothing. 0 for what the AI can't use: Soul Trap, interventions, Calm,
+// Frenzy, Demoralize, Rally, Charm, detections, Telekinesis, Mark, Recall, Jump, the water effects, Slow Fall, Light,
+// Lock, Open, Turn Undead, the disease effects, Invisibility, Chameleon, Night Eye, Vampirism, Stunted Magicka, Remove
+// Curse, Command; the resistances, Spell Absorption and Reflect (no telling what the enemy will cast); the fortifies (cast
+// over and over); Levitate; Restore Attribute / Skill. Blind only at a player with a weapon out and able to use it; Sound
+// and Silence only at one with a spell ready; Burden only when it overburdens; Absorb Magicka at a player with none left
+// 0.5 x the restore-magicka priority; Drain / Damage / Absorb of an attribute weighed by the attribute (Strength 1 ..
+// Luck 0.3), not of one at 0; Disintegrate Armor / Weapon only when there is some; Cure Paralysis / Poison 1001 for each
+// such effect on itself lasting over 3 s; Dispel by how many harmful and helpful effects it would take off; a summon 3,
+// none while its own is about. Target effects 0 under water (either of them). A no-magnitude effect already on whom it
+// is for: 0. Restore Health / Magicka / Fatigue on self by need: with p 4 for health, 2 for fatigue, and for magicka 2
+// when a spell it knows costs more than it has left (and no more than its maximum), else 0; heal = the mean magnitude x
 // the duration, the damage = maximum - now, and over = heal - damage when the damage is under heal and more than half
-// is left (then heal = the damage): (p - 1) / 2 x (damage / maximum + 0.6)^(2p) + p x (heal - 2 over) / maximum - 0.5,
-// x the effect's cost (0.5 x (min + max) x base cost / 10 x duration x fEffectCostMult) x fAIMagicSpellMult. Any other
-// effect rates 0 here (OpenMW weighs fortifies and the rest too: left out)
-float Session::npcRestoreRating(int ri, const SpellEffect& e)
+// is left (then heal = the damage): (p - 1) / 2 x (damage / maximum + 0.6)^(2p) + p x (heal - 2 over) / maximum - 0.5.
+// Bound items rate 0 here: an NPC's bound weapon or armour isn't done (the player's only)
+float Session::npcEffectRating(int ri, const SpellEffect& e, bool withEnemy)
 {
-	if (e.range != 0 || (e.effect != 75 && e.effect != 76 && e.effect != 77))
+	static const int kUseless[] = { 58, 63, 62, 49, 50, 51, 52, 53, 54, 55, 56, 44, 64, 65, 66, 59, 60, 61, 9, 0, 1, 2, 11, 41,
+		12, 13, 101, 32, 33, 34, 69, 70, 71, 94, 95, 96, 39, 40, 43, 133, 136, 126, 100, 118, 119,
+		90, 91, 92, 93, 97, 98, 99, 67, 68, 79, 80, 81, 82, 83, 84, 117, 10, 74, 78,
+		120, 121, 122, 123, 124, 125, 127, 128, 129, 130, 131 };
+	if (std::find(std::begin(kUseless), std::end(kUseless), e.effect) != std::end(kUseless))
 		return 0.0f;
 	const Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
-	float now = e.effect == 75 ? r.health : e.effect == 76 ? r.magicka : r.fatigue;
-	float max = e.effect == 75 ? r.healthMax : e.effect == 76 ? r.magickaMax : r.fatigueMax;
-	if (max <= 0.0f)
-		return 0.0f;
-	float p = e.effect == 75 ? 4.0f : 2.0f;
-	if (e.effect == 76)
-	{
-		p = 0.0f;
-		for (const auto& id : def.combatSpells)
-		{
-			auto it = w.game.spells.find(id);
-			if (it != w.game.spells.end() && it->second.type == 0 && it->second.cost > now && it->second.cost < max)
+	const bool helpless = w.player.knockTimer > 0.0f || w.effectTotal(45) > 0.0f;
+	// (the player's stance: a weapon out, else a spell ready when one is chosen: the 3DS casts from either)
+	const bool spellReady = !weaponDrawn && !w.stats.selectedSpell.empty();
+	// a spell it knows costs more than it has left (and no more than its maximum): magicka is worth restoring
+	auto magickaPriority = [&]() {
+		for (const std::vector<Atom>* list : { &def.combatSpells, &def.spells })
+			for (const Atom& id : *list)
 			{
-				p = 2.0f;
-				break;
+				auto it = w.game.spells.find(lower(id));
+				if (it != w.game.spells.end() && it->second.type == 0 && it->second.cost > r.magicka && it->second.cost < r.magickaMax)
+					return 2.0f;
 			}
+		return 0.0f;
+	};
+	// effects lasting over 3 s more, harmful or helpful, on itself or on the player (only: of that effect)
+	auto lasting = [&](bool onSelf, bool harmful, int only) {
+		int n = 0;
+		if (onSelf)
+		{
+			for (const auto& t : r.effects)
+				if ((only < 0 || t.effect == only) && t.remaining > 3.0f && ((effectFlags(t.effect) & 0x10) != 0) == harmful)
+					n++;
 		}
-	}
-	float dur = fmaxf(1.0f, (float)e.duration);
-	float heal = (e.min + e.max) * 0.5f * dur, damage = fmaxf(max - now, 0.0f), over = 0.0f;
-	if (damage < heal && now > max * 0.5f)
+		else
+			for (const ActiveEffect& t : w.effects)
+				if ((only < 0 || t.effect == only) && t.remaining > 3.0f && ((effectFlags(t.effect) & 0x10) != 0) == harmful)
+					n++;
+		return n;
+	};
+	float rating = 1.0f;
+	switch (e.effect)
 	{
-		over = heal - damage;
-		heal = damage;
+	case 47:                // Blind
+		if (!withEnemy || helpless || !weaponDrawn)
+			return 0.0f;
+		break;
+	case 48:                // Sound
+		if (!withEnemy || w.effectTotal(46) > 0.0f || helpless || !spellReady)
+			return 0.0f;
+		break;
+	case 46:                // Silence
+		if (!withEnemy || helpless || !spellReady)
+			return 0.0f;
+		break;
+	case 7:                 // Burden: only to overburden the player
+	{
+		if (!withEnemy)
+			return 0.0f;
+		float weight = w.effectTotal(7) - w.effectTotal(8);
+		for (auto& it : w.inventory)
+			if (const Object* o = w.game.object(it.id))
+				weight += o->weight * it.count;
+		float burden = weight - w.game.gmstf("fencumbrancestrmult", 5.0f) * w.stats.attributes[ATTR_STRENGTH];
+		if (burden > 0.0f || (e.min + e.max) * 0.5f <= -burden)
+			return 0.0f;
+		rating *= 3.0f;
+		break;
 	}
-	float rating = (p - 1.0f) / 2.0f * powf(damage / max + 0.6f, p * 2.0f) + p * (heal - 2.0f * over) / max - 0.5f;
+	case 8:                 // Feather: only for an overburdened caster (actors carry no load here)
+		return 0.0f;
+	case 87:                // Absorb Magicka
+		if (withEnemy && w.stats.magicka <= 0.0f)
+			rating = 0.5f * magickaPriority();
+		break;
+	case 75: case 76: case 77:
+		if (e.range == 0)
+		{
+			float now = e.effect == 75 ? r.health : e.effect == 76 ? r.magicka : r.fatigue;
+			float max = e.effect == 75 ? r.healthMax : e.effect == 76 ? r.magickaMax : r.fatigueMax;
+			if (max <= 0.0f)
+				return 0.0f;
+			float p = e.effect == 75 ? 4.0f : e.effect == 76 ? magickaPriority() : 2.0f;
+			float heal = (e.min + e.max) * 0.5f * fmaxf(1.0f, (float)e.duration), damage = fmaxf(max - now, 0.0f), over = 0.0f;
+			if (damage < heal && now > max * 0.5f)
+			{
+				over = heal - damage;
+				heal = damage;
+			}
+			rating = (p - 1.0f) / 2.0f * powf(damage / max + 0.6f, p * 2.0f) + p * (heal - 2.0f * over) / max - 0.5f;
+		}
+		break;
+	case 57:                // Dispel
+	{
+		int diff = e.range == 0 ? lasting(true, true, -1) - lasting(true, false, -1)
+			: (withEnemy ? lasting(false, false, -1) - lasting(false, true, -1) : 0);
+		if (e.range != 0)
+			rating = -rating;
+		if (diff <= 0)
+			return 0.0f;
+		rating *= diff / 5.0f;
+		break;
+	}
+	case 73:                // Cure Paralysis / Poison (over Dispel, which takes the good ones too)
+		return 1001.0f * lasting(true, true, 45);
+	case 72:
+		return 1001.0f * lasting(true, true, 27);
+	case 38:                // Disintegrate Armor: only at armour worn
+	{
+		if (!withEnemy)
+			return 0.0f;
+		bool armor = false;
+		for (auto& it : w.inventory)
+			if (const Object* o = it.equipped ? w.game.object(it.id) : nullptr)
+				armor |= o->type == "ARMO";
+		if (!armor)
+			return 0.0f;
+		break;
+	}
+	case 37:                // Disintegrate Weapon: only at a weapon held
+		if (!withEnemy || !playerWeapon())
+			return 0.0f;
+		break;
+	case 85: case 22: case 17:
+	{
+		static const float kAttrPriority[8] = { 1.0f, 0.5f, 0.6f, 0.7f, 0.5f, 0.8f, 0.7f, 0.3f };
+		if (withEnemy && e.attribute >= 0 && e.attribute < 8 && w.stats.attributes[e.attribute] <= 0)
+			return 0.0f;
+		if (e.attribute >= 0 && e.attribute < 8)
+			rating *= kAttrPriority[e.attribute];
+		break;
+	}
+	case 89: case 26: case 21:
+		if (!withEnemy || (e.skill >= 0 && e.skill < 27 && w.stats.skills[e.skill] <= 0))
+			return 0.0f;
+		break;
+	default:
+		break;
+	}
+	if (summonCreatureId(e.effect))
+	{
+		for (const NpcSummon& n : npcSummons)
+			if (n.caster == ri)
+				return 0.0f;                           // one summoned creature at a time
+		rating = 3.0f;                                 // but summons rate above other effects
+	}
+	// (under water: three quarters of the way up the body, OpenMW's isUnderwater(actor, 0.75))
+	if (e.range == 2 && (!withEnemy || w.underWater(r.pos[2] + 96.0f) || w.underWater(w.player.feet[2] + 96.0f)))
+		return 0.0f;
+	int flags = effectFlags(e.effect);
+	if (flags & 0x10)
+	{
+		rating = -rating;
+		if (!withEnemy)
+			return 0.0f;
+		rating *= 1.0f - fminf(resistBase(e.effect), 100.0f) / 100.0f;
+	}
+	if ((flags & 0x8) && ((flags & 0x10) ? w.effectTotal(e.effect) : w.actorEffect(ri, e.effect)) > 0.0f)
+		return 0.0f;
 	auto me = w.game.magicEffects.find(e.effect);
 	float base = me != w.game.magicEffects.end() ? me->second.cost : 1.0f;
-	float cost = (0.5f * (fmaxf(1.0f, (float)e.min) + fmaxf(1.0f, (float)e.max)) * 0.1f * base * dur
-		+ 0.05f * e.area * base) * w.game.gmstf("feffectcostmult", 0.5f);
-	return rating * cost * w.game.gmstf("faimagicspellmult", 3.0f);
+	bool magnitude = !(flags & 0x8), duration = !(flags & 0x4);
+	float dur = duration ? (float)e.duration : 1.0f;
+	if (!(flags & 0x1000))
+		dur = fmaxf(1.0f, dur);
+	float lo = magnitude ? fmaxf(1.0f, (float)e.min) : 1.0f, hi = magnitude ? fmaxf(1.0f, (float)e.max) : 1.0f;
+	rating *= (0.5f * (lo + hi) * 0.1f * base * dur + 0.05f * fmaxf(0.0f, (float)e.area) * base) * w.game.gmstf("feffectcostmult", 0.5f);
+	if (e.range != 0)
+		rating = -rating;
+	return rating;
+}
+
+// A list of effects (OpenMW's rateEffects): each one's rating x fAIRangeMagicSpellMult on target, fAIMagicSpellMult else
+// (spellMult false: neither, for a weapon's on-strike enchantment)
+float Session::npcEffectsRating(int ri, const std::vector<SpellEffect>& effects, bool withEnemy, bool spellMult)
+{
+	float rating = 0.0f;
+	for (const SpellEffect& e : effects)
+		rating += npcEffectRating(ri, e, withEnemy) * (!spellMult ? 1.0f
+			: e.range == 2 ? w.game.gmstf("fairangemagicspellmult", 5.0f) : w.game.gmstf("faimagicspellmult", 3.0f));
+	return rating;
 }
 
 // A potion it carries whose rating beats its weapon's is drunk (OpenMW's ActionPotion: taken when chosen, 0.75 s before
@@ -1234,9 +1373,7 @@ bool Session::npcDrinkPotion(int ri, float dist)
 		const Object* o = w.game.object(c.second);
 		if (c.first == 0 || !o || o->type != "ALCH")
 			continue;
-		float rating = 0.0f;
-		for (const SpellEffect& e : o->effects)
-			rating += npcRestoreRating(ri, e);
+		float rating = npcEffectsRating(ri, o->effects, false);      // (OpenMW's ratePotion: with no enemy)
 		if (rating > best)
 		{
 			best = rating;
@@ -1255,103 +1392,72 @@ bool Session::npcDrinkPotion(int ri, float dist)
 	return true;
 }
 
-// A spell from the actor's list: heal itself when hurt, else a harmful one at the player
-// (target spells from afar, touch spells up close). Starts the cast; npcCombat releases it.
+// A spell from the actor's lists when it rates above its weapon (OpenMW's prepareNextAction / rateSpell: its effects'
+// ratings, npcEffectsRating, x the cast chance; 0 for anything but a spell, short of magicka, or one still on its
+// target: the player for a touch or target one, itself for a self one). A touch spell waits for the player within its
+// reach. A spell all on itself (a summon, a shield, a heal) lands as it leaves the hands (castSpell -2, npcSummonRelease),
+// others go through its combat list (castSpell). Starts the cast; npcCombat releases it.
 void Session::npcCastSpell(int ri)
 {
 	Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
 	float dist = w.distanceToPlayer(ri);
 	float reach = kCombatDistance + actorHalfLength(ri) + kPlayerHalfLength;   // a touch spell's (OpenMW: fCombatDistance)
-	// A summon (when it has none about) or a ward first (half the time: a fight doesn't open with one every time)
-	std::string summon;
-	if (rand() % 2 == 0 && npcSummonSpell(ri, summon))
+	float best = npcWeaponRating(ri, dist);
+	std::string pick;
+	int range = -1;
+	std::vector<std::string> ids;
+	for (const std::vector<Atom>* list : { &def.combatSpells, &def.spells })
+		for (const Atom& id : *list)
+			if (std::find(ids.begin(), ids.end(), lower(id)) == ids.end())
+				ids.push_back(lower(id));
+	for (const std::string& id : ids)
 	{
-		const SpellDef& sp = w.game.spells[summon];
-		if (sp.type != 5)
-			r.magicka -= sp.cost;
-		r.castSpell = -2;
-		pendingSummon[ri] = summon;
-		r.shooting = false;
-		float windup = 0.6f;
-		if (Actor* a = w.actorOf(ri))
-		{
-			ActorSet& set = *w.actorsOf(ri);
-			a->showWeapon = false;
-			if (actorPlay(set, *a, "CastSelf", ANIM_ONCE))
-			{
-				const AnimGroup& g = actorSkeleton(set, a->skeleton).groups[a->group];
-				windup = g.loopStart - g.start;
-			}
-		}
-		r.hitAt = w.time + windup;
-		r.attackTimer = windup + 1.0f;
-		static const char* kSchool[6] = { "alteration", "conjuration", "destruction", "illusion", "mysticism", "restoration" };
-		playSound(ri, std::string(kSchool[spellSchool(sp)]) + " cast");
-		castVfx(sp, ri);
-		logf("combat: %s casts %s", r.id.c_str(), sp.name.c_str());
-		return;
-	}
-	// A healing spell when it rates above its weapon and its best harmful spell in reach (OpenMW's rateSpell: the
-	// effects' ratings x the cast chance; a harmful effect at the player rates its cost x fAIRangeMagicSpellMult on
-	// target, fAIMagicSpellMult on touch, the player's resistances left out). It healed under half its health
-	int pick = -1, range = -1, heal = -1;
-	float healBest = npcWeaponRating(ri, dist), harmBest = 0.0f;
-	for (size_t i = 0; i < def.combatSpells.size(); i++)
-	{
-		auto it = w.game.spells.find(def.combatSpells[i]);
-		if (it == w.game.spells.end() || (it->second.type != 5 && it->second.cost > r.magicka))
+		auto it = w.game.spells.find(id);
+		if (it == w.game.spells.end() || it->second.type != 0 || it->second.cost > r.magicka)
 			continue;
 		const SpellDef& sp = it->second;
-		static const int kSchoolSkill[6] = { 11, 13, 10, 12, 14, 15 };
-		float chance = sp.type == 5 ? 100.0f : fmaxf(0.0f, fminf(100.0f, (def.skills[kSchoolSkill[spellSchool(sp)]] * 2.0f
-			+ def.attributes[ATTR_WILLPOWER] / 5.0f + def.attributes[ATTR_LUCK] / 10.0f - sp.cost - w.actorEffect(ri, 48))
-			* fatigueTerm(r.fatigue, r.fatigueMax)));
-		float healRating = 0.0f, harm = 0.0f;
+		bool self = true, touch = false, onPlayer = false;
 		for (auto& e : sp.effects)
 		{
-			healRating += npcRestoreRating(ri, e);
-			if (e.range != 0)
-			{
-				auto me = w.game.magicEffects.find(e.effect);
-				float base = me != w.game.magicEffects.end() ? me->second.cost : 1.0f;
-				// (0x1000: applied once, its duration as it is)
-				float dur = (effectFlags(e.effect) & 0x1000) ? (float)e.duration : fmaxf(1.0f, (float)e.duration);
-				harm += (0.5f * (fmaxf(1.0f, (float)e.min) + fmaxf(1.0f, (float)e.max)) * 0.1f * base * dur + 0.05f * e.area * base)
-					* w.game.gmstf("feffectcostmult", 0.5f)
-					* (e.range == 2 ? w.game.gmstf("fairangemagicspellmult", 5.0f) : w.game.gmstf("faimagicspellmult", 3.0f));
-			}
-			if (e.range == 2 && dist > reach && range != 0)
-			{
-				pick = i;
-				range = 2;
-				harmBest = fmaxf(harmBest, harm * chance / 100.0f);
-			}
-			else if (e.range == 1 && dist <= reach && range != 0)
-			{
-				pick = i;
-				range = 1;
-				harmBest = fmaxf(harmBest, harm * chance / 100.0f);
-			}
+			self &= e.range == 0;
+			touch |= e.range == 1;
 		}
-		healRating *= chance / 100.0f;
-		if (healRating > healBest)
+		if (touch && dist > reach)
+			continue;
+		if (!self && std::find(def.combatSpells.begin(), def.combatSpells.end(), id) == def.combatSpells.end())
+			continue;
+		// (spells don't stack: none still on whom it is for)
+		for (const ActiveEffect& t : w.effects)
+			onPlayer |= !self && t.source == sp.name;
+		bool onSelf = false;
+		for (auto& e : sp.effects)
+			onSelf |= e.range == 0 && !summonCreatureId(e.effect) && (e.effect < 75 || e.effect > 77) && w.actorEffect(ri, e.effect) > 0.0f;
+		if (onPlayer || onSelf)
+			continue;
+		static const int kSchoolSkill[6] = { 11, 13, 10, 12, 14, 15 };
+		float chance = fmaxf(0.0f, fminf(100.0f, (def.skills[kSchoolSkill[spellSchool(sp)]] * 2.0f
+			+ def.attributes[ATTR_WILLPOWER] / 5.0f + def.attributes[ATTR_LUCK] / 10.0f - sp.cost - w.actorEffect(ri, 48))
+			* fatigueTerm(r.fatigue, r.fatigueMax)));
+		float rating = npcEffectsRating(ri, sp.effects, true) * chance / 100.0f;
+		if (rating > best)
 		{
-			healBest = healRating;
-			heal = (int)i;
+			best = rating;
+			pick = id;
+			range = self ? 0 : touch ? 1 : 2;
 		}
 	}
-	if (heal >= 0 && healBest > harmBest)
-	{
-		pick = heal;
-		range = 0;
-	}
-	if (pick < 0 || (range == 2 && rand() % 3 == 0))
+	if (pick.empty() || (range == 2 && rand() % 3 == 0))
 		return;
-	const SpellDef& sp = w.game.spells[def.combatSpells[pick]];
-	if (sp.type != 5)
-		r.magicka -= sp.cost;
-	r.castSpell = pick;
+	const SpellDef& sp = w.game.spells[pick];
+	r.magicka -= sp.cost;
+	if (range == 0)
+	{
+		r.castSpell = -2;
+		pendingSummon[ri] = pick;
+	}
+	else
+		r.castSpell = (int)(std::find(def.combatSpells.begin(), def.combatSpells.end(), pick) - def.combatSpells.begin());
 	r.shooting = false;
 	float windup = 0.6f;
 	if (Actor* a = w.actorOf(ri))

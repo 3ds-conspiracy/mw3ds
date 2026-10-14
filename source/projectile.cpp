@@ -75,7 +75,7 @@ void Session::fireProjectile(int owner, const float from[3], const float dir[3],
 		auto it = w.game.spells.find(spell);
 		p.glow = it != w.game.spells.end() ? spellGlow(it->second) : 0xFFFFFFFF;
 		if (it != w.game.spells.end())
-			p.bolt = boltPiece(it->second);
+			p.bolt = boltPiece(it->second, &p.boltEffect);
 		p.life = 3.0f;
 	}
 	projectiles.push_back(p);
@@ -280,7 +280,7 @@ void Session::updateProjectiles(float dt)
 	}
 }
 
-void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale, bool loop)
+void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale, bool loop, int effect)
 {
 	auto it = w.game.firstPerson.vfx.find(lower(staticId));
 	if (it == w.game.firstPerson.vfx.end())
@@ -310,18 +310,22 @@ void Session::spawnVfx(const std::string& staticId, const float pos[3], float li
 				vfx.erase(vfx.begin() + i);
 			else
 				i++;
-	// a visual with its own animation lasts as long as that (OpenMW drops a non-looping effect when it has played)
+	// a visual lasts as long as its longest controller runs, particle sprays' too (OpenMW drops a non-looping effect
+	// when it has played: FindMaxControllerLengthVisitor), else as long as its own animation
 	FpPiece* piece = vm.piece(w, it->second);
+	auto len = w.game.firstPerson.vfxLength.find(it->second);
+	float length = len != w.game.firstPerson.vfxLength.end() ? len->second : piece ? piece->length : 0.0f;
 	Vfx v;
 	v.piece = it->second;
 	v.what = lower(staticId);
 	memcpy(v.pos, pos, sizeof(v.pos));
 	v.age = 0.0f;
-	v.life = piece && piece->length > 0.0f && !loop ? piece->length : life;
+	v.life = length > 0.0f && !loop ? length : life;
 	v.loop = loop;
 	v.follow = follow;
 	v.yaw = yaw;
 	v.scale = scale;
+	v.effect = effect;
 	vfx.push_back(v);
 }
 
@@ -343,7 +347,7 @@ void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3], int fol
 		shown.push_back(one);
 		// a continuous effect's hit repeats for as long as the effect lasts (OpenMW's ContinuousVfx: a shield's bubble)
 		bool loop = kind == 1 && (me->second.flags & 0x20) && e.duration > 1;
-		spawnVfx(one.first, pos, loop ? (float)e.duration : 1.2f, follow, yaw, one.second, loop);
+		spawnVfx(one.first, pos, loop ? (float)e.duration : 1.2f, follow, yaw, one.second, loop, e.effect);
 		if (kind == 1)
 			return;                                    // one hit visual a spell (the first effect's)
 	}
@@ -357,7 +361,7 @@ void Session::castVfx(const SpellDef& sp, int caster)
 
 // A bolt flies as its first target effect's bolt model, VFX_DefaultBolt for an effect without one (OpenMW's
 // ProjectileManager::launchMagicBolt); looked up once, when it leaves
-std::string Session::boltPiece(const SpellDef& sp)
+std::string Session::boltPiece(const SpellDef& sp, int* effect)
 {
 	for (auto& e : sp.effects)
 	{
@@ -367,9 +371,24 @@ std::string Session::boltPiece(const SpellDef& sp)
 		auto pc = w.game.firstPerson.vfx.find(me == w.game.magicEffects.end() || me->second.bvfx.empty() ? std::string("vfx_defaultbolt")
 			: me->second.bvfx);
 		if (pc != w.game.firstPerson.vfx.end())
+		{
+			if (effect)
+				*effect = e.effect;
 			return pc->second;
+		}
 	}
 	return "";
+}
+
+// A spell visual's shape drawn in its magic effect's own particle texture when it takes one (OpenMW's
+// overrideFirstRootTexture: the shapes sharing the model root's first texture), else its own
+C3D_Tex* Session::fxTexture(const ActorMesh& m, C3D_Tex* own, int effect)
+{
+	if (!m.fx || effect < 0)
+		return own;
+	auto it = w.game.firstPerson.ptex.find(effect);
+	C3D_Tex* t = it == w.game.firstPerson.ptex.end() ? nullptr : skyTex(it->second);
+	return t ? t : own;
 }
 
 // Projectiles, then the player's arms over everything (after rendererDrawWorld); arms false: a view held elsewhere for
@@ -398,7 +417,7 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 			{
 				C3D_Mtx at;
 				if (fpTrackMatrix(m, bm, age, at))
-					rendererDrawMesh(m, &at, bolt->textures[m.tex]);
+					rendererDrawMesh(m, &at, fxTexture(m, bolt->textures[m.tex], p.boltEffect));
 			}
 			continue;
 		}
@@ -438,7 +457,7 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 		{
 			C3D_Mtx at;
 			if (fpTrackMatrix(m, vm_, age, at))
-				rendererDrawMesh(m, &at, piece->textures[m.tex]);
+				rendererDrawMesh(m, &at, fxTexture(m, piece->textures[m.tex], v.effect));
 		}
 	}
 	// Dropped items, with their own mesh where they lie

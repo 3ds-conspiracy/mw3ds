@@ -192,6 +192,7 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 		rd(f, m.tex);
 		rd(f, m.flags); rd(f, m.alphaRef); rd(f, m.kind); rd(f, pad);
 		m.hasMorph = pad & 1;
+		m.fx = (pad & 8) != 0;
 		fread(bone, 32, 1, f);
 		rd(f, m.numVerts);
 		rd(f, m.numIndices);

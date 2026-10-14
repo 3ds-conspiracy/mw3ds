@@ -16,6 +16,9 @@ float g_profActorsMs = 0.0f;          // debug profile accumulators, reported by
 float g_profWorldMs = 0.0f;
 int g_drawnBatches = 0, g_culledBatches = 0;
 int g_skippedDraws = 0;               // draws dropped because the GPU command buffer was nearly full
+// Blended draws of the last frame made after a nearer blended one (OpenMW sorts them back to front: a blended surface
+// behind drawn after one in front paints over it, as neither writes depth)
+int g_blendOutOfOrder = 0;
 int g_groundGaps = -1;                // cracks in the last saved shot (counted by the native test build; -1 here)
 
 static DVLB_s* s_dvlb;
@@ -590,6 +593,12 @@ static int batchPass(const CellBatch& b)
 struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; };
 static std::vector<SkinDraw> s_skinQueue;
 
+// Blended draws of the frame, drawn back to front after everything solid (OpenMW's SORT_BACK_TO_FRONT bin): the
+// cell's blended batches by their bounds' middle, actors' rigid blended meshes by the actor. A Khajiit's ears (blended
+// hair) were drawn before the tapestry behind them, which then painted over them
+struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr; };
+static std::vector<BlendDraw> s_blendQueue;
+
 static int drawSkinQueue(float time)
 {
 	if (s_skinQueue.empty())
@@ -644,6 +653,48 @@ static int drawSkinQueue(float time)
 	C3D_BindProgram(&s_program);
 	s_formatValid = false;
 	setLight(s_lightViewOn ? &s_lightView : nullptr);     // (the palette wrote over the torches' registers)
+	return draws;
+}
+
+
+static int drawBlendQueue(float time)
+{
+	std::stable_sort(s_blendQueue.begin(), s_blendQueue.end(), [](const BlendDraw& x, const BlendDraw& y) { return x.d2 > y.d2; });
+	int draws = 0;
+	float last = 1e30f;
+	g_blendOutOfOrder = 0;
+	for (const BlendDraw& bd : s_blendQueue)
+	{
+		g_blendOutOfOrder += bd.d2 > last * 1.0001f ? 1 : 0;
+		last = bd.d2;
+		if (bd.skinned)
+		{
+			// (a blended skinned mesh: drawn with skin.v.pica on its own, in its place in the order)
+			s_skinQueue.push_back({ bd.cell, bd.skinned, bd.mesh, bd.mv });
+			draws += drawSkinQueue(time);
+			continue;
+		}
+		setModelView(bd.mv);
+		if (bd.batch)
+			drawBatch(*bd.cell, *bd.batch, DRAW_WORLD, time);
+		else
+		{
+			const ActorMesh& m = *bd.mesh;
+			CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+			if (m.glow)
+				glowStage(m.glow);         // (enchanted armour and clothing)
+			drawBatch(*bd.cell, b, DRAW_WORLD, time);
+			if (m.glow)
+				glowStage(0);
+			if (bd.shimmer)
+			{
+				drawShimmer(b, bd.shimmer);
+				draws++;
+			}
+		}
+		draws++;
+	}
+	s_blendQueue.clear();
 	return draws;
 }
 
@@ -1060,9 +1111,29 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						continue;
 					if (far && m.numIndices < kActorDetailTris * 3)
 						continue;
+					if (m.gpuSkin && (m.flags & BATCH_BLEND))
+					{
+						s_blendQueue.push_back({ d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a });
+						continue;
+					}
 					if (m.gpuSkin)
 					{
 						s_skinQueue.push_back({ &l->cell, &a, &m, placeMv });
+						continue;
+					}
+					if (m.flags & BATCH_BLEND)
+					{
+						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0 };
+						if (m.bone >= 0 && m.kind != ACTOR_SKINNED)
+						{
+							C3D_Mtx model;
+							actorMeshMatrix(a, m, &model);
+							Mtx_Multiply(&bd.mv, &view, &model);
+						}
+						const Ref& ar = w.refs[a.ref];
+						if ((m.flags & ACTOR_MESH_WEAPON) && s_caustCount && ar.actor >= 0)
+							bd.shimmer = w.game.enchantGlow(w.game.actors[ar.actor].weapon);
+						s_blendQueue.push_back(bd);
 						continue;
 					}
 					if (m.bone >= 0 && m.kind != ACTOR_SKINNED)
@@ -1096,9 +1167,21 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 
 	g_profActorsMs += (svcGetSystemTick() - actorStart) * 1000.0f / SYSCLOCK_ARM11;
 
-	setModelView(view);
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_BLENDED); k++)
-		draws += drawBatches(w.loaded[k]->cell, w.loaded[k]->cell.batches, 2, &visible[k], time);
+	{
+		std::vector<CellBatch>& batches = w.loaded[k]->cell.batches;
+		for (size_t i = 0; i < batches.size(); i++)
+			if (batchPass(batches[i]) == 2 && visible[k][i])
+			{
+				const CellBatch& b = batches[i];
+				float c[3];
+				for (int j = 0; j < 3; j++)
+					c[j] = (b.bmin[j] + b.bmax[j]) * 0.5f - cam.pos[j];
+				s_blendQueue.push_back({ c[0] * c[0] + c[1] * c[1] + c[2] * c[2], &w.loaded[k]->cell, &b, nullptr, view, 0 });
+			}
+	}
+	draws += drawBlendQueue(time);
+	setModelView(view);
 	disableFog();
 	setUvOffset(0.0f, 0.0f);
 	return draws;

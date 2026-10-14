@@ -15,7 +15,8 @@ Writes data/fp/ (zlib-wrapped like the cells):
                     (the u8 after kind, bits: 1 the mesh morphs, its morphs last: u32 count, per morph u32 n,
                     n x (f32 t, f32 weight), f32 delta[num_vertices * 3]; 2 it moves, after that: u32 n,
                     n x f32 matrix[12] (3x4 rows, its space to the root, VFX_FPS a second from 0: a spell
-                    visual's node keyframes); 4 it turns to face the eye (a NiBillboardNode))
+                    visual's node keyframes); 4 it turns to face the eye (a NiBillboardNode); 8 it takes the magic
+                    effect's particle texture (game.json "firstperson" "ptex": effect index -> texture))
                     kind 1: u32 palette size, per entry: char bone[32], f32 skin_to_bone[12];
                             per vertex u8 index[4], u8 weight[4]
 Rigid positions are in their bone's space, skinned ones in skin space; bones are named, so a
@@ -127,6 +128,8 @@ class FirstPerson:
         self.db, self.arch, self.textures, self.out = db, arch, textures, out_dir
         self.nifs = {}
         self.pieces = {}          # name -> meshes (None while failed)
+        self.fx_need = {}         # spell visual piece -> texels its particle-texture shapes want (vfx_model)
+        self.vfx_len = {}         # spell visual piece -> its longest controller's stop time (vfx_model)
         objects = db["objects"]
         self.bodies = {r.id.lower(): r for r in objects.values() if r.tag == "BODY"}
         self.pose = {}
@@ -349,6 +352,16 @@ class FirstPerson:
         meshes = []
         if nif is not None:
             tracks, billboard, emitters = vfx_tracks(nif)
+            # The root's first NiTexturingProperty: the shapes below sharing it take the magic effect's own particle
+            # texture (OpenMW: nifloader marks them "overrideFx", Animation::addEffect overrideFirstRootTexture)
+            root = nif.blocks[0] if nif.blocks else {}
+            root_tex = next((p for p in root.get("properties") or [] if nif.get(p) and
+                             nif.get(p)["type"] == "NiTexturingProperty"), None)
+            # How long it plays: its longest controller's stop time, particle sprays' included (OpenMW's
+            # FindMaxControllerLengthVisitor: a visual that doesn't loop goes when that time has passed)
+            stops = [b["stop_time"] for b in nif.blocks if "stop_time" in b]
+            if stops and max(stops) > 0:
+                self.vfx_len[name] = round(float(max(stops)), 3)
             for s in extract_shapes(self.arch, nif):
                 if s["skinned"]:
                     continue
@@ -373,6 +386,10 @@ class FirstPerson:
                     loc = np.linalg.inv(rest) if abs(np.linalg.det(rest[:3, :3])) > 1e-12 else np.identity(4)
                     s["pos"] = np.asarray(s["pos"]) @ (peak @ loc)[:3, :3].T + (peak @ loc)[:3, 3]
                 m = self.mesh_record(s, "", False)
+                if root_tex is not None and s.get("texprop") == root_tex and s.get("block") != 0:
+                    m["fx"] = True
+                    self.fx_need[name] = max(self.fx_need.get(name, 0.0),
+                                             texels_needed(world_per_repeat(s["pos"], s["uv"], s["tris"])) * TEXEL_BOOST)
                 if track is not None:
                     m["pos"] = s["raw"]["pos"]                 # its own space: the track places it
                     m["track"] = [t[:3, :4] for t in track]
@@ -467,7 +484,23 @@ class FirstPerson:
                 if p:
                     vfx[sid] = p
         vfx.update(self.blood())
-        return {"races": races, "items": items, "third": self.third_person(objects), "vfx": vfx}
+        # Each magic effect's particle texture (MGEF PTEX), for the visuals with shapes that take it (fx_need): a Drain
+        # bolt flies as Destruction's bolt in its own vfx_map21 rather than the fire one
+        ptex = {}
+        for r in read_records_mgef(self.db):
+            tex = (r.zstr("PTEX") or "").lower()
+            pieces = [vfx.get((r.zstr(t) or "").lower()) for t in ("CVFX", "BVFX", "HVFX", "AVFX")]
+            need = max([self.fx_need.get(p, 0.0) for p in pieces if p] or [0.0])
+            if not tex or need <= 0:
+                continue
+            path = "textures\\" + tex.replace("/", "\\")
+            dds = re.sub(r"\.[^.\\]+$", ".dds", path)
+            path = next((c for c in (dds, path) if self.arch.exists(c)), None)
+            if path:
+                ptex[str(struct.unpack("<i", r.get("INDX"))[0])] = self.textures.request(path, need, True)
+        vfxlen = {p: self.vfx_len[p] for p in set(vfx.values()) if p in self.vfx_len}
+        return {"races": races, "items": items, "third": self.third_person(objects), "vfx": vfx, "ptex": ptex,
+                "vfxlen": vfxlen}
 
     def blood(self):
         """Morrowind.ini [Blood]: the splat a weapon hit throws (BloodSplat.nif, a particle burst), in each blood's
@@ -618,7 +651,7 @@ def write_piece(path, meshes):
         for m in meshes:
             n = len(m["pos"])
             tris = np.asarray(m["tris"]).ravel()
-            more = (1 if m.get("morph") else 0) | (2 if m.get("track") else 0) | (4 if m.get("billboard") else 0)
+            more = (1 if m.get("morph") else 0) | (2 if m.get("track") else 0) | (4 if m.get("billboard") else 0)                 | (8 if m.get("fx") else 0)
             f.write(struct.pack("<iBBBB", texs.index(m["tex"]) if m["tex"] else -1, m["flags"], m["alpha_ref"],
                                 m["kind"], more))
             f.write(m["bone"].encode("latin-1")[:31].ljust(32, b"\x00"))

@@ -81,6 +81,7 @@ struct ActorMesh
 	bool driven = false;               // the track runs on the actor's driveT (an arrow on its bow's ArrowBone) at its bone
 	u8 hand = 0;                       // 1 a torch (shown while the actor holds it out), 2 a shield (put away then)
 	bool billboard = false;
+	bool fx = false;                   // a spell visual's shape that takes its magic effect's particle texture (MGEF PTEX)
 	float radius = 0.0f;               // with a track: how far its vertices reach from its origin
 };
 

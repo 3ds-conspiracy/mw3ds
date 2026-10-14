@@ -1,0 +1,13 @@
+# Blended surfaces are drawn back to front, as OpenMW's transparent bin sorts them: Ra'Virr's ears (his blended hair
+# part, B_N_Khajiit_M_Hair01) were drawn with the people, before the room's blended batches, and the tapestry behind
+# him (tx_de_tapestry_07) then painted over them (neither writes depth): his head showed as a rounded hood. Checked on
+# the frame a SHOT draws: no blended draw after a nearer one.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora,_Ra'Virr:_Trader
+4 0 0 0
+0.3 0 0 0 0 TPIN:-306:-230:20:180
+3 0 0 0
+0.3 0 0 0 0 FACE:ra'virr+HUD:off
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:blendoutoforder:eq:0

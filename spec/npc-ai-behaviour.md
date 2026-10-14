@@ -42,10 +42,12 @@ no path grid (or a fish) it runs straight away from the foe for 1 s, then stands
 items, the weapons carried (`rateWeapon`), and the spells known (`rateSpell`). A potion is drunk at once when chosen,
 then 0.75 s to the next choice.
 
-    rateWeapon = mean damage (melee: (slash^2 + thrust^2 + chop^2) / (slash + thrust + chop); bow: chop; thrown: chop x 2)
+    rateWeapon = (mean damage (melee: (slash^2 + thrust^2 + chop^2) / (slash + thrust + chop); bow: chop; thrown: chop x 2)
                  x condition x (fDamageStrengthBase + Strength x fDamageStrengthMult / 10) x (1 - foe's Resist Normal
-                 Weapons, for a plain weapon) x hit chance (0.01 .. 1) x speed
-                 x fAIMeleeWeaponMult (fAIRangeMeleeWeaponMult: a ranged one out of the foe's reach)
+                 Weapons, for a plain weapon) + a bow's arrows' own rating (rateAmmo; none: 0) + an on-strike
+                 enchantment's effects' rating) x hit chance (0.01 .. 1) x speed
+                 x fAIMeleeWeaponMult (fAIRangeMeleeWeaponMult: a ranged one out of the foe's reach); a ranged one
+                 rates 0 under water. Test `bug-archer-arrow-rating`
     restore effect on self (rateEffect): p = 4 health, 2 fatigue, magicka 2 when a known spell costs more than is left
                  (but no more than the maximum), else 0
                  heal = mean magnitude x duration; damage = maximum - current; if damage < heal and more than half is
@@ -54,9 +56,27 @@ then 0.75 s to the next choice.
     each effect x its cost (0.5 x (min + max) x base cost / 10 x duration + area x base cost / 20, x fEffectCostMult)
                  x fAIMagicSpellMult (fAIRangeMagicSpellMult on target); a spell's sum x its cast chance / 100
 
-Here: potions and healing spells are weighed by these against the weapon (and a healing spell against the best harmful
-spell in reach, its cost x the range multiplier x chance). Other potions (fortifies ...), enchanted items and the
-player's resistances in a harmful spell's rating are left out; harmful spells are still picked by range and a timer.
+    every other effect (rateEffect): 1, made negative when harmful (then x 1 - the foe's resistance / 100) and negative
+                 again when cast on someone else, x its cost as above. 0 for what the AI can't use (Soul Trap,
+                 interventions, Calm / Frenzy / Demoralize / Rally, Charm, detections, Telekinesis, Mark, Recall, Jump,
+                 the water effects, Slow Fall, Light, Lock, Open, Turn Undead, the disease effects, Invisibility,
+                 Chameleon, Night Eye, Vampirism, Stunted Magicka, Remove Curse, Command), for the resistances, Spell
+                 Absorption and Reflect, the fortifies, Levitate and Restore Attribute / Skill. Blind only at a foe with
+                 a weapon out who can use it, Sound / Silence at one with a spell ready, Burden only to overburden (x 3),
+                 Drain / Damage / Absorb Attribute x the attribute's weight (Strength 1, Intelligence 0.5, Willpower 0.6,
+                 Agility 0.7, Speed 0.5, Endurance 0.8, Personality 0.7, Luck 0.3), Disintegrate only at armour / a
+                 weapon, Cure Paralysis / Poison 1001 per such effect lasting over 3 s, Dispel by the effects it would
+                 take off / 5, a summon 3 (0 while one of its own is about), target effects 0 under water, a
+                 no-magnitude effect already on its target 0
+    rateSpell = 0 for a power, short of magicka, or still on its target; else the effects' sum x chance / 100
+
+Here: every option is weighed so against the weapon: potions (rated with no foe) about once a blow, and spells (summons,
+shields, heals, harmful ones) when a cast comes up, every 3 - 6 s: the best spell above the weapon's rating is cast. A
+touch spell waits for the foe within reach; a target one is skipped a third of the time (cast pacing, ours). Left out:
+on-use enchanted items, NPCs' bound weapons and armour (rated 0: not done for NPCs), the weapon's condition in
+rateWeapon (actors' weapons don't wear here), "spell still on its target" by caster (ours: by the spell's name on the player, by
+its effects on the caster). Test `bug-npc-ward` (Ajira summons and never casts Spell Absorption: fails before, she put
+it on twice).
 
 ## Greetings and idle chatter
 

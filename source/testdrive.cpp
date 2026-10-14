@@ -203,14 +203,14 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "reftorch" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife";
 }
 
 // "<a>,<b>" as two numbers
@@ -475,11 +475,66 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	if (what == "deletingsave") { v = s.deletingSave ? 1.0f : 0.0f; return true; }    // the Saves screen asks "Delete ...?"
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
+	// blended draws of the last drawn frame made after a nearer blended one (they go back to front: renderer.cpp)
+	if (what == "blendoutoforder") { extern int g_blendOutOfOrder; v = (float)g_blendOutOfOrder; return true; }
 	if (what == "vfxpiece")           // vfxpiece:<text>: spell visuals showing now whose static's id has that text
 	{
 		v = 0.0f;
 		for (auto& x : s.vfx)
 			v += x.what.find(lower(arg)) != std::string::npos ? 1.0f : 0.0f;
+		return true;
+	}
+	// vfxlife:<text>: seconds the first spell visual showing now whose static's id has that text plays in all (-1 none)
+	if (what == "vfxlife")
+	{
+		v = -1.0f;
+		for (auto& x : s.vfx)
+			if (x.what.find(lower(arg)) != std::string::npos)
+			{
+				v = x.life;
+				break;
+			}
+		return true;
+	}
+	// vfxdark:<static id>: that spell visual's meshes drawn blended over the scene (not added to it) in near-black vertex
+	// colours: a dark smudge where Morrowind shows a glow (its particles lit by their emissive material)
+	if (what == "vfxdark")
+	{
+		v = -1.0f;
+		auto it = w.game.firstPerson.vfx.find(lower(arg));
+		FpPiece* p = it == w.game.firstPerson.vfx.end() ? nullptr : s.vm.piece(w, it->second);
+		if (!p)
+			return true;
+		v = 0.0f;
+		for (const ActorMesh& m : p->meshes)
+		{
+			if (!(m.flags & BATCH_BLEND) || (m.flags & BATCH_ADDITIVE) || m.gpuSkin || !m.numVerts)
+				continue;
+			float sum = 0.0f;
+			for (u32 i = 0; i < m.numVerts; i++)
+			{
+				const u8* c = (const u8*)m.verts + i * 24 + 20;
+				sum += fmaxf(fmaxf(c[0], c[1]), c[2]) / 255.0f;
+			}
+			v += sum / m.numVerts < 0.15f ? 1.0f : 0.0f;
+		}
+		return true;
+	}
+	// the first spell bolt in flight: its shapes drawn in its magic effect's own particle texture in place of the model's
+	// (a Drain bolt flies as Destruction's in vfx_map21, not the fire picture); -1 no bolt
+	if (what == "boltfxswap")
+	{
+		v = -1.0f;
+		for (auto& p : s.projectiles)
+		{
+			FpPiece* bolt = p.spell.empty() || p.bolt.empty() ? nullptr : s.vm.piece(w, p.bolt);
+			if (!bolt)
+				continue;
+			v = 0.0f;
+			for (auto& m : bolt->meshes)
+				v += s.fxTexture(m, bolt->textures[m.tex], p.boltEffect) != bolt->textures[m.tex] ? 1.0f : 0.0f;
+			break;
+		}
 		return true;
 	}
 	if (what == "vmammo")             // 1: an arrow or bolt sits in the first-person bow or crossbow
@@ -1057,6 +1112,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 					if (!(m.flags & BATCH_ADDITIVE) && !actorMeshShown(*a, m))
 						v += 1.0f;
 		}
+		else if (what == "refweaponrating") // its weapon's worth in a fight with the player (OpenMW's rateWeapon: a bow with its arrows)
+			v = s.npcWeaponRating(ri, w.distanceToPlayer(ri));
 		else if (what == "refadditive")     // glowing (additive) parts of its model showing now: flames, sparks
 		{
 			v = 0.0f;

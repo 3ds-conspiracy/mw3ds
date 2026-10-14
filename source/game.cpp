@@ -1196,6 +1196,12 @@ bool gameLoad(GameData& g, const char* path)
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "vfx"))
 			if (cJSON_IsString(vf))
 				g.firstPerson.vfx[vf->string] = vf->valuestring;
+		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "ptex"))
+			if (cJSON_IsString(vf))
+				g.firstPerson.ptex[atoi(vf->string)] = vf->valuestring;
+		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "vfxlen"))
+			if (cJSON_IsNumber(vf))
+				g.firstPerson.vfxLength[vf->string] = (float)vf->valuedouble;
 		if (const cJSON* tp = cJSON_GetObjectItem(fp, "third"))
 		{
 			ThirdPersonDef& t = g.firstPerson.third;

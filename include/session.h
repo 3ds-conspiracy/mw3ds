@@ -272,26 +272,27 @@ struct Session : ScriptHost
 	float ambientTimer = 3.0f;                     // until the region's next ambient sound
 	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
 	// Animation::addEffect), or at a spot (an area burst, blood)
-	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; bool loop = false; std::string what; };   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
+	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; bool loop = false; std::string what; int effect = -1; };   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
 	std::vector<Vfx> vfx;
 	// NPCs' and creatures' own summons (OpenMW's AI casts them in a fight): the caster, the creature, when it goes;
 	// a summon being cast (castSpell -2) waits in pendingSummon. Not saved: a load starts with none
 	struct NpcSummon { int caster, creature; float ends; };
 	std::vector<NpcSummon> npcSummons;
 	std::unordered_map<int, std::string> pendingSummon;
-	bool npcSummonSpell(int ri, std::string& spellId);   // a summon (none of its own about) or a ward it may cast now
 	void npcSummonRelease(int ri, const SpellDef& sp);   // the creature comes to fight the player; a ward lands on it
 	void npcSummonsUpdate();                             // they go when their time is up or the caster dies
 	static constexpr int kMaxVfx = 12;             // at once: past it a nearer one takes the farthest one's place
 	static constexpr float kVfxRange = 4096.0f;    // farther from the player none starts (many casters at once: their visuals are the cost)
 	// loop: its animation repeats for all of life (a continuous effect's hit: OpenMW's ContinuousVfx)
+	// effect: the magic effect it shows (its particle texture on the shapes that take one), -1 none
 	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2, float yaw = 0.0f, float scale = 1.0f,
-		bool loop = false);
+		bool loop = false, int effect = -1);
 	// kind 0 cast (every model its effects name), 1 hit, 2 area (each effect of that range with an area, at twice the
 	// area in feet: OpenMW's explodeSpell); range: the effects kind 2 bursts. An effect with none: the VFX_Default one
 	void spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow = -2, float yaw = 0.0f, int range = 2);
 	void castVfx(const SpellDef& sp, int caster);  // the cast's visual on its caster (-1 the player), as long as it casts
-	std::string boltPiece(const SpellDef& sp);     // what a bolt of it flies as ("" none: a glow)
+	std::string boltPiece(const SpellDef& sp, int* effect = nullptr);   // what a bolt of it flies as ("" none: a glow), for which effect
+	C3D_Tex* fxTexture(const ActorMesh& m, C3D_Tex* own, int effect);  // a visual's mesh texture: an fx shape the effect's own
 	C3D_Tex* skyTex(const std::string& name);      // acquired once, kept
 	std::unordered_map<std::string, C3D_Tex*> skyTextures;
 	int restInterruptAt = -1;                    // sleeping outdoors: the hour (restDone) a creature comes
@@ -349,7 +350,9 @@ struct Session : ScriptHost
 	float fleeRatingOf(int ref, float distance);
 	float actorHalfLength(int ref);                      // collision box half length (OpenMW's getHalfExtents().y())
 	float npcWeaponRating(int ref, float distance);      // OpenMW's rateWeapon against the player
-	float npcRestoreRating(int ref, const SpellEffect& e);   // OpenMW's rateEffect for Restore Health / Magicka / Fatigue on self
+	float npcWeaponRatingOf(int ref, const Object* weapon, float distance);   // ... for that weapon (or its arrows)
+	float npcEffectRating(int ref, const SpellEffect& e, bool withEnemy);   // OpenMW's rateEffect, the player the enemy (none: a potion)
+	float npcEffectsRating(int ref, const std::vector<SpellEffect>& effects, bool withEnemy, bool spellMult = true);   // OpenMW's rateEffects
 	bool npcDrinkPotion(int ref, float distance);
 	float fightTermOf(int ref, float distance);
 	float haggleChance(int merchantRef, int price, int offer, bool selling, int* dOut = nullptr);

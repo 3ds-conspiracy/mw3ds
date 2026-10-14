@@ -2869,6 +2869,9 @@ void World::recomputeStats()
 			abilities.push_back(id);
 	}
 	this->abilities.clear();
+	// Abilities' and worn constant enchantments' fortifies and drains are modifiers on top (OpenMW's modified value):
+	// only the base is held to 100, so the Boots of Blinding Speed take Speed past it
+	int attrMod[8] = {}, skillMod[27] = {};
 	for (auto& id : abilities)
 	{
 		auto it = game.spells.find(lower(id));
@@ -2886,24 +2889,24 @@ void World::recomputeStats()
 				continue;                                  // cured: the Corprus effect is gone
 			if (e.effect == 17 || e.effect == 79)
 				e.min *= scale;
-			if (e.effect == 79 && e.attribute >= 0 && e.attribute < 8) stats.attributes[e.attribute] += e.min;
-			else if (e.effect == 83 && e.skill >= 0 && e.skill < 27) stats.skills[e.skill] += e.min;
+			if (e.effect == 79 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] += e.min;
+			else if (e.effect == 83 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] += e.min;
 			else if (e.effect == 84) magickaMult += e.min / 10.0f;
-			else if (e.effect == 17 && e.attribute >= 0 && e.attribute < 8) stats.attributes[e.attribute] -= e.min;
-			else if (e.effect == 21 && e.skill >= 0 && e.skill < 27) stats.skills[e.skill] -= e.min;
+			else if (e.effect == 17 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] -= e.min;
+			else if (e.effect == 21 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] -= e.min;
 			else          // resistances, weaknesses, night eye ...: read while they last (for good)
 				this->abilities.push_back({ e.effect, e.attribute, e.skill, (float)e.min, 1e9f, it->second.name });
 		}
 	}
 	for (int i = 0; i < 8; i++)
 	{
-		stats.attributes[i] = stats.attributes[i] + stats.attrBonus[i] > 100 ? 100 : stats.attributes[i] + stats.attrBonus[i];
+		stats.attributes[i] = (stats.attributes[i] + stats.attrBonus[i] > 100 ? 100 : stats.attributes[i] + stats.attrBonus[i]) + attrMod[i];
 		// OpenMW cuts (base - damage) to a whole number, so part of a point of damage takes a whole point
 		stats.attributes[i] = std::max(0, stats.attributes[i] - (int)ceilf(stats.attrDamage[i] - 0.001f));
 	}
 	for (int k = 0; k < 27; k++)
 	{
-		stats.skills[k] = stats.skills[k] + stats.skillBonus[k] > 100 ? 100 : stats.skills[k] + stats.skillBonus[k];
+		stats.skills[k] = (stats.skills[k] + stats.skillBonus[k] > 100 ? 100 : stats.skills[k] + stats.skillBonus[k]) + skillMod[k];
 		stats.skills[k] = std::max(0, stats.skills[k] - (int)ceilf(stats.skillDamage[k] - 0.001f));
 	}
 	const int* a = stats.attributes;

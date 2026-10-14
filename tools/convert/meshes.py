@@ -177,7 +177,8 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False):
         tris = d["triangles"] if "triangles" in d else strips_to_triangles(d["strips"])
         if not tris:
             return
-        tex, uv_set, clamp = texture_path(arch, nif, last_prop(props, "NiTexturingProperty"))
+        texprop = last_prop(props, "NiTexturingProperty")
+        tex, uv_set, clamp = texture_path(arch, nif, texprop)
         pos = np.array(d["vertices"]).reshape(n, 3)
         nrm = np.array(d["normals"]).reshape(n, 3) if d["normals"] else np.tile([0.0, 0.0, 1.0], (n, 1))
         raw = {"pos": pos.copy(), "node": m.copy()}     # what animated actors need at run time
@@ -218,7 +219,8 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False):
             "pos": pos, "nrm": nrm, "uv": uv,
             "vcol": np.array(d["colors"]).reshape(n, 4) if d["colors"] else None,
             "tris": np.array(tris, dtype=np.uint32),
-            "tex": tex, "flags": flags, "skinned": b["skin"] != -1, "name": b["name"], "block": b["index"],
+            "tex": tex, "texprop": texprop["index"] if texprop else -1,
+            "flags": flags, "skinned": b["skin"] != -1, "name": b["name"], "block": b["index"],
             "alpha_ref": alpha["threshold"] if alpha else 0,
             "mat": last_prop(props, "NiMaterialProperty"),
             "vcp": last_prop(props, "NiVertexColorProperty"),
@@ -235,15 +237,29 @@ def find_node(nif, name):
     return found[0] if found else None
 
 
-def particle_color(nif, ctrl):
+def particle_color(nif, ctrl, mat=None):
+    """The colour a spray's quads are drawn in. OpenMW lights a particle with its colour as ambient and diffuse and the
+    shape's material emissive on top (applyDrawableProperties: particles have vertex colours); the colour runs along
+    the NiParticleColorModifier's keys over each particle's life (ParticleColorAffector: age / lifetime). The quads
+    stand for the whole spray, so they take the colour over a life, weighted by how opaque it is then, lit at full,
+    plus the emissive: many sprays start black for a moment (magic_cast_ill, magic_hit_dst, chimney smoke), which as
+    the colour at birth drew them as black clouds."""
+    rgb = np.array(ctrl["initial_color"][:3], dtype=float)
     mod = nif.get(ctrl.get("particle_modifier", -1))
     while mod:
         if mod["type"] == "NiParticleColorModifier":
             data = nif.get(mod["color_data"])
             if data and data["keys"]:
-                return np.array(data["keys"][0][1])
+                times = np.array([k[0] for k in data["keys"]], dtype=float)
+                cols = np.array([k[1] for k in data["keys"]], dtype=float)
+                t = np.linspace(0.0, 1.0, 65)
+                c = np.stack([np.interp(t, times, cols[:, j]) for j in range(4)], axis=1)
+                w = c[:, 3] if c[:, 3].sum() > 1e-6 else np.ones(len(t))
+                rgb = (c[:, :3] * w[:, None]).sum(axis=0) / w.sum()
+            break
         mod = nif.get(mod.get("next_modifier", -1))
-    return np.array(ctrl["initial_color"])
+    emissive = np.array(mat["emissive"], dtype=float) if mat else np.zeros(3)
+    return np.clip(rgb + emissive, 0.0, 1.0)
 
 
 def particle_fall(nif, ctrl, m):
@@ -268,7 +284,8 @@ def particle_shape(arch, nif, b, props, node_world):
     if not ctrl or "emitter" not in ctrl:
         return None
     emitter = node_world.get(ctrl["emitter"])
-    tex, _, _ = texture_path(arch, nif, last_prop(props, "NiTexturingProperty"))
+    texprop = last_prop(props, "NiTexturingProperty")
+    tex, _, _ = texture_path(arch, nif, texprop)
     if emitter is None or tex is None:
         return None
     size = max(ctrl["initial_size"], 1.0)
@@ -286,7 +303,7 @@ def particle_shape(arch, nif, b, props, node_world):
         # and as wide as the emitter throws it sideways (declination spread: past 90 degrees, every way)
         spread = ctrl.get("declination_var", 0.0)
         half_w = size + ctrl["speed"] * t * (1.0 if spread >= math.pi / 2 else math.sin(spread))
-    color = particle_color(nif, ctrl)
+    color = particle_color(nif, ctrl, last_prop(props, "NiMaterialProperty"))
 
     pos, uv, tris = [], [], []
     for k in range(3):
@@ -313,7 +330,8 @@ def particle_shape(arch, nif, b, props, node_world):
     return {
         "pos": pos, "nrm": np.tile([0.0, 0.0, 1.0], (n, 1)), "uv": np.array(uv, dtype=float),
         "vcol": np.tile(np.append(color[:3], 1.0), (n, 1)),
-        "tris": np.array(tris, dtype=np.uint32), "tex": tex, "flags": flags, "skinned": False,
+        "tris": np.array(tris, dtype=np.uint32), "tex": tex, "texprop": texprop["index"] if texprop else -1,
+        "flags": flags, "skinned": False,
         "alpha_ref": 0, "mat": None, "vcp": {"vertex_mode": 1, "lighting_mode": 0}, "block": b["index"], "name": b["name"],
     }
 

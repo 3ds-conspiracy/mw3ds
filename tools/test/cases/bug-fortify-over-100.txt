@@ -1,0 +1,11 @@
+# A worn constant Fortify Attribute is a modifier on top of the attribute, not part of it: OpenMW caps only the base
+# at 100 (level-ups), so the Boots of Blinding Speed (Fortify Speed 200, constant) take Speed 50 to 250. The cap took
+# the base and the boots' 200 together to 100.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SETATTR:speed:50
+0.3 0 0 0 0 GIVE:boots%of%blinding%speed[unique]
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+0.5 0 0 0 0 EXPECT:attr:speed:eq:250
+0.3 0 0 0 0 DROP:boots%of%blinding%speed[unique]
+0.5 0 0 0 0 EXPECT:attr:speed:eq:50

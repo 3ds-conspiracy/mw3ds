@@ -104,6 +104,23 @@ Shield's sphere sat half above the body. The area burst stays around the chest. 
 visual also moves with the actor: the 3DS keeps a self, touch or target hit visual on its target's feet every frame
 (it used to stay where the spell was cast). Test: `issue-19` (`vfxheight`, `vfxdist`).
 
+How a visual looks and how long it plays (2026-10-14, side by side):
+- **Particle colour.** OpenMW lights a particle with its colour as ambient and diffuse (particle systems have vertex
+  colours) and the shape's material emissive on top; the colour runs along the NiParticleColorModifier keys over each
+  particle's life (age / lifetime). The 3DS draws a spray as fixed crossed quads, so they take the colour over a life,
+  weighted by how opaque it is then, lit at full, plus the emissive (`meshes.py particle_color`). They took the colour at
+  birth: Illusion's cast and hit, Destruction's hit, Soul Trap's and chimney smoke start black for a moment, so a
+  Paralyze cast was a black cloud where Morrowind glows green. Test `bug-vfx-particle-colour` (`vfxdark`).
+- **The effect's particle texture** (MGEF PTEX) goes on the shapes of a model that share its root's first
+  NiTexturingProperty (OpenMW: `overrideFirstRootTexture`, nifloader's "overrideFx"). In Morrowind.esm only a few
+  models have one: Destruction's bolt, Mysticism's bolt and hit, Shield's cast, Soul Trap's hit; so a Drain or Damage
+  bolt flies as Destruction's bolt in its own picture, not the fire one. Test `bug-vfx-effect-texture` (`boltfxswap`).
+- **Length.** A visual that doesn't loop goes once its longest controller has run (OpenMW's
+  FindMaxControllerLengthVisitor: keyframes and particle sprays alike). The 3DS used the keyframes only, and 1.2 s for a
+  visual with none (Illusion's cast: 1.0 s; Mysticism's hit: 2.0 s). Test `bug-vfx-length` (`vfxlife`).
+- Differs (3DS cost, kept): sprays are not simulated (no particles flying, fading or spreading: a bolt's trail, the
+  sparks running up the arms in first person); a spray is fixed quads at its emitter.
+
 ## Findings
 
 2026-09-28 (spell cost, chance, school): see above.

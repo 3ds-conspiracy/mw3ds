@@ -167,5 +167,6 @@ a cell loads as it is entered (OpenMW loads a cell before the player can be in i
 so the chained quest runs keep their timing (`bug-walk-unloaded-cell`, with `STREAM:off`; written with the change: the
 engine before it has no `STREAM:` token).
 
-Not done: Fortify Attribute is capped at 100 with the base (`World::recomputeStats`); OpenMW's modified value is not
-(the Boots of Blinding Speed's +200 Speed). Noted in `internal/TODO.md`.
+A worn constant Fortify Attribute (or an ability's) is a modifier on top of the attribute: only the base is held to 100
+(`World::recomputeStats`), as OpenMW's modified value isn't capped, so the Boots of Blinding Speed's +200 takes Speed 50 to
+250 (`bug-fortify-over-100`). The same goes for Fortify / Drain Skill abilities.

@@ -1,0 +1,12 @@
+# A spell visual shared by several magic effects is drawn in each effect's own particle texture where the model takes
+# one (OpenMW's overrideFirstRootTexture: the shapes sharing the model root's first NiTexturingProperty, MGEF PTEX):
+# Wound (Drain Health) flies as Destruction's bolt in vfx_map21, not in the bolt's own fire picture.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 BOOST:100+SETMAGICKA:200
+0.3 0 0 0 0 SPELL:wound
+0.3 0 0 0 0 CAST:wound
+0.8 0 0 0
+0.1 0 0 0 0 EXPECT:boltfxswap:ge:1

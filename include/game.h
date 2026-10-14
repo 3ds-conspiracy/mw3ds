@@ -243,6 +243,8 @@ struct FirstPersonDef
 {
 	ThirdPersonDef third;
 	std::unordered_map<std::string, std::string> vfx;   // spell visual static id -> piece
+	std::unordered_map<int, std::string> ptex;          // magic effect -> its particle texture (a piece's fx shapes take it)
+	std::unordered_map<std::string, float> vfxLength;  // spell visual piece -> seconds it plays (its longest controller)
 	std::unordered_map<std::string, std::unordered_map<int, std::string>> races[2];   // [female] race -> slot -> piece
 	std::unordered_map<std::string, FpItem> items;                                   // lowercase item id
 };

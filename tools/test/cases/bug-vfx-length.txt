@@ -1,0 +1,15 @@
+# A spell visual that doesn't loop plays as long as its longest controller runs, its particle sprays' included (OpenMW's
+# FindMaxControllerLengthVisitor, the effect dropped once that time has passed). Illusion's cast (magic_cast_ill.nif,
+# particle sprays only, stopping at 1.0 s) stood 1.2 s, the time for a visual with no keyframes; Mysticism's hit
+# (sprays to 2.0 s, keyframes to 0) the same.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 BOOST:100+SETMAGICKA:200
+1 0 0 0 0 PLACE:kagouti:110
+0.3 0 0 0 0 FACE:kagouti
+0.3 0 0 0 0 SPELL:paralysis
+0.3 0 0 0 0 CAST:paralysis
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:vfxlife:illusioncast:eq:1

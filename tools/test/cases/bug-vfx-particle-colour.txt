@@ -1,0 +1,10 @@
+# Spell visuals' particle sprays glow as in Morrowind: OpenMW lights a particle with its colour as ambient and diffuse
+# and the material's emissive on top, its colour running along the colour keys over its life. Many sprays start
+# black for a moment (Illusion's cast and hit, Destruction's hit, Soul Trap's); taking the colour at birth drew a
+# Paralyze cast as a black cloud. None of these visuals' blended sprays may be near black.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:vfxdark:vfx_illusioncast:eq:0
+0.1 0 0 0 0 EXPECT:vfxdark:vfx_illusionhit:eq:0
+0.1 0 0 0 0 EXPECT:vfxdark:vfx_destructhit:eq:0
+0.1 0 0 0 0 EXPECT:vfxdark:vfx_soultraphit:eq:0
+0.1 0 0 0 0 EXPECT:vfxdark:vfx_illusionarea:eq:0
