@@ -1,0 +1,18 @@
+# Walking over a cell border into a cell that hasn't streamed in yet (the console reads one in 1 to 5 s, and after a
+# door only the player's own cell is there): the border rule kept the cell behind as "current" for 512 units, so the one
+# under the player stayed unloaded, there was no ground there, the body fell, and was under the land when the cell came.
+# Now feet with nothing loaded under them stay put until it comes (onto its land if that is over them, else gravity
+# finds what is there: a platform, a bridge, the land), and (with the cells
+# streaming on a thread: the emulator, the console) a cell the player stands in that isn't there loads at once; the PC
+# build keeps the 512 units, and loads it then. The (-3,-9) / (-3,-8) border at x -16512 (y -65536), the Bitter Coast
+# west of Seyda Neen: gentle land both sides (328 south, 384 at the border, 504 north), the north cell held back with
+# STREAM:off; the walk goes about 770 past (past the 512 the PC build loads it at)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 STREAM:off
+0.3 0 0 0 0 TP:-16512:-65600:450:0
+2 0 0 0
+0.3 0 0 0 0 SNAP:playerz+SNAP:playery
+2.8 0 1 0
+0.3 0 0 0 0 EXPECT:playery:ge:@700+EXPECT:playerz:ge:@-150+EXPECT:playerz:le:@150
+1 0 0 0

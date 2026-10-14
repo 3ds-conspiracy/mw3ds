@@ -342,6 +342,8 @@ struct World
 	std::vector<LoadedCell*> loaded;   // an interior alone, or the 3 x 3 exterior cells around the player
 	TextureCache textures;
 	struct StreamJob* streamJob = nullptr;   // an exterior cell loading on the streaming thread
+	bool streamPaused = false;               // tests (STREAM:off): no neighbour streams in; the player's own cell still loads
+	bool streamThreaded = false;             // a cell has streamed in on a thread (the console, the emulator; never the PC build)
 	std::unordered_map<long long, int> gridIndex;   // exterior grid -> index into cells
 	// every cell's references. A deque: it grows without moving them (a vector's doubling needed one
 	// block twice the size, tens of MB, and ran the heap out after many cells were visited)

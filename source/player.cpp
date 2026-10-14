@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "log.h"
+
 // Morrowind-scale body: ~128 units tall, steps up to 34 units (OpenMW's step size)
 static const float kRadius = 22.0f;
 static const float kHeight = 128.0f;
@@ -41,6 +43,23 @@ static bool pushSphere(Scene& scene, float c[3], float r, bool horizontalOnly)
 	for (Cell* cell : scene.cells)
 		touched |= collisionPushSphere(cell->collision, c, r, horizontalOnly);
 	return touched;
+}
+
+// The land's surface over the feet, whatever its slope (the floor test looks from the feet up and never finds the land
+// over a body that got under it)
+static bool sampleLand(Scene& scene, const float feet[3], float zTop, float zBottom, float* zOut)
+{
+	bool found = false;
+	for (Cell* cell : scene.cells)
+	{
+		float z;
+		if (collisionLandFloor(cell->collision, feet[0], feet[1], zTop, zBottom, &z) && (!found || z > *zOut))
+		{
+			*zOut = z;
+			found = true;
+		}
+	}
+	return found;
 }
 
 const char* g_playerBlock = "";    // debug: what last pushed the player back
@@ -145,6 +164,7 @@ void playerSpawn(Player& p, Scene& scene, const float eye[3], float yaw, float p
 	p.fits = bodyFits(scene, p.feet);
 	p.fallTop = p.feet[2];                // a teleport isn't a fall
 	p.landedFall = 0.0f;
+	p.heldUp = false;
 }
 
 // The body hanging on a face too steep to be a floor: the low sphere pushed out of it in 3D, and the sideways part of
@@ -224,11 +244,33 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 	int steps = (int)ceilf(fmaxf(fabsf(dx), fabsf(dy)) / (kRadius * 0.5f));
 	if (steps < 1)
 		steps = 1;
+	// On the ground, in a long frame (kLongFrame and up: the frame after a stall on the console is capped at 0.1 s, and
+	// at a run moves 30 to 55 units), the feet follow the floor up at each part of the move (within a step's height,
+	// as OpenMW's solver steps up at each thing it meets). The whole move used to be taken first and the floor looked
+	// for after it, from a step above the feet: a long frame's move up a hill (40 up of 50) put the floor out of that
+	// reach and the body went on down inside the hill; a little shorter (over 24 up), the low body sphere met the slope
+	// and was pushed back off it, a jolt at every long frame. A usual frame keeps the one step at the end of the move,
+	// below: it is what the chained quest runs (a fixed 1/30 s, 18 units a frame) are tuned on, and following in them
+	// too moved the body by units where it brushed a rock or a wall, enough to send a run another way. Steeper
+	// land (past kWalkSlope) is no floor, as ever: the feet don't follow it, the low body sphere pushes the body back
+	// off it, and the end of the move drops a body that got onto it, which slides off. Outdoors only: an interior
+	// loads whole as it is entered (no long frame on a stair)
+	const float kLongFrame = 0.06f;
+	bool outdoors = scene.here && !(scene.here->flags & CELL_INTERIOR);
+	bool following = p.onGround && !levitating && !p.swimming && outdoors && dt >= kLongFrame;
 	for (int s = 0; s < steps; s++)
 	{
 		p.feet[0] += dx / steps;
 		p.feet[1] += dy / steps;
 		resolveBody(p, scene);
+		float floorZ;
+		if (following && sampleFloor(scene, p.feet, p.feet[2] + kStepUp, p.feet[2] - 1.0f, &floorZ) && floorZ > p.feet[2] + 0.01f)
+		{
+			// (a step up without headroom over it is left to the end of the move, which blocks it like a wall, below)
+			float up[3] = { p.feet[0], p.feet[1], floorZ };
+			if (!p.fits || bodyFits(scene, up))
+				p.feet[2] = floorZ;
+		}
 	}
 
 	// Levitating: up and down where the view points (B / R up, L down), floors and ceilings stop it
@@ -315,11 +357,51 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 			p.feet[2] = floorZ;
 			p.vz = 0.0f;
 			p.onGround = true;
+			p.heldUp = false;
 		}
 		else
 		{
-			p.feet[2] = newZ;
-			p.onGround = false;
+			float landZ;
+			if (wasOnGround && outdoors && !scene.groundThere)
+			{
+				// The cell under the feet isn't loaded: it is still streaming in (World::streamExterior). The ground
+				// isn't gone, it isn't there yet: the feet stay where they are
+				p.vz = 0.0f;
+				p.onGround = true;
+				p.heldUp = true;
+			}
+			else if (wasOnGround && outdoors
+				&& sampleLand(scene, p.feet, p.feet[2] + (p.heldUp ? 4096.0f : kHeight), p.feet[2] + kStepUp, &landZ))
+			{
+				// Standing, with no floor under the feet but the land more than a step over them: the body is under the
+				// land (there is nothing to stand on below it), and is put back on it rather than fall for ever. The land
+				// of a cell that came in under feet held up for it may be far over them (a hill), and that is no news;
+				// otherwise it says so once: the follow above should never let it happen. (Less than a step over them is
+				// the feet a little into a face too steep to walk on: the low body sphere pushes the body back out, as
+				// ever.) Land below held feet is left to gravity, as ever: what the feet were on may be a platform or a
+				// bridge whose collision is in a cell still to come, and the land far under it. Done here: the never-
+				// through-a-surface check below would undo the move up through the hill
+				if (!p.heldUp)
+					monitorOnce("underland", "player under the land at %.0f %.0f %.0f (the land %.0f above the feet): put back on it",
+						p.feet[0], p.feet[1], p.feet[2], landZ - p.feet[2]);
+				p.feet[2] = landZ;
+				p.vz = 0.0f;
+				p.onGround = true;
+				p.heldUp = false;
+				p.fallTop = landZ;
+				p.landedFall = 0.0f;
+				p.inertia[0] = p.inertia[1] = 0.0f;
+				p.jumpFlight = false;
+				p.swimming = false;
+				p.fits = bodyFits(scene, p.feet);
+				return;
+			}
+			else
+			{
+				p.feet[2] = newZ;
+				p.onGround = false;
+				p.heldUp = false;
+			}
 		}
 		// Landed (or in the water below): the take-off's speed is spent
 		if (p.onGround)

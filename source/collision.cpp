@@ -264,6 +264,36 @@ bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBotto
 	return found;
 }
 
+bool collisionLandFloor(CollisionMesh& m, float x, float y, float zTop, float zBottom, float* zOut)
+{
+	bool found = false;
+	float best = zBottom;
+	forTrianglesIn(m, x, y, x, y, [&](u32 t) {
+		const float* a = &m.verts[m.tris[t * 3 + 0] * 3];
+		const float* b = &m.verts[m.tris[t * 3 + 1] * 3];
+		const float* c = &m.verts[m.tris[t * 3 + 2] * 3];
+		if (!landTriangle(a, b, c))
+			return;
+		float det = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1]);
+		if (fabsf(det) < 1e-4f)
+			return;
+		float l1 = ((b[1] - c[1]) * (x - c[0]) + (c[0] - b[0]) * (y - c[1])) / det;
+		float l2 = ((c[1] - a[1]) * (x - c[0]) + (a[0] - c[0]) * (y - c[1])) / det;
+		float l3 = 1.0f - l1 - l2;
+		if (l1 < 0 || l2 < 0 || l3 < 0)
+			return;
+		float z = l1 * a[2] + l2 * b[2] + l3 * c[2];
+		if (z <= zTop && z >= best)
+		{
+			best = z;
+			found = true;
+		}
+	});
+	if (found)
+		*zOut = best;
+	return found;
+}
+
 bool collisionFootFloor(CollisionMesh& m, float x, float y, float reach, float zTop, float zBottom, float* zOut)
 {
 	static const float offs[5][2] = { { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };

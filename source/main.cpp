@@ -61,6 +61,7 @@ struct ScriptedInput
 	float placeDist = 150.0f;
 	int giveCount = 0;                // GIVE:id:count
 	int boost = 0;              // BOOST:n: combat skills and attributes to n, health / fatigue / magicka full
+	float dt = 0.0f;            // DT:s: the frame step of the scripted run from here (0.1: a long frame, as after a stall on the console)
 	std::string give;           // GIVE:id: add the item (ammunition: 50) and equip it
 	std::string gotoCell;       // GOTO:cell: enter that cell through a door that leads there
 	std::string journal;        // JOURNAL:quest:index: set a journal stage
@@ -249,7 +250,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "TRUNCSAVE:", "REFHEALTH:", "REFADDITEM:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:" })
+				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "TRUNCSAVE:", "REFHEALTH:", "REFADDITEM:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:", "STREAM:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -277,6 +278,8 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		if (sscanf(tok, "SLEEP:%d:%d", &step->sleep, &step->sleepForce) >= 1)
 			continue;
 		if (sscanf(tok, "BOOST:%d", &step->boost) == 1)
+			continue;
+		if (sscanf(tok, "DT:%f", &step->dt) == 1)
 			continue;
 		if (sscanf(tok, "CHOICEVAL:%d", &step->choiceValue) == 1)
 			continue;
@@ -1269,8 +1272,11 @@ int main()
 
 		if (inputIndex < autoinput.size() && loaded)
 		{
-			dt = 1.0f / 30.0f;       // fixed steps so scripted runs are repeatable
 			ScriptedInput& s = autoinput[inputIndex];
+			static float testDt = 1.0f / 30.0f;      // fixed steps so scripted runs are repeatable (DT: sets them)
+			if (s.dt > 0.0f)
+				testDt = s.dt;
+			dt = testDt;
 			in = {};
 			in.moveX = s.moveX;
 			in.moveY = s.moveY;

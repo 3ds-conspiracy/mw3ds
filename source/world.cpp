@@ -1775,6 +1775,13 @@ Scene World::scene()
 	for (LoadedCell* l : loaded)
 		s.cells.push_back(&l->cell);
 	s.here = current >= 0 && cells[current].live ? &cells[current].live->cell : nullptr;
+	// Outdoors, whether the cell under the player's feet is loaded (a neighbour still streaming in: the feet are held
+	// where they are until it is, playerUpdate). Off the level's cells (the sea past the island) counts as loaded: as ever
+	if (current >= 0 && !cells[current].interior)
+	{
+		int under = gridCell((int)floorf(player.feet[0] / 8192.0f), (int)floorf(player.feet[1] / 8192.0f));
+		s.groundThere = under < 0 || cells[under].live != nullptr;
+	}
 	return s;
 }
 
@@ -1991,6 +1998,8 @@ static void startStreamJob(World& w, int index)
 	j->thread = g_sysCoreThreads ? threadCreate(streamWorker, j, 64 * 1024, prio + 1, 1, false) : nullptr;
 	if (!j->thread)
 		j->thread = threadCreate(streamWorker, j, 64 * 1024, prio + 1, -2, false);
+	if (j->thread)
+		w.streamThreaded = true;
 	if (!j->thread)
 	{
 		// No thread could be made: load it right here instead
@@ -2167,7 +2176,11 @@ void World::streamExterior(bool all)
 	int under = gridCell(gx, gy);
 	// Just over the line into a next-door cell, the cell the player was in stays "current": a player pacing on a border
 	// freed the row of cells behind and loaded the row ahead on every crossing (uber bug 39). Past 512 units, or
-	// farther than a neighbour, it changes
+	// farther than a neighbour, it changes. Not, with the cells streaming in on a thread, when the cell under the player
+	// isn't there (the console reads one in 1 to 5 s, and after a door only the player's own is loaded): it loads now,
+	// below. Kept as current, it stayed unloaded for those 512 units, there was no ground under the player, and the body
+	// fell and was under the land when the cell came. (Without a thread, the PC build of the tests, a neighbour is read
+	// on the spot a frame after it is asked for: the rule as it was, so the quest runs keep their timing)
 	bool nearEdge = false;
 	if (under >= 0 && under != current)
 	{
@@ -2175,7 +2188,7 @@ void World::streamExterior(bool all)
 		float ox = fmaxf(fmaxf(cur.gx * 8192.0f - player.feet[0], player.feet[0] - (cur.gx + 1) * 8192.0f), 0.0f);
 		float oy = fmaxf(fmaxf(cur.gy * 8192.0f - player.feet[1], player.feet[1] - (cur.gy + 1) * 8192.0f), 0.0f);
 		nearEdge = abs(cells[under].gx - cur.gx) <= 1 && abs(cells[under].gy - cur.gy) <= 1 && ox < 512.0f && oy < 512.0f
-			&& cur.live;
+			&& cur.live && (cells[under].live || !streamThreaded);
 	}
 	if (under >= 0 && under != current && !nearEdge)
 	{
@@ -2249,7 +2262,7 @@ void World::streamExterior(bool all)
 		}
 		if (room)
 			noRoomNoted = false;
-		if (!streamJob && !freed && room && osGetTime() >= streamRetryAt)
+		if (!streamJob && !freed && room && !streamPaused && osGetTime() >= streamRetryAt)
 			startStreamJob(*this, ci);
 		break;
 	}

@@ -51,6 +51,7 @@ struct Player
 	bool jumpedNow = false;   // set by the jump this frame (fatigue)
 	float swimBoost = 0.0f;   // Swift Swim's magnitude (percent faster in the water)
 	bool fits = false;        // the body had room where it stood at the end of the last update
+	bool heldUp = false;      // the feet are held where they were: nothing loaded under them yet (an exterior cell streaming in)
 	float fallTop = 0.0f;     // highest point since last on the ground
 	float landedFall = 0.0f;  // how far the last landing dropped (read and cleared by the session: fall damage)
 };
@@ -60,6 +61,9 @@ struct Scene
 {
 	std::vector<Cell*> cells;
 	Cell* here = nullptr;
+	// Outdoors, whether the exterior cell under the player's feet is loaded (false while it streams in: nothing to stand
+	// on there yet, and a loaded neighbour's collision grid can reach over the border); indoors always true
+	bool groundThere = true;
 };
 
 static const float PLAYER_EYE_HEIGHT = 124.0f;   // eye level of a default-height race

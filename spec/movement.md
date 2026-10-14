@@ -139,3 +139,33 @@ of the cavern roof). None is a collision fault.
 - The strafing x 0.75 is not applied (analog movement mixes forward and sideways).
 - NPC encumbrance is not tracked, so NPCs are never slowed by their load.
 - NPC fall damage and movement animations are driven by our own animation speeds, not `mSpeedFactor`.
+
+## Long frames up a hill, and cells not yet there (2026-10-13)
+
+The player's move used to be taken whole, sideways, and the floor looked for after it from a step's height (34) above
+the feet. A long frame up a hill (the frame step is capped at 0.1 s; after a stall on the console a run moves 50 units
+in it, 40 of them up a 40 degree slope) put the floor out of that reach, the body went on down inside the hill and fell
+through it; a little shorter, the low body sphere met the slope and was pushed back off it, a jolt at every long frame.
+Now, outdoors, in a long frame (0.06 s and up: a stall's frame is capped at 0.1 s), the feet follow a walkable floor
+up at each part of the move (half a radius at a time), as OpenMW's solver steps up at each thing it meets
+(`Stepper::step`). A usual frame and interiors keep the one step at the end of the move: it is what the chained quest
+runs are tuned on (their kit walks at 70 units a frame at a fixed 1/30 s), and following in them too moved the body by
+units where it brushed a rock, a wall or a Telvanni ramp, enough to send a run another way (escorts lost, a door
+missed). Land past `sMaxSlope` is treated as before (no floor, the body pushed back off
+it and dropped, sliding off: OpenMW slides along it as a wall; ours bounces, kept). A body still under the land by more
+than a step with nothing to stand on (an actor's push, something unforeseen) is put back on the land and says so
+(`monitor: player under the land`) (`bug-walk-fast-uphill`, with the `DT:` step token for long frames; the test fails
+on the engine before the change).
+
+Outdoors, a cell the player walks into that is not loaded yet (the console streams one in 1 to 5 s; after a door only
+the player's own cell is there) used to stay unloaded for 512 units: the border rule that keeps the cell behind as
+current (uber bug 39) applied to it, so there was no ground under the player, the body fell, and was under the land when
+the cell came. Now feet with nothing loaded under them stay where they are until it is (then onto its land if that
+came in over them, as up a hill; land below is left to gravity, as what the feet were on may be a platform or a bridge
+whose collision is in a cell still to come), and, with the cells streaming on a thread (the console, the emulator), such
+a cell loads as it is entered (OpenMW loads a cell before the player can be in it). The PC build of the tests, which reads a neighbour on the spot a frame after asking, keeps the 512 unit rule
+so the chained quest runs keep their timing (`bug-walk-unloaded-cell`, with `STREAM:off`; written with the change: the
+engine before it has no `STREAM:` token).
+
+Not done: Fortify Attribute is capped at 100 with the base (`World::recomputeStats`); OpenMW's modified value is not
+(the Boots of Blinding Speed's +200 Speed). Noted in `internal/TODO.md`.

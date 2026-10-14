@@ -2429,6 +2429,14 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		g_dialogueClothValue = atoi(a[1].c_str());
 		return true;
 	}
+	if (verb == "STREAM" && a.size() >= 2)
+	{
+		// STREAM:off / STREAM:on: the neighbouring exterior cells stop streaming in (the player's own cell still loads
+		// as it is entered): a walk into a cell that isn't there yet, as on the console with a slow card
+		w.streamPaused = a[1] == "off";
+		logf("test: cell streaming %s", w.streamPaused ? "off" : "on");
+		return true;
+	}
 	if (verb == "MEMHOLD" && a.size() >= 2)
 	{
 		// MEMHOLD:<KB>: hold that much linear memory (in 256 KB pieces) to play as the device does when it is nearly

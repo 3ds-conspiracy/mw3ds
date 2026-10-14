@@ -40,6 +40,9 @@ bool collisionRaycast(CollisionMesh& mesh, const float a[3], const float b[3], f
 bool collisionFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope = 60.0f);
 // The steepest land the player walks on: OpenMW's Constants::sMaxSlope (46 degrees); steeper slides as a wall
 static const float kWalkSlope = 46.0f;
+// The land's surface over (x, y) with zBottom <= z <= zTop, whatever its slope (land triangles only, terrain.py's):
+// a body under the land, where no floor test from its feet up finds the surface
+bool collisionLandFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBottom, float* zOut);
 
 // The floor an actor's feet rest on: the highest of collisionFloor under (x, y) and four spots
 // `reach` units around it (as OpenMW's actor box rests on the highest point under it, so on a slope

@@ -1,0 +1,14 @@
+# Running up a steep but walkable hill (41 degrees, every face under 46: Seyda Neen's cell at -8320,-66688, 776 up over
+# 896) in long frames, DT:0.1 as the console's frame after a stall (dt is capped at 0.1 s): 55 units a frame, 48 of them
+# up. The whole move was taken before the floor was looked for, from a step's height (34) above the feet, so the floor
+# rose out of reach, the body went on down inside the hill and fell through it (or, a little slower, the low body sphere
+# was pushed back off the slope, a jolt). The feet now follow the floor at each part of the move
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:-8320:-66760:450:0
+2 0 0 0
+0.3 0 0 0 0 SETATTR:speed:100+SETSKILL:athletics:100
+0.3 0 0 0 0 SNAP:playerz+DT:0.1
+1.6 0 1 0
+0.3 0 0 0 0 EXPECT:playerz:ge:@600+DT:0.0333
+1 0 0 0
