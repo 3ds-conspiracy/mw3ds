@@ -1851,7 +1851,7 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 static bool readLevelCell(const char* dataDir, const std::string& file, TextureCache& cache, LoadedCell* l)
 {
 	g_heapProbeFailed = false;
-	if (!cellLoad(l->cell, dataDir, (file + ".cel").c_str(), cache))
+	if (!cellLoad(l->cell, dataDir, (file + ".cel").c_str(), cache) || (g_streamCancel && threadGetCurrent()))
 	{
 		cellFree(l->cell, cache);
 		return false;
@@ -1959,6 +1959,8 @@ static void finishStreamJob(World& w, bool wait)
 			actorsFree(j->cell->actors);
 			cellFree(j->cell->cell, w.textures);
 		}
+		else if (g_streamCancel)
+			logf("world: stopped reading %s (the world is let go of)", j->file.c_str());
 		else
 		{
 			logf("world: failed to load %s", j->file.c_str());
@@ -2073,9 +2075,28 @@ bool World::dropFarthestLiveNeighbour()
 
 void World::freeAll()
 {
+	u64 t0 = osGetTime();
+	bool streaming = streamJob != nullptr;
+	const char* streamAt = g_workerAt;
+	g_streamCancel = true;
 	finishStreamJob(*this, true);
+	g_streamCancel = false;
+	u64 t1 = osGetTime();
+	int n = (int)loaded.size();
 	while (!loaded.empty())
-		unloadLevelCell(*this, loaded.back()->index);
+	{
+		LoadedCell* l = loaded.back();
+		unloadLevelCell(*this, l->index);
+		// (a loaded cell its LevelCell doesn't point at isn't unloaded there: this loop would spin, at the main thread's
+		// priority, with the watchdog under it never running to say so)
+		if (!loaded.empty() && loaded.back() == l)
+		{
+			monitorOnce("freeall", "cell %d is in the loaded list but not live: dropped", l->index);
+			loaded.pop_back();
+		}
+	}
+	logf("world: freed %d cells in %llu ms (%s %llu ms%s%s)", n, osGetTime() - t1, streaming ? "the cell streaming in stopped in"
+		: "nothing streaming,", t1 - t0, streaming ? ", it was at " : "", streaming ? streamAt : "");
 }
 
 bool World::enterCell(int index)

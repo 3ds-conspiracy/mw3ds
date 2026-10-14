@@ -137,6 +137,8 @@ static bool readBatches(FILE* f, std::vector<CellBatch>& out, Cell& cell, u32 ve
 	return true;
 }
 
+volatile bool g_streamCancel = false;
+
 // Holds a TextureCache's own lock for a scope (the map and the entries are shared between the
 // main and the streaming thread). Taken before any linear-heap lock, never after one.
 struct CacheGuard
@@ -154,6 +156,10 @@ struct CacheGuard
 // outlives the read; when both threads loaded it meanwhile, the second copy is dropped
 static void tryLoad(TextureCache& c, TextureCache::Entry* e, const char* dataDir, const std::string& name)
 {
+	// (the quit waited for the streaming thread to read every texture of a cell it then threw away: up to 5 s on
+	// hardware after the save, on a screen that looked frozen)
+	if (g_streamCancel && threadGetCurrent())
+		return;
 	char path[256];
 	snprintf(path, sizeof(path), "%s", shardedPath(dataDir, "tex", name).c_str());
 	C3D_Tex tex = {};
@@ -298,7 +304,7 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 		cell.textureNames[i] = name;
 		cell.textures[i] = cache.acquire(dataDir, name);
 		missing += cell.textures[i] == nullptr;
-		if (!cell.textures[i])
+		if (!cell.textures[i] && !(g_streamCancel && threadGetCurrent()))     // (a cancelled read skips them: not missing)
 			monitorOnce((std::string("tex:") + name).c_str(), "missing texture %s (first seen in %s)", name, cellFile);
 	}
 	// newly loaded; the rest was shared (textures freed meanwhile by the main thread can make it negative)

@@ -390,21 +390,33 @@ void Session::skipChargen()
 
 void Session::shutdown()
 {
+	// (each part marked and timed: the quit and a save's load run this)
+	u64 t0 = osGetTime();
+	MARK("shutdown: sounds");
 	if (waterChannel >= 0)
 		audioStop(waterChannel);
 	waterChannel = -1;
 	for (auto& r : w.refs)
 		if (r.voiceChannel >= 0)
 			audioStop(r.voiceChannel);
+	MARK("shutdown: hands and body");
 	vm.free(w);
 	body.free(w);
+	u64 t1 = osGetTime();
+	MARK("shutdown: cells");
 	w.freeAll();
+	u64 t2 = osGetTime();
 	// what outlives a session in globals: freed now, before a loaded save's session reads its own (the
 	// skeletons and sounds of two sessions at once ran out of memory loading a save). The distant land
 	// stays: the next session reuses it (distantLoad), its ~20 MB read being the hard part of a reload.
+	MARK("shutdown: skeletons and sounds");
 	skeletonsFree();
 	audioCacheClear();
+	u64 t3 = osGetTime();
+	MARK("shutdown: game data");
 	w.keepGame();
+	u64 t4 = osGetTime();
+	MARK("shutdown: map");
 	if (mapLoaded)
 	{
 		LinearGuard guard;
@@ -412,6 +424,8 @@ void Session::shutdown()
 		mapLoaded = false;
 	}
 	freeMapTiles();
+	logf("shutdown: %llu ms (sounds, hands and body %llu, cells %llu, skeletons and sounds %llu, game data %llu, map %llu)",
+		osGetTime() - t0, t1 - t0, t2 - t1, t3 - t2, t4 - t3, osGetTime() - t4);
 }
 
 bool Session::save()
@@ -2682,7 +2696,7 @@ void Session::monitorCellChanged()
 				r.destHasGrid ? "an exterior cell" : r.destCell.c_str(), (int)r.destUnconverted);
 	});
 	std::vector<unsigned long>& m = cellMemory[w.cellName()];
-	m.push_back(linearSpaceFree() / 1024);
+	unsigned long freeKb = linearSpaceFree() / 1024;
 	// what holds linear memory: textures, loaded cells' geometry, their people, distant land, decoded sounds (the rest:
 	// the GPU's command buffer, the UI, sky, effects)
 	u32 geometry = 0, actorBytes = 0;
@@ -2692,12 +2706,19 @@ void Session::monitorCellChanged()
 		actorBytes += l->actors.bytes;
 	}
 	logf("cellmem: %s entered, %lu KB linear free (visit %d): textures %lu, cells %lu, actors %lu, distant %lu, sounds %lu KB",
-		w.cellName().c_str(), m.back(), (int)m.size(), (unsigned long)(w.textures.bytes / 1024), (unsigned long)(geometry / 1024),
+		w.cellName().c_str(), freeKb, (int)m.size() + 1, (unsigned long)(w.textures.bytes / 1024), (unsigned long)(geometry / 1024),
 		(unsigned long)(actorBytes / 1024), (unsigned long)(distantBytes() / 1024), (unsigned long)(audioCacheBytes() / 1024));
+	// The check counts decoded sounds and distant land as free: both are capped caches that fill over a session (a New
+	// 3DS keeps up to 6 MB of sounds), and a cache filling up read as a leak on hardware. Interiors only: outside, what
+	// is loaded at entry depends on the cells still streaming and the way in (one name covers several grid cells, as
+	// Sadrith Mora's three), 3 MB apart from one visit to the next with nothing leaked
+	m.push_back(freeKb + (unsigned long)((audioCacheBytes() + distantBytes()) / 1024));
 	size_t n = m.size();
 	// (from the fifth visit on: the first entry always has the most free, the caches that fill after it not yet there)
-	if (n >= 5 && m[n - 1] + 64 < m[n - 2] && m[n - 2] + 64 < m[n - 3] && m[n - 3] + 64 < m[n - 4])
-		monitorOnce(("mem:" + w.cellName()).c_str(), "linear memory falls on each visit to %s: %lu, %lu, %lu, %lu KB free at entry",
+	if (w.cells[w.current].interior && n >= 5 && m[n - 1] + 64 < m[n - 2] && m[n - 2] + 64 < m[n - 3]
+		&& m[n - 3] + 64 < m[n - 4])
+		monitorOnce(("mem:" + w.cellName()).c_str(),
+			"linear memory falls on each visit to %s: %lu, %lu, %lu, %lu KB free at entry (sound and distant caches counted free)",
 			w.cellName().c_str(), m[n - 4], m[n - 3], m[n - 2], m[n - 1]);
 	if (n > 12)
 		m.erase(m.begin());

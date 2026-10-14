@@ -553,8 +553,8 @@ static float readStickScroll()
 // buttons. The Circle Pad walks (up / down) and turns (left / right); an aim button held roots the player and the
 // pad aims instead, up and down too, at half speed (GoldenEye's aim): X held past a tap, R while it winds up the
 // attack, or ZL / ZR (Circle Pad Pro / New 3DS). A tap of X readies or puts away the weapon, when it is let go
-// (a hold aims instead). L cast, Y jump (and rise, levitating), B run (held), SELECT sneak on / off, D-pad quick
-// keys; first / third person is a button on the touch screen. No strafing. Device and scripted runs both come
+// (a hold aims instead). L cast, Y jump (and rise, levitating), SELECT sneak on / off, D-pad strafes
+// (left / right) and looks up / down; quick keys and first / third person are on the touch screen. Device and scripted runs both come
 // through here, each with its own GoldenEyeState; dt: the frame's seconds (X's tap or hold)
 struct GoldenEyeState
 {
@@ -593,33 +593,41 @@ static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, floa
 	in.attack = held & KEY_R;
 	in.cast = down & KEY_L;
 	in.jump = down & KEY_Y;
-	in.fast = held & KEY_B;
+	in.fast = held & KEY_B;                // (only the test fly mode reads it: walk or run is how far the pad is pushed)
 	in.sneak = sneakOn;
 }
 
 // Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
 // The sensor runs only while it is on; the resting offset is taken off and turns under kSoft a second softened
+static bool s_gyroOn = false;
+
+// The sensors off again: the HID module keeps them running for the console after the game has gone otherwise
+static void gyroStop()
+{
+	if (!s_gyroOn)
+		return;
+	HIDUSER_DisableGyroscope();
+	HIDUSER_DisableAccelerometer();
+	s_gyroOn = false;
+}
+
 static void gyroInput(PlayerInput& in)
 {
-	static bool on = false;
 	static float toDps = 0.0f;
-	if ((g_gyroAim > 0) != on)
+	if ((g_gyroAim > 0) != s_gyroOn)
 	{
-		on = g_gyroAim > 0;
-		if (on)
+		if (g_gyroAim > 0)
 		{
+			s_gyroOn = true;
 			HIDUSER_EnableGyroscope();
 			HIDUSER_EnableAccelerometer();
 			if (R_FAILED(HIDUSER_GetGyroscopeRawToDpsCoefficient(&toDps)))
 				toDps = 0.0f;
 		}
 		else
-		{
-			HIDUSER_DisableGyroscope();
-			HIDUSER_DisableAccelerometer();
-		}
+			gyroStop();
 	}
-	if (!on)
+	if (!s_gyroOn)
 		return;
 	const float kSoft = 1.0f;
 	angularRate r;
@@ -659,7 +667,7 @@ static void gyroInput(PlayerInput& in)
 }
 
 // Three button layouts (Options > Controls; START and SELECT the same in all):
-//   Xbox (Morrowind on the Xbox): R attack, L cast, X ready / put away the weapon, Y jump, B run,
+//   Xbox (Morrowind on the Xbox): R attack, L cast, X ready / put away the weapon, Y jump, B free (walk or run by the pad),
 //     ZL sneak (down when levitating), ZR up when levitating, D-pad quick keys
 //   Classic: X attack, Y cast, B jump, ZR run, L sneak, ZL + D-pad quick keys, D-pad look, ZL + X put away
 //   GoldenEye: see goldenEyeInput
@@ -1107,6 +1115,7 @@ int main()
 	Session* session = new Session();
 	ScriptedSteps autoinput = loadAutoinput();
 	session->autotest = !autoinput.empty();
+	logBuffered(!session->autotest);          // play: the log written every 2 s, tests every line
 	u64 loadStart = osGetTime();
 	// sdmc:/3ds/mw3ds/start.txt: name of the cell to start in (e.g. "Seyda Neen"), skipping chargen,
 	// or "save:<path>" to continue from that save (test runs skip the title screen)
@@ -2056,6 +2065,7 @@ int main()
 			session->savePath = kSavePath;
 			// a test reload: still a test (and still invincible if it was)
 			session->autotest = !autoinput.empty();
+			logBuffered(!session->autotest);          // play: the log written every 2 s, tests every line
 			session->testGod = testGodKept;
 			session->testGodBlows = testGodBlowsKept;
 			session->testLegit = testLegitKept;
@@ -2350,18 +2360,46 @@ int main()
 		}
 	}
 
+	// Each step marked and timed, and the log left open to the last: a quit that hangs names its step in the
+	// watchdog's line (log.txt and watchdog.txt) instead of ending the log at "exit"
 	logf("exit");
+	char exitTimes[256] = "";
+	const char* stepName = nullptr;
+	u64 exitStart = osGetTime(), stepStart = exitStart;
+	auto exitStep = [&](const char* mark) {
+		u64 now = osGetTime();
+		size_t used = strlen(exitTimes);
+		if (stepName)
+			snprintf(exitTimes + used, sizeof(exitTimes) - used, "%s%s %llu", used ? ", " : "", stepName + 6, now - stepStart);
+		stepName = mark;
+		stepStart = now;
+		MARK(mark);
+	};
+	exitStep("exit: sensors");
+	gyroStop();
+	exitStep("exit: session shutdown");
 	session->shutdown();
+	exitStep("exit: session delete");
 	delete session;
+	exitStep("exit: audio");
 	audioExit();
+	exitStep("exit: ui");
 	uiExit();
+	exitStep("exit: renderer");
 	rendererExit();
+	exitStep("exit: citro2d");
 	C2D_Fini();
+	exitStep("exit: citro3d");
 	C3D_Fini();
+	exitStep("exit: romfs");
 	if (romfs)
 		romfsExit();
+	exitStep("exit: irrst");
 	irrstExit();
-	logExit();
+	exitStep("exit: gfx");
 	gfxExit();
+	exitStep("exit: process");
+	logf("exit: shut down in %llu ms (ms a step: %s)", osGetTime() - exitStart, exitTimes);
+	logExit();
 	return 0;
 }

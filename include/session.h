@@ -118,7 +118,7 @@ struct Session : ScriptHost
 	void viewCamera(RenderCamera& cam);
 	// repairing: -1 = with a repair tool (inventory index repairTool), else the smith's ref
 	int repairRef = -1, repairTool = -1;
-	int quitSaving = 0;               // Save and quit: "Saving..." shown first (frames), then the save and the quit
+	int quitSaving = 0;               // Save and quit: "Saving..." shown first (frames), then the save; -1 saved, closing
 	bool saveUnreadable = false;      // start(): the save asked for is there but won't read (nothing started over it)
 	bool wantReload = false;          // death / Saves screen: main loop restarts the session from a save
 	std::string reloadPath;           // which save (empty = the autosave)

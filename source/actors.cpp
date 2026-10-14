@@ -513,6 +513,12 @@ bool actorsLoad(ActorSet& set, const char* path, const char* dataDir, const std:
 	set.actors.resize(numActors);
 	for (auto& a : set.actors)
 	{
+		// (a cancelled stream, World::freeAll: the cell is thrown away, its people not read)
+		if (g_streamCancel && threadGetCurrent())
+		{
+			zclose(f);
+			return false;
+		}
 		rd(f, a.ref);
 		rd(f, a.skeleton);
 		if (set.skeletons.empty())

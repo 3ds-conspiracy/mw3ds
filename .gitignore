@@ -32,3 +32,4 @@ native_prof.txt
 
 # Scratch repros and probes (run by name: scratch\<case>)
 tools/test/cases/scratch/
+.claude

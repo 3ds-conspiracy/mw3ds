@@ -180,6 +180,7 @@ void logInit()
 	s_log = ::fopen((sdRoot() + "/3ds/mw3ds/log.txt").c_str(), "w");
 }
 void logSetHook(void (*hook)(const char*)) { s_hook = hook; }
+void logBuffered(bool) {}          // (native runs are tests: the flush below)
 void logf(const char* fmt, ...)
 {
 	char line[512];
@@ -222,6 +223,7 @@ void logExit()
 	s_log = nullptr;
 }
 void watchdogStart() {}
+void watchdogStop() {}
 void crashHandlerInstall(int) { nativeCrashInstall(); }
 
 // ---- linear lock: one thread

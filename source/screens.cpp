@@ -437,15 +437,20 @@ void Session::toggleGameMenu()
 void Session::drawGameMenu()
 {
 	header("Menu", w.cellName());
-	// Save and quit: "Saving..." on screen first, then the save (a long campaign's takes seconds: it looked frozen)
+	// Save and quit: "Saving..." on screen first, then the save (a long campaign's takes seconds: it looked frozen),
+	// then "Closing..." for the quit itself: a screen that stays says which of the two it is stuck in. A save that
+	// failed doesn't quit (its notice shows, the menu stays)
+	if (quitSaving < 0)
+	{
+		uiTextCentered(160, 110, 0.6f, col::text, "Game saved. Closing...");
+		wantQuit = true;
+		return;
+	}
 	if (quitSaving > 0)
 	{
 		uiTextCentered(160, 110, 0.6f, col::text, "Saving...");
 		if (++quitSaving > 2)
-		{
-			save();
-			wantQuit = true;
-		}
+			quitSaving = save() ? -1 : 0;
 		return;
 	}
 	const UiInput& in = uiIn();

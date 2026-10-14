@@ -15,6 +15,12 @@
 #include <unistd.h>
 
 static FILE* s_log;
+// Each write to the card costs about 12 ms on hardware (a 25-minute log: 12 ms between two lines with nothing between
+// them, three lines a second), so in play the lines gather here and the main thread writes them every 2 s
+// (logBuffered); a stall the watchdog sees, a crash and the quit write them at once
+static char s_logBuf[16 * 1024];
+static bool s_buffered = false;
+static u64 s_flushedAt = 0;
 static volatile size_t s_failedSize = 0;        // the last `new` that found no room (operator new below)
 static void* volatile s_failedSite = nullptr;
 
@@ -37,7 +43,12 @@ static void watchdogNote(const char* fmt, ...)
 		fclose(f);
 	}
 	logf("watchdog: %s", line);
+	if (s_log)
+		fflush(s_log);
 }
+
+static Thread s_watchdog = nullptr;
+static LightEvent s_watchdogStop;
 
 static void watchdogThread(void*)
 {
@@ -45,7 +56,8 @@ static void watchdogThread(void*)
 	int still = 0;
 	for (;;)
 	{
-		svcSleepThread(1000000000LL);
+		if (LightEvent_WaitTimeout(&s_watchdogStop, 1000000000LL) == 0)
+			return;                       // watchdogStop
 		unsigned f = g_mainFrames;
 		if (f != last)
 		{
@@ -206,7 +218,28 @@ void crashHandlerInstall(int slot)
 
 void watchdogStart()
 {
-	threadCreate(watchdogThread, nullptr, 8 * 1024, 0x3F, -2, true);
+	LightEvent_Init(&s_watchdogStop, RESET_STICKY);
+	s_watchdog = threadCreate(watchdogThread, nullptr, 8 * 1024, 0x3F, -2, false);
+}
+
+// The quit: the watchdog's thread ends before libctru's exit gives the heap back, its stack with it (a thread still
+// there that woke in between would fault on its own stack, at the very end of the quit). Joined with a limit: a
+// watchdog stuck in a write to the card doesn't hold the quit
+void watchdogStop()
+{
+	if (!s_watchdog)
+		return;
+	LightEvent_Signal(&s_watchdogStop);
+	if (threadJoin(s_watchdog, 2000000000ULL) == 0)
+		threadFree(s_watchdog);
+	s_watchdog = nullptr;
+}
+
+// libctru's __appExit calls this first (after the static destructors, before the SD card and the services go): the
+// watchdog covers the quit up to here
+extern "C" void userAppExit(void)
+{
+	watchdogStop();
 }
 
 void logInit()
@@ -214,6 +247,15 @@ void logInit()
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/mw3ds", 0777);
 	s_log = fopen("sdmc:/3ds/mw3ds/log.txt", "w");
+	if (s_log)
+		setvbuf(s_log, s_logBuf, _IOFBF, sizeof(s_logBuf));
+}
+
+void logBuffered(bool on)
+{
+	s_buffered = on;
+	if (!on && s_log)
+		fflush(s_log);
 }
 
 static void (*s_hook)(const char* line) = nullptr;
@@ -254,17 +296,22 @@ void logf(const char* fmt, ...)
 	va_start(args, fmt);
 	vsnprintf(line, sizeof(line), fmt, args);
 	va_end(args);
-	unsigned long long t = osGetTime() % 100000000ULL;
+	u64 now = osGetTime();
+	unsigned long long t = now % 100000000ULL;
 	if (s_log)
 	{
-		// Every line flushes to the SD card: marked, so a write that never returns (a wedged
-		// card) names itself in watchdog.txt instead of the mark of whatever logged
+		// The write to the SD card is marked, so a write that never returns (a wedged card) names itself in
+		// watchdog.txt instead of the mark of whatever logged. Buffered (play): the main thread writes every 2 s
 		const char* savedAt = g_mainAt;
 		bool main = threadGetCurrent() == nullptr;
 		if (main)
 			g_mainAt = "log write";
 		fprintf(s_log, "[%8llu] %s\n", t, line);
-		fflush(s_log);
+		if (!s_buffered || (main && now - s_flushedAt >= 2000))
+		{
+			fflush(s_log);
+			s_flushedAt = now;
+		}
 		if (main)
 			g_mainAt = savedAt;
 	}

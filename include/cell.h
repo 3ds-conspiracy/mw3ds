@@ -28,6 +28,10 @@ struct TextureCache
 	C3D_Tex* retry(const char* dataDir, const std::string& name);
 };
 
+// Set while the world is let go of (World::freeAll: the quit, a save's load): the cell the streaming thread reads is
+// thrown away, so its texture reads are skipped (not counted as failures) and the wait for it is short
+extern volatile bool g_streamCancel;
+
 // Batch render-state flags, matching tools/convert/convert_cell.py
 enum
 {

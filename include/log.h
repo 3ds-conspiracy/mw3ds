@@ -3,8 +3,11 @@
 #include <3ds.h>
 
 // Append-only log at sdmc:/3ds/mw3ds/log.txt. Flushed every line so the
-// file survives crashes and the emulator being killed.
+// file survives crashes and the emulator being killed (test runs); with
+// logBuffered every 2 s and at a stall, a crash or the quit (play: each
+// write to the card costs about 12 ms on hardware)
 void logInit();
+void logBuffered(bool on);
 // The socket service, started once for the log and the dev updater
 void logf(const char* fmt, ...) __attribute__((format(printf, 1, 2)));
 // "monitor: ..." for something an engine-side check found (tests count these lines): each key once per run,
@@ -22,6 +25,7 @@ extern volatile unsigned g_mainFrames;
 extern const char* volatile g_workerAt;     // the streaming thread's mark
 #define MARK(where) (g_mainAt = (where))
 void watchdogStart();
+void watchdogStop();          // the quit (libctru's userAppExit hook calls it)
 // A finer mark for a scope (a file read, a save write) on this thread's watchdog variable, the old
 // one back when it ends: a hang inside an SD operation names itself in watchdog.txt. Main or
 // streaming thread only (any other thread would write over the streaming thread's mark)
