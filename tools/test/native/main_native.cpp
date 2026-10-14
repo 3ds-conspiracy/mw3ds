@@ -556,9 +556,9 @@ static float readStickScroll()
 // buttons. The Circle Pad walks (up / down) and turns (left / right); an aim button held roots the player and the
 // pad aims instead, up and down too, at half speed (GoldenEye's aim): X held past a tap, R while it winds up the
 // attack, or ZL / ZR (Circle Pad Pro / New 3DS). A tap of X readies or puts away the weapon, when it is let go
-// (a hold aims instead). L cast, Y jump (and rise, levitating), SELECT sneak on / off, D-pad strafes
-// (left / right) and looks up / down; quick keys and first / third person are on the touch screen. Device and scripted runs both come
-// through here, each with its own GoldenEyeState; dt: the frame's seconds (X's tap or hold)
+// (a hold aims instead). L cast, Y jump (and rise, levitating), B sneak on / off, SELECT first / third person (as on
+// the other layouts), D-pad strafes (left / right) and looks up / down; quick keys are on the touch screen. Device and
+// scripted runs both come through here, each with its own GoldenEyeState; dt: the frame's seconds (X's tap or hold)
 struct GoldenEyeState
 {
 	float xHeld = 0.0f;               // seconds X has been held
@@ -591,13 +591,13 @@ static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, floa
 	if (held & KEY_DRIGHT) in.moveX += 1.0f;
 	if (held & KEY_DUP) in.lookY += 1.0f;
 	if (held & KEY_DDOWN) in.lookY -= 1.0f;
-	if (down & KEY_SELECT)
+	if (down & KEY_B)
 		sneakOn = !sneakOn;
 	in.attack = held & KEY_R;
 	in.cast = down & KEY_L;
 	in.jump = down & KEY_Y;
-	in.fast = held & KEY_B;                // (only the test fly mode reads it: walk or run is how far the pad is pushed)
 	in.sneak = sneakOn;
+	in.togglePov = down & KEY_SELECT;
 }
 
 // Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
@@ -672,7 +672,7 @@ static void gyroInput(PlayerInput& in)
 // Three button layouts (Options > Controls; START and SELECT the same in all):
 //   Xbox (Morrowind on the Xbox): R attack, L cast, X ready / put away the weapon, Y jump, B free (walk or run by the pad),
 //     ZL sneak (down when levitating), ZR up when levitating, D-pad quick keys
-//   Classic: X attack, Y cast, B jump, ZR run, L sneak, ZL + D-pad quick keys, D-pad look, ZL + X put away
+//   Classic: X attack, Y cast, B jump, L sneak, ZL + D-pad quick keys, D-pad look, ZL + X put away
 //   GoldenEye: see goldenEyeInput
 static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 {

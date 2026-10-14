@@ -112,7 +112,6 @@ struct Session : ScriptHost
 	PlayerBody body;
 	bool thirdPerson = false, previewFace = false;
 	bool deathView = false;       // the view went to third person for the player's death (back in when they live again)
-	bool povTapped = false;       // the HUD's view button (GoldenEye layout: SELECT sneaks), taken as the next frame's SELECT
 	float thirdDistance = 0.0f;               // eased camera distance (walls pull it in)
 	float blowStrength = 1.0f;                // the last blow let go (0..1): the body's follow-through
 	void viewCamera(RenderCamera& cam);
