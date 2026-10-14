@@ -132,10 +132,37 @@ end
 -- a cast shot: the spell readied, Use pressed, then the world stopped `after` seconds of game time later
 local function updateCast()
 	local s = poses[index]
-	if not s.cast or castFrames < 0 then
+	if not (s.cast or s.vfx or s.act) or castFrames < 0 then
 		return false
 	end
 	castFrames = castFrames + 1
+	if s.act then
+		-- a scene step: done by the world (global.lua); the shot `after` seconds of game time later
+		if not castStart then
+			castStart = core.getSimulationTime()
+			return false
+		end
+		if core.getSimulationTime() - castStart >= s.after then
+			core.sendGlobalEvent('MW3DS_SBS_Halt', { on = true })
+			castFrames = -1
+			return true
+		end
+		return false
+	end
+	if s.vfx then
+		-- a spell visual on its own: played, then the world stopped `after` seconds of game time later
+		if not castStart then
+			core.sendGlobalEvent('MW3DS_SBS_Vfx', { index = index })
+			castStart = core.getSimulationTime()
+			return false
+		end
+		if core.getSimulationTime() - castStart >= s.after then
+			core.sendGlobalEvent('MW3DS_SBS_Halt', { on = true })
+			castFrames = -1
+			return true
+		end
+		return false
+	end
 	if castFrames == 1 then
 		-- every cast succeeds and none runs short (sidebyside.py's CAST_SKILLS on the 3DS side)
 		for _, k in ipairs({ 'destruction', 'alteration', 'illusion', 'conjuration', 'mysticism', 'restoration' }) do
@@ -171,7 +198,7 @@ return {
 			if d.index ~= index then
 				return
 			end
-			if poses[index].cast then
+			if poses[index].cast or poses[index].vfx or poses[index].act then
 				castFrames = 0
 			elseif (poses[index].fp or poses[index].body) and poses[index].group then
 				armsFrames = 0
@@ -210,12 +237,12 @@ return {
 			elseif state == 'shot' then
 				placeCamera()
 				if frames >= kAfterShotFrames then
-					if poses[index].cast then
+					if poses[index].cast or poses[index].vfx or poses[index].act then
 						if not resumedAt then
 							core.sendGlobalEvent('MW3DS_SBS_Halt', { on = false })
 							resumedAt = core.getRealTime()
 						end
-						if core.getRealTime() - resumedAt < kClearSecs then
+						if core.getRealTime() - resumedAt < (poses[index].act and 0.1 or kClearSecs) then
 							return
 						end
 						resumedAt = nil

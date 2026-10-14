@@ -119,6 +119,7 @@ class TextureSet:
     def __init__(self, arch, max_size=256, force=False):
         self.arch, self.max_size, self.force = arch, max_size, force
         self.req = {}                  # source path -> {"px": texels, "alpha": bool}
+        self.whitened = {}             # output name -> {"src", "px", "alpha", "amount"}: a picture drawn whiter
         self.log = None                # a list: requests are also recorded there (a cell's, for the cell cache)
 
     def request(self, path, texels, alpha):
@@ -129,6 +130,15 @@ class TextureSet:
         r["px"] = max(r["px"], texels)
         r["alpha"] = r["alpha"] or bool(alpha)
         return texture_out_name(path)
+
+    def request_whitened(self, path, texels, alpha, amount):
+        """A whiter copy of the picture (whiten_image), its own output name ('<name>_w'): a spell visual's thin strip
+        whose white core is lost on the 3DS's small screen (firstperson.VFX_BOLD)."""
+        name = texture_out_name(path)[:-4] + "_w.t3x"
+        r = self.whitened.setdefault(name, {"src": path, "px": 0.0, "alpha": False, "amount": amount})
+        r["px"] = max(r["px"], texels)
+        r["alpha"] = r["alpha"] or bool(alpha)
+        return name
 
     def request_shape(self, s, alpha):
         return self.request(s["tex"], texels_needed(world_per_repeat(s["pos"], s["uv"], s["tris"])), alpha)
@@ -174,6 +184,27 @@ class TextureSet:
             stats["count"] += 1
             stats["bytes"] += etc_bytes(entry["size"], entry["alpha"])
             stats["full_bytes"] += etc_bytes(entry["source_pot"], entry["alpha"], cap=self.max_size)
+        for name, r in sorted(self.whitened.items()):
+            wanted.add(name)
+            limit = self.limit(r["px"])
+            entry = cache.get(name)
+            try:
+                if not (entry and entry.get("src") == r["src"] and entry.get("limit") == limit
+                        and entry.get("whiten") == r["amount"] and tex_path(name).exists()):
+                    img = Image.open(io.BytesIO(self.arch.read(r["src"])))
+                    img.load()
+                    tex3ds = tex3ds or tex3ds_path()
+                    tex_path(name).parent.mkdir(parents=True, exist_ok=True)
+                    entry = encode_one(tex3ds, whiten_image(img.convert("RGBA"), r["amount"]), tex_path(name), limit,
+                                       r["alpha"])
+                    entry.update({"src": r["src"], "limit": limit, "want_alpha": r["alpha"], "whiten": r["amount"]})
+                    cache[name] = entry
+                    stats["encoded"] += 1
+            except Exception as e:
+                stats["failed"].append(f"{r['src']} (whitened): {e}")
+                continue
+            stats["count"] += 1
+            stats["bytes"] += etc_bytes(entry["size"], entry["alpha"])
         for p in (OUT / "tex").rglob("*.t3x"):
             if p.name not in wanted:
                 p.unlink()
@@ -196,6 +227,13 @@ def etc_bytes(size, alpha, cap=None):
     while cap and max(w, h) > cap:
         w, h = max(8, w // 2), max(8, h // 2)
     return int(w * h * (1.0 if alpha else 0.5) * 4 / 3)    # 4 or 8 bpp, plus mipmaps
+
+
+def whiten_image(img, amount):
+    """Colours moved that share of the way to white (alpha kept): a purple-edged white core reads white."""
+    a = np.asarray(img, dtype=float)
+    a[..., :3] = 255.0 - (255.0 - a[..., :3]) * (1.0 - amount)
+    return Image.fromarray(a.clip(0, 255).astype(np.uint8), "RGBA")
 
 
 def encode_one(tex3ds, img, out, limit, want_alpha):

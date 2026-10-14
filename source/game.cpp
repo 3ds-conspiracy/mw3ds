@@ -1199,6 +1199,24 @@ bool gameLoad(GameData& g, const char* path)
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "ptex"))
 			if (cJSON_IsString(vf))
 				g.firstPerson.ptex[atoi(vf->string)] = vf->valuestring;
+		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "ptexrgb"))
+			if (cJSON_IsNumber(vf))
+				g.firstPerson.ptexRgb[atoi(vf->string)] = (u32)vf->valuedouble;
+		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "worldfx"))
+		{
+			FirstPersonDef::WorldFxDef d;
+			d.piece = str(vf, "piece");
+			d.loop = cJSON_IsTrue(cJSON_GetObjectItem(vf, "loop"));
+			const cJSON* gr;
+			cJSON_ArrayForEach(gr, cJSON_GetObjectItem(vf, "groups"))
+				if (cJSON_GetArraySize(gr) == 2)
+					d.groups[gr->string] = { (float)cJSON_GetArrayItem(gr, 0)->valuedouble,
+						(float)cJSON_GetArrayItem(gr, 1)->valuedouble };
+			g.firstPerson.worldFx[vf->string] = d;
+		}
+		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "cpfx"))
+			if (cJSON_IsString(vf))
+				g.firstPerson.cpfx[vf->string] = vf->valuestring;
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "vfxlen"))
 			if (cJSON_IsNumber(vf))
 				g.firstPerson.vfxLength[vf->string] = (float)vf->valuedouble;

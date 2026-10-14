@@ -245,6 +245,31 @@ static void setLight(const C3D_Mtx* view)
 				s_moreRgb[i]);
 }
 
+static bool s_uvOverrideOn = false;
+static float s_uvOverride[2] = { 0.0f, 0.0f };
+
+void rendererAlphaScale(float a)
+{
+	// texture combiner 3 (after the fog and the glow): alpha x this, colour as it is
+	C3D_TexEnv* env = C3D_GetTexEnv(3);
+	C3D_TexEnvInit(env);
+	if (a >= 0.999f)
+		return;
+	C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS);
+	C3D_TexEnvFunc(env, C3D_RGB, GPU_REPLACE);
+	C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS, GPU_CONSTANT);
+	C3D_TexEnvFunc(env, C3D_Alpha, GPU_MODULATE);
+	u32 al = (u32)(fminf(1.0f, fmaxf(0.0f, a)) * 255.0f + 0.5f);
+	C3D_TexEnvColor(env, al << 24 | 0xFFFFFF);
+}
+
+void rendererUvOverride(bool on, float u, float v)
+{
+	s_uvOverrideOn = on;
+	s_uvOverride[0] = u;
+	s_uvOverride[1] = v;
+}
+
 static void setUvOffset(float u, float v)
 {
 	if (u == s_uvOffset[0] && v == s_uvOffset[1])
@@ -261,6 +286,10 @@ static void setUvOffset(float u, float v)
 
 static const int kFogRampWidth = 64;
 static bool s_fogOn = false;
+static int s_spritesLeft = 0;          // this frame's particle sprites still to draw (g_profile.spriteBudget)
+static int s_spritesAsked = 0, s_spritesDrawn = 0;      // this view's so far: wanted, and drawn within the budget
+static int s_spritesAskedLast = 0, s_spritesDrawnLast = 0;
+static float s_spritesWanted = 0, s_spritesWantedLast = 0;   // every visual's live particles, each weighted by nearness
 static u32 s_fogColor = 0;
 
 void rendererSetDaylight(const float land[3], const float sky[3], const float fog[3], bool outdoors)
@@ -568,11 +597,15 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 		return;
 	}
 	setBatchState(tex, b, mode, time);
+	if (s_uvOverrideOn)
+		setUvOffset(s_uvOverride[0], s_uvOverride[1]);
 	bindVertexFormat(b);
 	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 	BufInfo_Init(bufInfo);
 	BufInfo_Add(bufInfo, b.verts, b.stride, 3, 0x210);
 	C3D_DrawElements(GPU_TRIANGLES, b.numIndices, C3D_UNSIGNED_SHORT, b.indices);
+	if (s_uvOverrideOn)
+		invalidateState();                          // (the next batch sets its own offset again)
 }
 
 static void drawBatch(Cell& cell, const CellBatch& b, DrawMode mode, float time)
@@ -870,6 +903,7 @@ float rendererStereoPixels(float depth, float eyeShift)
 
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale)
 {
+	s_spritesLeft = g_profile.spriteBudget;
 	MARK("draw world");
 	Cell& here = w.here();
 	bindPipeline();
@@ -1362,6 +1396,145 @@ void rendererViewAxes(float right[3], float up[3], float back[3])
 	right[0] = s_view.r[0].x; right[1] = s_view.r[0].y; right[2] = s_view.r[0].z;
 	up[0] = s_view.r[1].x; up[1] = s_view.r[1].y; up[2] = s_view.r[1].z;
 	back[0] = s_view.r[2].x; back[1] = s_view.r[2].y; back[2] = s_view.r[2].z;
+}
+
+void rendererDrawTrail(const float head[3], const float dir[3], float length, float widthHead, float widthTail, C3D_Tex* tex, u32 rgba)
+{
+	// Three strips across it: a clear edge, the full colour along the middle, a clear edge (a soft streak with no
+	// picture), the colour fading to nothing at the tail
+	static const int kMaxTrails = 32;              // both eyes'
+	static u8* ring = nullptr;
+	static u16* indices = nullptr;
+	static int frameSlot = 0;
+	if (!ring)
+	{
+		ring = (u8*)lockedLinearAlloc(kMaxTrails * 8 * 24);
+		indices = (u16*)lockedLinearAlloc(18 * 2);
+		// vertices: 0..3 across the head (edge, core, core, edge), 4..7 across the tail
+		static const u16 idx[18] = { 0, 1, 5, 0, 5, 4, 1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6 };
+		memcpy(indices, idx, sizeof(idx));
+		GSPGPU_FlushDataCache(indices, sizeof(idx));
+	}
+	if (!ring)
+		return;
+	u8* v = ring + (frameSlot++ % kMaxTrails) * 8 * 24;
+	// across the streak: perpendicular to it and to the line of sight
+	float back[3] = { s_view.r[2].x, s_view.r[2].y, s_view.r[2].z };
+	float side[3] = { dir[1] * back[2] - dir[2] * back[1], dir[2] * back[0] - dir[0] * back[2], dir[0] * back[1] - dir[1] * back[0] };
+	float n = sqrtf(side[0] * side[0] + side[1] * side[1] + side[2] * side[2]);
+	if (n < 1e-4f)
+		return;
+	for (int k = 0; k < 3; k++)
+		side[k] /= n;
+	static const float across[4] = { -1.0f, -0.55f, 0.55f, 1.0f };
+	u32 clear = rgba & 0x00FFFFFF;
+	for (int end = 0; end < 2; end++)
+		for (int i = 0; i < 4; i++)
+		{
+			float* p = (float*)(v + (end * 4 + i) * 24);
+			float w = (end ? widthTail : widthHead) * across[i];
+			for (int k = 0; k < 3; k++)
+				p[k] = head[k] - dir[k] * length * end + side[k] * w;
+			p[3] = p[4] = 0.5f;
+			memcpy(v + (end * 4 + i) * 24 + 20, (end == 0 && (i == 1 || i == 2)) ? &rgba : &clear, 4);
+		}
+	GSPGPU_FlushDataCache(v, 8 * 24);
+	ActorMesh m = {};
+	m.flags = BATCH_BLEND | BATCH_ADDITIVE | BATCH_TWO_SIDED;
+	m.numVerts = 8;
+	m.numIndices = 18;
+	m.verts = v;
+	m.indices = indices;
+	rendererDrawMesh(m, nullptr, tex);
+}
+
+void rendererSpriteFrame()
+{
+	s_spritesAskedLast = s_spritesAsked;
+	s_spritesDrawnLast = s_spritesDrawn;
+	s_spritesWantedLast = s_spritesWanted;
+	s_spritesAsked = s_spritesDrawn = s_spritesWanted = 0;
+}
+
+void rendererSpritesWanted(float n)
+{
+	s_spritesWanted += n;
+}
+
+// The base share of its particles each visual draws this frame: all of them while every visual's together fit the
+// budget, else budget / (last frame's particles, each counted by its visual's nearness weight); a visual keeps that
+// times its own weight. So ten visuals all show (the nearest the fullest) rather than the first one drawn taking the
+// whole budget
+float rendererSpriteShare()
+{
+	float budget = (float)g_profile.spriteBudget;
+	return s_spritesWantedLast > budget ? budget / s_spritesWantedLast : 1.0f;
+}
+
+float rendererSpritesWantedLast()
+{
+	return s_spritesWantedLast;
+}
+
+void rendererSpriteCounts(int& asked, int& drawn)
+{
+	asked = s_spritesAskedLast;
+	drawn = s_spritesDrawnLast;
+}
+
+void rendererDrawSprites(const float* pos, const float* half, int n, C3D_Tex* tex, u32 rgba, const u32* colors, bool additive)
+{
+	s_spritesAsked += std::max(0, n);
+	n = std::min(n, s_spritesLeft);
+	s_spritesLeft -= std::max(0, n);
+	s_spritesDrawn += std::max(0, n);
+	static const int kMaxPerDraw = 100;                // quads one draw takes
+	static const int kRing = 2 * g_profile.spriteBudgetMax;   // all a frame's, both eyes, at the most the budget gets
+	static u8* ring = nullptr;
+	static u16* indices = nullptr;
+	static int slot = 0;
+	if (!ring)
+	{
+		ring = (u8*)lockedLinearAlloc(kRing * 4 * 24);
+		indices = (u16*)lockedLinearAlloc(kMaxPerDraw * 6 * 2);
+		if (!ring || !indices)
+			return;
+		for (int q = 0; q < kMaxPerDraw; q++)
+		{
+			static const u16 idx[6] = { 0, 1, 2, 0, 2, 3 };
+			for (int k = 0; k < 6; k++)
+				indices[q * 6 + k] = (u16)(q * 4 + idx[k]);
+		}
+		GSPGPU_FlushDataCache(indices, kMaxPerDraw * 6 * 2);
+	}
+	n = std::min(n, kMaxPerDraw);
+	if (!ring || n <= 0)
+		return;
+	if (slot + n > kRing)
+		slot = 0;
+	u8* v = ring + slot * 4 * 24;
+	slot += n;
+	float right[3] = { s_view.r[0].x, s_view.r[0].y, s_view.r[0].z };
+	float up[3] = { s_view.r[1].x, s_view.r[1].y, s_view.r[1].z };
+	static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };
+	for (int q = 0; q < n; q++)
+		for (int i = 0; i < 4; i++)
+		{
+			float* p = (float*)(v + (q * 4 + i) * 24);
+			for (int k = 0; k < 3; k++)
+				p[k] = pos[q * 3 + k] + (right[k] * corner[i][0] + up[k] * corner[i][1]) * half[q];
+			p[3] = corner[i][0] * 0.5f + 0.5f;
+			p[4] = corner[i][1] * 0.5f + 0.5f;
+			memcpy(v + (q * 4 + i) * 24 + 20, colors ? &colors[q] : &rgba, 4);
+		}
+	GSPGPU_FlushDataCache(v, n * 4 * 24);
+	ActorMesh m = {};
+	m.flags = BATCH_BLEND | (additive ? BATCH_ADDITIVE : 0) | BATCH_TWO_SIDED | BATCH_CLAMP;
+	m.numVerts = n * 4;
+	m.numIndices = n * 6;
+	m.verts = v;
+	m.indices = indices;
+	rendererDrawMesh(m, nullptr, tex);
 }
 
 // Untextured camera-facing quad (spell bolts): size in world units, rgba 0xAABBGGRR

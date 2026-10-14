@@ -3,6 +3,7 @@
 local anim = require('openmw.animation')
 local core = require('openmw.core')
 local self = require('openmw.self')
+local types = require('openmw.types')
 local I = require('openmw.interfaces')
 local hold = require('scripts.mw3ds_sbs.hold')
 
@@ -10,6 +11,13 @@ local h = nil
 
 return {
 	eventHandlers = {
+		-- a scene step: this group played as the game would (the Heart of Lorkhan struck)
+		MW3DS_SBS_Kill = function()
+			types.Actor.stats.dynamic.health(self).current = 0
+		end,
+		MW3DS_SBS_Play = function(d)
+			anim.playQueued(self, d.group, {})
+		end,
 		MW3DS_SBS_Pose = function(d)
 			I.AI.removePackages()
 			h = d

@@ -245,6 +245,12 @@ struct FirstPersonDef
 	std::unordered_map<std::string, std::string> vfx;   // spell visual static id -> piece
 	std::unordered_map<int, std::string> ptex;          // magic effect -> its particle texture (a piece's fx shapes take it)
 	std::unordered_map<std::string, float> vfxLength;  // spell visual piece -> seconds it plays (its longest controller)
+	std::unordered_map<std::string, std::string> cpfx;  // creature id -> its sprays' particle piece (particles.py, prototype)
+	// World objects drawn as a visual where they are placed (particles.py world_entry, prototype): a steaming pool over
+	// and over, an activator held at rest until a script plays one of its groups (start, stop on its timeline)
+	struct WorldFxDef { std::string piece; bool loop = false; std::unordered_map<std::string, std::pair<float, float>> groups; };
+	std::unordered_map<std::string, WorldFxDef> worldFx;
+	std::unordered_map<int, u32> ptexRgb;               // magic effect -> its particle picture's colour, 0xRRGGBB (prototype)
 	std::unordered_map<std::string, std::unordered_map<int, std::string>> races[2];   // [female] race -> slot -> piece
 	std::unordered_map<std::string, FpItem> items;                                   // lowercase item id
 };

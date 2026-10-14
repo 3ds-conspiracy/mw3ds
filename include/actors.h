@@ -82,6 +82,21 @@ struct ActorMesh
 	u8 hand = 0;                       // 1 a torch (shown while the actor holds it out), 2 a shield (put away then)
 	bool billboard = false;
 	bool fx = false;                   // a spell visual's shape that takes its magic effect's particle texture (MGEF PTEX)
+	// Particle sprays made drawable without simulating them (tools/convert/particles.py, prototype): a flipbook steps
+	// its UVs one cell of flipCols x flipRows a frame, flipFps a second; baked paths swap in a frame's vertices
+	u16 flipFrames = 0, flipCols = 1, flipRows = 1;
+	float flipFps = 20.0f, pathFps = 20.0f;
+	std::vector<void*> pathFrames;     // linear memory, numVerts x 24 bytes each
+	// Particle records (drawn as sprites): each born, pos[3], vel[3], life, size in piece space; their acceleration,
+	// grow / fade times and colour keys (time of a life, 0xAABBGGRR)
+	std::vector<float> sprites;
+	float spriteAccel[3] = { 0, 0, 0 }, spriteGrow = 0.0f, spriteFade = 0.0f;
+	std::vector<float> spriteKeyT;
+	std::vector<u32> spriteKeyC;
+	float spriteRepeat[3] = { 0, 0, 0 };     // shed again every [0] s from [1] until [2] (a creature's long fire); 0 once
+	std::string boneName;                    // piece meshes: the bone the file names (creature particle pieces)
+	// A spell visual's texture slide (u, v pairs) and fade (a share of its alpha), kVfxFps samples a second
+	std::vector<float> uvTrack, alphaTrack;
 	float radius = 0.0f;               // with a track: how far its vertices reach from its origin
 };
 

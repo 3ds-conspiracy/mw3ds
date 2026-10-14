@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cstdlib>
 #include <functional>
 #include <map>
+#include <set>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -272,7 +274,8 @@ struct Session : ScriptHost
 	float ambientTimer = 3.0f;                     // until the region's next ambient sound
 	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
 	// Animation::addEffect), or at a spot (an area burst, blood)
-	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; bool loop = false; std::string what; int effect = -1; };   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
+	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; bool loop = false; std::string what; int effect = -1;
+		bool world = false; float until = -1.0f; };   // world: a placed object's own (updateWorldFx); until: its time held there once reached   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
 	std::vector<Vfx> vfx;
 	// NPCs' and creatures' own summons (OpenMW's AI casts them in a fight): the caster, the creature, when it goes;
 	// a summon being cast (castSpell -2) waits in pendingSummon. Not saved: a load starts with none
@@ -282,6 +285,24 @@ struct Session : ScriptHost
 	void npcSummonRelease(int ri, const SpellDef& sp);   // the creature comes to fight the player; a ward lands on it
 	void npcSummonsUpdate();                             // they go when their time is up or the caster dies
 	static constexpr int kMaxVfx = 12;             // at once: past it a nearer one takes the farthest one's place
+	// Prototype particle pieces (particles.py): modes from the test step PFX:<modes>, else MW3DS_PFX (native runs)
+	std::string pfxModes;
+	int vfxSprited = 0, vfxSpritedLast = 0;        // visuals that drew particle sprites: this frame so far, the last one
+	float vfxTrimTimer = 0.0f;
+	// Creatures' sprays as particles shed from their bones (prototype, particles.py --creature): per creature ref its
+	// piece, the animation time last seen, each piece mesh's bone, and the live particles (mesh, pos[3], vel[3], age,
+	// life, size)
+	struct CreatureFx { std::string piece; float prevTime = -1.0f; int prevGroup = -1; std::vector<int> bones;
+		std::vector<float> live; std::vector<float> clock; bool hid = false; };
+	std::unordered_map<int, CreatureFx> creatureFx;
+	void updateCreatureFx(float dt);
+	void updateWorldFx();                          // placed objects with a world visual (game firstPerson.worldFx) in range
+	static constexpr float kWorldFxRange = 12000.0f;   // (a giant like the Akulakhan chamber's model stands far from its origin)
+	std::unordered_map<int, std::pair<std::string, float>> objectGroups;   // ref -> group a script played on it, world time then
+	void playObjectGroup(int ref, const std::string& group, bool loop) override;
+	void drawCreatureFx(const float eye[3], bool secondEye);
+	void trimVfxPieces();                          // spell visuals' pieces nothing is playing let go (memory)
+	const char* pfxModeList() const { return !pfxModes.empty() ? pfxModes.c_str() : getenv("MW3DS_PFX"); }
 	static constexpr float kVfxRange = 4096.0f;    // farther from the player none starts (many casters at once: their visuals are the cost)
 	// loop: its animation repeats for all of life (a continuous effect's hit: OpenMW's ContinuousVfx)
 	// effect: the magic effect it shows (its particle texture on the shapes that take one), -1 none
@@ -724,10 +745,12 @@ struct Session : ScriptHost
 	void testBoost(int value);
 	void testGive(const std::string& id, int count = 0, bool topUp = false);   // count 0: one (50 arrows); topUp: only what's missing
 	void testPlace(const std::string& id, float dist);
+	void testPlaceAt(const std::string& id, const float at[3], float yaw);
 	void testHit(const std::string& id);
 	void testGoto(const std::string& cell);
 	int testFindRef(const std::string& id);         // as written, else with '_' read as spaces (the one PLACE moved, even dead)
 	int testPlaced = -1;                            // the actor PLACE last put in front of the player
+	std::set<int> testPlacedAll;                    // every actor PLACE / PLACEAT put somewhere (POSE keeps them there)
 	int travelPrice(int ref, const TravelDest& d);
 	void openTravel();                              // the dialogue's Travel button (barterRef = the speaker)
 	bool travelGo(int sel);                         // the travel list's Go: pay and leave (false: refused)

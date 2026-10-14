@@ -23,6 +23,14 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
     weapon=id ammo=id shield=id   the player carries and equips these (fp and actor=player shots)
     wear=id,id,...        armor and clothing the player wears (gauntlets, robes ...), on both sides
     spawn=id [dist=d]     a new actor (a creature) 250 (d) units ahead of the camera, facing it, is the shot's actor
+    do=step;step... after=t   a scene step, OpenMW side only (--pc-only): goto:<cell>:x:y:z, journal:<quest>:<n>,
+                          give:<id>, kill:<id>, group:<id>:<group>, global:<name>:<n>; the shot `after` seconds later,
+                          the world going on from there for the next shot (the final scene: tools/test/cases/
+                          scratch/final-scene.txt is our side)
+    vfx=static pos=x,y,z after=t,...   that spell visual (a STAT the magic effects name) played on its own at pos and
+                          the world stopped t seconds after it began: one shot per t (OpenMW: world.vfx.spawn; the 3DS:
+                          its VFX step); nobody near; ptex=texture gives it a particle texture (OpenMW's override);
+                          stand=id puts that actor at pos, holding its idle, to wear it (the camera must look at pos)
     cast=id after=t,...   the player casts that spell (level, ahead) and the world stands still t seconds after the
                           cast began: one shot per t (bolts in flight, cast and hit visuals). The player stands at
     from=x,y,z,yaw        from= (their feet, degrees), or at cam with view=fp; skills, Willpower and Luck at 100 and
@@ -54,7 +62,8 @@ from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[2]
 OPENMW = ROOT / "build" / "openmw-0.51"
-SBS = ROOT / "build" / "openmw-sbs"
+# (MW3DS_SBS_DIR / MW3DS_SBS_SD: another OpenMW folder and native save folder, so several runs can go at once)
+SBS = Path(os.environ.get("MW3DS_SBS_DIR") or ROOT / "build" / "openmw-sbs")
 MOD = Path(__file__).resolve().parent / "sidebyside"
 W, H = 400, 240
 SPAWN_DIST = 250         # spawn=: this far ahead of the camera
@@ -138,7 +147,27 @@ def read_shots(path):
             if len(frm) != 4:
                 sys.exit(f"{path}:{n}: actor=player wants from=x,y,z,yaw (where the player stands)")
             base["from"] = frm
-        if "cast" in base:
+        if "vfx" in base:
+            pos = [float(x) for x in base.get("pos", "").split(",") if x]
+            if len(pos) != 3:
+                sys.exit(f"{path}:{n}: vfx= wants pos=x,y,z (where it plays)")
+            base["pos"] = pos
+            base["model"] = vfx_model(base["vfx"])
+            if "stand" in base:
+                # (spawn= puts it dist ahead of the camera: the camera looks at pos)
+                base["spawn"] = base["actor"] = base.pop("stand")
+                base["dist"] = str(math.hypot(pos[0] - cam[0], pos[1] - cam[1]))
+                base.setdefault("face", str((cam[3] + 180.0) % 360.0))
+                base.setdefault("group", "idle")
+                base["at"] = float(base.get("at", 0.3))
+            points = [float(x) for x in base.pop("after", "1").split(",")]
+            key = "after"
+        elif "do" in base:
+            # a scene step (OpenMW side only, --pc-only): the world does it, the shot comes after seconds later, and the
+            # next shot goes on from there (nothing set back between them)
+            points = [float(x) for x in base.pop("after", "1").split(",")]
+            key = "after"
+        elif "cast" in base:
             if base.get("view") != "fp" and "from" not in base:
                 sys.exit(f"{path}:{n}: a cast seen from cam wants from=x,y,z,yaw (where the player casts)")
             frm = [float(x) for x in base["from"].split(",")] if "from" in base else cam[:4]
@@ -156,6 +185,27 @@ def read_shots(path):
                 s["name"] = f"{base['name']}-{i:02d}"
             shots.append(s)
     return shots
+
+
+_statics = None
+
+
+def vfx_model(static_id):
+    """The model a spell visual static uses (Morrowind.esm), as OpenMW wants it: meshes/..."""
+    global _statics
+    if _statics is None:
+        sys.path.insert(0, str(ROOT / "tools" / "convert"))
+        from mwfiles import DATA_FILES, read_records
+        _statics = {r.id.lower(): r.zstr("MODL") for r in read_records(DATA_FILES / "Morrowind.esm", {"STAT"})}
+    m = _statics.get(static_id.lower())
+    if not m:
+        # (a few visuals the effects name aren't STAT records)
+        from mwfiles import load_db
+        rec = load_db()["objects"].get(static_id.lower())
+        m = rec.zstr("MODL") if rec is not None else None
+    if not m:
+        sys.exit(f"sidebyside: no static {static_id}")
+    return "meshes/" + m.replace(chr(92), "/").lower()
 
 
 # ---- OpenMW
@@ -212,6 +262,13 @@ def write_openmw_setup(shots):
             f.append(f"face = {math.radians(float(s['face']))!r}")
         if "spawn" in s:
             f.append(f"spawn = {float(s.get('dist', SPAWN_DIST))}")
+        if "vfx" in s:
+            px, py, pz = s["pos"]
+            f.append(f"vfx = {lua_str(s['model'])}, after = {s['after']}, vfxX = {px}, vfxY = {py}, vfxZ = {pz}")
+            if "ptex" in s:
+                f.append(f"ptex = {lua_str(s['ptex'])}")
+        if "do" in s:
+            f.append(f"act = {lua_str(s['do'])}, after = {s['after']}")
         if "cast" in s:
             fx, fy, fz, fyaw = s["from"]
             f.append(f"cast = {lua_str(s['cast'].lower())}, after = {s['after']}")
@@ -311,8 +368,18 @@ def run_openmw(shots, out, timeout):
                     if not new:
                         print(f"openmw: no screenshot for {name}")
                         continue
-                    time.sleep(0.3)        # written asynchronously
-                    img = Image.open(new[-1]).convert("RGB")
+                    # (written asynchronously: under load it can still be half written, so try again a while)
+                    img = None
+                    for _ in range(20):
+                        time.sleep(0.3)
+                        try:
+                            img = Image.open(new[-1]).convert("RGB")
+                            break
+                        except OSError:
+                            img = None
+                    if img is None:
+                        print(f"openmw: screenshot for {name} never finished")
+                        continue
                     if img.size != (W, H):
                         print(f"openmw: screenshot is {img.size[0]} x {img.size[1]}, scaled to {W} x {H}")
                         img = img.resize((W, H), Image.LANCZOS)
@@ -341,6 +408,9 @@ def write_case(shots, name):
     for i, s in enumerate(shots):
         if "cast" in s:
             lines += cast_steps(s)
+            continue
+        if "vfx" in s:
+            lines += vfx_steps(s)
             continue
         if s.get("body"):
             lines += body_steps(s)
@@ -431,6 +501,30 @@ def cast_steps(s):
             "0.1 0 0 0 0 HALT:on", "0.5 0 0 0 0 SHOT", "3 0 0 0 0 HALT:off"]
 
 
+def vfx_steps(s):
+    """A spell visual on its own: the player 300 behind the camera, nobody near, the visual played at pos, the world
+    stopped `after` seconds later for the SHOT, then going on for it to be gone."""
+    x, y, z, yaw, pitch = s["cam"]
+    bx, by = x - math.sin(math.radians(yaw)) * 300, y - math.cos(math.radians(yaw)) * 300
+    setup = [f"TP:{fmt(bx)}:{fmt(by)}:{fmt(z)}:{fmt(yaw)}"]
+    if "hour" in s:
+        setup.append(f"HOUR:{s['hour']}")
+    view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:first", "HUD:off", "VMPOSE:off",
+            f"HIDEACTORS:{HIDE_RADIUS}"]
+    px, py, pz = s["pos"]
+    stand = []
+    if "spawn" in s:
+        # the actor wearing it, put at pos itself (PLACE in front of the player missed it by up to ~20 units where a
+        # wall had nudged the player), holding its idle
+        sid = s["spawn"].replace(" ", "_")
+        stand = [f"1 0 0 0 0 PLACEAT:{sid}:{fmt(px)}:{fmt(py)}:{fmt(pz)}", f"0.1 0 0 0 0 ENABLE:{sid}",
+                 f"0.5 0 0 0 0 POSE:{s['spawn'].replace(' ', '%')}:{s['group']}:{min(s['at'], 0.998):.3f}:{s['face']}"]
+    return ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view)] + stand + [
+            f"{fmt(s['after'])} 0 0 0 0 VFX:{s['vfx'].replace(' ', '_')}:{fmt(px)}:{fmt(py)}:{fmt(pz)}",
+            "0.1 0 0 0 0 HALT:on", "0.5 0 0 0 0 SHOT", "3 0 0 0 0 HALT:off"] + (
+            [f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '_')}"] if "spawn" in s else [])
+
+
 def run_3ds(shots, out, name, emu, data, exe):
     case = write_case(shots, name)
     raw = out / "3ds-raw"
@@ -444,7 +538,7 @@ def run_3ds(shots, out, name, emu, data, exe):
         if not exe:
             own = ROOT / "build" / "native-sbs" / "mw3ds-native.exe"
             exe = str(own if own.exists() else ROOT / "build" / "native" / "mw3ds-native.exe")
-        cmd += ["-Native", "-Exe", exe, "-Sd", str(ROOT / "build" / "native-sbs" / "sd")]
+        cmd += ["-Native", "-Exe", exe, "-Sd", os.environ.get("MW3DS_SBS_SD") or str(ROOT / "build" / "native-sbs" / "sd")]
     print("3ds:", case.relative_to(ROOT), "emulator" if emu else "native")
     r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     for ln in r.stdout.splitlines():
@@ -489,7 +583,7 @@ def main():
     shots = read_shots(a.shots)
     out = Path(a.out)
     if not a.pc_only:
-        run_3ds(shots, out, "sbs-" + Path(a.shots).stem, a.emu, a.data, a.exe)
+        run_3ds(shots, out, "sbs-" + Path(a.shots).stem + "-" + out.name, a.emu, a.data, a.exe)
     if not a.ds_only:
         run_openmw(shots, out / "pc", a.timeout or 60 + 15 * len(shots))
     compose(shots, out)

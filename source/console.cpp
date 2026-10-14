@@ -47,4 +47,7 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 	p.soundCacheBytes = p.smallHeap ? 2u << 20 : 6u << 20;
 	p.cleanAtDoors = p.smallHeap;
 	p.streamWaitsForBlock = p.smallHeap;
+	p.spriteBudget = p.slowCpu ? 200 : 400;
+	p.spriteBudgetMin = p.slowCpu ? 100 : 200;
+	p.spriteBudgetMax = p.slowCpu ? 400 : 600;
 }

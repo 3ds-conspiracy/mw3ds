@@ -564,6 +564,8 @@ class Converter:
         self.nif_cache = {}
         self.skeletons, self.skel_index = [], {}     # shared by every cell (cells/skeletons.skl)
         self.dynamic = moving_objects(db)
+        from particles import world_fx_kinds
+        self.world_fx = world_fx_kinds(db, arch)
         self.toggled = toggled_objects(db)
         # Cell cache: a cell whose references, settings and converter code are unchanged since the last
         # run isn't converted again (out/cell_cache/<data folder>/<file>.json holds what convert returned)
@@ -571,7 +573,8 @@ class Converter:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         tools = Path(__file__).parent
         code = b"".join((tools / f).read_bytes() for f in ("convert_cell.py", "meshes.py", "nif.py", "actors.py",
-                        "npc.py", "creature.py", "terrain.py", "textures.py", "mwfiles.py"))
+                        "npc.py", "creature.py", "terrain.py", "textures.py", "mwfiles.py",
+                        "particles.py"))
         # (and the mod folders laid over Data Files: another overlay is other meshes)
         code += ";".join(str(d) for d in OVERLAYS).encode()
         self.code_hash = hashlib.sha1(code).hexdigest()
@@ -812,6 +815,11 @@ class Converter:
                         col_tris.append(col[1] + col_count)
                         col_count += len(col[0])
                 shapes = extract_shapes(self.arch, nif, bind_pose=True)
+                # (a world object drawn as its particle piece at run time, particles.WORLD_FX: its old crossed quads
+                # left out, or all of it when it is animated; its collision stays)
+                wfx = self.world_fx.get(ref["id"].lower())
+                if wfx is not None:
+                    shapes = [] if wfx else [s for s in shapes if "raw" in s]
                 if swing_door:
                     # Swinging door: kept in object space, drawn with its own transform
                     for s in shapes:

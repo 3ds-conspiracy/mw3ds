@@ -32,6 +32,7 @@ struct ScriptHost
 	virtual void stopCombat(int ref) = 0;                // StopCombat: the actor's fight ends, and its allies' with it
 	virtual bool talkingTo(int ref) = 0;                 // the open conversation is with this actor (GetTarget "Player")
 	virtual void killActor(int ref) = 0;                // SetHealth 0 and the like
+	virtual void playObjectGroup(int ref, const std::string& group, bool loop) {}   // PlayGroup on an object, not an actor
 	virtual void knockDownActor(int ref) = 0;            // ModCurrentFatigue to 0 or less
 	virtual void teleportPlayer(int cell, const float pos[3], float yaw) = 0;   // PositionCell on the player
 	virtual void hurtPlayer(float health) = 0;           // HurtStandingActor

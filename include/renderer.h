@@ -55,6 +55,24 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 void rendererSetHorizon(float scale);
 // Additive camera-facing quad (spell bolts); rgba as 0xAABBGGRR
 void rendererDrawGlow(const float pos[3], float size, u32 rgba);
+// Sprites turned to the eye, all in one draw: centres (n x 3), half sizes, one picture and colour, added (a bolt's
+// trail of particles: prototype)
+void rendererDrawSprites(const float* pos, const float* half, int n, C3D_Tex* tex, u32 rgba, const u32* colors = nullptr, bool additive = true);
+// Particle sprite counts: a new frame's start (drawExtras, first eye), and the last whole frame's wanted and drawn
+// (at most g_profile.spriteBudget an eye; natively only frames a SHOT saves are drawn)
+void rendererSpriteFrame();
+// Every visual's live particles counted (first eye), and the share of them each draws so all fit the budget evenly
+void rendererSpritesWanted(float n);       // n particles, times the visual's nearness weight
+float rendererSpriteShare();
+void rendererSpriteCounts(int& asked, int& drawn);
+float rendererSpritesWantedLast();         // the last frame's live particles, nearness-weighted, before any share
+// What's drawn from now on has its alpha scaled by this (a spell visual's fade); 1: as it is
+void rendererAlphaScale(float a);
+// The next rendererDrawMesh draws with this texture offset (a flipbook's cell: particles.py prototype)
+void rendererUvOverride(bool on, float u = 0.0f, float v = 0.0f);
+// A streak behind a spell bolt: a quad from head back along dir, turned round its length to the eye, its texture
+// across it, fading to nothing at the tail (prototype)
+void rendererDrawTrail(const float head[3], const float dir[3], float length, float widthHead, float widthTail, C3D_Tex* tex, u32 rgba);
 // The eye's right, up and back directions in the world (of the last rendererDrawWorld): what a billboard turns to
 void rendererViewAxes(float right[3], float up[3], float back[3]);
 // Local map: renders the loaded cells seen from above (x/y square from minX, minY, size units wide;

@@ -551,6 +551,14 @@ void Session::adaptView(float workMs)
 		}
 		budget = frameCap == 30 ? 1000.0f : 47.0f;      // (at 30 the cap gives way first)
 	}
+	// Particle sprites (spell visuals): fewer at once while frames run past the budget, quickly; more again, slowly,
+	// once there is room (indoors too: a fight is the same work there). Spread evenly over the visuals showing
+	float spriteMs = g_profile.capSteps ? (frameCap == 30 ? 30.0f : 45.0f) : 30.0f;
+	int& sb = g_profile.spriteBudget;
+	if (workCost > spriteMs)
+		sb = std::max(g_profile.spriteBudgetMin, sb - 8);
+	else if (workCost < spriteMs - 6.0f)
+		sb = std::min(g_profile.spriteBudgetMax, sb + 2);
 	float minScale = g_profile.viewScaleMin, maxScale = g_profile.viewScaleMax;
 	if (w.current < 0 || w.cells[w.current].interior)
 	{
@@ -1390,7 +1398,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	// spell visuals age and go
 	// A hit visual is attached to its target's own node (OpenMW: Animation::addEffect), so it goes where the target goes
 	for (size_t i = 0; i < vfx.size();)
-		if ((vfx[i].age += dt) >= vfx[i].life)
+		if ((vfx[i].age += dt) >= vfx[i].life && !vfx[i].world)
 			vfx.erase(vfx.begin() + i);
 		else
 		{
@@ -1404,6 +1412,8 @@ void Session::update(const PlayerInput& inRaw, float dt)
 				memcpy(vfx[i].pos, w.refs[vfx[i].follow].pos, sizeof(vfx[i].pos));
 				vfx[i].yaw = w.refs[vfx[i].follow].rot[2];
 			}
+			if (vfx[i].until >= 0.0f && vfx[i].age > vfx[i].until)
+				vfx[i].age = vfx[i].until;
 			i++;
 		}
 	if (!playerDead && w.stats.health <= 0.0f)
@@ -2330,6 +2340,10 @@ int Session::testFindRef(const std::string& id)
 		if (pid == lower(id) || pid == lower(underscoresToSpaces(id)))
 			return testPlaced;
 	}
+	// (or one PLACEAT put somewhere: ten people placed, one of them an Imperial Guard among many)
+	for (int i : testPlacedAll)
+		if (w.active(i) && (w.refs[i].idLower == lower(id) || w.refs[i].idLower == lower(underscoresToSpaces(id))))
+			return i;
 	int ref = w.findRef(id);
 	if (!w.active(ref))
 	{
@@ -2377,12 +2391,19 @@ void Session::testGive(const std::string& id, int count, bool topUp)
 
 void Session::testPlace(const std::string& id, float dist)
 {
-	int ri = testFindRef(id);
 	float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
+	float to[3] = { w.player.feet[0] + fx * dist, w.player.feet[1] + fy * dist, w.player.feet[2] };
+	testPlaceAt(id, to, atan2f(-fx, -fy));
+}
+
+// The actor at that point (on the floor there), turned to yaw: PLACEAT, and PLACE in front of the player
+void Session::testPlaceAt(const std::string& id, const float at[3], float yaw)
+{
+	int ri = testFindRef(id);
 	if (!w.active(ri) || w.refs[ri].dead)
 	{
 		// None to move (or only a corpse): a new one, as PlaceAtPC would
-		ri = w.spawnActor(id, w.player.feet, atan2f(-fx, -fy));
+		ri = w.spawnActor(id, w.player.feet, yaw);
 		if (ri < 0)
 		{
 			logf("test: %s not loaded", id.c_str());
@@ -2391,17 +2412,18 @@ void Session::testPlace(const std::string& id, float dist)
 	}
 	Ref& r = w.refs[ri];
 	Cell* cell = w.cellOf(ri);
-	float to[3] = { w.player.feet[0] + fx * dist, w.player.feet[1] + fy * dist, w.player.feet[2] };
+	float to[3] = { at[0], at[1], at[2] };
 	float fz;
 	if (cell && collisionFloor(cell->collision, to[0], to[1], to[2] + 200.0f, to[2] - 400.0f, &fz))
 		to[2] = fz;
 	for (int k = 0; k < 3; k++)
 		r.pos[k] = r.home[k] = to[k];
 	r.fitBox();
-	r.rot[2] = atan2f(-fx, -fy);
+	r.rot[2] = yaw;
 	r.moved = true;
 	w.syncActor(ri);
 	testPlaced = ri;
+	testPlacedAll.insert(ri);
 	logf("test: placed %s at %.0f %.0f %.0f", r.id.c_str(), to[0], to[1], to[2]);
 }
 

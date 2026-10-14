@@ -16,7 +16,9 @@ Writes data/fp/ (zlib-wrapped like the cells):
                     n x (f32 t, f32 weight), f32 delta[num_vertices * 3]; 2 it moves, after that: u32 n,
                     n x f32 matrix[12] (3x4 rows, its space to the root, VFX_FPS a second from 0: a spell
                     visual's node keyframes); 4 it turns to face the eye (a NiBillboardNode); 8 it takes the magic
-                    effect's particle texture (game.json "firstperson" "ptex": effect index -> texture))
+                    effect's particle texture (game.json "firstperson" "ptex": effect index -> texture); 32 a
+                    flipbook, 64 baked particle paths (particles.py, after the track); 128 more after those: u8,
+                    2 a texture slide, 4 a fade (both sampled VFX_FPS a second), 1 particle records)
                     kind 1: u32 palette size, per entry: char bone[32], f32 skin_to_bone[12];
                             per vertex u8 index[4], u8 weight[4]
 Rigid positions are in their bone's space, skinned ones in skin space; bones are named, so a
@@ -26,6 +28,7 @@ piece fits either skeleton. game.json "firstperson" says which piece goes where:
 Slots are body part slots (npc.PART_BONES): 6/7 hands, 8/9 wrists, 10 shield, 11/12 forearms,
 13/14 upper arms, 25 weapon. "model" is an item's own mesh at its root (arrows in flight, dropped items).
 """
+import math
 import re
 import struct
 
@@ -253,7 +256,9 @@ class FirstPerson:
                               for mo in md["morphs"][1:]]
         # Lighting baked in skeleton space at the idle pose
         from convert_cell import bake_colors
-        m["colors"] = bake_colors(s, [], AMBIENT, SUN, SUN_DIR)
+        # (a world object's own piece, an animated activator: lit as the room it stands in, particles.auto)
+        light = getattr(self, "light", None)
+        m["colors"] = bake_colors(s, [], *light) if light else bake_colors(s, [], AMBIENT, SUN, SUN_DIR)
         return m
 
     def piece(self, model, slot, beast=False):
@@ -352,6 +357,8 @@ class FirstPerson:
         meshes = []
         if nif is not None:
             tracks, billboard, emitters = vfx_tracks(nif)
+            from creature import vis_keys
+            parents = {c: b["index"] for b in nif.blocks for c in b.get("children", []) or []}
             # The root's first NiTexturingProperty: the shapes below sharing it take the magic effect's own particle
             # texture (OpenMW: nifloader marks them "overrideFx", Animation::addEffect overrideFirstRootTexture)
             root = nif.blocks[0] if nif.blocks else {}
@@ -362,14 +369,21 @@ class FirstPerson:
             stops = [b["stop_time"] for b in nif.blocks if "stop_time" in b]
             if stops and max(stops) > 0:
                 self.vfx_len[name] = round(float(max(stops)), 3)
-            for s in extract_shapes(self.arch, nif):
+            # (shapes hidden at rest that a NiVisController shows at times: Lightning's second strike; their
+            # visibility goes into their fade track below)
+            for s in extract_shapes(self.arch, nif, vis_hidden=True):
                 if s["skinned"]:
                     continue
                 track, rest = None, None
+                widen, whiten = VFX_BOLD.get(model.lower(), (None, 0.0))
+                if widen and "raw" in s:
+                    s["pos"] = widen_rings(s["pos"], s["uv"], widen)
+                    s["raw"]["pos"] = widen_rings(s["raw"]["pos"], s["uv"], widen)
                 if "raw" in s:
                     track = tracks.get(s["block"])
                     rest = s["raw"]["node"]
                 else:
+                    s["particles"] = True
                     s["raw"] = {"pos": np.asarray(s["pos"], dtype=float), "node": np.identity(4)}   # particles: root space
                     e = emitter_of(s, emitters)
                     if e is not None and e in tracks:
@@ -386,6 +400,36 @@ class FirstPerson:
                     loc = np.linalg.inv(rest) if abs(np.linalg.det(rest[:3, :3])) > 1e-12 else np.identity(4)
                     s["pos"] = np.asarray(s["pos"]) @ (peak @ loc)[:3, :3].T + (peak @ loc)[:3, 3]
                 m = self.mesh_record(s, "", False)
+                if whiten and s.get("tex") and not s.get("particles"):
+                    m["tex"] = self.textures.request_whitened(s["tex"], 64.0, s["flags"] & 3, whiten)
+                m["particles"] = s.get("particles", False)
+                if not m["particles"]:
+                    m["uvtrack"], m["alphatrack"] = surface_tracks(nif, s)
+                    vis = vis_keys(nif, s.get("block", -1), parents)
+                    if vis:
+                        # shown and hidden by NiVisControllers (Lightning's bolts flicking on and off): as its fade,
+                        # nothing while hidden
+                        n = max(len(m["alphatrack"]), int(self.vfx_len.get(name, 1.0) * VFX_FPS + 0.999) + 1)
+                        fade = m["alphatrack"] + [m["alphatrack"][-1] if m["alphatrack"] else 1.0] * (n - len(m["alphatrack"]))
+                        def shown(t):
+                            on = vis[0][1]
+                            for kt, v in vis:
+                                if kt <= t + 1e-6:
+                                    on = v
+                            return on
+                        m["alphatrack"] = [a if shown(k / VFX_FPS) else 0.0 for k, a in enumerate(fade)]
+                    top = max(m["alphatrack"] or [1.0])
+                    if top > 1.0:
+                        # (a fade above the alpha it rests at: the vertices at its peak, the track a share of that)
+                        c = np.asarray(m["colors"]).astype(float)
+                        rest = (s.get("mat") or {}).get("alpha", 1.0)
+                        if rest < 1e-3:
+                            # (resting at alpha 0, Levitate's rings: nothing to scale, the peak itself)
+                            c[:, 3] = np.minimum(255.0, 255.0 * top * 1e-3)
+                        else:
+                            c[:, 3] = np.minimum(255.0, c[:, 3] * top)
+                        m["colors"] = c.round().astype(np.uint8)
+                        m["alphatrack"] = [a / top for a in m["alphatrack"]]
                 if root_tex is not None and s.get("texprop") == root_tex and s.get("block") != 0:
                     m["fx"] = True
                     self.fx_need[name] = max(self.fx_need.get(name, 0.0),
@@ -394,6 +438,22 @@ class FirstPerson:
                     m["pos"] = s["raw"]["pos"]                 # its own space: the track places it
                     m["track"] = [t[:3, :4] for t in track]
                     m["billboard"] = s.get("block") in billboard
+                md = s["raw"].get("morph")
+                if m.pop("morph", None) is not None and not m["particles"]:
+                    # A shape that morphs (NiGeomMorpherController: Restoration's cast tube rising from a ring): its
+                    # vertices baked VFX_FPS times a second up to the last weight key, the engine swapping in a
+                    # frame's (path frames) and holding the last
+                    rot = np.identity(3) if track is not None else s["raw"]["node"][:3, :3]
+                    deltas = [(mo["keys"], np.array(mo["vectors"]).reshape(-1, 3) @ rot.T) for mo in md["morphs"][1:]]
+                    end = max([k[-1][0] for k, _ in deltas if k] + [0.0])
+                    frames = []
+                    for k in range(int(end * VFX_FPS + 0.999) + 1):
+                        pos = np.asarray(m["pos"], dtype=float).copy()
+                        for keys, d in deltas:
+                            if keys:
+                                pos = pos + float(np.ravel(sample(keys, k / VFX_FPS))[0]) * d
+                        frames.append((pos, np.asarray(m["colors"])))
+                    m["path"] = (float(VFX_FPS), frames)
                 meshes.append(m)
         self.pieces[name] = meshes or None
         return name if meshes else None
@@ -489,7 +549,9 @@ class FirstPerson:
         ptex = {}
         for r in read_records_mgef(self.db):
             tex = (r.zstr("PTEX") or "").lower()
-            pieces = [vfx.get((r.zstr(t) or "").lower()) for t in ("CVFX", "BVFX", "HVFX", "AVFX")]
+            # (an effect with no bolt of its own flies the default one, as the engine does: Disintegrate Armor's fire)
+            pieces = [vfx.get((r.zstr(t) or ("vfx_defaultbolt" if t == "BVFX" else "")).lower())
+                      for t in ("CVFX", "BVFX", "HVFX", "AVFX")]
             need = max([self.fx_need.get(p, 0.0) for p in pieces if p] or [0.0])
             if not tex or need <= 0:
                 continue
@@ -551,12 +613,52 @@ def xyz_matrix(x, y, z):
     return rz @ ry @ rx
 
 
+# Spell visuals drawn bolder on the 3DS (model: (times as wide, share of the way to white)): Lightning's bolts are
+# tubes 1.4 units across with a white core in a purple edge, a pixel or two on its screen, where OpenMW shows a white
+# core two or three wide (user's call: wider, whiter centre)
+VFX_BOLD = {r"e\lightningbolts.nif": (2.5, 0.5)}
+
+
+def widen_rings(pos, uv, factor):
+    """A tube's rings (the vertices sharing a texture v) spread from their own middle: thicker, its path kept."""
+    pos = np.asarray(pos, dtype=float).copy()
+    keys = np.round(np.asarray(uv)[:, 1], 3)
+    for k in np.unique(keys):
+        ring = keys == k
+        mid = pos[ring].mean(axis=0)
+        pos[ring] = mid + (pos[ring] - mid) * factor
+    return pos
+
+
+def controller_time(c, t):
+    """The time a controller plays at t seconds into the model (OpenMW's ControllerFunction): frequency and phase, then
+    inside its start .. stop as its flags say (bits 1-2: 0 round again, 1 back and forth, 2 hold at the ends)."""
+    lo, hi = c["start_time"], c["stop_time"]
+    x = c.get("frequency", 1.0) * t + c.get("phase", 0.0)
+    if lo <= x <= hi:
+        return x
+    mode = (c.get("ctrl_flags", 0) >> 1) & 3
+    span = hi - lo
+    if mode == 0:
+        if span <= 0:
+            return lo
+        f = (x - lo) / span
+        return lo + (f - math.floor(f)) * span
+    if mode == 1:
+        if span <= 0:
+            return lo
+        f = (x - lo) / span
+        r = (f - math.floor(f)) * span
+        return lo + r if int(math.floor(f)) % 2 == 0 else hi - r
+    return min(max(x, lo), hi)
+
+
 def vfx_tracks(nif):
     """A spell visual's node keyframes, sampled VFX_FPS times a second from 0 to the last key.
     Returns ({block: [4x4 root-space matrix per sample]} for every object under an animated node,
     {blocks under a NiBillboardNode}, {particle emitter block: its rest root-space matrix}).
     Billboards turn to face the eye (OpenMW's BillboardCallback): the engine keeps the track's place and size."""
-    keyframes = {}
+    keyframes, timing = {}, {}
     for i, b in enumerate(nif.blocks):
         c = b.get("controller", -1)
         while c is not None and c >= 0:
@@ -565,15 +667,21 @@ def vfx_tracks(nif):
                 break
             if cb["type"] == "NiKeyframeController" and nif.get(cb.get("data", -1)):
                 keyframes[i] = nif.get(cb["data"])
+                timing[i] = cb
             c = cb.get("next_controller", -1)
     length = 0.0
     for kd in keyframes.values():
         for keys in [kd["translations"], kd["scales"], kd["rotations"]] + (kd["xyz_rotations"] or []):
             if keys:
                 length = max(length, keys[-1][0])
+    # (a keyframe controller that goes round plays as long as the model: its keys may sit anywhere, even before 0)
+    if any((cb.get("ctrl_flags", 0) >> 1) & 3 != 2 for cb in timing.values()):
+        length = max([length] + [b["stop_time"] for b in nif.blocks if "stop_time" in b and abs(b["stop_time"]) < 1e6])
 
     def local_at(b, idx, t):
         kd = keyframes.get(idx)
+        if kd:
+            t = controller_time(timing[idx], t)
         rot = np.array(b["rotation"]).reshape(3, 3)
         trans, scale = np.array(b["translation"]), b["scale"]
         if kd:
@@ -625,6 +733,35 @@ def vfx_tracks(nif):
     return tracks, billboard, emitters
 
 
+def surface_tracks(nif, s):
+    """A spell visual shape's texture slide and fade, VFX_FPS times a second from 0 to the controller's stop:
+    [(u, v)] from its NiUVController (the offset keys; tiling left out) and [alpha] from the NiAlphaController on its
+    NiMaterialProperty, as a share of the alpha it rests at (OpenMW's UVController, AlphaController). [] for none."""
+    def chain(block):
+        c = nif.get(block.get("controller", -1)) if block else None
+        while c:
+            yield c
+            c = nif.get(c.get("next_controller", -1))
+
+    shape = nif.get(s.get("block", -1))
+    uv, alpha = [], []
+    for c in chain(shape):
+        d = nif.get(c.get("data", -1))
+        if c["type"] == "NiUVController" and d and (d["groups"][0] or d["groups"][1]):
+            n = int(c["stop_time"] * VFX_FPS + 0.999) + 1
+            ts = [controller_time(c, k / VFX_FPS) for k in range(n)]
+            uv = [(sample(d["groups"][0], t)[0] if d["groups"][0] else 0.0,
+                   sample(d["groups"][1], t)[0] if d["groups"][1] else 0.0) for t in ts]
+    mat = s.get("mat")
+    for c in chain(mat):
+        d = nif.get(c.get("data", -1))
+        if c["type"] == "NiAlphaController" and d and d.get("keys"):
+            rest = max(1e-3, mat.get("alpha", 1.0))
+            n = int(c["stop_time"] * VFX_FPS + 0.999) + 1
+            alpha = [max(0.0, sample(d["keys"], controller_time(c, k / VFX_FPS))[0] / rest) for k in range(n)]
+    return uv, alpha
+
+
 def emitter_of(s, emitters):
     """The emitter a particle shape's quads stand on: particle_shape centres them on its rest place."""
     c = np.asarray(s["pos"]).mean(axis=0)
@@ -651,7 +788,7 @@ def write_piece(path, meshes):
         for m in meshes:
             n = len(m["pos"])
             tris = np.asarray(m["tris"]).ravel()
-            more = (1 if m.get("morph") else 0) | (2 if m.get("track") else 0) | (4 if m.get("billboard") else 0)                 | (8 if m.get("fx") else 0)
+            more = (1 if m.get("morph") else 0) | (2 if m.get("track") else 0) | (4 if m.get("billboard") else 0)                 | (8 if m.get("fx") else 0) | (32 if m.get("flip") else 0) | (64 if m.get("path") else 0)                 | (128 if m.get("sprites") or m.get("uvtrack") or m.get("alphatrack") else 0)
             f.write(struct.pack("<iBBBB", texs.index(m["tex"]) if m["tex"] else -1, m["flags"], m["alpha_ref"],
                                 m["kind"], more))
             f.write(m["bone"].encode("latin-1")[:31].ljust(32, b"\x00"))
@@ -679,3 +816,42 @@ def write_piece(path, meshes):
             if m.get("track"):
                 f.write(struct.pack("<I", len(m["track"])))
                 f.write(np.asarray(m["track"], dtype="<f4").tobytes())
+            if m.get("flip"):
+                # a flipbook (particles.py): u16 frames, u16 columns, u16 rows, f32 frames a second; frame 0 the
+                # top-left cell of the texture, its UVs the mesh's
+                frames, cols, rows, fps = m["flip"]
+                f.write(struct.pack("<HHHf", frames, cols, rows, fps))
+            if m.get("path"):
+                # baked particle paths (particles.py): u16 frames, f32 frames a second, then per frame per vertex
+                # f32 pos[3], u8 rgba[4]
+                fps, frames = m["path"]
+                f.write(struct.pack("<Hf", len(frames), fps))
+                for pos, rgba in frames:
+                    v = np.zeros(n, dtype=[("pos", "<f4", 3), ("color", "u1", 4)])
+                    v["pos"], v["color"] = pos, rgba
+                    f.write(v.tobytes())
+            if more & 128:
+                # u8: 1 particle records follow, 2 a texture slide, 4 a fade, 8 the records repeat
+                f.write(struct.pack("<B", (1 if m.get("sprites") else 0) | (2 if m.get("uvtrack") else 0)
+                                    | (4 if m.get("alphatrack") else 0)
+                                    | (8 if m.get("sprites") and m["sprites"].get("repeat") else 0)))
+            if m.get("uvtrack"):
+                # its texture's offset, VFX_FPS a second: u32 n, n x f32 (u, v) (the file's own v, down)
+                f.write(struct.pack("<I", len(m["uvtrack"])))
+                f.write(np.asarray(m["uvtrack"], dtype="<f4").tobytes())
+            if m.get("alphatrack"):
+                # its alpha as a share of its own, VFX_FPS a second: u32 n, n x f32
+                f.write(struct.pack("<I", len(m["alphatrack"])))
+                f.write(np.asarray(m["alphatrack"], dtype="<f4").tobytes())
+            if m.get("sprites"):
+                # particle records (particles.py): f32 accel[3], f32 grow, f32 fade, u8 keys, per key f32 t (of a
+                # life) + u8 rgba[4], u32 count, per particle f32 born, pos[3], vel[3], life, size (piece space)
+                sp = m["sprites"]
+                f.write(struct.pack("<3fffB", *sp["accel"], sp["grow"], sp["fade"], len(sp["keys"])))
+                for t, rgba in sp["keys"]:
+                    f.write(struct.pack("<f4B", t, *rgba))
+                f.write(struct.pack("<I", len(sp["records"])))
+                f.write(np.asarray(sp["records"], dtype="<f4").tobytes())
+                if sp.get("repeat"):
+                    # shed again every period seconds from start until stop (a creature's long fire): f32 x 3
+                    f.write(struct.pack("<3f", *sp["repeat"]))

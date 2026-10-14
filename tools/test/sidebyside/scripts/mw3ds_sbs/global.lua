@@ -53,9 +53,51 @@ local function silenceChargen()
 	end
 end
 
+-- A scene step's actions (do=, sidebyside.py), ';' between them
+local function act(s, player)
+	for step in string.gmatch(s.act, '[^;]+') do
+		local a = {}
+		for w in string.gmatch(step, '[^:]+') do
+			a[#a + 1] = w
+		end
+		if a[1] == 'goto' then
+			player:teleport(a[2], util.vector3(tonumber(a[3]), tonumber(a[4]), tonumber(a[5])), { onGround = true })
+		elseif a[1] == 'journal' then
+			types.Player.quests(player)[a[2]]:addJournalEntry(tonumber(a[3]), player)
+		elseif a[1] == 'give' then
+			world.createObject(a[2], 1):moveInto(types.Actor.inventory(player))
+		elseif a[1] == 'global' then
+			world.mwscript.getGlobalVariables(player)[a[2]] = tonumber(a[3])
+		elseif a[1] == 'kill' or a[1] == 'group' then
+			local found = nil
+			for _, list in ipairs({ player.cell:getAll(types.NPC), player.cell:getAll(types.Creature) }) do
+				for _, o in ipairs(list) do
+					if o.recordId == a[2] then
+						found = o
+					end
+				end
+			end
+			if not found then
+				print(string.format('MW3DS-SBS scene: no %s here', a[2]))
+			elseif a[1] == 'kill' then
+				found:sendEvent('MW3DS_SBS_Kill', {})       -- (health is changed by its own script only)
+			else
+				found:sendEvent('MW3DS_SBS_Play', { group = a[3] })
+			end
+		end
+		print(string.format('MW3DS-SBS scene: %s', step))
+	end
+end
+
 local function setup(data)
 	local s = poses[data.index]
 	local player = world.players[1]
+	if s.act then
+		-- (a scene step: the world goes on from the last one, the clock running)
+		act(s, player)
+		pending = { shot = s, index = data.index, frames = 0 }
+		return
+	end
 	world.setGameTimeScale(0)
 	local globals = world.mwscript.getGlobalVariables(player)
 	-- --start skips character creation but its scripts still run (the map menu's message box): -1 says it's done
@@ -82,6 +124,9 @@ local function setup(data)
 		-- 300 units behind the camera: in the cell, never in the picture
 		local back = util.vector3(-math.sin(s.yaw), -math.cos(s.yaw), 0) * 300
 		player:teleport(s.cell or '', cam + back)
+		if s.vfx then
+			hideActors = true          -- (a spell visual on its own: nobody near)
+		end
 	end
 	-- the shot's weapon, ammunition, shield and worn armor and clothing (player.lua equips them)
 	local inv = types.Actor.inventory(player)
@@ -172,6 +217,16 @@ end
 return {
 	eventHandlers = {
 		MW3DS_SBS_Setup = setup,
+		-- a vfx= shot: the visual played on its own at its spot (as the 3DS side's VFX step)
+		MW3DS_SBS_Vfx = function(d)
+			local s = poses[d.index]
+			local opts = { mwMagicVfx = true }
+			if s.ptex then
+				opts.particleTextureOverride = s.ptex
+			end
+			world.vfx.spawn(s.vfx, util.vector3(s.vfxX, s.vfxY, s.vfxZ), opts)
+			print(string.format('MW3DS-SBS vfx %s', s.vfx))
+		end,
 		MW3DS_SBS_Halt = function(d)
 			world.setSimulationTimeScale(d.on and 0 or 1)
 		end,

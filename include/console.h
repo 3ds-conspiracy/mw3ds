@@ -25,6 +25,10 @@ struct ConsoleProfile
 	int cmdBufScale;                 // GPU command buffer, in libctru's default sizes
 	bool stereoAtStart;              // 3D on until the Options say otherwise
 	bool goldenEyeAtStart;           // the GoldenEye control layout (no C-stick or ZL / ZR without a Circle Pad Pro)
+	int spriteBudget;                // particle sprites drawn a frame (spell visuals, bolts' trails), shared evenly among
+	                                 // them; it follows the frame's work (Session::adaptView) between these two
+	int spriteBudgetMin, spriteBudgetMax;
+
 	// ---- the heap
 	bool smallHeap;                  // under 64 MB (an Old 3DS's memory mode: about 41 MB)
 	int refBudget;                   // objects kept in memory

@@ -71,7 +71,10 @@ FpPiece* ViewModel::piece(World& w, const std::string& name)
 	if (bad != failedAt.end() && now - bad->second < 3000)
 		return nullptr;
 	bool missing = false;
+	u64 t0 = osGetTime();
 	FpPiece* p = fpLoadPiece(w, set.skeletons[0], name, &missing);
+	if (p)
+		logf("viewmodel: loaded %s in %d ms", name.c_str(), (int)(osGetTime() - t0));
 	if (p || missing)
 		pieces[name] = p;
 	else
@@ -87,6 +90,8 @@ void fpFreePiece(World& w, FpPiece* p)
 	{
 		lockedLinearFree(m.verts);
 		lockedLinearFree(m.indices);
+		for (void* v : m.pathFrames)
+			lockedLinearFree(v);
 	}
 	// Release by name, not by what came back: a texture that failed to load (linear memory was full) is
 	// still held in the cache, and without this it stayed failed and the next try came back white
@@ -194,6 +199,7 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 		m.hasMorph = pad & 1;
 		m.fx = (pad & 8) != 0;
 		fread(bone, 32, 1, f);
+		m.boneName = bone;
 		rd(f, m.numVerts);
 		rd(f, m.numIndices);
 		m.bone = boneIndex(sk, bone);
@@ -277,6 +283,74 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 			for (u32 i = 0; i < m.numVerts; i++)
 				m.radius = fmaxf(m.radius, sqrtf(m.src[i * 3] * m.src[i * 3] + m.src[i * 3 + 1] * m.src[i * 3 + 1] + m.src[i * 3 + 2] * m.src[i * 3 + 2]));
 			p->length = fmaxf(p->length, n > 1 ? (n - 1) / kVfxFps : 0.0f);
+		}
+		if (pad & 32)
+		{
+			rd(f, m.flipFrames); rd(f, m.flipCols); rd(f, m.flipRows); rd(f, m.flipFps);
+		}
+		if (pad & 64)
+		{
+			// every frame a whole vertex array: positions and colours from the file, UVs the mesh's own
+			u16 frames = 0;
+			rd(f, frames); rd(f, m.pathFps);
+			std::vector<u8> rec(m.numVerts * 16);
+			for (u16 k = 0; k < frames; k++)
+			{
+				fread(rec.data(), 1, rec.size(), f);
+				u8* v = (u8*)lockedLinearAlloc(m.numVerts * 24);
+				if (!v)
+				{
+					ok = false;
+					break;
+				}
+				for (u32 i = 0; i < m.numVerts; i++)
+				{
+					memcpy(v + i * 24, &rec[i * 16], 12);
+					memcpy(v + i * 24 + 12, (u8*)m.verts + i * 24 + 12, 8);
+					memcpy(v + i * 24 + 20, &rec[i * 16 + 12], 4);
+				}
+				GSPGPU_FlushDataCache(v, m.numVerts * 24);
+				m.pathFrames.push_back(v);
+				p->bytes += m.numVerts * 24;
+			}
+		}
+		if (pad & 128)
+		{
+			u8 more = 0;
+			rd(f, more);
+			if (more & 2)
+			{
+				u32 n = 0;
+				rd(f, n);
+				m.uvTrack.resize(n * 2);
+				fread(m.uvTrack.data(), 4, n * 2, f);
+			}
+			if (more & 4)
+			{
+				u32 n = 0;
+				rd(f, n);
+				m.alphaTrack.resize(n);
+				fread(m.alphaTrack.data(), 4, n, f);
+			}
+			if (more & 1)
+			{
+				u8 keys = 0;
+				rd(f, m.spriteAccel); rd(f, m.spriteGrow); rd(f, m.spriteFade); rd(f, keys);
+				for (u8 k = 0; k < keys; k++)
+				{
+					float t = 0.0f;
+					u32 c = 0;
+					rd(f, t); rd(f, c);
+					m.spriteKeyT.push_back(t);
+					m.spriteKeyC.push_back(c);
+				}
+				u32 count = 0;
+				rd(f, count);
+				m.sprites.resize(count * 9);
+				fread(m.sprites.data(), 4, count * 9, f);
+				if (more & 8)
+					rd(f, m.spriteRepeat);
+			}
 		}
 		// Textures: the mesh's own entry in the piece
 		if (m.tex >= 0 && m.tex < (int)ntex)

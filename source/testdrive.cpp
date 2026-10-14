@@ -11,6 +11,7 @@
 #include "session.h"
 #include "log.h"
 #include "audio.h"
+#include "console.h"
 
 extern const char* g_playerBlock;
 bool g_testFailed = false;          // a drive or expect FAIL happened (MW3DS_FAILFAST: the run stops at the first)
@@ -144,7 +145,7 @@ static int findRef(Session& s, const std::string& id, bool byWalk = true, bool p
 	}
 	// several share the id (a creature placed again after one died, a field of identical plants, shared door ids): the
 	// nearest living one in the loaded cells, as a player takes the one in front of them (a dead one only if all are)
-	if (ri >= 0 && ri != s.testPlaced)
+	if (ri >= 0 && ri != s.testPlaced && !s.testPlacedAll.count(ri))
 	{
 		const std::string want = s.w.refs[ri].idLower;
 		const bool wantDead = s.w.refs[ri].dead;
@@ -1303,6 +1304,27 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
 	else if (what == "linearfree") v = (float)(linearSpaceFree() / 1024);   // KB of linear memory free
+	else if (what == "spritesasked" || what == "spritesdrawn")   // the last view's particle sprites: wanted / drawn
+	{
+		int asked, drawn;
+		rendererSpriteCounts(asked, drawn);
+		v = (float)(what == "spritesasked" ? asked : drawn);
+	}
+	else if (what == "vfxlive") v = (float)s.vfx.size();       // spell visuals playing
+	else if (what == "spriteswanted") v = rendererSpritesWantedLast();   // every visual's particles, before the share
+	else if (what == "vfxpieces")                                // spell visuals' pieces loaded
+	{
+		v = 0;
+		for (auto& kv : s.vm.pieces)
+			for (auto& f : w.game.firstPerson.vfx)
+				if (kv.second && f.second == kv.first)
+				{
+					v += 1;
+					break;
+				}
+	}
+	else if (what == "vfxsprited") v = (float)s.vfxSpritedLast;   // visuals that drew particle sprites last frame
+	else if (what == "spritebudget") v = (float)g_profile.spriteBudget;   // this frame's, as the frame's work set it
 	// The heap (Old 3DS soak runs): KB in use now, the most used so far, the biggest block still to be had; zlib streams
 	// left open; whether the out-of-memory reserve is spent (1) or held (0)
 	else if (what == "heapused") v = (float)(mallinfo().uordblks / 1024);
@@ -1871,9 +1893,9 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 				g = (int)k;
 		if (g < 0)
 			return fail(a[1] + " has no group " + a[2]);
-		// (an actor PLACE put in front of the player: back where it was put, at the height the floor gave it)
+		// (an actor PLACE / PLACEAT put somewhere: back where it was put, at the height the floor gave it)
 		Ref& r = w.refs[ri];
-		if (ri == s.testPlaced)
+		if (ri == s.testPlaced || s.testPlacedAll.count(ri))
 		{
 			r.pos[0] = r.home[0];
 			r.pos[1] = r.home[1];
@@ -2310,6 +2332,107 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	// ENABLE:<ref> / DISABLE:<ref>: the script functions on a reference in the loaded cells
 	// HIDEACTORS:<radius>: every person and creature that near the player disabled (side-by-side spell shots, tools/test/
 	// sidebyside.py: nobody walks through the picture or catches the bolt)
+	// NPCCAST:<npc>:<spell>[:<target npc>]: that person casts the spell as an NPC's cast goes (its school's cast sound and
+	// cast visual on them; target effects as a bolt from their hands at the target, self / touch ones landing at once
+	// with their hit sound and visual), turned to face the target. Sights and sounds only on another person (a touch
+	// spell's effects aren't applied, and an NPC's bolt passes through NPCs): the game would count harm to them as the
+	// player's crime. No cast animation: they may be held in a POSE (stress tests: many casters at once,
+	// tools/test/cases/pfx-stress-o3ds.txt)
+	if (verb == "NPCCAST" && a.size() >= 3)
+	{
+		int ri = findRef(s, a[1]);
+		auto sit = w.game.spells.find(lower(spaced(a[2])));
+		if (ri < 0 || !w.active(ri))
+			return fail(a[1] + " not loaded");
+		if (sit == w.game.spells.end())
+			return fail("no spell " + a[2]);
+		const SpellDef& sp = sit->second;
+		int ti = a.size() >= 4 ? findRef(s, a[3]) : -1;
+		Ref& r = w.refs[ri];
+		if (ti >= 0)
+		{
+			r.rot[2] = atan2f(w.refs[ti].pos[0] - r.pos[0], w.refs[ti].pos[1] - r.pos[1]);
+			w.syncActor(ri);
+		}
+		static const char* kSchool[6] = { "alteration", "conjuration", "destruction", "illusion", "mysticism", "restoration" };
+		s.playSound(ri, std::string(kSchool[s.spellSchool(sp)]) + " cast");
+		s.castVfx(sp, ri);
+		bool bolt = false;
+		for (auto& e : sp.effects)
+		{
+			if (e.range == 2)
+			{
+				bolt = true;
+				continue;
+			}
+			if (e.range == 0 || ti < 0)
+				s.applyEffectToActor(ri, e, false, (float)sp.cost, 100.0f, sp.name);
+		}
+		for (int who : { ri, ti })
+		{
+			bool hit = false;
+			for (auto& e : sp.effects)
+				hit |= (e.range == 0 && who == ri) || (e.range == 1 && who == (ti >= 0 ? ti : ri));
+			if (who >= 0 && hit)
+			{
+				s.playSound(who, s.spellSound(sp, 2));
+				s.spellVfx(sp, 1, w.refs[who].pos, who, w.refs[who].rot[2]);
+			}
+		}
+		if (bolt && ti >= 0)
+		{
+			const Ref& t = w.refs[ti];
+			float from[3] = { r.pos[0] + sinf(r.rot[2]) * 40.0f, r.pos[1] + cosf(r.rot[2]) * 40.0f, r.pos[2] + 110.0f };
+			float d[3] = { t.pos[0] - from[0], t.pos[1] - from[1], t.pos[2] + 80.0f - from[2] };
+			float len = sqrtf(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+			for (int k = 0; k < 3; k++)
+				d[k] /= fmaxf(1.0f, len);
+			s.fireProjectile(ri, from, d, 1200.0f, "", "", 1.0f, sp.id);
+		}
+		logf("test: %s casts %s%s%s", r.id.c_str(), sp.name.c_str(), ti >= 0 ? " at " : "", ti >= 0 ? w.refs[ti].id.c_str() : "");
+		return true;
+	}
+	// PFX:<modes>: spell visuals use their prototype particle pieces (particles.py: pfx, trail, ..., comma-separated),
+	// as MW3DS_PFX does natively; PFX:off goes back to the default pieces (the device has no environment)
+	if (verb == "PFX" && a.size() >= 2)
+	{
+		s.pfxModes = a[1] == "off" ? "" : a[1];
+		logf("test: particle pieces %s", a[1].c_str());
+		return true;
+	}
+	// SPRITEBUDGET:<n>: the frame's particle sprites held at n (looking at thinning; before the first visual: the sprite
+	// buffer is sized from it then); SPRITEBUDGET:off lets it follow the frame's work again
+	if (verb == "SPRITEBUDGET" && a.size() >= 2)
+	{
+		static int lo = -1, hi = -1;
+		if (lo < 0)
+			lo = g_profile.spriteBudgetMin, hi = g_profile.spriteBudgetMax;
+		int n = a[1] == "off" ? -1 : atoi(a[1].c_str());
+		g_profile.spriteBudgetMin = n < 0 ? lo : n;
+		g_profile.spriteBudgetMax = n < 0 ? hi : n;
+		g_profile.spriteBudget = n < 0 ? std::min(std::max(g_profile.spriteBudget, lo), hi) : n;
+		return true;
+	}
+	// PLACEAT:<id>:x:y:z: that actor put there (on the floor under it), as PLACE puts it in front of the player but at a
+	// point that doesn't hang on where the player ended up (side-by-side stand-ins, tools/test/sidebyside.py)
+	if (verb == "PLACEAT" && a.size() >= 5)
+	{
+		float at[3] = { (float)atof(a[2].c_str()), (float)atof(a[3].c_str()), (float)atof(a[4].c_str()) };
+		s.testPlaceAt(a[1], at, atan2f(w.player.feet[0] - at[0], w.player.feet[1] - at[1]));
+		return true;
+	}
+	// VFX:<static>:x:y:z: that spell visual played there on its own (side-by-side shots against OpenMW's world.vfx)
+	if (verb == "VFX" && a.size() >= 5)
+	{
+		float at[3] = { (float)atof(a[2].c_str()), (float)atof(a[3].c_str()), (float)atof(a[4].c_str()) };
+		// (a token can't hold a space: an id written with underscores is tried with spaces too, "blight_cloud")
+		std::string id = lower(a[1]);
+		if (!w.game.firstPerson.vfx.count(id) && !w.game.firstPerson.vfx.count(id + "#pfx") && !w.game.object(id))
+			id = lower(spaced(a[1]));
+		s.spawnVfx(id, at);
+		logf("test: vfx %s at %.0f %.0f %.0f (%d showing)", a[1].c_str(), at[0], at[1], at[2], (int)s.vfx.size());
+		return true;
+	}
 	if (verb == "HIDEACTORS" && a.size() >= 2)
 	{
 		float r = (float)atof(a[1].c_str());
@@ -2495,15 +2618,19 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		logf("test: cell streaming %s", w.streamPaused ? "off" : "on");
 		return true;
 	}
-	if (verb == "MEMHOLD" && a.size() >= 2)
+	if ((verb == "MEMHOLD" || verb == "MEMLEAVE") && a.size() >= 2)
 	{
 		// MEMHOLD:<KB>: hold that much linear memory (in 256 KB pieces) to play as the device does when it is nearly
-		// full; MEMHOLD:0 lets it go
+		// full; MEMHOLD:0 lets it go. MEMLEAVE:<KB>: hold all but that much (the same squeeze natively and on the
+		// device, whatever each has free)
 		static std::vector<void*> held;
 		for (void* p : held)
 			lockedLinearFree(p);
 		held.clear();
-		for (int kb = atoi(a[1].c_str()); kb > 0; kb -= 256)
+		int want = atoi(a[1].c_str());
+		if (verb == "MEMLEAVE")
+			want = std::max(0, (int)(linearSpaceFree() / 1024) - want);
+		for (int kb = want; kb > 0; kb -= 256)
 			if (void* p = lockedLinearAlloc(256 * 1024))
 				held.push_back(p);
 		logf("test: holding %d KB of linear memory, %lu KB free", (int)held.size() * 256, linearSpaceFree() / 1024);

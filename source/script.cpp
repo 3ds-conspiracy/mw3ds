@@ -1011,6 +1011,9 @@ static float call(Ctx& c, const Node& n)
 	// Animation groups on actors: once (then back to idling) or looping (LoopGroup group count: that many
 	// more times round)
 	case F_PLAYGROUP: case F_LOOPGROUP:
+		// (an animated object, an activator: its own animation, the world's visual of it)
+		if (r && r->enabled && !w.actorOf(ref))
+			c.host.playObjectGroup(ref, lower(argStr(c, n, 0)), n.func == F_LOOPGROUP);
 		if (Actor* a = r && r->enabled ? w.actorOf(ref) : nullptr)
 			if (actorPlay(*w.actorsOf(ref), *a, argStr(c, n, 0).c_str(), n.func == F_LOOPGROUP ? ANIM_LOOP : ANIM_ONCE)
 				&& n.func == F_LOOPGROUP)

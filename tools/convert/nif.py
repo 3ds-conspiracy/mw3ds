@@ -141,7 +141,8 @@ def key_group(r, size):
 
 def time_controller(r, b):
     b["next_controller"] = r.ref()
-    r.skip(2 + 8)                  # flags, frequency, phase
+    b["ctrl_flags"] = r.u16()      # bits 1-2: 0 loop, 1 reverse, 2 clamp; 8 active
+    b["frequency"], b["phase"] = r.f32(), r.f32()
     b["start_time"], b["stop_time"] = r.f32(), r.f32()
     b["target"] = r.ref()
 
@@ -193,9 +194,10 @@ def rd_tri_strips_data(r, b):
 
 def rd_particles_data(r, b):
     geometry_data(r, b)
-    r.skip(2 + 4 + 2)              # num particles, radius, num active
-    if r.boolean():
-        r.skip(4 * b["num_vertices"])
+    b["quota"] = r.u16()           # (OpenMW: the most particles the system holds at once)
+    r.skip(4)                      # radius
+    b["active"] = r.u16()
+    b["sizes"] = r.floats(b["num_vertices"]) if r.boolean() else None
 
 
 def rd_rotating_particles_data(r, b):
@@ -332,16 +334,24 @@ def rd_particle_system_controller(r, b):
     v = r.floats(16)   # speed, var, declination, var, planar angle, var, normal[3], color[4], size, emit start/stop
     b["speed"], b["declination"] = v[0], v[2]
     b["speed_var"], b["declination_var"] = v[1], v[3]
+    b["planar"], b["planar_var"] = v[4], v[5]
     b["initial_color"], b["initial_size"] = v[9:13], v[13]
     b["emit_start"], b["emit_stop"] = v[14], v[15]
     r.skip(1)                              # reset particle system
     b["birth_rate"], b["lifetime"] = r.f32(), r.f32()
-    r.skip(4 + 1 + 1)                      # lifetime variation, use birth rate, spawn on death
+    b["lifetime_var"] = r.f32()
+    b["emit_flags"] = r.u16()              # 1: emit at birth_rate (else as many as num_particles allows)
     b["emitter_dims"] = r.floats(3)
     b["emitter"] = r.ref()
     r.skip(2 + 4 + 2 + 4 + 4)             # spawn settings
     num = r.u16()
-    r.skip(2 + 40 * num)                   # num valid, particle infos
+    b["num_particles"] = num
+    r.skip(2)                              # num valid
+    b["particles"] = []                    # the particles alive when the model was saved: (vel, age, lifespan, code)
+    for _ in range(num):
+        f = r.floats(8)                    # velocity, rotation axis, age, lifespan
+        r.skip(4 + 2)                      # last update, spawn generation
+        b["particles"].append((f[0:3], f[6], f[7], r.u16()))
     r.skip(4)                              # emitter modifier
     b["particle_modifier"] = r.ref()
     b["particle_collider"] = r.ref()
@@ -373,12 +383,11 @@ def rd_vis_data(r, b):
 
 
 def rd_uv_data(r, b):
-    for _ in range(4):
-        key_group(r, 1)
+    b["groups"] = [key_group(r, 1) for _ in range(4)]   # u offset, v offset, u tiling, v tiling
 
 
 def rd_float_data(r, b):
-    key_group(r, 1)
+    b["keys"] = key_group(r, 1)
 
 
 def rd_pos_data(r, b):
@@ -503,7 +512,8 @@ def rd_gravity(r, b):
 
 
 def rd_grow_fade(r, b):
-    particle_modifier(r, b); r.skip(8)
+    particle_modifier(r, b)
+    b["grow"], b["fade"] = r.f32(), r.f32()
 
 
 def rd_color_modifier(r, b):
