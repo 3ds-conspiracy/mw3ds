@@ -68,6 +68,9 @@ if ($Cams) {
     # Scripted stick input "seconds moveX moveY lookX [jump]"; ends with a shot.bmp
     Set-Content -Path (Join-Path $sd 'autoinput.txt') -Value $Inputs -Encoding ascii
     $donePattern = 'autoshot'
+    # A case ending in QUIT leaves through the game's exit path after its shot: the run is over when that has
+    # written its last line (or the game stops writing: the stall below)
+    if ($Inputs -match '(^|[\s+])QUIT($|[\s+])') { $donePattern = 'exit: shut down' }
 } else {
     New-Item -ItemType File -Force (Join-Path $sd 'autoshot') | Out-Null
     $donePattern = 'autoshot'
@@ -83,7 +86,12 @@ while ((Get-Date) -lt $deadline -and -not $done) {
     if (-not $done) {
         Start-Sleep -Milliseconds 500
         # Give up early when the emulator is gone or the game stopped writing its log (a hang)
-        if ($proc.HasExited) { $stalled = $true; break }
+        if ($proc.HasExited) {
+            # (the emulator closes with a game that quit: done when the log says so)
+            $done = (Test-Path $log) -and (Select-String -Path $log -Pattern $donePattern -Quiet)
+            if (-not $done) { $stalled = $true }
+            break
+        }
         if ((Test-Path $log) -and ((Get-Date) - (Get-Item $log).LastWriteTime).TotalSeconds -gt 180) { $stalled = $true; break }
     }
 }

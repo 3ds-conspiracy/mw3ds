@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "audio.h"
+#include "distant.h"
 #include "linear.h"
 #include "memstat.h"
 #include "log.h"
@@ -106,6 +107,8 @@ struct ScriptedInput
 	float stickY = 0.0f;              // STICKDOWN / STICKUP: the C-stick pushed down (1) / up (-1) in a menu's text pane
 	bool shot = false;                // SHOT: a screenshot (shot_step_NN.bmp) as this step starts
 	bool chain = false;               // CHAIN: from here JOURNAL setup only raises (chained chapter runs)
+	bool quit = false;                // QUIT (the last step): Save and quit from the game menu once the script ends, so the
+	                                  // run leaves through the real exit path
 	bool legit = false;               // LEGIT: from here only a player's own actions (TestDriver::playerToken)
 	std::vector<std::string> actions; // GOD / WALKTO / KILL / ACTIVATE / PICKUP / EQUIP / EXPECT (testdrive.h)
 	std::string startScript;          // STARTSCRIPT:name: a global script an earlier chapter would have started
@@ -236,6 +239,8 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			step->stickY = -1.0f;
 		if (strcmp(tok, "CHAIN") == 0)
 			step->chain = true;
+		if (strcmp(tok, "QUIT") == 0)
+			step->quit = true;
 		if (strncmp(tok, "SAVE:", 5) == 0)
 			step->saveAs = tok + 5;
 		if (strncmp(tok, "SAVEV1:", 7) == 0)
@@ -1032,6 +1037,21 @@ static void wrongConsoleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, 
 	}
 }
 
+// libctru's __appExit calls this once main has returned and newlib's exit() has closed every file still open, before
+// the SD card and the services go. The watchdog's thread ends here: its stack is on the heap libctru frees next. And
+// romfs is unmounted here, not among main's exit steps: the distant land's file stays open on romfs across sessions,
+// and exit() closing it after romfsExit() had emptied romfs's slot in the device table was a data abort in _close_r
+// (address 0xc, "main at exit: process" in crash.txt) that left the console on a black screen, from Save and quit and
+// from the HOME menu closing the game alike
+static bool s_romfs = false;
+
+extern "C" void userAppExit(void)
+{
+	watchdogStop();
+	if (s_romfs)
+		romfsExit();
+}
+
 int main()
 {
 	bool isNew3ds = false;
@@ -1067,6 +1087,7 @@ int main()
 	logf("console: %s CPU, %s heap (%d objects, %u KB of sounds kept)", g_profile.slowCpu ? "slow" : "fast",
 		g_profile.smallHeap ? "small" : "large", g_profile.refBudget, g_profile.soundCacheBytes / 1024);
 	bool romfs = R_SUCCEEDED(romfsInit());
+	s_romfs = romfs;                   // (unmounted in userAppExit)
 	struct stat st;
 	logf("memory: %s, heap %lu KB, linear %lu KB (%lu KB free)", isNew3ds ? "New 3DS" : "Old 3DS",
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, linearSpaceFree() / 1024);
@@ -1105,8 +1126,6 @@ int main()
 		rendererExit();
 		C2D_Fini();
 		C3D_Fini();
-		if (romfs)
-			romfsExit();
 		irrstExit();
 		logExit();
 		gfxExit();
@@ -1177,8 +1196,6 @@ int main()
 			rendererExit();
 			C2D_Fini();
 			C3D_Fini();
-			if (romfs)
-				romfsExit();
 			irrstExit();
 			logExit();
 			gfxExit();
@@ -1213,8 +1230,6 @@ int main()
 		rendererExit();
 		C2D_Fini();
 		C3D_Fini();
-		if (romfs)
-			romfsExit();
 		irrstExit();
 		logExit();
 		gfxExit();
@@ -1926,9 +1941,19 @@ int main()
 						session->w.player.feet[2], session->screen);
 					autoShotNow = true;
 					session->save();
-					logExit();       // native test build: the run is over
-					nativeVideoClose();
-					exit(0);
+					// QUIT: the game menu's Save and quit from here, the way a player leaves. The quit on the console ran
+					// code no test did: a crash at exit froze the console on a black screen
+					if (s.quit)
+					{
+						session->openScreen(SCR_GAMEMENU);
+						session->quitSaving = 1;
+					}
+					else
+					{
+						logExit();       // native test build: the run is over
+						nativeVideoClose();
+						exit(0);
+					}
 				}
 			}
 		}
@@ -2369,6 +2394,7 @@ int main()
 	// Each step marked and timed, and the log left open to the last: a quit that hangs names its step in the
 	// watchdog's line (log.txt and watchdog.txt) instead of ending the log at "exit"
 	logf("exit");
+	nativeVideoClose();       // native test build
 	char exitTimes[256] = "";
 	const char* stepName = nullptr;
 	u64 exitStart = osGetTime(), stepStart = exitStart;
@@ -2387,6 +2413,9 @@ int main()
 	session->shutdown();
 	exitStep("exit: session delete");
 	delete session;
+	// (the distant land outlives a session; its file, open on romfs, has to close before romfs goes: userAppExit)
+	exitStep("exit: distant land");
+	distantFree();
 	exitStep("exit: audio");
 	audioExit();
 	exitStep("exit: ui");
@@ -2397,9 +2426,7 @@ int main()
 	C2D_Fini();
 	exitStep("exit: citro3d");
 	C3D_Fini();
-	exitStep("exit: romfs");
-	if (romfs)
-		romfsExit();
+	// (romfs: unmounted in userAppExit, once newlib's exit has closed whatever is still open on it)
 	exitStep("exit: irrst");
 	irrstExit();
 	exitStep("exit: gfx");

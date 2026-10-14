@@ -1,0 +1,10 @@
+# Save and quit leaves through the real exit path: the log ends with "exit: shut down", no fault on the way. On the
+# console the quit (and the HOME menu closing the game) died at "exit: process" with a black screen: the distant land's
+# file, open on romfs across sessions, was closed by exit() after romfsExit() had emptied its device table entry
+# (_close_r read address 0xc). Only a run with the data as romfs shows it (a 3dsx built with --romfs, or the CIA):
+# with the data on the card the files close fine either way.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 GOD:2
+2 0 0 0 0 EXPECT:cell:Seyda_Neen
+1 0 0 0 0 QUIT

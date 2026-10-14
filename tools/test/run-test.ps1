@@ -54,7 +54,8 @@ if (-not (Select-String -Path $log -Pattern 'autoinput: end' -Quiet)) { "(did no
 $faults = $null
 if (-not $Native) {
     $emuLog = Join-Path $Emu 'user\log\azahar_log.txt'
-    $faults = Select-String -Path $emuLog -Pattern 'Unmapped\w+ @ \S+ at PC (0x[0-9A-Fa-f]+)|Unreachable code' -ErrorAction SilentlyContinue
+    # ("unmapped Read32 @ 0x0000000C at PC 0x002AA464" in today's Azahar, "UnmappedRead32 @ ..." before: the space is optional)
+    $faults = Select-String -Path $emuLog -Pattern 'Unmapped ?\w+ @ \S+ at PC (0x[0-9A-Fa-f]+)|Unreachable code' -ErrorAction SilentlyContinue
 }
 if ($faults) {
     $pcs = $faults | ForEach-Object { if ($_.Matches[0].Groups[1].Success) { $_.Matches[0].Groups[1].Value } else { 'gpu-unreachable' } } | Group-Object | Sort-Object Count -Descending
@@ -70,8 +71,13 @@ $warps = @(Select-String -Path $log -Pattern 'drive: stuck at .*warped').Count
 $misses = @(Select-String -Path $log -Pattern 'drive: crosshair miss').Count
 $mon = @(Select-String -Path $log -Pattern 'monitor: ').Count
 $ended = Select-String -Path $log -Pattern 'autoinput: end' -Quiet
-$bad = $fail + $drive + $mon + $(if ($faults) { 1 } else { 0 }) + $(if ($ended) { 0 } else { 1 })
-"RESULT: " + $(if ($bad -eq 0) { 'PASS' } else { 'FAIL' }) + " ($pass expectations met, $fail failed, $drive driver failures, $mon monitor warnings" + $(if ($faults) { ', emulator faults' } else { '' }) + $(if ($ended) { '' } else { ', did not finish' }) + ")" + $(if ($warps) { "; $warps navigation warps" } else { '' }) + $(if ($misses) { "; $misses crosshair misses (activated directly)" } else { '' })
+# A case ending in QUIT must leave through the game's exit path to its last line (a crash on the way out left the
+# console on a black screen): the exit line and any crash line are shown with the result
+$quit = @($inputs | Where-Object { $_ -match '(^|[\s+])QUIT($|[\s+])' }).Count -gt 0
+$shutDown = -not $quit -or (Select-String -Path $log -Pattern 'exit: shut down' -Quiet)
+if ($quit) { Select-String -Path $log -Pattern 'exit: shut down|crash: ' | ForEach-Object { $_.Line } }
+$bad = $fail + $drive + $mon + $(if ($faults) { 1 } else { 0 }) + $(if ($ended) { 0 } else { 1 }) + $(if ($shutDown) { 0 } else { 1 })
+"RESULT: " + $(if ($bad -eq 0) { 'PASS' } else { 'FAIL' }) + " ($pass expectations met, $fail failed, $drive driver failures, $mon monitor warnings" + $(if ($faults) { ', emulator faults' } else { '' }) + $(if ($ended) { '' } else { ', did not finish' }) + $(if ($shutDown) { '' } else { ', did not shut down' }) + ")" + $(if ($warps) { "; $warps navigation warps" } else { '' }) + $(if ($misses) { "; $misses crosshair misses (activated directly)" } else { '' })
 # SHOT steps as PNG (400 x 480: the top screen above the bottom one)
 if ($Shots) {
     python (Join-Path $PSScriptRoot 'shots.py') $shotDir $(if ([IO.Path]::IsPathRooted($Shots)) { $Shots } else { Join-Path $root $Shots })

@@ -100,6 +100,11 @@ static void crashHandler(ERRF_ExceptionInfo* e, CpuRegisters* r)
 {
 	static const char* kinds[] = { "prefetch abort", "data abort", "undefined instruction", "VFP exception" };
 	crashNote(e->type < 4 ? kinds[e->type] : "exception", r->pc, r->lr, e->far);
+	// In play the game stays as it is (the last frame on the screens, the log and crash.txt written) for the power
+	// button. During the quit there is nothing left to show: the screens are off after gfxExit, and the HOME menu
+	// waits for the process to end, so a fault there left a console black and dead on both counts. The process ends
+	if (strncmp(g_mainAt, "exit", 4) == 0)
+		svcExitProcess();
 	for (;;)
 		svcSleepThread(1000000000LL);
 }
@@ -224,7 +229,8 @@ void watchdogStart()
 
 // The quit: the watchdog's thread ends before libctru's exit gives the heap back, its stack with it (a thread still
 // there that woke in between would fault on its own stack, at the very end of the quit). Joined with a limit: a
-// watchdog stuck in a write to the card doesn't hold the quit
+// watchdog stuck in a write to the card doesn't hold the quit. Called from userAppExit (main.cpp), libctru's hook
+// after main returned and before the services go: the watchdog covers the quit up to there
 void watchdogStop()
 {
 	if (!s_watchdog)
@@ -233,13 +239,6 @@ void watchdogStop()
 	if (threadJoin(s_watchdog, 2000000000ULL) == 0)
 		threadFree(s_watchdog);
 	s_watchdog = nullptr;
-}
-
-// libctru's __appExit calls this first (after the static destructors, before the SD card and the services go): the
-// watchdog covers the quit up to here
-extern "C" void userAppExit(void)
-{
-	watchdogStop();
 }
 
 void logInit()
