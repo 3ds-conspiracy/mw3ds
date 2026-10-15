@@ -20,7 +20,7 @@ import mwtools
 
 ROOT = mwtools.ROOT
 DEFS = {
-    "APP_TITLE": "MW3DS", "APP_PRODUCT_CODE": "CTR-P-MW3D", "APP_UNIQUE_ID": "0xF3D50",
+    "APP_TITLE": "MW3DS", "APP_PRODUCT_CODE": "CTR-P-MW3D", "APP_UNIQUE_ID": "0xF8287",
     "APP_ROMFS": "build/romfs", "APP_CATEGORY": "Application", "APP_USE_ON_SD": "true", "APP_ENCRYPTED": "false",
     "APP_MEMORY_TYPE": "Application", "APP_SYSTEM_MODE": "64MB", "APP_SYSTEM_MODE_EXT": "124MB",
     "APP_CPU_SPEED": "804MHz", "APP_ENABLE_L2_CACHE": "true", "APP_VERSION_MAJOR": "0",
