@@ -27,7 +27,7 @@ import numpy as np
 from PIL import Image
 
 import envfile  # noqa: F401  (loads .env)
-from mwfiles import OVERLAYS
+from mwfiles import OVERLAYS, content_key
 
 # Converted data goes here (MW3DS_OUT overrides it, e.g. out/world for a whole-island trial run)
 OUT = Path(os.environ.get("MW3DS_OUT") or Path(__file__).resolve().parents[2] / "out" / "data")
@@ -156,7 +156,8 @@ class TextureSet:
         (OUT / "tex").mkdir(parents=True, exist_ok=True)
         stats = {"count": 0, "encoded": 0, "bytes": 0, "full_bytes": 0, "failed": []}
         # the mod folders laid over Data Files (mwfiles.OVERLAYS): with others, the same path can be another picture
-        overlay = ";".join(str(d) for d in OVERLAYS)
+        # (and the plugins: they come with their own loose textures, which may replace others)
+        overlay = ";".join(str(d) for d in OVERLAYS) + content_key()
         wanted = set()
         items = sorted(self.req.items())
         print(f"textures: checking {len(items)} (new or resized ones are encoded with tex3ds; the first run takes a while)",

@@ -140,14 +140,15 @@ void Session::drawEnchanting()
 	std::string gemLabel = "No soul gem";
 	if (enchantGem >= 0)
 	{
-		gemLabel = "Soul " + std::to_string(soul);
+		gemLabel = w.game.gmstLabel("ssoulgem", "Soul") + " " + std::to_string(soul);
 		for (auto& a : w.game.actors)
 			if (lower(a.id) == w.inventory[enchantGem].soul)
 				gemLabel = a.name + " (" + std::to_string(soul) + ")";
 	}
 	if (uiButton(162, 24, 154, 18, gemLabel) && !gems.empty())
 		enchantGem = gems[(indexIn(gems, enchantGem) + 1) % gems.size()];
-	if (uiButton(4, 46, 154, 18, enchantType >= 0 ? kCastNames[enchantType] : "-") && types)
+	static const char* kCastKeys[4] = { "sitemcastonce", "sitemcastwhenstrikes", "sitemcastwhenused", "sitemcastconstant" };
+	if (uiButton(4, 46, 154, 18, enchantType >= 0 ? w.game.gmstLabel(kCastKeys[enchantType], kCastNames[enchantType]) : "-") && types)
 	{
 		for (int k = 1; k <= 4; k++)
 			if (types & (1 << ((enchantType + k) % 4)))

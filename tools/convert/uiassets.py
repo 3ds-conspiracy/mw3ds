@@ -15,6 +15,7 @@ import struct
 import numpy as np
 from PIL import Image
 
+from mwfiles import CODEC
 from textures import OUT, encode_image
 
 ICON = 32
@@ -175,7 +176,7 @@ def parse_font(fnt, tex):
         ink = ink[::-1]
     glyphs, line = {}, 0.0
     for i, x, y, w, h, advance, kerning, ascent in rects:
-        ch = bytes([i]).decode("cp1252", errors="ignore")
+        ch = bytes([i]).decode(CODEC, errors="ignore")       # the release's code page: its fonts match it
         if not ch or advance <= 0 or w < 0 or h < 0:
             continue
         glyphs[ord(ch)] = [round(x), round(y), round(w), round(h), round(advance, 2), round(kerning, 2),

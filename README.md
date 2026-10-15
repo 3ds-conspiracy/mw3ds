@@ -159,6 +159,18 @@ repository has no license file).
 Without the mods: `python tools/build/build_cia.py` (or `--old3ds`). It writes the same folders, so switching means
 converting again.
 
+## Plugins and other languages
+
+**Plugins.** Put the `.esp` files in `Data Files` as usual (with their meshes and textures) and list them in `.env`,
+in load order: `MW3DS_PLUGINS=Siege at Firemoth.esp;master_index.esp`. The converter merges them with
+`Morrowind.esm` the way OpenMW does. Plugins that need Tribunal or Bloodmoon, MWSE, MGE XE or OpenMW Lua are not
+supported. At the end of a conversion each plugin gets a line listing any script functions the engine does not run
+yet, so you can see why a mod only half works.
+
+**Translated Morrowind.** A German, French, Polish, Russian ... `Morrowind.esm` converts like the English one: set
+`MW3DS_ENCODING` for its alphabet and convert. See [LANGUAGES.md](LANGUAGES.md) for the steps and what changes
+language.
+
 ## Running the tests
 
 The tests play the game automatically and check the results. Each test is a text file in `tools\test\cases\` listing

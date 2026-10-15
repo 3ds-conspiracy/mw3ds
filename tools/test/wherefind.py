@@ -10,7 +10,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "convert"))
-from mwfiles import DATA_FILES, cell_refs, read_records  # noqa: E402
+from mwfiles import cell_refs, read_game  # noqa: E402
 
 # AIDT services flags that mean "sells things" (OpenMW's AiData: weapons ... misc, potions, magic items)
 SELLS = 0x0001 | 0x0002 | 0x0004 | 0x0008 | 0x0010 | 0x0020 | 0x0040 | 0x0080 | 0x0100 | 0x0200 | 0x0400 | 0x2000
@@ -28,7 +28,7 @@ def main():
     holders = defaultdict(list)          # holder id -> [(item, count)]
     kind, sells, levels = {}, {}, defaultdict(list)
     cells = []
-    for r in read_records(DATA_FILES / "Morrowind.esm"):
+    for r in read_game():
         if r.tag in ("CONT", "NPC_", "CREA"):
             hid = r.id.lower()
             kind[hid] = r.tag

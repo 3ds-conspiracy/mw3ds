@@ -498,7 +498,7 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 				if (fog->second[gj * fn + gi] >= 12)
 					return;
 			}
-			markers.push_back({ dx, dy, full ? 10.0f : 8.0f, i, r.destCell });
+			markers.push_back({ dx, dy, full ? 10.0f : 8.0f, i, w.game.cellLabel(r.destCell) });
 		});
 		drawDetected([&](float mx, float my, float* sx, float* sy) {
 			*sx = ox + (mx - localMin[0]) / localSize * texSize * s;
@@ -557,7 +557,8 @@ void Session::drawMap()
 	static const float kMapZooms[kMapZoomSteps] = { 1.0f, 1.5f, 2.0f, 3.0f, 4.0f };
 	const UiInput& in = uiIn();
 	bool outside = w.current >= 0 && !w.cells[w.current].interior;
-	header(mapLocal ? "Local Map" : "World Map", w.cellName());
+	header((mapLocal ? w.game.gmstLabel("slocal", "Local") : w.game.gmstLabel("sworld", "World")) + " " +
+		w.game.gmstLabel("smap", "Map"), w.game.cellLabel(w.cellName()));
 	// L / R step the zoom (about the view's centre); the D-pad and circle pad pan, so does a finger dragged on the map
 	if ((in.down & KEY_L) && mapZoomIdx > 0)
 		mapZoomIdx--;
@@ -584,7 +585,8 @@ void Session::drawMap()
 	// The other map (Morrowind's World / Local button), zoom - and +, Close. The D-pad pans, so it doesn't move
 	// the buttons' focus
 	uiConsume(KEY_LEFT | KEY_RIGHT);
-	if (uiButton(4, 208, 148, 28, mapLocal ? "World Map" : "Local Map"))
+	if (uiButton(4, 208, 148, 28, (mapLocal ? w.game.gmstLabel("sworld", "World") : w.game.gmstLabel("slocal", "Local")) + " " +
+		w.game.gmstLabel("smap", "Map")))
 	{
 		playSound(-1, "Menu Click");
 		mapLocal = !mapLocal;

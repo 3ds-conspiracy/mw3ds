@@ -8,6 +8,8 @@ major skills +2, minor +1, other skills +0.5 and attributes +2 per level above 1
 import struct
 import zlib
 
+from mwfiles import text, text_bytes
+
 # Skill indices (SKIL INDX)
 SKILL_BLUNT, SKILL_LONG_BLADE, SKILL_AXE, SKILL_SPEAR = 4, 5, 6, 7
 SKILL_SHORT_BLADE, SKILL_MERCANTILE, SKILL_HAND_TO_HAND = 22, 24, 26
@@ -46,7 +48,7 @@ def resolve_item(lid, level, seed, depth=0):
     ok = [e for e in entries if e[0] <= level] or [min(entries)]
     top = max(e[0] for e in ok)
     best = sorted(e[1] for e in ok if e[0] == top)
-    pick = best[zlib.crc32((seed + "|" + lid).lower().encode("latin-1")) % len(best)]
+    pick = best[zlib.crc32(text_bytes((seed + "|" + lid).lower())) % len(best)]
     if pick.lower() in _LEVI:
         return resolve_item(pick, level, seed, depth + 1)
     return pick
@@ -64,7 +66,7 @@ def npc_items(rec):
         level = struct.unpack_from("<h", npdt)[0] if npdt else 1
     for t, d in rec.subs:
         if t == "NPCO":
-            item = d[4:].split(b"\0", 1)[0].decode("latin-1")
+            item = text(d[4:])
             if item.lower() in _LEVI:
                 item = resolve_item(item, level, rec.id)
                 if item is None:
@@ -155,7 +157,7 @@ def combat_spells(rec, spel):
     for t, d in rec.subs:
         if t != "NPCS":
             continue
-        sid = d.split(b"\0", 1)[0].decode("latin-1")
+        sid = text(d)
         sp = spel.get(sid.lower())
         if sp is None or struct.unpack_from("<i", sp.get("SPDT"))[0] not in (0, 5):     # spells and powers
             continue
@@ -247,7 +249,7 @@ def travel_destinations(rec):
             v = struct.unpack("<6f", d)
             out.append([list(v[:3]), list(v[3:]), None])
         elif t == "DNAM" and out:
-            out[-1][2] = d.split(b"\0", 1)[0].decode("latin-1")
+            out[-1][2] = text(d)
     return out
 
 
@@ -294,8 +296,8 @@ def ai_package(rec):
         if tag in ("AI_F", "AI_E"):
             x, y, z = struct.unpack_from("<3f", d)
             dur = struct.unpack_from("<H", d, 12)[0]
-            target = d[14:46].split(b"\0", 1)[0].decode("latin-1").lower()
+            target = text(d[14:46]).lower()
             return [3 if tag == "AI_F" else 2, target, x, y, z, dur]
         if tag == "AI_A":
-            return [4, d[:32].split(b"\0", 1)[0].decode("latin-1").lower(), 0, 0, 0, 0]
+            return [4, text(d[:32]).lower(), 0, 0, 0, 0]
     return None

@@ -13,17 +13,21 @@ void Session::layoutDialogue(float width)
 {
 	words.clear();
 	linkTopics = dlg.topics;
-	std::vector<std::string> linkNames;
+	std::vector<std::string> linkNames, linkIds;
 	for (auto& t : linkTopics)
-		linkNames.push_back(lower(t));
+	{
+		linkNames.push_back(lower(w.game.topicKeyword(t)));
+		linkIds.push_back(lower(t));
+	}
 	float lh = uiLineHeight(0.5f), space = uiTextWidth(" ", 0.5f);
 	float y = 0.0f, lastEntryY = 0.0f;
 
-	auto addText = [&](const std::string& text, u32 color, int forcedAction) {
-		std::string l = lower(text);
+	auto addText = [&](const std::string& raw, u32 color, int forcedAction) {
+		HyperText h = forcedAction == -1 ? dialogueHyperText(w.game, raw, linkNames, linkIds) : HyperText{ raw, {} };
+		const std::string& text = h.text;
 		std::vector<int> linkAt(text.size(), -1);
 		if (forcedAction == -1)
-			for (auto& m : dialogueFindKeywords(text, linkNames))
+			for (auto& m : h.links)
 				for (size_t k = m.begin; k < m.end; k++)
 					linkAt[k] = m.keyword;
 		float x = 0.0f;
@@ -275,7 +279,7 @@ void Session::drawPersuade()
 			persuade(k);
 			return;
 		}
-	uiText(8, 202, 0.42f, col::textDim, "Gold " + std::to_string(gold));
+	uiText(8, 202, 0.42f, col::textDim, w.game.gmstLabel("sgold", "Gold") + " " + std::to_string(gold));
 	if (uiButton(216, 208, 100, 28, w.game.gmst("sback", "Back")) || (uiIn().down & KEY_B))
 	{
 		playSound(-1, "Menu Click");
@@ -471,7 +475,7 @@ void Session::drawBarter()
 	uiConsume(KEY_A | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
 	int focusNone = -1;
 	int& focus = focusNone;
-	std::string action = barterSell ? "Sell" : "Buy";
+	std::string action = barterSell ? w.game.gmstLabel("ssell", "Sell") : w.game.gmstLabel("sbuy", "Buy");
 	// Haggling: Y / X lower or raise the offer 5% of the price at a time (the merchant may refuse)
 	const UiInput& hin = uiIn();
 	if (hin.down & KEY_Y) haggle--;
@@ -970,7 +974,7 @@ void Session::drawTravel()
 	header(w.game.gmst("stravel", "Travel") + " - " + def.name, "Gold: " + std::to_string(gold));
 	std::vector<std::string> rows;
 	for (auto& d : def.travel)
-		rows.push_back(d.cell + "   " + std::to_string(travelPrice(barterRef, d)) + "g");
+		rows.push_back(w.game.cellLabel(d.cell) + "   " + std::to_string(travelPrice(barterRef, d)) + "g");
 	uiList(list2, 4, 24, 312, 176, rows, 0.5f, true);
 	int sel = list2.selected < (int)def.travel.size() ? list2.selected : -1;
 	int b = buttonRow({ "Go", w.game.gmst("sdone", "Done") }, focus);

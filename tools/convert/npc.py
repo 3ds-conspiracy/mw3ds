@@ -11,6 +11,7 @@ import struct
 import numpy as np
 
 from meshes import extract_shapes, nif_local, ref_matrix
+from mwfiles import text
 from nif import Nif
 from npcstats import bind, npc_items, npc_stats
 
@@ -66,8 +67,8 @@ def sample(keys, t, quat=False):
 def text_key_time(nif, name):
     for b in nif.blocks:
         if b["type"] == "NiTextKeyExtraData":
-            for t, text in b["keys"]:
-                if text.lower().startswith(name.lower()):
+            for t, key in b["keys"]:
+                if key.lower().startswith(name.lower()):
                     return t
     return 0.0
 
@@ -117,7 +118,7 @@ def item_parts(rec):
             cur = [d[0], None, None]
             parts.append(cur)
         elif tag in ("BNAM", "CNAM") and cur is not None:
-            cur[1 if tag == "BNAM" else 2] = d.split(b"\0", 1)[0].decode("latin-1")
+            cur[1 if tag == "BNAM" else 2] = text(d)
     return parts
 
 
@@ -132,9 +133,9 @@ def enchant_glow(rec):
     if not ench:
         return 0
     if _glows is None:
-        from mwfiles import DATA_FILES, read_records
+        from mwfiles import read_game
         rgb, first = {}, {}
-        for r in read_records(DATA_FILES / "Morrowind.esm", {"MGEF", "ENCH"}):
+        for r in read_game({"MGEF", "ENCH"}):
             if r.tag == "MGEF":
                 c = struct.unpack_from("<iii", r.get("MEDT"), 12)
                 rgb[struct.unpack("<i", r.get("INDX"))[0]] = (min(255, c[0]) << 16) | (min(255, c[1]) << 8) | min(255, c[2])

@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 sys.path[:0] = [str(Path(__file__).parent), str(Path(__file__).resolve().parents[1] / "convert")]
-from mwfiles import DATA_FILES, cell_refs, load_db, read_records  # noqa: E402
+from mwfiles import cell_refs, load_db, read_game  # noqa: E402
 from questrun import conds  # noqa: E402
 
 ITEM = re.compile(r"""(?:additem|removeitem)\s+"?([\w' -]+?)"?\s+\d""", re.I)
@@ -23,7 +23,7 @@ def where(names):
     print("-- where (first 3 of each; gold left out)")
     names = names - {"gold_001"}
     seen = {}
-    for c in read_records(DATA_FILES / "Morrowind.esm", {"CELL"}):
+    for c in read_game({"CELL"}):
         d = c.get("DATA")
         interior = struct.unpack("<I", d[:4])[0] & 1
         for r in cell_refs(c):

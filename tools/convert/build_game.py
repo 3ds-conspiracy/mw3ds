@@ -12,7 +12,7 @@ import re
 import math
 import struct
 
-from mwfiles import DATA_FILES, read_records
+from mwfiles import DATA_FILES, read_game, read_records, text
 from mwscript import ScriptError, compile_script, compile_snippet
 from creature import creature_stats
 from npcstats import bind, npc_items, npc_stats, weapon_damage
@@ -75,17 +75,12 @@ def resolve_leveled_item(db, lid, depth=0):
 
 
 def z(d):
-    return d.split(b"\0", 1)[0].decode("latin-1") if d is not None else None
+    return text(d) if d is not None else None
 
 
 def txt(s):
-    """Record strings are read as latin-1; display text is really Windows-1252 (curly quotes etc.)."""
-    if not s:
-        return ""
-    try:
-        return s.encode("latin-1").decode("cp1252", errors="replace")
-    except UnicodeEncodeError:
-        return s
+    """Display text of a record string (already decoded in the release's code page: mwfiles.text)."""
+    return s or ""
 
 
 def book_text(s):
@@ -229,7 +224,7 @@ EFFECT_KEYS = """WaterBreathing SwiftSwim WaterWalking Shield FireShield Lightni
 def magic_effects(db):
     """School, base cost, flags (MEDT: 0x4 no duration, 0x8 no magnitude, 0x10 harmful) and display name."""
     flags, vfx, rgb = {}, {}, {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"MGEF"}):
+    for r in read_game({"MGEF"}):
         k = struct.unpack("<i", r.get("INDX"))[0]
         flags[k] = struct.unpack_from("<i", r.get("MEDT"), 8)[0]
         rgb[k] = list(struct.unpack_from("<iii", r.get("MEDT"), 12))      # its colour (enchanted items glow in it)
@@ -283,7 +278,7 @@ def info_conditions(info):
     for i, (t, d) in enumerate(subs):
         if t != "SCVR":
             continue
-        s = d.decode("latin-1")
+        s = text(d)
         val = 0
         if i + 1 < len(subs) and subs[i + 1][0] in ("INTV", "FLTV"):
             nd = subs[i + 1][1]
@@ -583,7 +578,7 @@ def enchantments(objects):
     cost per use, charge, effects."""
     wanted = {o["ench"] for o in objects.values() if o.get("ench")}
     out = {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"ENCH"}):
+    for r in read_game({"ENCH"}):
         if r.id.lower() in wanted:
             d = r.get("ENDT")
             out[r.id.lower()] = {"type": i32(d), "cost": i32(d, 4), "charge": i32(d, 8), "effects": enam_effects(r)}
@@ -698,7 +693,7 @@ def build(db, cells, actor_records, actor_cells):
     # Leveled item entries in containers and inventories stay lists (picked by the player's level at
     # run time: "leveled_items"); every item they can give is exported
     leveled_items = {}
-    levi = {r.id.lower(): r for r in read_records(DATA_FILES / "Morrowind.esm", {"LEVI"})}
+    levi = {r.id.lower(): r for r in read_game({"LEVI"})}
 
     def add_list(lid, depth=0):
         if lid in leveled_items or lid not in levi or depth > 5:
@@ -754,7 +749,7 @@ def build(db, cells, actor_records, actor_cells):
             objects[bid] = object_entry(rec)
 
     sound_ids = {s.lower() for s in ENGINE_SOUNDS}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"MGEF"}):
+    for r in read_game({"MGEF"}):
         sound_ids.update(r.zstr(t).lower() for t in ("CSND", "BSND", "HSND", "ASND") if r.zstr(t))
     for school in ("alteration", "conjuration", "destruction", "illusion", "mysticism", "restoration"):
         sound_ids.update(f"{school} {kind}" for kind in ("cast", "bolt", "hit", "area"))
@@ -822,7 +817,7 @@ def build(db, cells, actor_records, actor_cells):
     for cell in db["CELL"].values():
         for tag, d in cell.subs:
             if tag == "TNAM":
-                spells_needed.add(d.split(bytes(1), 1)[0].decode("latin-1").lower())
+                spells_needed.add(text(d).lower())
     spells = {s: spell_entry(db["SPEL"][s]) for s in spells_needed if s in db["SPEL"]}
 
     # Every faction: the player can join them (PCJoinFaction), dialogue names their ranks

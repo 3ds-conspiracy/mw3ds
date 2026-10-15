@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "convert"))
-from mwfiles import DATA_FILES, cell_refs, read_records  # noqa: E402
+from mwfiles import cell_refs, read_game  # noqa: E402
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
     if not want:
         print(__doc__)
         return
-    for c in read_records(DATA_FILES / "Morrowind.esm", {"CELL"}):
+    for c in read_game({"CELL"}):
         d = c.get("DATA")
         interior = struct.unpack("<I", d[:4])[0] & 1
         for r in cell_refs(c):

@@ -80,11 +80,12 @@ void Session::drawJournal()
 	auto found = [&](const std::string& text) { return find.empty() || lower(text).find(find) != std::string::npos; };
 	// The topics the journal has are links in its text, and open that topic (OpenMW's JournalBooks); the page is
 	// built and laid out again only when what it shows changes
-	std::vector<std::string> topics, topicKeys;
+	std::vector<std::string> topics, topicKeys, topicIds;
 	for (auto& t : w.topicLog)
 	{
 		topics.push_back(t.first);
-		topicKeys.push_back(lower(t.first));
+		topicKeys.push_back(lower(w.game.topicKeyword(t.first)));
+		topicIds.push_back(lower(t.first));
 	}
 	auto page = [&](const std::string& key, auto build, size_t skip) {
 		long rev = (long)(std::hash<std::string>()(key + "|" + std::to_string(w.journal.size()) + "|"
@@ -93,8 +94,9 @@ void Session::drawJournal()
 		std::vector<UiLink> links;
 		if (rev != journalText.revision)
 		{
-			text = build();
-			for (auto& m : dialogueFindKeywords(text, topicKeys))
+			HyperText h = dialogueHyperText(w.game, build(), topicKeys, topicIds);
+			text = h.text;
+			for (auto& m : h.links)
 				if (m.begin >= skip)
 					links.push_back({ m.begin, m.end, m.keyword });
 		}
@@ -279,13 +281,17 @@ static std::string statsText(Session& ss, bool progress)
 	if (c) cls = c->name;
 	if (const BirthDef* b = w.birthsign()) sign = b->name;
 	char buf[128];
-	std::string t = "Name: " + s.name + "\nRace: " + race + (s.female ? " (female)" : " (male)") +
-		"\nClass: " + cls + "\nSign: " + sign + (progress ? "" : "\nLevel: " + std::to_string(s.level)) + "\n\n";
-	snprintf(buf, sizeof(buf), "Health %d   Magicka %d   Fatigue %d\n\n", (int)s.healthMax, (int)s.magickaMax, (int)s.fatigueMax);
+	const GameData& g = w.game;
+	std::string t = g.gmstLabel("sname", "Name") + ": " + s.name + "\n" + g.gmstLabel("srace", "Race") + ": " + race +
+		(s.female ? " (female)" : " (male)") + "\n" + g.gmstLabel("sclass", "Class") + ": " + cls + "\n" +
+		g.gmstLabel("sbirthsign", "Sign") + ": " + sign +
+		(progress ? "" : "\n" + g.gmstLabel("slevel", "Level") + ": " + std::to_string(s.level)) + "\n\n";
+	snprintf(buf, sizeof(buf), "%s %d   %s %d   %s %d\n\n", g.gmstLabel("shealth", "Health").c_str(), (int)s.healthMax,
+		g.gmstLabel("smagic", "Magicka").c_str(), (int)s.magickaMax, g.gmstLabel("sfatigue", "Fatigue").c_str(), (int)s.fatigueMax);
 	t += buf;
 	for (int i = 0; i < 8; i++)
 		t += attrName(w, i) + ": " + std::to_string(s.attributes[i]) + (i % 2 ? "\n" : "     ");
-	auto section = [&](const char* title, auto pred) {
+	auto section = [&](const std::string& title, auto pred) {
 		t += std::string("\n") + title + "\n";
 		for (int k = 0; k < 27; k++)
 			if (pred(k))
@@ -300,9 +306,9 @@ static std::string statsText(Session& ss, bool progress)
 	auto inList = [](const int* arr, int k) { for (int i = 0; i < 5; i++) if (arr[i] == k) return true; return false; };
 	if (c)
 	{
-		section("Major Skills", [&](int k) { return inList(c->major, k); });
-		section("Minor Skills", [&](int k) { return inList(c->minor, k); });
-		section("Misc Skills", [&](int k) { return !inList(c->major, k) && !inList(c->minor, k); });
+		section(w.game.gmstLabel("sskillclassmajor", "Major Skills"), [&](int k) { return inList(c->major, k); });
+		section(w.game.gmstLabel("sskillclassminor", "Minor Skills"), [&](int k) { return inList(c->minor, k); });
+		section(w.game.gmstLabel("sskillclassmisc", "Misc Skills"), [&](int k) { return !inList(c->major, k) && !inList(c->minor, k); });
 	}
 	// Factions (rank, reputation there), reputation, bounty
 	if (!w.pcRank.empty())
@@ -319,13 +325,14 @@ static std::string statsText(Session& ss, bool progress)
 			t += "\n";
 		}
 	}
-	t += "\nReputation: " + std::to_string(w.pcReputation) + "   Bounty: " + std::to_string(w.bounty) + "\n";
+	t += "\n" + w.game.gmstLabel("sreputation", "Reputation") + ": " + std::to_string(w.pcReputation) + "   " +
+		w.game.gmstLabel("sbounty", "Bounty") + ": " + std::to_string(w.bounty) + "\n";
 	return t;
 }
 
 void Session::drawStats()
 {
-	header("Stats", dateText());
+	header(w.game.gmstLabel("sstats", "Stats"), dateText());
 	uiPanel(4, 24, 312, 180);
 	// Progress towards the next level: major and minor skill increases out of iLevelUpTotal
 	const PlayerStats& s = w.stats;
@@ -408,7 +415,7 @@ void Session::drawRace()
 
 void Session::drawClassMethod()
 {
-	header("Class");
+	header(w.game.gmstLabel("sclass", "Class"));
 	uiPanel(4, 28, 312, 60);
 	uiTextBox(scroll, 6, 34, 308, 50, "Socucius Ergalla needs to record your class. How would you like to do this?", 0.5f, false);
 	const UiInput& in = uiIn();
@@ -429,7 +436,7 @@ void Session::drawClassMethod()
 
 static std::string classText(World& w, const ClassDef& c)
 {
-	std::string t = "Specialization: " + specName(w, c.specialization) + "\nFavored: " +
+	std::string t = w.game.gmstLabel("sspecialization", "Specialization") + ": " + specName(w, c.specialization) + "\nFavored: " +
 		attrName(w, c.attributes[0]) + ", " + attrName(w, c.attributes[1]) + "\n\nMajor skills:\n";
 	for (int i = 0; i < 5; i++) t += "  " + skillName(w, c.major[i]) + "\n";
 	t += "Minor skills:\n";

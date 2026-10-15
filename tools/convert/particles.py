@@ -379,9 +379,9 @@ def prototype(model, static_id, out_dir, fps=20, duration=1.25):
     g = json.loads(data)
     fp = g["firstperson"]
     # each magic effect's particle picture, its colour where it shows (alpha-weighted): a bolt's streak is drawn in it
-    from mwfiles import DATA_FILES, read_records
+    from mwfiles import read_game
     rgb = {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"MGEF"}):
+    for r in read_game({"MGEF"}):
         t = (r.zstr("PTEX") or "").lower()
         for p in ("textures/" + t.rsplit(".", 1)[0] + ".dds", "textures/" + t):
             if t and arch.exists(p):
@@ -638,10 +638,10 @@ def loop_flipbook(arch, nif, block):
 def is_bolt(db, static_id):
     """A magic effect flies it as its bolt (MGEF BVFX)."""
     import struct
-    from mwfiles import read_records, DATA_FILES
+    from mwfiles import read_game
     global _BOLTS
     if _BOLTS is None:
-        _BOLTS = {(r.zstr("BVFX") or "").lower() for r in read_records(DATA_FILES / "Morrowind.esm", {"MGEF"})}
+        _BOLTS = {(r.zstr("BVFX") or "").lower() for r in read_game({"MGEF"})}
         _BOLTS.add("vfx_defaultbolt")
     return static_id.lower() in _BOLTS
 
@@ -889,10 +889,10 @@ def room_light(db, static_id):
 
 def is_spell_visual(static_id):
     """A magic effect plays it (MGEF CVFX / BVFX / HVFX / AVFX), or it is one of the vfx_ statics."""
-    from mwfiles import read_records, DATA_FILES
+    from mwfiles import read_game
     global _SPELL_VFX
     if _SPELL_VFX is None:
-        _SPELL_VFX = {(r.zstr(t) or "").lower() for r in read_records(DATA_FILES / "Morrowind.esm", {"MGEF"})
+        _SPELL_VFX = {(r.zstr(t) or "").lower() for r in read_game({"MGEF"})
                       for t in ("CVFX", "BVFX", "HVFX", "AVFX")}
     sid = static_id.lower()
     return sid in _SPELL_VFX or sid.startswith("vfx_")

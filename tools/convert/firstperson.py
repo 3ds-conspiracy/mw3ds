@@ -775,8 +775,8 @@ def emitter_of(s, emitters):
 
 
 def read_records_mgef(db):
-    from mwfiles import DATA_FILES, read_records
-    return read_records(DATA_FILES / "Morrowind.esm", {"MGEF"})
+    from mwfiles import read_game
+    return read_game({"MGEF"})
 
 
 def write_piece(path, meshes):

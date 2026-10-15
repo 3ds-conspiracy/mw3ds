@@ -425,6 +425,58 @@ std::vector<KeywordMatch> dialogueFindKeywords(const std::string& text, const st
 	return out;
 }
 
+// A "@name#" link's topic: pseudo asterisks (\x7f) at its end stand for asterisks in the topic's name
+static std::string explicitTopic(const GameData& g, const std::string& name, std::string* shown)
+{
+	std::string s = name;
+	size_t stars = 0;
+	while (!s.empty() && s.back() == '\x7f')
+	{
+		s.pop_back();
+		stars++;
+	}
+	if (shown)
+		*shown = s;
+	return lower(g.topicStandardForm(s + std::string(stars, '*')));
+}
+
+HyperText dialogueHyperText(const GameData& g, const std::string& raw, const std::vector<std::string>& keywords,
+	const std::vector<std::string>& ids)
+{
+	HyperText h;
+	auto scan = [&](const std::string& part) {
+		for (auto& m : dialogueFindKeywords(part, keywords))
+			h.links.push_back({ h.text.size() + m.begin, h.text.size() + m.end, m.keyword });
+		h.text += part;
+	};
+	size_t pos = 0;
+	for (;;)
+	{
+		size_t at = raw.find('@', pos);
+		size_t end = at == std::string::npos ? at : raw.find('#', at);
+		if (end == std::string::npos)
+		{
+			if (pos < raw.size())
+				scan(raw.substr(pos));
+			break;
+		}
+		if (at != pos)
+			scan(raw.substr(pos, at - pos));
+		std::string shown;
+		std::string id = explicitTopic(g, raw.substr(at + 1, end - at - 1), &shown);
+		size_t begin = h.text.size();
+		h.text += shown;
+		for (size_t k = 0; k < ids.size(); k++)
+			if (ids[k] == id)
+			{
+				h.links.push_back({ begin, h.text.size(), (int)k });
+				break;
+			}
+		pos = end + 1;
+	}
+	return h;
+}
+
 // Topics named in what someone says become known, when the speaker has something to say about them
 // (OpenMW's addTopicsFromText; the names searched are every dialogue's, so a greeting or a voice
 // name can take a stretch of text that a shorter topic would otherwise have)
@@ -469,7 +521,7 @@ static std::vector<const Topic*> topicsNamedIn(World& w, const std::string& text
 		named.clear();
 		for (auto& t : w.game.topics)
 		{
-			names.push_back(t.lower);
+			names.push_back(lower(w.game.topicKeyword(t.name)));
 			named.push_back(&t);
 		}
 	}
@@ -491,9 +543,7 @@ static std::vector<const Topic*> topicsNamedIn(World& w, const std::string& text
 		}
 		if (at != pos)
 			scan(text.substr(pos, at - pos));
-		std::string link = lower(text.substr(at + 1, end - at - 1));
-		while (!link.empty() && link.back() == '\x7f')
-			link.pop_back();                      // (a link's pseudo asterisks)
+		std::string link = explicitTopic(w.game, text.substr(at + 1, end - at - 1), nullptr);
 		for (const Topic* t : named)
 			if (t->lower == link)
 			{

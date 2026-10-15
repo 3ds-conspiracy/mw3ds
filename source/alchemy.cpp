@@ -197,7 +197,7 @@ bool Session::brewPotion()
 	if (shared.empty() || factor < rand() % 100)
 	{
 		playSound(-1, "potion fail");
-		notify("Your potion failed.");
+		notify(w.game.gmst("snotifymessage8", "Your potion failed."));
 		logf("alchemy: failed (%zu shared effects, factor %.0f)", shared.size(), factor);
 		return false;
 	}
@@ -247,7 +247,7 @@ bool Session::brewPotion()
 	}
 	if (potion.effects.empty())
 	{
-		notify("Your potion failed.");
+		notify(w.game.gmst("snotifymessage8", "Your potion failed."));
 		return false;
 	}
 	potion.name = effectLabel(potion.effects[0].effect, potion.effects[0].skill, potion.effects[0].attribute) + " Potion";

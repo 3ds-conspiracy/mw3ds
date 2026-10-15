@@ -20,7 +20,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path[:0] = [str(Path(__file__).parent), str(Path(__file__).resolve().parents[1] / "convert")]
-from mwfiles import DATA_FILES, Archives, read_records
+from mwfiles import DATA_FILES, Archives, read_game
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -42,7 +42,7 @@ def main():
 
     # ---- GMSTs
     gmsts = {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"GMST"}):
+    for r in read_game({"GMST"}):
         gmsts[r.id] = r
     unused = sorted(g for g in gmsts if g.lower() not in text)
     groups = defaultdict(list)
@@ -74,7 +74,7 @@ def main():
 
     # ---- record subrecords
     per_type = defaultdict(lambda: defaultdict(int))
-    for r in read_records(DATA_FILES / "Morrowind.esm", None):
+    for r in read_game(None):
         for tag, _ in r.subs:
             per_type[r.tag][tag] += 1
     out.append("## Record fields (subrecords) the converter never names")

@@ -21,7 +21,7 @@ from pathlib import Path
 
 import numpy as np
 
-from mwfiles import OVERLAYS, cell_refs
+from mwfiles import OVERLAYS, cell_refs, content_key, fixed_utf8, safe_name
 from meshes import (FLAG_BLEND, FLAG_DECAL, FLAG_SCROLL, FLAG_TEST, FLAG_TWO_SIDED,
                     collision_triangles, extract_shapes, find_node, ref_matrix)
 from nif import Nif
@@ -295,8 +295,8 @@ def write_cell(path, info, textures, batches, collision, actors, door_meshes, sk
         ranges = write_collision(f, *collision, ranges=col_ranges)
         f.write(struct.pack("<I", len(actors)))
         for a in actors:
-            f.write(a["id"].encode("latin-1")[:31].ljust(32, b"\0"))
-            f.write(a["name"].encode("latin-1")[:31].ljust(32, b"\0"))
+            f.write(fixed_utf8(a["id"], 32))
+            f.write(fixed_utf8(a["name"], 32))
             f.write(struct.pack("<6f", *a["pos"], a["yaw"], ACTOR_RADIUS, ACTOR_HEIGHT))
         f.write(struct.pack("<I", len(door_meshes)))
         for d in door_meshes:
@@ -382,7 +382,7 @@ def merge_small_groups(groups):
 
 
 def cell_file_name(cell_name):
-    return re.sub(r"[^a-z0-9_]", "_", cell_name.lower())
+    return safe_name(cell_name)
 
 
 # ---- exterior extras ----
@@ -584,8 +584,9 @@ class Converter:
         code = b"".join((tools / f).read_bytes() for f in ("convert_cell.py", "meshes.py", "nif.py", "actors.py",
                         "npc.py", "creature.py", "terrain.py", "textures.py", "mwfiles.py",
                         "particles.py"))
-        # (and the mod folders laid over Data Files: another overlay is other meshes)
-        code += ";".join(str(d) for d in OVERLAYS).encode()
+        # (and the mod folders laid over Data Files: another overlay is other meshes; and the plugins: a plugin's
+        # record can give an object another mesh without touching the cell)
+        code += ";".join(str(d) for d in OVERLAYS).encode() + content_key().encode()
         self.code_hash = hashlib.sha1(code).hexdigest()
         # Skeleton indices are written into .act files: keep the order of earlier runs
         registry = self.cache_dir / "skeletons.json"
@@ -598,7 +599,7 @@ class Converter:
 
     @staticmethod
     def library_path(rec_id):
-        name = re.sub(r"[^a-z0-9_]", "_", rec_id) + ".aml"
+        name = safe_name(rec_id) + ".aml"
         return f"cells/actors/{shard_dir(name)}/{name}"
 
     def actor_library(self, rec_id, shapes, skeleton):

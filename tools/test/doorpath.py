@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "convert"))
-from mwfiles import DATA_FILES, cell_refs, read_records  # noqa: E402
+from mwfiles import cell_refs, read_game  # noqa: E402
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
     interiors = {}
     doors = collections.defaultdict(list)       # interior cell -> [(dest_cell_lower_or_'', dest pos)]
     ext_in = collections.defaultdict(list)      # interior -> [(door pos in exterior cell, exterior cell id)]
-    cells = list(read_records(DATA_FILES / "Morrowind.esm", {"CELL"}))
+    cells = list(read_game({"CELL"}))
     for c in cells:
         d = c.get("DATA")
         if struct.unpack("<I", d[:4])[0] & 1:

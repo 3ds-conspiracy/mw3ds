@@ -85,8 +85,13 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 	playerSpawn(w.player, scene, w.here().spawn, w.here().yaw, 0.0f);
 	// Waking in the prison ship's hold (the level's start cell, where CharGen's PositionCell puts the
 	// player): Jiub's script asks the name, the guards' scripts bring the race menu and the way out.
-	// A level built before the ship was in (start cell: the census office) still opens both menus
-	if (lower(w.cellName()).find("prison ship") == std::string::npos)
+	// A level built before the ship was in (start cell: the census office) still opens both menus. The ship is
+	// known by Jiub ("chargen name") being there: a translated Morrowind.esm renames the cell, not its people
+	bool ship = false;
+	for (auto& r : w.refs)
+		if (r.cell == w.current && r.idLower == std::string("chargen name"))
+			ship = true;
+	if (!ship)
 	{
 		pendingMenus.push_back(SMENU_NAME);
 		pendingMenus.push_back(SMENU_RACE);
@@ -1683,7 +1688,7 @@ void Session::useDoor(int ref)
 		int dest = r.destUnconverted ? -1 : r.destHasGrid ? w.gridCell(r.destGrid[0], r.destGrid[1]) : w.cellIndex(r.destCell);
 		if (dest < 0 && !r.destEnd)
 		{
-			notify(r.destCell + " is not converted yet.");
+			notify(w.game.cellLabel(r.destCell) + " is not converted yet.");
 			return;
 		}
 		if (r.obj && !r.obj->openSound.empty())
@@ -1754,7 +1759,7 @@ std::string Session::targetLabel(int ref)
 	if (r.actor >= 0)
 		name = w.game.actors[r.actor].name + (r.dead ? " (dead)" : "");
 	if (r.type == "DOOR" && r.hasDest && lower(r.destCell) != lower(w.cellName()))
-		name += " - " + r.destCell;
+		name += " - " + w.game.cellLabel(r.destCell);
 	if (r.lockLevel > 0)
 		name += " - Locked";
 	if (r.count > 1)

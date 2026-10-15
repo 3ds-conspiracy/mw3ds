@@ -23,7 +23,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path[:0] = [str(Path(__file__).parent), str(Path(__file__).resolve().parents[1] / "convert")]
-from mwfiles import DATA_FILES, cell_refs, load_db, read_records  # noqa: E402
+from mwfiles import cell_refs, load_db, read_game  # noqa: E402
 from questcheck import JOURNAL_SET  # noqa: E402
 from questrun import ROOT, LOG, choice_parents, conds, token  # noqa: E402
 import struct  # noqa: E402
@@ -158,7 +158,7 @@ def main():
         return
 
     glob_default = {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"GLOB"}):
+    for r in read_game({"GLOB"}):
         fl = r.get("FLTV")
         glob_default[r.id.lower()] = struct.unpack("<f", fl[:4])[0] if fl and len(fl) >= 4 else 0.0
 

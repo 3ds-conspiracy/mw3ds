@@ -74,6 +74,7 @@ UiGridItem gridItem(const Object* o, const std::string& id, int count, bool equi
 
 // Morrowind's inventory filters: All, Weapon, Apparel, Magic, Misc
 const char* kTabs[5] = { "All", "Weapon", "Apparel", "Magic", "Misc" };
+const char* kTabKeys[5] = { "salltab", "sweapontab", "sappareltab", "smagictab", "smisctab" };
 
 bool inTab(const Object* o, int tab)
 {
@@ -220,7 +221,7 @@ void Session::drawTop()
 		float full = w.game.gmstf("fholdbreathtime", 20.0f);
 		uiRect(150, 8, 100, 8, C2D_Color32(0, 0, 0, 150));
 		uiRect(151, 9, 98 * fmaxf(0.0f, breath) / fmaxf(1.0f, full), 6, C2D_Color32(120, 170, 230, 220));
-		uiTextCentered(200, 18, 0.4f, breath > 0.0f ? col::text : col::health, breath > 0.0f ? "Breath" : "Drowning!");
+		uiTextCentered(200, 18, 0.4f, breath > 0.0f ? col::text : col::health, breath > 0.0f ? w.game.gmstLabel("sbreath", "Breath") : "Drowning!");
 	}
 	if (fade > 0.0f)
 		uiRect(0, 0, 400, 240, C2D_Color32(0, 0, 0, (u8)(fminf(fade, 1.0f) * 255)));
@@ -344,7 +345,7 @@ void Session::drawHud()
 	if (!(wo && uiIcon(wo->iconIx, 8, by + 2)))
 		uiTextCentered(24, by + 18 - uiLineHeight(0.36f) / 2, 0.36f, col::textDim, wo ? wo->name.str().substr(0, 3) : "Fist");
 	uiFrame(6, by, 36, 36);
-	uiText(48, by + 1, 0.42f, col::text, wo ? wo->name : "Hand-to-hand");
+	uiText(48, by + 1, 0.42f, col::text, wo ? wo->name.str() : w.game.gmstLabel("sskillhandtohand", "Hand-to-hand"));
 	std::string spell = s.selectedSpell.empty() ? "" : w.game.spells[s.selectedSpell].name;
 	uiText(48, by + 18, 0.42f, spell.empty() ? col::textDim : col::link, spell.empty() ? "No spell" : spell);
 
@@ -366,7 +367,8 @@ void Session::drawHud()
 	drawMapView(186, 26, 128, 128, 1.0f, false, w.current >= 0 && w.cells[w.current].interior);
 	if (mapOk && uiHit(186, 26, 128, 128))
 		openScreen(SCR_MAP);
-	uiTextCentered(250, 155, 0.38f, col::textDim, w.cellName().size() > 26 ? w.cellName().substr(0, 25) + "..." : w.cellName());
+	const std::string& here = w.game.cellLabel(w.cellName());
+	uiTextCentered(250, 155, 0.38f, col::textDim, here.size() > 26 ? here.substr(0, 25) + "..." : here);
 
 	if (target >= 0)
 	{
@@ -396,7 +398,7 @@ void Session::drawHud()
 	// the bounty on the minimap's foot, the frame rate in its top corner (the strip took their place)
 	if (w.bounty > 0)
 	{
-		std::string b = "Bounty " + std::to_string(w.bounty);
+		std::string b = w.game.gmstLabel("sbounty", "Bounty") + " " + std::to_string(w.bounty);
 		uiRect(312 - uiTextWidth(b, 0.4f) - 4, 140, uiTextWidth(b, 0.4f) + 4, 13, C2D_Color32(0, 0, 0, 170));
 		uiTextRight(311, 140, 0.4f, col::health, b);
 	}
@@ -406,13 +408,13 @@ void Session::drawHud()
 	bool inv = w.menusEnabled & MENU_INVENTORY, stats = w.menusEnabled & MENU_STATS;
 	if (uiButton(2, 208, 51, 28, "Items", false, inv))
 		openScreen(SCR_INVENTORY);
-	if (uiButton(55, 208, 51, 28, "Magic", false, (w.menusEnabled & MENU_MAGIC) || !w.game.chargen))
+	if (uiButton(55, 208, 51, 28, w.game.gmstLabel("smagicmenu", "Magic"), false, (w.menusEnabled & MENU_MAGIC) || !w.game.chargen))
 		openScreen(SCR_MAGIC);
-	if (uiButton(108, 208, 51, 28, "Journal", false, !w.journal.empty()))
+	if (uiButton(108, 208, 51, 28, w.game.gmstLabel("sjournal", "Journal"), false, !w.journal.empty()))
 		openScreen(SCR_JOURNAL);
-	if (uiButton(161, 208, 51, 28, "Map", false, !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen)))
+	if (uiButton(161, 208, 51, 28, w.game.gmstLabel("smap", "Map"), false, !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen)))
 		openScreen(SCR_MAP);
-	if (uiButton(214, 208, 51, 28, "Stats", false, stats))
+	if (uiButton(214, 208, 51, 28, w.game.gmstLabel("sstats", "Stats"), false, stats))
 		openScreen(SCR_STATS);
 	if (uiButton(267, 208, 51, 28, "Saves", false, !wantName))
 	{
@@ -435,7 +437,7 @@ void Session::toggleGameMenu()
 
 void Session::drawGameMenu()
 {
-	header("Menu", w.cellName());
+	header("Menu", w.game.cellLabel(w.cellName()));
 	// Save and quit: "Saving..." on screen first, then the save (a long campaign's takes seconds: it looked frozen),
 	// then "Closing..." for the quit itself: a screen that stays says which of the two it is stuck in. A save that
 	// failed doesn't quit (its notice shows, the menu stays)
@@ -447,7 +449,7 @@ void Session::drawGameMenu()
 	}
 	if (quitSaving > 0)
 	{
-		uiTextCentered(160, 110, 0.6f, col::text, "Saving...");
+		uiTextCentered(160, 110, 0.6f, col::text, w.game.gmstLabel("snotifymessage4", "Saving..."));
 		if (++quitSaving > 2)
 			quitSaving = save() ? -1 : 0;
 		return;
@@ -503,13 +505,13 @@ void Session::drawOptions()
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_RIGHT)) focus = focus == 5 ? 3 : focus + 1;
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_LEFT)) focus = focus == 3 ? 5 : focus - 1;
 	bool changed = false;
-	const char* names[3] = { "Difficulty", "Effects volume", "Music volume" };
+	const std::string names[3] = { w.game.gmstLabel("sdifficulty", "Difficulty"), "Effects volume", "Music volume" };
 	int* vals[3] = { &difficulty, &effectsVolume, &musicVolume };
 	const int lo[3] = { -100, 0, 0 }, hi[3] = { 100, 100, 100 }, step[3] = { 10, 10, 10 };
 	for (int i = 0; i < 3; i++)
 	{
 		float y = 28 + i * 38;
-		uiText(20, y, 0.45f, i == focus ? col::header : col::text, names[i] + std::string(": ") + std::to_string(*vals[i]));
+		uiText(20, y, 0.45f, i == focus ? col::header : col::text, names[i] + ": " + std::to_string(*vals[i]));
 		float bx = 20, bw = 280, by = y + 18;
 		uiRect(bx, by, bw, 8, col::panel);
 		uiFrame(bx, by, bw, 8);
@@ -575,9 +577,9 @@ void Session::drawOptions()
 	}
 	// Controls, Credits, Close (focus 7..9: D-pad left / right between them)
 	int b = -1;
-	const char* row[3] = { "Controls", "Credits", "Close" };
+	const std::string row[3] = { w.game.gmstLabel("scontrols", "Controls"), "Credits", w.game.gmstLabel("sclose", "Close") };
 	for (int i = 0; i < 3; i++)
-		if (uiButton(4 + i * 106, 208, 100, 28, i == 2 ? w.game.gmst("sclose", "Close") : row[i], focus == 7 + i)
+		if (uiButton(4 + i * 106, 208, 100, 28, row[i], focus == 7 + i)
 			|| (focus == 7 + i && (in.down & KEY_A)))
 			b = i;
 	if (focus >= 7 && focus <= 9 && (in.down & KEY_RIGHT)) focus = focus == 9 ? 7 : focus + 1;
@@ -835,11 +837,11 @@ void Session::drawSaves()
 			// (a solid box over the list, and its two buttons inside it, not across the whole screen as a button row)
 			uiRect(20, 70, 280, 100, C2D_Color32(0, 0, 0, 255));
 			uiPanel(20, 70, 280, 100);
-			uiTextBox(scroll, 26, 76, 268, 50, "Delete " + saveList[list.selected].title + "?", 0.5f, false);
+			uiTextBox(scroll, 26, 76, 268, 50, w.game.gmstLabel("sdelete", "Delete") + " " + saveList[list.selected].title + "?", 0.5f, false);
 			if (uiIn().down & (KEY_LEFT | KEY_RIGHT))
 				focus = 1 - focus;
 			int yn = -1;
-			static const char* kAnswer[2] = { "Yes", "No" };
+			const std::string kAnswer[2] = { w.game.gmstLabel("syes", "Yes"), w.game.gmstLabel("sno", "No") };
 			for (int i = 0; i < 2; i++)
 				if (uiButton(34 + i * 132, 132, 120, 28, kAnswer[i], i == focus))
 					yn = i;
@@ -861,7 +863,8 @@ void Session::drawSaves()
 		}
 		return;
 	}
-	int b = buttonRow({ canSave ? "New save" : playerDead ? "(dead)" : "(finish chargen)", "Load", "Delete", "Back" }, focus);
+	int b = buttonRow({ canSave ? "New save" : playerDead ? "(dead)" : "(finish chargen)", "Load", w.game.gmstLabel("sdelete", "Delete"),
+		w.game.gmstLabel("sback", "Back") }, focus);
 	if (b == 2 && canDelete)
 	{
 		deletingSave = true;
@@ -986,11 +989,11 @@ std::string Session::effectLine(const SpellEffect& e, bool showRange)
 	char buf[64];
 	if (!(flags & 0x8) && (e.min || e.max))
 	{
-		const char* unit = e.max == 1 ? " pt" : " pts";
+		std::string unit = " " + (e.max == 1 ? w.game.gmstLabel("spoint", "pt") : w.game.gmstLabel("spoints", "pts"));
 		if (e.min == e.max)
-			snprintf(buf, sizeof(buf), " %d%s", e.min, unit);
+			snprintf(buf, sizeof(buf), " %d%s", e.min, unit.c_str());
 		else
-			snprintf(buf, sizeof(buf), " %d to %d%s", e.min, e.max, unit);
+			snprintf(buf, sizeof(buf), " %d %s %d%s", e.min, w.game.gmstLabel("sto", "to").c_str(), e.max, unit.c_str());
 		s += buf;
 	}
 	if (!(flags & 0x4) && e.duration > 1)
@@ -1013,9 +1016,12 @@ void Session::spellTip(const SpellDef& sp)
 	tip.clear();
 	tip.emplace_back(sp.name, col::header);
 	static const char* kSchool[6] = { "Alteration", "Conjuration", "Destruction", "Illusion", "Mysticism", "Restoration" };
+	static const char* kSchoolKey[6] = { "sschoolalteration", "sschoolconjuration", "sschooldestruction", "sschoolillusion",
+		"sschoolmysticism", "sschoolrestoration" };
 	int school = spellSchool(sp);
 	if (sp.type == 0 && school >= 0 && school < 6)
-		tip.emplace_back(std::string("School: ") + kSchool[school], col::textDim);
+		tip.emplace_back(w.game.gmstLabel("sschool", "School") + ": " + w.game.gmstLabel(kSchoolKey[school], kSchool[school]),
+			col::textDim);
 	for (auto& e : sp.effects)
 		tip.emplace_back(effectLine(e, true), col::text);
 }
@@ -1087,7 +1093,7 @@ void Session::itemTip(const Object* o, const InventoryItem* it)
 		for (auto& a : w.game.actors)
 			if (lower(a.id) == it->soul)
 				soul = a.name;
-		tip.emplace_back("Soul: " + soul, col::text);
+		tip.emplace_back(w.game.gmstLabel("ssoulgem", "Soul") + ": " + soul, col::text);
 	}
 	// potions: their effects; ingredients: as many as Alchemy reveals (fWortChanceValue each)
 	if (o->type == "ALCH")
@@ -1108,8 +1114,9 @@ void Session::itemTip(const Object* o, const InventoryItem* it)
 	{
 		const SpellDef& sp = en->second;
 		static const char* kHow[4] = { "Cast Once", "Cast When Strikes", "Cast When Used", "Constant Effect" };
+		static const char* kHowKey[4] = { "sitemcastonce", "sitemcastwhenstrikes", "sitemcastwhenused", "sitemcastconstant" };
 		int t = sp.type - ENCH_ONCE;
-		tip.emplace_back(t >= 0 && t < 4 ? kHow[t] : "Enchanted", col::header);
+		tip.emplace_back(t >= 0 && t < 4 ? w.game.gmstLabel(kHowKey[t], kHow[t]) : "Enchanted", col::header);
 		for (auto& e : sp.effects)
 			tip.emplace_back(effectLine(e, t != 3), col::text);
 		if (t == 1 || t == 2)

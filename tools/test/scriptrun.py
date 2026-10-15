@@ -22,7 +22,7 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path[:0] = [str(Path(__file__).parent), str(Path(__file__).resolve().parents[1] / "convert")]
-from mwfiles import DATA_FILES, cell_refs, load_db, read_records  # noqa: E402
+from mwfiles import cell_refs, load_db, read_game  # noqa: E402
 import mwscript  # noqa: E402
 from questrun import meet, token, exact  # noqa: E402
 
@@ -90,7 +90,7 @@ def main():
     want = re.compile(args.filter, re.I)
     db = load_db()
     globals_ = {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"GLOB"}):
+    for r in read_game({"GLOB"}):
         globals_[r.id.lower()] = (r.zstr("FNAM") or "f")
     quests = {d["name"].lower() for d in db["dialogue"] if d["type"] == 4}
     dialogue_set = set()

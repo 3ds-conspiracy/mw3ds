@@ -16,5 +16,6 @@ struct Object;
 struct UiGridItem;
 UiGridItem gridItem(const Object* o, const std::string& id, int count, bool equipped);
 extern const char* kTabs[5];                 // inventory filters: All, Weapon, Apparel, Magic, Misc
+extern const char* kTabKeys[5];              // their GMSTs (sAllTab ...)
 bool inTab(const Object* o, int tab);
 void itemInfo(const Object* o, float y, const std::string& extra = "");   // name, weight and value

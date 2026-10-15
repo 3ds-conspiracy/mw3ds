@@ -354,7 +354,7 @@ void Session::drawInventory()
 	if (in.down & KEY_L) tab = (tab + 4) % 5;
 	if (in.down & KEY_R) tab = (tab + 1) % 5;
 	for (int t = 0; t < 5; t++)
-		if (uiButton(4 + t * 50, 24, 48, 18, kTabs[t], t == tab))
+		if (uiButton(4 + t * 50, 24, 48, 18, w.game.gmstLabel(kTabKeys[t], kTabs[t]), t == tab))
 			tab = t;
 	if (tab != invTab)
 	{
@@ -401,16 +401,17 @@ void Session::drawInventory()
 	std::string soulNote;
 	if (sel >= 0 && !w.inventory[sel].soul.empty())
 	{
-		soulNote = "Soul: " + w.inventory[sel].soul;
+		soulNote = w.game.gmstLabel("ssoulgem", "Soul") + ": " + w.inventory[sel].soul;
 		for (auto& a : w.game.actors)
 			if (lower(a.id) == w.inventory[sel].soul)
-				soulNote = "Soul: " + a.name;
+				soulNote = w.game.gmstLabel("ssoulgem", "Soul") + ": " + a.name;
 	}
 	itemInfo(o, 191, soulNote);
 	if (sel >= 0)
 		itemTip(o, &w.inventory[sel]);
 
 	std::vector<std::string> labels;
+	const std::string useLabel = w.game.gmstLabel("suse", "Use");
 	if (o)
 	{
 		if (o->type == "BOOK")
@@ -418,12 +419,12 @@ void Session::drawInventory()
 		else if (!o->effects.empty() && (o->type == "ALCH" || o->type == "INGR"))
 			labels.push_back(o->type == "ALCH" ? "Drink" : "Eat");
 		else if (o->type == "APPA" || o->type == "REPA" || !w.inventory[sel].soul.empty())
-			labels.push_back("Use");
+			labels.push_back(useLabel);
 		if (!w.inventory[sel].soul.empty())
 			labels.push_back("Recharge");
 		else if (o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH"
 			|| o->type == "LOCK" || o->type == "PROB")
-			labels.push_back(w.inventory[sel].equipped ? "Unequip" : "Equip");
+			labels.push_back(w.inventory[sel].equipped ? w.game.gmstLabel("sunequip", "Unequip") : w.game.gmstLabel("sequip", "Equip"));
 	}
 	if (o)
 	{
@@ -467,17 +468,17 @@ void Session::drawInventory()
 			screen = SCR_RECHARGE;
 			playSound(-1, "Menu Click");
 		}
-		else if (labels[b] == "Use" && o->type == "REPA")
+		else if (labels[b] == useLabel && o->type == "REPA")
 		{
 			openRepair(-1, sel);
 			playSound(-1, "Menu Click");
 		}
-		else if (labels[b] == "Use" && !w.inventory[sel].soul.empty())
+		else if (labels[b] == useLabel && !w.inventory[sel].soul.empty())
 		{
 			openEnchanting(-1);
 			playSound(-1, "Menu Click");
 		}
-		else if (labels[b] == "Use")
+		else if (labels[b] == useLabel)
 		{
 			alchemySlots.clear();
 			list2 = UiList();

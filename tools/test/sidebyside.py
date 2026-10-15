@@ -201,8 +201,8 @@ def vfx_model(static_id):
     global _statics
     if _statics is None:
         sys.path.insert(0, str(ROOT / "tools" / "convert"))
-        from mwfiles import DATA_FILES, read_records
-        _statics = {r.id.lower(): r.zstr("MODL") for r in read_records(DATA_FILES / "Morrowind.esm", {"STAT"})}
+        from mwfiles import read_game
+        _statics = {r.id.lower(): r.zstr("MODL") for r in read_game({"STAT"})}
     m = _statics.get(static_id.lower())
     if not m:
         # (a few visuals the effects name aren't STAT records)

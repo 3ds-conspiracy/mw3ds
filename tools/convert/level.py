@@ -41,7 +41,7 @@ from distant import build_distant
 from creature import resolve_leveled
 from firstperson import FirstPerson
 from particles import build_pieces
-from mwfiles import DATA_FILES, Archives, cell_refs, load_db, read_records
+from mwfiles import CODEC, DATA_FILES, MASTER, Archives, cell_refs, load_db, read_game, safe_name, text
 from terrain import CELL_SIZE
 from terrain import Terrain
 from worldmap import build_map, town_labels
@@ -98,8 +98,7 @@ WEATHER_NAMES = ["Clear", "Cloudy", "Foggy", "Overcast", "Rain", "Thunderstorm",
 
 
 def snd_name(path):
-    stem = re.sub(r"\.[^.]+$", "", path.lower().replace("/", "\\"))
-    return re.sub(r"[^a-z0-9_]", "_", stem) + ".snd"
+    return safe_name(re.sub(r"\.[^.]+$", "", path.lower().replace("/", "\\"))) + ".snd"
 
 
 def convert_sound(arch, path, out_dir, rate=RATE, shard=False):
@@ -145,13 +144,13 @@ def ref_owners(cell, leveled=()):
             cur["deleted"] = True
         elif tag in ("ANAM", "BNAM", "CNAM"):
             key = {"ANAM": "owner", "BNAM": "oglob", "CNAM": "ofac"}[tag]
-            cur["own"][key] = d.split(bytes(1), 1)[0].decode("latin-1").lower()
+            cur["own"][key] = text(d).lower()
         elif tag == "INDX":
             cur["own"]["orank"] = struct.unpack("<i", d)[0]
         elif tag == "TNAM":
-            cur["own"]["trap"] = d.split(bytes(1), 1)[0].decode("latin-1").lower()     # trap spell
+            cur["own"]["trap"] = text(d).lower()     # trap spell
         elif tag == "NAME":
-            cur["name"] = d.split(bytes(1), 1)[0].decode("latin-1").lower()
+            cur["name"] = text(d).lower()
     return [dict(r["own"], **({"lev": r["name"]} if leveled and r.get("name") in leveled else {}))
             for r in refs if r["pos"] and not r["deleted"]]
 
@@ -179,7 +178,79 @@ def finite(x):
 
 def read_ini():
     path = DATA_FILES.parent / "Morrowind.ini"
-    return path.read_text(encoding="cp1252", errors="replace") if path.exists() else ""
+    return path.read_text(encoding=CODEC, errors="replace") if path.exists() else ""
+
+
+def chargen_cells(db):
+    """Where character creation happens, found by who is there (a translation renames cells, not IDs): the ship
+    Jiub ("chargen name") wakes the player on, Socucius Ergalla's ("chargen class") office, and the town that
+    office's name starts with. The English names when they can't be found."""
+    found = {}
+    for name, rec in db["CELL"].items():
+        if isinstance(name, str):
+            for r in cell_refs(rec):
+                k = r["id"].lower()
+                if k in ("chargen name", "chargen class"):
+                    found.setdefault(k, name)
+    start, office = found.get("chargen name", START_CELL), found.get("chargen class", OFFICE_CELL)
+    return start, office, office.split(",")[0].strip() if "," in office else TOWN
+
+
+def plugin_script_report(db):
+    """Per plugin: the script functions its scripts and dialogue results call that the engine doesn't run (or runs
+    as a no-op), and scripts that don't compile, so a player sees why a mod half works. Lines for the summary."""
+    from mwfiles import load_order, read_records
+    from mwscript import STUBS, ScriptError, called, compile_script, compile_snippet, engine_functions
+    have, globs, out = engine_functions(), set(db["GLOB"]), []
+    for path in load_order()[1:]:
+        used, failed = {}, []
+        for r in read_records(path, {"SCPT", "INFO"}):
+            src = r.zstr("SCTX") if r.tag == "SCPT" else r.zstr("BNAM")
+            if not src or not src.strip():
+                continue
+            name = r.zstr("SCHD") if r.tag == "SCPT" else "result " + (r.zstr("INAM") or "")
+            found = set()
+            try:
+                called(compile_script(src, globs) if r.tag == "SCPT" else compile_snippet(src, globs), found)
+            except (ScriptError, IndexError) as e:
+                failed.append(f"{name}: {e}")
+            for f in found:
+                used.setdefault(f, name)
+        missing = sorted(f for f in used if f not in have)
+        stubbed = sorted(f for f in used if f in have and f in STUBS)
+        line = f"plugin {path.name}: {len(used)} script functions"
+        line += f"; not run by the engine: {', '.join(missing)}" if missing else "; all run by the engine"
+        if stubbed:
+            line += f"; accepted without effect: {', '.join(stubbed)}"
+        if failed:
+            line += f"; {len(failed)} scripts don't compile (first: {failed[0]})"
+        out.append(line)
+    return out
+
+
+def json_text(value):
+    """Compact JSON as UTF-8 bytes. Text outside ASCII stays as it is (cJSON reads UTF-8): as \\u escapes a Cyrillic
+    letter took 6 bytes instead of 2, and the 3DS holds a whole part while it parses it."""
+    return json.dumps(value, separators=(",", ":"), allow_nan=False, ensure_ascii=False).encode("utf-8")
+
+
+def translation_files():
+    """A translated release's own files beside Morrowind.esm, as OpenMW reads them (Translation::Storage): lines
+    "key<TAB>value" in the release's code page. Morrowind.cel: cell ID -> name shown; .top: a topic's phrase forms
+    -> the topic ("@form#" links in text); .mrk: topic -> the word that names it in text."""
+    out = {}
+    for ext in ("cel", "top", "mrk"):
+        path = DATA_FILES / f"{Path(MASTER).stem}.{ext}"
+        if not path.is_file():
+            continue
+        table = {}
+        for line in path.read_bytes().decode(CODEC, errors="replace").split("\n"):
+            key, tab, value = line.rstrip("\r").partition("\t")
+            if tab and key and value:
+                table.setdefault(key, value)
+        out[ext] = table
+        print(f"translation: {path.name}, {len(table)} entries")
+    return out
 
 
 def ini_section(ini, name):
@@ -412,6 +483,8 @@ def main():
     arch = Archives()
     ini = read_ini()
     print(f"ESM loaded in {time.time() - t0:.1f}s")
+    global START_CELL, OFFICE_CELL, TOWN
+    START_CELL, OFFICE_CELL, TOWN = chargen_cells(db)
 
     textures = TextureSet(arch, args.max_tex, args.force)
     unshard_cells()              # the converter (and its cache) works on cells/<file>.*
@@ -575,9 +648,9 @@ def main():
                 owned_refs += bool(own)
         elif c["refs"] and owners:
             owner_mismatch.append(c["name"])
-        with open(OUT / "cells" / (c["file"] + ".json"), "w") as f:
+        with open(OUT / "cells" / (c["file"] + ".json"), "w", encoding="utf-8") as f:
             json.dump(dict({"name": c["name"], "refs": c["refs"]}, **({"pathgrid": path} if path else {})), f,
-                      separators=(",", ":"))
+                      separators=(",", ":"), ensure_ascii=False)
 
     print(f"owned objects: {owned_refs}" + (f"; owners not matched in {len(owner_mismatch)} cells: "
           f"{owner_mismatch[:5]}" if owner_mismatch else ""), flush=True)
@@ -650,10 +723,10 @@ def main():
                     for ch in ("Sky", "Fog", "Ambient", "Sun")]}
     # Regions: their weather chances (percent, same order); exterior cells say which region they're in
     game["regions"] = {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"REGN"}):
+    for r in read_game({"REGN"}):
         w = r.get("WEAT") or b""
         # ambient sounds (SNAM: sound id, chance percent): birds, wind, insects
-        amb = [[d[:32].split(b"\0", 1)[0].decode("latin-1").lower(), d[32]] for t, d in r.subs if t == "SNAM" and len(d) >= 33]
+        amb = [[text(d[:32]).lower(), d[32]] for t, d in r.subs if t == "SNAM" and len(d) >= 33]
         game["regions"][r.id.lower()] = {"name": r.zstr("FNAM") or r.id, "chances": list(w),
                                          "sleep": (r.zstr("BNAM") or "").lower(), "ambient": amb}
         for sid, _ in amb:
@@ -665,7 +738,7 @@ def main():
     # level at run time): "all": any entry up to that level (else only the highest such), "none": the
     # chance (percent) of nothing
     game["leveled"] = {}
-    for r in read_records(DATA_FILES / "Morrowind.esm", {"LEVC"}):
+    for r in read_game({"LEVC"}):
         flags = struct.unpack("<i", r.get("DATA"))[0] if r.get("DATA") else 0
         game["leveled"][r.id.lower()] = {"all": flags & 1, "none": (r.get("NNAM") or b"\0")[0],
                                          "e": [[lvl, cid.lower()] for lvl, cid in db["LEVC"].get(r.id.lower(), [])]}
@@ -701,7 +774,7 @@ def main():
             if dc and r.get("dest") and dc.lower() not in entries and r["id"].lower() != "prisonmarker":
                 d = r["dest"]
                 entries[dc.lower()] = f"{dc.lower()}	{d[0]:.0f} {d[1]:.0f} {d[2]:.0f} {d[5]:.3f}"
-    (OUT / "cell_entries.txt").write_text("\n".join(entries.values()) + "\n", encoding="latin-1")
+    (OUT / "cell_entries.txt").write_text("\n".join(entries.values()) + "\n", encoding="utf-8")
     print(f"  cell entries (tests): {len(entries)}")
     # Each actor's mesh library and skeleton: an NPC moved to another cell (PositionCell) is drawn from them
     for a, rec in zip(game["actors"], actor_records):
@@ -722,6 +795,8 @@ def main():
           f"starting kit: {len(game['start_items'])} items + {game['skip_chargen_items']}")
     for e in errors:
         print("  warning:", e)
+    for line in plugin_script_report(db):
+        print(" ", line)
     # First-person arms and held items (before the textures are encoded: they ask for textures too)
     fp = FirstPerson(db, arch, textures, OUT / "fp")
     game["firstperson"] = fp.build(game["objects"])
@@ -730,6 +805,9 @@ def main():
     print(f"first person: {len(game['firstperson']['items'])} items, {fp.write() // 1024} KB")
     game["quiz"] = class_quiz(ini)
     game["levelup"] = ini_section(ini, "Level Up")      # Level2 .. Level20, Default: the level-up texts
+    tr = translation_files()
+    if tr:
+        game["translation"] = tr
     # Every named place outdoors gets a label; the 3DS shows those visited or revealed (ShowMap)
     places = sorted({rec.id for xy, rec in db["CELL"].items() if isinstance(xy, tuple) and rec.id})
     game["map"] = build_map(db, arch, terrain, town_labels(db, places))
@@ -845,18 +923,18 @@ def main():
         if key not in game:
             continue
         value = game.pop(key)
-        text = json.dumps({key: value}, separators=(",", ":"), allow_nan=False)
+        blob = json_text({key: value})
         # Big sections in parts (game_<key>_0.json ..): the 3DS parses one at a time, and a parsed
         # section takes several times its size
-        parts = max(1, len(text) // PART_BYTES + 1) if isinstance(value, (list, dict)) and len(value) > 1 else 1
+        parts = max(1, len(blob) // PART_BYTES + 1) if isinstance(value, (list, dict)) and len(value) > 1 else 1
         if parts == 1:
-            (OUT / f"game_{key}.json").write_text(text)
+            (OUT / f"game_{key}.json").write_bytes(blob)
             split.append(OUT / f"game_{key}.json")
             continue
         items = list(value.items()) if isinstance(value, dict) else value
         chunks, cur, size = [], [], 0
         for item in items:
-            n = len(json.dumps(item, separators=(",", ":"), allow_nan=False))
+            n = len(json_text(item))
             if cur and size + n > PART_BYTES:
                 chunks.append(cur)
                 cur, size = [], 0
@@ -865,13 +943,11 @@ def main():
         chunks.append(cur)
         for k, chunk in enumerate(chunks):
             p = OUT / f"game_{key}_{k}.json"
-            p.write_text(json.dumps({key: dict(chunk) if isinstance(value, dict) else chunk},
-                                    separators=(",", ":"), allow_nan=False))
+            p.write_bytes(json_text({key: dict(chunk) if isinstance(value, dict) else chunk}))
             split.append(p)
     # The largest texture edge: an Old 3DS refuses data converted for a New 3DS (source/main.cpp dataMaxTex)
     game["max_tex"] = args.max_tex
-    with open(OUT / "game.json", "w") as f:
-        json.dump(game, f, separators=(",", ":"), allow_nan=False)
+    (OUT / "game.json").write_bytes(json_text(game))
     sizes = {}
     for p in split:
         name = re.sub(r"_\d+$", "", p.stem[5:])

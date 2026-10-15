@@ -372,15 +372,22 @@ struct GameData
 	FirstPersonDef firstPerson;
 	SkyBodiesDef skyBodies;
 	ArtDef art;
+	// A translation's own files beside its Morrowind.esm (OpenMW's Translation::Storage), keys as the files spell them:
+	// .cel shown cell names, .top topic forms an "@...#" link may use, .mrk the words that link a topic in text
+	std::unordered_map<std::string, std::string> cellNames, phraseForms, topicKeywords;
 
 	const Object* object(const std::string& id) const;
 	u32 enchantGlow(const std::string& itemId) const;   // an enchanted item's glow (0xRRGGBB: its first effect's colour), 0 none
 	const Script* script(const std::string& name) const;
 	std::string gmst(const char* name, const char* fallback = "") const;
+	std::string gmstLabel(const char* name, const char* fallback) const;   // gmst without its edge spaces ("Map ")
 	float gmstf(const char* name, float fallback = 0.0f) const;
 	const Topic* topic(const std::string& name) const;
 	std::string factionName(const std::string& id) const;
 	std::string rankName(const std::string& faction, int rank) const;
+	const std::string& cellLabel(const std::string& cell) const;        // a cell's name as shown (.cel), else its ID
+	const std::string& topicStandardForm(const std::string& phrase) const;   // .top: the topic a phrase form links to
+	const std::string& topicKeyword(const std::string& topic) const;   // .mrk: what names the topic in text
 };
 
 std::string lower(const std::string& s);

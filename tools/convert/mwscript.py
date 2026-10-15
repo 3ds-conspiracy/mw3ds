@@ -13,6 +13,9 @@ The 3DS interprets the tree directly. Node shapes:
 Names and function names are lowercase; local variables are resolved by name at run time.
 """
 import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
 
 TOKEN = re.compile(r'''
     (?P<str>"[^"\n]*"?)
@@ -531,6 +534,39 @@ class Compiler:
             else:
                 body.append(self.statement(toks))
         return {"name": name, "locals": [[t, n] for t, n in self.locals], "body": root}
+
+
+# Functions the engine accepts but that do nothing yet (keep in step with script.cpp's no-op cases): rotating baked
+# objects, weather, UI history, voices
+STUBS = {"rotate", "modregion", "dontsaveobject", "changeweather", "clearinfoactor", "raiserank",
+         "getcurrentweather", "equip", "streammusic", "sethello"}
+
+
+def engine_functions():
+    """The script functions the engine runs, read from its source (source/script.cpp's function table and
+    statFunction's attribute / skill names), so the list follows the code as it grows."""
+    src = (ROOT / "source" / "script.cpp").read_text(encoding="utf-8", errors="replace")
+    names = set(re.findall(r'X\(\w+, "(\w+)"\)', src))
+    # statFunction: Get / Set / Mod + attribute or skill, Get / Set / Mod / ModCurrent + health etc.
+    for table in ("kAttrFuncs", "kSkillFuncs"):
+        m = re.search(table + r"\[\d+\] = \{(.*?)\};", src, re.S)
+        for stat in re.findall(r'"(\w+)"', m.group(1)) if m else []:
+            names |= {"get" + stat, "set" + stat, "mod" + stat}
+    for stat in ("health", "magicka", "fatigue"):
+        names |= {"get" + stat, "set" + stat, "mod" + stat, "modcurrent" + stat}
+    return names
+
+
+def called(node, out):
+    """Adds the names of the functions a compiled tree calls to `out`."""
+    if isinstance(node, list):
+        if len(node) >= 4 and node[0] == "c" and isinstance(node[2], str):
+            out.add(node[2])
+        for x in node:
+            called(x, out)
+    elif isinstance(node, (dict, tuple)):
+        for x in (node.values() if isinstance(node, dict) else node):
+            called(x, out)
 
 
 def compile_script(text, globals_):

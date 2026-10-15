@@ -25,7 +25,7 @@ void Session::drawRepair()
 		screen = SCR_INVENTORY;              // the tool is used up
 		return;
 	}
-	std::string note = repairRef >= 0 ? "Gold " + std::to_string(gold)
+	std::string note = repairRef >= 0 ? w.game.gmstLabel("sgold", "Gold") + " " + std::to_string(gold)
 		: to->name + " (" + std::to_string(tool->condition < 0 ? to->uses : tool->condition) + " uses)";
 	header(w.game.gmst("srepair", "Repair"), note);
 	std::vector<int> items;

@@ -46,6 +46,13 @@ void dialogueRefreshTopics(Dialogue& d, World& w);
 // however the word goes on ("cave rat" in "cave rats"); of overlapping ones the longest. Sorted by position.
 struct KeywordMatch { size_t begin, end; int keyword; };
 std::vector<KeywordMatch> dialogueFindKeywords(const std::string& text, const std::vector<std::string>& keywords);
+// Text as shown, with its links (OpenMW's parseHyperText): "@name#" links the topic it names (a .top phrase form
+// goes to its topic) and shows as name without the marks or its pseudo asterisks; the text between is searched for
+// `keywords`. A link's keyword indexes `keywords` / `ids` (the lowercase topic each keyword stands for).
+struct GameData;
+struct HyperText { std::string text; std::vector<KeywordMatch> links; };
+HyperText dialogueHyperText(const GameData& g, const std::string& raw, const std::vector<std::string>& keywords,
+	const std::vector<std::string>& ids);
 // Who last named a topic without having an answer for it ("" when nobody did): for the tests
 std::string dialogueNamedBy(const std::string& topicLower);
 

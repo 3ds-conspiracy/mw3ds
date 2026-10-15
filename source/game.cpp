@@ -242,6 +242,25 @@ std::string GameData::gmst(const char* name, const char* fallback) const
 	return it == gmstText.end() ? fallback : it->second;
 }
 
+static const std::string& lookupOr(const std::unordered_map<std::string, std::string>& m, const std::string& key)
+{
+	auto it = m.find(key);
+	return it == m.end() ? key : it->second;
+}
+
+const std::string& GameData::cellLabel(const std::string& cell) const { return lookupOr(cellNames, cell); }
+const std::string& GameData::topicStandardForm(const std::string& phrase) const { return lookupOr(phraseForms, phrase); }
+const std::string& GameData::topicKeyword(const std::string& topic) const { return lookupOr(topicKeywords, topic); }
+
+// Interface words come from the game's own strings, as Morrowind's menus take them (a translated
+// Morrowind.esm carries its language here); some hold a space at an edge (sMap "Map ", sStats "Stats ")
+std::string GameData::gmstLabel(const char* name, const char* fallback) const
+{
+	std::string s = gmst(name, fallback);
+	size_t a = s.find_first_not_of(' '), b = s.find_last_not_of(' ');
+	return a == std::string::npos ? fallback : s.substr(a, b - a + 1);
+}
+
 // Numeric GMSTs are read by name a few hundred times a frame (movement, AI, combat, magic): a lowercase copy and a
 // hash lookup each, real time on an Old 3DS. The answer is kept by the name's address (the callers pass string
 // literals; the text is compared too, for any that don't) until the game data changes (g_gameGeneration). Main
@@ -1265,6 +1284,15 @@ bool gameLoad(GameData& g, const char* path)
 	cJSON_ArrayForEach(lu, cJSON_GetObjectItem(root, "levelup"))
 		if (cJSON_IsString(lu))
 			g.levelUpText[lower(lu->string)] = lu->valuestring;
+	if (const cJSON* tr = cJSON_GetObjectItem(root, "translation"))
+	{
+		std::pair<const char*, std::unordered_map<std::string, std::string>*> files[3] = {
+			{ "cel", &g.cellNames }, { "top", &g.phraseForms }, { "mrk", &g.topicKeywords } };
+		for (auto& f : files)
+			cJSON_ArrayForEach(lu, cJSON_GetObjectItem(tr, f.first))
+				if (cJSON_IsString(lu))
+					(*f.second)[lu->string] = lu->valuestring;
+	}
 	cJSON_ArrayForEach(it, arr(root, "quiz"))
 	{
 		QuizQuestion q;

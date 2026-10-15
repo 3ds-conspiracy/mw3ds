@@ -87,7 +87,8 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 	SpellEffect& e = fx[sel];
 	int flags = effectFlags(e.effect);
 	int step = (uiIn().held & KEY_R) ? 10 : 1;
-	if (uiButton(138, cy, 90, 18, std::string("Range: ") + kRangeNames[e.range]))
+	static const char* kRangeKeys[3] = { "srangeself", "srangetouch", "srangetarget" };
+	if (uiButton(138, cy, 90, 18, w.game.gmstLabel("srange", "Range") + ": " + w.game.gmstLabel(kRangeKeys[e.range], kRangeNames[e.range])))
 	{
 		// the next range this effect and this kind of item allow
 		for (int k = 1; k <= 3; k++)
