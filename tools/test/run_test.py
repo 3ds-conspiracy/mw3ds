@@ -53,7 +53,10 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
         old3ds = True
     if native:
         # The game built for the PC (tools/test/native/build.py): same case file, same log lines, no emulator
-        sd_dir = Path(sd) if sd else ROOT / "build" / "native" / "sd"       # --sd: its own SD folder, so runs can go in parallel
+        # --sd: its own SD folder, so runs can go in parallel. --sd, --saves and --exe are relative to the repo, as the
+        # native exe (which runs there) sees them
+        sd_dir = (ROOT / sd).resolve() if sd else ROOT / "build" / "native" / "sd"
+        saves = str((ROOT / saves).resolve()) if saves else ""
         sd_app = sd_dir / "3ds" / "mw3ds"
         # A clean SD folder every run: saves and settings the case before left behind change what the next one starts in
         shutil.rmtree(sd_app, ignore_errors=True)
@@ -72,7 +75,7 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
         env["NATIVE_OLD3DS"] = "1" if old3ds else "0"
         # The software GPU (tools/test/native/native_gpu.cpp) only when something will be looked at: it is slower
         env["NATIVE_DRAW"] = "1" if draw or any(SHOT_STEP.search(ln) for ln in inputs) else "0"
-        exe_path = str((ROOT / exe).resolve()) if exe else str(ROOT / mwtools.NATIVE_EXE)      # (--exe may be relative to the repo)
+        exe_path = str((ROOT / exe).resolve()) if exe else str(ROOT / mwtools.NATIVE_EXE)
         proc = subprocess.Popen([exe_path], cwd=ROOT, env=env, creationflags=mwtools.hidden_flags(),
                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         try:

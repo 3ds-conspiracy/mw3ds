@@ -21,6 +21,26 @@ import run_test
 ROOT = mwtools.ROOT
 
 
+def run_item(it, emu, app, data, start, log, qlogs, par):
+    if it.startswith("test:"):
+        t = it[5:]
+        out = run_test.run(t, start=start, data=data, wait=1500, app=app, emu=emu,
+                           pattern=r"expect: FAIL|drive: FAIL|monitor:|refused|not supported")
+        (par / f"{t}.result").write_text("\n".join(out) + "\n", encoding="utf-8")
+        if log.exists():
+            shutil.copy2(log, par / f"{t}.log")
+        return
+    run_test.run(it, start=start, data=data, wait=2700, app=app, emu=emu, pattern="zzzz")
+    if log.exists():
+        shutil.copy2(log, qlogs / f"{it}.log")
+    emu_log = Path(emu) / "user" / "log" / "azahar_log.txt"
+    if emu_log.exists():
+        shutil.copy2(emu_log, qlogs / f"{it}.emu.log")
+    r = subprocess.run([sys.executable, str(mwtools.TEST_DIR / "questrun.py"), "--check", it,
+                        "--log", str(qlogs / f"{it}.log")], capture_output=True, text=True, errors="replace")
+    (par / f"{it}.result").write_text(r.stdout, encoding="utf-8")
+
+
 def worker(emu, app, data, start, items, lock, par):
     log = Path(emu) / "user" / "sdmc" / "3ds" / "mw3ds" / "log.txt"
     qlogs = ROOT / "build" / "qrun-logs"
@@ -29,21 +49,13 @@ def worker(emu, app, data, start, items, lock, par):
             if not items:
                 return
             it = items.pop(0)
-        if it.startswith("test:"):
-            t = it[5:]
-            out = run_test.run(t, start=start, data=data, wait=1500, app=app, emu=emu,
-                               pattern=r"expect: FAIL|drive: FAIL|monitor:|refused|not supported")
-            (par / f"{t}.result").write_text("\n".join(out) + "\n", encoding="utf-8")
-            shutil.copy2(log, par / f"{t}.log")
-        else:
-            run_test.run(it, start=start, data=data, wait=2700, app=app, emu=emu, pattern="zzzz")
-            shutil.copy2(log, qlogs / f"{it}.log")
-            emu_log = Path(emu) / "user" / "log" / "azahar_log.txt"
-            if emu_log.exists():
-                shutil.copy2(emu_log, qlogs / f"{it}.emu.log")
-            r = subprocess.run([sys.executable, str(mwtools.TEST_DIR / "questrun.py"), "--check", it,
-                                "--log", str(qlogs / f"{it}.log")], capture_output=True, text=True, errors="replace")
-            (par / f"{it}.result").write_text(r.stdout, encoding="utf-8")
+        # One item failing (an emulator that died at boot and wrote no log, ...) must not stop this emulator's worker:
+        # the error goes in the item's result and the worker takes the next one
+        try:
+            run_item(it, emu, app, data, start, log, qlogs, par)
+        except Exception as e:
+            name = it[5:] if it.startswith("test:") else it
+            (par / f"{name}.result").write_text(f"{it}: error: {type(e).__name__}: {e}\n", encoding="utf-8")
         with lock:
             with open(par / "progress.txt", "a", encoding="utf-8") as f:
                 f.write(f"{time.strftime('%H:%M')} {Path(emu).name}: {it} done\n")

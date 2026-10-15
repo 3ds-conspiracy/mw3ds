@@ -73,7 +73,8 @@ def main():
     log = Path(emu) / "user" / "sdmc" / "3ds" / "mw3ds" / "log.txt"
     for t in tests:
         out = run_test.run(t, start=a.start, data=a.data, wait=a.wait, emu=emu, app=a.app, fast=a.fast, old3ds=a.old3ds)
-        shutil.copy2(log, logs / f"{t}.log")
+        if log.exists():            # (an emulator that died at boot wrote none: the verdict line says so)
+            shutil.copy2(log, logs / f"{t}.log")
         if a.chained and chain_save.exists():
             shutil.copy2(chain_save, logs / f"{t}.sav")
         verdict = next((ln for ln in out if ln.startswith("RESULT:")), "")

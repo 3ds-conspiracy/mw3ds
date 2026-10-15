@@ -31,7 +31,8 @@ def main():
     for k in range(a.first, a.to + 1):
         name = f"{a.prefix}-{k}"
         run_test.run(name, data="out/world", start="Seyda Neen", wait=2700, pattern="zzzz", app=str(app))
-        shutil.copy2(log, logs / f"{name}.log")
+        if log.exists():            # (an emulator that died at boot wrote none: the check below then counts nothing)
+            shutil.copy2(log, logs / f"{name}.log")
         emu_log = emu / "user" / "log" / "azahar_log.txt"
         if emu_log.exists():
             shutil.copy2(emu_log, logs / f"{name}.emu.log")

@@ -120,7 +120,7 @@ def hidden_flags():
 def kill_processes_under(directory, names):
     """Stops running programs called one of `names` whose executable lives under `directory`."""
     import psutil
-    base = os.path.normcase(str(Path(directory).resolve()))
+    base = os.path.normcase(str(Path(directory).resolve())) + os.sep      # (azahar must not match azahar-b)
     for p in psutil.process_iter(["name", "exe"]):
         try:
             exe = p.info["exe"]

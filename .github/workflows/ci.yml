@@ -12,6 +12,11 @@ on:
 permissions:
   contents: read
 
+# A newer push to the same pull request or branch cancels the run still going for the older one
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   rules:
     # The contribution rules are for outside contributors: the repository owner's own pull requests skip them.
@@ -26,15 +31,15 @@ jobs:
 
       - name: No game data or builds
         run: |
-          bad=$(git diff --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD \
+          bad=$(git diff --no-renames --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD \
             | grep -Ei '(^|/)(out|out-vanilla|data|mods)/|\.(3dsx|cia|elf|esm|esp|bsa|nif|dds)$|(^|/)\.env$' || true)
           if [ -n "$bad" ]; then echo "Files that must not be committed:"; echo "$bad"; exit 1; fi
 
       - name: Code changes need a new test case
         run: |
           base=origin/${{ github.base_ref }}
-          code=$(git diff --name-only $base...HEAD -- source include tools/convert | wc -l)
-          cases=$(git diff --name-only --diff-filter=A $base...HEAD -- tools/test/cases | wc -l)
+          code=$(git diff --no-renames --name-only $base...HEAD -- source include tools/convert | wc -l)
+          cases=$(git diff --no-renames --name-only --diff-filter=A $base...HEAD -- tools/test/cases | wc -l)
           if [ "$code" -gt 0 ] && [ "$cases" -eq 0 ]; then
             echo "This change touches source/include/tools/convert but adds no case in tools/test/cases/."; exit 1
           fi
@@ -43,7 +48,7 @@ jobs:
         run: |
           base=origin/${{ github.base_ref }}
           fail=0
-          for f in $(git diff --name-only --diff-filter=A $base...HEAD -- tools/test/cases); do
+          for f in $(git diff --no-renames --name-only --diff-filter=A $base...HEAD -- tools/test/cases); do
             if ! grep -q 'EXPECT:' "$f"; then echo "$f: no EXPECT: line"; fail=1; fi
             if grep -q 'ROLL' "$f" && ! grep -q 'SEED:' "$f"; then echo "$f: dice without SEED:"; fail=1; fi
           done
@@ -53,10 +58,11 @@ jobs:
         run: |
           base=origin/${{ github.base_ref }}
           case ",$LABELS," in *,expect-change-approved,*) echo "Approved by the maintainer's label."; exit 0;; esac
-          removed=$(git diff -U0 $base...HEAD -- tools/test/cases | grep -E '^-[^-]' | grep 'EXPECT:' || true)
-          deleted=$(git diff --name-only --diff-filter=D $base...HEAD -- tools/test/cases || true)
+          removed=$(git diff --no-renames -U0 $base...HEAD -- tools/test/cases | grep -E '^-[^-]' | grep 'EXPECT:' || true)
+          deleted=$(git diff --no-renames --name-only --diff-filter=D $base...HEAD -- tools/test/cases || true)
           if [ -n "$removed" ] || [ -n "$deleted" ]; then
-            echo "Existing EXPECT lines or cases were removed or changed:"; echo "$removed"; echo "$deleted"
+            # (--no-renames: a case renamed to zz-open-* or chain-*, which the suite leaves out, counts as deleted)
+            echo "Existing EXPECT lines or cases were removed, changed or renamed:"; echo "$removed"; echo "$deleted"
             echo "Declined unless the approved idea changes that behaviour (the maintainer adds the expect-change-approved label)."
             exit 1
           fi
@@ -109,5 +115,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt ziglang
+      - run: pip install -r requirements.txt ziglang==0.16.0
       - run: python tools/test/native/build.py
