@@ -477,7 +477,8 @@ struct World
 	// weather they rule out is rerolled
 	void changeWeather(const std::string& region, int weather);
 	void modRegion(const std::string& region, const std::vector<int>& chances);
-	float weatherFogScale() const;                // view distance factor: 1 in clear weather
+	float weatherFogScale() const;                // view distance factor: 1 (the weather moves the fog's start)
+	float weatherFogStart() const;                // land fog start / end outdoors (OpenMW: 1 - fog depth); < -1.5 none
 	float weatherColour(int kind, int c) const;   // [sky, fog, ambient, sun] channel now (0..1), blended while changing
 	float weatherFogDepth() const;                // land fog depth now
 	int weatherShown() const;                     // the weather whose rain, storm and loops show (OpenMW's threshold)

@@ -803,21 +803,46 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 		}
 	}
 
+	// A torch held out: the left arm plays the Torch group over and over on its own time (OpenMW's character.cpp:
+	// playBlendedAnimation "torch", Priority_Torch, the left arm only: above weapons, blocks and knockdowns, below deaths)
+	if (sk.torchGroup == -2)
+	{
+		sk.torchGroup = -1;
+		for (size_t g = 0; g < sk.groups.size(); g++)
+			if (strncasecmp(sk.groups[g].name, "Torch", sizeof(sk.groups[g].name)) == 0)
+				sk.torchGroup = (int)g;
+		sk.leftArm.assign(sk.bones.size(), 0);
+		for (size_t i = 0; i < sk.bones.size(); i++)
+			sk.leftArm[i] = strcasecmp(sk.bones[i].name, "Bip01 L Clavicle") == 0
+				|| (sk.bones[i].parent >= 0 && sk.leftArm[sk.bones[i].parent]);
+	}
+	bool dying = !sk.groups.empty() && strncasecmp(sk.groups[a.group].name, "Death", 5) == 0;
+	const AnimGroup* torch = a.torchOut && sk.torchGroup >= 0 && !dying ? &sk.groups[sk.torchGroup] : nullptr;
+	if (torch)
+	{
+		a.torchTime = a.torchTime < torch->start || a.torchTime > torch->stop ? torch->start : a.torchTime + dt;
+		if (a.torchTime >= torch->stop)
+			a.torchTime = torch->start + fmodf(a.torchTime - torch->start, fmaxf(0.01f, torch->stop - torch->start));
+	}
+	else
+		a.torchTime = -1.0f;
+
 	for (size_t i = 0; i < sk.bones.size(); i++)
 	{
 		const SkelBone& b = sk.bones[i];
 		float local[12];
 		memcpy(local, b.rest, sizeof(local));
 		int ti = sk.trackOfBone[i];
+		float bt = torch && sk.leftArm[i] ? a.torchTime : a.time;
 		if (ti >= 0)
 		{
 			const Track& tr = sk.tracks[ti];
 			float scale = tr.scale.empty() ? sqrtf(b.rest[0] * b.rest[0] + b.rest[4] * b.rest[4] + b.rest[8] * b.rest[8])
-			                               : sampleScale(tr.scale, a.time);
+			                               : sampleScale(tr.scale, bt);
 			if (!tr.rot.empty())
 			{
 				float q[4];
-				sampleRot(tr.rot, a.time, q);
+				sampleRot(tr.rot, bt, q);
 				float w = q[0], x = q[1], y = q[2], z = q[3];
 				float r[9] = { 1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y),
 				               2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x),
@@ -829,7 +854,7 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 			if (!tr.trans.empty())
 			{
 				float v[3];
-				sampleVec(tr.trans, a.time, v);
+				sampleVec(tr.trans, bt, v);
 				if ((int)i == sk.accumBone)
 				{
 					v[0] = b.rest[3];        // the walked distance stays out: only the bob up and down

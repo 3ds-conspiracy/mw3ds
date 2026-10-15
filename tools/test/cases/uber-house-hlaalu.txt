@@ -842,11 +842,19 @@
 6 0 0 0
 90 0 0 0 0 WALKTO:@512,-67840,1032
 6 0 0 0
-90 0 0 0 0 WALKTO:@768,-67328,992
+# (down to the Ascadian Isles west of the ledge at 1000, -67200: an escort following straight down the old line
+# dropped into the hollow east of it and could not climb out; uberroute.py --slope 0.6)
+90 0 0 0 0 WALKTO:@768,-67584,1016
 6 0 0 0
-90 0 0 0 0 WALKTO:@768,-66816,904
+90 0 0 0 0 WALKTO:@256,-67072,1120
 6 0 0 0
-90 0 0 0 0 WALKTO:@512,-66304,640
+90 0 0 0 0 WALKTO:@512,-66560,816
+6 0 0 0
+90 0 0 0 0 WALKTO:@768,-66304,632
+6 0 0 0
+90 0 0 0 0 WALKTO:@768,-65792,392
+6 0 0 0
+90 0 0 0 0 WALKTO:@256,-65536,384
 6 0 0 0
 90 0 0 0 0 WALKTO:@0,-65792,488
 6 0 0 0

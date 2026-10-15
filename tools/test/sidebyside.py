@@ -11,10 +11,14 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
     cam=x,y,z,yaw,pitch   the camera (world units; degrees: yaw 0 looks along +Y, 90 along +X; pitch up positive)
     cell="..."            an interior (left out: the exterior)
     hour=h                the time of day (stopped there)
+    weather=name          the weather (Clear, Cloudy, Foggy, Overcast, Rain, Thunderstorm, Ashstorm, Blight, Snow,
+                          Blizzard): OpenMW's core.weather.changeWeather on the region, the 3DS's SETWEATHER
     actor=id              the NPC / creature (nearest the camera) sent back to where Morrowind.esm placed it ...
     group=name at=f,...   ... holding that animation group at those points (0 its start key, 1 its stop key):
                           one shot per point, "<name>-<n>"
     face=deg              ... turned that way instead of its placed rotation
+    natural=1             ... OpenMW side: no group held, the actor standing in its own idle (a held group plays at
+                          Scripted priority, over the arm's torch pose; the 3DS side holds the group)
     view=fp               first person: the player stands at cam (their feet; pitch 0) and their own arms hold the
                           group (a spell readied in OpenMW: spell=id, fire bite unless given; fists for the
                           hand-to-hand and weapon groups, HHChop, 1hSlashF, ...)
@@ -22,6 +26,8 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
                           near) and holds the group (Attack1h, ...)
     weapon=id ammo=id shield=id   the player carries and equips these (fp and actor=player shots)
     wear=id,id,...        armor and clothing the player wears (gauntlets, robes ...), on both sides
+    hide=1                the 3DS side hides every person and creature within 4000 units (one wandering into a
+                          plain shot of the world)
     spawn=id [dist=d]     a new actor (a creature) 250 (d) units ahead of the camera, facing it, is the shot's actor
     do=step;step... after=t   a scene step, OpenMW side only (--pc-only): goto:<cell>:x:y:z, journal:<quest>:<n>,
                           give:<id>, kill:<id>, group:<id>:<group>, global:<name>:<n>; the shot `after` seconds later,
@@ -233,9 +239,11 @@ def write_openmw_setup(shots):
             f.append(f"cell = {lua_str(s['cell'])}")
         if "hour" in s:
             f.append(f"hour = {float(s['hour'])}")
+        if "weather" in s:
+            f.append(f"weather = {lua_str(s['weather'])}")
         if "actor" in s:
             f.append(f"actor = {lua_str(s['actor'].lower())}")
-        if "group" in s:
+        if "group" in s and not s.get("natural"):
             g = s["group"].lower()
             group, start, stop = OPENMW_GROUPS.get(g, (g, None, None))
             f.append(f"group = {lua_str(group)}")
@@ -281,15 +289,28 @@ def write_openmw_setup(shots):
 
     def q(p):
         return '"' + str(p).replace("\\", "/") + '"'
+    # (--replace=config leaves out the install's own openmw.cfg: its Morrowind Lua scripts, resources/vfs-mw: combat,
+    # music, cell handlers; and OpenMW's default Morrowind.ini values, fallback=. The game's own Morrowind.ini is
+    # imported over those below: the ash storm's and blight's skies are only there)
+    install = (OPENMW / "openmw.cfg").read_text(errors="replace").splitlines()
+    fallbacks = [ln for ln in install if ln.startswith("fallback=")]
     (SBS / "openmw.cfg").write_text("\n".join([
         "# Written by tools/test/sidebyside.py",
+        f"data={q(OPENMW / 'resources' / 'vfs-mw')}",
         f"data={q(data_files)}",
         f"data={q(data)}",
         "fallback-archive=Morrowind.bsa",
         "content=Morrowind.esm",
         "content=mw3ds_sbs.omwscripts",
-        f"user-data={q(user)}",
-        ""]))
+        f"user-data={q(user)}"] + fallbacks + [""]))
+    ini = mw / "Morrowind.ini"
+    importer = OPENMW / "openmw-iniimporter.exe"
+    if ini.exists() and importer.exists():
+        # (-A: no archives from it; Morrowind.esm's own is set above)
+        r = subprocess.run([str(importer), "-A", "-i", str(ini), "-c", str(SBS / "openmw.cfg")],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            print("sidebyside: Morrowind.ini not imported:", (r.stderr or r.stdout).strip()[-300:])
     # The 3DS's top screen: 400 x 240, a 60 degree vertical field of view (renderer.cpp kFovY)
     (SBS / "settings.cfg").write_text("\n".join([
         "# Written by tools/test/sidebyside.py",
@@ -400,6 +421,16 @@ def fmt(v):
     return f"{v:.2f}".rstrip("0").rstrip(".")
 
 
+# Morrowind's weathers in order: the 3DS's SETWEATHER takes the number
+WEATHERS = ["clear", "cloudy", "foggy", "overcast", "rain", "thunderstorm", "ashstorm", "blight", "snow", "blizzard"]
+
+
+def weather_step(s):
+    """The 3DS side's SETWEATHER for the shot's weather= (by name or number)."""
+    w = s["weather"].strip().lower()
+    return f"SETWEATHER:{WEATHERS.index(w) if w in WEATHERS else int(w)}"
+
+
 def write_case(shots, name):
     """The test case: per shot the player behind the camera, the clock, then CAM + HUD:off + POSE, then SHOT."""
     # (the player a Dark Elf man, as OpenMW's default player: their first-person arms)
@@ -440,6 +471,10 @@ def write_case(shots, name):
             view = ["CAM:off", "POV:first", "HUD:off"] + ([f"VMPOSE:{s['group']}:{at}"] if "group" in s else [])
         else:
             view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:first", "HUD:off", "VMPOSE:off"]
+        if s.get("hide"):
+            view.append(f"HIDEACTORS:{HIDE_RADIUS}")
+        if "weather" in s:
+            view.append(weather_step(s))      # (after the teleport: the region it lands in)
         if not fp and "actor" in s and "group" in s:
             pose = f"POSE:{s['actor'].replace(' ', '%')}:{s['group']}:{at}"
             if "face" in s:
@@ -476,6 +511,8 @@ def body_steps(s):
         setup.append(f"HOUR:{s['hour']}")
     view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:third", "HUD:off", "VMPOSE:off",
             f"HIDEACTORS:{HIDE_RADIUS}"]
+    if "weather" in s:
+        view.append(weather_step(s))
     at = f"{min(s['at'], 0.998):.3f}"
     return ["1 0 0 0 0 " + "+".join(setup)] + gear(s) + ["1 0 0 0 0 " + "+".join(view),
             f"0.5 0 0 0 0 BODYPOSE:{s['group']}:{at}", "0.5 0 0 0 0 SHOT", "0.1 0 0 0 0 BODYPOSE:off"]
@@ -495,6 +532,8 @@ def cast_steps(s):
             "POV:first" if fp else "POV:third", "HUD:off", "VMPOSE:off", "SETMAGICKA:1000",
             "SETATTR:willpower:100", "SETATTR:luck:100",
             f"HIDEACTORS:{HIDE_RADIUS}"]
+    if "weather" in s:
+        view.append(weather_step(s))
     view += [f"SETSKILL:{k}:100" for k in CAST_SKILLS]
     return ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view),
             f"{fmt(s['after'])} 0 0 0 0 CAST:{s['cast'].replace(' ', '_')}",
@@ -511,6 +550,8 @@ def vfx_steps(s):
         setup.append(f"HOUR:{s['hour']}")
     view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:first", "HUD:off", "VMPOSE:off",
             f"HIDEACTORS:{HIDE_RADIUS}"]
+    if "weather" in s:
+        view.append(weather_step(s))
     px, py, pz = s["pos"]
     stand = []
     if "spawn" in s:

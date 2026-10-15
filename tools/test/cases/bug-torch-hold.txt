@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# A guard carrying a torch at night holds it up by its head, its left arm raised (OpenMW's character.cpp: the "torch" group
+# played on the left arm alone, above weapons, blocks and knockdowns, below deaths); ours carried it low in the shield
+# hold, the torch sticking out sideways (carried lights turn -90 degrees about X on the bone, OpenMW's
+# ActorAnimation::attach). Its left hand comes up to about shoulder height (base_anim's Torch: ~100 units over the feet;
+# the guard's own idles keep it at 93 or under). By day the torch is away and the arm goes back to the rest of its animation.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald-ruhn
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:22
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reftorch:redoran%guard%male:eq:1+EXPECT:reftorcharm:redoran%guard%male:eq:1+EXPECT:reflhandz:redoran%guard%male:ge:98
+0.3 0 0 0 0 HOUR:12
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reftorch:redoran%guard%male:eq:0+EXPECT:reftorcharm:redoran%guard%male:eq:0

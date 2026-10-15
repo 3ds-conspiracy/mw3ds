@@ -11,6 +11,7 @@ Output: out/data/textures/<name>.t3x (ETC1, or ETC1A4 when alpha matters), mipma
 Sizes chosen per run are cached in out/texture_cache.json so unchanged textures
 are not re-encoded, and .t3x files no level cell uses any more are removed.
 """
+import hashlib
 import io
 import json
 import zlib
@@ -121,6 +122,7 @@ class TextureSet:
         self.req = {}                  # source path -> {"px": texels, "alpha": bool}
         self.whitened = {}             # output name -> {"src", "px", "alpha", "amount"}: a picture drawn whiter
         self.made = set()              # output names encoded elsewhere (particles.py's flipbook sheets): kept
+        self.generated = {}            # output name -> PIL picture made by the converter (a world spray's loop sheet)
         self.log = None                # a list: requests are also recorded there (a cell's, for the cell cache)
 
     def request(self, path, texels, alpha):
@@ -163,6 +165,8 @@ class TextureSet:
             if i and i % 50 == 0:
                 print(f"  textures {i}/{len(items)}, {stats['encoded']} encoded", flush=True)
             name = texture_out_name(path)
+            if name in self.generated:
+                continue                       # (made by the converter: encoded below)
             wanted.add(name)
             limit = self.limit(r["px"])
             try:
@@ -207,6 +211,20 @@ class TextureSet:
             stats["count"] += 1
             stats["bytes"] += etc_bytes(entry["size"], entry["alpha"])
         wanted |= self.made
+        # (pictures the converter made, at their own size: a world spray's looping flipbook sheet)
+        for name, img in sorted(self.generated.items()):
+            wanted.add(name)
+            digest = hashlib.sha1(img.tobytes()).hexdigest()
+            entry = cache.get(name)
+            if not (entry and entry.get("digest") == digest and tex_path(name).exists()):
+                tex3ds = tex3ds or tex3ds_path()
+                tex_path(name).parent.mkdir(parents=True, exist_ok=True)
+                entry = encode_one(tex3ds, img, tex_path(name), max(img.size), True)
+                entry.update({"src": "generated", "digest": digest})
+                cache[name] = entry
+                stats["encoded"] += 1
+            stats["count"] += 1
+            stats["bytes"] += etc_bytes(entry["size"], entry["alpha"])
         for p in (OUT / "tex").rglob("*.t3x"):
             if p.name not in wanted:
                 p.unlink()

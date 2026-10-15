@@ -326,11 +326,11 @@ void Session::trimVfxPieces()
 		logf("vfx: %d unused visual pieces let go (%d kept, linear free %u KB)", freed, kept, (unsigned)(linearSpaceFree() / 1024));
 }
 
-void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale, bool loop, int effect)
+bool Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale, bool loop, int effect)
 {
 	auto it = w.game.firstPerson.vfx.find(lower(staticId));
 	if (it == w.game.firstPerson.vfx.end())
-		return;
+		return false;
 	// Many casters at once: only those near the player show, the nearest when there are too many
 	auto dist2 = [&](const float* p) {
 		float dx = p[0] - w.player.feet[0], dy = p[1] - w.player.feet[1], dz = p[2] - w.player.feet[2];
@@ -338,7 +338,7 @@ void Session::spawnVfx(const std::string& staticId, const float pos[3], float li
 	};
 	float d2 = dist2(pos);
 	if (d2 > kVfxRange * kVfxRange)
-		return;
+		return false;
 	// (placed objects' own visuals don't count: they come and go with their objects)
 	int spells = 0;
 	for (auto& o : vfx)
@@ -350,7 +350,7 @@ void Session::spawnVfx(const std::string& staticId, const float pos[3], float li
 			if (!vfx[i].world && (far < 0 || dist2(vfx[i].pos) > dist2(vfx[far].pos)))
 				far = (int)i;
 		if (far < 0 || dist2(vfx[far].pos) <= d2)
-			return;
+			return false;
 		vfx.erase(vfx.begin() + far);
 	}
 	// (a continuous one cast again takes the old one's place: one bubble, not two)
@@ -377,6 +377,7 @@ void Session::spawnVfx(const std::string& staticId, const float pos[3], float li
 	v.scale = scale;
 	v.effect = effect;
 	vfx.push_back(v);
+	return true;
 }
 
 void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow, float yaw, int range)
@@ -406,7 +407,67 @@ void Session::spellVfx(const SpellDef& sp, int kind, const float pos[3], int fol
 void Session::castVfx(const SpellDef& sp, int caster)
 {
 	const float* feet = caster < 0 ? w.player.feet : w.refs[caster].pos;
-	spellVfx(sp, 0, feet, caster, caster < 0 ? w.player.yaw : w.refs[caster].rot[2]);
+	float yaw = caster < 0 ? w.player.yaw : w.refs[caster].rot[2];
+	spellVfx(sp, 0, feet, caster, yaw);
+	// The glow on both hands as the cast starts: VFX_Hands on each hand bone, in the particle texture of the spell's
+	// last effect (OpenMW's CharacterController); the player's on their first-person arms out of third person
+	if (sp.effects.empty())
+		return;
+	for (const char* bone : { "Bip01 L Hand", "Bip01 R Hand" })
+	{
+		float at[3];
+		if (vfxBonePos(caster, bone, at) && spawnVfx("vfx_hands", at, 1.2f, caster, yaw, 1.0f, false, sp.effects.back().effect))
+			vfx.back().bone = bone;
+	}
+}
+
+// Where a bone of a visual's actor is now: the player's body (third person) for -1, else the actor of that ref; false
+// when it has no such bone or isn't posed
+bool Session::vfxBonePos(int follow, const std::string& bone, float out[3])
+{
+	Actor* a = nullptr;
+	ActorSet* set = nullptr;
+	if (follow == -1 && !thirdPerson)
+	{
+		// the first-person arms: the bone from the eye, turned with the view as ViewModel::draw turns the rig
+		float p[3];
+		if (!armsEyeSet || !vm.boneFromEye(bone.c_str(), p))
+			return false;
+		float cy = cosf(-w.player.yaw), sy = sinf(-w.player.yaw), cp = cosf(w.player.pitch), sp = sinf(w.player.pitch);
+		float y1 = cp * p[1] - sp * p[2], z1 = sp * p[1] + cp * p[2];
+		out[0] = armsEye[0] + cy * p[0] - sy * y1;
+		out[1] = armsEye[1] + sy * p[0] + cy * y1;
+		out[2] = armsEye[2] + z1;
+		return true;
+	}
+	if (follow == -1)
+	{
+		if (!body.ready || body.set.actors.empty())
+			return false;
+		set = &body.set;
+		a = &body.set.actors[0];
+	}
+	else if (follow >= 0 && follow < (int)w.refs.size())
+	{
+		a = w.actorOf(follow);
+		set = a ? w.actorsOf(follow) : nullptr;
+	}
+	if (!a || !set)
+		return false;
+	const Skeleton& sk = actorSkeleton(*set, a->skeleton);
+	for (size_t b = 0; b < sk.bones.size(); b++)
+		if (strcasecmp(sk.bones[b].name, bone.c_str()) == 0)
+		{
+			if ((b + 1) * 12 > a->pose.size())
+				return false;
+			// the bone's origin in the world: the actor's placement after its pose
+			const float* P = a->place;
+			const float* Q = &a->pose[b * 12];
+			for (int i = 0; i < 3; i++)
+				out[i] = P[i * 4] * Q[3] + P[i * 4 + 1] * Q[7] + P[i * 4 + 2] * Q[11] + P[i * 4 + 3];
+			return true;
+		}
+	return false;
 }
 
 // A bolt flies as its first target effect's bolt model, VFX_DefaultBolt for an effect without one (OpenMW's
@@ -1006,5 +1067,12 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 	if (thirdPerson || previewFace)
 		body.draw(w, !secondEye);
 	else
+	{
 		vm.draw(eye, w.player.yaw, w.player.pitch, !secondEye);
+		if (!secondEye)
+		{
+			memcpy(armsEye, eye, sizeof(armsEye));
+			armsEyeSet = true;
+		}
+	}
 }

@@ -34,7 +34,7 @@ IDLE_GROUPS = ["Idle"] + [f"Idle{i}" for i in range(2, 10)]
 # (hits and deaths: the runtime picks one of those there are at random, OpenMW's chooseRandomGroup; a death while
 # down or out: DeathKnockDown / DeathKnockOut)
 MOVE_GROUPS = ["RunForward", "WalkForward", "Hit1", "Hit2", "Hit3", "Hit4", "Hit5", "Death1", "Death2", "Death3", "Death4",
-               "Death5", "DeathKnockDown", "DeathKnockOut", "KnockDown", "KnockOut"]
+               "Death5", "DeathKnockDown", "DeathKnockOut", "KnockDown", "KnockOut", "Torch"]
 # Attacks: exported name -> text key group ("Chop ..." keys); the runtime picks one by weapon type.
 # The group's hit moment is stored as its loop start.
 ATTACK_GROUPS = {"AttackHH": "handtohand", "Attack1h": "weapononehand", "Attack2c": "weapontwohand",

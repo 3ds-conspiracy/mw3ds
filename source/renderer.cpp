@@ -502,7 +502,13 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 	C3D_AlphaTest((b.flags & BATCH_TEST) != 0, GPU_GREATER, b.alphaRef);
 	C3D_CullFace((b.flags & BATCH_TWO_SIDED) ? GPU_CULL_NONE : GPU_CULL_BACK_CCW);
 
-	if (b.flags & BATCH_SCROLL)
+	if (b.flipFrames && b.flipCols && b.flipRows)
+	{
+		// A world spray's looping flipbook: the frame from world time, a cell of its sheet (rows down from the top)
+		int f = (int)(time * b.flipFps) % b.flipFrames;
+		setUvOffset((float)(f % b.flipCols) / b.flipCols, -(float)(f / b.flipCols) / b.flipRows);
+	}
+	else if (b.flags & BATCH_SCROLL)
 	{
 		// Clouds drift slowly overhead; water moves faster (Morrowind plays 32 pictures of it at 12 a second, here one
 		// picture slides: at a fiftieth of a repeat a second it looked still)
@@ -909,6 +915,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	bindPipeline();
 	bool fog = here.fogEnd > 0.0f;
 	float fogStart = here.fogStart * fogScale, fogEnd = here.fogEnd * fogScale;
+	// (outdoors the weather says where the fog starts, as OpenMW: a storm's from the eye)
+	if (fog && !(here.flags & CELL_INTERIOR) && w.weatherFogStart() > -1.5f)
+		fogStart = fogEnd * w.weatherFogStart();
 	// (outdoors: the distant land's reach, at least the detailed view's)
 	float horizonEnd = fog && !(here.flags & CELL_INTERIOR) ? fmaxf(fogEnd, here.fogEnd * s_horizonScale) : fogEnd;
 	float farPlane = fog ? horizonEnd + 500.0f : kInteriorFar;
@@ -945,13 +954,24 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	// Sky: centred on the camera (rotation only), no depth, no fog
 	if (!here.sky.empty() && (g_renderParts & RENDER_SKY))
 	{
-		setTint(s_daylight ? s_skyTint : kOne);
 		C3D_Mtx skyView = view;
 		skyView.r[0].w = skyView.r[1].w = skyView.r[2].w = 0.0f;
 		setModelView(skyView);
-		for (auto& b : here.sky)
+		// (white fog and sky domes, then clouds: the domes take the hour's weather colours, the fog's at the horizon
+		// and the sky's overhead, as OpenMW draws its sky; an older cell's single baked gradient a tint)
+		bool layered = here.sky.size() >= 2 && here.sky[1].tex < 0 && (here.sky[1].flags & BATCH_BLEND);
+		for (size_t k = 0; k < here.sky.size(); k++)
 		{
-			drawBatch(here, b, DRAW_SKY, time);
+			if (layered && k < 2)
+			{
+				float c[3];
+				for (int i = 0; i < 3; i++)
+					c[i] = w.weatherColour(k == 0 ? 1 : 0, i);
+				setTint(c);
+			}
+			else
+				setTint(s_daylight ? s_skyTint : kOne);
+			drawBatch(here, here.sky[k], DRAW_SKY, time);
 			draws++;
 		}
 	}

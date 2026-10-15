@@ -275,7 +275,7 @@ struct Session : ScriptHost
 	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
 	// Animation::addEffect), or at a spot (an area burst, blood)
 	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; bool loop = false; std::string what; int effect = -1;
-		bool world = false; float until = -1.0f; };   // world: a placed object's own (updateWorldFx); until: its time held there once reached   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
+		bool world = false; float until = -1.0f; std::string bone; };   // bone: on that bone of its follow (a casting hand's glow)   // world: a placed object's own (updateWorldFx); until: its time held there once reached   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
 	std::vector<Vfx> vfx;
 	// NPCs' and creatures' own summons (OpenMW's AI casts them in a fight): the caster, the creature, when it goes;
 	// a summon being cast (castSpell -2) waits in pendingSummon. Not saved: a load starts with none
@@ -303,8 +303,12 @@ struct Session : ScriptHost
 	static constexpr float kVfxRange = 4096.0f;    // farther from the player none starts (many casters at once: their visuals are the cost)
 	// loop: its animation repeats for all of life (a continuous effect's hit: OpenMW's ContinuousVfx)
 	// effect: the magic effect it shows (its particle texture on the shapes that take one), -1 none
-	void spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2, float yaw = 0.0f, float scale = 1.0f,
+	// Returns whether it started (it shows only near the player, and so many at once)
+	bool spawnVfx(const std::string& staticId, const float pos[3], float life = 1.2f, int follow = -2, float yaw = 0.0f, float scale = 1.0f,
 		bool loop = false, int effect = -1);
+	bool vfxBonePos(int follow, const std::string& bone, float out[3]);   // a bone of the player's body / an actor in the world
+	float armsEye[3] = { 0.0f, 0.0f, 0.0f };      // where the first-person arms were last drawn from (vfxBonePos)
+	bool armsEyeSet = false;
 	// kind 0 cast (every model its effects name), 1 hit, 2 area (each effect of that range with an area, at twice the
 	// area in feet: OpenMW's explodeSpell); range: the effects kind 2 bursts. An effect with none: the VFX_Default one
 	void spellVfx(const SpellDef& sp, int kind, const float pos[3], int follow = -2, float yaw = 0.0f, int range = 2);

@@ -105,6 +105,23 @@ local function setup(data)
 	if s.hour then
 		globals.gamehour = s.hour
 	end
+	if s.weather and not core.weather then
+		print('MW3DS-SBS no core.weather in this OpenMW')
+	end
+	if s.weather and core.weather then
+		-- the weather of the shot's region (an exterior: the cell under the camera)
+		local c = s.cell and world.getCellByName(s.cell) or world.getExteriorCell(math.floor(s.x / 8192), math.floor(s.y / 8192))
+		local rec = core.weather.records[s.weather]
+		if c and c.region and rec then
+			-- (it only starts a transition, run on game time: the clock starts three hours early and three hours go
+			-- by for it, the sky ending at the shot's hour; set back afterwards it kept the later sky)
+			globals.gamehour = ((s.hour or globals.gamehour) - 3) % 24
+			core.weather.changeWeather(c.region, rec)
+			world.advanceTime(3)
+		else
+			print(string.format('MW3DS-SBS no weather %s for shot %d', s.weather, data.index))
+		end
+	end
 	local cam = util.vector3(s.x, s.y, s.z)
 	if s.cast then
 		player:teleport(s.cell or '', util.vector3(s.fromX, s.fromY, s.fromZ),
@@ -243,8 +260,8 @@ return {
 			silenceChargen()
 			if pending then
 				pending.frames = pending.frames + 1
-				-- a few frames for the cell's objects to come in
-				if pending.frames == 20 then
+				-- a few frames for the cell's objects to come in (a change of weather: more, for its transition)
+				if pending.frames == (pending.shot.weather and 90 or 20) then
 					local p = pending
 					pending = nil
 					poseActor(p)

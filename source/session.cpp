@@ -1412,6 +1412,8 @@ void Session::update(const PlayerInput& inRaw, float dt)
 				memcpy(vfx[i].pos, w.refs[vfx[i].follow].pos, sizeof(vfx[i].pos));
 				vfx[i].yaw = w.refs[vfx[i].follow].rot[2];
 			}
+			if (!vfx[i].bone.empty())
+				vfxBonePos(vfx[i].follow, vfx[i].bone, vfx[i].pos);   // (else it stays where it was last)
 			if (vfx[i].until >= 0.0f && vfx[i].age > vfx[i].until)
 				vfx[i].age = vfx[i].until;
 			i++;

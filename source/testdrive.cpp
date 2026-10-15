@@ -204,7 +204,7 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
@@ -1054,7 +1054,25 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		{
 			v = 0.0f;
 			for (auto& x : s.vfx)
-				v += x.follow == ri;
+				v += x.follow == ri && x.bone.empty();
+		}
+		else if (what == "refvfxhands")  // glows on its hands while it casts (VFX_Hands, one per hand)
+		{
+			v = 0.0f;
+			for (auto& x : s.vfx)
+				v += x.follow == ri && !x.bone.empty();
+		}
+		else if (what == "reflhandz")    // its left hand's height above its feet (the torch held out raises it)
+		{
+			float p[3];
+			v = s.vfxBonePos(ri, "Bip01 L Hand", p) ? p[2] - r.pos[2] : -1.0f;
+		}
+		else if (what == "refvfxhandz")  // the highest hand glow above its feet (0 none)
+		{
+			v = 0.0f;
+			for (auto& x : s.vfx)
+				if (x.follow == ri && !x.bone.empty())
+					v = fmaxf(v, x.pos[2] - r.pos[2]);
 		}
 		else if (what == "refdying")     // dead, and its fall to the ground still playing
 		{
@@ -1129,6 +1147,11 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 						&& m.hand != 1 && actorMeshShown(*a, m))
 						v = 1.0f;
 			}
+		}
+		else if (what == "reftorcharm")     // its left arm holds the torch out (the Torch group, OpenMW's torch pose), 1
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a && a->torchTime >= 0.0f ? 1.0f : 0.0f;
 		}
 		else if (what == "reftorch")        // its torch shows now (held out at night), 1; else 0
 		{

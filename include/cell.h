@@ -69,6 +69,8 @@ struct CellBatch
 	// Cell format 5 stores s16 positions / UVs (16-byte vertices); older files float (24 bytes)
 	float posOffset[3] = { 0, 0, 0 }, posScale[3] = { 1, 1, 1 }, uvScale[2] = { 1, 1 };
 	u32 stride = CELL_VERTEX_SIZE;
+	// Format 8: a looping flipbook (a world spray's sheet): frames, columns, rows, frames a second; 0 none
+	u8 flipFrames = 0, flipCols = 1, flipRows = 1, flipFps = 0;
 };
 
 struct __attribute__((packed)) CellActor

@@ -530,12 +530,13 @@ FLIP_MAX = 32
 RECORDS_MAX = 8192                                       # bytes of particle records an effect may carry
 # Thinning shares tuned against OpenMW side by side (effect: {spray block: keep 1 in k}): a spray that builds a solid
 # band by overlap (magic_cast_frost's ribbon) loses it when thinned as hard as loose sparks
-THIN = {"vfx_frostcast": {23: 2, 12: 5}}
+THIN = {"vfx_frostcast": {23: 2, 12: 5}, "vfx_hands": {10: 3, 19: 3}}
+# (the casting hands' glow, two on every caster at once: a third of its sparks)
 # Methods chosen against OpenMW side by side where the rule picks worse: the soul trap's sparkles fly out wide and a
 # flipbook frame spread over them shrank them into a flat glow; the lava river steam sits on the ground, where the
 # flipbook quad was cut off by it in a straight line
 METHOD = {"vfx_soul_trap": "records", "steam_lavariver": "records", "in_strong_platform": "flip",
-          "dagoth ur death sparkles": "records"}
+          "dagoth ur death sparkles": "records", "vfx_hands": "records"}
 
 
 def ensure_textures(arch, ts, meshes):
@@ -562,6 +563,76 @@ def ensure_textures(arch, ts, meshes):
     if n:
         textures.CACHE.write_text(json.dumps(cache, indent=0, sort_keys=True))
     return n
+
+
+# A world spray's looping flipbook (a candle's flame, a chimney's smoke, placed on its cell's crossed quads):
+# frames over one second and a third, a sheet of 4 x 4 cells; the cells' sprays share it, the frame from world time
+LOOP_FRAMES, LOOP_COLS, LOOP_FPS = 16, 4, 12.0
+_LOOPS = {}
+
+
+def loop_flipbook(arch, nif, block):
+    """The flipbook of the spray on particle shape `block` when its emitter stands still: (texture name, PIL sheet,
+    (frames, cols, rows, fps), bounds (x0, up0, x1, up1) round the emitter, root units), or None. The spray is
+    simulated as OpenMW runs it until it is steady, then a loop of frames drawn from the side, each particle in its
+    colour at its age (the colour keys over its life: a flame's tips redden). The light falls on the quads, as on the
+    cell's other shapes (meshes.particle_shape: a candle's flame is as bright as the room round it, OpenMW lights
+    particles), the material's glow on top. Shared by every spray alike."""
+    import hashlib
+    from firstperson import vfx_tracks
+    sp = next((x for x in sprays(nif, vis_hidden=True) if x["block"] == block), None)
+    if sp is None:
+        return None
+    tracks, _, _ = vfx_tracks(nif)
+    if sp["ctrl"]["emitter"] in tracks:
+        return None                                   # (a moving emitter: not a still loop)
+    c = sp["ctrl"]
+    path, _, _ = texture_path(arch, nif, sp["texprop"])
+    key = repr((path, round(c["speed"], 2), round(c["speed_var"], 2), round(c["lifetime"], 3), round(c["initial_size"], 2),
+                round(c["birth_rate"], 2), c.get("emit_flags"), c.get("num_particles"), round(c["declination"], 3),
+                round(c["declination_var"], 3), tuple(round(v, 1) for v in c["emitter_dims"]), sp["additive"],
+                [(g["force_type"], round(g["force"], 2), tuple(round(v, 3) for v in g["direction"])) for g in sp["mods"]["gravity"]],
+                sp["mods"]["growfade"] and (sp["mods"]["growfade"]["grow"], sp["mods"]["growfade"]["fade"]),
+                tuple(round(v, 3) for v in (sp["node"][:3, :3] @ np.array([0, 0, 1.0]))),
+                [(round(t, 3), [round(v, 3) for v in col]) for t, col in sp["mods"]["color"] or []],
+                [round(v, 3) for v in c["initial_color"]], sp["mat"] and [round(v, 3) for v in sp["mat"]["emissive"]],
+                sp.get("alpha_one")))
+    if key in _LOOPS:
+        return _LOOPS[key]
+    warm = c["lifetime"] + c.get("lifetime_var", 0.0)
+    span = LOOP_FRAMES / LOOP_FPS
+    total = warm + span
+    local = dict(sp, initial=[], mat=None)       # (no glow: the cell lights the quads, the glow added there)
+    local["ctrl"] = dict(c, emit_start=0.0, emit_stop=total + 1.0)
+    frames = simulate(local, total, LOOP_FPS)
+    origin = sp["emitter"][:3, 3]
+    loop = [[(p - origin, size, rgba) for p, size, rgba in live] for live in frames[-LOOP_FRAMES:]]
+    if not any(loop):
+        _LOOPS[key] = None
+        return None
+    x0, y0, x1, y1 = frames_bounds([loop], pad=SIZE_X)
+    half = max(abs(x0), abs(x1), 1.0)
+    x0, x1 = -half, half
+    cw, ch = (32, 64) if (y1 - y0) >= (x1 - x0) else (64, 32)
+    want = ch / cw
+    if (y1 - y0) / (x1 - x0) < want:
+        mid = (y0 + y1) / 2
+        y0, y1 = mid - (x1 - x0) * want / 2, mid + (x1 - x0) * want / 2
+    else:
+        half = (y1 - y0) / want / 2
+        x0, x1 = -half, half
+    imgs = render_group([(loop, particle_image(arch, nif, sp))], sp["additive"], (x0, y0, x1, y1), cw / (x1 - x0))
+    imgs = [im.resize((cw, ch), Image.BOX) for im in imgs]
+    rows = -(-LOOP_FRAMES // LOOP_COLS)
+    sheet = Image.new("RGBA", (cw * LOOP_COLS, ch * rows), (0, 0, 0, 0 if not sp["additive"] else 255))
+    for i, im in enumerate(imgs):
+        sheet.paste(im, ((i % LOOP_COLS) * cw, (i // LOOP_COLS) * ch))
+    # (named after its particle picture too: tests find a spray's batches by it, texlow)
+    import os, re
+    stem = re.sub(r"[^a-z0-9_]", "_", os.path.splitext(os.path.basename((path or "").replace("\\", "/")))[0].lower())
+    name = "loop_" + (stem + "_" if stem else "") + hashlib.sha1(key.encode()).hexdigest()[:12] + ".t3x"
+    _LOOPS[key] = (name, sheet, (LOOP_FRAMES, LOOP_COLS, rows, LOOP_FPS), (x0, y0, x1, y1))
+    return _LOOPS[key]
 
 
 def is_bolt(db, static_id):

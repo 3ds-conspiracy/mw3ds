@@ -35,6 +35,10 @@ struct Skeleton
 	int accumBone = -1;
 	int headBone = -1;                 // "Bip01 Head": turned toward the player (Actor::headYaw)
 	std::vector<float> groupSpeed;     // per group: how fast its root walks (skeleton units / s), 0 in place
+	// The Torch group and the left arm's bones ("Bip01 L Clavicle" and under it), found on first use: a carried torch is
+	// held out by the left arm alone (OpenMW's BlendMask_LeftArm), whatever the rest does
+	mutable int torchGroup = -2;
+	mutable std::vector<u8> leftArm;
 };
 
 struct MorphTrack
@@ -125,6 +129,7 @@ struct Actor
 	float lastXY[2] = { 1e9f, 1e9f };  // where it stood last frame
 	bool showWeapon = false;
 	bool torchOut = false;             // holds its torch out (night, out of a fight: World::actorTorchOut)
+	float torchTime = -1.0f;           // the left arm's own time in the Torch group while the torch is out
 	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
 	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline
 	bool frozen = false;               // held where it is in its group (the test driver's POSE): no time passes, no other group starts

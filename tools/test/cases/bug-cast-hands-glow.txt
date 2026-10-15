@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# A caster's hands glow while it casts: VFX_Hands on each hand bone, in the particle texture of the spell's last
+# effect (OpenMW's CharacterController), riding with the hands up the body rather than at the feet (TODO 47: an
+# Illusion cast's glow sat too low against OpenMW). Its cast visual still counts once (refvfx: hand glows apart).
+1 0 0 0 0 GOD+SEED:1+HOUR:12
+1 0 0 0 0 TP:-9850:-71040:250:240
+1 0 0 0 0 CAM:-10050:-71155:270:240:-10+POV:first+HUD:off
+1 0 0 0 0 PLACEAT:fargoth:-10300:-71210:158+PLACEAT:imperial%guard:-10353:-71227:158
+0.5 0 0 0 0 POSE:fargoth:idle:0.3:60+POSE:imperial%guard:idle:0.3:60+EXPECT:refvfxhands:fargoth:eq:0
+0.3 0 0 0 0 NPCCAST:fargoth:paralysis:imperial%guard
+0.1 0 0 0 0 EXPECT:refvfxhands:fargoth:eq:2+EXPECT:refvfxhandz:fargoth:gt:50+EXPECT:refvfx:fargoth:ge:1
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refvfxhands:fargoth:eq:0

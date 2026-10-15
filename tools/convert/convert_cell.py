@@ -116,7 +116,8 @@ def bake_colors(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
         color = emi
     else:
         pos, nrm = s["pos"], s["nrm"]
-        light = np.clip(nrm @ sun_dir, 0, None)[:, None] * sun
+        omni = s.get("omni")                # (facing the eye: lit from any side, a world spray's particles)
+        light = (np.ones(len(pos)) if omni else np.clip(nrm @ sun_dir, 0, None))[:, None] * sun
         lo, hi = pos.min(axis=0), pos.max(axis=0)
         for L in lights:
             reach = 2 * L["radius"]
@@ -124,7 +125,7 @@ def bake_colors(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
                 continue
             d = L["pos"] - pos
             dist = np.maximum(np.linalg.norm(d, axis=1), 1.0)
-            ndl = np.clip(np.sum(nrm * d, axis=1) / dist, 0, None)
+            ndl = np.ones(len(pos)) if omni else np.clip(np.sum(nrm * d, axis=1) / dist, 0, None)
             att = np.minimum(1.0, L["radius"] / (LINEAR_ATTEN * dist))
             fade = 1.0 - np.clip(dist / L["radius"] - 1.0, 0, 1) ** 2
             light += (ndl * att * fade)[:, None] * L["color"]
@@ -195,6 +196,10 @@ def write_batches(f, batches):
         f.write(struct.pack("<iBBHII6f8f", b["tex"], b["flags"], b["alpha_ref"], int(b.get("max_dist", 0) // 8),
                             len(v), len(b["idx"]), *p.min(axis=0), *p.max(axis=0),
                             *offset, *scale, *uv_scale))
+        # Format 8: u8 frames, columns, rows, frames a second of a looping flipbook (0 none): the frame steps its
+        # texture by a cell each 1 / rate s (a world spray's sheet, particles.loop_flipbook)
+        flip = b.get("flip")
+        f.write(struct.pack("<4B", *(flip[:3] + (int(flip[3]),)) if flip else (0, 0, 0, 0)))
         q = np.zeros(len(v), dtype=[("pos", "<i2", 4), ("uv", "<i2", 2), ("color", "u1", 4)])
         q["pos"][:, :3] = np.clip(np.round((p - offset) / scale), -32767, 32767)
         q["uv"] = np.clip(np.round(v["uv"] / uv_scale), -32767, 32767)
@@ -278,7 +283,7 @@ def write_cell(path, info, textures, batches, collision, actors, door_meshes, sk
     flags = (CELL_INTERIOR if info["interior"] else 0) | (CELL_WATER if info["water"] else 0) \
         | (CELL_SKY if sky else 0)
     with open(path, "wb") as f:
-        f.write(b"MWC1" + struct.pack("<II", 7, flags))
+        f.write(b"MWC1" + struct.pack("<II", 8, flags))
         f.write(struct.pack("<5f", *info["spawn"], info["yaw"], 0.0))
         f.write(bytes(info["ambient"]) + bytes(info["fog"]) + struct.pack("<f", info["fog_density"]))
         f.write(struct.pack("<3f", info["fog_start"], info["fog_end"], info["water_z"]))
@@ -327,13 +332,15 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None):
     for key in sorted(groups, key=order):
         tex, flags, alpha_ref = key[:3]
         max_dist = key[4] if len(key) > 4 else 0
+        # (a looping flipbook's frames, columns, rows and rate: every spray in the batch shares its sheet)
+        loop = next((s["loop"][2] for s in groups[key] if s.get("loop")), None)
         cur_v, cur_i, base, first = [], [], 0, 0
         for s in groups[key]:
             n = len(s["pos"])
             if base + n > 65535 and cur_v:
                 batches.append({"verts": np.concatenate(cur_v), "idx": np.concatenate(cur_i),
                                 "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
-                                "max_dist": max_dist})
+                                "max_dist": max_dist, "flip": loop})
                 cur_v, cur_i, base, first = [], [], 0, 0
             v = np.zeros(n, dtype=VERTEX)
             v["pos"] = s["local_pos"] if "local_pos" in s else s["pos"]
@@ -348,7 +355,7 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None):
         if cur_v:
             batches.append({"verts": np.concatenate(cur_v), "idx": np.concatenate(cur_i),
                             "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
-                            "max_dist": max_dist})
+                            "max_dist": max_dist, "flip": loop})
     return batches
 
 
@@ -468,10 +475,11 @@ def interior_water_shapes(arch, groups, water_z, sun, ambient, textures, chunk_o
 
 def sky_batches(arch, weather, textures, tex_index, tex_names):
     """Sky dome around the origin: a colour gradient (fog colour at and below the horizon,
-    sky colour overhead) and a scrolling cloud layer that fades out towards the horizon."""
+    sky colour overhead) and a scrolling cloud layer that fades out towards the horizon. The gradient is two white
+    domes, the fog's (opaque) and the sky's (its share, rising overhead), which the engine colours with the weather
+    of the hour (renderer.cpp: OpenMW's sky in the weather's own colours)."""
     seg = 16
     rings = [-30, -5, 0, 8, 20, 40, 65, 90]
-    fog, sky = weather["fog"], weather["sky"]
 
     def dome(elevations, color_of, alpha_of):
         pos, uv, rgba = [], [], []
@@ -490,13 +498,14 @@ def sky_batches(arch, weather, textures, tex_index, tex_names):
                 tris += [a, a + 1, b + 1, a, b + 1, b]
         return np.array(pos), np.array(uv), np.array(rgba), np.array(tris)
 
-    def gradient(e):
-        t = np.clip(e / 40.0, 0, 1) ** 0.7
-        return fog * (1 - t) + sky * t
+    def share(e):
+        return float(np.clip(e / 40.0, 0, 1) ** 0.7)
 
     shapes = []
-    pos, uv, rgba, tris = dome(rings, gradient, lambda e: 1.0)
+    pos, uv, rgba, tris = dome(rings, lambda e: np.ones(3), lambda e: 1.0)
     shapes.append(({"pos": pos, "uv": uv, "rgba": rgba, "tris": tris}, None, FLAG_TWO_SIDED))
+    pos, uv, rgba, tris = dome(rings, lambda e: np.ones(3), share)
+    shapes.append(({"pos": pos, "uv": uv, "rgba": rgba, "tris": tris}, None, FLAG_BLEND | FLAG_TWO_SIDED))
     cloud = "textures\\" + re.sub(r"\.[^.]+$", ".dds", weather["clouds"].lower())
     if arch.exists(cloud):
         cloud_rings = [3, 10, 20, 40, 65, 90]
@@ -652,16 +661,22 @@ class Converter:
                     self.textures.request(path, px, alpha)
                 for path in meta["skeletons"]:
                     self.skeleton(path)
+                for gname in meta.get("generated", []):
+                    from PIL import Image
+                    img = Image.open(self.cache_dir / "loops" / (gname + ".png"))
+                    img.load()
+                    self.textures.generated[gname] = img
                 self.actor_skeleton.update(meta.get("actor_skeletons", {}))
                 self.cached += 1
                 return {"refs": meta["refs"], "npcs": [self.db["objects"][i] for i in meta["npc_ids"]],
                         "file": file, "textures": meta["textures"], "geometry_bytes": meta["geometry_bytes"]}
-        self.textures.log, self.cell_skeletons, self.cell_actors = [], set(), {}
+        self.textures.log, self.cell_skeletons, self.cell_actors, self.cell_generated = [], set(), {}, set()
         out = self.convert_cell(cell_name, refs, env, spawn)
         self.actor_skeleton.update(self.cell_actors)
         meta = {"key": key, "refs": out["refs"], "npc_ids": [r.id.lower() for r in out["npcs"]],
                 "textures": out["textures"], "geometry_bytes": out["geometry_bytes"],
                 "tex_requests": self.textures.log, "skeletons": sorted(self.cell_skeletons),
+                "generated": sorted(self.cell_generated),
                 "actor_skeletons": self.cell_actors}
         self.textures.log = None
         meta_path.write_text(json.dumps(meta, default=float))
@@ -814,7 +829,7 @@ class Converter:
                         col_pos.append(col[0] @ m[:3, :3].T + m[:3, 3])
                         col_tris.append(col[1] + col_count)
                         col_count += len(col[0])
-                shapes = extract_shapes(self.arch, nif, bind_pose=True)
+                shapes = extract_shapes(self.arch, nif, bind_pose=True, loops=True)
                 # (a world object drawn as its particle piece at run time, particles.WORLD_FX: its old crossed quads
                 # left out, or all of it when it is animated; its collision stays)
                 wfx = self.world_fx.get(ref["id"].lower())
@@ -871,7 +886,17 @@ class Converter:
             if tex not in tex_index:
                 tex_index[tex] = len(tex_names)
                 tex_names.append(textures.request(tex, 0, False))
-            if "rgba" not in s:
+            if s.get("loop"):
+                # (a world spray's looping flipbook sheet: one picture for every spray alike, made by the converter;
+                # kept in the cell cache too, for when this cell comes from it)
+                gname = texture_out_name(tex)
+                textures.generated[gname] = s["loop"][1]
+                self.cell_generated.add(gname)
+                png = self.cache_dir / "loops" / (gname + ".png")
+                if not png.exists():
+                    png.parent.mkdir(parents=True, exist_ok=True)
+                    s["loop"][1].save(png)
+            elif "rgba" not in s:
                 textures.request_shape(s, key[1] & (FLAG_BLEND | FLAG_TEST))
 
         for key, ss in groups.items():

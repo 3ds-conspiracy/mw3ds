@@ -145,7 +145,7 @@ def skin_vertices(nif, inst, pos, nrm, skeleton):
     return out_p, out_n
 
 
-def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False):
+def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, loops=False):
     """Flattens a NIF into shapes. Rigid shapes come out in the NIF's root space;
     skinned shapes are skipped unless `skeleton` (bone name -> posed matrix) is given,
     then they come out in skeleton space and are marked "skinned". `bind_pose` draws a skinned
@@ -160,7 +160,7 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False):
 
     def visit(b, m, props):
         if b["type"] in ("NiRotatingParticles", "NiAutoNormalParticles"):
-            s = particle_shape(arch, nif, b, props, node_world)
+            s = particle_shape(arch, nif, b, props, node_world, loops)
             if s:
                 shapes.append(s)
             return
@@ -277,7 +277,7 @@ def particle_fall(nif, ctrl, m):
     return 0.0
 
 
-def particle_shape(arch, nif, b, props, node_world):
+def particle_shape(arch, nif, b, props, node_world, loops=False):
     """Approximates a particle emitter (candle / torch flame) as three crossed vertical quads
     at the emitter, sized from the particle settings, drawn unlit with the particles' blending."""
     ctrl = nif.get(b["controller"])
@@ -303,7 +303,19 @@ def particle_shape(arch, nif, b, props, node_world):
         # and as wide as the emitter throws it sideways (declination spread: past 90 degrees, every way)
         spread = ctrl.get("declination_var", 0.0)
         half_w = size + ctrl["speed"] * t * (1.0 if spread >= math.pi / 2 else math.sin(spread))
-    color = particle_color(nif, ctrl, last_prop(props, "NiMaterialProperty"))
+    mat = last_prop(props, "NiMaterialProperty")
+    color = particle_color(nif, ctrl, mat)
+    # A still spray that goes on (a candle, a brazier, a chimney's smoke): its own looping flipbook on the quads, sized
+    # to it (particles.loop_flipbook), in place of the scrolled picture
+    # (loops: placed in a cell, whose conversion encodes the sheet; carried torches keep the scrolled picture)
+    from particles import loop_flipbook
+    loop = loop_flipbook(arch, nif, b["index"]) if loops else None
+    u1 = v1 = 1.0
+    if loop:
+        lname, _, (frames, cols, rows, fps), (x0, y0, x1, y1) = loop
+        half_w, bottom, height = x1, y0, y1
+        color = np.ones(3)                   # (each particle's colour is in the sheet; the cell's light on the quads)
+        u1, v1 = 1.0 / cols, 1.0 / rows
 
     pos, uv, tris = [], [], []
     for k in range(3):
@@ -311,7 +323,7 @@ def particle_shape(arch, nif, b, props, node_world):
         dx, dy = math.cos(a) * half_w, math.sin(a) * half_w
         base = len(pos)
         pos += [(-dx, -dy, bottom), (dx, dy, bottom), (dx, dy, height), (-dx, -dy, height)]
-        uv += [(0, 1), (1, 1), (1, 0), (0, 0)]
+        uv += [(0, v1), (u1, v1), (u1, 0), (0, 0)]
         tris += [base, base + 1, base + 2, base, base + 2, base + 3]
     pos = np.array(pos, dtype=float)
     # Emitter origin, but keep the flame upright in its parent's frame
@@ -323,7 +335,10 @@ def particle_shape(arch, nif, b, props, node_world):
     if alpha and (alpha["flags"] >> 5) & 15 == ALPHA_ONE:
         flags |= FLAG_ADDITIVE
     name = tex.lower()
-    if re.search("smoke|steam|spark", name):
+    if loop:
+        flags |= FLAG_CLAMP
+        tex = "generated\\" + lname[:-4]
+    elif re.search("smoke|steam|spark", name):
         flags |= FLAG_RISE
     elif re.search("fire|flame", name) and "ash" not in name:
         flags |= FLAG_RISE | FLAG_CLAMP     # a flame: its picture flickers (no climb)
@@ -333,6 +348,21 @@ def particle_shape(arch, nif, b, props, node_world):
         "tris": np.array(tris, dtype=np.uint32), "tex": tex, "texprop": texprop["index"] if texprop else -1,
         "flags": flags, "skinned": False,
         "alpha_ref": 0, "mat": None, "vcp": {"vertex_mode": 1, "lighting_mode": 0}, "block": b["index"], "name": b["name"],
+        "loop": loop,
+    } if not loop else {
+        "pos": pos, "nrm": np.tile([0.0, 0.0, 1.0], (n, 1)), "uv": np.array(uv, dtype=float),
+        # (less opaque: the three crossed quads each carry the whole spray, and seen from any side about two of them
+        # cover it, |cos| summed over 60 degree steps. Added light doubles there: half; a smoke's cover compounds less
+        # (1 - (1 - a)^2): 0.7, against OpenMW side by side)
+        "vcol": np.tile([1.0, 1.0, 1.0, 0.5 if flags & FLAG_ADDITIVE else 0.7], (n, 1)),
+        "tris": np.array(tris, dtype=np.uint32), "tex": tex, "texprop": texprop["index"] if texprop else -1,
+        "flags": flags, "skinned": False, "alpha_ref": 0,
+        # OpenMW lights a particle as any lit shape, its colour as ambient and diffuse, the material's glow on top;
+        # a particle faces the eye, so the light reaches it from any side (convert_cell.bake_colors: omni)
+        "mat": {"ambient": [1.0, 1.0, 1.0], "diffuse": [1.0, 1.0, 1.0], "alpha": 1.0,
+                "emissive": list(mat["emissive"]) if mat else [0.0, 0.0, 0.0]},
+        "omni": True, "vcp": {"vertex_mode": 2, "lighting_mode": 1}, "block": b["index"], "name": b["name"],
+        "loop": loop,
     }
 
 

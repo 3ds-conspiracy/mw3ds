@@ -87,6 +87,13 @@ static bool readBatches(FILE* f, std::vector<CellBatch>& out, Cell& cell, u32 ve
 			fread(b.posScale, 4, 3, f);
 			fread(b.uvScale, 4, 2, f);
 			b.stride = CELL_VERTEX_SIZE_PACKED;
+			if (version >= 8)
+			{
+				fread(&b.flipFrames, 1, 1, f);
+				fread(&b.flipCols, 1, 1, f);
+				fread(&b.flipRows, 1, 1, f);
+				fread(&b.flipFps, 1, 1, f);
+			}
 		}
 		else
 		{
@@ -254,7 +261,7 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 	}
 
 	CellHeader h;
-	if (fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "MWC1", 4) != 0 || h.version < 1 || h.version > 7)
+	if (fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "MWC1", 4) != 0 || h.version < 1 || h.version > 8)
 	{
 		logf("cell: bad header in %s", path);
 		zclose(f);

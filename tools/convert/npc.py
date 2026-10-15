@@ -270,12 +270,20 @@ class NpcBuilder:
             tnif = self.nif("meshes\\" + lrec.zstr("MODL")) if lrec.zstr("MODL") and tbone is not None else None
             if tnif is None:
                 continue
+            # A carried light sits on the bone turned -90 degrees about X (its upright model then stands up in the
+            # Torch pose), moved by its "BoneOffset" node's translation (OpenMW's ActorAnimation::attach)
+            held = np.identity(4)
+            held[:3, :3] = [[1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, -1.0, 0.0]]
+            off = next((b for b in tnif.blocks if (b.get("name") or "").lower() == "boneoffset" and "translation" in b), None)
+            if off is not None:
+                held[:3, 3] = off["translation"]
+            place = tbone @ held
             for s in extract_shapes(self.arch, tnif, vis_hidden=True):
-                if "raw" not in s:
-                    s["raw"] = {"pos": np.asarray(s["pos"]), "node": np.identity(4)}
+                raw = s.get("raw") or {"pos": np.asarray(s["pos"]), "node": np.identity(4)}
+                s["raw"] = dict(raw, node=held @ raw["node"])
                 s["bone"], s["mirror"], s["hand"] = "shield bone", False, "torch"
-                s["pos"] = s["pos"] @ tbone[:3, :3].T + tbone[:3, 3]
-                s["nrm"] = s["nrm"] @ tbone[:3, :3].T
+                s["pos"] = s["pos"] @ place[:3, :3].T + place[:3, 3]
+                s["nrm"] = s["nrm"] @ place[:3, :3].T
                 shapes.append(s)
             break
 

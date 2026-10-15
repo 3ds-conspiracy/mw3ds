@@ -1080,10 +1080,18 @@ bool World::underWater(float z) const
 
 float World::weatherFogScale() const
 {
+	// (the weather no longer shortens the view: it moves where the fog starts, weatherFogStart)
+	return 1.0f;
+}
+
+// Where the land fog starts outdoors, a share of where it ends: OpenMW's FogManager puts it at the view distance x
+// (1 - the weather's land fog depth), the end at the view distance (Morrowind.ini Land Fog Day / Night Depth: 0.69
+// clear, 1.0 fog, 1.1 an ash storm, 1.2 blight: fogged from the eye). Below -1.5 without weathers
+float World::weatherFogStart() const
+{
 	if (game.weatherTypes.empty() || current < 0 || cells[current].interior)
-		return 1.0f;
-	// (the hour's part is OpenMW's fog depth; 0.69 is the vanilla day depth the view distance is tuned for)
-	return fmaxf(0.25f, fminf(1.0f, 0.69f / fmaxf(0.1f, weatherFogDepth())));
+		return -2.0f;
+	return fmaxf(-1.0f, fminf(0.95f, 1.0f - weatherFogDepth()));
 }
 
 // The weather's colours for the hour (OpenMW's interpolation: each channel its own sunrise / sunset windows)
