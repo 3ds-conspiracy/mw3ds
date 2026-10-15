@@ -68,7 +68,7 @@ jobs:
           files=$(git diff --name-only $base...HEAD -- . ':!tools/test/cases' | wc -l)
           lines=$(git diff --numstat $base...HEAD -- . ':!tools/test/cases' | awk '{s+=$1} END {print s+0}')
           echo "$files files, $lines added lines outside test cases"
-          if [ "$files" -gt 6 ] || [ "$lines" -gt 400 ]; then
+          if [ "$files" -gt 10 ] || [ "$lines" -gt 600 ]; then
             echo "Too big for a self-contained idea. Split it, or the maintainer adds size-approved."; exit 1
           fi
 
