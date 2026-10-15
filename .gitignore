@@ -21,7 +21,7 @@ tools/test/cases/bench-*.txt
 # private working notes (handoffs, todo)
 internal/
 
-# tools downloaded by tools/build/setup.ps1
+# tools downloaded by tools/build/setup.py
 .tools/
 
 # native test build crash traces (tools/test/native/native_crash.inc) and shell crash dumps

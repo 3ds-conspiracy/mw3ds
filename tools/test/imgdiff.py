@@ -1,4 +1,4 @@
-"""Compares two runs' screenshots (PNG folders from run-test.ps1 -Shots), shot by shot: how many pixels of the top
+"""Compares two runs' screenshots (PNG folders from run_test.py --shots), shot by shot: how many pixels of the top
 screen differ by more than a small amount, and a picture of where (red) beside each pair.
     python tools/test/imgdiff.py build/shots/skin-cpu build/shots/skin-gpu [--out build/shots/skin-diff] [--max 0.5]
 Exit code 1 when a shot differs on more than --max percent of the top screen (default 0.5).

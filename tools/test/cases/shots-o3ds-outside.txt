@@ -1,5 +1,5 @@
 # Outdoor screenshots (Old 3DS look check): Seyda Neen, Balmora, Vivec and the Bitter Coast at midday, a few headings
-# each. tools\test\run-test.ps1 shots-o3ds-outside -Old3ds -Data out\o3ds -Start "Seyda Neen" -Shots build\shots\o3-outside
+# each. tools/test/run_test.py shots-o3ds-outside --old3ds --data out/o3ds --start "Seyda Neen" --shots build/shots\o3-outside
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD+SEED:1+HOUR:12
 20 0 0 0

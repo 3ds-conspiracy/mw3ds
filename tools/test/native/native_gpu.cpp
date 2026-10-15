@@ -1,5 +1,5 @@
 // The native test build's software GPU: what citro3d and citro2d draw on the 3DS, drawn on the PC, so SHOT saves
-// both screens as the emulator does (the same 400 x 480 BMP). On with NATIVE_DRAW=1 (run-test.ps1 -Native sets it
+// both screens as the emulator does (the same 400 x 480 BMP). On with NATIVE_DRAW=1 (run_test.py --native sets it
 // for cases with SHOT); without it every call returns at once and the textures are never read, so the plain native
 // runs stay headless and fast.
 //

@@ -1,6 +1,6 @@
 """Converts a run's SHOT screenshots (shot_step_NN.bmp: 400 x 480, top screen above the bottom one) to PNG.
     python tools/test/shots.py <sd folder> <out folder> [--screen both|top|bottom]
-run-test.ps1 -Shots <folder> calls it. Prints each PNG written.
+run_test.py --shots <folder> calls it. Prints each PNG written.
 """
 import argparse
 from pathlib import Path

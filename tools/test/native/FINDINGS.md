@@ -42,7 +42,7 @@ the `hw-script*` family, `mech-magic`, `mech-skills`, `hw-escort`, `hw-writ`, `m
 ### The tests
 
 - **The sweep batches (`qrun`, `srun`, `xrun`) are not judged by `RESULT:`.** They count quests started
-  (`questrun.py --check`). A `topic X not offered` in them is a finding about that quest. `run-native-all.ps1` now
+  (`questrun.py --check`). A `topic X not offered` in them is a finding about that quest. `run_native_all.py` now
   judges them that way and compares with the emulator results in `build\<prefix>-results.txt`.
 - **Those saved emulator results are stale.** They are from 2026-09-28; a fresh emulator run now gives fewer quests
   started (for example `qrun-15` 10 then, 7 now). Native matches the fresh emulator numbers exactly. So a gap against
@@ -69,7 +69,7 @@ Both test fixes pass natively three times in a row and on the emulator twice.
 
 The rule: find out whether it fails on both sides before changing anything.
 
-1. **Run it natively** (about 1 s): `tools\test\run-test.ps1 <case> -Native -Data out\world -Start 'Seyda Neen'`.
+1. **Run it natively** (about 1 s): `tools/test/run_test.py <case> --native --data out/world --start 'Seyda Neen'`.
 2. **Run it on the emulator** (`-Fast`) once or twice. Results:
    - Fails on both, the same way: a real failure in the game or a stale test. Go to step 3.
    - Fails only natively: a native bug (float, stub, heap, timing). Fix the harness, not the test.

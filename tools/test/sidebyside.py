@@ -530,15 +530,15 @@ def run_3ds(shots, out, name, emu, data, exe):
     raw = out / "3ds-raw"
     if raw.exists():
         shutil.rmtree(raw)
-    cmd = ["powershell", "-NoProfile", "-File", str(ROOT / "tools" / "test" / "run-test.ps1"), f"scratch/{name}",
-           "-Data", data, "-Start", "Seyda Neen", "-Shots", str(raw)]
+    cmd = [sys.executable, str(ROOT / "tools" / "test" / "run_test.py"), f"scratch/{name}",
+           "--data", data, "--start", "Seyda Neen", "--shots", str(raw)]
     if emu:
-        cmd += ["-Fast", "-Wait", "900"]
+        cmd += ["--fast", "--wait", "900"]
     else:
         if not exe:
             own = ROOT / "build" / "native-sbs" / "mw3ds-native.exe"
             exe = str(own if own.exists() else ROOT / "build" / "native" / "mw3ds-native.exe")
-        cmd += ["-Native", "-Exe", exe, "-Sd", os.environ.get("MW3DS_SBS_SD") or str(ROOT / "build" / "native-sbs" / "sd")]
+        cmd += ["--native", "--exe", exe, "--sd", os.environ.get("MW3DS_SBS_SD") or str(ROOT / "build" / "native-sbs" / "sd")]
     print("3ds:", case.relative_to(ROOT), "emulator" if emu else "native")
     r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     for ln in r.stdout.splitlines():

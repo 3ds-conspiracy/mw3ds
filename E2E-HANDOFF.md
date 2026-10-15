@@ -7,13 +7,13 @@ bugs, are committed (b6ba258..HEAD). Open items 1-5 of the earlier list were the
 
 ## How the tests are run
 
-- One test: `tools\test\run-test.ps1 <name> -Data out\world -Start 'Seyda Neen' [-Wait secs] [-Emu <azahar folder>] [-App
+- One test: `tools/test/run_test.py <name> --data out/world --start 'Seyda Neen' [--wait secs] [--emu <azahar folder>] [--app
   <3dsx>]`. Reads `tools\test\cases\<name>.txt`, prints a `RESULT:` line. `-Wait` defaults to 300 s; the spec tests need
   5400-7200. `-App` with a copy of the 3dsx lets the app be rebuilt while a test runs.
-- Parallel (four Azahar copies: main, azahar-b, -c, -d): `tools\test\sweep-par.ps1 -ItemsFile <file>`, one `test:<name>` per
+- Parallel (four Azahar copies: main, azahar-b, -c, -d): `tools/test/sweep_par.py --items-file <file>`, one `test:<name>` per
   line, results in `build\par\<name>.result` / `.log`. Its `-Wait 1500` is too short for openmw-spec-dialogue, -world,
   -effects: run those directly.
-- Main-quest chain: `tools\test\run-suite.ps1 -Chained -Data out\world -Start 'Seyda Neen' -Wait 2400 [-Emu <azahar
+- Main-quest chain: `tools/test/run_suite.py --chained --data out/world --start 'Seyda Neen' --wait 2400 [--emu <azahar
   folder>] [-App <3dsx copy>] [-Logs <folder>]`. Without `-App` it runs the live `mw3ds.3dsx` (do not rebuild meanwhile).
   Each chapter's closing save is kept as `<logs>\chain-mq-chN.sav`; `-ResumeFrom <that save> -Tests mq-chN,...` restarts
   mid-chain. Chained, GIVE only tops up, SPELL skips a known spell, JOIN never lowers a rank, CHAIN pays a carried
@@ -21,7 +21,7 @@ bugs, are committed (b6ba258..HEAD). Open items 1-5 of the earlier list were the
 - Do not rebuild `out\world` while any emulator runs. Rebuild: `MW3DS_OUT=out/world python tools/convert/level.py --world`
   (about 12 minutes with the cell cache, ~4 GB of RAM). Under memory pressure `tex3ds` can die writing `map.t3x`
   (exit 0xC0000142) after the cells and skeletons are written but before `game.json`: check `game.json`'s time and rerun.
-- App build: `powershell -File tools\build\make.ps1`.
+- App build: `python tools/build/make.py`.
 - `SHOT` in a test writes `shot_step_NN.bmp` (400x480, top screen = top 240 rows) to the emulator's `sdmc/3ds/mw3ds`;
   `bug-dagger-hand` and `bug-andrano-tomb` use it.
 

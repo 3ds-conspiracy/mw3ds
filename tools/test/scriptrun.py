@@ -12,7 +12,7 @@ real actions: for each 'Journal Q n' in a script, the conditions around it becom
 Anything else a stage depends on (script locals set elsewhere, positions, spells...) and it's skipped, with why.
 
   python tools/test/scriptrun.py [--filter re] [--batch 10]  -> tools/test/cases/xrun-N.txt, build/xrun.json
-  tools\\test\\qrun-all.ps1 -Prefix xrun -From 1 -To N; results: questrun.py --check xrun-N
+  tools/test/qrun_all.py --prefix xrun --from 1 --to N; results: questrun.py --check xrun-N
 """
 import argparse
 import json

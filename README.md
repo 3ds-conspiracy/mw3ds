@@ -18,7 +18,7 @@ expect rough edges, and please report what you see (see [Testing and reporting](
 
 ### 1. Get the code
 
-```powershell
+```sh
 git clone -b old-3ds --recurse-submodules https://github.com/3ds-conspiracy/mw3ds.git
 ```
 
@@ -27,7 +27,8 @@ git clone -b old-3ds --recurse-submodules https://github.com/3ds-conspiracy/mw3d
 
 ### 2. Install the prerequisites
 
-You need a Windows PC with:
+You need a Windows PC (Linux and macOS can build too: the scripts call `make` directly there, with devkitPro
+installed and `DEVKITPRO` set. That path has not been tried yet) with:
 
 - **Morrowind**, installed anywhere. Only the base game is used; Tribunal and Bloodmoon are not needed.
 - **[Python](https://www.python.org/downloads/) 3.10 or newer.** Tick "Add Python to PATH" in the installer.
@@ -60,28 +61,28 @@ MW3DS_EMU_DIR=C:\Tools\azahar
 
 ### 4. Install the rest
 
-```powershell
-powershell -File tools\build\setup.ps1
+```sh
+python tools/build/setup.py
 ```
 
 This installs the Python packages, the 3DS toolchain and `makerom`, then checks everything. If something is missing it
-says what and where to get it. Run it again with `-Check` any time to see the state without installing anything.
+says what and where to get it. Run it again with `--check` any time to see the state without installing anything.
 
 ### 5. Build
 
 | Console | Command | Writes |
 |---|---|---|
-| **Old 3DS / Old 2DS** | `powershell -File tools\build\build-cia-mods.ps1 -Old3ds` | `build\mw3ds-o3ds.cia` |
-| New 3DS / New 2DS | `powershell -File tools\build\build-cia-mods.ps1` | `build\mw3ds.cia` |
+| **Old 3DS / Old 2DS** | `python tools/build/build_cia_mods.py --old3ds` | `build\mw3ds-o3ds.cia` |
+| New 3DS / New 2DS | `python tools/build/build_cia_mods.py` | `build\mw3ds.cia` |
 
 Each converts the game data from your Morrowind install (with the mods laid over it), builds the engine and packs both
 into the CIA (about 1 GB). The first run takes an hour or more; later runs reuse what is already converted.
 
 After changing only the engine code (a new commit of this branch), skip the conversion:
 
-```powershell
+```sh
 git pull --recurse-submodules
-powershell -File tools\build\build-cia-mods.ps1 -Old3ds -SkipConvert
+python tools/build/build_cia_mods.py --old3ds --skip-convert
 ```
 
 The Old 3DS data (textures at most 128 texels, a quarter of the memory) goes to `out\o3ds`, the New 3DS data to
@@ -155,7 +156,7 @@ and the build runs it for you. Your Morrowind install is not modified. A submodu
 repository, so nothing from the mods is part of this one; they keep their own licenses (Atlas: Unlicense; the patch
 repository has no license file).
 
-Without the mods: `tools\build\build-cia.ps1` (or `-Old3ds`). It writes the same folders, so switching means
+Without the mods: `python tools/build/build_cia.py` (or `--old3ds`). It writes the same folders, so switching means
 converting again.
 
 ## Running the tests
@@ -163,20 +164,20 @@ converting again.
 The tests play the game automatically and check the results. Each test is a text file in `tools\test\cases\` listing
 inputs and checks (go to a place, talk about a topic, expect a journal entry, ...).
 
-```powershell
-powershell -File tools\test\run-test.ps1 mq-ch1 -Start "Seyda Neen"                                   # in Azahar
-powershell -File tools\test\run-test.ps1 perf-balmora -Old3ds -Data out\o3ds -Start "Seyda Neen"      # Azahar as an Old 3DS
-powershell -File tools\test\run-test.ps1 soak-o3ds -Old3ds -Data out\o3ds -Start "Seyda Neen" -Wait 1500
+```sh
+python tools/test/run_test.py mq-ch1 --start "Seyda Neen"                                    # in Azahar
+python tools/test/run_test.py perf-balmora --old3ds --data out/o3ds --start "Seyda Neen"      # Azahar as an Old 3DS
+python tools/test/run_test.py soak-o3ds --old3ds --data out/o3ds --start "Seyda Neen" --wait 1500
 ```
 
-`-Old3ds` runs Azahar as an Old 3DS (the engine then keeps to the 64 MB mode's memory, as the console would). It checks
+`--old3ds` runs Azahar as an Old 3DS (the engine then keeps to the 64 MB mode's memory, as the console would). It checks
 memory and behaviour; frame times at the Old 3DS's 268 MHz need the console itself. `tools\test\perf.py <log>` sums up a
 run's per-second performance lines. The game's log is at `<Azahar folder>\user\sdmc\3ds\mw3ds\log.txt`.
 
 ## Troubleshooting
 
 - **"... is not set"**: a path is missing from `.env`. Fill it in and run again.
-- **Something else missing**: run `powershell -File tools\build\setup.ps1 -Check` to see what.
+- **Something else missing**: run `python tools/build/setup.py --check` to see what.
 - **"git submodule update failed"**: no network, or git can't reach GitHub. Try again, or build without the mods.
 - **"missing sounds" during the build**: a few sound files the game refers to were not found. The build carries on
   without them; those sounds are silent.
@@ -192,7 +193,7 @@ Your Morrowind install ──▶ tools\convert (converters, mods laid over) ─�
 |---|---|
 | `source\`, `include\` | The engine: world and rendering, combat, magic, dialogue, the MWScript interpreter, UI, saves, and the test harness |
 | `tools\convert\` | The converters (Python): Morrowind's files to the engine's data; `level.py` runs them all |
-| `tools\build\` | Setup, build and packaging scripts (PowerShell), the CIA's banner and RSF |
+| `tools\build\` | Setup, build and packaging scripts (Python), the CIA's banner and RSF |
 | `tools\test\` | The test runners, quest sweeps, spec test generators and data checks |
 | `tools\test\cases\` | The automated tests |
 | `mods\` | The optimization mods (git submodules) |

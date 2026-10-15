@@ -53,7 +53,7 @@ inline Result irrstInit() { return 0; }
 inline void irrstExit() {}
 inline bool aptMainLoop() { return true; }
 inline void gspWaitForVBlank() {}
-// NATIVE_OLD3DS=1 (run-test.ps1 -Old3ds): the game takes its Old 3DS profile
+// NATIVE_OLD3DS=1 (run_test.py --old3ds): the game takes its Old 3DS profile
 inline Result APT_CheckNew3DS(bool* b) { const char* o = getenv("NATIVE_OLD3DS"); *b = !(o && o[0] == '1'); return 0; }
 inline void osSetSpeedupEnable(bool) {}
 inline Result APT_SetAppCpuTimeLimit(u32) { return -1; }

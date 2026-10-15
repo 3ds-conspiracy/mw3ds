@@ -102,10 +102,7 @@ jobs:
 
   native-build:
     # The engine for the PC (what the native test runs use): compiles only, there is no game data here.
-    # Known to fail on Linux today (native_stubs.cpp includes <direct.h> and redefines rmdir): kept as a reminder until
-    # the native build is ported, and allowed to fail.
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
