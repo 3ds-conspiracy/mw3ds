@@ -17,6 +17,8 @@ test is a place where the engine and the spec disagree; each page ends with what
 | [crime.md](crime.md) | bounties per crime, who sees and reports, witness reactions | `openmw-spec-crime` (bounty column) |
 | [derived.md](derived.md) | base health, level-up gains, fatigue term, Reflect / Spell Absorption, resistance | `openmw-spec-health` (hand-written), `openmw-spec-resist` (the resistance term and base), `openmw-spec-enchcast` |
 
+Scripting (the two compilers, the console, a new game's scripts): [scripting.md](scripting.md).
+
 What has and hasn't been compared with OpenMW, file by file and rule by rule: [audit.md](audit.md).
 
 Rules for keeping it honest:

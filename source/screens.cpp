@@ -275,6 +275,7 @@ void Session::drawBottom()
 	case SCR_CONTROLS: drawControls(); break;
 	case SCR_DISPLAY: drawDisplay(); break;
 	case SCR_LOOK: drawLook(); break;
+	case SCR_CONSOLE: drawConsole(); break;
 	case SCR_REPAIR: drawRepair(); break;
 	case SCR_SAVES: drawSaves(); break;
 	case SCR_GAMEMENU: drawGameMenu(); break;
@@ -497,11 +498,12 @@ void Session::drawOptions()
 {
 	header(w.game.gmst("soptions", "Options"));
 	const UiInput& in = uiIn();
-	// focus: 0..2 the bars, 3..5 the toggles (3D, combat rules, hit numbers), 6 gyro aim and 10 Display beside it, 7..9
-	// the buttons along the bottom
-	if (in.down & KEY_DOWN) focus = focus == 10 ? 7 : focus >= 7 ? 0 : focus == 6 ? 7 : focus >= 3 ? 6 : focus + 1;
-	else if (in.down & KEY_UP) focus = focus == 10 ? 3 : focus == 0 ? 7 : focus >= 7 ? 6 : focus == 6 ? 3 : focus >= 3 ? 2 : focus - 1;
-	else if ((focus == 6 || focus == 10) && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 6 ? 10 : 6;
+	// focus: 0..2 the bars, 3..5 the toggles (3D, combat rules, hit numbers), 6 gyro aim, 11 Console and 10 Display
+	// beside it, 7..9 the buttons along the bottom
+	if (in.down & KEY_DOWN) focus = focus == 10 || focus == 11 ? 7 : focus >= 7 ? 0 : focus == 6 ? 7 : focus >= 3 ? 6 : focus + 1;
+	else if (in.down & KEY_UP) focus = focus == 10 || focus == 11 ? 3 : focus == 0 ? 7 : focus >= 7 ? 6 : focus == 6 ? 3 : focus >= 3 ? 2 : focus - 1;
+	else if ((focus == 6 || focus == 10 || focus == 11) && (in.down & KEY_RIGHT)) focus = focus == 6 ? 11 : focus == 11 ? 10 : 6;
+	else if ((focus == 6 || focus == 10 || focus == 11) && (in.down & KEY_LEFT)) focus = focus == 6 ? 10 : focus == 10 ? 11 : 6;
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_RIGHT)) focus = focus == 5 ? 3 : focus + 1;
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_LEFT)) focus = focus == 3 ? 5 : focus - 1;
 	bool changed = false;
@@ -558,8 +560,8 @@ void Session::drawOptions()
 	// Gyro aim: turning the console turns the view (off, half, as far, twice as far as it turned)
 	static const int kGyroSteps[4] = { 0, 50, 100, 200 };
 	char gyro[40];
-	snprintf(gyro, sizeof(gyro), g_gyroAim > 0 ? "Gyro aim: %.1fx" : "Gyro aim: Off", g_gyroAim / 100.0f);
-	if (uiButton(4, 174, 152, 26, gyro, focus == 6) || (focus == 6 && (in.down & KEY_A)))
+	snprintf(gyro, sizeof(gyro), g_gyroAim > 0 ? "Gyro: %.1fx" : "Gyro: Off", g_gyroAim / 100.0f);
+	if (uiButton(4, 174, 100, 26, gyro, focus == 6) || (focus == 6 && (in.down & KEY_A)))
 	{
 		int k = 0;
 		while (k < 3 && kGyroSteps[k] != g_gyroAim)
@@ -568,8 +570,10 @@ void Session::drawOptions()
 		notify(g_gyroAim > 0 ? "Gyro aim on: turn the 3DS to aim." : "Gyro aim off.");
 		changed = true;
 	}
+	// Console: OpenMW's, one script line at a time, on the object the crosshair was on
+	bool openConsole = uiButton(110, 174, 100, 26, "Console", focus == 11) || (focus == 11 && (in.down & KEY_A));
 	// Display: Gamma and Auto gamma, on their own screen
-	bool display = uiButton(164, 174, 152, 26, "Display", focus == 10) || (focus == 10 && (in.down & KEY_A));
+	bool display = uiButton(216, 174, 100, 26, "Display", focus == 10) || (focus == 10 && (in.down & KEY_A));
 	if (changed)
 	{
 		audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
@@ -589,6 +593,16 @@ void Session::drawOptions()
 		closeScreen();
 		focus = 0;
 		openScreen(SCR_DISPLAY);
+	}
+	else if (openConsole)
+	{
+		// the object under the crosshair when the menu was opened is the one the lines act on (OpenMW's click on it)
+		if (target >= 0)
+			console.selected = target;
+		closeScreen();
+		focus = 0;
+		consoleBack = 0.0f;
+		openScreen(SCR_CONSOLE);
 	}
 	else if (b == 0)
 	{
@@ -761,6 +775,72 @@ void Session::drawDisplay()
 	{
 		closeScreen();
 		focus = 0;
+		openScreen(SCR_OPTIONS);
+	}
+}
+
+// Options > Console (OpenMW's console, devconsole.cpp): the object the lines act on, what they printed, and the system
+// keyboard for the next line. D-pad / C-stick up and down scroll the output; Edit last opens the keyboard on the line
+// typed last
+void Session::drawConsole()
+{
+	header("Console");
+	const UiInput& in = uiIn();
+	if (console.selected >= (int)w.refs.size())
+		console.selected = -1;
+	std::string sel = console.selectedName(w);
+	uiText(8, 24, 0.4f, col::textDim, sel.empty() ? "Object: none (write Player->... for yourself)" : "Object: " + sel);
+	// the output, wrapped, newest at the bottom
+	const float kTop = 40.0f, kHeight = 162.0f, kScale = 0.4f;
+	uiRect(4, kTop, 312, kHeight, col::panel);
+	uiFrame(4, kTop, 312, kHeight);
+	struct Row { std::string text; bool error; };
+	std::vector<Row> rows;
+	for (auto& l : console.lines)
+		for (auto& part : uiWrap(l.text.empty() ? " " : l.text, 300.0f, kScale))
+			rows.push_back({ part, l.error });
+	float lh = uiLineHeight(kScale);
+	int fit = (int)((kHeight - 6.0f) / lh);
+	int maxBack = std::max(0, (int)rows.size() - fit);
+	if (in.down & KEY_UP) consoleBack += 3.0f;
+	if (in.down & KEY_DOWN) consoleBack -= 3.0f;
+	if (in.touching)
+		consoleBack += in.dragDY / lh;
+	consoleBack -= uiStickScroll() / lh;
+	consoleBack = fmaxf(0.0f, fminf((float)maxBack, consoleBack));
+	int last = (int)rows.size() - (int)consoleBack;
+	int first = std::max(0, last - fit);
+	for (int i = first; i < last; i++)
+		uiText(8, kTop + 3 + (i - first) * lh, kScale, rows[i].error ? col::health : col::text, rows[i].text);
+	if (rows.empty())
+	{
+		uiText(8, kTop + 3, kScale, col::textDim, "Tap Type, write a line: OK on the keyboard runs it.");
+		uiText(8, kTop + 3 + lh, kScale, col::textDim, "Player->AddItem gold_001 100, coc Balmora, tgm, sv");
+	}
+	// Type, Edit last, Clear, Close (focus 0..3: D-pad left / right)
+	if (in.down & KEY_RIGHT) focus = focus >= 3 ? 0 : focus + 1;
+	else if (in.down & KEY_LEFT) focus = focus <= 0 ? 3 : focus - 1;
+	int b = -1;
+	const std::string row[4] = { "Type", "Edit last", "Clear", w.game.gmst("sclose", "Close") };
+	for (int i = 0; i < 4; i++)
+		if (uiButton(4 + i * 79, 208, 75, 28, row[i], focus == i, i != 1 || !console.history.empty())
+			|| (focus == i && (in.down & KEY_A)))
+			b = i;
+	if (b == 0 || (b == 1 && !console.history.empty()))
+	{
+		consoleDraft = b == 1 ? console.history.back() : "";
+		wantText = TEXT_CONSOLE;
+	}
+	else if (b == 2)
+	{
+		console.lines.clear();
+		console.runStart = 0;
+		consoleBack = 0.0f;
+	}
+	else if (b == 3 || (in.down & KEY_B))
+	{
+		closeScreen();
+		focus = 11;
 		openScreen(SCR_OPTIONS);
 	}
 }

@@ -24,6 +24,7 @@ enum { PROF_WORLD, PROF_PLAYER, PROF_STREAM, PROF_AI, PROF_SCRIPTS, PROF_OTHER, 
 extern float g_profParts[PROF_COUNT];
 
 #include "console.h"
+#include "devconsole.h"
 
 enum { CONTROLS_XBOX = 0, CONTROLS_CLASSIC = 1, CONTROLS_GOLDENEYE = 2 };
 extern int g_controlLayout;   // button layout (settings.txt controls=xbox|classic|goldeneye)
@@ -50,6 +51,7 @@ enum Screen
 	SCR_CONTROLS,
 	SCR_DISPLAY,
 	SCR_LOOK,
+	SCR_CONSOLE,
 };
 
 struct MessageState
@@ -81,13 +83,14 @@ struct Session : ScriptHost
 		};
 	}
 	World w;
+	DevConsole console;              // the in-game console (Options): its output, history and selected object
 	Dialogue dlg;
 	Screen screen = SCR_NONE;
 	std::vector<MessageState> messages;
 	int buttonPressed = -1;
 	std::vector<ScriptMenu> pendingMenus;
 	bool wantName = false;            // main loop shows the system keyboard between frames
-	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH };
+	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE };
 	int wantText = TEXT_NONE;         // the same, for the name of the spell / item being made or the journal's search
 	std::string typedText;            // tests: what the system keyboard returns (TYPE:)
 	int travelCell = -1;              // door to another cell: main loop shows a loading screen, then finishTravel()
@@ -451,6 +454,9 @@ struct Session : ScriptHost
 	void drawControls();
 	void drawDisplay();
 	void drawLook();
+	void drawConsole();               // Options > Console: one MWScript line at a time (devconsole.cpp)
+	float consoleBack = 0.0f;         // its output scrolled back by this many lines
+	std::string consoleDraft;         // what its keyboard opens with (Edit last: the line typed last)
 	void saveSettings();
 	void viewModelUpdate(const PlayerInput& in, float dt);
 	// repair (screens.cpp)
@@ -492,6 +498,10 @@ struct Session : ScriptHost
 	// Movies (tools/convert/movies.py: data/movies/<name>.mwv, sound music/movie_<name>.snd): the game waits
 	bool playMovie(const std::string& name) override;
 	bool talking() override { return dlg.open; }
+	void report(const std::string& text) override { console.print(text); }
+	bool centerOnCell(const std::string& name) override;
+	bool centerOnExterior(int x, int y) override;
+	bool toggleGodMode() override { testGod = !testGod; testGodBlows = false; return testGod; }
 	bool moviePlaying() const { return movieFile != nullptr; }
 	void movieUpdate(float dt);                   // next frame when it's time; the end
 	void movieDraw();                             // on the top screen (main.cpp)

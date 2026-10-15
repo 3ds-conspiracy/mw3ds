@@ -1,0 +1,48 @@
+# The console's own commands (OpenMW's, which scripts may call too): God mode, AI off, COC / COE to a place, ShowVars,
+# ORI on the selected object, Help, FillMap, FillJournal; and one OpenMW has that the engine does not run, refused
+3 0 0 0 0 MSG
+0.3 0 0 0 0 CON:tgm
+0.3 0 0 0 0 EXPECT:conhas:God_Mode_->_On:eq:1
+0.3 0 0 0 0 CON:togglegodmode
+0.3 0 0 0 0 EXPECT:conhas:God_Mode_->_Off:eq:1
+0.3 0 0 0 0 CON:tai
+0.3 0 0 0 0 EXPECT:conhas:AI_->_Off:eq:1
+0.3 0 0 0 0 CON:tai
+0.3 0 0 0 0 EXPECT:conhas:AI_->_On:eq:1
+0.3 0 0 0 0 CON:help
+0.3 0 0 0 0 EXPECT:conhas:additem:eq:1
+# ShowVars and ORI on the selected object; ShowVars with nothing selected lists the globals
+0.3 0 0 0 0 GOTO:Seyda_Neen
+4 0 0 0
+0.3 0 0 0 0 CONSEL:fargoth
+0.3 0 0 0 0 CON:sv
+0.3 0 0 0 0 EXPECT:conhas:Local_variables_for_fargoth:eq:1
+0.3 0 0 0 0 EXPECT:conhas:state_=_0_(short):eq:1
+0.3 0 0 0 0 CON:ori
+0.3 0 0 0 0 EXPECT:conhas:RefID|_fargoth:eq:1
+0.3 0 0 0 0 CONSEL
+0.3 0 0 0 0 CON:ori
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+0.3 0 0 0 0 CON:sv
+0.3 0 0 0 0 EXPECT:conhas:timescale_=:eq:1
+# FillMap: every named exterior place on the map; FillJournal: every quest's entries
+0.3 0 0 0 0 EXPECT:mapknown:balmora:eq:0
+0.3 0 0 0 0 CON:fillmap
+0.3 0 0 0 0 EXPECT:mapknown:balmora:eq:1
+0.3 0 0 0 0 EXPECT:journal:A1_1_FindSpymaster:eq:0
+0.3 0 0 0 0 CON:filljournal
+0.3 0 0 0 0 EXPECT:journal:A1_1_FindSpymaster:gt:0
+# COC into an interior by name, an unknown place refused; COE to an exterior cell
+0.3 0 0 0 0 CON:coc%"Seyda%Neen,%Census%and%Excise%Office"
+4 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census_and_Excise_Office
+0.3 0 0 0 0 CON:coc%"Nowhere%At%All"
+0.3 0 0 0 0 EXPECT:conhas:is_not_found:eq:1
+0.3 0 0 0 0 CON:coe%-3%-2
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora
+# OpenMW has it, the engine does not run it: refused, not half run
+0.3 0 0 0 0 CON:tcl
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+0.3 0 0 0 0 EXPECT:conhas:not_supported_here:eq:1
+1 0 0 0

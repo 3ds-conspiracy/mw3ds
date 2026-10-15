@@ -3434,6 +3434,15 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				if (fabsf(ac->headPitch) < 0.001f)
 					ac->headPitch = 0.0f;
 			}
+		// ToggleAI off (the console): they stand where they are, their packages and fights held
+		if (!w.aiEnabled)
+		{
+			if (Actor* fa = w.actorOf(i))
+				if (fa->mode == ANIM_LOOP)
+					actorPlay(*w.actorsOf(i), *fa, "Idle", ANIM_IDLE);
+			r.wandering = false;
+			return;
+		}
 		if (r.ai == AI_IDLE)
 		{
 			// A timed wander runs out (the other packages count theirs in npcPackage)

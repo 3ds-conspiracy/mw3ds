@@ -46,12 +46,23 @@ struct ScriptHost
 	virtual void equipPlayerItem(const std::string& id) = 0;                       // Equip on the player
 	virtual bool playMovie(const std::string& name) = 0;
 	virtual bool talking() = 0;                                                    // a conversation is open                           // PlayBink (false: not there)
+	virtual void report(const std::string& text) {}                                // console output (OpenMW's InterpreterContext::report)
+	virtual bool centerOnCell(const std::string& name) { return false; }          // COC: false when there is no such place
+	virtual bool centerOnExterior(int x, int y) { return false; }                  // COE
+	virtual bool toggleGodMode() { return false; }                                 // TGM: on after the toggle
 };
 
 int scriptFunctionId(const std::string& lowerName);
 
-// Runs every running script instance once (local scripts, inventory item scripts, global scripts).
-void scriptsRun(World& w, ScriptHost& host, float dt);
+// Runs every running script instance once (local scripts, inventory item scripts, global scripts); globalOnly: the
+// global ones only (a new game's first runs)
+void scriptsRun(World& w, ScriptHost& host, float dt, bool globalOnly = false);
 
 // Runs a dialogue result script in the speaker's context.
 void scriptRunSnippet(World& w, ScriptHost& host, const Node& block, int speakerRef);
+
+// The value of one expression in a reference's context (its locals; -1: none). The console's printed values
+float scriptEval(World& w, ScriptHost& host, const Node& expr, int selfRef);
+
+// Whether the interpreter runs a function (lowercase name); the console refuses lines naming one it does not
+bool scriptFunctionSupported(const std::string& lowerName);

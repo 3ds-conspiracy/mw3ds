@@ -491,6 +491,7 @@ struct World
 	int nightDay() const;                         // 0 default, 1 interior in daylight, 2 exterior at night
 	bool underWater(float z) const;               // below the water of a loaded cell
 	bool teleportDisabled = false;
+	bool aiEnabled = true;            // ToggleAI (the console): off, actors stand still
 	// (no longer written: ClearInfoActor only edits the Topics index) "actor id|info uid"
 	std::unordered_set<std::string> clearedInfos;
 	// Set by the session: whether an actor notices the player (dialogue "Detected"), and whether it attacks on sight

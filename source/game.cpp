@@ -473,6 +473,17 @@ static void convertBlock(const cJSON* list, Node& n, const Script* scope)
 	}
 }
 
+// The device's own compiler (scriptc.cpp, the console) builds the same JSON as the converter: the same conversion
+void scriptBlockFromJson(const cJSON* list, Node& n, const Script* scope)
+{
+	convertBlock(list, n, scope);
+}
+
+void scriptExprFromJson(const cJSON* j, Node& n, const Script* scope)
+{
+	convertExpr(j, n, scope);
+}
+
 static bool treeCalls(const Node& n, const char* func)
 {
 	if (n.kind == N_CALL && n.b == func)

@@ -212,7 +212,7 @@ static bool hasArg(const std::string& what)
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown";
 }
 
 // "<a>,<b>" as two numbers
@@ -671,6 +671,20 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	{
 		Session::EnchantCalc c = s.enchantCalc();
 		v = what == "enchantpoints" ? c.points : c.chance;
+		return true;
+	}
+	if (what == "conhas")            // conhas:<text>:eq:1: 1 when what the last console line printed holds the text ('_' a space)
+	{
+		v = 0;
+		std::string want = lower(spaced(arg));
+		for (size_t k = s.console.runStart; k < s.console.lines.size(); k++)
+			if (lower(s.console.lines[k].text).find(want) != std::string::npos)
+				v = 1;
+		return true;
+	}
+	if (what == "mapknown")          // mapknown:<place>: 1 when the place is on the map (visited, ShowMap, FillMap)
+	{
+		v = w.mapKnown.count(lower(spaced(arg))) ? 1.0f : 0.0f;
 		return true;
 	}
 	if (what == "mapseen")           // EXPECT:mapseen:<gx>,<gy>:eq:1: the map shows that exterior cell as explored
@@ -1396,6 +1410,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 				v++;
 	}
 	else if (what == "bounty") v = (float)w.bounty;
+	else if (what == "conval") v = s.console.hasValue ? s.console.lastValue : -999999.0f;   // the last console expression's value
+	else if (what == "conerr") v = s.console.lastError ? 1.0f : 0.0f;                    // the last console line did not run
 	else if (what == "armor") v = s.playerArmor();              // the player's armor rating
 	else if (what == "target") v = s.target >= 0 ? 1.0f : 0.0f;       // something under the crosshair
 	else if (what == "forcesneak") v = w.forceSneak ? 1.0f : 0.0f;    // the player forced to sneak
@@ -1525,7 +1541,7 @@ static int screenByName(const std::string& n)
 		{ "alchemy", SCR_ALCHEMY }, { "recharge", SCR_RECHARGE }, { "persuade", SCR_PERSUADE }, { "spells", SCR_SPELLS },
 		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES }, { "death", SCR_DEATH },
 		{ "journal", SCR_JOURNAL }, { "gamemenu", SCR_GAMEMENU }, { "map", SCR_MAP },
-		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "options", SCR_OPTIONS }, { "display", SCR_DISPLAY }, { "controls", SCR_CONTROLS }, { "look", SCR_LOOK },
+		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "options", SCR_OPTIONS }, { "display", SCR_DISPLAY }, { "controls", SCR_CONTROLS }, { "look", SCR_LOOK }, { "console", SCR_CONSOLE },
 	};
 	for (auto& e : names)
 		if (n == e.name)
@@ -2867,6 +2883,28 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 			p = comma ? comma + 1 : p + strlen(p);
 		}
 		w.modRegion(lower(a[1]), ch);
+		return true;
+	}
+	// CON:<line>: one line typed into the console (Options), run as the console runs it: '%' for a space, '^' for a '+'
+	// (a harness token can't hold one); what it prints goes to the log as "console:" lines
+	if (verb == "CON" && a.size() >= 2)
+	{
+		std::string line;
+		for (size_t k = 1; k < a.size(); k++)
+			line += (k > 1 ? ":" : "") + a[k];
+		for (auto& ch : line)
+			if (ch == '^')
+				ch = '+';
+		s.console.run(w, s, line);
+		return true;
+	}
+	// CONSEL:<id>: the object the console's lines act on (OpenMW's click on it); CONSEL alone: none
+	if (verb == "CONSEL")
+	{
+		s.console.selected = a.size() >= 2 && !a[1].empty() ? findRef(s, a[1]) : -1;
+		if (a.size() >= 2 && !a[1].empty() && s.console.selected < 0)
+			return fail(a[1] + " not loaded");
+		logf("test: console selects %s", s.console.selected < 0 ? "nothing" : s.console.selectedName(w).c_str());
 		return true;
 	}
 	if (verb == "SETREP" && a.size() >= 2)

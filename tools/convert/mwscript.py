@@ -112,6 +112,40 @@ INSTRS = {
     "user4": "", "wakeuppc": "",
 }
 
+# Functions whose call without a reference needs none (OpenMW registers no explicit form for them, or its opcode
+# takes the reference as optional): any other, called with no object in context, is "no implicit reference"
+# (the console with nothing selected)
+NO_REF_NEEDED = {
+    "addtolevcreature", "addtolevitem", "addtopic", "cellchanged", "centeroncell", "centeronexterior",
+    "changeweather", "choice", "coc", "coe", "disablelevitation", "disableplayercontrols", "disableplayerfighting",
+    "disableplayerjumping", "disableplayerlooking", "disableplayermagic", "disableplayerviewswitch",
+    "disableteleporting", "disablevanitymode", "dontsaveobject", "enablebirthmenu", "enableclassmenu",
+    "enableinventorymenu", "enablelevelupmenu", "enablelevitation", "enablemagicmenu", "enablemapmenu",
+    "enablenamemenu", "enableplayercontrols", "enableplayerfighting", "enableplayerjumping", "enableplayerlooking",
+    "enableplayermagic", "enableplayerviewswitch", "enableracemenu", "enablerest", "enablestatreviewmenu",
+    "enablestatsmenu", "enableteleporting", "enablevanitymode", "fadein", "fadeout", "fadeto", "filljournal",
+    "fillmap", "fixme", "getbuttonpressed", "getcurrenttime", "getcurrentweather", "getdeadcount", "getdetected",
+    "getfactionreaction", "getinterior", "getitemcount", "getjournalindex", "getmasserphase", "getpccell",
+    "getpccrimelevel", "getpcfacrep", "getpcinjail", "getpcjumping", "getpcrank", "getpcrunning", "getpcsleep",
+    "getpcsneaking", "getpctraveling", "getpcvisionbonus", "getplayercontrolsdisabled", "getplayerfightingdisabled",
+    "getplayerjumpingdisabled", "getplayerlookingdisabled", "getplayermagicdisabled", "getplayerviewswitchdisabled",
+    "getsecondspassed", "getsecundaphase", "getsoundplaying", "getsquareroot", "getvanitymodedisabled",
+    "getwaterlevel", "getwerewolfkills", "getwindspeed", "goodbye", "gotojail", "help", "journal", "menumode",
+    "menutest", "messagebox", "modfactionreaction", "modpccrimelevel", "modpcfacrep", "modpcvisionbonus",
+    "modregion", "modwaterlevel", "payfine", "payfinethief", "pcclearexpelled", "pcexpell", "pcexpelled",
+    "pcforce1stperson", "pcforce3rdperson", "pcget3rdperson", "pcjoinfaction", "pclowerrank", "pcraiserank",
+    "placeatpc", "placeitem", "placeitemcell", "playbink", "playsound", "playsoundvp", "ra", "random", "reloadlua",
+    "removefromlevcreature", "removefromlevitem", "resetactors", "scriptrunning", "setfactionreaction",
+    "setjournalindex", "setnavmeshnumber", "setpccrimelevel", "setpcfacrep", "setpcvisionbonus", "setwaterlevel",
+    "show", "showmap", "showrestmenu", "showscenegraph", "showvars", "ssg", "startscript", "stopscript",
+    "streammusic", "sv", "t3d", "tai", "tap", "tb", "tcb", "tcg", "tcl", "testcells", "testinteriorcells",
+    "testmodels", "tfh", "tfow", "tgm", "tm", "toggleactorspaths", "toggleai", "toggleborders", "togglecollision",
+    "togglecollisionboxes", "togglecollisiongrid", "togglefogofwar", "togglefullhelp", "togglegodmode",
+    "togglemenus", "togglenavmesh", "togglepathgrid", "togglerecastmesh", "togglescripts", "togglesky",
+    "togglevanitymode", "togglewater", "togglewireframe", "toggleworld", "tpg", "ts", "turnmoonred",
+    "turnmoonwhite", "tvm", "tw", "twa", "twf", "user1", "user2", "wakeuppc", "xbox",
+}
+
 _ATTRS = ("strength", "intelligence", "willpower", "agility", "speed", "endurance", "personality", "luck")
 _DYN = ("health", "magicka", "fatigue")
 _SKILLS = ("block", "armorer", "mediumarmor", "heavyarmor", "bluntweapon", "longblade", "axe", "spear", "athletics",

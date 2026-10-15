@@ -1,0 +1,25 @@
+# The console acts on the object selected (OpenMW's click on it): its script's locals are the line's variables, and
+# calls without a reference act on it. Fargoth's script (LocalState) has one local, "state"
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+4 0 0 0
+0.3 0 0 0 0 CONSEL:fargoth
+0.3 0 0 0 0 CON:set%state%to%7
+0.3 0 0 0 0 EXPECT:conerr:eq:0
+0.3 0 0 0 0 EXPECT:reflocal:fargoth,state:eq:7
+0.3 0 0 0 0 CON:state
+0.3 0 0 0 0 EXPECT:conval:eq:7
+# X.var from anywhere, with nothing selected
+0.3 0 0 0 0 CONSEL
+0.3 0 0 0 0 CON:fargoth.state
+0.3 0 0 0 0 EXPECT:conval:eq:7
+0.3 0 0 0 0 CON:set%fargoth.state%to%9
+0.3 0 0 0 0 EXPECT:reflocal:fargoth,state:eq:9
+# with Fargoth selected, a call without a reference is his
+0.3 0 0 0 0 CONSEL:fargoth
+0.3 0 0 0 0 CON:additem%misc_com_bucket_01%1
+0.3 0 0 0 0 CON:fargoth->getitemcount%misc_com_bucket_01
+0.3 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 EXPECT:item:misc_com_bucket_01:eq:0
+1 0 0 0

@@ -1,0 +1,34 @@
+# Options > Console as a player reaches it: START, Options, Console; the object the crosshair is on is the one the lines
+# act on; Type opens the system keyboard (a scripted run answers with TYPE:), the line runs and its output shows; Edit
+# last opens it on the line typed last; Close goes back to Options
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:160:187
+0.5 0 0 0 0 EXPECT:screen:console
+0.3 0 0 0 0 TYPE:Player->AddItem%"iron%dagger"%2
+0.3 0 0 0 0 TAP:40:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:conerr:eq:0
+0.3 0 0 0 0 TYPE:Player->GetItemCount%"iron%dagger"
+0.3 0 0 0 0 TAP:40:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:conval:ge:2
+0.3 0 0 0 0 TYPE:nonsense%line
+0.3 0 0 0 0 TAP:40:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+0.3 0 0 0 0 SHOT
+# Edit last: the keyboard opens on the last line (a scripted run's TYPE: answers it again)
+0.3 0 0 0 0 TYPE:tgm
+0.3 0 0 0 0 TAP:119:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:conhas:God_Mode:eq:1
+# Close: back to Options
+0.3 0 0 0 0 TAP:277:222
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 SHOT
+1 0 0 0

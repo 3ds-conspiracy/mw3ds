@@ -1,0 +1,52 @@
+# The console (Options), as OpenMW's: each line is compiled on the device (source/scriptc.cpp, the converter's
+# compiler ported) and run by the interpreter; a line that is an expression prints its value (%d for a whole number,
+# %f otherwise); a line that does not compile, or names a function the engine does not run, is refused
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+# instructions, with and without a reference
+0.3 0 0 0 0 CON:player->additem%misc_com_bucket_01%2
+0.3 0 0 0 0 EXPECT:item:misc_com_bucket_01:eq:2
+0.3 0 0 0 0 EXPECT:conerr:eq:0
+# with nothing selected, a call that needs an object and names none is refused (OpenMW: "no implicit reference")
+0.3 0 0 0 0 CON:removeitem%misc_com_bucket_01%1
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+0.3 0 0 0 0 EXPECT:item:misc_com_bucket_01:eq:2
+0.3 0 0 0 0 CON:player->removeitem%misc_com_bucket_01%1
+0.3 0 0 0 0 EXPECT:conerr:eq:0
+0.3 0 0 0 0 EXPECT:item:misc_com_bucket_01:eq:1
+# ... and one that needs none runs (Journal's reference is optional)
+0.3 0 0 0 0 CON:journal%A1_1_FindSpymaster%1
+0.3 0 0 0 0 EXPECT:conerr:eq:0
+0.3 0 0 0 0 EXPECT:journal:A1_1_FindSpymaster:eq:1
+# a function prints its value
+0.3 0 0 0 0 CON:player->getitemcount%misc_com_bucket_01
+0.3 0 0 0 0 EXPECT:conval:eq:1
+# an ID with a space, in quotes
+0.3 0 0 0 0 CON:player->additem%"iron%dagger"%3
+0.3 0 0 0 0 CON:player->getitemcount%"iron%dagger"
+0.3 0 0 0 0 EXPECT:conval:ge:3
+# set ... to on a global, then the global read back as an expression
+0.3 0 0 0 0 CON:set%timescale%to%15
+0.3 0 0 0 0 EXPECT:global:timescale:eq:15
+0.3 0 0 0 0 CON:timescale
+0.3 0 0 0 0 EXPECT:conval:eq:15
+# whole numbers divide as whole numbers, floats do not; a leading sign or parenthesis starts an expression
+0.3 0 0 0 0 CON:7%/%2
+0.3 0 0 0 0 EXPECT:conval:eq:3
+0.3 0 0 0 0 CON:7.0%/%2
+0.3 0 0 0 0 EXPECT:conval:eq:3.5
+0.3 0 0 0 0 CON:(2%^%3)%*%4
+0.3 0 0 0 0 EXPECT:conval:eq:20
+0.3 0 0 0 0 CON:-5%^%2
+0.3 0 0 0 0 EXPECT:conval:eq:-3
+# refused: an unknown name, a block keyword, a set without "to", a Bloodmoon-only function the engine leaves out
+0.3 0 0 0 0 CON:frobnicate
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+0.3 0 0 0 0 CON:if%1
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+0.3 0 0 0 0 CON:set%timescale%30
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+0.3 0 0 0 0 EXPECT:global:timescale:eq:15
+0.3 0 0 0 0 CON:player->becomewerewolf
+0.3 0 0 0 0 EXPECT:conerr:eq:1
+1 0 0 0

@@ -1,0 +1,15 @@
+# start: Imperial Prison Ship
+# A new game starts as Morrowind's own scripts start it (OpenMW's new game, worldimp.cpp): CharGenState 1, the Main
+# script starts CharGen, and CharGen turns the controls off, puts the player in the ship's hold, sets the Bitter Coast
+# cloudy (ChangeWeather "Bitter Coast Region" 1), sets CharGenState to 10 and stops itself
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:regionweather:bitter%coast%region:eq:1
+0.3 0 0 0 0 EXPECT:global:chargenstate:eq:10
+0.3 0 0 0 0 EXPECT:cell:Imperial_Prison_Ship
+0.3 0 0 0 0 CON:scriptrunning%chargen
+0.3 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:scriptrunning%main
+0.3 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:getplayercontrolsdisabled
+0.3 0 0 0 0 EXPECT:conval:eq:1
+1 0 0 0

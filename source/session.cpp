@@ -69,20 +69,18 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 		playMusic(false);
 		return true;
 	}
-	// State the boat part of character creation leaves behind (script "CharGen")
-	w.globals["chargenstate"] = 10.0f;
 	if (!autotest)
 		playMovie("mw_intro");
-	// CharGen's DisablePlayerControls / Jumping / ViewSwitch / VanityMode / Fighting / Magic: the player lies still in
-	// the hold until the walking guard's script (CharGenWalkNPC) gives the controls back after the movement message
-	w.controlsEnabled = false;
-	w.jumpingEnabled = false;
-	w.controlsOff |= 2u | 4u;
-	w.fightingEnabled = false;
-	w.magicEnabled = false;
 	w.menusEnabled = 0;
 	Scene scene = w.scene();
 	playerSpawn(w.player, scene, w.here().spawn, w.here().yaw, 0.0f);
+	// A new game as OpenMW starts one (World::startNewGame): CharGenState 1, then the global scripts run five times
+	// before the first frame. Main starts Startup, VampireCheck and CharGen; CharGen turns the controls off (the
+	// player lies still in the hold until the walking guard's script, CharGenWalkNPC, gives them back), puts the
+	// player in the prison ship's hold, makes the Bitter Coast cloudy, sets CharGenState to 10 and stops
+	w.globals["chargenstate"] = 1.0f;
+	for (int i = 0; i < 5; i++)
+		scriptsRun(w, *this, 0.0f, true);
 	// Waking in the prison ship's hold (the level's start cell, where CharGen's PositionCell puts the
 	// player): Jiub's script asks the name, the guards' scripts bring the race menu and the way out.
 	// A level built before the ship was in (start cell: the census office) still opens both menus. The ship is
@@ -781,6 +779,11 @@ void Session::setText(bool confirmed, const std::string& text)
 		makeName = text;
 		logf("making: name %s", makeName.c_str());
 	}
+	else if (kind == TEXT_CONSOLE && !blank)
+	{
+		consoleBack = 0.0f;
+		console.run(w, *this, text);
+	}
 	else if (kind == TEXT_SEARCH)
 	{
 		journalSearch = blank ? "" : text;
@@ -791,7 +794,7 @@ void Session::setText(bool confirmed, const std::string& text)
 
 std::string Session::textNow()
 {
-	return wantText == TEXT_SEARCH ? journalSearch : makeName;
+	return wantText == TEXT_SEARCH ? journalSearch : wantText == TEXT_CONSOLE ? consoleDraft : makeName;
 }
 
 void Session::openScreen(Screen s)
@@ -954,7 +957,7 @@ bool Session::worldPaused() const
 	switch (screen)
 	{
 	case SCR_INVENTORY: case SCR_MAGIC: case SCR_SPELLS: case SCR_STATS: case SCR_MAP: case SCR_JOURNAL:
-	case SCR_SAVES: case SCR_OPTIONS: case SCR_CONTROLS: case SCR_DISPLAY: case SCR_LOOK: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
+	case SCR_SAVES: case SCR_OPTIONS: case SCR_CONTROLS: case SCR_DISPLAY: case SCR_LOOK: case SCR_CONSOLE: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
 		return true;
 	default:
 		return false;
@@ -2463,6 +2466,35 @@ void Session::testPlaceAt(const std::string& id, const float at[3], float yaw)
 	testPlaced = ri;
 	testPlacedAll.insert(ri);
 	logf("test: placed %s at %.0f %.0f %.0f", r.id.c_str(), to[0], to[1], to[2]);
+}
+
+// COC (the console): a named exterior (its street, for a town) or an interior, entered where a door into it lands
+// (OpenMW's findExteriorPosition / findInteriorPosition); false when the level has no such place
+bool Session::centerOnCell(const std::string& name)
+{
+	std::string want = lower(name);
+	bool known = w.cellIndex(name) >= 0 || w.game.townSpawns.count(want);
+	for (size_t i = 0; i < w.refs.size() && !known; i++)
+		known = w.refs[i].hasDest && lower(w.refs[i].destCell) == want;
+	if (!known)
+		return false;
+	testGoto(name);
+	return true;
+}
+
+// COE x y (the console): the middle of that exterior cell, set down on the ground
+bool Session::centerOnExterior(int x, int y)
+{
+	int cell = w.gridCell(x, y);
+	if (cell < 0)
+		return false;
+	travelCell = cell;
+	travelPos[0] = (x + 0.5f) * 8192.0f;
+	travelPos[1] = (y + 0.5f) * 8192.0f;
+	travelPos[2] = 0.0f;
+	travelYaw = 0.0f;
+	travelToSpawn = true;
+	return true;
 }
 
 // Enters a cell through a door that leads there (any loaded door; else the first one found)

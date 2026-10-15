@@ -75,7 +75,7 @@
 	X(GETPLAYERLOOKINGDISABLED, "getplayerlookingdisabled") X(GETPLAYERMAGICDISABLED, "getplayermagicdisabled") \
 	X(GETPLAYERVIEWSWITCHDISABLED, "getplayerviewswitchdisabled") X(GETVANITYMODEDISABLED, "getvanitymodedisabled") \
 	X(GOTOJAIL, "gotojail") X(RAISERANK, "raiserank") X(LOWERRANK, "lowerrank") X(HASSOULGEM, "hassoulgem") \
-	X(REMOVESOULGEM, "removesoulgem") X(GETCURRENTWEATHER, "getcurrentweather") X(GETPOS_, "getposition") X(FALL, "fall")
+	X(REMOVESOULGEM, "removesoulgem") X(GETCURRENTWEATHER, "getcurrentweather") X(GETPOS_, "getposition") X(FALL, "fall") 	X(COC, "coc") X(CENTERONCELL, "centeroncell") X(COE, "coe") X(CENTERONEXTERIOR, "centeronexterior") 	X(TGM, "tgm") X(TOGGLEGODMODE, "togglegodmode") X(TAI, "tai") X(TOGGLEAI, "toggleai") X(SV, "sv") 	X(SHOWVARS, "showvars") X(ORI, "ori") X(OUTPUTREFINFO, "outputrefinfo") X(BC, "bc") X(BETACOMMENT, "betacomment") 	X(HELP, "help") X(FILLJOURNAL, "filljournal") X(FILLMAP, "fillmap")
 
 enum ScriptFunction
 {
@@ -1665,6 +1665,125 @@ static float call(Ctx& c, const Node& n)
 		if (!c.host.playMovie(argStr(c, n, 0)) && lower(argStr(c, n, 0)).find("end") != std::string::npos)
 			c.host.notify("Dagoth Ur is defeated, the Heart of Lorkhan severed. The Blight lifts from Vvardenfell.");
 		return 0.0f;
+	// ---- The console's own (OpenMW registers them for scripts too)
+	// COC "cell" / CenterOnCell: the player to that cell, a named exterior or an interior (where a door into it lands)
+	case F_COC: case F_CENTERONCELL:
+		if (!c.host.centerOnCell(argStr(c, n, 0)))
+			c.host.report("Cell " + argStr(c, n, 0) + " is not found");
+		return 0.0f;
+	// COE x y / CenterOnExterior: the player to the middle of that exterior cell, on the ground
+	case F_COE: case F_CENTERONEXTERIOR:
+		if (!c.host.centerOnExterior((int)argNum(c, n, 0), (int)argNum(c, n, 1)))
+			c.host.report("Exterior cell " + std::to_string((int)argNum(c, n, 0)) + ", " + std::to_string((int)argNum(c, n, 1))
+				+ " is not in the level");
+		return 0.0f;
+	case F_TGM: case F_TOGGLEGODMODE:
+		c.host.report(c.host.toggleGodMode() ? "God Mode -> On" : "God Mode -> Off");
+		return 0.0f;
+	// ToggleAI: actors stand where they are, their packages and fights held (OpenMW's MechanicsManager::toggleAI)
+	case F_TAI: case F_TOGGLEAI:
+		w.aiEnabled = !w.aiEnabled;
+		c.host.report(w.aiEnabled ? "AI -> On" : "AI -> Off");
+		return 0.0f;
+	// ShowVars: the object's script variables, else the globals (sorted) and the running global scripts' (OpenMW)
+	case F_SV: case F_SHOWVARS:
+	{
+		std::string out;
+		char buf[160];
+		auto vars = [&](const ScriptInstance& si) {
+			for (size_t k = 0; k < si.locals.size() && k < si.script->localNames.size(); k++)
+			{
+				char t = k < si.script->localTypes.size() ? si.script->localTypes[k] : 'f';
+				snprintf(buf, sizeof(buf), "\n  %s = %g (%s)", si.script->localNames[k].c_str(), si.locals[k],
+					t == 's' ? "short" : t == 'l' ? "long" : "float");
+				out += buf;
+			}
+		};
+		if (r)
+		{
+			if (r->script < 0 || !w.scripts[r->script].script)
+				out = r->id.str() + " does not have a script.";
+			else
+			{
+				out = "Local variables for " + r->id.str();
+				vars(w.scripts[r->script]);
+			}
+		}
+		else
+		{
+			out = "Global Variables:";
+			std::vector<std::string> names;
+			for (auto& g : w.globals)
+				names.push_back(g.first);
+			std::sort(names.begin(), names.end());
+			for (auto& nm : names)
+			{
+				auto def = w.game.globals.find(nm);
+				char t = def != w.game.globals.end() ? def->second.type : 'f';
+				snprintf(buf, sizeof(buf), "\n %s = %g (%s)", nm.c_str(), w.globals[nm],
+					t == 's' ? "short" : t == 'l' ? "long" : "float");
+				out += buf;
+			}
+			out += "\nGlobal Scripts:";
+			for (auto& si : w.scripts)
+				if (si.ref < 0 && si.item.empty() && si.running && si.script && !si.locals.empty())
+				{
+					out += "\n " + si.script->name;
+					vars(si);
+				}
+		}
+		c.host.report(out);
+		return 0.0f;
+	}
+	// ORI / BC: about the object (OpenMW's BetaComment, cut to what this engine keeps)
+	case F_ORI: case F_OUTPUTREFINFO: case F_BC: case F_BETACOMMENT:
+	{
+		if (!r)
+			return 0.0f;
+		char buf[200];
+		const LevelCell& cell = w.cells[w.placeOf(ref)];
+		snprintf(buf, sizeof(buf), "RefID: %s\nCell: %s\nCoordinates: %.1f %.1f %.1f\nRotation: %.1f\nScript: %s%s%s",
+			r->id.c_str(), cell.name.c_str(), r->pos[0], r->pos[1], r->pos[2], r->rot[2] * 57.29578f,
+			r->script >= 0 && w.scripts[r->script].script ? w.scripts[r->script].script->name.c_str() : "none",
+			!r->enabled ? "\n[Disabled]" : "", r->dead ? "\n[Dead]" : "");
+		c.host.report(buf);
+		return 0.0f;
+	}
+	// Help: the functions the engine runs (OpenMW lists its keywords)
+	case F_HELP:
+	{
+		std::vector<std::string> names(kFunctionNames + 1, kFunctionNames + F_COUNT);
+		std::sort(names.begin(), names.end());
+		std::string out = "Script functions (also Get / Set / Mod + attributes, skills, Health, Magicka, Fatigue):";
+		std::string line;
+		for (auto& nm : names)
+		{
+			if (line.size() + nm.size() > 44)
+			{
+				out += "\n" + line;
+				line.clear();
+			}
+			line += (line.empty() ? "" : " ") + nm;
+		}
+		c.host.report(out + "\n" + line);
+		return 0.0f;
+	}
+	// FillJournal: every quest's every entry, and every topic known (OpenMW also fills each topic's page with all its
+	// answers: left out here)
+	case F_FILLJOURNAL:
+		for (auto& q : w.game.journals)
+			for (auto& e : q.second.entries)
+				w.journalAdd(q.first, e.index);
+		for (auto& t : w.game.topics)
+			if (t.type == 0)
+				w.knownTopics.insert(t.lower);
+		return 0.0f;
+	// FillMap: every named exterior place on the map, as visited
+	case F_FILLMAP:
+		for (auto& cl : w.cells)
+			if (!cl.interior && cl.name.size())
+				w.mapKnown.insert(lower(cl.name.str()));
+		return 0.0f;
 	case F_ENABLETELEPORTING: case F_DISABLETELEPORTING:
 		w.teleportDisabled = n.func == F_DISABLETELEPORTING;
 		return 0.0f;
@@ -1805,11 +1924,11 @@ static void exec(Ctx& c, const Node& block)
 	}
 }
 
-void scriptsRun(World& w, ScriptHost& host, float dt)
+void scriptsRun(World& w, ScriptHost& host, float dt, bool globalOnly)
 {
 	// Index loop: StartScript / AddItem can append instances while we run. The local scripts run first,
 	// then the global ones (OpenMW's frame)
-	for (int pass = 0; pass < 2; pass++)
+	for (int pass = globalOnly ? 1 : 0; pass < 2; pass++)
 	{
 		for (size_t i = 0; i < w.scripts.size(); i++)
 		{
@@ -1844,4 +1963,39 @@ void scriptRunSnippet(World& w, ScriptHost& host, const Node& block, int speaker
 	int inst = speakerRef >= 0 ? w.refs[speakerRef].script : -1;
 	Ctx c{ w, host, inst, speakerRef, 0.0f };
 	exec(c, block);
+}
+
+float scriptEval(World& w, ScriptHost& host, const Node& expr, int selfRef)
+{
+	int inst = selfRef >= 0 ? w.refs[selfRef].script : -1;
+	Ctx c{ w, host, inst, selfRef, 0.0f };
+	return eval(c, expr);
+}
+
+// What call() runs: the table, and statFunction's families (Get / Set / Mod + attribute or skill; Get / Set / Mod /
+// ModCurrent + health, magicka, fatigue; Get...GetRatio; GetLevel / SetLevel; ModPCCrimeLevel)
+bool scriptFunctionSupported(const std::string& name)
+{
+	if (scriptFunctionId(name) != F_UNKNOWN)
+		return true;
+	if (name == "getlevel" || name == "setlevel" || name == "modpccrimelevel")
+		return true;
+	int op = name.compare(0, 10, "modcurrent") == 0 ? 3 : name.compare(0, 3, "get") == 0 ? 0
+		: name.compare(0, 3, "set") == 0 ? 1 : name.compare(0, 3, "mod") == 0 ? 2 : -1;
+	if (op < 0)
+		return false;
+	std::string stat = name.substr(op == 3 ? 10 : 3);
+	if (op == 0 && stat.size() > 8 && stat.compare(stat.size() - 8, 8, "getratio") == 0)
+		stat.resize(stat.size() - 8);
+	else if (op == 3 && stat != "health" && stat != "magicka" && stat != "fatigue")
+		return false;
+	if (stat == "health" || stat == "magicka" || stat == "fatigue")
+		return true;
+	for (const char* a : kAttrFuncs)
+		if (stat == a)
+			return true;
+	for (const char* k : kSkillFuncs)
+		if (stat == k)
+			return true;
+	return false;
 }

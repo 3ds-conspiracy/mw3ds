@@ -32,6 +32,12 @@ struct Node
 	                           // N_IF cond, block, cond, block, ..., [else block]; N_WHILE cond, block
 };
 
+struct cJSON;
+struct Script;
+// Script trees from JSON (mwscript.py's shapes): a block, or one expression; scope gives the locals' slots
+void scriptBlockFromJson(const cJSON* list, Node& n, const Script* scope);
+void scriptExprFromJson(const cJSON* j, Node& n, const Script* scope);
+
 struct Script
 {
 	std::string name;

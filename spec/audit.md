@@ -21,6 +21,11 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `script.cpp` | 173 script functions (table below) | `mwscript/*extensions.cpp`, `components/interpreter` | unchecked |
 | `script.cpp` | expression evaluation, `if` / `while`, locals, `return`, GetSecondsPassed, targets (`x->`) | `components/compiler`, `components/interpreter` | unchecked |
 | `world.cpp` | local / global scripts: which run, when, StartScript / StopScript | `mwscript/globalscripts.cpp`, `mwworld/localscripts.cpp` | unchecked |
+| `scriptc.cpp` | the device's compiler (the console's): the same tree as `mwscript.py` | `components/compiler` | checked 2026-10-15 (`script_compile_check.py`: every script and result, 0 differences) |
+| `devconsole.cpp` | the console: expressions printed (%d / %f), the selected object's locals and implicit reference, "no implicit reference", refusals | `mwgui/console.cpp`, `compiler/lineparser.cpp`, `mwscript/interpretercontext.cpp` | checked 2026-10-15 (`console-basics`, `console-selected`, `console-commands`); [scripting.md](scripting.md) |
+| `script.cpp` | console commands: coc, coe, tgm, tai, sv, ori / bc, help, FillMap, FillJournal | `mwscript/{cell,misc,ai,gui,dialogue}extensions.cpp` | partial: [scripting.md](scripting.md) lists what differs |
+| `session.cpp` | a new game: CharGenState 1, the global scripts run five times, CharGen does the rest | `mwworld/worldimp.cpp startNewGame`, `globalscripts.cpp addStartup` | checked 2026-10-15 (`chargen-start-script`) |
+| `screens.cpp` | Options > Console | `mwgui/console.cpp` | differs (3DS UI, kept): bottom screen, the system keyboard |
 | `dialogue.cpp` | which response: filter order and each condition (`passes`, `filterFunction`) | `mwdialogue/filter.cpp` | unchecked |
 | `dialogue.cpp` | topics named in text become known; links on screen | `mwdialogue/keywordsearch.cpp`, `dialoguemanagerimp.cpp addTopicsFromText` | checked 2026-10-01 (`fg-rathunt`) |
 | `dialogue.cpp` | the topic list; exhausted topics (greyed) | `dialoguemanagerimp.cpp updateActorKnownTopics`, `mwgui/dialogue.cpp` | partial: exhausted not done |
