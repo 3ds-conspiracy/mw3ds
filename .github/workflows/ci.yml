@@ -99,11 +99,11 @@ jobs:
 
   build-3ds:
     runs-on: ubuntu-latest
+    # The image already holds libctru, citro2d / citro3d, zlib, tex3ds, picasso and the 3DS tools: nothing is fetched
+    # from devkitPro's server during the run (it has refused GitHub's runners with a 403 before)
     container: devkitpro/devkitarm
     steps:
       - uses: actions/checkout@v4
-      - name: Install the 3DS libraries
-        run: dkp-pacman -Syu --noconfirm --needed 3ds-dev
       - name: Build the engine
         run: make -j"$(nproc)"
 
