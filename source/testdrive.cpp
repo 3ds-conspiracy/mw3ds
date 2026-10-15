@@ -212,7 +212,7 @@ static bool hasArg(const std::string& what)
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "torchlit" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown";
 }
 
 // "<a>,<b>" as two numbers
@@ -1321,6 +1321,13 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 				}
 			fclose(f);
 		}
+	}
+	else if (what == "torchlit")    // <batches|world|share>: of the world batches (cells, terrain layers, distant land) the
+	{                               // last frame drew, how many with people's torch lights on, all of them, the share
+		extern int g_worldBatches, g_torchLitBatches;
+		if (arg == "batches") v = (float)g_torchLitBatches;
+		else if (arg == "world") v = (float)g_worldBatches;
+		else if (arg == "share") v = g_worldBatches ? (float)g_torchLitBatches / g_worldBatches : 0.0f;
 	}
 	else if (what == "gamma")       // <value|setting|auto|lift|sensor|saved>: Gamma (Display): the value used now, the bar,
 	{                               // Auto gamma on, the light reading's lift, the sensor (0 none, 1 QTM, 2 camera), settings.txt's

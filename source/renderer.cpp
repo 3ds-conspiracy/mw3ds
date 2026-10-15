@@ -20,6 +20,8 @@ int g_skippedDraws = 0;               // draws dropped because the GPU command b
 // behind drawn after one in front paints over it, as neither writes depth)
 int g_blendOutOfOrder = 0;
 int g_groundGaps = -1;                // cracks in the last saved shot (counted by the native test build; -1 here)
+// World batches the last frame drew (first eye) and how many of them with the torches' two lights on (moreLights)
+int g_worldBatches = 0, g_torchLitBatches = 0;
 
 static DVLB_s* s_dvlb;
 static shaderProgram_s s_program;
@@ -33,6 +35,11 @@ static int s_uBones = -1;
 static bool s_skinReady = false;
 static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
 static int s_moreLights = 0;
+static bool s_moreOn = false;               // moreLights as last set
+static bool s_moreWanted = false;           // moreLights for this view (setLight): people's torches light the world
+static bool s_worldBounds = false;          // the batches being drawn have world-space bounds (the cells' and distant land's)
+static bool s_countBatches = false;         // ... and are the first eye's (g_worldBatches, g_torchLitBatches)
+static int s_worldCount = 0, s_torchLitCount = 0;
 static int s_uAmbient = -1;
 static float s_ambientAdd = 0.0f;           // Night Eye's added light (rendererSetNightEye)
 static int s_bGamma = -1;
@@ -268,6 +275,7 @@ static void setLight(const C3D_Mtx* view)
 		return;
 	bool more = view && s_moreLights > 0;
 	C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLights, more);
+	s_moreOn = s_moreWanted = more;
 	if (more)
 		for (int i = 0; i < kActorLights; i++)
 			putLight(s_uMoreLightPos[i], s_uMoreLightColor[i], view, s_moreLight[i], i < s_moreLights ? s_moreRadius[i] : 0.0f,
@@ -630,6 +638,33 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 	{
 		g_skippedDraws++;
 		return;
+	}
+	if (s_worldBounds && s_moreWanted && s_bMoreLights >= 0)
+	{
+		// People's torches light only what lies within their radius (the light falls to nothing there): a batch
+		// whose bounds are out of every torch's reach is drawn without their two light terms (cell.v.pica
+		// moreLights), the same picture for less vertex work, which the GPU-bound console feels at night
+		bool reach = false;
+		for (int i = 0; i < s_moreLights && !reach; i++)
+		{
+			float d2 = 0.0f;
+			for (int k = 0; k < 3; k++)
+			{
+				float c = s_moreLight[i][k], o = c < b.bmin[k] ? b.bmin[k] - c : c > b.bmax[k] ? c - b.bmax[k] : 0.0f;
+				d2 += o * o;
+			}
+			reach = d2 < s_moreRadius[i] * s_moreRadius[i];
+		}
+		if (reach != s_moreOn)
+		{
+			C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLights, reach);
+			s_moreOn = reach;
+		}
+	}
+	if (s_countBatches)
+	{
+		s_worldCount++;
+		s_torchLitCount += s_moreOn;
 	}
 	setBatchState(tex, b, mode, time);
 	if (s_uvOverrideOn)
@@ -1060,6 +1095,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		std::sort(opaque.begin(), opaque.end(), [](const OpaqueDraw& a, const OpaqueDraw& b) {
 			return a.tex != b.tex ? a.tex < b.tex : a.state < b.state;
 		});
+	s_worldBounds = true;
+	s_countBatches = !secondEye;
+	if (s_countBatches)
+		s_worldCount = s_torchLitCount = 0;
 	if (g_renderParts & RENDER_OPAQUE)
 		for (auto& d : opaque)
 			drawBatchTex(d.tex, *d.b, DRAW_WORLD, time);
@@ -1097,6 +1136,18 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	}
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_LAYERS); k++)
 		draws += drawBatches(w.loaded[k]->cell, w.loaded[k]->cell.batches, 1, &visible[k], time);
+	if (s_countBatches)
+	{
+		g_worldBatches = s_worldCount;
+		g_torchLitBatches = s_torchLitCount;
+	}
+	s_worldBounds = s_countBatches = false;
+	// (what follows has no world bounds: actors, doors, sprites take the torches whole again)
+	if (s_moreOn != s_moreWanted && s_bMoreLights >= 0)
+	{
+		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLights, s_moreWanted);
+		s_moreOn = s_moreWanted;
+	}
 
 	// Enchanted things lying about shimmer: their own triangles in the cell's batches (Ref::ranges; the cell lists them
 	// when it loads, LoadedCell::glowRefs)
