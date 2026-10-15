@@ -20,7 +20,7 @@ permissions:
 
 env:
   TAG: ${{ inputs.tag || github.ref_name }}
-  BUILD_TOOLS_URL: https://github.com/3ds-conspiracy/morrowind3ds/releases/download/build-tools/build-tools-windows.zip
+  BUILD_TOOLS_URL: https://github.com/3ds-conspiracy/mw3ds/releases/download/build-tools/build-tools-windows.zip
   BUILD_TOOLS_SHA256: ""
 
 jobs:

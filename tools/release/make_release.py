@@ -79,7 +79,7 @@ Old 3DS with custom firmware. Nothing from Morrowind is in this download: the ga
 
 The CIA holds your own copy of the game: it is for your console only.
 MW3DS is a fan project, not affiliated with or endorsed by Bethesda Softworks.
-Source code, help and bug reports: https://github.com/3ds-conspiracy/morrowind3ds
+Source code, help and bug reports: https://github.com/3ds-conspiracy/mw3ds
 """
 
 
