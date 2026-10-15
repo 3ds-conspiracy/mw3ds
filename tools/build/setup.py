@@ -118,12 +118,29 @@ def download_makerom(dest):
     if asset["name"].endswith(".zip"):
         zipfile.ZipFile(io.BytesIO(data)).extractall(dest)
     else:
-        tarfile.open(fileobj=io.BytesIO(data)).extractall(dest)
+        with tarfile.open(fileobj=io.BytesIO(data)) as t:
+            try:
+                t.extractall(dest, filter="data")      # (no member may land outside dest)
+            except TypeError:                           # (Python before 3.10.12 has no filter)
+                t.extractall(dest)
     exe = dest / makerom_name()
     if not exe.exists():
         raise RuntimeError(f"{makerom_name()} is not in the download")
     exe.chmod(exe.stat().st_mode | 0o111)
     return rel["tag_name"]
+
+
+def set_env_line(key, value):
+    """Fills in `key` in .env: its blank line from .env.example when there is one, else a new line at the end."""
+    env = ROOT / ".env"
+    lines = env.read_text(encoding="utf-8-sig").splitlines() if env.exists() else []
+    for i, ln in enumerate(lines):
+        if ln.strip() == f"{key}=":
+            lines[i] = f"{key}={value}"
+            break
+    else:
+        lines.append(f"{key}={value}")
+    env.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def check_makerom(check):
@@ -138,8 +155,7 @@ def check_makerom(check):
         try:
             tag = download_makerom(dest)
             if not ctr:
-                with open(ROOT / ".env", "a", encoding="utf-8") as f:
-                    f.write(f"\nMW3DS_CTR_TOOLS_DIR={dest}\n")
+                set_env_line("MW3DS_CTR_TOOLS_DIR", str(dest))
                 os.environ["MW3DS_CTR_TOOLS_DIR"] = str(dest)
             ok(f"downloaded {tag} to {dest}")
         except Exception as e:
@@ -159,6 +175,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--check", action="store_true", help="only report, install nothing")
     a = ap.parse_args()
+    # Our lines must come out in order with pip's and pacman's, which write straight to the console
+    sys.stdout.reconfigure(line_buffering=True)
     os.chdir(ROOT)
     if not (ROOT / ".env").exists():
         shutil.copy(ROOT / ".env.example", ROOT / ".env")
