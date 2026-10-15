@@ -14,7 +14,8 @@ permissions:
 
 jobs:
   rules:
-    if: github.event_name == 'pull_request'
+    # The contribution rules are for outside contributors: the repository owner's own pull requests skip them.
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != github.repository_owner
     runs-on: ubuntu-latest
     env:
       LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
