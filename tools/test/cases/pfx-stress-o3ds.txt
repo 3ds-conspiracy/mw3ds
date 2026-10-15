@@ -1,13 +1,13 @@
 # start: Seyda Neen
 # console: old
-# Ten people in view casting at each other at once (bolts across the ring, self and touch spells: NPCCAST), with the
-# prototype particle pieces (PFX:pfx,trail), on the Old 3DS profile: the visuals stay within kMaxVfx; the sprites
+# Ten people in view casting at each other at once (bolts across the ring, self and touch spells: NPCCAST), their
+# visuals as sprites (tools/convert/particles.py), on the Old 3DS profile: the visuals stay within kMaxVfx; the sprites
 # wanted go past the frame's budget and every visual gets an even share of it (rendererSpriteShare); every cast
 # sounds; linear memory holds; spell visuals' pieces nothing plays are let go when short of memory (trimVfxPieces:
 # under 3 MB free). On the Old 3DS this is past what it can carry (accepted: a crazy scenario): ~10-17 fps while the
 # visuals load, sounds dropped once its channels are full, a cell's textures failing for want of linear memory
 # (monitor warnings, not failures). Frame rate: the log's fps lines (tools/test/perf.py), in Azahar -Old3ds.
-1 0 0 0 0 GOD+SEED:1+HOUR:12+PFX:pfx,trail
+1 0 0 0 0 GOD+SEED:1+HOUR:12
 1 0 0 0 0 TP:-9850:-71040:250:240
 1 0 0 0 0 CAM:-10050:-71155:270:240:-10+POV:first+HUD:off
 1 0 0 0 0 PLACEAT:fargoth:-10300:-71210:158+PLACEAT:erene%llenim:-10247:-71227:158+PLACEAT:teleri%helvi:-10214:-71272:158+PLACEAT:vodunius%nuccius:-10214:-71328:158+PLACEAT:darvame%hleran:-10247:-71373:158+PLACEAT:chargen%dock%guard:-10300:-71390:158+PLACEAT:eldafire:-10353:-71373:158+PLACEAT:chargen%boat%guard%1:-10386:-71328:158+PLACEAT:indrele%rathryon:-10386:-71272:158+PLACEAT:imperial%guard:-10353:-71227:158

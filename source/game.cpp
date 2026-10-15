@@ -1199,9 +1199,6 @@ bool gameLoad(GameData& g, const char* path)
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "ptex"))
 			if (cJSON_IsString(vf))
 				g.firstPerson.ptex[atoi(vf->string)] = vf->valuestring;
-		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "ptexrgb"))
-			if (cJSON_IsNumber(vf))
-				g.firstPerson.ptexRgb[atoi(vf->string)] = (u32)vf->valuedouble;
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "worldfx"))
 		{
 			FirstPersonDef::WorldFxDef d;

@@ -1,7 +1,11 @@
-"""Particle sprays simulated the way OpenMW runs a NIF's particle systems, for turning them into things the 3DS can
-draw without simulating them: a flipbook (the spray rendered into a sheet of frames, drawn as one quad turned to the
-eye) and baked paths (each particle's place every frame, drawn as small crossed quads). Prototype.
+"""Particle sprays simulated the way OpenMW runs a NIF's particle systems, turned into sprites the 3DS draws without
+simulating them: particle records (each particle's birth, place, speed, life and size: the engine places it each
+frame), flipbooks (a still spray rendered into a sheet of frames on one quad turned to the eye), and records shed into
+the world by bolts and creatures' bones. level.py builds every spell visual's, world object's (WORLD_FX) and
+creature's piece (build_pieces); internal/PFX-PROCESS.md has how each was matched against OpenMW.
 
+    python tools/convert/particles.py --auto <static id> [--dry] [--out out/world]     one visual or world object
+    python tools/convert/particles.py --creature <creature id> [--dry] [--out out/world]  one creature's sprays
     python tools/convert/particles.py --model e/magic_cast_ill.NIF --png build/particles/ill.png    a preview sheet
 
 The rules are OpenMW's (components/nifosg/nifloader.cpp handleParticleEmitter, particle.cpp):
@@ -297,6 +301,8 @@ def flipbook_meshes(arch, nif, ss, sims, name, fps, cell=(64, 128), cols=8, turn
         full = Image.new("RGBA", (side, side), (0, 0, 0, 0 if not additive else 255))
         full.paste(sheet, (0, 0))
         tex = f"{name}_{gi}.t3x"
+        if TEXTURES is not None:
+            TEXTURES.made.add(tex)                 # (the level's texture pass keeps it)
         out = textures.tex_path(tex)
         out.parent.mkdir(parents=True, exist_ok=True)
         textures.encode_one(textures.tex3ds_path(), full, out, side, True)
@@ -584,18 +590,16 @@ def peak_live(record_sets, duration, step=0.05):
     return best
 
 
-def auto(static_id, out_dir, dry=False):
-    """A spell visual made drawable the best way spray by spray (internal/PFX-PROCESS.md): sprays whose emitter stands
-    still for the effect's life as flipbooks (a quad per emitter), sprays whose emitter moves as particle records,
-    within the sprite budget; its other shapes kept. Piece '<piece>_auto', listed as '<static>#pfx'."""
-    import json, struct, zlib
-    from pathlib import Path
-    import textures
-    from firstperson import FirstPerson, vfx_tracks, write_piece, VFX_FPS
-    from mwfiles import Archives, load_db
+def make_piece(static_id, db, arch, fp, ts):
+    """A spell visual or world object made drawable the best way spray by spray (internal/PFX-PROCESS.md): sprays whose
+    emitter stands still for the effect's life as flipbooks (a quad per emitter), sprays whose emitter moves as particle
+    records, within the sprite budget; its other shapes kept (a world object's ambient shapes stay in its cell). fp: the
+    FirstPerson its shapes come from, ts: the TextureSet its textures are asked of. Returns {"base": piece name,
+    "meshes", "duration", "report": [lines], "world": its world_entry or None}."""
+    global TEXTURES
+    from firstperson import vfx_tracks, VFX_FPS
     from nif import Nif
-    arch = Archives()
-    db = load_db()
+    TEXTURES = ts
     rec = db["objects"][static_id.lower()]
     model = rec.zstr("MODL")
     nif = Nif(arch.read("meshes/" + model))
@@ -631,13 +635,13 @@ def auto(static_id, out_dir, dry=False):
         # (every spray as a flipbook, moving emitters simulated on their path: trails too dense to thin, the
         # Strong platform's swirls of 480 particles each)
         moving, still = [], list(ss)
-    global TEXTURES
-    TEXTURES = textures.TextureSet(arch)
-    fp = FirstPerson(db, arch, TEXTURES, Path(out_dir) / "fp")
     world = None if is_spell_visual(static_id) else world_entry(nif, "")
     if world and world["groups"]:
+        from firstperson import piece_name
         fp.light = room_light(db, static_id)
+        fp.pieces.pop(piece_name(model, "vfx"), None)     # (its shapes lit as the room, not as a held item)
     name = fp.vfx_model(model)
+    fp.light = None
     shapes = [m for m in fp.pieces[name] if not m.get("particles")] if name else []
     if world and not world["groups"]:
         shapes = []            # (an ambient one's shapes stay in its cell, baked; only its sprays are the piece's)
@@ -685,26 +689,98 @@ def auto(static_id, out_dir, dry=False):
         meshes += spr
         report.append(f"  records: {len(moving)} sprays moving or flat -> {n} particles ({n * 36 // 1024 + 1} KB), peak "
                       f"{peak} live" + (f", thinned 1 in {k} -> {peak2}" if k > 1 else ""))
-    if dry:
-        if not is_spell_visual(static_id):
-            report.append(f"  world object: {world_entry(nif, base)}")
-        print(chr(10).join(report))
-        return
-    write_piece(Path(out_dir) / "fp" / f"{base}.fpm", meshes)
-    added = ensure_textures(arch, TEXTURES, meshes)
-    if added:
-        report.append(f"  {added} textures encoded")
+    if world is not None:
+        world = world_entry(nif, base)
+        report.append(f"  world object: {world}")
+    return {"base": base, "meshes": meshes, "duration": duration, "report": report, "world": world}
+
+
+def auto(static_id, out_dir, dry=False):
+    """make_piece on its own (trying an effect): the piece into out_dir/fp, listed in its game_firstperson.json."""
+    from pathlib import Path
+    import textures
+    from firstperson import FirstPerson, write_piece
+    from mwfiles import Archives, load_db
+    arch, db = Archives(), load_db()
+    ts = textures.TextureSet(arch)
+    r = make_piece(static_id, db, arch, FirstPerson(db, arch, ts, Path(out_dir) / "fp"), ts)
+    if not dry:
+        write_piece(Path(out_dir) / "fp" / f"{r['base']}.fpm", r["meshes"])
+        added = ensure_textures(arch, ts, r["meshes"])
+        if added:
+            r["report"].append(f"  {added} textures encoded")
+        edit_firstperson(out_dir, lambda fpj: register(fpj, static_id, r))
+    print(chr(10).join(r["report"]))
+
+
+def register(fpj, static_id, r):
+    """A piece listed in game firstperson: as the static's own visual, its length, and a world object's entry."""
+    sid = static_id.lower()
+    fpj["vfx"][sid] = r["base"]
+    fpj.setdefault("vfxlen", {})[r["base"]] = r["duration"]
+    if r["world"] is not None:
+        fpj.setdefault("worldfx", {})[sid] = r["world"]
+
+
+def edit_firstperson(out_dir, fn):
+    """game_firstperson.json read, changed by fn(its "firstperson" dict), written back."""
+    import json, struct, zlib
+    from pathlib import Path
     gp = Path(out_dir) / "game_firstperson.json"
     raw = gp.read_bytes()
     g = json.loads(zlib.decompress(raw[8:]) if raw[:4] == b"MWZ1" else raw)
-    g["firstperson"]["vfx"][f"{static_id.lower()}#pfx"] = base
-    g["firstperson"].setdefault("vfxlen", {})[base] = duration
-    if not is_spell_visual(static_id):
-        g["firstperson"].setdefault("worldfx", {})[static_id.lower()] = world_entry(nif, base)
-        report.append(f"  world object: {g['firstperson']['worldfx'][static_id.lower()]}")
+    fn(g["firstperson"])
     data = json.dumps(g, separators=(",", ":")).encode()
     gp.write_bytes(b"MWZ1" + struct.pack("<I", len(data)) + zlib.compress(data, 9))
-    print(chr(10).join(report))
+
+
+def build_pieces(db, arch, ts, fp, fpj, log=print):
+    """The level conversion's particle pieces (level.py, after FirstPerson.build): every spell visual, the world
+    objects (WORLD_FX) and every creature with sprays, put in fp.pieces (FirstPerson.write writes them) and listed in
+    fpj (game firstperson). The spell visuals' plain pieces they replace go."""
+    replaced = set()
+    statics = sorted(fpj["vfx"])
+    for sid in statics + [w for w in WORLD_FX if w not in fpj["vfx"]]:
+        if sid not in db["objects"] or not db["objects"][sid].zstr("MODL"):
+            continue
+        old = fpj["vfx"].get(sid)
+        r = make_piece(sid, db, arch, fp, ts)
+        fp.pieces[r["base"]] = r["meshes"]
+        register(fpj, sid, r)
+        if old and old != r["base"]:
+            replaced.add(old)
+    still_used = set(fpj["vfx"].values())
+    for name in replaced - still_used:
+        fp.pieces.pop(name, None)
+    n = 0
+    for cid in creatures_with_sprays(db, arch):
+        r = make_creature_piece(cid, db, arch, ts)
+        if r:
+            fp.pieces[r["base"]] = r["meshes"]
+            fpj.setdefault("cpfx", {})[cid] = r["base"]
+            n += 1
+    log(f"  particle pieces: {len(statics)} visuals, {len(fpj.get('worldfx', {}))} world objects, {n} creatures")
+
+
+def creatures_with_sprays(db, arch):
+    """Creature ids whose model has a particle system (its sprays to shed from its bones), each model read once."""
+    from nif import Nif
+    has = {}
+    out = []
+    for oid, rec in sorted(db["objects"].items()):
+        if rec.tag != "CREA" or not rec.zstr("MODL"):
+            continue
+        model = rec.zstr("MODL").lower()
+        if model not in has:
+            try:
+                nif = Nif(arch.read("meshes/" + model))
+                has[model] = any(b["type"] in ("NiParticleSystemController", "NiBSPArrayController")
+                                 for b in nif.blocks)
+            except Exception:
+                has[model] = False
+        if has[model]:
+            out.append(oid)
+    return out
 
 
 # World objects drawn as their particle pieces where they are placed (internal/PARTICLES-AUDIT.md groups C, D, E): the
@@ -838,28 +914,20 @@ def bsp_targets(nif, c, recs, seed=1):
     return sorted(out.items())
 
 
-def creature_auto(crea_id, out_dir, dry=False):
+def make_creature_piece(crea_id, db, arch, ts):
     """A creature's particle sprays (an atronach's fire, a ghost's death spray, the Heart's bursts) as particle records
     in each emitter bone's own frame, born at times on the model's animation timeline: the engine sheds them into the
-    world from the bone as the creature's animation passes each one (OpenMW's world-space particles). Piece
-    '<id>_cpfx', listed under firstperson "cpfx" by creature id."""
-    import json, struct, zlib
-    from pathlib import Path
-    from firstperson import write_piece
-    from mwfiles import Archives, load_db
-    from nif import Nif
-    import textures
+    world from the bone as the creature's animation passes each one (OpenMW's world-space particles). Returns
+    {"base": piece name ('<id>_cpfx'), "meshes", "report"}, or None without sprays."""
     global TEXTURES
-    arch = Archives()
-    db = load_db()
-    TEXTURES = textures.TextureSet(arch)
+    from nif import Nif
+    TEXTURES = ts
     rec = db["objects"][crea_id.lower()]
     model = rec.zstr("MODL")
     nif = Nif(arch.read("meshes/" + model))
     ss = sprays(nif, vis_hidden=True)
     if not ss:
-        print(f"{crea_id} ({model}): no sprays")
-        return
+        return None
     end = max([b["stop_time"] for b in nif.blocks if "stop_time" in b] + [1.0])
     meshes = []
     for sp in ss:
@@ -900,18 +968,29 @@ def creature_auto(crea_id, out_dir, dry=False):
             m["sprites"]["records"] = kept
     base = crea_id.lower().replace(" ", "_") + "_cpfx"
     n = sum(len(m["sprites"]["records"]) for m, _ in meshes)
-    print(f"{crea_id} ({model}): {len(meshes)} sprays on " + ", ".join(sorted({m['bone'] for m, _ in meshes})) +
-          f" -> {n} particles ({n * 36 // 1024 + 1} KB), peak {peak} live" + (f", thinned 1 in {k}" if k > 1 else ""))
+    report = [f"{crea_id} ({model}): {len(meshes)} sprays on " + ", ".join(sorted({m['bone'] for m, _ in meshes})) +
+          f" -> {n} particles ({n * 36 // 1024 + 1} KB), peak {peak} live" + (f", thinned 1 in {k}" if k > 1 else "")]
+    return {"base": base, "meshes": [m for m, _ in meshes], "report": report}
+
+
+def creature_auto(crea_id, out_dir, dry=False):
+    """make_creature_piece on its own: the piece into out_dir/fp, listed under its game_firstperson.json "cpfx"."""
+    from pathlib import Path
+    import textures
+    from firstperson import write_piece
+    from mwfiles import Archives, load_db
+    arch, db = Archives(), load_db()
+    ts = textures.TextureSet(arch)
+    r = make_creature_piece(crea_id, db, arch, ts)
+    if r is None:
+        print(f"{crea_id}: no sprays")
+        return
+    print(chr(10).join(r["report"]))
     if dry:
         return
-    write_piece(Path(out_dir) / "fp" / f"{base}.fpm", [m for m, _ in meshes])
-    ensure_textures(arch, TEXTURES, [m for m, _ in meshes])
-    gp = Path(out_dir) / "game_firstperson.json"
-    raw = gp.read_bytes()
-    g = json.loads(zlib.decompress(raw[8:]) if raw[:4] == b"MWZ1" else raw)
-    g["firstperson"].setdefault("cpfx", {})[crea_id.lower()] = base
-    data = json.dumps(g, separators=(",", ":")).encode()
-    gp.write_bytes(b"MWZ1" + struct.pack("<I", len(data)) + zlib.compress(data, 9))
+    write_piece(Path(out_dir) / "fp" / f"{r['base']}.fpm", r["meshes"])
+    ensure_textures(arch, ts, r["meshes"])
+    edit_firstperson(out_dir, lambda fpj: fpj.setdefault("cpfx", {}).__setitem__(crea_id.lower(), r["base"]))
 
 
 def main():
@@ -923,7 +1002,7 @@ def main():
     ap.add_argument("--duration", type=float, default=1.2)
     ap.add_argument("--prototype", help="static id: write its flipbook / path pieces into --out")
     ap.add_argument("--sprites", help="static id: write its particle-record sprite piece into --out")
-    ap.add_argument("--auto", help="static id: the best way spray by spray (flipbook / records), piece '#pfx'")
+    ap.add_argument("--auto", help="static id: the best way spray by spray (flipbook / records), into --out")
     ap.add_argument("--creature", help="creature id: its sprays as bone-shed particle records, piece '<id>_cpfx'")
     ap.add_argument("--dry", action="store_true", help="--auto: only say what it would make")
     ap.add_argument("--out", default="out/world")

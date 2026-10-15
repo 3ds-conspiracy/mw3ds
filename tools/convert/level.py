@@ -40,6 +40,7 @@ from convert_cell import EXTERIOR_SUN_DIR, Converter
 from distant import build_distant
 from creature import resolve_leveled
 from firstperson import FirstPerson
+from particles import build_pieces
 from mwfiles import DATA_FILES, Archives, cell_refs, load_db, read_records
 from terrain import CELL_SIZE
 from terrain import Terrain
@@ -724,6 +725,8 @@ def main():
     # First-person arms and held items (before the textures are encoded: they ask for textures too)
     fp = FirstPerson(db, arch, textures, OUT / "fp")
     game["firstperson"] = fp.build(game["objects"])
+    # Particle sprays drawn as sprites: spell visuals, bolts, world objects, creatures (particles.py)
+    build_pieces(db, arch, textures, fp, game["firstperson"])
     print(f"first person: {len(game['firstperson']['items'])} items, {fp.write() // 1024} KB")
     game["quiz"] = class_quiz(ini)
     game["levelup"] = ini_section(ini, "Level Up")      # Level2 .. Level20, Default: the level-up texts

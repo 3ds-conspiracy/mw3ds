@@ -1398,56 +1398,6 @@ void rendererViewAxes(float right[3], float up[3], float back[3])
 	back[0] = s_view.r[2].x; back[1] = s_view.r[2].y; back[2] = s_view.r[2].z;
 }
 
-void rendererDrawTrail(const float head[3], const float dir[3], float length, float widthHead, float widthTail, C3D_Tex* tex, u32 rgba)
-{
-	// Three strips across it: a clear edge, the full colour along the middle, a clear edge (a soft streak with no
-	// picture), the colour fading to nothing at the tail
-	static const int kMaxTrails = 32;              // both eyes'
-	static u8* ring = nullptr;
-	static u16* indices = nullptr;
-	static int frameSlot = 0;
-	if (!ring)
-	{
-		ring = (u8*)lockedLinearAlloc(kMaxTrails * 8 * 24);
-		indices = (u16*)lockedLinearAlloc(18 * 2);
-		// vertices: 0..3 across the head (edge, core, core, edge), 4..7 across the tail
-		static const u16 idx[18] = { 0, 1, 5, 0, 5, 4, 1, 2, 6, 1, 6, 5, 2, 3, 7, 2, 7, 6 };
-		memcpy(indices, idx, sizeof(idx));
-		GSPGPU_FlushDataCache(indices, sizeof(idx));
-	}
-	if (!ring)
-		return;
-	u8* v = ring + (frameSlot++ % kMaxTrails) * 8 * 24;
-	// across the streak: perpendicular to it and to the line of sight
-	float back[3] = { s_view.r[2].x, s_view.r[2].y, s_view.r[2].z };
-	float side[3] = { dir[1] * back[2] - dir[2] * back[1], dir[2] * back[0] - dir[0] * back[2], dir[0] * back[1] - dir[1] * back[0] };
-	float n = sqrtf(side[0] * side[0] + side[1] * side[1] + side[2] * side[2]);
-	if (n < 1e-4f)
-		return;
-	for (int k = 0; k < 3; k++)
-		side[k] /= n;
-	static const float across[4] = { -1.0f, -0.55f, 0.55f, 1.0f };
-	u32 clear = rgba & 0x00FFFFFF;
-	for (int end = 0; end < 2; end++)
-		for (int i = 0; i < 4; i++)
-		{
-			float* p = (float*)(v + (end * 4 + i) * 24);
-			float w = (end ? widthTail : widthHead) * across[i];
-			for (int k = 0; k < 3; k++)
-				p[k] = head[k] - dir[k] * length * end + side[k] * w;
-			p[3] = p[4] = 0.5f;
-			memcpy(v + (end * 4 + i) * 24 + 20, (end == 0 && (i == 1 || i == 2)) ? &rgba : &clear, 4);
-		}
-	GSPGPU_FlushDataCache(v, 8 * 24);
-	ActorMesh m = {};
-	m.flags = BATCH_BLEND | BATCH_ADDITIVE | BATCH_TWO_SIDED;
-	m.numVerts = 8;
-	m.numIndices = 18;
-	m.verts = v;
-	m.indices = indices;
-	rendererDrawMesh(m, nullptr, tex);
-}
-
 void rendererSpriteFrame()
 {
 	s_spritesAskedLast = s_spritesAsked;

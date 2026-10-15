@@ -285,15 +285,13 @@ struct Session : ScriptHost
 	void npcSummonRelease(int ri, const SpellDef& sp);   // the creature comes to fight the player; a ward lands on it
 	void npcSummonsUpdate();                             // they go when their time is up or the caster dies
 	static constexpr int kMaxVfx = 12;             // at once: past it a nearer one takes the farthest one's place
-	// Prototype particle pieces (particles.py): modes from the test step PFX:<modes>, else MW3DS_PFX (native runs)
-	std::string pfxModes;
 	int vfxSprited = 0, vfxSpritedLast = 0;        // visuals that drew particle sprites: this frame so far, the last one
 	float vfxTrimTimer = 0.0f;
-	// Creatures' sprays as particles shed from their bones (prototype, particles.py --creature): per creature ref its
+	// Creatures' sprays as sprites shed from their bones (particles.py make_creature_piece): per creature ref its
 	// piece, the animation time last seen, each piece mesh's bone, and the live particles (mesh, pos[3], vel[3], age,
 	// life, size)
 	struct CreatureFx { std::string piece; float prevTime = -1.0f; int prevGroup = -1; std::vector<int> bones;
-		std::vector<float> live; std::vector<float> clock; bool hid = false; };
+		std::vector<float> live; std::vector<float> clock; };
 	std::unordered_map<int, CreatureFx> creatureFx;
 	void updateCreatureFx(float dt);
 	void updateWorldFx();                          // placed objects with a world visual (game firstPerson.worldFx) in range
@@ -302,7 +300,6 @@ struct Session : ScriptHost
 	void playObjectGroup(int ref, const std::string& group, bool loop) override;
 	void drawCreatureFx(const float eye[3], bool secondEye);
 	void trimVfxPieces();                          // spell visuals' pieces nothing is playing let go (memory)
-	const char* pfxModeList() const { return !pfxModes.empty() ? pfxModes.c_str() : getenv("MW3DS_PFX"); }
 	static constexpr float kVfxRange = 4096.0f;    // farther from the player none starts (many casters at once: their visuals are the cost)
 	// loop: its animation repeats for all of life (a continuous effect's hit: OpenMW's ContinuousVfx)
 	// effect: the magic effect it shows (its particle texture on the shapes that take one), -1 none

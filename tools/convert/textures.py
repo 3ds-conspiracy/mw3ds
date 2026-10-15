@@ -120,6 +120,7 @@ class TextureSet:
         self.arch, self.max_size, self.force = arch, max_size, force
         self.req = {}                  # source path -> {"px": texels, "alpha": bool}
         self.whitened = {}             # output name -> {"src", "px", "alpha", "amount"}: a picture drawn whiter
+        self.made = set()              # output names encoded elsewhere (particles.py's flipbook sheets): kept
         self.log = None                # a list: requests are also recorded there (a cell's, for the cell cache)
 
     def request(self, path, texels, alpha):
@@ -205,6 +206,7 @@ class TextureSet:
                 continue
             stats["count"] += 1
             stats["bytes"] += etc_bytes(entry["size"], entry["alpha"])
+        wanted |= self.made
         for p in (OUT / "tex").rglob("*.t3x"):
             if p.name not in wanted:
                 p.unlink()

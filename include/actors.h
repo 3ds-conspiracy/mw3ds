@@ -82,7 +82,7 @@ struct ActorMesh
 	u8 hand = 0;                       // 1 a torch (shown while the actor holds it out), 2 a shield (put away then)
 	bool billboard = false;
 	bool fx = false;                   // a spell visual's shape that takes its magic effect's particle texture (MGEF PTEX)
-	// Particle sprays made drawable without simulating them (tools/convert/particles.py, prototype): a flipbook steps
+	// Particle sprays drawn as sprites without simulating them (tools/convert/particles.py): a flipbook steps
 	// its UVs one cell of flipCols x flipRows a frame, flipFps a second; baked paths swap in a frame's vertices
 	u16 flipFrames = 0, flipCols = 1, flipRows = 1;
 	float flipFps = 20.0f, pathFps = 20.0f;

@@ -99,42 +99,6 @@ def creature_stats(rec, spel=None, db=None):
             "creature": True, "attack": attacks if any(a[1] > 0 for a in attacks) else [[1, 3]], "box": creature_box(rec)}
 
 
-def key_at(keys, t):
-    """A [(time, shown)] track's state at time t (its first state before its first key)."""
-    on = keys[0][1]
-    for kt, v in keys:
-        if kt > t:
-            break
-        on = v
-    return on
-
-
-def and_keys(a, b):
-    """Two [(time, shown)] tracks as one: shown while both are."""
-    out = []
-    for t in sorted({t for t, _ in a} | {t for t, _ in b}):
-        on = key_at(a, t) and key_at(b, t)
-        if not out or out[-1][1] != on:
-            out.append((round(float(t), 4), on))
-    return out
-
-
-def emission_keys(ctrl, end):
-    """A particle system's [(time, shown)]: from its emit start until its emit stop plus its particles' lifetime;
-    None when it emits over the whole timeline (or past end, the model's own animations' end)."""
-    start, stop = ctrl["emit_start"], ctrl["emit_stop"] + ctrl.get("lifetime", 0.0)
-    begins = start <= ctrl.get("start_time", 0.0) + 0.01
-    lasts = end is None or stop >= end
-    if begins and lasts:
-        return None
-    out = [(0.0, begins)]
-    if not begins:
-        out.append((round(float(start), 4), True))
-    if not lasts:
-        out.append((round(float(stop), 4), False))
-    return out
-
-
 def vis_keys(nif, block, parents, end=None):
     """When a shape shows, from its own and its nodes' NiVisControllers (a Bonelord's robe and hood go at its death):
     [(time, shown)] on the model's animation timeline, shown only while every one of them is on; None without any.
@@ -187,6 +151,9 @@ class CreatureBuilder:
         pose = skeleton_pose(nif, text_key_time(nif, "Idle: Start"))
         # (with the parts its NiVisControllers show at times: they hide them the rest of the time, vis_keys)
         shapes = extract_shapes(self.arch, nif, skeleton=pose, vis_hidden=True)
+        # (its particle sprays aren't baked as crossed quads: the engine sheds them from its bones as sprites,
+        # particles.make_creature_piece)
+        shapes = [s for s in shapes if "raw" in s]
         rest = {}
         walk_nif(nif, lambda b, m, p: rest.setdefault(b["index"], m), True)
         parents = {}
@@ -199,23 +166,6 @@ class CreatureBuilder:
             vis = vis_keys(nif, s.get("block", -1), parents, end)
             if vis:
                 s["vis"] = vis
-            if "raw" not in s and s.get("block") is not None:
-                # A particle system (a Flame Atronach's fire): its crossed quads (meshes.particle_shape, placed at
-                # the emitter as the model holds it at rest) ride the node that emits them
-                ctrl = nif.get(nif.get(s["block"]).get("controller", -1))
-                emitter = nif.get(ctrl["emitter"]) if ctrl and "emitter" in ctrl else None
-                at = rest.get(ctrl["emitter"]) if emitter else None
-                if at is not None:
-                    inv = np.linalg.inv(at)
-                    s["raw"] = {"pos": np.asarray(s["pos"]) @ inv[:3, :3].T + inv[:3, 3], "node": np.identity(4)}
-                    s["bone"] = emitter["name"].lower()
-                # It has particles only while it emits and they live on (an ancestor ghost's spray, an atronach's
-                # burst); a fire that emits the whole timeline burns always
-                if ctrl and "emit_start" in ctrl:
-                    burst = emission_keys(ctrl, end)
-                    if burst:
-                        s["vis"] = and_keys(s.get("vis") or [(0.0, True)], burst)
-                continue
             if s["skinned"] or "raw" not in s:
                 continue
             # Rigid pieces ride the node they hang from; keep their own transform below it

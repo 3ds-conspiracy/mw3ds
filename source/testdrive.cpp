@@ -211,7 +211,7 @@ static bool hasArg(const std::string& what)
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites";
 }
 
 // "<a>,<b>" as two numbers
@@ -499,6 +499,26 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	// vfxdark:<static id>: that spell visual's meshes drawn blended over the scene (not added to it) in near-black vertex
 	// colours: a dark smudge where Morrowind shows a glow (its particles lit by their emissive material)
+	// refsprites:<id>[/<bone>]: that creature's sprites shed and alive now (all of them, or from that bone's sprays)
+	if (what == "refsprites")
+	{
+		std::string id = arg, bone;
+		size_t slash = arg.find('/');
+		if (slash != std::string::npos)
+			id = arg.substr(0, slash), bone = lower(spaced(arg.substr(slash + 1)));
+		int ri = findRef(s, id);
+		v = -1.0f;
+		if (ri < 0)
+			return true;
+		v = 0.0f;
+		auto st = s.creatureFx.find(ri);
+		FpPiece* p = st == s.creatureFx.end() ? nullptr : s.vm.piece(w, st->second.piece);
+		if (!p)
+			return true;
+		for (size_t i = 0; i + 10 <= st->second.live.size(); i += 10)
+			v += bone.empty() || lower(p->meshes[(size_t)st->second.live[i]].boneName) == bone ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "vfxdark")
 	{
 		v = -1.0f;
@@ -511,6 +531,19 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		{
 			if (!(m.flags & BATCH_BLEND) || (m.flags & BATCH_ADDITIVE) || m.gpuSkin || !m.numVerts)
 				continue;
+			if (!m.sprites.empty())
+			{
+				// (sprites: their colour keys, each weighted by its alpha, as the particles are seen over their life)
+				float lit = 0.0f, wsum = 0.0f;
+				for (u32 c : m.spriteKeyC)
+				{
+					float a = ((c >> 24) & 255) / 255.0f + 1e-3f;
+					lit += a * fmaxf(fmaxf(c & 255, (c >> 8) & 255), (c >> 16) & 255) / 255.0f;
+					wsum += a;
+				}
+				v += m.spriteKeyC.empty() || lit / wsum >= 0.15f ? 0.0f : 1.0f;
+				continue;
+			}
 			float sum = 0.0f;
 			for (u32 i = 0; i < m.numVerts; i++)
 			{
@@ -2392,27 +2425,6 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		logf("test: %s casts %s%s%s", r.id.c_str(), sp.name.c_str(), ti >= 0 ? " at " : "", ti >= 0 ? w.refs[ti].id.c_str() : "");
 		return true;
 	}
-	// PFX:<modes>: spell visuals use their prototype particle pieces (particles.py: pfx, trail, ..., comma-separated),
-	// as MW3DS_PFX does natively; PFX:off goes back to the default pieces (the device has no environment)
-	if (verb == "PFX" && a.size() >= 2)
-	{
-		s.pfxModes = a[1] == "off" ? "" : a[1];
-		logf("test: particle pieces %s", a[1].c_str());
-		return true;
-	}
-	// SPRITEBUDGET:<n>: the frame's particle sprites held at n (looking at thinning; before the first visual: the sprite
-	// buffer is sized from it then); SPRITEBUDGET:off lets it follow the frame's work again
-	if (verb == "SPRITEBUDGET" && a.size() >= 2)
-	{
-		static int lo = -1, hi = -1;
-		if (lo < 0)
-			lo = g_profile.spriteBudgetMin, hi = g_profile.spriteBudgetMax;
-		int n = a[1] == "off" ? -1 : atoi(a[1].c_str());
-		g_profile.spriteBudgetMin = n < 0 ? lo : n;
-		g_profile.spriteBudgetMax = n < 0 ? hi : n;
-		g_profile.spriteBudget = n < 0 ? std::min(std::max(g_profile.spriteBudget, lo), hi) : n;
-		return true;
-	}
 	// PLACEAT:<id>:x:y:z: that actor put there (on the floor under it), as PLACE puts it in front of the player but at a
 	// point that doesn't hang on where the player ended up (side-by-side stand-ins, tools/test/sidebyside.py)
 	if (verb == "PLACEAT" && a.size() >= 5)
@@ -2427,7 +2439,7 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		float at[3] = { (float)atof(a[2].c_str()), (float)atof(a[3].c_str()), (float)atof(a[4].c_str()) };
 		// (a token can't hold a space: an id written with underscores is tried with spaces too, "blight_cloud")
 		std::string id = lower(a[1]);
-		if (!w.game.firstPerson.vfx.count(id) && !w.game.firstPerson.vfx.count(id + "#pfx") && !w.game.object(id))
+		if (!w.game.firstPerson.vfx.count(id) && !w.game.object(id))
 			id = lower(spaced(a[1]));
 		s.spawnVfx(id, at);
 		logf("test: vfx %s at %.0f %.0f %.0f (%d showing)", a[1].c_str(), at[0], at[1], at[2], (int)s.vfx.size());

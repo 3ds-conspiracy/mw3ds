@@ -1,10 +1,11 @@
 # start: Seyda Neen
-# A Flame Atronach burns: its model's particle systems (meshes.particle_shape's crossed quads, riding the node that
-# emits them) were left out of creatures, so it stood there unlit. The fire on its body always shows; the fire on its
-# fists only while it strikes or casts (their nodes' NiVisController).
+# A Flame Atronach burns: its model's particle systems were left out of creatures, so it stood there unlit. Its fire
+# is sprites shed from its bones (particles.make_creature_piece): the body's always, from every bone under its pelvis
+# (a BSP array); its fists burn hard only while it strikes (their own sprays' emit times, on the Weapon bone; at rest only a
+# little of the body's fire leaves from there).
 1 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
 1 0 0 0 0 PLACE:atronach_flame:300
 1 0 0 0 0 POSE:atronach_flame:idle:0.5
-0.3 0 0 0 0 EXPECT:refadditive:atronach_flame:eq:1
+0.3 0 0 0 0 EXPECT:refsprites:atronach_flame:ge:10+EXPECT:refsprites:atronach_flame/weapon:le:2
 0.5 0 0 0 0 POSE:atronach_flame:attack1:0.5
-0.3 0 0 0 0 EXPECT:refadditive:atronach_flame:eq:2
+0.3 0 0 0 0 EXPECT:refsprites:atronach_flame/weapon:ge:4

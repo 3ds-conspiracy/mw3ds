@@ -329,25 +329,6 @@ void Session::trimVfxPieces()
 void Session::spawnVfx(const std::string& staticId, const float pos[3], float life, int follow, float yaw, float scale, bool loop, int effect)
 {
 	auto it = w.game.firstPerson.vfx.find(lower(staticId));
-	// (prototype, particles.py: MW3DS_PFX=flip / path / spr, several with commas, draws a visual's flipbook, baked
-	// paths or particle sprites where it has one)
-	if (const char* pfx = pfxModeList())
-	{
-		std::string modes = pfx;
-		for (size_t a = 0; a <= modes.size();)
-		{
-			size_t b = modes.find(',', a);
-			if (b == std::string::npos)
-				b = modes.size();
-			auto alt = w.game.firstPerson.vfx.find(lower(staticId) + "#" + modes.substr(a, b - a));
-			if (alt != w.game.firstPerson.vfx.end())
-			{
-				it = alt;
-				break;
-			}
-			a = b + 1;
-		}
-	}
 	if (it == w.game.firstPerson.vfx.end())
 		return;
 	// Many casters at once: only those near the player show, the nearest when there are too many
@@ -439,14 +420,6 @@ std::string Session::boltPiece(const SpellDef& sp, int* effect)
 		auto me = w.game.magicEffects.find(e.effect);
 		std::string id = me == w.game.magicEffects.end() || me->second.bvfx.empty() ? std::string("vfx_defaultbolt") : me->second.bvfx;
 		auto pc = w.game.firstPerson.vfx.find(id);
-		// (prototype particle pieces: the shed-sprite bolt, MW3DS_PFX / PFX: with pfx)
-		if (const char* modes = pfxModeList())
-			if (strstr(modes, "pfx"))
-			{
-				auto alt = w.game.firstPerson.vfx.find(lower(id) + "#pfx");
-				if (alt != w.game.firstPerson.vfx.end())
-					pc = alt;
-			}
 		if (pc != w.game.firstPerson.vfx.end())
 		{
 			if (effect)
@@ -510,13 +483,12 @@ static float vfxThinGrow(float share, float dist)
 	return 1.0f + fminf(0.4f, 1.0f / sqrtf(share) - 1.0f) * far;
 }
 
-// Placed objects drawn as their visual (prototype: particles.py world_entry): a steaming pool or a lava river's steam
+// Placed objects drawn as their visual (particles.py world_entry): a steaming pool or a lava river's steam
 // over and over, Dagoth Ur's death sparkles from when they are enabled, an activator (the Akulakhan chamber, its
 // bridge) held at rest until a script plays one of its groups. Kept while the object shows and is near
 void Session::updateWorldFx()
 {
-	const char* modes = pfxModeList();
-	bool on = modes && strstr(modes, "pfx") && !w.game.firstPerson.worldFx.empty();
+	bool on = !w.game.firstPerson.worldFx.empty();
 	std::unordered_set<int> have;
 	for (size_t i = 0; i < vfx.size();)
 	{
@@ -598,8 +570,7 @@ void Session::playObjectGroup(int ref, const std::string& group, bool loop)
 // bone's frame, born at times on the model's own animation timeline; a group just started counts from its start
 void Session::updateCreatureFx(float dt)
 {
-	const char* modes = pfxModeList();
-	if (!modes || !strstr(modes, "pfx") || w.game.firstPerson.cpfx.empty())
+	if (w.game.firstPerson.cpfx.empty())
 	{
 		creatureFx.clear();
 		return;
@@ -625,15 +596,6 @@ void Session::updateCreatureFx(float dt)
 				for (size_t b = 0; b < sk.bones.size(); b++)
 					if (strcasecmp(sk.bones[b].name, piece->meshes[k].boneName.c_str()) == 0)
 						st.bones[k] = (int)b;
-		}
-		// (its old crossed quads on those bones, meshes.particle_shape: hidden)
-		if (!st.hid)
-		{
-			for (auto& am : a->meshes)
-				for (int b : st.bones)
-					if (b >= 0 && am.bone == b && (am.flags & BATCH_BLEND) && am.numVerts == 12)
-						am.vis = { 0.0f, 0.0f };
-			st.hid = true;
 		}
 		float cur = a->time;
 		if (st.prevTime < 0.0f)

@@ -6,6 +6,6 @@
 0.3 0 0 0 0 GOTO:Nerano_Ancestral_Tomb
 3 0 0 0
 0.5 0 0 0 0 POSE:ancestor_ghost:idle:0.3
-0.3 0 0 0 0 EXPECT:refadditive:ancestor_ghost:eq:0
+0.3 0 0 0 0 EXPECT:refsprites:ancestor_ghost:eq:0
 0.5 0 0 0 0 POSE:ancestor_ghost:death1:0.3
-0.3 0 0 0 0 EXPECT:refadditive:ancestor_ghost:ge:1
+0.3 0 0 0 0 EXPECT:refsprites:ancestor_ghost:ge:1
