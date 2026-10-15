@@ -7,17 +7,27 @@
                                                     finds the console itself)
     python tools/build/build_cia.py --mods          with the community optimization mods laid over the game files
                                                     (build_cia_mods.py is the same as --mods)
-Needs .env filled in (see .env.example): MW3DS_MORROWIND_DIR, MW3DS_CTR_TOOLS_DIR, and on Windows MW3DS_MSYS2_DIR.
+    python tools/build/build_cia.py --no-data       the program only in the CIA (~2 MB); the data stays in out/... for
+                                                    copying to sdmc:/3ds/mw3ds/data
+    python tools/build/build_cia.py --prebuilt      pack the mw3ds.elf / mw3ds.smdh already in the repo root instead of
+                                                    building them (the release converter, tools/release, uses this)
+Needs .env filled in (see .env.example): MW3DS_MORROWIND_DIR, MW3DS_CTR_TOOLS_DIR, and on Windows MW3DS_MSYS2_DIR
+(not with --prebuilt).
 """
 import argparse
+import io
+import json
 import os
+import shutil
 import subprocess
 import sys
+import urllib.request
+import zipfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import mwtools
-from make_cia import build
+from make_cia import build, pack
 
 ROOT = mwtools.ROOT
 
@@ -29,13 +39,47 @@ OVERLAYS = [
 ]
 
 
+# Outside a git checkout (the release converter's folder) the mods come as zips of the same commits the submodules
+# pin, listed here by tools/release/make_release.py: {"mods/<name>": {"url": <repository>, "commit": <sha>}}
+MODS_LOCK = "mods.lock.json"
+
+
+def fetch_mod_zips():
+    """Downloads each mod in mods.lock.json as a zip of its pinned commit (once: a folder already there is kept)."""
+    print("== the mods (zips of the pinned commits)")
+    for path, pin in json.loads((ROOT / MODS_LOCK).read_text(encoding="utf-8")).items():
+        dest = ROOT / path
+        stamp = dest / ".commit"
+        if stamp.is_file() and stamp.read_text().strip() == pin["commit"]:
+            continue
+        url = pin["url"].removesuffix(".git") + f"/archive/{pin['commit']}.zip"
+        print(f"   downloading {url}", flush=True)
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "mw3ds-converter"})
+            data = urllib.request.urlopen(req, timeout=60).read()
+        except OSError as e:
+            raise SystemExit(f"could not download {url} ({e}): check the network, or build without the mods")
+        shutil.rmtree(dest, ignore_errors=True)
+        tmp = dest.with_name(dest.name + ".part")
+        shutil.rmtree(tmp, ignore_errors=True)
+        zipfile.ZipFile(io.BytesIO(data)).extractall(tmp)
+        # (GitHub's zip holds one folder, <repository>-<commit>)
+        (top,) = list(tmp.iterdir())
+        top.replace(dest)
+        tmp.rmdir()
+        stamp.write_text(pin["commit"] + "\n")
+
+
 def fetch_mods():
     """Checks out the mods (git submodules, pinned to a commit each) and returns the overlay folders."""
-    print("== the mods (git submodules)")
-    r = subprocess.run(["git", "submodule", "update", "--init", "--depth", "1",
-                        "mods/morrowind-optimization-patch", "mods/project-atlas"], cwd=ROOT)
-    if r.returncode != 0:
-        raise SystemExit("git submodule update failed (network? see the message above)")
+    if (ROOT / ".git").exists() or not (ROOT / MODS_LOCK).is_file():
+        print("== the mods (git submodules)")
+        r = subprocess.run(["git", "submodule", "update", "--init", "--depth", "1",
+                            "mods/morrowind-optimization-patch", "mods/project-atlas"], cwd=ROOT)
+        if r.returncode != 0:
+            raise SystemExit("git submodule update failed (network? see the message above)")
+    else:
+        fetch_mod_zips()
     dirs = []
     for o in OVERLAYS:
         p = ROOT / o
@@ -46,7 +90,7 @@ def fetch_mods():
     return dirs
 
 
-def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=False):
+def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=False, no_data=False, prebuilt=False):
     os.chdir(ROOT)
     mwtools.load_env()
     if mods:
@@ -59,7 +103,7 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
     # Check the setup before the long steps
     morrowind = Path(mwtools.get_env("MW3DS_MORROWIND_DIR", "the folder of your Morrowind install"))
     ctr = Path(mwtools.get_env("MW3DS_CTR_TOOLS_DIR", "the folder with makerom"))
-    if mwtools.IS_WINDOWS:
+    if mwtools.IS_WINDOWS and not prebuilt:
         mwtools.get_env("MW3DS_MSYS2_DIR", "your MSYS2 folder")
     if not (morrowind / "Data Files" / "Morrowind.esm").exists():
         raise SystemExit(f"Morrowind.esm not found under {morrowind}/Data Files")
@@ -77,6 +121,7 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
     (ROOT / cia).unlink(missing_ok=True)
 
     # 1. Convert the game data (make_cia builds the program itself)
+    # (the same interpreter runs the converter: the release converter's own Python, or yours)
     if not skip_convert:
         print(f"== converting game data (python {sys.version.split()[0]})")
         r = subprocess.run([sys.executable, "tools/convert/level.py", *convert_args], cwd=ROOT)
@@ -87,8 +132,8 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
         raise SystemExit(f"{data} does not exist: run without --skip-convert first")
 
     # 2. Program + CIA
-    print("== building the program and the CIA")
-    if build(data, cia) != 0:
+    print("== packing the CIA" if prebuilt else "== building the program and the CIA")
+    if (pack if prebuilt else build)(data, cia, no_data) != 0:
         raise SystemExit("CIA build failed: see the make / makerom output just above this error")
     print(f"Built {cia}.")
     return 0
@@ -102,8 +147,10 @@ def main(mods=False):
     if not mods:
         ap.add_argument("--mods", action="store_true")
     ap.add_argument("--fetch-only", action="store_true", help="with --mods: just download the mods and print the overlay folders")
+    ap.add_argument("--no-data", action="store_true")
+    ap.add_argument("--prebuilt", action="store_true")
     a = ap.parse_args()
-    return run(a.small, a.skip_convert, a.old3ds, mods or getattr(a, "mods", False), a.fetch_only)
+    return run(a.small, a.skip_convert, a.old3ds, mods or getattr(a, "mods", False), a.fetch_only, a.no_data, a.prebuilt)
 
 
 if __name__ == "__main__":

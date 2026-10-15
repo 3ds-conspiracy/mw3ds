@@ -1,0 +1,89 @@
+name: Release
+
+# A tag v* builds the release converter (tools/release/make_release.py: a folder a player unzips, picks their own
+# Morrowind install in, and gets a CIA from) and attaches it to a draft GitHub release for the maintainer to check
+# and publish. Nothing from Morrowind is built or stored here: the converter reads the player's own copy.
+# tex3ds and makerom for Windows come from this repository's "build-tools" release (uploaded once by hand, pinned
+# below by checksum): devkitPro's package server has refused GitHub's runners before.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build (it must exist)"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+  BUILD_TOOLS_URL: https://github.com/3ds-conspiracy/morrowind3ds/releases/download/build-tools/build-tools-windows.zip
+  BUILD_TOOLS_SHA256: ""
+
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkitarm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - name: Build the engine
+        run: make -j"$(nproc)"
+      - name: Strip the debug information for the CIA (the full ELF goes on the release for crash addresses)
+        run: |
+          mkdir -p engine
+          cp mw3ds.elf "engine/mw3ds-${TAG}-debug.elf"
+          "$DEVKITARM/bin/arm-none-eabi-strip" --strip-debug -o engine/mw3ds.elf mw3ds.elf
+          cp mw3ds.smdh engine/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: engine
+          path: engine/
+
+  converter:
+    needs: engine
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: engine
+          path: engine
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - name: tex3ds and makerom
+        shell: bash
+        run: |
+          if [ -z "$BUILD_TOOLS_SHA256" ]; then echo "BUILD_TOOLS_SHA256 is not set in release.yml"; exit 1; fi
+          curl -fsSL -o build-tools.zip "$BUILD_TOOLS_URL"
+          echo "$BUILD_TOOLS_SHA256  build-tools.zip" | sha256sum -c -
+          mkdir -p build-tools && unzip -q build-tools.zip -d build-tools
+      - name: Assemble the converter
+        shell: bash
+        env:
+          TEX3DS: ${{ github.workspace }}\build-tools\tex3ds.exe
+          MW3DS_CTR_TOOLS_DIR: ${{ github.workspace }}\build-tools
+        run: python tools/release/make_release.py --elf engine --zip
+      - name: The bundled Python runs the packages and the build script
+        shell: bash
+        run: |
+          py=build/release/MW3DS-Converter/python/python.exe
+          "$py" -c "import numpy, PIL, miniaudio, imageio_ffmpeg, tkinter; tkinter.Tcl()"
+          "$py" build/release/MW3DS-Converter/app/tools/build/build_cia.py --help > /dev/null
+      - name: Draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$TAG" > /dev/null 2>&1 || gh release create "$TAG" --draft --title "$TAG" \
+            --notes "Unzip MW3DS-Converter, run MW3DS Converter.exe and pick your own Morrowind install: it makes the CIA. Nothing from Morrowind is in this download."
+          gh release upload "$TAG" --clobber build/release/MW3DS-Converter-*.zip "engine/mw3ds-${TAG}-debug.elf"

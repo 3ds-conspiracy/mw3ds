@@ -1,10 +1,11 @@
 """Builds build/mw3ds.cia with the converted game data packed into its RomFS.
 New 3DS settings: 124MB app memory mode, 804MHz CPU, L2 cache.
-    python tools/build/make_cia.py [--no-data] [--data out/world] [--out build/mw3ds-o3ds.cia]
+    python tools/build/make_cia.py [--no-data] [--data out/world] [--out build/mw3ds-o3ds.cia] [--prebuilt]
   --no-data   the program only (~2 MB): the game reads its data from sdmc:/3ds/mw3ds/data
               (the whole island copied there by card reader); no Wi-Fi update checks either
   --data      pack that data (default out/data, the Balmora area)
   --out       write the CIA there (default build/mw3ds.cia)
+  --prebuilt  do not run make: pack the mw3ds.elf and mw3ds.smdh already in the repo root
 The same program runs on both consoles (it takes its Old 3DS profile on an Old 3DS: 64 MB mode, see source/heaps.cpp);
 only the data differs (build_cia.py --old3ds converts with quarter-size textures).
 """
@@ -39,9 +40,21 @@ def build(data="out/data", out="build/mw3ds.cia", no_data=False):
         print(f"make failed (exit code {made.returncode}). Last lines of its output:")
         print("\n".join(lines[-30:]))
         return 1
+    return pack(data, out, no_data)
 
+
+def pack(data="out/data", out="build/mw3ds.cia", no_data=False):
+    """Packs the program already built (mw3ds.elf and mw3ds.smdh in the repo root) and the data into the CIA;
+    returns the exit code. The release converter calls this with a prebuilt program (tools/release)."""
+    mwtools.load_env()
+    for f in ("mw3ds.elf", "mw3ds.smdh"):
+        if not (ROOT / f).is_file():
+            print(f"{f} not found in {ROOT}: build the program first (tools/build/make.py)")
+            return 1
     staged = ROOT / "build" / "romfs" / "data"
     shutil.rmtree(staged, ignore_errors=True)
+    # (the RSF's RomFs root: empty for the program-only CIA, which makerom wants to exist all the same)
+    staged.parent.mkdir(parents=True, exist_ok=True)
     if not no_data:
         mwtools.copy_tree_linked(ROOT / data, staged)
     makerom_name = "makerom.exe" if mwtools.IS_WINDOWS else "makerom"
@@ -65,8 +78,9 @@ def main():
     ap.add_argument("--no-data", action="store_true")
     ap.add_argument("--data", default="out/data")
     ap.add_argument("--out", default="build/mw3ds.cia")
+    ap.add_argument("--prebuilt", action="store_true")
     a = ap.parse_args()
-    return build(a.data, a.out, a.no_data)
+    return (pack if a.prebuilt else build)(a.data, a.out, a.no_data)
 
 
 if __name__ == "__main__":
