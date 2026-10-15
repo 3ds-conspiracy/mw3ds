@@ -1295,6 +1295,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
 	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
+	else if (what == "torchtime") v = w.useTorches() ? 1.0f : 0.0f;   // time for torches here (night, a dark interior)
 	else if (what == "subtitle") v = w.time < s.subtitleUntil && !s.subtitle.empty() ? 1.0f : 0.0f;   // a spoken line written now
 	else if (what == "setting")     // <lookspeed|geturn|geaim|inverty|subtitles>: Controls > Look's and Display's, now
 	{

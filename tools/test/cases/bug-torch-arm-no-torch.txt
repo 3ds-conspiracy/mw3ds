@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# Only someone carrying a torch holds one out (OpenMW's updateEquippedLight equips a light from the inventory; without
+# one nothing changes). In the dark hold of the prison ship the two guards and Jiub carry no torch, yet all three
+# raised the left arm in the torch pose round an empty hand, and anyone with a shield would have put it away too.
+# A Redoran guard at night, who carries one, still holds it up (bug-torch-hold)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Imperial_Prison_Ship
+3 0 0 0
+0.1 0 0 0 0 EXPECT:torchtime:eq:1
+0.1 0 0 0 0 EXPECT:reftorcharm:chargen%boat%guard%2:eq:0+EXPECT:reftorcharm:chargen%boat%guard%3:eq:0
+0.1 0 0 0 0 EXPECT:reftorcharm:chargen%name:eq:0+EXPECT:reftorch:chargen%name:eq:0

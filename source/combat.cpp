@@ -3364,10 +3364,13 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		if (r.actor < 0 || r.dead || !r.visible())
 			return;
 		// A torch is held out when it's time for torches, in place of the shield; in a fight the shield comes back
-		// (OpenMW's updateEquippedLight)
+		// (OpenMW's updateEquippedLight). Only by someone who carries one: OpenMW equips a light from the inventory,
+		// and without one nothing changes (the arm was raised round an empty hand, and the shield put away for nothing)
 		if (Actor* ta = w.actorOf(i))
 		{
-			bool out = torches;
+			bool out = false;
+			for (const ActorMesh& m : ta->meshes)
+				out |= torches && m.hand == 1;
 			if (out && r.ai == AI_COMBAT)
 				for (const ActorMesh& m : ta->meshes)
 					if (m.hand == 2)
