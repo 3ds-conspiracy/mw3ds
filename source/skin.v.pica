@@ -13,6 +13,7 @@
 .fvec lightPos                  ; the light the player carries: eye-space xyz, w = 1 / radius squared
 .fvec lightColor                ; its colour (0 = none)
 .fvec ambientAdd                ; added to every vertex's light: Night Eye (OpenMW's ambient + 0.7 x magnitude / 100)
+.bool gammaOn                   ; the light curved by Gamma (cell.v.pica's, in the same register)
 
 ; Constants
 .constf consts(0.0, 1.0, 0.00392156862, 0.5)
@@ -22,8 +23,9 @@
 
 ; The palette: 3 rows (3x4, actor space) per bone the mesh uses, at most 25 (renderer.cpp kSkinBones)
 .fvec bones[75]
-.constf skinConsts(3.0, 0.0, 0.0, 0.0)
+.constf skinConsts(3.0, 0.001, 0.0, 0.0)
 .alias  three     skinConsts.xxxx
+.alias  gammaFloor skinConsts.yyyy
 
 ; Outputs
 .out outpos position
@@ -106,6 +108,18 @@
 	max r6, consts.xxxx, r6
 	mul r7, lightColor, r6
 	add r4.xyz, r4, r7
+	; Gamma (Options, Auto gamma): the light's rgb ^ (1 / gamma), its exponent in ambientAdd.w (renderer.cpp
+	; rendererSetGamma). lg2 and ex2 take one component each; the floor keeps lg2 off 0
+	ifu gammaOn
+		max r8.xyz, gammaFloor, r4
+		lg2 r9.x, r8.x
+		lg2 r9.y, r8.y
+		lg2 r9.z, r8.z
+		mul r9.xyz, ambientAdd.wwww, r9
+		ex2 r4.x, r9.x
+		ex2 r4.y, r9.y
+		ex2 r4.z, r9.z
+	.end
 	mov outclr, r4
 
 	end

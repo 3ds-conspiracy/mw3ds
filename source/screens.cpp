@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "audio.h"
+#include "gamma.h"
 #include "linear.h"
 #include "log.h"
 #include "renderer.h"
@@ -271,6 +272,8 @@ void Session::drawBottom()
 	case SCR_RECHARGE: drawRecharge(); break;
 	case SCR_OPTIONS: drawOptions(); break;
 	case SCR_CONTROLS: drawControls(); break;
+	case SCR_DISPLAY: drawDisplay(); break;
+	case SCR_LOOK: drawLook(); break;
 	case SCR_REPAIR: drawRepair(); break;
 	case SCR_SAVES: drawSaves(); break;
 	case SCR_GAMEMENU: drawGameMenu(); break;
@@ -492,9 +495,11 @@ void Session::drawOptions()
 {
 	header(w.game.gmst("soptions", "Options"));
 	const UiInput& in = uiIn();
-	// focus: 0..2 the bars, 3..5 the toggles (3D, combat rules, hit numbers), 6 gyro aim, 7..9 the buttons along the bottom
-	if (in.down & KEY_DOWN) focus = focus >= 7 ? 0 : focus == 6 ? 7 : focus >= 3 ? 6 : focus + 1;
-	else if (in.down & KEY_UP) focus = focus == 0 ? 7 : focus >= 7 ? 6 : focus == 6 ? 3 : focus >= 3 ? 2 : focus - 1;
+	// focus: 0..2 the bars, 3..5 the toggles (3D, combat rules, hit numbers), 6 gyro aim and 10 Display beside it, 7..9
+	// the buttons along the bottom
+	if (in.down & KEY_DOWN) focus = focus == 10 ? 7 : focus >= 7 ? 0 : focus == 6 ? 7 : focus >= 3 ? 6 : focus + 1;
+	else if (in.down & KEY_UP) focus = focus == 10 ? 3 : focus == 0 ? 7 : focus >= 7 ? 6 : focus == 6 ? 3 : focus >= 3 ? 2 : focus - 1;
+	else if ((focus == 6 || focus == 10) && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 6 ? 10 : 6;
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_RIGHT)) focus = focus == 5 ? 3 : focus + 1;
 	else if (focus >= 3 && focus <= 5 && (in.down & KEY_LEFT)) focus = focus == 3 ? 5 : focus - 1;
 	bool changed = false;
@@ -552,7 +557,7 @@ void Session::drawOptions()
 	static const int kGyroSteps[4] = { 0, 50, 100, 200 };
 	char gyro[40];
 	snprintf(gyro, sizeof(gyro), g_gyroAim > 0 ? "Gyro aim: %.1fx" : "Gyro aim: Off", g_gyroAim / 100.0f);
-	if (uiButton(4, 174, 312, 26, gyro, focus == 6) || (focus == 6 && (in.down & KEY_A)))
+	if (uiButton(4, 174, 152, 26, gyro, focus == 6) || (focus == 6 && (in.down & KEY_A)))
 	{
 		int k = 0;
 		while (k < 3 && kGyroSteps[k] != g_gyroAim)
@@ -561,6 +566,8 @@ void Session::drawOptions()
 		notify(g_gyroAim > 0 ? "Gyro aim on: turn the 3DS to aim." : "Gyro aim off.");
 		changed = true;
 	}
+	// Display: Gamma and Auto gamma, on their own screen
+	bool display = uiButton(164, 174, 152, 26, "Display", focus == 10) || (focus == 10 && (in.down & KEY_A));
 	if (changed)
 	{
 		audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
@@ -573,9 +580,15 @@ void Session::drawOptions()
 		if (uiButton(4 + i * 106, 208, 100, 28, i == 2 ? w.game.gmst("sclose", "Close") : row[i], focus == 7 + i)
 			|| (focus == 7 + i && (in.down & KEY_A)))
 			b = i;
-	if (focus >= 7 && (in.down & KEY_RIGHT)) focus = focus == 9 ? 7 : focus + 1;
-	else if (focus >= 7 && (in.down & KEY_LEFT)) focus = focus == 7 ? 9 : focus - 1;
-	if (b == 0)
+	if (focus >= 7 && focus <= 9 && (in.down & KEY_RIGHT)) focus = focus == 9 ? 7 : focus + 1;
+	else if (focus >= 7 && focus <= 9 && (in.down & KEY_LEFT)) focus = focus == 7 ? 9 : focus - 1;
+	if (display)
+	{
+		closeScreen();
+		focus = 0;
+		openScreen(SCR_DISPLAY);
+	}
+	else if (b == 0)
 	{
 		closeScreen();
 		openScreen(SCR_CONTROLS);
@@ -630,15 +643,173 @@ void Session::drawControls()
 		y += 13.5f;
 	}
 	// Y: the next layout (Xbox, classic, GoldenEye); A / B: back to Options
-	if (uiButton(40, 208, 130, 28, xbox ? "Y: Use classic" : goldenEye ? "Y: Use Xbox" : "Y: Use GoldenEye") || (uiIn().down & KEY_Y))
+	// X: Look (look speed, invert)
+	if (uiButton(4, 208, 124, 28, xbox ? "Y: Use classic" : goldenEye ? "Y: Use Xbox" : "Y: Use GoldenEye") || (uiIn().down & KEY_Y))
 	{
 		g_controlLayout = xbox ? CONTROLS_CLASSIC : goldenEye ? CONTROLS_XBOX : CONTROLS_GOLDENEYE;
 		saveSettings();
 	}
-	else if (uiButton(180, 208, 100, 28, w.game.gmst("sclose", "Close"), true) || (uiIn().down & (KEY_A | KEY_B)))
+	else if (uiButton(132, 208, 88, 28, "X: Look") || (uiIn().down & KEY_X))
+	{
+		closeScreen();
+		focus = 0;
+		openScreen(SCR_LOOK);
+	}
+	else if (uiButton(224, 208, 92, 28, w.game.gmst("sclose", "Close"), true) || (uiIn().down & (KEY_A | KEY_B)))
 	{
 		closeScreen();
 		openScreen(SCR_OPTIONS);
+	}
+}
+
+// A setting's bar, as the Options volume bars: its label (bright while focused) above it, D-pad left / right or a tap
+// on it to set. True when it changed
+static bool settingBar(float y, const std::string& label, int index, int& focus, int& value, int lo, int hi, int step)
+{
+	const UiInput& in = uiIn();
+	uiText(20, y, 0.45f, focus == index ? col::header : col::text, label);
+	float bx = 20, bw = 280, by = y + 18;
+	uiRect(bx, by, bw, 8, col::panel);
+	uiFrame(bx, by, bw, 8);
+	float f = (float)(value - lo) / (hi - lo);
+	uiRect(bx + f * bw - 4, by - 5, 8, 18, col::header);
+	int v = value;
+	if (focus == index && (in.down & KEY_LEFT)) v -= step;
+	if (focus == index && (in.down & KEY_RIGHT)) v += step;
+	if (in.touching && in.touchY >= by - 8 && in.touchY <= by + 16 && in.touchX >= bx - 6 && in.touchX <= bx + bw + 6)
+	{
+		focus = index;
+		v = lo + (int)roundf(fmaxf(0.0f, fminf(1.0f, (in.touchX - bx) / bw)) * (hi - lo) / step) * step;
+	}
+	v = v < lo ? lo : v > hi ? hi : v;
+	if (v == value)
+		return false;
+	value = v;
+	return true;
+}
+
+// Display: Gamma (a bar, 0.80 to 1.80), Subtitles and Auto gamma (on / off); kept in settings.txt. The world shows on
+// the top screen behind it, so the change is seen as it is made
+void Session::drawDisplay()
+{
+	header("Display");
+	const UiInput& in = uiIn();
+	// focus: 0 the Gamma bar, 1 Subtitles and 2 Auto gamma beside it, 3..4 the buttons along the bottom
+	if (in.down & KEY_DOWN) focus = focus == 0 ? 1 : focus <= 2 ? 3 : 0;
+	else if (in.down & KEY_UP) focus = focus == 0 ? 3 : focus <= 2 ? 0 : 1;
+	else if (focus >= 1 && focus <= 2 && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 1 ? 2 : 1;
+	else if (focus >= 3 && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 3 ? 4 : 3;
+	char label[64];
+	snprintf(label, sizeof(label), "Gamma: %.2f%s", g_gammaPct / 100.0f, g_gammaPct == 100 ? " (as Morrowind)" : "");
+	bool changed = settingBar(28, label, 0, focus, g_gammaPct, kGammaMinPct, kGammaMaxPct, kGammaStepPct);
+	// Dark to light, through the curve in use (what the bar does to the dim end)
+	float g = gammaValue();
+	for (int i = 0; i < 10; i++)
+	{
+		int c = (int)(powf(i / 9.0f, 1.0f / g) * 255.0f + 0.5f);
+		uiRect(20 + i * 28, 66, 28, 16, C2D_Color32(c, c, c, 255));
+	}
+	uiFrame(20, 66, 280, 16);
+	// Subtitles: spoken lines written on the top screen
+	if (uiButton(4, 94, 152, 26, g_subtitles ? "Subtitles: On" : "Subtitles: Off", focus == 1) || (focus == 1 && (in.down & KEY_A)))
+	{
+		g_subtitles = !g_subtitles;
+		notify(g_subtitles ? "Subtitles on." : "Subtitles off: spoken lines are only heard.");
+		changed = true;
+	}
+	// Auto gamma: what this console reads the light with
+	GammaSensor sensor = gammaSensor();
+	const char* autoLabel = gammaAutoOn() ? "Auto gamma: On" : "Auto gamma: Off";
+	if ((uiButton(164, 94, 152, 26, autoLabel, focus == 2, sensor != SENSOR_NONE) || (focus == 2 && (in.down & KEY_A)))
+		&& sensor != SENSOR_NONE)
+	{
+		g_autoGamma = gammaAutoOn() ? 0 : 1;
+		notify(!gammaAutoOn() ? "Auto gamma off." : sensor == SENSOR_QTM
+			? "Auto gamma on: the picture lifts in bright light."
+			: "Auto gamma on: the inner camera checks the light at each loading screen.");
+		changed = true;
+	}
+	const char* how = sensor == SENSOR_QTM ? "Auto gamma checks the light every few seconds."
+		: sensor == SENSOR_CAMERA ? "Auto gamma uses the inner camera at loads."
+		: "No light sensor: Auto gamma stays off.";
+	uiText(20, 128, 0.4f, col::textDim, how);
+	uiText(20, 144, 0.4f, col::textDim, "Higher gamma helps in sunlight.");
+	uiText(20, 158, 0.4f, col::textDim, "The dark stays dark: torches still matter.");
+	if (gammaAutoOn())
+	{
+		snprintf(label, sizeof(label), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
+		uiText(20, 180, 0.4f, col::textDim, label);
+	}
+	if (changed)
+		saveSettings();
+	// Default, Close (focus 3..4)
+	int b = -1;
+	const std::string row[2] = { "Default", w.game.gmst("sclose", "Close") };
+	for (int i = 0; i < 2; i++)
+		if (uiButton(40 + i * 130, 208, 110, 28, row[i], focus == 3 + i) || (focus == 3 + i && (in.down & KEY_A)))
+			b = i;
+	if (b == 0)
+	{
+		g_gammaPct = 100;
+		g_autoGamma = -1;
+		g_subtitles = true;
+		saveSettings();
+	}
+	else if (b == 1 || (in.down & KEY_B))
+	{
+		closeScreen();
+		focus = 0;
+		openScreen(SCR_OPTIONS);
+	}
+}
+
+// Look (from Controls): the C-stick's and D-pad's look speed, the GoldenEye pad's turn while walking and its look while
+// aiming (0.50x to 2.00x), and Invert up / down; kept in settings.txt
+void Session::drawLook()
+{
+	header("Look");
+	const UiInput& in = uiIn();
+	// focus: 0..2 the bars, 3 Invert, 4..5 the buttons along the bottom
+	if (in.down & KEY_DOWN) focus = focus >= 4 ? 0 : focus + 1;
+	else if (in.down & KEY_UP) focus = focus == 0 ? 4 : focus >= 4 ? 3 : focus - 1;
+	else if (focus >= 4 && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 4 ? 5 : 4;
+	bool changed = false;
+	char label[64];
+	snprintf(label, sizeof(label), "Look speed (C-stick, D-pad): %.2fx", g_lookSpeed / 100.0f);
+	changed |= settingBar(28, label, 0, focus, g_lookSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+	snprintf(label, sizeof(label), "GoldenEye turn (walking): %.2fx", g_geTurnSpeed / 100.0f);
+	changed |= settingBar(64, label, 1, focus, g_geTurnSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+	snprintf(label, sizeof(label), "GoldenEye look (aiming): %.2fx", g_geAimSpeed / 100.0f);
+	changed |= settingBar(100, label, 2, focus, g_geAimSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+	if (uiButton(4, 138, 312, 26, g_invertY ? "Invert look up / down: On" : "Invert look up / down: Off", focus == 3)
+		|| (focus == 3 && (in.down & KEY_A)))
+	{
+		g_invertY = !g_invertY;
+		notify(g_invertY ? "Up on the stick now looks down." : "Up on the stick looks up.");
+		changed = true;
+	}
+	uiText(20, 172, 0.4f, col::textDim, g_controlLayout == CONTROLS_GOLDENEYE ? "Your layout: GoldenEye (the pad turns and aims)."
+		: g_controlLayout == CONTROLS_XBOX ? "Your layout: Xbox (the C-stick looks)." : "Your layout: classic (C-stick and D-pad look).");
+	uiText(20, 186, 0.4f, col::textDim, "Gyro aim keeps its own speed (Options).");
+	if (changed)
+		saveSettings();
+	// Default, Close (focus 4..5)
+	int b = -1;
+	const std::string row[2] = { "Default", w.game.gmst("sclose", "Close") };
+	for (int i = 0; i < 2; i++)
+		if (uiButton(40 + i * 130, 208, 110, 28, row[i], focus == 4 + i) || (focus == 4 + i && (in.down & KEY_A)))
+			b = i;
+	if (b == 0)
+	{
+		g_lookSpeed = g_geTurnSpeed = g_geAimSpeed = 100;
+		g_invertY = false;
+		saveSettings();
+	}
+	else if (b == 1 || (in.down & KEY_B))
+	{
+		closeScreen();
+		focus = 0;
+		openScreen(SCR_CONTROLS);
 	}
 }
 

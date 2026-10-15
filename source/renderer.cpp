@@ -35,6 +35,9 @@ static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
 static int s_moreLights = 0;
 static int s_uAmbient = -1;
 static float s_ambientAdd = 0.0f;           // Night Eye's added light (rendererSetNightEye)
+static int s_bGamma = -1;
+static float s_invGamma = 1.0f;             // Gamma's exponent, 1 / gamma, in ambientAdd.w (rendererSetGamma)
+static bool s_gammaOn = false;
 static float s_moreLight[kActorLights][3], s_moreRadius[kActorLights], s_moreRgb[kActorLights][3];
 static C3D_Mtx s_lightView;               // the view the lights were last put in (set again after a skinned run)
 static bool s_lightViewOn = false;
@@ -81,6 +84,7 @@ void rendererInit()
 	s_uMoreLightColor[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor3");
 	s_bMoreLights = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLights");
 	s_uAmbient = shaderInstanceGetUniformLocation(s_program.vertexShader, "ambientAdd");
+	s_bGamma = shaderInstanceGetUniformLocation(s_program.vertexShader, "gammaOn");
 	s_skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
 	shaderProgramInit(&s_skinProgram);
 	shaderProgramSetVsh(&s_skinProgram, &s_skinDvlb->DVLE[0]);
@@ -92,6 +96,7 @@ void rendererInit()
 	for (const char* n : kShared)
 		s_skinReady &= shaderInstanceGetUniformLocation(s_program.vertexShader, n)
 			== shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, n);
+	s_skinReady &= s_bGamma == shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "gammaOn");
 	if (!s_skinReady)
 	{
 		g_gpuSkinning = false;
@@ -177,12 +182,36 @@ static void bindPipeline()
 	const float* t = s_daylight ? s_land : nullptr;
 	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTint, t ? t[0] : 1.0f, t ? t[1] : 1.0f, t ? t[2] : 1.0f, 1.0f);
 	if (s_uAmbient >= 0)
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, 0.0f, 0.0f, 0.0f, 0.0f);     // (the world's draws set it: setLight)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, 0.0f, 0.0f, 0.0f, s_invGamma);     // (the world's draws set it: setLight)
+	if (s_bGamma >= 0)
+		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bGamma, s_gammaOn);
 }
 
 void rendererSetNightEye(float add)
 {
 	s_ambientAdd = add;
+}
+
+void rendererSetGamma(float gamma)
+{
+	s_gammaOn = s_bGamma >= 0 && gamma > 0.0f && fabsf(gamma - 1.0f) > 0.001f;
+	s_invGamma = s_gammaOn ? 1.0f / gamma : 1.0f;
+}
+
+float rendererCurve(float v)
+{
+	return s_gammaOn && v > 0.0f ? powf(v, s_invGamma) : v;
+}
+
+// A 0xAABBGGRR colour through Gamma's curve (the fog: what the world fades into is curved as the world is)
+static u32 curveColor(u32 c)
+{
+	if (!s_gammaOn)
+		return c;
+	u32 out = c & 0xFF000000;
+	for (int sh = 0; sh < 24; sh += 8)
+		out |= (u32)(rendererCurve(((c >> sh) & 0xFF) / 255.0f) * 255.0f + 0.5f) << sh;
+	return out;
 }
 
 void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3])
@@ -230,7 +259,7 @@ static void setLight(const C3D_Mtx* view)
 	if (s_uAmbient >= 0)
 	{
 		float a = view ? s_ambientAdd : 0.0f;
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, a, a, a, 0.0f);
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, a, a, a, s_invGamma);
 	}
 	s_lightViewOn = view != nullptr;
 	if (view)
@@ -341,7 +370,7 @@ static void enableFog(const Cell& cell, float fogStart, float fogEnd)
 {
 	invalidateState();
 	setFogVec(fogStart, fogEnd);
-	s_fogColor = s_daylight ? s_dayFog : 0xFF000000 | (cell.fog[2] << 16) | (cell.fog[1] << 8) | cell.fog[0];    // 0xAABBGGRR
+	s_fogColor = curveColor(s_daylight ? s_dayFog : 0xFF000000 | (cell.fog[2] << 16) | (cell.fog[1] << 8) | cell.fog[0]);    // 0xAABBGGRR
 	C3D_TexBind(1, &s_fogRamp);
 	C3D_TexEnv* env = C3D_GetTexEnv(1);
 	C3D_TexEnvInit(env);

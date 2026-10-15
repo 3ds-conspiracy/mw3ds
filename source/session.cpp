@@ -13,6 +13,7 @@
 #include <cstring>
 
 #include "audio.h"
+#include "gamma.h"
 #include "linear.h"
 #include "log.h"
 #include "memstat.h"
@@ -576,6 +577,9 @@ void Session::adaptView(float workMs)
 static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";
 int g_controlLayout = CONTROLS_XBOX;
 int g_gyroAim = 0;                // gyro aim starts off (until it is tried on the device): Options turns it on
+int g_lookSpeed = 100, g_geTurnSpeed = 100, g_geAimSpeed = 100;
+bool g_invertY = false;
+bool g_subtitles = true;
 static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is off
 
 void Session::loadSettings()
@@ -587,6 +591,17 @@ void Session::loadSettings()
 	// ... and the GoldenEye layout: one with no C-stick or ZL / ZR (those need a Circle Pad Pro there)
 	if (g_profile.goldenEyeAtStart)
 		g_controlLayout = CONTROLS_GOLDENEYE;
+	// A scripted run starts at gamma 1.00 with Auto gamma off, whatever settings.txt a case before left (Azahar's SD card
+	// keeps it), and has no light reading of its own (Azahar's and the PC's would be noise): GAMMA:, AUTOGAMMA:, LUX:,
+	// CAMLUMA: change them. (A test reload keeps what the case set: main)
+	if (autotest)
+	{
+		g_gammaPct = 100;
+		g_autoGamma = 0;
+		g_lookSpeed = g_geTurnSpeed = g_geAimSpeed = 100;
+		g_invertY = false;
+		g_subtitles = true;
+	}
 	FILE* f = fopen(kSettingsPath, "r");
 	if (!f)
 		return;
@@ -609,6 +624,16 @@ void Session::loadSettings()
 		else if (strncmp(line, "controls=goldeneye", 18) == 0) g_controlLayout = CONTROLS_GOLDENEYE;
 		else if (strncmp(line, "gyroaim=off", 11) == 0) gyroOff = true;
 		else if (strncmp(line, "gyrosens=", 9) == 0 && atoi(line + 9) > 0) s_gyroSens = atoi(line + 9);
+		else if (autotest) {}
+		else if (strncmp(line, "gamma=", 6) == 0)
+			g_gammaPct = std::max(kGammaMinPct, std::min(kGammaMaxPct, atoi(line + 6)));
+		else if (strncmp(line, "autogamma=on", 12) == 0) g_autoGamma = 1;
+		else if (strncmp(line, "autogamma=off", 13) == 0) g_autoGamma = 0;
+		else if (strncmp(line, "lookspeed=", 10) == 0) g_lookSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 10)));
+		else if (strncmp(line, "geturn=", 7) == 0) g_geTurnSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 7)));
+		else if (strncmp(line, "geaim=", 6) == 0) g_geAimSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 6)));
+		else if (strncmp(line, "inverty=", 8) == 0) g_invertY = strncmp(line + 8, "on", 2) == 0;
+		else if (strncmp(line, "subtitles=", 10) == 0) g_subtitles = strncmp(line + 10, "off", 3) != 0;
 	}
 	fclose(f);
 	// (off at every start for now, whatever was saved: gyro aim is still to be tried on the device; the sensitivity is kept)
@@ -629,6 +654,11 @@ void Session::saveSettings()
 	fprintf(f, "gyroaim=%s\ngyrosens=%d\n", g_gyroAim > 0 ? "on" : "off", s_gyroSens);
 	fprintf(f, "combat=%s\n", combatMode == COMBAT_GBAC ? "gbac" : "vanilla");
 	fprintf(f, "numbers=%s\n", hitIndicators ? "on" : "off");
+	fprintf(f, "gamma=%d\n", g_gammaPct);
+	if (g_autoGamma >= 0)                // (not chosen: the console's default, on with QTM)
+		fprintf(f, "autogamma=%s\n", g_autoGamma ? "on" : "off");
+	fprintf(f, "lookspeed=%d\ngeturn=%d\ngeaim=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_geAimSpeed, g_invertY ? "on" : "off");
+	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
 	fclose(f);
 }
 
@@ -919,7 +949,7 @@ bool Session::worldPaused() const
 	switch (screen)
 	{
 	case SCR_INVENTORY: case SCR_MAGIC: case SCR_SPELLS: case SCR_STATS: case SCR_MAP: case SCR_JOURNAL:
-	case SCR_SAVES: case SCR_OPTIONS: case SCR_CONTROLS: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
+	case SCR_SAVES: case SCR_OPTIONS: case SCR_CONTROLS: case SCR_DISPLAY: case SCR_LOOK: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
 		return true;
 	default:
 		return false;
@@ -2154,7 +2184,8 @@ void Session::say(int ref, const std::string& file, const std::string& text)
 		// A scripted or dialogue line also counts as a greeting
 		w.refs[ref].helloTimer = fmaxf(w.refs[ref].helloTimer, duration + 20.0f);
 	}
-	if (!text.empty())
+	// Subtitles off: a line that is heard isn't written too (Morrowind's and OpenMW's subtitles setting)
+	if (!text.empty() && (g_subtitles || it == w.game.voices.end()))
 	{
 		std::string who = ref >= 0 && w.refs[ref].actor >= 0 ? w.game.actors[w.refs[ref].actor].name + ": " : "";
 		subtitle = who + text;

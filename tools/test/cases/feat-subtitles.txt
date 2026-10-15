@@ -1,0 +1,29 @@
+# Subtitles (Options > Display): on, a spoken line is written on the top screen; off (as OpenMW's default), a line
+# with a voice is only heard, and one with no voice file is still written. Turned off as a player would
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+1 0 0 0
+0.3 0 0 0 0 SAYLINE:fargoth
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:subtitle:eq:1
+0.3 0 0 0 0 SHOT
+15 0 0 0
+0.3 0 0 0 0 EXPECT:subtitle:eq:0
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 TAP:240:187
+0.5 0 0 0 0 EXPECT:screen:display
+0.3 0 0 0 0 TAP:80:107
+0.3 0 0 0 0 EXPECT:setting:subtitles:eq:0+EXPECT:savedsetting:subtitles:eq:0
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0 0 SAYLINE:fargoth
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:subtitle:eq:0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SAYLINE:fargoth:novoice
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:subtitle:eq:1
+0.3 0 0 0 0 SHOT

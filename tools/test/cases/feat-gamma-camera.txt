@@ -1,0 +1,15 @@
+# Auto gamma's camera path with the real inner camera (an Old 3DS's): read on its own thread while the loading screen
+# is up, then the camera let go. Whatever it sees (Azahar's stand-in picture, nothing natively), the load finishes, the
+# game goes on, and a second load reads it again
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 AUTOGAMMA:on+CAMLUMA:-1
+2 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:sensor:eq:2+EXPECT:gamma:auto:eq:1
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille's+EXPECT:gamma:value:ge:1+EXPECT:gamma:value:le:1.5
+120 0 0 0 0 DOORTO:outside
+1 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen+EXPECT:gamma:value:ge:1+EXPECT:gamma:value:le:1.5
+0.3 0 0 0 0 SHOT

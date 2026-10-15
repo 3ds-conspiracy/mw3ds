@@ -37,6 +37,9 @@ extern float g_starAlpha;                         // the star dome: 0 by day
 void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3]);
 // Night Eye: light added to everything the world draws, people too (OpenMW: 0.7 x min(1, magnitude / 100) on the ambient)
 void rendererSetNightEye(float add);
+// Gamma (gamma.h): the light the world is drawn with, light ^ (1 / gamma), in the vertex shaders; 1: as Morrowind
+void rendererSetGamma(float gamma);
+float rendererCurve(float v);      // one 0..1 channel through it (the clear colour)
 // Torches people hold out near the player (up to kActorLights; the rest: none), lighting the world as the carried
 // light does: world position, radius, colour 0..1 each
 static const int kActorLights = 2;

@@ -14,12 +14,14 @@
 0.1 0 0 0 0 EXPECT:nobutton:Try%again
 0.1 0 0 0 0 EXPECT:button:Load%last%save
 0.1 0 0 0 0 EXPECT:button:Choose%a%save
+0.3 0 0 0 0 SHOT
 # the saves list from there (no saving while dead); back out of it to the death screen again (no getting up from it)
 0.3 0 0 0 0 RIGHT
 0.3 0 0 0 0 A
 1 0 0 0
 0.1 0 0 0 0 EXPECT:screen:saves
 0.1 0 0 0 0 EXPECT:button:(dead)
+0.3 0 0 0 0 SHOT
 0.3 0 0 0 0 B
 1 0 0 0
 0.1 0 0 0 0 EXPECT:screen:death

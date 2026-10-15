@@ -8,6 +8,7 @@
 #include <queue>
 #include <tuple>
 #include "testdrive.h"
+#include "gamma.h"
 #include "session.h"
 #include "log.h"
 #include "audio.h"
@@ -210,8 +211,8 @@ static bool hasArg(const std::string& what)
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites";
+		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "texlow" || what == "regionchance" || what == "regionweather"
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting";
 }
 
 // "<a>,<b>" as two numbers
@@ -220,6 +221,30 @@ static void twoNumbers(const std::string& arg, float& a, float& b)
 	a = (float)atof(arg.c_str());
 	size_t c = arg.find(',');
 	b = c == std::string::npos ? 0.0f : (float)atof(arg.c_str() + c + 1);
+}
+
+// How bright step shot n's top screen is, 0..255 (its pixels' mean); -1: no such shot
+static float shotLuma(int n)
+{
+	char path[64];
+	snprintf(path, sizeof(path), "sdmc:/3ds/mw3ds/shot_step_%02d.bmp", n);
+	float v = -1.0f;
+	if (FILE* f = fopen(path, "rb"))
+	{
+		// 400 x 480, 24-bit, rows bottom first: the top screen is the last 240 rows (held only while read)
+		const size_t half = 400 * 240 * 3;
+		u8* top = (u8*)malloc(half);
+		if (top && fseek(f, 54 + (long)half, SEEK_SET) == 0 && fread(top, half, 1, f) == 1)
+		{
+			double sum = 0.0;
+			for (size_t i = 0; i < half; i++)
+				sum += top[i];
+			v = (float)(sum / (double)half);
+		}
+		free(top);
+		fclose(f);
+	}
+	return v;
 }
 
 static bool numberOf(Session& s, const std::string& what, const std::string& arg, float& v)
@@ -1256,30 +1281,67 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
 	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
+	else if (what == "subtitle") v = w.time < s.subtitleUntil && !s.subtitle.empty() ? 1.0f : 0.0f;   // a spoken line written now
+	else if (what == "setting")     // <lookspeed|geturn|geaim|inverty|subtitles>: Controls > Look's and Display's, now
+	{
+		if (arg == "lookspeed") v = (float)g_lookSpeed;
+		else if (arg == "geturn") v = (float)g_geTurnSpeed;
+		else if (arg == "geaim") v = (float)g_geAimSpeed;
+		else if (arg == "inverty") v = g_invertY ? 1.0f : 0.0f;
+		else if (arg == "subtitles") v = g_subtitles ? 1.0f : 0.0f;
+		else
+			return false;
+	}
+	else if (what == "savedsetting")    // <key>: settings.txt's <key>= (on 1, off 0, else its number; -1: not there)
+	{
+		v = -1.0f;
+		if (FILE* f = fopen("sdmc:/3ds/mw3ds/settings.txt", "r"))
+		{
+			char line[64];
+			std::string want = arg + "=";
+			while (fgets(line, sizeof(line), f))
+				if (strncmp(line, want.c_str(), want.size()) == 0)
+				{
+					const char* val = line + want.size();
+					v = strncmp(val, "on", 2) == 0 ? 1.0f : strncmp(val, "off", 3) == 0 ? 0.0f : (float)atof(val);
+				}
+			fclose(f);
+		}
+	}
+	else if (what == "gamma")       // <value|setting|auto|lift|sensor|saved>: Gamma (Display): the value used now, the bar,
+	{                               // Auto gamma on, the light reading's lift, the sensor (0 none, 1 QTM, 2 camera), settings.txt's
+		if (arg == "value") v = gammaValue();
+		else if (arg == "setting") v = g_gammaPct / 100.0f;
+		else if (arg == "auto") v = gammaAutoOn() ? 1.0f : 0.0f;
+		else if (arg == "lift") v = gammaLift();
+		else if (arg == "sensor") v = (float)gammaSensor();
+		else if (arg == "saved")
+		{
+			v = -1.0f;
+			if (FILE* f = fopen("sdmc:/3ds/mw3ds/settings.txt", "r"))
+			{
+				char line[64];
+				while (fgets(line, sizeof(line), f))
+					if (strncmp(line, "gamma=", 6) == 0)
+						v = atoi(line + 6) / 100.0f;
+				fclose(f);
+			}
+		}
+		else
+			return false;
+	}
 	else if (what == "cellfog") v = arg == "start" ? w.here().fogStart : w.here().fogEnd;    // <start|end>: this cell's fog distance (0: none)
 	else if (what == "keptcells") v = (float)w.cellStates.size();     // cells out of memory with their changes kept
 	else if (what == "savevalid")   // <name>: 1 when test_<name>.sav reads whole (a damaged one is refused)
 		v = World::savedCell(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
 	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
+		v = shotLuma(atoi(arg.c_str()));
+	else if (what == "shotlumagain")    // <a>,<b>: shot b's brightness over shot a's (-1: either missing or black)
 	{
-		char path[64];
-		snprintf(path, sizeof(path), "sdmc:/3ds/mw3ds/shot_step_%02d.bmp", atoi(arg.c_str()));
-		v = -1.0f;
-		if (FILE* f = fopen(path, "rb"))
-		{
-			// 400 x 480, 24-bit, rows bottom first: the top screen is the last 240 rows (held only while read)
-			const size_t half = 400 * 240 * 3;
-			u8* top = (u8*)malloc(half);
-			if (top && fseek(f, 54 + (long)half, SEEK_SET) == 0 && fread(top, half, 1, f) == 1)
-			{
-				double sum = 0.0;
-				for (size_t i = 0; i < half; i++)
-					sum += top[i];
-				v = (float)(sum / (double)half);
-			}
-			free(top);
-			fclose(f);
-		}
+		float a, b;
+		twoNumbers(arg, a, b);
+		float la = shotLuma((int)a), lb = shotLuma((int)b);
+		v = la > 0.0f && lb >= 0.0f ? lb / la : -1.0f;
 	}
 	else if (what == "texlow")      // <text>: the lowest point of this cell's batches drawn with a texture whose name has it
 	{
@@ -1463,7 +1525,7 @@ static int screenByName(const std::string& n)
 		{ "alchemy", SCR_ALCHEMY }, { "recharge", SCR_RECHARGE }, { "persuade", SCR_PERSUADE }, { "spells", SCR_SPELLS },
 		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES }, { "death", SCR_DEATH },
 		{ "journal", SCR_JOURNAL }, { "gamemenu", SCR_GAMEMENU }, { "map", SCR_MAP },
-		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "options", SCR_OPTIONS },
+		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "options", SCR_OPTIONS }, { "display", SCR_DISPLAY }, { "controls", SCR_CONTROLS }, { "look", SCR_LOOK },
 	};
 	for (auto& e : names)
 		if (n == e.name)
@@ -2645,6 +2707,51 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		g_dialogueClothValue = atoi(a[1].c_str());
 		return true;
 	}
+	// GAMMA:<percent> / AUTOGAMMA:on|off: the Display settings, saved as the screen saves them. LUX:<lux>: a light reading
+	// as if from QTM (the New 3DS's), polled as it is; CAMLUMA:<0..255>: as if from the camera at the next loading screen
+	// (CAMLUMA:-1: the real inner camera there, as an Old 3DS reads it)
+	// LOOKSPEED / GETURN / GEAIM:<percent>, INVERTY:on|off (Controls > Look), SUBTITLES:on|off (Display): saved as the
+	// screens save them
+	if ((verb == "LOOKSPEED" || verb == "GETURN" || verb == "GEAIM" || verb == "INVERTY" || verb == "SUBTITLES") && a.size() >= 2)
+	{
+		int pct = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(a[1].c_str())));
+		if (verb == "LOOKSPEED") g_lookSpeed = pct;
+		else if (verb == "GETURN") g_geTurnSpeed = pct;
+		else if (verb == "GEAIM") g_geAimSpeed = pct;
+		else if (verb == "INVERTY") g_invertY = a[1] == "on";
+		else g_subtitles = a[1] != "off";
+		s.saveSettings();
+		logf("test: %s %s", verb.c_str(), a[1].c_str());
+		return true;
+	}
+	// SAYLINE:<npc>[:novoice]: the NPC speaks a line, voiced (the first voice file in the data) or text only
+	if (verb == "SAYLINE" && a.size() >= 2)
+	{
+		int ri = s.testFindRef(a[1]);
+		if (ri < 0)
+			return fail("no " + a[1]);
+		bool voiced = !(a.size() >= 3 && a[2] == "novoice");
+		if (voiced && w.game.voices.empty())
+			return fail("no voice files in the data");
+		s.say(ri, voiced ? w.game.voices.begin()->first : "", voiced ? "A line spoken for the test." : "A line written for the test.");
+		logf("test: %s says a %s line", a[1].c_str(), voiced ? "voiced" : "text-only");
+		return true;
+	}
+	if ((verb == "GAMMA" || verb == "AUTOGAMMA" || verb == "LUX" || verb == "CAMLUMA") && a.size() >= 2)
+	{
+		if (verb == "GAMMA")
+			g_gammaPct = std::max(kGammaMinPct, std::min(kGammaMaxPct, atoi(a[1].c_str())));
+		else if (verb == "AUTOGAMMA")
+			g_autoGamma = a[1] == "on" ? 1 : 0;
+		else if (verb == "LUX")
+			gammaTestLux((float)atof(a[1].c_str()));
+		else
+			gammaTestLuma(atoi(a[1].c_str()));
+		if (verb == "GAMMA" || verb == "AUTOGAMMA")
+			s.saveSettings();
+		logf("test: %s %s", verb.c_str(), a[1].c_str());
+		return true;
+	}
 	if (verb == "STREAM" && a.size() >= 2)
 	{
 		// STREAM:off / STREAM:on: the neighbouring exterior cells stop streaming in (the player's own cell still loads
@@ -3275,7 +3382,7 @@ static std::string handItem(Session& s, bool takeWeapon)
 
 // A route out of where the player is stuck, found by trying the player's own steps (the game's playerUpdate on a copy: run or
 // running jump, sixteen headings, swimming up / level / down) and following the cheapest-looking reached spot towards the goal.
-// Gives the spots reached on the way, from the first step. Stops after maxStates or 90 s of the machine's time.
+// Gives the spots reached on the way, from the first step. Stops after a number of spots tried, or 90 s of the machine's time.
 static bool floodRoute(Session& s, const float goal[3], float radius, std::vector<TestDriver::SwimLeg>& out, float maxDz = 200.0f,
 	bool dive = false)
 {
@@ -3298,9 +3405,13 @@ static bool floodRoute(Session& s, const float goal[3], float radius, std::vecto
 	float minZ = fminf(s.w.player.feet[2], goal[2]) - 1500.0f;
 	u64 t0 = osGetTime();
 	int found = -1;
-	// (90 s of the machine's time at most; 10 under the v2 kit for a stuck walk's, where a search that long never found a way)
-	const u64 limit = s.kitV2() && !dive ? 10000 : 90000;   // (a dive's search is its way: the full 90)
-	while (!open.empty() && found < 0 && (int)nodes.size() < 6000 && osGetTime() - t0 < limit)
+	// A stuck walk's search under the v2 kit stops after 690 spots, the same on every machine: it stopped after 10 s of the
+	// machine's time, which a loaded PC spent on fewer spots, and uber-tribunal-temple's way out of the Puzzle Canal (found
+	// at spot 648 alone) was missed in a full suite run. None of the uber runs' searches found a way past 690. Others try
+	// 6000 (a dive's search is its way); 90 s of the machine's time stays as the backstop on a slow console
+	const int maxSpots = s.kitV2() && !dive ? 690 : 6000;
+	const u64 limit = 90000;
+	while (!open.empty() && found < 0 && (int)nodes.size() < maxSpots && osGetTime() - t0 < limit)
 	{
 		int bi = open.top().second;
 		open.pop();

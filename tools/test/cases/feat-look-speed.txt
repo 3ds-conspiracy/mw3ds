@@ -1,0 +1,20 @@
+# Look speed and Invert (Controls > Look) on the classic layout: the C-stick's look at 2.00x turns twice as far in the
+# same time (1.8 rad/s at 1.00x: about 26 degrees in 0.5 s at half a push), and with Invert on D-pad up looks down
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+1 0 0 0
+0.1 0 0 0 0 SNAP:yaw
+0.5 0 0 0.5
+0.1 0 0 0 0 EXPECT:yaw:ge:@22+EXPECT:yaw:le:@30
+0.1 0 0 0 0 LOOKSPEED:200
+0.1 0 0 0 0 SNAP:yaw
+0.5 0 0 0.5
+0.1 0 0 0 0 EXPECT:yaw:ge:@46+EXPECT:yaw:le:@57
+0.1 0 0 0 0 LOOKSPEED:100
+0.1 0 0 0 0 SNAP:pitch
+0.3 0 0 0 0 UP
+0.1 0 0 0 0 EXPECT:pitch:ge:@20
+0.1 0 0 0 0 INVERTY:on
+0.1 0 0 0 0 SNAP:pitch
+0.3 0 0 0 0 UP
+0.1 0 0 0 0 EXPECT:pitch:le:@-20

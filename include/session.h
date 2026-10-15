@@ -30,6 +30,15 @@ extern int g_controlLayout;   // button layout (settings.txt controls=xbox|class
 // Gyro aim (settings.txt gyroaim=on|off, gyrosens=50|100|200): turning the console turns the view, as far as it
 // turned. The percent of that turn (100: one to one), 0 when off
 extern int g_gyroAim;
+// Look (Controls > Look; settings.txt lookspeed=, geturn=, geaim=, inverty=on|off): how fast the C-stick and the D-pad
+// look, how fast the GoldenEye pad turns while walking and looks while aiming, percent (100: as before); look up and
+// down the other way round. Gyro aim keeps its own speed and is never inverted (the console's own tilt)
+extern int g_lookSpeed, g_geTurnSpeed, g_geAimSpeed;
+extern bool g_invertY;
+static const int kLookMinPct = 50, kLookMaxPct = 200, kLookStepPct = 10;
+// Subtitles (Options > Display; settings.txt subtitles=on|off): spoken lines written on the top screen. Off, a line
+// with a voice is only heard; one with no voice file is still written (it would be lost otherwise)
+extern bool g_subtitles;
 
 enum Screen
 {
@@ -39,6 +48,8 @@ enum Screen
 	SCR_ARREST, SCR_TRAINING, SCR_SAVES, SCR_REPAIR, SCR_GAMEMENU, SCR_LEVELUP, SCR_PERSUADE, SCR_ALCHEMY, SCR_SPELLMAKE, SCR_ENCHANT, SCR_RECHARGE,
 	SCR_OPTIONS,
 	SCR_CONTROLS,
+	SCR_DISPLAY,
+	SCR_LOOK,
 };
 
 struct MessageState
@@ -438,6 +449,8 @@ struct Session : ScriptHost
 	float difficultyScale(bool toPlayer) const;   // damage multiplier: to the player / dealt by the player
 	void drawOptions();
 	void drawControls();
+	void drawDisplay();
+	void drawLook();
 	void saveSettings();
 	void viewModelUpdate(const PlayerInput& in, float dt);
 	// repair (screens.cpp)

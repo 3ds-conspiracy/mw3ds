@@ -1,0 +1,18 @@
+# GoldenEye speeds (Controls > Look): the pad's turn while walking at 0.50x turns half as far (about 52 degrees in 1 s
+# instead of 103), its look while aiming (ZL held) at 2.00x twice as far (about 31 degrees up in 0.3 s instead of 15),
+# and Invert turns that look down
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:goldeneye
+1 0 0 0
+0.1 0 0 0 0 GETURN:50
+0.1 0 0 0 0 SNAP:yaw
+1 1 0 0
+0.1 0 0 0 0 EXPECT:yaw:ge:@45+EXPECT:yaw:le:@58
+0.1 0 0 0 0 GEAIM:200
+0.1 0 0 0 0 SNAP:pitch
+0.3 0 1 0 0 ZL
+0.1 0 0 0 0 EXPECT:pitch:ge:@25
+0.1 0 0 0 0 INVERTY:on
+0.1 0 0 0 0 SNAP:pitch
+0.3 0 1 0 0 ZL
+0.1 0 0 0 0 EXPECT:pitch:le:@-25

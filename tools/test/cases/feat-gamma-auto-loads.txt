@@ -1,0 +1,21 @@
+# Auto gamma on an Old 3DS / Old 2DS / New 2DS XL: no QTM, so the inner camera is read only while a loading screen is
+# up (CAMLUMA: stands in for its mean brightness, 60 dim to 200 bright). Nothing changes between loads; behind the
+# loading screen the value is set without easing. Into Arrille's in daylight, out again in the dark
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 AUTOGAMMA:on+CAMLUMA:220
+4 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:sensor:eq:2+EXPECT:gamma:auto:eq:1+EXPECT:gamma:lift:eq:1+EXPECT:gamma:value:eq:1
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+1 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille's
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:1.5+EXPECT:gamma:value:eq:1.5
+0.3 0 0 0 0 CAMLUMA:40
+5 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:1.5
+120 0 0 0 0 DOORTO:outside
+1 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:1+EXPECT:gamma:value:eq:1
+0.3 0 0 0 0 SCREEN:display
+0.5 0 0 0
+0.3 0 0 0 0 SHOT

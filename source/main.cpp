@@ -15,6 +15,7 @@
 #include "memstat.h"
 #include "log.h"
 #include "player.h"
+#include "gamma.h"
 #include "renderer.h"
 #include "screenshot.h"
 #include "testdrive.h"
@@ -255,7 +256,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:",
-				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "TRUNCSAVE:", "REFHEALTH:", "REFADDITEM:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "VFX:", "PLACEAT:", "SPRITEBUDGET:", "NPCCAST:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "MEMLEAVE:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:", "STREAM:" })
+				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "TRUNCSAVE:", "REFHEALTH:", "REFADDITEM:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "VFX:", "PLACEAT:", "SPRITEBUDGET:", "NPCCAST:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "MEMLEAVE:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:", "STREAM:", "GAMMA:", "AUTOGAMMA:", "LUX:", "CAMLUMA:", "LOOKSPEED:", "GETURN:", "GEAIM:", "INVERTY:", "SUBTITLES:", "SAYLINE:" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)
@@ -581,21 +582,23 @@ static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, floa
 	if (!(held & KEY_X))
 		xHeld = 0.0f;
 	in.moveX = in.moveY = 0.0f;
+	// (Controls > Look: the pad's turn while walking, its look while aiming and the D-pad's look up and down)
+	float turn = g_geTurnSpeed / 100.0f, aim = g_geAimSpeed / 100.0f;
 	if (aiming)
 	{
-		in.lookX += padX * 0.5f;
-		in.lookY += padY * 0.5f;
+		in.lookX += padX * 0.5f * aim;
+		in.lookY += padY * 0.5f * aim;
 	}
 	else
 	{
-		in.lookX += padX;
+		in.lookX += padX * turn;
 		in.moveY = padY;
 	}
 	// D-pad: left / right strafe, up / down look up and down (the user's GoldenEye; the quick keys are the touch strip's)
 	if (held & KEY_DLEFT) in.moveX -= 1.0f;
 	if (held & KEY_DRIGHT) in.moveX += 1.0f;
-	if (held & KEY_DUP) in.lookY += 1.0f;
-	if (held & KEY_DDOWN) in.lookY -= 1.0f;
+	if (held & KEY_DUP) in.lookY += aim;
+	if (held & KEY_DDOWN) in.lookY -= aim;
 	if (down & KEY_B)
 		sneakOn = !sneakOn;
 	in.attack = held & KEY_R;
@@ -674,6 +677,20 @@ static void gyroInput(PlayerInput& in)
 	in.gyroPitch = gyroSoften(pitch, kSoft) * g_gyroAim / 100.0f;
 }
 
+// Controls > Look: the C-stick's and the D-pad's look speed (the GoldenEye pad's are goldenEyeInput's), and up / down
+// the other way round when Invert is on (gyro aim keeps its own: the console's own tilt)
+static float lookScale()
+{
+	return g_lookSpeed / 100.0f;
+}
+
+static PlayerInput invertLook(PlayerInput in)
+{
+	if (g_invertY)
+		in.lookY = -in.lookY;
+	return in;
+}
+
 // Three button layouts (Options > Controls; START and SELECT the same in all):
 //   Xbox (Morrowind on the Xbox): R attack, L cast, X ready / put away the weapon, Y jump, B free (walk or run by the pad),
 //     ZL sneak (down when levitating), ZR up when levitating, D-pad quick keys
@@ -687,15 +704,15 @@ static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	PlayerInput in = {};
 	in.moveX = fabsf(cp.dx) > 15 ? fmaxf(-1.0f, fminf(1.0f, cp.dx / 150.0f)) : 0.0f;
 	in.moveY = fabsf(cp.dy) > 15 ? fmaxf(-1.0f, fminf(1.0f, cp.dy / 150.0f)) : 0.0f;
-	in.lookX = fabsf(cs.dx) > 20 ? cs.dx / 150.0f : 0.0f;
-	in.lookY = fabsf(cs.dy) > 20 ? cs.dy / 150.0f : 0.0f;
+	in.lookX = fabsf(cs.dx) > 20 ? cs.dx / 150.0f * lookScale() : 0.0f;
+	in.lookY = fabsf(cs.dy) > 20 ? cs.dy / 150.0f * lookScale() : 0.0f;
 	in.quick = -1;
 	gyroInput(in);
 	if (g_controlLayout == CONTROLS_GOLDENEYE)
 	{
 		static GoldenEyeState state;
 		goldenEyeInput(state, in, in.moveX, in.moveY, held, down, up, dt);
-		return in;
+		return invertLook(in);
 	}
 	if (g_controlLayout == CONTROLS_XBOX)
 	{
@@ -712,7 +729,7 @@ static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 		in.up = held & KEY_ZR;
 		in.down = held & KEY_ZL;
 		in.sneak = held & KEY_ZL;
-		return in;
+		return invertLook(in);
 	}
 	if (held & KEY_ZL)
 	{
@@ -724,10 +741,10 @@ static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	}
 	else
 	{
-		if (held & KEY_DRIGHT) in.lookX += 1.0f;
-		if (held & KEY_DLEFT)  in.lookX -= 1.0f;
-		if (held & KEY_DUP)    in.lookY += 1.0f;
-		if (held & KEY_DDOWN)  in.lookY -= 1.0f;
+		if (held & KEY_DRIGHT) in.lookX += lookScale();
+		if (held & KEY_DLEFT)  in.lookX -= lookScale();
+		if (held & KEY_DUP)    in.lookY += lookScale();
+		if (held & KEY_DDOWN)  in.lookY -= lookScale();
 	}
 	in.jump = down & KEY_B;
 	in.togglePov = down & KEY_SELECT;
@@ -739,7 +756,7 @@ static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	in.attack = (held & KEY_X) && !(held & KEY_ZL);
 	in.cast = down & KEY_Y;
 	in.sneak = held & KEY_L;
-	return in;
+	return invertLook(in);
 }
 
 // Clears the 3D screen's target to an 0xRRGGBBAA colour. The GPU's fill writes the value's low bits as they
@@ -858,11 +875,13 @@ struct LoadingProgress
 		s_progress.start = s_progress.drawn = osGetTime();
 		svcGetThreadId(&s_progress.mainThread, CUR_THREAD_HANDLE);
 		logSetHook(loadingProgress);
+		gammaLoadStart();                // (the camera reading, where it is the light sensor: hidden by the load)
 	}
 	// The last step, whatever the throttle skipped, and that the first frame comes next: if the
 	// screen stays like this, the first frame hung (the GPU)
 	~LoadingProgress()
 	{
+		gammaLoadEnd();
 		logSetHook(nullptr);
 		std::string text = s_progress.last + "\n\nLoaded. Starting the first frame...";
 		drawLoading(s_progress.top, s_progress.bottom, s_progress.title.c_str(), text.c_str(),
@@ -1085,6 +1104,7 @@ int main()
 		g_sysCoreThreads ? ", cells stream on the system core" : "");
 	logf("console: %s CPU, %s heap (%d objects, %u KB of sounds kept)", g_profile.slowCpu ? "slow" : "fast",
 		g_profile.smallHeap ? "small" : "large", g_profile.refBudget, g_profile.soundCacheBytes / 1024);
+	gammaInit();
 	bool romfs = R_SUCCEEDED(romfsInit());
 	s_romfs = romfs;                   // (unmounted in userAppExit)
 	struct stat st;
@@ -1295,7 +1315,7 @@ int main()
 			in = {};
 			in.moveX = s.moveX;
 			in.moveY = s.moveY;
-			in.lookX = s.lookX;
+			in.lookX = s.lookX * lookScale();       // (the step's look is the C-stick's)
 			in.attack = (s.keys & KEY_X) && !(s.keys & KEY_ZL);     // ZL + X puts the weapon away
 			in.cast = inputTime == 0.0f && (s.keys & KEY_Y);
 			in.sneak = s.keys & KEY_L;
@@ -1316,8 +1336,8 @@ int main()
 			}
 			else
 			{
-				if (held & KEY_DUP) in.lookY += 1.0f;
-				if (held & KEY_DDOWN) in.lookY -= 1.0f;
+				if (held & KEY_DUP) in.lookY += lookScale();
+				if (held & KEY_DDOWN) in.lookY -= lookScale();
 			}
 			// CONTROLS:goldeneye: the step's stick is the Circle Pad and its keys the buttons, through that layout;
 			// GYRO:yaw:pitch: the console turning that fast, through gyro aim's switch and sensitivity
@@ -1342,7 +1362,7 @@ int main()
 			{
 				PlayerInput ge = {};
 				ge.quick = -1;
-				ge.lookX = s.lookX;
+				ge.lookX = s.lookX * lookScale();
 				static u32 lastHeld = 0;
 				u32 released = first ? lastHeld & ~held : 0;
 				lastHeld = held;
@@ -1351,6 +1371,7 @@ int main()
 				ge.jump |= s.jump && first;
 				in = ge;
 			}
+			in = invertLook(in);
 			if (g_gyroAim > 0)
 			{
 				in.gyroYaw = s.gyroYaw * g_gyroAim / 100.0f;
@@ -2065,6 +2086,7 @@ int main()
 		if (loaded && session->wantReload)
 		{
 			bool testGodKept = session->testGod, testGodBlowsKept = session->testGodBlows, testLegitKept = session->testLegit;
+			int gammaKept = g_gammaPct, autoGammaKept = g_autoGamma;     // (the new session reads settings.txt)
 			drawLoading(top, bottom, "Loading...");
 			std::string path = session->reloadPath.empty() ? kSavePath : session->reloadPath;
 			logf("reload from %s, heap used %d KB", path.c_str(), mallinfo().uordblks / 1024);
@@ -2087,8 +2109,13 @@ int main()
 			if (!testRun && !retryFromTitle(loaded))
 				break;
 			session->savePath = kSavePath;
-			// a test reload: still a test (and still invincible if it was)
+			// a test reload: still a test (and still invincible if it was), its Display settings kept as the case set them
 			session->autotest = !autoinput.empty();
+			if (session->autotest)
+			{
+				g_gammaPct = gammaKept;
+				g_autoGamma = autoGammaKept;
+			}
 			logBuffered(!session->autotest);          // play: the log written every 2 s, tests every line
 			session->testGod = testGodKept;
 			session->testGodBlows = testGodBlowsKept;
@@ -2216,6 +2243,8 @@ int main()
 			// Night Eye adds light to everything, in the dark too (OpenMW's updateAmbient: the ambient + 0.7 x
 			// min(1, magnitude / 100)); it was a scale on the time of day's colour, near black at night: no help
 			rendererSetNightEye(0.7f * fminf(1.0f, session->w.effectTotal(43) / 100.0f));
+			// Gamma (Display): the light curved, the fog and the clear colour with it
+			rendererSetGamma(gammaUpdate(dt));
 			// Light brightens what the player sees a little
 			float boost = 1.0f + (session->w.effectTotal(41) > 0.0f ? 0.25f : 0.0f);
 			if (boost > 1.0f)
@@ -2241,6 +2270,10 @@ int main()
 			rendererSetDaylight(land, sky, dayFog, outdoors);
 			if (outdoors)
 				clear = ((u32)(dayFog[0] * 255) << 24) | ((u32)(dayFog[1] * 255) << 16) | ((u32)(dayFog[2] * 255) << 8) | 0xFF;
+			u32 curved = 0xFF;
+			for (int sh = 8; sh < 32; sh += 8)
+				curved |= (u32)(rendererCurve(((clear >> sh) & 0xFF) / 255.0f) * 255.0f + 0.5f) << sh;
+			clear = curved;
 		}
 		float eyeCmd = 0.0f;
 		float aimDepth = stereoOn && loaded ? session->aimDepth() : 0.0f;
@@ -2400,6 +2433,8 @@ int main()
 	// (the distant land outlives a session; its file, open on romfs, has to close before romfs goes: userAppExit)
 	exitStep("exit: distant land");
 	distantFree();
+	exitStep("exit: gamma");
+	gammaExit();
 	exitStep("exit: audio");
 	audioExit();
 	exitStep("exit: ui");

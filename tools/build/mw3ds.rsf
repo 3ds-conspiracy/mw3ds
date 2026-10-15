@@ -236,6 +236,7 @@ AccessControlInfo:
    - nwm::UDS
    - ptm:sysm
    - ptm:u
+   - qtm:s
    - pxi:dev
    - soc:U
    - ssl:C

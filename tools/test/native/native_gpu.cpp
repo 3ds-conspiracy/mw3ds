@@ -727,9 +727,10 @@ void C3D_TexEnvColor(C3D_TexEnv* env, u32 color) { env->color = color; }
 // ---- renderer.cpp's shader: uniform slots by name, as cell.v.pica declares them
 enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET, U_POSSCALE, U_UVSCALE, U_TINT, U_LIGHTPOS,
 	U_LIGHTCOLOR, U_AMBIENT, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye)
-// cell.v.pica's two more lights sit where skin.v.pica's palette starts, as on the PICA; bool 0 turns them on
-enum { U_LIGHTPOS2 = U_BONES, U_LIGHTCOLOR2, U_LIGHTPOS3, U_LIGHTCOLOR3, B_MORELIGHTS = 0 };
-static bool s_moreLights = false;
+// cell.v.pica's two more lights sit where skin.v.pica's palette starts, as on the PICA; bool 1 turns them on. Bool 0:
+// Gamma's curve, light ^ ambientAdd.w
+enum { U_LIGHTPOS2 = U_BONES, U_LIGHTCOLOR2, U_LIGHTPOS3, U_LIGHTCOLOR3, B_GAMMA = 0, B_MORELIGHTS = 1 };
+static bool s_moreLights = false, s_gammaOn = false;
 
 DVLB_s* DVLB_ParseFile(u32*, u32) { return new DVLB_s(); }
 void DVLB_Free(DVLB_s* d) { delete d; }
@@ -742,7 +743,7 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 		{ "modelView", U_MODELVIEW }, { "uvOffset", U_UVOFFSET }, { "fogVec", U_FOGVEC }, { "posOffset", U_POSOFFSET },
 		{ "posScale", U_POSSCALE }, { "uvScale", U_UVSCALE }, { "tint", U_TINT }, { "lightPos", U_LIGHTPOS },
 		{ "lightColor", U_LIGHTCOLOR }, { "ambientAdd", U_AMBIENT }, { "bones", U_BONES }, { "lightPos2", U_LIGHTPOS2 }, { "lightColor2", U_LIGHTCOLOR2 },
-		{ "lightPos3", U_LIGHTPOS3 }, { "lightColor3", U_LIGHTCOLOR3 }, { "moreLights", B_MORELIGHTS } };
+		{ "lightPos3", U_LIGHTPOS3 }, { "lightColor3", U_LIGHTCOLOR3 }, { "moreLights", B_MORELIGHTS }, { "gammaOn", B_GAMMA } };
 	for (auto& s : kSlots)
 		if (strcmp(s.name, name) == 0)
 			return s.slot;
@@ -775,6 +776,8 @@ void C3D_BoolUnifSet(int, int id, bool value)
 {
 	if (id == B_MORELIGHTS)
 		s_moreLights = value;
+	else if (id == B_GAMMA)
+		s_gammaOn = value;
 }
 void C3D_FVUnifMtx4x4(int, int id, const C3D_Mtx* m)
 {
@@ -1001,7 +1004,11 @@ static ClipV vertexShader(const u8* v)
 	{
 		float c = in[2][k] / 255.0f * u[U_TINT][k];
 		if (k < 3)
+		{
 			c += u[U_AMBIENT][k] + u[U_LIGHTCOLOR][k] * f1 + (more ? u[U_LIGHTCOLOR2][k] * f2 + u[U_LIGHTCOLOR3][k] * f3 : 0.0f);
+			if (s_gammaOn)
+				c = exp2f(u[U_AMBIENT][3] * log2f(std::max(c, 0.001f)));
+		}
 		o.a[k] = clamp01(c);
 	}
 	o.a[7] = 0.0f;

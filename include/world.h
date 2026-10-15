@@ -296,7 +296,7 @@ struct LevelCell
 	int pathBase = 0, pathCount = 0;  // its path grid points are World::pathPoints[pathBase ..)
 	bool refsLoaded = false;          // its objects are in memory (read when needed; evictCells drops far ones)
 	u32 lastUsed = 0;                 // World::useTick when last read or loaded
-	u64 askedAt = 0;                  // osGetTime() when its objects were last read or asked for (ensureRefs)
+	float askedAt = -1000.0f;         // World::time when its objects were last read or asked for (ensureRefs)
 	float freedAt = -1e9f;            // World::time when its geometry was last freed
 	float sea = 0.0f;                 // exterior: share of its ground under open water (converter)
 	bool noSleep = false;             // resting is illegal here (waiting only, or a bed)

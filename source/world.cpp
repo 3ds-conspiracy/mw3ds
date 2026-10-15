@@ -1547,7 +1547,6 @@ void World::evictCell(int c)
 int World::evictCells(int budget, const std::function<bool(int)>& inUse, bool now_)
 {
 	int total = refsInMemory(), evicted = 0;
-	u64 now = osGetTime();
 	while (total > budget)
 	{
 		int best = -1;
@@ -1558,8 +1557,9 @@ int World::evictCells(int budget, const std::function<bool(int)>& inUse, bool no
 				continue;
 			// ... nor one a script asked for in the last seconds: it would be read straight back. On an Old 3DS
 			// out of heap, a quest script's remote ref read Caius Cosades's house back every few frames as fast
-			// as it went (heap churn on the edge of running out)
-			if (now - lc.askedAt < 10000 && !now_)
+			// as it went (heap churn on the edge of running out). Game seconds, not the machine's: a busy PC ran fewer frames
+			// in 10 of its own, kept other cells, and a test's later fights went another way (uber-main-quest in a full suite)
+			if (time - lc.askedAt < 10.0f && !now_)
 				continue;
 			bool busy = false;
 			for (int i = lc.refBase; i < lc.refBase + lc.refCount && !busy; i++)
@@ -1610,7 +1610,7 @@ void World::postChargenRef(Ref& r)
 bool World::ensureRefs(int cellIndex)
 {
 	if (cellIndex >= 0)
-		cells[cellIndex].askedAt = osGetTime();
+		cells[cellIndex].askedAt = time;
 	if (cellIndex < 0 || cells[cellIndex].refsLoaded)
 		return cellIndex >= 0;
 	ParsedRefs p;
