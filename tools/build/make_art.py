@@ -34,6 +34,7 @@ BANNER_WAV = ROOT / "tools" / "build" / "banner.wav"
 BANNER_BNR = ROOT / "tools" / "build" / "banner.bnr"
 ICON_PNG = ROOT / "icon.png"
 CGFX_LIMIT = 0x80000  # the HOME menu refuses a banner model over 512 KB
+MODEL_LAYERS = ("title", "emblem")  # the 3D banner's layers (emblem.py also renders "wall": left out)
 
 
 def find_blender():
@@ -114,7 +115,12 @@ def make_cgfx(out):
 
     to_txob = swizzler.to_txob
     swizzler.to_txob = lambda im, format=None, mipmaps=1: to_txob(im, TextureFormat.RGB8, mipmaps)
-    cgfx = pycgfx.convert_gltf(gltflib.GLTF.load(str(WORK / "banner.gltf"), load_file_resources=True))
+    gltf = gltflib.GLTF.load(str(WORK / "banner.gltf"), load_file_resources=True)
+    # Only the title and the emblem go in the model: the stone wall behind them looked like a grey slab in the HOME
+    # menu, so they float on the menu's own background (the wall still lights and shadows them in the renders)
+    scene = gltf.model.scenes[gltf.model.scene or 0]
+    scene.nodes = [i for i in scene.nodes if gltf.model.nodes[i].name in MODEL_LAYERS]
+    cgfx = pycgfx.convert_gltf(gltf)
     model = cgfx.data.models["COMMON"]
     for name in model.materials:
         stages = model.materials[name].fragment_shader.texture_combiners
