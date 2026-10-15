@@ -37,6 +37,14 @@ namespace std { template<class I, class T> I native_remove_dispatch(I a, I b, co
 	inline int native_remove_dispatch(const char* p) { return native_remove(p); } }
 template<class I, class T> I native_remove_dispatch(I a, I b, const T& v) { return std::remove(a, b, v); }
 inline int native_remove_dispatch(const char* p) { return native_remove(p); }
+// (the system headers that declare these come first: a macro in front of their declarations breaks them)
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#undef F_LOCK        // (glibc's lockf constants; the script functions F_LOCK / F_UNLOCK are enumerators)
+#undef F_ULOCK
+#undef F_TLOCK
+#undef F_TEST
 #define fopen(p, m) native_fopen(p, m)
 #define stat(p, s) native_stat(p, s)
 #define remove(...) native_remove_dispatch(__VA_ARGS__)

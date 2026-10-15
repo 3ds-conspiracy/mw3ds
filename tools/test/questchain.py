@@ -13,7 +13,7 @@ way (a script sets the step in between: xrun's) are listed as "unreachable"; the
   python tools/test/questchain.py [--filter REGEX] [--batch 6]     -> tools/test/cases/chain-N.txt, build/chain.json
   python tools/test/questchain.py --list [--filter REGEX]          the stage order per quest, no files written
   python tools/test/questrun.py --check chain-3 [--log F]          per quest: the first stage where the chain breaks
-Run: tools\\test\\sweep-par.ps1 -ItemsFile <file of chain-N lines>  (or tools\\test\\run-test.ps1 chain-3 ...)
+Run: tools/test/sweep_par.py --items-file <file of chain-N lines>  (or tools/test/run_test.py chain-3 ...)
 """
 import argparse
 import json

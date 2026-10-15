@@ -7,7 +7,7 @@ are written out here in our own words, and the data (effect base costs, flags, i
 GMSTs) is what the engine loaded (out/world), so a failure is the engine's logic, not the data.
 
   python tools/test/openmw_specgen.py [--seed N] [--count N]   writes tools/test/cases/openmw-spec-magic.txt, openmw-spec-enchant.txt, openmw-spec-alchemy.txt
-  tools\\test\\sweep-par.ps1 with test:openmw-spec-magic ... ; each RESULT line counts the mismatches
+  tools/test/sweep_par.py with test:openmw-spec-magic ... ; each RESULT line counts the mismatches
 Every EXPECT is a pair of bounds around the oracle value (a rounding at exactly .5 may fall either way).
 """
 import argparse

@@ -1,7 +1,7 @@
 """Writes tools/test/cases/mech-magic.txt: magic effects checked by what they do (spells the harness puts together
 from single effects, cast as the player casts; target effects at a creature and an NPC; potions, scrolls).
 
-  python tools/test/mechmagic.py ; tools\\test\\run-test.ps1 mech-magic -Data out\\world -Start 'Seyda Neen'
+  python tools/test/mechmagic.py ; tools/test/run_test.py mech-magic --data out/world --start 'Seyda Neen'
 """
 from pathlib import Path
 

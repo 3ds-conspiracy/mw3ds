@@ -1,10 +1,10 @@
 r"""Record a native test case as an MP4 (video and sound).
 
 Usage:
-  python tools\test\video.py <case> [--every N] [--fps F] [--frames A-B] [--out file.mp4] [--wait SECS] [--exe E] [--sd D]
+  python tools/test/video.py <case> [--every N] [--fps F] [--frames A-B] [--out file.mp4] [--wait SECS] [--exe E] [--sd D]
                               [--data out\world] [--start 'Seyda Neen'] [--no-audio]
 
-Runs tools\test\run-test.ps1 -Native with NATIVE_VIDEO / NATIVE_AUDIO set (tools/test/native/native_gpu.cpp and
+Runs tools/test/run_test.py --native with NATIVE_VIDEO / NATIVE_AUDIO set (tools/test/native/native_gpu.cpp and
 native_stubs.cpp). The game draws every Nth frame (30 / N frames a second in the video) and pipes it to ffmpeg;
 the DSP stand-in mixes sound 1/30 s a frame into a WAV; this script joins the two. Frames are a fixed 1/30 s, so
 sound and picture stay in step whatever the PC's speed. ffmpeg: WinGet Gyan.FFmpeg (or NATIVE_FFMPEG).
@@ -35,8 +35,8 @@ def main():
     ap.add_argument("--start", default="Seyda Neen")
     ap.add_argument("--no-audio", action="store_true")
     ap.add_argument("--fps", default="", help="the video's frame rate (e.g. 24; default 30 / every)")
-    ap.add_argument("--exe", default="", help="another native build (run-test.ps1 -Exe)")
-    ap.add_argument("--sd", default="", help="its own SD folder (run-test.ps1 -Sd), so it can run beside other tests")
+    ap.add_argument("--exe", default="", help="another native build (run_test.py --exe)")
+    ap.add_argument("--sd", default="", help="its own SD folder (run_test.py --sd), so it can run beside other tests")
     a = ap.parse_args()
     ffmpeg = findFfmpeg()
     outDir = ROOT / "build" / "video"
@@ -52,12 +52,12 @@ def main():
     if not a.no_audio:
         env["NATIVE_AUDIO"] = str(wav)
     t0 = time.time()
-    cmd = ["powershell", "-NoProfile", "-File", str(ROOT / "tools/test/run-test.ps1"), a.case, "-Native",
-           "-Data", a.data, "-Start", a.start, "-Wait", str(a.wait)]
+    cmd = [sys.executable, str(ROOT / "tools/test/run_test.py"), a.case, "--native",
+           "--data", a.data, "--start", a.start, "--wait", str(a.wait)]
     if a.exe:
-        cmd += ["-Exe", a.exe]
+        cmd += ["--exe", a.exe]
     if a.sd:
-        cmd += ["-Sd", a.sd]
+        cmd += ["--sd", a.sd]
     r = subprocess.run(cmd, env=env, cwd=ROOT, capture_output=True, text=True)
     t1 = time.time()
     verdict = [l for l in r.stdout.splitlines() if l.startswith("RESULT") or "did not reach" in l]

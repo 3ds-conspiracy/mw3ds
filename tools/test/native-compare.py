@@ -1,4 +1,4 @@
-"""Compares two native suite runs (run-native-all.ps1 output folders): which cases went from PASS to FAIL
+"""Compares two native suite runs (run_native_all.py output folders): which cases went from PASS to FAIL
 (regressions), which were fixed, which are new or gone.
     python tools/test/native-compare.py build/native-results/<before> build/native-results/<after>
 Exits 1 when anything regressed.

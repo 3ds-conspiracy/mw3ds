@@ -1,0 +1,119 @@
+name: CI
+
+# What runs here needs no Morrowind data: it checks that the engine builds, the Python tools load, and that a pull
+# request follows the contribution rules. The real tests (the case suite and the quest runs) need a Morrowind install
+# and are run by the maintainer before a merge: a green check here does not mean the change is verified.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A newer push to the same pull request or branch cancels the run still going for the older one
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rules:
+    # The contribution rules are for outside contributors: the repository owner's own pull requests skip them.
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != github.repository_owner
+    runs-on: ubuntu-latest
+    env:
+      LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: No game data or builds
+        run: |
+          bad=$(git diff --no-renames --name-only --diff-filter=AM origin/${{ github.base_ref }}...HEAD \
+            | grep -Ei '(^|/)(out|out-vanilla|data|mods)/|\.(3dsx|cia|elf|esm|esp|bsa|nif|dds)$|(^|/)\.env$' || true)
+          if [ -n "$bad" ]; then echo "Files that must not be committed:"; echo "$bad"; exit 1; fi
+
+      - name: Code changes need a new test case
+        run: |
+          base=origin/${{ github.base_ref }}
+          code=$(git diff --no-renames --name-only $base...HEAD -- source include tools/convert | wc -l)
+          cases=$(git diff --no-renames --name-only --diff-filter=A $base...HEAD -- tools/test/cases | wc -l)
+          if [ "$code" -gt 0 ] && [ "$cases" -eq 0 ]; then
+            echo "This change touches source/include/tools/convert but adds no case in tools/test/cases/."; exit 1
+          fi
+
+      - name: New cases are valid
+        run: |
+          base=origin/${{ github.base_ref }}
+          fail=0
+          for f in $(git diff --no-renames --name-only --diff-filter=A $base...HEAD -- tools/test/cases); do
+            if ! grep -q 'EXPECT:' "$f"; then echo "$f: no EXPECT: line"; fail=1; fi
+            if grep -q 'ROLL' "$f" && ! grep -q 'SEED:' "$f"; then echo "$f: dice without SEED:"; fail=1; fi
+          done
+          exit $fail
+
+      - name: Existing tests are not weakened
+        run: |
+          base=origin/${{ github.base_ref }}
+          case ",$LABELS," in *,expect-change-approved,*) echo "Approved by the maintainer's label."; exit 0;; esac
+          removed=$(git diff --no-renames -U0 $base...HEAD -- tools/test/cases | grep -E '^-[^-]' | grep 'EXPECT:' || true)
+          deleted=$(git diff --no-renames --name-only --diff-filter=D $base...HEAD -- tools/test/cases || true)
+          if [ -n "$removed" ] || [ -n "$deleted" ]; then
+            # (--no-renames: a case renamed to zz-open-* or chain-*, which the suite leaves out, counts as deleted)
+            echo "Existing EXPECT lines or cases were removed, changed or renamed:"; echo "$removed"; echo "$deleted"
+            echo "Declined unless the approved idea changes that behaviour (the maintainer adds the expect-change-approved label)."
+            exit 1
+          fi
+
+      - name: Small change
+        run: |
+          base=origin/${{ github.base_ref }}
+          case ",$LABELS," in *,size-approved,*) exit 0;; esac
+          files=$(git diff --name-only $base...HEAD -- . ':!tools/test/cases' | wc -l)
+          lines=$(git diff --numstat $base...HEAD -- . ':!tools/test/cases' | awk '{s+=$1} END {print s+0}')
+          echo "$files files, $lines added lines outside test cases"
+          if [ "$files" -gt 10 ] || [ "$lines" -gt 600 ]; then
+            echo "Too big for a self-contained idea. Split it, or the maintainer adds size-approved."; exit 1
+          fi
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Every tool compiles
+        run: python -m compileall -q tools
+      - name: The build and test scripts load
+        run: |
+          # (setup.py, make.py and addr2line.py take no --help: compileall above covers them)
+          for s in tools/build/build_cia.py tools/build/build_cia_mods.py tools/build/make_cia.py tools/test/run_test.py \
+                   tools/test/run_native_all.py tools/test/run_suite.py tools/test/sweep_par.py tools/test/qrun_all.py \
+                   tools/test/make_save.py; do
+            python "$s" --help > /dev/null || { echo "$s does not start"; exit 1; }
+          done
+
+  build-3ds:
+    runs-on: ubuntu-latest
+    # The image already holds libctru, citro2d / citro3d, zlib, tex3ds, picasso and the 3DS tools: nothing is fetched
+    # from devkitPro's server during the run (it has refused GitHub's runners with a 403 before)
+    container: devkitpro/devkitarm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the engine
+        run: make -j"$(nproc)"
+
+  native-build:
+    # The engine for the PC (what the native test runs use): compiles only, there is no game data here.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt ziglang==0.16.0
+      - run: python tools/test/native/build.py

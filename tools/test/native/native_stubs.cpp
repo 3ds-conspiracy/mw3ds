@@ -19,9 +19,21 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#ifdef _WIN32
 #include <direct.h>
 #include <io.h>
-#include "native_crash.inc"
+#define sysMkdir(p) ::_mkdir(p)
+#define sysRmdir(p) ::_rmdir(p)
+#else
+#include <unistd.h>
+#undef mkdir        // (native_compat.h redirects these two to the functions below)
+#undef rmdir
+#define sysMkdir(p) ::mkdir(p, 0777)
+#define sysRmdir(p) ::rmdir(p)
+#endif
+#ifdef _WIN32
+#include "native_crash.inc"        // (Windows only: a crash logger, a profiler and a guard-page allocator)
+#endif
 
 #include <3ds.h>
 #include <citro3d.h>
@@ -102,12 +114,12 @@ int native_rename(const char* from, const char* to)
 
 int native_mkdir(const char* path, int)
 {
-	return ::_mkdir(nativePath(path));
+	return sysMkdir(nativePath(path));
 }
 
 int native_rmdir(const char* path)
 {
-	return ::_rmdir(nativePath(path));
+	return sysRmdir(nativePath(path));
 }
 
 DIR* native_opendir(const char* path)
@@ -174,9 +186,9 @@ static void (*s_hook)(const char*) = nullptr;
 
 void logInit()
 {
-	::_mkdir(sdRoot().c_str());
-	::_mkdir((sdRoot() + "/3ds").c_str());
-	::_mkdir((sdRoot() + "/3ds/mw3ds").c_str());
+	sysMkdir(sdRoot().c_str());
+	sysMkdir((sdRoot() + "/3ds").c_str());
+	sysMkdir((sdRoot() + "/3ds/mw3ds").c_str());
 	s_log = ::fopen((sdRoot() + "/3ds/mw3ds/log.txt").c_str(), "w");
 }
 void logSetHook(void (*hook)(const char*)) { s_hook = hook; }
@@ -224,7 +236,11 @@ void logExit()
 }
 void watchdogStart() {}
 void watchdogStop() {}
+#ifdef _WIN32
 void crashHandlerInstall(int) { nativeCrashInstall(); }
+#else
+void crashHandlerInstall(int) {}
+#endif
 
 // ---- linear lock: one thread
 void linearLockInit() {}

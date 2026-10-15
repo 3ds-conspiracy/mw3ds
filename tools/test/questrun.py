@@ -9,7 +9,7 @@ and the journal is checked.
   python tools/test/questrun.py [--filter REGEX] [--batch 30]
 Writes tools/test/cases/qrun-<k>.txt and build/qrun.json ({test: [[quest, stage, why-skipped-or-""]...]});
   python tools/test/questrun.py --check qrun-3      reads the emulator log: which quests started
-Run a batch: tools\\test\\run-test.ps1 qrun-3 -Data out\\world -Start "Seyda Neen" -Wait 1800
+Run a batch: tools/test/run_test.py qrun-3 --data out/world --start "Seyda Neen" --wait 1800
 """
 import argparse
 import json
