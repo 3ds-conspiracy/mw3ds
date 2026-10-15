@@ -533,11 +533,14 @@ struct Session : ScriptHost
 	{
 		if (cell == w.current || (!w.cells[cell].interior && !w.cells[w.current].interior))
 		{
-			// Same space: just stand there
+			// Same space: stand there, set down on the floor as a move into another cell is (OpenMW's PositionCell
+			// adjusts the player to the ground: the new game's CharGen put the player 24 units over the ship's deck,
+			// and they fell ~130 units onto it). Feet first, so the cells around them stream in before the floor is looked for
 			memcpy(w.player.feet, pos, sizeof(w.player.feet));
-			w.player.yaw = yaw;
-			w.player.vz = 0.0f;
 			w.streamExterior(true);
+			float eye[3] = { pos[0], pos[1], pos[2] + PLAYER_EYE_HEIGHT };
+			Scene scene = w.scene();
+			playerSpawn(w.player, scene, eye, yaw, w.player.pitch);
 			return;
 		}
 		travelCell = cell;

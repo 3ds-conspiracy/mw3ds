@@ -1,0 +1,8 @@
+# start: Imperial Prison Ship
+# A new game wakes on the prison ship's deck, not above it. CharGen's PositionCell puts the player 24.5 units up
+# (Player->PositionCell 61, -135, 24.5 ...); OpenMW sets the player down on the ground after a PositionCell
+# (adjustPosition, always for the player), but here the feet stayed there and the player fell ~130 units onto
+# the deck as the game began. The deck under the start is at about -105
+0.02 0 0 0 0 EXPECT:playerz:lt:-90+EXPECT:playerz:gt:-120
+3 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:lt:-90+EXPECT:playerz:gt:-120+EXPECT:cell:Imperial_Prison_Ship
