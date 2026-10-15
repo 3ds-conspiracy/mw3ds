@@ -1,0 +1,25 @@
+# Auto gamma with the lux a real New 3DS reads (its log over ftpd: 27-61 in the dark, about 110 in a dim room, 1400-1900
+# in bright light). A dim room gives no lift; bright light gives most of the lift (x1.5) within 15 s and all of it at
+# 1900; back in the dim room it is gone again within half a minute. Under the first thresholds (500 / 10000 lux)
+# 1400 lux lifted only 1.17
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:1
+1 0 0 0
+0.3 0 0 0 0 TP:-10900:-71000:600:90
+2 0 0 0
+0.3 0 0 0 0 GAMMA:80+AUTOGAMMA:on+LUX:110
+4 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:sensor:eq:1+EXPECT:gamma:lift:eq:1+EXPECT:gamma:value:eq:0.8
+0.3 0 0 0 0 LUX:1400
+15 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:lift:gt:1.3+EXPECT:gamma:value:gt:1.0
+0.3 0 0 0 0 LUX:1900
+20 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:1.5+EXPECT:gamma:value:eq:1.2
+0.3 0 0 0 0 LUX:110
+25 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:lift:lt:1.1+EXPECT:gamma:value:lt:0.9
+0.3 0 0 0 0 LUX:40
+10 0 0 0
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:1+EXPECT:gamma:value:eq:0.8

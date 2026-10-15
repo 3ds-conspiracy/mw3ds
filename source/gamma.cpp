@@ -7,11 +7,12 @@
 int g_gammaPct = 100;
 int g_autoGamma = -1;
 
-// Where the light reading ends: at or under kDimLux (a room) no lift, at or over kBrightLux (daylight) kMaxLift, between
-// them along log(lux). The camera's 0..255 mean has its own two ends. Guesses to tune on the consoles from the log's
-// "gamma:" lines (internal plan: gamma.md)
+// Where the light reading ends: at or under kDimLux no lift, at or over kBrightLux kMaxLift, between them along log(lux).
+// Tuned from a New 3DS's own log: QTM read 27-61 lux in the dark, about 110 in a dim room and 1400-1900 in bright light
+// (it reads far lower than a light meter: 500 / 10000 left the lift at 1.15 in the brightest light it saw). The camera's
+// 0..255 mean has its own two ends, still guesses (internal plan: gamma.md)
 static const float kMaxLift = 1.5f;
-static const float kDimLux = 500.0f, kBrightLux = 10000.0f;
+static const float kDimLux = 200.0f, kBrightLux = 1500.0f;
 static const float kDimLuma = 60.0f, kBrightLuma = 200.0f;
 static const float kMinGamma = 0.8f, kMaxGamma = 2.0f;
 static const float kPollSecs = 3.0f;             // QTM read this often
@@ -59,10 +60,12 @@ static void useLux(float lux)
 {
 	if (!(lux >= 0.0f) || !isfinite(lux))
 		return;
+	// Smoothed on log(lux), as the lift is read: in lux a drop from 2000 to 100 took half a minute to show
 	float k = s_lux < 0.0f ? 1.0f : fminf(1.0f, kPollSecs / kLuxSmoothSecs);
-	s_lux += (lux - s_lux) * k;
 	if (k >= 1.0f)
 		s_lux = lux;
+	else
+		s_lux = expf(logf(fmaxf(s_lux, 1.0f)) + (logf(fmaxf(lux, 1.0f)) - logf(fmaxf(s_lux, 1.0f))) * k);
 	float t = (logf(fmaxf(s_lux, 1.0f)) - logf(kDimLux)) / (logf(kBrightLux) - logf(kDimLux));
 	setLift(liftFor(t), "lux", lux);
 }
