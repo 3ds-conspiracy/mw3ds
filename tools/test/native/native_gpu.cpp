@@ -733,10 +733,11 @@ void C3D_TexEnvColor(C3D_TexEnv* env, u32 color) { env->color = color; }
 // ---- renderer.cpp's shader: uniform slots by name, as cell.v.pica declares them
 enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET, U_POSSCALE, U_UVSCALE, U_TINT, U_LIGHTPOS,
 	U_LIGHTCOLOR, U_AMBIENT, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye)
-// cell.v.pica's two more lights sit where skin.v.pica's palette starts, as on the PICA; bool 1 turns them on. Bool 0:
-// Gamma's curve, light ^ ambientAdd.w
-enum { U_LIGHTPOS2 = U_BONES, U_LIGHTCOLOR2, U_LIGHTPOS3, U_LIGHTCOLOR3, B_GAMMA = 0, B_MORELIGHTS = 1 };
-static bool s_moreLights = false, s_gammaOn = false;
+// cell.v.pica's two more lights sit where skin.v.pica's palette starts, as on the PICA. The bools in the order the
+// shaders declare them: 0 Gamma's curve (light ^ ambientAdd.w), 1 the carried light, 2 and 3 each torch's own switch
+// (cell.v.pica moreLight2, moreLight3: renderer.cpp turns each on only for batches within that torch's reach)
+enum { U_LIGHTPOS2 = U_BONES, U_LIGHTCOLOR2, U_LIGHTPOS3, U_LIGHTCOLOR3, B_GAMMA = 0, B_LIGHTON, B_MORELIGHT2, B_MORELIGHT3 };
+static bool s_lightOn = false, s_moreLight2 = false, s_moreLight3 = false, s_gammaOn = false;
 
 DVLB_s* DVLB_ParseFile(u32*, u32) { return new DVLB_s(); }
 void DVLB_Free(DVLB_s* d) { delete d; }
@@ -749,7 +750,8 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 		{ "modelView", U_MODELVIEW }, { "uvOffset", U_UVOFFSET }, { "fogVec", U_FOGVEC }, { "posOffset", U_POSOFFSET },
 		{ "posScale", U_POSSCALE }, { "uvScale", U_UVSCALE }, { "tint", U_TINT }, { "lightPos", U_LIGHTPOS },
 		{ "lightColor", U_LIGHTCOLOR }, { "ambientAdd", U_AMBIENT }, { "bones", U_BONES }, { "lightPos2", U_LIGHTPOS2 }, { "lightColor2", U_LIGHTCOLOR2 },
-		{ "lightPos3", U_LIGHTPOS3 }, { "lightColor3", U_LIGHTCOLOR3 }, { "moreLights", B_MORELIGHTS }, { "gammaOn", B_GAMMA } };
+		{ "lightPos3", U_LIGHTPOS3 }, { "lightColor3", U_LIGHTCOLOR3 }, { "gammaOn", B_GAMMA }, { "lightOn", B_LIGHTON },
+		{ "moreLight2", B_MORELIGHT2 }, { "moreLight3", B_MORELIGHT3 } };
 	for (auto& s : kSlots)
 		if (strcmp(s.name, name) == 0)
 			return s.slot;
@@ -780,8 +782,12 @@ void C3D_FVUnifSet(int, int id, float x, float y, float z, float w)
 }
 void C3D_BoolUnifSet(int, int id, bool value)
 {
-	if (id == B_MORELIGHTS)
-		s_moreLights = value;
+	if (id == B_LIGHTON)
+		s_lightOn = value;
+	else if (id == B_MORELIGHT2)
+		s_moreLight2 = value;
+	else if (id == B_MORELIGHT3)
+		s_moreLight3 = value;
 	else if (id == B_GAMMA)
 		s_gammaOn = value;
 }
@@ -998,20 +1004,21 @@ static ClipV vertexShader(const u8* v)
 	o.a[4] = u[U_UVOFFSET][0] + in[1][0] * u[U_UVSCALE][0];
 	o.a[5] = u[U_UVOFFSET][1] + in[1][1] * u[U_UVSCALE][1];
 	o.a[6] = u[U_FOGVEC][0] * r1[0] + u[U_FOGVEC][1] * r1[1] + u[U_FOGVEC][2] * r1[2] + u[U_FOGVEC][3] * r1[3];
-	// the carried light, and (cell.v.pica, its moreLights on) two more: people's torches
+	// the carried light (lightOn), and (cell.v.pica, each its own switch) two more: people's torches
 	auto fall = [&](int pos)
 	{
 		float d[3] = { r1[0] - u[pos][0], r1[1] - u[pos][1], r1[2] - u[pos][2] };
 		return std::max(0.0f, 1.0f - (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]) * u[pos][3]);
 	};
-	bool more = s_moreLights && s_attr.count < 5;
-	float f1 = fall(U_LIGHTPOS), f2 = more ? fall(U_LIGHTPOS2) : 0.0f, f3 = more ? fall(U_LIGHTPOS3) : 0.0f;
+	bool cell = s_attr.count < 5;
+	float f1 = s_lightOn ? fall(U_LIGHTPOS) : 0.0f;
+	float f2 = cell && s_moreLight2 ? fall(U_LIGHTPOS2) : 0.0f, f3 = cell && s_moreLight3 ? fall(U_LIGHTPOS3) : 0.0f;
 	for (int k = 0; k < 4; k++)
 	{
 		float c = in[2][k] / 255.0f * u[U_TINT][k];
 		if (k < 3)
 		{
-			c += u[U_AMBIENT][k] + u[U_LIGHTCOLOR][k] * f1 + (more ? u[U_LIGHTCOLOR2][k] * f2 + u[U_LIGHTCOLOR3][k] * f3 : 0.0f);
+			c += u[U_AMBIENT][k] + u[U_LIGHTCOLOR][k] * f1 + u[U_LIGHTCOLOR2][k] * f2 + u[U_LIGHTCOLOR3][k] * f3;
 			if (s_gammaOn)
 				c = exp2f(u[U_AMBIENT][3] * log2f(std::max(c, 0.001f)));
 		}
