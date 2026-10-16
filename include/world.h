@@ -239,10 +239,16 @@ struct JournalLine { std::string quest; int index; std::string text; };
 
 enum Attribute { ATTR_STRENGTH, ATTR_INTELLIGENCE, ATTR_WILLPOWER, ATTR_AGILITY, ATTR_SPEED, ATTR_ENDURANCE, ATTR_PERSONALITY, ATTR_LUCK };
 
+// The id a class made at character creation goes by (no record in Morrowind.esm has a $)
+static const char* const kCustomClassId = "$custom";
+
 struct PlayerStats
 {
 	std::string name = "Stranger";
 	std::string race = "imperial", cls, birthsign;
+	// The class made at character creation (Create Custom Class): cls is kCustomClassId while it is the player's.
+	// Kept with the save, as OpenMW keeps the created class record
+	ClassDef customClass = {};
 	std::string head, hair;           // body part ids chosen at character creation ("" = the race's first)
 	bool female = false;
 	int attributes[8] = {};

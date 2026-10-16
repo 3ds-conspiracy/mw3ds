@@ -11,6 +11,15 @@ Mirrors the OpenMW wiki page *Research:Stats and Levelling*. Rules read from Ope
 - Attributes: the race's (by sex), +10 for each of the class's two favoured attributes.
 - Skills: 5; +25 major, +10 minor; +5 in the class's specialization; the race's skill bonuses on top.
 - Race and birthsign abilities apply as constant effects (Fortify / Drain attribute and skill, resistances ...).
+- **Create Custom Class** (`sClassChoiceMenu3`; OpenMW `CreateClassDialog`, `CharacterCreation::selectCreatedClass`):
+  a name, a specialization, two favoured attributes, five major and five minor skills, a description. The form
+  starts at `sCustomClassName` ("Adventurer"), Combat, Strength and Agility, Block / Armorer / Medium Armor / Heavy
+  Armor / Blunt Weapon major, Long Blade / Axe / Spear / Athletics / Enchant minor. Choosing an attribute or a skill
+  another field holds swaps the two, so none is taken twice. OK needs a name; the description may stay empty
+  (OpenMW does not ask for one, though `sCreateClassMenu3` exists). The class then follows the rules above like any
+  other and is kept in the save (OpenMW stores the created class record). We follow Morrowind on Back: it leaves
+  without choosing the class (OpenMW chooses it there too, its code says, "not done in MW"); the form keeps what
+  was filled in either way. Test: `chargen-custom-class`.
 
 ## Health, magicka, fatigue
 

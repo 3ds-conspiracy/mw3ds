@@ -800,10 +800,23 @@ void Session::setText(bool confirmed, const std::string& text)
 		list2 = UiList();
 		logf("journal: search \"%s\"", journalSearch.c_str());
 	}
+	// the class being made: its name can't be left blank (OpenMW's OK waits for one), its description can
+	else if (kind == TEXT_CLASSNAME && !blank)
+	{
+		classDraft.name = text;
+		logf("chargen: class name %s", text.c_str());
+	}
+	else if (kind == TEXT_CLASSDESC)
+	{
+		classDraft.desc = blank ? "" : text;
+		logf("chargen: class description \"%s\"", classDraft.desc.c_str());
+	}
 }
 
 std::string Session::textNow()
 {
+	if (wantText == TEXT_CLASSNAME || wantText == TEXT_CLASSDESC)
+		return wantText == TEXT_CLASSNAME ? classDraft.name : classDraft.desc;
 	return wantText == TEXT_SEARCH ? journalSearch : wantText == TEXT_CONSOLE ? consoleDraft : makeName;
 }
 

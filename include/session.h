@@ -55,6 +55,7 @@ enum Screen
 	SCR_DISPLAY,
 	SCR_LOOK,
 	SCR_CONSOLE,
+	SCR_CLASS_CREATE,
 };
 
 struct MessageState
@@ -93,8 +94,8 @@ struct Session : ScriptHost
 	int buttonPressed = -1;
 	std::vector<ScriptMenu> pendingMenus;
 	bool wantName = false;            // main loop shows the system keyboard between frames
-	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE };
-	int wantText = TEXT_NONE;         // the same, for the name of the spell / item being made or the journal's search
+	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE, TEXT_CLASSNAME, TEXT_CLASSDESC };
+	int wantText = TEXT_NONE;         // the same, for the name of the spell / item being made, the journal's search or the class being made
 	std::string typedText;            // tests: what the system keyboard returns (TYPE:)
 	int travelCell = -1;              // door to another cell: main loop shows a loading screen, then finishTravel()
 	float travelPos[3] = {}, travelYaw = 0.0f;
@@ -238,6 +239,11 @@ struct Session : ScriptHost
 	int bookSpread = 0;
 	int quizIndex = 0, quizCounts[3] = {};
 	std::string pickedClass;
+	// Create Custom Class: the class being filled in (kept when Back leaves it, as OpenMW keeps the dialog), and the
+	// field whose choice list is open over the form (-1: none; CF_ field ids, screens_character.cpp)
+	ClassDef classDraft = {};
+	bool classDraftReady = false;
+	int classPicking = -1, classPickCursor = 0;
 
 	// world interaction
 	int target = -1;
@@ -602,6 +608,7 @@ struct Session : ScriptHost
 	void drawClassList();
 	void drawClassQuiz();
 	void drawClassResult();
+	void drawClassCreate();
 	void drawBirth();
 	void drawReview();
 	void drawEnd();

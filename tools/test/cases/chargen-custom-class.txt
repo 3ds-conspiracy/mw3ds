@@ -1,0 +1,120 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 PCRACE:imperial
+0.3 0 0 0 0 PCSEX:0
+0.3 0 0 0 0 SCREEN:classmethod
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:160:209
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TYPE:Spellblade
+0.3 0 0 0 0 TAP:218:34
+0.5 0 0 0
+0.3 0 0 0 0 TAP:218:56
+0.5 0 0 0
+0.3 0 0 0 0 TAP:160:84
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:239:222
+0.5 0 0 0
+0.3 0 0 0 0 TAP:168:78
+0.5 0 0 0
+0.3 0 0 0 0 TAP:81:84
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:239:222
+0.5 0 0 0
+0.3 0 0 0 0 TAP:268:78
+0.5 0 0 0
+0.3 0 0 0 0 TAP:81:112
+0.5 0 0 0
+0.3 0 0 0 0 TAP:239:222
+0.5 0 0 0
+0.3 0 0 0 0 TAP:81:116
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:160:98
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:239:222
+0.5 0 0 0
+0.3 0 0 0 0 TAP:81:135
+0.5 0 0 0
+0.3 0 0 0 0 TAP:160:69
+0.5 0 0 0
+0.3 0 0 0 0 TAP:239:222
+0.5 0 0 0
+0.3 0 0 0 0 TAP:239:135
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 DRAG:0:-100
+0.5 0 0 0
+0.3 0 0 0 0 TAP:160:189
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:239:222
+0.5 0 0 0
+0.3 0 0 0 0 TAP:81:154
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 TAP:218:56
+0.5 0 0 0
+0.3 0 0 0 0 TAP:160:112
+0.5 0 0 0
+0.3 0 0 0 0 TAP:81:222
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:160:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:classmethod
+0.3 0 0 0 0 TAP:160:209
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 RIGHT
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:265:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:skill:destruction:eq:35
+0.3 0 0 0 0 EXPECT:skill:enchant:eq:35
+0.3 0 0 0 0 EXPECT:skill:alteration:eq:35
+0.3 0 0 0 0 EXPECT:skill:heavyarmor:eq:30
+0.3 0 0 0 0 EXPECT:skill:unarmored:eq:20
+0.3 0 0 0 0 EXPECT:skill:axe:eq:5
+0.3 0 0 0 0 EXPECT:skill:armorer:eq:15
+0.3 0 0 0 0 EXPECT:skill:mediumarmor:eq:5
+0.3 0 0 0 0 EXPECT:skill:block:eq:5
+0.3 0 0 0 0 EXPECT:skill:illusion:eq:10
+0.3 0 0 0 0 EXPECT:skill:sneak:eq:5
+0.3 0 0 0 0 EXPECT:attr:intelligence:eq:50
+0.3 0 0 0 0 EXPECT:attr:willpower:eq:40
+0.3 0 0 0 0 EXPECT:attr:strength:eq:40
+0.3 0 0 0 0 SCREEN:stats
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0 0 SAVE:customclass
+1 0 0 0
+0.3 0 0 0 0 CLASS:warrior
+0.3 0 0 0 0 EXPECT:skill:destruction:eq:5
+1 0 0 0 0 LOAD:customclass
+2 0 0 0
+0.3 0 0 0 0 EXPECT:skill:destruction:eq:35
+0.3 0 0 0 0 EXPECT:skill:alteration:eq:35
+0.3 0 0 0 0 EXPECT:skill:unarmored:eq:20
+0.3 0 0 0 0 EXPECT:skill:armorer:eq:15
+0.3 0 0 0 0 EXPECT:attr:intelligence:eq:50
+0.3 0 0 0 0 SCREEN:stats
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none

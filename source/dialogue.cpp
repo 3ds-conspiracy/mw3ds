@@ -323,7 +323,7 @@ std::string dialogueSubstitute(World& w, const std::string& text, int ref)
 		{ "%pccrimelevel", std::to_string(w.bounty) },
 		{ "%pcname", w.stats.name },
 		{ "%pcrace", raceName(w, w.stats.race) },
-		{ "%pcclass", className(w, w.stats.cls) },
+		{ "%pcclass", w.playerClass() ? w.playerClass()->name : className(w, w.stats.cls) },     // (a made class has no record)
 		{ "%pcrank", fac.empty() ? "%" : w.game.rankName(fac, std::max(0, pcRank)) },
 		{ "%name", a ? a->name : "" },
 		{ "%race", a ? raceName(w, a->race) : "" },

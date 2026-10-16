@@ -253,6 +253,7 @@ void Session::drawBottom()
 	case SCR_CLASS_LIST: drawClassList(); break;
 	case SCR_CLASS_QUIZ: drawClassQuiz(); break;
 	case SCR_CLASS_RESULT: drawClassResult(); break;
+	case SCR_CLASS_CREATE: drawClassCreate(); break;
 	case SCR_BIRTH: drawBirth(); break;
 	case SCR_REVIEW: drawReview(); break;
 	case SCR_REST: drawRest(); break;

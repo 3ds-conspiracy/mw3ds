@@ -2244,11 +2244,13 @@ int main()
 				char text[256] = {};
 				bool search = session->wantText == Session::TEXT_SEARCH;
 				bool console = session->wantText == Session::TEXT_CONSOLE;      // a script line (Options > Console)
-				swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, console ? 200 : 31);
+				bool classDesc = session->wantText == Session::TEXT_CLASSDESC;  // the made class's description (may be empty)
+				swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, console || classDesc ? 200 : 31);
 				swkbdSetHintText(&kb, console ? "Script line, e.g. Player->AddItem gold_001 100" : search ? "Search"
+					: classDesc ? "Describe your class" : session->wantText == Session::TEXT_CLASSNAME ? "Name your class"
 					: session->screen == SCR_ENCHANT ? "Name the item" : "Name the spell");
 				swkbdSetInitialText(&kb, session->textNow().c_str());
-				if (!search && !console)
+				if (!search && !console && !classDesc)
 					swkbdSetValidation(&kb, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
 				SwkbdButton button = swkbdInputText(&kb, text, sizeof(text));
 				session->setText(button == SWKBD_BUTTON_CONFIRM, text);

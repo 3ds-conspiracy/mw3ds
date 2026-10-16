@@ -2885,6 +2885,8 @@ const RaceDef* World::race() const
 
 const ClassDef* World::playerClass() const
 {
+	if (!stats.customClass.id.empty() && strcasecmp(stats.customClass.id.c_str(), stats.cls.c_str()) == 0)
+		return &stats.customClass;
 	for (auto& c : game.classes)
 		if (strcasecmp(c.id.c_str(), stats.cls.c_str()) == 0)    // (Athletics asks every frame a run lasts: no copies)
 			return &c;
