@@ -10,14 +10,16 @@ int g_autoGamma = -1;
 // Where the light reading ends: at or under kDimLux no lift, at or over kBrightLux kMaxLift, between them along log(lux).
 // Tuned from a New 3DS's own log: QTM read 27-61 lux in the dark, about 110 in a dim room and 1400-1900 in bright light
 // (it reads far lower than a light meter: 500 / 10000 left the lift at 1.15 in the brightest light it saw). The full
-// lift comes at 1000, under the bright light it read, so a lit room already gets most of it. The camera's 0..255 mean
-// has its own two ends, still guesses (internal plan: gamma.md)
-static const float kMaxLift = 1.5f;
-static const float kDimLux = 200.0f, kBrightLux = 1000.0f;
+// lift, 2 (1.5 was too little in bright light on the console), comes at 800, under the bright light it read, so a lit
+// room already gets most of it; a dim room none. The camera's 0..255 mean has its own two ends and lift, still guesses
+// (internal plan: gamma.md)
+static const float kMaxLift = 2.0f;
+static const float kMaxCameraLift = 1.5f;
+static const float kDimLux = 200.0f, kBrightLux = 800.0f;
 static const float kDimLuma = 60.0f, kBrightLuma = 200.0f;
-static const float kMinGamma = 0.8f, kMaxGamma = 2.0f;
+static const float kMinGamma = 0.8f, kMaxGamma = 2.5f;     // (Gamma's slider over 100 still adds to the full lift)
 static const float kPollSecs = 3.0f;             // QTM read this often
-static const float kLuxSmoothSecs = 10.0f;       // a thumb over the camera or an exposure jump doesn't pump the picture
+static const float kLuxSmoothSecs = 6.0f;        // a thumb over the camera or an exposure jump doesn't pump the picture
 static const float kEasePerSec = 0.5f;           // the value used moves at most this far a second
 #ifdef __3DS__
 static const s8 kCamExposure = 0;                // fixed (auto-exposure averages every scene to grey); Nintendo's -5..5
@@ -42,9 +44,9 @@ static float clampf(float v, float lo, float hi)
 	return v < lo ? lo : v > hi ? hi : v;
 }
 
-static float liftFor(float t)
+static float liftFor(float t, float maxLift)
 {
-	return 1.0f + (kMaxLift - 1.0f) * clampf(t, 0.0f, 1.0f);
+	return 1.0f + (maxLift - 1.0f) * clampf(t, 0.0f, 1.0f);
 }
 
 static void setLift(float lift, const char* from, float reading)
@@ -68,14 +70,14 @@ static void useLux(float lux)
 	else
 		s_lux = expf(logf(fmaxf(s_lux, 1.0f)) + (logf(fmaxf(lux, 1.0f)) - logf(fmaxf(s_lux, 1.0f))) * k);
 	float t = (logf(fmaxf(s_lux, 1.0f)) - logf(kDimLux)) / (logf(kBrightLux) - logf(kDimLux));
-	setLift(liftFor(t), "lux", lux);
+	setLift(liftFor(t, kMaxLift), "lux", lux);
 }
 
 static void useLuma(int luma)
 {
 	if (luma < 0)
 		return;
-	setLift(liftFor((luma - kDimLuma) / (kBrightLuma - kDimLuma)), "camera luma", (float)luma);
+	setLift(liftFor((luma - kDimLuma) / (kBrightLuma - kDimLuma), kMaxCameraLift), "camera luma", (float)luma);
 }
 
 #ifdef __3DS__

@@ -16,7 +16,7 @@
 0.3 0 0 0 0 EXPECT:gamma:lift:gt:1.3+EXPECT:gamma:value:gt:1.0
 0.3 0 0 0 0 LUX:1900
 20 0 0 0
-0.3 0 0 0 0 EXPECT:gamma:lift:eq:1.5+EXPECT:gamma:value:eq:1.2
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:2+EXPECT:gamma:value:eq:1.6
 0.3 0 0 0 0 LUX:110
 25 0 0 0
 0.3 0 0 0 0 EXPECT:gamma:lift:lt:1.1+EXPECT:gamma:value:lt:0.9
