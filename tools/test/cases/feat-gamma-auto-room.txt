@@ -1,0 +1,18 @@
+# Auto gamma reaches its whole lift at 1000 lux of a New 3DS's sensor, under the bright light it reads (1400-1900),
+# so a lit room's reading gets most of it: 700 lux lifts the picture by more than 1.35 (it was 1.31 with the whole
+# lift at 1500), 1200 by the whole 1.5, and a dim room's 110 by nothing
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SETWEATHER:0+HOUR:1
+1 0 0 0
+0.3 0 0 0 0 TP:-10900:-71000:600:90
+2 0 0 0
+0.3 0 0 0 0 AUTOGAMMA:on+LUX:110
+4 0 0 0
+0.1 0 0 0 0 EXPECT:gamma:lift:eq:1
+0.3 0 0 0 0 LUX:700
+25 0 0 0
+0.1 0 0 0 0 EXPECT:gamma:lift:gt:1.35+EXPECT:gamma:lift:lt:1.5
+0.3 0 0 0 0 LUX:1200
+25 0 0 0
+0.1 0 0 0 0 EXPECT:gamma:lift:eq:1.5

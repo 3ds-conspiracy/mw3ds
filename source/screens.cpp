@@ -368,8 +368,9 @@ void Session::drawHud()
 	drawMapView(186, 26, 128, 128, 1.0f, false, w.current >= 0 && w.cells[w.current].interior);
 	if (mapOk && uiHit(186, 26, 128, 128))
 		openScreen(SCR_MAP);
-	const std::string& here = w.game.cellLabel(w.cellName());
-	uiTextCentered(250, 155, 0.38f, col::textDim, here.size() > 26 ? here.substr(0, 25) + "..." : here);
+	std::string here = w.game.cellLabel(w.cellName());
+	hudCaption = here.size() > 26 ? here.substr(0, 25) + "..." : here;
+	uiTextCentered(250, 155, 0.38f, col::textDim, hudCaption);
 
 	if (target >= 0)
 	{
@@ -883,7 +884,8 @@ void Session::drawLook()
 			b = i;
 	if (b == 0)
 	{
-		g_lookSpeed = g_geTurnSpeed = g_geAimSpeed = 100;
+		g_lookSpeed = kLookDefaultPct;
+		g_geTurnSpeed = g_geAimSpeed = 100;
 		g_invertY = false;
 		saveSettings();
 	}

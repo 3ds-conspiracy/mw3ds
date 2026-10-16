@@ -8,6 +8,7 @@
 #include "log.h"
 #include "renderer.h"
 #include "screens.h"
+#include "screenshot.h"
 #include "session.h"
 
 bool Session::ensureMapTexture()
@@ -83,6 +84,29 @@ void Session::updateLocalMap()
 {
 	if (w.current < 0 || !w.cells[w.current].live)
 		return;
+	if (mapCellJob.on && --mapCellJob.frames <= 0)
+	{
+		// One outdoor cell straight down, as the local map draws (the world map's picture is baked from these):
+		// everything loaded inside its square, from above its highest batch
+		mapCellJob.on = false;
+		const float x0 = mapCellJob.gx * 8192.0f, y0 = mapCellJob.gy * 8192.0f;
+		float lo = 1e9f, hi = -1e9f;
+		for (LoadedCell* l : w.loaded)
+			for (auto& b : l->cell.batches)
+				if (b.bmax[0] >= x0 && b.bmin[0] <= x0 + 8192.0f && b.bmax[1] >= y0 && b.bmin[1] <= y0 + 8192.0f)
+				{
+					lo = fminf(lo, b.bmin[2]);
+					hi = fmaxf(hi, b.bmax[2]);
+				}
+		bool ok = lo <= hi;
+		screenshotDrawThisFrame();
+		bool drawn = ok && rendererDrawLocalMap(w, x0, y0, 8192.0f, hi + 10.0f, hi - lo + 100.0f, true);
+		bool saved = drawn && screenshotSaveTexture(rendererLocalMap(), mapCellJob.path.c_str());
+		ok = saved;
+		localMapCell = -1;                       // (the map screen's own local map renders again when it shows)
+		logf("mapcell: %d %d -> %s %s", mapCellJob.gx, mapCellJob.gy, mapCellJob.path.c_str(), ok ? "saved" : "FAILED");
+		return;
+	}
 	if (!w.cells[w.current].interior)
 	{
 		// Outdoors, only while the map screen shows it (a render costs a frame): a cell and a half round the

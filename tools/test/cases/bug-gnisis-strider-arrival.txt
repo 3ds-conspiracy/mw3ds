@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# Arriving at Gnisis by silt strider lands on the rock by the strider and stays there, even when the neighbouring cells
+# have not streamed in yet (STREAM:off: as on the console, which reads them on a thread after the arrival). The stop
+# stands 650 units from the cell to the north, and the rock under it is that cell's: with only the Gnisis cell loaded
+# the player was under every floor and fell to the gully ~900 units below. Neighbours near an arrival with no ground
+# under it now load behind the loading screen
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald-ruhn
+5 0 0 0
+60 0 0 0 0 ACTIVATE:navam_veran
+1.5 0 0 0
+0.3 0 0 0 0 STREAM:off
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Gnisis+EXPECT:playerz:gt:1000+EXPECT:playerz:lt:1060
+0.3 0 0 0 0 STREAM:on
+3 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:1000+EXPECT:playerz:lt:1060

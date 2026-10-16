@@ -31,6 +31,7 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 	audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
 	MARK("shimmer frames");
 	rendererLoadCaustics(dataDir);
+	rendererLoadWaterFrames(dataDir, 0.0f);
 	MARK("game data");
 	// A save asked for that is there but won't read (damaged, or a newer version): nothing starts, the caller goes back
 	// to the title. A new game in its place autosaved over the player's save at the first door
@@ -47,6 +48,7 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 	{
 		if (!w.load(dataDir, savedCell))
 			return false;
+		rendererLoadWaterFrames(dataDir, w.game.waterFps);
 		if (w.cellIndex(savedCell) == w.current && w.applySave(savePath))
 		{
 			startGameScripts();          // saves from before Main ran get it now
@@ -61,6 +63,7 @@ bool Session::start(const char* dataDir, const std::string& startCell, const cha
 	}
 	if (!w.load(dataDir, startCell))
 		return false;
+	rendererLoadWaterFrames(dataDir, w.game.waterFps);
 	giveItems(w.game.startItems);
 	startGameScripts();
 	if (!w.isStartCell() || !w.game.chargen)
@@ -580,7 +583,7 @@ void Session::adaptView(float workMs)
 static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";
 int g_controlLayout = CONTROLS_XBOX;
 int g_gyroAim = 0;                // gyro aim starts off (until it is tried on the device): Options turns it on
-int g_lookSpeed = 100, g_geTurnSpeed = 100, g_geAimSpeed = 100;
+int g_lookSpeed = kLookDefaultPct, g_geTurnSpeed = 100, g_geAimSpeed = 100;
 bool g_invertY = false;
 bool g_subtitles = true;
 static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is off
@@ -735,6 +738,13 @@ void Session::finishTravel()
 	float eye[3] = { travelPos[0], travelPos[1], travelPos[2] + PLAYER_EYE_HEIGHT };
 	Scene scene = w.scene();
 	playerSpawn(w.player, scene, eye, travelYaw, 0.0f);
+	// Nothing under the feet outdoors: the ground may be a neighbouring cell's that would stream in after the player
+	// had fallen. Those near the arrival load now, still behind the loading screen, and the player is set down again
+	if (!w.player.onGround && !w.cells[w.current].interior && w.loadCellsNear(travelPos, 2048.0f) > 0)
+	{
+		scene = w.scene();
+		playerSpawn(w.player, scene, eye, travelYaw, 0.0f);
+	}
 	for (size_t k = 0; k < followers.size(); k++)
 	{
 		// Just ahead of the player, side by side (behind is the door, often a wall)

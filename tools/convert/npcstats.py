@@ -31,6 +31,11 @@ ARMOR_SLOT_WEIGHT = [0.1, 0.3, 0.1, 0.1, 0.1, 0.1, 0.05, 0.05, 0.1, 0.05, 0.05]
 # The leveled item lists (LEVI) of the data being converted: an NPC's inventory can hold one ("Imperial Guard
 # Random Weapon"), and it has to become a real item for what the NPC wears and fights with. Set by bind().
 _LEVI = {}
+# The player level the lists are picked for. OpenMW picks an actor's lists for the player's level when their cell first
+# loads (MWMechanics::getLevelledItem), and the NPC wears the best of what came: the look is baked here, so it is a new
+# character's pick, as a new game meets them (Baladas Demnevanni's level 10-14 Telvanni list gave him the enchanted
+# Devil Cephalopod Helm when picked for his own level, 35; OpenMW gives him nothing from it before player level 10)
+PICK_LEVEL = 1
 
 
 def bind(db):
@@ -39,13 +44,16 @@ def bind(db):
 
 
 def resolve_item(lid, level, seed, depth=0):
-    """A leveled item list's pick for an actor of this level: among the entries at or under the level the
+    """A leveled item list's pick for this player level: among the entries at or under the level the
     highest-level ones (the list's 'all levels' flag not read), one chosen by the seed, so the same NPC
-    always gets the same piece; nested lists followed. None for an empty list."""
+    always gets the same piece; nested lists followed. None for an empty list, or one whose entries are all above
+    the level (OpenMW's getLevelledItem gives nothing then)."""
     entries = _LEVI.get(lid.lower())
     if not entries or depth > 5:
         return None
-    ok = [e for e in entries if e[0] <= level] or [min(entries)]
+    ok = [e for e in entries if e[0] <= level]
+    if not ok:
+        return None
     top = max(e[0] for e in ok)
     best = sorted(e[1] for e in ok if e[0] == top)
     pick = best[zlib.crc32(text_bytes((seed + "|" + lid).lower())) % len(best)]
@@ -56,19 +64,13 @@ def resolve_item(lid, level, seed, depth=0):
 
 def npc_items(rec):
     """[(count, id)] from NPCO (negative counts are restocking merchant stock), the leveled lists among them
-    resolved to an item."""
+    resolved to an item for PICK_LEVEL."""
     out = []
-    npdt = rec.get("NPDT")
-    # (a creature's NPDT starts with its type, then the level as an int)
-    if rec.tag == "CREA":
-        level = struct.unpack_from("<i", npdt, 4)[0] if npdt and len(npdt) >= 8 else 1
-    else:
-        level = struct.unpack_from("<h", npdt)[0] if npdt else 1
     for t, d in rec.subs:
         if t == "NPCO":
             item = text(d[4:])
             if item.lower() in _LEVI:
-                item = resolve_item(item, level, rec.id)
+                item = resolve_item(item, PICK_LEVEL, rec.id)
                 if item is None:
                     continue
             out.append((struct.unpack_from("<i", d)[0], item))      # (the sign stays: negative is restocking stock)

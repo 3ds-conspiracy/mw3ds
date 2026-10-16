@@ -833,6 +833,7 @@ def main():
     print(f"  map: {game['map']['width']} x {game['map']['height']} px, {game['map']['units_per_pixel']:.0f} units per pixel")
     game["ui"], report = build_ui(arch, ini_section(ini, "Font Color"), game["objects"])
     game["art"] = build_art(arch, DATA_FILES.parent if DATA_FILES.suffix else DATA_FILES)
+    game["water_fps"] = game["art"].get("water", {}).get("fps", 12.0)   # (the engine plays art/water/waterNN.t3x at this)
     game["movies"] = {k: {"file": v["file"], "sound": v["sound"]}
                       for k, v in build_movies(DATA_FILES.parent if DATA_FILES.suffix else DATA_FILES).items()}
     print(f"  art: {len(game['art']['splash'])} loading screens, {len(game['art']['levelup'])} level-up, "
@@ -903,6 +904,8 @@ def main():
             missing.append(v)
     game["music"] = [n for n in (convert_sound(arch, m, OUT / "music") for m in MUSIC) if n]
     game["music_battle"] = [n for n in (convert_sound(arch, m, OUT / "music") for m in MUSIC_BATTLE) if n]
+    # The title screen's (OpenMW's titleMusic), at a fixed name: music/music_special_morrowind_title.snd
+    game["music_title"] = convert_sound(arch, "Music/Special/morrowind title.mp3", OUT / "music") or ""
     if missing:
         print(f"  {len(missing)} sounds not found in your Morrowind install (harmless, those play silent): "
               f"{missing[:8]}{' ...' if len(missing) > 8 else ''}")

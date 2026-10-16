@@ -62,8 +62,9 @@ Tcl/Tk (BSD-style license), for the window: https://www.tcl.tk/
 tex3ds (GPLv3), devkitPro: https://github.com/devkitPro/tex3ds
 makerom (MIT), Project_CTR: https://github.com/3DSGuy/Project_CTR
 
-The mods the converter can download when you build (Morrowind Optimization Patch, Project Atlas) are not part of
-this download: they come from their own repositories, at the commits listed in app/mods.lock.json.
+The mods the converter can download when you build (Morrowind Optimization Patch, and Project Atlas for the Old 3DS
+build) are not part of this download: they come from their own repositories, at the commits listed in
+app/mods.lock.json.
 """
 
 README = """MW3DS Converter {version}

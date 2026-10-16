@@ -68,8 +68,11 @@ inline void gfxInitDefault() {}
 enum { GSP_RGBA8_OES = 0, GSP_BGR8_OES = 1, GSP_RGB565_OES = 2 };
 inline void gfxInit(int, int, bool) {}
 inline void gfxExit() {}
-inline void gfxSet3D(bool) {}
-inline float osGet3DSliderState() { return 0; }
+// NATIVE_3D=<0..1>: the 3D slider (the game then draws both eyes; a SHOT saves the right one as <name>_r.bmp)
+inline bool& nativeStereo() { static bool on = false; return on; }
+inline void gfxSet3D(bool on) { nativeStereo() = on; }
+inline bool gfxIs3D() { return nativeStereo(); }
+inline float osGet3DSliderState() { const char* e = getenv("NATIVE_3D"); return e ? (float)atof(e) : 0.0f; }
 
 // One thread only: threadCreate fails, and the game then does that work on the spot (world.cpp streaming)
 typedef int LightLock;

@@ -189,10 +189,21 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, 
                             np.array(bone["indices"], dtype=int), np.array(bone["weights"]))
                            for bref, bone in zip(inst["bones"], data["bones"]) if nif.get(bref)]
         c = nif.get(b.get("controller", -1))
+        scroll = None
         while c:
             if c["type"] == "NiGeomMorpherController" and nif.get(c["data"]):
                 raw["morph"] = nif.get(c["data"])
                 raw["text_keys"] = next((x["keys"] for x in nif.blocks if x["type"] == "NiTextKeyExtraData"), [])
+            if c["type"] == "NiUVController" and nif.get(c["data"]):
+                # The texture slides (waterfalls, the Vivec outlets' falls): its u and v offset keys as rates, repeats a
+                # second, in the NIF's (DirectX) coordinates. A looping straight line in the original
+                def rate(keys):
+                    if len(keys) < 2 or keys[-1][0] <= keys[0][0]:
+                        return 0.0
+                    return (keys[-1][1][0] - keys[0][1][0]) / (keys[-1][0] - keys[0][0]) * (c.get("frequency") or 1.0)
+                g = nif.get(c["data"])["groups"]
+                su, sv = round(rate(g[0]), 3), round(rate(g[1]), 3)
+                scroll = (su, sv) if su or sv else None
             c = nif.get(c.get("next_controller", -1))
         if b["skin"] != -1:
             pos, nrm = skin_vertices(nif, nif.get(b["skin"]), pos, nrm, skeleton)
@@ -225,6 +236,7 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, 
             "mat": last_prop(props, "NiMaterialProperty"),
             "vcp": last_prop(props, "NiVertexColorProperty"),
             "raw": raw,
+            "scroll": scroll,
         })
 
     walk_nif(nif, visit, vis_hidden)

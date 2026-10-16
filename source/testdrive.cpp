@@ -1296,6 +1296,11 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
 	else if (what == "wfogscale") v = w.weatherFogScale();      // the share of the view drawn in this weather
 	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
+	else if (what == "hudcaption")    // the cell name under the HUD's minimap is this cell's, 1; else 0
+	{
+		std::string want = w.game.cellLabel(w.cellName());
+		v = s.hudCaption == (want.size() > 26 ? want.substr(0, 25) + "..." : want) ? 1.0f : 0.0f;
+	}
 	else if (what == "torchtime") v = w.useTorches() ? 1.0f : 0.0f;   // time for torches here (night, a dark interior)
 	else if (what == "subtitle") v = w.time < s.subtitleUntil && !s.subtitle.empty() ? 1.0f : 0.0f;   // a spoken line written now
 	else if (what == "setting")     // <lookspeed|geturn|geaim|inverty|subtitles>: Controls > Look's and Display's, now
@@ -1468,6 +1473,15 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "vfxsprited") v = (float)s.vfxSpritedLast;   // visuals that drew particle sprites last frame
 	else if (what == "spritebudget") v = (float)g_profile.spriteBudget;   // this frame's, as the frame's work set it
+	else if (what == "waterframes") v = (float)rendererWaterFrameCount();  // the water surface's frames loaded
+	else if (what == "scrollbatches")
+	{
+		// loaded batches whose texture slides (a waterfall's NiUVController), not counting the water surface
+		v = 0;
+		for (LoadedCell* l : w.loaded)
+			for (auto& b : l->cell.batches)
+				v += (b.scrollU != 0.0f || b.scrollV != 0.0f) && !(b.flags & BATCH_SCROLL) ? 1 : 0;
+	}
 	// The heap (Old 3DS soak runs): KB in use now, the most used so far, the biggest block still to be had; zlib streams
 	// left open; whether the out-of-memory reserve is spent (1) or held (0)
 	else if (what == "heapused") v = (float)(mallinfo().uordblks / 1024);
@@ -2871,6 +2885,33 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	}
 	// SETWEATHER:<id>: this region's weather at once. CHANGEWEATHER:<region>:<id> and MODREGION:<region>:<c0,c1,..>
 	// are the script functions ('%' in the region stands for a space; a short list leaves the rest 0)
+	// MAPCELL:gx:gy:file: the player to that outdoor cell's middle, then (its neighbours loaded) the cell from above,
+	// as the local map draws it, saved to file (tools/convert/maprender.py: the world map baked from these)
+	// MAPSEEN:gx0:gy0:gx1:gy1: those outdoor cells explored on the world map (a shot of the map over towns not walked)
+	if (verb == "MAPSEEN" && a.size() >= 5)
+	{
+		for (int gy = atoi(a[2].c_str()); gy <= atoi(a[4].c_str()); gy++)
+			for (int gx = atoi(a[1].c_str()); gx <= atoi(a[3].c_str()); gx++)
+				w.mapCells.insert(w.mapCellKey(gx, gy));
+		return true;
+	}
+	if (verb == "MAPCELL" && a.size() >= 4)
+	{
+		int gx = atoi(a[1].c_str()), gy = atoi(a[2].c_str());
+		int ci = w.gridCell(gx, gy);
+		if (ci < 0)
+			return fail("MAPCELL: no cell " + a[1] + " " + a[2]);
+		float pos[3] = { gx * 8192.0f + 4096.0f, gy * 8192.0f + 4096.0f, 4000.0f };
+		s.teleportPlayer(ci, pos, 0.0f);
+		s.mapCellJob.gx = gx;
+		s.mapCellJob.gy = gy;
+		s.mapCellJob.path = a[3];
+		for (size_t k = 4; k < a.size(); k++)
+			s.mapCellJob.path += ":" + a[k];       // (the path's own colon, sdmc:/...)
+		s.mapCellJob.frames = 12;
+		s.mapCellJob.on = true;
+		return true;
+	}
 	if (verb == "SETWEATHER" && a.size() >= 2 && w.current >= 0)
 	{
 		w.setWeatherHere(atoi(a[1].c_str()));

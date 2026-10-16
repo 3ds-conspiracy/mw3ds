@@ -1,0 +1,20 @@
+# Controls > Look's Default sets the C-stick and D-pad look speed to 1.20x, a new player's speed (1.00x felt slow on
+# the console); the GoldenEye bars go back to 1.00x and Invert to off. (A scripted run starts at 1.00x whatever the
+# default, so the other cases keep their timing)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+1 0 0 0
+0.1 0 0 0 0 EXPECT:setting:lookspeed:eq:100
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 TAP:54:222
+0.5 0 0 0 0 EXPECT:screen:controls
+0.3 0 0 0 0 TAP:176:222
+0.5 0 0 0 0 EXPECT:screen:look
+0.3 0 0 0 0 LEFT
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 EXPECT:setting:lookspeed:eq:90+EXPECT:setting:geturn:eq:110
+0.3 0 0 0 0 TAP:95:222
+0.5 0 0 0 0 EXPECT:setting:lookspeed:eq:120+EXPECT:setting:geturn:eq:100+EXPECT:savedsetting:lookspeed:eq:120

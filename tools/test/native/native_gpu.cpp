@@ -43,6 +43,8 @@ static int drawMode()
 static bool drawOn() { return drawMode() != 0; }
 static bool s_drawThisFrame = false;
 static std::vector<std::string> s_pendingShots;
+static std::vector<std::pair<C3D_Tex*, std::string>> s_pendingTexShots;
+static bool writeTexShot(C3D_Tex* tex, const char* path);
 static bool drawFrame() { return drawMode() == 2 || (drawMode() == 1 && s_drawThisFrame); }
 
 // ---- render targets: RGBA (0xAABBGGRR, as C2D_Color32), rows top to bottom, and a depth buffer
@@ -584,6 +586,10 @@ void C3D_FrameEnd(u8)
 		if (!writeShot(path.c_str()))
 			logf("native gpu: could not write %s", path.c_str());
 	s_pendingShots.clear();
+	for (auto& ts : s_pendingTexShots)
+		if (!writeTexShot(ts.first, ts.second.c_str()))
+			logf("native gpu: could not write %s", ts.second.c_str());
+	s_pendingTexShots.clear();
 	s_drawThisFrame = false;
 }
 void C3D_FrameDrawOn(C3D_RenderTarget* t) { s_target = t; }
@@ -1309,12 +1315,12 @@ bool screenshotSave(const char* path)
 }
 
 // Both screens as 400 x 480 RGB rows, bottom row first (BMP order)
-static std::vector<u8> buildImage(const C3D_RenderTarget*& topOut)
+static std::vector<u8> buildImage(const C3D_RenderTarget*& topOut, int side = GFX_LEFT)
 {
 	const C3D_RenderTarget *top = nullptr, *bottom = nullptr;
 	for (auto* t : s_targets)
 	{
-		if (t->screen == GFX_TOP && t->side == GFX_LEFT)
+		if (t->screen == GFX_TOP && t->side == side)
 			top = t;
 		if (t->screen == GFX_BOTTOM)
 			bottom = t;
@@ -1347,6 +1353,59 @@ static void videoFrame()
 	const int kRow = 400 * 3;
 	for (int y = 479; y >= 0; y--)
 		fwrite(&img[y * kRow], kRow, 1, s_video);
+}
+
+// A render target texture's colour buffer as a 24-bit BMP (its rows as the target holds them, the top one first)
+static bool writeTexShot(C3D_Tex* tex, const char* path)
+{
+	const TexImage* ti = tex ? (const TexImage*)tex->native : nullptr;
+	const C3D_RenderTarget* t = ti ? ti->target : nullptr;
+	if (!t || t->w <= 0 || t->h <= 0)
+		return false;
+	const int row = (t->w * 3 + 3) & ~3;
+	std::vector<u8> img(row * t->h, 0);
+	for (int y = 0; y < t->h; y++)
+		for (int x = 0; x < t->w; x++)
+		{
+			u32 c = t->color[y * t->w + x];
+			u8* p = &img[(t->h - 1 - y) * row + x * 3];
+			p[0] = (c >> 16) & 255;
+			p[1] = (c >> 8) & 255;
+			p[2] = c & 255;
+		}
+	u8 header[54] = {};
+	auto put32 = [&](int at, u32 v) { for (int i = 0; i < 4; i++) header[at + i] = (v >> (i * 8)) & 255; };
+	header[0] = 'B';
+	header[1] = 'M';
+	put32(2, sizeof(header) + img.size());
+	put32(10, sizeof(header));
+	put32(14, 40);
+	put32(18, t->w);
+	put32(22, t->h);
+	header[26] = 1;
+	header[28] = 24;
+	FILE* f = fopen(path, "wb");
+	if (!f)
+		return false;
+	fwrite(header, 1, sizeof(header), f);
+	fwrite(img.data(), 1, img.size(), f);
+	fclose(f);
+	return true;
+}
+
+void screenshotDrawThisFrame()
+{
+	if (drawOn())
+		s_drawThisFrame = true;
+}
+
+bool screenshotSaveTexture(C3D_Tex* tex, const char* path)
+{
+	if (!drawOn() || !tex)
+		return false;
+	s_pendingTexShots.push_back({ tex, path });
+	s_drawThisFrame = true;
+	return true;
 }
 
 static bool writeShot(const char* path)
@@ -1383,6 +1442,21 @@ static bool writeShot(const char* path)
 	bool ok = f && fwrite(header, sizeof(header), 1, f) == 1 && fwrite(img.data(), img.size(), 1, f) == 1;
 	if (f)
 		fclose(f);
+	// In 3D the right eye as well, <name>_r.bmp, as the device's screenshot.cpp
+	if (ok && gfxIs3D())
+	{
+		const C3D_RenderTarget* right;
+		std::vector<u8> r = buildImage(right, GFX_RIGHT);
+		std::string rp = path;
+		size_t dot = rp.rfind('.');
+		rp.insert(dot == std::string::npos ? rp.size() : dot, "_r");
+		if (FILE* rf = right ? fopen(rp.c_str(), "wb") : nullptr)
+		{
+			fwrite(header, sizeof(header), 1, rf);
+			fwrite(r.data(), r.size(), 1, rf);
+			fclose(rf);
+		}
+	}
 	return ok;
 }
 
@@ -1394,7 +1468,7 @@ void rendererDrawMesh_sw(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 void rendererDrawMeshGlow_sw(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow);
 void rendererDrawActor_sw(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel);
 void rendererDrawGlow_sw(const float pos[3], float size, u32 rgba);
-bool rendererDrawLocalMap_sw(World& w, float minX, float minY, float size, float topZ, float depth);
+bool rendererDrawLocalMap_sw(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater);
 C3D_Tex* rendererLocalMap_sw();
 
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale)
@@ -1421,8 +1495,8 @@ void rendererDrawGlow(const float pos[3], float size, u32 rgba)
 	if (drawFrame())
 		rendererDrawGlow_sw(pos, size, rgba);
 }
-bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth)
+bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater)
 {
-	return drawFrame() && rendererDrawLocalMap_sw(w, minX, minY, size, topZ, depth);
+	return drawFrame() && rendererDrawLocalMap_sw(w, minX, minY, size, topZ, depth, opaqueWater);
 }
 C3D_Tex* rendererLocalMap() { return drawFrame() ? rendererLocalMap_sw() : nullptr; }

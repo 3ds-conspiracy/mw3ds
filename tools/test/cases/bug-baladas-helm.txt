@@ -1,0 +1,15 @@
+# Baladas Demnevanni wears only his robe and shoes for a new character. His inventory holds four picks from
+# l_m_enchantitem_telvanni_rank8, whose entries are all level 10 to 14; OpenMW picks an actor's leveled lists for the
+# player's level (getLevelledItem) and gives nothing from a list with no entry at or under it. The converter picked
+# them for his own level, 35, and he wore the enchanted Devil Cephalopod Helm, glowing. A Telvanni guard's plain
+# cephalopod_helm is in its own record: it stays (OpenMW shows it too)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Gnisis,_Arvs-Drelen
+2 0 0 0 0 TPIN:3720:4493:800:289
+0.3 0 0 0 0 EXPECT:refitem:baladas%demnevanni,devil%cephalopod%helm:eq:0
+0.1 0 0 0 0 EXPECT:refitem:baladas%demnevanni,expensive_robe_03:eq:1
+0.1 0 0 0 0 EXPECT:refglow:baladas%demnevanni:eq:0
+0.3 0 0 0 0 GOTO:Sadrith%Mora
+2 0 0 0 0 TP:152364:34880:900:180
+0.3 0 0 0 0 EXPECT:refitem:telvanni%guard,cephalopod_helm:eq:1

@@ -1,0 +1,12 @@
+# The water surface plays Morrowind's 32 frames of textures\water\water00..31 at 12 a second (Morrowind.ini [Water]:
+# SurfaceFrameCount, SurfaceFPS), as Morrowind and OpenMW animate it; one picture slid over the water looked still on
+# the console. The shots a quarter second apart show the ripples changing shape (the sea off Seyda Neen)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+0.3 0 0 0 0 TP:-14000:-86000:300:180
+4 0 0 0
+0.5 0 0 0 0 EXPECT:waterframes:eq:32
+0.3 0 0 0 0 HUD:off+POV:first+VMPOSE:off+CAM:-14000:-86000:300:180:-50
+0.25 0 0 0 0 SHOT
+0.25 0 0 0 0 SHOT
+0.25 0 0 0 0 SHOT

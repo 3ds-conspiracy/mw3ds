@@ -21,7 +21,8 @@ float audioDuration(const std::string& file);      // seconds, read from the hea
 float audioLoudness(int channel);                  // RMS 0..1 around the current play position
 
 // Loops the playlist, streaming from disk. Call audioUpdate() every frame.
-void audioMusicPlay(const std::vector<std::string>& files, float volume);
+// loop: start the list over at its end; false: silence after the last track (the main menu's title music, as OpenMW)
+void audioMusicPlay(const std::vector<std::string>& files, float volume, bool loop = true);
 // Options: overall effects (sounds and voices) and music volume, 0..1
 void audioSetScales(float effects, float music);
 void audioUpdate();

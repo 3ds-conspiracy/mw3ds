@@ -34,6 +34,7 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `dialogue.cpp` | voiced reactions (Hello, Attack, Hit, Flee, Thief ...) | `dialoguemanagerimp.cpp say`, `mwmechanics/actors.cpp` | partial (greetings in `npc-ai-behaviour.md`) |
 | `world.cpp` | disposition, faction reaction | `mechanicsmanagerimp.cpp getDerivedDisposition` | unchecked (persuasion checked) |
 | `world.cpp` | containers and NPC inventories filled, leveled lists, restock | `mwworld/containerstore.cpp fill / restock`, `mwmechanics/levelledlist.cpp` | unchecked |
+| `tools/convert/npcstats.py` | NPCs' leveled gear (worn and carried), picked at conversion | `mwmechanics/levelledlist.cpp getLevelledItem` | checked: the empty pick above the level; picked for level 1, differs (kept) (`world-rules.md` 1) |
 | `world.cpp` | corpses and containers respawning | `mwworld/cellstore.cpp respawn` | unchecked |
 | `world.cpp` | the crosshair pick: boxes with OpenMW's mesh pick approximated (a body among a plant's leaves wins over the plant) | `mwrender/renderingmanager.cpp castCameraToViewportRay` (meshes) | differs: boxes; `bug-body-in-plant` (2026-10-13) |
 | `playerbody.cpp` | third-person body in water and in the air: swimming groups the way they go, walk only while levitating | `character.cpp` movement states | checked 2026-10-13 (`bug-body-swims`, `bug-body-levitates`) |

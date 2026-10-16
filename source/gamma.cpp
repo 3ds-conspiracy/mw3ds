@@ -9,10 +9,11 @@ int g_autoGamma = -1;
 
 // Where the light reading ends: at or under kDimLux no lift, at or over kBrightLux kMaxLift, between them along log(lux).
 // Tuned from a New 3DS's own log: QTM read 27-61 lux in the dark, about 110 in a dim room and 1400-1900 in bright light
-// (it reads far lower than a light meter: 500 / 10000 left the lift at 1.15 in the brightest light it saw). The camera's
-// 0..255 mean has its own two ends, still guesses (internal plan: gamma.md)
+// (it reads far lower than a light meter: 500 / 10000 left the lift at 1.15 in the brightest light it saw). The full
+// lift comes at 1000, under the bright light it read, so a lit room already gets most of it. The camera's 0..255 mean
+// has its own two ends, still guesses (internal plan: gamma.md)
 static const float kMaxLift = 1.5f;
-static const float kDimLux = 200.0f, kBrightLux = 1500.0f;
+static const float kDimLux = 200.0f, kBrightLux = 1000.0f;
 static const float kDimLuma = 60.0f, kBrightLuma = 200.0f;
 static const float kMinGamma = 0.8f, kMaxGamma = 2.0f;
 static const float kPollSecs = 3.0f;             // QTM read this often

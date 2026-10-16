@@ -372,6 +372,7 @@ struct GameData
 	std::vector<std::pair<int, std::string>> skipChargenItems;  // starting past chargen: weapon, gold
 	std::unordered_map<std::string, std::vector<float>> townSpawns;   // lowercase town -> feet x y z, yaw
 	std::string waterSound;                                // looping shore ambience (sound id)
+	float waterFps = 12.0f;                                // the water surface's frames a second (Morrowind.ini [Water] SurfaceFPS)
 	MapDef map;
 	UiThemeDef ui;
 	std::unordered_map<std::string, std::vector<int>> refCells;   // object id scripts name -> cells holding it
@@ -391,10 +392,11 @@ struct GameData
 	const Topic* topic(const std::string& name) const;
 	std::string factionName(const std::string& id) const;
 	std::string rankName(const std::string& faction, int rank) const;
-	const std::string& cellLabel(const std::string& cell) const;        // a cell's name as shown (.cel), else its ID
-	const std::string& topicStandardForm(const std::string& phrase) const;   // .top: the topic a phrase form links to
-	const std::string& topicKeyword(const std::string& topic) const;   // .mrk: what names the topic in text
+	std::string cellLabel(const std::string& cell) const;        // a cell's name as shown (.cel), else its ID
+	std::string topicStandardForm(const std::string& phrase) const;   // .top: the topic a phrase form links to
+	std::string topicKeyword(const std::string& topic) const;   // .mrk: what names the topic in text
 };
 
 std::string lower(const std::string& s);
 bool gameLoad(GameData& game, const char* path);
+bool gameLoadUiTheme(const char* path, UiThemeDef& t);   // only game.json's "ui" (the startup, before the game loads)

@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <string>
 
 static const int kImgW = 400, kImgH = 480, kRowBytes = kImgW * 3;
 
@@ -38,9 +39,9 @@ static void readPixel(const u8* fb, GSPGPU_FramebufferFormat fmt, int x, int y, 
 	}
 }
 
-static void blitScreen(u8* img, gfxScreen_t screen, int w, int yOffset, int xOffset)
+static void blitScreen(u8* img, gfxScreen_t screen, int w, int yOffset, int xOffset, gfx3dSide_t side = GFX_LEFT)
 {
-	const u8* fb = gfxGetFramebuffer(screen, GFX_LEFT, nullptr, nullptr);
+	const u8* fb = gfxGetFramebuffer(screen, side, nullptr, nullptr);
 	GSPGPU_FramebufferFormat fmt = gfxGetScreenFormat(screen);
 	for (int y = 0; y < 240; y++)
 	{
@@ -78,6 +79,30 @@ bool screenshotSave(const char* path)
 	bool ok = f && fwrite(header, sizeof(header), 1, f) == 1 && fwrite(img, imgBytes, 1, f) == 1;
 	if (f)
 		fclose(f);
+	// In 3D the right eye's top screen as well, beside it as <name>_r.bmp (a picture in one eye only shows when the two
+	// are compared)
+	if (ok && gfxIs3D())
+	{
+		blitScreen(img, GFX_TOP, 400, 0, 0, GFX_RIGHT);
+		std::string right = path;
+		size_t dot = right.rfind('.');
+		right.insert(dot == std::string::npos ? right.size() : dot, "_r");
+		if (FILE* r = fopen(right.c_str(), "wb"))
+		{
+			fwrite(header, sizeof(header), 1, r);
+			fwrite(img, imgBytes, 1, r);
+			fclose(r);
+		}
+	}
 	free(img);
 	return ok;
+}
+
+bool screenshotSaveTexture(C3D_Tex*, const char*)
+{
+	return false;
+}
+
+void screenshotDrawThisFrame()
+{
 }

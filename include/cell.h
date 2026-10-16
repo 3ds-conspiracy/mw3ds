@@ -71,6 +71,8 @@ struct CellBatch
 	u32 stride = CELL_VERTEX_SIZE;
 	// Format 8: a looping flipbook (a world spray's sheet): frames, columns, rows, frames a second; 0 none
 	u8 flipFrames = 0, flipCols = 1, flipRows = 1, flipFps = 0;
+	// Format 9: the texture slides by this many repeats a second (a model's NiUVController: waterfalls); 0 none
+	float scrollU = 0.0f, scrollV = 0.0f;
 };
 
 struct __attribute__((packed)) CellActor

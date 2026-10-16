@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# The cell name under the HUD's minimap is the cell's. Without a translation (.cel) the label lookup answered with
+# a reference to its key, here a temporary copy of the cell's name, and the HUD kept that reference past the copy's
+# end: on the console the line under the map flashed through whatever words reused the memory, indoors above all
+# (long interior names live on the heap). The lookups now answer with a copy
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.1 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:hudcaption:eq:1
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+4 0 0 0
+0.1 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:hudcaption:eq:1
+0.3 0 0 0 0 GOTO:Balmora
+4 0 0 0
+0.1 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:hudcaption:eq:1

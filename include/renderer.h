@@ -47,6 +47,8 @@ void rendererSetActorLights(int count, const float pos[][3], const float radius[
 extern C3D_Tex* g_starTexture;
 // Enchanted items' shimmer: dataDir/art/magicitem/caust00..31.t3x, read once (without them a plain tint)
 void rendererLoadCaustics(const char* dataDir);
+void rendererLoadWaterFrames(const char* dataDir, float fps);   // Morrowind's water surface frames, played at fps
+int rendererWaterFrameCount();                                  // how many were loaded (0: the one scrolled picture)
 int rendererCausticFrames();                    // how many of them were read
 float rendererWaterScroll();                    // how fast water slides: texture repeats a second
 // rendererDrawMesh, with the shimmer of an enchantment in that colour (0xRRGGBB) over it; 0: none
@@ -78,7 +80,7 @@ void rendererViewAxes(float right[3], float up[3], float back[3]);
 // Local map: renders the loaded cells seen from above (x/y square from minX, minY, size units wide;
 // looking down from topZ through depth units) into a 256 x 256 texture. Inside a frame, before the
 // screens are drawn. The texture: rendererLocalMap() (nullptr until the first render).
-bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth);
+bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater = false);
 C3D_Tex* rendererLocalMap();
 
 // Day and night outdoors: tint on the baked light, the sky's tint and the fog / clear colour (0..1)

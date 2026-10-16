@@ -74,7 +74,8 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
         # --old3ds: the game is told it runs on an Old 3DS (its O3DS profile: view, budgets, frame cap)
         env["NATIVE_OLD3DS"] = "1" if old3ds else "0"
         # The software GPU (tools/test/native/native_gpu.cpp) only when something will be looked at: it is slower
-        env["NATIVE_DRAW"] = "1" if draw or any(SHOT_STEP.search(ln) for ln in inputs) else "0"
+        # (a MAPCELL step saves a picture too: the cell from above, tools/convert/maprender.py)
+        env["NATIVE_DRAW"] = "1" if draw or any(SHOT_STEP.search(ln) or "MAPCELL:" in ln for ln in inputs) else "0"
         exe_path = str((ROOT / exe).resolve()) if exe else str(ROOT / mwtools.NATIVE_EXE)
         proc = subprocess.Popen([exe_path], cwd=ROOT, env=env, creationflags=mwtools.hidden_flags(),
                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

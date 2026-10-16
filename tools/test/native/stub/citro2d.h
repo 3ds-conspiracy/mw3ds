@@ -28,6 +28,11 @@ inline void C2D_PlainImageTint(C2D_ImageTint* t, u32 color, float blend)
 	for (auto& c : t->corners)
 		c = { color, blend };
 }
+// (citro2d's: the texture's own colour, its alpha times this one)
+inline void C2D_AlphaImageTint(C2D_ImageTint* t, float alpha)
+{
+	C2D_PlainImageTint(t, C2D_Color32(0, 0, 0, (u32)(alpha * 255.0f + 0.5f)), 0.0f);
+}
 inline C2D_TextBuf C2D_TextBufNew(size_t) { static C2D_TextBuf_s b; return &b; }
 inline void C2D_TextBufDelete(C2D_TextBuf) {}
 inline void C2D_TextBufClear(C2D_TextBuf) {}

@@ -28,6 +28,14 @@ flag, it is rolled once per unit (each roll gives 1 item); otherwise it is rolle
 whole count (the nested pick is never top level, so *each* applies only to the line itself). A negative count keeps
 its sign through the leveled pick. The new items take the container's owner (a plain container has none).
 
+**What NPCs and creatures carry and wear** (differs, kept). OpenMW fills an actor's inventory by the same pick, for
+the player's level when the actor's cell first loads, and the NPC wears the best of what came. The 3DS bakes each
+NPC's look (its worn pieces are part of its converted model), so the converter picks an actor's lists once, for a new
+character (`npcstats.py PICK_LEVEL`, level 1), and the inventory is that same pick: what they wear and what they carry
+agree. A list with every entry above level 1 gives nothing, as `getLevelledItem` does (step 4): Baladas Demnevanni's
+four picks from `l_m_enchantitem_telvanni_rank8` (levels 10 to 14) gave him the Devil Cephalopod Helm when the
+converter picked for his own level, 35. Cost: a high-level player meets actors with a new character's gear.
+
 **When a container is filled.** A container is unresolved until something touches it (open, take, put, script
 reads); then `resolve` fills it from the record, once. Content already there is zeroed first. The generator seed is
 stored with the container, so a saved, unmodified container refills the same way. Anything the player changed

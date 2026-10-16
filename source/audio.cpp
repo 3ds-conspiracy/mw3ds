@@ -94,6 +94,7 @@ static ndspWaveBuf s_streamBuf[kStreamBufs];
 static FILE* s_musicFile = nullptr;
 static std::vector<std::string> s_playlist;
 static size_t s_track = 0;
+static bool s_musicLoop = true;       // audioMusicPlay's loop
 static bool s_musicAdpcm = false;
 static u32 s_musicLeft = 0;
 static AdpcmState s_musicState;
@@ -369,7 +370,7 @@ static u32 s_musicRateSet = 0, s_musicFileRate = 0;
 
 static bool openTrack()
 {
-	if (s_playlist.empty())
+	if (s_playlist.empty() || (!s_musicLoop && s_track >= s_playlist.size()))
 		return false;
 	MarkScope mark("music open");
 	for (size_t tries = 0; tries < s_playlist.size(); tries++)
@@ -402,7 +403,13 @@ static bool fillStream(int i)
 	while (got < kStreamSamples)
 	{
 		if (!s_musicFile && !openTrack())
-			return false;
+		{
+			// the list is over (played once): the track's last samples go out, the rest of the buffer silent
+			if (!got)
+				return false;
+			memset(s_streamData[i] + got, 0, (kStreamSamples - got) * 2);
+			break;
+		}
 		if (s_musicAdpcm)
 		{
 			u32 n = kStreamSamples - got < s_musicLeft ? kStreamSamples - got : s_musicLeft;
@@ -448,12 +455,13 @@ void audioSetScales(float effects, float music)
 		setMix(kMusicChannel, s_musicVolume, 0.0f);
 }
 
-void audioMusicPlay(const std::vector<std::string>& files, float volume)
+void audioMusicPlay(const std::vector<std::string>& files, float volume, bool loop)
 {
 	if (!s_enabled || files.empty())
 		return;
 	s_playlist = files;
 	s_track = 0;
+	s_musicLoop = loop;
 	s_musicVolume = volume;
 	// The reset puts the channel back to the DSP's own rate (32728 Hz); only opening a track sets the
 	// file's (22050). A track left open mid-stream would carry on at the wrong rate (1.5x fast after a

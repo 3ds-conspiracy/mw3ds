@@ -62,9 +62,15 @@ static C3D_Tex s_fogRamp;
 static void initFogRamp();
 static C3D_Tex s_localTex;                        // local map (rendererDrawLocalMap)
 static C3D_RenderTarget* s_localTarget = nullptr;
+static C3D_Tex s_water[64];                       // the water surface's frames (rendererLoadWaterFrames)
+static int s_waterCount = 0;
+static float s_waterFps = 12.0f;
+static const float kCaustFps = 20.0f;
+static const float kCaustTiles = 2.0f;           // the 32 x 32 frame repeated twice across the item's texture
 static C3D_Tex s_caust[32];                       // enchanted items' shimmer frames (rendererLoadCaustics)
 static int s_caustCount = 0;
 static void drawShimmer(CellBatch b, u32 rgb);
+static void shimmerStage(u32 rgb);
 
 static const float kFovY = 60.0f;
 static const float kNear = 5.0f;
@@ -124,6 +130,9 @@ void rendererExit()
 	for (int i = 0; i < s_caustCount; i++)
 		C3D_TexDelete(&s_caust[i]);
 	s_caustCount = 0;
+	for (int i = 0; i < s_waterCount; i++)
+		C3D_TexDelete(&s_water[i]);
+	s_waterCount = 0;
 	shaderProgramFree(&s_program);
 	DVLB_Free(s_dvlb);
 	shaderProgramFree(&s_skinProgram);
@@ -324,6 +333,8 @@ static void setUvOffset(float u, float v)
 static const int kFogRampWidth = 64;
 static bool s_fogOn = false;
 static int s_spritesLeft = 0;          // this frame's particle sprites still to draw (g_profile.spriteBudget)
+static int s_spriteSlot = 0;           // where the frame's next sprite vertices go in rendererDrawSprites' ring
+static bool s_opaqueWater = false;     // rendererDrawLocalMap's opaqueWater, while it draws
 static int s_spritesAsked = 0, s_spritesDrawn = 0;      // this view's so far: wanted, and drawn within the budget
 static int s_spritesAskedLast = 0, s_spritesDrawnLast = 0;
 static float s_spritesWanted = 0, s_spritesWantedLast = 0;   // every visual's live particles, each weighted by nearness
@@ -483,7 +494,7 @@ static C3D_Tex* batchTexture(Cell& cell, const CellBatch& b)
 
 // The last render state set, so consecutive draws with the same state skip re-setting it (each
 // citro3d state call re-sends GPU commands). Anything else that touches state invalidates it.
-static struct { bool valid; C3D_Tex* tex; u8 flags, alphaRef; int mode; } s_last;
+static struct { bool valid; C3D_Tex* tex; u8 flags, alphaRef; int mode; float scrollU, scrollV; } s_last;
 
 static void invalidateState()
 {
@@ -520,9 +531,9 @@ static void glowStage(u32 glow)
 static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 {
 	if (s_last.valid && s_last.tex == tex && s_last.flags == b.flags && s_last.alphaRef == b.alphaRef
-		&& s_last.mode == mode)
+		&& s_last.mode == mode && s_last.scrollU == b.scrollU && s_last.scrollV == b.scrollV)
 		return;
-	s_last = { true, tex, b.flags, b.alphaRef, (int)mode };
+	s_last = { true, tex, b.flags, b.alphaRef, (int)mode, b.scrollU, b.scrollV };
 	if (b.flags & BATCH_BLEND)
 	{
 		GPU_BLENDFACTOR dst = (b.flags & BATCH_ADDITIVE) ? GPU_ONE : GPU_ONE_MINUS_SRC_ALPHA;
@@ -545,6 +556,13 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 		int f = (int)(time * b.flipFps) % b.flipFrames;
 		setUvOffset((float)(f % b.flipCols) / b.flipCols, -(float)(f / b.flipCols) / b.flipRows);
 	}
+	else if (b.scrollU != 0.0f || b.scrollV != 0.0f)
+	{
+		// A model's own sliding texture (NiUVController: a waterfall's water falling), repeats a second
+		setUvOffset(fmodf(time * b.scrollU, 1.0f), fmodf(time * b.scrollV, 1.0f));
+	}
+	else if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && s_waterCount)
+		setUvOffset(0.0f, 0.0f);             // (the water's frames move it: drawBatchTex picks the frame)
 	else if (b.flags & BATCH_SCROLL)
 	{
 		// Clouds drift slowly overhead; water moves faster (Morrowind plays 32 pictures of it at 12 a second, here one
@@ -639,6 +657,10 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 		g_skippedDraws++;
 		return;
 	}
+	// Water plays Morrowind's surface frames ([Water] SurfaceTexture, SurfaceFrameCount at SurfaceFPS, as OpenMW's
+	// simple water): the ripples change shape. One picture sliding looked still on the console
+	if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && s_waterCount)
+		tex = &s_water[(int)(fmaxf(0.0f, time) * s_waterFps) % s_waterCount];
 	if (s_worldBounds && s_moreWanted && s_bMoreLights >= 0)
 	{
 		// People's torches light only what lies within their radius (the light falls to nothing there): a batch
@@ -666,7 +688,15 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 		s_worldCount++;
 		s_torchLitCount += s_moreOn;
 	}
-	setBatchState(tex, b, mode, time);
+	// (the world map's baked cells: the sea drawn opaque, one even sea whatever lies under it)
+	if (s_opaqueWater && (b.flags & BATCH_SCROLL) && mode != DRAW_SKY)
+	{
+		CellBatch flat = b;
+		flat.flags &= ~(BATCH_BLEND | BATCH_ADDITIVE);
+		setBatchState(tex, flat, mode, time);
+	}
+	else
+		setBatchState(tex, b, mode, time);
 	if (s_uvOverrideOn)
 		setUvOffset(s_uvOverride[0], s_uvOverride[1]);
 	bindVertexFormat(b);
@@ -745,12 +775,29 @@ static int drawSkinQueue(float time)
 		C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 		BufInfo_Init(bufInfo);
 		BufInfo_Add(bufInfo, m.verts, 24, 5, 0x43210);
-		if (m.glow)
+		bool flat = m.glow && !s_caustCount;
+		if (flat)
 			glowStage(m.glow);
 		C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
-		if (m.glow)
+		if (flat)
 			glowStage(0);
 		draws++;
+		if (m.glow && s_caustCount)
+		{
+			// Enchanted armour and clothing shimmer as OpenMW's glow does: the caustic frames in the enchantment's
+			// colour added over the item (a second pass, as for a weapon). The colour added flat over the whole item
+			// turned a dark one solid blue (the Devil Cephalopod Helm on Baladas Demnevanni)
+			CellBatch sb = b;
+			sb.flags = (b.flags & BATCH_TWO_SIDED) | BATCH_BLEND | BATCH_ADDITIVE | BATCH_DECAL;
+			sb.alphaRef = 0;
+			setBatchState(&s_caust[(int)(time * kCaustFps) % s_caustCount], sb, DRAW_WORLD, time);
+			C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uUvScale, m.uvQ * kCaustTiles, m.uvQ * kCaustTiles, 1.0f, 1.0f);
+			shimmerStage(m.glow);
+			C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
+			C3D_TexEnvInit(C3D_GetTexEnv(2));
+			invalidateState();
+			draws++;
+		}
 	}
 	s_skinQueue.clear();
 	C3D_BindProgram(&s_program);
@@ -784,11 +831,17 @@ static int drawBlendQueue(float time)
 		{
 			const ActorMesh& m = *bd.mesh;
 			CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
-			if (m.glow)
-				glowStage(m.glow);         // (enchanted armour and clothing)
+			bool flat = m.glow && !s_caustCount;
+			if (flat)
+				glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)
 			drawBatch(*bd.cell, b, DRAW_WORLD, time);
-			if (m.glow)
+			if (flat)
 				glowStage(0);
+			else if (m.glow)
+			{
+				drawShimmer(b, m.glow);
+				draws++;
+			}
 			if (bd.shimmer)
 			{
 				drawShimmer(b, bd.shimmer);
@@ -1008,7 +1061,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	s_mvValid = false;
 	s_time = time;
 	if (!secondEye)
+	{
 		s_glowCount = 0;              // the second eye's glows get their own vertices
+		s_spriteSlot = 0;             // (the frame's sprites from the ring's start: both eyes' fit it whole)
+	}
 
 	int draws = 0;
 	disableFog();
@@ -1280,11 +1336,18 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					else
 						setModelView(placeMv);
 					CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
-					if (m.glow)
-						glowStage(m.glow);         // (enchanted armour and clothing)
+					bool flat = m.glow && !s_caustCount;
+					if (flat)
+						glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)
 					drawBatch(l->cell, b, DRAW_WORLD, time);
-					if (m.glow)
+					if (flat)
 						glowStage(0);
+					else if (m.glow)
+					{
+						// (shimmering as a weapon does: the caustic frames added over it, not a colour over all of it)
+						drawShimmer(b, m.glow);
+						draws++;
+					}
 					draws++;
 					// their weapon, enchanted, shimmers
 					const Ref& ar = w.refs[a.ref];
@@ -1330,7 +1393,7 @@ C3D_Tex* rendererLocalMap()
 	return s_localTarget ? &s_localTex : nullptr;
 }
 
-bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth)
+bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater)
 {
 	setLight(nullptr);
 	if (!s_localTarget)
@@ -1359,9 +1422,11 @@ bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float to
 	Mtx_Translate(&view, 0.0f, 0.0f, -topZ, true);
 	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uProjection, &projection);
 	setModelView(view);
+	s_opaqueWater = opaqueWater;
 	for (int pass = 0; pass < 3; pass++)
 		for (LoadedCell* l : w.loaded)
 			drawBatches(l->cell, l->cell.batches, pass, nullptr, w.time);
+	s_opaqueWater = false;
 	setUvOffset(0.0f, 0.0f);
 	invalidateState();
 	s_mvValid = false;
@@ -1386,8 +1451,31 @@ void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 // added in the colour of its enchantment's first effect (OpenMW's addEnchantedGlow; it maps them by the view,
 // here by the item's own texture coordinates)
 
-static const float kCaustFps = 20.0f;
-static const float kCaustTiles = 2.0f;           // the 32 x 32 frame repeated twice across the item's texture
+
+// The water surface's frames (art/water/waterNN.t3x, the converter's from Morrowind.ini [Water]) and their rate
+int rendererWaterFrameCount()
+{
+	return s_waterCount;
+}
+
+void rendererLoadWaterFrames(const char* dataDir, float fps)
+{
+	if (fps > 0.0f)
+		s_waterFps = fps;
+	if (s_waterCount)
+		return;
+	for (int i = 0; i < 64; i++)
+	{
+		char path[256];
+		snprintf(path, sizeof(path), "%s/art/water/water%02d.t3x", dataDir, i);
+		if (!texImportFile(&s_water[i], path))
+			break;
+		C3D_TexSetFilter(&s_water[i], GPU_LINEAR, GPU_LINEAR);
+		C3D_TexSetWrap(&s_water[i], GPU_REPEAT, GPU_REPEAT);
+		s_waterCount = i + 1;
+	}
+	logf("renderer: %d water frames at %.0f a second", s_waterCount, s_waterFps);
+}
 
 void rendererLoadCaustics(const char* dataDir)
 {
@@ -1412,12 +1500,8 @@ int rendererCausticFrames()
 
 // The second pass over an enchanted batch, under the model view already set: the current frame x the colour
 // (0xRRGGBB), added on the same surface
-static void drawShimmer(CellBatch b, u32 rgb)
+static void shimmerStage(u32 rgb)
 {
-	b.flags = (b.flags & BATCH_TWO_SIDED) | BATCH_BLEND | BATCH_ADDITIVE | BATCH_DECAL;
-	b.alphaRef = 0;
-	b.uvScale[0] *= kCaustTiles;
-	b.uvScale[1] *= kCaustTiles;
 	// stage 2: texture x colour, replacing the lit texture and the fog of stages 0 and 1 (alpha 1: added whole)
 	C3D_TexEnv* env = C3D_GetTexEnv(2);
 	C3D_TexEnvInit(env);
@@ -1426,6 +1510,15 @@ static void drawShimmer(CellBatch b, u32 rgb)
 	C3D_TexEnvSrc(env, C3D_Alpha, GPU_CONSTANT);
 	C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
 	C3D_TexEnvColor(env, 0xFF000000 | ((rgb & 255) << 16) | (rgb & 0xFF00) | ((rgb >> 16) & 255));
+}
+
+static void drawShimmer(CellBatch b, u32 rgb)
+{
+	b.flags = (b.flags & BATCH_TWO_SIDED) | BATCH_BLEND | BATCH_ADDITIVE | BATCH_DECAL;
+	b.alphaRef = 0;
+	b.uvScale[0] *= kCaustTiles;
+	b.uvScale[1] *= kCaustTiles;
+	shimmerStage(rgb);
 	drawBatchTex(&s_caust[(int)(s_time * kCaustFps) % s_caustCount], b, DRAW_WORLD, s_time);
 	C3D_TexEnvInit(C3D_GetTexEnv(2));
 }
@@ -1542,7 +1635,6 @@ void rendererDrawSprites(const float* pos, const float* half, int n, C3D_Tex* te
 	static const int kRing = 2 * g_profile.spriteBudgetMax;   // all a frame's, both eyes, at the most the budget gets
 	static u8* ring = nullptr;
 	static u16* indices = nullptr;
-	static int slot = 0;
 	if (!ring)
 	{
 		ring = (u8*)lockedLinearAlloc(kRing * 4 * 24);
@@ -1560,10 +1652,16 @@ void rendererDrawSprites(const float* pos, const float* half, int n, C3D_Tex* te
 	n = std::min(n, kMaxPerDraw);
 	if (!ring || n <= 0)
 		return;
-	if (slot + n > kRing)
-		slot = 0;
-	u8* v = ring + slot * 4 * 24;
-	slot += n;
+	// The GPU reads every eye's sprites after the frame is built: a ring that wrapped within the frame wrote the right
+	// eye's over the left eye's, and the left eye showed other particles' quads (the frame starts the ring at 0, and two
+	// eyes' budgets fill it at most)
+	if (s_spriteSlot + n > kRing)
+	{
+		monitorOnce("sprite ring", "the sprite ring is full (%d of %d quads this frame): sprites dropped", s_spriteSlot, kRing);
+		return;
+	}
+	u8* v = ring + s_spriteSlot * 4 * 24;
+	s_spriteSlot += n;
 	float right[3] = { s_view.r[0].x, s_view.r[0].y, s_view.r[0].z };
 	float up[3] = { s_view.r[1].x, s_view.r[1].y, s_view.r[1].z };
 	static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };

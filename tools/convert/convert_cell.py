@@ -200,6 +200,10 @@ def write_batches(f, batches):
         # texture by a cell each 1 / rate s (a world spray's sheet, particles.loop_flipbook)
         flip = b.get("flip")
         f.write(struct.pack("<4B", *(flip[:3] + (int(flip[3]),)) if flip else (0, 0, 0, 0)))
+        # Format 9: s16 u, v the texture slides by, 1/256 repeat a second (a model's NiUVController; 0 none). V turns
+        # over with the coordinates (DirectX V down, PICA V up)
+        su, sv = b.get("scroll") or (0.0, 0.0)
+        f.write(struct.pack("<2h", int(np.clip(round(su * 256), -32767, 32767)), int(np.clip(round(-sv * 256), -32767, 32767))))
         q = np.zeros(len(v), dtype=[("pos", "<i2", 4), ("uv", "<i2", 2), ("color", "u1", 4)])
         q["pos"][:, :3] = np.clip(np.round((p - offset) / scale), -32767, 32767)
         q["uv"] = np.clip(np.round(v["uv"] / uv_scale), -32767, 32767)
@@ -271,6 +275,7 @@ def write_cell(path, info, textures, batches, collision, actors, door_meshes, sk
          flags: 1 blend, 2 alpha test, 4 two-sided, 8 clamp, 16 additive,
                 32 decal (coplanar overlay: equal depth passes, no depth write), 64 scrolling UVs,
                 128 rising UVs (smoke, steam)
+         format 8: u8 flipbook frames, columns, rows, frames a second; format 9: s16 scroll u, v (1/256 repeat a second)
        collision (see write_collision): u32 num_vertices, f32 offset[3], f32 scale[3], s16 pos[3]... (pad 4),
          u32 num_triangles, u32 widths (byte 0 triangle index bytes, byte 1 grid list bytes: 2 or 4),
          idx[3]... (pad 4), f32 grid_origin[2], f32 grid_cell, u32 nx, u32 ny, u32 cell_start[nx*ny+1],
@@ -283,7 +288,7 @@ def write_cell(path, info, textures, batches, collision, actors, door_meshes, sk
     flags = (CELL_INTERIOR if info["interior"] else 0) | (CELL_WATER if info["water"] else 0) \
         | (CELL_SKY if sky else 0)
     with open(path, "wb") as f:
-        f.write(b"MWC1" + struct.pack("<II", 8, flags))
+        f.write(b"MWC1" + struct.pack("<II", 9, flags))
         f.write(struct.pack("<5f", *info["spawn"], info["yaw"], 0.0))
         f.write(bytes(info["ambient"]) + bytes(info["fog"]) + struct.pack("<f", info["fog_density"]))
         f.write(struct.pack("<3f", info["fog_start"], info["fog_end"], info["water_z"]))
@@ -332,6 +337,7 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None):
     for key in sorted(groups, key=order):
         tex, flags, alpha_ref = key[:3]
         max_dist = key[4] if len(key) > 4 else 0
+        scroll = key[5] if len(key) > 5 else (0.0, 0.0)
         # (a looping flipbook's frames, columns, rows and rate: every spray in the batch shares its sheet)
         loop = next((s["loop"][2] for s in groups[key] if s.get("loop")), None)
         cur_v, cur_i, base, first = [], [], 0, 0
@@ -340,7 +346,7 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None):
             if base + n > 65535 and cur_v:
                 batches.append({"verts": np.concatenate(cur_v), "idx": np.concatenate(cur_i),
                                 "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
-                                "max_dist": max_dist, "flip": loop})
+                                "max_dist": max_dist, "flip": loop, "scroll": scroll})
                 cur_v, cur_i, base, first = [], [], 0, 0
             v = np.zeros(n, dtype=VERTEX)
             v["pos"] = s["local_pos"] if "local_pos" in s else s["pos"]
@@ -355,7 +361,7 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None):
         if cur_v:
             batches.append({"verts": np.concatenate(cur_v), "idx": np.concatenate(cur_i),
                             "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
-                            "max_dist": max_dist, "flip": loop})
+                            "max_dist": max_dist, "flip": loop, "scroll": scroll})
     return batches
 
 
@@ -583,7 +589,7 @@ class Converter:
         tools = Path(__file__).parent
         code = b"".join((tools / f).read_bytes() for f in ("convert_cell.py", "meshes.py", "nif.py", "actors.py",
                         "npc.py", "creature.py", "terrain.py", "textures.py", "mwfiles.py",
-                        "particles.py"))
+                        "particles.py", "npcstats.py"))
         # (and the mod folders laid over Data Files: another overlay is other meshes; and the plugins: a plugin's
         # record can give an object another mesh without touching the cell)
         code += ";".join(str(d) for d in OVERLAYS).encode() + content_key().encode()
@@ -857,7 +863,9 @@ class Converter:
                 detail = detail_distance(float(np.linalg.norm(p.max(0) - p.min(0))))
             for s in shapes:
                 s["ref"] = ri if rec.tag != "STAT" else None
-                groups.setdefault((s["tex"], s["flags"], s["alpha_ref"], chunk_of(s), detail), []).append(s)
+                # (a sliding texture keeps its own batch: the rate is the batch's)
+                groups.setdefault((s["tex"], s["flags"], s["alpha_ref"], chunk_of(s), detail, s.get("scroll") or (0.0, 0.0)),
+                                  []).append(s)
 
         sky = []
         if not env["interior"]:

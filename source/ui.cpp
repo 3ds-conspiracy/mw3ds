@@ -110,6 +110,11 @@ static void artEvict(u64 now)
 			++it;
 }
 
+void uiArtDir(const char* dataDir)
+{
+	s_artDir = dataDir;
+}
+
 bool uiArt(const std::string& file, int w, int h, float x, float y, float dw, float dh)
 {
 	u64 now = osGetTime();

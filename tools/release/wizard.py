@@ -279,8 +279,9 @@ class Wizard:
         row += 1
 
         self.mods = tk.BooleanVar(value=self.settings.get("mods", True))
-        ttk.Checkbutton(f, text="Use the optimization mods (Morrowind Optimization Patch, Project Atlas): faster "
-                                "on the 3DS.", variable=self.mods).grid(row=row, column=1, columnspan=2, sticky="w", **pad)
+        ttk.Checkbutton(f, text="Use the optimization mods: faster on the 3DS (Morrowind Optimization Patch; "
+                                "Project Atlas too for the Old 3DS).", variable=self.mods).grid(row=row, column=1,
+                                                                                            columnspan=2, sticky="w", **pad)
         row += 1
         ttk.Label(f, text="Downloaded from their own pages the first time (about 550 MB).", foreground="#555").grid(
             row=row, column=1, columnspan=2, sticky="w", padx=28)

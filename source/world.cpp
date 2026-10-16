@@ -2282,6 +2282,37 @@ void World::streamExterior(bool all)
 	}
 }
 
+// The neighbouring exterior cells within `reach` of a point, loaded now rather than on the streaming thread; returns
+// how many. For an arrival behind the loading screen whose ground is another cell's: the Gnisis silt strider stop
+// stands 650 units from the cell to the north, whose rock the player lands on, and on the console that cell streamed
+// in a moment after the player had fallen through to the gully below
+int World::loadCellsNear(const float pos[3], float reach)
+{
+	if (current < 0 || cells[current].interior)
+		return 0;
+	const LevelCell& c = cells[current];
+	int n = 0;
+	for (int dy = -1; dy <= 1; dy++)
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			int ci = gridCell(c.gx + dx, c.gy + dy);
+			if (ci < 0 || cells[ci].live)
+				continue;
+			float x0 = cells[ci].gx * 8192.0f, y0 = cells[ci].gy * 8192.0f;
+			float ox = fmaxf(fmaxf(x0 - pos[0], pos[0] - (x0 + 8192.0f)), 0.0f);
+			float oy = fmaxf(fmaxf(y0 - pos[1], pos[1] - (y0 + 8192.0f)), 0.0f);
+			if (ox * ox + oy * oy > reach * reach)
+				continue;
+			finishStreamJob(*this, true);
+			if (!cells[ci].live && loadLevelCell(*this, ci))
+			{
+				logf("world: %s loaded with the arrival (its ground is %.0f units away)", cells[ci].file.c_str(), sqrtf(ox * ox + oy * oy));
+				n++;
+			}
+		}
+	return n;
+}
+
 void World::retryMissingTextures(float dt)
 {
 	// Textures a loaded cell couldn't read (linear memory full when it loaded) are tried again every few seconds:

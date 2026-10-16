@@ -242,15 +242,17 @@ std::string GameData::gmst(const char* name, const char* fallback) const
 	return it == gmstText.end() ? fallback : it->second;
 }
 
-static const std::string& lookupOr(const std::unordered_map<std::string, std::string>& m, const std::string& key)
+// (a copy, not a reference: without a translation the answer is the key, often a temporary the caller made, and a
+// reference to it outlived it; the HUD's cell name under the map read freed memory and flashed through other words)
+static std::string lookupOr(const std::unordered_map<std::string, std::string>& m, const std::string& key)
 {
 	auto it = m.find(key);
 	return it == m.end() ? key : it->second;
 }
 
-const std::string& GameData::cellLabel(const std::string& cell) const { return lookupOr(cellNames, cell); }
-const std::string& GameData::topicStandardForm(const std::string& phrase) const { return lookupOr(phraseForms, phrase); }
-const std::string& GameData::topicKeyword(const std::string& topic) const { return lookupOr(topicKeywords, topic); }
+std::string GameData::cellLabel(const std::string& cell) const { return lookupOr(cellNames, cell); }
+std::string GameData::topicStandardForm(const std::string& phrase) const { return lookupOr(phraseForms, phrase); }
+std::string GameData::topicKeyword(const std::string& topic) const { return lookupOr(topicKeywords, topic); }
 
 // Interface words come from the game's own strings, as Morrowind's menus take them (a translated
 // Morrowind.esm carries its language here); some hold a space at an edge (sMap "Map ", sStats "Stats ")
@@ -617,6 +619,48 @@ static void storeTexts(const cJSON* root)
 	sectionDone();
 }
 
+// The interface's look ("ui": the font, the frames' atlas, the icon pages, the colours)
+static void parseUiTheme(const cJSON* ui, UiThemeDef& t)
+{
+	if (const cJSON* ic = cJSON_GetObjectItem(ui, "icons"))
+	{
+		t.iconSize = num(ic, "size", 32);
+		t.iconPage = num(ic, "page", 256);
+		const cJSON* p;
+		cJSON_ArrayForEach(p, arr(ic, "pages"))
+			t.iconPages.emplace_back(str(p, "file"), (int)num(p, "height"));
+	}
+	if (const cJSON* a = cJSON_GetObjectItem(ui, "atlas"))
+	{
+		t.atlasFile = str(a, "file");
+		t.atlasW = num(a, "width"); t.atlasH = num(a, "height");
+		const cJSON* p;
+		cJSON_ArrayForEach(p, cJSON_GetObjectItem(a, "pieces"))
+		{
+			auto v = [&](int k) { const cJSON* e = cJSON_GetArrayItem(p, k); return e ? (u16)e->valueint : (u16)0; };
+			t.pieces[p->string] = { v(0), v(1), v(2), v(3) };
+		}
+	}
+	if (const cJSON* f = cJSON_GetObjectItem(ui, "font"))
+	{
+		t.fontFile = str(f, "file");
+		t.fontW = num(f, "width"); t.fontH = num(f, "height");
+		t.fontLine = num(f, "line");
+		const cJSON* gl;
+		cJSON_ArrayForEach(gl, cJSON_GetObjectItem(f, "glyphs"))
+		{
+			auto v = [&](int k) { const cJSON* e = cJSON_GetArrayItem(gl, k); return e ? (float)e->valuedouble : 0.0f; };
+			t.glyphs[(u32)strtoul(gl->string, nullptr, 10)] = { (u16)v(0), (u16)v(1), (u16)v(2), (u16)v(3), v(4), v(5), v(6) };
+		}
+	}
+	const cJSON* c;
+	cJSON_ArrayForEach(c, cJSON_GetObjectItem(ui, "colors"))
+	{
+		auto v = [&](int k) { const cJSON* e = cJSON_GetArrayItem(c, k); return e ? (u32)(e->valueint & 255) : 0u; };
+		t.colors[c->string] = 0xFF000000u | (v(2) << 16) | (v(1) << 8) | v(0);
+	}
+}
+
 bool gameLoad(GameData& g, const char* path)
 {
 	g_gameGeneration++;
@@ -946,6 +990,8 @@ bool gameLoad(GameData& g, const char* path)
 				(k ? g.skipChargenItems : g.startItems).emplace_back(cJSON_GetArrayItem(it, 0)->valueint, lower(id->valuestring));
 		}
 	g.waterSound = str(cJSON_GetObjectItem(root, "ambient"), "water");
+	if (const cJSON* wf = cJSON_GetObjectItem(root, "water_fps"))
+		g.waterFps = (float)wf->valuedouble;
 	forSection(root, "ref_cells", [&](const cJSON* it0) {
 		const cJSON* c;
 		cJSON_ArrayForEach(c, it0)
@@ -979,46 +1025,7 @@ bool gameLoad(GameData& g, const char* path)
 	}
 
 	if (const cJSON* ui = section(root, "ui"))
-	{
-		UiThemeDef& t = g.ui;
-		if (const cJSON* ic = cJSON_GetObjectItem(ui, "icons"))
-		{
-			t.iconSize = num(ic, "size", 32);
-			t.iconPage = num(ic, "page", 256);
-			const cJSON* p;
-			cJSON_ArrayForEach(p, arr(ic, "pages"))
-				t.iconPages.emplace_back(str(p, "file"), (int)num(p, "height"));
-		}
-		if (const cJSON* a = cJSON_GetObjectItem(ui, "atlas"))
-		{
-			t.atlasFile = str(a, "file");
-			t.atlasW = num(a, "width"); t.atlasH = num(a, "height");
-			const cJSON* p;
-			cJSON_ArrayForEach(p, cJSON_GetObjectItem(a, "pieces"))
-			{
-				auto v = [&](int k) { const cJSON* e = cJSON_GetArrayItem(p, k); return e ? (u16)e->valueint : (u16)0; };
-				t.pieces[p->string] = { v(0), v(1), v(2), v(3) };
-			}
-		}
-		if (const cJSON* f = cJSON_GetObjectItem(ui, "font"))
-		{
-			t.fontFile = str(f, "file");
-			t.fontW = num(f, "width"); t.fontH = num(f, "height");
-			t.fontLine = num(f, "line");
-			const cJSON* gl;
-			cJSON_ArrayForEach(gl, cJSON_GetObjectItem(f, "glyphs"))
-			{
-				auto v = [&](int k) { const cJSON* e = cJSON_GetArrayItem(gl, k); return e ? (float)e->valuedouble : 0.0f; };
-				t.glyphs[(u32)strtoul(gl->string, nullptr, 10)] = { (u16)v(0), (u16)v(1), (u16)v(2), (u16)v(3), v(4), v(5), v(6) };
-			}
-		}
-		const cJSON* c;
-		cJSON_ArrayForEach(c, cJSON_GetObjectItem(ui, "colors"))
-		{
-			auto v = [&](int k) { const cJSON* e = cJSON_GetArrayItem(c, k); return e ? (u32)(e->valueint & 255) : 0u; };
-			t.colors[c->string] = 0xFF000000u | (v(2) << 16) | (v(1) << 8) | v(0);
-		}
-	}
+		parseUiTheme(ui, g.ui);
 
 	const cJSON* ts;
 	if (const cJSON* wt = cJSON_GetObjectItem(root, "weather"))
@@ -1364,4 +1371,30 @@ u32 GameData::enchantGlow(const std::string& itemId) const
 		return 0;
 	auto me = magicEffects.find(sp->second.effects[0].effect);
 	return me != magicEffects.end() ? me->second.rgb : 0;
+}
+
+// Only the "ui" section, for the logos and the title screen before the game loads: they wrote in the 3DS's system font
+// until then, and the menus after them in Morrowind's
+bool gameLoadUiTheme(const char* path, UiThemeDef& t)
+{
+	s_dataDir = path;
+	size_t slash = s_dataDir.rfind('/');
+	s_dataDir = slash == std::string::npos ? "." : s_dataDir.substr(0, slash);
+	size_t size = 0;
+	char* text = readFile(path, &size);
+	if (!text)
+		return false;
+	cJSON* root = cJSON_Parse(text);
+	free(text);
+	if (!root)
+		return false;
+	bool ok = false;
+	if (const cJSON* ui = section(root, "ui"))
+	{
+		parseUiTheme(ui, t);
+		ok = !t.fontFile.empty();
+	}
+	sectionDone();
+	cJSON_Delete(root);
+	return ok;
 }

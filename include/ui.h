@@ -47,6 +47,7 @@ void uiText(float x, float y, float scale, u32 color, const std::string& s);
 // A picture from data/art (loaded once, kept): its own size (w, h) inside the texture, drawn at x, y scaled
 // to dw x dh (0: its own size). False when it can't be read.
 bool uiArt(const std::string& file, int w, int h, float x, float y, float dw = 0, float dh = 0);
+void uiArtDir(const char* dataDir);   // the folder uiArt reads from before a theme is loaded (the title screen)
 void uiArtFree();
 void uiTextCentered(float cx, float y, float scale, u32 color, const std::string& s);
 void uiTextRight(float rx, float y, float scale, u32 color, const std::string& s);

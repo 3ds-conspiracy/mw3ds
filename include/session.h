@@ -37,6 +37,9 @@ extern int g_gyroAim;
 extern int g_lookSpeed, g_geTurnSpeed, g_geAimSpeed;
 extern bool g_invertY;
 static const int kLookMinPct = 50, kLookMaxPct = 200, kLookStepPct = 10;
+// A new player's C-stick and D-pad look speed, and Look's Default: a little quicker than 1.00x, which felt slow on the
+// console. Scripted runs start at 1.00x whatever this is (Session's settings load), so the cases keep their timing
+static const int kLookDefaultPct = 120;
 // Subtitles (Options > Display; settings.txt subtitles=on|off): spoken lines written on the top screen. Off, a line
 // with a voice is only heard; one with no voice file is still written (it would be lost otherwise)
 extern bool g_subtitles;
@@ -115,6 +118,7 @@ struct Session : ScriptHost
 	float drawTimer = 0.0f;           // > 0 while the weapon comes out; the wind-up waits for it
 	bool pickQueued = false;          // a press while the lockpick / probe came up: tried once it's up
 	float sheatheTimer = 0.0f;        // seconds without fighting; the weapon goes away after a while
+	std::string hudCaption;           // the cell name the HUD wrote under the minimap last
 	int heldLights = 0;               // people's torches lighting the world this frame (rendererSetActorLights)
 	int attackKind = 0;               // 0 chop, 1 slash, 2 thrust: picked when the wind-up starts
 	std::string bodyAttack;           // the third-person body's group for that blow (Attack1hSl ...)
@@ -170,6 +174,8 @@ struct Session : ScriptHost
 	// Local map: the interior rendered from above on arrival (renderer texture), again when the player
 	// changes floor; outdoors (localMapCell -2) the cells round the player, while the map screen shows it
 	int localMapCell = -1;
+	// MAPCELL (tools/convert/maprender.py): an outdoor cell rendered from above into a file, once its neighbours load
+	struct MapCellJob { int gx = 0, gy = 0, frames = 0; std::string path; bool on = false; } mapCellJob;
 	float localMin[2] = {}, localSize = 1.0f, localTopZ = 0.0f;
 	void updateLocalMap();            // inside a frame, before the screens are drawn
 	bool ensureMapTexture();

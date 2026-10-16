@@ -37,6 +37,11 @@ OVERLAYS = [
     "mods/project-atlas/00 Core",
     "mods/project-atlas/01 Textures - Vanilla",
 ]
+# Project Atlas draws many objects from one big sheet each: fewer draws, but the 3DS's texture cap shrinks a whole sheet,
+# so every object on it loses most of its detail (Dunmer furniture came out about 16 x 16 texels). The New 3DS keeps
+# its frame rate without it (Balmora: 30 fps either way, about 1.3 ms more GPU command time a frame) and draws
+# everything at its own texture's detail; the Old 3DS, short of time for draws and already at 128 texels, keeps it
+ATLAS_OVERLAYS = ["mods/project-atlas/00 Core", "mods/project-atlas/01 Textures - Vanilla"]
 
 
 # Outside a git checkout (the release converter's folder) the mods come as zips of the same commits the submodules
@@ -70,8 +75,9 @@ def fetch_mod_zips():
         stamp.write_text(pin["commit"] + "\n")
 
 
-def fetch_mods():
-    """Checks out the mods (git submodules, pinned to a commit each) and returns the overlay folders."""
+def fetch_mods(old3ds=False):
+    """Checks out the mods (git submodules, pinned to a commit each) and returns the overlay folders (Project Atlas's
+    for the Old 3DS only)."""
     if (ROOT / ".git").exists() or not (ROOT / MODS_LOCK).is_file():
         print("== the mods (git submodules)")
         r = subprocess.run(["git", "submodule", "update", "--init", "--depth", "1",
@@ -82,6 +88,8 @@ def fetch_mods():
         fetch_mod_zips()
     dirs = []
     for o in OVERLAYS:
+        if o in ATLAS_OVERLAYS and not old3ds:
+            continue
         p = ROOT / o
         if not p.exists():
             raise SystemExit(f"overlay folder '{o}' is missing: is the submodule checked out?")
@@ -94,7 +102,7 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
     os.chdir(ROOT)
     mwtools.load_env()
     if mods:
-        dirs = fetch_mods()
+        dirs = fetch_mods(old3ds)
         if fetch_only:
             return 0
         # The converter (tools/convert/mwfiles.py) lays these folders over Data Files; a real environment variable wins over .env
@@ -130,6 +138,12 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
                              "names the sound file it stopped on.")
     elif not (ROOT / data).exists():
         raise SystemExit(f"{data} does not exist: run without --skip-convert first")
+    # The world map from the cells' top-down renders (the native build's; without one the drawn map stays)
+    if not skip_convert:
+        print("== rendering the world map from above")
+        r = subprocess.run([sys.executable, "tools/convert/maprender.py", "--data", data], cwd=ROOT)
+        if r.returncode != 0:
+            print("(maprender failed: the map stays as level.py drew it)")
 
     # 2. Program + CIA
     print("== packing the CIA" if prebuilt else "== building the program and the CIA")

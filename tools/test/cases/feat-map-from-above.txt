@@ -1,0 +1,16 @@
+# The world map shows the towns from above: tools/convert/maprender.py renders every outdoor cell straight down (the
+# local map's view) and lays the renders over the drawn land. Vivec's cantons stood as blank squares in the sea with
+# only their outlines. The shots: the map at Vivec, then zoomed in twice
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GOTO:Vivec,_Foreign_Quarter+MAPSEEN:-2:-15:8:-6
+4 0 0 0
+0.3 0 0 0 0 SCREEN:map
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:maplocal:eq:0
+0.3 0 0 0 0 TAP:214:222
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:mapzoom:eq:1
+0.3 0 0 0 0 TAP:214:222
+0.5 0 0 0 0 SHOT

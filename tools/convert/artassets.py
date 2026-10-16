@@ -5,7 +5,9 @@ Each becomes data/art/<kind>/<name>.t3x (RGB565, or RGBA4 with transparency), pa
 game.json "art": {"splash": [{"file", "w", "h"}...], "levelup": {class: {...}}, "bookart": {name: {...}},
 "book": {name: {...}}} with the picture's own size inside the padded texture. "book" is the reading screen's own
 look: the open book (tx_menubook) and the scroll (scroll.dds), sized for the bottom screen, and their buttons
-(tx_menubook_<take|close|next|prev>_<idle|over|pressed>).
+(tx_menubook_<take|close|next|prev>_<idle|over|pressed>). "menu": the main menu's picture (textures menu_morrowind.dds,
+as OpenMW's main menu shows it) for the title screen, at a fixed name, art/menu_morrowind.t3x: the title screen runs
+before game.json is read.
 """
 import io
 import re
@@ -75,6 +77,48 @@ def build_art(arch, data_files):
         if arch.exists(path):
             img = Image.open(io.BytesIO(arch.read(path))).convert("RGB")
             encode(img, OUT / "art" / "magicitem" / f"caust{i:02d}.t3x", False)
+    # The water surface's frames, as Morrowind and OpenMW animate water (Morrowind.ini [Water]: SurfaceTexture, frames
+    # SurfaceFrameCount at SurfaceFPS, SurfaceTextureSize texels): data/art/water/waterNN.t3x, ETC1. The ripples change
+    # shape; one picture slid over the water looked still on the console
+    ini = {}
+    try:
+        text = (Path(data_files).parent / "Morrowind.ini").read_text(encoding="latin-1", errors="replace")
+        part = re.search(r"^\[Water\](.*?)(?=^\[|\Z)", text, re.M | re.S)
+        for line in (part.group(1).splitlines() if part else []):
+            k, eq, v = line.partition("=")
+            if eq and not k.strip().startswith(";"):
+                ini[k.strip().lower()] = v.strip()
+    except OSError:
+        pass
+    stem = ini.get("surfacetexture", "water")
+    count = int(float(ini.get("surfaceframecount", 32) or 32))
+    size = pow2(int(float(ini.get("surfacetexturesize", 128) or 128)))
+    frames = 0
+    for i in range(min(count, 64)):
+        try:
+            img = Image.open(io.BytesIO(arch.read(f"textures\\water\\{stem}{i:02d}.dds"))).convert("RGB")
+        except (KeyError, OSError):
+            break
+        out = OUT / "art" / "water" / f"water{i:02d}.t3x"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        encode_image(img.resize((size, size), Image.LANCZOS), out, "etc1")
+        frames += 1
+    if frames:
+        art["water"] = {"frames": frames, "fps": float(ini.get("surfacefps", 12) or 12)}
+    # The main menu's picture (OpenMW's MainMenu background), on the title screen's top screen, stretched as Morrowind
+    # stretched it: the 2:1 picture filled a 4:3 screen, 1.5 times taller than it is, and the logo movie before it was
+    # drawn to match (fitted frame against picture: no other shape lines up its emblem and lettering). Its middle at
+    # the screen's 5:3 across and 5:3 / 1.5 up and down, the logo whole (it spans the middle 80% across)
+    try:
+        img = Image.open(io.BytesIO(arch.read("textures\\menu_morrowind.dds"))).convert("RGB")
+        w, h = img.size
+        cw = min(w, round(h * SPLASH_SIZE[0] / SPLASH_SIZE[1]))
+        ch = min(h, round(cw * SPLASH_SIZE[1] / SPLASH_SIZE[0] / 1.5))
+        img = img.crop(((w - cw) // 2, (h - ch) // 2, (w - cw) // 2 + cw, (h - ch) // 2 + ch)).resize(SPLASH_SIZE, Image.LANCZOS)
+        w, h = encode(img, OUT / "art" / "menu_morrowind.t3x", False)
+        art["menu"] = {"file": "art/menu_morrowind.t3x", "w": w, "h": h}
+    except (KeyError, OSError):
+        pass
     # Loading screens
     splash_dir = Path(data_files) / "Splash"
     for p in sorted(splash_dir.glob("*.tga")) if splash_dir.exists() else []:
