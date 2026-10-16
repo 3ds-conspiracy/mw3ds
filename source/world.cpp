@@ -28,6 +28,14 @@ static bool isItemType(const std::string& t)
 	return false;
 }
 
+static bool isItemType(const Atom& t)
+{
+	for (auto* it : kItemTypes)
+		if (t == it)
+			return true;
+	return false;
+}
+
 float* ScriptInstance::local(const std::string& lowerName)
 {
 	int i = script ? script->localIndex(lowerName) : -1;
@@ -289,6 +297,7 @@ static void freeSlots(std::vector<std::pair<int, int>>& free, int first, int n)
 // Reference slots given back; a free run at the end of the list goes from it (its memory back to the heap)
 static void freeRefSlots(World& w, int first, int n)
 {
+	w.refsChanged();
 	freeSlots(w.freeRefs, first, n);
 	if (!w.freeRefs.empty() && w.freeRefs.back().first + w.freeRefs.back().second == (int)w.refs.size())
 	{
@@ -306,6 +315,7 @@ static void appendRefs(World& w, int cellIndex, ParsedRefs& p)
 		return;
 	lc.refsLoaded = true;
 	lc.lastUsed = ++w.useTick;
+	w.refsChanged();
 	int n = p.refs.size();
 	int base = n ? takeSlots(w.freeRefs, n) : -1;
 	if (base < 0)
@@ -529,6 +539,7 @@ int World::spawnActor(const std::string& id, const float pos[3], float yaw, int 
 	}
 	refs[slot] = std::move(r);
 	refs[slot].spawnedRef = true;
+	refsChanged();
 	spawned.push_back(slot);
 	startScriptFor(slot);
 	attachSpawned(slot);
@@ -713,6 +724,7 @@ int World::dropItem(const InventoryItem& it, const float pos[3], float yaw, int 
 	}
 	refs[slot] = std::move(r);
 	refs[slot].spawnedRef = true;
+	refsChanged();
 	spawned.push_back(slot);
 	rebuildLoadedLists();
 	logf("world: dropped %d x %s at %.0f %.0f %.0f", it.count, it.id.c_str(), pos[0], pos[1], pos[2]);
@@ -1266,6 +1278,7 @@ bool World::applyLevPick(int ri, const std::string& pick)
 		detachActor(ri);
 	r.id = game.actors[sp->second.actor].id;
 	r.idLower = lower(r.id);
+	refsChanged();
 	r.actor = sp->second.actor;
 	r.obj = game.object(r.id);
 	r.contents.clear();
@@ -2413,17 +2426,45 @@ int World::findRefAnywhere(const std::string& id)
 
 int World::findRef(const std::string& id) const
 {
+	// The first active reference with that id, else the first at all. By an index of the interned ids (Atoms are one copy
+	// per text): a scan of every reference was milliseconds a call on an Old 3DS, and AI packages and scripts call it a frame
 	std::string l = lower(id);
-	int other = -1;
-	for (size_t i = 0; i < refs.size(); i++)
-		if (refs[i].idLower == l)
+	const char* key = l.empty() ? nullptr : Atom::existing(l.data(), l.size());
+	if (!key)
+		return -1;
+	for (int pass = 0; pass < 2; pass++)
+	{
+		if (refIndexStale)
 		{
+			refIndex.clear();
+			refIndex.reserve(refs.size());
+			for (size_t i = 0; i < refs.size(); i++)
+				if (!refs[i].idLower.empty())
+					refIndex.push_back({ refs[i].idLower.c_str(), (int)i });
+			std::sort(refIndex.begin(), refIndex.end());
+			refIndexStale = false;
+		}
+		auto it = std::lower_bound(refIndex.begin(), refIndex.end(), std::make_pair(key, -1));
+		int other = -1;
+		bool stale = false;
+		for (; it != refIndex.end() && it->first == key; ++it)
+		{
+			int i = it->second;
+			if (i >= (int)refs.size() || refs[i].idLower.c_str() != key)
+			{
+				stale = true;              // (a change nobody reported: rebuilt once)
+				break;
+			}
 			if (active(i))
 				return i;
 			if (other < 0)
 				other = i;
 		}
-	return other;
+		if (!stale)
+			return other;
+		refIndexStale = true;
+	}
+	return -1;
 }
 
 int World::findActorRef(int actor) const
@@ -2837,7 +2878,7 @@ int World::getJournal(const std::string& quest) const
 const RaceDef* World::race() const
 {
 	for (auto& r : game.races)
-		if (lower(r.id) == lower(stats.race))
+		if (strcasecmp(r.id.c_str(), stats.race.c_str()) == 0)
 			return &r;
 	return nullptr;
 }
@@ -2845,7 +2886,7 @@ const RaceDef* World::race() const
 const ClassDef* World::playerClass() const
 {
 	for (auto& c : game.classes)
-		if (lower(c.id) == lower(stats.cls))
+		if (strcasecmp(c.id.c_str(), stats.cls.c_str()) == 0)    // (Athletics asks every frame a run lasts: no copies)
 			return &c;
 	return nullptr;
 }
@@ -2853,7 +2894,7 @@ const ClassDef* World::playerClass() const
 const BirthDef* World::birthsign() const
 {
 	for (auto& b : game.birthsigns)
-		if (lower(b.id) == lower(stats.birthsign))
+		if (strcasecmp(b.id.c_str(), stats.birthsign.c_str()) == 0)
 			return &b;
 	return nullptr;
 }
@@ -3103,7 +3144,6 @@ void World::update(float dt)
 	// Pose only actors near enough to be drawn (the towns have many more than the office)
 	// and pose the far ones less often (their re-skinning is rarer too, renderer.cpp)
 	float reach = here().fogEnd > 0.0f && !(here().flags & CELL_INTERIOR) ? fminf(here().fogEnd * drawScale, kActorViewDistance) + 200.0f : 4200.0f;
-	static u32 frame = 0;
 	frame++;
 	for (LoadedCell* l : loaded)
 	{
@@ -3118,7 +3158,10 @@ void World::update(float dt)
 			if (!refs[a.ref].dead && !refs[a.ref].effects.empty() && actorEffect(a.ref, 45) > 0.0f)
 				continue;
 			a.pendingDt += dt;
-			if ((frame + k) % actorPoseEvery(d2) == 0)
+			// One with skins shows a pose only when the renderer re-skins it (its rigid parts ride that pose too), so it is
+			// posed on the re-skin's cadence, and the renderer re-skins each new pose (the skipped frames' time is owed)
+			u32 every = a.skinned ? actorSkinEvery(d2) : actorPoseEvery(d2);
+			if ((frame + k) % every == 0)
 			{
 				actorAnimate(l->actors, a, a.pendingDt);
 				a.pendingDt = 0.0f;
@@ -3197,7 +3240,7 @@ static bool isActivatable(const Ref& r)
 {
 	if (!r.visible() || !r.hasBox || !r.obj)
 		return false;
-	const std::string& t = r.type;
+	const Atom& t = r.type;
 	if (t == "ACTI" && r.obj->name.empty())
 		return false;                      // nameless activators are script triggers ("chargen stuff room")
 	if (t == "NPC_" || t == "DOOR" || t == "CONT" || t == "ACTI")
@@ -3335,6 +3378,19 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	for (int i : w.loadedPickables)
 	{
 		const Ref& r = w.refs[i];
+		// Out of reach first (most of the nine cells' things): the eye's distance to the box. A door turned open is
+		// tested against its turned box below instead
+		if (r.doorAngle == 0.0f)
+		{
+			float d2 = 0.0f;
+			for (int k = 0; k < 3; k++)
+			{
+				float c = fmaxf(r.boxMin[k], fminf(eye[k], r.boxMax[k])) - eye[k];
+				d2 += c * c;
+			}
+			if (d2 > reach * reach)
+				continue;
+		}
 		if (!isActivatable(r))
 			continue;
 		// A hatch in the ceiling (Sorkvild's, over the hall at Dagon Fel): its box reaches down round the player, so the eye is

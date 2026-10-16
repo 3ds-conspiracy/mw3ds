@@ -401,6 +401,7 @@ struct World
 	bool fightingEnabled = false, magicEnabled = false;
 	unsigned menusEnabled = 0;
 	float time = 0.0f;            // seconds since the level started
+	u32 frame = 0;                // World::update calls (actor posing's cadence)
 	float drawScale = 1.0f;       // share of the fog distance being drawn (adaptive view, 3D)
 	float gameHour = 9.0f;            // hours since midnight of the first day (runs past 24)
 	GameDate date() const;
@@ -532,6 +533,11 @@ struct World
 	std::string cellStateJson(const StoredCell& s) const;     // "" when it won't unpack
 	std::unordered_map<std::string, int> deadCounts;           // lowercase id -> killed (GetDeadCount)
 	std::vector<std::pair<int, int>> freeRefs, freePaths;      // slot ranges evicted cells left (first, count)
+	// findRef's index: (interned lower-case id, slot), sorted; rebuilt on the next lookup after references came, went or
+	// changed id (refsChanged)
+	mutable std::vector<std::pair<const char*, int>> refIndex;
+	mutable bool refIndexStale = true;
+	void refsChanged() { refIndexStale = true; }
 	u32 useTick = 0;
 	// References placed while playing (PlaceAtPC / PlaceAtMe): outside any cell's range, drawn while
 	// their cell is loaded; they go when their cell's objects leave memory (and aren't saved)

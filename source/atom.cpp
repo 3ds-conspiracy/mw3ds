@@ -67,6 +67,22 @@ const char* Atom::intern(const char* s, size_t n)
 	return p;
 }
 
+const char* Atom::existing(const char* s, size_t n)
+{
+	if (n == 0)
+		return "";
+	LightLock_Lock(&s_lock);
+	const char* p = nullptr;
+	if (s_set)
+	{
+		auto it = s_set->find(std::string_view(s, n));
+		if (it != s_set->end())
+			p = it->data();
+	}
+	LightLock_Unlock(&s_lock);
+	return p;
+}
+
 Atom Atom::stored(const std::string& s)
 {
 	if (s.empty())

@@ -5,7 +5,7 @@
 # and not a bug. Guard case: it passed before the change too.
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
-0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 SEED:1
 0.3 0 0 0 0 GIVE:p_chameleon_e:10
 0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Addammus's_Yurt
 3 0 0 0

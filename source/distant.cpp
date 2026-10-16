@@ -24,6 +24,8 @@ int s_x0 = 0, s_y0 = 0, s_nx = 0, s_ny = 0, s_per = 0, s_cols = 0;
 u16* s_indices = nullptr;         // shared by every cell (same layout)
 u32 s_numIndices = 0;
 std::vector<DistantCell> s_cells;
+bool s_rescan = true;             // distantUpdate looks for cells to build (moved, data changed, or some still owed)
+int s_lastGx = 0, s_lastGy = 0, s_lastRadius = -1;
 // Big objects per cell: where each cell's mesh starts in s_statics (the file's STAT section). A distant.bin
 // stored as it is (not zlib'd: the converter's current output) stays on the card instead, read a cell at a time
 // from s_file at that offset: the section is ~9 MB, a quarter of an Old 3DS's heap
@@ -339,6 +341,7 @@ bool distantLoad(const char* dataDir)
 		for (auto& c : s_cells)
 			freeCell(c);
 		s_cells.clear();
+		s_rescan = true;
 		logf("distant: kept from the last session");
 		return true;
 	}
@@ -425,6 +428,7 @@ void distantFree()
 	for (auto& c : s_cells)
 		freeCell(c);
 	s_cells.clear();
+	s_rescan = true;
 	s_statics.clear();
 	s_statics.shrink_to_fit();
 	s_staticAt.clear();
@@ -449,21 +453,41 @@ void distantUpdate(int gx, int gy, int radius)
 		}
 		else
 			i++;
-	// build what came into reach (a few a frame)
-	int built = 0;
-	for (int dy = -radius; dy <= radius && built < 4; dy++)
-		for (int dx = -radius; dx <= radius && built < 4; dx++)
+	// build what came into reach: a few a frame, and of those with objects on the card (an Old 3DS's distant.bin stays
+	// there) one a frame, each a seek and a read inside the frame. Nothing to look for until the player moves to another
+	// cell or something is still owed
+	if (gx != s_lastGx || gy != s_lastGy || radius != s_lastRadius)
+		s_rescan = true;
+	if (!s_rescan)
+		return;
+	s_lastGx = gx, s_lastGy = gy, s_lastRadius = radius;
+	int built = 0, reads = 0;
+	bool owed = false;
+	for (int dy = -radius; dy <= radius; dy++)
+		for (int dx = -radius; dx <= radius; dx++)
 		{
+			int cx = gx + dx - s_x0, cy = gy + dy - s_y0;
+			if (cx < 0 || cy < 0 || cx >= s_nx || cy >= s_ny)
+				continue;
 			bool have = false;
 			for (auto& c : s_cells)
 				have |= c.gx == gx + dx && c.gy == gy + dy;
+			if (have)
+				continue;
+			bool read = s_file && s_staticAt.count(cellKey(gx + dx, gy + dy));
 			DistantCell c;
-			if (!have && buildCell(gx + dx, gy + dy, c))
+			if (built >= 4 || (read && reads >= 1))
+				owed = true;
+			else if (buildCell(gx + dx, gy + dy, c))
 			{
 				s_cells.push_back(c);
 				built++;
+				reads += read;
 			}
+			else
+				owed = true;               // (no linear memory for it now: tried again next frame)
 		}
+	s_rescan = owed;
 }
 
 u32 distantBytes()

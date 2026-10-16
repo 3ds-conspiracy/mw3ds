@@ -1205,8 +1205,10 @@ void Session::update(const PlayerInput& inRaw, float dt)
 			{
 				static const float defBase[4] = { 5.0f, 2.5f, 2.0f, 1.5f }, defMult[4] = { 2.0f, 4.0f, 1.5f, 2.0f };
 				int k = !strcmp(kind, "run") ? 0 : !strcmp(kind, "swimrun") ? 1 : !strcmp(kind, "sneak") ? 2 : 3;
-				float cost = w.game.gmstf((std::string("ffatigue") + kind + "base").c_str(), defBase[k])
-					+ playerLoad * w.game.gmstf((std::string("ffatigue") + kind + "mult").c_str(), defMult[k]);
+				// (the names as fixed texts: gmstf's cache keys on the text's address)
+				static const char* const kBase[4] = { "ffatiguerunbase", "ffatigueswimrunbase", "ffatiguesneakbase", "ffatigueswimwalkbase" };
+				static const char* const kMult[4] = { "ffatiguerunmult", "ffatigueswimrunmult", "ffatiguesneakmult", "ffatigueswimwalkmult" };
+				float cost = w.game.gmstf(kBase[k], defBase[k]) + playerLoad * w.game.gmstf(kMult[k], defMult[k]);
 				w.stats.fatigue = fmaxf(0.0f, w.stats.fatigue - cost * dt);
 			}
 			if (w.player.jumpedNow)
@@ -2220,7 +2222,16 @@ bool Session::sayDone(int ref)
 // NPCs greet the player with a "Hello" voice line when they come close
 void Session::greetings(float dt)
 {
-	const Topic* hello = w.game.topic("Hello");
+	// (looked up once per game data: a scan of every topic)
+	static const Topic* hello = nullptr;
+	static const GameData* helloData = nullptr;
+	static u32 helloGen = ~0u;
+	if (helloData != &w.game || helloGen != g_gameGeneration)
+	{
+		hello = w.game.topic("Hello");
+		helloData = &w.game;
+		helloGen = g_gameGeneration;
+	}
 	// Nobody greets during scripted scenes (controls taken away)
 	if (!hello || !w.controlsEnabled)
 		return;

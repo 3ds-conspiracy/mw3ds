@@ -18,6 +18,8 @@ public:
 	Atom(const std::string& s) : p_(intern(s.data(), s.size())) {}
 	Atom(const char* s) : p_(intern(s, strlen(s))) {}
 	static Atom stored(const std::string& s);
+	// The pooled copy of a text, or nullptr when no Atom holds it (a lookup that adds nothing to the pool)
+	static const char* existing(const char* s, size_t n);
 	Atom& operator=(const std::string& s) { p_ = intern(s.data(), s.size()); return *this; }
 	Atom& operator=(const char* s) { p_ = intern(s, strlen(s)); return *this; }
 

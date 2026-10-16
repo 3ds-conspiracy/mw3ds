@@ -120,6 +120,7 @@ struct Actor
 	float blinkTimer = 2.0f, blinkTime = -1.0f;
 	bool deformed = false;             // vertex buffers hold a posed mesh
 	u32 poseSerial = 0, skinSerial = ~0u;   // bumped by each posing / the pose the skins hold
+	bool skinned = false;              // has a skinned mesh: only the renderer's re-skins show its poses
 	AnimMode mode = ANIM_IDLE;
 	s8 loopsLeft = -1;                 // looping group: more times round (LoopGroup's count), -1 for ever
 	float pendingDt = 0.0f;            // animation time owed while it was skipped (far away)

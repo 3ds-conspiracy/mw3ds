@@ -1,4 +1,5 @@
 #include "cell.h"
+#include <sys/stat.h>
 #include "planes.h"
 #include "datapath.h"
 
@@ -193,8 +194,14 @@ static void tryLoad(TextureCache& c, TextureCache::Entry* e, const char* dataDir
 		e->ok = true;
 		c.bytes += C3D_TexCalcTotalSize(e->tex.size, e->tex.maxLevel);
 	}
-	else if (e->fails++ == 0)
-		logf("cell: texture failed: %s", path);
+	else
+	{
+		// (no such file, the converter wrote none: not worth a read every few seconds while a cell holds it)
+		struct stat st;
+		e->missing = stat(path, &st) != 0;
+		if (e->fails++ == 0)
+			logf("cell: texture failed: %s%s", path, e->missing ? " (no such file)" : "");
+	}
 }
 
 C3D_Tex* TextureCache::acquire(const char* dataDir, const std::string& name)
@@ -206,7 +213,7 @@ C3D_Tex* TextureCache::acquire(const char* dataDir, const std::string& name)
 	Entry* e = slot;
 	// The reference first: the load lets go of the lock, and the other thread may release the name meanwhile
 	e->refs++;
-	if (!e->ok && e->fails < 3)
+	if (!e->ok && !e->missing && e->fails < 3)
 		tryLoad(*this, e, dataDir, name);
 	return e->ok ? &e->tex : nullptr;
 }
@@ -217,7 +224,7 @@ C3D_Tex* TextureCache::recheck(const char* dataDir, const std::string& name)
 	auto it = entries.find(name);
 	if (it == entries.end())
 		return nullptr;
-	if (!it->second->ok && it->second->fails < 3)
+	if (!it->second->ok && !it->second->missing && it->second->fails < 3)
 		tryLoad(*this, it->second, dataDir, name);
 	return it->second->ok ? &it->second->tex : nullptr;
 }
@@ -229,7 +236,7 @@ C3D_Tex* TextureCache::retry(const char* dataDir, const std::string& name)
 	auto it = entries.find(name);
 	if (it == entries.end())
 		return nullptr;
-	if (!it->second->ok && (it->second->fails < 3 || linearSpaceFree() > kRoom))
+	if (!it->second->ok && !it->second->missing && (it->second->fails < 3 || linearSpaceFree() > kRoom))
 		tryLoad(*this, it->second, dataDir, name);
 	return it->second->ok ? &it->second->tex : nullptr;
 }
@@ -384,6 +391,7 @@ static void freeBatches(std::vector<CellBatch>& batches)
 void cellFree(Cell& cell, TextureCache& cache)
 {
 	freeBatches(cell.batches);
+	cell.batchBoundsOf = 0;
 	freeBatches(cell.sky);
 	for (auto& d : cell.doors)
 		freeBatches(d.batches);

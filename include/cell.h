@@ -11,7 +11,7 @@
 // Textures shared by the cells that are loaded at the same time (the exterior keeps 3 x 3)
 struct TextureCache
 {
-	struct Entry { C3D_Tex tex; bool ok; int refs; int fails; };
+	struct Entry { C3D_Tex tex; bool ok; int refs; int fails; bool missing; };   // missing: no such file (never tried again)
 	std::unordered_map<std::string, Entry*> entries;
 	u32 bytes = 0;
 	// Its own lock, not the linear heap's: a texture load reads the SD card, and the main thread
@@ -104,6 +104,8 @@ struct Cell
 	std::vector<C3D_Tex*> textures;       // from the TextureCache; nullptr = missing
 	std::vector<std::string> textureNames;
 	std::vector<CellBatch> batches;
+	float batchMin[3] = {}, batchMax[3] = {};   // all the batches' boxes in one (the renderer's, for batchBoundsOf batches)
+	size_t batchBoundsOf = 0;
 	CollisionMesh collision;
 	std::vector<CellActor> actors;
 	std::vector<DoorMesh> doors;

@@ -1281,12 +1281,9 @@ int main()
 	if (g_profile.slowCpu)
 		g_sysCoreThreads = R_SUCCEEDED(APT_SetAppCpuTimeLimit(30));
 
-	// The Old 3DS's 16-bit colour buffer goes to a 16-bit top screen (see DISPLAY_TRANSFER_FLAGS; its framebuffers
-	// take a third less linear memory too)
-	if (g_profile.rgb565)
-		gfxInit(GSP_RGB565_OES, GSP_BGR8_OES, false);
-	else
-		gfxInitDefault();
+	// The Old 3DS's 16-bit colour buffer goes to a 16-bit top screen (see DISPLAY_TRANSFER_FLAGS). The screens'
+	// framebuffers are in VRAM, beside the render targets (a few MB of its 6 free): a MB of linear memory back for cells
+	gfxInit(g_profile.rgb565 ? GSP_RGB565_OES : GSP_BGR8_OES, GSP_BGR8_OES, true);
 	// GPU commands of a whole frame (both eyes, bottom screen): overflowing it is a panic, so it is
 	// generous, the renderer stops drawing near the end and 3D backs off when one eye uses too much.
 	// (an Old 3DS's is half: console.cpp)

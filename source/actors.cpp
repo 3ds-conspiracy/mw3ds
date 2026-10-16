@@ -483,6 +483,8 @@ int actorsAddFromLibrary(ActorSet& set, Cell& cell, TextureCache& cache, const c
 	}
 	const Skeleton& sk = actorSkeleton(set, a.skeleton);
 	a.pose.assign(sk.bones.size() * 12, 0.0f);
+	for (auto& m : a.meshes)
+		a.skinned |= m.kind == ACTOR_SKINNED;
 	a.time = sk.groups.empty() ? 0.0f : sk.groups[0].start;
 	a.blinkTimer = 1.0f;
 	return set.actors.size() - 1;
@@ -557,6 +559,8 @@ bool actorsLoad(ActorSet& set, const char* path, const char* dataDir, const std:
 		}
 		const Skeleton& sk = actorSkeleton(set, a.skeleton);
 		a.pose.assign(sk.bones.size() * 12, 0.0f);
+		for (auto& m : a.meshes)
+			a.skinned |= m.kind == ACTOR_SKINNED;
 		// Desynchronize idles so actors don't breathe in unison
 		a.time = sk.groups.empty() ? 0.0f : sk.groups[0].start + (rand() % 1000) / 1000.0f * (sk.groups[0].stop - sk.groups[0].start);
 		a.blinkTimer = 1.0f + (rand() % 3000) / 1000.0f;
@@ -718,17 +722,26 @@ static float sampleWeight(const std::vector<float>& keys, float t)
 	return keys[(n - 1) * 2 + 1];
 }
 
+// The idles' and blinks' own dice, apart from the game's rand(): how often an actor is posed follows the console and
+// its distance, and the game's rolls (awareness, combat, a test's SEED) must not move with that
+static u32 s_animDice = 1;
+static int animRand()
+{
+	s_animDice = s_animDice * 1103515245u + 12345u;
+	return (s_animDice >> 16) & 0x7fff;
+}
+
 // Next idle as Morrowind's wander AI picks it: most of the time the plain Idle; otherwise each
 // Idle2..9 rolls against its chance and the highest successful roll wins.
 static int pickIdle(const Skeleton& sk, const Actor& a)
 {
-	if ((rand() % 1000) / 1000.0f > 0.75f)      // fIdleChanceMultiplier
+	if ((animRand() % 1000) / 1000.0f > 0.75f)      // fIdleChanceMultiplier
 		return 0;
 	int best = 0;
 	float bestRoll = 0.0f;
 	for (int i = 0; i < 8; i++)
 	{
-		float roll = (rand() % 1000) / 10.0f;
+		float roll = (animRand() % 1000) / 10.0f;
 		if (roll <= a.idle[i] && roll > bestRoll && i + 1 < sk.numIdle)
 		{
 			best = i + 1;
@@ -799,7 +812,7 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 		if (a.blinkTime > len)
 		{
 			a.blinkTime = -1.0f;
-			a.blinkTimer = 2.0f + (float)(rand() % 6);
+			a.blinkTimer = 2.0f + (float)(animRand() % 6);
 		}
 	}
 
@@ -931,6 +944,7 @@ void actorDeform(ActorSet& set, Actor& a)
 		bool skinned = false;
 		for (auto& m : a.meshes)
 			skinned |= m.kind == ACTOR_SKINNED;
+		a.skinned = skinned;
 		if (skinned)
 			a.skinPose = a.pose;
 		else

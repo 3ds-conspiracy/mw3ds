@@ -3,7 +3,7 @@
 # skipAnim), until it wears off. The steel jinkblade paralyzes for 10 seconds on touch.
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD:2
-0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 SEED:1
 0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
 1 0 0 0 0 HIDEACTORS:3000
 0.3 0 0 0 0 GIVE:steel%jinkblade

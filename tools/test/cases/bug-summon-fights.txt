@@ -4,7 +4,7 @@
 # the foe's half length counted. Ours struck at once every 1.2 s from 120 away middle to middle, never missing (the
 # scamp's blows landed from inside the guar)
 1 0 0 0 0 TP:-3514:-62273:520:0+HOUR:12
-0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 SEED:2
 0.3 0 0 0 0 GOD
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 SPELL:summon_scamp

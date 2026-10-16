@@ -1114,6 +1114,22 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	{
 		Cell& cell = w.loaded[k]->cell;
 		visible[k].resize(cell.batches.size());
+		// A whole cell out of the frustum (most of the nine are behind the camera or beside it): none of its batches tested
+		if (cell.batchBoundsOf != cell.batches.size())
+		{
+			for (int j = 0; j < 3; j++)
+				cell.batchMin[j] = 1e30f, cell.batchMax[j] = -1e30f;
+			for (const CellBatch& b : cell.batches)
+				for (int j = 0; j < 3; j++)
+					cell.batchMin[j] = fminf(cell.batchMin[j], b.bmin[j]), cell.batchMax[j] = fmaxf(cell.batchMax[j], b.bmax[j]);
+			cell.batchBoundsOf = cell.batches.size();
+		}
+		if (!cell.batches.empty() && !boxVisible(fr, cell.batchMin, cell.batchMax))
+		{
+			std::fill(visible[k].begin(), visible[k].end(), 0);
+			total += cell.batches.size();
+			continue;
+		}
 		for (size_t i = 0; i < cell.batches.size(); i++)
 		{
 			const CellBatch& b = cell.batches[i];
@@ -1253,15 +1269,13 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	// Animated actors: skinned meshes are already in world space, rigid parts ride their bone.
 	// Skip actors behind the camera or past the view distance; refresh deformation at 30 Hz
 	// (alternating actors), and at 7.5 Hz for actors far enough that nobody can tell.
-	static u32 frame = 0;
-	if (!secondEye)
-		frame++;
 	u64 actorStart = svcGetSystemTick();
 	// (an Old 3DS draws people and creatures to 4000 outdoors: each is a re-skin and a dozen draws)
 	float maxDist = fog && !(here.flags & CELL_INTERIOR)
 		? fminf(fogEnd, g_profile.actorViewLimit > 0.0f ? g_profile.actorViewLimit : kActorViewDistance) : 4000.0f;
 	float detailDist = kActorDetailDistance * g_profile.actorDetailScale;
-	for (int pass = 0; pass < 2 && (g_renderParts & RENDER_ACTORS); pass++)
+	// (one pass: the blended meshes go to the blend queue, drawn back to front with the world's)
+	if (g_renderParts & RENDER_ACTORS)
 	{
 		for (LoadedCell* l : w.loaded)
 			for (size_t ai = 0; ai < l->actors.actors.size(); ai++)
@@ -1275,10 +1289,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				float bmax[3] = { a.place[3] + 80.0f, a.place[7] + 80.0f, a.place[11] + 150.0f };
 				if (!boxVisible(fr, bmin, bmax) || dist2 > maxDist * maxDist)
 					continue;
-				// Re-skin up close often, less often the smaller they are on screen. A pose held for a side-by-side shot
-				// (the test driver's POSE) every time: the native build draws only the frames it saves, so a throttled
-				// re-skin showed the shot before's pose
-				if (pass == 0 && !secondEye && ((frame + ai) % actorSkinEvery(dist2) == 0 || !a.deformed || a.frozen))
+				// Re-skinned for each new pose: World::update poses those with skins on the re-skin cadence (often up close,
+				// less often the smaller they are on screen). A pose held for a side-by-side shot (the test driver's POSE)
+				// every time: the native build draws only the frames it saves
+				if (!secondEye && (a.poseSerial != a.skinSerial || !a.deformed || a.frozen))
 				{
 					actorDeform(l->actors, a);
 					a.deformed = true;
@@ -1296,8 +1310,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				}
 				for (auto& m : a.meshes)
 				{
-					if (((m.flags & BATCH_BLEND) != 0) != (pass == 1) || ((m.flags & ACTOR_MESH_WEAPON) && !a.showWeapon)
-						|| !actorMeshShown(a, m))
+					if (((m.flags & ACTOR_MESH_WEAPON) && !a.showWeapon) || !actorMeshShown(a, m))
 						continue;
 					if (far && m.numIndices < kActorDetailTris * 3)
 						continue;
