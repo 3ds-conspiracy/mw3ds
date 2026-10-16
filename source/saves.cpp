@@ -19,12 +19,33 @@ static std::string formatTime(u64 ms)
 	return buf;
 }
 
+s64 g_saveClockShiftMs = 0;
+std::string g_lastSavePath;
+
+static bool readInfo(const std::string& path, SaveInfo& out);
+static std::vector<std::string> jsonFiles(const std::string& dir);
+
 void writeSaveMeta(const char* savePath, const std::string& name, const std::string& place, int level, u64 timeMs)
 {
+	timeMs += g_saveClockShiftMs;
+	// The save's count, one past the highest of the player's saves: the list is ordered by it, as the console's clock
+	// can be reset or set back (a save made then sorted below older ones by its time)
+	u32 order = 0;
+	if (strcmp(savePath, kAutosavePath) != 0)
+	{
+		g_lastSavePath = savePath;
+		for (auto& p : jsonFiles(kSaveDir))
+		{
+			SaveInfo s;
+			if (p != savePath && readInfo(p, s) && s.order > order)
+				order = s.order;
+		}
+		order++;
+	}
 	std::string meta = std::string(savePath) + ".meta";
 	if (FILE* f = fopen(meta.c_str(), "w"))
 	{
-		fprintf(f, "%s\t%s\t%d\t%llu\n", name.c_str(), place.c_str(), level, timeMs);
+		fprintf(f, "%s\t%s\t%d\t%llu\t%lu\n", name.c_str(), place.c_str(), level, timeMs, (unsigned long)order);
 		fclose(f);
 	}
 }
@@ -43,9 +64,9 @@ static bool readInfo(const std::string& path, SaveInfo& out)
 	if (fgets(line, sizeof(line), f))
 	{
 		line[strcspn(line, "\r\n")] = 0;
-		char* fields[4] = {};
+		char* fields[5] = {};
 		int n = 0;
-		for (char* p = line; n < 4; n++)
+		for (char* p = line; n < 5; n++)
 		{
 			fields[n] = p;
 			char* tab = strchr(p, '\t');
@@ -63,6 +84,8 @@ static bool readInfo(const std::string& path, SaveInfo& out)
 			out.detail = std::string("Level ") + fields[2];
 		if (n >= 4)
 			out.time = strtoull(fields[3], nullptr, 10);
+		if (n >= 5)
+			out.order = strtoul(fields[4], nullptr, 10);
 	}
 	fclose(f);
 	return true;
@@ -100,7 +123,10 @@ std::vector<SaveInfo> savesList(const char* dataDir)
 		if (readInfo(p, s))
 			mine.push_back(s);
 	}
-	std::sort(mine.begin(), mine.end(), [](const SaveInfo& a, const SaveInfo& b) { return a.time > b.time; });
+	// Newest first: by the save count, then (older saves without one) by the time they were made
+	std::sort(mine.begin(), mine.end(), [](const SaveInfo& a, const SaveInfo& b) {
+		return a.order != b.order ? a.order > b.order : a.time > b.time;
+	});
 	for (auto& p : jsonFiles(std::string(dataDir) + "/saves"))
 	{
 		SaveInfo s;

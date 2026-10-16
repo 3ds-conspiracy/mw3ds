@@ -1415,6 +1415,16 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "fatigue") v = st.fatigue;
 	else if (what == "fatiguemax") v = st.fatigueMax;
 	else if (what == "gold") v = (float)w.itemCount("gold_001");
+	else if (what == "savenewestfirst")    // 1: the first of the player's own saves in the list is the one written last
+	{
+		v = 0;
+		for (auto& sv : savesList(s.dataDir))
+			if (!sv.autosave && !sv.bundled)
+			{
+				v = sv.path == g_lastSavePath ? 1.0f : 0.0f;
+				break;
+			}
+	}
 	else if (what == "saves")
 	{
 		// the player's own saves on the card (not the autosave or the starting points)
@@ -3013,6 +3023,12 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		}
 		else
 			s.screen = (Screen)scr;
+		return true;
+	}
+	// CLOCKSHIFT:<hours>: the clock saves record moves by that much (negative: back), as a console's clock reset or set back
+	if (verb == "CLOCKSHIFT" && a.size() >= 2)
+	{
+		g_saveClockShiftMs = (s64)(atof(a[1].c_str()) * 3600000.0);
 		return true;
 	}
 	// SAVESEL:newest: pick the newest of the player's own saves in the Saves list (a finger on the row)

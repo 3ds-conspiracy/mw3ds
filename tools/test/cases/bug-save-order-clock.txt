@@ -1,0 +1,15 @@
+# Saves are listed newest first even when the console's clock went back between two saves (a clock reset or set to an
+# earlier date). The list was sorted by the time in each save's .meta, so a save made after the clock went back sank
+# below the older ones. Fails before the fix (savesList orders by a save counter in the .meta), passes after.
+1 0 0 0 0 MSG
+3 0 0 0
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SCREEN:saves
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:savenewestfirst:eq:1
+0.3 0 0 0 0 CLOCKSHIFT:-720
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:savenewestfirst:eq:1
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0
