@@ -123,12 +123,14 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 					glow[s.first] = w.game.enchantGlow(it.id);
 				}
 		}
-	// The weapon while it is out (the first-person piece of it rides the weapon bone either way)
+	// The weapon while it is out (the first-person piece of it rides the weapon bone either way). Equipped arrows and
+	// bolts are ammo, not the weapon (Session::playerWeaponItem): arrows ahead of a sword in the inventory put the arrow
+	// in the fist, a thin stick with its head out at the tip
 	if (weaponOut)
 		for (auto& it : w.inventory)
 			if (it.equipped)
 				if (const Object* o = w.game.object(it.id))
-					if (o->type == "WEAP")
+					if (o->type == "WEAP" && o->subtype < WEAP_ARROW)
 					{
 						auto fit = w.game.firstPerson.items.find(lower(it.id));
 						if (fit != w.game.firstPerson.items.end() && fit->second.slots.count(SLOT_WEAPON))
@@ -138,6 +140,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 						}
 						break;
 					}
+	weapon = part[SLOT_WEAPON];
 	std::string key;
 	for (int s = 0; s < kSlotCount; s++)
 		key += part[s] + (glow[s] ? "*|" : "|");

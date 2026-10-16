@@ -6182,6 +6182,14 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		ok = g[0] && strncmp(g, a[1].c_str(), a[1].size()) == 0;
 		snprintf(got, sizeof(got), "%s", !s.thirdPerson ? "first person" : g[0] ? g : "no group");
 	}
+	else if (what == "bodyweapon" && a.size() >= 2)
+	{
+		// EXPECT:bodyweapon:<piece>: in third person, the player's body holds that piece on its weapon bone
+		// (w_iron_longsword_25); EXPECT:bodyweapon:none: nothing
+		const std::string& p = s.body.weapon;
+		ok = s.thirdPerson && (a[1] == "none" ? p.empty() : p == a[1]);
+		snprintf(got, sizeof(got), "%s", !s.thirdPerson ? "first person" : p.empty() ? "none" : p.c_str());
+	}
 	else
 	{
 		bool arg = hasArg(what);

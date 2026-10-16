@@ -38,6 +38,7 @@ struct PlayerBody
 	std::vector<C3D_Tex*> textures;               // indexed by the meshes' tex
 	std::unordered_map<std::string, FpPiece*> pieces;   // bones resolved against this skeleton
 	std::string builtFor, forRace;
+	std::string weapon;                           // the piece on the weapon bone ("" when none is out)
 	bool forFemale = false;
 	std::string group;                            // the walk / idle group asked for last ("" after a blow or cast)
 	BodyAction acting = BODY_NONE;                // the arms' action being played

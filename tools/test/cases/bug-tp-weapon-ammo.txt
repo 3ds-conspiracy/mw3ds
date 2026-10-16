@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# In third person the body holds the equipped weapon, never the equipped arrows (ammo is not the weapon, as
+# Session::playerWeaponItem has it). With arrows ahead of a short sword in the inventory, the body held the arrow:
+# a thin stick out of the fist, its head at the far end, the sword looking upside down.
+1 0 0 0 0 TP:-10300:-71300:200:270+HOUR:12+GOD
+0.3 0 0 0 0 GIVE:iron%arrow
+0.3 0 0 0 0 GIVE:steel%shortsword
+0.3 0 0 0 0 POV:third
+1 0 0 0
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1+EXPECT:bodyweapon:w_shortsword00_25+SHOT
+0.1 0 0 0 0 ZL+X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0+EXPECT:bodyweapon:none
