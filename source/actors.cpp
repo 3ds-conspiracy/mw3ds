@@ -452,6 +452,16 @@ static bool readLibrary(ActorSet& set, Actor& a, const std::string& path, const 
 			zclose(f);
 			return false;
 		}
+		// A carried torch's fire flickers and its smoke climbs as the world's do (BATCH_RISE, cell.v.pica's offset): the
+		// quads meshes.py makes of its sprays, known by their picture as it knows them (the flag's bit is the weapon's here)
+		if (m.hand == 1 && !name.empty())
+		{
+			std::string low = name;
+			for (char& c : low)
+				c = (char)tolower((unsigned char)c);
+			bool fire = (low.find("fire") != std::string::npos || low.find("flame") != std::string::npos) && low.find("ash") == std::string::npos;
+			m.rise = fire || low.find("smoke") != std::string::npos || low.find("steam") != std::string::npos || low.find("spark") != std::string::npos;
+		}
 	}
 	zclose(f);
 	return true;

@@ -84,6 +84,7 @@ struct ActorMesh
 	std::vector<float> vis;            // shown (1) or hidden (0) from each time on: pairs (time, shown), empty: always shown
 	bool driven = false;               // the track runs on the actor's driveT (an arrow on its bow's ArrowBone) at its bone
 	u8 hand = 0;                       // 1 a torch (shown while the actor holds it out), 2 a shield (put away then)
+	bool rise = false;                 // the torch's fire or smoke quads: drawn with BATCH_RISE (flags' 128 is the weapon's)
 	bool billboard = false;
 	bool fx = false;                   // a spell visual's shape that takes its magic effect's particle texture (MGEF PTEX)
 	// Particle sprays drawn as sprites without simulating them (tools/convert/particles.py): a flipbook steps

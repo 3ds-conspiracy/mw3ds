@@ -12,11 +12,13 @@
 .fvec ambientAdd                ; added to every vertex's light: Night Eye (OpenMW's ambient + 0.7 x magnitude / 100)
 ; Two more, the same way: torches people near the player hold out (renderer.cpp rendererSetActorLights). Not in
 ; skin.v.pica (its bone palette fills the registers): they light the world, not other people. Set again after each
-; skinned run (its palette overwrites these registers)
+; skinned run (its palette overwrites these registers). Each is switched on for the batches within its reach only
+; (renderer.cpp drawBatchTex)
 .fvec lightPos2, lightColor2
 .fvec lightPos3, lightColor3
 .bool gammaOn                   ; on: the light is curved by Gamma (gamma.h); first, so skin.v.pica has it in the same register
-.bool moreLights                ; on: the two above are added (off: skipped, no cost)
+.bool lightOn                   ; on: the player carries a light (off: its terms skipped; second, as in skin.v.pica)
+.bool moreLight2, moreLight3    ; on: that torch is added (off: skipped, no cost); each on its own, for what it reaches
 
 ; Constants
 .constf consts(0.0, 1.0, 0.00392156862, 0.5)
@@ -73,31 +75,28 @@
 	mul r4, inv255, inclr
 	mul r4, tint, r4
 	add r4.xyz, ambientAdd, r4
-	add r5, -lightPos, r1
-	mov r5.w, consts.x
-	dp3 r6, r5, r5
-	mul r6, lightPos.wwww, r6
-	add r6, ones, -r6
-	max r6, consts.xxxx, r6
-	mul r7, lightColor, r6
-	add r4.xyz, r4, r7
-	ifu moreLights
+	; (r5.w is left as it falls: dp3 reads xyz. r1.w is 1, the point's: the falloff 1 - d^2 / r^2 is one mad, the
+	; colour added another: five instructions a light, not eight, on every vertex)
+	ifu lightOn
+		add r5, -lightPos, r1
+		dp3 r6, r5, r5
+		mad r6, r6, -lightPos.wwww, r1.wwww
+		max r6, consts.xxxx, r6
+		mad r4.xyz, r6, lightColor, r4
+	.end
+	ifu moreLight2
 		add r5, -lightPos2, r1
-		mov r5.w, consts.x
 		dp3 r6, r5, r5
-		mul r6, lightPos2.wwww, r6
-		add r6, ones, -r6
+		mad r6, r6, -lightPos2.wwww, r1.wwww
 		max r6, consts.xxxx, r6
-		mul r7, lightColor2, r6
-		add r4.xyz, r4, r7
+		mad r4.xyz, r6, lightColor2, r4
+	.end
+	ifu moreLight3
 		add r5, -lightPos3, r1
-		mov r5.w, consts.x
 		dp3 r6, r5, r5
-		mul r6, lightPos3.wwww, r6
-		add r6, ones, -r6
+		mad r6, r6, -lightPos3.wwww, r1.wwww
 		max r6, consts.xxxx, r6
-		mul r7, lightColor3, r6
-		add r4.xyz, r4, r7
+		mad r4.xyz, r6, lightColor3, r4
 	.end
 	; Gamma (Options, Auto gamma): the light's rgb ^ (1 / gamma), its exponent in ambientAdd.w (renderer.cpp
 	; rendererSetGamma). lg2 and ex2 take one component each; the floor keeps lg2 off 0

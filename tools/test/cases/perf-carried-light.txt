@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# The player's own torch in a dark cave (Addamasartus): the same view with no light carried, then with the torch in
+# hand (its light on the rock: cell.v.pica lightOn, on only while a light is carried). Shots to compare builds by
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GOTO:Addamasartus
+3 0 0 0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:torch:eq:0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GIVE:torch:1
+0.3 0 0 0 0 EQUIP:torch
+2 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:torch:eq:1
+0.3 0 0 0 0 SHOT

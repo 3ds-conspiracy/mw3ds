@@ -22,12 +22,14 @@ int g_blendOutOfOrder = 0;
 int g_groundGaps = -1;                // cracks in the last saved shot (counted by the native test build; -1 here)
 // World batches the last frame drew (first eye) and how many of them with the torches' two lights on (moreLights)
 int g_worldBatches = 0, g_torchLitBatches = 0;
+// ... and their vertices (the torch terms are per vertex: a few big batches can be most of the work)
+int g_worldVerts = 0, g_torchLitVerts = 0;
 
 static DVLB_s* s_dvlb;
 static shaderProgram_s s_program;
 static int s_uProjection, s_uModelView, s_uUvOffset, s_uFogVec, s_uPosOffset, s_uPosScale, s_uUvScale, s_uTint = -1;
 static int s_uLightPos = -1, s_uLightColor = -1;
-static int s_uMoreLightPos[kActorLights] = { -1, -1 }, s_uMoreLightColor[kActorLights] = { -1, -1 }, s_bMoreLights = -1;
+static int s_uMoreLightPos[kActorLights] = { -1, -1 }, s_uMoreLightColor[kActorLights] = { -1, -1 }, s_bMoreLight[kActorLights] = { -1, -1 };
 // GPU skinning (skin.v.pica): its own program, the same uniforms in the same registers plus the bone palette
 static DVLB_s* s_skinDvlb;
 static shaderProgram_s s_skinProgram;
@@ -35,16 +37,17 @@ static int s_uBones = -1;
 static bool s_skinReady = false;
 static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
 static int s_moreLights = 0;
-static bool s_moreOn = false;               // moreLights as last set
-static bool s_moreWanted = false;           // moreLights for this view (setLight): people's torches light the world
+static u8 s_moreOn = 0;                     // the torches' switches as last set (bit i: moreLight2 / moreLight3)
+static u8 s_moreWanted = 0;                 // ... for this view (setLight): people's torches light the world
 static bool s_worldBounds = false;          // the batches being drawn have world-space bounds (the cells' and distant land's)
 static bool s_countBatches = false;         // ... and are the first eye's (g_worldBatches, g_torchLitBatches)
-static int s_worldCount = 0, s_torchLitCount = 0;
+static int s_worldCount = 0, s_torchLitCount = 0, s_worldVerts = 0, s_torchLitVerts = 0;
 static int s_uAmbient = -1;
 static float s_ambientAdd = 0.0f;           // Night Eye's added light (rendererSetNightEye)
 static int s_bGamma = -1;
 static float s_invGamma = 1.0f;             // Gamma's exponent, 1 / gamma, in ambientAdd.w (rendererSetGamma)
 static bool s_gammaOn = false;
+static int s_bLightOn = -1;                 // cell.v.pica / skin.v.pica lightOn: the carried light's terms, skipped without one
 static float s_moreLight[kActorLights][3], s_moreRadius[kActorLights], s_moreRgb[kActorLights][3];
 static C3D_Mtx s_lightView;               // the view the lights were last put in (set again after a skinned run)
 static bool s_lightViewOn = false;
@@ -95,9 +98,11 @@ void rendererInit()
 	s_uMoreLightColor[0] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor2");
 	s_uMoreLightPos[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos3");
 	s_uMoreLightColor[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor3");
-	s_bMoreLights = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLights");
+	s_bMoreLight[0] = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLight2");
+	s_bMoreLight[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLight3");
 	s_uAmbient = shaderInstanceGetUniformLocation(s_program.vertexShader, "ambientAdd");
 	s_bGamma = shaderInstanceGetUniformLocation(s_program.vertexShader, "gammaOn");
+	s_bLightOn = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightOn");
 	s_skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
 	shaderProgramInit(&s_skinProgram);
 	shaderProgramSetVsh(&s_skinProgram, &s_skinDvlb->DVLE[0]);
@@ -110,6 +115,7 @@ void rendererInit()
 		s_skinReady &= shaderInstanceGetUniformLocation(s_program.vertexShader, n)
 			== shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, n);
 	s_skinReady &= s_bGamma == shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "gammaOn");
+	s_skinReady &= s_bLightOn == shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "lightOn");
 	if (!s_skinReady)
 	{
 		g_gpuSkinning = false;
@@ -271,6 +277,10 @@ static void setLight(const C3D_Mtx* view)
 	if (s_uLightColor < 0 || s_uLightPos < 0)
 		return;
 	putLight(s_uLightPos, s_uLightColor, view, s_light, s_lightRadius, s_lightRgb);
+	// (no light carried: its five instructions a vertex are skipped, most of the time on most of the picture)
+	if (s_bLightOn >= 0)
+		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bLightOn, view && s_lightRadius > 0.0f
+			&& (s_lightRgb[0] > 0.0f || s_lightRgb[1] > 0.0f || s_lightRgb[2] > 0.0f));
 	// Night Eye on the world's draws (none on the sky's: OpenMW adds it to the ambient light, which the sky doesn't take)
 	if (s_uAmbient >= 0)
 	{
@@ -280,15 +290,30 @@ static void setLight(const C3D_Mtx* view)
 	s_lightViewOn = view != nullptr;
 	if (view)
 		s_lightView = *view;
-	if (s_bMoreLights < 0)
+	if (s_bMoreLight[0] < 0)
 		return;
 	bool more = view && s_moreLights > 0;
-	C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLights, more);
-	s_moreOn = s_moreWanted = more;
+	u8 mask = 0;
+	for (int i = 0; i < kActorLights; i++)
+	{
+		bool on = more && i < s_moreLights;
+		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLight[i], on);
+		mask |= on ? 1 << i : 0;
+	}
+	s_moreOn = s_moreWanted = mask;
 	if (more)
 		for (int i = 0; i < kActorLights; i++)
 			putLight(s_uMoreLightPos[i], s_uMoreLightColor[i], view, s_moreLight[i], i < s_moreLights ? s_moreRadius[i] : 0.0f,
 				s_moreRgb[i]);
+}
+
+// The torches' switches (cell.v.pica moreLight2, moreLight3) set to this mask, each only when it changes
+static void setMoreLights(u8 mask)
+{
+	for (int i = 0; i < kActorLights; i++)
+		if (((mask ^ s_moreOn) >> i) & 1)
+			C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLight[i], (mask >> i) & 1);
+	s_moreOn = mask;
 }
 
 static bool s_uvOverrideOn = false;
@@ -661,13 +686,14 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 	// simple water): the ripples change shape. One picture sliding looked still on the console
 	if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && s_waterCount)
 		tex = &s_water[(int)(fmaxf(0.0f, time) * s_waterFps) % s_waterCount];
-	if (s_worldBounds && s_moreWanted && s_bMoreLights >= 0)
+	if (s_worldBounds && s_moreWanted && s_bMoreLight[0] >= 0)
 	{
 		// People's torches light only what lies within their radius (the light falls to nothing there): a batch
-		// whose bounds are out of every torch's reach is drawn without their two light terms (cell.v.pica
-		// moreLights), the same picture for less vertex work, which the GPU-bound console feels at night
-		bool reach = false;
-		for (int i = 0; i < s_moreLights && !reach; i++)
+		// whose bounds are out of a torch's reach is drawn without that one's light term (cell.v.pica moreLight2,
+		// moreLight3, each its own switch), the same picture for less vertex work, which the GPU-bound console
+		// feels at night
+		u8 reach = 0;
+		for (int i = 0; i < s_moreLights; i++)
 		{
 			float d2 = 0.0f;
 			for (int k = 0; k < 3; k++)
@@ -675,18 +701,16 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 				float c = s_moreLight[i][k], o = c < b.bmin[k] ? b.bmin[k] - c : c > b.bmax[k] ? c - b.bmax[k] : 0.0f;
 				d2 += o * o;
 			}
-			reach = d2 < s_moreRadius[i] * s_moreRadius[i];
+			reach |= d2 < s_moreRadius[i] * s_moreRadius[i] ? 1 << i : 0;
 		}
-		if (reach != s_moreOn)
-		{
-			C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLights, reach);
-			s_moreOn = reach;
-		}
+		setMoreLights(reach);
 	}
 	if (s_countBatches)
 	{
 		s_worldCount++;
-		s_torchLitCount += s_moreOn;
+		s_torchLitCount += s_moreOn != 0;
+		s_worldVerts += b.numVerts;
+		s_torchLitVerts += s_moreOn ? b.numVerts : 0;
 	}
 	// (the world map's baked cells: the sea drawn opaque, one even sea whatever lies under it)
 	if (s_opaqueWater && (b.flags & BATCH_SCROLL) && mode != DRAW_SKY)
@@ -732,6 +756,13 @@ static std::vector<SkinDraw> s_skinQueue;
 struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr; };
 static std::vector<BlendDraw> s_blendQueue;
 
+// An actor's mesh as a batch: its flags' 128 is the weapon's (ACTOR_MESH_WEAPON), not BATCH_RISE, which a torch's fire
+// and smoke take from ActorMesh::rise
+static u8 actorBatchFlags(const ActorMesh& m)
+{
+	return (u8)((m.flags & ~ACTOR_MESH_WEAPON) | (m.rise ? BATCH_RISE : 0));
+}
+
 static int drawSkinQueue(float time)
 {
 	if (s_skinQueue.empty())
@@ -749,7 +780,7 @@ static int drawSkinQueue(float time)
 			g_skippedDraws++;
 			continue;
 		}
-		CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+		CellBatch b = { m.tex, actorBatchFlags(m), m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
 		for (int k = 0; k < 3; k++)
 			b.posScale[k] = m.posQ;
 		b.uvScale[0] = b.uvScale[1] = m.uvQ;
@@ -830,7 +861,7 @@ static int drawBlendQueue(float time)
 		else
 		{
 			const ActorMesh& m = *bd.mesh;
-			CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+			CellBatch b = { m.tex, actorBatchFlags(m), m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
 			bool flat = m.glow && !s_caustCount;
 			if (flat)
 				glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)
@@ -1170,7 +1201,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	s_worldBounds = true;
 	s_countBatches = !secondEye;
 	if (s_countBatches)
-		s_worldCount = s_torchLitCount = 0;
+		s_worldCount = s_torchLitCount = s_worldVerts = s_torchLitVerts = 0;
 	if (g_renderParts & RENDER_OPAQUE)
 		for (auto& d : opaque)
 			drawBatchTex(d.tex, *d.b, DRAW_WORLD, time);
@@ -1212,14 +1243,13 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	{
 		g_worldBatches = s_worldCount;
 		g_torchLitBatches = s_torchLitCount;
+		g_worldVerts = s_worldVerts;
+		g_torchLitVerts = s_torchLitVerts;
 	}
 	s_worldBounds = s_countBatches = false;
 	// (what follows has no world bounds: actors, doors, sprites take the torches whole again)
-	if (s_moreOn != s_moreWanted && s_bMoreLights >= 0)
-	{
-		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLights, s_moreWanted);
-		s_moreOn = s_moreWanted;
-	}
+	if (s_bMoreLight[0] >= 0)
+		setMoreLights(s_moreWanted);
 
 	// Enchanted things lying about shimmer: their own triangles in the cell's batches (Ref::ranges; the cell lists them
 	// when it loads, LoadedCell::glowRefs)
@@ -1348,7 +1378,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					}
 					else
 						setModelView(placeMv);
-					CellBatch b = { m.tex, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+					CellBatch b = { m.tex, actorBatchFlags(m), m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
 					bool flat = m.glow && !s_caustCount;
 					if (flat)
 						glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)

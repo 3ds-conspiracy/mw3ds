@@ -1,0 +1,16 @@
+# A torch a person holds out burns with a still picture: its fire and smoke are the crossed quads meshes.py makes of the
+# model's sprays, flagged to flicker and climb (FLAG_RISE), but an actor's mesh keeps that bit for its weapon
+# (actors.py actor_mesh), so the renderer drew them still. The Redoran guards in Ald-ruhn at 10 p.m. hold out
+# torch_infinite_time (tx_firealpha10, tx_smokealpha00): both quads must be known as moving
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald-ruhn
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:22
+1 0 0 0
+0.3 0 0 0 0 TP:-13159:55127:2400:0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reftorch:redoran%guard%male:eq:1
+0.1 0 0 0 0 EXPECT:reftorchfire:redoran%guard%male:ge:2
+0.3 0 0 0 0 FACE:redoran%guard%male+SHOT

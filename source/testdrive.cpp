@@ -205,7 +205,7 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
@@ -1200,6 +1200,22 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 					if (m.hand == 1 && actorMeshShown(*a, m))
 						v = 1.0f;
 		}
+		else if (what == "refcpuskin" || what == "refblendskin" || what == "refmeshes")
+		{                                   // its skinned vertices the CPU rewrites each pose (no GPU skin), its blended meshes
+			v = 0.0f;                        // skinned on the GPU (each a shader switch), all its meshes
+			if (const Actor* a = w.actorOf(ri))
+				for (const ActorMesh& m : a->meshes)
+					v += what == "refmeshes" ? 1.0f : what == "refcpuskin" ? (m.kind == ACTOR_SKINNED && !m.gpuSkin ? (float)m.numVerts : 0.0f)
+						: (m.gpuSkin && (m.flags & BATCH_BLEND) ? 1.0f : 0.0f);
+		}
+		else if (what == "reftorchfire")    // its torch's fire and smoke quads that flicker and climb as drawn (ActorMesh::rise)
+		{
+			v = 0.0f;
+			if (const Actor* a = w.actorOf(ri))
+				for (const ActorMesh& m : a->meshes)
+					if (m.hand == 1 && m.rise)
+						v += 1.0f;
+		}
 		else if (what == "refhiddenparts")  // solid meshes of its model its visibility keys hide now (a dead Bonelord's robe;
 		{                                   // not its glowing particle sprays, which show only while they burst)
 			v = 0.0f;
@@ -1331,10 +1347,13 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "torchlit")    // <batches|world|share>: of the world batches (cells, terrain layers, distant land) the
 	{                               // last frame drew, how many with people's torch lights on, all of them, the share
-		extern int g_worldBatches, g_torchLitBatches;
+		extern int g_worldBatches, g_torchLitBatches, g_worldVerts, g_torchLitVerts;
 		if (arg == "batches") v = (float)g_torchLitBatches;
 		else if (arg == "world") v = (float)g_worldBatches;
 		else if (arg == "share") v = g_worldBatches ? (float)g_torchLitBatches / g_worldBatches : 0.0f;
+		else if (arg == "verts") v = (float)g_torchLitVerts;        // <verts|allverts|vshare>: the same by vertices
+		else if (arg == "allverts") v = (float)g_worldVerts;
+		else if (arg == "vshare") v = g_worldVerts ? (float)g_torchLitVerts / g_worldVerts : 0.0f;
 	}
 	else if (what == "gamma")       // <value|setting|auto|lift|sensor|saved>: Gamma (Display): the value used now, the bar,
 	{                               // Auto gamma on, the light reading's lift, the sensor (0 none, 1 QTM, 2 camera), settings.txt's
