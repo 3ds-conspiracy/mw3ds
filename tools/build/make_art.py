@@ -34,7 +34,6 @@ BANNER_WAV = ROOT / "tools" / "build" / "banner.wav"
 BANNER_BNR = ROOT / "tools" / "build" / "banner.bnr"
 ICON_PNG = ROOT / "icon.png"
 CGFX_LIMIT = 0x80000  # the HOME menu refuses a banner model over 512 KB
-MODEL_LAYERS = ("title", "emblem")  # the 3D banner's layers (emblem.py also renders "wall": left out)
 
 
 def find_blender():
@@ -115,12 +114,7 @@ def make_cgfx(out):
 
     to_txob = swizzler.to_txob
     swizzler.to_txob = lambda im, format=None, mipmaps=1: to_txob(im, TextureFormat.RGB8, mipmaps)
-    gltf = gltflib.GLTF.load(str(WORK / "banner.gltf"), load_file_resources=True)
-    # Only the title and the emblem go in the model: the stone wall behind them looked like a grey slab in the HOME
-    # menu, so they float on the menu's own background (the wall still lights and shadows them in the renders)
-    scene = gltf.model.scenes[gltf.model.scene or 0]
-    scene.nodes = [i for i in scene.nodes if gltf.model.nodes[i].name in MODEL_LAYERS]
-    cgfx = pycgfx.convert_gltf(gltf)
+    cgfx = pycgfx.convert_gltf(gltflib.GLTF.load(str(WORK / "banner.gltf"), load_file_resources=True))
     model = cgfx.data.models["COMMON"]
     for name in model.materials:
         stages = model.materials[name].fragment_shader.texture_combiners
@@ -131,6 +125,15 @@ def make_cgfx(out):
         for stage in stages[1:3]:
             stage.src_rgb = stage.src_alpha = 0x00F
             stage.combine_rgb = stage.combine_alpha = 0
+    # The wall stays in the model but draws nothing: its blend keeps what is already there (source x 0 + destination
+    # x 1) and it writes no depth, so the HOME menu's own background shows behind the title (a stone wall read as a
+    # grey slab there). It stays rather than being left out: the same model without it froze the HOME menu
+    from cgfx.mtob import BlendFunction, DepthFlag
+    ops = model.materials["wall"].fragment_operations
+    blend = ops.blend_operation
+    blend.src_color = blend.src_alpha = BlendFunction.Zero
+    blend.dst_color = blend.dst_alpha = BlendFunction.One
+    ops.depth_operation.flags = DepthFlag.TestEnabled
     data = pycgfx.write(cgfx)
     if len(data) > CGFX_LIMIT:
         raise SystemExit(f"the banner model is {len(data)} bytes, over the HOME menu's {CGFX_LIMIT}")
