@@ -272,10 +272,8 @@ void Session::drawBottom()
 	case SCR_SPELLMAKE: drawSpellmaking(); break;
 	case SCR_ENCHANT: drawEnchanting(); break;
 	case SCR_RECHARGE: drawRecharge(); break;
-	case SCR_OPTIONS: drawOptions(); break;
+	case SCR_OPTIONS: case SCR_AUDIO: case SCR_DISPLAY: case SCR_LOOK: drawOptions(); break;
 	case SCR_CONTROLS: drawControls(); break;
-	case SCR_DISPLAY: drawDisplay(); break;
-	case SCR_LOOK: drawLook(); break;
 	case SCR_CONSOLE: drawConsole(); break;
 	case SCR_REPAIR: drawRepair(); break;
 	case SCR_SAVES: drawSaves(); break;
@@ -494,134 +492,277 @@ void Session::drawGameMenu()
 		quitSaving = 1;
 }
 
-// Options: 3D, difficulty, effects and music volume (D-pad up / down picks, left / right or a tap on the
-// bar sets); kept in settings.txt
+// Options, in Morrowind's tabs: Prefs, Audio, Video and Controls (L / R, or a tap on a tab). Each tab is a column of
+// settings, a bar (D-pad left / right, or a tap on it, sets it) or a value (A, a tap or D-pad right steps to the next,
+// left to the one before), over its buttons; D-pad up / down moves between them. Kept in settings.txt. Each tab is its
+// own screen (options, audio, display, look), so B and Close leave from any of them. 3D has no setting: the 3D slider
+// alone turns it on and off
+static const Screen kOptionTabs[4] = { SCR_OPTIONS, SCR_AUDIO, SCR_DISPLAY, SCR_LOOK };
+static const int kPrefsConsoleFocus = 4;      // Prefs' Console button, where Console's Close comes back to
+static const int kControlsButtonsFocus = 6;   // Controls' Layout button, where the button list's Close comes back to
+
 void Session::drawOptions()
 {
+	int tab = 0;
+	while (tab < 3 && kOptionTabs[tab] != screen)
+		tab++;
 	header(w.game.gmst("soptions", "Options"));
 	const UiInput& in = uiIn();
-	// focus: 0..2 the bars, 3..5 the toggles (3D, combat rules, hit numbers), 6 gyro aim, 11 Console and 10 Display
-	// beside it, 7..9 the buttons along the bottom
-	if (in.down & KEY_DOWN) focus = focus == 10 || focus == 11 ? 7 : focus >= 7 ? 0 : focus == 6 ? 7 : focus >= 3 ? 6 : focus + 1;
-	else if (in.down & KEY_UP) focus = focus == 10 || focus == 11 ? 3 : focus == 0 ? 7 : focus >= 7 ? 6 : focus == 6 ? 3 : focus >= 3 ? 2 : focus - 1;
-	else if ((focus == 6 || focus == 10 || focus == 11) && (in.down & KEY_RIGHT)) focus = focus == 6 ? 11 : focus == 11 ? 10 : 6;
-	else if ((focus == 6 || focus == 10 || focus == 11) && (in.down & KEY_LEFT)) focus = focus == 6 ? 10 : focus == 10 ? 11 : 6;
-	else if (focus >= 3 && focus <= 5 && (in.down & KEY_RIGHT)) focus = focus == 5 ? 3 : focus + 1;
-	else if (focus >= 3 && focus <= 5 && (in.down & KEY_LEFT)) focus = focus == 3 ? 5 : focus - 1;
-	bool changed = false;
-	const std::string names[3] = { w.game.gmstLabel("sdifficulty", "Difficulty"), "Effects volume", "Music volume" };
-	int* vals[3] = { &difficulty, &effectsVolume, &musicVolume };
-	const int lo[3] = { -100, 0, 0 }, hi[3] = { 100, 100, 100 }, step[3] = { 10, 10, 10 };
-	for (int i = 0; i < 3; i++)
+	static const char* kTabKeys[4][2] = { { "sprefs", "Prefs" }, { "saudio", "Audio" }, { "svideo", "Video" },
+		{ "scontrols", "Controls" } };
+	int to = -1;
+	for (int i = 0; i < 4; i++)
+		if (uiButton(4 + i * 79, 24, 75, 20, w.game.gmstLabel(kTabKeys[i][0], kTabKeys[i][1]), i == tab) && i != tab)
+			to = i;
+	if (in.down & KEY_L) to = (tab + 3) % 4;
+	if (in.down & KEY_R) to = (tab + 1) % 4;
+	if (to >= 0)
 	{
-		float y = 28 + i * 38;
-		uiText(20, y, 0.45f, i == focus ? col::header : col::text, names[i] + ": " + std::to_string(*vals[i]));
-		float bx = 20, bw = 280, by = y + 18;
-		uiRect(bx, by, bw, 8, col::panel);
-		uiFrame(bx, by, bw, 8);
-		float f = (float)(*vals[i] - lo[i]) / (hi[i] - lo[i]);
-		uiRect(bx + f * bw - 4, by - 5, 8, 18, col::header);
-		int v = *vals[i];
-		if (i == focus && (in.down & KEY_LEFT)) v -= step[i];
-		if (i == focus && (in.down & KEY_RIGHT)) v += step[i];
-		if (in.touching && in.touchY >= by - 8 && in.touchY <= by + 16 && in.touchX >= bx - 6 && in.touchX <= bx + bw + 6)
+		openScreen(kOptionTabs[to]);
+		return;
+	}
+
+	// The focus walks lines: a line holds one setting, or buttons side by side (left / right between them)
+	struct Line { int first, count; };
+	std::vector<Line> lines;
+	auto line = [&](int count) {
+		int first = lines.empty() ? 0 : lines.back().first + lines.back().count;
+		lines.push_back({ first, count });
+		return first;
+	};
+	bool changed = false;
+	// a setting's name at the left, shrunk to fit beside its control (x 118 on)
+	auto name = [&](float y, const std::string& text, u32 color) {
+		float s = 0.45f;
+		while (s > 0.34f && uiTextWidth(text, s) > 104)
+			s -= 0.02f;
+		uiText(10, y, s, color, text);
+	};
+	// a bar: its name and value on a line, the bar across the screen under them (a line 34 high)
+	auto bar = [&](float y, const std::string& label, const std::string& shown, int& value, int lo, int hi, int step) {
+		bool f = focus == line(1);
+		uiText(10, y, 0.45f, f ? col::header : col::text, label);
+		uiTextRight(310, y, 0.45f, f ? col::header : col::text, shown);
+		float bx = 14, bw = 292, by = y + 21;
+		uiRect(bx, by, bw, 7, col::panel);
+		uiFrame(bx, by, bw, 7);
+		uiRect(bx + (float)(value - lo) / (hi - lo) * bw - 4, by - 5, 8, 17, col::header);
+		int v = value;
+		if (f && (in.down & KEY_LEFT)) v -= step;
+		if (f && (in.down & KEY_RIGHT)) v += step;
+		if (in.touching && in.touchY >= y + 10 && in.touchY < y + 34 && in.touchX >= bx - 8 && in.touchX <= bx + bw + 8)
 		{
-			focus = i;
-			v = lo[i] + (int)roundf(fmaxf(0.0f, fminf(1.0f, (in.touchX - bx) / bw)) * (hi[i] - lo[i]) / step[i]) * step[i];
+			focus = lines.back().first;
+			v = lo + (int)roundf(fmaxf(0.0f, fminf(1.0f, (in.touchX - bx) / bw)) * (hi - lo) / step) * step;
 		}
-		v = v < lo[i] ? lo[i] : v > hi[i] ? hi[i] : v;
-		if (v != *vals[i])
+		v = v < lo ? lo : v > hi ? hi : v;
+		if (v == value)
+			return;
+		value = v;
+		changed = true;
+	};
+	// a value: its name at the left, the value on a button at the right. Returns the step asked for (-1, 0, 1)
+	auto choice = [&](float y, const std::string& label, const std::string& shown, bool enabled = true) {
+		bool f = focus == line(1);
+		name(y + 4, label, !enabled ? col::textDim : f ? col::header : col::text);
+		int d = uiButton(118, y, 198, 22, shown, f, enabled) ? 1 : 0;
+		if (enabled && f && (in.down & KEY_RIGHT)) d = 1;
+		if (enabled && f && (in.down & KEY_LEFT)) d = -1;
+		if (d)
+			changed = true;
+		return d;
+	};
+	// buttons side by side across the screen: the one pressed, or -1
+	auto buttons = [&](float y, float h, const std::vector<std::string>& labels) {
+		int n = labels.size(), first = line(n), hit = -1;
+		float bw = (312.0f - (n - 1) * 4.0f) / n;
+		for (int i = 0; i < n; i++)
+			if (uiButton(4 + i * (bw + 4), y, bw, h, labels[i], focus == first + i))
+				hit = i;
+		return hit;
+	};
+	auto onOff = [](bool on) { return std::string(on ? "On" : "Off"); };
+	char text[64];
+	int b = -1;
+	bool closing = false;
+	if (screen == SCR_OPTIONS)
+	{
+		snprintf(text, sizeof(text), "%d", difficulty);
+		bar(50, w.game.gmstLabel("sdifficulty", "Difficulty"), text, difficulty, -100, 100, 10);
+		// Combat: vanilla, or Glancing Blows and Crits (misses glance, crits; the same average damage)
+		if (choice(86, "Combat hits", combatMode == COMBAT_GBAC ? "Glancing blows + crits" : "Vanilla"))
 		{
-			*vals[i] = v;
+			combatMode = combatMode == COMBAT_GBAC ? COMBAT_VANILLA : COMBAT_GBAC;
+			notify(combatMode == COMBAT_GBAC ? "Glancing blows and crits: misses glance for half damage, strong hits can crit."
+				: "Vanilla combat.");
+		}
+		// Hit & Miss Indicators: damage numbers and misses by the crosshair
+		if (choice(112, "Hit numbers", onOff(hitIndicators)))
+		{
+			hitIndicators = !hitIndicators;
+			notify(hitIndicators ? "Hit and miss numbers on." : "Hit and miss numbers off.");
+		}
+		// Subtitles: spoken lines written on the top screen
+		if (choice(138, w.game.gmstLabel("ssubtitles", "Subtitles"), onOff(g_subtitles)))
+		{
+			g_subtitles = !g_subtitles;
+			notify(g_subtitles ? "Subtitles on." : "Subtitles off: spoken lines are only heard.");
+		}
+		// Console: OpenMW's, one script line at a time, on the object the crosshair was on; Credits: Morrowind's movie
+		int extra = buttons(170, 26, { "Console", "Credits" });
+		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
+		closing = b == 1;
+		if (extra == 0)
+		{
+			// the object under the crosshair when the menu was opened is the one the lines act on (OpenMW's click on it)
+			if (target >= 0)
+				console.selected = target;
+			closeScreen();
+			consoleBack = 0.0f;
+			openScreen(SCR_CONSOLE);
+			return;
+		}
+		// Morrowind's credits are its movie (Video\mw_credits.bik): data converted without it keeps Options open and
+		// says so, rather than dropping back into the game as if the button did nothing
+		if (extra == 1)
+		{
+			if (playMovie("mw_credits"))
+				closeScreen();
+			else
+				notify("The credits movie is missing: Video\\mw_credits.bik was not converted with the game data.");
+			return;
+		}
+		if (b == 0)
+		{
+			difficulty = 0;
+			combatMode = COMBAT_VANILLA;
+			hitIndicators = false;
+			g_subtitles = true;
 			changed = true;
 		}
 	}
-	const char* stereo = stereoMode == STEREO_OFF ? "3D: Off" : "3D: On";
-	if (uiButton(4, 142, 100, 26, stereo, focus == 3) || (focus == 3 && (in.down & KEY_A)))
+	else if (screen == SCR_AUDIO)
 	{
-		stereoMode = stereoMode == STEREO_OFF ? STEREO_ON : STEREO_OFF;
-		changed = true;
+		snprintf(text, sizeof(text), "%d", effectsVolume);
+		bar(50, w.game.gmstLabel("seffects", "Effects"), text, effectsVolume, 0, 100, 10);
+		snprintf(text, sizeof(text), "%d", musicVolume);
+		bar(86, w.game.gmstLabel("smusic", "Music"), text, musicVolume, 0, 100, 10);
+		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
+		closing = b == 1;
+		if (b == 0)
+		{
+			effectsVolume = musicVolume = 100;
+			changed = true;
+		}
 	}
-	// Combat: vanilla, or Glancing Blows and Crits (misses glance, crits; the same average damage)
-	const char* rules = combatMode == COMBAT_GBAC ? "Glance+Crit" : "Vanilla hits";
-	if (uiButton(110, 142, 100, 26, rules, focus == 4) || (focus == 4 && (in.down & KEY_A)))
+	else if (screen == SCR_DISPLAY)
 	{
-		combatMode = combatMode == COMBAT_GBAC ? COMBAT_VANILLA : COMBAT_GBAC;
-		notify(combatMode == COMBAT_GBAC ? "Glancing blows and crits: misses glance for half damage, strong hits can crit."
-			: "Vanilla combat.");
-		changed = true;
+		// Gamma (0.80 to 1.80), and a ramp dark to light through the curve in use (what the bar does to the dim end);
+		// the world shows on the top screen behind it, so the change is seen as it is made
+		snprintf(text, sizeof(text), "%.2f", g_gammaPct / 100.0f);
+		bar(50, "Gamma", text, g_gammaPct, kGammaMinPct, kGammaMaxPct, kGammaStepPct);
+		float g = gammaValue();
+		for (int i = 0; i < 10; i++)
+		{
+			int c = (int)(powf(i / 9.0f, 1.0f / g) * 255.0f + 0.5f);
+			uiRect(14 + i * 29.2f, 88, 29.2f, 12, C2D_Color32(c, c, c, 255));
+		}
+		uiFrame(14, 88, 292, 12);
+		// Auto gamma: what this console reads the light with
+		GammaSensor sensor = gammaSensor();
+		if (choice(108, "Auto gamma", sensor == SENSOR_NONE ? "No light sensor" : onOff(gammaAutoOn()), sensor != SENSOR_NONE))
+		{
+			g_autoGamma = gammaAutoOn() ? 0 : 1;
+			notify(!gammaAutoOn() ? "Auto gamma off." : sensor == SENSOR_QTM
+				? "Auto gamma on: the picture lifts in bright light."
+				: "Auto gamma on: the inner camera checks the light at each loading screen.");
+		}
+		const char* how = sensor == SENSOR_QTM ? "Auto gamma checks the light every few seconds."
+			: sensor == SENSOR_CAMERA ? "Auto gamma uses the inner camera at loads."
+			: "No light sensor: Auto gamma stays off.";
+		uiText(10, 140, 0.4f, col::textDim, how);
+		uiText(10, 155, 0.4f, col::textDim, "1.00 is Morrowind's own; higher helps in sunlight.");
+		uiText(10, 170, 0.4f, col::textDim, "The dark stays dark: torches still matter.");
+		if (gammaAutoOn())
+		{
+			snprintf(text, sizeof(text), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
+			uiText(10, 188, 0.4f, col::textDim, text);
+		}
+		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
+		closing = b == 1;
+		if (b == 0)
+		{
+			g_gammaPct = 100;
+			g_autoGamma = -1;
+			changed = true;
+		}
 	}
-	// Hit & Miss Indicators: damage numbers and misses by the crosshair
-	if (uiButton(216, 142, 100, 26, hitIndicators ? "Numbers: On" : "Numbers: Off", focus == 5)
-		|| (focus == 5 && (in.down & KEY_A)))
+	else
 	{
-		hitIndicators = !hitIndicators;
-		notify(hitIndicators ? "Hit and miss numbers on." : "Hit and miss numbers off.");
-		changed = true;
+		// Look speed (the C-stick and D-pad), the GoldenEye pad's turn while walking and its look while aiming
+		// (0.50x to 2.00x), Invert and Gyro aim
+		snprintf(text, sizeof(text), "%.2fx", g_lookSpeed / 100.0f);
+		bar(50, "Look speed (C-stick, D-pad)", text, g_lookSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+		snprintf(text, sizeof(text), "%.2fx", g_geTurnSpeed / 100.0f);
+		bar(84, "GoldenEye turn (walking)", text, g_geTurnSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+		snprintf(text, sizeof(text), "%.2fx", g_geAimSpeed / 100.0f);
+		bar(118, "GoldenEye look (aiming)", text, g_geAimSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+		if (choice(154, "Invert look", onOff(g_invertY)))
+		{
+			g_invertY = !g_invertY;
+			notify(g_invertY ? "Up on the stick now looks down." : "Up on the stick looks up.");
+		}
+		// Gyro aim: turning the console turns the view (off, half, as far, twice as far as it turned)
+		static const int kGyroSteps[4] = { 0, 50, 100, 200 };
+		snprintf(text, sizeof(text), g_gyroAim > 0 ? "%.1fx" : "Off", g_gyroAim / 100.0f);
+		if (int d = choice(180, "Gyro aim", text))
+		{
+			int k = 0;
+			while (k < 3 && kGyroSteps[k] != g_gyroAim)
+				k++;
+			g_gyroAim = kGyroSteps[(k + d + 4) % 4];
+			notify(g_gyroAim > 0 ? "Gyro aim on: turn the 3DS to aim." : "Gyro aim off.");
+		}
+		// Layout: the button list, what each button does in the layout in use (Y there switches Xbox, classic, GoldenEye)
+		b = buttons(208, 28, { "Default", "Layout", w.game.gmstLabel("sclose", "Close") });
+		closing = b == 2;
+		if (b == 0)
+		{
+			g_lookSpeed = kLookDefaultPct;
+			g_geTurnSpeed = g_geAimSpeed = 100;
+			g_invertY = false;
+			g_gyroAim = 0;
+			changed = true;
+		}
+		else if (b == 1)
+		{
+			openScreen(SCR_CONTROLS);
+			return;
+		}
 	}
-	// Gyro aim: turning the console turns the view (off, half, as far, twice as far as it turned)
-	static const int kGyroSteps[4] = { 0, 50, 100, 200 };
-	char gyro[40];
-	snprintf(gyro, sizeof(gyro), g_gyroAim > 0 ? "Gyro: %.1fx" : "Gyro: Off", g_gyroAim / 100.0f);
-	if (uiButton(4, 174, 100, 26, gyro, focus == 6) || (focus == 6 && (in.down & KEY_A)))
-	{
-		int k = 0;
-		while (k < 3 && kGyroSteps[k] != g_gyroAim)
-			k++;
-		g_gyroAim = kGyroSteps[(k + 1) % 4];
-		notify(g_gyroAim > 0 ? "Gyro aim on: turn the 3DS to aim." : "Gyro aim off.");
-		changed = true;
-	}
-	// Console: OpenMW's, one script line at a time, on the object the crosshair was on
-	bool openConsole = uiButton(110, 174, 100, 26, "Console", focus == 11) || (focus == 11 && (in.down & KEY_A));
-	// Display: Gamma and Auto gamma, on their own screen
-	bool display = uiButton(216, 174, 100, 26, "Display", focus == 10) || (focus == 10 && (in.down & KEY_A));
 	if (changed)
 	{
 		audioSetScales(effectsVolume / 100.0f, musicVolume / 100.0f);
 		saveSettings();
 	}
-	// Controls, Credits, Close (focus 7..9: D-pad left / right between them)
-	int b = -1;
-	const std::string row[3] = { w.game.gmstLabel("scontrols", "Controls"), "Credits", w.game.gmstLabel("sclose", "Close") };
-	for (int i = 0; i < 3; i++)
-		if (uiButton(4 + i * 106, 208, 100, 28, row[i], focus == 7 + i)
-			|| (focus == 7 + i && (in.down & KEY_A)))
-			b = i;
-	if (focus >= 7 && focus <= 9 && (in.down & KEY_RIGHT)) focus = focus == 9 ? 7 : focus + 1;
-	else if (focus >= 7 && focus <= 9 && (in.down & KEY_LEFT)) focus = focus == 7 ? 9 : focus - 1;
-	if (display)
+	if (closing || (in.down & KEY_B))
 	{
 		closeScreen();
-		focus = 0;
-		openScreen(SCR_DISPLAY);
+		return;
 	}
-	else if (openConsole)
+	// D-pad up / down: the line above / below (keeping the column, as near as the line has); left / right between
+	// buttons side by side (a setting's own line takes them itself)
+	int li = 0;
+	while (li + 1 < (int)lines.size() && focus >= lines[li + 1].first)
+		li++;
+	int column = focus - lines[li].first, n = lines.size();
+	if (in.down & (KEY_DOWN | KEY_UP))
 	{
-		// the object under the crosshair when the menu was opened is the one the lines act on (OpenMW's click on it)
-		if (target >= 0)
-			console.selected = target;
-		closeScreen();
-		focus = 0;
-		consoleBack = 0.0f;
-		openScreen(SCR_CONSOLE);
+		li = (li + ((in.down & KEY_DOWN) ? 1 : n - 1)) % n;
+		focus = lines[li].first + std::min(column, lines[li].count - 1);
 	}
-	else if (b == 0)
-	{
-		closeScreen();
-		openScreen(SCR_CONTROLS);
-	}
-	else if (b == 1)
-	{
-		// Morrowind's credits are its movie (Video\mw_credits.bik): data converted without it keeps Options open and
-		// says so, rather than dropping back into the game as if the button did nothing
-		if (playMovie("mw_credits"))
-			closeScreen();
-		else
-			notify("The credits movie is missing: Video\\mw_credits.bik was not converted with the game data.");
-	}
-	else if (b == 2 || (in.down & KEY_B))
-		closeScreen();
+	else if (lines[li].count > 1 && (in.down & (KEY_LEFT | KEY_RIGHT)))
+		focus = lines[li].first + (column + ((in.down & KEY_RIGHT) ? 1 : lines[li].count - 1)) % lines[li].count;
 }
 
 // What each button does
@@ -660,124 +801,16 @@ void Session::drawControls()
 		uiText(140, y, 0.42f, col::text, l[1]);
 		y += 13.5f;
 	}
-	// Y: the next layout (Xbox, classic, GoldenEye); A / B: back to Options
-	// X: Look (look speed, invert)
-	if (uiButton(4, 208, 124, 28, xbox ? "Y: Use classic" : goldenEye ? "Y: Use Xbox" : "Y: Use GoldenEye") || (uiIn().down & KEY_Y))
+	// Y: the next layout (Xbox, classic, GoldenEye); A / B: back to the Controls tab, on its Layout button
+	if (uiButton(4, 208, 154, 28, xbox ? "Y: Use classic" : goldenEye ? "Y: Use Xbox" : "Y: Use GoldenEye") || (uiIn().down & KEY_Y))
 	{
 		g_controlLayout = xbox ? CONTROLS_CLASSIC : goldenEye ? CONTROLS_XBOX : CONTROLS_GOLDENEYE;
 		saveSettings();
 	}
-	else if (uiButton(132, 208, 88, 28, "X: Look") || (uiIn().down & KEY_X))
+	else if (uiButton(162, 208, 154, 28, w.game.gmst("sclose", "Close"), true) || (uiIn().down & (KEY_A | KEY_B)))
 	{
-		closeScreen();
-		focus = 0;
 		openScreen(SCR_LOOK);
-	}
-	else if (uiButton(224, 208, 92, 28, w.game.gmst("sclose", "Close"), true) || (uiIn().down & (KEY_A | KEY_B)))
-	{
-		closeScreen();
-		openScreen(SCR_OPTIONS);
-	}
-}
-
-// A setting's bar, as the Options volume bars: its label (bright while focused) above it, D-pad left / right or a tap
-// on it to set. True when it changed
-static bool settingBar(float y, const std::string& label, int index, int& focus, int& value, int lo, int hi, int step)
-{
-	const UiInput& in = uiIn();
-	uiText(20, y, 0.45f, focus == index ? col::header : col::text, label);
-	float bx = 20, bw = 280, by = y + 18;
-	uiRect(bx, by, bw, 8, col::panel);
-	uiFrame(bx, by, bw, 8);
-	float f = (float)(value - lo) / (hi - lo);
-	uiRect(bx + f * bw - 4, by - 5, 8, 18, col::header);
-	int v = value;
-	if (focus == index && (in.down & KEY_LEFT)) v -= step;
-	if (focus == index && (in.down & KEY_RIGHT)) v += step;
-	if (in.touching && in.touchY >= by - 8 && in.touchY <= by + 16 && in.touchX >= bx - 6 && in.touchX <= bx + bw + 6)
-	{
-		focus = index;
-		v = lo + (int)roundf(fmaxf(0.0f, fminf(1.0f, (in.touchX - bx) / bw)) * (hi - lo) / step) * step;
-	}
-	v = v < lo ? lo : v > hi ? hi : v;
-	if (v == value)
-		return false;
-	value = v;
-	return true;
-}
-
-// Display: Gamma (a bar, 0.80 to 1.80), Subtitles and Auto gamma (on / off); kept in settings.txt. The world shows on
-// the top screen behind it, so the change is seen as it is made
-void Session::drawDisplay()
-{
-	header("Display");
-	const UiInput& in = uiIn();
-	// focus: 0 the Gamma bar, 1 Subtitles and 2 Auto gamma beside it, 3..4 the buttons along the bottom
-	if (in.down & KEY_DOWN) focus = focus == 0 ? 1 : focus <= 2 ? 3 : 0;
-	else if (in.down & KEY_UP) focus = focus == 0 ? 3 : focus <= 2 ? 0 : 1;
-	else if (focus >= 1 && focus <= 2 && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 1 ? 2 : 1;
-	else if (focus >= 3 && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 3 ? 4 : 3;
-	char label[64];
-	snprintf(label, sizeof(label), "Gamma: %.2f%s", g_gammaPct / 100.0f, g_gammaPct == 100 ? " (as Morrowind)" : "");
-	bool changed = settingBar(28, label, 0, focus, g_gammaPct, kGammaMinPct, kGammaMaxPct, kGammaStepPct);
-	// Dark to light, through the curve in use (what the bar does to the dim end)
-	float g = gammaValue();
-	for (int i = 0; i < 10; i++)
-	{
-		int c = (int)(powf(i / 9.0f, 1.0f / g) * 255.0f + 0.5f);
-		uiRect(20 + i * 28, 66, 28, 16, C2D_Color32(c, c, c, 255));
-	}
-	uiFrame(20, 66, 280, 16);
-	// Subtitles: spoken lines written on the top screen
-	if (uiButton(4, 94, 152, 26, g_subtitles ? "Subtitles: On" : "Subtitles: Off", focus == 1) || (focus == 1 && (in.down & KEY_A)))
-	{
-		g_subtitles = !g_subtitles;
-		notify(g_subtitles ? "Subtitles on." : "Subtitles off: spoken lines are only heard.");
-		changed = true;
-	}
-	// Auto gamma: what this console reads the light with
-	GammaSensor sensor = gammaSensor();
-	const char* autoLabel = gammaAutoOn() ? "Auto gamma: On" : "Auto gamma: Off";
-	if ((uiButton(164, 94, 152, 26, autoLabel, focus == 2, sensor != SENSOR_NONE) || (focus == 2 && (in.down & KEY_A)))
-		&& sensor != SENSOR_NONE)
-	{
-		g_autoGamma = gammaAutoOn() ? 0 : 1;
-		notify(!gammaAutoOn() ? "Auto gamma off." : sensor == SENSOR_QTM
-			? "Auto gamma on: the picture lifts in bright light."
-			: "Auto gamma on: the inner camera checks the light at each loading screen.");
-		changed = true;
-	}
-	const char* how = sensor == SENSOR_QTM ? "Auto gamma checks the light every few seconds."
-		: sensor == SENSOR_CAMERA ? "Auto gamma uses the inner camera at loads."
-		: "No light sensor: Auto gamma stays off.";
-	uiText(20, 128, 0.4f, col::textDim, how);
-	uiText(20, 144, 0.4f, col::textDim, "Higher gamma helps in sunlight.");
-	uiText(20, 158, 0.4f, col::textDim, "The dark stays dark: torches still matter.");
-	if (gammaAutoOn())
-	{
-		snprintf(label, sizeof(label), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
-		uiText(20, 180, 0.4f, col::textDim, label);
-	}
-	if (changed)
-		saveSettings();
-	// Default, Close (focus 3..4)
-	int b = -1;
-	const std::string row[2] = { "Default", w.game.gmst("sclose", "Close") };
-	for (int i = 0; i < 2; i++)
-		if (uiButton(40 + i * 130, 208, 110, 28, row[i], focus == 3 + i) || (focus == 3 + i && (in.down & KEY_A)))
-			b = i;
-	if (b == 0)
-	{
-		g_gammaPct = 100;
-		g_autoGamma = -1;
-		g_subtitles = true;
-		saveSettings();
-	}
-	else if (b == 1 || (in.down & KEY_B))
-	{
-		closeScreen();
-		focus = 0;
-		openScreen(SCR_OPTIONS);
+		focus = kControlsButtonsFocus;
 	}
 }
 
@@ -841,60 +874,8 @@ void Session::drawConsole()
 	}
 	else if (b == 3 || (in.down & KEY_B))
 	{
-		closeScreen();
-		focus = 11;
 		openScreen(SCR_OPTIONS);
-	}
-}
-
-// Look (from Controls): the C-stick's and D-pad's look speed, the GoldenEye pad's turn while walking and its look while
-// aiming (0.50x to 2.00x), and Invert up / down; kept in settings.txt
-void Session::drawLook()
-{
-	header("Look");
-	const UiInput& in = uiIn();
-	// focus: 0..2 the bars, 3 Invert, 4..5 the buttons along the bottom
-	if (in.down & KEY_DOWN) focus = focus >= 4 ? 0 : focus + 1;
-	else if (in.down & KEY_UP) focus = focus == 0 ? 4 : focus >= 4 ? 3 : focus - 1;
-	else if (focus >= 4 && (in.down & (KEY_LEFT | KEY_RIGHT))) focus = focus == 4 ? 5 : 4;
-	bool changed = false;
-	char label[64];
-	snprintf(label, sizeof(label), "Look speed (C-stick, D-pad): %.2fx", g_lookSpeed / 100.0f);
-	changed |= settingBar(28, label, 0, focus, g_lookSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
-	snprintf(label, sizeof(label), "GoldenEye turn (walking): %.2fx", g_geTurnSpeed / 100.0f);
-	changed |= settingBar(64, label, 1, focus, g_geTurnSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
-	snprintf(label, sizeof(label), "GoldenEye look (aiming): %.2fx", g_geAimSpeed / 100.0f);
-	changed |= settingBar(100, label, 2, focus, g_geAimSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
-	if (uiButton(4, 138, 312, 26, g_invertY ? "Invert look up / down: On" : "Invert look up / down: Off", focus == 3)
-		|| (focus == 3 && (in.down & KEY_A)))
-	{
-		g_invertY = !g_invertY;
-		notify(g_invertY ? "Up on the stick now looks down." : "Up on the stick looks up.");
-		changed = true;
-	}
-	uiText(20, 172, 0.4f, col::textDim, g_controlLayout == CONTROLS_GOLDENEYE ? "Your layout: GoldenEye (the pad turns and aims)."
-		: g_controlLayout == CONTROLS_XBOX ? "Your layout: Xbox (the C-stick looks)." : "Your layout: classic (C-stick and D-pad look).");
-	uiText(20, 186, 0.4f, col::textDim, "Gyro aim keeps its own speed (Options).");
-	if (changed)
-		saveSettings();
-	// Default, Close (focus 4..5)
-	int b = -1;
-	const std::string row[2] = { "Default", w.game.gmst("sclose", "Close") };
-	for (int i = 0; i < 2; i++)
-		if (uiButton(40 + i * 130, 208, 110, 28, row[i], focus == 4 + i) || (focus == 4 + i && (in.down & KEY_A)))
-			b = i;
-	if (b == 0)
-	{
-		g_lookSpeed = kLookDefaultPct;
-		g_geTurnSpeed = g_geAimSpeed = 100;
-		g_invertY = false;
-		saveSettings();
-	}
-	else if (b == 1 || (in.down & KEY_B))
-	{
-		closeScreen();
-		focus = 0;
-		openScreen(SCR_CONTROLS);
+		focus = kPrefsConsoleFocus;
 	}
 }
 

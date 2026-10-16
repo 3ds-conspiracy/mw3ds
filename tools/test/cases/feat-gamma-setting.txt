@@ -15,7 +15,7 @@
 0.3 0 0 0 0 TAP:160:169
 0.5 0 0 0 0 EXPECT:screen:options
 0.3 0 0 0 0 SHOT
-0.3 0 0 0 0 TAP:240:187
+0.3 0 0 0 0 TAP:199:34
 0.3 0 0 0 0 EXPECT:screen:display
 0.3 0 0 0 0 SHOT
 0.3 0 0 0 0 RIGHT
@@ -24,7 +24,7 @@
 1 0 0 0
 0.3 0 0 0 0 EXPECT:gamma:value:eq:1.1
 0.3 0 0 0 0 SHOT
-0.3 0 0 0 0 B
+0.3 0 0 0 0 TAP:41:34
 0.3 0 0 0 0 EXPECT:screen:options
 0.3 0 0 0 0 SCREEN:none
 0.3 0 0 0 0 GAMMA:80

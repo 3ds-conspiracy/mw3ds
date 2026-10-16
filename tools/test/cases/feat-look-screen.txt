@@ -10,11 +10,13 @@
 0.3 0 0 0 0 TAP:160:169
 0.5 0 0 0 0 EXPECT:screen:options
 0.3 0 0 0 0 SHOT
-0.3 0 0 0 0 TAP:54:222
+0.3 0 0 0 0 TAP:278:34
+0.3 0 0 0 0 TAP:160:222
 0.5 0 0 0 0 EXPECT:screen:controls
 0.3 0 0 0 0 SHOT
 0.3 0 0 0 0 TAP:176:222
 0.5 0 0 0 0 EXPECT:screen:look
+0.3 0 0 0 0 DOWN
 0.3 0 0 0 0 SHOT
 0.3 0 0 0 0 RIGHT
 0.3 0 0 0 0 RIGHT
@@ -32,5 +34,5 @@
 0.3 0 0 0 0 EXPECT:setting:inverty:eq:1+EXPECT:savedsetting:inverty:eq:1
 0.5 0 0 0
 0.3 0 0 0 0 SHOT
-0.3 0 0 0 0 B
+0.3 0 0 0 0 TAP:160:222
 0.5 0 0 0 0 EXPECT:screen:controls

@@ -518,12 +518,12 @@ float Session::aimDepth()
 	return fmaxf(best, 20.0f);
 }
 
-// 0 or 1: whether this frame should be stereo: the player's choice (menu toggle, slider), whatever
-// the frame rate; only a second eye that wouldn't fit the GPU command buffer waits
+// 0 or 1: whether this frame should be stereo: the player's choice (the 3D slider), whatever the frame rate; only a
+// second eye that wouldn't fit the GPU command buffer waits
 float Session::stereoTarget(float slider, float dt)
 {
 	(void)dt;
-	if (slider <= 0.0f || stereoMode == STEREO_OFF || w.current < 0)
+	if (slider <= 0.0f || w.current < 0)
 		return 0.0f;
 	// A second eye has to fit in the frame's GPU command buffer next to the first (and the HUDs)
 	if (!stereoCmdRoom && eyeCmdUse < 0.3f)
@@ -590,11 +590,7 @@ static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is of
 
 void Session::loadSettings()
 {
-	// An Old 3DS starts with 3D off (the second eye is the whole scene again on a CPU a third as fast); the Options
-	// toggle still turns it on
-	if (!g_profile.stereoAtStart)
-		stereoMode = STEREO_OFF;
-	// ... and the GoldenEye layout: one with no C-stick or ZL / ZR (those need a Circle Pad Pro there)
+	// An Old 3DS starts with the GoldenEye layout: one with no C-stick or ZL / ZR (those need a Circle Pad Pro there)
 	if (g_profile.goldenEyeAtStart)
 		g_controlLayout = CONTROLS_GOLDENEYE;
 	// A scripted run starts at gamma 1.00 with Auto gamma off, whatever settings.txt a case before left (Azahar's SD card
@@ -615,10 +611,8 @@ void Session::loadSettings()
 	char line[64];
 	while (fgets(line, sizeof(line), f))
 	{
-		if (strncmp(line, "stereo=on", 9) == 0) stereoMode = STEREO_ON;
-		else if (strncmp(line, "stereo=off", 10) == 0) stereoMode = STEREO_OFF;
-		else if (strncmp(line, "stereo=auto", 11) == 0) stereoMode = STEREO_ON;
-		else if (strncmp(line, "difficulty=", 11) == 0) difficulty = atoi(line + 11);
+		// (an older file's stereo= line is left unread: the 3D slider alone decides)
+		if (strncmp(line, "difficulty=", 11) == 0) difficulty = atoi(line + 11);
 		else if (strncmp(line, "effects=", 8) == 0) effectsVolume = atoi(line + 8);
 		else if (strncmp(line, "music=", 6) == 0) musicVolume = atoi(line + 6);
 		else if (strncmp(line, "controls=classic", 16) == 0) g_controlLayout = CONTROLS_CLASSIC;
@@ -652,7 +646,6 @@ void Session::saveSettings()
 	FILE* f = fopen(kSettingsPath, "w");
 	if (!f)
 		return;
-	fprintf(f, "stereo=%s\n", stereoMode == STEREO_OFF ? "off" : "on");
 	fprintf(f, "difficulty=%d\neffects=%d\nmusic=%d\n", difficulty, effectsVolume, musicVolume);
 	fprintf(f, "controls=%s\n", g_controlLayout == CONTROLS_CLASSIC ? "classic" : g_controlLayout == CONTROLS_GOLDENEYE ? "goldeneye" : "xbox");
 	if (g_gyroAim > 0)
@@ -980,7 +973,7 @@ bool Session::worldPaused() const
 	switch (screen)
 	{
 	case SCR_INVENTORY: case SCR_MAGIC: case SCR_SPELLS: case SCR_STATS: case SCR_MAP: case SCR_JOURNAL:
-	case SCR_SAVES: case SCR_OPTIONS: case SCR_CONTROLS: case SCR_DISPLAY: case SCR_LOOK: case SCR_CONSOLE: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
+	case SCR_SAVES: case SCR_OPTIONS: case SCR_AUDIO: case SCR_CONTROLS: case SCR_DISPLAY: case SCR_LOOK: case SCR_CONSOLE: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
 		return true;
 	default:
 		return false;

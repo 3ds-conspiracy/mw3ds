@@ -1,0 +1,48 @@
+# Options in Morrowind's tabs (Prefs, Audio, Video, Controls), reached as a player would (START, Options): R / L and a tap
+# change tabs; no 3D toggle (the 3D slider alone decides, and settings.txt keeps no stereo= line); a value steps with A or
+# D-pad right; a bar with D-pad left / right; Default puts a tab back; Layout opens the button list, whose Close comes
+# back to Controls; B leaves Options from any tab
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 EXPECT:nobutton:3D:%On+EXPECT:nobutton:3D:%Off+EXPECT:button:Console+EXPECT:button:Credits+EXPECT:button:Prefs+EXPECT:button:Controls
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:savedsetting:numbers:eq:1+EXPECT:savedsetting:stereo:eq:-1
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 EXPECT:savedsetting:numbers:eq:0
+0.3 0 0 0 0 R
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 LEFT
+0.3 0 0 0 0 EXPECT:savedsetting:effects:eq:90
+0.3 0 0 0 0 TAP:81:222
+0.3 0 0 0 0 EXPECT:savedsetting:effects:eq:100
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:display
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 EXPECT:gamma:setting:eq:1.05
+0.3 0 0 0 0 TAP:81:222
+0.3 0 0 0 0 EXPECT:gamma:setting:eq:1
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:look
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:160:222
+0.5 0 0 0 0 EXPECT:screen:controls
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+0.5 0 0 0 0 EXPECT:screen:look
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 L
+0.5 0 0 0 0 EXPECT:screen:look
+0.3 0 0 0 0 TAP:199:34
+0.5 0 0 0 0 EXPECT:screen:display
+0.3 0 0 0 0 B
+0.5 0 0 0 0 EXPECT:screen:none
+1 0 0 0

@@ -20,13 +20,12 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.skinEvery[0] = 2, p.skinEvery[1] = 3, p.skinEvery[2] = 4;
 		p.rgb565 = false;
 		p.cmdBufScale = 8;           // room for both eyes of a busy town
-		p.stereoAtStart = true;
 		p.goldenEyeAtStart = false;
 	}
 	else
 	{
 		// A CPU a third as fast: 30 fps (20 when the scene is too heavy, an even share of the screen's 60 Hz), a shorter
-		// view outdoors, people drawn and animated less far, 3D off at first (the second eye is the whole scene again)
+		// view outdoors, people drawn and animated less far
 		p.slowCpu = true;
 		p.frameCap = 30;
 		p.capSteps = true;
@@ -38,8 +37,7 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.actorDetailScale = 0.67f;
 		p.skinEvery[0] = 2, p.skinEvery[1] = 4, p.skinEvery[2] = 6;
 		p.rgb565 = true;
-		p.cmdBufScale = 4;           // (3D off unless asked, a shorter view: 1 MB of linear memory back)
-		p.stereoAtStart = false;
+		p.cmdBufScale = 4;           // 1 MB of linear memory back (a second eye draws only while it fits: Session::stereoTarget)
 		p.goldenEyeAtStart = true;
 	}
 	p.smallHeap = heapBytes < (64u << 20);

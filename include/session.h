@@ -56,6 +56,7 @@ enum Screen
 	SCR_LOOK,
 	SCR_CONSOLE,
 	SCR_CLASS_CREATE,
+	SCR_AUDIO,
 };
 
 struct MessageState
@@ -428,11 +429,8 @@ struct Session : ScriptHost
 	void projectileHits(Projectile& p, int victim);
 	void drawExtras(const float eye[3], bool secondEye = false, bool arms = true);
 
-	// Stereo 3D (main.cpp draws each eye): on with the slider in interiors, and outdoors while the
-	// frame has room for a second eye; Settings on the Stats screen can force it on or off
-	// 3D is the player's call (the menu toggle and the slider): no frame-rate cut-off
-	enum { STEREO_AUTO, STEREO_ON, STEREO_OFF };   // AUTO: old settings files, read as ON
-	int stereoMode = STEREO_ON;
+	// Stereo 3D (main.cpp draws each eye): the 3D slider alone turns it on and off (no Options toggle), whatever the frame
+	// rate; only a second eye that wouldn't fit the frame's GPU command buffer waits
 	// Combat rules (Options): vanilla, or Glancing Blows and Crits (GBAC 1.2.1 by ZullleMW, Nexus 49541):
 	// misses become glancing blows, crits come with a high hit chance, the same damage on average
 	enum { COMBAT_VANILLA = 0, COMBAT_GBAC = 1 };
@@ -462,10 +460,8 @@ struct Session : ScriptHost
 	// Options (settings.txt): difficulty -100..100 (Morrowind's slider), effects / music volume 0..100
 	int difficulty = 0, effectsVolume = 100, musicVolume = 100;
 	float difficultyScale(bool toPlayer) const;   // damage multiplier: to the player / dealt by the player
-	void drawOptions();
-	void drawControls();
-	void drawDisplay();
-	void drawLook();
+	void drawOptions();               // the Options tabs: Prefs, Audio, Video (SCR_DISPLAY), Controls (SCR_LOOK)
+	void drawControls();              // Options > Controls > Buttons: what each button does
 	void drawConsole();               // Options > Console: one MWScript line at a time (devconsole.cpp)
 	float consoleBack = 0.0f;         // its output scrolled back by this many lines
 	std::string consoleDraft;         // what its keyboard opens with (Edit last: the line typed last)

@@ -104,7 +104,8 @@ The engine finds out which console it is on and, on an Old 3DS, takes a lighter 
   judder). Indoors, most of the game, it stays at 30.
 - **View**: a shorter view outdoors, the fog closing in further only when needed; distant land still reaches the
   horizon. People are drawn less far and animated less often in the distance.
-- **3D** starts off (Options turns it on: it costs a second picture each frame).
+- **3D** follows the 3D slider, as on a New 3DS (there is no Options setting). It costs a second picture each frame:
+  keep the slider down for the best frame rate.
 
 ### Controls
 
