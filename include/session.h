@@ -449,11 +449,13 @@ struct Session : ScriptHost
 	float renderCost = 0.0f;          // smoothed per-frame render time (ms) of one eye
 	float eyeCmdUse = 0.0f;           // share of the GPU command buffer one eye's world takes
 	bool stereoCmdRoom = true;
-	// Adaptive view distance outdoors (fog scale), from the frame's CPU / GPU work. An Old 3DS starts nearer and may
-	// close in further, and caps the frame rate at 30 or 20 (frameCap: main hands it to C3D_FrameRate)
-	float viewScale = g_profile.viewScaleMax, workCost = 0.0f;
+	// Adaptive view distance outdoors (fog scale), from the frame's CPU / GPU work and the time between frames. An Old
+	// 3DS starts nearer and may close in further, and caps the frame rate at 30 or 20 (frameCap: main hands it to
+	// C3D_FrameRate)
+	float viewScale = g_profile.viewScaleMax, workCost = 0.0f, frameCost = 0.0f;
 	int frameCap = g_profile.frameCap, capFrames = 0;
-	void adaptView(float workMs);
+	u64 adaptTick = 0;                // when adaptView last ran (once a frame: the time between frames)
+	void adaptView(float workMs, float frameMs = 0.0f);   // frameMs 0: measured here
 	float stereoTarget(float slider, float dt);
 	void noteRenderCost(float cpuMs, float gpuMs, bool stereo, float eyeCmd);
 	void loadSettings();

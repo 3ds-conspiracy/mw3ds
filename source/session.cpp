@@ -540,10 +540,20 @@ float Session::stereoTarget(float slider, float dt)
 // under 30 fps' 33 ms, 20 once it keeps running past, 30 again once it keeps well under. Both are even shares of
 // the screen's 60 Hz: a cap of 24 would show frames for 2 and 3 refreshes in turn, a judder worse than a steady 20.
 // Only past 20 fps' 50 ms does the fog close in (interiors, most of the game, hold 30)
-void Session::adaptView(float workMs)
+//
+// A New 3DS runs uncapped at the screen's 60 Hz, so a frame that misses a refresh waits for the next one: 30 ms of
+// measured work showed 23-25 fps on the console (3D on, outdoors), between the work thresholds, and the view stayed
+// whole. It closes in by the time between frames, the frame rate the player sees, and opens out only while the work
+// leaves room for 30 fps
+void Session::adaptView(float workMs, float frameMs)
 {
+	u64 tick = svcGetSystemTick();
+	if (frameMs <= 0.0f)
+		frameMs = adaptTick ? (float)(tick - adaptTick) * 1000.0f / SYSCLOCK_ARM11 : workMs;
+	adaptTick = tick;
 	// One long frame (a cell arriving) shouldn't shrink the view: each counts at most as a slow one
 	workCost += (fminf(workMs, g_profile.workCap) - workCost) * 0.1f;
+	frameCost += (fminf(frameMs, g_profile.workCap) - frameCost) * 0.1f;
 	float budget = 34.0f;
 	if (g_profile.capSteps)
 	{
@@ -574,9 +584,12 @@ void Session::adaptView(float workMs)
 			viewScale = 1.0f;
 		return;
 	}
-	if (workCost > budget)
+	// (New 3DS: past 34.5 ms between frames is under 29 fps; under 27 ms of work held 29-30 fps on the console)
+	bool slow = g_profile.capSteps ? workCost > budget : frameCost > 34.5f;
+	bool room = g_profile.capSteps ? workCost < budget - 4.0f : workCost < 27.0f;
+	if (slow)
 		viewScale = fmaxf(minScale, viewScale - 0.004f);
-	else if (workCost < budget - 4.0f)
+	else if (room)
 		viewScale = fminf(maxScale, viewScale + 0.002f);
 }
 

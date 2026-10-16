@@ -1312,6 +1312,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
 	else if (what == "wfogscale") v = w.weatherFogScale();      // the share of the view drawn in this weather
 	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
+	else if (what == "viewscale") v = s.viewScale;              // the adaptive view distance outdoors (1: the whole view)
 	else if (what == "hudcaption")    // the cell name under the HUD's minimap is this cell's, 1; else 0
 	{
 		std::string want = w.game.cellLabel(w.cellName());
@@ -2103,6 +2104,22 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		ac->frozen = true;
 		logf("test: %s holds %.16s at %.2f (%.3f s; skeleton %d, %.3f - %.3f)", a[1].c_str(), sk.groups[g].name, at,
 			ac->time - sk.groups[g].start, ac->skeleton, sk.groups[g].start, sk.groups[g].stop);
+		return true;
+	}
+	// VIEWSCALE:<0..1>: the adaptive view distance set there; ADAPTVIEW:<work ms>:<frame ms>:<frames>: that many frames
+	// of that measured work arriving that far apart handed to Session::adaptView, as main's loop does after each frame
+	// (it leaves the view alone while a script runs: these stand in for the console's frames)
+	if (verb == "VIEWSCALE" && a.size() >= 2)
+	{
+		s.viewScale = (float)atof(a[1].c_str());
+		return true;
+	}
+	if (verb == "ADAPTVIEW" && a.size() >= 4)
+	{
+		float work = (float)atof(a[1].c_str()), frame = (float)atof(a[2].c_str());
+		for (int n = atoi(a[3].c_str()); n > 0; n--)
+			s.adaptView(work, frame);
+		logf("test: %d frames of %.1f ms work %.1f ms apart: view %.0f%%", atoi(a[3].c_str()), work, frame, s.viewScale * 100.0f);
 		return true;
 	}
 	// POV:first|third: the view, as SELECT toggles it (side-by-side shots seen from elsewhere want the player's body)

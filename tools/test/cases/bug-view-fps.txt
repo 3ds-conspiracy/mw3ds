@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# The New 3DS's view distance closes in when the frame rate falls under 30, whatever the frames' measured work says.
+# Outdoors with 3D on the console ran 23-25 fps while the GPU's 30-31 ms of work sat between the view's thresholds
+# (shrink past 34 ms, grow under 30): the view stayed long and the frame rate low. Frames that miss a 60 Hz refresh
+# wait for the next one, so 30 ms of work does not make 30 fps. Steady 30 fps holds the view; light frames grow it.
+# (each case first runs the frames a while: the costs are smoothed over frames, as in play)
+1 0 0 0 0 TP:-10300:-71300:200:270+HOUR:12
+3 0 0 0
+0.1 0 0 0 0 ADAPTVIEW:30.5:41.7:100+VIEWSCALE:1
+0.1 0 0 0 0 ADAPTVIEW:30.5:41.7:300
+0.1 0 0 0 0 EXPECT:viewscale:lt:0.9
+0.1 0 0 0 0 ADAPTVIEW:29:33.3:100+VIEWSCALE:0.8
+0.1 0 0 0 0 ADAPTVIEW:29:33.3:300
+0.1 0 0 0 0 EXPECT:viewscale:ge:0.79+EXPECT:viewscale:le:0.81
+0.1 0 0 0 0 ADAPTVIEW:15:16.7:100+VIEWSCALE:0.7
+0.1 0 0 0 0 ADAPTVIEW:15:16.7:300
+0.1 0 0 0 0 EXPECT:viewscale:ge:0.99
