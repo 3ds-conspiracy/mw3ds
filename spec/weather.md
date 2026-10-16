@@ -52,6 +52,12 @@ values by the "Fog" windows. Distant-land fog factor / offset per weather are Op
 Cloudy 0.9 / 0, Foggy 0.2 / 30, Overcast 0.7 / 0, Rain 0.5 / 10, Thunderstorm 0.5 / 20, Ashstorm 0.2 / 50,
 Blight 0.2 / 60, Snow 0.5 / 40, Blizzard 0.16 / 70); they only matter if distant land is drawn.
 
+**Storm view distance (differs, kept for speed).** OpenMW draws the whole view in every weather and puts the land
+fog's start at the view distance x (1 - fog depth), so a storm fogs from the eye. The engine keeps that start but
+draws only 0.69 / fog depth of the view outdoors (clear weather's day depth over the weather's, at least a quarter:
+an ash storm 0.63, rain 0.86; `World::weatherFogScale`), so the fog is whole where the drawing stops. Drawing land
+hidden in fog cost both consoles their frame rate in rain and storms. Test: `perf-storm-view`.
+
 **Night flag** (`mNight`): hour before sunrise, or after `nightStart + starsPostSunsetStart - starsFadingDuration`
 (= 19 with vanilla 1 and 2). **Star fade** is a fifth interpolation (0 by day, 1 at night) with lead / lag 2 / 0 around sunrise and 1 / 1
 around sunset (from the star settings and the 2-hour fading duration).

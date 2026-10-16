@@ -1078,10 +1078,16 @@ bool World::underWater(float z) const
 	return false;
 }
 
+// The share of the view drawn in this weather outdoors: 0.69 (clear weather's day fog depth, which the view distance is
+// tuned for) over the weather's land fog depth, a quarter at least: an ash storm (1.1) draws 0.63 of it, rain 0.86.
+// Differs from OpenMW on purpose, for speed: OpenMW draws the whole view and only moves the fog's start toward
+// the eye (weatherFogStart, which still applies over the shorter view, so the fog is whole where the drawing stops).
+// Drawing land hidden in thick fog cost both consoles their frame rate in rain and storms
 float World::weatherFogScale() const
 {
-	// (the weather no longer shortens the view: it moves where the fog starts, weatherFogStart)
-	return 1.0f;
+	if (game.weatherTypes.empty() || current < 0 || cells[current].interior)
+		return 1.0f;
+	return fmaxf(0.25f, fminf(1.0f, 0.69f / fmaxf(0.1f, weatherFogDepth())));
 }
 
 // Where the land fog starts outdoors, a share of where it ends: OpenMW's FogManager puts it at the view distance x

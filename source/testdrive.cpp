@@ -1294,6 +1294,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = w.weatherColour(k, ch);
 	}
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
+	else if (what == "wfogscale") v = w.weatherFogScale();      // the share of the view drawn in this weather
 	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
 	else if (what == "torchtime") v = w.useTorches() ? 1.0f : 0.0f;   // time for torches here (night, a dark interior)
 	else if (what == "subtitle") v = w.time < s.subtitleUntil && !s.subtitle.empty() ? 1.0f : 0.0f;   // a spoken line written now

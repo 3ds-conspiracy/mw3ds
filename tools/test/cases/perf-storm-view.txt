@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# Storms draw less of the view: 0.69 (clear weather's day fog depth) over the weather's land fog depth, a quarter at
+# least. OpenMW draws the whole view and only brings the fog's start toward the eye; the 10/14 change did the same here
+# and the consoles lost their frame rate in rain and ash storms drawing land hidden in fog. The fog still starts from
+# the eye in a storm (wfogdepth over 1), now over the shorter view. Clear weather keeps the whole view
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora
+5 0 0 0
+0.3 0 0 0 0 SETWEATHER:0+HOUR:13
+3 0 0 0
+0.1 0 0 0 0 EXPECT:wfogscale:eq:1
+0.3 0 0 0 0 SETWEATHER:6
+3 0 0 0
+0.1 0 0 0 0 EXPECT:wfogdepth:gt:1+EXPECT:wfogscale:lt:0.7+EXPECT:wfogscale:gt:0.55
+0.3 0 0 0 0 SETWEATHER:7
+3 0 0 0
+0.1 0 0 0 0 EXPECT:wfogscale:lt:0.65+EXPECT:wfogscale:ge:0.25
+0.3 0 0 0 0 SETWEATHER:4
+3 0 0 0
+0.1 0 0 0 0 EXPECT:wfogscale:lt:1
+0.3 0 0 0 0 SETWEATHER:0
+3 0 0 0
+0.1 0 0 0 0 EXPECT:wfogscale:eq:1
