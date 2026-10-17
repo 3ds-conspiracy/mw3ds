@@ -21,7 +21,7 @@ permissions:
 env:
   TAG: ${{ inputs.tag || github.ref_name }}
   BUILD_TOOLS_URL: https://github.com/3ds-conspiracy/mw3ds/releases/download/build-tools/build-tools-windows.zip
-  BUILD_TOOLS_SHA256: ""
+  BUILD_TOOLS_SHA256: "e305062bb9bccf8388dd8791f9e1084f423f690cda8be7652c621441755fd2b5"
 
 jobs:
   engine:
