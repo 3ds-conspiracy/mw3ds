@@ -14,6 +14,23 @@ expect rough edges, and please report what you see (see [Testing and reporting](
 > share or upload them. MW3DS is an unofficial fan project, not affiliated with or endorsed by Bethesda Softworks or
 > ZeniMax Media.
 
+## The converter (Windows, no setup)
+
+The easiest way to get a CIA. You need no git, Python or devkitPro: just Windows, your Morrowind install (Steam, GOG or
+disc) and an internet connection.
+
+1. Download `MW3DS-Converter-<version>.zip` from [Releases](https://github.com/3ds-conspiracy/mw3ds/releases).
+2. Unzip it to a short folder with about 5 GB free, such as `C:\MW3DS` (deep folders under Downloads or OneDrive can
+   pass Windows' path length limit).
+3. Run `MW3DS Converter.exe`. Windows may warn about an unknown publisher: **More info**, then **Run anyway**.
+4. Pick your Morrowind folder, your console (New 3DS or Old 3DS) and the game's language, then **Start**. The first
+   run takes an hour or more and downloads ffmpeg (about 30 MB) and, with the optimization mods on, the mods (about
+   550 MB). Later runs reuse what was converted: keep the same work folder.
+5. Install `output\mw3ds.cia` with FBI (see [Install it](#6-install-it)).
+
+If it stops, the whole log is in `work\converter-log.txt`: attach it to a
+[bug report](#testing-and-reporting). To build from source instead, follow the Quick start below.
+
 ## Quick start
 
 ### 1. Get the code
