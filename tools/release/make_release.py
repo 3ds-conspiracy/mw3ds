@@ -13,7 +13,8 @@ MW3DS_CTR_TOOLS_DIR). Windows only: the converter is a Windows program.
 
 The folder it writes:
     MW3DS Converter.exe     starts python\\pythonw.exe on app\\tools\\release\\wizard.py (launcher.cs)
-    python\\                 embeddable Python + numpy, pillow, miniaudio, imageio-ffmpeg ... + tkinter
+    python\\                 embeddable Python + numpy, pillow, miniaudio, imageio-ffmpeg ... + tkinter (ffmpeg itself
+                            is not shipped: the wizard downloads it, see ffmpeg_lock)
     app\\                    the repo's own files the conversion needs, in the repo's layout (the wizard copies
                             them into the player's work folder and runs tools/build/build_cia.py --prebuilt there)
     bin\\                    tex3ds.exe, makerom.exe
@@ -57,7 +58,8 @@ THIRD_PARTY = """Programs bundled with the MW3DS Converter, and where their sour
 
 Python {python} (Python Software Foundation License): https://www.python.org/ (python/LICENSE.txt)
   with the packages in python/Lib/site-packages, each with its license in its *.dist-info folder.
-  imageio-ffmpeg brings an ffmpeg build (GPL): https://ffmpeg.org/ , https://github.com/imageio/imageio-ffmpeg
+  imageio-ffmpeg is there without its ffmpeg build: the converter downloads that from PyPI (the package's
+  win_amd64 wheel, pinned in app/ffmpeg.lock.json) on your PC the first time, for the game's movies.
 Tcl/Tk (BSD-style license), for the window: https://www.tcl.tk/
 tex3ds (GPLv3), devkitPro: https://github.com/devkitPro/tex3ds
 makerom (MIT), Project_CTR: https://github.com/3DSGuy/Project_CTR
@@ -153,6 +155,7 @@ def make_python(dest, cache):
         raise SystemExit("pip install failed")
     # (the packages' command-line launchers: unused, and each holds the path of the Python that installed it)
     shutil.rmtree(site / "bin", ignore_errors=True)
+    ffmpeg = ffmpeg_lock(site)
 
     base = Path(sys.base_prefix)
     for f in ("_tkinter.pyd", "tcl86t.dll", "tk86t.dll", "zlib1.dll"):
@@ -164,6 +167,21 @@ def make_python(dest, cache):
     shutil.copytree(base / "Lib" / "tkinter", dest / "Lib" / "tkinter",
                     ignore=shutil.ignore_patterns("__pycache__", "test"))
     shutil.copytree(base / "tcl", dest / "tcl", ignore=shutil.ignore_patterns("tix*", "*demos*"))
+    return ffmpeg
+
+
+def ffmpeg_lock(site):
+    """Takes ffmpeg out of the bundled imageio-ffmpeg and pins the PyPI wheel it comes in, for the wizard to download
+    on the player's PC. The binary is a GPL build of ffmpeg statically linked with many libraries (x264, x265, ...):
+    shipping it would mean shipping all their source, so it is never part of the release."""
+    dist = next(site.glob("imageio_ffmpeg-*.dist-info"))
+    ver = dist.name[len("imageio_ffmpeg-"):-len(".dist-info")]
+    for exe in (site / "imageio_ffmpeg" / "binaries").glob("ffmpeg*"):
+        exe.unlink()
+    req = urllib.request.Request(f"https://pypi.org/pypi/imageio-ffmpeg/{ver}/json", headers={"User-Agent": "mw3ds-release"})
+    files = json.load(urllib.request.urlopen(req, timeout=60))["urls"]
+    wheel = next(f for f in files if f["filename"].endswith("-win_amd64.whl"))
+    return {"url": wheel["url"], "sha256": wheel["digests"]["sha256"], "size": wheel["size"]}
 
 
 def make_app(dest, elf_dir):
@@ -270,9 +288,10 @@ def main():
     folder.mkdir(parents=True)
     ver = version()
 
-    make_python(folder / "python", out / "cache")
+    ffmpeg = make_python(folder / "python", out / "cache")
     make_app(folder / "app", a.elf)
     (folder / "app" / "VERSION.txt").write_text(ver + "\n", encoding="utf-8")
+    (folder / "app" / "ffmpeg.lock.json").write_text(json.dumps(ffmpeg, indent=1) + "\n", encoding="utf-8")
     make_bin(folder / "bin")
     make_launcher(folder / "MW3DS Converter.exe")
     lic = folder / "licenses"

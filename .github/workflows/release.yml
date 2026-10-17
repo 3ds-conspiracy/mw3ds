@@ -79,6 +79,13 @@ jobs:
           py=build/release/MW3DS-Converter/python/python.exe
           "$py" -c "import numpy, PIL, miniaudio, imageio_ffmpeg, tkinter; tkinter.Tcl()"
           "$py" build/release/MW3DS-Converter/app/tools/build/build_cia.py --help > /dev/null
+      - name: ffmpeg is not shipped (a GPL build; the wizard downloads it), only pinned
+        shell: bash
+        run: |
+          if ls build/release/MW3DS-Converter/python/Lib/site-packages/imageio_ffmpeg/binaries/ffmpeg* 2> /dev/null; then
+            echo "ffmpeg is in the release"; exit 1
+          fi
+          test -s build/release/MW3DS-Converter/app/ffmpeg.lock.json
       - name: Draft release
         shell: bash
         env:

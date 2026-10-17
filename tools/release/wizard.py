@@ -8,6 +8,8 @@ converted data and its caches, several GB) and build\\ (the CIA) inside it. Keep
 releases keeps the caches, so a later conversion is much faster.
 """
 import argparse
+import hashlib
+import io
 import json
 import os
 import queue
@@ -19,6 +21,8 @@ import sys
 import threading
 import time
 import tkinter as tk
+import urllib.request
+import zipfile
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
@@ -26,6 +30,7 @@ APP = Path(__file__).resolve().parents[2]              # app\ in the release, th
 RELEASE = APP.parent
 BIN = RELEASE / "bin"
 SETTINGS = RELEASE / "settings.json"
+FFMPEG_LOCK = APP / "ffmpeg.lock.json"                 # (only in a release: tools/release/make_release.py ffmpeg_lock)
 TITLE = "MW3DS Converter"
 
 # The code pages Morrowind's releases use, by language (tools/convert/mwfiles.py ENCODINGS; LANGUAGES.md)
@@ -194,6 +199,28 @@ def plugin_files(folder):
 
 # ---- The machine
 
+def fetch_ffmpeg(work, say):
+    """ffmpeg for the game's movies. The release does not ship it (a GPL build: tools/release/make_release.py
+    ffmpeg_lock); it is downloaded once from PyPI, in the imageio-ffmpeg wheel the release pins, checked against the
+    pinned SHA-256, and kept in the work folder."""
+    lock = json.loads(FFMPEG_LOCK.read_text(encoding="utf-8"))
+    exe = work / "ffmpeg" / f"ffmpeg-{lock['sha256'][:12]}.exe"
+    if exe.is_file():
+        return exe
+    say(f"downloading ffmpeg for the movies from PyPI ({lock['size'] / 1048576:.0f} MB, the first time only)")
+    req = urllib.request.Request(lock["url"], headers={"User-Agent": "mw3ds-converter"})
+    data = urllib.request.urlopen(req, timeout=600).read()
+    if hashlib.sha256(data).hexdigest() != lock["sha256"]:
+        raise RuntimeError("the ffmpeg download does not match its checksum: try again later")
+    with zipfile.ZipFile(io.BytesIO(data)) as z:
+        name = next(n for n in z.namelist() if re.fullmatch(r"imageio_ffmpeg/binaries/ffmpeg[^/]*\.exe", n))
+        exe.parent.mkdir(parents=True, exist_ok=True)
+        part = exe.with_suffix(".part")
+        part.write_bytes(z.read(name))
+        part.replace(exe)
+    return exe
+
+
 def free_ram_gb():
     try:
         import psutil
@@ -307,7 +334,8 @@ class Wizard:
         ttk.Button(f, text="Browse...", command=lambda: self.browse_dir(self.work)).grid(row=row, column=2, **pad)
         row += 1
         ttk.Label(f, text=f"Needs about {NEED_GB} GB free. Keep the same work folder for later versions: "
-                          "what it has converted is reused.", foreground="#555", wraplength=520).grid(
+                          "what it has converted is reused. The first run also downloads ffmpeg (about 30 MB, "
+                          "from PyPI) for the game's movies.", foreground="#555", wraplength=520).grid(
             row=row, column=1, columnspan=2, sticky="w", padx=8)
         row += 1
 
@@ -505,6 +533,8 @@ class Wizard:
             env.update(TEX3DS=str(BIN / "tex3ds.exe"), MW3DS_CTR_TOOLS_DIR=str(BIN))
         for k in ("MW3DS_OUT", "MW3DS_OVERLAY_DIRS"):
             env.pop(k, None)
+        if FFMPEG_LOCK.is_file() and not self.dry_run:
+            env["IMAGEIO_FFMPEG_EXE"] = str(fetch_ffmpeg(work, say))
         python = Path(sys.executable).with_name("python.exe")
         cmd = [str(python if python.is_file() else sys.executable), str(work / "tools" / "build" / "build_cia.py"),
                "--prebuilt"]
