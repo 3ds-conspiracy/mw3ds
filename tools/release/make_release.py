@@ -237,6 +237,10 @@ def check_private(folder):
     """Fails when the home folder of whoever built this, or a private string, is in any file of the release."""
     home = Path.home()
     needles = {str(home), str(home).replace("\\", "/"), str(home).replace("\\", "\\\\")}
+    # (on a GitHub runner the home folder is C:\Users\runneradmin, nobody's own: numpy's wheels are built on the same
+    # runners and carry it in their build configuration)
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        needles = set()
     needles |= {s for s in os.environ.get("MW3DS_PRIVATE_STRINGS", "").split(";") if s.strip()}
     pats = []
     for s in needles:
