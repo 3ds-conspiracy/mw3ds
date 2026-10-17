@@ -2147,7 +2147,14 @@ float g_precipX0 = 0.0f;
 namespace
 {
 
-	float frand() { return (rand() % 10000) / 10000.0f; }   // (not over RAND_MAX: the native build's rand stops at 32767 under a larger one)
+	// The rain's own dice: the game's rand() is the AI's and the scripts' too, and drawing rain from it changed who fought
+	// whom while it rained (and made a run depend on what the screen drew)
+	u32 s_precipSeed = 12345u;
+	float frand()
+	{
+		s_precipSeed = s_precipSeed * 1664525u + 1013904223u;
+		return (s_precipSeed >> 8) / 16777216.0f;
+	}
 
 	// One quad: centre c, half extents along a and b, colour 0xAABBGGRR. thin: the picture's middle column across it
 	// (a streak a pixel or two wide sampled its sides, where the drop isn't, and mostly vanished)
