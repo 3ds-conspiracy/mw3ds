@@ -817,7 +817,7 @@ void Session::drawCreatureFx(const float eye[3], bool secondEye)
 	}
 }
 
-// Projectiles, then the player's arms over everything (after rendererDrawWorld); arms false: a view held elsewhere for
+// Projectiles, the rain and ash, then the player's arms over everything (after rendererDrawWorld); arms false: a view held elsewhere for
 // a side-by-side shot, no arms (the body still, in third person)
 void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 {
@@ -1066,6 +1066,7 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 		for (auto& m : piece->meshes)
 			rendererDrawMeshGlow(m, &model, piece->textures[m.tex], glow);
 	}
+	drawPrecipitation(eye, secondEye);
 	if (!arms && !thirdPerson)
 		return;
 	if (thirdPerson || previewFace)

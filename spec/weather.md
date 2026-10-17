@@ -199,6 +199,22 @@ cell flagged as such, e.g. Mournhold) counts as exterior.
 - Precipitation, rain loops: Rain and Thunderstorm use rain sound `rain` (a weather's Rain Loop Sound ID overrides;
   "None" silences it); a weather's Ambient Loop Sound ID, when set, plays as a loop ("None" silences it).
 
+## Rain and ash particles (`sky.cpp createRain`, `WrapAroundOperator`, ashcloud.nif / blightcloud.nif)
+
+- OpenMW: rain is a particle system in a box round the camera, Rain Diameter (600) across and (Rain Height Min + Max)
+  / 2 high, each particle moved back across the box when the camera leaves it behind (`WrapAroundOperator`), falling at
+  `Weather_Precip_Gravity` (575), tilted by `-atan(wind / 50)` (under a degree in rain); tx_raindrop_01 streaks 5 to 15
+  long, alpha x 0.6. Ash storms and blight play ashcloud.nif / blightcloud.nif round the camera, turned toward the
+  storm direction: 100 flakes (tx_ash_flake, 4.5 units) falling at 900 with a sideways push, and 72 dust clouds 400
+  across (tx_ash_cloud / tx_blight_cloud). None under water.
+- Ours (`Session::drawPrecipitation`): the same idea, particles in boxes round the eye that wrap, so they hang in the
+  world. Rain: up to 450 streaks (311 in rain, all in a thunderstorm, as Max Raindrops 450 / 650) in a 420 x 420 x 380
+  box, about a pixel wide at any distance, the drop's alpha doubled (`artassets.py`). Flakes: 240, blown with the wind
+  at 360 and falling at 220 (Morrowind's 900 flickered at 30 frames a second), no more than about 3 pixels across.
+  Dust: 24 clouds, faded out within 400 of the eye. On a New 3DS also a band of falling rain round the horizon, 450
+  out, and ripples where drops land. Counts and the Old / New split: `performance-tradeoffs.md`. Test:
+  `feat-world-rain`.
+
 ## Time (`datetimemanager.cpp`)
 
 The game hour is a float in 0..24 (setHour carries whole days into the day counter); game time per real second is

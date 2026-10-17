@@ -207,7 +207,6 @@ void Session::drawTop()
 	// pass left the tooltip in one eye only)
 	if (hudEye == hudEyes - 1)
 		tip.clear();
-	drawPrecipitation();
 	// A menu has stopped the world (both eyes draw it: it comes from the screen, not from a timer)
 	if (worldPaused())
 	{

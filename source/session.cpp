@@ -2081,6 +2081,7 @@ void Session::updateWeatherEffects(float dt)
 		if (it != w.game.sounds.end())
 			weatherChannel = audioPlay(it->second.file, it->second.volume * 0.7f, 0.0f, true);
 	}
+	precipDt += dt;                  // (drawPrecipitation moves the rain and ash by it)
 	if (outside && wt == WEATHER_THUNDER && (thunderIn -= dt) <= 0.0f)
 	{
 		thunderIn = 8.0f + rand() % 20;
@@ -2089,64 +2090,347 @@ void Session::updateWeatherEffects(float dt)
 	}
 }
 
-// Rain (streaks) and ash / blight (drifting motes) over the top screen, as dense as the weather is in
-void Session::drawPrecipitation()
+// ---- Rain, ash and blight in the world (OpenMW's SkyManager)
+// Each kind is a set of particles in a box round the eye, every one moving on its own; one the eye leaves behind
+// wraps to the box's far side (OpenMW's WrapAroundOperator). So they hang in the world: turning the view or walking
+// leaves them where they are, and both eyes of the 3D screen see them at their depth. Drawn over the screen they
+// moved with the view, flat on the HUD. Rain: OpenMW's box (Rain Diameter 600 across, half of Rain Height Min + Max
+// high) falling at Weather_Precip_Gravity (575); ash and blight: ashcloud.nif / blightcloud.nif's flakes, falling
+// fast and blown out from Red Mountain, and its dust clouds rolling with the wind, in OpenMW's 1024 x 1024 x 800 box
+// (the dust in a wider one: its clouds are 400 across). Fewer than OpenMW's (450 to 650 raindrop batches, 100 flakes,
+// 72 clouds), and the clouds fade out near the eye: the console's fill rate (spec/performance-tradeoffs.md). Past the
+// streaks' box, rain in the distance: a ring of falling drops round the eye, 450 out, the picture fixed to the world's
+// directions (turning is right) and sliding down at the drops' speed. A ring always has a side ahead, so nothing is
+// turned edge-on or swapped as the eye turns. Only a band of it, round the horizon (overhead and underfoot the streaks
+// are enough): a whole ring is a see-through layer over the whole screen, a band about 0.4 of it (sheets stacked
+// across the view, the screen's whole area each). The ring and the ripples are a New 3DS's alone
+// (ConsoleProfile::rainExtras)
+namespace
 {
-	if (w.current < 0 || w.cells[w.current].interior || w.game.weatherTypes.empty())
-		return;
-	// OpenMW: the falling stuff fades out of the old weather up to the new one's rain threshold, then in
-	float thr = w.game.weatherTypes[std::min(w.weatherNext, (int)w.game.weatherTypes.size() - 1)].rainThreshold;
-	thr = thr > 0.0f ? thr : 0.5f;
-	auto amount = [&](int kind) {
-		if (w.weatherNow == w.weatherNext)
-			return w.weatherNow == kind ? 1.0f : 0.0f;
-		float out = fmaxf(0.0f, 1.0f - w.weatherBlend / thr), in = fmaxf(0.0f, (w.weatherBlend - thr) / (1.0f - thr));
-		return (w.weatherNow == kind ? out : 0.0f) + (w.weatherNext == kind ? in : 0.0f);
+	enum { PRECIP_RAIN, PRECIP_FLAKES, PRECIP_DUST, PRECIP_LAYERS };
+	enum { PTEX_RAIN, PTEX_FLAKE, PTEX_ASH, PTEX_BLIGHT, PTEX_SHEET, PTEX_SPLASH, PTEX_COUNT };
+	const int kPrecipMax[PRECIP_LAYERS] = { 450, 240, 24 };
+	const float kPrecipBox[PRECIP_LAYERS][3] = { { 420, 420, 380 }, { 600, 600, 450 }, { 1100, 1100, 400 } };
+	const float kPrecipLift[PRECIP_LAYERS] = { 40, 100, 120 };   // the box's centre over the eye
+	const int kRingSides = 16, kRings = 1;
+	const float kRingRadius[kRings] = { 450.0f };
+	const int kRingRepeats[kRings] = { 16 };       // the picture round the ring (128 x 256 texels: 177 units across)
+	// Drops landing: a ripple spreading on the ground or the water where one hit, round the eye (OpenMW ripples water
+	// alone, and only with its shaders; on the street they're what makes rain read as rain at this size)
+	const int kSplashes = 40;
+	const float kSplashLife = 0.35f;
+	struct Splash { float pos[3]; float age; };
+	Splash s_splash[kSplashes];
+	float s_splashDue = 0.0f;
+	const int kPrecipQuads = 450 + 240 + 24 + kRings * kRingSides * 2 + kSplashes;
+	float s_precipClock = 0.0f;
+	struct PrecipLayer
+	{
+		float pos[450][3];
+		float pace[450];          // of the layer's speed (OpenMW's speed variance: a quarter either way)
+		bool seeded = false;
 	};
-	float rain = amount(WEATHER_RAIN) + amount(WEATHER_THUNDER) * 1.5f;
-	float ash = amount(WEATHER_ASH) + amount(WEATHER_BLIGHT);
-	if (rain < 0.05f && ash < 0.05f)
-		return;
-	static float px[96], py[96];
-	static bool seeded = false;
-	// The drops move once a frame, not once an eye: each eye drew its own, and the two never matched (a
-	// double image that hurts to look at). The same drops in both eyes sit flat on the HUD's plane
-	bool step = hudEye == 0;
-	if (!seeded)
+	PrecipLayer s_precip[PRECIP_LAYERS];
+	C3D_Tex s_precipTex[PTEX_COUNT];
+	bool s_precipTexOk[PTEX_COUNT];
+	bool s_precipTexTried = false;
+	u8* s_precipVerts = nullptr;       // the frame's quads, built in the first eye and drawn in both
+	u16* s_precipIndices = nullptr;
+	struct PrecipDraw { int first, n, tex; bool repeat; };
+	PrecipDraw s_precipDraws[PRECIP_LAYERS + kRings + 1];
+	int s_precipDrawCount = 0;
+}
+// What the last frame drew, for the test driver: rain streaks, flakes, the far ring's quads, and rain particle 0's
+// place across the world (it stays put while the view turns: the particles hang in the world)
+int g_precipStreaks = 0, g_precipFlakes = 0, g_precipRing = 0;
+float g_precipX0 = 0.0f;
+namespace
+{
+
+	float frand() { return (rand() % 10000) / 10000.0f; }   // (not over RAND_MAX: the native build's rand stops at 32767 under a larger one)
+
+	// One quad: centre c, half extents along a and b, colour 0xAABBGGRR. thin: the picture's middle column across it
+	// (a streak a pixel or two wide sampled its sides, where the drop isn't, and mostly vanished)
+	void precipQuad(u8* v, const float c[3], const float a[3], const float b[3], u32 rgba, bool thin)
 	{
-		for (int k = 0; k < 96; k++)
+		static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };
+		for (int i = 0; i < 4; i++)
 		{
-			px[k] = rand() % 400;
-			py[k] = rand() % 240;
+			float* p = (float*)(v + i * 24);
+			for (int k = 0; k < 3; k++)
+				p[k] = c[k] + a[k] * corner[i][0] + b[k] * corner[i][1];
+			p[3] = thin ? 0.5f : corner[i][0] * 0.5f + 0.5f;
+			p[4] = corner[i][1] * 0.5f + 0.5f;
+			memcpy(v + i * 24 + 20, &rgba, 4);
 		}
-		seeded = true;
 	}
-	int n = (int)(fminf(1.5f, rain + ash) * 64.0f);
-	for (int k = 0; k < n && k < 96; k++)
+
+	u32 precipColour(int r, int g, int b, float a)
 	{
-		if (rain >= ash)
+		int ai = (int)(fminf(1.0f, fmaxf(0.0f, a)) * 255.0f);
+		return (u32)r | ((u32)g << 8) | ((u32)b << 16) | ((u32)ai << 24);
+	}
+}
+
+void Session::drawPrecipitation(const float eye[3], bool secondEye)
+{
+	if (!secondEye)
+	{
+		s_precipDrawCount = 0;
+		g_precipStreaks = g_precipFlakes = g_precipRing = 0;
+		float dt = precipDt;
+		precipDt = 0.0f;
+		if (w.current < 0 || w.cells[w.current].interior || w.game.weatherTypes.empty())
+			return;
+		Cell& here = w.here();
+		if (here.hasWater() && eye[2] < here.waterZ)       // (OpenMW: none under water)
+			return;
+		// OpenMW: the falling stuff fades out of the old weather up to the new one's rain threshold, then in
+		float thr = w.game.weatherTypes[std::min(w.weatherNext, (int)w.game.weatherTypes.size() - 1)].rainThreshold;
+		thr = thr > 0.0f ? thr : 0.5f;
+		auto amount = [&](int kind) {
+			if (w.weatherNow == w.weatherNext)
+				return w.weatherNow == kind ? 1.0f : 0.0f;
+			float out = fmaxf(0.0f, 1.0f - w.weatherBlend / thr), in = fmaxf(0.0f, (w.weatherBlend - thr) / (1.0f - thr));
+			return (w.weatherNow == kind ? out : 0.0f) + (w.weatherNext == kind ? in : 0.0f);
+		};
+		// a thunderstorm's Max Raindrops 650 against the rain's 450
+		float rain = amount(WEATHER_RAIN) * (450.0f / 650.0f) + amount(WEATHER_THUNDER);
+		float ash = amount(WEATHER_ASH), blight = amount(WEATHER_BLIGHT);
+		if (rain < 0.02f && ash + blight < 0.02f)
+			return;
+		if (!s_precipTexTried)
 		{
-			if (step)
+			s_precipTexTried = true;
+			static const char* names[PTEX_COUNT] = { "rain", "ash_flake", "ash_cloud", "blight_cloud", "rain_sheet", "splash" };
+			for (auto& sp : s_splash)
+				sp.age = kSplashLife;
+			for (int t = 0; t < PTEX_COUNT; t++)
 			{
-				py[k] += 9.0f;
-				px[k] -= 1.5f;
+				char path[256];
+				snprintf(path, sizeof(path), "%s/art/weather/%s.t3x", w.dataDir, names[t]);
+				s_precipTexOk[t] = texImportFile(&s_precipTex[t], path);
+				if (s_precipTexOk[t])
+				{
+					C3D_TexSetFilter(&s_precipTex[t], GPU_LINEAR, GPU_LINEAR);
+					C3D_TexSetWrap(&s_precipTex[t], GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
+				}
 			}
-			uiRect(px[k], py[k], 1, 7, C2D_Color32(190, 200, 215, 120));
-		}
-		else
-		{
-			if (step)
+			s_precipVerts = (u8*)lockedLinearAlloc(kPrecipQuads * 4 * 24);
+			s_precipIndices = (u16*)lockedLinearAlloc(kPrecipQuads * 6 * 2);
+			if (s_precipIndices)
 			{
-				py[k] += 1.5f;
-				px[k] -= 3.5f;
+				for (int q = 0; q < kPrecipQuads; q++)
+				{
+					static const u16 idx[6] = { 0, 1, 2, 0, 2, 3 };
+					for (int k = 0; k < 6; k++)
+						s_precipIndices[q * 6 + k] = (u16)(q * 4 + idx[k]);
+				}
+				GSPGPU_FlushDataCache(s_precipIndices, kPrecipQuads * 6 * 2);
 			}
-			uiRect(px[k], py[k], 2, 2, C2D_Color32(120, 90, 70, 150));
+			logf("weather: rain %d, flake %d, ash %d, blight %d, rain sheet %d, splash %d textures", s_precipTexOk[0],
+				s_precipTexOk[1], s_precipTexOk[2], s_precipTexOk[3], s_precipTexOk[4], s_precipTexOk[5]);
 		}
-		if (step && (py[k] > 240 || px[k] < 0))
+		if (!s_precipVerts || !s_precipIndices)
+			return;
+		// Storms blow out from Red Mountain (OpenMW's calculateStormDirection)
+		float sx = eye[0] - 20480.0f, sy = eye[1] - 69632.0f, sl = sqrtf(sx * sx + sy * sy);
+		float wind[2] = { sl > 1.0f ? sx / sl : 0.0f, sl > 1.0f ? sy / sl : 1.0f };
+		// Each layer's velocity: rain straight down (Rain Speed's tilt by a wind of 0.3 is under a degree); flakes
+		// blown with the wind and falling slowly (Morrowind's fall at 900, pushed 270 sideways on average: at 30 frames
+		// a second each jumped 30 units a frame, a flicker of dark rain rather than ash on the wind); the dust with
+		// the wind at its sprays' 75 to 375, rising on its gravity
+		float vel[PRECIP_LAYERS][3] = { { 0, 0, -575.0f }, { wind[0] * 360.0f, wind[1] * 360.0f, -220.0f },
+			{ wind[0] * 225.0f, wind[1] * 225.0f, 40.0f } };
+		int want[PRECIP_LAYERS] = { (int)(kPrecipMax[0] * fminf(1.0f, rain)), (int)(kPrecipMax[1] * fminf(1.0f, ash + blight)),
+			(int)(kPrecipMax[2] * fminf(1.0f, ash + blight)) };
+		float right[3], up[3], back[3];
+		rendererViewAxes(right, up, back);
+		u8* v = s_precipVerts;
+		int quads = 0;
+		// The far rain's ring, drawn first (it's behind the streaks): from 60 under the eye to 130 over it, faded out at
+		// both ends (no edge against the sky or the ground below a hill)
+		s_precipClock = fmodf(s_precipClock + dt, 600.0f);
+		if (rain >= 0.02f && g_profile.rainExtras && s_precipTexOk[PTEX_SHEET])
+			for (int r = 0; r < kRings; r++)
+			{
+				float rad = kRingRadius[r], across = 2.0f * 3.14159265f * rad / kRingRepeats[r], tall = across * 2.0f;
+				float slide = s_precipClock * 575.0f / tall + r * 0.37f;
+				static const float rowZ[3] = { -60.0f, 30.0f, 130.0f }, rowA[3] = { 0.0f, 1.0f, 0.0f };
+				float strength = fminf(1.0f, rain) * 0.7f;
+				s_precipDraws[s_precipDrawCount++] = { quads, kRingSides * 2, PTEX_SHEET, true };
+				g_precipRing += kRingSides * 2;
+				for (int k = 0; k < kRingSides; k++)
+					for (int h = 0; h < 2; h++)
+					{
+						float* f = (float*)(s_precipVerts + quads * 96);
+						for (int i = 0; i < 4; i++)
+						{
+							int side = k + (i == 1 || i == 2), row = h + (i >= 2);
+							float ang = side * 2.0f * 3.14159265f / kRingSides;
+							float* p = f + i * 6;
+							p[0] = eye[0] + sinf(ang) * rad;
+							p[1] = eye[1] + cosf(ang) * rad;
+							p[2] = eye[2] + rowZ[row];
+							p[3] = (float)side * kRingRepeats[r] / kRingSides;
+							p[4] = (rowZ[row] - rowZ[0]) / tall + slide;
+							u32 col = precipColour(210, 220, 235, rowA[row] * strength);
+							memcpy(p + 5, &col, 4);
+						}
+						quads++;
+					}
+			}
+		for (int L = 0; L < PRECIP_LAYERS; L++)
 		{
-			px[k] = rand() % 420;
-			py[k] = -(float)(rand() % 40);
+			PrecipLayer& P = s_precip[L];
+			const float* box = kPrecipBox[L];
+			float c[3] = { eye[0], eye[1], eye[2] + kPrecipLift[L] };
+			if (!P.seeded)
+			{
+				for (int i = 0; i < kPrecipMax[L]; i++)
+				{
+					for (int k = 0; k < 3; k++)
+						P.pos[i][k] = c[k] + (frand() - 0.5f) * box[k];
+					P.pace[i] = 0.75f + frand() * 0.5f;
+				}
+				P.seeded = true;
+			}
+			int n = std::min(want[L], kPrecipQuads - quads);
+			if (n <= 0)
+				continue;
+			// (only those drawn move: the rest wait where they were seeded, as scattered as these)
+			for (int i = 0; i < n; i++)
+				for (int k = 0; k < 3; k++)
+				{
+					float q = P.pos[i][k] + vel[L][k] * P.pace[i] * dt - c[k], h = box[k] * 0.5f;
+					if (q > h || q < -h)
+						q -= box[k] * floorf(q / box[k] + 0.5f);
+					P.pos[i][k] = c[k] + q;
+				}
+			int tex = L == PRECIP_RAIN ? PTEX_RAIN : L == PRECIP_FLAKES ? PTEX_FLAKE : blight > ash ? PTEX_BLIGHT : PTEX_ASH;
+			s_precipDraws[s_precipDrawCount++] = { quads, n, tex, false };
+			if (L == PRECIP_RAIN)
+			{
+				g_precipStreaks = n;
+				g_precipX0 = P.pos[0][0];
+			}
+			else if (L == PRECIP_FLAKES)
+				g_precipFlakes = n;
+			float vl = sqrtf(vel[L][0] * vel[L][0] + vel[L][1] * vel[L][1] + vel[L][2] * vel[L][2]);
+			float axis[3] = { vel[L][0] / vl, vel[L][1] / vl, vel[L][2] / vl };
+			for (int i = 0; i < n; i++)
+			{
+				const float* p = P.pos[i];
+				float e[3] = { p[0] - eye[0], p[1] - eye[1], p[2] - eye[2] };
+				float d = sqrtf(e[0] * e[0] + e[1] * e[1] + e[2] * e[2]);
+				// near the box's sides they fade (the wrap's jump unseen)
+				float edge = fmaxf(fabsf(p[0] - c[0]) / box[0], fabsf(p[1] - c[1]) / box[1]) * 2.0f;
+				float fade = fminf(1.0f, (1.0f - edge) * 4.0f);
+				if (L == PRECIP_DUST)
+				{
+					// clouds turned to the eye, 400 across (the sprays' size), gone within 150 of it
+					float a = fade * fminf(1.0f, fmaxf(0.0f, (d - 150.0f) / 250.0f));
+					float half = 200.0f, ar[3], au[3];
+					for (int k = 0; k < 3; k++)
+					{
+						ar[k] = right[k] * half;
+						au[k] = up[k] * half;
+					}
+					precipQuad(v + quads * 96, p, ar, au, precipColour(255, 255, 255, a), false);
+				}
+				else
+				{
+					// a streak along its fall, turned round that line to the eye; at least about a pixel wide (the
+					// top screen shows 208 / d pixels a unit at distance d)
+					float s[3] = { axis[1] * e[2] - axis[2] * e[1], axis[2] * e[0] - axis[0] * e[2], axis[0] * e[1] - axis[1] * e[0] };
+					float sl2 = sqrtf(s[0] * s[0] + s[1] * s[1] + s[2] * s[2]);
+					if (sl2 < 1e-3f)
+					{
+						memcpy(s, right, sizeof(s));
+						sl2 = 1.0f;
+					}
+					// rain: about a pixel wide however near (a world width made the nearest drops bars five pixels
+					// wide), faster drops longer (the eye's blur of a falling drop), each its own brightness, and
+					// faded out right at the eye
+					// flakes: the whole picture (a soft speck), a little drawn out along their flight, no more than
+					// about 3 pixels across (ashcloud.nif's 4.5 units filled 40 near the eye, a dark block hanging
+					// there), faded near the eye like the rain
+					float width = L == PRECIP_RAIN ? fmaxf(0.05f, d * 0.0028f) : fminf(2.25f, fmaxf(0.4f, d * 0.0075f));
+					float len = L == PRECIP_RAIN ? 15.0f * P.pace[i] : width * 1.6f;
+					if (L == PRECIP_RAIN)
+						fade *= fminf(1.0f, (d - 8.0f) / 50.0f) * (0.55f + 0.45f * ((i * 37) % 11) / 10.0f);
+					else
+						fade *= fminf(1.0f, fmaxf(0.0f, (d - 20.0f) / 80.0f));
+					float sa[3], la[3];
+					for (int k = 0; k < 3; k++)
+					{
+						sa[k] = s[k] / sl2 * width;
+						la[k] = axis[k] * len;
+					}
+					u32 col = L == PRECIP_RAIN ? precipColour(210, 220, 235, fade) : precipColour(255, 255, 255, fade);
+					precipQuad(v + quads * 96, p, sa, la, col, L == PRECIP_RAIN);
+				}
+				quads++;
+			}
 		}
+		// Ripples where drops land: new ones in view, 30 to 180 out, on the floor found there (the water's
+		// surface over it); 50 a second in rain, 70 in a thunderstorm
+		if (rain >= 0.02f && g_profile.rainExtras && s_precipTexOk[PTEX_SPLASH])
+		{
+			float fwd = atan2f(back[0], back[1]);     // (rendererViewAxes: "back" is the view's z row, along the look here)
+			for (s_splashDue += fminf(dt, 0.1f) * 70.0f * fminf(1.0f, rain); s_splashDue >= 1.0f; s_splashDue -= 1.0f)
+			{
+				Splash* sp = nullptr;
+				for (auto& c : s_splash)
+					if (c.age >= kSplashLife)
+					{
+						sp = &c;
+						break;
+					}
+				if (!sp)
+					break;
+				float ang = fwd + (frand() - 0.5f) * 1.8f, dist = 30.0f + frand() * 150.0f;
+				float x = eye[0] + sinf(ang) * dist, y = eye[1] + cosf(ang) * dist, floorZ = -1e9f;
+				for (LoadedCell* l : w.loaded)
+				{
+					float z;
+					if (collisionReaches(l->cell.collision, x, y, 0.0f)
+						&& collisionFloor(l->cell.collision, x, y, eye[2] + 200.0f, eye[2] - 600.0f, &z) && z > floorZ)
+						floorZ = z;
+				}
+				if (here.hasWater() && here.waterZ > floorZ)
+					floorZ = here.waterZ;
+				if (floorZ < -1e8f)
+					continue;
+				*sp = { { x, y, floorZ + 1.0f }, 0.0f };
+			}
+			int first = quads, n = 0;
+			for (auto& sp : s_splash)
+			{
+				if (sp.age >= kSplashLife || quads >= kPrecipQuads)
+					continue;
+				sp.age += fminf(dt, 0.1f);       // (a long frame skips nothing: native draws one frame in many)
+				float f = fminf(1.0f, sp.age / kSplashLife), half = 3.0f + 11.0f * f;
+				float ax[3] = { half, 0, 0 }, ay[3] = { 0, half, 0 };
+				precipQuad(v + quads * 96, sp.pos, ax, ay, precipColour(230, 236, 245, 1.0f - f * f), false);
+				quads++;
+				n++;
+			}
+			if (n)
+				s_precipDraws[s_precipDrawCount++] = { first, n, PTEX_SPLASH, false };
+		}
+		GSPGPU_FlushDataCache(s_precipVerts, quads * 96);
+	}
+	for (int k = 0; k < s_precipDrawCount; k++)
+	{
+		const PrecipDraw& d = s_precipDraws[k];
+		ActorMesh m = {};
+		m.flags = BATCH_BLEND | BATCH_TWO_SIDED | (d.repeat ? 0 : BATCH_CLAMP);
+		m.numVerts = d.n * 4;
+		m.numIndices = d.n * 6;
+		m.verts = s_precipVerts + d.first * 96;
+		m.indices = s_precipIndices;
+		rendererDrawMesh(m, nullptr, s_precipTexOk[d.tex] ? &s_precipTex[d.tex] : nullptr);
 	}
 }
 

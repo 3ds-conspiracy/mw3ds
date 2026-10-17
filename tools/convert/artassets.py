@@ -7,7 +7,7 @@ game.json "art": {"splash": [{"file", "w", "h"}...], "levelup": {class: {...}}, 
 look: the open book (tx_menubook) and the scroll (scroll.dds), sized for the bottom screen, and their buttons
 (tx_menubook_<take|close|next|prev>_<idle|over|pressed>). "menu": the main menu's picture (textures menu_morrowind.dds,
 as OpenMW's main menu shows it) for the title screen, at a fixed name, art/menu_morrowind.t3x: the title screen runs
-before game.json is read.
+before game.json is read. Rain and ash particles' pictures go to art/weather/<name>.t3x, found there by name.
 """
 import io
 import re
@@ -44,6 +44,36 @@ def encode(img, out_path, alpha):
     return w, h
 
 
+def rain_sheet(drop, size=(128, 256), drops=90, seed=7):
+    """The far rain's picture (Session::drawPrecipitation's rings): raindrop.nif's drop, its middle column stretched to
+    8 to 20 texels, scattered over a sheet that repeats both ways, white with the drop's alpha doubled."""
+    import random
+    w, h = size
+    core = [drop.getpixel((drop.size[0] // 2, y))[3] for y in range(drop.size[1])]
+    alpha = [[0] * w for _ in range(h)]
+    rnd = random.Random(seed)
+    for _ in range(drops):
+        x, y0, length = rnd.randrange(w), rnd.randrange(h), rnd.randint(8, 20)
+        strength = rnd.uniform(0.6, 1.0)
+        for k in range(length):
+            a = core[min(len(core) - 1, k * len(core) // length)] * 2.0 * strength
+            row = alpha[(y0 + k) % h]
+            row[x] = min(255, max(row[x], round(a)))
+    img = Image.new("RGBA", size, (255, 255, 255, 0))
+    img.putdata([(255, 255, 255, alpha[y][x]) for y in range(h) for x in range(w)])
+    return img
+
+
+def splash_ring(size=32):
+    """A drop's ripple (Session::drawPrecipitation): a soft white ring, brightest at 0.75 of the radius, clear inside."""
+    import math
+    img = Image.new("RGBA", (size, size), (255, 255, 255, 0))
+    c = (size - 1) / 2.0
+    img.putdata([(255, 255, 255, round(255 * max(0.0, 1.0 - abs(math.hypot(x - c, y - c) / c - 0.75) / 0.25)))
+                 for y in range(size) for x in range(size)])
+    return img
+
+
 def build_art(arch, data_files):
     art = {"splash": [], "levelup": {}, "bookart": {}, "hud": {}}
     # HUD pieces: the sneak eye (shown while sneaking unseen)
@@ -77,6 +107,21 @@ def build_art(arch, data_files):
         if arch.exists(path):
             img = Image.open(io.BytesIO(arch.read(path))).convert("RGB")
             encode(img, OUT / "art" / "magicitem" / f"caust{i:02d}.t3x", False)
+    # Rain and ash in the world (Session::drawPrecipitation): raindrop.nif's drop, ashcloud.nif's flake and the dust
+    # clouds of ashcloud.nif and blightcloud.nif, at art/weather/<name>.t3x. Their alpha twice the original's: on the
+    # top screen's 240 lines OpenMW's faint drops and flakes were all but gone, and its clouds lost in the fog
+    for key, path, gain in (("rain", r"textures\tx_raindrop_01.dds", 2.0), ("ash_flake", r"textures\tx_ash_flake.dds", 2.0),
+                            ("ash_cloud", r"textures\tx_ash_cloud.dds", 2.0), ("blight_cloud", r"textures\tx_blight_cloud.dds", 2.0)):
+        if arch.exists(path):
+            img = Image.open(io.BytesIO(arch.read(path))).convert("RGBA")
+            if gain != 1.0:
+                r, g, b, a = img.split()
+                img = Image.merge("RGBA", (r, g, b, a.point(lambda x: min(255, round(x * gain)))))
+            encode(img, OUT / "art" / "weather" / f"{key}.t3x", True)
+    if arch.exists(r"textures\tx_raindrop_01.dds"):
+        drop = Image.open(io.BytesIO(arch.read(r"textures\tx_raindrop_01.dds"))).convert("RGBA")
+        encode(rain_sheet(drop), OUT / "art" / "weather" / "rain_sheet.t3x", True)
+        encode(splash_ring(), OUT / "art" / "weather" / "splash.t3x", True)
     # The water surface's frames, as Morrowind and OpenMW animate water (Morrowind.ini [Water]: SurfaceTexture, frames
     # SurfaceFrameCount at SurfaceFPS, SurfaceTextureSize texels): data/art/water/waterNN.t3x, ETC1. The ripples change
     # shape; one picture slid over the water looked still on the console

@@ -27,6 +27,7 @@ struct ConsoleProfile
 	int spriteBudget;                // particle sprites drawn a frame (spell visuals, bolts' trails), shared evenly among
 	                                 // them; it follows the frame's work (Session::adaptView) between these two
 	int spriteBudgetMin, spriteBudgetMax;
+	bool rainExtras;                 // the far rain's ring and the ripples where drops land (Session::drawPrecipitation)
 
 	// ---- the heap
 	bool smallHeap;                  // under 64 MB (an Old 3DS's memory mode: about 41 MB)

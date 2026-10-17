@@ -39,6 +39,21 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   (`kActorViewDistance`, `actorViewLimit`, `kActorDetailDistance`)
 - **People are re-posed on a cadence**, often up close, less often the smaller they are on screen. (`World::update`)
 
+## Rain and storms
+
+- **Rain, ash and blight are particles in a box round the eye, fewer than OpenMW's.** Up to 450 rain streaks (OpenMW
+  450 to 650 raindrop batches), 240 ash or blight flakes, 24 dust clouds (OpenMW: ashcloud.nif's 100 flakes and 72
+  clouds), each wrapped to the box's far side as the eye leaves it behind (OpenMW's WrapAroundOperator), moved and
+  built on the CPU in one pass a frame and drawn in a few draws (about 0.5 ms of an Old 3DS's CPU). The dust clouds
+  fade out within 400 units of the eye: a 400-unit cloud near the eye is a see-through layer over most of the screen,
+  and blending costs the GPU per pixel covered. (`Session::drawPrecipitation`)
+- **On an Old 3DS, the streaks alone; a New 3DS adds a far-rain ring and ripples.** The ring is one band of falling
+  drops round the horizon, 450 out, about 0.4 of the screen blended (a whole ring covered the screen, two of them about
+  2 ms of GPU in 3D); the ripples are up to 40 small quads and about two floor checks a frame. An Old 3DS has the least
+  to spare in a busy town, in 3D most of all. Neither is in OpenMW (it has no distant rain; its ripples are on water,
+  with its shaders). Full rings, sheets stacked across the view, or a screen-wide rain picture were each tried or
+  weighed and turned down for the blending cost. (`console.cpp rainExtras`, `Session::drawPrecipitation`)
+
 ## Particles and memory
 
 - **A particle budget a frame** (spell visuals, sprays): fewer sprites while frames run long, every visual keeping the

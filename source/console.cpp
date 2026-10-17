@@ -48,4 +48,6 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 	p.spriteBudget = p.slowCpu ? 200 : 400;
 	p.spriteBudgetMin = p.slowCpu ? 100 : 200;
 	p.spriteBudgetMax = p.slowCpu ? 400 : 600;
+	// (an Old 3DS has the streaks alone: it has the least to spare in a busy town, in 3D most of all)
+	p.rainExtras = !p.slowCpu;
 }

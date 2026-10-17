@@ -294,7 +294,7 @@ struct Session : ScriptHost
 	std::vector<ScriptSound> scriptSounds;
 	void updateLoopSounds();
 	void stopLoopSounds();
-	// Weather outdoors: its ambient loop (rain, ash storm), thunder, and rain / ash drawn over the view
+	// Weather outdoors: its ambient loop (rain, ash storm), thunder, and the rain / ash in the world round the eye
 	int weatherChannel = -1;
 	std::string weatherSound;
 	float thunderIn = 10.0f;
@@ -349,7 +349,8 @@ struct Session : ScriptHost
 	int restInterruptAt = -1;                    // sleeping outdoors: the hour (restDone) a creature comes
 	std::string restInterruptList;
 	void startRest(int hours);
-	void drawPrecipitation();
+	float precipDt = 0.0f;                       // game time since the rain and ash last moved
+	void drawPrecipitation(const float eye[3], bool secondEye);   // after the world, in each eye
 	float fadeTarget = 0.0f, fadeRate = 2.5f;     // script fades (FadeOut / FadeIn)
 
 	// combat.cpp

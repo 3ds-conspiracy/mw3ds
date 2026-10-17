@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# Rain and ash hang in the world (OpenMW's SkyManager: particles kept in a box round the eye, wrapped to its far side as
+# the eye leaves them behind). Ours were dashes drawn over the screen that moved with every turn of the view and sat
+# flat on the HUD in 3D. Balmora at noon in rain: streaks drawn, the far-rain ring on a New 3DS (spec/performance-
+# tradeoffs.md), and a raindrop's place across the world the same after the view turns (it falls straight down; the
+# old dashes slid with the turn); in an ash storm flakes; indoors none
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+GOTO:Balmora
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:4+HOUR:12+HIDEACTORS:4000
+2 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:streaks:gt:200+EXPECT:precip:ring:eq:32+SNAP:precip:x0
+1.5 0 0 0.4
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:x0:eq:@0+EXPECT:precip:streaks:gt:200
+0.3 0 0 0 0 SETWEATHER:6
+2 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:flakes:gt:100+EXPECT:precip:streaks:eq:0
+0.3 0 0 0 0 GOTO:Balmora,_Eight_Plates
+3 0 0 0
+10 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:flakes:eq:0+EXPECT:precip:streaks:eq:0
