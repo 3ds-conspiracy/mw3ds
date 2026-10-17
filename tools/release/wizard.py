@@ -9,7 +9,6 @@ releases keeps the caches, so a later conversion is much faster.
 """
 import argparse
 import hashlib
-import io
 import json
 import os
 import queue
@@ -21,10 +20,12 @@ import sys
 import threading
 import time
 import tkinter as tk
-import urllib.request
 import zipfile
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import mwtools                                         # (tools/mwtools.py: the downloads)
 
 APP = Path(__file__).resolve().parents[2]              # app\ in the release, the repo root in a checkout
 RELEASE = APP.parent
@@ -208,16 +209,21 @@ def fetch_ffmpeg(work, say):
     if exe.is_file():
         return exe
     say(f"downloading ffmpeg for the movies from PyPI ({lock['size'] / 1048576:.0f} MB, the first time only)")
-    req = urllib.request.Request(lock["url"], headers={"User-Agent": "mw3ds-converter"})
-    data = urllib.request.urlopen(req, timeout=600).read()
-    if hashlib.sha256(data).hexdigest() != lock["sha256"]:
+    wheel = work / "ffmpeg" / "imageio-ffmpeg.whl"
+    try:
+        mwtools.download(lock["url"], wheel)
+    except OSError as e:
+        raise RuntimeError(f"could not download ffmpeg ({e}): check the network (a firewall or antivirus may block "
+                           f"Python)")
+    if hashlib.sha256(wheel.read_bytes()).hexdigest() != lock["sha256"]:
+        wheel.unlink()
         raise RuntimeError("the ffmpeg download does not match its checksum: try again later")
-    with zipfile.ZipFile(io.BytesIO(data)) as z:
+    with zipfile.ZipFile(wheel) as z:
         name = next(n for n in z.namelist() if re.fullmatch(r"imageio_ffmpeg/binaries/ffmpeg[^/]*\.exe", n))
-        exe.parent.mkdir(parents=True, exist_ok=True)
         part = exe.with_suffix(".part")
         part.write_bytes(z.read(name))
         part.replace(exe)
+    wheel.unlink()
     return exe
 
 

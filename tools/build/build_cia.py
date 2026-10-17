@@ -15,13 +15,11 @@ Needs .env filled in (see .env.example): MW3DS_MORROWIND_DIR, MW3DS_CTR_TOOLS_DI
 (not with --prebuilt).
 """
 import argparse
-import io
 import json
 import os
 import shutil
 import subprocess
 import sys
-import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -59,19 +57,34 @@ def fetch_mod_zips():
             continue
         url = pin["url"].removesuffix(".git") + f"/archive/{pin['commit']}.zip"
         print(f"   downloading {url}", flush=True)
+        archive = dest.with_name(dest.name + ".zip")
         try:
-            req = urllib.request.Request(url, headers={"User-Agent": "mw3ds-converter"})
-            data = urllib.request.urlopen(req, timeout=60).read()
+            mwtools.download(url, archive)
         except OSError as e:
-            raise SystemExit(f"could not download {url} ({e}): check the network, or build without the mods")
+            raise SystemExit(f"could not download {url} ({e}): check the network (a firewall or antivirus may block "
+                             f"Python), or build without the mods")
         shutil.rmtree(dest, ignore_errors=True)
         tmp = dest.with_name(dest.name + ".part")
         shutil.rmtree(tmp, ignore_errors=True)
-        zipfile.ZipFile(io.BytesIO(data)).extractall(tmp)
-        # (GitHub's zip holds one folder, <repository>-<commit>)
-        (top,) = list(tmp.iterdir())
-        top.replace(dest)
-        tmp.rmdir()
+        # GitHub's zip holds one folder, <repository>-<commit>: it is left out here rather than extracted and moved,
+        # since its 40-letter commit would take the mod's deepest files past Windows' 260-letter path limit in a
+        # work folder only a little deep (Downloads, OneDrive's Desktop)
+        try:
+            with zipfile.ZipFile(archive) as z:
+                for info in z.infolist():
+                    rel = Path(*Path(info.filename).parts[1:])
+                    if info.is_dir() or not rel.parts or ".." in rel.parts:
+                        continue
+                    out = tmp / rel
+                    out.parent.mkdir(parents=True, exist_ok=True)
+                    with z.open(info) as src, open(out, "wb") as f:
+                        shutil.copyfileobj(src, f, 1 << 20)
+        except (OSError, zipfile.BadZipFile) as e:
+            shutil.rmtree(tmp, ignore_errors=True)
+            raise SystemExit(f"could not unpack {archive.name} into {dest.parent} ({e}): a shorter work folder "
+                             f"(such as C:\\MW3DS) helps if the path was too long")
+        tmp.replace(dest)
+        archive.unlink()
         stamp.write_text(pin["commit"] + "\n")
 
 

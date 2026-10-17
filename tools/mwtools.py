@@ -112,6 +112,40 @@ def kill_tree(proc):
         proc.kill()
 
 
+def download(url, dest, tries=3):
+    """Downloads `url` to the file `dest` (through dest + '.part', so a broken download never looks finished).
+    Python's own HTTPS first, a few times; then, on Windows, the curl.exe Windows ships (10 1803 and later). Python
+    reads the Windows certificate store but never makes Windows fetch a root it lacks, which a fresh or rarely updated
+    PC may not have yet (CERTIFICATE_VERIFY_FAILED); Windows' own TLS (Schannel, which curl.exe uses) fetches it.
+    Raises OSError with every attempt's reason when nothing worked."""
+    import time
+    import urllib.request
+    dest = Path(dest)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    part = dest.with_name(dest.name + ".part")
+    errors = []
+    for attempt in range(tries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "mw3ds-converter"})
+            with urllib.request.urlopen(req, timeout=120) as r, open(part, "wb") as f:
+                shutil.copyfileobj(r, f, 1 << 20)
+            part.replace(dest)
+            return dest
+        except OSError as e:
+            errors.append(f"python: {e}")
+            time.sleep(2 * (attempt + 1))
+    curl = Path(os.environ.get("SystemRoot", r"C:\Windows")) / "System32" / "curl.exe"
+    if IS_WINDOWS and curl.is_file():
+        r = subprocess.run([str(curl), "-fsSL", "--retry", "3", "--retry-delay", "5", "-A", "mw3ds-converter",
+                            "-o", str(part), url], capture_output=True, text=True, creationflags=hidden_flags())
+        if r.returncode == 0 and part.is_file():
+            part.replace(dest)
+            return dest
+        errors.append(f"curl.exe: {r.stderr.strip() or f'exit code {r.returncode}'}")
+    part.unlink(missing_ok=True)
+    raise OSError("; ".join(errors))
+
+
 def hidden_flags():
     """Popen creationflags for a background process without a console window (Windows only)."""
     return getattr(subprocess, "CREATE_NO_WINDOW", 0) if IS_WINDOWS else 0
