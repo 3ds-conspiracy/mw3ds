@@ -61,11 +61,41 @@ Python {python} (Python Software Foundation License): https://www.python.org/ (p
 Tcl/Tk (BSD-style license), for the window: https://www.tcl.tk/
 tex3ds (GPLv3), devkitPro: https://github.com/devkitPro/tex3ds
 makerom (MIT), Project_CTR: https://github.com/3DSGuy/Project_CTR
+  their license texts, the libraries tex3ds is built with, and where each one's source is: tex3ds-makerom/
 
 The mods the converter can download when you build (Morrowind Optimization Patch, and Project Atlas for the Old 3DS
 build) are not part of this download: they come from their own repositories, at the commits listed in
 app/mods.lock.json.
 """
+
+# Where the source of tex3ds.exe and makerom.exe is (GPLv3 section 6(d): clear directions next to the object code).
+# The license texts are in tools/release/licenses, fetched from each project at these tags.
+TOOL_SOURCES = """tex3ds.exe and makerom.exe: where their source is
+
+tex3ds v2.3.0 (GNU GPL version 3, tex3ds-COPYING.txt), the Windows build devkitPro distributes.
+  Source: https://github.com/devkitPro/tex3ds/tree/v2.3.0
+  (archive: https://github.com/devkitPro/tex3ds/archive/refs/tags/v2.3.0.tar.gz)
+  It is statically linked with these libraries, each under its own license (files in this folder):
+    ImageMagick 7.0.7-31 (ImageMagick-LICENSE.txt): https://github.com/ImageMagick/ImageMagick/tree/7.0.7-31
+    libpng 1.6.37 (libpng-LICENSE.txt): https://github.com/glennrp/libpng/tree/v1.6.37
+    libjpeg-turbo 1.5.3 (libjpeg-turbo-LICENSE.md): https://github.com/libjpeg-turbo/libjpeg-turbo/tree/1.5.3
+    zlib 1.2.11 (zlib-LICENSE.txt): https://zlib.net/fossils/
+    FreeType, under the FreeType License (freetype-FTL.txt): https://freetype.org/
+    bzip2 (bzip2-LICENSE.txt): https://sourceware.org/bzip2/
+    mingw-w64 winpthreads v8.0.0 (winpthreads-COPYING.txt): https://www.mingw-w64.org/
+
+makerom v0.19.0 (MIT License, makerom-LICENSE.txt), from Project_CTR.
+  Source: https://github.com/3DSGuy/Project_CTR/tree/makerom-v0.19.0
+"""
+
+
+def copy_tool_licenses(dest):
+    """The license texts of tex3ds, makerom and what tex3ds links, and where their source is, into `dest`."""
+    dest.mkdir(parents=True, exist_ok=True)
+    for p in sorted((Path(__file__).parent / "licenses").iterdir()):
+        shutil.copy2(p, dest / p.name)
+    (dest / "SOURCES-tex3ds-makerom.txt").write_text(TOOL_SOURCES, encoding="utf-8")
+
 
 README = """MW3DS Converter {version}
 
@@ -225,6 +255,7 @@ def main():
         tools = out / "build-tools"
         shutil.rmtree(tools, ignore_errors=True)
         make_bin(tools)
+        copy_tool_licenses(tools)
         archive = out / "build-tools-windows.zip"
         with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
             for p in sorted(tools.iterdir()):
@@ -248,6 +279,7 @@ def main():
     lic.mkdir()
     shutil.copy2(ROOT / "LICENSE", lic / "MW3DS-LICENSE.txt")
     (lic / "THIRD-PARTY.txt").write_text(THIRD_PARTY.format(python=platform.python_version()), encoding="utf-8")
+    copy_tool_licenses(lic / "tex3ds-makerom")
     (folder / "README.txt").write_text(README.format(version=ver), encoding="utf-8")
 
     if not a.no_check and not check_private(folder):
