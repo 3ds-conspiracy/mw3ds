@@ -103,6 +103,14 @@ static bool readBatches(FILE* f, std::vector<CellBatch>& out, Cell& cell, u32 ve
 				b.scrollU = su / 256.0f;
 				b.scrollV = sv / 256.0f;
 			}
+			if (version >= 10)
+			{
+				// The lamp light's colour; the vertices' w is its brightness (convert_cell.py lamp_channel)
+				u8 lamp[4] = { 0, 0, 0, 0 };
+				fread(lamp, 1, 4, f);
+				for (int k = 0; k < 3; k++)
+					b.lamp[k] = lamp[k] / 255.0f;
+			}
 		}
 		else
 		{
@@ -276,7 +284,7 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 	}
 
 	CellHeader h;
-	if (fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "MWC1", 4) != 0 || h.version < 1 || h.version > 9)
+	if (fread(&h, sizeof(h), 1, f) != 1 || memcmp(h.magic, "MWC1", 4) != 0 || h.version < 1 || h.version > 10)
 	{
 		logf("cell: bad header in %s", path);
 		zclose(f);
@@ -372,8 +380,11 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 	if (ok && h.version >= 4)
 		ok = readBatches(f, cell.sky, cell, h.version);
 	zclose(f);
-	logf("cell: %s: %d batches, %lu tris, %d doors, %d sky, %d actors, collision %d tris, geometry %lu KB, textures %lu KB (%d missing)",
-		cellFile, (int)cell.batches.size(), cell.numTris, (int)cell.doors.size(), (int)cell.sky.size(), (int)cell.actors.size(),
+	int lamps = 0;
+	for (auto& b : cell.batches)
+		lamps += b.lamp[0] > 0.0f || b.lamp[1] > 0.0f || b.lamp[2] > 0.0f;
+	logf("cell: %s: %d batches (%d lamp lit), %lu tris, %d doors, %d sky, %d actors, collision %d tris, geometry %lu KB, textures %lu KB (%d missing)",
+		cellFile, (int)cell.batches.size(), lamps, cell.numTris, (int)cell.doors.size(), (int)cell.sky.size(), (int)cell.actors.size(),
 		(int)cell.collision.tris.size() / 3, cell.geometryBytes / 1024, cell.textureBytes / 1024, missing);
 	return ok;
 }

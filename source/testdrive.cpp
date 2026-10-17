@@ -205,14 +205,14 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "reflampnow" || what == "refheldlight" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "torchlit" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown";
 }
 
 // "<a>,<b>" as two numbers
@@ -1196,6 +1196,16 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			const Actor* a = w.actorOf(ri);
 			v = a ? (a->tint[0] + a->tint[1] + a->tint[2]) / (3.0f * 64.0f) : -1.0f;
 		}
+		else if (what == "reflampnow")      // the lamps' and others' torches' light where it stands now (Actor::lampNow, 1: 0.5)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? (a->lampNow[0] + a->lampNow[1] + a->lampNow[2]) / (3.0f * 64.0f) : -1.0f;
+		}
+		else if (what == "refheldlight")    // the light of the torch it holds out, on itself (Actor::heldLight, 0..1)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? (a->heldLight[0] + a->heldLight[1] + a->heldLight[2]) / 3.0f : -1.0f;
+		}
 		else if (what == "refalpha")        // how solid it is drawn (1; less under Invisibility, Chameleon)
 		{
 			const Actor* a = w.actorOf(ri);
@@ -1344,7 +1354,6 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
 	else if (what == "wfogscale") v = w.weatherFogScale();      // the share of the view drawn in this weather
-	else if (what == "torchlights") v = (float)s.heldLights;   // people's torches lighting the world now
 	else if (what == "viewscale") v = s.viewScale;              // the adaptive view distance outdoors (1: the whole view)
 	else if (what == "hudcaption")    // the cell name under the HUD's minimap is this cell's, 1; else 0
 	{
@@ -1353,6 +1362,16 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "torchtime") v = w.useTorches() ? 1.0f : 0.0f;   // time for torches here (night, a dark interior)
 	else if (what == "subtitle") v = w.time < s.subtitleUntil && !s.subtitle.empty() ? 1.0f : 0.0f;   // a spoken line written now
+	else if (what == "lampbatches")     // batches the last view drew with lamp light the night left alone (outdoors)
+	{
+		extern int g_lampLitBatches;
+		v = (float)g_lampLitBatches;
+	}
+	else if (what == "torchpixel")      // the player's torch in the last view: per pixel 1, per vertex 0, none -1
+	{
+		extern int g_torchPerPixel;
+		v = (float)g_torchPerPixel;
+	}
 	else if (what == "setting")     // <lookspeed|geturn|geaim|inverty|subtitles>: Controls > Look's and Display's, now
 	{
 		if (arg == "lookspeed") v = (float)g_lookSpeed;
@@ -1378,16 +1397,6 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 				}
 			fclose(f);
 		}
-	}
-	else if (what == "torchlit")    // <batches|world|share>: of the world batches (cells, terrain layers, distant land) the
-	{                               // last frame drew, how many with people's torch lights on, all of them, the share
-		extern int g_worldBatches, g_torchLitBatches, g_worldVerts, g_torchLitVerts;
-		if (arg == "batches") v = (float)g_torchLitBatches;
-		else if (arg == "world") v = (float)g_worldBatches;
-		else if (arg == "share") v = g_worldBatches ? (float)g_torchLitBatches / g_worldBatches : 0.0f;
-		else if (arg == "verts") v = (float)g_torchLitVerts;        // <verts|allverts|vshare>: the same by vertices
-		else if (arg == "allverts") v = (float)g_worldVerts;
-		else if (arg == "vshare") v = g_worldVerts ? (float)g_torchLitVerts / g_worldVerts : 0.0f;
 	}
 	else if (what == "gamma")       // <value|setting|auto|lift|sensor|saved>: Gamma (Display): the value used now, the bar,
 	{                               // Auto gamma on, the light reading's lift, the sensor (0 none, 1 QTM, 2 camera), settings.txt's

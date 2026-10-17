@@ -135,6 +135,10 @@ struct Actor
 	bool bothHands = false;            // its group uses both hands (fists, a spell, two-handed weapons): no shield shown
 	float alpha = 1.0f;                // drawn see-through below 1: Invisibility, Chameleon (actorSeeThrough)
 	u8 tint[3] = { 64, 64, 64 };       // the light where it was placed (x 64), its library meshes lit by it
+	u8 lamp[3] = { 0, 0, 0 };          // ... the lamps' share of it (x 64): night outdoors darkens the rest only
+	float heldLight[3] = { 0, 0, 0 };  // the light of the torch it holds out, on itself (0..1; none: 0)
+	bool lampSplit = false;            // its placement carries the lamps' share apart (.act 4): lampNow replaces it
+	float lampNow[3] = { 0, 0, 0 };    // the lamps' and other people's torches' light where it stands now (x 64, Session)
 	float torchTime = -1.0f;           // the left arm's own time in the Torch group while the torch is out
 	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
 	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline

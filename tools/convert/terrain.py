@@ -119,9 +119,11 @@ class Terrain:
                     out[t] += np.where(tile == t, wx * wy, 0.0)
         return out
 
-    def chunk(self, cx, cy, step, sun_dir, sun, ambient, skirt=False):
+    def chunk(self, cx, cy, step, sun_dir, sun, ambient, skirt=False, lamp=None):
         """One chunk (chunk grid coordinates within this terrain) as layers:
-        [(texture value, positions Nx3, uv Nx2, rgba Nx4 floats, triangles Mx3)], base layer first."""
+        [(texture value, positions Nx3, uv Nx2, rgba + lamp rgb Nx7 floats, triangles Mx3)], base layer first.
+        lamp(positions, normals): the point lights' light there (None: none); the colour's share of it is the last
+        three columns."""
         q = CHUNK_QUADS
         xs = np.arange(cx * q, cx * q + q + 1, step)
         ys = np.arange(cy * q, cy * q + q + 1, step)
@@ -130,7 +132,11 @@ class Terrain:
         pos = np.stack([self.origin[0] + gx * QUAD, self.origin[1] + gy * QUAD, self.h[gy, gx]], axis=-1)
         nrm = self.n[gy, gx]
         light = ambient + np.clip(nrm @ sun_dir, 0, None)[..., None] * sun
-        rgb = np.clip(self.c[gy, gx] * light, 0, 1)
+        lit = np.zeros(pos.shape)
+        if lamp is not None:
+            lit = self.c[gy, gx] * lamp(pos.reshape(-1, 3), nrm.reshape(-1, 3)).reshape(pos.shape)
+        rgb = np.clip(self.c[gy, gx] * light + lit, 0, 1)
+        lit = np.minimum(np.clip(lit, 0, 1), rgb)
         # Chunk-local UVs keep texture coordinates small (one repeat per texture tile)
         uv = np.stack([(gx - cx * q) * QUAD / TILE_SIZE, (gy - cy * q) * QUAD / TILE_SIZE], axis=-1)
 
@@ -147,6 +153,7 @@ class Terrain:
         tris_all = np.concatenate([quads[:, [0, 1, 2]], quads[:, [0, 2, 3]]])
 
         flat_pos, flat_uv, flat_rgb = pos.reshape(-1, 3), uv.reshape(-1, 2), rgb.reshape(-1, 3)
+        flat_lit = lit.reshape(-1, 3)
         layers, acc = [], np.zeros(gx.shape)
         for k, t in enumerate(order):
             w = weights[t]
@@ -160,7 +167,7 @@ class Terrain:
                 if not touched.any():
                     continue
                 tris = np.concatenate([quads[touched][:, [0, 1, 2]], quads[touched][:, [0, 2, 3]]])
-            rgba = np.concatenate([flat_rgb, alpha.reshape(-1, 1)], axis=1)
+            rgba = np.concatenate([flat_rgb, alpha.reshape(-1, 1), flat_lit], axis=1)
             p, u, c, tr = flat_pos, flat_uv, rgba, tris
             if k == 0 and skirt:
                 p, u, c, tr = add_skirt(p, u, c, tr, n)

@@ -542,6 +542,13 @@ bool actorsLoad(ActorSet& set, const char* path, const char* dataDir, const std:
 			// The meshes are in the record's library file, shared by every placement
 			u8 tint[4];
 			fread(tint, 1, 4, f);
+			if (version >= 4)
+			{
+				u8 lamp[4];
+				fread(lamp, 1, 4, f);
+				memcpy(a.lamp, lamp, 3);
+				a.lampSplit = true;
+			}
 			u16 len = 0;
 			rd(f, len);
 			std::string lib(len, '\0');

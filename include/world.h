@@ -288,6 +288,7 @@ struct LoadedCell
 	Cell cell;
 	ActorSet actors;
 	std::vector<std::pair<int, u32>> glowRefs;   // its enchanted things lying about and their colours (the shimmer)
+	std::vector<int> lightRefs;                  // its lights (on by default): people are lit by those near them
 };
 
 // One cell of the level: its references stay loaded, its geometry only while the player is in or

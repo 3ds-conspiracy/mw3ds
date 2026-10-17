@@ -20,35 +20,38 @@ int g_skippedDraws = 0;               // draws dropped because the GPU command b
 // behind drawn after one in front paints over it, as neither writes depth)
 int g_blendOutOfOrder = 0;
 int g_groundGaps = -1;                // cracks in the last saved shot (counted by the native test build; -1 here)
-// World batches the last frame drew (first eye) and how many of them with the torches' two lights on (moreLights)
-int g_worldBatches = 0, g_torchLitBatches = 0;
-// ... and their vertices (the torch terms are per vertex: a few big batches can be most of the work)
-int g_worldVerts = 0, g_torchLitVerts = 0;
 
 static DVLB_s* s_dvlb;
 static shaderProgram_s s_program;
 static int s_uProjection, s_uModelView, s_uUvOffset, s_uFogVec, s_uPosOffset, s_uPosScale, s_uUvScale, s_uTint = -1;
 static int s_uLightPos = -1, s_uLightColor = -1;
-static int s_uMoreLightPos[kActorLights] = { -1, -1 }, s_uMoreLightColor[kActorLights] = { -1, -1 }, s_bMoreLight[kActorLights] = { -1, -1 };
+static int s_uLamp = -1;                    // cell.v.pica lamp: the batch's lamp light the night leaves alone
+static int s_uTorchVec = -1;                // cell.v.pica / skin.v.pica torchVec: how far out the torch's light is (per pixel)
+static bool s_torchStageOn = false;         // ... its combiner stage is in (setLight; setBatchState writes it)
+static const float kTorchAtEye = 80.0f;     // ... only while it is this near the camera
+// ... reaching twice its radius, Morrowind's light falloff along the way: whole to a third of the radius, then
+// radius / (3 x distance) (LinearValue 3), faded out over the second radius as the converter's lamps are; x 0.3 for
+// the surfaces' facing (no normals here: the average lit side's), against OpenMW in a cave
+static const float kTorchReach = 2.0f, kTorchFacing = 0.3f;
+int g_torchPerPixel = 0;                    // the last world view lit the torch per pixel (1), per vertex (0), none (-1)
+static float s_lampSet[3] = { 0.0f, 0.0f, 0.0f };
+static bool s_lampValid = false;            // ... as last uploaded (a skinned run's palette overwrites the register)
+int g_lampLitBatches = 0;                   // batches the last view drew with lamp light the night left alone (tests)
+// Texture combiner stages: 0 the lit texture (setBatchState), then the player's torch per pixel, the fog, an enchanted
+// mesh's glow or shimmer, and an alpha scale (see-through actors)
+static const int kTevTorch = 1, kTevFog = 2, kTevGlow = 3, kTevAlpha = 4;
 // GPU skinning (skin.v.pica): its own program, the same uniforms in the same registers plus the bone palette
 static DVLB_s* s_skinDvlb;
 static shaderProgram_s s_skinProgram;
 static int s_uBones = -1;
 static bool s_skinReady = false;
 static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
-static int s_moreLights = 0;
-static u8 s_moreOn = 0;                     // the torches' switches as last set (bit i: moreLight2 / moreLight3)
-static u8 s_moreWanted = 0;                 // ... for this view (setLight): people's torches light the world
-static bool s_worldBounds = false;          // the batches being drawn have world-space bounds (the cells' and distant land's)
-static bool s_countBatches = false;         // ... and are the first eye's (g_worldBatches, g_torchLitBatches)
-static int s_worldCount = 0, s_torchLitCount = 0, s_worldVerts = 0, s_torchLitVerts = 0;
 static int s_uAmbient = -1;
 static float s_ambientAdd = 0.0f;           // Night Eye's added light (rendererSetNightEye)
 static int s_bGamma = -1;
 static float s_invGamma = 1.0f;             // Gamma's exponent, 1 / gamma, in ambientAdd.w (rendererSetGamma)
 static bool s_gammaOn = false;
 static int s_bLightOn = -1;                 // cell.v.pica / skin.v.pica lightOn: the carried light's terms, skipped without one
-static float s_moreLight[kActorLights][3], s_moreRadius[kActorLights], s_moreRgb[kActorLights][3];
 static C3D_Mtx s_lightView;               // the view the lights were last put in (set again after a skinned run)
 static bool s_lightViewOn = false;
 // Day and night outdoors (World::daylight): tint on the baked light, the sky's, and the fog colour
@@ -60,6 +63,7 @@ static bool s_packedBound = false;
 static float s_boundQuant[8];                     // pos offset, pos scale, uv scale
 static C3D_Mtx s_view;                            // of the last rendererDrawWorld, for the extra draws
 static float s_eyeSnap[3] = { 0.0f, 0.0f, 0.0f }; // its camera position on a 64-unit grid
+static float s_eye[3] = { 0.0f, 0.0f, 0.0f };     // ... and as it is
 static float s_uvOffset[2];
 static C3D_Tex s_fogRamp;
 static void initFogRamp();
@@ -94,12 +98,8 @@ void rendererInit()
 	s_uTint = shaderInstanceGetUniformLocation(s_program.vertexShader, "tint");
 	s_uLightPos = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos");
 	s_uLightColor = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor");
-	s_uMoreLightPos[0] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos2");
-	s_uMoreLightColor[0] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor2");
-	s_uMoreLightPos[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos3");
-	s_uMoreLightColor[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor3");
-	s_bMoreLight[0] = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLight2");
-	s_bMoreLight[1] = shaderInstanceGetUniformLocation(s_program.vertexShader, "moreLight3");
+	s_uLamp = shaderInstanceGetUniformLocation(s_program.vertexShader, "lamp");
+	s_uTorchVec = shaderInstanceGetUniformLocation(s_program.vertexShader, "torchVec");
 	s_uAmbient = shaderInstanceGetUniformLocation(s_program.vertexShader, "ambientAdd");
 	s_bGamma = shaderInstanceGetUniformLocation(s_program.vertexShader, "gammaOn");
 	s_bLightOn = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightOn");
@@ -109,7 +109,7 @@ void rendererInit()
 	s_uBones = shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "bones");
 	// The frame's uniforms carry over between the two programs only if they sit in the same registers
 	static const char* const kShared[] = { "projection", "modelView", "uvOffset", "fogVec", "posOffset", "posScale",
-		"uvScale", "tint", "lightPos", "lightColor", "ambientAdd" };
+		"uvScale", "tint", "lightPos", "lightColor", "ambientAdd", "torchVec" };
 	s_skinReady = s_uBones >= 0;
 	for (const char* n : kShared)
 		s_skinReady &= shaderInstanceGetUniformLocation(s_program.vertexShader, n)
@@ -207,6 +207,9 @@ static void bindPipeline()
 		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, 0.0f, 0.0f, 0.0f, s_invGamma);     // (the world's draws set it: setLight)
 	if (s_bGamma >= 0)
 		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bGamma, s_gammaOn);
+	if (s_uTorchVec >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTorchVec, 0.0f, 0.0f, 0.0f, 1.0f);     // (no torch: past its reach everywhere)
+	s_torchStageOn = false;
 }
 
 void rendererSetNightEye(float add)
@@ -243,16 +246,7 @@ void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3
 	memcpy(s_lightRgb, rgb, sizeof(s_lightRgb));
 }
 
-void rendererSetActorLights(int count, const float pos[][3], const float radius[], const float rgb[][3])
-{
-	s_moreLights = count < kActorLights ? count : kActorLights;
-	for (int i = 0; i < s_moreLights; i++)
-	{
-		memcpy(s_moreLight[i], pos[i], sizeof(s_moreLight[i]));
-		s_moreRadius[i] = radius[i];
-		memcpy(s_moreRgb[i], rgb[i], sizeof(s_moreRgb[i]));
-	}
-}
+static void updateLightRamp();
 
 // One light in this view's eye space: position (w = 1 / radius squared) and colour (off: no colour)
 static void putLight(int uPos, int uColor, const C3D_Mtx* view, const float pos[3], float radius, const float rgb[3])
@@ -270,17 +264,44 @@ static void putLight(int uPos, int uColor, const C3D_Mtx* view, const float pos[
 	C3D_FVUnifSet(GPU_VERTEX_SHADER, uColor, rgb[0], rgb[1], rgb[2], 0.0f);
 }
 
-// The carried light and people's torches in this view's eye space (none: no view). The torches sit in registers
-// skin.v.pica's palette uses: drawSkinQueue puts them back
+// The carried light in this view's eye space (none: no view). Per pixel (first person) it is no
+// vertex work: the shaders put how far out its light reaches into the fog's texture coordinate (torchVec: the eye-space
+// depth over twice its radius, the torch being at the eye), the light ramp's rows hold its falloff in its colour, and the
+// torch stage adds texture x that before the fog. Depth rather than distance: at the screen's sides it reaches a little
+// further. Per vertex otherwise: lightColor x (1 - distance^2 / radius^2) at each vertex (cell.v.pica lightOn)
 static void setLight(const C3D_Mtx* view)
 {
 	if (s_uLightColor < 0 || s_uLightPos < 0)
 		return;
-	putLight(s_uLightPos, s_uLightColor, view, s_light, s_lightRadius, s_lightRgb);
-	// (no light carried: its five instructions a vertex are skipped, most of the time on most of the picture)
+	bool lit = view && s_lightRadius > 0.0f && (s_lightRgb[0] > 0.0f || s_lightRgb[1] > 0.0f || s_lightRgb[2] > 0.0f);
+	// (per pixel only with the torch at the eye: first person; a third-person or held camera lights per vertex)
+	float d2 = 0.0f;
+	for (int k = 0; k < 3; k++)
+		d2 += (s_light[k] - s_eye[k]) * (s_light[k] - s_eye[k]);
+	bool pixel = lit && s_uTorchVec >= 0 && d2 < kTorchAtEye * kTorchAtEye;
+	putLight(s_uLightPos, s_uLightColor, pixel ? nullptr : view, s_light, s_lightRadius, s_lightRgb);
+	if (s_uTorchVec >= 0)
+	{
+		if (pixel)
+			C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTorchVec, 0.0f, 0.0f, -1.0f / (kTorchReach * s_lightRadius), 0.0f);
+		else
+			C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTorchVec, 0.0f, 0.0f, 0.0f, 1.0f);
+	}
+	if (pixel)
+	{
+		updateLightRamp();
+		C3D_TexBind(1, &s_fogRamp);
+	}
+	if (view)
+		g_torchPerPixel = pixel ? 1 : lit ? 0 : -1;
+	if (pixel != s_torchStageOn)
+	{
+		s_torchStageOn = pixel;
+		invalidateState();                  // (setBatchState writes the torch stage, or clears it)
+	}
+	// (no light carried, or lit per pixel: its five instructions a vertex are skipped)
 	if (s_bLightOn >= 0)
-		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bLightOn, view && s_lightRadius > 0.0f
-			&& (s_lightRgb[0] > 0.0f || s_lightRgb[1] > 0.0f || s_lightRgb[2] > 0.0f));
+		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bLightOn, lit && !pixel);
 	// Night Eye on the world's draws (none on the sky's: OpenMW adds it to the ambient light, which the sky doesn't take)
 	if (s_uAmbient >= 0)
 	{
@@ -290,30 +311,6 @@ static void setLight(const C3D_Mtx* view)
 	s_lightViewOn = view != nullptr;
 	if (view)
 		s_lightView = *view;
-	if (s_bMoreLight[0] < 0)
-		return;
-	bool more = view && s_moreLights > 0;
-	u8 mask = 0;
-	for (int i = 0; i < kActorLights; i++)
-	{
-		bool on = more && i < s_moreLights;
-		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLight[i], on);
-		mask |= on ? 1 << i : 0;
-	}
-	s_moreOn = s_moreWanted = mask;
-	if (more)
-		for (int i = 0; i < kActorLights; i++)
-			putLight(s_uMoreLightPos[i], s_uMoreLightColor[i], view, s_moreLight[i], i < s_moreLights ? s_moreRadius[i] : 0.0f,
-				s_moreRgb[i]);
-}
-
-// The torches' switches (cell.v.pica moreLight2, moreLight3) set to this mask, each only when it changes
-static void setMoreLights(u8 mask)
-{
-	for (int i = 0; i < kActorLights; i++)
-		if (((mask ^ s_moreOn) >> i) & 1)
-			C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bMoreLight[i], (mask >> i) & 1);
-	s_moreOn = mask;
 }
 
 static bool s_uvOverrideOn = false;
@@ -338,8 +335,8 @@ void rendererSetUnderwater(bool on, float fogDepth)
 
 void rendererAlphaScale(float a)
 {
-	// texture combiner 3 (after the fog and the glow): alpha x this, colour as it is
-	C3D_TexEnv* env = C3D_GetTexEnv(3);
+	// the alpha stage (after the fog and the glow): alpha x this, colour as it is
+	C3D_TexEnv* env = C3D_GetTexEnv(kTevAlpha);
 	C3D_TexEnvInit(env);
 	if (a >= 0.999f)
 		return;
@@ -368,11 +365,14 @@ static void setUvOffset(float u, float v)
 }
 
 // ---- Fog: linear from fogStart to fogEnd (eye depth). The vertex shader writes the fog amount
-// to texture coordinate 1, texture unit 1 holds a 0..1 alpha ramp, and combiner stage 1 blends
-// towards the fog colour by it. (The PICA's own fog table is indexed by the non-linear depth
-// buffer value, which leaves almost no resolution past a few hundred units.)
+// to texture coordinate 1's x, texture unit 1 holds the light ramp, and the fog stage blends
+// towards the fog colour by its alpha, a 0..1 ramp across. (The PICA's own fog table is indexed by the non-linear depth
+// buffer value, which leaves almost no resolution past a few hundred units.) Down the ramp, the coordinate's y: the
+// player's torch lit per pixel, its colour x its falloff at y = depth / (twice its radius) (setLight), in the rgb
 
-static const int kFogRampWidth = 64;
+static const int kFogRampWidth = 64, kLightRampRows = 32;
+static float s_rampRgb[3] = { -1.0f, -1.0f, -1.0f };     // the torch colour and gamma the ramp's rgb was built for
+static float s_rampGamma = -1.0f;
 static bool s_fogOn = false;
 static int s_spritesLeft = 0;          // this frame's particle sprites still to draw (g_profile.spriteBudget)
 static int s_spriteSlot = 0;           // where the frame's next sprite vertices go in rendererDrawSprites' ring
@@ -395,20 +395,94 @@ static void setTint(const float t[3])
 	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTint, t[0], t[1], t[2], 1.0f);
 }
 
+static const float kNoTint[3] = { 1, 1, 1 };
+
+// The world's tint: the hour's outdoors, none indoors
+static const float* worldTint()
+{
+	return s_daylight ? s_land : kNoTint;
+}
+
+// A person's or creature's tint: its meshes carry the light where it was placed (Actor::tint, baked in when they load);
+// outdoors the hour darkens the sun's and the sky's share of it, not the lamps' (Actor::lamp), channel by channel
+static void actorTint(const Actor& a, float out[3])
+{
+	const float* t = worldTint();
+	for (int k = 0; k < 3; k++)
+	{
+		// (and the torch it holds out, on itself: Actor::heldLight, in the tint's units, light / 0.5 x 64)
+		// (and the lamps near where it stands now in place of those where it was placed: Actor::lampNow)
+		float all = a.tint[k], lamp = a.lamp[k] < a.tint[k] ? a.lamp[k] : a.tint[k], held = a.heldLight[k] * 128.0f;
+		float now = a.lampSplit ? a.lampNow[k] : lamp;
+		out[k] = all > 0.0f ? (t[k] * (all - lamp) + now + held) / all : t[k] + (now + held) / 64.0f;
+	}
+}
+
+// The batch's lamp light (cell.v.pica lamp): its colour x (1 - the hour's tint) / 16383, so tint x colour + this x the
+// vertex's brightness keeps the lamps' share whole; nothing indoors or on a batch without lamp light
+static void setLamp(const CellBatch& b)
+{
+	if (s_uLamp < 0)
+		return;
+	float v[3] = { 0.0f, 0.0f, 0.0f };
+	if (s_daylight && (b.lamp[0] > 0.0f || b.lamp[1] > 0.0f || b.lamp[2] > 0.0f))
+		for (int k = 0; k < 3; k++)
+			v[k] = b.lamp[k] * (1.0f - s_land[k]) * (1.0f / 16383.0f);
+	g_lampLitBatches += v[0] > 0.0f || v[1] > 0.0f || v[2] > 0.0f;
+	if (s_lampValid && memcmp(v, s_lampSet, sizeof(v)) == 0)
+		return;
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLamp, v[0], v[1], v[2], 0.0f);
+	memcpy(s_lampSet, v, sizeof(v));
+	s_lampValid = true;
+}
+
+// The ramp's texel (x, y): 8x8 tiles in rows, texels in Morton order within a tile, RGBA8 stored a b g r. The first
+// row in memory is the texture's top (v = 1)
+static u8* rampTexel(int x, int y)
+{
+	int morton = (x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3);
+	return (u8*)s_fogRamp.data + (((y / 8) * (kFogRampWidth / 8) + x / 8) * 64 + morton) * 4;
+}
+
 static void initFogRamp()
 {
-	C3D_TexInit(&s_fogRamp, kFogRampWidth, 8, GPU_A8);
-	u8* data = (u8*)s_fogRamp.data;
+	C3D_TexInit(&s_fogRamp, kFogRampWidth, kLightRampRows, GPU_RGBA8);
 	for (int x = 0; x < kFogRampWidth; x++)
-		for (int y = 0; y < 8; y++)
+		for (int y = 0; y < kLightRampRows; y++)
 		{
-			// 8x8 tiles, texels in Morton order within a tile
-			int morton = (x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3);
-			data[(x / 8) * 64 + morton] = (u8)(255 * x / (kFogRampWidth - 1));
+			u8* t = rampTexel(x, y);
+			t[0] = (u8)(255 * x / (kFogRampWidth - 1));
+			t[1] = t[2] = t[3] = 0;
 		}
 	C3D_TexFlush(&s_fogRamp);
 	C3D_TexSetFilter(&s_fogRamp, GPU_LINEAR, GPU_LINEAR);
 	C3D_TexSetWrap(&s_fogRamp, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
+}
+
+// The ramp's rgb for the torch now carried (its colour, through Gamma's curve as the vertex light is), when either changed
+static void updateLightRamp()
+{
+	if (memcmp(s_rampRgb, s_lightRgb, sizeof(s_rampRgb)) == 0 && s_rampGamma == s_invGamma)
+		return;
+	memcpy(s_rampRgb, s_lightRgb, sizeof(s_rampRgb));
+	s_rampGamma = s_invGamma;
+	for (int y = 0; y < kLightRampRows; y++)
+	{
+		// (row 0, v = 1: twice the radius, nothing; the last row, v = 0: at the eye)
+		float d = kTorchReach * (1.0f - (float)y / (kLightRampRows - 1)), over = fminf(fmaxf(d - 1.0f, 0.0f), 1.0f);
+		float fall = kTorchFacing * fminf(1.0f, 1.0f / (3.0f * fmaxf(d, 0.001f))) * (1.0f - over * over);
+		u8 c[3];
+		for (int k = 0; k < 3; k++)
+			c[k] = y == 0 ? 0 : (u8)(fminf(1.0f, rendererCurve(s_lightRgb[k] * fall)) * 255.0f + 0.5f);
+		for (int x = 0; x < kFogRampWidth; x++)
+		{
+			u8* t = rampTexel(x, y);
+			t[1] = c[2];
+			t[2] = c[1];
+			t[3] = c[0];
+		}
+	}
+	C3D_TexFlush(&s_fogRamp);
 }
 
 // The horizon's scale of the exterior fog distance (main: the weather's alone): distant land is drawn that far with its
@@ -433,7 +507,7 @@ static void enableFog(const Cell& cell, float fogStart, float fogEnd)
 	setFogVec(fogStart, fogEnd);
 	s_fogColor = curveColor(s_daylight ? s_dayFog : 0xFF000000 | (cell.fog[2] << 16) | (cell.fog[1] << 8) | cell.fog[0]);    // 0xAABBGGRR
 	C3D_TexBind(1, &s_fogRamp);
-	C3D_TexEnv* env = C3D_GetTexEnv(1);
+	C3D_TexEnv* env = C3D_GetTexEnv(kTevFog);
 	C3D_TexEnvInit(env);
 	// rgb = fog * ramp.a + previous * (1 - ramp.a); alpha unchanged
 	C3D_TexEnvSrc(env, C3D_RGB, GPU_CONSTANT, GPU_PREVIOUS, GPU_TEXTURE1);
@@ -449,7 +523,7 @@ static void disableFog()
 {
 	invalidateState();
 	setFogVec(0.0f, 0.0f);
-	C3D_TexEnvInit(C3D_GetTexEnv(1));
+	C3D_TexEnvInit(C3D_GetTexEnv(kTevFog));
 	s_fogOn = false;
 }
 
@@ -556,12 +630,12 @@ static void glowStage(u32 glow)
 {
 	if (!glow)
 	{
-		C3D_TexEnvInit(C3D_GetTexEnv(2));
+		C3D_TexEnvInit(C3D_GetTexEnv(kTevGlow));
 		return;
 	}
 	float k = 0.30f + 0.12f * sinf(osGetTime() * 0.004f);
 	u32 r = (u32)(((glow >> 16) & 255) * k), g = (u32)(((glow >> 8) & 255) * k), b = (u32)((glow & 255) * k);
-	C3D_TexEnv* env = C3D_GetTexEnv(2);
+	C3D_TexEnv* env = C3D_GetTexEnv(kTevGlow);
 	C3D_TexEnvInit(env);
 	C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS, GPU_CONSTANT);
 	C3D_TexEnvFunc(env, C3D_RGB, GPU_ADD);
@@ -627,7 +701,7 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 		setUvOffset(0.0f, 0.0f);
 
 	if (s_fogOn)
-		C3D_TexEnvColor(C3D_GetTexEnv(1), (b.flags & BATCH_ADDITIVE) ? 0xFF000000 : s_fogColor);
+		C3D_TexEnvColor(C3D_GetTexEnv(kTevFog), (b.flags & BATCH_ADDITIVE) ? 0xFF000000 : s_fogColor);
 
 	C3D_TexEnv* env = C3D_GetTexEnv(0);
 	C3D_TexEnvInit(env);
@@ -643,6 +717,24 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 	{
 		C3D_TexEnvSrc(env, C3D_Both, GPU_PRIMARY_COLOR);
 		C3D_TexEnvFunc(env, C3D_Both, GPU_REPLACE);
+	}
+	// The torch per pixel: texture x the ramp's light added (the light alone on an untextured batch); alpha as it is
+	env = C3D_GetTexEnv(kTevTorch);
+	C3D_TexEnvInit(env);
+	if (s_torchStageOn && mode != DRAW_SKY)
+	{
+		if (tex)
+		{
+			C3D_TexEnvSrc(env, C3D_RGB, GPU_TEXTURE0, GPU_TEXTURE1, GPU_PREVIOUS);
+			C3D_TexEnvFunc(env, C3D_RGB, GPU_MULTIPLY_ADD);
+		}
+		else
+		{
+			C3D_TexEnvSrc(env, C3D_RGB, GPU_TEXTURE1, GPU_PREVIOUS);
+			C3D_TexEnvFunc(env, C3D_RGB, GPU_ADD);
+		}
+		C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS);
+		C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
 	}
 }
 
@@ -703,32 +795,7 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 	// simple water): the ripples change shape. One picture sliding looked still on the console
 	if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && s_waterCount)
 		tex = &s_water[(int)(fmaxf(0.0f, time) * s_waterFps) % s_waterCount];
-	if (s_worldBounds && s_moreWanted && s_bMoreLight[0] >= 0)
-	{
-		// People's torches light only what lies within their radius (the light falls to nothing there): a batch
-		// whose bounds are out of a torch's reach is drawn without that one's light term (cell.v.pica moreLight2,
-		// moreLight3, each its own switch), the same picture for less vertex work, which the GPU-bound console
-		// feels at night
-		u8 reach = 0;
-		for (int i = 0; i < s_moreLights; i++)
-		{
-			float d2 = 0.0f;
-			for (int k = 0; k < 3; k++)
-			{
-				float c = s_moreLight[i][k], o = c < b.bmin[k] ? b.bmin[k] - c : c > b.bmax[k] ? c - b.bmax[k] : 0.0f;
-				d2 += o * o;
-			}
-			reach |= d2 < s_moreRadius[i] * s_moreRadius[i] ? 1 << i : 0;
-		}
-		setMoreLights(reach);
-	}
-	if (s_countBatches)
-	{
-		s_worldCount++;
-		s_torchLitCount += s_moreOn != 0;
-		s_worldVerts += b.numVerts;
-		s_torchLitVerts += s_moreOn ? b.numVerts : 0;
-	}
+	setLamp(b);
 	// (the world map's baked cells: the sea drawn opaque, one even sea whatever lies under it)
 	if (s_opaqueWater && (b.flags & BATCH_SCROLL) && mode != DRAW_SKY)
 	{
@@ -764,14 +831,15 @@ static int batchPass(const CellBatch& b)
 
 // GPU-skinned actor meshes (ActorMesh::gpuSkin) the actor loop queued, drawn with skin.v.pica after it: one switch of
 // program for them all. Each sends its bone palette (3 rows a bone) and draws its packed vertices as they are
-struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; float alpha = 1.0f; };
+struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; float alpha = 1.0f; float tint[3] = { 1, 1, 1 }; };
 static std::vector<SkinDraw> s_skinQueue;
 
 // Blended draws of the frame, drawn back to front after everything solid (OpenMW's SORT_BACK_TO_FRONT bin): the
 // cell's blended batches by their bounds' middle, actors' rigid blended meshes by the actor. A Khajiit's ears (blended
 // hair) were drawn before the tapestry behind them, which then painted over them
 struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr;
-	float alpha = 1.0f; };            // (an actor drawn see-through: Invisibility, Chameleon)
+	float alpha = 1.0f;               // (an actor drawn see-through: Invisibility, Chameleon)
+	float tint[3] = { 1, 1, 1 }; };   // (an actor's: actorTint; a cell batch's: the world's)
 static std::vector<BlendDraw> s_blendQueue;
 
 // An actor's mesh as a batch: its flags' 128 is the weapon's (ACTOR_MESH_WEAPON), not BATCH_RISE, which a torch's fire
@@ -807,6 +875,7 @@ static int drawSkinQueue(float time)
 		if (ghost)
 			b.flags |= BATCH_BLEND;
 		setModelView(d.mv);
+		setTint(d.tint);
 		setBatchState(batchTexture(*d.cell, b), b, DRAW_WORLD, time);
 		bindVertexFormat(b);
 		C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
@@ -850,7 +919,7 @@ static int drawSkinQueue(float time)
 			C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uUvScale, m.uvQ * kCaustTiles, m.uvQ * kCaustTiles, 1.0f, 1.0f);
 			shimmerStage(m.glow);
 			C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
-			C3D_TexEnvInit(C3D_GetTexEnv(2));
+			C3D_TexEnvInit(C3D_GetTexEnv(kTevGlow));
 			invalidateState();
 			draws++;
 		}
@@ -858,7 +927,8 @@ static int drawSkinQueue(float time)
 	s_skinQueue.clear();
 	C3D_BindProgram(&s_program);
 	s_formatValid = false;
-	setLight(s_lightViewOn ? &s_lightView : nullptr);     // (the palette wrote over the torches' registers)
+	s_lampValid = false;                // (the palette wrote over cell.v.pica's lamp register)
+	setTint(worldTint());
 	return draws;
 }
 
@@ -876,11 +946,14 @@ static int drawBlendQueue(float time)
 		if (bd.skinned)
 		{
 			// (a blended skinned mesh: drawn with skin.v.pica on its own, in its place in the order)
-			s_skinQueue.push_back({ bd.cell, bd.skinned, bd.mesh, bd.mv, bd.alpha });
+			SkinDraw sd = { bd.cell, bd.skinned, bd.mesh, bd.mv, bd.alpha };
+			memcpy(sd.tint, bd.tint, sizeof(sd.tint));
+			s_skinQueue.push_back(sd);
 			draws += drawSkinQueue(time);
 			continue;
 		}
 		setModelView(bd.mv);
+		setTint(bd.tint);
 		if (bd.batch)
 			drawBatch(*bd.cell, *bd.batch, DRAW_WORLD, time);
 		else
@@ -915,6 +988,7 @@ static int drawBlendQueue(float time)
 		draws++;
 	}
 	s_blendQueue.clear();
+	setTint(worldTint());
 	return draws;
 }
 
@@ -1093,6 +1167,8 @@ float rendererStereoPixels(float depth, float eyeShift)
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale)
 {
 	s_spritesLeft = g_profile.spriteBudget;
+	if (!secondEye)
+		g_lampLitBatches = 0;
 	MARK("draw world");
 	Cell& here = w.here();
 	bindPipeline();
@@ -1132,7 +1208,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	s_farPlane = farPlane;
 	s_view = view;
 	for (int k = 0; k < 3; k++)
+	{
 		s_eyeSnap[k] = floorf(cam.pos[k] / 64.0f) * 64.0f;
+		s_eye[k] = cam.pos[k];
+	}
 	s_mvValid = false;
 	s_time = time;
 	if (!secondEye)
@@ -1276,10 +1355,6 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		std::sort(opaque.begin(), opaque.end(), [](const OpaqueDraw& a, const OpaqueDraw& b) {
 			return a.tex != b.tex ? a.tex < b.tex : a.state < b.state;
 		});
-	s_worldBounds = true;
-	s_countBatches = !secondEye;
-	if (s_countBatches)
-		s_worldCount = s_torchLitCount = s_worldVerts = s_torchLitVerts = 0;
 	if (g_renderParts & RENDER_OPAQUE)
 		for (auto& d : opaque)
 			drawBatchTex(d.tex, *d.b, DRAW_WORLD, time);
@@ -1317,17 +1392,6 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	}
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_LAYERS); k++)
 		draws += drawBatches(w.loaded[k]->cell, w.loaded[k]->cell.batches, 1, &visible[k], time);
-	if (s_countBatches)
-	{
-		g_worldBatches = s_worldCount;
-		g_torchLitBatches = s_torchLitCount;
-		g_worldVerts = s_worldVerts;
-		g_torchLitVerts = s_torchLitVerts;
-	}
-	s_worldBounds = s_countBatches = false;
-	// (what follows has no world bounds: actors, doors, sprites take the torches whole again)
-	if (s_bMoreLight[0] >= 0)
-		setMoreLights(s_moreWanted);
 
 	// Enchanted things lying about shimmer: their own triangles in the cell's batches (Ref::ranges; the cell lists them
 	// when it loads, LoadedCell::glowRefs)
@@ -1418,6 +1482,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				}
 				// (see-through under Invisibility or Chameleon: every mesh blended, in the back-to-front queue)
 				const bool ghost = a.alpha < 0.999f;
+				float tint[3];
+				actorTint(a, tint);
+				setTint(tint);
 				for (auto& m : a.meshes)
 				{
 					if (((m.flags & ACTOR_MESH_WEAPON) && !a.showWeapon) || !actorMeshShown(a, m))
@@ -1426,17 +1493,22 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						continue;
 					if (m.gpuSkin && ((m.flags & BATCH_BLEND) || ghost))
 					{
-						s_blendQueue.push_back({ d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a, a.alpha });
+						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a, a.alpha };
+						memcpy(bd.tint, tint, sizeof(bd.tint));
+						s_blendQueue.push_back(bd);
 						continue;
 					}
 					if (m.gpuSkin)
 					{
-						s_skinQueue.push_back({ &l->cell, &a, &m, placeMv });
+						SkinDraw sd = { &l->cell, &a, &m, placeMv };
+						memcpy(sd.tint, tint, sizeof(sd.tint));
+						s_skinQueue.push_back(sd);
 						continue;
 					}
 					if ((m.flags & BATCH_BLEND) || ghost)
 					{
 						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, nullptr, a.alpha };
+						memcpy(bd.tint, tint, sizeof(bd.tint));
 						if (m.bone >= 0 && m.kind != ACTOR_SKINNED)
 						{
 							C3D_Mtx model;
@@ -1483,6 +1555,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				}
 			}
 		draws += drawSkinQueue(time);
+		setTint(worldTint());
 	}
 
 	g_profActorsMs += (svcGetSystemTick() - actorStart) * 1000.0f / SYSCLOCK_ARM11;
@@ -1497,7 +1570,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				float c[3];
 				for (int j = 0; j < 3; j++)
 					c[j] = (b.bmin[j] + b.bmax[j]) * 0.5f - cam.pos[j];
-				s_blendQueue.push_back({ c[0] * c[0] + c[1] * c[1] + c[2] * c[2], &w.loaded[k]->cell, &b, nullptr, view, 0 });
+				BlendDraw bd = { c[0] * c[0] + c[1] * c[1] + c[2] * c[2], &w.loaded[k]->cell, &b, nullptr, view, 0 };
+				memcpy(bd.tint, worldTint(), sizeof(bd.tint));
+				s_blendQueue.push_back(bd);
 			}
 	}
 	draws += drawBlendQueue(time);
@@ -1636,8 +1711,8 @@ int rendererCausticFrames()
 // (0xRRGGBB), added on the same surface
 static void shimmerStage(u32 rgb)
 {
-	// stage 2: texture x colour, replacing the lit texture and the fog of stages 0 and 1 (alpha 1: added whole)
-	C3D_TexEnv* env = C3D_GetTexEnv(2);
+	// the glow stage: texture x colour, replacing the lit texture, torch and fog before it (alpha 1: added whole)
+	C3D_TexEnv* env = C3D_GetTexEnv(kTevGlow);
 	C3D_TexEnvInit(env);
 	C3D_TexEnvSrc(env, C3D_RGB, GPU_TEXTURE0, GPU_CONSTANT);
 	C3D_TexEnvFunc(env, C3D_RGB, GPU_MODULATE);
@@ -1654,7 +1729,7 @@ static void drawShimmer(CellBatch b, u32 rgb)
 	b.uvScale[1] *= kCaustTiles;
 	shimmerStage(rgb);
 	drawBatchTex(&s_caust[(int)(s_time * kCaustFps) % s_caustCount], b, DRAW_WORLD, s_time);
-	C3D_TexEnvInit(C3D_GetTexEnv(2));
+	C3D_TexEnvInit(C3D_GetTexEnv(kTevGlow));
 }
 
 void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow)
@@ -1672,7 +1747,7 @@ void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex
 		// stage), pulsing
 		float k = 0.30f + 0.12f * sinf(osGetTime() * 0.004f);
 		u32 r = (u32)(((glow >> 16) & 255) * k), g = (u32)(((glow >> 8) & 255) * k), b = (u32)((glow & 255) * k);
-		C3D_TexEnv* env = C3D_GetTexEnv(2);
+		C3D_TexEnv* env = C3D_GetTexEnv(kTevGlow);
 		C3D_TexEnvInit(env);
 		C3D_TexEnvSrc(env, C3D_RGB, GPU_PREVIOUS, GPU_CONSTANT);
 		C3D_TexEnvFunc(env, C3D_RGB, GPU_ADD);
@@ -1680,7 +1755,7 @@ void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex
 		C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
 		C3D_TexEnvColor(env, 0xFF000000 | (b << 16) | (g << 8) | r);
 		rendererDrawMesh(m, model, tex);
-		C3D_TexEnvInit(C3D_GetTexEnv(2));
+		C3D_TexEnvInit(C3D_GetTexEnv(kTevGlow));
 	}
 }
 

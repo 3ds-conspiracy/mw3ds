@@ -46,7 +46,7 @@ enum { CELL_INTERIOR = 1, CELL_WATER = 2, CELL_SKY = 4 };
 
 // Vertex layout in .cel files: f32 pos[3], f32 uv[2], u8 rgba[4]
 static const int CELL_VERTEX_SIZE = 24;
-// Packed layout: s16 pos[4] (w unused), s16 uv[2], u8 rgba[4]
+// Packed layout: s16 pos[4] (w: the lamp light's brightness, CellBatch::lamp), s16 uv[2], u8 rgba[4]
 static const int CELL_VERTEX_SIZE_PACKED = 16;
 
 // Exterior view distance (linear fog, world units): OpenMW's viewing distance, its default and Morrowind's farthest
@@ -75,6 +75,9 @@ struct CellBatch
 	u8 flipFrames = 0, flipCols = 1, flipRows = 1, flipFps = 0;
 	// Format 9: the texture slides by this many repeats a second (a model's NiUVController: waterfalls); 0 none
 	float scrollU = 0.0f, scrollV = 0.0f;
+	// Format 10 (outdoors): the lamps' light on the batch, one colour; each vertex's w is its brightness of it x 16383.
+	// Night leaves it alone (cell.v.pica lamp); 0 none
+	float lamp[3] = { 0.0f, 0.0f, 0.0f };
 };
 
 struct __attribute__((packed)) CellActor

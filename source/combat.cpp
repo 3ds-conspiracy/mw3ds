@@ -36,6 +36,7 @@ static float trailHeightNear(float x, float y);     // (below: the player's foot
 static const float kCombatDistance = 128.0f;      // fCombatDistance: reach 1.0 weapons
 static const float kTurnSpeed = 6.0f;              // radians per second
 static const float kHostileGiveUp = 5000.0f;
+static const float kHeldLightShare = 0.5f;           // a held torch's colour on its holder (Actor::heldLight), against OpenMW
 static const float kArmorSlotWeight[11] = { 0.1f, 0.3f, 0.1f, 0.1f, 0.1f, 0.1f, 0.05f, 0.05f, 0.1f, 0.05f, 0.05f };
 // Base weights per armor slot (iHelmWeight ...): lighter than 60% light armor, than 90% medium
 static const float kArmorSlotBaseWeight[11] = { 5, 30, 10, 10, 15, 20, 5, 5, 15, 5, 5 };
@@ -3414,6 +3415,19 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 						out = false;
 						break;
 					}
+			if (out != ta->torchOut)
+			{
+				// The torch lights the one holding it (its own colour, the side of a body facing a hand-held light):
+				// people's torches light no one else and nothing around, the console can't spare the vertex work
+				const Object* npc = w.game.object(r.id);
+				const Object* light = nullptr;
+				for (size_t k = 0; out && npc && !light && k < npc->items.size(); k++)
+					if (const Object* o = w.game.object(npc->items[k].second))
+						if (o->type == "LIGH" && o->lightRadius > 0 && (o->flags & 2))     // (LHDT 0x2: can be carried)
+							light = o;
+				for (int k = 0; k < 3; k++)
+					ta->heldLight[k] = light ? light->lightColor[k] / 255.0f * kHeldLightShare : 0.0f;
+			}
 			ta->torchOut = out;
 			ta->alpha = actorSeeThrough(false, w.actorEffect(i, 39), w.actorEffect(i, 40));
 		}

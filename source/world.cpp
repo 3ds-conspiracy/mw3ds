@@ -1142,7 +1142,7 @@ void World::daylight(float land[3], float sky[3], float fog[3]) const
 	{
 		fog[c] = weatherColour(1, c);
 		float day = game.weather[2][1][c] + 0.6f * game.weather[3][1][c];
-		land[c] = fmaxf(0.45f, fminf(1.2f, (weatherColour(2, c) + 0.6f * weatherColour(3, c)) / fmaxf(0.01f, day)));
+		land[c] = fmaxf(0.02f, fminf(1.2f, (weatherColour(2, c) + 0.6f * weatherColour(3, c)) / fmaxf(0.01f, day)));
 		sky[c] = fmaxf(0.05f, fminf(1.5f, weatherColour(0, c) / fmaxf(0.01f, game.weather[0][1][c])));
 	}
 }
@@ -1886,6 +1886,9 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 		if (r.obj && !r.obj->ench.empty() && !r.ranges.empty())
 			if (u32 glow = w.game.enchantGlow(r.id))
 				l->glowRefs.push_back({ i, glow });
+		// (lights, listed once too: Session lights people by those near where they stand now)
+		if (r.obj && r.obj->type == "LIGH" && r.obj->lightRadius > 0 && !(r.obj->flags & 0x20))     // (LHDT 0x20: off by default)
+			l->lightRefs.push_back(i);
 	}
 	lc.lastUsed = ++w.useTick;
 	for (int i : w.spawned)

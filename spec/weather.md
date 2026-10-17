@@ -102,6 +102,23 @@ around sunset (from the star settings and the 2-hour fading duration).
   the current weather's glare view >= 0.5 is "interior day" (the windows look bright); else default. (The current
   weather decides, not the transition's blend.)
 
+## Lamps and carried lights (`sceneutil/lightutil.cpp` `configureLight`, `shaders/lib/light/util.glsl`)
+
+- A point light's strength at distance d: 1 / (linear x d) with linear = LinearValue (3) / (radius x LinearRadiusMult
+  (1)), Morrowind.ini's linear-only attenuation: radius / (3 d), not capped (beside the lamp it is several times its
+  colour; the lit colour is what is held to 1). Faded to nothing over the last quarter of its bounds, 1.65 x the radius
+  (light bounds multiplier): x (1 - fade((d / bounds - 0.75) / 0.25)), fade(x) = 1 - (1 - x^2)^2.
+- Lamps burn day and night. The hour changes the sun's and the sky's (ambient) light, not the lamps' or a material's
+  emissive: at night outdoors a lamp's light is as strong as by day, on walls, the ground and people alike.
+- Ours: lamps are baked into the cells (convert_cell.py `light_falloff`), their share kept apart outdoors (each batch
+  one lamp colour, each vertex its brightness) so the night darkens the rest only. Differs: a lamp toggled by a script
+  keeps its baked light; a person who walks away keeps the light of where they were placed.
+- People's torches (differs, kept for the console's sake): they light the one holding them, not the world around.
+  OpenMW lights the world from them as from any light.
+- The player's torch (differs: its look): in first person lit per pixel by how far ahead a point is, Morrowind's
+  falloff (whole to a third of the radius, then radius / 3 d, gone by twice it) x 0.3 for the facing it can't see,
+  matched against OpenMW in Addamasartus; in third person per vertex, 0.8 x its colour x (1 - d^2 / radius^2).
+
 ## Weather transitions
 
 State: current weather, next weather (none outside a transition), queued weather (none), transition factor

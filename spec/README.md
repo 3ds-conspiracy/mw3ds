@@ -21,6 +21,9 @@ Scripting (the two compilers, the console, a new game's scripts): [scripting.md]
 
 What has and hasn't been compared with OpenMW, file by file and rule by rule: [audit.md](audit.md).
 
+Where the engine does less than OpenMW on purpose, for the frame rate, and must not be changed back without asking:
+[performance-tradeoffs.md](performance-tradeoffs.md).
+
 Rules for keeping it honest:
 - OpenMW is the reference, not the truth. Where OpenMW itself looks wrong (it says so in its changelog, or its
   formula disagrees with UESP), the page says which side we follow and why.

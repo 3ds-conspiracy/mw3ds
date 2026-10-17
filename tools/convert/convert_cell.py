@@ -35,12 +35,22 @@ from textures import OUT, texels_needed
 
 # Morrowind.ini light attenuation defaults: linear only, 3 / radius
 LINEAR_ATTEN = 3.0
+# OpenMW lights reach this far past their radius (its "light bounds multiplier"), fading out over the last quarter
+LIGHT_BOUNDS = 1.65
+
+
+def light_falloff(dist, radius):
+    """A point light's strength at a distance, as OpenMW lights the world: radius / (3 x distance), not capped (beside
+    the lamp it is several times its colour), faded to nothing from 0.75 to 1 of its bounds (calcAttenuation, fade)."""
+    att = radius / (LINEAR_ATTEN * np.maximum(dist, 1.0))
+    x = np.clip((dist / (LIGHT_BOUNDS * radius) - 0.75) / 0.25, 0.0, 1.0)
+    return att * (1.0 - x * x) ** 2
 INTERIOR_SUN_DIR = np.array([-0.15, 0.15, 1.0]) / np.linalg.norm([-0.15, 0.15, 1.0])
 # Mid-morning sun, from the east-south-east
 EXTERIOR_SUN_DIR = np.array([0.7, -0.25, 0.65]) / np.linalg.norm([0.7, -0.25, 0.65])
 LIGHT_NEGATIVE, LIGHT_OFF_DEFAULT = 0x4, 0x20
 
-VERTEX = np.dtype([("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4)])
+VERTEX = np.dtype([("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4), ("lamp", "<i2")])
 
 # Objects that block actors; carried items (MISC, BOOK, ...) do not
 COLLIDING_TYPES = {"STAT", "DOOR", "ACTI", "CONT", "LIGH"}
@@ -93,9 +103,30 @@ def build_grid(pos, tris):
 
 # ---- lighting ----
 
-def bake_colors(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
+def point_light(pos, nrm, lights, omni=False):
+    """The point lights' light at each vertex: Morrowind's linear attenuation, faded out past the radius."""
+    light = np.zeros((len(pos), 3))
+    if not len(pos):
+        return light
+    lo, hi = pos.min(axis=0), pos.max(axis=0)
+    for L in lights:
+        reach = LIGHT_BOUNDS * L["radius"]
+        if np.any(L["pos"] < lo - reach) or np.any(L["pos"] > hi + reach):
+            continue
+        d = L["pos"] - pos
+        dist = np.maximum(np.linalg.norm(d, axis=1), 1.0)
+        ndl = np.ones(len(pos)) if omni else np.clip(np.sum(nrm * d, axis=1) / dist, 0, None)
+        light += (ndl * light_falloff(dist, L["radius"]))[:, None] * L["color"]
+    return light
+
+
+def shade(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
+    """A shape's lit colour (rgba 0..1) and the part of its rgb its own glow and the point lights give: the part the
+    night outdoors leaves alone (OpenMW: the sun and the ambient light change with the hour, lamps and emissive don't)."""
     if "rgba" in s:                        # terrain, water, sky: colours computed by their builders
-        return (np.clip(s["rgba"], 0, 1) * 255 + 0.5).astype(np.uint8)
+        rgba = np.clip(s["rgba"], 0, 1)
+        lamp = np.minimum(s["lamp"], rgba[:, :3]) if "lamp" in s else np.zeros((len(rgba), 3))
+        return rgba, lamp
     n = len(s["pos"])
     mat = s["mat"]
     amb = np.array(mat["ambient"]) if mat else np.ones(3)
@@ -113,25 +144,42 @@ def bake_colors(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
             emi = s["vcol"][:, :3]
 
     if lighting_mode == 0:
-        color = emi
+        color = lamp = emi
     else:
         pos, nrm = s["pos"], s["nrm"]
         omni = s.get("omni")                # (facing the eye: lit from any side, a world spray's particles)
         light = (np.ones(len(pos)) if omni else np.clip(nrm @ sun_dir, 0, None))[:, None] * sun
-        lo, hi = pos.min(axis=0), pos.max(axis=0)
-        for L in lights:
-            reach = 2 * L["radius"]
-            if np.any(L["pos"] < lo - reach) or np.any(L["pos"] > hi + reach):
-                continue
-            d = L["pos"] - pos
-            dist = np.maximum(np.linalg.norm(d, axis=1), 1.0)
-            ndl = np.ones(len(pos)) if omni else np.clip(np.sum(nrm * d, axis=1) / dist, 0, None)
-            att = np.minimum(1.0, L["radius"] / (LINEAR_ATTEN * dist))
-            fade = 1.0 - np.clip(dist / L["radius"] - 1.0, 0, 1) ** 2
-            light += (ndl * att * fade)[:, None] * L["color"]
-        color = emi + amb * ambient + dif * light
-    rgba = np.concatenate([np.clip(color, 0, 1), np.clip(alpha, 0, 1)[:, None]], axis=1)
+        lamp = emi + dif * point_light(pos, nrm, lights, omni)
+        color = amb * ambient + dif * light + lamp
+    rgb = np.nan_to_num(np.clip(color, 0, 1), nan=1.0)
+    rgba = np.concatenate([rgb, np.clip(alpha, 0, 1)[:, None]], axis=1)
+    return rgba, np.minimum(np.nan_to_num(np.clip(lamp, 0, 1)), rgb)
+
+
+def to_bytes(rgba):
     return (np.nan_to_num(rgba, nan=1.0) * 255 + 0.5).astype(np.uint8)
+
+
+def bake_colors(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
+    return to_bytes(shade(s, lights, ambient, sun, sun_dir)[0])
+
+
+# Outdoors a batch's lamp light rides along: one colour for the batch, and at each vertex a brightness of it in the
+# packed position's spare w, x LAMP_SCALE (0..2). cell.v.pica adds brightness x colour x (1 - the hour's tint) to the
+# tinted colour, so night darkens the sun's and the sky's share and leaves the lamps' (one instruction a vertex)
+LAMP_SCALE = 16383.0
+
+
+def lamp_channel(lamps):
+    """A batch's lamp light (n x 3, 0..1) as its colour (brightest channel 1) and each vertex's brightness of it
+    (int16, x LAMP_SCALE); None and zeros where no lamp reaches."""
+    w = np.zeros(len(lamps), dtype=np.int16)
+    if not len(lamps) or lamps.max() < 1.0 / 255.0:
+        return None, w
+    total = lamps.sum(axis=0)
+    color = total / total.max()
+    k = lamps @ color / (color @ color)
+    return color, np.round(np.clip(k, 0, 2) * LAMP_SCALE).astype(np.int16)
 
 
 # Actor libraries are lit evenly at this level; each placement's tint (x 64 in a byte) scales it to the
@@ -146,14 +194,15 @@ FACING_SHARE = 1.0 / math.pi
 
 
 def light_tint(pos, lights, ambient, sun):
-    light = np.asarray(ambient, dtype=float) + SUN_SHARE * np.asarray(sun, dtype=float)
+    """The placement's tint (x 64) and the lamps' share of it (x 64): night outdoors darkens the rest only."""
+    lamp = np.zeros(3)
     for L in lights:
-        d = float(np.linalg.norm(L["pos"] - pos))
-        dist = max(d, 1.0)
-        att = min(1.0, L["radius"] / (LINEAR_ATTEN * dist))
-        fade = 1.0 - min(max(dist / L["radius"] - 1.0, 0.0), 1.0) ** 2
-        light = light + FACING_SHARE * att * fade * np.asarray(L["color"])
-    return [int(v) for v in np.clip(np.round(light / NEUTRAL_LIGHT * 64), 0, 255)]
+        dist = max(float(np.linalg.norm(L["pos"] - pos)), 1.0)
+        lamp = lamp + FACING_SHARE * float(light_falloff(dist, L["radius"])) * np.asarray(L["color"])
+    light = np.asarray(ambient, dtype=float) + SUN_SHARE * np.asarray(sun, dtype=float) + lamp
+    byte = lambda v: [int(c) for c in np.clip(np.round(v / NEUTRAL_LIGHT * 64), 0, 255)]
+    tint = byte(light)
+    return tint, [min(a, b) for a, b in zip(byte(lamp), tint)]
 
 
 # ---- cell file ----
@@ -210,8 +259,13 @@ def write_batches(f, batches):
         # over with the coordinates (DirectX V down, PICA V up)
         su, sv = b.get("scroll") or (0.0, 0.0)
         f.write(struct.pack("<2h", int(np.clip(round(su * 256), -32767, 32767)), int(np.clip(round(-sv * 256), -32767, 32767))))
+        # Format 10: u8 rgb (pad) the lamp light's colour, the vertices' w its brightness (lamp_channel; 0 none)
+        lc = b.get("lamp_color")
+        f.write(bytes([int(round(c * 255)) for c in lc] + [0]) if lc is not None else b"\0\0\0\0")
         q = np.zeros(len(v), dtype=[("pos", "<i2", 4), ("uv", "<i2", 2), ("color", "u1", 4)])
         q["pos"][:, :3] = np.clip(np.round((p - offset) / scale), -32767, 32767)
+        if "lamp" in v.dtype.names:
+            q["pos"][:, 3] = v["lamp"]
         q["uv"] = np.clip(np.round(v["uv"] / uv_scale), -32767, 32767)
         q["color"] = v["color"]
         # Format 7: positions as differences from the previous vertex, then everything as byte planes
@@ -267,7 +321,7 @@ def write_collision(f, pos, tris, ranges=None):
 
 def write_cell(path, info, textures, batches, collision, actors, door_meshes, sky, col_ranges=None):
     """Layout (little endian):
-       'MWC1' u32 version=6 u32 flags (bit0 interior, bit1 water plane, bit2 sky)
+       'MWC1' u32 version=10 u32 flags (bit0 interior, bit1 water plane, bit2 sky)
        f32 spawn[3] f32 yaw f32 pitch
        u8 ambient[4] u8 fog[4] f32 fog_density
        f32 fog_start f32 fog_end (0 = no fog) f32 water_z
@@ -276,12 +330,13 @@ def write_cell(path, info, textures, batches, collision, actors, door_meshes, sk
        u32 num_batches, then per batch:
          i32 texture (-1 none) u8 flags u8 alpha_ref u16 max_distance / 8 (0 = any) u32 num_vertices u32 num_indices
          f32 bbox_min[3] f32 bbox_max[3] f32 pos_offset[3] f32 pos_scale[3] f32 uv_scale[2]
-         vertices (16 bytes: s16 pos[4] (w unused), s16 uv[2], u8 rgba[4]; pos = offset + s16 * scale,
-         uv = s16 * uv_scale), u16 indices, pad to 4 bytes
+         vertices (16 bytes: s16 pos[4] (w: the lamp light's brightness, format 10), s16 uv[2], u8 rgba[4];
+         pos = offset + s16 * scale, uv = s16 * uv_scale), u16 indices, pad to 4 bytes
          flags: 1 blend, 2 alpha test, 4 two-sided, 8 clamp, 16 additive,
                 32 decal (coplanar overlay: equal depth passes, no depth write), 64 scrolling UVs,
                 128 rising UVs (smoke, steam)
-         format 8: u8 flipbook frames, columns, rows, frames a second; format 9: s16 scroll u, v (1/256 repeat a second)
+         format 8: u8 flipbook frames, columns, rows, frames a second; format 9: s16 scroll u, v (1/256 repeat a second);
+         format 10: u8 lamp colour rgb, pad (0: no lamp light; outdoors only)
        collision (see write_collision): u32 num_vertices, f32 offset[3], f32 scale[3], s16 pos[3]... (pad 4),
          u32 num_triangles, u32 widths (byte 0 triangle index bytes, byte 1 grid list bytes: 2 or 4),
          idx[3]... (pad 4), f32 grid_origin[2], f32 grid_cell, u32 nx, u32 ny, u32 cell_start[nx*ny+1],
@@ -294,7 +349,7 @@ def write_cell(path, info, textures, batches, collision, actors, door_meshes, sk
     flags = (CELL_INTERIOR if info["interior"] else 0) | (CELL_WATER if info["water"] else 0) \
         | (CELL_SKY if sky else 0)
     with open(path, "wb") as f:
-        f.write(b"MWC1" + struct.pack("<II", 9, flags))
+        f.write(b"MWC1" + struct.pack("<II", 10, flags))
         f.write(struct.pack("<5f", *info["spawn"], info["yaw"], 0.0))
         f.write(bytes(info["ambient"]) + bytes(info["fog"]) + struct.pack("<f", info["fog_density"]))
         f.write(struct.pack("<3f", info["fog_start"], info["fog_end"], info["water_z"]))
@@ -333,11 +388,11 @@ def world_shapes(shapes, m):
     return shapes
 
 
-def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None):
+def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None, split=False):
     """Merges shape groups into batches (opaque, then alpha-tested, then blended; stable
     otherwise, so terrain layers keep their order). Group keys start with the render key
     (tex, flags, alpha_ref). With `ranges`, records where each shape's triangles land:
-    ranges[ref] += [batch, first, count]."""
+    ranges[ref] += [batch, first, count]. split (outdoors): each batch carries its lamp light (lamp_channel)."""
     batches = []
     order = lambda k: (bool(k[1] & FLAG_BLEND), bool(k[1] & FLAG_TEST))
     for key in sorted(groups, key=order):
@@ -346,28 +401,36 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None):
         scroll = key[5] if len(key) > 5 else (0.0, 0.0)
         # (a looping flipbook's frames, columns, rows and rate: every spray in the batch shares its sheet)
         loop = next((s["loop"][2] for s in groups[key] if s.get("loop")), None)
-        cur_v, cur_i, base, first = [], [], 0, 0
+        cur_v, cur_i, cur_l, base, first = [], [], [], 0, 0
+
+        def close():
+            verts = np.concatenate(cur_v)
+            color = None
+            if split:
+                color, verts["lamp"] = lamp_channel(np.concatenate(cur_l))
+            batches.append({"verts": verts, "idx": np.concatenate(cur_i),
+                            "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
+                            "max_dist": max_dist, "flip": loop, "scroll": scroll, "lamp_color": color})
+
         for s in groups[key]:
             n = len(s["pos"])
             if base + n > 65535 and cur_v:
-                batches.append({"verts": np.concatenate(cur_v), "idx": np.concatenate(cur_i),
-                                "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
-                                "max_dist": max_dist, "flip": loop, "scroll": scroll})
-                cur_v, cur_i, base, first = [], [], 0, 0
+                close()
+                cur_v, cur_i, cur_l, base, first = [], [], [], 0, 0
             v = np.zeros(n, dtype=VERTEX)
             v["pos"] = s["local_pos"] if "local_pos" in s else s["pos"]
             v["uv"] = s["uv"] * [1.0, -1.0] + [0.0, 1.0]   # DirectX V (0 = top) -> PICA V (0 = bottom)
-            v["color"] = bake_colors(s, lights, ambient, sun, sun_dir)
+            rgba, lamp = shade(s, lights, ambient, sun, sun_dir)
+            v["color"] = to_bytes(rgba)
             cur_v.append(v)
+            cur_l.append(lamp)
             cur_i.append(np.asarray(s["tris"]).ravel() + base)
             if ranges is not None and s.get("ref") is not None:
                 ranges.setdefault(s["ref"], []).append([len(batches), first, len(np.asarray(s["tris"]).ravel())])
             first += len(np.asarray(s["tris"]).ravel())
             base += n
         if cur_v:
-            batches.append({"verts": np.concatenate(cur_v), "idx": np.concatenate(cur_i),
-                            "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
-                            "max_dist": max_dist, "flip": loop, "scroll": scroll})
+            close()
     return batches
 
 
@@ -399,9 +462,10 @@ def cell_file_name(cell_name):
 
 # ---- exterior extras ----
 
-def terrain_shapes(db, arch, terrain, gx, gy, full, sun, ambient, textures):
+def terrain_shapes(db, arch, terrain, gx, gy, full, sun, ambient, textures, lights=()):
     """Terrain chunk layers of exterior cell (gx, gy) as pre-coloured shapes, keyed by chunk.
-    full: every vertex (walkable cells); else every second one plus a skirt (horizon cells)."""
+    full: every vertex (walkable cells); else every second one plus a skirt (horizon cells).
+    lights: the lamps that light the ground (their share is the shapes' "lamp", make_batches)."""
     shapes = []
     per_cell = int(CELL_SIZE // EXTERIOR_CHUNK)
     tx, ty = gx - terrain.x0, gy - terrain.y0
@@ -409,13 +473,14 @@ def terrain_shapes(db, arch, terrain, gx, gy, full, sun, ambient, textures):
         return shapes
     for cy in range(ty * per_cell, (ty + 1) * per_cell):
         for cx in range(tx * per_cell, (tx + 1) * per_cell):
-            layers = terrain.chunk(cx, cy, 1 if full else 2, EXTERIOR_SUN_DIR, sun, ambient, skirt=not full)
-            for k, (value, pos, uv, rgba, tris) in enumerate(layers):
+            layers = terrain.chunk(cx, cy, 1 if full else 2, EXTERIOR_SUN_DIR, sun, ambient, skirt=not full,
+                                   lamp=(lambda p, n: point_light(p, n, lights)) if lights else None)
+            for k, (value, pos, uv, color, tris) in enumerate(layers):
                 path = ltex_path(db, arch, value)
                 textures.request(path, texels_needed(TILE_SIZE), False)
                 flags = FLAG_TWO_SIDED | (FLAG_BLEND | FLAG_DECAL if k else 0)
-                shapes.append({"pos": pos, "uv": uv, "rgba": rgba, "tris": tris, "tex": path,
-                               "flags": flags, "alpha_ref": 0, "chunk": ("terrain", cx, cy)})
+                shapes.append({"pos": pos, "uv": uv, "rgba": color[:, :4], "lamp": color[:, 4:], "tris": tris,
+                               "tex": path, "flags": flags, "alpha_ref": 0, "chunk": ("terrain", cx, cy)})
     return shapes
 
 
@@ -757,15 +822,9 @@ class Converter:
                "weather": weather, "file": file}
         return self.convert(name, refs, env, spawn)
 
-    def convert_cell(self, cell_name, refs, env, spawn):
-        """Writes cells/<name>.cel and .act; returns {"refs": [...], "npcs": [NPC_ records], "file"}."""
+    def lights_of(self, refs):
+        """The references' lights (on by default): position from the mesh's AttachLight node when present."""
         objects = self.db["objects"]
-        ambient, sun, sun_dir = env["ambient"], env["sun"], env["sun_dir"]
-        info = dict(env["info"])
-        chunk_size = env["chunk"]
-        textures = self.textures
-
-        # Lights: position from the mesh's AttachLight node when present
         lights = []
         for ref in refs:
             rec = objects.get(ref["id"].lower())
@@ -783,6 +842,30 @@ class Converter:
             pos = (m @ attach)[:3, 3] if attach is not None else np.array(ref["pos"])
             color = color3(lhdt, 16) * (-1 if flags & LIGHT_NEGATIVE else 1)
             lights.append({"pos": pos, "radius": float(radius), "color": color})
+        return lights
+
+    def convert_cell(self, cell_name, refs, env, spawn):
+        """Writes cells/<name>.cel and .act; returns {"refs": [...], "npcs": [NPC_ records], "file"}."""
+        objects = self.db["objects"]
+        ambient, sun, sun_dir = env["ambient"], env["sun"], env["sun_dir"]
+        info = dict(env["info"])
+        chunk_size = env["chunk"]
+        textures = self.textures
+
+        lights = self.lights_of(refs)
+        if not env["interior"] and env["walkable"]:
+            # A lamp by the edge of the next cell lights this one's ground and walls too (as far as it reaches)
+            gx, gy = env["grid"]
+            lo, hi = np.array([gx, gy]) * CELL_SIZE, np.array([gx + 1, gy + 1]) * CELL_SIZE
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    other = self.db["CELL"].get((gx + dx, gy + dy)) if dx or dy else None
+                    if other is None:
+                        continue
+                    for L in self.lights_of([r for r in cell_refs(other) if not r.get("deleted")]):
+                        reach = LIGHT_BOUNDS * L["radius"]
+                        if np.all(L["pos"][:2] > lo - reach) and np.all(L["pos"][:2] < hi + reach):
+                            lights.append(L)
         print(f"{cell_name}{' ' + str(env['grid']) if 'grid' in env else ''}: {len(refs)} refs, {len(lights)} lights",
               flush=True)
 
@@ -876,7 +959,7 @@ class Converter:
         sky = []
         if not env["interior"]:
             terrain, (gx, gy), walkable = env["terrain"], env["grid"], env["walkable"]
-            for s in terrain_shapes(self.db, self.arch, terrain, gx, gy, walkable, sun, ambient, textures):
+            for s in terrain_shapes(self.db, self.arch, terrain, gx, gy, walkable, sun, ambient, textures, lights):
                 groups.setdefault((s["tex"], s["flags"], s["alpha_ref"], s["chunk"]), []).append(s)
             for s in water_shapes(self.arch, terrain, gx, gy, info["water_z"], sun, ambient, textures):
                 groups.setdefault((s["tex"], s["flags"], s["alpha_ref"], s["chunk"]), []).append(s)
@@ -925,7 +1008,7 @@ class Converter:
                 use(s, (s["tex"], s["flags"]))
 
         ranges = {}
-        batches = make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges)
+        batches = make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges, split=not env["interior"])
         for ri, rr in ranges.items():
             ref_out[ri]["ranges"] = rr
         door_meshes = []
@@ -933,7 +1016,8 @@ class Converter:
             g = {}
             for s in shapes:
                 g.setdefault((s["tex"], s["flags"], s["alpha_ref"]), []).append(s)
-            door_meshes.append({"ref": ri, "batches": make_batches(g, tex_index, lights, ambient, sun, sun_dir)})
+            door_meshes.append({"ref": ri, "batches": make_batches(g, tex_index, lights, ambient, sun, sun_dir,
+                                                                   split=not env["interior"])})
         if not env["interior"]:
             sky = sky_batches(self.arch, env["weather"], textures, tex_index, tex_names)
 
@@ -963,10 +1047,11 @@ class Converter:
             sk = skeletons[self.skeleton(path)]
             place = np.asarray(a["info"]["place"])
             self.cell_actors[a["id"]] = path
+            tint, lamp = light_tint(place[:3, 3] + [0.0, 0.0, 64.0], lights, ambient, sun)
             act_out.append({"ref": a["ref"], "skeleton": skel_index[path], "place": place, "idle": a["idle"],
                             "lib": self.actor_library(a["id"], a["shapes"], sk),
                             "meshes": self.library_meshes[a["id"]],     # (for the memory estimate below)
-                            "tint": light_tint(place[:3, 3] + [0.0, 0.0, 64.0], lights, ambient, sun)})
+                            "tint": tint, "lamp": lamp})
         write_actor_placements(base.with_suffix(".act"), act_out)
         nv = sum(len(b["verts"]) for b in batches)
         nt = sum(len(b["idx"]) for b in batches) // 3

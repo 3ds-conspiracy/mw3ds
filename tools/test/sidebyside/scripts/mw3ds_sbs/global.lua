@@ -145,6 +145,9 @@ local function setup(data)
 			hideActors = true          -- (a spell visual on its own: nobody near)
 		end
 	end
+	if s.hide then
+		hideActors = true          -- (hide=1: nobody near, no one casting at the player)
+	end
 	-- the shot's weapon, ammunition, shield and worn armor and clothing (player.lua equips them)
 	local inv = types.Actor.inventory(player)
 	local ids = { s.weapon or false, s.ammo or false, s.shield or false }

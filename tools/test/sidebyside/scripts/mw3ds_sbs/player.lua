@@ -111,6 +111,12 @@ local function updateArms()
 			types.Actor.setStance(self, types.Actor.STANCE.Spell)
 		end
 	end
+	if armsFrames == 2 and s.stance == 'weapon' and s.shield and s.weapon then
+		-- (a torch beside the weapon: given in the same setEquipment as the weapon it stayed out of the hand)
+		local eq = types.Actor.getEquipment(self)
+		eq[types.Actor.EQUIPMENT_SLOT.CarriedLeft] = s.shield
+		types.Actor.setEquipment(self, eq)
+	end
 	if armsFrames < kStanceFrames then
 		return false
 	end

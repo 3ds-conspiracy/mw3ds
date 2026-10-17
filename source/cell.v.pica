@@ -10,15 +10,14 @@
 .fvec lightPos                  ; the light the player carries: eye-space xyz, w = 1 / radius squared
 .fvec lightColor                ; its colour (0 = none)
 .fvec ambientAdd                ; added to every vertex's light: Night Eye (OpenMW's ambient + 0.7 x magnitude / 100)
-; Two more, the same way: torches people near the player hold out (renderer.cpp rendererSetActorLights). Not in
-; skin.v.pica (its bone palette fills the registers): they light the world, not other people. Set again after each
-; skinned run (its palette overwrites these registers). Each is switched on for the batches within its reach only
-; (renderer.cpp drawBatchTex)
-.fvec lightPos2, lightColor2
-.fvec lightPos3, lightColor3
+.fvec torchVec                  ; the player's torch lit per pixel (first person): eye-space position . torchVec = how far
+                                ; out its light reaches there, 0 at the eye, 1 at its radius (renderer.cpp light ramp); (0, 0, 0, 1): none
+; Outdoors, the lamps' light the night leaves alone: the batch's lamp colour x (1 - tint) / 16383, times each vertex's
+; brightness of it in the position's w (convert_cell.py lamp_channel); 0 for everything else. Not in skin.v.pica: its
+; bone palette overwrites this register (renderer.cpp sets it again after a skinned run)
+.fvec lamp
 .bool gammaOn                   ; on: the light is curved by Gamma (gamma.h); first, so skin.v.pica has it in the same register
 .bool lightOn                   ; on: the player carries a light (off: its terms skipped; second, as in skin.v.pica)
-.bool moreLight2, moreLight3    ; on: that torch is added (off: skipped, no cost); each on its own, for what it reaches
 
 ; Constants
 .constf consts(0.0, 1.0, 0.00392156862, 0.5)
@@ -31,7 +30,7 @@
 ; Outputs
 .out outpos position
 .out outtc0 texcoord0
-.out outtc1 texcoord1           ; x: fog amount, looked up in the fog ramp texture (renderer.cpp)
+.out outtc1 texcoord1           ; x: fog amount, y: the torch's reach, looked up in the light ramp texture (renderer.cpp)
 .out outclr color
 
 ; Inputs
@@ -61,19 +60,20 @@
 	mul r2.xy, uvScale, r2
 	add outtc0, uvOffset, r2
 
-	; Linear distance fog from the eye-space depth: (fog, 0.5, 0, 0). Built in a temporary and
-	; written to the output whole: the real PICA hangs when any component of an output register is
+	; Linear distance fog from the eye-space depth, and how far out the torch's light is: (fog, reach, 0, 0). Built in a
+	; temporary and written to the output whole: the real PICA hangs when any component of an output register is
 	; left unwritten (emulators don't care), which froze the game on its first 3D frame
 	mov r3, consts.xxxx
 	dp4 r3.x, fogVec, r1
-	mov r3.y, half
+	dp4 r3.y, torchVec, r1
 	mov outtc1, r3
 
-	; Unsigned byte colors arrive as 0..255; scaled by the time of day's tint, plus the carried light
-	; falling off with distance: lightColor x max(0, 1 - distance^2 / radius^2) (written whole; no
-	; square roots: rsq of a zero distance hung the GPU)
+	; Unsigned byte colors arrive as 0..255; scaled by the time of day's tint, the lamps' share put back (one mad: the
+	; night darkens the sun's and the sky's light, not theirs), plus the carried light falling off with distance:
+	; lightColor x max(0, 1 - distance^2 / radius^2) (written whole; no square roots: rsq of a zero distance hung the GPU)
 	mul r4, inv255, inclr
 	mul r4, tint, r4
+	mad r4.xyz, inpos.wwww, lamp, r4
 	add r4.xyz, ambientAdd, r4
 	; (r5.w is left as it falls: dp3 reads xyz. r1.w is 1, the point's: the falloff 1 - d^2 / r^2 is one mad, the
 	; colour added another: five instructions a light, not eight, on every vertex)
@@ -83,20 +83,6 @@
 		mad r6, r6, -lightPos.wwww, r1.wwww
 		max r6, consts.xxxx, r6
 		mad r4.xyz, r6, lightColor, r4
-	.end
-	ifu moreLight2
-		add r5, -lightPos2, r1
-		dp3 r6, r5, r5
-		mad r6, r6, -lightPos2.wwww, r1.wwww
-		max r6, consts.xxxx, r6
-		mad r4.xyz, r6, lightColor2, r4
-	.end
-	ifu moreLight3
-		add r5, -lightPos3, r1
-		dp3 r6, r5, r5
-		mad r6, r6, -lightPos3.wwww, r1.wwww
-		max r6, consts.xxxx, r6
-		mad r4.xyz, r6, lightColor3, r4
 	.end
 	; Gamma (Options, Auto gamma): the light's rgb ^ (1 / gamma), its exponent in ambientAdd.w (renderer.cpp
 	; rendererSetGamma). lg2 and ex2 take one component each; the floor keeps lg2 off 0

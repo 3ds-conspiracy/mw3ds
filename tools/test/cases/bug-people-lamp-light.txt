@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# People are lit by the lamps near where they stand now, and a torch held out lights its holder (OpenMW lights every
+# person by the lights near them). Ours lit a person by where the converter placed them, and people's torches lit the
+# world around but not the one holding it. Now a tint a person on the CPU (Session): the lamps' and others' torches'
+# light where they stand, their own torch on themselves; people's torches light nothing else (the console can't spare
+# the vertex work: spec/performance-tradeoffs.md). Balmora at 23:00: Rararyn Radarys held beside a lantern, then where
+# no lamp reaches (posed: she wanders off); Ald-ruhn at 22:00: a Redoran guard with his torch out
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+GOTO:Balmora
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:23
+1 0 0 0 0 PLACEAT:rararyn%radarys:-20434:-13850:300+POSE:rararyn%radarys:idle:0.3
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflampnow:rararyn%radarys:gt:0.08
+1 0 0 0 0 PLACEAT:rararyn%radarys:-20288:-15100:173+POSE:rararyn%radarys:idle:0.3
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflampnow:rararyn%radarys:eq:0
+0.3 0 0 0 0 GOTO:Ald-ruhn
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 HOUR:22
+40 0 0 0 0 WALKTO:redoran%guard%male
+0.1 0 0 0 0 EXPECT:reftorch:redoran%guard%male:eq:1+EXPECT:refheldlight:redoran%guard%male:gt:0.2

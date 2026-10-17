@@ -124,7 +124,6 @@ struct Session : ScriptHost
 	bool pickQueued = false;          // a press while the lockpick / probe came up: tried once it's up
 	float sheatheTimer = 0.0f;        // seconds without fighting; the weapon goes away after a while
 	std::string hudCaption;           // the cell name the HUD wrote under the minimap last
-	int heldLights = 0;               // people's torches lighting the world this frame (rendererSetActorLights)
 	int attackKind = 0;               // 0 chop, 1 slash, 2 thrust: picked when the wind-up starts
 	std::string bodyAttack;           // the third-person body's group for that blow (Attack1hSl ...)
 	float blockUntil = 0.0f;          // shield raised (view model)

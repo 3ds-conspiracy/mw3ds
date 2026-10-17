@@ -20,6 +20,7 @@
 #include <malloc.h>
 
 static const float kReach = 192.0f;          // iMaxActivateDist
+static const float kLightBounds = 1.65f;     // OpenMW's light bounds multiplier: a light reaches this x its radius
 
 bool Session::start(const char* dataDir, const std::string& startCell, const char* savePathIn)
 {
@@ -1415,58 +1416,66 @@ void Session::update(const PlayerInput& inRaw, float dt)
 			w.player.feet[2] + 100.0f };
 		rendererSetCarriedLight(at, radius, rgb);
 	}
+	// (people's torches light only people, not the world around: the console can't spare the vertex work; the player's
+	// light is the one live light)
 	{
-		// People holding a torch out light their surroundings as the player's does (Morrowind and OpenMW light the
-		// world with a carried light's own radius and colour): the nearest kActorLights of them to the player, the
-		// light at the left hand. The light is the first carryable one they have (the torch their model holds)
-		struct Held { float d; float pos[3]; float radius; float rgb[3]; };
-		Held best[kActorLights];
-		int n = 0;
+		// People are lit by the lamps near where they stand now and by the torches others hold out near them (the
+		// converter lit them where they were placed): the light on a standing body's facing side, 1 / pi of it, at
+		// OpenMW's falloff (convert_cell.py light_tint, light_falloff), x 64 as their tint. CPU only: one tint a person
+		struct Lamp { float pos[3]; float radius; float rgb[3]; int holder; };
+		static std::vector<Lamp> lamps;
+		lamps.clear();
+		for (LoadedCell* l : w.loaded)
+			for (int i : l->lightRefs)
+			{
+				const Ref& r = w.refs[i];
+				if (!r.visible() || !r.obj)
+					continue;
+				float sign = (r.obj->flags & 4) ? -1.0f : 1.0f;      // (LHDT 0x4: a negative light)
+				Lamp L = { { r.pos[0], r.pos[1], r.pos[2] }, (float)r.obj->lightRadius,
+					{ sign * r.obj->lightColor[0] / 255.0f, sign * r.obj->lightColor[1] / 255.0f, sign * r.obj->lightColor[2] / 255.0f }, -1 };
+				lamps.push_back(L);
+			}
 		w.forLoadedActors([&](int i) {
-			const Ref& r = w.refs[i];
-			const Actor* a = r.dead || !r.visible() ? nullptr : w.actorOf(i);
+			const Actor* a = w.actorOf(i);
 			if (!a || !a->torchOut)
 				return;
-			bool holds = false;
-			for (const ActorMesh& m : a->meshes)
-				holds |= m.hand == 1;
-			float d = holds ? w.distanceToPlayer(i) : 1e9f;
-			if (d > 4000.0f || (n == kActorLights && d >= best[n - 1].d))
-				return;
+			const Ref& r = w.refs[i];
 			const Object* npc = w.game.object(r.id);
-			const Object* light = nullptr;
-			for (size_t k = 0; npc && !light && k < npc->items.size(); k++)
+			for (size_t k = 0; npc && k < npc->items.size(); k++)
 				if (const Object* o = w.game.object(npc->items[k].second))
-					if (o->type == "LIGH" && o->lightRadius > 0 && (o->flags & 2))     // (LHDT 0x2: can be carried)
-						light = o;
-			if (!light)
-				return;
-			Held h;
-			h.d = d;
-			float fx = sinf(r.rot[2]), fy = cosf(r.rot[2]);
-			h.pos[0] = r.pos[0] + fx * 20.0f - fy * 20.0f;
-			h.pos[1] = r.pos[1] + fy * 20.0f + fx * 20.0f;
-			h.pos[2] = r.pos[2] + 100.0f;
-			h.radius = (float)light->lightRadius;
-			for (int k = 0; k < 3; k++)
-				h.rgb[k] = light->lightColor[k] / 255.0f * 0.8f;
-			int at = n < kActorLights ? n++ : n - 1;
-			while (at > 0 && best[at - 1].d > d)
-			{
-				best[at] = best[at - 1];
-				at--;
-			}
-			best[at] = h;
+					if (o->type == "LIGH" && o->lightRadius > 0 && (o->flags & 2))
+					{
+						Lamp L = { { r.pos[0], r.pos[1], r.pos[2] + 100.0f }, (float)o->lightRadius,
+							{ o->lightColor[0] / 255.0f, o->lightColor[1] / 255.0f, o->lightColor[2] / 255.0f }, i };
+						lamps.push_back(L);
+						break;
+					}
 		});
-		float pos[kActorLights][3], radius[kActorLights], rgb[kActorLights][3];
-		for (int k = 0; k < n; k++)
-		{
-			memcpy(pos[k], best[k].pos, sizeof(pos[k]));
-			radius[k] = best[k].radius;
-			memcpy(rgb[k], best[k].rgb, sizeof(rgb[k]));
-		}
-		heldLights = n;
-		rendererSetActorLights(n, pos, radius, rgb);
+		w.forLoadedActors([&](int i) {
+			Actor* a = w.actorOf(i);
+			if (!a)
+				return;
+			const Ref& r = w.refs[i];
+			float at[3] = { r.pos[0], r.pos[1], r.pos[2] + 64.0f }, sum[3] = { 0.0f, 0.0f, 0.0f };
+			for (const Lamp& L : lamps)
+			{
+				if (L.holder == i)
+					continue;                   // (its own torch: Actor::heldLight)
+				float d2 = 0.0f;
+				for (int k = 0; k < 3; k++)
+					d2 += (L.pos[k] - at[k]) * (L.pos[k] - at[k]);
+				float bounds = kLightBounds * L.radius;
+				if (d2 >= bounds * bounds)
+					continue;
+				float d = fmaxf(sqrtf(d2), 1.0f), x = fminf(fmaxf((d / bounds - 0.75f) / 0.25f, 0.0f), 1.0f);
+				float f = (L.radius / (3.0f * d)) * (1.0f - x * x) * (1.0f - x * x) * (1.0f / 3.14159265f) * 128.0f;
+				for (int k = 0; k < 3; k++)
+					sum[k] += f * L.rgb[k];
+			}
+			for (int k = 0; k < 3; k++)
+				a->lampNow[k] = fminf(fmaxf(sum[k], 0.0f), 255.0f);
+		});
 	}
 	// spell visuals age and go
 	// A hit visual is attached to its target's own node (OpenMW: Animation::addEffect), so it goes where the target goes

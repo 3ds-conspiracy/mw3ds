@@ -26,7 +26,7 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
                           near) and holds the group (Attack1h, ...)
     weapon=id ammo=id shield=id   the player carries and equips these (fp and actor=player shots)
     wear=id,id,...        armor and clothing the player wears (gauntlets, robes ...), on both sides
-    hide=1                the 3DS side hides every person and creature within 4000 units (one wandering into a
+    hide=1                both sides hide every person and creature within 4000 units (one wandering into a
                           plain shot of the world)
     spawn=id [dist=d]     a new actor (a creature) 250 (d) units ahead of the camera, facing it, is the shot's actor
     do=step;step... after=t   a scene step, OpenMW side only (--pc-only): goto:<cell>:x:y:z, journal:<quest>:<n>,
@@ -253,6 +253,8 @@ def write_openmw_setup(shots):
             f.append(f"at = {s['at']}")
         if s.get("view") == "fp":
             f.append("fp = true")
+        if s.get("hide"):
+            f.append("hide = true")
         if s.get("body"):
             fx, fy, fz, fyaw = s["from"]
             f.append(f"body = true, fromX = {fx}, fromY = {fy}, fromZ = {fz}, fromYaw = {math.radians(fyaw)!r}")

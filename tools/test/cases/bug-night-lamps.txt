@@ -1,0 +1,20 @@
+# start: Seyda Neen
+# Lamps at night outdoors (OpenMW: lights are lights all day; the hour changes the sun's and the sky's light only). Ours
+# darkened the baked lamp light with the rest at night, and held the night at 0.45 of the day or brighter, grey where
+# OpenMW's is dark blue: Balmora's lanterns lit nothing. The lamps' share of each batch now rides apart (cell.v.pica
+# lamp), and the night is the weather's own. Balmora at 23:00, clear, looking down a street with a lantern: batches
+# drawn with lamp light the night leaves alone, the picture as dark as OpenMW's (16.8 there), and noon over 3 times it
+# (native draws only the frames a SHOT saves: each check follows one)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+GOTO:Balmora
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:Clear+HOUR:23
+1 0 0 0 0 CAM:-20434:-14000:520:0:-25+HUD:off+HIDEACTORS:4000
+2 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:lampbatches:gt:20+EXPECT:shotluma:0:lt:20
+0.3 0 0 0 0 HOUR:12
+2 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:lampbatches:eq:0+EXPECT:shotlumagain:0,1:gt:3

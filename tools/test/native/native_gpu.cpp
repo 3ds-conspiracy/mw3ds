@@ -732,12 +732,12 @@ void C3D_TexEnvColor(C3D_TexEnv* env, u32 color) { env->color = color; }
 
 // ---- renderer.cpp's shader: uniform slots by name, as cell.v.pica declares them
 enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET, U_POSSCALE, U_UVSCALE, U_TINT, U_LIGHTPOS,
-	U_LIGHTCOLOR, U_AMBIENT, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye)
-// cell.v.pica's two more lights sit where skin.v.pica's palette starts, as on the PICA. The bools in the order the
-// shaders declare them: 0 Gamma's curve (light ^ ambientAdd.w), 1 the carried light, 2 and 3 each torch's own switch
-// (cell.v.pica moreLight2, moreLight3: renderer.cpp turns each on only for batches within that torch's reach)
-enum { U_LIGHTPOS2 = U_BONES, U_LIGHTCOLOR2, U_LIGHTPOS3, U_LIGHTCOLOR3, B_GAMMA = 0, B_LIGHTON, B_MORELIGHT2, B_MORELIGHT3 };
-static bool s_lightOn = false, s_moreLight2 = false, s_moreLight3 = false, s_gammaOn = false;
+	U_LIGHTCOLOR, U_AMBIENT, U_TORCHVEC, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye;
+	                                                   // U_TORCHVEC: the torch's reach per pixel)
+// cell.v.pica's lamp (the batch's lamp light, x each vertex's w) sits where skin.v.pica's palette starts, as on the
+// PICA. The bools in the order the shaders declare them: 0 Gamma's curve (light ^ ambientAdd.w), 1 the carried light
+enum { U_LAMP = U_BONES, B_GAMMA = 0, B_LIGHTON };
+static bool s_lightOn = false, s_gammaOn = false;
 
 DVLB_s* DVLB_ParseFile(u32*, u32) { return new DVLB_s(); }
 void DVLB_Free(DVLB_s* d) { delete d; }
@@ -749,9 +749,9 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 	static const struct { const char* name; int slot; } kSlots[] = { { "projection", U_PROJECTION },
 		{ "modelView", U_MODELVIEW }, { "uvOffset", U_UVOFFSET }, { "fogVec", U_FOGVEC }, { "posOffset", U_POSOFFSET },
 		{ "posScale", U_POSSCALE }, { "uvScale", U_UVSCALE }, { "tint", U_TINT }, { "lightPos", U_LIGHTPOS },
-		{ "lightColor", U_LIGHTCOLOR }, { "ambientAdd", U_AMBIENT }, { "bones", U_BONES }, { "lightPos2", U_LIGHTPOS2 }, { "lightColor2", U_LIGHTCOLOR2 },
-		{ "lightPos3", U_LIGHTPOS3 }, { "lightColor3", U_LIGHTCOLOR3 }, { "gammaOn", B_GAMMA }, { "lightOn", B_LIGHTON },
-		{ "moreLight2", B_MORELIGHT2 }, { "moreLight3", B_MORELIGHT3 } };
+		{ "lightColor", U_LIGHTCOLOR }, { "ambientAdd", U_AMBIENT }, { "torchVec", U_TORCHVEC }, { "bones", U_BONES },
+		{ "lamp", U_LAMP },
+		{ "gammaOn", B_GAMMA }, { "lightOn", B_LIGHTON } };
 	for (auto& s : kSlots)
 		if (strcmp(s.name, name) == 0)
 			return s.slot;
@@ -784,10 +784,6 @@ void C3D_BoolUnifSet(int, int id, bool value)
 {
 	if (id == B_LIGHTON)
 		s_lightOn = value;
-	else if (id == B_MORELIGHT2)
-		s_moreLight2 = value;
-	else if (id == B_MORELIGHT3)
-		s_moreLight3 = value;
 	else if (id == B_GAMMA)
 		s_gammaOn = value;
 }
@@ -928,8 +924,8 @@ static inline bool compare(int func, float a, float b)
 static inline float clamp01(float v) { return std::clamp(v, 0.0f, 1.0f); }
 
 // cell.v.pica: position from the packed or float input, model-view, projection; texture coordinate; fog; baked
-// colour times the tint, plus the carried light
-struct ClipV { float p[4]; float a[kAttrs]; };     // a: r g b a u v fog
+// colour times the tint, the lamps' share put back (w x lamp), plus the carried light
+struct ClipV { float p[4]; float a[kAttrs]; };     // a: r g b a u v fog, the torch's reach (texture coordinate 1)
 
 static void readAttr(const u8* v, int fmt, int n, float out[4])
 {
@@ -1004,7 +1000,7 @@ static ClipV vertexShader(const u8* v)
 	o.a[4] = u[U_UVOFFSET][0] + in[1][0] * u[U_UVSCALE][0];
 	o.a[5] = u[U_UVOFFSET][1] + in[1][1] * u[U_UVSCALE][1];
 	o.a[6] = u[U_FOGVEC][0] * r1[0] + u[U_FOGVEC][1] * r1[1] + u[U_FOGVEC][2] * r1[2] + u[U_FOGVEC][3] * r1[3];
-	// the carried light (lightOn), and (cell.v.pica, each its own switch) two more: people's torches
+	// the carried light (lightOn)
 	auto fall = [&](int pos)
 	{
 		float d[3] = { r1[0] - u[pos][0], r1[1] - u[pos][1], r1[2] - u[pos][2] };
@@ -1012,19 +1008,20 @@ static ClipV vertexShader(const u8* v)
 	};
 	bool cell = s_attr.count < 5;
 	float f1 = s_lightOn ? fall(U_LIGHTPOS) : 0.0f;
-	float f2 = cell && s_moreLight2 ? fall(U_LIGHTPOS2) : 0.0f, f3 = cell && s_moreLight3 ? fall(U_LIGHTPOS3) : 0.0f;
 	for (int k = 0; k < 4; k++)
 	{
 		float c = in[2][k] / 255.0f * u[U_TINT][k];
 		if (k < 3)
 		{
-			c += u[U_AMBIENT][k] + u[U_LIGHTCOLOR][k] * f1 + u[U_LIGHTCOLOR2][k] * f2 + u[U_LIGHTCOLOR3][k] * f3;
+			if (cell)
+				c += in[0][3] * u[U_LAMP][k];
+			c += u[U_AMBIENT][k] + u[U_LIGHTCOLOR][k] * f1;
 			if (s_gammaOn)
 				c = exp2f(u[U_AMBIENT][3] * log2f(std::max(c, 0.001f)));
 		}
 		o.a[k] = clamp01(c);
 	}
-	o.a[7] = 0.0f;
+	o.a[7] = dp4(u[U_TORCHVEC], r1);
 	return o;
 }
 
@@ -1084,6 +1081,7 @@ static inline float tevFunc(int f, float a, float b, float c)
 	case GPU_MODULATE: return a * b;
 	case GPU_ADD: return std::min(1.0f, a + b);
 	case GPU_INTERPOLATE: return a * c + b * (1.0f - c);
+	case GPU_MULTIPLY_ADD: return std::min(1.0f, a * b + c);
 	default: return a;
 	}
 }
@@ -1125,7 +1123,7 @@ void C3D_DrawElements(int, int count, int type, const void* indices)
 			return;
 		V4 prim = { a[0], a[1], a[2], a[3] };
 		V4 tex0 = need0 ? sample(s_units[0], a[4], a[5]) : V4{ 1, 1, 1, 1 };
-		V4 tex1 = need1 ? sample(s_units[1], a[6], 0.5f) : V4{ 1, 1, 1, 1 };
+		V4 tex1 = need1 ? sample(s_units[1], a[6], a[7]) : V4{ 1, 1, 1, 1 };
 		V4 prev = { 0, 0, 0, 0 };
 		for (int st = 0; st < 6; st++)
 		{
@@ -1193,7 +1191,7 @@ void C3D_DrawElements(int, int count, int type, const void* indices)
 		if (s_cull == GPU_CULL_BACK_CCW && area > 0)
 			continue;
 		for (int k = 1; k + 1 < n; k++)
-			rasterTri(t, sv[0], sv[k], sv[k + 1], 7, true, frag);
+			rasterTri(t, sv[0], sv[k], sv[k + 1], kAttrs, true, frag);
 	}
 }
 

@@ -13,6 +13,8 @@
 .fvec lightPos                  ; the light the player carries: eye-space xyz, w = 1 / radius squared
 .fvec lightColor                ; its colour (0 = none)
 .fvec ambientAdd                ; added to every vertex's light: Night Eye (OpenMW's ambient + 0.7 x magnitude / 100)
+.fvec torchVec                  ; the player's torch lit per pixel (first person): eye-space position . torchVec = how far
+                                ; out its light reaches there, 0 at the eye, 1 at its radius (renderer.cpp light ramp); (0, 0, 0, 1): none
 .bool gammaOn                   ; the light curved by Gamma (cell.v.pica's, in the same register)
 .bool lightOn                   ; the player carries a light (cell.v.pica's, in the same register)
 
@@ -31,7 +33,7 @@
 ; Outputs
 .out outpos position
 .out outtc0 texcoord0
-.out outtc1 texcoord1           ; x: fog amount, looked up in the fog ramp texture (renderer.cpp)
+.out outtc1 texcoord1           ; x: fog amount, y: the torch's reach, looked up in the light ramp texture (renderer.cpp)
 .out outclr color
 
 ; Inputs
@@ -91,10 +93,10 @@
 	mul r2.xy, uvScale, r2
 	add outtc0, uvOffset, r2
 
-	; Fog, as cell.v.pica (written whole: an output left partly unwritten hangs the real PICA)
+	; Fog and the torch's reach, as cell.v.pica (written whole: an output left partly unwritten hangs the real PICA)
 	mov r3, consts.xxxx
 	dp4 r3.x, fogVec, r1
-	mov r3.y, half
+	dp4 r3.y, torchVec, r1
 	mov outtc1, r3
 
 	; Colour, as cell.v.pica
