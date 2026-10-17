@@ -21,7 +21,7 @@ EXTRA = ["IdleSwim", "SwimWalkForward", "SwimRunForward", "SwimHit1", "SwimDeath
          "SwimRunLeft", "SwimRunRight", "TurnLeft", "TurnRight", "SwimTurnLeft", "SwimTurnRight",
          # moving every way (OpenMW's movement states by the direction against the facing), sneaking, jumping
          "WalkBack", "WalkLeft", "WalkRight", "RunBack", "RunLeft", "RunRight",
-         "SneakForward", "SneakBack", "SneakLeft", "SneakRight", "Jump",
+         "SneakForward", "SneakBack", "SneakLeft", "SneakRight", "Jump", "IdleSneak",
          # with a weapon out: its ready stance standing, walking and running (hand to hand, one-handed, two-handed,
          # two-handed wide; bows and thrown weapons use 1h, crossbows 2c)
          "Idle1h", "Idle2c", "Idle2w", "IdleHH", "WalkForward1h", "WalkForward2c", "WalkForward2w", "WalkForwardHH",

@@ -303,7 +303,8 @@ struct WeatherType { std::string name; float colors[4][4][3] = {}; float fog[2] 
 	// sun glare when looked at, rain threshold, thunder, clouds maximum, rain / snow falling
 	float delta = 0.015f, wind = 0.0f, glare = 1.0f, rainThreshold = 0.5f, thunderFreq = 0.0f, thunderThreshold = 0.0f,
 		flashDecrement = 0.0f, cloudsMax = 1.0f;
-	bool precip = false; };
+	bool precip = false;
+	std::string clouds; };                              // its cloud picture (Cloud Texture), as the sky draws it
 // The day's boundaries (Morrowind.ini [Weather]) and, per colour channel [sky, fog, ambient, sun], the hours it
 // leads / lags them: before sunrise, after sunrise, before sunset, after sunset
 struct WeatherClock { float sunrise = 6.0f, sunset = 18.0f, sunriseDur = 2.0f, sunsetDur = 2.0f;

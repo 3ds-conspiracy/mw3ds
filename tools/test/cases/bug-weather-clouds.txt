@@ -1,0 +1,12 @@
+# Each weather draws its own cloud picture (Morrowind.ini Cloud Texture: Tx_Sky_Overcast, Tx_Sky_Ashstorm ...), and
+# while the weather changes now's fades out as the next one's fades in (OpenMW's SkyManager: two cloud layers, the
+# cloud blend factor). Ours always drew the clear sky's clouds, which the cells carry. Needs data converted after the
+# change (game.json's weather_types carry the pictures)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+1 0 0 0 0 EXPECT:cloudtex:0:eq:1
+0.3 0 0 0 0 SETWEATHER:3
+1 0 0 0 0 EXPECT:cloudtex:3:eq:1+EXPECT:cloudtex:0:eq:0
+0.3 0 0 0 0 SETWEATHER:6
+1 0 0 0 0 EXPECT:cloudtex:6:eq:1
+1 0 0 0

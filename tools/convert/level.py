@@ -700,8 +700,11 @@ def main():
     game["weather_types"] = []
     for wname in WEATHER_NAMES:
         sec = dict(WEATHER_DEFAULTS, **ini_section(ini, f"Weather {wname}"))
+        # its own cloud picture (Cloud Texture: Tx_Sky_Cloudy, Tx_Sky_Ashstorm ...), as the cells ask for the sky's
+        cloud = "textures\\" + re.sub(r"\.[^.]+$", ".dds", sec.get("Cloud Texture", "").lower())
         game["weather_types"].append({
             "name": wname,
+            "clouds": textures.request(cloud, 256, True) if sec.get("Cloud Texture") and arch.exists(cloud) else "",
             **{k.lower(): [rgb(sec.get(f"{k} {t} Color", sec.get(f"{k} Day Color", "128,128,128")))
                            for t in ("Sunrise", "Day", "Sunset", "Night")] for k in ("Sky", "Fog", "Ambient", "Sun")},
             # (not "fog": that key holds the fog colours above, and this overwrote them: black fog)

@@ -517,10 +517,30 @@ void Session::damageNpc(int ri, float dmg, bool fatigueOnly)
 	{
 		r.health -= dmg;
 		playSound(ri, "Health Damage");
-		// the blood splat (Morrowind.ini [Blood]: red, a skeleton's white, a dwemer machine's gold sparks)
+		// the blood splat (Morrowind.ini [Blood]: red, a skeleton's white, a dwemer machine's gold sparks), one of the
+		// three models, where the blow lands: on the side facing the player, a quarter of the width either way along x,
+		// 20 to 100 % of the height up (OpenMW's getHitContact and spawnBloodEffect). (The picks from a hash of the
+		// moment, not rand(): a seeded test's dice stay as they were)
 		int blood = r.actor >= 0 ? w.game.actors[r.actor].blood : 0;
-		float at[3] = { r.pos[0], r.pos[1], r.pos[2] + 80.0f };
-		spawnVfx("blood" + std::to_string(blood >= 0 && blood < 3 ? blood : 0), at, 0.5f);
+		u32 h = ((u32)(w.time * 1000.0f) + (u32)ri * 2654435761u) * 2246822519u;
+		float hx = r.hasBox ? 0.5f * (r.boxMax[0] - r.boxMin[0]) : 30.0f, hy = r.hasBox ? 0.5f * (r.boxMax[1] - r.boxMin[1]) : 30.0f;
+		float hz = r.hasBox ? r.boxMax[2] - r.boxMin[2] : 128.0f;
+		float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1], dl = sqrtf(dx * dx + dy * dy);
+		if (dl > 1.0f)
+			dx /= dl, dy /= dl;
+		else
+			dx = dy = 0.0f;
+		float at[3] = { r.pos[0] + dx * hy + hx * 2.0f * (((h >> 8) & 255) / 255.0f * 0.5f - 0.25f), r.pos[1] + dy * hy,
+			r.pos[2] + hz * (0.2f + 0.8f * ((h >> 16) & 255) / 255.0f) };
+		int model = (int)((h >> 24) % 3);
+		std::string id = "blood" + std::to_string(blood >= 0 && blood < 3 ? blood : 0);
+		if (model == 0 || !spawnVfx(id + "_" + std::to_string(model), at, 0.5f))
+		{
+			if (spawnVfx(id, at, 0.5f))
+				bloodModels |= 1;
+		}
+		else
+			bloodModels |= 1 << model;
 	}
 	enemyRef = ri;
 	enemyUntil = w.time + 6.0f;
@@ -536,6 +556,19 @@ void Session::damageNpc(int ri, float dmg, bool fatigueOnly)
 		std::string g = actorRandomGroup(*w.actorsOf(ri), *w.actorOf(ri), "Hit");
 		actorPlay(*w.actorsOf(ri), *w.actorOf(ri), g.empty() ? "Hit1" : g.c_str(), ANIM_ONCE);
 	}
+}
+
+// Lava and the like (HurtStandingActor), every frame stood on it: the flash pulses and Health Damage plays as it ends
+// (OpenMW's World::updateActors: the sound unless it is playing), not a solid red screen and the sound each frame
+void Session::hurtPlayer(float health)
+{
+	if (testGod || playerDead)
+		return;
+	w.stats.health -= health;
+	if (hurtFlashOngoing())
+		playSound(-1, "Health Damage");
+	if (w.stats.health <= 0.0f)
+		damagePlayer(0.0f, false);      // the death screen
 }
 
 void Session::damagePlayer(float dmg, bool fatigueOnly)
@@ -3359,6 +3392,9 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	float headTrack = w.game.gmstf("fmaxheadtrackdistance", 400.0f);
 	float headTrackIn = w.game.gmstf("finteriorheadtrackmult", 0.5f);
 	const bool torches = w.useTorches();
+	// (the player's own body in third person, as see-through as anyone under Invisibility or Chameleon)
+	if (!body.set.actors.empty())
+		body.set.actors[0].alpha = actorSeeThrough(true, w.effectTotal(39), w.effectTotal(40));
 	w.forLoadedActors([&](int i) {
 		Ref& r = w.refs[i];
 		if (r.actor < 0 || r.dead || !r.visible())
@@ -3379,6 +3415,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 						break;
 					}
 			ta->torchOut = out;
+			ta->alpha = actorSeeThrough(false, w.actorEffect(i, 39), w.actorEffect(i, 40));
 		}
 		// (held in a pose for a side-by-side screenshot, tools/test/sidebyside.py: no AI, no head turning)
 		if (const Actor* fa = w.actorOf(i))

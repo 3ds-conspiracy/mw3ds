@@ -1,0 +1,15 @@
+# Under water the view is as OpenMW's FogManager draws it: Morrowind.ini's Underwater Color (12, 30, 37) weighed 0.85
+# against the fog's colour, the fog thick from the eye (Underwater Day Fog 2.5: it starts 1.5 views behind it) to the
+# view's end, the seabed fading out far off; no sky. Ours closed the view to 15 % of it in a fixed teal and drew the
+# sky round that bubble: white wedges and bands where the seabed ended. Off Seyda Neen at noon: the picture is even
+# (its brightness spread under 15; 37 before), Underwater Fog 2.5 at noon, 4 at night
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+0.5 0 0 0 0 TP:-9000:-80000:-150:200
+2 0 0 0 0 LOOK:0
+0.2 0 0 0 0 TP:-9000:-80000:-400:200
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:shotspread:0:lt:15+EXPECT:shotspread:0:gt:0+EXPECT:uwfog:eq:2.5
+0.3 0 0 0 0 HOUR:23
+1 0 0 0 0 EXPECT:uwfog:eq:4
+1 0 0 0

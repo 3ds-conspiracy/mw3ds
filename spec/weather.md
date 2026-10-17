@@ -78,6 +78,21 @@ around sunset (from the star settings and the 2-hour fading duration).
 - `getSunPercentage(h)`: 0 outside `(nightEnd, nightStart)`, rising over the sunrise duration, 1 in day, falling
   over the sunset duration.
 
+## Clouds and the sky bodies' sizes (`sky.cpp setWeather`, `skyutil.cpp`)
+
+- Each weather draws its own Cloud Texture; while the weather changes, now's layer fades out (1 - blend) as the
+  next one's fades in (the cloud blend factor). Their colour (emission) is the fog colour + 0.13, not the sky's.
+- The sun is a 450-unit quad 1000 units away; its flash (tx_sun_flash_grey_05) 2.6 times it, white. The moons are
+  450 x size / 125 (Masser 55, Secunda 40). Looking toward the sun adds a full-screen glare: Sun Glare Fader Max
+  (0.5) at the sun, gone at Fader Angle Max (30 degrees), twice the Fader Color, x the glare fade above x the
+  weather's Glare View x how much of the sun is seen (an occlusion query).
+
+## Under water (`fogmanager.cpp`)
+
+- Fog colour: Water_UnderwaterColor (12, 30, 37) x UnderwaterColorWeight (0.85) + the fog colour x 0.15.
+- Fog from view x (1 - underwater fog) to the view (7168 at most): Underwater Sunrise / Day / Sunset / Night Fog
+  3 / 2.5 / 3 / 4 by the fog channel's hours, Indoor Fog 3 inside. Above 1 the fog starts behind the eye.
+
 ## Torches and night / day mode
 
 - `useTorches(h)`: dark (`h < sunrise` or `h > nightStart`) and not precipitation. Precipitation means the weather

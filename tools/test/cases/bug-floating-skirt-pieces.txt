@@ -1,0 +1,12 @@
+# A clothing or armour part whose model has a skinned shape goes on as a skin: only its skinned shapes named for the
+# slot's bone are taken, its rigid ones dropped (OpenMW's SceneUtil::attach, CopyRigVisitor). The extravagant skirt
+# holds two rigid "Tri chest" pieces besides its skinned skirt; hung from the groin bone they floated over the wearer's
+# head (Neminda in the Redoran Council Entrance, female Redoran guards: the "floating scarf"). Twelve part models mix
+# the two (skirts, robes, shirts, a chitin set). Neminda: 28 meshes before, 25 after. Needs data converted after the
+# change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Ald-ruhn,%Redoran%Council%Entrance
+2 0 0 0 0 TPIN:781:868:-87:0
+1 0 0 0 0 EXPECT:refmeshes:neminda:eq:25
+1 0 0 0

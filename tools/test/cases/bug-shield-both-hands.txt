@@ -1,0 +1,30 @@
+# A shield is put away while the hands hold something both need: fists, a spell, a two-handed weapon, a bow or a
+# crossbow (OpenMW's updateCarriedLeftVisible: hand-to-hand and spell count as two-handed weapon types). Velfred
+# (Hla Oad's docks) carries a shield: it shows while he stands, not while he casts or swings his fists, and comes
+# back when he stands again
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 TP:-54732:-45100:300:0
+3 0 0 0 0 POSE:velfred:Idle:0.3
+0.5 0 0 0 0 EXPECT:refshield:velfred:eq:1
+0.3 0 0 0 0 POSE:velfred:CastTarget:0.5
+0.5 0 0 0 0 EXPECT:refshield:velfred:eq:0
+0.3 0 0 0 0 POSE:velfred:AttackHH:0.5
+0.5 0 0 0 0 EXPECT:refshield:velfred:eq:0
+0.3 0 0 0 0 POSE:velfred:Attack1h:0.5
+0.5 0 0 0 0 EXPECT:refshield:velfred:eq:1
+0.3 0 0 0 0 POSE:velfred:Idle:0.3
+0.5 0 0 0 0 EXPECT:refshield:velfred:eq:1
+# The player's own body (third person) too: the shield on the arm with the weapon put away (it showed only with a
+# weapon out), away while the fists are up, back with a one-handed sword
+0.3 0 0 0 0 GIVE:iron_shield:1
+0.3 0 0 0 0 GIVE:iron%longsword:1
+0.3 0 0 0 0 EQUIP:iron_shield
+0.3 0 0 0 0 POV:third
+1 0 0 0 0 EXPECT:bodyshield:eq:1
+0.3 0 0 0 0 BODYPOSE:AttackHH:0.5
+0.5 0 0 0 0 EXPECT:bodyshield:eq:0
+0.3 0 0 0 0 EQUIP:iron%longsword
+0.3 0 0 0 0 BODYPOSE:Attack1h:0.5
+0.5 0 0 0 0 EXPECT:bodyshield:eq:1
+1 0 0 0

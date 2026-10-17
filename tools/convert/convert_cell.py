@@ -137,16 +137,22 @@ def bake_colors(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
 # Actor libraries are lit evenly at this level; each placement's tint (x 64 in a byte) scales it to the
 # light where it stands: ambient, the sun, and the point lights' reach there
 NEUTRAL_LIGHT = 0.5
+# A light falls on the side of a body that faces it (OpenMW lights actors by their normals). The sun from above: half
+# its light, as seen. A lamp at body height lights a standing figure from the side: the cosine over a cylinder's
+# surface averages 1 / pi. Taken whole, a lamp beside someone indoors lit them twice as bright as OpenMW's against a
+# room that matched (Socucius Ergalla, Raxle Berne, Yagrum Bagarn side by side)
+SUN_SHARE = 0.5
+FACING_SHARE = 1.0 / math.pi
 
 
 def light_tint(pos, lights, ambient, sun):
-    light = np.asarray(ambient, dtype=float) + 0.5 * np.asarray(sun, dtype=float)
+    light = np.asarray(ambient, dtype=float) + SUN_SHARE * np.asarray(sun, dtype=float)
     for L in lights:
         d = float(np.linalg.norm(L["pos"] - pos))
         dist = max(d, 1.0)
         att = min(1.0, L["radius"] / (LINEAR_ATTEN * dist))
         fade = 1.0 - min(max(dist / L["radius"] - 1.0, 0.0), 1.0) ** 2
-        light = light + att * fade * np.asarray(L["color"])
+        light = light + FACING_SHARE * att * fade * np.asarray(L["color"])
     return [int(v) for v in np.clip(np.round(light / NEUTRAL_LIGHT * 64), 0, 255)]
 
 

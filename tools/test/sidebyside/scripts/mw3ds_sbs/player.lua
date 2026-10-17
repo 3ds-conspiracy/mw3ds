@@ -69,12 +69,11 @@ local kArmorSlots = { 'Helmet', 'Cuirass', 'LeftPauldron', 'RightPauldron', 'Gre
 	'RightGauntlet', 'CarriedLeft', 'LeftGauntlet', 'RightGauntlet' }
 local kClothingSlots = { 'Pants', 'Boots', 'Shirt', 'Belt', 'Robe', 'RightGauntlet', 'LeftGauntlet', 'Skirt',
 	'RightRing', 'Amulet' }
-local function wear(s)
+local function wear(s, eq)
 	if not s.wear then
 		return
 	end
 	local inv = types.Actor.inventory(self)
-	local eq = types.Actor.getEquipment(self)
 	for _, id in ipairs(s.wear) do
 		local o = inv:find(id)
 		if o then
@@ -85,7 +84,6 @@ local function wear(s)
 			end
 		end
 	end
-	types.Actor.setEquipment(self, eq)
 end
 
 -- fp: the spell readied, then the arms hold the group
@@ -96,17 +94,19 @@ local function updateArms()
 	end
 	armsFrames = armsFrames + 1
 	if armsFrames == 1 then
-		wear(s)
+		-- (one setEquipment: a second one in the same frame starts from the equipment before the first and undoes it)
+		local eq = types.Actor.getEquipment(self)
+		wear(s, eq)
 		if s.stance == 'weapon' then
 			-- the shot's weapon in hand (none: fists), its ammunition, the shield
 			local slot = types.Actor.EQUIPMENT_SLOT
-			local eq = types.Actor.getEquipment(self)
 			eq[slot.CarriedRight] = s.weapon
 			eq[slot.Ammunition] = s.ammo
 			eq[slot.CarriedLeft] = s.shield
 			types.Actor.setEquipment(self, eq)
 			types.Actor.setStance(self, types.Actor.STANCE.Weapon)
 		else
+			types.Actor.setEquipment(self, eq)
 			types.Actor.setSelectedSpell(self, s.spell or 'fire bite')
 			types.Actor.setStance(self, types.Actor.STANCE.Spell)
 		end

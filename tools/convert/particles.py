@@ -534,9 +534,10 @@ THIN = {"vfx_frostcast": {23: 2, 12: 5}, "vfx_hands": {10: 3, 19: 3}}
 # (the casting hands' glow, two on every caster at once: a third of its sparks)
 # Methods chosen against OpenMW side by side where the rule picks worse: the soul trap's sparkles fly out wide and a
 # flipbook frame spread over them shrank them into a flat glow; the lava river steam sits on the ground, where the
-# flipbook quad was cut off by it in a straight line
+# flipbook quad was cut off by it in a straight line; the Mysticism hit's sprays all take the effect's own particle
+# texture (Dispel's white sparkles, Detect Animal's ...), which a flipbook baked in the model's texture can't
 METHOD = {"vfx_soul_trap": "records", "steam_lavariver": "records", "in_strong_platform": "flip",
-          "dagoth ur death sparkles": "records", "vfx_hands": "records"}
+          "dagoth ur death sparkles": "records", "vfx_hands": "records", "vfx_mysticismhit": "records"}
 
 
 def ensure_textures(arch, ts, meshes):

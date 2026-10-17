@@ -1,0 +1,12 @@
+# Standing still while sneaking, the player's body (third person) crouches: OpenMW's CharState_IdleSneak plays the
+# idlesneak group (the idle only for a skeleton without it). Ours stood upright: the group wasn't exported with the
+# skeletons. Needs data converted after the change (cells/skel_<k>.skl)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.5 0 0 0 0 POV:third
+0.5 0 0 0 0 EXPECT:bodygroup:Idle
+0.3 0 0 0 0 SNEAK:1
+1 0 0 0 0 EXPECT:bodygroup:IdleSneak
+0.3 0 0 0 0 SNEAK:0
+1 0 0 0 0 EXPECT:bodygroup:Idle
+1 0 0 0

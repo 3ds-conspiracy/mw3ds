@@ -999,6 +999,20 @@ float World::weatherFogDepth() const
 	return fogDepthAt(game, weatherNow, h) * (1.0f - weatherBlend) + fogDepthAt(game, weatherNext, h) * weatherBlend;
 }
 
+// Morrowind.ini [Water] Underwater Sunrise / Day / Sunset / Night Fog (3, 2.5, 3, 4) by the fog channel's hours, Indoor
+// Fog (3) inside (OpenMW's mUnderwaterFog, FogManager): the fog starts that many views behind the eye less one, so the
+// water is murky from the eye and thickens to the view's end
+float World::underwaterFog() const
+{
+	if (current < 0 || cells[current].interior || game.weatherTypes.empty())
+		return 3.0f;
+	static const float kFog[4] = { 3.0f, 2.5f, 3.0f, 4.0f };
+	int a, b;
+	float f;
+	timeOfDay(game.weatherClock, 1, fmodf(gameHour, 24.0f), a, b, f);
+	return kFog[a] * (1.0f - f) + kFog[b] * f;
+}
+
 int World::weatherShown() const
 {
 	if (weatherNext == weatherNow || game.weatherTypes.empty())

@@ -115,6 +115,9 @@ struct Session : ScriptHost
 	int enemyRef = -1;                // last NPC hit: its health bar shows on the top screen
 	float enemyUntil = 0.0f;
 	float hurtFlash = 0.0f;
+	bool dynamicView = true;          // Options > Video > Dynamic view: the view shortens when frames run long (dynview=)
+	float viewNow() const { return dynamicView ? viewScale : g_profile.viewScaleMax; }   // the share of the view drawn
+	u8 bloodModels = 0;               // the blood splat models hits have thrown so far (bits 0..2; the test driver's bloodmodels)
 	bool playerDead = false;
 	bool weaponDrawn = false;         // weapon (or fists) out: the view model shows it
 	float drawTimer = 0.0f;           // > 0 while the weapon comes out; the wind-up waits for it
@@ -536,7 +539,10 @@ struct Session : ScriptHost
 	bool talkingTo(int ref) override { return dlg.open && dlg.ref == ref; }
 	void killActor(int ref) override { if (!w.refs[ref].dead) killNpc(ref, false); }   // scripts (SetHealth 0)
 	void knockDownActor(int ref) override { if (!w.refs[ref].dead) knockDown(ref, true); }   // scripts (fatigue to 0)
-	void hurtPlayer(float health) override { damagePlayer(health, false); }
+	void hurtPlayer(float health) override;
+	// Harm that goes on (a damage spell or poison, sun damage, drowning, lava): the red flash starts again only once
+	// the last has faded (OpenMW's activateHitOverlay(false)); true when it started
+	bool hurtFlashOngoing() { if (hurtFlash > 0.0f) return false; hurtFlash = 1.0f; return true; }
 	void sheathe() override { sheatheTimer = 99.0f; }
 	void goToJail() override;
 	void teleportPlayer(int cell, const float pos[3], float yaw) override

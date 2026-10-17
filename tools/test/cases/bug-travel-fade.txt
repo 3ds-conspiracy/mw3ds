@@ -1,0 +1,19 @@
+# After a journey the screen comes back from black over a second (OpenMW's TravelWindow: fadeScreenOut(0), then
+# fadeScreenIn(1)); after resting, waiting or training over a fifth of a second (WaitDialog, TrainingWindow:
+# fadeScreenIn(0.2)). Ours came back over 0.4 s from all of them. Seyda Neen's silt strider to Balmora: half a second
+# after arriving the screen is still about half dark
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+120 0 0 0 0 WALKTO:darvame_hleran
+60 0 0 0 0 ACTIVATE:darvame_hleran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:darvame_hleran:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora
+0.4 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora+EXPECT:fade:ge:0.2+EXPECT:fade:le:0.75
+2 0 0 0
+0.1 0 0 0 0 EXPECT:fade:eq:0
+1 0 0 0

@@ -489,6 +489,7 @@ struct World
 	float weatherFogStart() const;                // land fog start / end outdoors (OpenMW: 1 - fog depth); < -1.5 none
 	float weatherColour(int kind, int c) const;   // [sky, fog, ambient, sun] channel now (0..1), blended while changing
 	float weatherFogDepth() const;                // land fog depth now
+	float underwaterFog() const;                  // how thick the water is to the eye now (fog starts 1 - this of the view)
 	int weatherShown() const;                     // the weather whose rain, storm and loops show (OpenMW's threshold)
 	bool weatherPrecip() const;                   // rain, snow or blight falling (not an ash storm)
 	bool weatherStorm() const;

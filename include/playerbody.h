@@ -51,6 +51,7 @@ struct PlayerBody
 	// Animation from what the player does; place at feet, facing yaw
 	void update(World& w, float dt, float speed, bool swimming, bool sneaking, bool weaponOut, const BodyAct& act);
 	const char* playing() const;                  // the group being played ("" when none)
+	bool loopTimes(float& time, float& loopStart, float& loopStop) const;   // that group's time and its loop keys
 	void draw(World& w, bool deform);
 	void free(World& w);
 };

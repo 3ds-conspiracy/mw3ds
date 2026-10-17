@@ -1,0 +1,13 @@
+# The red flash of being hurt shows for harm that goes on too, as OpenMW's activateHitOverlay(false) (it starts again
+# once the last has faded): a damage spell or poison on the player (ActiveSpells), sun damage, drowning, lava (World::
+# updateActors, with the Health Damage sound unless it is playing). Ours flashed only for blows and falls. Damage
+# Health 2 for 3 seconds: the flash is up while it hurts and gone after
+3 0 0 0 0 MSG
+0.3 0 0 0 0 HOUR:12
+0.5 0 0 0 0 EXPECT:hurtflash:eq:0
+0.1 0 0 0 0 ACTIVE:23:2:3
+0.2 0 0 0 0 EXPECT:hurtflash:gt:0
+0.6 0 0 0 0 EXPECT:hurtflash:gt:0
+4 0 0 0 0 EXPECT:effect:23:gt:0
+3 0 0 0 0 EXPECT:hurtflash:eq:0+EXPECT:effect:23:eq:0+EXPECT:health:le:44.5
+1 0 0 0

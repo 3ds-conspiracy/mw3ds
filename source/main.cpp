@@ -2440,7 +2440,7 @@ int main()
 		// Outdoors the fog closes in while frames run long, and with the weather
 		float fogScale = 1.0f;
 		if (loaded && !session->w.cells[session->w.current].interior)
-			fogScale = session->viewScale * session->w.weatherFogScale();
+			fogScale = session->viewNow() * session->w.weatherFogScale();
 		// (the horizon: distant land as far as the weather lets one see, not shortened with the detailed view; under
 		// water no farther than the murk)
 		rendererSetHorizon(loaded ? session->w.weatherFogScale() : 0.0f);
@@ -2468,18 +2468,17 @@ int main()
 					land[c] = fminf(2.0f, land[c] * boost);
 				outdoors = true;           // the tint applies indoors too while it lasts
 			}
-			// Under water: murky blue-green, close fog, dimmer light
+			// Under water (OpenMW's FogManager): Morrowind.ini's Underwater Color (12, 30, 37) weighed 0.85 against the
+			// fog's colour, the fog thick from the eye (Underwater Fog) to the view's end
 			Cell& here = session->w.here();
-			if (here.hasWater() && playerEyeZ(session->w.player) < here.waterZ)
+			bool underwater = here.hasWater() && playerEyeZ(session->w.player) < here.waterZ;
+			rendererSetUnderwater(underwater, session->w.underwaterFog());
+			if (underwater)
 			{
-				static const float murk[3] = { 0.08f, 0.2f, 0.24f }, dim[3] = { 0.45f, 0.65f, 0.75f };
+				static const float kColour[3] = { 12.0f / 255.0f, 30.0f / 255.0f, 37.0f / 255.0f };
 				for (int c = 0; c < 3; c++)
-				{
-					dayFog[c] = murk[c];
-					land[c] *= dim[c];
-				}
+					dayFog[c] = kColour[c] * 0.85f + dayFog[c] * 0.15f;
 				outdoors = true;
-				fogScale *= 0.15f;
 				rendererSetHorizon(0.0f);
 			}
 			rendererSetDaylight(land, sky, dayFog, outdoors);

@@ -1,0 +1,32 @@
+# start: Seyda Neen
+# In the air the player's body loops the jump between its Loop Start and Loop Stop keys (the same frame in Morrowind's
+# base_anim: held there); the landing (Loop Stop to Stop) plays once on touching down, then the idle (OpenMW's
+# CharacterController: JumpState_InAir plays "start" and goes round "loop start" to "loop stop", JumpState_Landing plays
+# "loop stop" to "stop"). It went round Loop Start to Stop, kicking out the landing again and again on a long jump (the
+# Scroll of Icarian Flight's fall over Ghostgate).
+1 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12+POV:third+SEED:1+GOD
+1 0 0 0 0 CON:EnablePlayerJumping+ACTIVE:9:20:4
+0.1 0 0 0 1
+0.5 0 0 0 0 EXPECT:bodygroup:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+0.1 0 0 0 0 EXPECT:bodyloop:Jump
+4 0 0 0 0
+0.1 0 0 0 0 EXPECT:bodygroup:Idle

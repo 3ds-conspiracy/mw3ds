@@ -901,6 +901,8 @@ void Session::updateEffects(float dt)
 		if (w.weatherNext > WEATHER_CLOUDY)
 			light *= w.game.gmstf("fmagicsunblockedmult", 0.5f);
 		s.health -= sun * light * dt;
+		if (light > 0.0f)
+			hurtFlashOngoing();
 	}
 	for (size_t i = 0; i < w.effects.size();)
 	{
@@ -945,6 +947,8 @@ void Session::updateEffects(float dt)
 			if (!playerDead)
 			{
 				s.health -= a.magnitude * step;
+				if (a.magnitude > 0.0f)
+					hurtFlashOngoing();
 				if (s.health <= 0.0f)
 					damagePlayer(0.0f, false);      // the death screen
 			}

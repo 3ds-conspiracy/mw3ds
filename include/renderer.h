@@ -37,6 +37,9 @@ extern float g_starAlpha;                         // the star dome: 0 by day
 void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3]);
 // Night Eye: light added to everything the world draws, people too (OpenMW: 0.7 x min(1, magnitude / 100) on the ambient)
 void rendererSetNightEye(float add);
+// Under water (OpenMW's FogManager): the fog starts (1 - fogDepth) of the view from the eye, behind it, to the view's end
+void rendererSetUnderwater(bool on, float fogDepth);
+void rendererFogRange(float& start, float& end);   // the outdoor / indoor fog the last frame was drawn with
 // Gamma (gamma.h): the light the world is drawn with, light ^ (1 / gamma), in the vertex shaders; 1: as Morrowind
 void rendererSetGamma(float gamma);
 float rendererCurve(float v);      // one 0..1 channel through it (the clear colour)
@@ -45,6 +48,10 @@ float rendererCurve(float v);      // one 0..1 channel through it (the clear col
 static const int kActorLights = 2;
 void rendererSetActorLights(int count, const float pos[][3], const float radius[], const float rgb[][3]);
 extern C3D_Tex* g_starTexture;
+// The weathers' cloud pictures: now's, and the next one's while the weather changes (g_cloudBlend its share,
+// OpenMW's cloud blend factor); none: the cell's own sky picture
+extern C3D_Tex* g_cloudTex[2];
+extern float g_cloudBlend;
 // Enchanted items' shimmer: dataDir/art/magicitem/caust00..31.t3x, read once (without them a plain tint)
 void rendererLoadCaustics(const char* dataDir);
 void rendererLoadWaterFrames(const char* dataDir, float fps);   // Morrowind's water surface frames, played at fps

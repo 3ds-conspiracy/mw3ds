@@ -1,7 +1,9 @@
 # Enchanted armour and clothing shimmer on NPCs too (OpenMW's addEnchantedGlow on every enchanted part), not only their
-# weapon: Ilen Faveran in Balmora's temple wears an enchanted Velothian helm and Shield of Light
+# weapon: Muldroni Rendas in Tel Branora's upper tower wears an enchanted Devil Mole Crab Helm and Shockmirror Robe.
+# (Was Ilen Faveran in Balmora's temple: OpenMW leaves her Velothian helm and Shield of Light in her pack, their rating
+# under her Unarmored, InventoryStore::autoEquipArmor, and so does the converter since bug-npc-autoequip)
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
-0.3 0 0 0 0 GOTO:Balmora,_Temple
+0.3 0 0 0 0 GOTO:Tel%Branora,%Upper%Tower
 3 0 0 0
-0.1 0 0 0 0 EXPECT:refglow:ilen%faveran:ge:2
+0.1 0 0 0 0 EXPECT:refglow:muldroni%rendas:ge:2

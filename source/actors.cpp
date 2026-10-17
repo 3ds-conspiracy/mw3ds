@@ -399,7 +399,7 @@ std::string actorRandomGroup(const ActorSet& set, const Actor& a, const char* pr
 bool actorMeshShown(const Actor& a, const ActorMesh& m)
 {
 	// (the torch while it's held out, the shield while it isn't)
-	if ((m.hand == 1 && !a.torchOut) || (m.hand == 2 && a.torchOut))
+	if ((m.hand == 1 && !a.torchOut) || (m.hand == 2 && (a.torchOut || a.bothHands)))
 		return false;
 	if (m.vis.empty())
 		return true;
@@ -546,6 +546,7 @@ bool actorsLoad(ActorSet& set, const char* path, const char* dataDir, const std:
 			rd(f, len);
 			std::string lib(len, '\0');
 			fread(&lib[0], 1, len, f);
+			memcpy(a.tint, tint, 3);
 			if (!readLibrary(set, a, std::string(dataDir) + "/" + lib, texNames, tint))
 			{
 				zclose(f);
@@ -642,6 +643,15 @@ bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode)
 	a.mode = mode;
 	a.loopsLeft = -1;
 	a.time = actorSkeleton(set, a.skeleton).groups[g].start;
+	// Both hands busy: fists, a spell, a two-handed weapon, a bow or crossbow (their groups: AttackHH, IdleSpell,
+	// CastTarget, RunForward2c, AttackBow ...); the shield is put away then (OpenMW's updateCarriedLeftVisible: the
+	// hand-to-hand and spell weapon types count as two-handed)
+	char name[sizeof(actorSkeleton(set, a.skeleton).groups[g].name) + 1] = {};
+	memcpy(name, actorSkeleton(set, a.skeleton).groups[g].name, sizeof(name) - 1);
+	size_t n = strlen(name);
+	auto ends = [&](const char* t) { size_t k = strlen(t); return n >= k && strcasecmp(name + n - k, t) == 0; };
+	a.bothHands = ends("HH") || ends("2c") || ends("2w") || ends("Bow") || ends("Spell") || strncasecmp(name, "Cast", 4) == 0
+		|| strncasecmp(name, "Spell", 5) == 0;
 	return true;
 }
 
@@ -784,7 +794,15 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 		a.lastXY[1] = y;
 		a.time += dt * a.rate;
 		const AnimGroup& g = sk.groups[a.group];
-		if (a.time >= g.stop)
+		// A looping group with its own Loop Stop before Stop goes round from there back to Loop Start while loops are
+		// left, then plays on to Stop (OpenMW's AnimState); equal loop keys hold that frame (the jump in the air)
+		if (a.mode == ANIM_LOOP && a.loopsLeft != 0 && g.loopStop < g.stop && g.loopStart <= g.loopStop && a.time >= g.loopStop)
+		{
+			if (a.loopsLeft > 0)
+				a.loopsLeft--;
+			a.time = g.loopStart;
+		}
+		else if (a.time >= g.stop)
 		{
 			if (a.mode == ANIM_LOOP && a.loopsLeft != 0)
 			{

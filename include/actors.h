@@ -1,6 +1,7 @@
 #pragma once
 
 #include <3ds.h>
+#include <algorithm>
 #include <citro3d.h>
 #include <string>
 #include <vector>
@@ -131,11 +132,24 @@ struct Actor
 	float lastXY[2] = { 1e9f, 1e9f };  // where it stood last frame
 	bool showWeapon = false;
 	bool torchOut = false;             // holds its torch out (night, out of a fight: World::actorTorchOut)
+	bool bothHands = false;            // its group uses both hands (fists, a spell, two-handed weapons): no shield shown
+	float alpha = 1.0f;                // drawn see-through below 1: Invisibility, Chameleon (actorSeeThrough)
+	u8 tint[3] = { 64, 64, 64 };       // the light where it was placed (x 64), its library meshes lit by it
 	float torchTime = -1.0f;           // the left arm's own time in the Torch group while the torch is out
 	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
 	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline
 	bool frozen = false;               // held where it is in its group (the test driver's POSE): no time passes, no other group starts
 };
+
+// How solid an actor is drawn under Invisibility and Chameleon (OpenMW's CharacterController::setVisibility): invisible,
+// the player 0.25 and anyone else 0.05; Chameleon then x (1 - magnitude / 100) held to 0.25 .. 0.75
+inline float actorSeeThrough(bool player, float invisibility, float chameleon)
+{
+	float a = invisibility > 0.0f ? (player ? 0.25f : 0.05f) : 1.0f;
+	if (chameleon > 0.0f)
+		a *= std::min(0.75f, std::max(0.25f, 1.0f - chameleon / 100.0f));
+	return a;
+}
 
 struct ActorSet
 {

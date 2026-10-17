@@ -680,13 +680,21 @@ void Session::drawOptions()
 		const char* how = sensor == SENSOR_QTM ? "Auto gamma checks the light every few seconds."
 			: sensor == SENSOR_CAMERA ? "Auto gamma uses the inner camera at loads."
 			: "No light sensor: Auto gamma stays off.";
-		uiText(10, 140, 0.4f, col::textDim, how);
-		uiText(10, 155, 0.4f, col::textDim, "1.00 is Morrowind's own; higher helps in sunlight.");
-		uiText(10, 170, 0.4f, col::textDim, "The dark stays dark: torches still matter.");
+		// Dynamic view: on, the outdoor view (OpenMW's, 7168 at the most) shortens while frames run long, the fog moving
+		// in with it; off, always the whole view
+		if (choice(134, "Dynamic view", onOff(dynamicView)))
+		{
+			dynamicView = !dynamicView;
+			changed = true;
+			notify(dynamicView ? "Dynamic view on: the fog closes in when the game slows down."
+				: "Dynamic view off: always the full view, however slow.");
+		}
+		uiText(10, 162, 0.4f, col::textDim, how);
+		uiText(10, 176, 0.4f, col::textDim, "Gamma 1.00 is Morrowind's own; higher helps in sun.");
 		if (gammaAutoOn())
 		{
 			snprintf(text, sizeof(text), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
-			uiText(10, 188, 0.4f, col::textDim, text);
+			uiText(10, 190, 0.4f, col::textDim, text);
 		}
 		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
 		closing = b == 1;
@@ -694,6 +702,7 @@ void Session::drawOptions()
 		{
 			g_gammaPct = 100;
 			g_autoGamma = -1;
+			dynamicView = true;
 			changed = true;
 		}
 	}

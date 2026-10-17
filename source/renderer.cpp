@@ -319,6 +319,23 @@ static void setMoreLights(u8 mask)
 static bool s_uvOverrideOn = false;
 static float s_uvOverride[2] = { 0.0f, 0.0f };
 
+static float s_lastFog[2] = { 0.0f, 0.0f };
+
+void rendererFogRange(float& start, float& end)
+{
+	start = s_lastFog[0];
+	end = s_lastFog[1];
+}
+
+static bool s_underwaterOn = false;
+static float s_underwaterFog = 3.0f;
+
+void rendererSetUnderwater(bool on, float fogDepth)
+{
+	s_underwaterOn = on;
+	s_underwaterFog = fogDepth;
+}
+
 void rendererAlphaScale(float a)
 {
 	// texture combiner 3 (after the fog and the glow): alpha x this, colour as it is
@@ -747,13 +764,14 @@ static int batchPass(const CellBatch& b)
 
 // GPU-skinned actor meshes (ActorMesh::gpuSkin) the actor loop queued, drawn with skin.v.pica after it: one switch of
 // program for them all. Each sends its bone palette (3 rows a bone) and draws its packed vertices as they are
-struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; };
+struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; float alpha = 1.0f; };
 static std::vector<SkinDraw> s_skinQueue;
 
 // Blended draws of the frame, drawn back to front after everything solid (OpenMW's SORT_BACK_TO_FRONT bin): the
 // cell's blended batches by their bounds' middle, actors' rigid blended meshes by the actor. A Khajiit's ears (blended
 // hair) were drawn before the tapestry behind them, which then painted over them
-struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr; };
+struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr;
+	float alpha = 1.0f; };            // (an actor drawn see-through: Invisibility, Chameleon)
 static std::vector<BlendDraw> s_blendQueue;
 
 // An actor's mesh as a batch: its flags' 128 is the weapon's (ACTOR_MESH_WEAPON), not BATCH_RISE, which a torch's fire
@@ -785,6 +803,9 @@ static int drawSkinQueue(float time)
 			b.posScale[k] = m.posQ;
 		b.uvScale[0] = b.uvScale[1] = m.uvQ;
 		b.stride = CELL_VERTEX_SIZE_PACKED;          // (the scales go up as for a packed cell batch)
+		bool ghost = d.alpha < 0.999f;
+		if (ghost)
+			b.flags |= BATCH_BLEND;
 		setModelView(d.mv);
 		setBatchState(batchTexture(*d.cell, b), b, DRAW_WORLD, time);
 		bindVertexFormat(b);
@@ -809,11 +830,15 @@ static int drawSkinQueue(float time)
 		bool flat = m.glow && !s_caustCount;
 		if (flat)
 			glowStage(m.glow);
+		if (ghost)
+			rendererAlphaScale(d.alpha);
 		C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
+		if (ghost)
+			rendererAlphaScale(1.0f);
 		if (flat)
 			glowStage(0);
 		draws++;
-		if (m.glow && s_caustCount)
+		if (m.glow && s_caustCount && !ghost)
 		{
 			// Enchanted armour and clothing shimmer as OpenMW's glow does: the caustic frames in the enchantment's
 			// colour added over the item (a second pass, as for a weapon). The colour added flat over the whole item
@@ -851,7 +876,7 @@ static int drawBlendQueue(float time)
 		if (bd.skinned)
 		{
 			// (a blended skinned mesh: drawn with skin.v.pica on its own, in its place in the order)
-			s_skinQueue.push_back({ bd.cell, bd.skinned, bd.mesh, bd.mv });
+			s_skinQueue.push_back({ bd.cell, bd.skinned, bd.mesh, bd.mv, bd.alpha });
 			draws += drawSkinQueue(time);
 			continue;
 		}
@@ -862,13 +887,21 @@ static int drawBlendQueue(float time)
 		{
 			const ActorMesh& m = *bd.mesh;
 			CellBatch b = { m.tex, actorBatchFlags(m), m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+			bool ghost = bd.alpha < 0.999f;
+			if (ghost)
+			{
+				b.flags |= BATCH_BLEND;
+				rendererAlphaScale(bd.alpha);
+			}
 			bool flat = m.glow && !s_caustCount;
 			if (flat)
 				glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)
 			drawBatch(*bd.cell, b, DRAW_WORLD, time);
+			if (ghost)
+				rendererAlphaScale(1.0f);
 			if (flat)
 				glowStage(0);
-			else if (m.glow)
+			else if (m.glow && !ghost)
 			{
 				drawShimmer(b, m.glow);
 				draws++;
@@ -902,6 +935,8 @@ static int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, co
 std::vector<SkyBillboard> g_skyBillboards;
 float g_starAlpha = 0.0f;
 C3D_Tex* g_starTexture = nullptr;
+C3D_Tex* g_cloudTex[2] = { nullptr, nullptr };
+float g_cloudBlend = 0.0f;
 
 // The stars (a dome, tiled) and the sun / moons (squares toward the eye) around the camera, no depth
 static void drawSkyBodies(const C3D_Mtx& view, bool secondEye)
@@ -1062,12 +1097,21 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	Cell& here = w.here();
 	bindPipeline();
 	bool fog = here.fogEnd > 0.0f;
-	float fogStart = here.fogStart * fogScale, fogEnd = here.fogEnd * fogScale;
+	const float viewEnd = here.fogEnd;
+	float fogStart = here.fogStart * fogScale, fogEnd = viewEnd * fogScale;
 	// (outdoors the weather says where the fog starts, as OpenMW: a storm's from the eye)
 	if (fog && !(here.flags & CELL_INTERIOR) && w.weatherFogStart() > -1.5f)
-		fogStart = fogEnd * w.weatherFogStart();
+	{
+		// (at OpenMW's distance: its view distance x (1 - the weather's land fog depth), 2200 on a clear day, closing in
+		// with our view; ours reaches farther, and the fog spread over it left far things crisper than OpenMW's)
+		fogStart = fminf(fogEnd, kInteriorFogView * fogScale) * w.weatherFogStart();
+	}
+	if (fog && s_underwaterOn)
+		fogStart = fogEnd * (1.0f - s_underwaterFog);
 	// (outdoors: the distant land's reach, at least the detailed view's)
-	float horizonEnd = fog && !(here.flags & CELL_INTERIOR) ? fmaxf(fogEnd, here.fogEnd * s_horizonScale) : fogEnd;
+	float horizonEnd = fog && !(here.flags & CELL_INTERIOR) ? fmaxf(fogEnd, viewEnd * s_horizonScale) : fogEnd;
+	s_lastFog[0] = fog ? fogStart : 0.0f;
+	s_lastFog[1] = fog ? fogEnd : 0.0f;
 	float farPlane = fog ? horizonEnd + 500.0f : kInteriorFar;
 	float time = w.time;
 
@@ -1102,8 +1146,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	setLight(nullptr);
 	static const float kOne[3] = { 1, 1, 1 };
 
-	// Sky: centred on the camera (rotation only), no depth, no fog
-	if (!here.sky.empty() && (g_renderParts & RENDER_SKY))
+	// Sky: centred on the camera (rotation only), no depth, no fog. Not from under water: the water's colour fills what
+	// the fog hides (the clear colour), as OpenMW's underwater fog does
+	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !s_underwaterOn)
 	{
 		C3D_Mtx skyView = view;
 		skyView.r[0].w = skyView.r[1].w = skyView.r[2].w = 0.0f;
@@ -1120,13 +1165,46 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					c[i] = w.weatherColour(k == 0 ? 1 : 0, i);
 				setTint(c);
 			}
+			else if (layered && s_daylight)
+			{
+				// Clouds: the fog's colour lifted by 0.13 (OpenMW's SkyManager::setWeather, their emission), so a sunset's
+				// clouds stand out warm against its sky rather than taking the sky's own colour
+				float c[3];
+				for (int i = 0; i < 3; i++)
+					c[i] = w.weatherColour(1, i) + 0.13f;
+				setTint(c);
+				// in the weather's own picture (an overcast sky's grey blanket, an ash storm's brown); while it changes,
+				// now's fading out as the next one's fades in (OpenMW's two cloud layers)
+				if (g_cloudTex[0])
+				{
+					const CellBatch& cb = here.sky[k];
+					bool changing = g_cloudTex[1] && g_cloudBlend > 0.01f;
+					if (changing)
+					{
+						CellBatch fade = cb;
+						fade.flags |= BATCH_BLEND;
+						rendererAlphaScale(1.0f - g_cloudBlend);
+						drawBatchTex(g_cloudTex[0], fade, DRAW_SKY, time);
+						rendererAlphaScale(g_cloudBlend);
+						drawBatchTex(g_cloudTex[1], fade, DRAW_SKY, time);
+						rendererAlphaScale(1.0f);
+						draws += 2;
+					}
+					else
+					{
+						drawBatchTex(g_cloudTex[0], cb, DRAW_SKY, time);
+						draws++;
+					}
+					continue;
+				}
+			}
 			else
 				setTint(s_daylight ? s_skyTint : kOne);
 			drawBatch(here, here.sky[k], DRAW_SKY, time);
 			draws++;
 		}
 	}
-	if (!here.sky.empty() && (g_renderParts & RENDER_SKY))
+	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !s_underwaterOn)
 		drawSkyBodies(view, secondEye);
 	setModelView(view);
 	setTint(s_daylight ? s_land : kOne);
@@ -1338,15 +1416,17 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					place.r[3] = FVec4_New(0, 0, 0, 1);
 					Mtx_Multiply(&placeMv, &view, &place);
 				}
+				// (see-through under Invisibility or Chameleon: every mesh blended, in the back-to-front queue)
+				const bool ghost = a.alpha < 0.999f;
 				for (auto& m : a.meshes)
 				{
 					if (((m.flags & ACTOR_MESH_WEAPON) && !a.showWeapon) || !actorMeshShown(a, m))
 						continue;
 					if (far && m.numIndices < kActorDetailTris * 3)
 						continue;
-					if (m.gpuSkin && (m.flags & BATCH_BLEND))
+					if (m.gpuSkin && ((m.flags & BATCH_BLEND) || ghost))
 					{
-						s_blendQueue.push_back({ d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a });
+						s_blendQueue.push_back({ d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a, a.alpha });
 						continue;
 					}
 					if (m.gpuSkin)
@@ -1354,9 +1434,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						s_skinQueue.push_back({ &l->cell, &a, &m, placeMv });
 						continue;
 					}
-					if (m.flags & BATCH_BLEND)
+					if ((m.flags & BATCH_BLEND) || ghost)
 					{
-						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0 };
+						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, nullptr, a.alpha };
 						if (m.bone >= 0 && m.kind != ACTOR_SKINNED)
 						{
 							C3D_Mtx model;
@@ -1478,6 +1558,9 @@ bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float to
 
 // ---- Extra meshes after the world: projectiles in flight, then the first-person view model
 
+// (rendererDrawActor's actor drawn see-through: its alpha, Invisibility or Chameleon)
+static float s_meshAlpha = 1.0f;
+
 void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 {
 	C3D_Mtx mv;
@@ -1487,6 +1570,14 @@ void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 		mv = s_view;
 	setModelView(mv);
 	CellBatch b = { -1, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
+	if (s_meshAlpha < 0.999f)
+	{
+		b.flags |= BATCH_BLEND;
+		rendererAlphaScale(s_meshAlpha);
+		drawBatchTex(tex, b, DRAW_WORLD, s_time);
+		rendererAlphaScale(1.0f);
+		return;
+	}
 	drawBatchTex(tex, b, DRAW_WORLD, s_time);
 }
 
@@ -1607,6 +1698,7 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 			s_eyeShift * 0.5f, kViewModelFocus, false);
 		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uProjection, &projection);
 	}
+	s_meshAlpha = viewModel ? 1.0f : a.alpha;
 	for (int pass = 0; pass < 2; pass++)
 		for (auto& m : a.meshes)
 		{
@@ -1615,8 +1707,9 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 			C3D_Tex* tex = m.tex >= 0 && m.tex < (int)textures.size() ? textures[m.tex] : nullptr;
 			C3D_Mtx model;
 			actorMeshMatrix(a, m, &model);
-			rendererDrawMeshGlow(m, &model, tex, m.glow);     // (an enchanted item shimmers)
+			rendererDrawMeshGlow(m, &model, tex, s_meshAlpha < 0.999f ? 0 : m.glow);     // (an enchanted item shimmers)
 		}
+	s_meshAlpha = 1.0f;
 	if (viewModel)
 	{
 		C3D_DepthMap(true, -1.0f, 0.0f);

@@ -1062,6 +1062,7 @@ bool gameLoad(GameData& g, const char* path)
 		t.flashDecrement = (float)num(wty, "flash_decrement", t.flashDecrement);
 		t.cloudsMax = (float)num(wty, "clouds_max", t.cloudsMax);
 		t.precip = num(wty, "precip", 0.0) != 0.0;
+		t.clouds = str(wty, "clouds");
 		g.weatherTypes.push_back(t);
 	}
 	g.weatherHours = (float)num(root, "weather_hours", 20.0);

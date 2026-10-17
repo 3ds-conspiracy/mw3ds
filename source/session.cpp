@@ -647,6 +647,7 @@ void Session::loadSettings()
 		else if (strncmp(line, "geaim=", 6) == 0) g_geAimSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 6)));
 		else if (strncmp(line, "inverty=", 8) == 0) g_invertY = strncmp(line + 8, "on", 2) == 0;
 		else if (strncmp(line, "subtitles=", 10) == 0) g_subtitles = strncmp(line + 10, "off", 3) != 0;
+		else if (strncmp(line, "dynview=", 8) == 0) dynamicView = strncmp(line + 8, "off", 3) != 0;
 	}
 	fclose(f);
 	// (off at every start for now, whatever was saved: gyro aim is still to be tried on the device; the sensitivity is kept)
@@ -671,6 +672,7 @@ void Session::saveSettings()
 		fprintf(f, "autogamma=%s\n", g_autoGamma ? "on" : "off");
 	fprintf(f, "lookspeed=%d\ngeturn=%d\ngeaim=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_geAimSpeed, g_invertY ? "on" : "off");
 	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
+	fprintf(f, "dynview=%s\n", dynamicView ? "on" : "off");
 	fclose(f);
 }
 
@@ -768,6 +770,7 @@ void Session::finishTravel()
 		w.relocate(followers[k], c, pos, w.player.yaw);
 	}
 	fade = 1.0f;
+	fadeRate = 1.0f;                     // (back over a second, as OpenMW's TravelWindow: fadeScreenIn(1))
 	if (!autotest)
 		save();
 	logf("travel: %s in %llu ms, feet %.0f %.0f %.0f", w.cellName().c_str(), osGetTime() - start,
@@ -1182,6 +1185,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 				{
 					breath = 0.0f;
 					w.stats.health -= w.game.gmstf("fsuffocationdamage", 3.0f) * dt;
+					hurtFlashOngoing();
 				}
 			}
 		}
@@ -1963,23 +1967,31 @@ void Session::updateSky()
 		out[1] = -sinf(a) * sinf(t);
 		out[2] = sinf(a) * cosf(t);
 	};
-	// the sun
-	float st = (h - sky.sunrise) / fmaxf(1.0f, sky.sunset - sky.sunrise);
-	if (st > -0.05f && st < 1.05f)
+	// the sun: from sunrise to the end of sunset (OpenMW's night start), along Morrowind's fixed line across the sky,
+	// (400 x orbit, -75, 100), orbit 1 at sunrise to -1 at night (OpenMW's WeatherManager::update)
+	const WeatherClock& wc = w.game.weatherClock;
+	float dayLength = fmaxf(1.0f, wc.sunset + wc.sunsetDur - wc.sunrise);
+	float st = (h - wc.sunrise) / dayLength;
+	if (st > 0.0f && st < 1.0f)
 	{
+		// (sizes as OpenMW's: the sun a 450-unit quad 1000 away, its flash 2.6 times that, the moons 450 x size / 125;
+		// the billboards here sit 2700 away and take half their width)
 		SkyBillboard sun = {};
-		toDir(st * 180.0f, 30.0f, sun.dir);
-		sun.size = 150.0f;
+		float orbit = 1.0f - 2.0f * st, len = sqrtf(160000.0f * orbit * orbit + 75.0f * 75.0f + 100.0f * 100.0f);
+		sun.dir[0] = 400.0f * orbit / len;
+		sun.dir[1] = -75.0f / len;
+		sun.dir[2] = 100.0f / len;
+		sun.size = 0.5f * 450.0f * 2.7f;
 		sun.tex = skyTex(sky.sun);
-		float edge = fminf(1.0f, fminf(st + 0.05f, 1.05f - st) * 8.0f);
+		float edge = fminf(1.0f, fminf(st, 1.0f - st) * 20.0f);
 		u8 a = (u8)(255 * clear * fmaxf(0.0f, edge));
 		sun.rgba = 0x00FFFFFF | ((u32)a << 24);
 		g_skyBillboards.push_back(sun);
 		SkyBillboard glare = sun;
-		glare.size = 420.0f;
+		glare.size = sun.size * 2.6f;              // the sun flash (tx_sun_flash_grey_05), white, as bright as the sun
 		glare.tex = skyTex(sky.glare);
-		glare.additive = true;
-		glare.rgba = ((u32)(a * 0.45f) << 24) | 0x2F5FDE;     // Sun Glare Fader Color 222, 95, 39 (as ABGR)
+		glare.additive = false;                    // (blended by its own alpha, as OpenMW's sky draws it)
+		glare.rgba = 0x00FFFFFF | ((u32)a << 24);
 		g_skyBillboards.push_back(glare);
 	}
 	// the moons
@@ -2013,7 +2025,7 @@ void Session::updateSky()
 			continue;
 		SkyBillboard mb = {};
 		toDir(angle, md.axisOffset, mb.dir);
-		mb.size = md.size * 2.2f;
+		mb.size = 0.5f * 450.0f * md.size / 125.0f * 2.7f;
 		mb.tex = skyTex(m == 0 ? sky.masser[phase] : sky.secunda[phase]);
 		mb.rgba = 0x00FFFFFF | ((u32)(alpha * 255) << 24);
 		g_skyBillboards.push_back(mb);
@@ -2029,6 +2041,14 @@ void Session::updateSky()
 		night = 1.0f - (h - endH) / 2.0f;
 	g_starAlpha = night * clear;
 	g_starTexture = skyTex(sky.stars);
+	// the clouds: the weather's own picture, and the next weather's while it changes
+	int n = (int)w.game.weatherTypes.size();
+	g_cloudTex[0] = n ? skyTex(w.game.weatherTypes[std::min(w.weatherNow, n - 1)].clouds) : nullptr;
+	g_cloudTex[1] = n && w.weatherNext != w.weatherNow ? skyTex(w.game.weatherTypes[std::min(w.weatherNext, n - 1)].clouds) : nullptr;
+	g_cloudBlend = g_cloudTex[1] ? w.weatherBlend : 0.0f;
+	for (C3D_Tex* t : g_cloudTex)
+		if (t)
+			C3D_TexSetWrap(t, GPU_REPEAT, GPU_REPEAT);
 }
 
 void Session::updateWeatherEffects(float dt)

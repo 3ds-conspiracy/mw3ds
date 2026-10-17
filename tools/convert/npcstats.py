@@ -129,6 +129,77 @@ def best_shield(rec, objects):
     return best
 
 
+# Equipment slots (OpenMW's InventoryStore::Slot_*), and the ones each ARMO / CLOT type goes in (getEquipmentSlots:
+# bracers take the gauntlets' slots, shoes the boots', gloves the gauntlets', a ring either hand)
+EQ_HELMET, EQ_CUIRASS, EQ_GREAVES, EQ_LPAULDRON, EQ_RPAULDRON, EQ_LGAUNTLET, EQ_RGAUNTLET, EQ_BOOTS = range(8)
+EQ_SHIRT, EQ_PANTS, EQ_SKIRT, EQ_ROBE, EQ_LRING, EQ_RRING, EQ_AMULET, EQ_BELT, EQ_LEFT = range(8, 17)
+ARMOR_EQ = [[EQ_HELMET], [EQ_CUIRASS], [EQ_LPAULDRON], [EQ_RPAULDRON], [EQ_GREAVES], [EQ_BOOTS], [EQ_LGAUNTLET],
+            [EQ_RGAUNTLET], [EQ_LEFT], [EQ_LGAUNTLET], [EQ_RGAUNTLET]]
+CLOTH_EQ = [[EQ_PANTS], [EQ_BOOTS], [EQ_SHIRT], [EQ_BELT], [EQ_ROBE], [EQ_RGAUNTLET], [EQ_LGAUNTLET], [EQ_SKIRT],
+            [EQ_LRING, EQ_RRING], [EQ_AMULET]]
+PART_HEAD, PART_RFOOT, PART_LFOOT = 0, 15, 16
+
+
+def item_part_types(rec):
+    return [d[0] for t, d in rec.subs if t == "INDX"]
+
+
+def worn_items(rec, objects, skills, beast):
+    """What the NPC wears of what it carries, as OpenMW's InventoryStore::autoEquipArmor picks it: armor before
+    clothing (the inventory's type order), each in carried order; armor no better than Unarmored
+    ((fUnarmoredBase1 x skill) x (fUnarmoredBase2 x skill)) stays in the pack; a beast can't put on a full helm or
+    anything for the feet; a later piece takes a filled slot only if it is armor of the same type with a higher
+    skill-adjusted rating, armor of a lower type number (a gauntlet over a bracer), armor over clothing, or clothing
+    worth more over clothing. {slot: record}"""
+    unarmored = (0.1 * skills[SKILL_UNARMORED]) * (0.065 * skills[SKILL_UNARMORED])
+    recs = [objects.get(item.lower()) for _, item in npc_items(rec)]
+    armor = [r for r in recs if r is not None and r.tag == "ARMO"]
+    cloth = [r for r in recs if r is not None and r.tag == "CLOT"]
+    slots = {}
+
+    def rating(r):
+        d = r.get("AODT")
+        kind, weight, value = struct.unpack_from("<i", d)[0], struct.unpack_from("<f", d, 4)[0], struct.unpack_from("<i", d, 20)[0]
+        if weight == 0 or not 0 <= kind < len(ARMOR_BASE_WEIGHT):
+            return value
+        base = ARMOR_BASE_WEIGHT[kind]
+        skill = SKILL_LIGHT if weight <= base * 0.6 + 0.0005 else SKILL_MEDIUM if weight <= base * 0.9 + 0.0005 else SKILL_HEAVY
+        return value * skills[skill] / 30.0
+
+    for r in armor + cloth:
+        is_armor = r.tag == "ARMO"
+        kind = struct.unpack_from("<i", r.get("AODT" if is_armor else "CTDT"))[0]
+        table = ARMOR_EQ if is_armor else CLOTH_EQ
+        if not 0 <= kind < len(table):
+            continue
+        if is_armor and rating(r) <= unarmored:
+            continue
+        if beast and any(p in (PART_HEAD, PART_RFOOT, PART_LFOOT) for p in item_part_types(r)):
+            continue
+        for slot in table[kind]:
+            old = slots.get(slot)
+            if old is not None:
+                if not is_armor:
+                    if old.tag != "CLOT":
+                        continue
+                    if slot == EQ_LRING and (slots.get(EQ_RRING) is None or
+                                             struct.unpack_from("<h", slots[EQ_RRING].get("CTDT"), 8)[0] <=
+                                             struct.unpack_from("<h", old.get("CTDT"), 8)[0]):
+                        continue
+                    if struct.unpack_from("<h", r.get("CTDT"), 8)[0] <= struct.unpack_from("<h", old.get("CTDT"), 8)[0]:
+                        continue
+                elif old.tag == "ARMO":
+                    old_kind = struct.unpack_from("<i", old.get("AODT"))[0]
+                    if old_kind == kind:
+                        if rating(r) <= rating(old):
+                            continue
+                    elif old_kind < kind:
+                        continue
+            slots[slot] = r
+            break
+    return slots
+
+
 # Weapon type -> skill
 MELEE_SKILL = {0: SKILL_SHORT_BLADE, 1: SKILL_LONG_BLADE, 2: SKILL_LONG_BLADE, 3: SKILL_BLUNT, 4: SKILL_BLUNT,
                5: SKILL_BLUNT, 6: SKILL_SPEAR, 7: SKILL_AXE, 8: SKILL_AXE}
@@ -255,6 +326,14 @@ def travel_destinations(rec):
     return out
 
 
+def preferred_shield(rec, db, skills):
+    """The shield it takes up: the one autoEquip puts on it (OpenMW's getPreferredShield)."""
+    race = db["RACE"].get((rec.zstr("RNAM") or "").lower())
+    beast = race is not None and struct.unpack_from("<i", race.get("RADT"), 136)[0] & 2
+    shield = worn_items(rec, db["objects"], skills, beast).get(EQ_LEFT)
+    return shield.id if shield is not None else ""
+
+
 def npc_stats(rec, db):
     bind(db)
     npdt = rec.get("NPDT")
@@ -278,7 +357,7 @@ def npc_stats(rec, db):
     magicka = int(attrs[1] * 2.0)                       # intelligence x fNPCbaseMagickaMult
     return {"attributes": attrs, "skills": skills, "health": max(int(health), 0), "fatigue": max(int(fatigue), 1),
             "magicka": magicka, "gold": max(gold, 0), "fight": fight, "flee": flee, "services": services,
-            "weapon": weapon or "", "ammo": ammo or "", "shield": best_shield(rec, db["objects"]) or "",
+            "weapon": weapon or "", "ammo": ammo or "", "shield": preferred_shield(rec, db, skills),
             "combat_spells": combat_spells(rec, db["SPEL"]), "armor": armor_rating(rec, db["objects"], skills),
             "travel": travel_destinations(rec),
             # AI_W: how far from their spot they stroll (0 = they stay put)

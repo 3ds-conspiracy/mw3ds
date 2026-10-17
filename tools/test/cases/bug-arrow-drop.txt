@@ -1,0 +1,19 @@
+# Arrows, bolts and thrown weapons fall a little in flight, their nose following the path: OpenMW's moveProjectiles
+# takes a tenth of the world's gravity off their climb each second (9.8 x 69.99 x 0.1, about 69 units a second), so a
+# shot drops some 34 units over 3000. Spell bolts fly straight. Ours flew every arrow dead straight. A drawn long bow,
+# let go: half a second later the arrow climbs some 34 units a second less than as it left
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:30
+0.3 0 0 0 0 GIVE:long%bow
+0.3 0 0 0 0 GIVE:iron%arrow:20
+0.3 0 0 0 0 EQUIP:long%bow
+0.3 0 0 0 0 EQUIP:iron%arrow
+1.5 0 0 0 0 X
+1.6 0 0 0 0 X
+0.1 0 0 0 0 X
+0.05 0 0 0
+0.02 0 0 0 0 SNAP:arrowvz+EXPECT:arrowvz:gt:-9999
+0.5 0 0 0
+0.02 0 0 0 0 EXPECT:arrowvz:le:@-25+EXPECT:arrowvz:ge:@-45
+1 0 0 0

@@ -105,8 +105,8 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 			if (!o || (o->type != "CLOT" && o->type != "ARMO"))
 				continue;
 			int l = o->type == "ARMO" ? 1 : o->subtype == CLOT_SKIRT ? 2 : o->subtype == CLOT_ROBE ? 3 : 0;
-			if (l != layer || (o->type == "ARMO" && o->subtype == 8 && !weaponOut))
-				continue;                 // a shield shows while fighting
+			if (l != layer)
+				continue;                 // (a shield shows on the arm, weapon out or not: OpenMW's updateCarriedLeftVisible)
 			if (o->type == "CLOT" && o->subtype == CLOT_ROBE)
 				for (int s : kRobeHides)
 					part[s].clear();
@@ -182,6 +182,8 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 			ActorMesh copy = m;
 			copy.tex = textures.size();
 			copy.glow = glow[s];
+			if (s == SLOT_SHIELD)
+				copy.hand = 2;            // put away while both hands are busy (Actor::bothHands)
 			textures.push_back(p->textures[m.tex]);
 			a.meshes.push_back(copy);
 		}
@@ -283,7 +285,16 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 			}
 		}
 	}
-	if (!busy)
+	const AnimGroup* cur = a.group >= 0 && a.group < (int)sk.groups.size() ? &sk.groups[a.group] : nullptr;
+	if (!busy && !act.airborne && group == "Jump" && cur && strncmp(cur->name, "Jump", 4) == 0 && cur->loopStop < cur->stop)
+	{
+		// Touching down: the jump's landing, Loop Stop to Stop, plays once before the walk or idle (OpenMW's
+		// JumpState_Landing; in the air the jump held at its loop)
+		a.mode = ANIM_ONCE;
+		a.time = cur->loopStop;
+		group = "";
+	}
+	else if (!busy)
 	{
 		// Walking, running and sneaking the way the stick goes against the facing (OpenMW's movement states: forward,
 		// back, left, right), in the air the jump, standing; with a weapon out, its ready stance when the skeleton has
@@ -295,7 +306,7 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 		a.swimming = swimming;
 		std::string want = swimming ? (speed <= 10.0f ? "Idle" : std::string(speed > 200.0f ? "Run" : "Walk") + dir)
 			: act.airborne ? "Jump"
-			: speed <= 10.0f ? "Idle"
+			: speed <= 10.0f ? (sneaking ? "IdleSneak" : "Idle")     // (crouched still: OpenMW's CharState_IdleSneak)
 			: std::string(act.flying ? "Walk" : sneaking ? "Sneak" : speed > 200.0f ? "Run" : "Walk") + dir;   // (OpenMW: no run or sneak in the air)
 		if (want != group || weaponOut != stanceOut || swimming != swimOut)
 		{
@@ -306,6 +317,8 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 			std::string forward = want.substr(0, want.size() - strlen(dir)) + "Forward";
 			if (!stance.empty() && actorFindGroup(sk, stance.c_str()) >= 0 && actorPlay(set, a, stance.c_str(), ANIM_LOOP))
 				group = want;
+			else if (want == "IdleSneak" && actorFindGroup(sk, "IdleSneak") < 0 && actorPlay(set, a, "Idle", ANIM_IDLE))
+				group = want;     // (data without it: standing, as OpenMW falls back to the idle)
 			else if (actorPlay(set, a, want.c_str(), want == "Idle" ? ANIM_IDLE : ANIM_LOOP) || want == "Idle")
 				group = want;
 			else if (speed > 10.0f && !act.airborne && actorPlay(set, a, forward.c_str(), ANIM_LOOP))
@@ -315,6 +328,20 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 		}
 	}
 	actorAnimate(set, a, step);
+}
+
+bool PlayerBody::loopTimes(float& time, float& loopStart, float& loopStop) const
+{
+	if (!ready || set.actors.empty())
+		return false;
+	const Actor& a = set.actors[0];
+	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	if (a.group < 0 || a.group >= (int)sk.groups.size())
+		return false;
+	time = a.time;
+	loopStart = sk.groups[a.group].loopStart;
+	loopStop = sk.groups[a.group].loopStop;
+	return true;
 }
 
 const char* PlayerBody::playing() const

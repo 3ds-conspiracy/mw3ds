@@ -13,7 +13,7 @@ import numpy as np
 from meshes import extract_shapes, nif_local, ref_matrix
 from mwfiles import text
 from nif import Nif
-from npcstats import bind, npc_items, npc_stats
+from npcstats import bind, npc_items, npc_stats, worn_items
 
 # Part reference slots (ESM INDX values) -> skeleton bone they attach to
 PART_BONES = [
@@ -181,7 +181,15 @@ class NpcBuilder:
         parts[SLOT_HAIR] = npc.zstr("KNAM")
         if self.db:
             bind(self.db)
-        items = [self.objects.get(item.lower()) for _, item in npc_items(npc)]
+        # What they wear of what they carry: OpenMW's autoEquip (two helms carried, the better one worn; a beast's
+        # feet and full helms left in the pack)
+        if self.db:
+            race = self.races.get(race_id)
+            beast = race is not None and struct.unpack_from("<i", race.get("RADT"), 136)[0] & 2
+            worn = worn_items(npc, self.objects, npc_stats(npc, self.db)["skills"], beast)
+            items = [r for r in worn.values()]
+        else:
+            items = [self.objects.get(item.lower()) for _, item in npc_items(npc)]
 
         def clothing_type(rec):
             return struct.unpack_from("<i", rec.get("CTDT"))[0] if rec.tag == "CLOT" else -1
@@ -235,7 +243,15 @@ class NpcBuilder:
             bone_name = PART_BONES[slot]
             bone = bones.get(bone_name.lower())
             mirror = bone_name.startswith("Left")
-            for i, s in enumerate(extract_shapes(self.arch, nif, skeleton=bones)):
+            part_shapes = extract_shapes(self.arch, nif, skeleton=bones)
+            # A part model with a skinned shape is attached as a skin (OpenMW's SceneUtil::attach, CopyRigVisitor): only
+            # its skinned shapes named for the slot's bone are taken, its rigid ones dropped. The extravagant skirt also
+            # holds two rigid "Tri chest" pieces that, hung from the groin bone, floated over its wearer's head
+            # (Neminda, female Redoran guards)
+            as_skin = any(s["skinned"] for s in part_shapes)
+            for i, s in enumerate(part_shapes):
+                if as_skin and not s["skinned"]:
+                    continue
                 if s["skinned"]:
                     # Skinned part files can hold pieces for several slots (e.g. both hands
                     # plus a chest); a slot only takes the pieces named "Tri <bone>"

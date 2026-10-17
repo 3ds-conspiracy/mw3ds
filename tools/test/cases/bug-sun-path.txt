@@ -1,0 +1,13 @@
+# The sun crosses the sky as OpenMW (Morrowind) has it: along a fixed line, (400 x orbit, -75, 100), orbit 1 at sunrise
+# to -1 when sunset ends (WeatherManager::update), up from sunrise to the night's start (20:00); at noon it stands 47
+# degrees up (orbit 1 - 2 x 6 / 14). Its picture is a 450-unit quad 1000 away (CelestialBody), 12.7 degrees half wide,
+# with the flash 2.6 times that. Ours climbed a half circle tilted 30 degrees to 60 at noon, set at 18:00, and was a
+# quarter the size
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SETWEATHER:0+HOUR:12
+1 0 0 0 0 EXPECT:sunelev:ge:45+EXPECT:sunelev:le:49+EXPECT:sunsize:ge:12+EXPECT:sunsize:le:13.5
+0.3 0 0 0 0 HOUR:19
+1 0 0 0 0 EXPECT:sunelev:gt:0
+0.3 0 0 0 0 HOUR:21
+1 0 0 0 0 EXPECT:sunelev:eq:-1
+1 0 0 0

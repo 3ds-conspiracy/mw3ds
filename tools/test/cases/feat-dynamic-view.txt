@@ -1,0 +1,23 @@
+# Outdoors the view is OpenMW's and never farther: fog from its viewing distance (7168) x (1 - the weather's land fog
+# depth) to 7168 (FogManager::configure), 2222 to 7168 on a clear day (Seyda Neen). The dynamic view only shortens it
+# while frames run long (Session::viewScale), the fog moving in with it. Options > Video > Dynamic view off keeps the
+# whole view however slow; saved as dynview=. Reached as a player would (START, Options, R to Video)
+# (native draws only the frames a SHOT saves: each check follows one)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SETWEATHER:0+HOUR:12
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:eq:7168+EXPECT:fogrange:start:ge:2200+EXPECT:fogrange:start:le:2250
+0.3 0 0 0 0 VIEWSCALE:0.6
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:ge:4290+EXPECT:fogrange:end:le:4310+EXPECT:fogrange:start:le:1340
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:display
+0.3 0 0 0 0 TAP:217:145
+0.3 0 0 0 0 EXPECT:savedsetting:dynview:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:eq:7168
+1 0 0 0

@@ -1,0 +1,16 @@
+# Under Invisibility and Chameleon the player's own body (third person) is drawn see-through (OpenMW's
+# CharacterController::setVisibility: invisible, the player 0.25 and anyone else 0.05; Chameleon then x (1 - magnitude /
+# 100) held to 0.25 .. 0.75). It was drawn solid. A potion of Chameleon, then one of Invisibility on top of it
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+0.3 0 0 0 0 GIVE:p_invisibility_s:1
+0.3 0 0 0 0 GIVE:p_chameleon_e:1
+0.5 0 0 0 0 POV:third
+0.5 0 0 0 0 EXPECT:bodyalpha:eq:1+EXPECT:refalpha:fargoth:eq:1
+0.3 0 0 0 0 USE:p_chameleon_e
+1 0 0 0 0 EXPECT:bodyalpha:ge:0.25+EXPECT:bodyalpha:le:0.75
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 USE:p_invisibility_s
+1 0 0 0 0 EXPECT:bodyalpha:ge:0.0625+EXPECT:bodyalpha:le:0.1875+EXPECT:refalpha:fargoth:eq:1
+0.5 0 0 0 0 SHOT
+1 0 0 0

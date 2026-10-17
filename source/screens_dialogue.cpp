@@ -825,6 +825,7 @@ bool Session::trainSkill(int k)
 	w.gameHour += 2.0f;
 	rechargeItems(2.0f * 3600.0f / w.timescale());
 	fade = 1.0f;
+	fadeRate = 5.0f;                     // (OpenMW's TrainingWindow: fadeScreenIn(0.2))
 	logf("training: skill %d for %d gold", k, price);
 	return true;
 }

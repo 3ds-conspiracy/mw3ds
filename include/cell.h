@@ -49,8 +49,10 @@ static const int CELL_VERTEX_SIZE = 24;
 // Packed layout: s16 pos[4] (w unused), s16 uv[2], u8 rgba[4]
 static const int CELL_VERTEX_SIZE_PACKED = 16;
 
-// Exterior view distance (linear fog, world units); distant land fills in past the loaded 3 x 3
-static const float kExteriorFogStart = 3000.0f, kExteriorFogEnd = 12000.0f;
+// Exterior view distance (linear fog, world units): OpenMW's viewing distance, its default and Morrowind's farthest
+// slider setting, never farther; the dynamic view (Session::viewScale) only shortens it, the fog with it. The start is
+// the weather's (World::weatherFogStart: 2222 on a clear day)
+static const float kExteriorFogStart = 3000.0f, kExteriorFogEnd = 7168.0f;
 // Interiors fog over OpenMW's viewing distance (its default, 7168): from that x (1 - the cell's fog density) to it
 // (FogManager::configure, standard fog)
 static const float kInteriorFogView = 7168.0f;

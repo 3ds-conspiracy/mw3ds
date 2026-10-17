@@ -214,6 +214,10 @@ void Session::updateProjectiles(float dt)
 	{
 		Projectile& p = projectiles[i];
 		p.life -= dt;
+		// Arrows, bolts and thrown weapons fall a little, nose following their path: OpenMW's moveProjectiles pulls them
+		// down at a tenth of the world's gravity (9.8 m/s2 x 69.99 units a metre x 0.1); spell bolts fly straight
+		if (p.spell.empty() && !p.item.empty())
+			p.vel[2] -= 9.8f * 69.99f * 0.1f * dt;
 		float next[3] = { p.pos[0] + p.vel[0] * dt, p.pos[1] + p.vel[1] * dt, p.pos[2] + p.vel[2] * dt };
 		float best = 2.0f;
 		int victim = -2;                             // -2 nothing, -1 player, >= 0 ref

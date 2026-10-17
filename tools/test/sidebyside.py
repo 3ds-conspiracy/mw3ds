@@ -35,7 +35,8 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
                           scratch/final-scene.txt is our side)
     vfx=static pos=x,y,z after=t,...   that spell visual (a STAT the magic effects name) played on its own at pos and
                           the world stopped t seconds after it began: one shot per t (OpenMW: world.vfx.spawn; the 3DS:
-                          its VFX step); nobody near; ptex=texture gives it a particle texture (OpenMW's override);
+                          its VFX step); nobody near; ptex=texture gives it a particle texture (OpenMW's override),
+                          effect=n the magic effect whose particle texture the 3DS side gives it (the one with that PTEX);
                           stand=id puts that actor at pos, holding its idle, to wear it (the camera must look at pos)
     cast=id after=t,...   the player casts that spell (level, ahead) and the world stands still t seconds after the
                           cast began: one shot per t (bolts in flight, cast and hit visuals). The player stands at
@@ -67,7 +68,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[2]
-OPENMW = ROOT / "build" / "openmw-0.51"
+OPENMW = Path(os.environ.get("MW3DS_OPENMW") or ROOT / "build" / "openmw-0.51")
 # (MW3DS_SBS_DIR / MW3DS_SBS_SD: another OpenMW folder and native save folder, so several runs can go at once)
 SBS = Path(os.environ.get("MW3DS_SBS_DIR") or ROOT / "build" / "openmw-sbs")
 MOD = Path(__file__).resolve().parent / "sidebyside"
@@ -561,7 +562,8 @@ def vfx_steps(s):
         stand = [f"1 0 0 0 0 PLACEAT:{sid}:{fmt(px)}:{fmt(py)}:{fmt(pz)}", f"0.1 0 0 0 0 ENABLE:{sid}",
                  f"0.5 0 0 0 0 POSE:{s['spawn'].replace(' ', '%')}:{s['group']}:{min(s['at'], 0.998):.3f}:{s['face']}"]
     return ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view)] + stand + [
-            f"{fmt(s['after'])} 0 0 0 0 VFX:{s['vfx'].replace(' ', '_')}:{fmt(px)}:{fmt(py)}:{fmt(pz)}",
+            f"{fmt(s['after'])} 0 0 0 0 VFX:{s['vfx'].replace(' ', '_')}:{fmt(px)}:{fmt(py)}:{fmt(pz)}"
+            + (f":{int(s['effect'])}" if "effect" in s else ""),
             "0.1 0 0 0 0 HALT:on", "0.5 0 0 0 0 SHOT", "3 0 0 0 0 HALT:off"] + (
             [f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '_')}"] if "spawn" in s else [])
 

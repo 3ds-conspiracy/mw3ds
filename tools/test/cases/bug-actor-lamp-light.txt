@@ -1,0 +1,10 @@
+# People and creatures take the light where they stand (each placement's tint) with a lamp's share by how much of a
+# body faces it: OpenMW lights actors by their normals, so a lamp at body height reaches a standing figure's surface at
+# 1 / pi of its strength on average, the sun from above half. The converter gave lamps their whole strength: indoors,
+# beside a candle, people were twice as bright as OpenMW's against a room that matched (Socucius Ergalla in the census
+# office: tint 1.85 before, 0.98 after; Fargoth outdoors at noon unchanged). Needs data converted after the change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Seyda%Neen,%Census%and%Excise%Office
+2 0 0 0 0 EXPECT:reftint:chargen%class:le:1.3+EXPECT:reftint:chargen%class:ge:0.7
+1 0 0 0

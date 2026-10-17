@@ -205,14 +205,14 @@ static bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "torchlit" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown";
+		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "texlow" || what == "regionchance" || what == "regionweather"
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "torchlit" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown";
 }
 
 // "<a>,<b>" as two numbers
@@ -223,8 +223,10 @@ static void twoNumbers(const std::string& arg, float& a, float& b)
 	b = c == std::string::npos ? 0.0f : (float)atof(arg.c_str() + c + 1);
 }
 
-// How bright step shot n's top screen is, 0..255 (its pixels' mean); -1: no such shot
-static float shotLuma(int n)
+// How bright step shot n's top screen is, 0..255 (its pixels' mean); -1: no such shot. With spread: how far its pixels'
+// brightness (the mean of a pixel's three channels) strays from their mean instead (standard deviation: clouds against
+// the sky, a pattern against a flat colour)
+static float shotLuma(int n, bool spread = false)
 {
 	char path[64];
 	snprintf(path, sizeof(path), "sdmc:/3ds/mw3ds/shot_step_%02d.bmp", n);
@@ -236,10 +238,15 @@ static float shotLuma(int n)
 		u8* top = (u8*)malloc(half);
 		if (top && fseek(f, 54 + (long)half, SEEK_SET) == 0 && fread(top, half, 1, f) == 1)
 		{
-			double sum = 0.0;
-			for (size_t i = 0; i < half; i++)
-				sum += top[i];
-			v = (float)(sum / (double)half);
+			double sum = 0.0, sq = 0.0;
+			for (size_t i = 0; i < half; i += 3)
+			{
+				double l = (top[i] + top[i + 1] + top[i + 2]) / 3.0;
+				sum += l;
+				sq += l * l;
+			}
+			double px = (double)(half / 3), mean = sum / px;
+			v = spread ? (float)sqrt(fmax(0.0, sq / px - mean * mean)) : (float)mean;
 		}
 		free(top);
 		fclose(f);
@@ -525,6 +532,22 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	// vfxdark:<static id>: that spell visual's meshes drawn blended over the scene (not added to it) in near-black vertex
 	// colours: a dark smudge where Morrowind shows a glow (its particles lit by their emissive material)
 	// refsprites:<id>[/<bone>]: that creature's sprites shed and alive now (all of them, or from that bone's sprays)
+	// vfxfxsprites:<text>: particle records the first spell visual showing now whose static's id has that text carries
+	// in the shapes that take its magic effect's particle texture (-1 none showing)
+	if (what == "vfxfxsprites")
+	{
+		v = -1.0f;
+		for (auto& x : s.vfx)
+			if (x.what.find(lower(arg)) != std::string::npos)
+			{
+				v = 0.0f;
+				if (FpPiece* p = s.vm.piece(w, x.piece))
+					for (const ActorMesh& m : p->meshes)
+						v += m.fx ? (float)(m.sprites.size() / 9) : 0.0f;
+				break;
+			}
+		return true;
+	}
 	if (what == "refsprites")
 	{
 		std::string id = arg, bone;
@@ -1168,6 +1191,16 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			const Actor* a = w.actorOf(ri);
 			v = a ? a->time : -1.0f;
 		}
+		else if (what == "reftint")         // the light it was placed in, as its meshes are lit (1: the library's own)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? (a->tint[0] + a->tint[1] + a->tint[2]) / (3.0f * 64.0f) : -1.0f;
+		}
+		else if (what == "refalpha")        // how solid it is drawn (1; less under Invisibility, Chameleon)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? a->alpha : -1.0f;
+		}
 		else if (what == "refglow")         // its meshes that shimmer (enchanted armour and clothing)
 		{
 			v = 0.0f;
@@ -1384,6 +1417,55 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = World::savedCell(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
 	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
 		v = shotLuma(atoi(arg.c_str()));
+	else if (what == "shotspread")  // <n>: how far step shot n's top screen's pixels stray from its mean brightness (-1: none)
+		v = shotLuma(atoi(arg.c_str()), true);
+	else if (what == "bodyalpha")   // how solid the player's third-person body is drawn (1; less under Invisibility, Chameleon)
+		v = s.body.set.actors.empty() ? -1.0f : s.body.set.actors[0].alpha;
+	else if (what == "sunelev" || what == "sunsize")   // the sun in the sky now: degrees over the horizon / its picture's
+	{                                                  // half width in degrees (-1: not up)
+		v = -1.0f;
+		if (!g_skyBillboards.empty() && g_skyBillboards[0].tex && g_skyBillboards[0].tex == s.skyTex(w.game.skyBodies.sun))
+		{
+			const SkyBillboard& sb = g_skyBillboards[0];
+			v = what == "sunelev" ? asinf(fmaxf(-1.0f, fminf(1.0f, sb.dir[2]))) * 57.29578f : atanf(sb.size / 2700.0f) * 57.29578f;
+		}
+	}
+	else if (what == "hurtflash") v = s.hurtFlash;     // the red flash of being hurt now, 1 as it starts, 0 gone
+	else if (what == "fade") v = s.fade;               // how black the screen is now (travel, rest, scripts' FadeOut)
+	else if (what == "uwfog") v = w.underwaterFog();   // how thick the water is to the eye now (Morrowind.ini Underwater Fog)
+	else if (what == "fogrange")    // <start|end>: the fog the last frame was drawn with (world units; 0 none)
+	{
+		float fs, fe;
+		rendererFogRange(fs, fe);
+		v = arg == "start" ? fs : fe;
+	}
+	else if (what == "arrowvz" || what == "arrowz" || what == "arrowdist")  // the first arrow, bolt or thrown weapon in
+	{                                                                    // flight: how fast it climbs / its height /
+		v = -9999.0f;                                                    // how far it is from the player (-9999: none)
+		for (const Projectile& p : s.projectiles)
+			if (p.spell.empty() && !p.item.empty())
+			{
+				float dx = p.pos[0] - w.player.feet[0], dy = p.pos[1] - w.player.feet[1];
+				v = what == "arrowvz" ? p.vel[2] : what == "arrowz" ? p.pos[2] : sqrtf(dx * dx + dy * dy);
+				break;
+			}
+	}
+	else if (what == "bloodmodels")  // how many of the three blood splat models hits have thrown so far
+		v = (float)((s.bloodModels & 1) + ((s.bloodModels >> 1) & 1) + ((s.bloodModels >> 2) & 1));
+	else if (what == "cloudtex")    // <weather 0..9>: the sky's clouds are drawn in that weather's picture now, 1; else 0
+	{
+		int k = atoi(arg.c_str());
+		v = k >= 0 && k < (int)w.game.weatherTypes.size() && g_cloudTex[0] && !w.game.weatherTypes[k].clouds.empty()
+			&& g_cloudTex[0] == s.skyTex(w.game.weatherTypes[k].clouds) ? 1.0f : 0.0f;
+	}
+	else if (what == "bodyshield")  // the player's third-person body shows its shield now, 1; else 0
+	{
+		v = 0.0f;
+		if (!s.body.set.actors.empty())
+			for (const ActorMesh& m : s.body.set.actors[0].meshes)
+				if (m.hand == 2 && actorMeshShown(s.body.set.actors[0], m))
+					v = 1.0f;
+	}
 	else if (what == "shotlumagain")    // <a>,<b>: shot b's brightness over shot a's (-1: either missing or black)
 	{
 		float a, b;
@@ -2611,7 +2693,9 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		std::string id = lower(a[1]);
 		if (!w.game.firstPerson.vfx.count(id) && !w.game.object(id))
 			id = lower(spaced(a[1]));
-		s.spawnVfx(id, at);
+		// (VFX:<id>:x:y:z:<effect>: drawn for that magic effect, its particle texture on the shapes that take one)
+		int effect = a.size() >= 6 ? atoi(a[5].c_str()) : -1;
+		s.spawnVfx(id, at, 1.2f, -2, 0.0f, 1.0f, false, effect);
 		logf("test: vfx %s at %.0f %.0f %.0f (%d showing)", a[1].c_str(), at[0], at[1], at[2], (int)s.vfx.size());
 		return true;
 	}
@@ -6198,6 +6282,19 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		const char* g = s.thirdPerson ? s.body.playing() : "";
 		ok = g[0] && strncmp(g, a[1].c_str(), a[1].size()) == 0;
 		snprintf(got, sizeof(got), "%s", !s.thirdPerson ? "first person" : g[0] ? g : "no group");
+	}
+	else if (what == "bodyloop" && a.size() >= 2)
+	{
+		// EXPECT:bodyloop:<group>: in third person the body plays that group inside its loop, Loop Start to Loop Stop (in
+		// the air the jump goes round there; its landing, Loop Stop to Stop, waits for the ground: OpenMW's jump states)
+		const char* g = s.thirdPerson ? s.body.playing() : "";
+		float t = 0.0f, t0 = 0.0f, t1 = 0.0f;
+		bool have = g[0] && strncmp(g, a[1].c_str(), a[1].size()) == 0 && s.body.loopTimes(t, t0, t1);
+		ok = have && t >= t0 - 0.001f && t <= t1 + 0.001f;     // (equal keys: held at that frame)
+		if (have)
+			snprintf(got, sizeof(got), "%s at %.3f, loop %.3f to %.3f", g, t, t0, t1);
+		else
+			snprintf(got, sizeof(got), "%s", !s.thirdPerson ? "first person" : g[0] ? g : "no group");
 	}
 	else if (what == "bodyweapon" && a.size() >= 2)
 	{

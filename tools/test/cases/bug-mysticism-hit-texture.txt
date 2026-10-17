@@ -1,0 +1,9 @@
+# The Mysticism hit's sparkles take the effect's own particle texture, as all spell visuals' root-textured sprays do
+# (OpenMW's overrideFirstRootTexture: Dispel's white vfx_particle064, ...). Its nine sprays peak at 261 particles,
+# so the converter baked them into a flipbook in the model's purple texture, which no effect can change; they are
+# particle records now (thinned to the sprite budget, as other visuals). Needs data converted after the change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.1 0 0 0 0 VFX:VFX_MysticismHit:-10511:-71230:200:57
+0.3 0 0 0 0 EXPECT:vfxpiece:mysticismhit:eq:1+EXPECT:vfxfxsprites:mysticismhit:gt:0
+2 0 0 0

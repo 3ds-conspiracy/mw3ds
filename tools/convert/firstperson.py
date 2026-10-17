@@ -275,8 +275,11 @@ class FirstPerson:
         bone = bones.get(bone_name.lower())
         mirror = bone_name.startswith("Left")
         meshes = []
-        for s in extract_shapes(self.arch, nif, skeleton=bones):
-            if "raw" not in s:
+        part_shapes = extract_shapes(self.arch, nif, skeleton=bones)
+        # (a model with a skinned shape goes on as a skin: its rigid shapes dropped, as npc.py and OpenMW's attach)
+        as_skin = slot != SLOT_WEAPON and any(s["skinned"] for s in part_shapes)
+        for s in part_shapes:
+            if "raw" not in s or (as_skin and not s["skinned"]):
                 continue
             if s["skinned"]:
                 sn = s["name"].lower()
@@ -566,26 +569,29 @@ class FirstPerson:
                 "vfxlen": vfxlen}
 
     def blood(self):
-        """Morrowind.ini [Blood]: the splat a weapon hit throws (BloodSplat.nif, a particle burst), in each blood's
-        texture: 0 red, 1 skeleton white, 2 metal sparks gold. Pieces "blood0".."blood2"."""
+        """Morrowind.ini [Blood]: the splat a weapon hit throws (Blood Model 0..2: BloodSplat, BloodSplat2, BloodSplat3,
+        particle bursts; OpenMW picks one at random), in each blood's texture: 0 red, 1 skeleton white, 2 metal sparks
+        gold. Pieces "blood<texture>" (the first model) and "blood<texture>_<model>"."""
         out = {}
-        nif = self.nif("meshes\\bloodsplat.nif")
-        if nif is None:
-            return out
-        for k, tex in enumerate(("textures\\tx_blood.dds", "textures\\tx_blood_white.dds", "textures\\tx_blood_gold.dds")):
-            if not self.arch.exists(tex):
+        for m, model in enumerate(("bloodsplat", "bloodsplat2", "bloodsplat3")):
+            nif = self.nif("meshes\\" + model + ".nif")
+            if nif is None:
                 continue
-            meshes = []
-            for s in extract_shapes(self.arch, nif):
-                if s["skinned"]:
+            for k, tex in enumerate(("textures\\tx_blood.dds", "textures\\tx_blood_white.dds", "textures\\tx_blood_gold.dds")):
+                if not self.arch.exists(tex):
                     continue
-                if "raw" not in s:
-                    s["raw"] = {"pos": np.asarray(s["pos"], dtype=float), "node": np.identity(4)}   # particles: root space
-                s["tex"] = tex
-                meshes.append(self.mesh_record(s, "", False))
-            if meshes:
-                self.pieces[f"blood{k}"] = meshes
-                out[f"blood{k}"] = f"blood{k}"
+                meshes = []
+                for s in extract_shapes(self.arch, nif):
+                    if s["skinned"]:
+                        continue
+                    if "raw" not in s:
+                        s["raw"] = {"pos": np.asarray(s["pos"], dtype=float), "node": np.identity(4)}   # particles: root space
+                    s["tex"] = tex
+                    meshes.append(self.mesh_record(s, "", False))
+                if meshes:
+                    name = f"blood{k}" if m == 0 else f"blood{k}_{m}"
+                    self.pieces[name] = meshes
+                    out[name] = name
         return out
 
     def write(self):

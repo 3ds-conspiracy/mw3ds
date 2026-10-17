@@ -1,0 +1,15 @@
+# NPCs wear what OpenMW's InventoryStore::autoEquipArmor puts on them: armor before clothing, each in the order carried;
+# a later piece takes a filled slot only with a higher skill-adjusted rating (armor of the same type), a lower type
+# number (a gauntlet over a bracer), as armor over clothing, or as clothing worth more; armor no better than Unarmored
+# stays in the pack; beast races can't wear full helms or anything on their feet. The converter put on every piece
+# carried, the last one listed winning each slot. Velfred (Hla Oad's docks) wore his netch boots: OpenMW leaves him
+# barefoot (his Unarmored beats them), 33 meshes before, 31 after. Ra'zhid (a Khajiit in Fatleg's Drop Off) wore boots
+# and greaves' feet: 32 before, 27 after. Needs data converted after the change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 TP:-54732:-45100:300:0
+3 0 0 0 0 EXPECT:refmeshes:velfred:eq:31+EXPECT:refshield:velfred:eq:1
+0.3 0 0 0 0 GOTO:Hla%Oad,%Fatleg's%Drop%Off
+2 0 0 0 0 TPIN:3855:4300:14520:180
+0.3 0 0 0 0 EXPECT:refmeshes:ra'zhid:eq:27
+1 0 0 0

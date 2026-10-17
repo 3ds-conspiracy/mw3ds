@@ -1,0 +1,15 @@
+# A blow's blood splat is one of Morrowind.ini's three Blood Models (BloodSplat, BloodSplat2, BloodSplat3), picked at
+# random each hit, in the creature's blood texture (OpenMW's Combat spawnBloodEffect), where the blow lands: on the
+# side facing the attacker, 20 to 100 % of its height up (getHitContact). Ours threw BloodSplat every time, at the
+# middle of the body. An ogrim struck a dozen times with a chitin dagger shows more than one model. Needs data
+# converted after the change (the three models' pieces)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:chitin%dagger
+0.3 0 0 0 0 PLACE:ogrim:120
+1 0 0 0
+0.3 0 0 0 0 FACE:ogrim+EXPECT:bloodmodels:eq:0
+30 0 0 0 0 STRIKE:ogrim:25
+1 0 0 0 0 EXPECT:bloodmodels:ge:2
+1 0 0 0

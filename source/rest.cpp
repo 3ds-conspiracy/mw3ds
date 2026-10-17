@@ -335,6 +335,7 @@ void Session::finishRest()
 	restDone = -1;
 	closeScreen();
 	fade = 1.0f;
+	fadeRate = 5.0f;                     // (back in a fifth of a second, as OpenMW's WaitDialog: fadeScreenIn(0.2))
 	// Waking with ten major / minor increases behind you: the level up
 	if (slept && w.stats.levelProgress >= levelUpTotal())
 	{
