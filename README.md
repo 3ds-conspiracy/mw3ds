@@ -1,11 +1,14 @@
-# MW3DS: Morrowind for the 3DS (Old 3DS test branch)
+# MW3DS: Morrowind for the 3DS
 
 Play *The Elder Scrolls III: Morrowind* on a **Nintendo 3DS**. MW3DS is a from-scratch engine written in C++ for the 3DS.
 It runs the base game on real hardware and in the [Azahar](https://azahar-emu.org/) emulator.
 
-**This branch (`old-3ds`) is for testing on the Old 3DS / 2DS.** The same build also runs on a New 3DS; on an Old 3DS
-the engine notices and switches to a lighter profile (see [On an Old 3DS](#on-an-old-3ds)). It is a test branch:
-expect rough edges, and please report what you see (see [Testing and reporting](#testing-and-reporting)).
+**It supports both the Old 3DS / 2DS and the New 3DS / New 2DS XL, with a separate build for each.** The converter
+(or the build script) makes a CIA for the console you choose: the New 3DS build has the full textures, the Old 3DS
+build quarter-size ones to fit its memory. The engine also knows which console it is on and takes a lighter profile on
+an Old 3DS (see [On an Old 3DS](#on-an-old-3ds)). Install the build made for your console: the New 3DS's on an Old 3DS
+shows a screen that says so and quits. It is under development: expect rough edges, and please report what you see (see
+[Testing and reporting](#testing-and-reporting)).
 
 > [!IMPORTANT]
 > **For testing and research only. You need your own legally obtained copy of Morrowind.**
@@ -36,10 +39,10 @@ If it stops, the whole log is in `work\converter-log.txt`: attach it to a
 ### 1. Get the code
 
 ```sh
-git clone -b old-3ds --recurse-submodules https://github.com/3ds-conspiracy/mw3ds.git
+git clone --recurse-submodules https://github.com/3ds-conspiracy/mw3ds.git
 ```
 
-`--recurse-submodules` also downloads the two optimization mods this branch builds with (see
+`--recurse-submodules` also downloads the two optimization mods the builds use (see
 [The optimization mods](#the-optimization-mods)). Already cloned without it? The build downloads them itself.
 
 ### 2. Install the prerequisites
@@ -95,7 +98,7 @@ says what and where to get it. Run it again with `--check` any time to see the s
 Each converts the game data from your Morrowind install (with the mods laid over it), builds the engine and packs both
 into the CIA (about 1 GB). The first run takes an hour or more; later runs reuse what is already converted.
 
-After changing only the engine code (a new commit of this branch), skip the conversion:
+After changing only the engine code (a new commit), skip the conversion:
 
 ```sh
 git pull --recurse-submodules
@@ -117,10 +120,10 @@ Menu as **MW3DS**. Saves and settings live in `sdmc:/3ds/mw3ds/`.
 The engine finds out which console it is on and, on an Old 3DS, takes a lighter profile:
 
 - **Memory**: the 64 MB mode, split with more for the game and less for graphics; fewer far-away objects kept in memory.
-- **Frame rate**: held at 30, or at 20 where the scene is too heavy (both even shares of the screen's 60 Hz, so no
-  judder). Indoors, most of the game, it stays at 30.
-- **View**: a shorter view outdoors, the fog closing in further only when needed; distant land still reaches the
-  horizon. People are drawn less far and animated less often in the distance.
+- **Frame rate**: a steady 20 outdoors and 30 indoors, 20 where a room is too heavy (both even shares of the screen's
+  60 Hz, so no judder).
+- **View**: a shorter view outdoors, the fog closing in further whenever frames come slower than 20 a second; distant
+  land still reaches the horizon. People are drawn less far and animated less often in the distance.
 - **3D** follows the 3D slider, as on a New 3DS (there is no Options setting). It costs a second picture each frame:
   keep the slider down for the best frame rate.
 
@@ -233,8 +236,7 @@ Your Morrowind install ──▶ tools\convert (converters, mods laid over) ─�
 
 ## Status
 
-Under development. Builds are played on a real New 3DS and fixed from what is seen there; this branch is the first to
-target the Old 3DS, so far checked in the emulator only. The main quest's 15 chapters pass their automated tests. The
+Under development. Builds are played on a real New 3DS and a real Old 2DS and fixed from what is seen there. The main quest's 15 chapters pass their automated tests. The
 engine follows OpenMW's rules where they are known.
 
 ## Contributing
