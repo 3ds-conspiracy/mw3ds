@@ -6,6 +6,8 @@ New 3DS settings: 124MB app memory mode, 804MHz CPU, L2 cache.
   --data      pack that data (default out/data, the Balmora area)
   --out       write the CIA there (default build/mw3ds.cia)
   --prebuilt  do not run make: pack the mw3ds.elf and mw3ds.smdh already in the repo root
+The CIA's title version (FBI, System Settings > Data Management) is the release's: MW3DS_VERSION, else the release
+converter's VERSION.txt, else the git tag on this commit (else the latest tag).
 The HOME menu banner's sound is the start of Morrowind's title music, taken from your Data Files when the CIA is packed
 (banner_with_tune); without them, the banner's own tune.
 The same program runs on both consoles (it takes its Old 3DS profile on an Old 3DS: 64 MB mode, see source/heaps.cpp);
@@ -36,6 +38,22 @@ BANNER = ROOT / "tools" / "build" / "banner.bnr"         # the 3D model (make_ar
 BANNER_WAV = ROOT / "tools" / "build" / "banner.wav"
 TUNE = "Music/Special/morrowind title.mp3"                 # under Data Files
 TUNE_RATE, TUNE_SECS, TUNE_FADE = 32000, 2.9, 0.6
+
+
+def app_version():
+    """The release's version as text and as the CIA's title version number (major 6 bits, minor 6, micro 4)."""
+    text = mwtools.optional_env("MW3DS_VERSION")
+    if not text and (ROOT / "VERSION.txt").is_file():
+        text = (ROOT / "VERSION.txt").read_text(encoding="utf-8").strip()
+    for args in (["--exact-match"], ["--abbrev=0"]):
+        if not text:
+            r = subprocess.run(["git", "describe", "--tags", *args], cwd=ROOT, capture_output=True, text=True)
+            text = r.stdout.strip() if r.returncode == 0 else ""
+    m = re.match(r"v?(\d+)\.(\d+)\.(\d+)", text or "")
+    if not m:
+        return "0.0.0", 0
+    major, minor, micro = (int(g) for g in m.groups())
+    return f"{major}.{minor}.{micro}", (min(major, 63) << 10) | (min(minor, 63) << 4) | min(micro, 15)
 
 
 def banner_tune():
@@ -141,6 +159,9 @@ def pack(data="out/data", out="build/mw3ds.cia", no_data=False):
             "-icon", "mw3ds.smdh", "-banner", str(banner_with_tune(ROOT / "build" / "banner.bnr")), "-exefslogo",
             "-target", "t"]
     args += [f"-D{k}={v}" for k, v in DEFS.items()]
+    ver, number = app_version()
+    args += ["-ver", str(number)]
+    print(f"version {ver}")
     code = subprocess.run(args, cwd=ROOT).returncode
     # The staged copy of the data is only makerom's input: packed into the CIA, it would be a third 1 GB copy on disk
     shutil.rmtree(staged, ignore_errors=True)

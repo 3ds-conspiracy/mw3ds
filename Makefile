@@ -33,7 +33,10 @@ include $(DEVKITARM)/3ds_rules
 #---------------------------------------------------------------------------------
 TARGET		:=	mw3ds
 APP_TITLE	:=	MW3DS
-APP_DESCRIPTION	:=	Morrowind engine for New 3DS
+# The release's version, on the HOME menu under the title (the CIA's title version: tools/build/make_cia.py): the
+# release workflow's tag, else the git tag here (a commit past one: 0.0.2-3-g1234abc), else "dev"
+export MW3DS_VERSION	?=	$(or $(TAG),$(shell git describe --tags 2>/dev/null),dev)
+APP_DESCRIPTION	:=	Morrowind engine for 3DS $(MW3DS_VERSION)
 APP_AUTHOR	:=	mw3ds
 BUILD		:=	build
 SOURCES		:=	source
@@ -169,6 +172,7 @@ endif
 
 #---------------------------------------------------------------------------------
 all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
+	@[ "$$(cat $(BUILD)/version.txt 2>/dev/null)" = "$(MW3DS_VERSION)" ] || echo "$(MW3DS_VERSION)" > $(BUILD)/version.txt
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 $(BUILD):
@@ -202,6 +206,9 @@ else
 # main targets
 #---------------------------------------------------------------------------------
 $(OUTPUT).3dsx	:	$(OUTPUT).elf $(_3DSXDEPS)
+
+# (the version in the SMDH: made again when it changes)
+$(OUTPUT).smdh	:	$(TOPDIR)/$(BUILD)/version.txt
 
 $(OFILES_SOURCES) : $(HFILES)
 
