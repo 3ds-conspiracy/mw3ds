@@ -82,6 +82,18 @@ around sunset (from the star settings and the 2-hour fading duration).
 
 - Each weather draws its own Cloud Texture; while the weather changes, now's layer fades out (1 - blend) as the
   next one's fades in (the cloud blend factor). Their colour (emission) is the fog colour + 0.13, not the sky's.
+- The cloud picture lies on sky_clouds_01.nif, a flattened dome: 1000 wide, 292 high at the top, 85 at the rim, the
+  picture laid flat across it (2.5 repeats from the middle to the rim). From the middle, the dome is 275 out at 45
+  degrees up, 462 at 27, 688 at 15 and 1000 at 5: little of the picture overhead, most of it low down, so the clouds
+  shrink towards the horizon. (Ours: the same spread by elevation on a round dome, `convert_cell.sky_batches`.)
+- The moons (`MoonModel`, `Moon::setState`): each rises Daily Increment hours later every day (from 16 Last Seed, in a
+  24-day loop that skips the increments a day can't hold) and climbs 15 x Speed degrees an hour (at least half a turn
+  in 23 hours) along `rotX(angle) x rotZ(Axis Offset) x north`: from the northern horizon over to the southern one,
+  the path leaning west by the Axis Offset. Below Fade End Angle up its path (Masser 40, Secunda 30) the moon is a
+  disk in the sky's colour; it is textured from there to Fade Start Angle (50), and the disk itself fades in over
+  Moon Shadow Early Fade Angle (0.5) below Fade End. By the hour: Fade In Start / Finish, Fade Out Start / Finish
+  (culled a minute before Fade Out Finish). The phase changes once the moon is out of sight at midnight.
+  (Ours: the disk in the sky's colour is drawn as nothing; it hides the stars in OpenMW.)
 - The sun is a 450-unit quad 1000 units away; its flash (tx_sun_flash_grey_05) 2.6 times it, white. The moons are
   450 x size / 125 (Masser 55, Secunda 40). Looking toward the sun adds a full-screen glare: Sun Glare Fader Max
   (0.5) at the sun, gone at Fader Angle Max (30 degrees), twice the Fader Color, x the glare fade above x the

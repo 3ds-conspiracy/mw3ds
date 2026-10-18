@@ -79,9 +79,16 @@ static bool readInfo(const std::string& path, SaveInfo& out)
 			p = tab + 1;
 		}
 		if (n >= 2)
+		{
 			out.title = strcmp(fields[0], fields[1]) == 0 ? fields[0] : std::string(fields[0]) + " - " + fields[1];
+			out.name = fields[0];
+			out.place = fields[1];
+		}
 		if (n >= 3)
+		{
 			out.detail = std::string("Level ") + fields[2];
+			out.level = atoi(fields[2]);
+		}
 		if (n >= 4)
 			out.time = strtoull(fields[3], nullptr, 10);
 		if (n >= 5)
@@ -164,10 +171,39 @@ std::string saveNewPath()
 	return std::string(kSaveDir) + "/save_999.json";
 }
 
+void saveRow(const std::vector<SaveInfo>& saves, size_t i, std::string& left, std::string& right)
+{
+	const SaveInfo& s = saves[i];
+	bool names = false;               // (one character's saves: its name on every row says nothing)
+	for (const SaveInfo& o : saves)
+		names = names || (!o.name.empty() && !s.name.empty() && o.name != s.name);
+	left = s.place.empty() ? s.title : names ? s.name + " - " + s.place : s.place;
+	if (s.autosave)
+		left = "Autosave: " + left;
+	else if (s.bundled)
+		left = "Starting point: " + left;
+	right.clear();
+	if (s.level > 0)
+		right = "Lv " + std::to_string(s.level);
+	if (s.time && !s.bundled)
+	{
+		time_t t = (time_t)(s.time / 1000 - 2208988800ULL);
+		const struct tm* tm = gmtime(&t);
+		char buf[32] = {};
+		if (tm)              // month / day and the hour: "10/18 13:18"
+			snprintf(buf, sizeof(buf), "%d/%d %02d:%02d", tm->tm_mon + 1, tm->tm_mday, tm->tm_hour, tm->tm_min);
+		right += (right.empty() ? "" : "  ") + std::string(buf);
+	}
+}
+
 int uiSaveList(UiList& list, const std::vector<SaveInfo>& saves, float x, float y, float w, float h, bool keys)
 {
-	std::vector<std::string> rows;
-	for (auto& s : saves)
-		rows.push_back(s.title + "   (" + s.detail + ")");
-	return uiList(list, x, y, w, h, rows, 0.45f, keys);
+	std::vector<std::string> rows, right;
+	for (size_t i = 0; i < saves.size(); i++)
+	{
+		rows.emplace_back();
+		right.emplace_back();
+		saveRow(saves, i, rows.back(), right.back());
+	}
+	return uiList(list, x, y, w, h, rows, 0.45f, keys, &right);
 }

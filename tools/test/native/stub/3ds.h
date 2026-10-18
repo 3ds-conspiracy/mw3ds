@@ -53,12 +53,14 @@ inline Result irrstInit() { return 0; }
 inline void irrstExit() {}
 inline bool aptMainLoop() { return true; }
 inline void gspWaitForVBlank() {}
+inline Result GSPGPU_SetLcdForceBlack(u8) { return 0; }
 // NATIVE_OLD3DS=1 (run_test.py --old3ds): the game takes its Old 3DS profile
 inline Result APT_CheckNew3DS(bool* b) { const char* o = getenv("NATIVE_OLD3DS"); *b = !(o && o[0] == '1'); return 0; }
 inline void osSetSpeedupEnable(bool) {}
 inline Result APT_SetAppCpuTimeLimit(u32) { return -1; }
 inline u32 osGetApplicationMemType() { const char* o = getenv("NATIVE_OLD3DS"); return o && o[0] == '1' ? 0 : 6; }
-inline u64 osGetTime() { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); }
+// (from 1900 as the console counts: saves turn it into a date)
+inline u64 osGetTime() { return 2208988800000ULL + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); }
 #define SYSCLOCK_ARM11 268111856ULL
 inline u64 svcGetSystemTick() { return (u64)(std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count() * SYSCLOCK_ARM11); }
 inline void svcSleepThread(s64 ns) { std::this_thread::sleep_for(std::chrono::nanoseconds(ns)); }

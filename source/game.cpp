@@ -1217,6 +1217,10 @@ bool gameLoad(GameData& g, const char* path)
 				o.fadeInFinish = num(md, "Fade In Finish", o.fadeInFinish); o.fadeOutStart = num(md, "Fade Out Start", o.fadeOutStart);
 				o.fadeOutFinish = num(md, "Fade Out Finish", o.fadeOutFinish); o.axisOffset = num(md, "Axis Offset", o.axisOffset);
 				o.speed = num(md, "Speed", o.speed); o.dailyIncrement = num(md, "Daily Increment", o.dailyIncrement);
+				// (data from before these were carried: Morrowind.ini's own, Secunda's fade ending lower)
+				o.fadeStartAngle = num(md, "Fade Start Angle", 50.0f);
+				o.fadeEndAngle = num(md, "Fade End Angle", m == 0 ? 40.0f : 30.0f);
+				o.earlyFadeAngle = num(md, "Moon Shadow Early Fade Angle", 0.5f);
 			}
 		d.sunrise = num(sb, "sunrise", 6); d.sunset = num(sb, "sunset", 18);
 	}

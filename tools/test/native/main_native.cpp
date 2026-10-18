@@ -1100,6 +1100,7 @@ static std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, 
 	// Test hook (run-emu.ps1 without -Cams/-Inputs): screenshot the title screen, then load the first save
 	bool shotTest = stat("sdmc:/3ds/mw3ds/autoshot", &st) == 0;
 	int frame = 0, dissolve = 0;
+	u64 lastTick = 0;
 	while (aptMainLoop())
 	{
 		audioUpdate();                       // (the title music streams: nothing else feeds it before the game runs)
@@ -1151,6 +1152,9 @@ static std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, 
 		ui.down = down;
 		ui.held = held;
 		ui.stickY = readStickScroll();
+		u64 tick = svcGetSystemTick();
+		ui.dt = lastTick ? fminf((float)(tick - lastTick) / SYSCLOCK_ARM11, 0.1f) : 0.0f;
+		lastTick = tick;
 		uiBeginFrame(ui);
 
 		std::string result = "\x01";
@@ -1322,6 +1326,9 @@ int main()
 	// The Old 3DS's 16-bit colour buffer goes to a 16-bit top screen (see DISPLAY_TRANSFER_FLAGS). The screens'
 	// framebuffers are in VRAM, beside the render targets (a few MB of its 6 free): a MB of linear memory back for cells
 	gfxInit(g_profile.rgb565 ? GSP_RGB565_OES : GSP_BGR8_OES, GSP_BGR8_OES, true);
+	// gfxInit lights the screens on buffers that hold whatever VRAM had (multicoloured static, on an Old 2DS and when
+	// started from FBI): they stay forced black until the first black frame below is up
+	GSPGPU_SetLcdForceBlack(1);
 	// GPU commands of a whole frame (both eyes, bottom screen): overflowing it is a panic, so it is
 	// generous, the renderer stops drawing near the end and 3D backs off when one eye uses too much.
 	// (an Old 3DS's is half: console.cpp)
@@ -1358,13 +1365,15 @@ int main()
 	C3D_RenderTargetSetOutput(topRight, GFX_TOP, GFX_RIGHT, transfer);
 	bool stereoOn = false;
 	C3D_RenderTarget* bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
-	// A black frame at once, through the GPU: the screens' buffers start as whatever VRAM held, and an Old 2DS showed
-	// multicoloured static until the first picture came. (Cleared by the CPU instead, the console stopped on a data
-	// abort: VRAM isn't the program's to write)
+	// A black frame at once, through the GPU, before the screens are let go of black. (Cleared by the CPU instead,
+	// the console stopped on a data abort: VRAM isn't the program's to write)
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
 	clearTop(top, 0x000000FF);
 	C3D_RenderTargetClear(bottom, C3D_CLEAR_ALL, 0x000000FF, 0);
 	C3D_FrameEnd(0);
+	for (int i = 0; i < 3; i++)        // (the frame is swapped in on a VBlank once the GPU is done with it)
+		gspWaitForVBlank();
+	GSPGPU_SetLcdForceBlack(0);
 	rendererInit();
 	uiInit();
 	// A CIA with its data inside uses that (whatever an older copy left on the card); the dev build and
@@ -2263,6 +2272,7 @@ int main()
 		ui.held = held;
 		ui.up = up;
 		ui.stickY = inputIndex < autoinput.size() && loaded ? autoinput[inputIndex].stickY : readStickScroll();
+		ui.dt = dt;
 		uiBeginFrame(ui);
 
 		if (session->wantName)

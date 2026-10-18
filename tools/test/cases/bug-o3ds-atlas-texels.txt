@@ -1,0 +1,12 @@
+# console: old
+# Project Atlas (Old 3DS data only) packs a building set's textures into one tall sheet: the Imperial houses' are eight
+# 256 x 256 pictures stacked into tx_imperial_atlas1 (256 x 2048). The Old 3DS's 128-texel cap was taken on the sheet's
+# long side, so it came out 16 x 128 and every wall had 16 x 16 texels: mud. The cap is per picture in the sheet now
+# (its short side), the long side up to the 3DS's 1024: 128 x 1024, the memory of the eight pictures at 128 apiece.
+# Every Atlas sheet in Seyda Neen keeps at least 64 texels across (16 before)
+# Needs Old 3DS data converted after the change (out/o3ds)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-10300:-71300:200:0
+2 0 0 0 0 SHOT
+1 0 0 0 0 EXPECT:texside:atl_:ge:64
+1 0 0 0

@@ -41,6 +41,15 @@ FOV_Y = math.radians(60.0)
 CLOSE_DISTANCE = 96.0          # arm's length: items on a table, a face in dialogue
 PIXEL_WORLD = CLOSE_DISTANCE * 2 * math.tan(FOV_Y / 2) / SCREEN_HEIGHT
 MIN_SIZE = 32
+# The 3DS's largest texture side
+MAX_SIDE = 1024
+
+
+def is_sheet(path):
+    """A sheet of several pictures side by side (Project Atlas's: textures/atl/..., *_atlas*): the size cap is per
+    picture, so it applies to the sheet's short side."""
+    p = path.lower().replace("\\", "/")
+    return "/atl/" in p or "atlas" in p.rsplit("/", 1)[-1]
 
 
 def tex3ds_path():
@@ -173,15 +182,17 @@ class TextureSet:
             try:
                 img = None
                 entry = cache.get(name)
+                sheet = is_sheet(path)
                 if not (entry and entry.get("src") == path and entry.get("limit") == limit
                         and entry.get("want_alpha") == r["alpha"] and entry.get("overlay", "") == overlay
-                        and tex_path(name).exists()):
+                        and entry.get("sheet", False) == sheet and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(path)))
                     img.load()
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
-                    entry = encode_one(tex3ds, img.convert("RGBA"), tex_path(name), limit, r["alpha"])
-                    entry.update({"src": path, "limit": limit, "want_alpha": r["alpha"], "overlay": overlay})
+                    entry = encode_one(tex3ds, img.convert("RGBA"), tex_path(name), limit, r["alpha"], sheet)
+                    entry.update({"src": path, "limit": limit, "want_alpha": r["alpha"], "overlay": overlay,
+                                  "sheet": sheet})
                     cache[name] = entry
                     stats["encoded"] += 1
             except Exception as e:           # missing or unreadable: the cell draws it untextured
@@ -257,12 +268,14 @@ def whiten_image(img, amount):
     return Image.fromarray(a.clip(0, 255).astype(np.uint8), "RGBA")
 
 
-def encode_one(tex3ds, img, out, limit, want_alpha):
+def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False):
+    """A sheet (is_sheet) is capped on its short side, the long side up to MAX_SIDE: taken on the long side, an Old
+    3DS's 128 left each of the eight pictures of a 256 x 2048 sheet 16 texels across."""
     w, h = img.size
     pot = lambda v: 1 << max(3, round(math.log2(max(v, 1))))
     sw, sh = pot(w), pot(h)
     tw, th = sw, sh
-    while max(tw, th) > limit:
+    while (min(tw, th) if sheet else max(tw, th)) > limit or max(tw, th) > MAX_SIDE:
         tw, th = max(8, tw // 2), max(8, th // 2)
     if (tw, th) != (w, h):
         img = img.resize((tw, th), Image.LANCZOS)

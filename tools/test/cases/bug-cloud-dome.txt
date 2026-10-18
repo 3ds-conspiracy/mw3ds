@@ -1,0 +1,8 @@
+# The cloud picture lies on the sky as on Morrowind's flattened cloud dome (sky_clouds_01.nif: 1000 wide, 292 high at
+# the top, 85 at the rim, the picture laid flat across it): little of it overhead, most of it low down, so the clouds
+# shrink towards the horizon. Ours spread it over a round dome by the flat distance: overhead took 70 % of the picture
+# by 45 degrees up and the horizon was squeezed into streaks running down to it
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+1 0 0 0 0 EXPECT:clouduv:45:ge:20+EXPECT:clouduv:45:le:40+EXPECT:clouduv:20:ge:45+EXPECT:clouduv:20:le:70
+1 0 0 0

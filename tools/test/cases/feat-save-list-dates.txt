@@ -1,0 +1,15 @@
+# The save list shows each save's level, date and time in a column at the right, always in view: the place before it
+# is cut short, and the selected row's slides left and comes round again when it is too long. Saves of one character
+# don't repeat its name on every row. Before, a row was "<name> - <place>   (Level n, date time)" in one line, and with
+# a longer place ("Balmora, Guild of Mages") the date and time ran off the list
+1 0 0 0 0 MSG
+3 0 0 0
+0.3 0 0 0 0 GOD+GOTO:Balmora,_Guild_of_Mages
+2 0 0 0
+0.3 0 0 0 0 SCREEN:saves
+0.5 0 0 0 0 A
+0.5 0 0 0 0 SAVESEL:newest
+0.5 0 0 0 0 EXPECT:saverow:0:eq:1
+3 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0

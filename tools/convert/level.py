@@ -825,7 +825,8 @@ def main():
         "masser": [sky_tex("tx_masser_" + p) for p in phases], "secunda": [sky_tex("tx_secunda_" + p) for p in phases],
         "moons": {m: {k: float(moons.get(f"{m.capitalize()} {k}", "0") or 0) for k in
                       ("Size", "Fade In Start", "Fade In Finish", "Fade Out Start", "Fade Out Finish", "Axis Offset",
-                       "Speed", "Daily Increment")} for m in ("masser", "secunda")},
+                       "Speed", "Daily Increment", "Fade Start Angle", "Fade End Angle", "Moon Shadow Early Fade Angle")}
+                   for m in ("masser", "secunda")},
         "sunrise": float(wsec.get("Sunrise Time", "6")), "sunset": float(wsec.get("Sunset Time", "18")),
     }
     # Distant land past the loaded cells (tools/convert/distant.py)

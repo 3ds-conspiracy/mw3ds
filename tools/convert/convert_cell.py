@@ -558,7 +558,7 @@ def sky_batches(arch, weather, textures, tex_index, tex_names):
     seg = 16
     rings = [-30, -5, 0, 8, 20, 40, 65, 90]
 
-    def dome(elevations, color_of, alpha_of):
+    def dome(elevations, color_of, alpha_of, reach=None):
         pos, uv, rgba = [], [], []
         for e in elevations:
             er = math.radians(e)
@@ -566,7 +566,8 @@ def sky_batches(arch, weather, textures, tex_index, tex_names):
                 a = 2 * math.pi * i / seg
                 p = np.array([math.cos(er) * math.sin(a), math.cos(er) * math.cos(a), math.sin(er)]) * SKY_RADIUS
                 pos.append(p)
-                uv.append(p[:2] / SKY_RADIUS * 1.5)
+                uv.append(p[:2] / SKY_RADIUS * 1.5 if reach is None else
+                          np.array([math.sin(a), math.cos(a)]) * reach(e))
                 rgba.append(np.append(color_of(e), alpha_of(e)))
         tris = []
         for r in range(len(elevations) - 1):
@@ -585,9 +586,15 @@ def sky_batches(arch, weather, textures, tex_index, tex_names):
     shapes.append(({"pos": pos, "uv": uv, "rgba": rgba, "tris": tris}, None, FLAG_BLEND | FLAG_TWO_SIDED))
     cloud = "textures\\" + re.sub(r"\.[^.]+$", ".dds", weather["clouds"].lower())
     if arch.exists(cloud):
-        cloud_rings = [3, 10, 20, 40, 65, 90]
+        # The picture lies as on Morrowind's cloud dome (sky_clouds_01.nif), a flattened one: 1000 wide, 292 high at the
+        # top and 85 at the rim, the picture laid flat across it (2.5 repeats from the middle to the rim). Seen from its
+        # middle, little of the picture is overhead and most of it low down, so the clouds shrink towards the horizon.
+        # The dome's width at each height (elevation as seen from the middle, degrees: distance out of 1000)
+        flat_dome = ([4.9, 15.1, 27.4, 44.9, 90.0], [1000.0, 688.0, 462.0, 275.0, 0.0])
+        cloud_rings = [3, 6, 10, 15, 20, 27, 35, 45, 60, 75, 90]
         pos, uv, rgba, tris = dome(cloud_rings, lambda e: np.ones(3),
-                                   lambda e: float(np.clip((e - 3) / 25.0, 0, 1)) * 0.9)
+                                   lambda e: float(np.clip((e - 3) / 25.0, 0, 1)) * 0.9,
+                                   lambda e: float(np.interp(e, *flat_dome)) / 1000.0 * 2.5)
         textures.request(cloud, 256, True)
         shapes.append(({"pos": pos, "uv": uv, "rgba": rgba, "tris": tris}, cloud,
                        FLAG_BLEND | FLAG_SCROLL | FLAG_TWO_SIDED))

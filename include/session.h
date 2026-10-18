@@ -301,6 +301,7 @@ struct Session : ScriptHost
 	float thunderIn = 10.0f;
 	void updateWeatherEffects(float dt);
 	void updateSky();
+	float moonDir[2][3] = {}, moonAlpha[2] = {};     // where Masser and Secunda are and how much of each shows (updateSky)
 	float ambientTimer = 3.0f;                     // until the region's next ambient sound
 	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
 	// Animation::addEffect), or at a spot (an area burst, blood)

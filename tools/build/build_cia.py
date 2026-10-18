@@ -35,10 +35,10 @@ OVERLAYS = [
     "mods/project-atlas/00 Core",
     "mods/project-atlas/01 Textures - Vanilla",
 ]
-# Project Atlas draws many objects from one big sheet each: fewer draws, but the 3DS's texture cap shrinks a whole sheet,
-# so every object on it loses most of its detail (Dunmer furniture came out about 16 x 16 texels). The New 3DS keeps
-# its frame rate without it (Balmora: 30 fps either way, about 1.3 ms more GPU command time a frame) and draws
-# everything at its own texture's detail; the Old 3DS, short of time for draws and already at 128 texels, keeps it
+# Project Atlas draws many objects from one big sheet each: fewer draws. The New 3DS keeps its frame rate without it
+# (Balmora: 30 fps either way, about 1.3 ms more GPU command time a frame) and draws everything at its own texture's
+# detail; the Old 3DS, short of time for draws, keeps it, a sheet capped per picture in it (textures.py is_sheet: capped
+# whole, Dunmer furniture came out about 16 x 16 texels)
 ATLAS_OVERLAYS = ["mods/project-atlas/00 Core", "mods/project-atlas/01 Textures - Vanilla"]
 
 

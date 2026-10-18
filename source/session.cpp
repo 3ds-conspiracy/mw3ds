@@ -2003,12 +2003,6 @@ void Session::updateSky()
 	GameDate d = w.date();
 	float h = d.hour;
 	float clear = w.weatherNow <= 1 ? 1.0f : w.weatherNow <= 3 ? 0.35f : 0.1f;   // clear / cloudy, foggy / overcast, worse
-	auto toDir = [](float angleDeg, float tiltDeg, float out[3]) {
-		float a = angleDeg * 0.0174533f, t = tiltDeg * 0.0174533f;
-		out[0] = cosf(a);
-		out[1] = -sinf(a) * sinf(t);
-		out[2] = sinf(a) * cosf(t);
-	};
 	// the sun: from sunrise to the end of sunset (OpenMW's night start), along Morrowind's fixed line across the sky,
 	// (400 x orbit, -75, 100), orbit 1 at sunrise to -1 at night (OpenMW's WeatherManager::update)
 	const WeatherClock& wc = w.game.weatherClock;
@@ -2036,37 +2030,86 @@ void Session::updateSky()
 		glare.rgba = 0x00FFFFFF | ((u32)a << 24);
 		g_skyBillboards.push_back(glare);
 	}
-	// the moons
+	// the moons (OpenMW's MoonModel): each rises Daily Increment hours later every day, in a 24-day loop that skips the
+	// increments a day can't hold, and climbs 15 x Speed degrees an hour (at least half a turn in 23 hours) from the
+	// northern horizon over to the southern one, its path leaning west by its Axis Offset. Low on its path it is a disk
+	// the sky's own colour (shown here as nothing): textured from Fade End Angle, whole from Fade Start Angle, and
+	// gone below Moon Shadow Early Fade Angle under that; by the hour it fades in and out (Fade In / Out Start, Finish)
 	for (int m = 0; m < 2; m++)
 	{
 		const MoonDef& md = sky.moons[m];
-		auto riseHour = [&](int days) { return md.dailyIncrement + fmodf((days - 1 + 16) * md.dailyIncrement, 24.0f); };
-		auto rotation = [&](float hours) { return 15.0f * md.speed * hours; };
+		moonAlpha[m] = 0.0f;
+		float speed = fmaxf(md.speed, 180.0f / 23.0f / 15.0f), inc = fmodf(md.dailyIncrement, 24.0f);
+		auto rotation = [&](float hours) { return 15.0f * speed * hours; };
+		auto riseHour = [&](int days) {
+			if (inc == 0.0f)
+				return 0.0f;
+			float offset = (24.0f - fabsf(24.0f / inc)) * floorf((days + 16) / 24.0f);
+			return inc + fmodf((days - 1 + 16 - offset) * inc, 24.0f);
+		};
+		auto angleAt = [&](int days, float hour) {
+			float riseToday = riseHour(days), a = 0.0f;
+			if (hour < riseToday)
+			{
+				float riseYesterday = riseToday - inc;
+				if (riseYesterday < 24.0f)
+				{
+					float early = md.fadeEndAngle - md.earlyFadeAngle;
+					float cycle = riseYesterday + early / rotation(1.0f) > 24.0f ? inc : 0.0f;
+					float yesterday = rotation(24.0f - (riseYesterday + cycle));
+					if (yesterday < 180.0f)
+						a = rotation(hour) + yesterday;
+				}
+			}
+			else
+				a = rotation(hour - riseToday);
+			return a >= 180.0f ? 0.0f : a;
+		};
+		auto shadowAlpha = [&](float a) {        // the disk's own fade at the ends of its path
+			float a1 = md.fadeEndAngle - md.earlyFadeAngle, e2 = 180.0f - md.fadeEndAngle, a2 = e2 + md.earlyFadeAngle;
+			if (a >= a1 && a < md.fadeEndAngle)
+				return (a - a1) / fmaxf(0.01f, md.earlyFadeAngle);
+			if (a >= md.fadeEndAngle && a < e2)
+				return 1.0f;
+			if (a >= e2 && a < a2)
+				return (a2 - a) / fmaxf(0.01f, md.earlyFadeAngle);
+			return 0.0f;
+		};
+		auto hourAlpha = [&](float hour) {
+			float outEnd = md.fadeOutFinish - 0.0167f;      // (culled a minute early, as Morrowind does)
+			if (hour >= md.fadeOutStart && hour < outEnd)
+				return (outEnd - hour) / fmaxf(0.01f, outEnd - md.fadeOutStart);
+			if (hour >= outEnd && hour < md.fadeInStart)
+				return 0.0f;
+			if (hour >= md.fadeInStart && hour < md.fadeInFinish)
+				return (hour - md.fadeInStart) / fmaxf(0.01f, md.fadeInFinish - md.fadeInStart);
+			return 1.0f;
+		};
 		int day = d.daysPassed;
-		float riseToday = riseHour(day), angle = 0.0f;
-		if (h < riseToday)
-		{
-			float riseYesterday = riseHour(day - 1);
-			if (riseYesterday < 24.0f)
-				angle = rotation(h + 24.0f - riseYesterday);
-		}
-		else
-			angle = rotation(h - riseToday);
-		if (angle <= 0.0f || angle >= 180.0f)
-			continue;
-		int phase = h < riseToday ? (day / 3) % 8 : ((day + 1) / 3) % 8;
-		float alpha = 0.0f;
-		if (h >= md.fadeInFinish || h <= md.fadeOutStart)
-			alpha = 1.0f;
-		else if (h > md.fadeInStart && h < md.fadeInFinish)
-			alpha = (h - md.fadeInStart) / fmaxf(0.01f, md.fadeInFinish - md.fadeInStart);
-		else if (h > md.fadeOutStart && h < md.fadeOutFinish)
-			alpha = 1.0f - (h - md.fadeOutStart) / fmaxf(0.01f, md.fadeOutFinish - md.fadeOutStart);
-		alpha *= clear * fminf(1.0f, fminf(angle, 180.0f - angle) / 8.0f);
+		float angle = angleAt(day, h);
+		// the phase changes once the moon is out of sight at midnight, or a day's increment after it went
+		float phaseHour = 0.0f;
+		if (hourAlpha(0.0f) > 0.0f && shadowAlpha(angleAt(day, 0.0f)) > 0.0f)
+			phaseHour = (180.0f - md.fadeEndAngle + md.earlyFadeAngle - angleAt(day, 0.0f)) / rotation(1.0f) + fmaxf(inc, 0.0f);
+		int phase = h < phaseHour ? (day / 3) % 8 : ((day + 1) / 3) % 8;
+		float fade = md.fadeStartAngle - md.fadeEndAngle, textured = 0.0f;
+		if (angle >= md.fadeEndAngle && angle < md.fadeStartAngle)
+			textured = (angle - md.fadeEndAngle) / fmaxf(0.01f, fade);
+		else if (angle >= md.fadeStartAngle && angle < 180.0f - md.fadeStartAngle)
+			textured = 1.0f;
+		else if (angle >= 180.0f - md.fadeStartAngle && angle < 180.0f - md.fadeEndAngle)
+			textured = (180.0f - md.fadeEndAngle - angle) / fmaxf(0.01f, fade);
+		float a = angle * 0.0174533f, z = md.axisOffset * 0.0174533f;
+		moonDir[m][0] = -sinf(z);
+		moonDir[m][1] = cosf(z) * cosf(a);
+		moonDir[m][2] = cosf(z) * sinf(a);
+		float alpha = clear * hourAlpha(h) * shadowAlpha(angle) * textured;
+		moonAlpha[m] = alpha;
 		if (alpha <= 0.01f)
 			continue;
 		SkyBillboard mb = {};
-		toDir(angle, md.axisOffset, mb.dir);
+		for (int k = 0; k < 3; k++)
+			mb.dir[k] = moonDir[m][k];
 		mb.size = 0.5f * 450.0f * md.size / 125.0f * 2.7f;
 		mb.tex = skyTex(m == 0 ? sky.masser[phase] : sky.secunda[phase]);
 		mb.rgba = 0x00FFFFFF | ((u32)(alpha * 255) << 24);

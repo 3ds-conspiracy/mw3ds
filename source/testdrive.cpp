@@ -211,7 +211,7 @@ static bool hasArg(const std::string& what)
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "texlow" || what == "regionchance" || what == "regionweather"
+		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "clouduv" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "regionchance" || what == "regionweather"
 		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
 }
 
@@ -1527,6 +1527,58 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = k >= 0 && k < (int)w.game.weatherTypes.size() && g_cloudTex[0] && !w.game.weatherTypes[k].clouds.empty()
 			&& g_cloudTex[0] == s.skyTex(w.game.weatherTypes[k].clouds) ? 1.0f : 0.0f;
 	}
+	else if (what == "moonx" || what == "moonz" || what == "moonalpha")   // <0 Masser | 1 Secunda>: its direction's east
+	{                                                                         // (x) or up (z) part, how much of it shows
+		int m = atoi(arg.c_str()) ? 1 : 0;
+		s.updateSky();
+		v = what == "moonx" ? s.moonDir[m][0] : what == "moonz" ? s.moonDir[m][2] : s.moonAlpha[m];
+	}
+	else if (what == "clouduv")     // <elevation>: how far out the cloud picture is at that height in the sky, as a % of
+	{                                 // its reach at the dome's rim (Morrowind's flat dome: little overhead, most low down)
+		v = -1.0f;
+		float e = (float)atof(arg.c_str()) * 3.14159265f / 180.0f, best = 1e9f, at = 0.0f, rim = 0.0f, cu = 0.0f, cv = 0.0f, top = -2.0f;
+		for (const CellBatch& b : w.here().sky)
+		{
+			if (!(b.flags & BATCH_SCROLL) || !b.verts)
+				continue;
+			bool packed = b.stride == CELL_VERTEX_SIZE_PACKED;
+			auto vert = [&](u32 i, float p[3], float uv[2]) {
+				const u8* q = (const u8*)b.verts + i * b.stride;
+				if (packed)
+				{
+					const s16* h = (const s16*)q;
+					for (int k = 0; k < 3; k++)
+						p[k] = b.posOffset[k] + h[k] * b.posScale[k];
+					uv[0] = h[4] * b.uvScale[0], uv[1] = h[5] * b.uvScale[1];
+				}
+				else
+				{
+					const float* f = (const float*)q;
+					p[0] = f[0], p[1] = f[1], p[2] = f[2], uv[0] = f[3], uv[1] = f[4];
+				}
+			};
+			float p[3], uv[2];
+			for (u32 i = 0; i < b.numVerts; i++)     // the zenith's spot in the picture is its middle
+			{
+				vert(i, p, uv);
+				float el = atan2f(p[2], sqrtf(p[0] * p[0] + p[1] * p[1]));
+				if (el > top)
+					top = el, cu = uv[0], cv = uv[1];
+			}
+			for (u32 i = 0; i < b.numVerts; i++)
+			{
+				vert(i, p, uv);
+				float el = atan2f(p[2], sqrtf(p[0] * p[0] + p[1] * p[1]));
+				float d = sqrtf((uv[0] - cu) * (uv[0] - cu) + (uv[1] - cv) * (uv[1] - cv));
+				rim = std::max(rim, d);
+				if (fabsf(el - e) < best)
+					best = fabsf(el - e), at = d;
+			}
+			break;
+		}
+		if (rim > 0.0f)
+			v = 100.0f * at / rim;
+	}
 	else if (what == "bodyshield")  // the player's third-person body shows its shield now, 1; else 0
 	{
 		v = 0.0f;
@@ -1551,6 +1603,21 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			if (b.tex >= 0 && b.tex < (int)c.textureNames.size() && lower(c.textureNames[b.tex]).find(want) != std::string::npos)
 			{
 				v = any ? fminf(v, b.bmin[2]) : b.bmin[2];
+				any = true;
+			}
+		if (!any)
+			return false;
+	}
+	else if (what == "texside")     // <text>: the smallest short side, in texels, of this cell's textures whose names have it
+	{
+		const Cell& c = w.here();
+		std::string want = lower(arg);
+		bool any = false;
+		for (size_t i = 0; i < c.textureNames.size(); i++)
+			if (i < c.textures.size() && c.textures[i] && lower(c.textureNames[i]).find(want) != std::string::npos)
+			{
+				float side = (float)std::min(c.textures[i]->width, c.textures[i]->height);
+				v = any ? fminf(v, side) : side;
 				any = true;
 			}
 		if (!any)
@@ -1595,6 +1662,23 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 				v = sv.path == g_lastSavePath ? 1.0f : 0.0f;
 				break;
 			}
+	}
+	else if (what == "saverow")     // <n>: row n of the save list shows its date and time whole at the right (1), and not
+	{                                 // the character's name when all the saves are one character's; else 0
+		std::vector<SaveInfo> list = savesList(s.dataDir);
+		size_t n = (size_t)atoi(arg.c_str());
+		v = 0.0f;
+		if (n < list.size())
+		{
+			std::string left, right;
+			saveRow(list, n, left, right);
+			bool dated = right.find(':') != std::string::npos && uiTextWidth(right, 0.45f) + 16.0f < 312.0f;
+			bool named = !list[n].name.empty() && left.find(list[n].name + " - ") != std::string::npos;
+			bool oneName = true;
+			for (const SaveInfo& o : list)
+				oneName = oneName && (o.name.empty() || o.name == list[n].name);
+			v = dated && !(named && oneName) ? 1.0f : 0.0f;
+		}
 	}
 	else if (what == "saves")
 	{

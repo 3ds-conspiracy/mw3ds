@@ -63,6 +63,10 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   same share. (`console.cpp spriteBudget`, `Session` frame pacing, `renderer.cpp`)
 - **Far cells' objects are dropped from memory** past a reference budget, and read again when needed.
   (`console.cpp refBudget`, `World::evictCells`)
+- **An Old 3DS keeps textures to 128 texels and draws from Project Atlas's sheets** (fewer draws). A sheet's cap is per
+  picture in it, its short side, the long side up to 1024: a 256 x 2048 sheet of eight pictures is 128 x 1024, the
+  memory of the eight at 128 apiece (taken on the long side it was 16 x 128, each wall 16 texels across). Seyda Neen:
+  about 480 KB more texture memory. (`textures.py is_sheet`, `build_cia.py ATLAS_OVERLAYS`)
 
 ## Movement
 

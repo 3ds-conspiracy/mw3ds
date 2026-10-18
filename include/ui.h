@@ -22,6 +22,7 @@ struct UiInput
 	int touchX, touchY, tapX, tapY;
 	int dragDX, dragDY;   // drag since last frame
 	float stickY;         // the C-stick up / down, -1 (up) to 1 (down): scrolls a text pane
+	float dt;             // the frame's step (seconds): what moves on its own (a long row sliding)
 };
 
 // How far the C-stick (-1..1) scrolls a text pane this frame
@@ -77,12 +78,16 @@ struct UiList
 {
 	float scroll = 0.0f;
 	int selected = 0;
+	int marqueeRow = -1;     // the row whose text slides (too long for its space) and for how long it has
+	float marqueeTime = 0.0f;
 };
 // A list whose rows wrap onto more lines when they don't fit the width (dialogue topics and choices)
 int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows,
 	float scale, bool keys);
+// right: a column of text at each row's right edge, always shown; the row's own text is cut short before it, and the
+// selected row's slides left and comes round again when it doesn't fit
 int uiList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows,
-	float scale = 0.5f, bool keys = true);
+	float scale = 0.5f, bool keys = true, const std::vector<std::string>* right = nullptr);
 
 // Grid of item icons, Morrowind inventory style: count in the corner, equipped / magic backgrounds.
 // D-pad moves the selection, drag scrolls; returns the tapped cell (or the selected one on A), else -1.

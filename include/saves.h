@@ -21,6 +21,8 @@ struct SaveInfo
 	std::string path;
 	std::string title;       // "Tester - Balmora"
 	std::string detail;      // "Level 3, 24 Sep 2026 14:02" / "Autosave" / "Starting point"
+	std::string name, place; // from the .meta (empty for a save without one)
+	int level = 0;
 	u64 time = 0;
 	u32 order = 0;           // the .meta's save count: higher was saved later (0: older saves without one)
 	bool autosave = false, bundled = false;
@@ -36,5 +38,8 @@ std::vector<SaveInfo> savesList(const char* dataDir);
 // A new, unused path in kSaveDir
 std::string saveNewPath();
 
+// A row of the list: the place (with the character's name only when the saves are of several), and its level, date and
+// time for the column on the right
+void saveRow(const std::vector<SaveInfo>& saves, size_t i, std::string& left, std::string& right);
 // The list as UI rows; returns the row activated this frame (tap or A) or -1
 int uiSaveList(UiList& list, const std::vector<SaveInfo>& saves, float x, float y, float w, float h, bool keys = true);

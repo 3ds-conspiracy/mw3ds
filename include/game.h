@@ -224,7 +224,7 @@ struct FpItem
 // hairs to choose from (body id, piece), and item -> slot -> (male, female piece)
 // The sun, the moons and the stars (level.py "sky_bodies"; Morrowind.ini [Moons])
 struct MoonDef { float size = 50, fadeInStart = 14, fadeInFinish = 15, fadeOutStart = 7, fadeOutFinish = 10,
-	axisOffset = 35, speed = 0.5f, dailyIncrement = 1; };
+	axisOffset = 35, speed = 0.5f, dailyIncrement = 1, fadeStartAngle = 50, fadeEndAngle = 40, earlyFadeAngle = 0.5f; };
 struct SkyBodiesDef
 {
 	std::string sun, glare, stars, masser[8], secunda[8];

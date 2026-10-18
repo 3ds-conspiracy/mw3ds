@@ -656,7 +656,8 @@ bool uiButton(float x, float y, float w, float h, const std::string& label, bool
 	return uiHit(x, y, w, h) || (focused && (s_in.down & KEY_A));
 }
 
-int uiList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows, float scale, bool keys)
+int uiList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows, float scale, bool keys,
+	const std::vector<std::string>* right)
 {
 	float rowH = uiLineHeight(scale) + 4.0f;
 	float content = rows.size() * rowH;
@@ -684,9 +685,44 @@ int uiList(UiList& list, float x, float y, float w, float h, const std::vector<s
 		if (ry + rowH < y || ry > y + h)
 			continue;
 		bool sel = (int)i == list.selected && keys;
+		u32 colour = sel ? col::textOver : col::text;
 		if (sel)
 			uiRect(x, ry, w, rowH, col::select);
-		uiText(x + 4, ry + 2, scale, sel ? col::textOver : col::text, rows[i]);
+		const std::string* side = right && i < right->size() && !(*right)[i].empty() ? &(*right)[i] : nullptr;
+		if (!side)
+			uiText(x + 4, ry + 2, scale, colour, rows[i]);
+		else
+		{
+			float sideW = uiTextWidth(*side, scale), room = w - sideW - 16.0f, textW = uiTextWidth(rows[i], scale);
+			uiText(x + w - 4 - sideW, ry + 2, scale, colour, *side);
+			// the row's text in the room left of it: cut there, or (selected) sliding left at 30 a second after a
+			// second's rest, a gap, then round again
+			float shift = 0.0f;
+			if (sel && textW > room)
+			{
+				if (list.marqueeRow != (int)i)
+				{
+					list.marqueeRow = i;
+					list.marqueeTime = 0.0f;
+				}
+				list.marqueeTime += s_in.dt;
+				float t = list.marqueeTime - 1.0f, loop = textW + 40.0f;
+				shift = t > 0.0f ? fmodf(t * 30.0f, loop) : 0.0f;
+			}
+			else if (sel)
+				list.marqueeRow = -1;
+			C2D_Flush();
+			float cy0 = fmaxf(ry, y), cy1 = fminf(ry + rowH, y + h);
+			if (cy1 > cy0)
+			{
+				C3D_SetScissor(GPU_SCISSOR_NORMAL, (u32)(240 - cy1), (u32)(320 - (x + 4 + room)), (u32)(240 - cy0), (u32)(320 - x));
+				uiText(x + 4 - shift, ry + 2, scale, colour, rows[i]);
+				if (shift > 0.0f)
+					uiText(x + 4 - shift + textW + 40.0f, ry + 2, scale, colour, rows[i]);
+				C2D_Flush();
+			}
+			C3D_SetScissor(GPU_SCISSOR_NORMAL, (u32)(240 - (y + h)), (u32)(320 - (x + w)), (u32)(240 - y), (u32)(320 - x));
+		}
 		if (uiHit(x, fmaxf(ry, y), w, fminf(rowH, y + h - ry)))
 		{
 			list.selected = i;
