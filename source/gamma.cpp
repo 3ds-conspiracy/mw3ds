@@ -14,7 +14,7 @@ int g_autoGamma = -1;
 // room already gets most of it; a dim room none. The camera's 0..255 mean has its own two ends and lift, still guesses
 // (internal plan: gamma.md)
 static const float kMaxLift = 2.0f;
-static const float kMaxCameraLift = 1.5f;
+static const float kMaxCameraLift = 2.0f;   // (as QTM's: at 1.5 a 2DS in sunlight still showed the dark too dark)
 static const float kDimLux = 200.0f, kBrightLux = 800.0f;
 static const float kDimLuma = 60.0f, kBrightLuma = 200.0f;
 static const float kMinGamma = 0.8f, kMaxGamma = 2.5f;     // (Gamma's slider over 100 still adds to the full lift)

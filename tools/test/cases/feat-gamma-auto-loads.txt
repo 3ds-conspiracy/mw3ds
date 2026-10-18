@@ -9,10 +9,10 @@
 120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
 1 0 0 0
 0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille's
-0.3 0 0 0 0 EXPECT:gamma:lift:eq:1.5+EXPECT:gamma:value:eq:1.5
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:2+EXPECT:gamma:value:eq:2
 0.3 0 0 0 0 CAMLUMA:40
 5 0 0 0
-0.3 0 0 0 0 EXPECT:gamma:lift:eq:1.5
+0.3 0 0 0 0 EXPECT:gamma:lift:eq:2
 120 0 0 0 0 DOORTO:outside
 1 0 0 0
 0.3 0 0 0 0 EXPECT:gamma:lift:eq:1+EXPECT:gamma:value:eq:1
