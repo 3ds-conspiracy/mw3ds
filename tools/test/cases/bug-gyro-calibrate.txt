@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# Gyro aim's calibration (Options > Controls > Look: Gyro aim set to a speed, and once as the game starts): the
+# console laid down, the gyroscope's resting offsets measured outright. A 2DS's view kept sinking. One made while the
+# console moved (held in a hand) is refused and the offsets stay as they were: stored, the hand's turn drifted the
+# view worse than before. Each axis is learned only with all three still (one at a time took a slow steady tilt for
+# the offset)
+# Laid down, resting at 3 a second on the turning axis and 12 on another: after it, a hand's jitter is all that's left
+0.5 0 0 0 0 EXPECT:gyrocal:3,0.4,2,12:lt:0.2
+# Held in a moving hand meanwhile: refused, nothing learned in its place (the view still turns at about the offset,
+# the still-hand learning to come)
+0.1 0 0 0 0 EXPECT:gyrocal:3,4,0.5,0:gt:2
+# The resting offset is still learned without one, and an aim is still an aim (as bug-gyro-drift)
+0.1 0 0 0 0 EXPECT:gyrodrift:3,0.4,20:lt:0.3
+0.1 0 0 0 0 EXPECT:gyrodrift:8,2.5,3:gt:7
+# Never calibrated and never held still (a 2DS in moving hands reading 2.5 a second on its up / down axis): the
+# accelerometer's gravity not turning says the console isn't tilting, so the up / down offset is learned in play.
+# Before, the view sank for good
+0.1 0 0 0 0 EXPECT:gyrolevel:2.5,2,10:lt:0.4
+0.1 0 0 0 0 EXPECT:gyrolevel:-3,2,10:lt:0.4
+# An aim up at 3 a second in steady hands (gravity turning with it) is still an aim, and turning left and right at 20 a
+# second isn't taken for an up / down offset
+0.1 0 0 0 0 EXPECT:gyrolevel:0,1,4,3:lt:0.4
+0.1 0 0 0 0 EXPECT:gyrolevel:0,2,10,0,20:lt:0.4

@@ -1,0 +1,23 @@
+# console: old
+# The Old 3DS's (and 2DS's) view closes in when its frame rate falls under its 20 outdoors. On the console it ran 18 fps
+# with the view as long as it goes: the view watched the frames' work alone, under its 47 ms budget, while a frame a
+# little over 50 ms waits for the next refresh (the New 3DS's bug-view-fps, never brought over). Outdoors it now holds a
+# steady 20 (it stepped between 30 and 20), the view closing in, as far as 0.3 of OpenMW's, whenever frames come
+# slower; it grows back only with room to spare. Indoors 30. Its top screen is 32-bit as the New 3DS's (16-bit banded
+# the sky and the fog)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SETWEATHER:0+HOUR:12
+1 0 0 0
+0.1 0 0 0 0 EXPECT:colorbits:eq:32
+0.1 0 0 0 0 VIEWSCALE:0.8+ADAPTVIEW:40:55:150
+0.1 0 0 0 0 EXPECT:framecap:eq:20+EXPECT:viewscale:lt:0.6
+0.1 0 0 0 0 ADAPTVIEW:40:55:200
+0.1 0 0 0 0 EXPECT:viewscale:le:0.31
+0.1 0 0 0 0 ADAPTVIEW:40:50:200
+0.1 0 0 0 0 EXPECT:viewscale:le:0.31+EXPECT:framecap:eq:20
+0.1 0 0 0 0 ADAPTVIEW:30:50:400
+0.1 0 0 0 0 EXPECT:viewscale:ge:0.79+EXPECT:framecap:eq:20
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+3 0 0 0
+0.1 0 0 0 0 ADAPTVIEW:20:33.3:100
+0.1 0 0 0 0 EXPECT:framecap:eq:30

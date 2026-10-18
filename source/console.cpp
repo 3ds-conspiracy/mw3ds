@@ -24,19 +24,19 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 	}
 	else
 	{
-		// A CPU a third as fast: 30 fps (20 when the scene is too heavy, an even share of the screen's 60 Hz), a shorter
-		// view outdoors, people drawn and animated less far
+		// A CPU a third as fast: a steady 20 fps outdoors (an even share of the screen's 60 Hz), 30 indoors (20 when a
+		// room is too heavy), a shorter view outdoors, people drawn and animated less far
 		p.slowCpu = true;
 		p.frameCap = 30;
 		p.capSteps = true;
-		p.viewScaleMin = 0.45f;
+		p.viewScaleMin = 0.3f;       // (2150 units: as far as it closes in to hold 20 fps)
 		p.viewScaleMax = 0.8f;
 		p.keepViewIndoors = true;
 		p.workCap = 70.0f;
 		p.actorViewLimit = 4000.0f;
 		p.actorDetailScale = 0.67f;
 		p.skinEvery[0] = 2, p.skinEvery[1] = 4, p.skinEvery[2] = 6;
-		p.rgb565 = true;
+		p.rgb565 = false;            // (16-bit banded the sky and the fog; the GPU and its memory are the New 3DS's)
 		p.cmdBufScale = 4;           // 1 MB of linear memory back (a second eye draws only while it fits: Session::stereoTarget)
 		p.goldenEyeAtStart = true;
 	}

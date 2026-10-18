@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# A Circle Pad or C-stick that rests a little off centre once let go (worn, or the New 3DS nub) kept the player
+# walking or the view turning until it was moved again: the dead zones were 15 / 20 counts on each axis on their own.
+# Now a round one on both sticks, 20% of a full push (30 counts) unless Controls > Look sets another (10% to 35%),
+# the push rescaled from its edge so it doesn't jump: a stick resting at 18 across and 16 up (24 out) does nothing, nor
+# one at 22 on one axis; a little past the edge a little; full push full
+0.5 0 0 0 0 EXPECT:setting:stickzone:eq:20
+0.1 0 0 0 0 EXPECT:stick:18,16:eq:0+EXPECT:stick:22,0:eq:0+EXPECT:stick:0,-22:eq:0
+0.1 0 0 0 0 EXPECT:stick:40,0:gt:0.05+EXPECT:stick:40,0:lt:0.12
+0.1 0 0 0 0 EXPECT:stick:150,0:eq:1+EXPECT:stick:107,107:eq:1+EXPECT:stick:0,155:eq:1
+# Controls > Look: its third bar (two down from the first, where the focus starts), D-pad right a step up (saved), left a step down; at 35% a stick at 50 out still rests
+0.3 0 0 0 0 SCREEN:look
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 EXPECT:setting:stickzone:eq:25+EXPECT:savedsetting:stickzone:eq:25
+0.3 0 0 0 0 LEFT
+0.3 0 0 0 0 EXPECT:setting:stickzone:eq:20
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 EXPECT:setting:stickzone:eq:35+EXPECT:stick:50,0:eq:0
+0.3 0 0 0 0 B

@@ -707,14 +707,15 @@ void Session::drawOptions()
 	}
 	else
 	{
-		// Look speed (the C-stick and D-pad), the GoldenEye pad's turn while walking and its look while aiming
-		// (0.50x to 2.00x), Invert and Gyro aim
+		// Look speed (the C-stick, the D-pad and the GoldenEye pad while aiming: one bar, they were two) and the GoldenEye
+		// pad's turn while walking (0.50x to 2.00x), the sticks' dead zone (10% to 35% of a full push: a stick that rests
+		// a little off centre kept walking or turning the view), Invert and Gyro aim
 		snprintf(text, sizeof(text), "%.2fx", g_lookSpeed / 100.0f);
-		bar(50, "Look speed (C-stick, D-pad)", text, g_lookSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+		bar(50, "Look speed (sticks, D-pad, aiming)", text, g_lookSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
 		snprintf(text, sizeof(text), "%.2fx", g_geTurnSpeed / 100.0f);
 		bar(84, "GoldenEye turn (walking)", text, g_geTurnSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
-		snprintf(text, sizeof(text), "%.2fx", g_geAimSpeed / 100.0f);
-		bar(118, "GoldenEye look (aiming)", text, g_geAimSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+		snprintf(text, sizeof(text), "%d%%", g_stickZonePct);
+		bar(118, "Stick dead zone", text, g_stickZonePct, kStickZoneMinPct, kStickZoneMaxPct, kStickZoneStepPct);
 		if (choice(154, "Invert look", onOff(g_invertY)))
 		{
 			g_invertY = !g_invertY;
@@ -729,7 +730,11 @@ void Session::drawOptions()
 			while (k < 3 && kGyroSteps[k] != g_gyroAim)
 				k++;
 			g_gyroAim = kGyroSteps[(k + d + 4) % 4];
-			notify(g_gyroAim > 0 ? "Gyro aim on: turn the 3DS to aim." : "Gyro aim off.");
+			// (set to a speed, the gyroscope's offsets are measured first, the console laid down: GyroRest::calibrate.
+			// Choosing a speed again calibrates again)
+			extern bool g_gyroCalibrate;
+			g_gyroCalibrate = g_gyroAim > 0;
+			notify(g_gyroAim > 0 ? "Gyro aim on: lay the 3DS down for 2 seconds to calibrate, then turn it to aim." : "Gyro aim off.");
 		}
 		// Layout: the button list, what each button does in the layout in use (Y there switches Xbox, classic, GoldenEye)
 		b = buttons(208, 28, { "Default", "Layout", w.game.gmstLabel("sclose", "Close") });
@@ -737,7 +742,8 @@ void Session::drawOptions()
 		if (b == 0)
 		{
 			g_lookSpeed = kLookDefaultPct;
-			g_geTurnSpeed = g_geAimSpeed = 100;
+			g_geTurnSpeed = 100;
+			g_stickZonePct = kStickZoneDefaultPct;
 			g_invertY = false;
 			g_gyroAim = 0;
 			changed = true;
@@ -793,9 +799,9 @@ void Session::drawControls()
 	// One stick (an Old 3DS without the C-stick) on the Xbox buttons: the pad walks and turns; an aim button held
 	// stands still and the pad aims
 	static const char* kGoldenEye[][2] = {
-		{ "Circle Pad", "Walk (far: run) up, down; turn" }, { "X (hold) / ZL / ZR", "Aim: stand still, the pad aims" },
-		{ "X (tap)", "Ready / put away the weapon" }, { "R (hold, release)", "Wind up (aiming), strike" },
-		{ "L", "Cast the selected spell" }, { "A", "Activate: talk, open, take" },
+		{ "Circle Pad", "Walk (far: run) up, down; turn" }, { "A (hold) / ZL / ZR", "Aim: stand still, the pad aims" },
+		{ "A (tap)", "Activate: talk, open, take" }, { "R (hold, release)", "Wind up, strike" },
+		{ "L", "Cast the selected spell" }, { "X", "Ready / put away the weapon" },
 		{ "Y", "Jump (swim up in water)" }, { "B", "Sneak on / off" }, { "SELECT", "First / third person" },
 		{ "D-Pad", "Left / right: strafe; up / down: look" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Menus, quick keys" } };

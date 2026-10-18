@@ -212,7 +212,7 @@ static bool hasArg(const std::string& what)
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "texlow" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
 }
 
 // "<a>,<b>" as two numbers
@@ -820,18 +820,69 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = what == "gyroyaw" ? yaw : pitch;
 		return true;
 	}
-	if (what == "gyrodrift")           // gyrodrift:<offset>,<jitter>,<seconds>: a console held still whose sensor rests at
-	{                                  // <offset> degrees a second on its turning axis, with a hand's <jitter>, for that
-		float n[3] = {};               // long at 30 frames a second: how fast the view still turns after (degrees a second)
-		sscanf(arg.c_str(), "%f,%f,%f", &n[0], &n[1], &n[2]);
+	if (what == "stick")               // stick:<dx>,<dy>: a stick's counts through the dead zone: the push (the x and y
+	{                                  // together, 0..1)
+		float dx, dy, x, y;
+		twoNumbers(arg, dx, dy);
+		stickAxes(dx, dy, stickZone(), x, y);
+		v = sqrtf(x * x + y * y);
+		return true;
+	}
+	if (what == "gyrolevel")
+	{
+		// gyrolevel:<offset>,<jitter>,<seconds>[,<aim>[,<yaw>]]: a console held at a 2DS's angle in moving hands (a hand's
+		// <jitter> on every axis: never still), its sensor resting at <offset> a second on the up / down axis (x), tilted
+		// up at <aim> a second (gravity turning with it) and turned about gravity at <yaw>, for that long at 30 frames a
+		// second: the up / down turn the view still gets, less the aim, over the last second (degrees a second)
+		float n[5] = {};
+		sscanf(arg.c_str(), "%f,%f,%f,%f,%f", &n[0], &n[1], &n[2], &n[3], &n[4]);
 		GyroRest rest;
+		float tilt = 0.45f, sum = 0.0f;           // radians the console leans back (gravity's y and z)
+		int frames = (int)(n[2] * 30.0f), counted = 0;
+		for (int f = 0; f < frames; f++)
+		{
+			float j = n[1] * (sinf(f * 0.9f) * 0.6f + sinf(f * 1.7f + 1.0f) * 0.4f);
+			tilt += n[3] / 57.2958f / 30.0f;
+			float g[3] = { -30.0f, -512.0f * cosf(tilt), -512.0f * sinf(tilt) };
+			// (a turn about gravity shows on y and z as gravity lies in the console's frame)
+			float rate[3] = { n[0] + n[3] + j, n[4] * cosf(tilt) + j * 0.8f, n[4] * sinf(tilt) - j * 0.6f };
+			rest.gravity(g, 1.0f / 30.0f);
+			rest.update(rate, 1.0f / 30.0f);
+			if (f >= frames - 30)
+			{
+				sum += rate[0] - n[3];
+				counted++;
+			}
+		}
+		v = counted ? fabsf(sum / counted) : 0.0f;
+		return true;
+	}
+	if (what == "gyrodrift" || what == "gyrocal")
+	{
+		// gyrodrift:<offset>,<jitter>,<seconds>[,<other>]: a console held still whose sensor rests at <offset> degrees a
+		// second on its turning axis (and <other> on another), with a hand's <jitter>, for that long at 30 frames a
+		// second: how fast the view still turns after (degrees a second). gyrocal: the same after Calibrate, the console
+		// laid down while it measures (gyrocal:...,<jitter> over 2: held in a hand meanwhile, that much)
+		float n[4] = {};
+		sscanf(arg.c_str(), "%f,%f,%f,%f", &n[0], &n[1], &n[2], &n[3]);
+		GyroRest rest;
+		if (what == "gyrocal")
+		{
+			rest.calibrate();
+			for (int f = 0; f < (int)((GyroRest::kCalibrate + 0.25f) * 30.0f) + 2; f++)
+			{
+				float j = n[1] > 2.0f ? n[1] * (sinf(f * 0.9f) * 0.6f + sinf(f * 0.23f + 1.0f) * 0.4f) : 0.0f;
+				float rate[3] = { j * 0.5f, n[0] + j, n[3] + j * 0.3f };
+				rest.update(rate, 1.0f / 30.0f);
+			}
+		}
 		float sum = 0.0f;
 		int frames = (int)(n[2] * 30.0f), counted = 0;
 		for (int f = 0; f < frames; f++)
 		{
 			// (a hand's jitter: a few slow wobbles, the same every run)
 			float j = n[1] * (sinf(f * 0.9f) * 0.6f + sinf(f * 0.23f + 1.0f) * 0.4f);
-			float rate[3] = { j * 0.5f, n[0] + j, j * 0.3f };
+			float rate[3] = { j * 0.5f, n[0] + j, n[3] + j * 0.3f };
 			rest.update(rate, 1.0f / 30.0f);
 			if (f >= frames - 30)                       // (the last second's average: the wobble left out)
 			{
@@ -1354,6 +1405,8 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "wfogdepth") v = w.weatherFogDepth();
 	else if (what == "wfogscale") v = w.weatherFogScale();      // the share of the view drawn in this weather
+	else if (what == "framecap") v = (float)s.frameCap;          // the frame rate the console holds to (Old 3DS: 30 or 20)
+	else if (what == "colorbits") v = g_profile.rgb565 ? 16.0f : 32.0f;   // the 3D screen's colour buffer
 	else if (what == "viewscale") v = s.viewScale;              // the adaptive view distance outdoors (1: the whole view)
 	else if (what == "hudcaption")    // the cell name under the HUD's minimap is this cell's, 1; else 0
 	{
@@ -1382,9 +1435,10 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	{
 		if (arg == "lookspeed") v = (float)g_lookSpeed;
 		else if (arg == "geturn") v = (float)g_geTurnSpeed;
-		else if (arg == "geaim") v = (float)g_geAimSpeed;
+		else if (arg == "geaim") v = (float)g_lookSpeed;      // (the look speed: one bar since)
 		else if (arg == "inverty") v = g_invertY ? 1.0f : 0.0f;
 		else if (arg == "subtitles") v = g_subtitles ? 1.0f : 0.0f;
+		else if (arg == "stickzone") v = (float)g_stickZonePct;
 		else
 			return false;
 	}
@@ -2901,7 +2955,7 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 		int pct = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(a[1].c_str())));
 		if (verb == "LOOKSPEED") g_lookSpeed = pct;
 		else if (verb == "GETURN") g_geTurnSpeed = pct;
-		else if (verb == "GEAIM") g_geAimSpeed = pct;
+		else if (verb == "GEAIM") g_lookSpeed = pct;      // (the GoldenEye aim looks at the look speed)
 		else if (verb == "INVERTY") g_invertY = a[1] == "on";
 		else g_subtitles = a[1] != "off";
 		s.saveSettings();

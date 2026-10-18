@@ -19,6 +19,7 @@ struct PlayerInput
 	bool sneak;           // held: sneak (L, outside fly mode)
 	int quick = -1;       // quick key used this frame (ZL + D-pad: 0 up, 1 right, 2 down, 3 left)
 	bool togglePov = false;  // SELECT: first / third person
+	bool activate = false;   // GoldenEye: a tap of A (let go before it aimed): activate (the other layouts: A pressed)
 	// Gyro aim: how fast the console turns, degrees a second (sensitivity applied), around its up axis (+ right)
 	// and across (+ up). Turned into view angles one to one, not through the stick's look speed
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;
@@ -81,6 +82,31 @@ inline float gyroRawToDps(float raw, float coeff)
 {
 	return coeff >= 1.0f ? raw / coeff : raw * coeff;
 }
+// A stick's reading (the Circle Pad's or the C-stick's counts, about 150 at full push) past a round dead zone of
+// `zone` counts, rescaled so the push grows from 0 at the zone's edge (no jump) to 1 at full; x and y -1..1. A worn
+// Circle Pad or a C-stick that doesn't spring back rests a little off centre: with dead zones of 15 / 20 counts on
+// each axis, past them, the player kept walking or the view kept turning after the stick was let go, until it was
+// moved again
+inline void stickAxes(float dx, float dy, float zone, float& x, float& y)
+{
+	const float kFull = 150.0f;
+	float m = sqrtf(dx * dx + dy * dy);
+	if (m <= zone)
+	{
+		x = y = 0.0f;
+		return;
+	}
+	float s = fminf(1.0f, (m - zone) / (kFull - zone)) / m;
+	x = dx * s;
+	y = dy * s;
+}
+// Both sticks' dead zone, percent of a full push (Controls > Look: Stick dead zone; settings.txt stickzone=)
+extern int g_stickZonePct;
+static const int kStickZoneMinPct = 10, kStickZoneMaxPct = 35, kStickZoneStepPct = 5, kStickZoneDefaultPct = 20;
+inline float stickZone()
+{
+	return g_stickZonePct * 1.5f;            // (of the 150 counts of a full push)
+}
 // Gyro aim's soft threshold (GyroWiki's "tightening"): a turn under `soft` degrees a second is scaled down by how far
 // under it is (a shaking hand's jitter all but gone, a slow aim kept), one over it passes whole; no hard dead zone
 inline float gyroSoften(float rate, float soft)
@@ -95,16 +121,85 @@ inline float gyroSoften(float rate, float soft)
 //   kMost a second (the sensor's are a few). Before, it was learned only near the offset learned so far, starting from
 //   0, so an offset over 1.5 a second was never learned and the view drifted to one side for good
 // - otherwise, while within 1.5 a second of it: slowly (some 10 s), so a slow, deliberate aim is not mistaken for it
-// rate: degrees a second, corrected in place; dt: seconds since the last reading
+// All three axes at once: learned one axis at a time, a slow steady tilt to aim (the other axes still moving) was taken
+// for the offset, and the view drifted back the other way once it stopped (worse on a 2DS than before).
+// And calibrate(): the console laid down, the offsets measured outright over kCalibrate seconds (Options > Controls >
+// Look: Gyro aim set to a speed, and once as the game starts). A console that moved meanwhile (any axis straying more
+// than kCalStray from its average) measures nothing: the offsets stay as they were, as a hand-held calibration stored
+// the hand's turn as the offset.
+// And the accelerometer, for the up / down axis (x, the console's left-right, lying level in the hands): a console
+// whose gravity hasn't turned isn't tilting up or down, so the x it reads then is its offset, learned in about a second
+// while it plays (gravity(): each reading, before update). A 2DS reading 2.5 a second on it, held in moving hands,
+// was never still enough to learn it: the view sank for good. (Turns about gravity itself, left and right, leave
+// gravity as it was: x is learned only while y and z read little, so a turn isn't taken for it.)
+// rate: degrees a second, corrected in place; dt: seconds since the reading
 struct GyroRest
 {
+	static constexpr float kCalibrate = 2.0f, kCalStray = 0.8f;
 	float rest[3] = { 0.0f, 0.0f, 0.0f };
 	float mean[3] = { 0.0f, 0.0f, 0.0f }, wobble[3] = { 0.0f, 0.0f, 0.0f };
 	float still = 0.0f;                          // seconds held still
+	float calLeft = 0.0f, calSum[3] = {}, calSq[3] = {}, calTime = 0.0f;   // a calibration under way
 	bool started = false;
-	void update(float rate[3], float dt)
+	float gPrev[3] = {}, gTurn = 99.0f, gLevel = 1.0f;   // gravity's direction, how fast it turns (degrees a second, smoothed)
+	bool gHas = false;                                   // and how far x is from level (|gravity's x|, 0..1)
+	void gravity(const float g[3], float dt)
+	{
+		float l = sqrtf(g[0] * g[0] + g[1] * g[1] + g[2] * g[2]);
+		if (l < 1.0f || dt <= 0.0f)
+			return;
+		float u[3] = { g[0] / l, g[1] / l, g[2] / l };
+		if (gHas)
+		{
+			float d = sqrtf((u[0] - gPrev[0]) * (u[0] - gPrev[0]) + (u[1] - gPrev[1]) * (u[1] - gPrev[1])
+				+ (u[2] - gPrev[2]) * (u[2] - gPrev[2]));
+			gTurn += (d / dt * 57.2958f - gTurn) * fminf(1.0f, dt / 0.3f);
+		}
+		for (int k = 0; k < 3; k++)
+			gPrev[k] = u[k];
+		gHas = true;
+		gLevel = fabsf(u[0]);
+	}
+	void calibrate()
+	{
+		calLeft = kCalibrate + 0.25f;            // (the first quarter second left out: a sensor just turned on reads 0)
+		calTime = 0.0f;
+		for (int k = 0; k < 3; k++)
+			calSum[k] = calSq[k] = 0.0f;
+	}
+	// 1 the reading that ends a calibration that took, -1 one that didn't (the console moved), else 0
+	int update(float rate[3], float dt)
 	{
 		const float kStill = 1.0f, kMost = 10.0f;
+		if (calLeft > 0.0f)
+		{
+			// (the view held while it measures: the console lies still, every reading is the offset)
+			bool counted = calLeft <= kCalibrate;
+			for (int k = 0; k < 3; k++)
+			{
+				calSum[k] += counted ? rate[k] * dt : 0.0f;
+				calSq[k] += counted ? rate[k] * rate[k] * dt : 0.0f;
+				rate[k] = 0.0f;
+			}
+			calTime += counted ? dt : 0.0f;
+			if ((calLeft -= dt) > 0.0f || calTime <= 0.0f)
+				return 0;
+			bool steady = true;
+			for (int k = 0; k < 3; k++)
+			{
+				float m = calSum[k] / calTime;
+				steady = steady && calSq[k] / calTime - m * m < kCalStray * kCalStray;
+			}
+			if (!steady)
+				return -1;
+			for (int k = 0; k < 3; k++)
+			{
+				rest[k] = mean[k] = calSum[k] / calTime;
+				wobble[k] = 0.0f;
+			}
+			still = 0.0f;
+			return 1;
+		}
 		if (!started)
 		{
 			for (int k = 0; k < 3; k++)
@@ -121,14 +216,25 @@ struct GyroRest
 			near = near && fabsf(rate[k] - rest[k]) < 1.5f;
 		}
 		still = calm ? still + dt : 0.0f;
+		// (gravity not turning, x level, no turn on y or z, and x reading no more than an offset's worth)
+		bool level = gHas && gTurn < 1.5f && gLevel < 0.5f && fabsf(rate[1] - rest[1]) < 5.0f
+			&& fabsf(rate[2] - rest[2]) < 5.0f && fabsf(rate[0] - rest[0]) < 6.0f;
 		for (int k = 0; k < 3; k++)
 		{
-			if (still >= 1.0f)
+			// (and while gravity turns, x isn't learned at all: a slow steady tilt up or down in steady hands was taken for
+			// the offset)
+			bool tilting = k == 0 && gHas && gTurn >= 1.5f;
+			if (k == 0 && level && still < 1.0f)
+				rest[0] += (rate[0] - rest[0]) * fminf(1.0f, dt / 1.0f);
+			else if (tilting)
+				;
+			else if (still >= 1.0f)
 				rest[k] += (mean[k] - rest[k]) * learn;
 			else if (near)
 				rest[k] += (rate[k] - rest[k]) * slow;
 			rate[k] -= rest[k];
 		}
+		return 0;
 	}
 };
 // Gyro aim in "player space" (JibbSmart's GamepadMotionHelpers, GyroWiki): the turn about the world's up (gravity, from

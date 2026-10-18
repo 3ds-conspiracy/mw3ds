@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# GoldenEye: the aim (stand still, the Circle Pad looks around) is on a hold of A, a tap of A activates. It was on a
+# hold of X, beside Y: a thumb on Y to jump while walking caught X and the view tilted up. Fargoth: a tap of A talks to
+# him; walking with Y down jumps and leaves the view's pitch as it was
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+90 0 0 0 0 WALKTO:fargoth
+0.3 0 0 0 0 FACE:fargoth+CONTROLS:goldeneye
+0.1 0 0 0 0 A
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue
+0.3 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 SNAP:pitch
+0.5 0 1 0 0 Y
+0.1 0 0 0 0 EXPECT:pitch:ge:@-1+EXPECT:pitch:le:@1

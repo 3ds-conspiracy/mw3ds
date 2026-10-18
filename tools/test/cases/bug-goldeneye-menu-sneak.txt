@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# GoldenEye: B toggles sneaking, and closes a menu. The B that closed a menu also toggled sneaking: out of Options the
+# player was crouched. Now B toggles it only outside a menu: out of Options standing; B in play crouches
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+CONTROLS:goldeneye
+1 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:0
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 B
+0.5 0 0 0 0 EXPECT:screen:none+EXPECT:sneaking:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 EXPECT:sneaking:eq:1

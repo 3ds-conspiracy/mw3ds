@@ -558,16 +558,31 @@ void Session::adaptView(float workMs, float frameMs)
 	float budget = 34.0f;
 	if (g_profile.capSteps)
 	{
+		// Outdoors a steady 20 fps, the view giving way to keep it (below); indoors 30, 20 while a room is too heavy:
 		// two seconds past the 30 fps budget: 20; four seconds well under it: 30 again
-		bool slow = frameCap == 30 ? workCost > 31.0f : workCost < 24.0f;
-		capFrames = slow ? capFrames + 1 : 0;
-		if (capFrames >= (frameCap == 30 ? 60 : 80))
+		bool outdoors = w.current >= 0 && !w.cells[w.current].interior;
+		int cap = frameCap;
+		if (outdoors)
 		{
-			frameCap = frameCap == 30 ? 20 : 30;
+			cap = 20;
 			capFrames = 0;
-			logf("view: frame rate capped at %d (frame work %.1f ms)", frameCap, workCost);
 		}
-		budget = frameCap == 30 ? 1000.0f : 47.0f;      // (at 30 the cap gives way first)
+		else
+		{
+			bool slow = frameCap == 30 ? workCost > 31.0f : workCost < 24.0f;
+			capFrames = slow ? capFrames + 1 : 0;
+			if (capFrames >= (frameCap == 30 ? 60 : 80))
+			{
+				cap = frameCap == 30 ? 20 : 30;
+				capFrames = 0;
+			}
+		}
+		if (cap != frameCap)
+		{
+			frameCap = cap;
+			logf("view: frame rate capped at %d (frame work %.1f ms, view %.0f%%)", frameCap, workCost, viewScale * 100.0f);
+		}
+		budget = 44.0f;
 	}
 	// Particle sprites (spell visuals): fewer at once while frames run past the budget, quickly; more again, slowly,
 	// once there is room (indoors too: a fight is the same work there). Spread evenly over the visuals showing
@@ -585,11 +600,14 @@ void Session::adaptView(float workMs, float frameMs)
 			viewScale = 1.0f;
 		return;
 	}
-	// (New 3DS: past 34.5 ms between frames is under 29 fps; under 27 ms of work held 29-30 fps on the console)
-	bool slow = g_profile.capSteps ? workCost > budget : frameCost > 34.5f;
-	bool room = g_profile.capSteps ? workCost < budget - 4.0f : workCost < 27.0f;
+	// (New 3DS: past 34.5 ms between frames is under 29 fps; under 27 ms of work held 29-30 fps on the console. Old 3DS,
+	// at its 20: past 51.5 ms between frames is under 19.4 fps, or the work near the budget; it grows back only with
+	// room to spare. On the console it ran 18 fps while the work, under 47 ms, said all was well: a frame a little over
+	// 50 ms waits for the next refresh)
+	bool slow = g_profile.capSteps ? workCost > budget || frameCost > 51.5f : frameCost > 34.5f;
+	bool room = g_profile.capSteps ? workCost < budget - 8.0f && frameCost < 51.5f : workCost < 27.0f;
 	if (slow)
-		viewScale = fmaxf(minScale, viewScale - 0.004f);
+		viewScale = fmaxf(minScale, viewScale - (g_profile.capSteps ? 0.006f : 0.004f));
 	else if (room)
 		viewScale = fminf(maxScale, viewScale + 0.002f);
 }
@@ -597,7 +615,8 @@ void Session::adaptView(float workMs, float frameMs)
 static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";
 int g_controlLayout = CONTROLS_XBOX;
 int g_gyroAim = 0;                // gyro aim starts off (until it is tried on the device): Options turns it on
-int g_lookSpeed = kLookDefaultPct, g_geTurnSpeed = 100, g_geAimSpeed = 100;
+int g_lookSpeed = kLookDefaultPct, g_geTurnSpeed = 100;
+int g_stickZonePct = kStickZoneDefaultPct;
 bool g_invertY = false;
 bool g_subtitles = true;
 static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is off
@@ -614,14 +633,15 @@ void Session::loadSettings()
 	{
 		g_gammaPct = 100;
 		g_autoGamma = 0;
-		g_lookSpeed = g_geTurnSpeed = g_geAimSpeed = 100;
+		g_lookSpeed = g_geTurnSpeed = 100;
+		g_stickZonePct = kStickZoneDefaultPct;
 		g_invertY = false;
 		g_subtitles = true;
 	}
 	FILE* f = fopen(kSettingsPath, "r");
 	if (!f)
 		return;
-	bool gyroOff = false;
+	bool gyroOff = false, gyroOn = false;
 	char line[64];
 	while (fgets(line, sizeof(line), f))
 	{
@@ -637,23 +657,26 @@ void Session::loadSettings()
 		else if (strncmp(line, "controls=xbox", 13) == 0) g_controlLayout = CONTROLS_XBOX;
 		else if (strncmp(line, "controls=goldeneye", 18) == 0) g_controlLayout = CONTROLS_GOLDENEYE;
 		else if (strncmp(line, "gyroaim=off", 11) == 0) gyroOff = true;
+		else if (strncmp(line, "gyroaim=on", 10) == 0) gyroOn = true;
 		else if (strncmp(line, "gyrosens=", 9) == 0 && atoi(line + 9) > 0) s_gyroSens = atoi(line + 9);
 		else if (autotest) {}
 		else if (strncmp(line, "gamma=", 6) == 0)
 			g_gammaPct = std::max(kGammaMinPct, std::min(kGammaMaxPct, atoi(line + 6)));
 		else if (strncmp(line, "autogamma=on", 12) == 0) g_autoGamma = 1;
 		else if (strncmp(line, "autogamma=off", 13) == 0) g_autoGamma = 0;
+		else if (strncmp(line, "stickzone=", 10) == 0)
+			g_stickZonePct = std::max(kStickZoneMinPct, std::min(kStickZoneMaxPct, atoi(line + 10)));
 		else if (strncmp(line, "lookspeed=", 10) == 0) g_lookSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 10)));
 		else if (strncmp(line, "geturn=", 7) == 0) g_geTurnSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 7)));
-		else if (strncmp(line, "geaim=", 6) == 0) g_geAimSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 6)));
+		// (an older file's geaim= is left unread: the GoldenEye aim looks at the look speed)
 		else if (strncmp(line, "inverty=", 8) == 0) g_invertY = strncmp(line + 8, "on", 2) == 0;
 		else if (strncmp(line, "subtitles=", 10) == 0) g_subtitles = strncmp(line + 10, "off", 3) != 0;
 		else if (strncmp(line, "dynview=", 8) == 0) dynamicView = strncmp(line + 8, "off", 3) != 0;
 	}
 	fclose(f);
-	// (off at every start for now, whatever was saved: gyro aim is still to be tried on the device; the sensitivity is kept)
-	(void)gyroOff;
-	g_gyroAim = 0;
+	// Gyro aim as it was left, at its sensitivity (it was turned off at every start while untried on the device, and
+	// the setting seemed not to be kept). A scripted run starts with it off
+	g_gyroAim = gyroOn && !gyroOff && !autotest ? s_gyroSens : 0;
 }
 
 void Session::saveSettings()
@@ -671,7 +694,8 @@ void Session::saveSettings()
 	fprintf(f, "gamma=%d\n", g_gammaPct);
 	if (g_autoGamma >= 0)                // (not chosen: the console's default, on with QTM)
 		fprintf(f, "autogamma=%s\n", g_autoGamma ? "on" : "off");
-	fprintf(f, "lookspeed=%d\ngeturn=%d\ngeaim=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_geAimSpeed, g_invertY ? "on" : "off");
+	fprintf(f, "lookspeed=%d\ngeturn=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_invertY ? "on" : "off");
+	fprintf(f, "stickzone=%d\n", g_stickZonePct);
 	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
 	fprintf(f, "dynview=%s\n", dynamicView ? "on" : "off");
 	fclose(f);
@@ -999,6 +1023,13 @@ bool Session::worldPaused() const
 
 void Session::update(const PlayerInput& inRaw, float dt)
 {
+	// Gyro aim's calibration, as it went (main's gyroInput)
+	extern int g_gyroCalNotice;
+	if (g_gyroCalNotice)
+	{
+		notify(g_gyroCalNotice > 0 ? "Gyro calibrated." : "The 3DS moved, so the gyro wasn't calibrated: lay it down and choose the speed again.");
+		g_gyroCalNotice = 0;
+	}
 	u64 t = profTick();
 	MARK("world update");
 	w.pcWeaponDrawn = weaponDrawn;
@@ -1275,10 +1306,12 @@ void Session::update(const PlayerInput& inRaw, float dt)
 
 	// Telekinesis reaches farther (magnitude in feet, 22 units each)
 	target = menu ? -1 : worldPick(w, eye, dir, kReach + w.effectTotal(59) * 22.0f);
-	if (!menu && (uiIn().down & KEY_A))
+	// (GoldenEye: on a tap of A, let go before it aimed; the press itself is kept from the screens either way)
+	bool goldenEye = g_controlLayout == CONTROLS_GOLDENEYE;
+	if (!menu && ((uiIn().down & KEY_A) || (goldenEye && in.activate)))
 	{
 		uiConsume(KEY_A);
-		if (target >= 0 && w.controlsEnabled)
+		if ((goldenEye ? in.activate : true) && target >= 0 && w.controlsEnabled)
 			playerActivate(target);
 	}
 

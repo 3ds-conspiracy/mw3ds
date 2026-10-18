@@ -132,11 +132,11 @@ that walks and turns, on the Xbox layout's buttons, and a button that stops you 
 | Button | GoldenEye (Old 3DS default) |
 |---|---|
 | Circle Pad | Walk forward / back, turn left / right |
-| X (hold), ZL / ZR (hold) | Aim: stand still, the Circle Pad aims (up and down too) |
-| X (tap) | Ready / put away the weapon |
-| R (hold, release) | Wind up (aiming as X does), strike |
+| A (hold), ZL / ZR (hold) | Aim: stand still, the Circle Pad aims (up and down too) |
+| A (tap) | Activate: talk, open, take |
+| X | Ready / put away the weapon |
+| R (hold, release) | Wind up, strike (the Circle Pad keeps walking) |
 | L | Cast the selected spell |
-| A | Activate: talk, open, take |
 | Y | Jump |
 | B | Sneak on / off |
 | SELECT | First / third person |
@@ -144,9 +144,11 @@ that walks and turns, on the Xbox layout's buttons, and a button that stops you 
 | START | Menu: save, rest, options |
 | Touch screen | Inventory, magic, map, stats, quick keys |
 
-**Gyro aim** is on by default on every console: turning the 3DS turns your view by the same angle, for fine aiming.
-Options > Gyro aim cycles off, 0.5x, 1x and 2x. Options > Controls shows the layout and switches between GoldenEye,
-Xbox and classic (Y).
+**Gyro aim** (Options > Controls): turning the 3DS turns your view, for fine aiming; off, 0.5x, 1x or 2x, kept between
+sessions. Choosing a speed calibrates it: lay the 3DS down for 2 seconds (it also tries once as the game starts). The
+same tab sets one look speed for the sticks, the D-pad and GoldenEye aiming, the GoldenEye turn while walking, and the
+sticks' dead zone (raise it if a stick keeps walking or turning after you let go). Layout shows the buttons and switches
+between GoldenEye, Xbox and classic (Y).
 
 ## Testing and reporting
 

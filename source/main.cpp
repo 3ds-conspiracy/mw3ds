@@ -555,39 +555,47 @@ static float readStickScroll()
 {
 	circlePosition cs;
 	hidCstickRead(&cs);
-	return fabsf(cs.dy) > 20 ? fmaxf(-1.0f, fminf(1.0f, -cs.dy / 150.0f)) : 0.0f;
+	float x, y;
+	stickAxes(cs.dx, cs.dy, stickZone(), x, y);
+	return -y;
 }
 
 // GoldenEye (Options > Controls): one stick, for an Old 3DS without the C-stick and ZL / ZR, on the Xbox layout's
 // buttons. The Circle Pad walks (up / down) and turns (left / right); an aim button held roots the player and the
-// pad aims instead, up and down too, at half speed (GoldenEye's aim): X held past a tap, R while it winds up the
-// attack, or ZL / ZR (Circle Pad Pro / New 3DS). A tap of X readies or puts away the weapon, when it is let go
-// (a hold aims instead). L cast, Y jump (and rise, levitating), B sneak on / off, SELECT first / third person (as on
-// the other layouts), D-pad strafes (left / right) and looks up / down; quick keys are on the touch screen. Device and
-// scripted runs both come through here, each with its own GoldenEyeState; dt: the frame's seconds (X's tap or hold)
+// pad aims instead, up and down too, at the look speed (half of it was GoldenEye's aim: too slow on the console): A held,
+// or ZL / ZR (Circle Pad Pro / New 3DS). R winds up the attack and leaves the pad walking (it aimed too: the player stood
+// rooted while winding up a blow). A tap of A activates, when it is let go (a hold aims instead). X readies or puts away
+// the weapon, L casts, Y jumps (and rises, levitating), B sneaks on / off, SELECT first / third person (as on the other
+// layouts), D-pad strafes (left / right) and looks up / down; quick keys are on the touch screen. (The aim was on a
+// hold of X, beside Y: a thumb on Y to jump while walking caught X and the pad looked up.) Device and scripted runs
+// both come through here, each with its own GoldenEyeState; dt: the frame's seconds (A's tap or hold)
 struct GoldenEyeState
 {
-	float xHeld = 0.0f;               // seconds X has been held
+	float aHeld = 0.0f;               // seconds A has been held
 	bool sneakOn = false;
 };
+// A menu is up this frame (main sets it before the input is read): GoldenEye's B toggles sneaking only outside one. The
+// B that closed a menu crouched the player as it went
+static bool s_menuForInput = false;
 static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt)
 {
-	float& xHeld = ge.xHeld;
+	float& aHeld = ge.aHeld;
 	bool& sneakOn = ge.sneakOn;
-	const float kTap = 0.25f;           // X let go before this: ready / put away; held longer: only aimed
-	if (held & KEY_X)
-		xHeld += dt;
-	bool aiming = held & (KEY_X | KEY_R | KEY_ZL | KEY_ZR);   // (X from the press on: a quick let-go readies instead)
-	in.readyToggle = (up & KEY_X) && xHeld < kTap;
-	if (!(held & KEY_X))
-		xHeld = 0.0f;
+	const float kTap = 0.25f;           // A let go before this: activate; held longer: only aimed
+	if (held & KEY_A)
+		aHeld += dt;
+	bool aiming = held & (KEY_A | KEY_ZL | KEY_ZR);   // (A from the press on: a quick let-go activates instead)
+	in.activate = (up & KEY_A) && aHeld < kTap;
+	if (!(held & KEY_A))
+		aHeld = 0.0f;
+	in.readyToggle = down & KEY_X;
 	in.moveX = in.moveY = 0.0f;
 	// (Controls > Look: the pad's turn while walking, its look while aiming and the D-pad's look up and down)
-	float turn = g_geTurnSpeed / 100.0f, aim = g_geAimSpeed / 100.0f;
+	float turn = g_geTurnSpeed / 100.0f, aim = g_lookSpeed / 100.0f;
 	if (aiming)
 	{
-		in.lookX += padX * 0.5f * aim;
-		in.lookY += padY * 0.5f * aim;
+		in.lookX += padX * aim;
+		in.lookY += padY * aim;
 	}
 	else
 	{
@@ -599,7 +607,7 @@ static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, floa
 	if (held & KEY_DRIGHT) in.moveX += 1.0f;
 	if (held & KEY_DUP) in.lookY += aim;
 	if (held & KEY_DDOWN) in.lookY -= aim;
-	if (down & KEY_B)
+	if ((down & KEY_B) && !s_menuForInput)
 		sneakOn = !sneakOn;
 	in.attack = held & KEY_R;
 	in.cast = down & KEY_L;
@@ -611,6 +619,9 @@ static void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, floa
 // Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
 // The sensor runs only while it is on; the resting offset is taken off and turns under kSoft a second softened
 static bool s_gyroOn = false;
+
+bool g_gyroCalibrate = false;      // Gyro aim set to a speed (Options): measure the gyroscope's offsets (GyroRest::calibrate)
+int g_gyroCalNotice = 0;           // how the last one asked for went (1 took, -1 the console moved): Session says so
 
 // The sensors off again: the HID module keeps them running for the console after the game has gone otherwise
 static void gyroStop()
@@ -646,12 +657,17 @@ static void gyroInput(PlayerInput& in)
 	float ax = gyroRawToDps(r.x, toDps), ay = gyroRawToDps(r.y, toDps), az = gyroRawToDps(r.z, toDps);
 	// The sensor's resting offset taken off (GyroRest)
 	static GyroRest rest;
-	static u64 last = 0;
+	static u64 last = 0, logged = 0;
+	static bool firstCal = true, asked = false;  // (once as the sensor starts: kept only if the console lay still)
 	u64 now = osGetTime();
 	float rate[3] = { ax, ay, az };
-	rest.update(rate, last ? fminf(0.1f, (now - last) / 1000.0f) : 1.0f / 30.0f);
-	last = now;
-	// Gravity from the accelerometer, steadied over a few frames
+	if (g_gyroCalibrate || firstCal)
+	{
+		asked = g_gyroCalibrate;
+		g_gyroCalibrate = firstCal = false;
+		rest.calibrate();
+	}
+	// Gravity from the accelerometer, steadied over a few frames (GyroRest learns the up / down offset by it)
 	static float grav[3] = { 0.0f, -512.0f, 0.0f };
 	accelVector acc;
 	hidAccelRead(&acc);
@@ -660,6 +676,25 @@ static void gyroInput(PlayerInput& in)
 		const float a[3] = { (float)acc.x, (float)acc.y, (float)acc.z };
 		for (int k = 0; k < 3; k++)
 			grav[k] += (a[k] - grav[k]) * 0.1f;
+	}
+	float step = last ? fminf(0.1f, (now - last) / 1000.0f) : 1.0f / 30.0f;
+	rest.gravity(grav, step);
+	int cal = rest.update(rate, step);
+	if (cal)
+	{
+		logf("gyro: calibration %s, offsets %.2f %.2f %.2f dps", cal > 0 ? "took" : "refused (the console moved)",
+			rest.rest[0], rest.rest[1], rest.rest[2]);
+		if (asked)
+			g_gyroCalNotice = cal;
+		asked = false;
+	}
+	last = now;
+	// (the offsets learned, every 10 s: a view that drifts on the console shows here)
+	if (now - logged >= 10000)
+	{
+		logged = now;
+		logf("gyro: offsets %.2f %.2f %.2f dps, held still %.1f s, gravity turning %.1f dps, x off level %.2f", rest.rest[0],
+			rest.rest[1], rest.rest[2], rest.still, rest.gTurn, rest.gLevel);
 	}
 	// (while the console turns, its axes and gravity go to the log twice a second: the signs are still to be read on
 	// the device)
@@ -702,10 +737,12 @@ static PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	hidCircleRead(&cp);
 	hidCstickRead(&cs);
 	PlayerInput in = {};
-	in.moveX = fabsf(cp.dx) > 15 ? fmaxf(-1.0f, fminf(1.0f, cp.dx / 150.0f)) : 0.0f;
-	in.moveY = fabsf(cp.dy) > 15 ? fmaxf(-1.0f, fminf(1.0f, cp.dy / 150.0f)) : 0.0f;
-	in.lookX = fabsf(cs.dx) > 20 ? cs.dx / 150.0f * lookScale() : 0.0f;
-	in.lookY = fabsf(cs.dy) > 20 ? cs.dy / 150.0f * lookScale() : 0.0f;
+	// (both sticks past a round dead zone, rescaled from its edge: stickAxes)
+	stickAxes(cp.dx, cp.dy, stickZone(), in.moveX, in.moveY);
+	float cx, cy;
+	stickAxes(cs.dx, cs.dy, stickZone(), cx, cy);
+	in.lookX = cx * lookScale();
+	in.lookY = cy * lookScale();
 	in.quick = -1;
 	gyroInput(in);
 	if (g_controlLayout == CONTROLS_GOLDENEYE)
@@ -1307,8 +1344,8 @@ int main()
 	logf("memory: %s, heap %lu KB, linear %lu KB (%lu KB free)", isNew3ds ? "New 3DS" : "Old 3DS",
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, linearSpaceFree() / 1024);
 
-	// The top screen's colour buffer: 16-bit on an Old 3DS (half the buffer and the copy to the screen each frame;
-	// Morrowind's muted colours show no banding to speak of), 32-bit on a New 3DS
+	// The top screen's colour buffer: 32-bit on both consoles (console.h rgb565 keeps the 16-bit one, half the buffer and
+	// the copy to the screen each frame: it banded the sky and the fog on an Old 3DS)
 	GPU_COLORBUF colorFmt = g_profile.rgb565 ? GPU_RB_RGB565 : GPU_RB_RGBA8;
 	u32 transfer = g_profile.rgb565 ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565, GX_TRANSFER_FMT_RGB565)
 		: DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGB8);
@@ -1320,6 +1357,13 @@ int main()
 	C3D_RenderTargetSetOutput(topRight, GFX_TOP, GFX_RIGHT, transfer);
 	bool stereoOn = false;
 	C3D_RenderTarget* bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+	// A black frame at once, through the GPU: the screens' buffers start as whatever VRAM held, and an Old 2DS showed
+	// multicoloured static until the first picture came. (Cleared by the CPU instead, the console stopped on a data
+	// abort: VRAM isn't the program's to write)
+	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	clearTop(top, 0x000000FF);
+	C3D_RenderTargetClear(bottom, C3D_CLEAR_ALL, 0x000000FF, 0);
+	C3D_FrameEnd(0);
 	rendererInit();
 	uiInit();
 	// A CIA with its data inside uses that (whatever an older copy left on the card); the dev build and
@@ -1513,6 +1557,7 @@ int main()
 		// The scripted tests press the classic buttons, or the layout a CONTROLS: step chose
 		if (session->autotest)
 			g_controlLayout = s_testLayout;
+		s_menuForInput = session->menuOpen();
 		PlayerInput in = readInput(held, down, up, dt);
 		bool autoShotNow = false;
 

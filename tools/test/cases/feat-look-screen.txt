@@ -1,5 +1,5 @@
-# Controls > Look, reached as a player would (START, Options, Controls, X: Look): three speed bars (C-stick and D-pad,
-# GoldenEye turn while walking, GoldenEye look while aiming) step by 0.10x, Invert look up / down, all kept in
+# Controls > Look, reached as a player would (START, Options, Controls, X: Look): two speed bars (the sticks, D-pad and
+# GoldenEye aiming: one bar since; the GoldenEye turn while walking) step by 0.10x, the sticks' dead zone by 5%, Invert look up / down, all kept in
 # settings.txt; Close goes back to Controls
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
@@ -28,7 +28,7 @@
 0.3 0 0 0 0 RIGHT
 0.3 0 0 0 0 RIGHT
 0.3 0 0 0 0 RIGHT
-0.3 0 0 0 0 EXPECT:setting:geaim:eq:130+EXPECT:savedsetting:geaim:eq:130
+0.3 0 0 0 0 EXPECT:setting:stickzone:eq:35+EXPECT:savedsetting:stickzone:eq:35
 0.3 0 0 0 0 DOWN
 0.3 0 0 0 0 A
 0.3 0 0 0 0 EXPECT:setting:inverty:eq:1+EXPECT:savedsetting:inverty:eq:1

@@ -30,7 +30,10 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
 ## View distance and detail
 
 - **Never farther than OpenMW's view (7168); shorter when frames run long.** The dynamic view closes in with the fog
-  (Options > Video > Dynamic view). (`include/cell.h`, `Session::viewScale`)
+  (Options > Video > Dynamic view). An Old 3DS or 2DS runs a steady 20 fps outdoors (30 indoors) and
+  keeps it with the view: 0.8 of OpenMW's at most, closing in as far as 0.3 (2150) whenever frames come slower than
+  20 a second, growing back only with room to spare. (`include/cell.h`, `Session::viewScale`,
+  `Session::adaptView`, `console.cpp`)
 - **Rain and storms shorten the view.** OpenMW draws the whole view and moves the fog's start in; drawing land hidden in
   thick fog cost both consoles their frame rate. (`World::weatherFogScale`)
 - **Small clutter stops at a distance by its size.** Each size tier vanishes at about 25 pixels on screen.

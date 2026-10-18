@@ -1,6 +1,6 @@
-# GoldenEye controls on the Xbox layout's buttons (Old 3DS default): a tap of X readies and puts away the weapon,
-# holding X aims (the player stands still and the Circle Pad turns and looks up and down) and leaves the weapon as it
-# was, B turns sneaking on and off, SELECT switches first / third person (as on the other layouts), L casts the
+# GoldenEye controls on the Xbox layout's buttons (Old 3DS default): X readies and puts away the weapon, holding A
+# aims (the player stands still and the Circle Pad turns and looks up and down) and leaves the weapon as it was (the
+# aim was on a hold of X: moved to A, away from Y), B turns sneaking on and off, SELECT switches first / third person (as on the other layouts), L casts the
 # selected spell, Y jumps
 # (the Circle Pad's walking and turning, and R's aim: aim-goldeneye, aim-goldeneye-hold)
 3 0 0 0 0 MSG
@@ -13,8 +13,8 @@
 1.5 0 0 0
 0.1 0 0 0 0 EXPECT:weapondrawn:eq:0
 0.1 0 0 0 0 SNAP:moved+SNAP:yaw+SNAP:pitch
-1 1 0.5 0 0 X
-0.1 0 0 0 0 X+EXPECT:moved:le:5+EXPECT:yaw:ge:@46+EXPECT:yaw:le:@57+EXPECT:pitch:ge:@23+EXPECT:pitch:le:@29
+1 1 0.5 0 0 A
+0.1 0 0 0 0 A+EXPECT:moved:le:5+EXPECT:yaw:ge:@92+EXPECT:yaw:le:@114+EXPECT:pitch:ge:@46+EXPECT:pitch:le:@58
 1 0 0 0
 0.1 0 0 0 0 EXPECT:weapondrawn:eq:0
 0.1 0 0 0 0 B
