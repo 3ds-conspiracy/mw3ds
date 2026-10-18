@@ -1,0 +1,27 @@
+# start: Imperial Prison Ship
+# The guard who walks the player off the prison ship goes up the stairs with them. His script escorts the player to
+# the deck (AIEscort Player, 12, 195, 100, 170), then walks back a little (AITravel 185, 174, 170). Our packages ended
+# by the flat distance alone: right under the deck, in the hold 275 units below, he counted as there, finished both and
+# stood against the stairs' side supports. OpenMW's AiEscort and AiTravel end within the actor's size in all three axes
+# (AiPackage::pathTo); a traveller only gives up flat-close after 2 s of getting no nearer (AiTravel). The player follows
+# him, as one does
+3 0 0 0 0 MSG
+24 0 0 0
+0.5 0 0 0 0 A
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+8 0 0 0 0 WALKTO:chargen%boat%guard%2
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:refz:chargen%boat%guard%2:gt:40

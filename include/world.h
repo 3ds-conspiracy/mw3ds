@@ -193,6 +193,7 @@ struct Ref
 	float aiDest[3] = {};         // travel / escort / follow destination (all 0: none)
 	float aiDuration = 0.0f;      // game hours, 0 = until done
 	float aiStart = 0.0f;         // World::gameHour when it began
+	float aiNearTime = 0.0f;      // travelling: seconds spent flat-close to the destination without getting there (AiTravel)
 	int aiRange = -1;             // wander distance (-1: the record's)
 	bool aiDone = false;          // GetAIPackageDone
 	bool aiRepeat = false;        // the script's reset argument: the package starts over when it finishes
@@ -564,6 +565,9 @@ struct World
 	void despawn(int ri);             // a placed reference goes (a summons ends)
 	// Day and night outdoors: the tint on baked lighting, the sky's and the fog colour for this hour
 	void daylight(float land[3], float sky[3], float fog[3]) const;
+	// The light from the side outdoors (cell.v.pica sideLight): rgb the sun's colour now on a wall facing it, w +1 when it
+	// comes from the east, -1 from the west; zeros indoors
+	void sunSide(float out[4]) const;
 	// Places `count` of an id `dist` in front of (dir 0), behind (1), left of (2) or right of (3) a spot
 	void placeAt(const std::string& id, int count, float dist, int dir, const float base[3], float yaw);
 	void snapToFloor(float pos[3]);     // down onto the floor below (from a little above), never up

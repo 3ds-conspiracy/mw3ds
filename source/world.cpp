@@ -1147,6 +1147,29 @@ void World::daylight(float land[3], float sky[3], float fog[3]) const
 	}
 }
 
+// OpenMW's WeatherManager::update: the light runs east to west along (400 x orbit, -75, 100), orbit 1 at sunrise to
+// -1 at night's start, and through the night back from the west (-1) to the east (1), in the weather's sun colour of
+// the hour (its night colour by night). The cells bake its noon place (overhead, to the south); this is its east-west
+// share, 400 x |orbit| / its length, on a wall square to it
+void World::sunSide(float out[4]) const
+{
+	out[0] = out[1] = out[2] = out[3] = 0.0f;
+	if (!game.hasWeather || current < 0 || cells[current].interior)
+		return;
+	const WeatherClock& wc = game.weatherClock;
+	float h = fmodf(gameHour, 24.0f), nightStart = wc.sunset + wc.sunsetDur;
+	if (h < wc.sunrise)
+		h += 24.0f;
+	if (nightStart < wc.sunrise)
+		nightStart += 24.0f;
+	float day = fmaxf(0.1f, nightStart - wc.sunrise), night = fmaxf(0.1f, 24.0f - day);
+	float orbit = h < nightStart ? 1.0f - 2.0f * (h - wc.sunrise) / day : 2.0f * (h - nightStart) / night - 1.0f;
+	float k = 400.0f * fabsf(orbit) / sqrtf(160000.0f * orbit * orbit + 75.0f * 75.0f + 100.0f * 100.0f);
+	for (int c = 0; c < 3; c++)
+		out[c] = weatherColour(3, c) * k;
+	out[3] = orbit > 0.0f ? 1.0f : orbit < 0.0f ? -1.0f : 0.0f;
+}
+
 void World::refreshStats()
 {
 	float h = stats.health, m = stats.magicka, f = stats.fatigue;

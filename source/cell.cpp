@@ -110,6 +110,7 @@ static bool readBatches(FILE* f, std::vector<CellBatch>& out, Cell& cell, u32 ve
 				fread(lamp, 1, 4, f);
 				for (int k = 0; k < 3; k++)
 					b.lamp[k] = lamp[k] / 255.0f;
+				b.side = lamp[3] != 0;     // (the colours' alpha is the side light's facing: convert_cell.py side_facing)
 			}
 		}
 		else

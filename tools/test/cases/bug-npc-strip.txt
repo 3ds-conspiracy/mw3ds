@@ -1,0 +1,12 @@
+# Clothes taken off an NPC come off it. NPCs are drawn from a library the converter dressed, so a corpse stripped of its
+# shirt and trousers still wore them. Now one whose library's items leave its pack is dressed again from the
+# third-person pieces (its race's body, its own head and hair, what it still has on), as OpenMW's NpcAnimation rebuilds
+# its parts when the inventory changes. Needs data converted after the change (game.json's head / hair / worn)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+0.3 0 0 0 0 SLAY:fargoth
+3 0 0 0 0 EXPECT:refdressed:fargoth:eq:0+SNAP:refmeshes:fargoth
+60 0 0 0 0 LOOT:fargoth:common_shirt_04
+60 0 0 0 0 LOOT:fargoth:common_pants_04
+2 0 0 0 0 EXPECT:refdressed:fargoth:eq:1
+1 0 0 0

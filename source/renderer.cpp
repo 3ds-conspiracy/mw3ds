@@ -34,7 +34,9 @@ static const float kTorchAtEye = 80.0f;     // ... only while it is this near th
 // the surfaces' facing (no normals here: the average lit side's), against OpenMW in a cave
 static const float kTorchReach = 2.0f, kTorchFacing = 0.3f;
 int g_torchPerPixel = 0;                    // the last world view lit the torch per pixel (1), per vertex (0), none (-1)
-static float s_lampSet[3] = { 0.0f, 0.0f, 0.0f };
+static float s_lampSet[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+static int s_uSide = -1;                    // cell.v.pica sideLight (rendererSetSunSide), on side-lit batches only
+static float s_sideNow[4] = { 0.0f, 0.0f, 0.0f, 0.0f }, s_sideSet[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 static bool s_lampValid = false;            // ... as last uploaded (a skinned run's palette overwrites the register)
 int g_lampLitBatches = 0;                   // batches the last view drew with lamp light the night left alone (tests)
 // Texture combiner stages: 0 the lit texture (setBatchState), then the player's torch per pixel, the fog, an enchanted
@@ -99,6 +101,7 @@ void rendererInit()
 	s_uLightPos = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos");
 	s_uLightColor = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor");
 	s_uLamp = shaderInstanceGetUniformLocation(s_program.vertexShader, "lamp");
+	s_uSide = shaderInstanceGetUniformLocation(s_program.vertexShader, "sideLight");
 	s_uTorchVec = shaderInstanceGetUniformLocation(s_program.vertexShader, "torchVec");
 	s_uAmbient = shaderInstanceGetUniformLocation(s_program.vertexShader, "ambientAdd");
 	s_bGamma = shaderInstanceGetUniformLocation(s_program.vertexShader, "gammaOn");
@@ -405,6 +408,7 @@ static const float* worldTint()
 
 // A person's or creature's tint: its meshes carry the light where it was placed (Actor::tint, baked in when they load);
 // outdoors the hour darkens the sun's and the sky's share of it, not the lamps' (Actor::lamp), channel by channel
+static const float kPieceLight = 0.63f;    // a library's even light against a third-person piece's (about 0.5 / 0.8)
 static void actorTint(const Actor& a, float out[3])
 {
 	const float* t = worldTint();
@@ -415,24 +419,42 @@ static void actorTint(const Actor& a, float out[3])
 		float all = a.tint[k], lamp = a.lamp[k] < a.tint[k] ? a.lamp[k] : a.tint[k], held = a.heldLight[k] * 128.0f;
 		float now = a.lampSplit ? a.lampNow[k] : lamp;
 		out[k] = all > 0.0f ? (t[k] * (all - lamp) + now + held) / all : t[k] + (now + held) / 64.0f;
+		// Dressed again from the third-person pieces (npcDress): their colours lack the placement's light a library's take
+		// as it loads, and are lit as the player's arms are (ambient 0.55 and a sun), not a library's even 0.5
+		if (a.dressed)
+			out[k] *= (all > 0.0f ? all / 64.0f : 1.0f) * kPieceLight;
 	}
 }
 
+void rendererSetSunSide(const float side[4])
+{
+	memcpy(s_sideNow, side, sizeof(s_sideNow));
+}
+
 // The batch's lamp light (cell.v.pica lamp): its colour x (1 - the hour's tint) / 16383, so tint x colour + this x the
-// vertex's brightness keeps the lamps' share whole; nothing indoors or on a batch without lamp light
+// vertex's brightness keeps the lamps' share whole; nothing indoors or on a batch without lamp light. On a side-lit
+// batch the low sun's light (sideLight: its colour, w 2 x direction / 255) and lamp.w -direction: cell.v.pica turns the
+// colours' alpha into facing x direction with them
 static void setLamp(const CellBatch& b)
 {
 	if (s_uLamp < 0)
 		return;
-	float v[3] = { 0.0f, 0.0f, 0.0f };
+	bool side = b.side && s_daylight && s_sideNow[3] != 0.0f;
+	float v[4] = { 0.0f, 0.0f, 0.0f, side ? -s_sideNow[3] : 0.0f };
 	if (s_daylight && (b.lamp[0] > 0.0f || b.lamp[1] > 0.0f || b.lamp[2] > 0.0f))
 		for (int k = 0; k < 3; k++)
 			v[k] = b.lamp[k] * (1.0f - s_land[k]) * (1.0f / 16383.0f);
 	g_lampLitBatches += v[0] > 0.0f || v[1] > 0.0f || v[2] > 0.0f;
-	if (s_lampValid && memcmp(v, s_lampSet, sizeof(v)) == 0)
+	float sd[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	if (side)
+		sd[0] = s_sideNow[0], sd[1] = s_sideNow[1], sd[2] = s_sideNow[2], sd[3] = 2.0f * s_sideNow[3] / 255.0f;
+	if (s_lampValid && memcmp(v, s_lampSet, sizeof(v)) == 0 && memcmp(sd, s_sideSet, sizeof(sd)) == 0)
 		return;
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLamp, v[0], v[1], v[2], 0.0f);
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLamp, v[0], v[1], v[2], v[3]);
+	if (s_uSide >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uSide, sd[0], sd[1], sd[2], sd[3]);
 	memcpy(s_lampSet, v, sizeof(v));
+	memcpy(s_sideSet, sd, sizeof(sd));
 	s_lampValid = true;
 }
 

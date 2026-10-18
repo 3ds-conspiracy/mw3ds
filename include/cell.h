@@ -78,6 +78,9 @@ struct CellBatch
 	// Format 10 (outdoors): the lamps' light on the batch, one colour; each vertex's w is its brightness of it x 16383.
 	// Night leaves it alone (cell.v.pica lamp); 0 none
 	float lamp[3] = { 0.0f, 0.0f, 0.0f };
+	// Format 10 (outdoors, opaque): the colours' alpha is how much each vertex faces east (0..255: -1..1), lit by the
+	// low sun's light at run time (cell.v.pica sideLight), not an alpha
+	bool side = false;
 };
 
 struct __attribute__((packed)) CellActor

@@ -1,0 +1,15 @@
+# The sun lights the side of a wall that faces it as it goes east to west (OpenMW's WeatherManager::update: along
+# (400 x orbit, -75, 100), the night light back from the west to the east). The cells baked a fixed mid-morning sun
+# from the east-south-east, tinted by the hour: at dusk the walls facing away from the sun glowed in its orange light and
+# the ones facing it were dark. Now they bake the sun's noon place and carry how much each opaque vertex faces east;
+# the low sun (and the night light) adds its colour to the side facing it. Needs data converted after the change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SETWEATHER:0+HOUR:7+TP:-10300:-71300:200:0
+1 0 0 0 0 EXPECT:sidebatches:gt:20+EXPECT:sunside:3:eq:1+EXPECT:sunside:0:gt:0.3
+0.3 0 0 0 0 HOUR:13
+1 0 0 0 0 EXPECT:sunside:0:lt:0.05
+0.3 0 0 0 0 HOUR:19
+1 0 0 0 0 EXPECT:sunside:3:eq:-1+EXPECT:sunside:0:gt:0.3
+0.3 0 0 0 0 HOUR:23
+1 0 0 0 0 EXPECT:sunside:3:eq:-1
+1 0 0 0

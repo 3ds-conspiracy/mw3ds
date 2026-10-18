@@ -26,6 +26,13 @@ struct BodyAct
 	bool flying = false;                          // levitating: walks, never runs or sneaks (OpenMW)
 };
 
+// An NPC whose clothes left its pack (a stripped corpse): its library meshes swapped for the third-person pieces of its
+// race's body, its own head and hair and what it still wears (items: worn ids), as the player's body is put together;
+// its torch and weapon stay. Its textures join the cell's list. False (the library kept) when a piece couldn't load
+struct ActorDef;
+struct LoadedCell;
+bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::vector<std::string>& items);
+
 // The player seen from outside (third-person view, character creation's face preview): the NPC skeleton
 // of their race and sex, dressed from the "third" pieces (tools/convert/firstperson.py third_person): the bare
 // body, the chosen head and hair, then clothes, armor, skirts and robes as an NPC's are put together

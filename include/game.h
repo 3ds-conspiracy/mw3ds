@@ -187,6 +187,8 @@ struct ActorDef
 	// First AI package when it isn't wandering (AIPKG_*, -1 none): target id, destination, hours
 	int aiPackage = -1;
 	Atom lib;                            // mesh library (drawing it in a cell it wasn't placed in)
+	Atom head, hair;                     // NPCs: their head and hair body parts, and the armor and clothing their library
+	std::vector<Atom> worn;              // has on (dressed again from the third-person pieces once one leaves the pack)
 	int skel = -1;                       // shared skeleton index
 	Atom aiTarget;
 	float aiDest[3] = {}, aiDuration = 0.0f;

@@ -1389,6 +1389,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	updateWeatherEffects(dt);
 	updateMusic(dt);
 	updateSky();
+	updateDress(dt);
 	// The region's ambient sounds outdoors in fair weather (Morrowind.ini: 1 to 5 s between; each by its chance)
 	if (w.current >= 0 && !w.cells[w.current].interior && w.weatherNow <= 3 && (ambientTimer -= dt) <= 0.0f)
 	{
@@ -2134,6 +2135,53 @@ void Session::updateSky()
 	for (C3D_Tex* t : g_cloudTex)
 		if (t)
 			C3D_TexSetWrap(t, GPU_REPEAT, GPU_REPEAT);
+}
+
+// NPCs wear what their library has on (the converter dressed them). Twice a second each loaded one is looked at: when
+// an item of that leaves its pack (a stripped corpse, RemoveItem) it is dressed again from the third-person pieces with
+// what is left (npcDress), as OpenMW's NpcAnimation rebuilds its parts when the inventory changes; a cell read again
+// with the item still gone comes back dressed the same way
+void Session::updateDress(float dt)
+{
+	if ((dressTimer -= dt) > 0.0f)
+		return;
+	dressTimer = 0.5f;
+	for (LoadedCell* l : w.loaded)
+		for (Actor& a : l->actors.actors)
+		{
+			if (a.ref < 0 || a.ref >= (int)w.refs.size() || w.refs[a.ref].actor < 0)
+				continue;
+			const Ref& r = w.refs[a.ref];
+			const ActorDef& d = w.game.actors[r.actor];
+			if (d.creature || d.worn.empty() || d.worn.size() > 32)
+				continue;
+			u32 mask = 0;
+			std::vector<std::string> left;
+			for (size_t k = 0; k < d.worn.size(); k++)
+			{
+				// (rings and amulets show nothing: one gone changes no part)
+				if (!w.game.firstPerson.third.items.count(d.worn[k].str()))
+				{
+					mask |= 1u << k;
+					continue;
+				}
+				for (const ContentItem& c : r.contents)
+					if (c.first != 0 && c.second == d.worn[k].view())
+					{
+						mask |= 1u << k;
+						left.push_back(c.second);
+						break;
+					}
+			}
+			u32 all = d.worn.size() == 32 ? ~0u : (1u << d.worn.size()) - 1;
+			if (a.wornMask == ~0u && mask == all && !a.dressed)
+				a.wornMask = mask;               // (as its library has it)
+			if (mask == a.wornMask)
+				continue;
+			a.wornMask = mask;
+			if (!npcDress(w, *l, a, d, left))
+				logf("npcdress: %s kept as it was (a piece wouldn't load)", d.id.c_str());
+		}
 }
 
 void Session::updateWeatherEffects(float dt)

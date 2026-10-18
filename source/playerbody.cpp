@@ -378,3 +378,133 @@ void PlayerBody::free(World& w)
 	builtFor.clear();
 	ready = false;
 }
+
+bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::vector<std::string>& items)
+{
+	const ThirdPersonDef& t = w.game.firstPerson.third;
+	std::string race = lower(d.race.str());
+	int female = d.female ? 1 : 0;
+	// The bare body of its race and sex (male parts where the female's are missing), its own head and hair
+	std::string part[kSlotCount];
+	u32 glow[kSlotCount] = {};
+	for (int sex : { female, 0 })
+	{
+		auto it = t.races[sex].find(race);
+		if (it == t.races[sex].end())
+			continue;
+		for (auto& s : it->second)
+			if (s.first >= 0 && s.first < kSlotCount && part[s.first].empty())
+				part[s.first] = s.second;
+	}
+	auto own = [&](bool hair) {
+		auto& map = (hair ? t.hairs : t.heads)[female];
+		auto it = map.find(race);
+		const std::string want = (hair ? d.hair : d.head).str();
+		if (it != map.end())
+			for (auto& e : it->second)
+				if (e.first == want)
+					return e.second;
+		return std::string();
+	};
+	part[SLOT_HEAD] = own(false);
+	part[SLOT_HAIR] = own(true);
+	if (part[SLOT_HEAD].empty())
+		return false;                     // (a head the pieces lack, a vampire's: the library stays)
+	// What it still wears, as npc.py's parts(): a helmet takes the hair; clothing, armor, skirts, then robes over all
+	for (auto& id : items)
+		if (const Object* o = w.game.object(id))
+			if (o->type == "ARMO" && o->subtype == 0)
+				part[SLOT_HAIR].clear();
+	for (int layer = 0; layer < 4; layer++)
+		for (auto& id : items)
+		{
+			const Object* o = w.game.object(id);
+			if (!o || (o->type != "CLOT" && o->type != "ARMO"))
+				continue;
+			int lr = o->type == "ARMO" ? 1 : o->subtype == CLOT_SKIRT ? 2 : o->subtype == CLOT_ROBE ? 3 : 0;
+			if (lr != layer)
+				continue;
+			if (o->type == "CLOT" && o->subtype == CLOT_ROBE)
+				for (int s : kRobeHides)
+					part[s].clear();
+			if (o->type == "CLOT" && o->subtype == CLOT_SKIRT)
+				for (int s : kSkirtHides)
+					part[s].clear();
+			auto fit = t.items.find(id);
+			if (fit == t.items.end())
+				continue;
+			for (auto& s : fit->second)
+				if (s.first >= 0 && s.first < kSlotCount && s.first != SLOT_WEAPON)
+				{
+					part[s.first] = female && !s.second.second.empty() ? s.second.second : s.second.first;
+					glow[s.first] = w.game.enchantGlow(id);
+				}
+		}
+	// The pieces, read for this actor alone (a skin re-posed on the CPU writes its own vertices)
+	const Skeleton& sk = actorSkeleton(l.actors, a.skeleton);
+	std::vector<ActorMesh> made;
+	bool ok = true;
+	for (int s = 0; s < kSlotCount && ok; s++)
+	{
+		if (part[s].empty())
+			continue;
+		FpPiece* p = fpLoadPiece(w, sk, part[s]);
+		if (!p)
+		{
+			ok = false;
+			break;
+		}
+		for (auto& m : p->meshes)
+		{
+			ActorMesh copy = m;
+			copy.tex = -1;
+			const std::string& name = m.tex >= 0 && m.tex < (int)p->texNames.size() ? p->texNames[m.tex] : std::string();
+			for (size_t k = 0; k < l.cell.textureNames.size() && !name.empty(); k++)
+				if (l.cell.textureNames[k] == name)
+					copy.tex = k;
+			if (copy.tex < 0 && !name.empty())
+			{
+				copy.tex = l.cell.textureNames.size();
+				l.cell.textureNames.push_back(name);
+				l.cell.textures.push_back(w.textures.acquire(w.dataDir, name));
+			}
+			copy.glow = glow[s];
+			if (s == SLOT_SHIELD)
+				copy.hand = 2;            // put away while both hands are busy or the torch is out
+			made.push_back(copy);
+		}
+		p->meshes.clear();                // (their buffers are the actor's now; the piece gives back its own textures)
+		fpFreePiece(w, p);
+	}
+	if (!ok)
+	{
+		for (auto& m : made)
+		{
+			lockedLinearFree(m.verts);
+			lockedLinearFree(m.indices);
+		}
+		return false;
+	}
+	// The library's torch and weapon stay; the rest goes
+	std::vector<ActorMesh> keep;
+	for (auto& m : a.meshes)
+		if (m.hand == 1 || (m.flags & 128))
+			keep.push_back(m);
+		else
+		{
+			lockedLinearFree(m.verts);
+			lockedLinearFree(m.indices);
+			for (void* v : m.pathFrames)
+				lockedLinearFree(v);
+		}
+	keep.insert(keep.end(), made.begin(), made.end());
+	a.meshes.swap(keep);
+	a.skinned = false;
+	for (auto& m : a.meshes)
+		a.skinned |= m.kind == ACTOR_SKINNED;
+	a.deformed = false;
+	a.skinSerial = ~0u;
+	a.dressed = true;
+	logf("npcdress: %s dressed again, %d items on, %d meshes", d.id.c_str(), (int)items.size(), (int)a.meshes.size());
+	return true;
+}

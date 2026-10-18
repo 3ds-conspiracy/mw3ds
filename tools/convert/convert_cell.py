@@ -46,8 +46,11 @@ def light_falloff(dist, radius):
     x = np.clip((dist / (LIGHT_BOUNDS * radius) - 0.75) / 0.25, 0.0, 1.0)
     return att * (1.0 - x * x) ** 2
 INTERIOR_SUN_DIR = np.array([-0.15, 0.15, 1.0]) / np.linalg.norm([-0.15, 0.15, 1.0])
-# Mid-morning sun, from the east-south-east
-EXTERIOR_SUN_DIR = np.array([0.7, -0.25, 0.65]) / np.linalg.norm([0.7, -0.25, 0.65])
+# Outdoors the sun's path runs east to west along (400 x orbit, -75, 100) (OpenMW's WeatherManager::update, Morrowind's
+# constant): baked from where it is at noon, overhead and to the south. Its east-west part is the side light
+# (cell.v.pica sideLight): each opaque vertex keeps how much it faces east in its colour's alpha, lit at run time from
+# the sun's place on the path (and the night light's, which runs back the same way)
+EXTERIOR_SUN_DIR = np.array([0.0, -75.0, 100.0]) / np.linalg.norm([0.0, -75.0, 100.0])
 LIGHT_NEGATIVE, LIGHT_OFF_DEFAULT = 0x4, 0x20
 
 VERTEX = np.dtype([("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4), ("lamp", "<i2")])
@@ -156,6 +159,25 @@ def shade(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
     return rgba, np.minimum(np.nan_to_num(np.clip(lamp, 0, 1)), rgb)
 
 
+def side_facing(s):
+    """How much each vertex faces east (+1) or west (-1), times its diffuse colour's brightness: what the low sun's light
+    adds to it (cell.v.pica sideLight). 0 for shapes lit otherwise (terrain, water, sky, glow-only, particles)."""
+    n = len(s["pos"])
+    if "rgba" in s or s.get("omni") or s.get("nrm") is None:
+        return np.zeros(n)
+    if s["vcp"] and s["vcp"]["lighting_mode"] == 0:
+        return np.zeros(n)
+    dif = np.tile(np.array(s["mat"]["diffuse"]) if s["mat"] else np.ones(3), (n, 1))
+    if s["vcol"] is not None and (s["vcp"]["vertex_mode"] if s["vcp"] else 2) == 2:
+        dif = s["vcol"][:, :3]
+    return np.clip(s["nrm"][:, 0], -1, 1) * np.clip(dif @ [0.299, 0.587, 0.114], 0, 1)
+
+
+def side_bytes(f):
+    """side_facing's -1..1 as a byte, 0..255 (128: neither way)."""
+    return np.clip(np.round((np.asarray(f) + 1.0) * 127.5), 0, 255).astype(np.uint8)
+
+
 def to_bytes(rgba):
     return (np.nan_to_num(rgba, nan=1.0) * 255 + 0.5).astype(np.uint8)
 
@@ -259,9 +281,10 @@ def write_batches(f, batches):
         # over with the coordinates (DirectX V down, PICA V up)
         su, sv = b.get("scroll") or (0.0, 0.0)
         f.write(struct.pack("<2h", int(np.clip(round(su * 256), -32767, 32767)), int(np.clip(round(-sv * 256), -32767, 32767))))
-        # Format 10: u8 rgb (pad) the lamp light's colour, the vertices' w its brightness (lamp_channel; 0 none)
+        # Format 10: u8 rgb the lamp light's colour, the vertices' w its brightness (lamp_channel; 0 none); then 1 when
+        # the colours' alpha holds the side light (side_facing), 0 when it is the alpha
         lc = b.get("lamp_color")
-        f.write(bytes([int(round(c * 255)) for c in lc] + [0]) if lc is not None else b"\0\0\0\0")
+        f.write(bytes(([int(round(c * 255)) for c in lc] if lc is not None else [0, 0, 0]) + [1 if b.get("side") else 0]))
         q = np.zeros(len(v), dtype=[("pos", "<i2", 4), ("uv", "<i2", 2), ("color", "u1", 4)])
         q["pos"][:, :3] = np.clip(np.round((p - offset) / scale), -32767, 32767)
         if "lamp" in v.dtype.names:
@@ -401,22 +424,27 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None, 
         scroll = key[5] if len(key) > 5 else (0.0, 0.0)
         # (a looping flipbook's frames, columns, rows and rate: every spray in the batch shares its sheet)
         loop = next((s["loop"][2] for s in groups[key] if s.get("loop")), None)
-        cur_v, cur_i, cur_l, base, first = [], [], [], 0, 0
+        cur_v, cur_i, cur_l, cur_s, base, first = [], [], [], [], 0, 0
+        # outdoors, opaque batches take the side light in their colours' alpha (blended and alpha-tested ones need it)
+        side = split and not flags & (FLAG_BLEND | FLAG_TEST)
 
         def close():
             verts = np.concatenate(cur_v)
             color = None
             if split:
                 color, verts["lamp"] = lamp_channel(np.concatenate(cur_l))
+            if side:
+                verts["color"][:, 3] = side_bytes(np.concatenate(cur_s))
             batches.append({"verts": verts, "idx": np.concatenate(cur_i),
                             "tex": tex_index.get(tex, -1), "flags": flags, "alpha_ref": alpha_ref,
-                            "max_dist": max_dist, "flip": loop, "scroll": scroll, "lamp_color": color})
+                            "max_dist": max_dist, "flip": loop, "scroll": scroll, "lamp_color": color,
+                            "side": side})
 
         for s in groups[key]:
             n = len(s["pos"])
             if base + n > 65535 and cur_v:
                 close()
-                cur_v, cur_i, cur_l, base, first = [], [], [], 0, 0
+                cur_v, cur_i, cur_l, cur_s, base, first = [], [], [], [], 0, 0
             v = np.zeros(n, dtype=VERTEX)
             v["pos"] = s["local_pos"] if "local_pos" in s else s["pos"]
             v["uv"] = s["uv"] * [1.0, -1.0] + [0.0, 1.0]   # DirectX V (0 = top) -> PICA V (0 = bottom)
@@ -424,6 +452,8 @@ def make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges=None, 
             v["color"] = to_bytes(rgba)
             cur_v.append(v)
             cur_l.append(lamp)
+            if side:
+                cur_s.append(side_facing(s))
             cur_i.append(np.asarray(s["tris"]).ravel() + base)
             if ranges is not None and s.get("ref") is not None:
                 ranges.setdefault(s["ref"], []).append([len(batches), first, len(np.asarray(s["tris"]).ravel())])

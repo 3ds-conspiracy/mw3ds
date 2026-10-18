@@ -736,7 +736,7 @@ enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET,
 	                                                   // U_TORCHVEC: the torch's reach per pixel)
 // cell.v.pica's lamp (the batch's lamp light, x each vertex's w) sits where skin.v.pica's palette starts, as on the
 // PICA. The bools in the order the shaders declare them: 0 Gamma's curve (light ^ ambientAdd.w), 1 the carried light
-enum { U_LAMP = U_BONES, B_GAMMA = 0, B_LIGHTON };
+enum { U_LAMP = U_BONES, U_SIDE, B_GAMMA = 0, B_LIGHTON };     // (U_SIDE: cell.v.pica sideLight, after lamp)
 static bool s_lightOn = false, s_gammaOn = false;
 
 DVLB_s* DVLB_ParseFile(u32*, u32) { return new DVLB_s(); }
@@ -750,7 +750,7 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 		{ "modelView", U_MODELVIEW }, { "uvOffset", U_UVOFFSET }, { "fogVec", U_FOGVEC }, { "posOffset", U_POSOFFSET },
 		{ "posScale", U_POSSCALE }, { "uvScale", U_UVSCALE }, { "tint", U_TINT }, { "lightPos", U_LIGHTPOS },
 		{ "lightColor", U_LIGHTCOLOR }, { "ambientAdd", U_AMBIENT }, { "torchVec", U_TORCHVEC }, { "bones", U_BONES },
-		{ "lamp", U_LAMP },
+		{ "lamp", U_LAMP }, { "sideLight", U_SIDE },
 		{ "gammaOn", B_GAMMA }, { "lightOn", B_LIGHTON } };
 	for (auto& s : kSlots)
 		if (strcmp(s.name, name) == 0)
@@ -1008,13 +1008,16 @@ static ClipV vertexShader(const u8* v)
 	};
 	bool cell = s_attr.count < 5;
 	float f1 = s_lightOn ? fall(U_LIGHTPOS) : 0.0f;
+	// the low sun's side light: the colours' alpha is how much the vertex faces east on a side-lit batch (sideLight.w
+	// 2 x direction / 255, lamp.w -direction: facing x direction; both 0 elsewhere)
+	float side = cell ? std::max(0.0f, in[2][3] * u[U_SIDE][3] + u[U_LAMP][3]) : 0.0f;
 	for (int k = 0; k < 4; k++)
 	{
 		float c = in[2][k] / 255.0f * u[U_TINT][k];
 		if (k < 3)
 		{
 			if (cell)
-				c += in[0][3] * u[U_LAMP][k];
+				c += in[0][3] * u[U_LAMP][k] + side * u[U_SIDE][k];
 			c += u[U_AMBIENT][k] + u[U_LIGHTCOLOR][k] * f1;
 			if (s_gammaOn)
 				c = exp2f(u[U_AMBIENT][3] * log2f(std::max(c, 0.001f)));

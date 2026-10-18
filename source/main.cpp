@@ -2537,6 +2537,9 @@ int main()
 				rendererSetHorizon(0.0f);
 			}
 			rendererSetDaylight(land, sky, dayFog, outdoors);
+			float side[4];
+			session->w.sunSide(side);
+			rendererSetSunSide(side);
 			if (outdoors)
 				clear = ((u32)(dayFog[0] * 255) << 24) | ((u32)(dayFog[1] * 255) << 16) | ((u32)(dayFog[2] * 255) << 8) | 0xFF;
 			u32 curved = 0xFF;

@@ -716,6 +716,15 @@ bool gameLoad(GameData& g, const char* path)
 		a.fight = num(it, "fight", 30); a.services = (unsigned)num(it, "services");
 		a.weapon = lower(str(it, "weapon")); a.armor = num(it, "armor"); a.wander = num(it, "wander");
 		a.lib = str(it, "lib");
+		a.head = str(it, "head");
+		a.hair = str(it, "hair");
+		if (const cJSON* wn = cJSON_GetObjectItem(it, "worn"))
+		{
+			const cJSON* wi;
+			cJSON_ArrayForEach(wi, wn)
+				if (cJSON_IsString(wi))
+					a.worn.push_back(wi->valuestring);
+		}
 		a.skel = num(it, "skel", -1);
 		if (const cJSON* ai = cJSON_GetObjectItem(it, "ai"))
 		{

@@ -23,9 +23,16 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   lights on nearby batches cost the GPU a large part of a town at night (one batch is up to a 2048-unit chunk).
 - **People take one light for the whole body.** A tint a person, from the lamps and torches near where they stand
   (`Session`, `renderer.cpp actorTint`); OpenMW lights each vertex of each person by its normal.
-- **The night is a tint on the day's baked light.** Surfaces keep the daytime pattern of sun and shade, darkened;
-  OpenMW's moonlight lights the side facing the moon. Splitting the sun's share out would need another channel in
-  every vertex. (`World::daylight`)
+- **The sun's light from the side is one number a vertex; the rest is baked.** Opaque outdoor geometry bakes the noon
+  sun (overhead, to the south) and keeps in its colours' alpha how much it faces east or west; the low sun of morning
+  and evening and the night light (both along OpenMW's path) add their colour to the side facing them: four vertex
+  instructions, no memory. Terrain and see-through or alpha-tested things (leaves, fences) keep the noon pattern all
+  day, tinted by the hour; OpenMW lights every vertex by its normal. (`convert_cell.py side_facing`, `World::sunSide`,
+  `cell.v.pica sideLight`)
+- **NPCs are drawn from a library the converter dressed** (their race's body, head, hair and what they wear, merged:
+  about 29 meshes each, against about 35 put together from parts). One whose clothes leave its pack (a stripped
+  corpse) is put together from the shared third-person pieces at run time instead (`npcDress`): about 6 more draws
+  for that one. OpenMW builds every NPC from parts.
 
 ## View distance and detail
 

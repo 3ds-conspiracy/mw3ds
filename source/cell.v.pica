@@ -15,7 +15,12 @@
 ; Outdoors, the lamps' light the night leaves alone: the batch's lamp colour x (1 - tint) / 16383, times each vertex's
 ; brightness of it in the position's w (convert_cell.py lamp_channel); 0 for everything else. Not in skin.v.pica: its
 ; bone palette overwrites this register (renderer.cpp sets it again after a skinned run)
-.fvec lamp
+.fvec lamp                      ; (w: the side light's -direction below)
+; Outdoors, the low sun's light from the side (World::sunSide): rgb its colour on a wall square to it. A side-lit batch's
+; colours carry in their alpha how much each vertex faces east, -1..1 as 0..255 (convert_cell.py side_facing; opaque
+; batches, never blended: the alpha isn't one). Its direction d is +1 from the east, -1 from the west: w = 2d / 255 and
+; lamp.w = -d, so alpha x w + lamp.w = facing x d (both 0 on other batches); it adds rgb x max(0, that)
+.fvec sideLight
 .bool gammaOn                   ; on: the light is curved by Gamma (gamma.h); first, so skin.v.pica has it in the same register
 .bool lightOn                   ; on: the player carries a light (off: its terms skipped; second, as in skin.v.pica)
 
@@ -74,6 +79,11 @@
 	mul r4, inv255, inclr
 	mul r4, tint, r4
 	mad r4.xyz, inpos.wwww, lamp, r4
+	; the side light: facing x direction, not below 0, times its colour (four instructions)
+	mul r7, sideLight.wwww, inclr.wwww
+	add r7, lamp.wwww, r7
+	max r7, consts.xxxx, r7
+	mad r4.xyz, r7, sideLight, r4
 	add r4.xyz, ambientAdd, r4
 	; (r5.w is left as it falls: dp3 reads xyz. r1.w is 1, the point's: the falloff 1 - d^2 / r^2 is one mad, the
 	; colour added another: five instructions a light, not eight, on every vertex)

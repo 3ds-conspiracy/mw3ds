@@ -2572,6 +2572,8 @@ int Session::guardFoe(int ri)
 // still counts as the current one until the next tick (aiSettle), so a script polling both sees the pair once
 static void aiFinish(World& w, Ref& r)
 {
+	if (!r.aiDone)
+		logf("ai: %s package %d done at %.0f %.0f %.0f", r.idLower.c_str(), r.aiPackage, r.pos[0], r.pos[1], r.pos[2]);
 	r.aiDone = true;
 	if (r.aiRepeat)
 		r.aiStart = w.gameHour;
@@ -2761,6 +2763,10 @@ void Session::npcPackage(int ri, float dt)
 		float dx = p[0] - r.pos[0], dy = p[1] - r.pos[1];
 		return dx * dx + dy * dy < d * d;
 	};
+	// A destination reached: close on the ground and at its height too (OpenMW's AiPackage::pathTo measures all three
+	// axes): flat alone, a guard in the hold right under the deck he was sent to counted as there. (A script's point is
+	// often set a little above the floor: some 150 of height is let go)
+	auto arrived = [&](const float* p, float d) { return near(p, d) && fabsf(p[2] - r.pos[2]) < 150.0f; };
 	const float* goal = nullptr;
 	float speed = actorWalkSpeed(ri);   // walking pace (OpenMW: by their Speed)
 	bool running = false;               // only a follower far behind runs (OpenMW's AiFollow; the rest walk)
@@ -2772,8 +2778,14 @@ void Session::npcPackage(int ri, float dt)
 		float gap[3] = { r.aiDest[0] - r.pos[0], r.aiDest[1] - r.pos[1], r.aiDest[2] - r.pos[2] };
 		if (gap[0] * gap[0] + gap[1] * gap[1] + gap[2] * gap[2] > 7168.0f * 7168.0f)
 			break;
-		if (near(r.aiDest, 64.0f))
+		// (and, as Morrowind, one that stays flat-close for 2 s without getting there gives up: OpenMW's AiTravel, the
+		// half height let go)
+		r.aiNearTime = near(r.aiDest, 64.0f + 64.0f) ? r.aiNearTime + dt : 0.0f;
+		if (arrived(r.aiDest, 64.0f) || r.aiNearTime >= 2.0f)
+		{
+			r.aiNearTime = 0.0f;
 			aiFinish(w, r);
+		}
 		else
 			goal = r.aiDest;
 		break;
@@ -2816,7 +2828,7 @@ void Session::npcPackage(int ri, float dt)
 		break;
 	}
 	case AIPKG_ESCORT:
-		if (hasDest && near(r.aiDest, 128.0f))
+		if (hasDest && arrived(r.aiDest, 128.0f))
 			aiFinish(w, r);
 		// Lead the way, but wait when the escorted one falls behind (OpenMW: stop past half extent + 450, go on again
 		// within half extent + 250)

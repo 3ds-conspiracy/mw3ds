@@ -143,6 +143,11 @@ struct Actor
 	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
 	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline
 	bool frozen = false;               // held where it is in its group (the test driver's POSE): no time passes, no other group starts
+	// An NPC: which of the items its library has on are still in its pack (bit k: ActorDef::worn[k]; ~0 as placed), and
+	// whether it has been dressed again from the third-person pieces for what is left (npcDress), lit brighter than a
+	// library is (renderer.cpp actorTint scales it back)
+	u32 wornMask = ~0u;
+	bool dressed = false;
 };
 
 // How solid an actor is drawn under Invisibility and Chameleon (OpenMW's CharacterController::setVisibility): invisible,

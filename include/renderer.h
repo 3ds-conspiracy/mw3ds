@@ -89,3 +89,6 @@ C3D_Tex* rendererLocalMap();
 
 // Day and night outdoors: tint on the baked light, the sky's tint and the fog / clear colour (0..1)
 void rendererSetDaylight(const float land[3], const float sky[3], const float fog[3], bool outdoors);
+// The low sun's (and the night light's) side light outdoors: rgb its colour on a wall facing it, w +1 from the east, -1
+// from the west, 0 none (World::sunSide; cell.v.pica sideLight)
+void rendererSetSunSide(const float side[4]);

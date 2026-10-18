@@ -42,6 +42,7 @@ from creature import resolve_leveled
 from firstperson import FirstPerson
 from particles import build_pieces
 from mwfiles import CODEC, DATA_FILES, MASTER, Archives, cell_refs, load_db, read_game, safe_name, text
+from npcstats import npc_stats, worn_items
 from terrain import CELL_SIZE
 from terrain import Terrain
 from worldmap import build_map, town_labels
@@ -780,10 +781,18 @@ def main():
     (OUT / "cell_entries.txt").write_text("\n".join(entries.values()) + "\n", encoding="utf-8")
     print(f"  cell entries (tests): {len(entries)}")
     # Each actor's mesh library and skeleton: an NPC moved to another cell (PositionCell) is drawn from them
+    # NPCs also carry what their library has on: head and hair (body part ids) and the worn items, so one whose clothes
+    # leave its pack (a stripped corpse) is dressed again from the third-person pieces at run time (Session::updateDress)
     for a, rec in zip(game["actors"], actor_records):
         skel = conv.actor_skeleton.get(rec.id.lower())
         if skel is not None:
             a["lib"], a["skel"] = conv.library_path(rec.id.lower()), conv.skel_index[skel]
+            if rec.tag == "NPC_":
+                race = db["RACE"].get((rec.zstr("RNAM") or "").lower())
+                beast = race is not None and struct.unpack_from("<i", race.get("RADT"), 136)[0] & 2
+                worn = worn_items(rec, db["objects"], npc_stats(rec, db)["skills"], beast)
+                a["head"], a["hair"] = (rec.zstr("BNAM") or "").lower(), (rec.zstr("KNAM") or "").lower()
+                a["worn"] = [r.id.lower() for r in worn.values() if r is not None and r.tag in ("ARMO", "CLOT")]
     game["town_spawns"] = {}
     for t in towns:
         tc = town_cells(db, t)
