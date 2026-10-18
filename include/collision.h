@@ -47,7 +47,8 @@ bool collisionLandFloor(CollisionMesh& mesh, float x, float y, float zTop, float
 // The floor an actor's feet rest on: the highest of collisionFloor under (x, y) and four spots
 // `reach` units around it (as OpenMW's actor box rests on the highest point under it, so on a slope
 // or a ledge's edge the middle is a little above the floor under it)
-bool collisionFootFloor(CollisionMesh& mesh, float x, float y, float reach, float zTop, float zBottom, float* zOut);
+bool collisionFootFloor(CollisionMesh& mesh, float x, float y, float reach, float zTop, float zBottom, float* zOut,
+	float maxSlope = 60.0f);
 static const float kActorFootReach = 15.0f;
 
 // Whether the mesh's grid covers (x, y), give or take `margin` (a query outside it would still look at the edge buckets)

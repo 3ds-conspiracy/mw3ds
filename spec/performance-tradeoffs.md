@@ -78,4 +78,5 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
 ## Movement
 
 - **No navigation mesh.** Actors walk on the path grids and climb up to 60 degree slopes; the player 46. A navmesh
-  costs memory and CPU the console doesn't have.
+  costs memory and CPU the console doesn't have. In a fight an actor climbs only the player's 46 (a quest follower
+  keeps 60), so backing up a steep slope wins nobody a fight (`npcClimbSlope`; our own rule).

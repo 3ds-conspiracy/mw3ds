@@ -78,6 +78,7 @@ struct Word
 
 // The running game: world state, dialogue, menus, and everything scripts call into.
 const char* summonCreatureId(int effect);    // the creature a summoning effect calls (magic.cpp), nullptr if none
+float npcClimbSlope(const World& w, const Ref& r);   // the steepest land an actor walks up now, degrees (combat.cpp)
 
 struct Session : ScriptHost
 {

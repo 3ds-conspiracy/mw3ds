@@ -1,0 +1,12 @@
+# In a fight a foe climbs no steeper than the player (46, OpenMW's sMaxSlope), not the 60 degrees actors walk otherwise:
+# backing up a slope too steep to walk got the player out of a fight for nothing, or a foe out of the player's reach.
+# One following or escorting the player for a quest keeps the 60. Our own rule, not OpenMW's (its actors climb what its
+# navigation mesh allows)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2+TP:-10300:-71300:200:0+HOUR:12
+2 0 0 0
+0.3 0 0 0 0 PLACE:rat:300
+0.5 0 0 0 0 ENABLE:rat+HOSTILE:rat
+1 0 0 0 0 EXPECT:refclimb:rat:eq:46+EXPECT:refclimb:fargoth:eq:60
+1 0 0 0 0 HOSTILE:fargoth
+1 0 0 0 0 EXPECT:refclimb:fargoth:eq:46

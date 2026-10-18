@@ -294,14 +294,14 @@ bool collisionLandFloor(CollisionMesh& m, float x, float y, float zTop, float zB
 	return found;
 }
 
-bool collisionFootFloor(CollisionMesh& m, float x, float y, float reach, float zTop, float zBottom, float* zOut)
+bool collisionFootFloor(CollisionMesh& m, float x, float y, float reach, float zTop, float zBottom, float* zOut, float maxSlope)
 {
 	static const float offs[5][2] = { { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 	bool found = false;
 	for (auto& o : offs)
 	{
 		float z;
-		if (collisionFloor(m, x + o[0] * reach, y + o[1] * reach, zTop, zBottom, &z) && (!found || z > *zOut))
+		if (collisionFloor(m, x + o[0] * reach, y + o[1] * reach, zTop, zBottom, &z, maxSlope) && (!found || z > *zOut))
 		{
 			*zOut = z;
 			found = true;

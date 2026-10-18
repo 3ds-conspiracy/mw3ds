@@ -38,13 +38,16 @@ def select_cases(filters, old3ds):
         cases = [c for c in cases if not c.startswith(("chain-", "zz-open-"))]
     # A case for one console says so in its first lines, "# console: new" or "# console: old" (issue-32 pins the New 3DS's
     # animation rates, issue-32-old3ds the Old 3DS profile's): left out of a run with the other profile
+    # A case only the emulator can judge says "# run: emulator" (bug-quit-black-screen: the exit with the data as romfs;
+    # the native build ends its run straight after the save): left out of native runs the same way
     console = "old" if old3ds else "new"
     other = []
     for c in cases:
         for ln in mwtools.read_lines(mwtools.CASES / f"{c}.txt")[:5]:
             m = re.match(r"^#\s*console:\s*(new|old)\s*$", ln)
-            if m and m.group(1) != console:
+            if (m and m.group(1) != console) or re.match(r"^#\s*run:\s*emulator\s*$", ln):
                 other.append(c)
+                break
     return [c for c in cases if c not in other], other
 
 
@@ -188,7 +191,7 @@ def main():
     mode = ", monitor warnings ignored" if a.ignore_warnings else ""
     lines = [f"native run {stamp}: {len(passed)} of {total} passed in {int(time.time() - clock)} s ({jobs} at a time, data {a.data}{mode})"]
     if other_console:
-        lines.append(f"left out, for the other console: {', '.join(other_console)}")
+        lines.append(f"left out, for the other console or the emulator only: {', '.join(other_console)}")
     lines += ["", f"SUCCEEDED ({len(passed)}):"]
     for r in passed:
         extra = f"  {r['detail']}" if r["detail"].startswith("sweep:") else (f"  ({r['warnings']} warnings ignored)" if r["warnings"] else "")

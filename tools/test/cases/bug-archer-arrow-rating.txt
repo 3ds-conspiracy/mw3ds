@@ -1,6 +1,7 @@
 # An archer's bow is worth its own damage and its arrows' as OpenMW's rateWeapon weighs it (rateAmmo: the arrows rated
 # as a weapon of their own, added to the bow's before the hit chance, speed and range multiplier). The arrows were left
-# out, so a bow rated as its own chop alone: the skeleton archer 600 away, 52.5 with the bow only, 102.5 with its arrows.
+# out, so a bow rated as its own chop alone: the skeleton archer 600 away, about 31 with the bow only, 60 with its arrows
+# (the hit chance by its Combat 50, as OpenMW's rateWeapon takes a creature's; by the bow's Stealth 90 it read 52.5 and 102.5)
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
 0.3 0 0 0 0 HOUR:12
@@ -8,4 +9,4 @@
 1 0 0 0 0 HIDEACTORS:3000
 1 0 0 0 0 PLACE:skeleton%archer:600
 0.5 0 0 0 0 POSE:skeleton%archer:idle:0.3
-0.3 0 0 0 0 EXPECT:refweaponrating:skeleton%archer:gt:80
+0.3 0 0 0 0 EXPECT:refweaponrating:skeleton%archer:gt:45

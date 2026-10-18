@@ -407,6 +407,14 @@ void Session::npcKnockUpdate(int ri, float dt)
 
 // ---- NPCs
 
+// The skill a blow is rolled with: a person's for the weapon (hand-to-hand without one); a creature's Combat, whatever
+// it strikes with (OpenMW's Creature::hit: mData.mCombat). Creatures carry Combat, Magic and Stealth over the nine skills
+// of each specialization (creature.py), so hand-to-hand and a bow read its Stealth: a scamp struck at 20, not its 50
+static int attackSkill(const ActorDef& def, const Object* wpn)
+{
+	return def.creature ? def.skills[0] : def.skills[weaponSkill(wpn)];
+}
+
 void Session::makeHostile(int ri)
 {
 	Ref& r = w.refs[ri];
@@ -831,7 +839,7 @@ void Session::npcStrike(int ri)
 	r.fatigue -= w.game.gmstf("ffatigueattackbase", 2.0f) + (wpn ? wpn->weight : 0.0f) * charge * w.game.gmstf("fweaponfatiguemult", 0.25f);
 	// OpenMW's getHitChance: the attack term less the player's evasion (none while down or paralyzed), rounded
 	bool helpless = w.player.knockTimer > 0.0f || w.effectTotal(45) > 0.0f;
-	float chance = roundf(attackTermOf(def.skills[weaponSkill(wpn)], def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
+	float chance = roundf(attackTermOf(attackSkill(def, wpn), def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
 		r.fatigue, r.fatigueMax, w.actorEffect(ri, 117), w.actorEffect(ri, 47)) - playerDefense(helpless));
 	BlowRoll roll = rollBlow(chance, false, false);
 	// (a missed blow follows through as the weakest)
@@ -1183,10 +1191,11 @@ float Session::npcWeaponRatingOf(int ri, const Object* wpn, float dist)
 		if (en != w.game.spells.end() && en->second.type == ENCH_STRIKE)
 			rating += npcEffectsRating(ri, en->second.effects, true, false);
 	}
-	int skill = def.skills[weaponSkill(wpn)];
-	if (skill <= 0)
+	// (whether to take it up at all by the weapon's own skill, a creature's Combat, Magic or Stealth for it; the hit chance by
+	// the skill its blows roll with: OpenMW's rateWeapon)
+	if (def.skills[weaponSkill(wpn)] <= 0)
 		return 0.0f;
-	float chance = attackTermOf(skill, def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax,
+	float chance = attackTermOf(attackSkill(def, wpn), def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax,
 		w.actorEffect(ri, 117), w.actorEffect(ri, 47)) - playerDefense(false);
 	rating *= fmaxf(0.01f, fminf(1.0f, chance / 100.0f));
 	return ammo ? rating * mult : rating * wpn->speed * mult;
@@ -1921,6 +1930,18 @@ static const float kNpcSwimDepth = 95.0f;          // as the player's: feet belo
 
 // Moves an NPC `step` units along (dirX, dirY), following the floor and stopped by walls;
 // false when blocked (no floor there)
+// The steepest land an actor walks up: up to 60 degrees (OpenMW's actors climb what its navigation mesh allows), except in
+// a fight, where it climbs no steeper than the player does (kWalkSlope, 46): backing up a slope too steep to walk was a
+// way out of a fight that cost the player nothing, or one a foe took out of the player's reach. One following or
+// escorting the player for a quest keeps up wherever they go, fight or not. (Out of a fight the 46 kept town guards from
+// paths they walk.) Our own rule, not OpenMW's
+float npcClimbSlope(const World& w, const Ref& r)
+{
+	bool quest = (r.aiPackage == AIPKG_FOLLOW || r.aiPackage == AIPKG_ESCORT) && r.aiTarget == "player" && !r.aiDone && !r.ally;
+	bool fighting = r.ai == AI_COMBAT || r.duelFoe >= 0;
+	return fighting && !quest ? kWalkSlope : 60.0f;
+}
+
 bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 {
 	Ref& r = w.refs[ri];
@@ -1998,6 +2019,24 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	{
 		float th = trailHeightNear(body[0], body[1]);
 		if (th > -1e8f && fz < th - 45.0f)
+			return false;
+	}
+	// Up land steeper than it may climb (npcClimbSlope): no step. (The floor test at that limit finds no floor there, or one
+	// well below the one the 60 degree test stepped up to; a few units' difference is a foot's spot on a small steep patch
+	// of an even slope, not a slope too steep. Going down is never refused, nor anything in the water)
+	float climb = npcClimbSlope(w, r);
+	bool wet = cell.hasWater() && r.pos[2] < cell.waterZ + 10.0f;
+	if (climb < 60.0f && fz > r.pos[2] + 2.0f && fz > swimZ + 0.5f && !wet)
+	{
+		float low = -1e9f;
+		for (int k = 0; k < aroundCount; k++)
+		{
+			float z;
+			if (collisionFootFloor(around[k]->collision, body[0], body[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 300.0f, &z, climb)
+				&& z > low)
+				low = z;
+		}
+		if (low < fz - 8.0f)
 			return false;
 	}
 	if (Actor* a = w.actorOf(ri))
@@ -2480,7 +2519,7 @@ void Session::npcDuel(int ri, float dt)
 		{
 			float charge = frand();
 			r.fatigue -= w.game.gmstf("ffatigueattackbase", 2.0f) + (wpn ? wpn->weight : 0.0f) * charge * w.game.gmstf("fweaponfatiguemult", 0.25f);
-			float chance = roundf(attackTermOf(def.skills[weaponSkill(wpn)], def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
+			float chance = roundf(attackTermOf(attackSkill(def, wpn), def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
 				r.fatigue, r.fatigueMax, w.actorEffect(ri, 117), w.actorEffect(ri, 47))
 				- npcDefense(fi, f.knockTimer > 0.0f || w.actorEffect(fi, 45) > 0.0f));
 			BlowRoll roll = rollBlow(chance, false, false);
@@ -2767,6 +2806,12 @@ void Session::npcPackage(int ri, float dt)
 	// axes): flat alone, a guard in the hold right under the deck he was sent to counted as there. (A script's point is
 	// often set a little above the floor: some 150 of height is let go)
 	auto arrived = [&](const float* p, float d) { return near(p, d) && fabsf(p[2] - r.pos[2]) < 150.0f; };
+	// How close to whoever they follow or escort: in a straight line, height and all (OpenMW's AiFollow, AiEscort). On the
+	// ground alone, a follower at the foot of the stairs with the player halfway up stood as if it had caught up
+	auto within = [&](const float* p, float d) {
+		float dx = p[0] - r.pos[0], dy = p[1] - r.pos[1], dz = p[2] - r.pos[2];
+		return dx * dx + dy * dy + dz * dz < d * d;
+	};
 	const float* goal = nullptr;
 	float speed = actorWalkSpeed(ri);   // walking pace (OpenMW: by their Speed)
 	bool running = false;               // only a follower far behind runs (OpenMW's AiFollow; the rest walk)
@@ -2814,12 +2859,12 @@ void Session::npcPackage(int ri, float dt)
 			if (!r.aiRepeat)
 				break;
 		}
-		if (who && !near(who, 256.0f))
+		if (who && !within(who, 256.0f))
 		{
 			goal = r.aiTarget == "player" ? followGoal(w, r, who, dt) : who;
 			// running to catch up: from 450 units away, until within 325 (a dead zone, as in OpenMW, so they don't flip)
 			bool wasRunning = a && a->mode == ANIM_LOOP && a->group == actorFindGroup(actorSkeleton(*set, a->skeleton), "RunForward");
-			if (!near(who, wasRunning ? 325.0f : 450.0f))
+			if (!within(who, wasRunning ? 325.0f : 450.0f))
 			{
 				speed = actorRunSpeed(ri);
 				running = true;
@@ -2832,7 +2877,7 @@ void Session::npcPackage(int ri, float dt)
 			aiFinish(w, r);
 		// Lead the way, but wait when the escorted one falls behind (OpenMW: stop past half extent + 450, go on again
 		// within half extent + 250)
-		else if (hasDest && (!who || near(who, r.escortWaiting ? 300.0f : 500.0f)))
+		else if (hasDest && (!who || within(who, r.escortWaiting ? 300.0f : 500.0f)))
 		{
 			r.escortWaiting = false;
 			goal = r.aiDest;

@@ -1,0 +1,14 @@
+# A follower comes up to the player standing on the stairs. OpenMW's AiFollow stops within its follow distance measured
+# in all three axes (targetDir.length2()) and runs past 450 the same way; ours measured on the ground alone. With the
+# player halfway up Venim Manor's cellar stairs (624, 508, -125), Varvur Sarethi at their foot was 256 away on the
+# ground and 356 in a straight line, and stood there as if he had caught up (uber main quest: "varvur_sarethi not
+# coming")
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+GOTO:Ald-ruhn,_Venim_Manor_Right_Wing
+2 0 0 0
+60 0 0 0 0 WALKTO:varvur%sarethi
+1 0 0 0 0 CON:"varvur%sarethi"->aifollow%player%0%0%0%0
+1 0 0 0
+60 0 0 0 0 WALKTO:@624,508,-125
+15 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:varvur%sarethi:le:300
