@@ -1,14 +1,15 @@
 name: Release
 
-# A tag v* builds the release converter (tools/release/make_release.py: a folder a player unzips, picks their own
-# Morrowind install in, and gets a CIA from) and attaches it to a draft GitHub release for the maintainer to check
-# and publish. Nothing from Morrowind is built or stored here: the converter reads the player's own copy.
+# A version tag (0.0.4, no "v") builds the release converter (tools/release/make_release.py: a folder a player
+# unzips, picks their own Morrowind install in, and gets a CIA from) and attaches it to a draft GitHub release for the
+# maintainer to check and publish. Nothing from Morrowind is built or stored here: the converter reads the player's
+# own copy. Before the draft is made, check_version.py checks the tag is the version everywhere a player sees one.
 # tex3ds and makerom for Windows come from this repository's "build-tools" release (uploaded once by hand, pinned
 # below by checksum): devkitPro's package server has refused GitHub's runners before.
 
 on:
   push:
-    tags: ["v*"]
+    tags: ["[0-9]+.[0-9]+.[0-9]+"]
   workflow_dispatch:
     inputs:
       tag:
@@ -86,6 +87,9 @@ jobs:
             echo "ffmpeg is in the release"; exit 1
           fi
           test -s build/release/MW3DS-Converter/app/ffmpeg.lock.json
+      - name: The tag is the version everywhere (VERSION.txt, the CIA's title version, the HOME menu text)
+        shell: bash
+        run: python tools/release/check_version.py "$TAG" build/release/MW3DS-Converter
       - name: Draft release
         shell: bash
         env:
