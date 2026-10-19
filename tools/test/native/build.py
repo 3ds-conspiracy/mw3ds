@@ -6,6 +6,7 @@ zlib from its source (fetched once into build/native/zlib).
 """
 import io
 import os
+import re
 import subprocess
 import sys
 import tarfile
@@ -21,6 +22,11 @@ ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz"
 ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "inftrees", "trees", "uncompr", "zutil"]
 # replaced by native_stubs.cpp (log, linear heap, the dev updater), native_gpu.cpp (screenshots) or main_native.cpp
 SKIP = {"main", "log", "screenshot", "linear", "heaps"}
+# The two builds' entry files: they only define what include/platform.h asks of them and call appMain; the game itself is
+# source/app.cpp, compiled into both, so the console and this build can't drift apart (check_entry_files)
+ENTRY_FILES = ["source/main.cpp", "tools/test/native/main_native.cpp"]
+ENTRY_MAX_LINES = 40
+ENTRY_FUNCTIONS = {"main", "platformRunOver", "platformFailFast"}
 # renderer.cpp's drawing entry points get a suffix: native_gpu.cpp wraps them so they draw only with NATIVE_DRAW=1
 RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGlow", "rendererDrawActor", "rendererDrawGlow",
                     "rendererDrawLocalMap", "rendererLocalMap"]
@@ -68,7 +74,27 @@ def newest_header():
     return _newest
 
 
+def check_entry_files():
+    """Stops the build when an entry file holds more than the platform hooks: the game belongs in source/app.cpp (or
+    another source file), where both builds compile it."""
+    problems = []
+    for rel in ENTRY_FILES:
+        text = (ROOT / rel).read_text(encoding="utf-8")
+        lines = text.splitlines()
+        if len(lines) > ENTRY_MAX_LINES:
+            problems.append(f"{rel}: {len(lines)} lines (at most {ENTRY_MAX_LINES})")
+        # function definitions: a name and its parameters at the start of a line, the body on the next ("{")
+        for i, ln in enumerate(lines[:-1]):
+            m = re.match(r"^[A-Za-z_][\w:<>*& ]*?\b(\w+)\s*\([^;]*\)\s*$", ln)
+            if m and lines[i + 1].strip() == "{" and m.group(1) not in ENTRY_FUNCTIONS:
+                problems.append(f"{rel}:{i + 1}: defines {m.group(1)}(), not one of include/platform.h's hooks")
+    if problems:
+        sys.exit("build.py: an entry file holds more than include/platform.h's hooks: move it to source/ so both builds "
+                 "compile it (or add a hook to platform.h when the builds must differ)\n  " + "\n  ".join(problems))
+
+
 def main():
+    check_entry_files()
     fetch_zlib()
     objdir = BUILD / "obj"
     objdir.mkdir(parents=True, exist_ok=True)

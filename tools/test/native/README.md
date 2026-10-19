@@ -7,8 +7,11 @@ or memory limits. A case that takes minutes on Azahar takes seconds here.
 
 - `build.py` compiles the game's own `source/*.cpp` with zig (`python -m ziglang`), against stand-in 3DS headers in
   `stub/`. zlib is downloaded once into `build/native/zlib`. Output: `build/native/mw3ds-native.exe`.
-- `main_native.cpp` is a **copy** of `source/main.cpp` with one change: it exits when the script ends. `source/` is
-  never edited by this build.
+- The game is `source/app.cpp` (start-up, title, input, the frame loop), the same code in both builds. Each build's entry
+  file only defines the two hooks in `include/platform.h` and calls `appMain`: `source/main.cpp` (the console: a run's
+  end changes nothing) and `main_native.cpp` (here: the process ends when the script does, and `MW3DS_FAILFAST` stops a
+  run at its first failure). `build.py` refuses an entry file that holds anything else. `source/` is never edited by
+  this build.
 - `native_stubs.cpp` and `stub/` stand in for what the 3DS provided:
   - `sdmc:/3ds/mw3ds/...` maps to a folder (`NATIVE_SD`, default `build/native/sd`); `.../data` maps to the converted
     game data (`MW3DS_DATA`, e.g. `out/world`), read in place.
@@ -126,7 +129,9 @@ Not checked natively, so use the emulator:
 
 A native pass is a fast regression check. Run the emulator for a final check before a release.
 
-## Keeping the copy in step
+## One game, two entry files
 
-`main_native.cpp` does not follow `source/main.cpp` by itself. When `main.cpp` changes, re-copy it and re-apply the exit
-after `autoinput: end` (search for `native test build`). There is no automatic drift check yet.
+There is no copy to keep in step: `source/main.cpp` and `main_native.cpp` are a few lines each, and everything else is
+compiled from `source/` into both builds. What must differ goes through `include/platform.h`. `build.py` checks both
+entry files before it compiles (only the hooks and `main`, a few dozen lines at most) and stops with a message when one
+grows.
