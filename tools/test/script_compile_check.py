@@ -1,11 +1,11 @@
-"""Checks the 3DS script compiler (source/scriptc.cpp) against the PC one (tools/convert/mwscript.py).
+"""Checks the 3DS script compiler (source/components/compiler/compiler.cpp) against the PC one (tools/convert/mwscript.py).
 
 The engine compiles console lines itself; the converter compiles the game's scripts. Both must build the same
 tree, so this compiles every script and dialogue result of the load order with both and compares them. The C++
-side's function tables (include/scriptc_tables.h) are generated from mwscript.py's, so they cannot drift.
+side's function tables (source/components/compiler/extensions0.hpp) are generated from mwscript.py's, so they cannot drift.
 
 Usage:
-    python tools/test/script_compile_check.py --tables   # rewrite include/scriptc_tables.h from mwscript.py
+    python tools/test/script_compile_check.py --tables   # rewrite source/components/compiler/extensions0.hpp from mwscript.py
     python tools/test/script_compile_check.py            # tables current? then compile everything both ways
     python tools/test/script_compile_check.py --show 5   # print the first 5 differences in full
 """
@@ -21,10 +21,10 @@ sys.path.insert(0, str(ROOT / "tools" / "convert"))
 
 import mwscript  # noqa: E402
 
-TABLES = ROOT / "include" / "scriptc_tables.h"
+TABLES = ROOT / "source" / "components" / "compiler" / "extensions0.hpp"
 OUT = ROOT / "build" / "scriptc-check"
 EXE = OUT / "scriptc-check.exe"
-SOURCES = [ROOT / "tools/test/native/scriptc_check.cpp", ROOT / "source/scriptc.cpp", ROOT / "source/cJSON.c"]
+SOURCES = [ROOT / "tools/test/native/scriptc_check.cpp", ROOT / "source/components/compiler/compiler.cpp", ROOT / "source/extern/cjson/cJSON.c"]
 
 
 def tables_text():
@@ -54,13 +54,13 @@ def tables_text():
 
 def build_exe():
     OUT.mkdir(parents=True, exist_ok=True)
-    newest = max(p.stat().st_mtime for p in SOURCES + [TABLES, ROOT / "include/scriptc.h"])
+    newest = max(p.stat().st_mtime for p in SOURCES + [TABLES, ROOT / "source/components/compiler/compiler.hpp"])
     if EXE.exists() and EXE.stat().st_mtime > newest:
         return
     zig = [sys.executable, "-m", "ziglang"]
     cjson = OUT / "cJSON.o"
-    steps = [zig + ["cc", "-c", "-O1", "-w", "-I", str(ROOT / "include"), str(ROOT / "source/cJSON.c"), "-o", str(cjson)],
-             zig + ["c++", "-O1", "-std=c++17", "-w", "-I", str(ROOT / "include"),
+    steps = [zig + ["cc", "-c", "-O1", "-w", "-I", str(ROOT / "source"), str(ROOT / "source/extern/cjson/cJSON.c"), "-o", str(cjson)],
+             zig + ["c++", "-O1", "-std=c++17", "-w", "-I", str(ROOT / "source"),
                     *[str(p) for p in SOURCES if p.suffix == ".cpp"], str(cjson), "-o", str(EXE)]]
     for cmd in steps:
         r = subprocess.run(cmd, capture_output=True, text=True)
@@ -99,7 +99,7 @@ def cases():
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--tables", action="store_true", help="rewrite include/scriptc_tables.h")
+    ap.add_argument("--tables", action="store_true", help="rewrite source/components/compiler/extensions0.hpp")
     ap.add_argument("--show", type=int, default=3, help="differences to print in full")
     args = ap.parse_args()
     text = tables_text()
@@ -108,7 +108,7 @@ def main():
         print(f"wrote {TABLES.relative_to(ROOT)}")
         return
     if not TABLES.exists() or TABLES.read_text(encoding="utf-8") != text:
-        sys.exit("include/scriptc_tables.h is out of date: run with --tables")
+        sys.exit("source/components/compiler/extensions0.hpp is out of date: run with --tables")
     build_exe()
     glob, items = cases()
     OUT.mkdir(parents=True, exist_ok=True)

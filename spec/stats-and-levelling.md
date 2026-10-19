@@ -2,7 +2,7 @@
 
 Mirrors the OpenMW wiki page *Research:Stats and Levelling*. Rules read from OpenMW's `npcstats.cpp` (`levelUp`,
 `updateHealth`, `getSkillProgressRequirement`, `getLevelupAttributeMultiplier`), `creaturestats.cpp`
-(`getFatigueTerm`, `recalculateMagicka`), `actors.cpp` (`restoreDynamicStats`, `calculateRestoration`,
+(`getFatigueTerm`, `recalculateMagicka`), `mwrender/animation.cpp` (`restoreDynamicStats`, `calculateRestoration`,
 `getRestorationPerHourOfSleep`), `mwclass/npc.cpp` (`getCapacity`, character creation), and the Lua
 `omw/skillhandlers.lua` (skill use types). In our words.
 

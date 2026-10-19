@@ -40,8 +40,9 @@ APP_DESCRIPTION	:=	Morrowind engine for 3DS $(MW3DS_VERSION)
 APP_AUTHOR	:=	mw3ds
 BUILD		:=	build
 SOURCES		:=	source
+SHADERS		:=	source/shaders
 DATA		:=	data
-INCLUDES	:=	include
+INCLUDES	:=	source
 GRAPHICS	:=	gfx
 GFXBUILD	:=	$(BUILD)
 #ROMFS		:=	romfs
@@ -65,7 +66,7 @@ CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
 ASFLAGS	:=	-g $(ARCH)
 LDFLAGS	=	-specs=3dsx.specs -g -O3 -flto=auto $(ARCH) -Wl,-Map,$(notdir $*.map) \
 			-Wl,--wrap=linearAlloc,--wrap=linearMemAlign,--wrap=linearFree
-# (the linear heap kept from running dry and used under one lock: source/linear.cpp)
+# (the linear heap kept from running dry and used under one lock: source/platform/linear.cpp)
 
 LIBS	:= -lcitro2d -lcitro3d -lctru -lz -lm
 
@@ -86,17 +87,21 @@ ifneq ($(BUILD),$(notdir $(CURDIR)))
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 export TOPDIR	:=	$(CURDIR)
 
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
+export VPATH	:=	$(foreach dir,$(SOURCES) $(SHADERS),$(CURDIR)/$(dir)) \
 			$(foreach dir,$(GRAPHICS),$(CURDIR)/$(dir)) \
 			$(foreach dir,$(DATA),$(CURDIR)/$(dir))
 
 export DEPSDIR	:=	$(CURDIR)/$(BUILD)
 
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-PICAFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.v.pica)))
-SHLISTFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.shlist)))
+# Every source file under source/, with its folder (mwworld/worldimp.cpp -> build/mwworld/worldimp.o): the folders
+# follow OpenMW's (apps/openmw/mwworld, components/...), where one file name can be in several of them
+rwildcard	=	$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
+CFILES		:=	$(foreach dir,$(SOURCES),$(patsubst $(dir)/%,%,$(call rwildcard,$(dir),*.c)))
+CPPFILES	:=	$(foreach dir,$(SOURCES),$(patsubst $(dir)/%,%,$(call rwildcard,$(dir),*.cpp)))
+SFILES		:=	$(foreach dir,$(SOURCES),$(patsubst $(dir)/%,%,$(call rwildcard,$(dir),*.s)))
+export OBJDIRS	:=	$(sort $(dir $(CFILES) $(CPPFILES) $(SFILES)))
+PICAFILES	:=	$(foreach dir,$(SHADERS),$(notdir $(wildcard $(dir)/*.v.pica)))
+SHLISTFILES	:=	$(foreach dir,$(SHADERS),$(notdir $(wildcard $(dir)/*.shlist)))
 GFXFILES	:=	$(foreach dir,$(GRAPHICS),$(notdir $(wildcard $(dir)/*.t3s)))
 BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
 
@@ -172,6 +177,7 @@ endif
 
 #---------------------------------------------------------------------------------
 all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
+	@mkdir -p $(addprefix $(BUILD)/,$(OBJDIRS))
 	@[ "$$(cat $(BUILD)/version.txt 2>/dev/null)" = "$(MW3DS_VERSION)" ] || echo "$(MW3DS_VERSION)" > $(BUILD)/version.txt
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
@@ -236,7 +242,7 @@ $(OUTPUT).elf	:	$(OFILES)
 	$(SILENTMSG) $(notdir $<)
 	$(bin2o)
 
--include $(DEPSDIR)/*.d
+-include $(addprefix $(DEPSDIR)/,$(addsuffix *.d,$(OBJDIRS)))
 
 #---------------------------------------------------------------------------------------
 endif

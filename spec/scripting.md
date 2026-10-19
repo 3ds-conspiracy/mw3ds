@@ -9,10 +9,10 @@ OpenMW's code: `components/compiler` (scanner, parsers, `extensions0.cpp`), `app
 | Where | What | Code |
 |---|---|---|
 | PC, at conversion | every script and dialogue result of the load order | `tools/convert/mwscript.py` |
-| device, at run time | one console line | `source/scriptc.cpp` (a port of `mwscript.py`) |
+| device, at run time | one console line | `source/components/compiler/compiler.cpp` (a port of `mwscript.py`) |
 
-Both build the same JSON tree (`mwscript.py`'s docstring has the shapes), which `game.cpp` turns into the interpreter's
-nodes. The C++ function tables (`include/scriptc_tables.h`) are generated from `mwscript.py`'s, and
+Both build the same JSON tree (`mwscript.py`'s docstring has the shapes), which `mwworld/esmstore.cpp` turns into the interpreter's
+nodes. The C++ function tables (`source/components/compiler/extensions0.hpp`) are generated from `mwscript.py`'s, and
 `tools/test/script_compile_check.py` compiles every script and dialogue result with both and compares the trees
 (26,230 compiles, 0 differences, 2026-10-15). Run it after changing either compiler.
 

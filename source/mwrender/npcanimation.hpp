@@ -1,0 +1,67 @@
+#pragma once
+
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "mwrender/animation.hpp"
+#include "mwrender/viewmodel.hpp"
+
+struct World;
+
+// What the player's arms do, taken from the first-person action (in OpenMW one character controller drives both
+// views): a blow drawn back, let go, or a spell cast
+enum BodyAction { BODY_NONE, BODY_WINDUP, BODY_STRIKE, BODY_CAST, BODY_DEATH };   // death: its group played once, held
+
+struct BodyAct
+{
+	BodyAction action = BODY_NONE;
+	const char* group = "";                       // the NPC group: Attack1h ... AttackHH, CastSelf / CastTouch / CastTarget
+	float charge = 0.0f;                          // wind-up: 0..1 between the min and max attack marks
+	float speed = 1.0f;                           // the weapon's speed: blows play at this rate
+	float strength = 1.0f;                        // a blow let go: small / medium / large follow-through by it
+	const char* stance = "";                      // the weapon's family for its ready stance: 1h 2c 2w HH
+	float moveX = 0.0f, moveY = 0.0f;             // the stick against the facing (+y forward): which way they walk
+	bool airborne = false;                        // off the ground (jumping, falling): the jump
+	bool flying = false;                          // levitating: walks, never runs or sneaks (OpenMW)
+};
+
+// An NPC whose clothes left its pack (a stripped corpse): its library meshes swapped for the third-person pieces of its
+// race's body, its own head and hair and what it still wears (items: worn ids), as the player's body is put together;
+// its torch and weapon stay. Its textures join the cell's list. False (the library kept) when a piece couldn't load
+struct ActorDef;
+struct LoadedCell;
+bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::vector<std::string>& items);
+
+// The player seen from outside (third-person view, character creation's face preview): the NPC skeleton
+// of their race and sex, dressed from the "third" pieces (tools/convert/firstperson.py third_person): the bare
+// body, the chosen head and hair, then clothes, armor, skirts and robes as an NPC's are put together
+// (tools/convert/npc.py NpcBuilder.parts), the weapon while it is out.
+struct PlayerBody
+{
+	bool ready = false;
+	int skel = -1;                                // index into the shared NPC skeletons
+	ActorSet set;                                 // actors[0]: the player
+	std::vector<C3D_Tex*> textures;               // indexed by the meshes' tex
+	std::unordered_map<std::string, FpPiece*> pieces;   // bones resolved against this skeleton
+	std::string builtFor, forRace;
+	std::string weapon;                           // the piece on the weapon bone ("" when none is out)
+	bool forFemale = false;
+	std::string group;                            // the walk / idle group asked for last ("" after a blow or cast)
+	BodyAction acting = BODY_NONE;                // the arms' action being played
+	std::string actGroup;
+	bool followCut = false;                       // a blow's follow-through was chosen at its hit
+	bool stanceOut = false;                       // the walk / idle was chosen with the weapon out
+	bool swimOut = false;                         // ... and in the water (actorPlay's swimming groups)
+
+	void rebuild(World& w, bool weaponOut);      // (re)dress when race, head, hair or equipment changed
+	// Animation from what the player does; place at feet, facing yaw
+	void update(World& w, float dt, float speed, bool swimming, bool sneaking, bool weaponOut, const BodyAct& act);
+	const char* playing() const;                  // the group being played ("" when none)
+	bool loopTimes(float& time, float& loopStart, float& loopStop) const;   // that group's time and its loop keys
+	void draw(World& w, bool deform);
+	void free(World& w);
+};
+
+// The heads / hairs a race and sex can choose from (body ids), for character creation
+const std::vector<std::pair<std::string, std::string>>* playerHeadChoices(const World& w, bool hair);

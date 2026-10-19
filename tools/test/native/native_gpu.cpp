@@ -4,8 +4,8 @@
 // runs stay headless and fast.
 //
 // What it covers: .t3x textures (none / LZ10 / LZ11 / Huffman / RLE, the PICA's tiled formats and ETC1 / ETC1A4),
-// render targets (the two screens, the local map texture), renderer.cpp's vertex shader (cell.v.pica) in C++,
-// clipping, the texture combiners renderer.cpp sets, alpha test, depth test, blending, culling, scissor, and
+// render targets (the two screens, the local map texture), mwrender/renderingmanager.cpp's vertex shader (shaders/cell.v.pica) in C++,
+// clipping, the texture combiners mwrender/renderingmanager.cpp sets, alpha test, depth test, blending, culling, scissor, and
 // citro2d's rectangles, triangles and images. Not covered: mipmaps (level 0 only), the system font (glyphs are
 // grey blocks; the game draws its own Morrowind font once the theme is loaded), stereo (left eye only).
 #include <3ds.h>
@@ -20,9 +20,9 @@
 #include <string>
 #include <vector>
 
-#include "log.h"
-#include "renderer.h"
-#include "screenshot.h"
+#include "components/debug/debuglog.hpp"
+#include "mwrender/renderingmanager.hpp"
+#include "mwrender/screenshotmanager.hpp"
 
 // NATIVE_DRAW=1: textures are read and the frames a SHOT saves are drawn (the shot is the frame drawn right after
 // the SHOT step starts, one frame later than the 3DS build's, which saves the frame before); NATIVE_DRAW=all draws
@@ -730,13 +730,13 @@ void C3D_TexEnvFunc(C3D_TexEnv* env, int mode, int func)
 }
 void C3D_TexEnvColor(C3D_TexEnv* env, u32 color) { env->color = color; }
 
-// ---- renderer.cpp's shader: uniform slots by name, as cell.v.pica declares them
+// ---- mwrender/renderingmanager.cpp's shader: uniform slots by name, as shaders/cell.v.pica declares them
 enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET, U_POSSCALE, U_UVSCALE, U_TINT, U_LIGHTPOS,
-	U_LIGHTCOLOR, U_AMBIENT, U_TORCHVEC, U_BONES };     // (U_BONES: skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye;
+	U_LIGHTCOLOR, U_AMBIENT, U_TORCHVEC, U_BONES };     // (U_BONES: shaders/skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye;
 	                                                   // U_TORCHVEC: the torch's reach per pixel)
-// cell.v.pica's lamp (the batch's lamp light, x each vertex's w) sits where skin.v.pica's palette starts, as on the
+// shaders/cell.v.pica's lamp (the batch's lamp light, x each vertex's w) sits where shaders/skin.v.pica's palette starts, as on the
 // PICA. The bools in the order the shaders declare them: 0 Gamma's curve (light ^ ambientAdd.w), 1 the carried light
-enum { U_LAMP = U_BONES, U_SIDE, B_GAMMA = 0, B_LIGHTON };     // (U_SIDE: cell.v.pica sideLight, after lamp)
+enum { U_LAMP = U_BONES, U_SIDE, B_GAMMA = 0, B_LIGHTON };     // (U_SIDE: shaders/cell.v.pica sideLight, after lamp)
 static bool s_lightOn = false, s_gammaOn = false;
 
 DVLB_s* DVLB_ParseFile(u32*, u32) { return new DVLB_s(); }
@@ -919,11 +919,11 @@ static inline bool compare(int func, float a, float b)
 	}
 }
 
-// ---- 3D draws (renderer.cpp)
+// ---- 3D draws (mwrender/renderingmanager.cpp)
 
 static inline float clamp01(float v) { return std::clamp(v, 0.0f, 1.0f); }
 
-// cell.v.pica: position from the packed or float input, model-view, projection; texture coordinate; fog; baked
+// shaders/cell.v.pica: position from the packed or float input, model-view, projection; texture coordinate; fog; baked
 // colour times the tint, the lamps' share put back (w x lamp), plus the carried light
 struct ClipV { float p[4]; float a[kAttrs]; };     // a: r g b a u v fog, the torch's reach (texture coordinate 1)
 
@@ -975,7 +975,7 @@ static ClipV vertexShader(const u8* v)
 	float r0[4] = { f24(u[U_POSOFFSET][0] + f24(in[0][0] * u[U_POSSCALE][0])),
 		f24(u[U_POSOFFSET][1] + f24(in[0][1] * u[U_POSSCALE][1])), f24(u[U_POSOFFSET][2] + f24(in[0][2] * u[U_POSSCALE][2])),
 		1.0f };
-	// skin.v.pica (five inputs): the bind-pose position blended from four palette bones by their weights
+	// shaders/skin.v.pica (five inputs): the bind-pose position blended from four palette bones by their weights
 	if (s_attr.count >= 5)
 	{
 		float p[4] = { f24(in[0][0] * u[U_POSSCALE][0]), f24(in[0][1] * u[U_POSSCALE][1]), f24(in[0][2] * u[U_POSSCALE][2]), 1.0f };
@@ -1308,7 +1308,7 @@ void C2D_DrawText(const C2D_Text* t, u32, float x, float y, float, float sx, flo
 	}
 }
 
-// ---- SHOT: both screens as one 400 x 480 BMP, the top screen above the bottom (as screenshot.cpp writes)
+// ---- SHOT: both screens as one 400 x 480 BMP, the top screen above the bottom (as mwrender/screenshotmanager.cpp writes)
 
 bool screenshotSave(const char* path)
 {
@@ -1450,7 +1450,7 @@ static bool writeShot(const char* path)
 	bool ok = f && fwrite(header, sizeof(header), 1, f) == 1 && fwrite(img.data(), img.size(), 1, f) == 1;
 	if (f)
 		fclose(f);
-	// In 3D the right eye as well, <name>_r.bmp, as the device's screenshot.cpp
+	// In 3D the right eye as well, <name>_r.bmp, as the device's mwrender/screenshotmanager.cpp
 	if (ok && gfxIs3D())
 	{
 		const C3D_RenderTarget* right;
@@ -1468,7 +1468,7 @@ static bool writeShot(const char* path)
 	return ok;
 }
 
-// ---- renderer.cpp, built with its drawing entry points renamed (build.py): they draw only when drawing is on,
+// ---- mwrender/renderingmanager.cpp, built with its drawing entry points renamed (build.py): they draw only when drawing is on,
 // so a plain native run does what it did before the software GPU (no world drawn, no actors re-skinned)
 
 int rendererDrawWorld_sw(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale);

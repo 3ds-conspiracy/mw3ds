@@ -17,11 +17,12 @@ def build():
     """physim.exe, rebuilt when its sources changed."""
     BUILD.mkdir(parents=True, exist_ok=True)
     exe = BUILD / "physim.exe"
-    srcs = [HERE / "physim.cpp", ROOT / "source" / "player.cpp", ROOT / "source" / "collision.cpp",
-            ROOT / "include" / "player.h", ROOT / "include" / "collision.h"]
+    src = ROOT / "source"
+    srcs = [HERE / "physim.cpp", src / "mwphysics" / "movementsolver.cpp", src / "mwphysics" / "physicssystem.cpp",
+            src / "mwworld" / "player.hpp", src / "mwphysics" / "physicssystem.hpp"]
     if not exe.exists() or max(s.stat().st_mtime for s in srcs) > exe.stat().st_mtime:
         subprocess.check_call([sys.executable, "-m", "ziglang", "c++", "-O2", "-std=c++17", "-w",
-                               "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
+                               "-I", str(HERE / "stub"), "-I", str(src),
                                *(str(s) for s in srcs if s.suffix == ".cpp"), "-o", str(exe)])
     return exe
 

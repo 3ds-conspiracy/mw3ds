@@ -1,5 +1,5 @@
-// The console build's entry: the game is app.cpp, shared with the PC test build (platform.h)
-#include "platform.h"
+// The console build's entry: the game is engine.cpp, shared with the PC test build (platform/platform.hpp)
+#include "platform/platform.hpp"
 
 // A scripted run's end changes nothing on the console: the game goes on (into the run's QUIT, when it has one)
 void platformRunOver()

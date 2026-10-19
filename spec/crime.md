@@ -32,7 +32,7 @@ Witnesses' responses (disposition and fight raised by the crime; guards pursue w
 | murder | `iFightKilling` | none |
 | theft | `fFightStealing x value` | `int(fDispStealing x value x Alarm / 100)` (not permanent) |
 
-`Session::crimeBounty` (`formulas.cpp`) is the bounty column; `openmw-spec-crime` tests it.
+`Session::crimeBounty` (`mwmechanics/formulas.cpp`) is the bounty column; `openmw-spec-crime` tests it.
 
 ## Arrest (OpenMW `aipursue.cpp`, `actors.cpp`, `miscextensions.cpp`)
 
@@ -51,7 +51,7 @@ clears the bounty. `GoToJail` clears the bounty and takes the stolen goods too, 
 days pass. When a guard starts a fight with the player, every guard pursuing them fights too (`startCombat`).
 Paying calms the witnesses again and clears their Alarmed flag (the crime id).
 
-Ours: `Session::guardCheck` (`combat.cpp`) walks the guard over and calls `forceGreeting`; `Ref::alarmed` is the flag
+Ours: `Session::guardCheck` (`mwmechanics/mechanicsmanagerimp.cpp`) walks the guard over and calls `forceGreeting`; `Ref::alarmed` is the flag
 the Alarmed filter reads (with the bounty still standing); the fixed arrest screen (`drawArrest`) is only for a guard
 with no greeting that fits. `issue-4` (theft during character creation), `crime-arrest-pay`, `crime-arrest-jail` and
 `crime-arrest-resist` test it.

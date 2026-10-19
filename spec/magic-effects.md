@@ -3,7 +3,7 @@
 Taken from OpenMW's `apps/openmw/mwmechanics/`: `spelleffects.cpp` (`applyMagicEffect`, `applyActorMagicEffect`,
 `removeMagicEffect`, `applyProtections`), `activespells.cpp` (the list of active spells, stacking, expiry),
 `spellcasting.cpp` (`CastSpell::inflict`, `cast`), `spellresistance.cpp`, `magiceffects.cpp` (the per-actor totals),
-`summoning.cpp`, and the per-frame bits of `actors.cpp`. In our words; ids are the ESM effect indices this repo uses
+`summoning.cpp`, and the per-frame bits of `mwrender/animation.cpp`. In our words; ids are the ESM effect indices this repo uses
 (`out/world/game.json`, 0..136). The cost, cast chance, resistance roll and Reflect / Absorption odds are in
 [magic.md](magic.md); this page is about what an effect does once it lands.
 
@@ -117,7 +117,7 @@ Resist column: the effect that resists it (R = Resist Magicka, W = Weakness to M
 | 75, 76, 77 | Restore Health / Magicka / Fatigue | per-second | current rises, clamped at the maximum | none | none |
 | 86, 87, 88 | Absorb Health / Magicka / Fatigue | per-second | target current falls (clamped at 0) and the **caster gains the full amount** (clamped at the caster's maximum) even when the target had less | none | R / W |
 
-Rest (`actors.cpp`): with Stunted Magicka on, sleeping restores magicka only for the hours after the effect has run
+Rest (`mwrender/animation.cpp`): with Stunted Magicka on, sleeping restores magicka only for the hours after the effect has run
 out (a permanent one: none). Drowning: no Water Breathing and submerged past the held breath: fSuffocationDamage per
 second (3), not in god mode.
 
@@ -167,7 +167,7 @@ These add to the effect total and nothing else happens in `spelleffects.cpp`. Wh
 knowledge, outside the reading list; to verify when a test is written): Shield (3) armor rating; Burden (7) / Feather (8)
 carrying capacity; Jump (9) jump height; Levitate (10) allowed only if levitation is enabled (else removed with
 a message); Slowfall (11) fall damage; Swift Swim (1) swim speed; Water Walking (2) see below; Water Breathing (0) stops
-drowning (read in `actors.cpp`: no damage while its magnitude is > 0); Chameleon (40) and Invisibility (39) hit chance
+drowning (read in `mwrender/animation.cpp`: no damage while its magnitude is > 0); Chameleon (40) and Invisibility (39) hit chance
 and detection; Light (41) the light on the actor; Sanctuary (42) the chance to be hit; Night Eye (43) brightness (a
 negative total is clamped away at the end of the effect, see its handler); Fortify Attack (117) the player's attack
 roll; Blind (47) the actor's own hit chance; Sound (48) the spell-cast chance (magic.md); Silence (46) forbids casting; Paralyze (45) freezes the actor; Charm (44) raises disposition;

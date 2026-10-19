@@ -11,7 +11,7 @@
 #include <random>
 #include <tuple>
 
-#include "player.h"
+#include "mwworld/player.hpp"
 
 extern const char* g_playerBlock;
 

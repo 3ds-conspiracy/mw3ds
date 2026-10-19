@@ -76,7 +76,7 @@ inline void gfxSet3D(bool on) { nativeStereo() = on; }
 inline bool gfxIs3D() { return nativeStereo(); }
 inline float osGet3DSliderState() { const char* e = getenv("NATIVE_3D"); return e ? (float)atof(e) : 0.0f; }
 
-// One thread only: threadCreate fails, and the game then does that work on the spot (world.cpp streaming)
+// One thread only: threadCreate fails, and the game then does that work on the spot (mwworld/worldimp.cpp streaming)
 typedef int LightLock;
 inline void LightLock_Init(LightLock* l) { *l = 1; }
 inline void LightLock_Lock(LightLock*) {}

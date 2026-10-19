@@ -143,7 +143,7 @@ How a visual looks and how long it plays (2026-10-14, side by side):
    spells at the player too).
 7. **Actors' Shield, Sanctuary, Chameleon, Invisibility, Blind, Fortify Attack, Silence, Sound and elemental shields**
    did nothing; they now count in combat, casting, and shields burn the player's blows.
-8. **Every enchanted weapon counted as ordinary** (a misplaced statement in `game.cpp` read "magic" only for lights),
+8. **Every enchanted weapon counted as ordinary** (a misplaced statement in `mwworld/esmstore.cpp` read "magic" only for lights),
    so ghosts resisted enchanted blades, and the magic icon background was missing on enchanted weapons and armor.
 9. **Dispel** removed effects one by one from any source; OpenMW removes whole spells, one roll each, and leaves
    potions and enchantments. **Remove Curse** did nothing; it removes curses.

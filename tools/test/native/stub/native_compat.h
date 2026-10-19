@@ -59,7 +59,7 @@ struct CFNT_s { int unused; };
 struct FontInfo { int lineFeed; };
 struct CharWidthInfo { int charWidth; };
 inline void fontEnsureMapped() {}
-// The 3DS system font's line feed (30), which also sizes the Morrowind font (ui.cpp fontScale); its glyphs average
+// The 3DS system font's line feed (30), which also sizes the Morrowind font (mwgui/widgets.cpp fontScale); its glyphs average
 // about 13 pixels across
 inline FontInfo* fontGetInfo(void*) { static FontInfo f = { 30 }; return &f; }
 inline int fontGlyphIndexFromCodePoint(void*, uint32_t cp) { return (int)cp; }

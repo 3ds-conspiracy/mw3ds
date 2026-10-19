@@ -1,6 +1,6 @@
 # Findings: dialogue (response filter, greetings, choices, topic list, substitution)
 
-Written from OpenMW's `mwdialogue/*.cpp` and `interpreter/defines.cpp` only; `source/dialogue.cpp` was not read.
+Written from OpenMW's `mwdialogue/*.cpp` and `interpreter/defines.cpp` only; `source/mwdialogue/dialoguemanagerimp.cpp` was not read.
 Full rule text: `spec/dialogue.md` (R1-R28). Already audited and not repeated here: D1-D28, F1-F29 in
 `spec/audit-findings.md`; this page extends them with tests.
 
@@ -131,15 +131,15 @@ Fix phase (read against `mwdialogue/*.cpp`, `defines.cpp`, `interpretercontext.c
 | Rule | Our behaviour | Cause | Status | File |
 |---|---|---|---|---|
 | R12 Not-ID / Faction / Class / Race | The converter dropped an info when the stored operator / value said "= 0" (or similar): 56 topics, Greeting 2 among them | `static_match` ran `compare(op, truth, value)`; OpenMW needs only the plain truth (the engine already did) | fixed (needs a data rebuild) | tools/convert/build_game.py |
-| R11 Same Sex / Same Race (44, 45) | A creature with a record "female" bit equal to the player's sex read true | no creature guard | fixed | source/dialogue.cpp |
-| R11 Vampirism (60) | Read the script global `pcvampire` | wrong source | fixed: the Vampirism effect (133) magnitude > 0 | source/dialogue.cpp |
-| R16 topic click | `dialogueTopic` answered while a choice was open and for any dialogue type (the UI hid both, a test hook did not) | no guard in the rule code | fixed | source/dialogue.cpp |
-| R19 choice answer | A persuasion reply was answered again by a choice; topics a choice answer names were learned after its script | no type test; one order for all | fixed (only Topic / Greeting are re-searched; learn before the script for a choice answer) | source/dialogue.cpp |
-| R20 voiced reactions | Hello / Hit lines were searched with choice -1 (Choice conditions false) | callers passed -1 | fixed: `dialogueVoiced` (choice 0, live talked flag, no fallback) | source/dialogue.cpp, combat.cpp, session.cpp (one call each) |
-| R22 explicit links | `@topic#` in a text was not a hit | keyword search had no link split | fixed (`topicsNamedIn`) | source/dialogue.cpp |
-| R23 exhausted / specific | No such flag in the engine (the 3DS list does not colour topics) | UI only | differs on purpose for the UI; the rule is computed for the tests by `dialogueTopicFlags`. Open: history is the journal Topics text ("who: text", 12 lines per topic), not info ids, so it is an approximation | source/dialogue.cpp |
-| R26 unmatched `%` / `^` | The character after an unmatched escape could start an escape ("%%name" gave "%" + name) | loop re-read it | fixed | source/dialogue.cpp |
-| R17 test `answer` for Service Refusal | The test hook allowed the Info Refusal fallback | hook only (the engine did not) | fixed: no fallback | source/testdrive.cpp |
+| R11 Same Sex / Same Race (44, 45) | A creature with a record "female" bit equal to the player's sex read true | no creature guard | fixed | source/mwdialogue/dialoguemanagerimp.cpp |
+| R11 Vampirism (60) | Read the script global `pcvampire` | wrong source | fixed: the Vampirism effect (133) magnitude > 0 | source/mwdialogue/dialoguemanagerimp.cpp |
+| R16 topic click | `dialogueTopic` answered while a choice was open and for any dialogue type (the UI hid both, a test hook did not) | no guard in the rule code | fixed | source/mwdialogue/dialoguemanagerimp.cpp |
+| R19 choice answer | A persuasion reply was answered again by a choice; topics a choice answer names were learned after its script | no type test; one order for all | fixed (only Topic / Greeting are re-searched; learn before the script for a choice answer) | source/mwdialogue/dialoguemanagerimp.cpp |
+| R20 voiced reactions | Hello / Hit lines were searched with choice -1 (Choice conditions false) | callers passed -1 | fixed: `dialogueVoiced` (choice 0, live talked flag, no fallback) | source/mwdialogue/dialoguemanagerimp.cpp, mwmechanics/combat.cpp, mwbase/session.cpp (one call each) |
+| R22 explicit links | `@topic#` in a text was not a hit | keyword search had no link split | fixed (`topicsNamedIn`) | source/mwdialogue/dialoguemanagerimp.cpp |
+| R23 exhausted / specific | No such flag in the engine (the 3DS list does not colour topics) | UI only | differs on purpose for the UI; the rule is computed for the tests by `dialogueTopicFlags`. Open: history is the journal Topics text ("who: text", 12 lines per topic), not info ids, so it is an approximation | source/mwdialogue/dialoguemanagerimp.cpp |
+| R26 unmatched `%` / `^` | The character after an unmatched escape could start an escape ("%%name" gave "%" + name) | loop re-read it | fixed | source/mwdialogue/dialoguemanagerimp.cpp |
+| R17 test `answer` for Service Refusal | The test hook allowed the Info Refusal fallback | hook only (the engine did not) | fixed: no fallback | source/testdrive/testdrive.cpp |
 | R25 action-key names (`%ActionActivate` ...) | not substituted | not meaningful in 3DS dialogue text | differs on purpose | n/a |
 | R25 global values | printed with `%g` for shorts / longs too (a long of 1000000 prints 1e+06) | type not known in the engine's globals | open (rare) | n/a |
 | R11 Alarmed (49) | true when the speaker is fighting | no alarmed flag on a Ref (memory) | open: approximation | n/a |
@@ -150,7 +150,7 @@ Fix phase (read against `mwdialogue/*.cpp`, `defines.cpp`, `interpretercontext.c
 Checked by reading, same as OpenMW: R1, R2, R3, R4, R6, R7-R10 (modified values, rank difference, reaction, rank requirement),
 R11 clothing slots 0-15 without shield, R14 (frozen flag), R15, R17, R18, R21, R24, R27, R28.
 
-Hooks added to `source/testdrive.cpp`: `PCRACE`, `PCSEX`, `PCNAME`, `SETITEM`, `SETDEAD`, `SETTALKED`, `CLOTHVALUE`,
+Hooks added to `source/testdrive/testdrive.cpp`: `PCRACE`, `PCSEX`, `PCNAME`, `SETITEM`, `SETDEAD`, `SETTALKED`, `CLOTHVALUE`,
 `EXPECT:topicnotlisted`, `topicflag`, `answerchoice`, `answerid` (`<topic>:<npc>:[<op>:]<n>`; an Info Refusal answer reads
 1000 + its place), `talked` (`<npc>[:<op>:<n>]`), `greetingtopic` (`<npc>:[<eq|ne>:]<topic>`, underscores for spaces),
 `voiced`, `learned`. Answers to the open questions: `JOURNAL:` sets the index directly (`setJournal`); `%Rank` / `%Faction`

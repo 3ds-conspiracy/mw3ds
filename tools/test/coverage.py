@@ -6,8 +6,8 @@
 
 Counted: script functions (object scripts and dialogue result scripts), dialogue filter functions,
 magic effects of spells / enchantments / potions / ingredients, NPC and creature AI packages.
-"Supported" is read from the engine source (source/script.cpp's function table, dialogue.cpp's
-filterFunction, magic.cpp's effect enum), so the report follows the code as it grows.
+"Supported" is read from the engine source (source/components/interpreter/scriptfunctions.hpp's function table, mwdialogue/filter.cpp's
+filterFunction, mwmechanics/spellcasting.cpp's effect enum), so the report follows the code as it grows.
 """
 import argparse
 import collections
@@ -63,7 +63,7 @@ engine_script_functions = mwscript.engine_functions
 
 
 def engine_filter_functions():
-    src = (ROOT / "source" / "dialogue.cpp").read_text()
+    src = (ROOT / "source" / "mwdialogue" / "filter.cpp").read_text()
     body = src[src.index("static float filterFunction"):]
     body = body[:body.index("\n}\n")]
     handled = set(int(n) for n in re.findall(r"case (\d+):", body))
@@ -74,7 +74,7 @@ def engine_filter_functions():
 
 
 def engine_effects():
-    src = (ROOT / "source" / "magic.cpp").read_text()
+    src = "".join((ROOT / "source" / "mwmechanics" / f).read_text() for f in ("magiceffects.hpp", "spelleffects.cpp"))
     enum = src[src.index("EFF_"):]
     enum = enum[:enum.index("};")]
     out = {int(v): n for n, v in re.findall(r"EFF_(\w+) = (\d+)", enum)}

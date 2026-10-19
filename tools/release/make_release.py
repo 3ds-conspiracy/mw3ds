@@ -50,7 +50,7 @@ APP_FILES = [
     "tools/build/build_cia.py", "tools/build/make_cia.py", "tools/build/mw3ds.rsf", "tools/build/banner.bnr",
     "tools/release/wizard.py",
     # (mwscript.engine_functions reads the engine's script function table at convert time)
-    "source/script.cpp",
+    "source/components/interpreter/scriptfunctions.hpp",
     "LICENSE", "LANGUAGES.md", "requirements.txt",
 ]
 

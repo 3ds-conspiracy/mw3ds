@@ -103,24 +103,24 @@ writes `%` for spaces in region names (the step lines split at spaces).
 | Rule | Our behaviour before | Cause | Status | File |
 |---|---|---|---|---|
 | J18 GetCurrentWeather = outgoing weather | already the outgoing one in a running change, but a ChangeWeather took effect a frame late and ModRegion / expiry bypassed the queue | the stored weather and the transition were two states | fixed: one state (now / next / queued) as OpenMW | world.cpp |
-| J17 ChangeWeather ends at the next expiry | the weather was taken up once and the next 20 h roll dropped it by `gameHour` arithmetic (and a HOUR jump re-rolled) | no per-region stored weather; timer was absolute hours | fixed: region keeps it (`forcedWeather`) until the countdown `weatherTimer` clears all regions | world.cpp |
-| J19 ModRegion: chances not given become 0 | script padded 0 already; the re-roll happened only when the *next* weather's chance was 0 and only for the current region | rule read the wrong weather | fixed: re-roll when the region's stored weather has chance 0 (any region), then a change if current | world.cpp |
-| D7 Weather condition indoors fails | already returns 0 in interiors (dialogue.cpp:199) | an earlier agent | already fixed, not touched | dialogue.cpp |
-| Region roll: 1..100 walk, remainder Clear | `rand() % total` over the chances (sum under 100 never gave Clear) | own invention | fixed | world.cpp |
+| J17 ChangeWeather ends at the next expiry | the weather was taken up once and the next 20 h roll dropped it by `gameHour` arithmetic (and a HOUR jump re-rolled) | no per-region stored weather; timer was absolute hours | fixed: region keeps it (`forcedWeather`) until the countdown `weatherTimer` clears all regions | mwworld/worldimp.cpp |
+| J19 ModRegion: chances not given become 0 | script padded 0 already; the re-roll happened only when the *next* weather's chance was 0 and only for the current region | rule read the wrong weather | fixed: re-roll when the region's stored weather has chance 0 (any region), then a change if current | mwworld/worldimp.cpp |
+| D7 Weather condition indoors fails | already returns 0 in interiors (mwdialogue/dialoguemanagerimp.cpp:199) | an earlier agent | already fixed, not touched | mwdialogue/dialoguemanagerimp.cpp |
+| Region roll: 1..100 walk, remainder Clear | `rand() % total` over the chances (sum under 100 never gave Clear) | own invention | fixed | mwworld/worldimp.cpp |
 | Colour by hour, per channel windows | one table (5 / 6.5 / 8 / 17 / 18.5 / 20) for all channels | no per-channel lead / lag | fixed: `timeOfDay()` is OpenMW's interpolator, windows from the ini | world.cpp, level.py, game.cpp |
 | Fog depth by hour | night factor ramp 5..8 and 17..20 | same | fixed: day depth sunrise-mid to sunset-mid, night depth toward night (OpenMW's constructor) | world.cpp |
 | Fog depth to view distance (0.69 / depth, clamp 0.25..1) | own mapping | 3DS view distance | differs on purpose: only the hour part follows OpenMW | world.cpp |
-| Baked light scale (`daylight()` land / sky factors, clamps) | own mapping of weather colour to the baked cell light | 3DS draws pre-lit cells | differs on purpose | world.cpp |
-| Transition speed | fixed half a game hour | invention | fixed: real seconds, `1 / delta` of the next weather, leftover carried to the queued one | world.cpp |
-| Queue (one wait, a newer replaces, same as next ignored) | none | none | fixed | world.cpp |
-| Fast forward on rest / wait / travel / training | blend ran on | none | fixed: any hours skipped (`gameHour` jump beyond the frame's) finish the change to the last weather; HOUR / SetGameHour do not count | world.cpp, main.cpp |
-| 20 h expiry counted in game hours passed (incl. skipped) | absolute-hour compare | see J17 | fixed | world.cpp |
-| Arrival by door / travel: weather at once; walking over a border: a change | always at once | none | fixed (walking = last cell an adjacent exterior) | world.cpp |
-| Timers and changes keep running indoors | updateWeather returned early indoors | none | fixed | world.cpp |
-| Wind: min(8 w, 70), gust within 0.5..2x, rain 25 %, blend, 0 indoors | no wind | not modelled | fixed (value only; nothing in the engine uses it yet) | world.cpp |
-| Storm / precipitation (ash excluded) / torches / sun on / glare fade / sun visibility / night-day mode | not modelled (storm walking uses fixed weather ids 6, 7, 9 = the same set) | none | fixed as queries with hooks; nothing consumes torches / night-day yet | world.cpp |
+| Baked light scale (`daylight()` land / sky factors, clamps) | own mapping of weather colour to the baked cell light | 3DS draws pre-lit cells | differs on purpose | mwworld/worldimp.cpp |
+| Transition speed | fixed half a game hour | invention | fixed: real seconds, `1 / delta` of the next weather, leftover carried to the queued one | mwworld/worldimp.cpp |
+| Queue (one wait, a newer replaces, same as next ignored) | none | none | fixed | mwworld/worldimp.cpp |
+| Fast forward on rest / wait / travel / training | blend ran on | none | fixed: any hours skipped (`gameHour` jump beyond the frame's) finish the change to the last weather; HOUR / SetGameHour do not count | mwworld/worldimp.cpp, main.cpp |
+| 20 h expiry counted in game hours passed (incl. skipped) | absolute-hour compare | see J17 | fixed | mwworld/worldimp.cpp |
+| Arrival by door / travel: weather at once; walking over a border: a change | always at once | none | fixed (walking = last cell an adjacent exterior) | mwworld/worldimp.cpp |
+| Timers and changes keep running indoors | updateWeather returned early indoors | none | fixed | mwworld/weather.cpp |
+| Wind: min(8 w, 70), gust within 0.5..2x, rain 25 %, blend, 0 indoors | no wind | not modelled | fixed (value only; nothing in the engine uses it yet) | mwworld/worldimp.cpp |
+| Storm / precipitation (ash excluded) / torches / sun on / glare fade / sun visibility / night-day mode | not modelled (storm walking uses fixed weather ids 6, 7, 9 = the same set) | none | fixed as queries with hooks; nothing consumes torches / night-day yet | mwworld/worldimp.cpp |
 | Rain loop, precipitation and storm belong to the old weather until the next weather's rain threshold, then fade in | switch at 0.5, linear cross-fade | none | fixed (loop weather by `weatherShown()`, falling rain / ash alpha as OpenMW) | world.cpp, session.cpp |
-| Thunder strikes (chance per frame, four sounds, flash adds to fog / ambient / sun) | timer 8..28 s, sound only, no flash | own | differs on purpose: the flash is skipped (bright frames hurt on the 3D screen, see session.cpp); strike timing open | session.cpp |
+| Thunder strikes (chance per frame, four sounds, flash adds to fog / ambient / sun) | timer 8..28 s, sound only, no flash | own | differs on purpose: the flash is skipped (bright frames hurt on the 3D screen, see mwrender/sky.cpp); strike timing open | mwbase/session.cpp |
 | Sun disc: ours fades in over the horizon from 5% outside sunrise / sunset, no disc colour | own | sky drawing | differs on purpose; wsunon only exposes OpenMW's flag | session.cpp |
-| Transitions paused while a menu is open | not checked | World::update does not know pause | open | world.cpp |
-| Storm direction origin (OpenMW 25000, 70000; ours 20480, 69632) | own constants | sessions's walk slow-down | open (not weather timing; outside this task) | session.cpp |
+| Transitions paused while a menu is open | not checked | World::update does not know pause | open | mwworld/worldimp.cpp |
+| Storm direction origin (OpenMW 25000, 70000; ours 20480, 69632) | own constants | sessions's walk slow-down | open (not weather timing; outside this task) | mwbase/session.cpp |

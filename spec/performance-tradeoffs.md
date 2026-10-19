@@ -14,21 +14,21 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   lights cost vertex-shader work on everything they touch, and the console's vertex work is its limit. Outdoors each
   batch keeps its lamps' share apart (one colour a batch, a brightness a vertex in the position's spare w) so the night
   darkens the rest only: one shader instruction a vertex. A lamp a script switches off keeps its baked light.
-  (`convert_cell.py`, `terrain.py`, `cell.v.pica` lamp, `renderer.cpp setLamp`)
+  (`convert_cell.py`, `terrain.py`, `shaders/cell.v.pica` lamp, `mwrender/renderingmanager.cpp setLamp`)
 - **The player's torch is the one live light.** In first person it is lit per pixel through the fog's texture lookup
   (depth from the eye, not true distance: the screen's sides get a little more), no vertex work; in third person per
-  vertex. (`renderer.cpp setLight`, `updateLightRamp`)
+  vertex. (`mwrender/renderingmanager.cpp setLight`, `updateLightRamp`)
 - **People's torches light people only.** A torch held out lights its holder (`Actor::heldLight`) and the people near
   it (`Session`, per person on the CPU), never walls or ground; OpenMW lights the world from them. Per-vertex torch
   lights on nearby batches cost the GPU a large part of a town at night (one batch is up to a 2048-unit chunk).
 - **People take one light for the whole body.** A tint a person, from the lamps and torches near where they stand
-  (`Session`, `renderer.cpp actorTint`); OpenMW lights each vertex of each person by its normal.
+  (`Session`, `mwrender/renderingmanager.cpp actorTint`); OpenMW lights each vertex of each person by its normal.
 - **The sun's light from the side is one number a vertex; the rest is baked.** Opaque outdoor geometry bakes the noon
   sun (overhead, to the south) and keeps in its colours' alpha how much it faces east or west; the low sun of morning
   and evening and the night light (both along OpenMW's path) add their colour to the side facing them: four vertex
   instructions, no memory. Terrain and see-through or alpha-tested things (leaves, fences) keep the noon pattern all
   day, tinted by the hour; OpenMW lights every vertex by its normal. (`convert_cell.py side_facing`, `World::sunSide`,
-  `cell.v.pica sideLight`)
+  `shaders/cell.v.pica sideLight`)
 - **NPCs are drawn from a library the converter dressed** (their race's body, head, hair and what they wear, merged:
   about 29 meshes each, against about 35 put together from parts). One whose clothes leave its pack (a stripped
   corpse) is put together from the shared third-person pieces at run time instead (`npcDress`): about 6 more draws
@@ -41,8 +41,8 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   keeps it with the view: 0.8 of OpenMW's at most, closing in as far as 0.3 (2150) whenever frames come slower than
   20 a second, growing back only with room to spare. The view is drawn in steps of a twentieth, moved only once the
   adapted scale is a whole step away: drawn as adapted, the fog's reach followed the scale's saw of a few thousandths
-  a frame at its threshold, and on an Old 3DS the walkways' edges in the fog flashed. (`include/cell.h`,
-  `Session::viewScale`, `Session::viewDrawn`, `Session::adaptView`, `console.cpp`)
+  a frame at its threshold, and on an Old 3DS the walkways' edges in the fog flashed. (`source/mwrender/objects.hpp`,
+  `Session::viewScale`, `Session::viewDrawn`, `Session::adaptView`, `platform/console.cpp`)
 - **Rain and storms shorten the view.** OpenMW draws the whole view and moves the fog's start in; drawing land hidden in
   thick fog cost both consoles their frame rate. (`World::weatherFogScale`)
 - **Small clutter stops at a distance by its size.** Each size tier vanishes at about 25 pixels on screen.
@@ -64,14 +64,14 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   2 ms of GPU in 3D); the ripples are up to 40 small quads and about two floor checks a frame. An Old 3DS has the least
   to spare in a busy town, in 3D most of all. Neither is in OpenMW (it has no distant rain; its ripples are on water,
   with its shaders). Full rings, sheets stacked across the view, or a screen-wide rain picture were each tried or
-  weighed and turned down for the blending cost. (`console.cpp rainExtras`, `Session::drawPrecipitation`)
+  weighed and turned down for the blending cost. (`platform/console.cpp rainExtras`, `Session::drawPrecipitation`)
 
 ## Particles and memory
 
 - **A particle budget a frame** (spell visuals, sprays): fewer sprites while frames run long, every visual keeping the
-  same share. (`console.cpp spriteBudget`, `Session` frame pacing, `renderer.cpp`)
+  same share. (`platform/console.cpp spriteBudget`, `Session` frame pacing, `mwrender/renderingmanager.cpp`)
 - **Far cells' objects are dropped from memory** past a reference budget, and read again when needed.
-  (`console.cpp refBudget`, `World::evictCells`)
+  (`platform/console.cpp refBudget`, `World::evictCells`)
 - **An Old 3DS keeps textures to 128 texels and draws from Project Atlas's sheets** (fewer draws). A sheet's cap is per
   picture in it, its short side, the long side up to 1024: a 256 x 2048 sheet of eight pictures is 128 x 1024, the
   memory of the eight at 128 apiece (taken on the long side it was 16 x 128, each wall 16 texels across). Seyda Neen:
@@ -80,7 +80,7 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   blend its pictures into each other (Hlaalu's wall bleeds into the dark trim packed under it), and far walls and
   walkways showed dark patches flickering in and out. Far ground shimmers a little more and reads more texture memory
   a frame; the Old 3DS's GPU has the room (about 15 ms of its 50). The New 3DS keeps them: no sheets there.
-  (`ConsoleProfile::textureMips`, `cell.cpp loadTexture`)
+  (`ConsoleProfile::textureMips`, `mwrender/objects.cpp loadTexture`)
 
 ## Movement
 

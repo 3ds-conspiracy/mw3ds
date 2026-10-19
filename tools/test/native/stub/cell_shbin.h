@@ -1,4 +1,4 @@
-// Host stand-in for the assembled vertex shader: native_gpu.cpp runs cell.v.pica as C++ instead
+// Host stand-in for the assembled vertex shader: native_gpu.cpp runs shaders/cell.v.pica as C++ instead
 #pragma once
 #include "3ds/types.h"
 static const u8 cell_shbin[4] = { 0 };

@@ -82,7 +82,7 @@ linear-memory squeeze outdoors is real.
 3. Monitor noise left in the chain: actors stuck fighting (Ald Daedroth, Arena Pit, Akulakhan's Chamber, Beshara),
    player falling in the Arena Pit / Akulakhan's Chamber, under the floor in Tel Naga Upper Tower (ch13), dralcea arethi
    20 below the floor in Balmora.
-4. Not done, outside the fixed bugs: script Drop from a container drops a plain item (script.cpp); barter prices ignore
+4. Not done, outside the fixed bugs: script Drop from a container drops a plain item (components/interpreter/interpreter.cpp); barter prices ignore
    condition and soul; the converter does not skip not-playable body parts (BYDT flags & 2) as OpenMW does; driven
    thefts in mq-ch2 / ch3 still run up a bounty (paid at CHAIN).
 

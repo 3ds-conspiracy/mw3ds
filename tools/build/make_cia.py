@@ -10,7 +10,7 @@ The CIA's title version (FBI, System Settings > Data Management) is the release'
 converter's VERSION.txt, else the git tag on this commit (else the latest tag).
 The HOME menu banner's sound is the start of Morrowind's title music, taken from your Data Files when the CIA is packed
 (banner_with_tune); without them, the banner's own tune.
-The same program runs on both consoles (it takes its Old 3DS profile on an Old 3DS: 64 MB mode, see source/heaps.cpp);
+The same program runs on both consoles (it takes its Old 3DS profile on an Old 3DS: 64 MB mode, see source/platform/heaps.cpp);
 only the data differs (build_cia.py --old3ds converts with quarter-size textures).
 """
 import argparse

@@ -1,4 +1,4 @@
-// Host stand-in for citro3d. The matrix math is real (viewmodel.cpp reads it, and the projection is what the
+// Host stand-in for citro3d. The matrix math is real (mwrender/viewmodel.cpp reads it, and the projection is what the
 // software GPU in native_gpu.cpp draws with). Every GPU call goes to native_gpu.cpp: with NATIVE_DRAW=1 it draws
 // both screens in software (for SHOT); without it the calls return at once and the run stays headless.
 #pragma once
@@ -167,7 +167,7 @@ struct Tex3DS_SubTexture { u16 width, height; float left, top, right, bottom; };
 typedef void* Tex3DS_Texture;
 struct C2D_Image { C3D_Tex* tex; const Tex3DS_SubTexture* subtex; };
 
-// Shader programs: only renderer.cpp's (cell.v.pica, run in C++ by native_gpu.cpp)
+// Shader programs: only mwrender/renderingmanager.cpp's (shaders/cell.v.pica, run in C++ by native_gpu.cpp)
 struct DVLE_s { int unused; };
 struct DVLB_s { DVLE_s DVLE[1]; };
 struct shaderInstance_s { int unused; };

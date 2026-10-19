@@ -314,7 +314,7 @@ def write_openmw_setup(shots):
                            capture_output=True, text=True)
         if r.returncode != 0:
             print("sidebyside: Morrowind.ini not imported:", (r.stderr or r.stdout).strip()[-300:])
-    # The 3DS's top screen: 400 x 240, a 60 degree vertical field of view (renderer.cpp kFovY)
+    # The 3DS's top screen: 400 x 240, a 60 degree vertical field of view (mwrender/renderingmanager.cpp kFovY)
     (SBS / "settings.cfg").write_text("\n".join([
         "# Written by tools/test/sidebyside.py",
         "[Video]", "resolution x = 400", "resolution y = 240", "window mode = 2", "window border = true",

@@ -21,17 +21,22 @@ ZLIB = BUILD / "zlib"
 ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz"
 ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "inftrees", "trees", "uncompr", "zutil"]
 # replaced by native_stubs.cpp (log, linear heap, the dev updater), native_gpu.cpp (screenshots) or main_native.cpp
-SKIP = {"main", "log", "screenshot", "linear", "heaps"}
-# The two builds' entry files: they only define what include/platform.h asks of them and call appMain; the game itself is
-# source/app.cpp, compiled into both, so the console and this build can't drift apart (check_entry_files)
+SKIP = {"main.cpp", "components/debug/debuglog.cpp", "mwrender/screenshotmanager.cpp", "platform/linear.cpp",
+        "platform/heaps.cpp"}
+# The two builds' entry files: they only define what source/platform/platform.hpp asks of them and call appMain; the
+# game itself is source/engine.cpp, compiled into both, so the console and this build can't drift apart
+# (check_entry_files)
 ENTRY_FILES = ["source/main.cpp", "tools/test/native/main_native.cpp"]
 ENTRY_MAX_LINES = 40
 ENTRY_FUNCTIONS = {"main", "platformRunOver", "platformFailFast"}
-# renderer.cpp's drawing entry points get a suffix: native_gpu.cpp wraps them so they draw only with NATIVE_DRAW=1
+# The renderer's drawing entry points get a suffix in the file that defines them: native_gpu.cpp wraps them so they draw
+# only with NATIVE_DRAW=1
 RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGlow", "rendererDrawActor", "rendererDrawGlow",
                     "rendererDrawLocalMap", "rendererLocalMap"]
+# a definition: the name and its parameters at the start of a line, the body on the next ("{")
+RENDERER_DEFINES = re.compile(r"^[A-Za-z_][\w:<>*& ]*\b(?:" + "|".join(RENDERER_RENAMES) + r")\([^;]*\)\s*\n\{", re.M)
 # no fused multiply-add: the 3DS's VFP rounds every operation, and a host-CPU build would round some differently
-CXXFLAGS = [os.environ.get("MW3DS_NATIVE_OPT", "-O1"), "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "include"),
+CXXFLAGS = [os.environ.get("MW3DS_NATIVE_OPT", "-O1"), "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "source"),
             "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h")]
 
 
@@ -54,8 +59,8 @@ def fetch_zlib():
 def compile_one(src, obj, cxx):
     if obj.exists() and obj.stat().st_mtime > max(src.stat().st_mtime, newest_header()):
         return None
-    flags = CXXFLAGS if cxx else ["-O2", "-w", "-I", str(ZLIB), "-I", str(ROOT / "include"), "-DNO_FSEEKO"]
-    if src.stem == "renderer":
+    flags = CXXFLAGS if cxx else ["-O2", "-w", "-I", str(ZLIB), "-I", str(ROOT / "source"), "-DNO_FSEEKO"]
+    if cxx and src.is_relative_to(ROOT / "source") and RENDERER_DEFINES.search(src.read_text(encoding="utf-8", errors="replace")):
         flags = flags + [f"-D{n}={n}_sw" for n in RENDERER_RENAMES]
     if src.stem == "native_gpu":
         flags = flags + ["-O2"]         # the rasterizer: every pixel of both screens, each frame it draws
@@ -70,12 +75,12 @@ _newest = None
 def newest_header():
     global _newest
     if _newest is None:
-        _newest = max(p.stat().st_mtime for d in (ROOT / "include", HERE / "stub") for p in d.rglob("*.h"))
+        _newest = max(p.stat().st_mtime for d in (ROOT / "source", HERE / "stub") for p in d.rglob("*.h*"))
     return _newest
 
 
 def check_entry_files():
-    """Stops the build when an entry file holds more than the platform hooks: the game belongs in source/app.cpp (or
+    """Stops the build when an entry file holds more than the platform hooks: the game belongs in source/engine.cpp (or
     another source file), where both builds compile it."""
     problems = []
     for rel in ENTRY_FILES:
@@ -87,10 +92,10 @@ def check_entry_files():
         for i, ln in enumerate(lines[:-1]):
             m = re.match(r"^[A-Za-z_][\w:<>*& ]*?\b(\w+)\s*\([^;]*\)\s*$", ln)
             if m and lines[i + 1].strip() == "{" and m.group(1) not in ENTRY_FUNCTIONS:
-                problems.append(f"{rel}:{i + 1}: defines {m.group(1)}(), not one of include/platform.h's hooks")
+                problems.append(f"{rel}:{i + 1}: defines {m.group(1)}(), not one of platform/platform.hpp's hooks")
     if problems:
-        sys.exit("build.py: an entry file holds more than include/platform.h's hooks: move it to source/ so both builds "
-                 "compile it (or add a hook to platform.h when the builds must differ)\n  " + "\n  ".join(problems))
+        sys.exit("build.py: an entry file holds more than platform/platform.hpp's hooks: move it to source/ so both builds "
+                 "compile it (or add a hook to platform/platform.hpp when the builds must differ)\n  " + "\n  ".join(problems))
 
 
 def main():
@@ -99,13 +104,16 @@ def main():
     objdir = BUILD / "obj"
     objdir.mkdir(parents=True, exist_ok=True)
     jobs = []
-    for s in sorted((ROOT / "source").glob("*.cpp")):
-        if s.stem not in SKIP:
-            jobs.append((s, objdir / (s.stem + ".o"), True))
+    src = ROOT / "source"
+    for s in sorted(src.rglob("*.c*")):
+        rel = s.relative_to(src).as_posix()
+        if s.suffix in (".cpp", ".c") and rel not in SKIP:
+            obj = objdir / "game" / s.relative_to(src).with_suffix(".o")
+            obj.parent.mkdir(parents=True, exist_ok=True)
+            jobs.append((s, obj, s.suffix == ".cpp"))
     jobs.append((HERE / "main_native.cpp", objdir / "main_native.o", True))
     jobs.append((HERE / "native_stubs.cpp", objdir / "native_stubs.o", True))
     jobs.append((HERE / "native_gpu.cpp", objdir / "native_gpu.o", True))
-    jobs.append((ROOT / "source" / "cJSON.c", objdir / "cJSON.o", False))
     for z in ZLIB_SRC:
         jobs.append((ZLIB / (z + ".c"), objdir / ("z_" + z + ".o"), False))
     with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as pool:

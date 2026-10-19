@@ -62,7 +62,7 @@ def tex3ds_path():
 
 def shard_dir(name):
     """Subfolder (of 64) a data file lives in: the 3DS's SD file system scans a whole folder to
-    create or open a file, so thousands in one folder crawl (source/datapath.h computes the same)."""
+    create or open a file, so thousands in one folder crawl (source/components/files/datapath.hpp computes the same)."""
     return "%02x" % (zlib.crc32(name.encode("latin-1")) & 63)
 
 

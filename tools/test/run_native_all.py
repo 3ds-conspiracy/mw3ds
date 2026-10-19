@@ -9,7 +9,7 @@
 Each case gets its own SD folder (build/native/sd-<slot>), so they do not touch each other's logs or saves.
 --exe / --sd-root / --no-latest: another native build (build.py with MW3DS_NATIVE_BUILD), its own SD folders, and no copy
 to build/native-results/latest (a second session's run that leaves the first one's alone)
---old3ds: every case with the Old 3DS profile (slow CPU, small heap: include/console.h), as run_test.py --old3ds
+--old3ds: every case with the Old 3DS profile (slow CPU, small heap: source/platform/console.hpp), as run_test.py --old3ds
 """
 import argparse
 import csv

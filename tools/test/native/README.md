@@ -7,8 +7,8 @@ or memory limits. A case that takes minutes on Azahar takes seconds here.
 
 - `build.py` compiles the game's own `source/*.cpp` with zig (`python -m ziglang`), against stand-in 3DS headers in
   `stub/`. zlib is downloaded once into `build/native/zlib`. Output: `build/native/mw3ds-native.exe`.
-- The game is `source/app.cpp` (start-up, title, input, the frame loop), the same code in both builds. Each build's entry
-  file only defines the two hooks in `include/platform.h` and calls `appMain`: `source/main.cpp` (the console: a run's
+- The game is `source/engine.cpp` (start-up, title, input, the frame loop), the same code in both builds. Each build's entry
+  file only defines the two hooks in `source/platform/platform.hpp` and calls `appMain`: `source/main.cpp` (the console: a run's
   end changes nothing) and `main_native.cpp` (here: the process ends when the script does, and `MW3DS_FAILFAST` stops a
   run at its first failure). `build.py` refuses an entry file that holds anything else. `source/` is never edited by
   this build.
@@ -96,8 +96,8 @@ tools/test/run_test.py ui-g1-g9 --native --data out/world --start 'Seyda Neen' -
 ```
 
 `native_gpu.cpp` is a small software GPU: it reads the `.t3x` textures (all five compressions, the tiled formats and
-ETC1 / ETC1A4), runs `renderer.cpp` itself (`build.py` renames its drawing entry points and `native_gpu.cpp` wraps
-them, so they draw only when asked), runs `cell.v.pica` as C++, and draws citro2d's rectangles, triangles and
+ETC1 / ETC1A4), runs `mwrender/renderingmanager.cpp` itself (`build.py` renames its drawing entry points and `native_gpu.cpp` wraps
+them, so they draw only when asked), runs `shaders/cell.v.pica` as C++, and draws citro2d's rectangles, triangles and
 images. Only the frames a `SHOT` saves are drawn, so a case with shots takes about as long as one without (a UI case:
 3 s here, 16 s in Azahar). `NATIVE_DRAW=all` draws every frame instead (slow).
 
@@ -132,6 +132,6 @@ A native pass is a fast regression check. Run the emulator for a final check bef
 ## One game, two entry files
 
 There is no copy to keep in step: `source/main.cpp` and `main_native.cpp` are a few lines each, and everything else is
-compiled from `source/` into both builds. What must differ goes through `include/platform.h`. `build.py` checks both
+compiled from `source/` into both builds. What must differ goes through `source/platform/platform.hpp`. `build.py` checks both
 entry files before it compiles (only the hooks and `main`, a few dozen lines at most) and stops with a message when one
 grows.

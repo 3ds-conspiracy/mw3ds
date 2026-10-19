@@ -2,7 +2,7 @@
 
 Rules read from OpenMW's `mwworld/containerstore.cpp`, `cellstore.cpp`, `datetimemanager.cpp`, `duration.hpp`,
 `timestamp.cpp`, `actionteleport.cpp`, `actiontake.cpp`, `worldimp.cpp` (enable, disable, deleteObject,
-advanceTime), `engine.cpp` (the per-frame clock), `mwmechanics/levelledlist.cpp`, `actors.cpp` (soulTrap),
+advanceTime), `engine.cpp` (the per-frame clock), `mwmechanics/levelledlist.cpp`, `mwrender/animation.cpp` (soulTrap),
 `spelleffects.cpp`, `mechanicsmanagerimp.cpp` (getDerivedDisposition), `mwdialogue/journalimp.cpp`, `quest.cpp`,
 `dialoguemanagerimp.cpp` (faction reaction) and `mwgui/dialogue.cpp`, `containeritemmodel.cpp` (restock). In our
 words. The oracle is `tools/test/specgen_world.py` (tests `openmw-spec-world`, `openmw-spec-world-hooks`); what each
@@ -127,7 +127,7 @@ Not read: day of the week (`worldimp`), which we believe is `(days passed + offs
 ## 5. Soul trap
 
 Applying the effect (`spelleffects.cpp`) puts it on the creature; the player is told "invalid target" if it is a
-creature with soul 0. The soul is taken when the creature dies (`actors.cpp soulTrap`), **creatures only** (an NPC
+creature with soul 0. The soul is taken when the creature dies (`mwrender/animation.cpp soulTrap`), **creatures only** (an NPC
 never gives a soul):
 1. Needs a Soul Trap effect with magnitude above 0 on the victim, and the creature's record soul value above 0.
 2. For each such effect, the caster (any actor with an inventory, not only the player) is looked at: among the caster's

@@ -1,12 +1,12 @@
 // Compiles every case of tools/test/script_compile_check.py's cases.json with the device's compiler
-// (source/scriptc.cpp) and prints the trees as a JSON array: {"ok": tree} or {"error": message} per case.
+// (source/components/compiler/compiler.cpp) and prints the trees as a JSON array: {"ok": tree} or {"error": message} per case.
 //     scriptc-check.exe cases.json
 #include <cstdio>
 #include <string>
 #include <unordered_map>
 
-#include "cJSON.h"
-#include "scriptc.h"
+#include "extern/cjson/cJSON.h"
+#include "components/compiler/compiler.hpp"
 
 int main(int argc, char** argv)
 {

@@ -570,16 +570,16 @@ class Compiler:
         return {"name": name, "locals": [[t, n] for t, n in self.locals], "body": root}
 
 
-# Functions the engine accepts but that do nothing yet (keep in step with script.cpp's no-op cases): rotating baked
+# Functions the engine accepts but that do nothing yet (keep in step with components/interpreter/interpreter.cpp's no-op cases): rotating baked
 # objects, weather, UI history, voices
 STUBS = {"rotate", "modregion", "dontsaveobject", "changeweather", "clearinfoactor", "raiserank",
          "getcurrentweather", "equip", "streammusic", "sethello"}
 
 
 def engine_functions():
-    """The script functions the engine runs, read from its source (source/script.cpp's function table and
+    """The script functions the engine runs, read from its source (source/components/interpreter/scriptfunctions.hpp: the function table and
     statFunction's attribute / skill names), so the list follows the code as it grows."""
-    src = (ROOT / "source" / "script.cpp").read_text(encoding="utf-8", errors="replace")
+    src = (ROOT / "source/components/interpreter/scriptfunctions.hpp").read_text(encoding="utf-8", errors="replace")
     names = set(re.findall(r'X\(\w+, "(\w+)"\)', src))
     # statFunction: Get / Set / Mod + attribute or skill, Get / Set / Mod / ModCurrent + health etc.
     for table in ("kAttrFuncs", "kSkillFuncs"):

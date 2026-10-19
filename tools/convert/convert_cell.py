@@ -48,7 +48,7 @@ def light_falloff(dist, radius):
 INTERIOR_SUN_DIR = np.array([-0.15, 0.15, 1.0]) / np.linalg.norm([-0.15, 0.15, 1.0])
 # Outdoors the sun's path runs east to west along (400 x orbit, -75, 100) (OpenMW's WeatherManager::update, Morrowind's
 # constant): baked from where it is at noon, overhead and to the south. Its east-west part is the side light
-# (cell.v.pica sideLight): each opaque vertex keeps how much it faces east in its colour's alpha, lit at run time from
+# (shaders/cell.v.pica sideLight): each opaque vertex keeps how much it faces east in its colour's alpha, lit at run time from
 # the sun's place on the path (and the night light's, which runs back the same way)
 EXTERIOR_SUN_DIR = np.array([0.0, -75.0, 100.0]) / np.linalg.norm([0.0, -75.0, 100.0])
 LIGHT_NEGATIVE, LIGHT_OFF_DEFAULT = 0x4, 0x20
@@ -161,7 +161,7 @@ def shade(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
 
 def side_facing(s):
     """How much each vertex faces east (+1) or west (-1), times its diffuse colour's brightness: what the low sun's light
-    adds to it (cell.v.pica sideLight). 0 for shapes lit otherwise (terrain, water, sky, glow-only, particles)."""
+    adds to it (shaders/cell.v.pica sideLight). 0 for shapes lit otherwise (terrain, water, sky, glow-only, particles)."""
     n = len(s["pos"])
     if "rgba" in s or s.get("omni") or s.get("nrm") is None:
         return np.zeros(n)
@@ -187,7 +187,7 @@ def bake_colors(s, lights, ambient, sun, sun_dir=INTERIOR_SUN_DIR):
 
 
 # Outdoors a batch's lamp light rides along: one colour for the batch, and at each vertex a brightness of it in the
-# packed position's spare w, x LAMP_SCALE (0..2). cell.v.pica adds brightness x colour x (1 - the hour's tint) to the
+# packed position's spare w, x LAMP_SCALE (0..2). shaders/cell.v.pica adds brightness x colour x (1 - the hour's tint) to the
 # tinted colour, so night darkens the sun's and the sky's share and leaves the lamps' (one instruction a vertex)
 LAMP_SCALE = 16383.0
 
@@ -230,7 +230,7 @@ def light_tint(pos, lights, ambient, sun):
 # ---- cell file ----
 
 def planar(records):
-    """(n, size) bytes -> bytes as planes: byte 0 of every record, then byte 1 ... (planes.h undoes it)"""
+    """(n, size) bytes -> bytes as planes: byte 0 of every record, then byte 1 ... (components/misc/planes.hpp undoes it)"""
     return np.ascontiguousarray(np.asarray(records, dtype=np.uint8).T).tobytes()
 
 
@@ -252,7 +252,7 @@ def write_batches(f, batches):
     s16 = (pos - offset) / scale, so coplanar terrain layers in different batches quantize identically.
     The step is a power of two and the offset a multiple of it: terrain corners (multiples of 8) then sit
     on every cell's grid, and the engine can rebuild positions near the camera exactly in the GPU's
-    24-bit floats (renderer.cpp uploadTransform), so neighbouring cells meet without cracks.
+    24-bit floats (mwrender/renderingmanager.cpp uploadTransform), so neighbouring cells meet without cracks.
     UVs are s16 scaled per batch. 16 bytes per vertex instead of 24."""
     f.write(struct.pack("<I", len(batches)))
     if not batches:
@@ -584,7 +584,7 @@ def sky_batches(arch, weather, textures, tex_index, tex_names):
     """Sky dome around the origin: a colour gradient (fog colour at and below the horizon,
     sky colour overhead) and a scrolling cloud layer that fades out towards the horizon. The gradient is two white
     domes, the fog's (opaque) and the sky's (its share, rising overhead), which the engine colours with the weather
-    of the hour (renderer.cpp: OpenMW's sky in the weather's own colours)."""
+    of the hour (mwrender/renderingmanager.cpp: OpenMW's sky in the weather's own colours)."""
     seg = 16
     rings = [-30, -5, 0, 8, 20, 40, 65, 90]
 

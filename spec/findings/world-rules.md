@@ -1,7 +1,7 @@
 # Findings: world rules
 
 Spec: `spec/world-rules.md`. Oracle: `tools/test/specgen_world.py`. Written from OpenMW's source only; our
-`source/world.cpp` and `source/session.cpp` were not read, and nothing here has been run (no build, no emulator).
+`source/mwworld/worldimp.cpp` and `source/mwbase/session.cpp` were not read, and nothing here has been run (no build, no emulator).
 
 ## Rules
 
@@ -21,7 +21,7 @@ One heading per rule; OpenMW file:function, GMSTs, quirks. The prose is in `spec
 - **Calendar**: `datetimemanager.cpp`, `duration.hpp`. No leap years; set-day wraps; set-hour past 24 moves the day
   but not days passed; set-month clamps the day and carries years.
 - **Timescale**: `engine.cpp` (frame seconds x timescale / 3600), default 30.
-- **Soul trap**: `actors.cpp soulTrap`: creatures only, smallest empty gem with `value x fSoulgemMult >= soul`,
+- **Soul trap**: `mwrender/animation.cpp soulTrap`: creatures only, smallest empty gem with `value x fSoulgemMult >= soul`,
   one gem of the stack, restack.
 - **Followers**: `actionteleport.cpp getFollowers`: within 800 units, `stayoutside` local honored, hostile ones included
   but their combat with the player is stopped and they stay.
@@ -103,25 +103,25 @@ of out\world before the emulator shows it.
 | Rule | Our behaviour | Cause | Status | File |
 |---|---|---|---|---|
 | Journal finished / restart / quest names | 0 of 620 quests had a finished or restart flag, and no title | Morrowind.esm has no QSTN / QSTF / QSTR at all: Tribunal.esm and Bloodmoon.esm carry them, replacing the vanilla entries by INAM (725 finished, 3 restart, 558 titles) | fixed (data) | tools/convert/build_game.py `plugin_journal_infos`, `build_journals` |
-| Timescale | the TimeScale global was ignored (read as a GMST, always 30) | `gmstf("timescale")` | fixed | source/world.cpp `timescale()`, rest.cpp, magic.cpp |
-| Calendar | Day / Month / Year / DaysPassed were recomputed from the start date each frame, so a script's `Set day / month / year / dayspassed` was overwritten; `GameHour` past 24 dropped the days | `World::date()` derived, `syncTime` rewrote | fixed: the globals are the calendar, time moving on advances them, sets follow OpenMW's setters (day wraps, month clamps and carries years, hour past 24 moves the day not DaysPassed) | source/world.cpp `setGlobal`, `syncTime`, script.cpp, main.cpp, save.cpp |
-| Gold of other sizes | `AddItem gold_100` made a gold_100 stack (the script path mapped it, the harness / direct adds did not) | mapping lived in script.cpp only | fixed: `addItem` maps gold_005/010/025/100 to gold_001 | source/world.cpp |
-| Soul trap restack | a filled gem never joined a stack of the same soul (stack counts grew with each soul) | `trapSoul` / `pickUp` pushed a new item | fixed (`addStack`) | source/world.cpp |
-| Soul gem capacity | Azura's Star held any soul | special case | fixed: value x fSoulgemMult for every gem | source/world.cpp |
-| Corpse clearing | corpses lay for ever | only respawning actors were looked at | fixed: dead, non-persistent, 72 h (`>=`, as `<=`) -> deleted on the next cell load; respawners come back after min(respawn, clear) delay | source/world.cpp `respawnCell`, `deleteRef` |
-| Respawn timing | actors were only looked at inside the 2880 h container gate; the gate used `>=` and began at the first load | one block | fixed: actors every load; containers when `now - last > 2880` with the stamp starting at day 1, hour 0 | source/world.cpp |
-| Followers through doors | everything within 2048 (2D) came, escorts too, hostile ones too, `stayoutside` ignored | simple radius | fixed: follow package / summons only, 800 (3D), `stayoutside`, a follower fighting the player stops and stays | source/session.cpp `finishTravel`, include/world.h `followerTaken` |
-| Disposition | no weapon-drawn term; Charm raised the base disposition for good | missing term; effect applied as a change | fixed: fDispWeaponDrawn when the weapon is out; Charm is a timed effect read by `disposition()` | source/world.cpp, magic.cpp, session.cpp |
+| Timescale | the TimeScale global was ignored (read as a GMST, always 30) | `gmstf("timescale")` | fixed | source/mwworld/worldimp.cpp `timescale()`, mwgui/waitdialog.cpp, mwmechanics/spellcasting.cpp |
+| Calendar | Day / Month / Year / DaysPassed were recomputed from the start date each frame, so a script's `Set day / month / year / dayspassed` was overwritten; `GameHour` past 24 dropped the days | `World::date()` derived, `syncTime` rewrote | fixed: the globals are the calendar, time moving on advances them, sets follow OpenMW's setters (day wraps, month clamps and carries years, hour past 24 moves the day not DaysPassed) | source/mwworld/datetimemanager.cpp, source/mwworld/globals.cpp `setGlobal`, `syncTime`, components/interpreter/interpreter.cpp, main.cpp, mwstate/statemanagerimp.cpp |
+| Gold of other sizes | `AddItem gold_100` made a gold_100 stack (the script path mapped it, the harness / direct adds did not) | mapping lived in components/interpreter/interpreter.cpp only | fixed: `addItem` maps gold_005/010/025/100 to gold_001 | source/mwworld/containerstore.cpp |
+| Soul trap restack | a filled gem never joined a stack of the same soul (stack counts grew with each soul) | `trapSoul` / `pickUp` pushed a new item | fixed (`addStack`) | source/mwmechanics/actors.cpp, source/mwworld/containerstore.cpp |
+| Soul gem capacity | Azura's Star held any soul | special case | fixed: value x fSoulgemMult for every gem | source/mwworld/worldimp.cpp |
+| Corpse clearing | corpses lay for ever | only respawning actors were looked at | fixed: dead, non-persistent, 72 h (`>=`, as `<=`) -> deleted on the next cell load; respawners come back after min(respawn, clear) delay | source/mwworld/cellstore.cpp, source/mwworld/worldimp.cpp `respawnCell`, `deleteRef` |
+| Respawn timing | actors were only looked at inside the 2880 h container gate; the gate used `>=` and began at the first load | one block | fixed: actors every load; containers when `now - last > 2880` with the stamp starting at day 1, hour 0 | source/mwworld/worldimp.cpp |
+| Followers through doors | everything within 2048 (2D) came, escorts too, hostile ones too, `stayoutside` ignored | simple radius | fixed: follow package / summons only, 800 (3D), `stayoutside`, a follower fighting the player stops and stays | source/mwgui/travelwindow.cpp `finishTravel`, source/mwworld/worldimp.hpp `followerTaken` |
+| Disposition | no weapon-drawn term; Charm raised the base disposition for good | missing term; effect applied as a change | fixed: fDispWeaponDrawn when the weapon is out; Charm is a timed effect read by `disposition()` | source/mwworld/worldimp.cpp, mwmechanics/spellcasting.cpp, mwbase/session.cpp |
 | Disposition crime term | `modCrimeDispositionModifier` (set by witnessed crime) not modelled | crime area | open (crime reaction, outside this pass) | - |
-| Restock quantity | negative counts lost their sign (fill took abs; the converter did `abs` for NPC lines): a merchant ran out | `fillContents`, `npc_items` | fixed: sign kept, shown as `|count|`, a sale never depletes it, stacking keeps the sign, loot takes `|count|`; Data for NPC inventories | source/world.cpp, screens_dialogue.cpp, screens_items.cpp, script.cpp, tools/convert/npcstats.py |
-| Merchant gold reset | reset on opening Barter, and every trade re-armed the 24 h timer (a busy merchant never refilled) | `lastBarter` set on each trade | fixed: on opening dialogue, timer set only by a reset | source/dialogue.cpp, world.cpp `restockGold`, screens_dialogue.cpp |
-| Leveled pick / each flag | same rule | - | matches (candidate rule shared by `pickLeveled` and the `levpick` hook; item `all` = flag 1, `each` = flag 2, creature `all` = flag 1 as the exporter does) | source/game.cpp |
-| Journal / SetJournalIndex | same rules (dedup on heard lines, index only up, finished / restart, empty text writes nothing) | - | matches | source/world.cpp |
-| Journal with an index the quest has no entry for | OpenMW throws (script error); ours moves the index up and goes on | kept running | differs on purpose: a vanilla script naming a missing stage must not abort | source/world.cpp `journalAdd` |
-| Scripted items stack | scripted items stack (one script per item id) | per-id script instances, memory | differs on purpose | source/world.cpp `addItem` |
+| Restock quantity | negative counts lost their sign (fill took abs; the converter did `abs` for NPC lines): a merchant ran out | `fillContents`, `npc_items` | fixed: sign kept, shown as `|count|`, a sale never depletes it, stacking keeps the sign, loot takes `|count|`; Data for NPC inventories | source/mwworld/cellstore.cpp, mwgui/dialogue.cpp, mwgui/inventorywindow.cpp, components/interpreter/interpreter.cpp, tools/convert/npcstats.py |
+| Merchant gold reset | reset on opening Barter, and every trade re-armed the 24 h timer (a busy merchant never refilled) | `lastBarter` set on each trade | fixed: on opening dialogue, timer set only by a reset | source/mwdialogue/dialoguemanagerimp.cpp, mwworld/containerstore.cpp `restockGold`, mwgui/dialogue.cpp |
+| Leveled pick / each flag | same rule | - | matches (candidate rule shared by `pickLeveled` and the `levpick` hook; item `all` = flag 1, `each` = flag 2, creature `all` = flag 1 as the exporter does) | source/mwmechanics/levelledlist.cpp |
+| Journal / SetJournalIndex | same rules (dedup on heard lines, index only up, finished / restart, empty text writes nothing) | - | matches | source/mwworld/worldimp.cpp |
+| Journal with an index the quest has no entry for | OpenMW throws (script error); ours moves the index up and goes on | kept running | differs on purpose: a vanilla script naming a missing stage must not abort | source/mwdialogue/journalimp.cpp `journalAdd` |
+| Scripted items stack | scripted items stack (one script per item id) | per-id script instances, memory | differs on purpose | source/mwworld/containerstore.cpp `addItem` |
 | NPC leveled inventory lines | resolved once when the data is built (seeded), not rolled at fill time | converter `npcstats.bind` | differs on purpose: data size; open if exact rolls are wanted | tools/convert/npcstats.py |
-| Persistent actors | corpse clearing spares essential and scripted actors | the record's Persistent flag is not exported | differs on purpose (needs the flag in the actor export to be exact) | source/world.cpp `respawnCell` |
-| Respawn on cell load | runs for every cell that loads, OpenMW only when the player enters (not for neighbours streaming in) | no such distinction | differs on purpose, harmless | source/world.cpp |
+| Persistent actors | corpse clearing spares essential and scripted actors | the record's Persistent flag is not exported | differs on purpose (needs the flag in the actor export to be exact) | source/mwworld/cellstore.cpp `respawnCell` |
+| Respawn on cell load | runs for every cell that loads, OpenMW only when the player enters (not for neighbours streaming in) | no such distinction | differs on purpose, harmless | source/mwworld/worldimp.cpp |
 | Followers of followers | not taken | one level | open (OpenMW recurses) | source/session.cpp |
 | Day of week | not read: OpenMW's `apps/openmw` has no such command | - | n/a | - |
 | Quest list shows finished quests | the journal's quest list does not hide finished ones | UI | open (3DS layout kept) | - |
@@ -131,7 +131,7 @@ them); `getActorsFollowing` is the follow package only (`followTargetThroughDoor
 recurses; `CellStore::respawn` runs from `Scene::loadCell` when the cell is entered; `Creature::respawn` uses
 min(fCorpseRespawnDelay, fCorpseClearDelay) (or the clear delay for a deleted one), `<=`.
 
-## Hooks added (source/testdrive.cpp; JOURNALADD ... DISABLE also in the verb list of source/main.cpp)
+## Hooks added (source/testdrive/testdrive.cpp; JOURNALADD ... DISABLE also in the verb list of source/main.cpp)
 
 `EXPECT:levcandidates | levpick | levrolls | respawninterval | corpsedelay | goldresetdelay | soulcapacity | stackcount |
 refexists | refenabled | refstock | merchantgold | followset`, setup `JOURNALADD`, `SETJOURNALINDEX`, `ADVANCE`, `ENABLE`,

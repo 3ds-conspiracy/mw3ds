@@ -1,7 +1,7 @@
 # NPC AI Behaviour
 
 Mirrors the OpenMW wiki page *Research:NPC AI Behaviour*. Rules read from OpenMW's `mwmechanics/actors.cpp`
-(`engageCombat`, `updateGreetingState`, `playIdleDialogue`, the crime-on-sight check), `combat.cpp` (`getFightTerm`,
+(`engageCombat`, `updateGreetingState`, `playIdleDialogue`, the crime-on-sight check), `mwmechanics/combat.cpp` (`getFightTerm`,
 `isAggressive`, `isAggressionCapable`), `aicombat.cpp` / `aicombataction.cpp` (`vanillaRateFlee`,
 `makeFleeDecision`), `aiwander.cpp`, `aifollow.cpp`, `aiescort.cpp`, `mechanicsmanagerimp.cpp` (`awarenessCheck`).
 In our words.
@@ -102,7 +102,7 @@ it on twice).
 - **Getting unstuck** (`obstacle.cpp`): an actor that has stood in the same spot for a while (1.5 s) evades for a
   second, each time the next way round, as (right, forward): right and forward, right, right and back, back, left and
   back, left, left and forward. OpenMW finds its way round with a navigation mesh; we have the path grid only, and the
-  wilds have none. So `npcMoveTo` (`combat.cpp`), stuck for half a second, first looks for an opening: the way nearest
+  wilds have none. So `npcMoveTo` (`mwmechanics/aipackage.cpp`), stuck for half a second, first looks for an opening: the way nearest
   the goal, turned up to about 155 degrees, along which a body fits for 200 units (rays at its sides, knee and chest
   high), keeping to the side it took last; stuck again in the same place, it starts farther round and keeps to the
   way longer. Only with no opening does it use OpenMW's turn. `issue-20` (Drerel Indaren following the

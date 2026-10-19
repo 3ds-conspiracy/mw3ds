@@ -37,12 +37,12 @@
 
 #include <3ds.h>
 #include <citro3d.h>
-#include "audio.h"
-#include "linear.h"
-#include "log.h"
+#include "mwsound/soundmanagerimp.hpp"
+#include "platform/linear.hpp"
+#include "components/debug/debuglog.hpp"
 
 extern "C" { u32 __ctru_heap_size = 92380U * 1024, __ctru_linear_heap_size = 32768U * 1024; }
-// NATIVE_OLD3DS=1: the Old 3DS split (source/heaps.cpp): the linear heap the game counts against is smaller
+// NATIVE_OLD3DS=1: the Old 3DS split (source/platform/heaps.cpp): the linear heap the game counts against is smaller
 static struct NativeOld3dsHeaps
 {
 	NativeOld3dsHeaps()

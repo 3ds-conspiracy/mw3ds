@@ -1,8 +1,8 @@
 # Findings: activation
 
 Written from OpenMW's source only (the engine's own code was not read). The rules are in `spec/activation.md`; this page
-is the audit side: rules in short, tests, hooks, questions. Audit rows: `spec/audit.md` (`session.cpp` activation,
-`screens_items.cpp` equipping, taking, pickpocket). Already covered elsewhere and not redone: lock and trap chance
+is the audit side: rules in short, tests, hooks, questions. Audit rows: `spec/audit.md` (`mwworld/action.cpp` activation,
+`mwgui/inventorywindow.cpp` equipping, taking, pickpocket). Already covered elsewhere and not redone: lock and trap chance
 (`openmw-spec-security`, `combat.md`), theft / trespass / pickpocket bounties (`crime.md`, `openmw-spec-crime`),
 `audit-findings.md` M1 (Activate ran the default action unconditionally), M2 (OnActivate consumed on read), M4 (Lock /
 Unlock state), A13 (AiActivate). This page extends them with what the player sees on activation.
@@ -115,7 +115,7 @@ Data issue: the converted sounds (`out/world/game.json` `sounds`) have `LockedDo
    the engine's witness rule differs from `crime.md` ("Open" list), the bounty test fails for that reason, not for
    activation.
 
-## Hooks added (source/testdrive.cpp)
+## Hooks added (source/testdrive/testdrive.cpp)
 
 Reused (already there): `EXPECT:reflock`, `locklevel`, `itemhealth`, `SEED`, `USE`, `ROLL`, `PCRACE`. New:
 `SETRACE:<race>` (as PCRACE), `SETITEMHEALTH:<id>:<n>`, `SNEAK:<0|1>`, `WEREWOLF:<0|1>`, `KNOCKDOWN:<npc>`,
@@ -143,28 +143,28 @@ New tests: `openmw-spec-activation-equip`, `-beast`, `-bed`, `-pickpocket`, `-kn
 
 | Rule (OpenMW) | Our behaviour before | Cause | Status | File |
 |---|---|---|---|---|
-| Locked door / container with its key: unlock, disarm a trap (sound `Disarm Trap`) | A trap fired first, even for a locked door with no key and with the key | `springTrap` ran before the lock check | fixed (`lockGate`) | source/session.cpp |
-| Locked, no key: sound only, no message | Extra "Locked" notice | `notify("Locked")` | fixed | source/session.cpp |
-| Key use has no sound; the trap going off plays `Disarm Trap Fail` | `Open Lock` on the key, `Trap Trigger` on the trap | wrong sound ids | fixed | source/session.cpp, source/combat.cpp |
+| Locked door / container with its key: unlock, disarm a trap (sound `Disarm Trap`) | A trap fired first, even for a locked door with no key and with the key | `springTrap` ran before the lock check | fixed (`lockGate`) | source/mwworld/actiondoor.cpp |
+| Locked, no key: sound only, no message | Extra "Locked" notice | `notify("Locked")` | fixed | source/mwworld/action.cpp |
+| Key use has no sound; the trap going off plays `Disarm Trap Fail` | `Open Lock` on the key, `Trap Trigger` on the trap | wrong sound ids | fixed | source/mwworld/actiondoor.cpp, source/mwmechanics/security.cpp |
 | Sounds `Disarm Trap`, `Disarm Trap Fail`, `Open Lock Fail` | Not in the converted data | not in `ENGINE_SOUNDS` | fixed in the converter, needs a data rebuild | tools/convert/build_game.py |
-| NPC in combat with the player: `sActorInCombat` message | Nothing | silent return | fixed | source/session.cpp |
-| Knocked-down NPC (not fighting): loot window, no rolls; taking is a theft from them | Talked, or the pickpocket rolls when sneaking | no rule | fixed (theft marks the NPC as owner) | source/session.cpp, source/screens_items.cpp, source/combat.cpp |
-| Werewolf refused by everything but doors | No werewolf form in the engine | whole mechanic missing | partly: refusal hook only (`WEREWOLF`); no transformation or script functions | source/session.cpp |
-| Owned bed: trespass, refused only if someone reports it; werewolf and enemies refused first | Refused at once, no crime, whoever watched | `F_SHOWRESTMENU` | fixed (`bedRefused`) | source/session.cpp, source/script.cpp |
-| Equip broken armor / weapon: `sInventoryMessage1` | Worn | no check | fixed (`canEquip`) | source/screens_items.cpp |
-| Beast races: no full helm, boots, shoes (by body parts) | No check | no part data | fixed, needs a data rebuild | tools/convert/build_game.py, source/screens_items.cpp |
+| NPC in combat with the player: `sActorInCombat` message | Nothing | silent return | fixed | source/mwworld/action.cpp |
+| Knocked-down NPC (not fighting): loot window, no rolls; taking is a theft from them | Talked, or the pickpocket rolls when sneaking | no rule | fixed (theft marks the NPC as owner) | source/mwworld/action.cpp, source/mwgui/container.cpp, source/mwmechanics/mechanicsmanagerimp.cpp |
+| Werewolf refused by everything but doors | No werewolf form in the engine | whole mechanic missing | partly: refusal hook only (`WEREWOLF`); no transformation or script functions | source/mwworld/action.cpp |
+| Owned bed: trespass, refused only if someone reports it; werewolf and enemies refused first | Refused at once, no crime, whoever watched | `F_SHOWRESTMENU` | fixed (`bedRefused`) | source/mwworld/action.cpp, source/components/interpreter/interpreter.cpp |
+| Equip broken armor / weapon: `sInventoryMessage1` | Worn | no check | fixed (`canEquip`) | source/mwworld/actionequip.cpp |
+| Beast races: no full helm, boots, shoes (by body parts) | No check | no part data | fixed, needs a data rebuild | tools/convert/build_game.py, source/mwgui/inventorywindow.cpp |
 | Two-hander and shield both worn | The other hand was unequipped | vanilla rule | fixed (user decision: follow OpenMW) | source/screens_items.cpp |
-| Boots and shoes share one slot; shield and light share the left hand | Both worn together | slot table | fixed | source/screens_items.cpp |
-| Script `Equip` is forced (no refusal) | n/a | | fixed (force flag) | source/screens_items.cpp |
-| Reading a pack book in a fight: `sInventoryMessage4` | Opened | no check | fixed (uses `enemiesNear`, 3000 units, as the rest check) | source/screens_items.cpp |
-| Non-carry lights do nothing when activated | Crosshair never finds them, but a direct activation took them | no check in `activate` | fixed | source/session.cpp |
-| Pickpocket roll (`2x - y`, bar floor Sneak / 5, cap 75) | Same formula | | matches; the die can now be fixed with `ROLL` | source/combat.cpp |
-| Lock pick / probe die | `rand` only | | `ROLL` hook | source/combat.cpp |
-| Organic containers are harvested (taken whole, no window) | Opens the list | needs a harvest mesh state (graphic herbalism) | differs on purpose (3DS keeps the vanilla list) | source/session.cpp |
-| Telekinesis on a trapped door / container: trap hits the object | Hits the player | no range rule | open | source/combat.cpp |
-| Pickpocket window hides items by a Sneak roll each, hides equipped and bound items, no put-back | Shows everything | needs a filtered view of the container grid | open (drawContainer index mapping; no put-into-container action on the 3DS either) | source/screens_items.cpp |
+| Boots and shoes share one slot; shield and light share the left hand | Both worn together | slot table | fixed | source/mwgui/inventorywindow.cpp |
+| Script `Equip` is forced (no refusal) | n/a | | fixed (force flag) | source/mwgui/inventorywindow.cpp |
+| Reading a pack book in a fight: `sInventoryMessage4` | Opened | no check | fixed (uses `enemiesNear`, 3000 units, as the rest check) | source/mwgui/inventorywindow.cpp |
+| Non-carry lights do nothing when activated | Crosshair never finds them, but a direct activation took them | no check in `activate` | fixed | source/mwworld/action.cpp |
+| Pickpocket roll (`2x - y`, bar floor Sneak / 5, cap 75) | Same formula | | matches; the die can now be fixed with `ROLL` | source/mwmechanics/combat.cpp |
+| Lock pick / probe die | `rand` only | | `ROLL` hook | source/mwmechanics/combat.cpp |
+| Organic containers are harvested (taken whole, no window) | Opens the list | needs a harvest mesh state (graphic herbalism) | differs on purpose (3DS keeps the vanilla list) | source/mwworld/action.cpp |
+| Telekinesis on a trapped door / container: trap hits the object | Hits the player | no range rule | open | source/mwmechanics/combat.cpp |
+| Pickpocket window hides items by a Sneak roll each, hides equipped and bound items, no put-back | Shows everything | needs a filtered view of the container grid | open (drawContainer index mapping; no put-into-container action on the 3DS either) | source/mwgui/container.cpp |
 | Mid-attack weapon swap refused (`sCantEquipWeapWarning`) | The inventory screen stops play, so no swing is in progress | unreachable | differs on purpose | |
-| Dead actor / `diseaseContact` on opening a body | A diseased body gives nothing | not called from the loot path | open | source/formulas.cpp |
-| Creatures: alive and not knocked down always start talk (no dialogue gives no window) | Only creatures with services or lines | equivalent outcome | differs on purpose | source/session.cpp |
+| Dead actor / `diseaseContact` on opening a body | A diseased body gives nothing | not called from the loot path | open | source/mwmechanics/formulas.cpp |
+| Creatures: alive and not knocked down always start talk (no dialogue gives no window) | Only creatures with services or lines | equivalent outcome | differs on purpose | source/mwworld/action.cpp |
 | Sneaking pickpocket skips companions here | `!r.ally` skip | kept | open (OpenMW opens the window for followers too) | source/session.cpp |
-| `OnPCEquip` / `PCSkipEquip` rules (books, ingredients, repair tools) | `onpcequip` set for every equip | | open | source/screens_items.cpp |
+| `OnPCEquip` / `PCSkipEquip` rules (books, ingredients, repair tools) | `onpcequip` set for every equip | | open | source/mwgui/inventorywindow.cpp |

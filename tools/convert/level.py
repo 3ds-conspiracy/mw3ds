@@ -68,7 +68,7 @@ MUSIC = [f"Music/Explore/mx_explore_{k}.mp3" for k in range(1, 8)]
 MUSIC_BATTLE = [f"Music/Battle/MW battle{k}.mp3" for k in (1, 2, 3, 5)] + [f"Music/Battle/MW battle {k}.mp3" for k in (4, 7, 8)]
 RATE = 22050
 VOICE_RATE = 16000          # speech has next to nothing above 8 kHz; the 3DS speakers roll off there too
-# game.json sections written to game_<name>.json (source/game.cpp reads them one at a time)
+# game.json sections written to game_<name>.json (source/mwworld/esmstore.cpp reads them one at a time)
 SPLIT_SECTIONS = ["actors", "objects", "scripts", "dialogue", "journal", "gmst", "classes", "races",
                   "birthsigns", "spells", "voices", "ref_cells", "ui", "firstperson", "factions"]
 ROOT = Path(__file__).resolve().parents[2]
@@ -157,7 +157,7 @@ def ref_owners(cell, leveled=()):
 
 
 def compress_file(path):
-    """Lossless: 'MWZ1', u32 original size, zlib stream (source/zfile.cpp inflates on load)."""
+    """Lossless: 'MWZ1', u32 original size, zlib stream (source/components/files/zfile.cpp inflates on load)."""
     data = path.read_bytes()
     if data[:4] == b"MWZ1":
         return
@@ -1007,7 +1007,7 @@ def unshard_cells():
 
 
 def shard_cells():
-    """Cell files (.cel / .act / .json) into 64 subfolders by their name (source/datapath.h cellPath):
+    """Cell files (.cel / .act / .json) into 64 subfolders by their name (source/components/files/datapath.hpp cellPath):
     the 3DS's SD card scans a whole folder to open or create a file, and the island has ~10000."""
     root = OUT / "cells"
     for p in list(root.iterdir()):

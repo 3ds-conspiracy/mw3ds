@@ -5,7 +5,7 @@ Mirrors the OpenMW wiki page *Research:Combat*. Rules read from OpenMW's `mwmech
 `applyElementalShields`, `resistNormalWeapon`, `reduceWeaponCondition`, `projectileHit`), `mwclass/npc.cpp` and
 `creature.cpp` (`hit`), `mwmechanics/character.cpp` (`getFallDamage`), `mechanicsmanagerimp.cpp` (`awarenessCheck`),
 `disease.hpp` (`diseaseContact`) and the Lua `data-mw/scripts/omw/combat/common.lua` / `local.lua` (armor rating,
-armor, difficulty, stagger). In our words. Where this page and the code disagree, the code in `source/formulas.cpp`
+armor, difficulty, stagger). In our words. Where this page and the code disagree, the code in `source/mwmechanics/formulas.cpp`
 is what the tests read.
 
 ## Fatigue term
@@ -150,7 +150,7 @@ against the player's foes): the nearest within 1500. Ours struck at once every 1
 2026-09-29 (earlier): armor rating ignored the armor skill and Unarmored (fixed for the player, `Session::playerArmor`,
 and NPCs, `tools/convert/npcstats.py armor_rating`).
 
-2026-09-29, this pass (all in `combat.cpp`, `projectile.cpp`, `formulas.cpp`, `session.cpp`):
+2026-09-29, this pass (all in `mwmechanics/combat.cpp`, `mwworld/projectilemanager.cpp`, `mwmechanics/formulas.cpp`, `mwbase/session.cpp`):
 
 1. **Hit chance** was 100 against anyone unaware or knocked down; OpenMW only drops their evasion. The player's
    Chameleon and Invisibility didn't add to defense; the result wasn't rounded; NPC shots ignored Sanctuary.

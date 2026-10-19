@@ -395,7 +395,7 @@ def gen_armor(d, rng, count):
     return t
 
 
-# ---- Formula pieces of formulas.cpp: repair, recharge, security, persuasion, resistance, crime, enchanted casts
+# ---- Formula pieces of mwmechanics/formulas.cpp: repair, recharge, security, persuasion, resistance, crime, enchanted casts
 # (spec/combat.md, spec/derived.md, spec/crime.md; OpenMW: repair.cpp, recharge.cpp, security.cpp, dialoguemanagerimp /
 # mechanicsmanagerimp.cpp getPersuasionChance, spellresistance.cpp, mechanicsmanagerimp.cpp reportCrime, spellutil.cpp)
 

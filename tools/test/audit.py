@@ -28,7 +28,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def corpus():
     """All source and tool text, lowercase (what the port can possibly know about)."""
     parts = []
-    for pat in ("source/*.cpp", "source/*.pica", "include/*.h", "tools/**/*.py"):
+    for pat in ("source/**/*.cpp", "source/**/*.pica", "source/**/*.h*", "tools/**/*.py"):
         for p in ROOT.glob(pat):
             if p.name == "audit.py":
                 continue

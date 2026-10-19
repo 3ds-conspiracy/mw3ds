@@ -293,7 +293,7 @@ def gen_disposition(d, rng, count):
     return t
 
 
-# ------------------------------------------------------------------ soul trap (actors.cpp soulTrap)
+# ------------------------------------------------------------------ soul trap (mwrender/animation.cpp soulTrap)
 
 GEMS = [("misc_soulgem_petty", 10), ("misc_soulgem_lesser", 20), ("misc_soulgem_common", 40),
         ("misc_soulgem_greater", 60), ("misc_soulgem_grand", 200), ("misc_soulgem_azura", 5000)]

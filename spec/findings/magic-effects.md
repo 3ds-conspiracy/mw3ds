@@ -1,8 +1,8 @@
 # Findings: mechanics of individual magic effects
 
 Source: OpenMW `mwmechanics/spelleffects.cpp`, `activespells.cpp`, `spellcasting.cpp`, `spellresistance.cpp`,
-`magiceffects.cpp`, `summoning.cpp`, `actors.cpp`. Full page: [../magic-effects.md](../magic-effects.md). Written from
-OpenMW only; our `source/magic.cpp` was not read.
+`magiceffects.cpp`, `summoning.cpp`, `mwrender/animation.cpp`. Full page: [../magic-effects.md](../magic-effects.md). Written from
+OpenMW only; our `source/mwmechanics/spellcasting.cpp` was not read.
 
 ## Rules
 
@@ -56,7 +56,7 @@ magnitude removes the whole spell and runs each effect's undo.
 ### Fortify Maximum Magicka
 `recalculateMagicka` (creaturestats.cpp, not on this list; from general OpenMW knowledge, verify). Max magicka =
 `int((multiplier + 0.1 x Fortify Max Magicka) x Intelligence)`, multiplier fPCbaseMagickaMult (1.0) for the player, fNPCbaseMagickaMult
-(2.0) for NPCs; current scales with the maximum. Stunted Magicka stops the rest-time magicka restoring (actors.cpp).
+(2.0) for NPCs; current scales with the maximum. Stunted Magicka stops the rest-time magicka restoring (mwrender/animation.cpp).
 
 ### Modifier-only effects
 Shield, elemental shields, Burden, Feather, Jump, Levitate, Slowfall, Swift Swim, Water Breathing, Chameleon, Invisibility,
@@ -143,7 +143,7 @@ Everything below is what the spec describes but a test cannot see today. None is
 - Where is the duration of an effect clamped (to at least 1 for effects that are not applied-once)? It is in the Lua-side `applyMagicEffects`
   (`mwlua`), outside the list.
 - Fortify Health / Magicka / Fatigue raising the *maximum*: the handler only raises the current value; the maximum comes from the totals read in
-  `creaturestats.cpp` / `actors.cpp`. The tests assume the long-standing behaviour (maximum and current both +magnitude).
+  `creaturestats.cpp` / `mwrender/animation.cpp`. The tests assume the long-standing behaviour (maximum and current both +magnitude).
 - Readers of the modifier-only totals (Burden, Feather, Sanctuary, Chameleon, Shield, Jump, Levitate, Slowfall, Swift Swim, Blind, Sound) are in
   `npc.cpp`, `character controller`, `combat`: their formulas need their own spec pass.
 - magic.md says Drain Health on an *actor* lowers both current and maximum here, and that Cure Corprus removes the disease: OpenMW does neither
@@ -154,7 +154,7 @@ Everything below is what the spec describes but a test cannot see today. None is
 
 ## Mismatches
 
-Hooks added to `source/testdrive.cpp` (names as in the table above unless noted): `refattr`, `refskill`, `refhealthmax`, `refmagickamax`,
+Hooks added to `source/testdrive/testdrive.cpp` (names as in the table above unless noted): `refattr`, `refskill`, `refhealthmax`, `refmagickamax`,
 `refcommanded`, `effectarg`, `locklevel` (same as `reflock`), `summoned`, `itemhealth`, `spellmagicka` (the cost the last cast took),
 `capacity`, `hitchance`, `detectchance` (Chameleon + 100 if invisible), `levitating`, `fallmult`, `swimspeed`, `jumpheight`, `waterwalking`,
 `marked`, `corprus`, `activespells` (distinct sources), `diseases` (types 2..4), verbs `FATIGUEREGEN:0|1`, `GIVEPOTION:<id>[:n]`, `USE:<id>`,
@@ -164,24 +164,24 @@ modifier (the engine only has a fleeing flag), `refdisp` after Charm (exists), `
 | Rule | Our behaviour | Cause | Status | File |
 |---|---|---|---|---|
 | Applied-once flag 0x1000 on effects | never set, so the cost rule "duration at least 1 unless applied once" was dead | OpenMW sets it in code (`HardcodedFlags` in loadmgef.cpp), not in the ESM | fixed (needs data rebuild) | tools/convert/build_game.py `APPLIED_ONCE` |
-| Drain Health / Fatigue on actors lowers current only | lowered current and maximum | wrong rule | fixed | source/magic.cpp |
-| Drain Magicka on actors given back at the end, may go below 0 | clamped at 0, never given back | missing undo | fixed | source/magic.cpp |
-| Restore Magicka on actors capped at the maximum | uncapped | missing cap | fixed | source/magic.cpp |
-| Drain / Fortify / Absorb Attribute and Skill on actors (skills not on creatures); Absorb fortifies the caster | none (actors' numbers never changed) | not modelled | fixed (kept as timed effects, read by hook; combat still uses record numbers) | source/magic.cpp, include/world.h |
-| Fortify Health / Fatigue / Magicka on actors | not handled | missing | fixed | source/magic.cpp |
-| Drain Magicka / Fatigue on the player may go below 0 | clamped at 0 | extra clamp | fixed | source/magic.cpp |
-| Same spell does not stack (recast ends the old copy) | each cast added a copy | no source key check | fixed for the player (actors' spells carry no source) | source/magic.cpp `releaseSpell` |
-| Dispel / Cure Poison / Paralyzation run each effect's undo | only Fortify undone (a Dispelled Drain stayed) | partial undo | fixed (`endPlayerEffect`) | source/magic.cpp |
-| Reflect / Spell Absorption on any effect of another's spell | harmful effects only | extra condition | fixed | source/magic.cpp |
-| Absorb needs an actor caster | self / potion Absorb drained the player alone | no caster check | fixed (dropped) | source/magic.cpp |
-| Cure Corprus ends the Corprus effect only | removed the disease from the list | wrong rule | fixed (`corprusSince` = -2 means cured, saved with it) | source/magic.cpp, world.cpp, session.cpp |
+| Drain Health / Fatigue on actors lowers current only | lowered current and maximum | wrong rule | fixed | source/mwmechanics/spellcasting.cpp |
+| Drain Magicka on actors given back at the end, may go below 0 | clamped at 0, never given back | missing undo | fixed | source/mwmechanics/spellcasting.cpp |
+| Restore Magicka on actors capped at the maximum | uncapped | missing cap | fixed | source/mwmechanics/spellcasting.cpp |
+| Drain / Fortify / Absorb Attribute and Skill on actors (skills not on creatures); Absorb fortifies the caster | none (actors' numbers never changed) | not modelled | fixed (kept as timed effects, read by hook; combat still uses record numbers) | source/mwmechanics/spellcasting.cpp, source/mwworld/worldimp.hpp |
+| Fortify Health / Fatigue / Magicka on actors | not handled | missing | fixed | source/mwmechanics/spellcasting.cpp |
+| Drain Magicka / Fatigue on the player may go below 0 | clamped at 0 | extra clamp | fixed | source/mwmechanics/spellcasting.cpp |
+| Same spell does not stack (recast ends the old copy) | each cast added a copy | no source key check | fixed for the player (actors' spells carry no source) | source/mwmechanics/spellcasting.cpp `releaseSpell` |
+| Dispel / Cure Poison / Paralyzation run each effect's undo | only Fortify undone (a Dispelled Drain stayed) | partial undo | fixed (`endPlayerEffect`) | source/mwmechanics/spelleffects.cpp |
+| Reflect / Spell Absorption on any effect of another's spell | harmful effects only | extra condition | fixed | source/mwmechanics/spellcasting.cpp |
+| Absorb needs an actor caster | self / potion Absorb drained the player alone | no caster check | fixed (dropped) | source/mwmechanics/spellcasting.cpp |
+| Cure Corprus ends the Corprus effect only | removed the disease from the list | wrong rule | fixed (`corprusSince` = -2 means cured, saved with it) | source/mwmechanics/spellcasting.cpp, mwworld/worldimp.cpp, mwbase/session.cpp |
 | Unreflectable effects skip Reflect | not known | flag not exported | open | tools/convert/build_game.py |
-| Spells on actors keyed by spell (no stacking, Dispel of actors, Cure on actors) | effects on actors carry no source; Dispel / Cure do nothing there | memory (no per-effect source) | open | source/magic.cpp |
-| Damage / Restore Attribute / Skill on actors; Fortify Maximum Magicka on actors | not kept | would need per-actor damage store | open | source/magic.cpp |
-| Magnitude is an integer roll min + d(max-min+1) | player rolls a float | small | differs on purpose (under 1 point) | source/magic.cpp |
-| Drain / Fortify with duration 0 undone at the next update | actors use 1 second | simplicity | differs on purpose | source/magic.cpp |
-| Fortify Attack, Frenzy / Demoralize / Rally / Calm amounts as Fight / Flee numbers | flags and timers (r.fleeing, calmUntil) | AI is not number based here | open (AI area) | source/magic.cpp |
-| Summon / bound-item rules (placement, purge when the summon dies, equip failure) | not compared | out of scope this pass | open | source/magic.cpp |
+| Spells on actors keyed by spell (no stacking, Dispel of actors, Cure on actors) | effects on actors carry no source; Dispel / Cure do nothing there | memory (no per-effect source) | open | source/mwmechanics/spellcasting.cpp |
+| Damage / Restore Attribute / Skill on actors; Fortify Maximum Magicka on actors | not kept | would need per-actor damage store | open | source/mwmechanics/spellcasting.cpp |
+| Magnitude is an integer roll min + d(max-min+1) | player rolls a float | small | differs on purpose (under 1 point) | source/mwmechanics/spellcasting.cpp |
+| Drain / Fortify with duration 0 undone at the next update | actors use 1 second | simplicity | differs on purpose | source/mwmechanics/spellcasting.cpp |
+| Fortify Attack, Frenzy / Demoralize / Rally / Calm amounts as Fight / Flee numbers | flags and timers (r.fleeing, calmUntil) | AI is not number based here | open (AI area) | source/mwmechanics/spellcasting.cpp |
+| Summon / bound-item rules (placement, purge when the summon dies, equip failure) | not compared | out of scope this pass | open | source/mwmechanics/spellcasting.cpp |
 
 Next emulator batch: `openmw-spec-effects` (needs a data rebuild first for the applied-once flag: made-spell cost of Drain / Fortify with duration 0
 changes), plus a quick re-run of `openmw-spec-magic` and `openmw-spec-actormagic` (cost and actor effects). The Fatigue cases need `FATIGUEREGEN:0`.

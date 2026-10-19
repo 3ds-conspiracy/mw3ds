@@ -1,8 +1,8 @@
-// The PC test build's entry: the game is source/app.cpp, the same code as on the console (platform.h)
+// The PC test build's entry: the game is source/engine.cpp, the same code as on the console (platform/platform.hpp)
 #include <cstdlib>
 
-#include "log.h"
-#include "platform.h"
+#include "components/debug/debuglog.hpp"
+#include "platform/platform.hpp"
 
 void nativeVideoClose();
 

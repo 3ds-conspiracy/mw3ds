@@ -2,7 +2,7 @@
 
 Reads OpenMW's function and instruction names from its compiler (build/openmw-full/components/compiler/
 extensions0.cpp, plus the ones it registers in loops: attributes, skills, health / magicka / fatigue, magic
-effects, the player-control switches), ours from source/script.cpp (its function table and statFunction's
+effects, the player-control switches), ours from source/components/interpreter/scriptfunctions.hpp (the function table and the stat names statFunction takes
 families), and every script and dialogue result in Morrowind.esm, Tribunal.esm and Bloodmoon.esm.
 
 Usage:
@@ -53,7 +53,7 @@ def openmw_names():
 
 
 def our_names():
-    src = (ROOT / "source/script.cpp").read_text(encoding="utf-8", errors="replace")
+    src = (ROOT / "source/components/interpreter/scriptfunctions.hpp").read_text(encoding="utf-8", errors="replace")
     names = set(re.findall(r'X\(\w+, "(\w+)"\)', src))
     for a in ATTRS + SKILLS:
         names |= {"get" + a, "set" + a, "mod" + a}

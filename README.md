@@ -247,8 +247,8 @@ builds.
 
 ## License
 
-The code is licensed under the GNU General Public License v3.0 or later ([`LICENSE`](LICENSE)). `source/cJSON.c` and
-`include/cJSON.h` are [cJSON](https://github.com/DaveGamble/cJSON), MIT licensed. The specs in `spec/` describe
+The code is licensed under the GNU General Public License v3.0 or later ([`LICENSE`](LICENSE)). `source/extern/cjson/cJSON.c` and
+`source/extern/cjson/cJSON.h` are [cJSON](https://github.com/DaveGamble/cJSON), MIT licensed. The specs in `spec/` describe
 mechanics as documented by the [OpenMW](https://openmw.org/) project and the community.
 
 The license covers this repository's code only. It grants no rights to Morrowind or any other Bethesda content.

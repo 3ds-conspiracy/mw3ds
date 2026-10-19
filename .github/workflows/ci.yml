@@ -38,10 +38,10 @@ jobs:
       - name: Code changes need a new test case
         run: |
           base=origin/${{ github.base_ref }}
-          code=$(git diff --no-renames --name-only $base...HEAD -- source include tools/convert | wc -l)
+          code=$(git diff --no-renames --name-only $base...HEAD -- source tools/convert | wc -l)
           cases=$(git diff --no-renames --name-only --diff-filter=A $base...HEAD -- tools/test/cases | wc -l)
           if [ "$code" -gt 0 ] && [ "$cases" -eq 0 ]; then
-            echo "This change touches source/include/tools/convert but adds no case in tools/test/cases/."; exit 1
+            echo "This change touches source/ or tools/convert but adds no case in tools/test/cases/."; exit 1
           fi
 
       - name: New cases are valid

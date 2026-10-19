@@ -102,8 +102,8 @@ The rule: find out whether it fails on both sides before changing anything.
    in the runner.
 4. **Sweeps:** replace the stale `build\*-results.txt` baseline with a fresh emulator run, then list the quests that
    fail on both sides (for example `va_vampchild`, `hr_rescuesarethi`) as game or test items to look at.
-5. **Drift guard:** done 2026-10-18: the game is `source/app.cpp` in both builds; the entry files only hold the
-   `platform.h` hooks, and `build.py` refuses more.
+5. **Drift guard:** done 2026-10-18: the game is `source/engine.cpp` in both builds; the entry files only hold the
+   `platform/platform.hpp` hooks, and `build.py` refuses more.
 6. **Regenerate `build\xrun.json`** so `xrun-17` and `xrun-18` can be checked.
 
 ## Open questions
