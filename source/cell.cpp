@@ -7,6 +7,7 @@
 #include <cstring>
 #include <tex3ds.h>
 
+#include "console.h"
 #include "linear.h"
 #include "log.h"
 #include "memstat.h"
@@ -55,6 +56,8 @@ static bool loadTexture(C3D_Tex* tex, const char* path)
 		return false;
 	C3D_TexSetFilter(tex, GPU_LINEAR, GPU_LINEAR);
 	C3D_TexSetFilterMipmap(tex, GPU_LINEAR);
+	if (!g_profile.textureMips)
+		C3D_TexSetLodBias(tex, -16.0f);      // the full-size picture at every distance (the lowest bias there is)
 	return true;
 }
 

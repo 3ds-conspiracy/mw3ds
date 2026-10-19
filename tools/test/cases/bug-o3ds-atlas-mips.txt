@@ -1,0 +1,11 @@
+# console: old
+# An Old 3DS draws from Project Atlas's sheets, several pictures packed into one texture (Hlaalu's: a wall above dark
+# trim strips). The sheet's smaller copies (mipmaps, made from the whole sheet) blend the pictures into each other, so
+# on the console far walkways and walls in Balmora showed dark patches of the trim, flickering in and out even with the
+# game paused. An Old 3DS now draws its world textures at full size only: the lowest mipmap bias on every one of them
+# (ConsoleProfile::textureMips). Needs Old 3DS data (out/o3ds)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-10300:-71300:200:0
+2 0 0 0 0 SHOT
+1 0 0 0 0 EXPECT:texlod:atl_:le:-15.9+EXPECT:texlod:tx_:le:-15.9
+1 0 0 0

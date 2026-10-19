@@ -118,7 +118,7 @@ struct Session : ScriptHost
 	float enemyUntil = 0.0f;
 	float hurtFlash = 0.0f;
 	bool dynamicView = true;          // Options > Video > Dynamic view: the view shortens when frames run long (dynview=)
-	float viewNow() const { return dynamicView ? viewScale : g_profile.viewScaleMax; }   // the share of the view drawn
+	float viewNow() const { return dynamicView ? viewDrawn : g_profile.viewScaleMax; }   // the share of the view drawn
 	u8 bloodModels = 0;               // the blood splat models hits have thrown so far (bits 0..2; the test driver's bloodmodels)
 	bool playerDead = false;
 	bool weaponDrawn = false;         // weapon (or fists) out: the view model shows it
@@ -461,6 +461,11 @@ struct Session : ScriptHost
 	// 3DS starts nearer and may close in further, and caps the frame rate at 30 or 20 (frameCap: main hands it to
 	// C3D_FrameRate)
 	float viewScale = g_profile.viewScaleMax, workCost = 0.0f, frameCost = 0.0f;
+	// ... and the share actually drawn: viewScale in steps of kViewStep, moved only once viewScale has left the step
+	// by a whole one. The frame cost hovering at its threshold saws viewScale by a few thousandths every frame, and
+	// drawn as it is, the fog's reach moved with it: on an Old 3DS at its short view the walkways' edges in the fog
+	// flashed frame by frame
+	float viewDrawn = g_profile.viewScaleMax;
 	int frameCap = g_profile.frameCap, capFrames = 0;
 	u64 adaptTick = 0;                // when adaptView last ran (once a frame: the time between frames)
 	void adaptView(float workMs, float frameMs = 0.0f);   // frameMs 0: measured here

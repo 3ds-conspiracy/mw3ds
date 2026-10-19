@@ -150,6 +150,7 @@ struct C3D_Tex
 	u16 width = 0, height = 0;
 	u32 size = 0;                 // bytes of level 0
 	u8 maxLevel = 0;
+	u16 lodBias = 0;              // levels x 256, 13-bit two's complement (as citro3d keeps it)
 	int fmt = 0;
 	int wrapS = GPU_REPEAT, wrapT = GPU_REPEAT, filter = GPU_NEAREST;
 	void* native = nullptr;       // the software GPU's decoded copy (native_gpu.cpp)
@@ -200,6 +201,12 @@ void C3D_AlphaBlend(int colorEq, int alphaEq, int srcClr, int dstClr, int srcAlp
 void C3D_SetScissor(int mode, u32 left, u32 top, u32 right, u32 bottom);
 void C3D_TexSetFilter(C3D_Tex* t, int magFilter, int minFilter);
 inline void C3D_TexSetFilterMipmap(C3D_Tex*, int) {}
+inline void C3D_TexSetLodBias(C3D_Tex* t, float bias)
+{
+	int b = (int)(bias * 256.0f);
+	b = b > 0xFFF ? 0xFFF : b < -0x1000 ? -0x1000 : b;
+	t->lodBias = (u16)(b & 0x1FFF);
+}
 void C3D_TexSetWrap(C3D_Tex* t, int wrapS, int wrapT);
 void C3D_TexBind(int unit, C3D_Tex* t);
 void C3D_TexFlush(C3D_Tex* t);

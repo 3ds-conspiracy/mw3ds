@@ -211,7 +211,7 @@ static bool hasArg(const std::string& what)
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "regionchance" || what == "regionweather"
+		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "texlod" || what == "regionchance" || what == "regionweather"
 		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
 }
 
@@ -1417,6 +1417,7 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "framecap") v = (float)s.frameCap;          // the frame rate the console holds to (Old 3DS: 30 or 20)
 	else if (what == "colorbits") v = g_profile.rgb565 ? 16.0f : 32.0f;   // the 3D screen's colour buffer
 	else if (what == "viewscale") v = s.viewScale;              // the adaptive view distance outdoors (1: the whole view)
+	else if (what == "viewdrawn") v = s.viewDrawn;              // ... as drawn: in steps, held while viewScale saws (Session::viewDrawn)
 	else if (what == "hudcaption")    // the cell name under the HUD's minimap is this cell's, 1; else 0
 	{
 		std::string want = w.game.cellLabel(w.cellName());
@@ -1653,6 +1654,22 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 			{
 				float side = (float)std::min(c.textures[i]->width, c.textures[i]->height);
 				v = any ? fminf(v, side) : side;
+				any = true;
+			}
+		if (!any)
+			return false;
+	}
+	else if (what == "texlod")      // <text>: the highest mipmap bias, in levels, of this cell's textures whose names have it
+	{
+		const Cell& c = w.here();
+		std::string want = lower(arg);
+		bool any = false;
+		for (size_t i = 0; i < c.textureNames.size(); i++)
+			if (i < c.textures.size() && c.textures[i] && lower(c.textureNames[i]).find(want) != std::string::npos)
+			{
+				int b = c.textures[i]->lodBias & 0x1FFF;
+				float bias = (b & 0x1000 ? b - 0x2000 : b) / 256.0f;
+				v = any ? fmaxf(v, bias) : bias;
 				any = true;
 			}
 		if (!any)
@@ -2381,7 +2398,7 @@ static bool mechanicsOp(Session& s, const std::vector<std::string>& a)
 	// (it leaves the view alone while a script runs: these stand in for the console's frames)
 	if (verb == "VIEWSCALE" && a.size() >= 2)
 	{
-		s.viewScale = (float)atof(a[1].c_str());
+		s.viewScale = s.viewDrawn = (float)atof(a[1].c_str());     // (drawn as set: the step hysteresis starts from it)
 		return true;
 	}
 	if (verb == "ADAPTVIEW" && a.size() >= 4)

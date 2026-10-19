@@ -546,6 +546,8 @@ float Session::stereoTarget(float slider, float dt)
 // measured work showed 23-25 fps on the console (3D on, outdoors), between the work thresholds, and the view stayed
 // whole. It closes in by the time between frames, the frame rate the player sees, and opens out only while the work
 // leaves room for 30 fps
+static const float kViewStep = 0.05f;      // the drawn view moves in steps of this share of the full view (viewDrawn)
+
 void Session::adaptView(float workMs, float frameMs)
 {
 	u64 tick = svcGetSystemTick();
@@ -597,7 +599,7 @@ void Session::adaptView(float workMs, float frameMs)
 	{
 		// (indoors the view is whole whatever this says: the Old 3DS keeps its outdoor view for the way out)
 		if (!g_profile.keepViewIndoors)
-			viewScale = 1.0f;
+			viewScale = viewDrawn = 1.0f;
 		return;
 	}
 	// (New 3DS: past 34.5 ms between frames is under 29 fps; under 27 ms of work held 29-30 fps on the console. Old 3DS,
@@ -610,6 +612,11 @@ void Session::adaptView(float workMs, float frameMs)
 		viewScale = fmaxf(minScale, viewScale - (g_profile.capSteps ? 0.006f : 0.004f));
 	else if (room)
 		viewScale = fminf(maxScale, viewScale + 0.002f);
+	// The drawn view (viewDrawn): the nearest step once the scale is a whole step away from the one drawn. At the
+	// threshold the scale saws between -0.006 and +0.002 a frame, well inside a step, so the fog stands still; a real
+	// change of load moves it a step at a time
+	if (fabsf(viewScale - viewDrawn) >= kViewStep - 0.0005f)
+		viewDrawn = fmaxf(minScale, fminf(maxScale, roundf(viewScale / kViewStep) * kViewStep));
 }
 
 static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";

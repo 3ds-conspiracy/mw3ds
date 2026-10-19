@@ -1,0 +1,7 @@
+# The New 3DS keeps its textures' smaller copies (mipmaps) far off: only an Old 3DS, drawing from Project Atlas's
+# sheets, draws its world textures at full size (bug-o3ds-atlas-mips). Without them far ground shimmers
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-10300:-71300:200:0
+2 0 0 0 0 SHOT
+1 0 0 0 0 EXPECT:texlod:tx_:ge:0+EXPECT:texlod:tx_:le:0
+1 0 0 0

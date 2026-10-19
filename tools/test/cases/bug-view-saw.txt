@@ -1,0 +1,29 @@
+# start: Seyda Neen
+# The view the frame is drawn with holds still while the adaptive view scale saws. With the frame cost hovering at its
+# threshold the scale stepped down 0.004-0.006 and up 0.002 from frame to frame, and the fog's reach moved with it
+# every frame: on an Old 3DS at its short view (fog ending a few hundred units out) the walkways' edges in the fog
+# flashed frame by frame. Now the drawn view (Session::viewDrawn) moves in steps of
+# 0.05, only once the scale is a whole step away from the one drawn; a lasting change of load still moves it.
+# (each ADAPTVIEW hands measured frames to Session::adaptView as the console's loop does; the costs are smoothed, so
+# frames alternating a little over and under the New 3DS's 34.5 ms threshold saw the scale as in play)
+1 0 0 0 0 TP:-10300:-71300:200:270+HOUR:12+SETWEATHER:0
+3 0 0 0
+0.1 0 0 0 0 ADAPTVIEW:28:34.5:100+VIEWSCALE:0.8
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.8
+0.1 0 0 0 0 ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6
+0.1 0 0 0 0 EXPECT:viewscale:ne:0.8+EXPECT:viewscale:gt:0.75+EXPECT:viewscale:lt:0.82+EXPECT:viewdrawn:eq:0.8
+0.1 0 0 0 0 ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6
+0.1 0 0 0 0 EXPECT:viewscale:gt:0.75+EXPECT:viewscale:lt:0.82+EXPECT:viewdrawn:eq:0.8
+0.1 0 0 0 0 ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6+ADAPTVIEW:24:40:4+ADAPTVIEW:24:30:6
+0.1 0 0 0 0 EXPECT:viewscale:gt:0.75+EXPECT:viewscale:lt:0.82+EXPECT:viewdrawn:eq:0.8
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:ge:5730+EXPECT:fogrange:end:le:5740
+# a lasting slowdown still closes the view, a step at a time, down to the New 3DS's shortest
+0.1 0 0 0 0 ADAPTVIEW:40:45:200
+0.1 0 0 0 0 EXPECT:viewscale:le:0.61+EXPECT:viewdrawn:le:0.61+EXPECT:viewdrawn:ge:0.59
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:ge:4290+EXPECT:fogrange:end:le:4310
+# ... and light frames open it again
+0.1 0 0 0 0 ADAPTVIEW:20:30:300
+0.1 0 0 0 0 EXPECT:viewscale:ge:0.99+EXPECT:viewdrawn:ge:0.99
+1 0 0 0
