@@ -52,6 +52,12 @@ one cut short. With duration 0 the whole magnitude lands in one frame. This is t
   of a point per frame accumulates on the stat), Sun Damage, Disintegrate Weapon / Armor (the fractional remainder is
   kept on the item), Restore Health / Magicka / Fatigue / Attribute / Skill, Absorb Health / Magicka / Fatigue.
 
+A health-damaging effect only changes the stat. No hit recoil (the Hit animation), no "Health Damage" sound, no blood
+and no "Hit" voice line: those come from a blow's `onHit` (the Lua combat script sets hit recovery), never from
+`applyMagicEffect`. On the player it lights the hit overlay without the sound (`activateHitOverlay(false)`). We follow
+this: the engine played the Hit on every frame's tick, so a burning foe's run started over each frame and it slid
+along in one stride (test `bug-burning-foe-skates`).
+
 The "applied once" effects are the reversible ones: the handler runs on the first frame, the same amount is undone by
 the removal handler at the end. By the pairing of apply and undo in `spelleffects.cpp` these are Drain and Fortify of
 every kind, Absorb Attribute / Skill, Fortify Maximum Magicka, Fortify Attack, the summons and bound items, the AI

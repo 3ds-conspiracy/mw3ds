@@ -645,7 +645,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 		if (dur > 1.0f)
 			timed(dur);
 		else
-			damageNpc(ri, mag, false);               // (the difficulty slider scales blows, not spells)
+			damageNpc(ri, mag, false, true);         // (the difficulty slider scales blows, not spells)
 		break;
 	case EFF_DAMAGE_FATIGUE: case EFF_DAMAGE_MAGICKA: case EFF_RESTORE_HEALTH: case EFF_RESTORE_FATIGUE:
 	case EFF_RESTORE_MAGICKA: case EFF_ABSORB_HEALTH: case EFF_ABSORB_FATIGUE: case EFF_ABSORB_MAGICKA:
@@ -660,7 +660,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 	// Drain: the current and the maximum drop by the magnitude until it ends
 	case EFF_DRAIN_HEALTH:
 		timed(fmaxf(1.0f, dur));
-		damageNpc(ri, mag, false);
+		damageNpc(ri, mag, false, true);
 		break;
 	case EFF_DRAIN_FATIGUE:
 		r.fatigue -= mag;
@@ -799,7 +799,7 @@ void Session::updateActorEffects(int ri, float dt)
 		{
 		case EFF_FIRE_DAMAGE: case EFF_SHOCK_DAMAGE: case EFF_FROST_DAMAGE: case EFF_DAMAGE_HEALTH: case EFF_POISON:
 			if (!r.dead)
-				damageNpc(ri, amount, false);
+				damageNpc(ri, amount, false, true);
 			break;
 		case EFF_DAMAGE_FATIGUE: r.fatigue -= amount; break;
 		case EFF_DAMAGE_MAGICKA: r.magicka = fmaxf(0.0f, r.magicka - amount); break;
@@ -809,7 +809,7 @@ void Session::updateActorEffects(int ri, float dt)
 		// Absorb: theirs becomes the player's
 		case EFF_ABSORB_HEALTH:
 			if (!r.dead)
-				damageNpc(ri, amount, false);
+				damageNpc(ri, amount, false, true);
 			w.stats.health = fminf(w.stats.healthMax, w.stats.health + amount);
 			break;
 		case EFF_ABSORB_FATIGUE:

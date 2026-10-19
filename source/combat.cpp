@@ -514,9 +514,23 @@ void Session::killNpc(int ri, bool byPlayer)
 
 // fatigueOnly: hand-to-hand on someone standing, which only tires (OpenMW: fists hurt fatigue or, on someone down or
 // paralyzed, health; never both)
-void Session::damageNpc(int ri, float dmg, bool fatigueOnly)
+// spell: a damage spell's health, all at once or a tick a frame while it lasts. OpenMW's applyMagicEffect only takes
+// the health: the recoil, the hurt sound, the blood and the "Hit" voice come with blows (its onHit). Played on every
+// tick, the Hit started over each frame and froze a burning foe in one stride as it ran
+void Session::damageNpc(int ri, float dmg, bool fatigueOnly, bool spell)
 {
 	Ref& r = w.refs[ri];
+	if (spell)
+	{
+		r.health -= dmg;
+		enemyRef = ri;
+		enemyUntil = w.time + 6.0f;
+		if (r.health <= 0.0f)
+			killNpc(ri);
+		else if (r.fatigue <= 0.0f)
+			knockDown(ri, true);
+		return;
+	}
 	if (fatigueOnly)
 	{
 		r.fatigue -= dmg;

@@ -1,0 +1,19 @@
+# A foe under a damage spell that lasts (Frost Bolt: 2 s of Frost Damage) keeps running with its legs moving. Each
+# frame's tick of the damage played its Hit again from the start, and the chase its run, so the animation never got
+# past its first frame: the foe slid towards the player in one stride (the promo's flame atronach). Spell damage
+# only takes health in OpenMW (applyMagicEffect): no hit recoil, no hurt sound, no blood; those come with blows.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 BOOST:100+FILL+SETSKILL:destruction:100
+0.3 0 0 0 0 SPELL:frost_bolt
+1 0 0 0 0 PLACE:scamp:500
+0.3 0 0 0 0 CASTAT:scamp:frost_bolt
+3 0 0 0 0 UNTIL:refeffect:scamp,16:gt:0
+0.2 0 0 0
+# still freezing, chasing the player: its run plays on
+0.1 0 0 0 0 EXPECT:refeffect:scamp,16:gt:0+EXPECT:refrun:scamp:eq:1+SNAP:refanimtime:scamp
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:scamp,16:gt:0+EXPECT:refrun:scamp:eq:1+EXPECT:refanimtime:scamp:ne:@0

@@ -373,7 +373,8 @@ struct Session : ScriptHost
 	// In reach in a fight: OpenMW's combat moves (a side step, an archer backing away). True when it moved this frame
 	bool combatMove(int ref, Cell& cell, float dist, float facing, bool ranged, const Object* foeWeapon, float dt);
 	void makeHostile(int ref);
-	void damageNpc(int ref, float dmg, bool fatigueOnly);
+	// spell: a damage effect (health only, no hit recoil, hurt sound, blood or voice: OpenMW's applyMagicEffect)
+	void damageNpc(int ref, float dmg, bool fatigueOnly, bool spell = false);
 	void actorGravity(float dt);
 	bool inSwing(int ref, float* dist = nullptr);         // a swing now would reach them
 	int swingTarget();                                   // who a swing now would strike (-1: nobody)
