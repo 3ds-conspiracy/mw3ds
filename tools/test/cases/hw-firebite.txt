@@ -10,7 +10,8 @@
 0.3 0 0 0 0 CAST:fire%bite
 0.6 0 0 0
 0.2 0 0 0 0 SHOT
-0.3 0 0 0 0 EXPECT:vfxcount:ge:2
+# the fire hit only: spell damage makes no blood (OpenMW's applyMagicEffect; blood comes with blows)
+0.3 0 0 0 0 EXPECT:vfxcount:ge:1
 0.8 0 0 0
 0.3 0 0 0 0 EXPECT:refhealth:mudcrab:lt:@0
 0.5 0 0 0
