@@ -91,6 +91,16 @@ bool inTab(const Object* o, int tab)
 	}
 }
 
+bool schoolButton(const GameData& g, float x, float y, float w, float h, int tab, bool lit)
+{
+	static const char* kShort[7] = { "All", "Alt", "Con", "Des", "Ill", "Mys", "Res" };
+	int icon = tab > 0 && tab <= 6 ? g.schoolIcons[tab - 1] : -1;
+	bool hit = uiButton(x, y, w, h, icon >= 0 ? "" : kShort[tab], lit);
+	if (icon >= 0)
+		uiIcon(icon, roundf(x + (w - 16) / 2), roundf(y + (h - 16) / 2), 16.0f);
+	return hit;
+}
+
 // The selected item's name, and its weight and value on the right
 void itemInfo(const Object* o, float y, const std::string& extra)
 {
@@ -203,10 +213,78 @@ void Session::drawTop()
 		for (size_t i = 0; i < tip.size(); i++)
 			uiTextCentered(200, y + 4 + i * lh, tip[i].second == col::header ? 0.52f : scale, tip[i].second, tip[i].first);
 	}
+	// Character creation's box: a picture, or the vitals, centred and framed
+	if (menuOpen() && topModal.kind != TopModal::NONE)
+	{
+		const float lh = uiLineHeight(0.5f);
+		float bw, bh, pw = 0, ph = 0;
+		if (topModal.kind == TopModal::ART && topModal.art.w > 0 && topModal.art.h > 0)
+		{
+			// (up to 240 x 150, its own proportions; a small picture is not blown up past twice its size)
+			float s = fminf(fminf(240.0f / topModal.art.w, 150.0f / topModal.art.h), 2.0f);
+			pw = topModal.art.w * s;
+			ph = topModal.art.h * s;
+			// (the frame is thick: words get room inside it)
+			bw = fmaxf(pw + 24, fmaxf(uiTextWidth(topModal.title, 0.5f), uiTextWidth(topModal.caption, 0.5f)) + 40);
+			bh = ph + 24 + (topModal.title.empty() ? 0 : lh + 4) + (topModal.caption.empty() ? 0 : lh + 4);
+		}
+		else
+		{
+			bw = topModal.attributes ? 288 : 248;
+			bh = 3 * 24 + 24 + (topModal.title.empty() ? 0 : lh + 4) + (topModal.attributes ? 4 * lh + 10 : 0);
+		}
+		float bx = roundf(200 - bw / 2), by = roundf(120 - bh / 2), y = by + 12;
+		uiRect(bx, by, bw, bh, C2D_Color32(0, 0, 0, 235));
+		uiFrame(bx, by, bw, bh, "menu_thin_border", col::border);
+		if (!topModal.title.empty())
+		{
+			uiTextCentered(200, y, 0.5f, col::header, topModal.title);
+			y += lh + 4;
+		}
+		if (topModal.kind == TopModal::ART)
+		{
+			float px = roundf(200 - pw / 2);
+			uiArt(topModal.art.file, topModal.art.w, topModal.art.h, px, y, pw, ph);
+			// a frame of its own round the picture, as OpenMW's class and birthsign pictures have
+			uiFrame(px - 2, y - 2, pw + 4, ph + 4, "menu_thin_border", col::border);
+			y += ph + 4;
+			if (!topModal.caption.empty())
+				uiTextCentered(200, y, 0.5f, col::text, topModal.caption);
+		}
+		else
+		{
+			static const char* kName[3] = { "shealth", "smagic", "sfatigue" };
+			static const char* kText[3] = { "Health", "Magicka", "Fatigue" };
+			static const u32 kColor[3] = { C2D_Color32(190, 40, 30, 255), C2D_Color32(40, 70, 200, 255), C2D_Color32(30, 150, 50, 255) };
+			for (int k = 0; k < 3; k++)
+			{
+				float ry = y + k * 24;
+				uiText(bx + 12, ry + 3, 0.5f, col::header, w.game.gmstLabel(kName[k], kText[k]));
+				uiBar(bx + 84, ry + 2, bw - 84 - 12, 16, topModal.vitals[k][1] > 0 ? (float)topModal.vitals[k][0] / topModal.vitals[k][1] : 0.0f, kColor[k]);
+				uiTextCentered(bx + 84 + (bw - 96) / 2, ry + 3, 0.45f, col::text,
+					std::to_string(topModal.vitals[k][0]) + "/" + std::to_string(topModal.vitals[k][1]));
+			}
+			// the attributes, two columns of four (strength .. luck down the first)
+			if (topModal.attributes)
+			{
+				float ay = y + 3 * 24 + 6;
+				uiRect(bx + 12, ay - 4, bw - 24, 1, col::border);
+				for (int i = 0; i < 8; i++)
+				{
+					float x = bx + 12 + (i / 4) * (bw - 24) / 2, ry = ay + (i % 4) * lh;
+					uiText(x, ry, 0.5f, col::text, attrName(w, i));
+					uiTextRight(x + (bw - 24) / 2 - 10, ry, 0.5f, col::header, std::to_string(w.stats.attributes[i]));
+				}
+			}
+		}
+	}
 	// set by the bottom screen each frame; kept until both eyes have drawn it (clearing it after the first
 	// pass left the tooltip in one eye only)
 	if (hudEye == hudEyes - 1)
+	{
 		tip.clear();
+		topModal = TopModal();
+	}
 	// A menu has stopped the world (both eyes draw it: it comes from the screen, not from a timer)
 	if (worldPaused())
 	{
@@ -1065,7 +1143,13 @@ std::string Session::effectLine(const SpellEffect& e, bool showRange)
 	auto me = w.game.magicEffects.find(e.effect);
 	int flags = me != w.game.magicEffects.end() ? me->second.flags : 0;
 	char buf[64];
-	if (!(flags & 0x8) && (e.min || e.max))
+	// Fortify Maximum Magicka is a multiple of Intelligence (the birthsigns', 1.5x INT), not points (OpenMW's effect widget)
+	if (e.effect == 84)
+	{
+		snprintf(buf, sizeof(buf), " %g", e.min / 10.0f);
+		s += buf + w.game.gmstLabel("sxtimesint", "x INT");
+	}
+	else if (!(flags & 0x8) && (e.min || e.max))
 	{
 		std::string unit = " " + (e.max == 1 ? w.game.gmstLabel("spoint", "pt") : w.game.gmstLabel("spoints", "pts"));
 		if (e.min == e.max)

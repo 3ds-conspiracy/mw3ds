@@ -380,6 +380,9 @@ void Session::drawRace()
 	uiTextBox(scroll, 126, 26, 188, 92, text, 0.45f, false);
 
 	const UiInput& in = uiIn();
+	// The C-stick turns the face on the top screen (its camera goes round the head), 150 degrees a second at full push
+	previewSpin += in.stickX * 2.6f * in.dt;
+	uiText(128, 234, 0.33f, col::textDim, "C-stick: turn the face");
 	// Head and hair: < > through the race's own (the face shows on the top screen)
 	for (int hair = 0; hair < 2; hair++)
 	{
@@ -449,6 +452,18 @@ static std::string classText(World& w, const ClassDef& c)
 	return t + "\n" + c.desc;
 }
 
+// The class's picture (Morrowind's level-up art for it) in a box on the top screen; title: over it, the class's name under it
+static void classModal(Session& s, const ClassDef& c, const std::string& title = "")
+{
+	auto art = s.w.game.art.levelup.find(lower(c.id));
+	if (art == s.w.game.art.levelup.end() || art->second.h <= 0)
+		return;
+	s.topModal.kind = Session::TopModal::ART;
+	s.topModal.art = art->second;
+	s.topModal.title = title.empty() ? c.name : title;
+	s.topModal.caption = title.empty() ? "" : c.name;
+}
+
 void Session::drawClassList()
 {
 	header("Choose your class");
@@ -462,6 +477,7 @@ void Session::drawClassList()
 		}
 	int pick = uiList(list, 4, 24, 116, 212, rows);
 	const ClassDef* c = classes[list.selected < (int)classes.size() ? list.selected : 0];
+	classModal(*this, *c);
 	uiPanel(124, 24, 192, 168);
 	uiTextBox(scroll, 126, 26, 188, 164, classText(w, *c), 0.45f, false);
 	if (uiButton(124, 196, 192, 36, w.game.gmst("sok", "OK"), true) || (pick >= 0 && (uiIn().down & KEY_A)))
@@ -587,6 +603,7 @@ void Session::drawClassResult()
 		openScreen(SCR_CLASS_LIST);
 		return;
 	}
+	classModal(*this, *c, "Your personality and past reflect a:");
 	uiPanel(4, 24, 312, 178);
 	uiTextBox(scroll, 6, 26, 308, 174, "Based on your answers, you are a " + c->name + ".\n\n" + classText(w, *c), 0.45f, false);
 	int b = buttonRow({ w.game.gmst("sback", "Back"), w.game.gmst("sok", "OK") }, focus);
@@ -909,17 +926,59 @@ void Session::drawBirth()
 		rows.push_back(b.name);
 	int pick = uiList(list, 4, 24, 116, 212, rows);
 	const BirthDef& b = w.game.birthsigns[list.selected < (int)rows.size() ? list.selected : 0];
-	std::string text = b.desc + "\n\n" + w.game.gmst("sbirthsignmenu1", "Abilities:") + "\n";
-	for (auto& id : b.spells)
+	// the constellation, in a box on the top screen
+	auto art = w.game.art.birthsign.find(lower(b.id));
+	if (art != w.game.art.birthsign.end() && art->second.h > 0)
 	{
-		auto it = w.game.spells.find(lower(id));
-		if (it == w.game.spells.end())
-			continue;
-		const char* kind = it->second.type == 1 ? "Ability" : it->second.type == 5 ? "Power" : "Spell";
-		text += "  " + it->second.name + " (" + kind + ")\n";
+		topModal.kind = TopModal::ART;
+		topModal.art = art->second;
+		topModal.title = b.name;
+	}
+	// What the sign is, then what it gives (OpenMW's birthsign menu): abilities, powers, spells, each with its
+	// effects and their icons
+	const float scale = 0.4f;
+	std::vector<std::string> lines;
+	std::vector<int> icons;
+	auto add = [&](const std::string& s, int icon = -1) { lines.push_back(s); icons.push_back(icon); };
+	for (auto& l : uiWrap(b.desc, 176, scale))
+		add(l);
+	static const struct { int type; const char* key; const char* text; } kGroups[] = {
+		{ 1, "sbirthsignmenu1", "Abilities:" }, { 5, "sbirthsignmenu2", "Powers:" }, { 0, "sbirthsignmenu3", "Spells:" } };
+	for (auto& g : kGroups)
+	{
+		bool head = false;
+		for (auto& id : b.spells)
+		{
+			auto it = w.game.spells.find(lower(id));
+			if (it == w.game.spells.end() || it->second.type != g.type)
+				continue;
+			if (!head)
+			{
+				add("");
+				add(w.game.gmstLabel(g.key, g.text));
+				head = true;
+			}
+			add(it->second.name);
+			for (auto& e : it->second.effects)
+			{
+				auto me = w.game.magicEffects.find(e.effect);
+				std::vector<std::string> wrapped = uiWrap(effectLine(e, false), 150, scale);
+				for (size_t k = 0; k < wrapped.size(); k++)
+					add(wrapped[k], k == 0 && me != w.game.magicEffects.end() ? me->second.iconIx : -1);
+			}
+		}
+	}
+	static int shown = -1;
+	if (shown != list.selected)
+	{
+		shown = list.selected;
+		list2.scroll = 0.0f;
 	}
 	uiPanel(124, 24, 192, 168);
-	uiTextBox(scroll, 126, 26, 188, 164, text, 0.45f, false);
+	birthIcons = 0;
+	for (int ic : icons)
+		birthIcons += ic >= 0;
+	uiList(list2, 125, 25, 190, 166, lines, scale, false, nullptr, &icons);
 	if (uiButton(124, 196, 192, 36, w.game.gmst("sok", "OK"), true) || (pick >= 0 && (uiIn().down & KEY_A)))
 	{
 		w.stats.birthsign = b.id;
@@ -946,9 +1005,64 @@ void Session::useSkill(int skill, int use, float amount)
 void Session::drawReview()
 {
 	header("Review your information");
-	uiPanel(4, 24, 312, 178);
-	uiTextBox(scroll, 6, 26, 308, 174, statsText(*this, false), 0.45f, true);
-	if (buttonRow({ w.game.gmst("sok", "OK") }, focus) == 0)
+	const PlayerStats& s = w.stats;
+	const GameData& g = w.game;
+	// health, magicka, fatigue and the attributes on the top screen
+	topModal.kind = TopModal::VITALS;
+	topModal.title = "";
+	topModal.vitals[0][0] = topModal.vitals[0][1] = (int)s.healthMax;
+	topModal.vitals[1][0] = topModal.vitals[1][1] = (int)s.magickaMax;
+	topModal.vitals[2][0] = topModal.vitals[2][1] = (int)s.fatigueMax;
+	topModal.attributes = true;
+
+	std::string race, cls, sign;
+	for (auto& r : g.races)
+		if (lower(r.id) == lower(s.race))
+			race = r.name;
+	const ClassDef* c = w.playerClass();
+	if (c)
+		cls = c->name;
+	if (const BirthDef* b = w.birthsign())
+		sign = b->name;
+	// who: name and race, class and sign
+	const float sc = 0.46f, lh = uiLineHeight(sc) + 2;
+	auto fact = [&](float x, float y, const char* key, const char* fallback, const std::string& value) {
+		std::string label = g.gmstLabel(key, fallback) + ":";
+		uiText(x, y, sc, col::textDim, label);
+		float vx = x + uiTextWidth(label, sc) + 5;
+		std::string v = value;
+		while (v.size() > 3 && vx + uiTextWidth(v, sc) > x + 152)
+			v = v.substr(0, v.size() - 4) + "...";
+		uiText(vx, y, sc, col::header, v);
+	};
+	uiPanel(4, 24, 312, 2 * lh + 6);
+	fact(10, 27, "sname", "Name", s.name);
+	fact(164, 27, "srace", "Race", race);
+	fact(10, 27 + lh, "sclass", "Class", cls);
+	fact(164, 27 + lh, "sbirthsign", "Sign", sign);
+	// the skills under their class headings: a list that scrolls
+	std::vector<std::string> rows, right;
+	auto inList = [](const int* arr, int k) { for (int i = 0; i < 5; i++) if (arr[i] == k) return true; return false; };
+	auto section = [&](const std::string& title, auto pred) {
+		rows.push_back(title);
+		right.push_back("");
+		for (int k = 0; k < 27; k++)
+			if (pred(k))
+			{
+				rows.push_back("   " + skillName(w, k));
+				right.push_back(std::to_string(s.skills[k]));
+			}
+	};
+	if (c)
+	{
+		section(g.gmstLabel("sskillclassmajor", "Major Skills"), [&](int k) { return inList(c->major, k); });
+		section(g.gmstLabel("sskillclassminor", "Minor Skills"), [&](int k) { return inList(c->minor, k); });
+		section(g.gmstLabel("sskillclassmisc", "Misc Skills"), [&](int k) { return !inList(c->major, k) && !inList(c->minor, k); });
+	}
+	float sy = 24 + 2 * lh + 10;
+	uiPanel(4, sy, 312, 204 - sy);
+	uiList(list, 5, sy + 1, 310, 202 - sy, rows, 0.44f, true, &right);
+	if (buttonRow({ g.gmst("sok", "OK") }, focus) == 0)
 	{
 		logf("chargen: review accepted");
 		givePlayerStartSpells();

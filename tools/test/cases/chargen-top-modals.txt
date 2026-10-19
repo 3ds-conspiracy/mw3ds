@@ -1,0 +1,41 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 PCRACE:dark%elf
+0.3 0 0 0 0 PCSEX:0
+0.3 0 0 0 0 SCREEN:classlist
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:topmodal:eq:1
+0.3 0 0 0 0 EXPECT:topmodalart:gt:0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:classmethod
+0.5 0 0 0
+0.3 0 0 0 0 TAP:160:124
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:classquiz
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.4 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:classresult
+0.3 0 0 0 0 EXPECT:topmodal:eq:1
+0.3 0 0 0 0 EXPECT:topmodalart:gt:0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:birth
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:topmodal:eq:1
+0.3 0 0 0 0 EXPECT:topmodalart:gt:0
+0.3 0 0 0 0 EXPECT:birthicons:ge:1
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:review
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:topmodal:eq:2
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:topmodal:eq:0

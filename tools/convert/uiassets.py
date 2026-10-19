@@ -91,11 +91,12 @@ def read_image(arch, path):
     return None
 
 
-def build_icons(arch, objects):
+def build_icons(arch, objects, extra=()):
     """Item icons packed into pages; sets each object's "ic" (icon number) when its icon exists.
     objects: game.json "objects" (a dict by id, or a list)."""
     objects = list(objects.values()) if isinstance(objects, dict) else objects
-    paths = sorted({o["icon"].lower().replace("/", "\\") for o in objects if o.get("icon")} | {DEFAULT_ICON})
+    extra = list(extra)        # magic effects: their icons share the pages, "ic" set on each
+    paths = sorted({o["icon"].lower().replace("/", "\\") for o in objects + extra if o.get("icon")} | {DEFAULT_ICON})
     index, images, missing = {}, [], []
     for p in paths:
         img = read_image(arch, "icons\\" + p)
@@ -126,6 +127,10 @@ def build_icons(arch, objects):
         ic = index.get((o.get("icon") or "").lower().replace("/", "\\"), index.get(DEFAULT_ICON))
         if ic is not None and o.get("type") in ITEM_TYPES:
             o["ic"] = ic
+    for e in extra:
+        ic = index.get((e.get("icon") or "").lower().replace("/", "\\"))
+        if ic is not None:
+            e["ic"] = ic
     return {"size": ICON, "page": ICON_PAGE, "pages": pages}, len(images), missing
 
 
@@ -253,8 +258,8 @@ def colors(font_color_section):
     return out
 
 
-def build_ui(arch, font_color_section, objects):
-    icons, count, missing = build_icons(arch, objects)
+def build_ui(arch, font_color_section, objects, extra=()):
+    icons, count, missing = build_icons(arch, objects, extra)
     ui = {"icons": icons, "colors": colors(font_color_section)}
     atlas = build_atlas(arch)
     if atlas:

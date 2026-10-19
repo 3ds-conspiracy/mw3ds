@@ -31,6 +31,7 @@ extern bool g_menuForInput;
 
 // The C-stick up / down for the menus' text panes: -1 (up) to 1 (down), nothing inside the dead zone
 float readStickScroll();
+float readStickTurn();
 void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt);
 // The gyroscope let go
 void gyroStop();

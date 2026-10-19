@@ -76,6 +76,7 @@ struct ScriptedInput
 	std::string setLocal;             // SETLOCAL:id:var:value: a script local of that reference
 	int rep = -1;                     // REP:n: the player's reputation
 	float stickY = 0.0f;              // STICKDOWN / STICKUP: the C-stick pushed down (1) / up (-1) in a menu's text pane
+	float stickX = 0.0f;              // STICKRIGHT / STICKLEFT: the C-stick pushed right (1) / left (-1), turning the race menu's face
 	bool shot = false;                // SHOT: a screenshot (shot_step_NN.bmp) as this step starts
 	bool chain = false;               // CHAIN: from here JOURNAL setup only raises (chained chapter runs)
 	bool quit = false;                // QUIT (the last step): Save and quit from the game menu once the script ends, so the

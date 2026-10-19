@@ -74,8 +74,24 @@ def splash_ring(size=32):
     return img
 
 
-def build_art(arch, data_files):
-    art = {"splash": [], "levelup": {}, "bookart": {}, "hud": {}}
+def build_art(arch, data_files, birthsigns=()):
+    art = {"splash": [], "levelup": {}, "bookart": {}, "hud": {}, "birthsign": {}}
+    # The birthsign menu's constellations (the sign record's texture), by sign id: shown on the top screen
+    for sign in birthsigns:
+        base = re.sub(r"\.[^.]+$", "", (sign.get("texture") or "").lower().replace("/", "\\"))
+        if base and not base.startswith("textures\\"):
+            base = "textures\\" + base           # (the record names it from textures\: Birthsigns\Tx_birth_mage.tga)
+        for ext in (".dds", ".tga", ".bmp"):
+            try:
+                img = Image.open(io.BytesIO(arch.read(base + ext))).convert("RGB")
+            except (FileNotFoundError, KeyError, OSError, ValueError):
+                continue
+            if img.size[0] > 256:
+                img = img.resize((256, max(1, round(img.size[1] * 256 / img.size[0]))), Image.LANCZOS)
+            stem = re.sub(r"[^a-z0-9_]", "_", sign["id"].lower())
+            w, h = encode(img, OUT / "art" / "birthsign" / f"{stem}.t3x", False)
+            art["birthsign"][sign["id"].lower()] = {"file": f"art/birthsign/{stem}.t3x", "w": w, "h": h}
+            break
     # HUD pieces: the sneak eye (shown while sneaking unseen)
     for key, path in (("sneak", r"icons\k\stealth_sneak.dds"),):
         if arch.exists(path):

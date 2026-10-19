@@ -134,6 +134,10 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			step->stickY = 1.0f;
 		if (strcmp(tok, "STICKUP") == 0)
 			step->stickY = -1.0f;
+		if (strcmp(tok, "STICKRIGHT") == 0)
+			step->stickX = 1.0f;
+		if (strcmp(tok, "STICKLEFT") == 0)
+			step->stickX = -1.0f;
 		if (strcmp(tok, "CHAIN") == 0)
 			step->chain = true;
 		if (strcmp(tok, "QUIT") == 0)

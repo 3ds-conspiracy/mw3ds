@@ -36,6 +36,16 @@ float readStickScroll()
 	return -y;
 }
 
+// The C-stick left / right: -1 to 1, nothing inside the dead zone
+float readStickTurn()
+{
+	circlePosition cs;
+	hidCstickRead(&cs);
+	float x, y;
+	stickAxes(cs.dx, cs.dy, stickZone(), x, y);
+	return x;
+}
+
 // A menu is up this frame (main sets it before the input is read): GoldenEye's B toggles sneaking only outside one. The
 // B that closed a menu crouched the player as it went
 bool g_menuForInput = false;

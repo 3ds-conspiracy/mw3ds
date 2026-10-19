@@ -4181,6 +4181,8 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		body.acting = BODY_NONE;              // a blow or cast under way when the view changes starts afresh
 	}
 	previewFace = screen == SCR_RACE;          // character creation: the face being chosen
+	if (!previewFace)
+		previewSpin = 0.0f;
 	if (thirdPerson || previewFace)
 	{
 		body.rebuild(w, weaponDrawn);

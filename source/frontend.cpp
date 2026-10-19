@@ -355,6 +355,7 @@ std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const c
 		ui.down = down;
 		ui.held = held;
 		ui.stickY = readStickScroll();
+		ui.stickX = readStickTurn();
 		u64 tick = svcGetSystemTick();
 		ui.dt = lastTick ? fminf((float)(tick - lastTick) / SYSCLOCK_ARM11, 0.1f) : 0.0f;
 		lastTick = tick;

@@ -149,7 +149,7 @@ struct BirthDef { std::string id, name, desc, texture; std::vector<std::string> 
 enum { ENCH_ONCE = 10, ENCH_STRIKE = 11, ENCH_USE = 12, ENCH_CONSTANT = 13 };
 extern u32 g_gameGeneration;           // bumped whenever game data is loaded or handed on: caches of pointers into it
 struct SpellDef { std::string id, name; int type, cost = 0, flags = 0, charge = 0; std::vector<SpellEffect> effects; };
-struct MagicEffectDef { int school; float cost; int flags = 0; std::string name; std::string cvfx, bvfx, hvfx, avfx; std::string snd[4]; u32 rgb = 0xFFFFFF; };   // snd: cast, bolt, hit, area (empty: the school's)   // flags: 0x4 no duration, 0x8 no magnitude, 0x10 harmful      // school: 0 alteration, 1 conjuration, 2 destruction,
+struct MagicEffectDef { int school; float cost; int flags = 0; std::string name; std::string cvfx, bvfx, hvfx, avfx; std::string snd[4]; u32 rgb = 0xFFFFFF; int iconIx = -1; };   // snd: cast, bolt, hit, area (empty: the school's)   // flags: 0x4 no duration, 0x8 no magnitude, 0x10 harmful      // school: 0 alteration, 1 conjuration, 2 destruction,
                                                         // 3 illusion, 4 mysticism, 5 restoration
 struct SkillDef { int attribute, specialization; std::string desc; float use[4]; };   // use: progress per kind of use
 struct SoundDef { std::string file; float volume; int minRange, maxRange; };
@@ -239,6 +239,7 @@ struct ArtDef
 {
 	std::vector<ArtRef> splash;
 	std::unordered_map<std::string, ArtRef> levelup, bookart, hud;
+	std::unordered_map<std::string, ArtRef> birthsign;   // the birthsign menu's constellations, by sign id
 	std::unordered_map<std::string, ArtRef> book;   // the reading screen: "book", "scroll", "<button>_<idle|over|pressed>"
 };
 struct ThirdPersonDef
@@ -350,6 +351,7 @@ struct GameData
 	std::string cellName;                                  // where the level starts
 	bool chargen = true;                                   // starts with character creation
 	std::vector<CellDef> cells;                            // the level's cells, the starting one first
+	int schoolIcons[6] = { -1, -1, -1, -1, -1, -1 };   // the magic schools' skill icons (item icon pages), alteration .. restoration
 	std::unordered_map<std::string, std::string> levelUpText;   // Morrowind.ini [Level Up]: "level2".., "default"
 	std::vector<ActorDef> actors;
 	std::unordered_map<std::string, Object> objects;       // lowercase id

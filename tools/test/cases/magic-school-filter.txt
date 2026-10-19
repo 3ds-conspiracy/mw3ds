@@ -1,0 +1,18 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SPELL:fire_bite
+0.3 0 0 0 0 SPELL:hearth_heal
+0.3 0 0 0 0 SCREEN:magic
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:magicshown:ge:2
+0.3 0 0 0 0 EXPECT:magicicons:ge:2
+0.1 0 0 0 0 SNAP:magicshown
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:magicshown:ge:1
+0.3 0 0 0 0 EXPECT:magicshown:lt:@0
+0.3 0 0 0 0 EXPECT:magicicons:ge:1
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none

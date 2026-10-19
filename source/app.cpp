@@ -1019,6 +1019,7 @@ int appMain()
 		ui.held = held;
 		ui.up = up;
 		ui.stickY = inputIndex < autoinput.size() && loaded ? autoinput[inputIndex].stickY : readStickScroll();
+		ui.stickX = inputIndex < autoinput.size() && loaded ? autoinput[inputIndex].stickX : readStickTurn();
 		ui.dt = dt;
 		uiBeginFrame(ui);
 

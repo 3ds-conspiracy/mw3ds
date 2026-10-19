@@ -1789,6 +1789,12 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "brewedvalue") { const Object* o = w.game.object(s.lastBrewed); if (!o) return false; v = (float)o->value; }
 	else if (what == "made") { v = 0; for (auto& id : w.madeItems) v += carried(w, id) >= 0; }
 	else if (what == "quizbottom") v = s.quizBottom;      // the class quiz: the bottom of its focused answer
+	else if (what == "previewspin") v = s.previewSpin * 57.29578f;   // the race menu's face turned by the C-stick (degrees)
+	else if (what == "topmodal") v = (float)s.topModal.kind;   // the top screen's box: 0 none, 1 a picture, 2 the vitals
+	else if (what == "topmodalart") v = (float)s.topModal.art.w;   // its picture's width (0: none)
+	else if (what == "magicshown") v = (float)s.magicShown;       // the Magic menu's rows under its school filter
+	else if (what == "magicicons") v = (float)s.magicIcons;       // ... those with an effect icon
+	else if (what == "birthicons") v = (float)s.birthIcons;       // the birthsign menu's effect rows with an icon
 	else if (what == "notesright") v = s.notesRight;      // the right edge of the notices on the top screen
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
@@ -1905,7 +1911,7 @@ static int screenByName(const std::string& n)
 		{ "alchemy", SCR_ALCHEMY }, { "recharge", SCR_RECHARGE }, { "persuade", SCR_PERSUADE }, { "spells", SCR_SPELLS },
 		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES }, { "death", SCR_DEATH },
 		{ "journal", SCR_JOURNAL }, { "gamemenu", SCR_GAMEMENU }, { "map", SCR_MAP },
-		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "options", SCR_OPTIONS }, { "display", SCR_DISPLAY }, { "controls", SCR_CONTROLS }, { "look", SCR_LOOK }, { "console", SCR_CONSOLE },
+		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "classlist", SCR_CLASS_LIST }, { "classresult", SCR_CLASS_RESULT }, { "classcreate", SCR_CLASS_CREATE }, { "review", SCR_REVIEW }, { "magic", SCR_MAGIC }, { "options", SCR_OPTIONS }, { "display", SCR_DISPLAY }, { "controls", SCR_CONTROLS }, { "look", SCR_LOOK }, { "console", SCR_CONSOLE },
 	};
 	for (auto& e : names)
 		if (n == e.name)
@@ -3503,7 +3509,7 @@ bool TestDriver::playerToken(const std::string& tok)
 {
 	static const char* const kPlayer[] = {
 		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "ZR", "FRAMECAP", "GYRO", "CONTROLS", "GYROAIM", "TAP", "DRAG", "TOUCH", "STICKDOWN",
-		"STICKUP", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT",
+		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT",
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE",

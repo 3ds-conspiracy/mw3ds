@@ -18,4 +18,6 @@ UiGridItem gridItem(const Object* o, const std::string& id, int count, bool equi
 extern const char* kTabs[5];                 // inventory filters: All, Weapon, Apparel, Magic, Misc
 extern const char* kTabKeys[5];              // their GMSTs (sAllTab ...)
 bool inTab(const Object* o, int tab);
+// A magic school filter button: tab 0 "All", 1..6 the schools by their skill icon (alteration .. restoration)
+bool schoolButton(const GameData& g, float x, float y, float w, float h, int tab, bool lit);
 void itemInfo(const Object* o, float y, const std::string& extra = "");   // name, weight and value

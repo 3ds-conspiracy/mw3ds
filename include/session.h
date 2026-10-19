@@ -137,6 +137,7 @@ struct Session : ScriptHost
 	// face preview (previewFace)
 	PlayerBody body;
 	bool thirdPerson = false, previewFace = false;
+	float previewSpin = 0.0f;         // the race menu's face turned this far (radians) by the C-stick
 	bool deathView = false;       // the view went to third person for the player's death (back in when they live again)
 	float thirdDistance = 0.0f;               // eased camera distance (walls pull it in)
 	float blowStrength = 1.0f;                // the last blow let go (0..1): the body's follow-through
@@ -219,6 +220,7 @@ struct Session : ScriptHost
 	UiList list, list2;
 	UiGrid grid;                      // item icons (inventory, containers, barter)
 	int invTab = 0;                   // inventory filter: all, weapon, apparel, magic, misc
+	int magicTab = 0;                 // Magic menu filter: all, then the six schools
 	int journalTab = 0;               // journal: 0 the entries, 1 the topics index
 	std::string journalTopic;         // the topic open in the index
 	std::string journalSearch;        // what the index and the entries are narrowed to ("": all)
@@ -256,6 +258,8 @@ struct Session : ScriptHost
 	std::vector<Note> notes;
 	UiScroll quizScroll;              // the class quiz's page, when a question and its answers are taller than the screen
 	float quizBottom = 0.0f;          // tests: the bottom of the class quiz's focused answer (the screen is 240 high)
+	int magicShown = 0, magicIcons = 0;   // tests: the Magic menu's rows after its school filter, and those with an icon
+	int birthIcons = 0;               // tests: the birthsign menu's effect rows with an icon
 	float notesRight = 0.0f;          // tests: the right edge of the notices drawn last (the top screen is 400 wide)
 	bool messageSidebar = false;      // a message box with more text than fits above its buttons: buttons on the right
 	int messageTop = 0, messageLeft = 0;   // tests: its first line shown, and the lines below what is shown
@@ -497,6 +501,16 @@ struct Session : ScriptHost
 	// Tooltip: what a menu has selected, in full on the top screen (as Morrowind's hover box);
 	// the screens fill it each frame, drawTop shows and clears it
 	std::vector<std::pair<std::string, u32>> tip;
+	// A bordered box in the middle of the top screen (character creation: the class picture, the birthsign's
+	// constellation, health / magicka / fatigue): the screens fill it each frame, drawTop shows and clears it as it does the tip
+	struct TopModal
+	{
+		enum { NONE, ART, VITALS } kind = NONE;
+		ArtRef art;                       // ART: the picture
+		std::string title, caption;
+		int vitals[3][2] = {};            // VITALS: health, magicka, fatigue: now, most
+		bool attributes = false;          // VITALS: and the eight attributes under them (the player's)
+	} topModal;
 	void itemTip(const Object* o, const InventoryItem* it);   // it: that one's wear and charge (nullptr: new)
 	void spellTip(const SpellDef& sp);
 	int armorSkill(const Object* o);      // the armor skill a piece of armor trains: by its weight for its slot

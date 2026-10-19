@@ -22,6 +22,7 @@ struct UiInput
 	int touchX, touchY, tapX, tapY;
 	int dragDX, dragDY;   // drag since last frame
 	float stickY;         // the C-stick up / down, -1 (up) to 1 (down): scrolls a text pane
+	float stickX = 0.0f;  // the C-stick left / right, -1 to 1: turns the face in the race menu
 	float dt;             // the frame's step (seconds): what moves on its own (a long row sliding)
 };
 
@@ -89,8 +90,10 @@ int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vect
 	float scale, bool keys);
 // right: a column of text at each row's right edge, always shown; the row's own text is cut short before it, and the
 // selected row's slides left and comes round again when it doesn't fit
+// icons: an item icon page number per row (-1: none) drawn at the row's left, the row's text after it
 int uiList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows,
-	float scale = 0.5f, bool keys = true, const std::vector<std::string>* right = nullptr);
+	float scale = 0.5f, bool keys = true, const std::vector<std::string>* right = nullptr,
+	const std::vector<int>* icons = nullptr);
 
 // Grid of item icons, Morrowind inventory style: count in the corner, equipped / magic backgrounds.
 // D-pad moves the selection, drag scrolls; returns the tapped cell (or the selected one on A), else -1.

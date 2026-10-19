@@ -1,0 +1,29 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 PCNAME:Hero
+0.3 0 0 0 0 PCRACE:dark%elf
+0.3 0 0 0 0 PCSEX:0
+0.3 0 0 0 0 SCREEN:race
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:classmethod
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:classlist
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:classquiz
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:classcreate
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:classresult
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:birth
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:review
+0.8 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none

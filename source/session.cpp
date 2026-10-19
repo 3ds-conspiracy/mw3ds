@@ -258,7 +258,8 @@ void Session::viewCamera(RenderCamera& cam)
 	if (!thirdPerson && !previewFace)
 		return;
 	const Player& p = w.player;
-	float fx = sinf(p.yaw), fy = cosf(p.yaw);
+	const float yaw = p.yaw + (previewFace ? previewSpin : 0.0f);
+	float fx = sinf(yaw), fy = cosf(yaw);
 	float head[3] = { p.feet[0], p.feet[1], p.feet[2] + (previewFace ? 118.0f : 120.0f) };
 	float want = previewFace ? 70.0f : 220.0f;
 	float dir = previewFace ? 1.0f : -1.0f;       // the preview stands in front, facing back
@@ -281,7 +282,7 @@ void Session::viewCamera(RenderCamera& cam)
 		cam.pos[k] = head[k] + (to[k] - head[k]) * (thirdDistance / want);
 	if (previewFace)
 	{
-		cam.yaw = p.yaw + 3.14159265f;
+		cam.yaw = yaw + 3.14159265f;
 		cam.pitch = 0.0f;
 	}
 	else if (playerDead && deathView)

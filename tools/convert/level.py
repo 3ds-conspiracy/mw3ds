@@ -844,8 +844,12 @@ def main():
     dl = build_distant(db, arch, terrain, EXTERIOR_SUN_DIR, wx["sun"], wx["ambient"], OUT / "distant.bin")
     print(f"  distant land: {dl['cells']} cells, {dl['samples']} samples")
     print(f"  map: {game['map']['width']} x {game['map']['height']} px, {game['map']['units_per_pixel']:.0f} units per pixel")
-    game["ui"], report = build_ui(arch, ini_section(ini, "Font Color"), game["objects"])
-    game["art"] = build_art(arch, DATA_FILES.parent if DATA_FILES.suffix else DATA_FILES)
+    # (the magic effects' icons and the six schools' skill icons share the item icon pages)
+    schools = [{"icon": rf"k\magic_{s}.dds"} for s in ("alteration", "conjuration", "destruction", "illusion", "mysticism", "restoration")]
+    game["ui"], report = build_ui(arch, ini_section(ini, "Font Color"), game["objects"],
+                                  list(game["magic_effects"].values()) + schools)
+    game["school_icons"] = [s.get("ic", -1) for s in schools]
+    game["art"] = build_art(arch, DATA_FILES.parent if DATA_FILES.suffix else DATA_FILES, game["birthsigns"])
     game["water_fps"] = game["art"].get("water", {}).get("fps", 12.0)   # (the engine plays art/water/waterNN.t3x at this)
     game["movies"] = {k: {"file": v["file"], "sound": v["sound"]}
                       for k, v in build_movies(DATA_FILES.parent if DATA_FILES.suffix else DATA_FILES).items()}

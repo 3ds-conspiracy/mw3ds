@@ -746,6 +746,7 @@ void Session::drawSpells()
 	int gold = w.itemCount("gold_001");
 	header(w.game.gmst("sspells", "Spells") + " - " + def.name, "Gold: " + std::to_string(gold));
 	std::vector<std::string> known = knownSpells(), ids, rows;
+	std::vector<int> icons;
 	for (auto& id : def.spells)
 	{
 		auto it = w.game.spells.find(id);
@@ -759,10 +760,12 @@ void Session::drawSpells()
 		int price = barterPrice(barterRef, std::max(1, (int)(it->second.cost * w.game.gmstf("fspellvaluemult", 10.0f))), true);
 		ids.push_back(id);
 		rows.push_back(it->second.name + "   " + std::to_string(price) + "g");
+		auto me = it->second.effects.empty() ? w.game.magicEffects.end() : w.game.magicEffects.find(it->second.effects[0].effect);
+		icons.push_back(me != w.game.magicEffects.end() ? me->second.iconIx : -1);
 	}
 	if (rows.empty())
 		uiTextCentered(160, 100, 0.5f, col::textDim, "Nothing you don't already know");
-	uiList(list2, 4, 24, 312, 176, rows, 0.45f, true);
+	uiList(list2, 4, 24, 312, 176, rows, 0.45f, true, nullptr, &icons);
 	int sel = list2.selected < (int)ids.size() ? list2.selected : -1;
 	// what the chosen spell does, on the top screen as in the Magic menu
 	if (sel >= 0)

@@ -223,11 +223,12 @@ EFFECT_KEYS = """WaterBreathing SwiftSwim WaterWalking Shield FireShield Lightni
 
 def magic_effects(db):
     """School, base cost, flags (MEDT: 0x4 no duration, 0x8 no magnitude, 0x10 harmful) and display name."""
-    flags, vfx, rgb = {}, {}, {}
+    flags, vfx, rgb, icon = {}, {}, {}, {}
     for r in read_game({"MGEF"}):
         k = struct.unpack("<i", r.get("INDX"))[0]
         flags[k] = struct.unpack_from("<i", r.get("MEDT"), 8)[0]
         rgb[k] = list(struct.unpack_from("<iii", r.get("MEDT"), 12))      # its colour (enchanted items glow in it)
+        icon[k] = (r.zstr("ITEX") or "").lower().replace("/", "\\")       # its icon, under icons\ (s\...)
         # the visuals: statics named by the effect (cast at the hand, the bolt, the hit, the area)
         vfx[k] = {t.lower(): (r.zstr(t) or "").lower() for t in ("CVFX", "BVFX", "HVFX", "AVFX") if r.zstr(t)}
         # its own sounds (shock, frost; some borrow another school's), else the school's
@@ -235,7 +236,7 @@ def magic_effects(db):
     out = {}
     for k, v in db["MGEF"].items():
         name = db["GMST"].get("seffect" + EFFECT_KEYS[k].lower(), "") if k < len(EFFECT_KEYS) else ""
-        out[str(k)] = dict(v, flags=flags.get(k, 0) | hardcoded_flags(k), name=name or f"Effect {k}", rgb=rgb.get(k, [255, 255, 255]),
+        out[str(k)] = dict(v, flags=flags.get(k, 0) | hardcoded_flags(k), name=name or f"Effect {k}", rgb=rgb.get(k, [255, 255, 255]), icon=icon.get(k, ""),
                            **vfx.get(k, {}))
     return out
 

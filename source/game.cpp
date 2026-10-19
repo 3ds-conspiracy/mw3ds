@@ -966,6 +966,7 @@ bool gameLoad(GameData& g, const char* path)
 		MagicEffectDef& me = g.magicEffects[atoi(it->string)];
 		me = { (int)num(it, "school"), (float)num(it, "cost", 1.0), (int)num(it, "flags"), str(it, "name") };
 		me.cvfx = str(it, "cvfx"); me.bvfx = str(it, "bvfx"); me.hvfx = str(it, "hvfx"); me.avfx = str(it, "avfx");
+		me.iconIx = (int)num(it, "ic", -1);
 		me.snd[0] = str(it, "csnd"); me.snd[1] = str(it, "bsnd"); me.snd[2] = str(it, "hsnd"); me.snd[3] = str(it, "asnd");
 		if (const cJSON* c = cJSON_GetObjectItem(it, "rgb"))
 			if (cJSON_GetArraySize(c) == 3)
@@ -1035,6 +1036,9 @@ bool gameLoad(GameData& g, const char* path)
 
 	if (const cJSON* ui = section(root, "ui"))
 		parseUiTheme(ui, g.ui);
+	if (const cJSON* si = section(root, "school_icons"))
+		for (int k = 0; k < 6 && k < cJSON_GetArraySize(si); k++)
+			g.schoolIcons[k] = cJSON_GetArrayItem(si, k)->valueint;
 
 	const cJSON* ts;
 	if (const cJSON* wt = cJSON_GetObjectItem(root, "weather"))
@@ -1201,6 +1205,8 @@ bool gameLoad(GameData& g, const char* path)
 			g.art.levelup[lower(a->string)] = one(a);
 		cJSON_ArrayForEach(a, cJSON_GetObjectItem(art, "bookart"))
 			g.art.bookart[lower(a->string)] = one(a);
+		cJSON_ArrayForEach(a, cJSON_GetObjectItem(art, "birthsign"))
+			g.art.birthsign[lower(a->string)] = one(a);
 		cJSON_ArrayForEach(a, cJSON_GetObjectItem(art, "hud"))
 			g.art.hud[lower(a->string)] = one(a);
 		cJSON_ArrayForEach(a, cJSON_GetObjectItem(art, "book"))
