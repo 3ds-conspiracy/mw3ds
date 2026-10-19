@@ -1492,6 +1492,23 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	}
 	else if (what == "cellfog") v = arg == "start" ? w.here().fogStart : w.here().fogEnd;    // <start|end>: this cell's fog distance (0: none)
 	else if (what == "keptcells") v = (float)w.cellStates.size();     // cells out of memory with their changes kept
+	else if (what == "nearunloaded")  // outdoors: the neighbouring cells nearer the player than the fog's start not loaded
+	{
+		v = 0;
+		if (w.current >= 0 && !w.cells[w.current].interior)
+			for (int dy = -1; dy <= 1; dy++)
+				for (int dx = -1; dx <= 1; dx++)
+				{
+					int ci = w.gridCell(w.cells[w.current].gx + dx, w.cells[w.current].gy + dy);
+					if (ci < 0 || w.cells[ci].live)
+						continue;
+					float x0 = w.cells[ci].gx * 8192.0f, y0 = w.cells[ci].gy * 8192.0f;
+					float ox = fmaxf(fmaxf(x0 - w.player.feet[0], w.player.feet[0] - (x0 + 8192.0f)), 0.0f);
+					float oy = fmaxf(fmaxf(y0 - w.player.feet[1], w.player.feet[1] - (y0 + 8192.0f)), 0.0f);
+					if (ox * ox + oy * oy < kExteriorFogStart * kExteriorFogStart)
+						v++;
+				}
+	}
 	else if (what == "savevalid")   // <name>: 1 when test_<name>.sav reads whole (a damaged one is refused)
 		v = World::savedCell(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
 	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
@@ -1748,6 +1765,13 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 	else if (what == "forcesneak") v = w.forceSneak ? 1.0f : 0.0f;    // the player forced to sneak
 	else if (what == "sneaking") v = w.player.sneaking ? 1.0f : 0.0f;  // the player sneaks now
 	else if (what == "thirdperson") v = s.thirdPerson ? 1.0f : 0.0f;  // the view is third person
+	else if (what == "viewcamz")    // third person or the face preview: the camera's height over the player's feet (else 0)
+	{
+		RenderCamera c = {};
+		c.pos[2] = w.player.feet[2];
+		s.viewCamera(c);
+		v = c.pos[2] - w.player.feet[2];
+	}
 	else if (what == "unaimable")
 	{
 		// loaded people (and bodies) within 2000 units the crosshair can't find where they stand

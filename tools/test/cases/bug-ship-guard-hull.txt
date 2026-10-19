@@ -1,0 +1,21 @@
+# start: Imperial Prison Ship
+# The prison ship's guard walked straight at the hold's side and up it, and on the hold's ceiling into the deck. The
+# hull's inner side is faces of 37 to 58 degrees: an object's face counts as floor up to 60 (stair ramps), so an actor
+# off a path grid route climbed it a step at a time. OpenMW's actors climb no more than 46 (sMaxSlope) and its stepper
+# takes stairs; its navigation mesh routes them, ours keeps to the grid. Off a grid route an actor climbs objects to 46,
+# and never steps up where its body has no room under what is overhead. Dropped by the hull while escorting the player,
+# the guard keeps below its steep part (z -43 up); before, the second and third drops took him up to z 24 and -9.
+# (The second and third drop him against a post by the hull, where he stays: the drop's doing, not a walk's)
+3 0 0 0 0 MSG
+24 0 0 0
+0.5 0 0 0 0 A
+8 0 0 0 0 WALKTO:@80,420,-105
+0.1 0 0 0 0 PLACEAT:chargen%boat%guard%2:195:600:-300
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refz:chargen%boat%guard%2:lt:-40
+0.1 0 0 0 0 PLACEAT:chargen%boat%guard%2:-160:450:-300
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refz:chargen%boat%guard%2:lt:-40
+0.1 0 0 0 0 PLACEAT:chargen%boat%guard%2:195:450:-300
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refz:chargen%boat%guard%2:lt:-40

@@ -1,0 +1,14 @@
+# start: Imperial Prison Ship
+# Character creation's face preview put its camera where the player's look pointed (up or down) and aimed it level:
+# opened while looking up, the camera sat under the chin and showed the chest, the head cut off at the top. It is level
+# with the face (the head's middle some 118 over the feet) whichever way the player looked
+3 0 0 0 0 MSG
+24 0 0 0
+0.5 0 0 0 0 A
+1.5 0 0 0 0 UP
+0.1 0 0 0 0 EXPECT:pitch:gt:20
+0.2 0 0 0 0 SCREEN:race
+1 0 0 0
+0.1 0 0 0 0 EXPECT:viewcamz:gt:105
+0.1 0 0 0 0 EXPECT:viewcamz:lt:130
+0.2 0 0 0 0 SHOT

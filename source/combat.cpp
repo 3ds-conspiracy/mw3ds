@@ -1942,6 +1942,24 @@ float npcClimbSlope(const World& w, const Ref& r)
 	return fighting && !quest ? kWalkSlope : 60.0f;
 }
 
+// The room a walking actor needs over the floor it steps up onto: about half its height (people are some 128 tall;
+// stairs under a sloping ceiling leave less than all of it straight over the step)
+static const float kActorHeadroom = 64.0f;
+
+// The room over a floor at (x, y, z) up to kActorHeadroom: how far up the first thing overhead is
+static float actorRoomOver(Cell* const* cells, int count, float x, float y, float z)
+{
+	float from[3] = { x, y, z + 2.0f }, to[3] = { x, y, z + kActorHeadroom };
+	float room = kActorHeadroom;
+	for (int k = 0; k < count; k++)
+	{
+		float t;
+		if (collisionRaycast(cells[k]->collision, from, to, &t))
+			room = fminf(room, 2.0f + t * (kActorHeadroom - 2.0f));
+	}
+	return room;
+}
+
 bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 {
 	Ref& r = w.refs[ri];
@@ -2024,19 +2042,49 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	// Up land steeper than it may climb (npcClimbSlope): no step. (The floor test at that limit finds no floor there, or one
 	// well below the one the 60 degree test stepped up to; a few units' difference is a foot's spot on a small steep patch
 	// of an even slope, not a slope too steep. Going down is never refused, nor anything in the water)
+	// Objects' faces count as floor up to 60 degrees for the stair ramps a path grid route takes. Off one (walking
+	// straight at its point, or stepping aside when stuck) an actor climbs objects no steeper than the player's 46
+	// (OpenMW's sMaxSlope; its navigation mesh routes round the rest): the prison ship's guard walked straight at the
+	// hold's side, faces of 37 to 58 degrees, and up it. A follower of the player (it walks their footsteps) and a
+	// fighter keep 60, on the stairs the player takes
 	float climb = npcClimbSlope(w, r);
+	bool onRoute = !r.path.empty() && r.stuckTimer >= 0.0f;
+	bool fighting = r.ai == AI_COMBAT || r.duelFoe >= 0;
+	bool follower = r.aiPackage == AIPKG_FOLLOW && r.aiTarget == "player" && !r.aiDone;
+	float objectClimb = onRoute || fighting || follower ? 90.0f : kWalkSlope;
 	bool wet = cell.hasWater() && r.pos[2] < cell.waterZ + 10.0f;
-	if (climb < 60.0f && fz > r.pos[2] + 2.0f && fz > swimZ + 0.5f && !wet)
+	if ((climb < 60.0f || objectClimb < 90.0f) && fz > r.pos[2] + 2.0f && fz > swimZ + 0.5f && !wet)
 	{
 		float low = -1e9f;
 		for (int k = 0; k < aroundCount; k++)
 		{
 			float z;
-			if (collisionFootFloor(around[k]->collision, body[0], body[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 300.0f, &z, climb)
-				&& z > low)
+			if (collisionFootFloor(around[k]->collision, body[0], body[1], kActorFootReach, r.pos[2] + 40.0f, r.pos[2] - 300.0f, &z, climb,
+				objectClimb) && z > low)
 				low = z;
 		}
 		if (low < fz - 8.0f)
+			return false;
+	}
+	// No step up into less room than the body needs under what is overhead (the sphere above only keeps it out of walls),
+	// unless it stands in less where it is (put somewhere cramped, it can still get out): a guard at the top of the hold's
+	// side stepped onto the hold's ceiling, inside the deck. (A follower of the player and a fighter go where the player
+	// went: Larienna Macrina was held on the stairs up out of Nchurdamz's lower hall)
+	if (fz > r.pos[2] + 2.0f && !follower)
+	{
+		float room = fighting ? kActorHeadroom : actorRoomOver(around, aroundCount, body[0], body[1], fz);
+		if (room < kActorHeadroom && room < actorRoomOver(around, aroundCount, r.pos[0], r.pos[1], r.pos[2]))
+			return false;
+		// Nor up onto a spot held by a foot's edge alone with nothing at all under the middle (a crack has a floor below it):
+		// Nistacey went up the rock's edge over the gap beside Zainsipilu's floor, and every step from there, pushed back off the
+		// rock, came down over the gap
+		bool under = false;
+		for (int k = 0; k < aroundCount && !under; k++)
+		{
+			float z;
+			under = collisionFloor(around[k]->collision, body[0], body[1], fz + 2.0f, r.pos[2] - 300.0f, &z);
+		}
+		if (!under)
 			return false;
 	}
 	if (Actor* a = w.actorOf(ri))

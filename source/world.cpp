@@ -2181,6 +2181,11 @@ bool World::enterCell(int index)
 	if (!cells[index].interior)
 	{
 		streamExterior(true);
+		// The neighbours whose ground is in clear sight of the arrival (nearer than the fog's start) load now too, behind
+		// the loading screen; the rest stream in, inside the fog. With the player's own cell alone, a silt strider stop or
+		// a door near a cell's edge showed the bare distant land beside the player until the next one came
+		if (cells[index].live)
+			loadCellsNear(player.feet, kExteriorFogStart);
 		logf("world: outside in %s (%d cells loaded), linear free %lu KB", cells[index].name.c_str(),
 			(int)loaded.size(), linearSpaceFree() / 1024);
 		return cells[index].live != nullptr;
@@ -2355,6 +2360,11 @@ int World::loadCellsNear(const float pos[3], float reach)
 			float ox = fmaxf(fmaxf(x0 - pos[0], pos[0] - (x0 + 8192.0f)), 0.0f);
 			float oy = fmaxf(fmaxf(y0 - pos[1], pos[1] - (y0 + 8192.0f)), 0.0f);
 			if (ox * ox + oy * oy > reach * reach)
+				continue;
+			// (an Old 3DS reads one only with room for it, as streamExterior: a cell read that runs the heap dry stops the
+			// game; it streams in once there is room)
+			if (g_profile.streamWaitsForBlock
+				&& !((size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= 1536u * 1024u))
 				continue;
 			finishStreamJob(*this, true);
 			if (!cells[ci].live && loadLevelCell(*this, ci))

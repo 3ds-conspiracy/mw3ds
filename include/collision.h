@@ -36,8 +36,9 @@ bool collisionRaycast(CollisionMesh& mesh, const float a[3], const float b[3], f
 
 // Highest surface directly below (x, y) with zBottom <= z <= zTop. A surface steeper than maxSlope degrees is a
 // wall, not a floor (60 for placing things and resting actors; the player walks on kWalkSlope). A limit under 60
-// is for the land only: objects (stair ramps, rocks) keep 60
-bool collisionFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope = 60.0f);
+// is for the land only: objects (stair ramps, rocks) keep 60, unless objectSlope is under that (90: no limit of its own)
+bool collisionFloor(CollisionMesh& mesh, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope = 60.0f,
+	float objectSlope = 90.0f);
 // The steepest land the player walks on: OpenMW's Constants::sMaxSlope (46 degrees); steeper slides as a wall
 static const float kWalkSlope = 46.0f;
 // The land's surface over (x, y) with zBottom <= z <= zTop, whatever its slope (land triangles only, terrain.py's):
@@ -48,7 +49,7 @@ bool collisionLandFloor(CollisionMesh& mesh, float x, float y, float zTop, float
 // `reach` units around it (as OpenMW's actor box rests on the highest point under it, so on a slope
 // or a ledge's edge the middle is a little above the floor under it)
 bool collisionFootFloor(CollisionMesh& mesh, float x, float y, float reach, float zTop, float zBottom, float* zOut,
-	float maxSlope = 60.0f);
+	float maxSlope = 60.0f, float objectSlope = 90.0f);
 static const float kActorFootReach = 15.0f;
 
 // Whether the mesh's grid covers (x, y), give or take `margin` (a query outside it would still look at the edge buckets)

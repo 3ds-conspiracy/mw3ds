@@ -262,8 +262,9 @@ void Session::viewCamera(RenderCamera& cam)
 	float head[3] = { p.feet[0], p.feet[1], p.feet[2] + (previewFace ? 118.0f : 120.0f) };
 	float want = previewFace ? 70.0f : 220.0f;
 	float dir = previewFace ? 1.0f : -1.0f;       // the preview stands in front, facing back
-	// (dead: from behind and above, looking down at the body where it fell)
-	const float pitch = playerDead && deathView ? -0.6f : p.pitch;
+	// (dead: from behind and above, looking down at the body where it fell. The face preview is level with the face,
+	// whatever way the player looked when it opened: looking up, it sat under the chin, aimed level at the chest)
+	const float pitch = playerDead && deathView ? -0.6f : previewFace ? 0.0f : p.pitch;
 	float cp = cosf(pitch), sp = sinf(pitch);
 	float to[3] = { head[0] + dir * fx * cp * want, head[1] + dir * fy * cp * want, head[2] - sp * want };
 	// walls between the head and the camera pull it in

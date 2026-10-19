@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# Arriving outdoors (silt strider, a door) the loading screen went away with only the player's own cell read; the
+# neighbours streamed in after, on the console a second or more each, and near a cell's edge the ground beside the
+# player was the bare distant land until they came. Those nearer the arrival than the fog's start now load behind the
+# loading screen (STREAM:off: no streaming after the arrival, as on the console in its first moments). Vivec's strider
+# stop had 3 of them missing
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+60 0 0 0 0 ACTIVATE:darvame_hleran
+1.5 0 0 0
+0.3 0 0 0 0 STREAM:off
+0.3 0 0 0 0 TRAVEL:darvame_hleran:Vivec
+1 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Vivec+EXPECT:nearunloaded:eq:0
+0.3 0 0 0 0 STREAM:on

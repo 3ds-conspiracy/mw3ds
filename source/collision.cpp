@@ -223,10 +223,11 @@ static bool landTriangle(const float* a, const float* b, const float* c)
 		&& fabsf(b[0] - c[0]) < 130.0f && fabsf(b[1] - c[1]) < 130.0f;
 }
 
-bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope)
+bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope, float objectSlope)
 {
 	// the normal's z against its length, squared: cos(maxSlope)^2 (a hot path: the usual limits as constants)
 	float minZ2 = maxSlope == 60.0f ? 0.25f : maxSlope == kWalkSlope ? 0.48255f : cosf(maxSlope * 0.017453293f) * cosf(maxSlope * 0.017453293f);
+	float objZ2 = objectSlope >= 90.0f ? 0.0f : objectSlope == kWalkSlope ? 0.48255f : cosf(objectSlope * 0.017453293f) * cosf(objectSlope * 0.017453293f);
 	bool found = false;
 	float best = zBottom;
 	forTrianglesIn(m, x, y, x, y, [&](u32 t) {
@@ -244,8 +245,12 @@ bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBotto
 		sub(c, a, e2);
 		float n[3] = { e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0] };
 		// A walking limit under 60 is for the land only; objects keep 60 degrees: a stair's collision is often a steep
-		// ramp, which OpenMW's stepper climbs a step at a time (its stair hacks), and our floor test has no stepper
-		if (n[2] * n[2] < minZ2 * dot(n, n) && (maxSlope >= 60.0f || landTriangle(a, b, c) || n[2] * n[2] < 0.25f * dot(n, n)))
+		// ramp, which OpenMW's stepper climbs a step at a time (its stair hacks), and our floor test has no stepper.
+		// objectSlope holds objects to a limit of their own (an actor off the path grid: the prison ship's hull)
+		float nz2 = n[2] * n[2], len2 = dot(n, n);
+		if (nz2 < minZ2 * len2 && (maxSlope >= 60.0f || landTriangle(a, b, c) || nz2 < 0.25f * len2))
+			return;
+		if (nz2 < objZ2 * len2 && !landTriangle(a, b, c))
 			return;
 		float l1 = ((b[1] - c[1]) * (x - c[0]) + (c[0] - b[0]) * (y - c[1])) / det;
 		float l2 = ((c[1] - a[1]) * (x - c[0]) + (a[0] - c[0]) * (y - c[1])) / det;
@@ -294,14 +299,15 @@ bool collisionLandFloor(CollisionMesh& m, float x, float y, float zTop, float zB
 	return found;
 }
 
-bool collisionFootFloor(CollisionMesh& m, float x, float y, float reach, float zTop, float zBottom, float* zOut, float maxSlope)
+bool collisionFootFloor(CollisionMesh& m, float x, float y, float reach, float zTop, float zBottom, float* zOut, float maxSlope,
+	float objectSlope)
 {
 	static const float offs[5][2] = { { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
 	bool found = false;
 	for (auto& o : offs)
 	{
 		float z;
-		if (collisionFloor(m, x + o[0] * reach, y + o[1] * reach, zTop, zBottom, &z, maxSlope) && (!found || z > *zOut))
+		if (collisionFloor(m, x + o[0] * reach, y + o[1] * reach, zTop, zBottom, &z, maxSlope, objectSlope) && (!found || z > *zOut))
 		{
 			*zOut = z;
 			found = true;
