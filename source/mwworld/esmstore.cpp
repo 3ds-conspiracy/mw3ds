@@ -9,7 +9,6 @@
 #include "extern/cjson/cJSON.h"
 #include "components/debug/debuglog.hpp"
 #include "components/files/zfile.hpp"
-#include "components/interpreter/interpreter.hpp"
 #include "mwworld/esmhelpers.hpp"
 
 std::string lower(const std::string& s)

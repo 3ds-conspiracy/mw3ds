@@ -1,6 +1,5 @@
 // The loaded cells: entering, streaming exterior cells, memory, eviction
 #include "mwworld/worldimp.hpp"
-#include "mwrender/objectpaging.hpp"
 #include "components/files/datapath.hpp"
 
 #include <3ds.h>
@@ -10,25 +9,19 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "extern/cjson/cJSON.h"
 #include "platform/linear.hpp"
-#include "platform/console.hpp"
 extern "C" u32 __ctru_heap_size;
 #include "platform/memstat.hpp"
 #include <malloc.h>
 #include "components/debug/debuglog.hpp"
-#include "components/files/zfile.hpp"
 #include "mwworld/worldhelpers.hpp"
 #include <array>
 #include <functional>
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/animation.hpp"
 #include "mwbase/session.hpp"
 #include "mwsound/soundmanagerimp.hpp"
-#include "platform/gamma.hpp"
-#include "mwbase/sessionhelpers.hpp"
 
 int World::refsInMemory() const
 {

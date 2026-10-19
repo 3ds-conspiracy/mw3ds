@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "platform/console.hpp"
 #include "components/debug/debuglog.hpp"
 #include <algorithm>
 #include <array>
@@ -19,14 +18,9 @@
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/objectpaging.hpp"
-#include "mwrender/animation.hpp"
 #include "mwbase/session.hpp"
 #include <cstdlib>
-#include "platform/gamma.hpp"
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "mwbase/sessionhelpers.hpp"
 
 static bool s_enabled = false;
 static std::string s_dataDir;

@@ -1,7 +1,6 @@
 #pragma once
 
 // What the game data loader and the script tree share
-#include "mwworld/esmstore.hpp"
 
 #include <algorithm>
 #include <cstdio>
@@ -9,10 +8,6 @@
 #include <cstring>
 #include <malloc.h>
 
-#include "extern/cjson/cJSON.h"
-#include "components/debug/debuglog.hpp"
-#include "components/files/zfile.hpp"
-#include "components/interpreter/interpreter.hpp"
 
 void convertStatement(const cJSON* j, Node& n, const Script* scope);
 

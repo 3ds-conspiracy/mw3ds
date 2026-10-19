@@ -3,9 +3,7 @@
 #include <cmath>
 
 #include "components/debug/debuglog.hpp"
-#include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
 
 // One repair of a carried weapon or armor piece, as the screen's row does: at the smith (repairRef) for his price,
 // else a try with the tool (repairTool), which wears one use

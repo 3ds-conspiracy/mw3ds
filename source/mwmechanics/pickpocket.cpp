@@ -4,10 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
 // Pickpocketing (OpenMW's reading of Morrowind): the thief's and the victim's

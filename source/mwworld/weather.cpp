@@ -1,7 +1,5 @@
 // Weather and the time of day: transitions, colours, fog, sun and light
 #include "mwworld/worldimp.hpp"
-#include "mwrender/objectpaging.hpp"
-#include "components/files/datapath.hpp"
 
 #include <3ds.h>
 #include <algorithm>
@@ -10,15 +8,8 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "extern/cjson/cJSON.h"
-#include "platform/linear.hpp"
-#include "platform/console.hpp"
 extern "C" u32 __ctru_heap_size;
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "components/debug/debuglog.hpp"
-#include "components/files/zfile.hpp"
-#include "mwworld/worldhelpers.hpp"
 
 // OpenMW's RegionWeather::chooseNewWeather: a number 1..100 walks the chances in weather order; chances that
 // sum to under 100 leave Clear for the rest

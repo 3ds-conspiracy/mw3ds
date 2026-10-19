@@ -4,27 +4,15 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
-#include "mwmechanics/combathelpers.hpp"
 #include <cstdio>
-#include "platform/gamma.hpp"
-#include "platform/linear.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include <array>
 #include <functional>
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/objectpaging.hpp"
-#include "mwrender/animation.hpp"
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "mwbase/sessionhelpers.hpp"
-#include "mwgui/windowhelpers.hpp"
 
 void Session::addIndicator(const std::string& text, u32 rgb)
 {

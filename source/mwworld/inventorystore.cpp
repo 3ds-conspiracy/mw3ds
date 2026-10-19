@@ -4,10 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
 static const float kArmorSlotWeight[11] = { 0.1f, 0.3f, 0.1f, 0.1f, 0.1f, 0.1f, 0.05f, 0.05f, 0.1f, 0.05f, 0.05f };

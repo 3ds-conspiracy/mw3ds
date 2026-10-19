@@ -9,11 +9,8 @@
 #include <queue>
 #include <tuple>
 #include "testdrive/testdrive.hpp"
-#include "platform/gamma.hpp"
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/console.hpp"
 
 extern const char* g_playerBlock;
 #include "testdrive/testhelpers.hpp"
@@ -60,11 +57,6 @@ bool cellNameMatches(const std::string& cell, std::string want)
 // ---- mechanics tests: names, numbers, snapshots
 
 #include <map>
-#include "mwgui/windowmanagerimp.hpp"
-#include "mwphysics/physicssystem.hpp"
-#include "platform/linear.hpp"
-#include "platform/memstat.hpp"
-#include "components/files/zfile.hpp"
 #include <malloc.h>
 
 // How far a player has to walk to a door: the grid route's length (squared, to compare like a 3D distance squared).

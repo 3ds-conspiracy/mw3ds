@@ -4,23 +4,12 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
-#include "mwworld/worldimp.hpp"
-#include "mwrender/objectpaging.hpp"
-#include "components/files/datapath.hpp"
 #include <3ds.h>
 #include <cstdio>
-#include "extern/cjson/cJSON.h"
-#include "platform/linear.hpp"
-#include "platform/console.hpp"
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "components/files/zfile.hpp"
-#include "mwworld/worldhelpers.hpp"
 
 bool Session::npcAware(int ri)
 {

@@ -2,10 +2,8 @@
 #include <cmath>
 #include <functional>
 
-#include "components/debug/debuglog.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
 #include "mwmechanics/alchemyhelpers.hpp"
 
 // Ingredients on the left, the (up to four) chosen on the right with the effects their potion will

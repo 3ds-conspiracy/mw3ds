@@ -7,21 +7,11 @@
 #include <map>
 #include <queue>
 #include <tuple>
-#include "testdrive/testdrive.hpp"
-#include "platform/gamma.hpp"
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/console.hpp"
 
 extern const char* g_playerBlock;
-#include "mwgui/windowmanagerimp.hpp"
-#include "mwphysics/physicssystem.hpp"
-#include "platform/linear.hpp"
-#include "platform/memstat.hpp"
-#include "components/files/zfile.hpp"
 #include <malloc.h>
-#include "testdrive/testhelpers.hpp"
 
 // The path grid of a cave can be split in two pieces with no link between them: findPath then has no route. A player
 // walks as far as the grid goes and then crosses by sight: to the point of the goal's piece that can be seen from a

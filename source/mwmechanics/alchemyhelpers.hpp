@@ -4,10 +4,6 @@
 #include <cmath>
 #include <functional>
 
-#include "components/debug/debuglog.hpp"
-#include "mwgui/windowmanagerimp.hpp"
-#include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
 
 extern const World* s_alchemyWorld;
 bool sameEffect(const Object::IngredientEffect& a, const Object::IngredientEffect& b);

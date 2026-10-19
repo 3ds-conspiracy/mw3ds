@@ -1,6 +1,5 @@
 // A cell's references: read from its file, their contents and actors, respawn, and its saved state
 #include "mwworld/worldimp.hpp"
-#include "mwrender/objectpaging.hpp"
 #include "components/files/datapath.hpp"
 
 #include <3ds.h>
@@ -11,15 +10,11 @@
 #include <cstring>
 
 #include "extern/cjson/cJSON.h"
-#include "platform/linear.hpp"
-#include "platform/console.hpp"
 extern "C" u32 __ctru_heap_size;
-#include "platform/memstat.hpp"
 #include <malloc.h>
 #include "components/debug/debuglog.hpp"
 #include "components/files/zfile.hpp"
 #include "mwworld/worldhelpers.hpp"
-#include "mwgui/savegamedialog.hpp"
 #include <vector>
 #include <zlib.h>
 #include <array>
@@ -27,11 +22,6 @@ extern "C" u32 __ctru_heap_size;
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/animation.hpp"
-#include "mwbase/session.hpp"
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/gamma.hpp"
-#include "mwbase/sessionhelpers.hpp"
 #include "mwstate/statehelpers.hpp"
 
 static bool isItemType(const Atom& t)

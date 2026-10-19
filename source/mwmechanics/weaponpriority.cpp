@@ -4,10 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
 // What a fighter does next, as OpenMW's prepareNextAction weighs it (aicombataction.cpp): its weapon against its

@@ -9,8 +9,6 @@
 #include <cstring>
 #include <unordered_set>
 
-#include "mwworld/esmstore.hpp"
-#include "mwrender/animation.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwworld/worldimp.hpp"
 #include "components/interpreter/interpreterhelpers.hpp"

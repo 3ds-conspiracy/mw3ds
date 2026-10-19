@@ -1,7 +1,4 @@
 // Spells known, diseases and curses on actors and the player
-#include "mwworld/worldimp.hpp"
-#include "mwrender/objectpaging.hpp"
-#include "components/files/datapath.hpp"
 
 #include <3ds.h>
 #include <algorithm>
@@ -10,18 +7,10 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "extern/cjson/cJSON.h"
-#include "platform/linear.hpp"
-#include "platform/console.hpp"
 extern "C" u32 __ctru_heap_size;
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "components/debug/debuglog.hpp"
-#include "components/files/zfile.hpp"
-#include "mwworld/worldhelpers.hpp"
 #include <unordered_set>
 #include "mwbase/session.hpp"
-#include "mwmechanics/magichelpers.hpp"
 
 bool World::pcHasDisease(int type) const
 {

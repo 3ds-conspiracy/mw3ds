@@ -9,7 +9,6 @@
 #include "platform/linear.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwrender/renderingmanager.hpp"
-#include "mwworld/worldimp.hpp"
 #include "components/files/zfile.hpp"
 
 template <typename T> static bool rd(FILE* f, T& v) { return fread(&v, sizeof(T), 1, f) == 1; }

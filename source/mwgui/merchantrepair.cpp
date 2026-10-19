@@ -4,11 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
-#include "mwmechanics/combathelpers.hpp"
 
 // A smith's price for mending an item (OpenMW's formula): the missing condition over
 // max condition / value, times fRepairMult, then bartered like a purchase

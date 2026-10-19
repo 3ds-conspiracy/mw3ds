@@ -23,10 +23,8 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
 static const float kHeldLightShare = 0.5f;           // a held torch's colour on its holder (Actor::heldLight), against OpenMW

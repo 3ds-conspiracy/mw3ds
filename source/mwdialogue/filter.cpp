@@ -6,8 +6,6 @@
 #include <map>
 #include <cstring>
 
-#include "components/debug/debuglog.hpp"
-#include "components/interpreter/interpreter.hpp"
 #include "mwworld/worldimp.hpp"
 #include "mwdialogue/dialoguehelpers.hpp"
 

@@ -5,9 +5,6 @@
 
 #include "mwsound/soundmanagerimp.hpp"
 #include "platform/gamma.hpp"
-#include "platform/linear.hpp"
-#include "components/debug/debuglog.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 #include <algorithm>
@@ -16,13 +13,8 @@
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/objectpaging.hpp"
-#include "mwrender/animation.hpp"
 #include <cstdlib>
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "mwbase/sessionhelpers.hpp"
-#include "mwgui/windowhelpers.hpp"
 
 // Options, in Morrowind's tabs: Prefs, Audio, Video and Controls (L / R, or a tap on a tab). Each tab is a column of
 // settings, a bar (D-pad left / right, or a tap on it, sets it) or a value (A, a tap or D-pad right steps to the next,

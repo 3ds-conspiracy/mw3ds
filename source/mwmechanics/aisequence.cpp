@@ -4,10 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
 // A package that ran its hours or got where it was going is over: GetAIPackageDone reports 1, and OpenMW drops it, so

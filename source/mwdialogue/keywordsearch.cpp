@@ -6,10 +6,6 @@
 #include <map>
 #include <cstring>
 
-#include "components/debug/debuglog.hpp"
-#include "components/interpreter/interpreter.hpp"
-#include "mwworld/worldimp.hpp"
-#include "mwdialogue/dialoguehelpers.hpp"
 
 // What may come before a keyword (OpenMW's word separators)
 static const char kWordStarts[] = { '\n', '\r', ' ', '\t', '\'', '"', '(', '[', 0 };

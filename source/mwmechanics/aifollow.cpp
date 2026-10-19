@@ -4,11 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
-#include "mwmechanics/combathelpers.hpp"
 
 // The player's recent footsteps: a point every 120 units walked, numbered as they come. A follower that is held up
 // (the player out of sight behind a rock, or a ledge in the straight way) goes along them, the way the player went

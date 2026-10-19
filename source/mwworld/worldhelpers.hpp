@@ -1,9 +1,6 @@
 #pragma once
 
 // What the world files share
-#include "mwworld/worldimp.hpp"
-#include "mwrender/objectpaging.hpp"
-#include "components/files/datapath.hpp"
 
 #include <3ds.h>
 #include <algorithm>
@@ -12,14 +9,8 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "extern/cjson/cJSON.h"
-#include "platform/linear.hpp"
-#include "platform/console.hpp"
 extern "C" u32 __ctru_heap_size;
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "components/debug/debuglog.hpp"
-#include "components/files/zfile.hpp"
 
 static const char* kItemTypes[] = { "MISC", "BOOK", "ALCH", "INGR", "WEAP", "ARMO", "CLOT", "LIGH", "APPA", "LOCK", "PROB", "REPA" };
 

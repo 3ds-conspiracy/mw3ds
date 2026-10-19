@@ -9,24 +9,9 @@
 #include <string>
 #include <sys/stat.h>
 #include <vector>
-#include "mwsound/soundmanagerimp.hpp"
-#include "mwrender/objectpaging.hpp"
-#include "platform/linear.hpp"
-#include "platform/memstat.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwworld/player.hpp"
-#include "platform/gamma.hpp"
-#include "mwrender/renderingmanager.hpp"
-#include "mwrender/screenshotmanager.hpp"
-#include "testdrive/testdrive.hpp"
-#include "components/files/zfile.hpp"
-#include "mwgui/savegamedialog.hpp"
-#include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
 #include "platform/platform.hpp"
-#include "testdrive/autoinput.hpp"
 #include "mwinput/inputmanagerimp.hpp"
-#include "mwgui/loadingscreen.hpp"
 #include "testdrive/steprunner.hpp"
 
 extern "C" u32 __ctru_heap_size, __ctru_linear_heap_size;

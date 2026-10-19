@@ -5,7 +5,6 @@
 #include "components/debug/debuglog.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
 #include "mwmechanics/alchemyhelpers.hpp"
 
 std::string Session::effectLabel(int effect, int skill, int attribute)

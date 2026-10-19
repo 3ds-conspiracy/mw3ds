@@ -4,12 +4,9 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
-#include "mwworld/player.hpp"
 
 static const float kNpcSwimDepth = 95.0f;          // as the player's: feet below the surface
 

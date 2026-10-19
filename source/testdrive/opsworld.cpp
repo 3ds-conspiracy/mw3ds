@@ -12,18 +12,10 @@
 #include "platform/gamma.hpp"
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/console.hpp"
 
 extern const char* g_playerBlock;
-#include "mwgui/windowmanagerimp.hpp"
-#include "mwphysics/physicssystem.hpp"
-#include "platform/linear.hpp"
-#include "platform/memstat.hpp"
-#include "components/files/zfile.hpp"
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
-#include "testdrive/opshelpers.hpp"
 
 std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 {

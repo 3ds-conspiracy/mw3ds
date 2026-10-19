@@ -4,11 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
-#include "mwmechanics/combathelpers.hpp"
 
 // How much an effect is worth to an actor fighting the player (OpenMW's rateEffect, spellpriority.cpp; withEnemy false:
 // a potion, rated with no enemy). 1 x the effect's cost (calcEffectCost, GameSpell), made negative when harmful (then x

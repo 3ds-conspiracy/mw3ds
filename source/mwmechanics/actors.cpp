@@ -4,31 +4,17 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwmechanics/combathelpers.hpp"
-#include "mwworld/worldimp.hpp"
-#include "mwrender/objectpaging.hpp"
-#include "components/files/datapath.hpp"
 #include <3ds.h>
 #include <cstdio>
-#include "extern/cjson/cJSON.h"
-#include "platform/linear.hpp"
-#include "platform/console.hpp"
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "components/files/zfile.hpp"
-#include "mwworld/worldhelpers.hpp"
 #include <array>
 #include <functional>
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/animation.hpp"
-#include "platform/gamma.hpp"
-#include "mwbase/sessionhelpers.hpp"
 
 void Session::makeHostile(int ri)
 {

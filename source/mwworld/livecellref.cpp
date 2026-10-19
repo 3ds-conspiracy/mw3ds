@@ -4,9 +4,6 @@
 #include <cstring>
 
 #include "extern/cjson/cJSON.h"
-#include "components/debug/debuglog.hpp"
-#include "mwgui/savegamedialog.hpp"
-#include "components/files/zfile.hpp"
 #include <vector>
 #include <zlib.h>
 #include "mwworld/worldimp.hpp"
@@ -16,16 +13,8 @@
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/objectpaging.hpp"
-#include "mwrender/animation.hpp"
-#include "mwbase/session.hpp"
 #include <cmath>
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/gamma.hpp"
-#include "platform/linear.hpp"
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "mwbase/sessionhelpers.hpp"
 #include "mwstate/statehelpers.hpp"
 
 cJSON* World::refState(int i) const

@@ -2,13 +2,8 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/linear.hpp"
-#include "components/debug/debuglog.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/inventoryhelpers.hpp"
 
 // How a quick key is set from Inventory / Magic: the D-pad moves the selection there, so both layouts hold ZL
 const char* kQuickHint = "ZL + D-pad: set quick key";

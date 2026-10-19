@@ -4,11 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
-#include "mwmechanics/combathelpers.hpp"
 
 // The summoned creature comes in a flash beside its caster and goes for the player, for the spell's duration; a ward's
 // effects land on the caster, with their hit

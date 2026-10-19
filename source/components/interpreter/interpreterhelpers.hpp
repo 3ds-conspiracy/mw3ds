@@ -1,7 +1,6 @@
 #pragma once
 
 // What the interpreter and the script functions (mwscript/*extensions.cpp) share: the context, arguments
-#include "components/interpreter/interpreter.hpp"
 #include "components/interpreter/scriptfunctions.hpp"
 
 #include <optional>
@@ -12,10 +11,6 @@
 #include <cstring>
 #include <unordered_set>
 
-#include "mwworld/esmstore.hpp"
-#include "mwrender/animation.hpp"
-#include "components/debug/debuglog.hpp"
-#include "mwworld/worldimp.hpp"
 
 
 

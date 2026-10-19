@@ -3,7 +3,6 @@
 #include <cmath>
 #include <cstdio>
 
-#include "components/debug/debuglog.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 

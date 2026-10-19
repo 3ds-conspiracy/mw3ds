@@ -5,29 +5,16 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "extern/cjson/cJSON.h"
-#include "components/debug/debuglog.hpp"
-#include "mwgui/savegamedialog.hpp"
-#include "components/files/zfile.hpp"
 #include <vector>
 #include <zlib.h>
-#include "mwworld/worldimp.hpp"
 #include <algorithm>
 #include <array>
 #include <functional>
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/objectpaging.hpp"
-#include "mwrender/animation.hpp"
-#include "mwbase/session.hpp"
 #include <cmath>
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/gamma.hpp"
-#include "platform/linear.hpp"
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "mwbase/sessionhelpers.hpp"
 
 bool packText(const std::string& text, std::vector<u8>& out);
 bool unpackText(const u8* in, size_t inLen, u32 raw, std::string& out);

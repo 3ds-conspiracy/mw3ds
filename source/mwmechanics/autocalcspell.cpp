@@ -7,11 +7,6 @@
 #include <cstring>
 #include <malloc.h>
 
-#include "extern/cjson/cJSON.h"
-#include "components/debug/debuglog.hpp"
-#include "components/files/zfile.hpp"
-#include "components/interpreter/interpreter.hpp"
-#include "mwworld/esmhelpers.hpp"
 
 // School of each magic skill: alteration, conjuration, destruction, illusion, mysticism, restoration
 static const int kSchoolSkillIdx[6] = { 11, 13, 10, 12, 14, 15 };

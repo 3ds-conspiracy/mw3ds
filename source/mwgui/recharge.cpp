@@ -2,11 +2,8 @@
 #include <cmath>
 #include <functional>
 
-#include "components/debug/debuglog.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
-#include "mwmechanics/enchantinghelpers.hpp"
 
 // Recharging: enchanted items that aren't full; tapping one pours the chosen gem's soul into it
 void Session::drawRecharge()

@@ -3,10 +3,7 @@
 #include <functional>
 
 #include "components/debug/debuglog.hpp"
-#include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
-#include "mwmechanics/enchantinghelpers.hpp"
 
 // The player's enchanted items that cast when used or when they strike win back fMagicItemRechargePerSecond of charge
 // each second (real time; skipped time counts as its real seconds), up to full (OpenMW's rechargeItems)

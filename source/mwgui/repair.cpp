@@ -1,10 +1,8 @@
 // The repair screen: at a smith or with a repair tool
 #include <cmath>
 
-#include "components/debug/debuglog.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
 
 void Session::openRepair(int smith, int tool)
 {

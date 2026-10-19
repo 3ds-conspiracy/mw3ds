@@ -2,13 +2,9 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/linear.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/inventoryhelpers.hpp"
 
 // One stack out of the open container into the player's inventory (the owner's claim when it has one)
 void Session::containerTake(int i, bool checkOwner)

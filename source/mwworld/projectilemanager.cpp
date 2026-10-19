@@ -9,10 +9,7 @@
 #include <cstring>
 
 #include <unordered_set>
-#include "platform/console.hpp"
-#include "platform/linear.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwbase/session.hpp"
 
 static const float kActorRadius = 34.0f, kActorHeight = 135.0f;

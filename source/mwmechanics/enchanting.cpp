@@ -5,10 +5,7 @@
 #include <functional>
 
 #include "components/debug/debuglog.hpp"
-#include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
-#include "mwmechanics/enchantinghelpers.hpp"
 
 const char* kCastNames[4] = { "Cast Once", "Cast When Strikes", "Cast When Used", "Constant Effect" };
 

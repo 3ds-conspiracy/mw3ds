@@ -7,24 +7,15 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <cmath>
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/gamma.hpp"
-#include "platform/linear.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 #include <array>
 #include <functional>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/objectpaging.hpp"
-#include "mwrender/animation.hpp"
 #include <cstdlib>
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "mwbase/sessionhelpers.hpp"
-#include "mwgui/windowhelpers.hpp"
 
 static std::string formatTime(u64 ms)
 {

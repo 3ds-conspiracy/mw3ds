@@ -9,21 +9,9 @@
 #include <string>
 #include <sys/stat.h>
 #include <vector>
-#include "mwsound/soundmanagerimp.hpp"
-#include "mwrender/objectpaging.hpp"
-#include "platform/linear.hpp"
-#include "platform/memstat.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwworld/player.hpp"
-#include "platform/gamma.hpp"
-#include "mwrender/renderingmanager.hpp"
-#include "mwrender/screenshotmanager.hpp"
 #include "testdrive/testdrive.hpp"
-#include "components/files/zfile.hpp"
-#include "mwgui/savegamedialog.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
-#include "platform/platform.hpp"
 #include "testdrive/autoinput.hpp"
 
 // A scripted run keeps the Old 3DS frame cap (30 / 20 fps), as the console would run it. A case that only needs the story

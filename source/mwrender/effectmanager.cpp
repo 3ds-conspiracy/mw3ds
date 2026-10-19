@@ -5,10 +5,7 @@
 #include <cstring>
 
 #include <unordered_set>
-#include "platform/console.hpp"
-#include "platform/linear.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwbase/session.hpp"
 
 // Spell visuals' pieces (meshes, flipbook sheets, baked frames) stay loaded once seen, for the next cast; only with

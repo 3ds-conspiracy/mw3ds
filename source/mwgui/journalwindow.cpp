@@ -4,13 +4,9 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/linear.hpp"
 #include "components/debug/debuglog.hpp"
-#include "mwrender/renderingmanager.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/statshelpers.hpp"
 
 // The questlines the journal's entries can be narrowed to, told apart by the start of the quest's id (A1_ / B5_ / C3_
 // main quest, MG_ Mages Guild ...); every other quest is "Other"

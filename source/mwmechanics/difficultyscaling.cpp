@@ -5,21 +5,13 @@
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwrender/objectpaging.hpp"
-#include "mwrender/animation.hpp"
 #include "mwbase/session.hpp"
 
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "platform/gamma.hpp"
-#include "platform/linear.hpp"
-#include "components/debug/debuglog.hpp"
-#include "platform/memstat.hpp"
 #include <malloc.h>
-#include "mwbase/sessionhelpers.hpp"
 
 // Starting somewhere other than the Census office: character creation counts as done, with
 // the first playable class and birthsign, and the player stands outside a door into this cell

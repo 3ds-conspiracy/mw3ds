@@ -6,7 +6,6 @@
 #include "components/debug/debuglog.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
-#include "mwgui/widgets.hpp"
 
 static const char* kRangeNames[3] = { "Self", "Touch", "Target" };
 

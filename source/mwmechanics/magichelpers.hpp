@@ -6,8 +6,6 @@
 #include <cstdlib>
 #include <unordered_set>
 
-#include "components/debug/debuglog.hpp"
-#include "mwbase/session.hpp"
 #include "mwmechanics/magiceffects.hpp"
 
 

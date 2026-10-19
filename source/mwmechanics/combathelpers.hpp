@@ -6,10 +6,6 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "mwsound/soundmanagerimp.hpp"
-#include "components/debug/debuglog.hpp"
-#include "mwbase/session.hpp"
-#include "mwdialogue/dialoguemanagerimp.hpp"
 
 enum { SKILL_BLOCK = 0, SKILL_MEDIUM_ARMOR = 2, SKILL_HEAVY_ARMOR = 3, SKILL_BLUNT = 4, SKILL_LONG_BLADE = 5,
        SKILL_AXE = 6, SKILL_SPEAR = 7, SKILL_SECURITY = 18, SKILL_SNEAK = 19, SKILL_LIGHT_ARMOR = 21, SKILL_SHORT_BLADE = 22,
