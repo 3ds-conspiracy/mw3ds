@@ -36,6 +36,35 @@ FNT_HEADER = 296                 # float size, int 1, int 1, char name[284]
 FNT_GLYPH = 56                   # 14 floats per character
 FNT_SIZE = FNT_HEADER + 256 * FNT_GLYPH
 
+# Which character each of a font's 256 slots holds (as OpenMW's FontLoader reads them): the win1252 releases' fonts
+# (English, German, French ...) are in code page 437's order, not win1252's (a umlaut at 0x84, sharp s at 0xE1); the
+# win1250 ones (Polish ...) in win1250 with these slots holding other letters (0: none); the win1251 ones (Russian)
+# in win1251
+FONT_CODEC = {"cp1252": "cp437"}
+WIN1250_SLOTS = {0x80: 0xC6, 0x81: 0x9C, 0x82: 0xE6, 0x83: 0xB3, 0x84: 0xF1, 0x85: 0xB9, 0x86: 0xBF, 0x87: 0x9F,
+                 0x88: 0xEA, 0x89: 0xEA, 0x8A: 0, 0x8B: 0, 0x8C: 0x8F, 0x8D: 0xAF, 0x8E: 0xA5, 0x8F: 0x8C, 0x90: 0xCA,
+                 0x93: 0xA3, 0x94: 0xF6, 0x95: 0xF3, 0x96: 0xAF, 0x97: 0x8F, 0x99: 0xD3, 0x9A: 0xD1, 0x9C: 0, 0xA0: 0xB9,
+                 0xA1: 0xAF, 0xA2: 0xF3, 0xA3: 0xBF, 0xA4: 0, 0xE1: 0x8C, 0xE3: 0, 0xF5: 0}
+# Characters the fonts lack, drawn with one they have, by its slot (Morrowind's own stand-ins, as OpenMW's FontLoader
+# lists them): curly quotes as straight ones, a low double quote as a comma, accented capitals as plain ones ...
+FONT_STAND_INS = {
+    34: "\u201c\u201d\u00a8", 37: "\u2030", 39: "\u2018\u2019\u00b4", 43: "\u2020", 44: "\u201a\u201e\u00b8",
+    45: "\u2013\u2014\u00ad", 46: "\u2026", 49: "\u00b9", 51: "\u00b3", 60: "\u2039", 62: "\u203a",
+    65: "\u00c0\u00c1\u00c2\u00c3", 68: "\u00d0", 69: "\u00c8\u00ca\u00cb\u0401", 73: "\u00cc\u00cd\u00ce\u00cf",
+    79: "\u0152\u00d2\u00d3\u00d4\u00d5\u00d8", 83: "\u0160", 84: "\u2122", 85: "\u00d9\u00da\u00db",
+    89: "\u0178\u00dd", 90: "\u017d", 94: "\u02c6", 95: "\u00af", 97: "\u00e3", 99: "\u00a9", 100: "\u00f0",
+    111: "\u0153\u00f5\u00f8", 114: "\u00ae", 115: "\u0161", 120: "\u00d7", 121: "\u00fd", 122: "\u017e",
+    126: "\u02dc", 137: "\u0451", 216: "\u2021", 221: "\u00a6",
+}
+
+
+def slot_char(i):
+    """The character font slot i holds in this release's fonts ("" none)."""
+    if CODEC == "cp1250":
+        b = WIN1250_SLOTS.get(i, i)
+        return bytes([b]).decode("cp1250", errors="ignore") if b else ""
+    return bytes([i]).decode(FONT_CODEC.get(CODEC, CODEC), errors="ignore")
+
 # Morrowind.ini [Font Color] defaults
 COLOR_DEFAULTS = {
     "color_normal": "202,165,96", "color_normal_over": "223,201,159", "color_normal_pressed": "243,237,221",
@@ -174,19 +203,18 @@ def parse_font(fnt, tex):
         return total
     if ink_in(ink[::-1]) > ink_in(ink) * 1.2:
         ink = ink[::-1]
-    glyphs, line = {}, 0.0
+    glyphs, line, by_slot = {}, 0.0, {}
     for i, x, y, w, h, advance, kerning, ascent in rects:
-        ch = bytes([i]).decode(CODEC, errors="ignore")       # the release's code page: its fonts match it
+        ch = slot_char(i)
         if not ch or advance <= 0 or w < 0 or h < 0:
             continue
-        glyphs[ord(ch)] = [round(x), round(y), round(w), round(h), round(advance, 2), round(kerning, 2),
-                           round(size - ascent, 2)]
+        by_slot[i] = [round(x), round(y), round(w), round(h), round(advance, 2), round(kerning, 2), round(size - ascent, 2)]
+        glyphs[ord(ch)] = by_slot[i]
         line = max(line, h)
-    # The fonts have no curly quotes or long dashes: the slots cp1252 gives them hold other letters (o circumflex,
-    # o umlaut ...). The straight ones stand in, as OpenMW's font loader does
-    for cp, plain in ((0x2018, "'"), (0x2019, "'"), (0x201C, '"'), (0x201D, '"'), (0x2013, "-"), (0x2014, "-")):
-        if ord(plain) in glyphs:
-            glyphs[cp] = glyphs[ord(plain)]
+    for slot, chars in FONT_STAND_INS.items():
+        if slot in by_slot:
+            for ch in chars:
+                glyphs.setdefault(ord(ch), by_slot[slot])
     if ord("A") not in glyphs or ord(" ") not in glyphs:
         return None
     img = Image.new("L", (pow2(tw), pow2(th)), 0)

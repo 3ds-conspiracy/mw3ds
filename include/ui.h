@@ -43,6 +43,9 @@ void uiConsume(u32 keys);                 // keys handled by gameplay are hidden
 // Text (system font). scale 0.5 ~ 15 px lines.
 float uiLineHeight(float scale);
 float uiTextWidth(const std::string& s, float scale);
+// The game font's own glyph for a character (not the '?' a missing one is drawn as): where it is in the font's picture
+// and its advance; false when the font has none
+bool uiFontGlyph(unsigned cp, int& x, int& y, float& advance);
 std::vector<std::string> uiWrap(const std::string& text, float width, float scale);
 void uiText(float x, float y, float scale, u32 color, const std::string& s);
 // A picture from data/art (loaded once, kept): its own size (w, h) inside the texture, drawn at x, y scaled

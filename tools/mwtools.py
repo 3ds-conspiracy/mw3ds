@@ -224,8 +224,10 @@ def read_lines(path):
 
 
 def write_lines(path, lines):
+    """UTF-8, as the game reads its text: a step's words in another language (NOTIFY:geträumt) arrive whole (written as
+    ASCII, every other character came out a "?")."""
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    Path(path).write_text("\n".join(lines) + "\n", encoding="ascii", errors="replace", newline="\n")
+    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
 def grep(path, pattern):

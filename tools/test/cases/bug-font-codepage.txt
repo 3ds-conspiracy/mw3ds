@@ -1,0 +1,9 @@
+# The game font's characters are where Morrowind's .fnt files keep them: in code page 437's order for the win1252
+# releases (English, German, French ...), as OpenMW's FontLoader reads them, with its stand-ins for what the font lacks
+# (a curly quote drawn as the straight one, a low double quote as a comma ...). Read as win1252, slot 0x84 (ä in code
+# page 437) was taken for the low double quote and ä itself for slot 0xE4 (Σ): German text lost its umlauts, French its
+# accents ("geträumt" drawn without the ä, or with a "?"). Needs data converted after the change (game.json's font)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 EXPECT:glyph:228:gt:0+EXPECT:glyph:246:gt:0+EXPECT:glyph:252:gt:0+EXPECT:glyph:223:gt:0+EXPECT:glyph:233:gt:0
+0.3 0 0 0 0 EXPECT:glyphsame:8222,44:eq:1+EXPECT:glyphsame:8217,39:eq:1
+0.3 0 0 0 0 EXPECT:glyph:931:gt:0+EXPECT:glyphsame:228,931:eq:0

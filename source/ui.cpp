@@ -265,6 +265,21 @@ static float fontScale(float scale)
 	return fabsf(k - 1.0f) < 0.2f ? 1.0f : k;
 }
 
+bool uiFontGlyph(unsigned cp, int& x, int& y, float& advance)
+{
+	const UiGlyph* g = nullptr;
+	if (cp < 256)
+		g = s_asciiHas[cp] ? &s_ascii[cp] : nullptr;
+	else if (s_def.glyphs.count(cp))
+		g = &s_def.glyphs.at(cp);
+	if (!g)
+		return false;
+	x = g->x;
+	y = g->y;
+	advance = g->advance;
+	return true;
+}
+
 static const UiGlyph* glyphOf(u32 cp)
 {
 	if (cp < 256)

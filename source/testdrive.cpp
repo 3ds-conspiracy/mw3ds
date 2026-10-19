@@ -211,7 +211,7 @@ static bool hasArg(const std::string& what)
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "clouduv" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "regionchance" || what == "regionweather"
+		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "regionchance" || what == "regionweather"
 		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
 }
 
@@ -1553,6 +1553,20 @@ static bool numberOf(Session& s, const std::string& what, const std::string& arg
 		v = 0.0f;
 		for (const CellBatch& b : w.here().batches)
 			v += b.side ? 1.0f : 0.0f;
+	}
+	else if (what == "glyph")       // <code point>: the game font's own glyph's advance for it; 0 when the font has none
+	{
+		int gx, gy;
+		float adv = 0.0f;
+		v = uiFontGlyph((unsigned)atoi(arg.c_str()), gx, gy, adv) ? adv : 0.0f;
+	}
+	else if (what == "glyphsame")   // <a>,<b>: 1 when the font draws the two code points with the same glyph; else 0
+	{
+		float a = 0.0f, b = 0.0f;
+		twoNumbers(arg, a, b);
+		int ax, ay, bx, by;
+		float aa, ba;
+		v = uiFontGlyph((unsigned)a, ax, ay, aa) && uiFontGlyph((unsigned)b, bx, by, ba) && ax == bx && ay == by ? 1.0f : 0.0f;
 	}
 	else if (what == "clouduv")     // <elevation>: how far out the cloud picture is at that height in the sky, as a % of
 	{                                 // its reach at the dome's rim (Morrowind's flat dome: little overhead, most low down)
