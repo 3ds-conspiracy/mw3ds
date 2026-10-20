@@ -8,13 +8,13 @@ The folders and file names follow OpenMW's, so a rule is found in the file of th
 | Folder | What is in it |
 |---|---|
 | `mwbase/` | `Session` (`session.hpp`): the game's state and services, OpenMW's `Environment` and managers in one |
-| `mwworld/` | `World` (`worldimp`), cells and streaming (`scene`, `cellstore`), items (`containerstore`, `inventorystore`), weather, time, activation (`action*.cpp`), projectiles |
+| `mwworld/` | `World` (`worldimp`), references (`livecellref.hpp`: `Ref`), cells and streaming (`scene`, `cellstore`), items (`containerstore`, `inventorystore`), weather, time, activation (`action*.cpp`), projectiles; `esmstore.hpp` holds `GameData`, the loaded records |
 | `mwmechanics/` | Rules: combat, AI packages (`ai*.cpp`), magic (`spell*.cpp`, `activespells`), crime and disposition (`mechanicsmanagerimp`), skills (`npcstats`), alchemy, enchanting, repair; `formulas.cpp` holds the numbers the spec tests read |
 | `mwphysics/` | Collision meshes (`physicssystem`), moving the player and actors (`movementsolver`) |
 | `mwrender/` | Drawing (`renderingmanager`), actors' meshes and animation (`animation`, `npcanimation`, `viewmodel`), sky, water, effects, camera |
 | `mwgui/` | The screens, one file per OpenMW window (`inventorywindow`, `tradewindow`, `journalwindow` ...); `widgets.cpp` is the UI toolkit |
 | `mwdialogue/`, `mwscript/`, `mwsound/`, `mwinput/`, `mwstate/` | Dialogue, script functions (`*extensions.cpp`), sound, input, saves |
-| `components/` | The script compiler and interpreter (`scriptfunctions.hpp` is the function table), log, files, settings, misc |
+| `components/` | The script compiler and interpreter (`scriptfunctions.hpp` is the function table), log, files, settings, misc; `esm3/load*.hpp` the game data's records as OpenMW names them (`loadnpc.hpp`: `ActorDef`), `fallback/` Morrowind.ini's sky and weathers |
 | `platform/` | The 3DS itself (no OpenMW counterpart): console profile, heaps, linear memory, the light sensor |
 | `testdrive/` | The test driver (no counterpart): step runner, movement, `EXPECT` values (`expect*.cpp`), tokens (`ops*.cpp`), monitors |
 | `shaders/`, `extern/` | PICA vertex shaders; cJSON |
