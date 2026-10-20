@@ -792,6 +792,15 @@ void World::streamExterior(bool all)
 			logf("world: %d KB of heap used, biggest free block %u KB: the neighbouring cells wait for room", mallinfo().uordblks / 1024,
 				(unsigned)(heapLargestBlock() / 1024));
 		}
+		// ... nor with under 5 MB of linear memory left (a cell takes 1 to 3 MB of it, its actors and sounds more): the 22 MB of an Old 3DS ran dry
+		// with Seyda Neen's nine cells in, and the actors, the cells' last batches (white walls), the item icons and a
+		// book's pages had none. The neighbours past it wait (the distant land stands in), as for the heap
+		static bool noLinearNoted = false;
+		bool linearRoom = !g_profile.streamWaitsForBlock || linearSpaceFree() >= (5u << 20);
+		if (!linearRoom && !noLinearNoted)
+			logf("world: %lu KB of linear memory left: the neighbouring cells wait for room", (unsigned long)(linearSpaceFree() / 1024));
+		noLinearNoted = !linearRoom;
+		room = room && linearRoom;
 		if (room)
 			noRoomNoted = false;
 		if (!streamJob && !freed && room && !streamPaused && osGetTime() >= streamRetryAt)

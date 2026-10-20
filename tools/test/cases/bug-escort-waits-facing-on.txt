@@ -1,0 +1,13 @@
+# start: Imperial Prison Ship
+# The prison ship's guard leads the player up (CharGenWalkNPC: AIEscort Player). Each time the player fell behind he
+# turned round to face them, and back again when they caught up, unless they kept right behind him. OpenMW's AiEscort
+# only stops (past half extent + 450), its idle playing, still facing its way, and goes on within half extent + 250
+3 0 0 0 0 MSG
+40 0 0 0 0 MSG
+30 0 0 0 0 UNTIL:refdist:chargen_boat_guard_2:ge:400
+0.1 0 0 0 0 SNAP:refyaw:chargen_boat_guard_2
+5 0 0 0 0
+0.1 0 0 0 0 SNAP:refdist:chargen_boat_guard_2
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:chargen_boat_guard_2:ge:@-20+EXPECT:refyaw:chargen_boat_guard_2:ge:@-20+EXPECT:refyaw:chargen_boat_guard_2:le:@20
+1 0 0 0 0

@@ -22,6 +22,10 @@ void Session::finishTravel()
 {
 	int dest = travelCell;
 	travelCell = -1;
+	loadScreens++;
+	// (an Old 3DS's dynamic view starts short again in the new place and opens out while there is room)
+	if (g_profile.viewStartsShort)
+		viewScale = viewDrawn = g_profile.viewScaleMin;
 	if (g_profile.cleanAtDoors)
 		cleanForLoad();
 	w.player.inertia[0] = w.player.inertia[1] = 0.0f;     // (a jump's take-off doesn't come along: doors, travel)

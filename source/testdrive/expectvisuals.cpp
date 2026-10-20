@@ -322,9 +322,13 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	else if (what == "uwfog") v = w.underwaterFog();   // how thick the water is to the eye now (Morrowind.ini Underwater Fog)
 	else if (what == "fogrange")    // <start|end>: the fog the last frame was drawn with (world units; 0 none)
 	{
+		// (<horizonstart|horizonend>: the distant land's past the detailed view, 0 when none was drawn)
 		float fs, fe;
-		rendererFogRange(fs, fe);
-		v = arg == "start" ? fs : fe;
+		if (arg.compare(0, 7, "horizon") == 0)
+			rendererHorizonFog(fs, fe);
+		else
+			rendererFogRange(fs, fe);
+		v = arg == "start" || arg == "horizonstart" ? fs : fe;
 	}
 	else if (what == "arrowvz" || what == "arrowz" || what == "arrowdist")  // the first arrow, bolt or thrown weapon in
 	{                                                                    // flight: how fast it climbs / its height /

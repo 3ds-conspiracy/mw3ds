@@ -270,6 +270,10 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 		// (a bed's rest menu already open: its Rest, asleep there even where sleeping is illegal)
 		if (!(session->screen == SCR_REST && session->restBed))
 			session->openRest(false);
+		// (SLEEP sleeps where it is, as it always has: in a town's streets, where the rest menu only waits since the
+		// exteriors' no-sleep flag is read, too. RESTMENU opens the menu as the player does)
+		if (session->screen == SCR_REST)
+			session->restSleep = true;
 		session->startRest(sleepHours);
 		if (s.sleepForce == 2)
 			session->restInterruptAt = -1;     // 2: nothing comes

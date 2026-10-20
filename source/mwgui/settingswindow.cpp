@@ -203,14 +203,18 @@ void Session::drawOptions()
 		const char* how = sensor == SENSOR_QTM ? "Auto gamma checks the light every few seconds."
 			: sensor == SENSOR_CAMERA ? "Auto gamma uses the inner camera at loads."
 			: "No light sensor: Auto gamma stays off.";
-		// Dynamic view: on, the outdoor view (OpenMW's, 7168 at the most) shortens while frames run long, the fog moving
-		// in with it; off, always the whole view
-		if (choice(134, "Dynamic view", onOff(dynamicView)))
+		// View distance (outdoors; OpenMW's 7168 at the most): Max, the console's longest whatever the speed; Min, its
+		// shortest; Mid halfway; Auto between them with the frame rate (a New 3DS from the longest, closing in when slow;
+		// an Old 3DS from the shortest, opening out while there is room). A tap goes Auto, Max, Mid, Min
+		static const char* kViewNames[4] = { "Min", "Auto", "Max", "Mid" };
+		if (choice(134, "View distance", kViewNames[viewMode]))
 		{
-			dynamicView = !dynamicView;
+			viewMode = viewMode == VIEW_AUTO ? VIEW_MAX : viewMode == VIEW_MAX ? VIEW_MID : viewMode == VIEW_MID ? VIEW_MIN : VIEW_AUTO;
 			changed = true;
-			notify(dynamicView ? "Dynamic view on: the fog closes in when the game slows down."
-				: "Dynamic view off: always the full view, however slow.");
+			notify(viewMode == VIEW_MAX ? "View distance Max: always as far as this console sees, however slow."
+				: viewMode == VIEW_MID ? "View distance Mid: halfway, whatever the speed."
+				: viewMode == VIEW_MIN ? "View distance Min: the nearest fog, the smoothest frames."
+				: "View distance Auto: the fog moves with the frame rate.");
 		}
 		uiText(10, 162, 0.4f, col::textDim, how);
 		uiText(10, 176, 0.4f, col::textDim, "Gamma 1.00 is Morrowind's own; higher helps in sun.");
@@ -225,7 +229,7 @@ void Session::drawOptions()
 		{
 			g_gammaPct = 100;
 			g_autoGamma = -1;
-			dynamicView = true;
+			viewMode = VIEW_AUTO;
 			changed = true;
 		}
 	}

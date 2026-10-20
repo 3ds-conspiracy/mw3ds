@@ -1,0 +1,47 @@
+# Options > Video > View distance: Min, Mid, Auto, Max (it was Dynamic view on / off). Max is the console's longest view
+# whatever the speed (a New 3DS: OpenMW's 7168), Min its shortest (0.6 of it: 4300), Mid halfway (0.8: 5734), Auto between
+# them with the frame rate. A tap goes Auto, Max, Mid, Min, Auto. Reached as a player would (START, Options, R to Video)
+# (native draws only the frames a SHOT saves: each check follows one)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SETWEATHER:0+HOUR:12
+0.3 0 0 0 0 VIEWSCALE:0.7
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:display
+0.3 0 0 0 0 TAP:217:145
+0.3 0 0 0 0 EXPECT:savedsetting:dynview:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:eq:7168
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:display
+0.3 0 0 0 0 TAP:217:145
+0.3 0 0 0 0 B
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:ge:5725+EXPECT:fogrange:end:le:5745
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:display
+0.3 0 0 0 0 TAP:217:145
+0.3 0 0 0 0 B
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:ge:4290+EXPECT:fogrange:end:le:4310
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:screen:display
+0.3 0 0 0 0 TAP:217:145
+0.3 0 0 0 0 EXPECT:savedsetting:dynview:eq:1
+0.3 0 0 0 0 B
+0.3 0 0 0 0 VIEWSCALE:0.7
+0.5 0 0 0 0 SHOT
+0.2 0 0 0 0 EXPECT:fogrange:end:ge:5000+EXPECT:fogrange:end:le:5040
+1 0 0 0 0

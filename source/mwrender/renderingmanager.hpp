@@ -41,6 +41,7 @@ void rendererSetNightEye(float add);
 // Under water (OpenMW's FogManager): the fog starts (1 - fogDepth) of the view from the eye, behind it, to the view's end
 void rendererSetUnderwater(bool on, float fogDepth);
 void rendererFogRange(float& start, float& end);   // the outdoor / indoor fog the last frame was drawn with
+void rendererHorizonFog(float& start, float& end); // the distant land's past the detailed view, the last frame (0 0: none)
 // Gamma (platform/gamma.hpp): the light the world is drawn with, light ^ (1 / gamma), in the vertex shaders; 1: as Morrowind
 void rendererSetGamma(float gamma);
 float rendererCurve(float v);      // one 0..1 channel through it (the clear colour)

@@ -31,6 +31,12 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		logf("test: cell streaming %s", w.streamPaused ? "off" : "on");
 		return true;
 	}
+	// RESTMENU: the rest menu opened as the player opens it (T): its refusals, and sleep or only waiting (EXPECT:restsleep)
+	if (verb == "RESTMENU")
+	{
+		s.openRest(false);
+		return true;
+	}
 	if ((verb == "MEMHOLD" || verb == "MEMLEAVE") && a.size() >= 2)
 	{
 		// MEMHOLD:<KB>: hold that much linear memory (in 256 KB pieces) to play as the device does when it is nearly

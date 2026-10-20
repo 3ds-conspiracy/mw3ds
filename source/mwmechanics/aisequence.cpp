@@ -202,8 +202,10 @@ void Session::npcPackage(int ri, float dt)
 	{
 		if (a && a->mode == ANIM_LOOP)
 			actorPlay(*set, *a, "Idle", ANIM_IDLE);
-		// Following / escorting: face whoever it is while standing
-		if (who && (r.aiPackage == AIPKG_FOLLOW || r.aiPackage == AIPKG_ESCORT) && r.aiActive)
+		// Following: face whoever it is while standing. (Not an escort waiting for the one it leads: OpenMW's AiEscort only
+		// stops, its idle playing, still facing its way. The prison ship's guard turned round each time the player fell
+		// behind and back again when they caught up)
+		if (who && r.aiPackage == AIPKG_FOLLOW && r.aiActive)
 		{
 			float diff = angleDiff(atan2f(who[0] - r.pos[0], who[1] - r.pos[1]), r.rot[2]);
 			r.rot[2] += fmaxf(-kTurnSpeed * 0.5f * dt, fminf(kTurnSpeed * 0.5f * dt, diff));

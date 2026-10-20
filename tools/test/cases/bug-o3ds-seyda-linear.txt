@@ -1,0 +1,19 @@
+# console: old
+# An Old 3DS out of the census office into Seyda Neen: its nine cells streamed in one after another until 743 KB of the
+# 22 MB of linear memory was left, and then the actors, the cells' last batches (white walls), the item icons and a book's
+# pages had none. A neighbour now waits while under 5 MB is left (the distant land stands in), as for the heap
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0 0
+# (14 MB left free in the office, natively and on the console alike: the console had 15.4 MB there)
+0.3 0 0 0 0 MEMLEAVE:14000
+120 0 0 0 0 DOORTO:outside
+40 0 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen+SHOT
+0.3 0 0 0 0 EXPECT:linearfree:ge:2500
+0.3 0 0 0 0 SCREEN:inventory
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:linearfree:ge:2000
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0 0

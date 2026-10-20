@@ -15,3 +15,7 @@ void platformRunOver();
 
 // MW3DS_FAILFAST=1 on the PC test build: a run stops at its first failure. Never on the console
 bool platformFailFast();
+
+// Before gfxInit: the console's VRAM cleared to black (gfxInit puts the screens' buffers there and lights the screens on
+// them at once, before the game's first frame). Nothing on the PC test build
+void platformClearVram();

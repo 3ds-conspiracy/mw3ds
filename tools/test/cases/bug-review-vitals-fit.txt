@@ -1,0 +1,10 @@
+# Character creation's review, top screen: the health / magicka / fatigue numbers ran out of the bottom of their bars
+# (drawn from the bar's top at 0.45). Centred in the bar, a size smaller, as the HUD's: the SHOT is for the eye (no
+# engine value sees glyphs leave a box)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SCREEN:review
+0.5 0 0 0 0
+0.3 0 0 0 0 EXPECT:topmodal:eq:2
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0 0

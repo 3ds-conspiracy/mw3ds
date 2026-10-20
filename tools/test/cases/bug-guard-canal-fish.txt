@@ -1,0 +1,16 @@
+# Balmora: a slaughterfish in the canal (out of sight under the water) bites the wading player, and the guard on the
+# west bank takes up the fight (fAlarmRadius, OpenMW's engageCombat; canFight: a person can swim). It ran up to the
+# canal's edge and back for good, the drop to the water refused. As OpenMW's actors walk off an edge and swim, a fighter
+# goes over one with only deep water under it: the guard drops in and kills the fish.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 TP:-19300:-13700:300:0+HOUR:12
+4 0 0 0 0
+0.3 0 0 0 0 EXPECT:swimming:eq:1
+1 0 0 0 0 PLACE:slaughterfish:200
+0.3 0 0 0 0 HOSTILE:slaughterfish
+20 0 0 0 0 UNTIL:dead:slaughterfish:eq:1
+0.3 0 0 0 0 EXPECT:dead:slaughterfish:eq:1
+0.3 0 0 0 0 EXPECT:refwater:hlaalu_guard_outside:lt:0
+1 0 0 0 0

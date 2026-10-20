@@ -317,6 +317,8 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		else if (what == "refpkgdone") v = r.aiDone ? 1.0f : 0.0f;                              // GetAIPackageDone
 		else if (what == "refknock") v = r.knockTimer;
 		else if (what == "refsidesteps") v = (float)r.sideSteps;     // side steps begun in a fight (OpenMW's combat moves)
+		else if (what == "refyaw") v = r.rot[2] * 57.29578f;          // which way it faces, degrees
+		else if (what == "refskate") v = s.skates.count(ri) ? s.skates[ri].secs : 0.0f;   // seconds moving while playing an idle
 		else if (what == "refidlevoice") v = s.idleVoiceOk(ri) ? 1.0f : 0.0f;   // may say an idle line now
 		else if (what == "refheadyaw" || what == "refheadpitch")      // the head turned / tilted, degrees
 		{

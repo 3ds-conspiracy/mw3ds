@@ -1,0 +1,12 @@
+# Almsivi Intervention cast outdoors (Seyda Neen) to a temple far off: the player stood there before its cells had
+# come in, the land and the town appearing round them. Like a door or a silt strider it goes through the loading
+# screen (OpenMW changes the cell grid with its loading screen): the cells round the arrival are in on the first frame.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:1
+0.3 0 0 0 0 SNAP:loadscreens
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+0.1 0 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:notcell:Seyda_Neen+EXPECT:loadscreens:eq:@1
+3 0 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0

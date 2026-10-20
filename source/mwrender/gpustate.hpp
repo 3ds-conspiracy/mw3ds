@@ -89,6 +89,7 @@ struct GpuState
 	float uvOverride[2] = { 0.0f, 0.0f };
 
 	float lastFog[2] = { 0.0f, 0.0f };
+	float lastHorizonFog[2] = { 0.0f, 0.0f };   // the distant land's past the detailed view (0: none drawn)
 
 	bool underwaterOn = false;
 	float underwaterFog = 3.0f;

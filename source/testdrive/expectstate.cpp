@@ -108,6 +108,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "notesright") v = s.notesRight;      // the right edge of the notices on the top screen
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
+	else if (what == "iconmisses") { extern int g_uiIconMisses; v = (float)g_uiIconMisses; }   // icons not drawn, page not loaded
 	else if (what == "linearfree") v = (float)(linearSpaceFree() / 1024);   // KB of linear memory free
 	else if (what == "spritesasked" || what == "spritesdrawn")   // the last view's particle sprites: wanted / drawn
 	{
@@ -162,6 +163,8 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "waterscroll") v = rendererWaterScroll();       // water's slide, texture repeats a second
 	else if (what == "controls") v = w.controlsEnabled ? 1.0f : 0.0f;   // DisablePlayerControls / EnablePlayerControls
 	else if (what == "jumping") v = w.jumpingEnabled ? 1.0f : 0.0f;     // DisablePlayerJumping / EnablePlayerJumping
+	else if (what == "loadscreens") v = (float)s.loadScreens;          // trips through the loading screen so far
+	else if (what == "restsleep") v = s.restSleep ? 1.0f : 0.0f;       // the rest menu sleeps (else only waits: illegal here)
 	else if (what == "skillsum") { v = 0; for (int k = 0; k < 27; k++) v += st.skills[k]; }   // all 27 skills (jail time)
 	else if (what == "messagetop") v = s.messageTop;      // its first text line shown
 	else if (what == "messageleft") v = s.messageLeft;    // its text lines below what is shown

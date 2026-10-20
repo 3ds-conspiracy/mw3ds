@@ -186,7 +186,8 @@ void Session::drawTop()
 				float ry = y + k * 24;
 				uiText(bx + 12, ry + 3, 0.5f, col::header, w.game.gmstLabel(kName[k], kText[k]));
 				uiBar(bx + 84, ry + 2, bw - 84 - 12, 16, topModal.vitals[k][1] > 0 ? (float)topModal.vitals[k][0] / topModal.vitals[k][1] : 0.0f, kColor[k]);
-				uiTextCentered(bx + 84 + (bw - 96) / 2, ry + 3, 0.45f, col::text,
+				// (centred in the bar as the HUD's are: from its top they ran out of its bottom)
+				uiTextCentered(bx + 84 + (bw - 96) / 2, ry + 2 + 8 - uiLineHeight(0.42f) / 2, 0.42f, col::text,
 					std::to_string(topModal.vitals[k][0]) + "/" + std::to_string(topModal.vitals[k][1]));
 			}
 			// the attributes, two columns of four (strength .. luck down the first)

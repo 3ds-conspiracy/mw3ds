@@ -1,0 +1,12 @@
+# console: old
+# An Old 3DS's View distance Auto found its view from the top: the longest (0.8 of OpenMW's), a slow start that then
+# closed in. It starts at its shortest (0.3) and opens out while frames have room, as far as its longest; after a
+# loading screen it starts short again
+0.1 0 0 0 0 EXPECT:viewdrawn:le:0.36
+0.3 0 0 0 0 ADAPTVIEW:20:50:300
+0.1 0 0 0 0 EXPECT:viewdrawn:ge:0.6
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+4 0 0 0 0
+60 0 0 0 0 DOORTO:outside
+0.1 0 0 0 0 EXPECT:viewdrawn:le:0.36
+1 0 0 0 0

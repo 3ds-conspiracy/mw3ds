@@ -17,6 +17,8 @@ struct ConsoleProfile
 	bool capSteps;                   // the cap steps between 30 and 20 with the scene's work (Session::adaptView)
 	float viewScaleMin, viewScaleMax;    // how far the outdoor view may close in, and its longest
 	bool keepViewIndoors;            // indoors the outdoor view stays as it was (else whole again)
+	bool viewStartsShort;            // the dynamic view starts at its shortest and opens out while there is room (else it
+	                                 // starts at its longest and closes in when slow), and again after each loading screen
 	float workCap;                   // one long frame (a cell arriving) counts as at most this, in ms
 	float actorViewLimit;            // people are drawn no farther than this (0: the renderer's own distance)
 	float actorDetailScale;          // of the renderer's full-detail distance for people

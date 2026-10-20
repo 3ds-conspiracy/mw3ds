@@ -43,7 +43,7 @@ void Session::loadSettings()
 	FILE* f = fopen(kSettingsPath, "r");
 	if (!f)
 		return;
-	bool gyroOff = false, gyroOn = false;
+	bool gyroOff = false, gyroOn = false, sawView = false;
 	char line[64];
 	while (fgets(line, sizeof(line), f))
 	{
@@ -73,7 +73,15 @@ void Session::loadSettings()
 		// (an older file's geaim= is left unread: the GoldenEye aim looks at the look speed)
 		else if (strncmp(line, "inverty=", 8) == 0) g_invertY = strncmp(line + 8, "on", 2) == 0;
 		else if (strncmp(line, "subtitles=", 10) == 0) g_subtitles = strncmp(line + 10, "off", 3) != 0;
-		else if (strncmp(line, "dynview=", 8) == 0) dynamicView = strncmp(line + 8, "off", 3) != 0;
+		else if (strncmp(line, "view=", 5) == 0)
+		{
+			viewMode = strncmp(line + 5, "min", 3) == 0 ? VIEW_MIN : strncmp(line + 5, "max", 3) == 0 ? VIEW_MAX
+				: strncmp(line + 5, "mid", 3) == 0 ? VIEW_MID : VIEW_AUTO;
+			sawView = true;
+		}
+		// (an older file's dynview=: off was the whole view)
+		else if (strncmp(line, "dynview=", 8) == 0 && !sawView)
+			viewMode = strncmp(line + 8, "off", 3) == 0 ? VIEW_MAX : VIEW_AUTO;
 	}
 	fclose(f);
 	// Gyro aim as it was left, at its sensitivity (it was turned off at every start while untried on the device, and
@@ -99,6 +107,7 @@ void Session::saveSettings()
 	fprintf(f, "lookspeed=%d\ngeturn=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_invertY ? "on" : "off");
 	fprintf(f, "stickzone=%d\n", g_stickZonePct);
 	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
-	fprintf(f, "dynview=%s\n", dynamicView ? "on" : "off");
+	fprintf(f, "view=%s\n", viewMode == VIEW_MIN ? "min" : viewMode == VIEW_MAX ? "max" : viewMode == VIEW_MID ? "mid" : "auto");
+	fprintf(f, "dynview=%s\n", viewMode == VIEW_AUTO ? "on" : "off");     // (for an older build reading the file)
 	fclose(f);
 }

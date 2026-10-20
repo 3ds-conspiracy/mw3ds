@@ -13,6 +13,12 @@ void rendererFogRange(float& start, float& end)
 	end = g_gpu.lastFog[1];
 }
 
+void rendererHorizonFog(float& start, float& end)
+{
+	start = g_gpu.lastHorizonFog[0];
+	end = g_gpu.lastHorizonFog[1];
+}
+
 void rendererSetUnderwater(bool on, float fogDepth)
 {
 	g_gpu.underwaterOn = on;

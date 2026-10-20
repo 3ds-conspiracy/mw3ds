@@ -1,0 +1,27 @@
+# Out in the streets of a town sleeping is illegal, as Morrowind.esm marks 61 town exteriors (CELL DATA flag 4: Seyda
+# Neen, Balmora, Vivec ...) and OpenMW's World::canRest reads it for any cell: the rest menu only waits there. The
+# wilds around keep sleep.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 RESTMENU
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:restsleep:eq:0
+0.3 0 0 0 0 B
+0.3 0 0 0 0 TP:-21000:-12500:1500:0
+4 0 0 0 0
+0.3 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 RESTMENU
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora
+0.3 0 0 0 0 EXPECT:restsleep:eq:0
+0.3 0 0 0 0 B
+0.3 0 0 0 0 TP:31313:-33004:1800:0
+4 0 0 0 0
+0.3 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 RESTMENU
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ascadian_Isles
+0.3 0 0 0 0 EXPECT:restsleep:eq:1
+1 0 0 0 0

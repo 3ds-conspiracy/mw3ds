@@ -91,6 +91,12 @@ the never-through-a-surface check, so it hung in the air for good. Now such a re
 sphere out of the face in 3D and takes the sideways part: the body slides off the ridge and lands, as OpenMW's
 actors slide down a slope too steep to stand on (`bug-fall-steep-ridge`).
 
+A fast fall onto land too steep to walk on (2026-10-20, Ascadian Isles hill at 32400 -33200) went through it: the
+feet passed the face in one frame (it is no floor), and the chest's ray met it the frame after, when the face was
+more than a step over the feet, out of the floor test's reach. The body fell inside the hill to the sea. Now the
+feet crossing the land straight down from where they were count as meeting it, and the body is put on it and slides
+off as above (`bug-fall-through-steep-hill`).
+
 ## Steepest walkable ground (2026-10-09)
 
 The player walks on ground up to 46 degrees (OpenMW's `Constants::sMaxSlope`, used by its movement solver's

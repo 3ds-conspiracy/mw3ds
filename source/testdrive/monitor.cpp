@@ -28,6 +28,26 @@ void Session::noteHudMismatch(int left, int right)
 // linear memory that shrinks each time the same cell is entered.
 void Session::monitorActors(float dt)
 {
+	// Skating: an actor going over the ground faster than a crawl (30 a second) while it plays an idle, its legs still
+	if (autotest && dt > 0.0f)
+		for (int i : w.loadedActors)
+		{
+			const Ref& r = w.refs[i];
+			Skate& k = skates[i];
+			const Actor* a = w.actorOf(i);
+			bool idle = false;
+			if (a && a->group >= 0 && !r.dead)
+			{
+				const Skeleton& sk = actorSkeleton(*w.actorsOf(i), a->skeleton);
+				idle = a->group < (int)sk.groups.size() && strncmp(sk.groups[a->group].name, "Idle", 4) == 0;
+			}
+			float mx = r.pos[0] - k.x, my = r.pos[1] - k.y;
+			if (k.seen && idle && mx * mx + my * my > 30.0f * dt * 30.0f * dt)
+				k.secs += dt;
+			k.x = r.pos[0];
+			k.y = r.pos[1];
+			k.seen = true;
+		}
 	monitorTimer += dt;
 	if (monitorTimer < 1.0f)
 		return;
@@ -111,7 +131,21 @@ void Session::monitorActors(float dt)
 		float gap = floorZ > -1e8f ? r.pos[2] - floorZ : 0.0f;
 		if (gap > 0.0f)
 			gap = fmaxf(0.0f, r.pos[2] - footZ);
-		bool off = idle && ((floorZ < -1e8f && !creature) || gap < -20.0f || (gap > 8.0f && !creature));
+		// (outdoors, one high over the floor with a cell round it not loaded yet is held there on purpose, as gravity holds it
+		// till that cell comes: its floor may be in it, actorFloorMaybeUnloaded. After a loading screen fish placed over
+		// Vivec's water were flagged while the cells round the arrival streamed in)
+		bool heldForCell = false;
+		if ((gap > 400.0f || floorZ < -1e8f) && !w.cells[w.placeOf(i)].interior)
+		{
+			int gx = (int)floorf(r.pos[0] / 8192.0f), gy = (int)floorf(r.pos[1] / 8192.0f);
+			for (int dy = -1; dy <= 1 && !heldForCell; dy++)
+				for (int dx = -1; dx <= 1 && !heldForCell; dx++)
+				{
+					int ci = w.gridCell(gx + dx, gy + dy);
+					heldForCell = ci >= 0 && !w.cells[ci].live;
+				}
+		}
+		bool off = idle && !heldForCell && ((floorZ < -1e8f && !creature) || gap < -20.0f || (gap > 8.0f && !creature));
 		wt.off = off ? wt.off + step : 0.0f;
 		if (wt.off >= 2.0f && !wt.toldFloor)
 		{
@@ -128,8 +162,9 @@ void Session::monitorActors(float dt)
 		// units of net movement in 5 s (next to the player is where a follower or a fighter stops)
 		// (a scripted follower that hasn't seen its leader yet stands, as in OpenMW; a follower stops within
 		// follow distance, 256, of whoever it follows, which needn't be the player)
+		// (an escort waiting for the one it leads to catch up stands on purpose)
 		bool going = ((r.aiPackage == AIPKG_TRAVEL || r.aiPackage == AIPKG_FOLLOW || r.aiPackage == AIPKG_ESCORT) && !r.aiDone
-				&& r.aiActive) || r.ai == AI_COMBAT;
+				&& r.aiActive && !(r.aiPackage == AIPKG_ESCORT && r.escortWaiting)) || r.ai == AI_COMBAT;
 		float leaderDist = w.distanceToPlayer(i);
 		if ((r.aiPackage == AIPKG_FOLLOW || r.aiPackage == AIPKG_ESCORT) && r.ai != AI_COMBAT && r.aiTarget != "player"
 			&& !r.aiTarget.empty())

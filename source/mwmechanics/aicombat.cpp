@@ -274,22 +274,34 @@ void Session::npcCombat(int ri, float dt)
 		// ledge, a gap the grid doesn't cover): stand rather than run in place, and run again once it moves.
 		r.sideStep = 0;
 		r.backingUp = false;
+		float was[2] = { r.pos[0], r.pos[1] };
 		npcMoveTo(ri, w.player.feet, actorRunSpeed(ri), dt, false);
+		float moved = hypotf(r.pos[0] - was[0], r.pos[1] - was[1]);
 		// progress: how far it really got each second (sliding to and fro against a door or a wall, or the
 		// player walking up to it, doesn't count)
 		r.chaseWindow += dt;
 		if (r.chaseWindow >= 1.0f)
 		{
 			float mx = r.pos[0] - r.chaseAnchor[0], my = r.pos[1] - r.chaseAnchor[1];
-			r.chaseStill = mx * mx + my * my < 60.0f * 60.0f ? r.chaseStill + r.chaseWindow : 0.0f;
+			// (getting nowhere: under 60 units a second, or under a third of its own pace for a slow one: a steam
+			// centurion runs 43 a second, was judged stuck after 2 s of a chase, and idled or walked while it ran on)
+			float minGain = fminf(60.0f, actorRunSpeed(ri) * 0.33f) * r.chaseWindow;
+			r.chaseStill = mx * mx + my * my < minGain * minGain ? r.chaseStill + r.chaseWindow : 0.0f;
 			r.chaseAnchor[0] = r.pos[0];
 			r.chaseAnchor[1] = r.pos[1];
 			r.chaseWindow = 0.0f;
 		}
-		if (r.chaseStill >= 2.0f)
+		// (stood still only while it really goes nowhere: one sliding slowly along a fence or a wall it can't get past walks,
+		// over a crawl of 30 a second; it played its Idle and glided along, legs still)
+		if (r.chaseStill >= 2.0f && moved <= 30.0f * dt)
 		{
 			if (a && a->mode == ANIM_LOOP)
 				actorPlay(*set, *a, "Idle", ANIM_IDLE);
+		}
+		else if (r.chaseStill >= 2.0f)
+		{
+			if (a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
+				actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
 		}
 		else if (a && !actorPlay(*set, *a, stanceGroup(*set, *a, "RunForward", wpn).c_str(), ANIM_LOOP))
 			actorPlay(*set, *a, "WalkForward", ANIM_LOOP);

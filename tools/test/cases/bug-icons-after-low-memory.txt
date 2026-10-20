@@ -1,0 +1,16 @@
+# An icon page (or a book's picture) that couldn't load while linear memory was full was given up on for the session: an
+# Old 3DS showed "Ext", "Scr", "Gol" for the items in Tarhiel's bag and bare book pages long after memory came back. They
+# are tried again every 2 s
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:iron_dagger+GIVE:sc_almsiviintervention+GIVE:gold_001:17
+0.3 0 0 0 0 MEMLEAVE:20
+0.3 0 0 0 0 SCREEN:inventory
+1 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:iconmisses:gt:0
+0.3 0 0 0 0 MEMHOLD:0
+3 0 0 0 0
+0.3 0 0 0 0 SNAP:iconmisses
+1 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:iconmisses:eq:@0
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0 0

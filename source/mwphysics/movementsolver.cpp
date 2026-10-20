@@ -99,6 +99,28 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	}
 	if (!found)
 	{
+		// One in a fight with a foe in the water goes off an edge with nothing under it but deep water (OpenMW's actors walk
+		// off one and swim): a guard after a slaughterfish in Balmora's canal ran up to the edge and back for good. Moved on
+		// at its height, gravity takes it down into the water, which breaks the fall (actorGravity); not where any floor is
+		// above the water. (Not after a foe on dry land: Vevos Nerethi dropped into Saturan's pool and the player after him)
+		bool foeInWater = r.duelFoe >= 0 ? w.refs[r.duelFoe].pos[2] < cell.waterZ : r.ai == AI_COMBAT && w.player.swimming;
+		if (foeInWater && swimZ > -1e8f && r.pos[2] > swimZ + 1.0f)
+		{
+			bool floorAbove = false;
+			for (int k = 0; k < aroundCount && !floorAbove; k++)
+			{
+				float z;
+				floorAbove = collisionFootFloor(around[k]->collision, body[0], body[1], kActorFootReach, r.pos[2] + 40.0f, swimZ - 1.0f, &z);
+			}
+			if (!floorAbove)
+			{
+				r.pos[0] = body[0];
+				r.pos[1] = body[1];
+				r.fitBox();
+				r.moved = true;
+				return true;
+			}
+		}
 		if (swimZ < -1e8f || r.pos[2] > swimZ + 1.0f)
 			return false;
 		fz = swimZ;
@@ -328,11 +350,17 @@ void Session::actorGravity(float dt)
 		float h = r.fallTop - z;
 		if (r.dead || swim)
 			continue;                   // water breaks a fall
+		// A person's landing makes its sound, as the player's does (OpenMW's CharacterController: NPCs only); a drop within
+		// OpenMW's step down (sStepSizeDown, 62) keeps an actor on the ground there, so makes none
+		if (!creature && h > 62.0f)
+			playSound(i, "DefaultLand");
 		int acro = w.game.actors[r.actor].skills[20];
 		float x = fallDamage(h, acro, 0.0f);
 		if (x > 0.0f)
 		{
 			float ft = fatigueTermOf(r.fatigue, r.fatigueMax);
+			// the hurt sound, as any fall damage makes it (OpenMW's CharacterController): Tarhiel's crunch
+			playSound(i, "Health Damage");
 			logf("world: %s lands after %.0f units, %.1f damage", r.id.c_str(), h, x * (1.0f - 0.25f * ft));
 			r.health -= x * (1.0f - 0.25f * ft);
 			if (r.health <= 0.0f)
@@ -797,7 +825,14 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 		return false;
 	};
 	float endZ = p.feet[2];
-	if (!startOnGround && !levitating && !p.swimming && endZ < start[2] - 0.01f && crosses(p.feet))
+	// The feet down through the land this frame: land steeper than the walking limit is no floor to the fall above, and the
+	// chest meets it only a frame later, by when a fast fall (over 22 units a frame) has it more than a step over the
+	// feet, out of the floor test's reach below: the body went on down inside the hill, to the sea under it. (Outdoors only:
+	// the land is known by its corners on the 128-unit grid, which a cave's mesh may have too)
+	float landZ;
+	bool intoLand = outdoors && !startOnGround && !levitating && !p.swimming && endZ < start[2] - 0.01f
+		&& sampleLand(scene, start, start[2] + 1.0f, endZ, &landZ);
+	if (!startOnGround && !levitating && !p.swimming && endZ < start[2] - 0.01f && (intoLand || crosses(p.feet)))
 	{
 		// Falling with the pad (or a jump's speed) pushing the chest into a wall face: the push is refused, the fall
 		// goes on straight down (OpenMW's solver clips the velocity at what it hits and gravity goes on). Undoing the

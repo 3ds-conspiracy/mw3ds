@@ -1,0 +1,19 @@
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.1 0 0 0 0 TP:32350:-33200:2200:0
+5 0 0 0 0
+0.3 0 0 0 0 EXPECT:swimming:eq:0
+0.3 0 0 0 0 EXPECT:playerz:ge:900
+0.1 0 0 0 0 TP:32450:-33300:2200:0
+5 0 0 0 0
+0.3 0 0 0 0 EXPECT:swimming:eq:0
+0.3 0 0 0 0 EXPECT:playerz:ge:900
+0.1 0 0 0 0 TP:32550:-33400:2200:0
+5 0 0 0 0
+0.3 0 0 0 0 EXPECT:swimming:eq:0
+0.3 0 0 0 0 EXPECT:playerz:ge:900
+0.1 0 0 0 0 TP:32650:-33500:2200:0
+5 0 0 0 0
+0.3 0 0 0 0 EXPECT:swimming:eq:0
+0.3 0 0 0 0 EXPECT:playerz:ge:900
+1 0 0 0 0

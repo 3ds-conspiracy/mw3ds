@@ -420,7 +420,11 @@ static Tex3DS_Texture importT3x(const u8* d, size_t n, C3D_Tex* tex)
 		t->subs.push_back({ v[0], v[1], v[2] / 1024.0f, v[3] / 1024.0f, v[4] / 1024.0f, v[5] / 1024.0f });
 	}
 	std::vector<u8> data = decompress(d + p, n - p);
-	C3D_TexInit(tex, 1 << (wl + 3), 1 << (hl + 3), fmt);
+	if (!C3D_TexInit(tex, 1 << (wl + 3), 1 << (hl + 3), fmt))
+	{
+		delete t;
+		return nullptr;
+	}
 	tex->maxLevel = mips;
 	memcpy(tex->data, data.data(), std::min<size_t>(data.size(), tex->size));
 	return (Tex3DS_Texture)t;
@@ -463,6 +467,12 @@ bool C3D_TexInit(C3D_Tex* t, u16 w, u16 h, int fmt)
 	t->maxLevel = 0;
 	t->wrapS = t->wrapT = GPU_CLAMP_TO_EDGE;
 	t->filter = GPU_NEAREST;
+	// (a texture is linear memory on the console: none made when there isn't room, as a test squeezes it with MEMHOLD)
+	if (t->size > linearSpaceFree())
+	{
+		t->data = nullptr;
+		return false;
+	}
 	t->data = calloc(1, t->size ? t->size : 1);
 	t->native = nullptr;
 	return t->data != nullptr;

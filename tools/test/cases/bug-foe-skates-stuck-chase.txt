@@ -1,0 +1,18 @@
+# A foe that can't get at the player (fenced off, at Seyda Neen's docks) with a Fireball cast at it: once its chase made
+# under 60 units a second for 2 s the chase played its Idle but went on moving it, so it glided along with its legs
+# still ("enemies skating when I fireball them"). It walks or runs while it moves; it idles only standing.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 BOOST:100+FILL+SETSKILL:destruction:100
+0.3 0 0 0 0 SPELL:fireball
+1 0 0 0 0 PLACE:ogrim:600
+0.3 0 0 0 0 HOSTILE:ogrim
+4 0 0 0 0
+0.1 0 0 0 0 CASTAT:ogrim:fireball
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:ogrim:eq:1
+0.1 0 0 0 0 EXPECT:refskate:ogrim:lt:0.5
+1 0 0 0 0

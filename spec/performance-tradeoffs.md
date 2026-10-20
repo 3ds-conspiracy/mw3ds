@@ -81,6 +81,10 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   walkways showed dark patches flickering in and out. Far ground shimmers a little more and reads more texture memory
   a frame; the Old 3DS's GPU has the room (about 15 ms of its 50). The New 3DS keeps them: no sheets there.
   (`ConsoleProfile::textureMips`, `mwrender/objects.cpp loadTexture`)
+- **An Old 3DS leaves a neighbouring cell unloaded while under 5 MB of linear memory is left** (the distant land stands
+  in until it comes). Its 22 MB ran dry with Seyda Neen's nine cells in: the actors, the cells' last batches (white
+  walls), the item icons and a book's pages had none. Seyda Neen now holds six or seven of its nine cells.
+  (`World::streamExterior`, `bug-o3ds-seyda-linear`)
 
 ## Movement
 

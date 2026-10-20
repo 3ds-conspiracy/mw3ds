@@ -41,12 +41,12 @@ struct RenderState
 	// Adaptive view distance outdoors (fog scale), from the frame's CPU / GPU work and the time between frames. An Old
 	// 3DS starts nearer and may close in further, and caps the frame rate at 30 or 20 (frameCap: main hands it to
 	// C3D_FrameRate)
-	float viewScale = g_profile.viewScaleMax, workCost = 0.0f, frameCost = 0.0f;
+	float viewScale = g_profile.viewStartsShort ? g_profile.viewScaleMin : g_profile.viewScaleMax, workCost = 0.0f, frameCost = 0.0f;
 	// ... and the share actually drawn: viewScale in steps of kViewStep, moved only once viewScale has left the step
 	// by a whole one. The frame cost hovering at its threshold saws viewScale by a few thousandths every frame, and
 	// drawn as it is, the fog's reach moved with it: on an Old 3DS at its short view the walkways' edges in the fog
 	// flashed frame by frame
-	float viewDrawn = g_profile.viewScaleMax;
+	float viewDrawn = g_profile.viewStartsShort ? g_profile.viewScaleMin : g_profile.viewScaleMax;
 	int frameCap = g_profile.frameCap, capFrames = 0;
 	u64 adaptTick = 0;                // when adaptView last ran (once a frame: the time between frames)
 };

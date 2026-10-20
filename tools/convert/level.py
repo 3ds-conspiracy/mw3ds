@@ -566,7 +566,11 @@ def main():
                 print(f"  FAILED exterior {gx},{gy}: {type(e).__name__}: {e}", flush=True)
                 failed.append((f"exterior {gx},{gy}", f"{type(e).__name__}: {e}"))
                 continue
-            c = dict(c, name=name, interior=False, grid=[gx, gy], sea=sea_coverage(terrain, gx, gy))
+            # CELL DATA flag 4 on exteriors too: 61 town cells (Balmora, Vivec, Sadrith Mora ...) are no place to
+            # sleep, as OpenMW's World::canRest reads it for any cell
+            rec = db["CELL"].get((gx, gy))
+            nosleep = rec is not None and bool(struct.unpack("<I", rec.get("DATA")[:4])[0] & 4)
+            c = dict(c, name=name, interior=False, grid=[gx, gy], sea=sea_coverage(terrain, gx, gy), nosleep=nosleep)
             grid[(gx, gy)] = c
             if (gx, gy) == start_xy:
                 cells.insert(0, c)                 # the level starts here

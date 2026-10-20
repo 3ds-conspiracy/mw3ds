@@ -1,0 +1,14 @@
+# Tarhiel's fall (fallingScript): his landing made no sound, "no crunch". OpenMW's CharacterController plays Health
+# Damage when a fall hurts and DefaultLand when a person lands; and a 0 / 0 sound record carries by fAudioDefault*
+# Distance (100 to 2000 units), heard here 830 away
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TP:-16100:-58050:700:0
+2 0 0 0 0
+0.1 0 0 0 0 SNAP:soundstarted:Health%Damage+SNAP:soundstarted:DefaultLand
+40 0 0 0 0 UNTIL:dead:agronian_guy:eq:1
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:dead:agronian_guy:eq:1
+0.3 0 0 0 0 EXPECT:soundstarted:Health%Damage:ge:@1
+0.3 0 0 0 0 EXPECT:soundstarted:DefaultLand:ge:@1
+1 0 0 0 0

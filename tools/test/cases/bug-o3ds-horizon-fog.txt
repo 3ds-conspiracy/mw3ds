@@ -1,0 +1,14 @@
+# console: old
+# An Old 3DS's view closes in (here to 0.35): the detailed view's fog ends there, and the distant land past it had its own
+# fog from the near fog's end plus as much as the horizon is farther. Just behind the near view, where the detailed
+# objects are lost in fog, the distant land stood out dark and clear ("far off items dark instead of fog coloured"). It
+# fogs from the near fog's start to the horizon now
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 TP:-23500:-14000:1200:90
+6 0 0 0 0
+0.3 0 0 0 0 VIEWSCALE:0.35
+2 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:fogrange:horizonend:gt:0
+0.3 0 0 0 0 EXPECT:fogrange:start:lt:1000+EXPECT:fogrange:horizonstart:lt:1000
+1 0 0 0 0

@@ -1,0 +1,21 @@
+# Sent to jail before the courtyard (the papers taken, then the limeware platter): released at Seyda Neen's prison
+# marker outside the office, as OpenMW's teleportToClosestMarker, still unable to jump. Jumping comes back, as in
+# Morrowind, from the courtyard barrel's script (CharGenFatigueBarrel: within 400 of it), the only one that enables it
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:4
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 CON:DisablePlayerJumping+CON:DisablePlayerFighting+CON:DisablePlayerMagic
+# (the start skips character creation, so marks the barrel's script done: undone here)
+0.3 0 0 0 0 SETLOCAL:chargen_barrel_fatigue:done:0
+0.3 0 0 0 0 SETBOUNTY:50
+0.3 0 0 0 0 JAIL
+4 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:jumping:eq:0
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+30 0 0 0 0 WALKTO:chargen_barrel_fatigue
+3 0 0 0 0 ANSWER
+0.3 0 0 0 0 EXPECT:reflocal:chargen_barrel_fatigue,done:eq:1
+0.3 0 0 0 0 EXPECT:jumping:eq:1
+1 0 0 0 0

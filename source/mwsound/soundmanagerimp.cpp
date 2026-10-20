@@ -537,14 +537,31 @@ void Session::updateAmbience()
 
 // ---- Sound
 
-void Session::mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist)
+void Session::mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist, bool inverse)
 {
 	float dx = pos[0] - listener[0], dy = pos[1] - listener[1], dz = pos[2] - listener[2];
 	float dist = sqrtf(dx * dx + dy * dy + dz * dz);
-	float att = dist <= minDist ? 1.0f : fmaxf(0.0f, 1.0f - (dist - minDist) / fmaxf(1.0f, maxDist - minDist));
+	// inverse: OpenAL's inverse distance clamped, as OpenMW plays its sounds (full within minDist, then minDist / dist);
+	// past maxDist not played, as the line below has it
+	float att = inverse ? (dist <= minDist ? 1.0f : dist > maxDist ? 0.0f : minDist / dist)
+		: dist <= minDist ? 1.0f : fmaxf(0.0f, 1.0f - (dist - minDist) / fmaxf(1.0f, maxDist - minDist));
 	volume *= att;
 	float rel = atan2f(dx, dy) - listener[3];
 	pan = dist > 1.0f ? sinf(rel) * 0.8f : 0.0f;
+}
+
+// A sound record's range in units (OpenMW's SoundBufferPool::insertSound): its own, or fAudioDefaultMinDistance /
+// fAudioDefaultMaxDistance when both are 0, times fAudioMinDistanceMult and fAudioMaxDistanceMult (20 and 50)
+static void soundRange(const GameData& g, const SoundDef& d, float& minDist, float& maxDist)
+{
+	float lo = (float)d.minRange, hi = (float)d.maxRange;
+	if (d.minRange == 0 && d.maxRange == 0)
+	{
+		lo = g.gmstf("faudiodefaultmindistance", 5.0f);
+		hi = g.gmstf("faudiodefaultmaxdistance", 40.0f);
+	}
+	minDist = fmaxf(1.0f, lo * g.gmstf("faudiomindistancemult", 20.0f));
+	maxDist = fmaxf(minDist, hi * g.gmstf("faudiomaxdistancemult", 50.0f));
 }
 
 void Session::playSound(int ref, const std::string& soundId, float volume, float pitch, bool script)
@@ -557,7 +574,9 @@ void Session::playSound(int ref, const std::string& soundId, float volume, float
 	if (ref >= 0)
 	{
 		float pos[3] = { w.refs[ref].pos[0], w.refs[ref].pos[1], w.refs[ref].pos[2] + 50.0f };
-		mix3d(pos, volume, pan, it->second.minRange * 20.0f, fmaxf(it->second.maxRange * 20.0f, 600.0f));
+		float lo, hi;
+		soundRange(w.game, it->second, lo, hi);
+		mix3d(pos, volume, pan, lo, hi, true);
 	}
 	if (volume > 0.01f)
 	{
@@ -633,7 +652,11 @@ void Session::updateLoopSounds()
 		float volume = (it != w.game.sounds.end() ? it->second.volume : 1.0f) * l.volume;
 		float pos[3] = { w.refs[l.ref].pos[0], w.refs[l.ref].pos[1], w.refs[l.ref].pos[2] + 50.0f };
 		if (it != w.game.sounds.end())
-			mix3d(pos, volume, pans[k], it->second.minRange * 20.0f, fmaxf(it->second.maxRange * 20.0f, 600.0f));
+		{
+			float lo, hi;
+			soundRange(w.game, it->second, lo, hi);
+			mix3d(pos, volume, pans[k], lo, hi, true);
+		}
 		vols[k] = volume;
 	}
 	order = vols;

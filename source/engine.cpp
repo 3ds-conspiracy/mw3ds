@@ -82,6 +82,7 @@ bool Engine::prepare()
 
 	// The Old 3DS's 16-bit colour buffer goes to a 16-bit top screen (see DISPLAY_TRANSFER_FLAGS). The screens'
 	// framebuffers are in VRAM, beside the render targets (a few MB of its 6 free): a MB of linear memory back for cells
+	platformClearVram();
 	gfxInit(g_profile.rgb565 ? GSP_RGB565_OES : GSP_BGR8_OES, GSP_BGR8_OES, true);
 	// gfxInit lights the screens on buffers that hold whatever VRAM had (multicoloured static, on an Old 2DS and when
 	// started from FBI): they stay forced black until the first black frame below is up

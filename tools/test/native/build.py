@@ -28,7 +28,7 @@ SKIP = {"main.cpp", "components/debug/debuglog.cpp", "mwrender/screenshotmanager
 # (check_entry_files)
 ENTRY_FILES = ["source/main.cpp", "tools/test/native/main_native.cpp"]
 ENTRY_MAX_LINES = 40
-ENTRY_FUNCTIONS = {"main", "platformRunOver", "platformFailFast"}
+ENTRY_FUNCTIONS = {"main", "platformRunOver", "platformFailFast", "platformClearVram"}
 # The renderer's drawing entry points get a suffix in the file that defines them: native_gpu.cpp wraps them so they draw
 # only with NATIVE_DRAW=1
 RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGlow", "rendererDrawActor", "rendererDrawGlow",

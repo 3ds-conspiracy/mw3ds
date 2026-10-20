@@ -19,6 +19,10 @@ bool platformFailFast()
 	return getenv("MW3DS_FAILFAST") != nullptr;
 }
 
+void platformClearVram()
+{
+}
+
 int main()
 {
 	return appMain();

@@ -43,9 +43,10 @@ static bool s_fontOn = false, s_atlasOn = false;
 static C3D_Tex s_fontTex, s_atlasTex;
 static UiGlyph s_ascii[256];
 static bool s_asciiHas[256];
-struct IconPage { C3D_Tex tex; bool loaded = false, failed = false; u32 used = 0; };
+struct IconPage { C3D_Tex tex; bool loaded = false; u32 failedAt = 0, used = 0; };
 static std::vector<IconPage> s_iconPages;
 static std::string s_dataDir;
+int g_uiIconMisses = 0;                 // icons not drawn, their page not in memory (EXPECT:iconmisses)
 static const int kMaxIconPages = 8;     // loaded at once (128 KB each); unused ones go first
 
 static std::unordered_map<std::string, std::vector<std::string>> s_wrapCache;
@@ -90,7 +91,7 @@ static bool loadTex(const std::string& path, C3D_Tex* tex, GPU_TEXTURE_FILTER_PA
 }
 
 static u32 s_fontSum = 0, s_atlasSum = 0;      // uiCheckTheme: the font's and frames' texels as loaded
-struct ArtTex { C3D_Tex tex; bool ok; u64 lastUse; };
+struct ArtTex { C3D_Tex tex; bool ok; u64 lastUse; u32 triedAt; };
 static std::unordered_map<std::string, ArtTex*> s_art;
 
 // Pictures not drawn for a few seconds give their linear memory back (a picture is read again when next shown).
@@ -125,10 +126,20 @@ bool uiArt(const std::string& file, int w, int h, float x, float y, float dw, fl
 		artEvict(now);
 		a = new ArtTex();
 		a->ok = loadTex(s_artDir + "/" + file, &a->tex, GPU_LINEAR);
+		a->triedAt = s_frame;
 		s_art[file] = a;
 	}
 	else
+	{
 		a = it->second;
+		// (a picture that couldn't load, linear memory full, is tried again every 60 frames while it is shown: a book's
+		// pages stayed bare as long as it was open)
+		if (!a->ok && s_frame - a->triedAt >= 60)
+		{
+			a->ok = loadTex(s_artDir + "/" + file, &a->tex, GPU_LINEAR);
+			a->triedAt = s_frame;
+		}
+	}
 	a->lastUse = now;
 	if (!a->ok || w <= 0 || h <= 0)
 		return false;
@@ -595,8 +606,13 @@ bool uiIcon(int icon, float x, float y, float size)
 	IconPage& pg = s_iconPages[page];
 	if (!pg.loaded)
 	{
-		if (pg.failed)
+		// (one that couldn't load, linear memory full, is tried again every 60 frames, 2 or 3 s: it stayed an icon-less box
+		// all session)
+		if (pg.failedAt && s_frame - pg.failedAt < 60)
+		{
+			g_uiIconMisses++;
 			return false;
+		}
 		// Too many pages in memory: drop ones this frame hasn't drawn from (the GPU is done with
 		// earlier frames by now)
 		int loaded = 0;
@@ -613,8 +629,10 @@ bool uiIcon(int icon, float x, float y, float size)
 		pg.loaded = loadTex(s_dataDir + "/" + s_def.iconPages[page].first, &pg.tex, GPU_LINEAR);
 		if (!pg.loaded)
 		{
-			pg.failed = true;
-			logf("ui: cannot load %s", s_def.iconPages[page].first.c_str());
+			if (!pg.failedAt)
+				logf("ui: cannot load %s", s_def.iconPages[page].first.c_str());
+			pg.failedAt = s_frame ? s_frame : 1;
+			g_uiIconMisses++;
 			return false;
 		}
 	}

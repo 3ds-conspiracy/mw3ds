@@ -835,11 +835,15 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		int gx = (int)floorf(cam.pos[0] / 8192.0f), gy = (int)floorf(cam.pos[1] / 8192.0f);
 		if (!secondEye)
 			distantUpdate(gx, gy, (int)ceilf(horizonEnd / 8192.0f) + 1);
-		// Past the detailed view: its own fog, from where the near fog ends to the horizon
+		// Past the detailed view (an Old 3DS's closes in to 0.3 of it): the fog from where the near fog starts to the horizon.
+		// It started past the near fog's end, by as much as the horizon is farther: just behind the near view, where the
+		// detailed objects are lost in the fog, the distant land's stood out dark and clear
 		bool horizon = horizonEnd > fogEnd + 1.0f;
 		Frustum far = horizon ? makeFrustum(cam, horizonEnd) : fr;
 		if (horizon)
-			setFogVec(fogStart + (horizonEnd - fogEnd), horizonEnd);
+			setFogVec(fogStart, horizonEnd);
+		g_gpu.lastHorizonFog[0] = horizon ? fogStart : 0.0f;
+		g_gpu.lastHorizonFog[1] = horizon ? horizonEnd : 0.0f;
 		for (auto& d : distantCells())
 		{
 			int ci = w.gridCell(d.gx, d.gy);
