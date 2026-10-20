@@ -12,9 +12,9 @@
 #include <cstring>
 
 #include "mwsound/soundmanagerimp.hpp"
-#include "platform/linear.hpp"
-#include "components/debug/debuglog.hpp"
 #include <malloc.h>
+#include <citro3d.h>
+#include "mwrender/renderhelpers.hpp"
 
 // The weather's ambient loop outdoors (the one it's changing to past halfway), thunder in storms
 C3D_Tex* Session::skyTex(const std::string& name)
@@ -553,5 +553,124 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 		m.verts = s_precipVerts + d.first * 96;
 		m.indices = s_precipIndices;
 		rendererDrawMesh(m, nullptr, s_precipTexOk[d.tex] ? &s_precipTex[d.tex] : nullptr);
+	}
+}
+
+std::vector<SkyBillboard> g_skyBillboards;
+float g_starAlpha = 0.0f;
+C3D_Tex* g_starTexture = nullptr;
+C3D_Tex* g_cloudTex[2] = { nullptr, nullptr };
+float g_cloudBlend = 0.0f;
+
+// The stars (a dome, tiled) and the sun / moons (squares toward the eye) around the camera, no depth
+void drawSkyBodies(const C3D_Mtx& view, bool secondEye)
+{
+	static const int kMax = 16;
+	static u8* ring = nullptr;                   // this frame's billboard vertices (each eye its own)
+	static u16* quad = nullptr;
+	static u8* dome = nullptr;
+	static u16* domeIdx = nullptr;
+	static int domeVerts = 0, domeIndices = 0, slot = 0;
+	if (!ring)
+	{
+		ring = (u8*)lockedLinearAlloc(kMax * 2 * 4 * 24);
+		quad = (u16*)lockedLinearAlloc(6 * 2);
+		static const u16 q[6] = { 0, 1, 2, 0, 2, 3 };
+		if (quad)
+		{
+			memcpy(quad, q, sizeof(q));
+			GSPGPU_FlushDataCache(quad, sizeof(q));
+		}
+		// star dome: elevation rings 5..90 degrees, 12 around; the texture repeats 4 times around
+		const int seg = 12, rings = 5;
+		const float elev[rings] = { 0, 15, 35, 60, 90 };
+		domeVerts = (seg + 1) * rings;
+		dome = (u8*)lockedLinearAlloc(domeVerts * 24);
+		std::vector<u16> idx;
+		for (int r = 0; r < rings && dome; r++)
+			for (int i = 0; i <= seg; i++)
+			{
+				float e = elev[r] * 0.0174533f, a = 6.2831853f * i / seg;
+				float* p = (float*)(dome + (r * (seg + 1) + i) * 24);
+				p[0] = cosf(e) * sinf(a) * 2800.0f;
+				p[1] = cosf(e) * cosf(a) * 2800.0f;
+				p[2] = sinf(e) * 2800.0f;
+				p[3] = i * 4.0f / seg;
+				p[4] = r * 1.5f / (rings - 1);
+				u32 white = 0xFFFFFFFF;
+				memcpy(dome + (r * (seg + 1) + i) * 24 + 20, &white, 4);
+				if (r < rings - 1 && i < seg)
+				{
+					u16 v = r * (seg + 1) + i, u = v + seg + 1;
+					u16 t[6] = { v, (u16)(v + 1), (u16)(u + 1), v, (u16)(u + 1), u };
+					idx.insert(idx.end(), t, t + 6);
+				}
+			}
+		domeIndices = idx.size();
+		domeIdx = (u16*)lockedLinearAlloc(idx.size() * 2);
+		if (domeIdx)
+		{
+			memcpy(domeIdx, idx.data(), idx.size() * 2);
+			GSPGPU_FlushDataCache(domeIdx, idx.size() * 2);
+		}
+		if (dome)
+			GSPGPU_FlushDataCache(dome, domeVerts * 24);
+	}
+	if (!ring || !quad)
+		return;
+	C3D_Mtx skyView = view;
+	skyView.r[0].w = skyView.r[1].w = skyView.r[2].w = 0.0f;
+	setModelView(skyView);
+	static const float one[3] = { 1, 1, 1 };
+	setTint(one);
+	// the stars, fading in at night
+	if (g_starTexture && g_starAlpha > 0.01f && dome && domeIdx)
+	{
+		u8 a = (u8)(fminf(1.0f, g_starAlpha) * 255.0f);
+		for (int i = 0; i < domeVerts; i++)
+			dome[i * 24 + 23] = a;
+		GSPGPU_FlushDataCache(dome, domeVerts * 24);
+		CellBatch b = {};
+		b.tex = 0;
+		b.flags = BATCH_BLEND | BATCH_ADDITIVE | BATCH_TWO_SIDED;
+		b.numVerts = domeVerts;
+		b.numIndices = domeIndices;
+		b.verts = dome;
+		b.indices = domeIdx;
+		b.stride = CELL_VERTEX_SIZE;
+		drawBatchTex(g_starTexture, b, DRAW_SKY, 0.0f);
+	}
+	if (!secondEye)
+		slot = 0;
+	float right[3] = { skyView.r[0].x, skyView.r[0].y, skyView.r[0].z };
+	float up[3] = { skyView.r[1].x, skyView.r[1].y, skyView.r[1].z };
+	for (auto& sb : g_skyBillboards)
+	{
+		if (slot >= kMax * 2 || !sb.tex)
+			break;
+		u8* v = ring + (slot++) * 4 * 24;
+		static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };
+		static const float uv[4][2] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
+		float cr = cosf(sb.roll), sr = sinf(sb.roll);
+		for (int i = 0; i < 4; i++)
+		{
+			float cx = corner[i][0] * cr - corner[i][1] * sr, cy = corner[i][0] * sr + corner[i][1] * cr;
+			float* p = (float*)(v + i * 24);
+			for (int k = 0; k < 3; k++)
+				p[k] = sb.dir[k] * 2700.0f + (right[k] * cx + up[k] * cy) * sb.size;
+			p[3] = uv[i][0];
+			p[4] = uv[i][1];
+			memcpy(v + i * 24 + 20, &sb.rgba, 4);
+		}
+		GSPGPU_FlushDataCache(v, 4 * 24);
+		CellBatch b = {};
+		b.tex = 0;
+		b.flags = BATCH_BLEND | BATCH_TWO_SIDED | BATCH_CLAMP | (sb.additive ? BATCH_ADDITIVE : 0);
+		b.numVerts = 4;
+		b.numIndices = 6;
+		b.verts = v;
+		b.indices = quad;
+		b.stride = CELL_VERTEX_SIZE;
+		drawBatchTex(sb.tex, b, DRAW_SKY, 0.0f);
 	}
 }

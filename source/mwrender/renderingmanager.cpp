@@ -1,16 +1,11 @@
 #include "mwrender/renderingmanager.hpp"
-#include "mwrender/objectpaging.hpp"
 
 #include <algorithm>
 #include <citro3d.h>
 #include <cmath>
 #include <cstring>
 
-#include "cell_shbin.h"
-#include "skin_shbin.h"
-#include "platform/linear.hpp"
-#include "platform/console.hpp"
-#include "components/debug/debuglog.hpp"
+#include "mwrender/renderhelpers.hpp"
 
 float g_profActorsMs = 0.0f;          // debug profile accumulators, reported by main once a second
 float g_profWorldMs = 0.0f;
@@ -20,64 +15,11 @@ int g_skippedDraws = 0;               // draws dropped because the GPU command b
 // behind drawn after one in front paints over it, as neither writes depth)
 int g_blendOutOfOrder = 0;
 int g_groundGaps = -1;                // cracks in the last saved shot (counted by the native test build; -1 here)
-
-static DVLB_s* s_dvlb;
-static shaderProgram_s s_program;
-static int s_uProjection, s_uModelView, s_uUvOffset, s_uFogVec, s_uPosOffset, s_uPosScale, s_uUvScale, s_uTint = -1;
-static int s_uLightPos = -1, s_uLightColor = -1;
-static int s_uLamp = -1;                    // shaders/cell.v.pica lamp: the batch's lamp light the night leaves alone
-static int s_uTorchVec = -1;                // shaders/cell.v.pica / shaders/skin.v.pica torchVec: how far out the torch's light is (per pixel)
-static bool s_torchStageOn = false;         // ... its combiner stage is in (setLight; setBatchState writes it)
-static const float kTorchAtEye = 80.0f;     // ... only while it is this near the camera
-// ... reaching twice its radius, Morrowind's light falloff along the way: whole to a third of the radius, then
-// radius / (3 x distance) (LinearValue 3), faded out over the second radius as the converter's lamps are; x 0.3 for
-// the surfaces' facing (no normals here: the average lit side's), against OpenMW in a cave
-static const float kTorchReach = 2.0f, kTorchFacing = 0.3f;
+GpuState g_gpu;
 int g_torchPerPixel = 0;                    // the last world view lit the torch per pixel (1), per vertex (0), none (-1)
-static float s_lampSet[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-static int s_uSide = -1;                    // shaders/cell.v.pica sideLight (rendererSetSunSide), on side-lit batches only
-static float s_sideNow[4] = { 0.0f, 0.0f, 0.0f, 0.0f }, s_sideSet[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-static bool s_lampValid = false;            // ... as last uploaded (a skinned run's palette overwrites the register)
 int g_lampLitBatches = 0;                   // batches the last view drew with lamp light the night left alone (tests)
-// Texture combiner stages: 0 the lit texture (setBatchState), then the player's torch per pixel, the fog, an enchanted
-// mesh's glow or shimmer, and an alpha scale (see-through actors)
-static const int kTevTorch = 1, kTevFog = 2, kTevGlow = 3, kTevAlpha = 4;
-// GPU skinning (shaders/skin.v.pica): its own program, the same uniforms in the same registers plus the bone palette
-static DVLB_s* s_skinDvlb;
-static shaderProgram_s s_skinProgram;
-static int s_uBones = -1;
-static bool s_skinReady = false;
-static float s_light[3], s_lightRadius = 0.0f, s_lightRgb[3] = { 0, 0, 0 };
-static int s_uAmbient = -1;
-static float s_ambientAdd = 0.0f;           // Night Eye's added light (rendererSetNightEye)
-static int s_bGamma = -1;
-static float s_invGamma = 1.0f;             // Gamma's exponent, 1 / gamma, in ambientAdd.w (rendererSetGamma)
-static bool s_gammaOn = false;
-static int s_bLightOn = -1;                 // shaders/cell.v.pica / shaders/skin.v.pica lightOn: the carried light's terms, skipped without one
-static C3D_Mtx s_lightView;               // the view the lights were last put in (set again after a skinned run)
-static bool s_lightViewOn = false;
-// Day and night outdoors (World::daylight): tint on the baked light, the sky's, and the fog colour
-static float s_land[3] = { 1, 1, 1 }, s_skyTint[3] = { 1, 1, 1 };
-static u32 s_dayFog = 0;
-static bool s_daylight = false;
-static bool s_formatValid = false;                // vertex format / quantization currently bound
-static bool s_packedBound = false;
-static float s_boundQuant[8];                     // pos offset, pos scale, uv scale
-static C3D_Mtx s_view;                            // of the last rendererDrawWorld, for the extra draws
-static float s_eyeSnap[3] = { 0.0f, 0.0f, 0.0f }; // its camera position on a 64-unit grid
-static float s_eye[3] = { 0.0f, 0.0f, 0.0f };     // ... and as it is
-static float s_uvOffset[2];
-static C3D_Tex s_fogRamp;
-static void initFogRamp();
-static C3D_Tex s_localTex;                        // local map (rendererDrawLocalMap)
-static C3D_RenderTarget* s_localTarget = nullptr;
-static C3D_Tex s_water[64];                       // the water surface's frames (rendererLoadWaterFrames)
-static int s_waterCount = 0;
-static float s_waterFps = 12.0f;
 static const float kCaustFps = 20.0f;
 static const float kCaustTiles = 2.0f;           // the 32 x 32 frame repeated twice across the item's texture
-static C3D_Tex s_caust[32];                       // enchanted items' shimmer frames (rendererLoadCaustics)
-static int s_caustCount = 0;
 static void drawShimmer(CellBatch b, u32 rgb);
 static void shimmerStage(u32 rgb);
 
@@ -87,39 +29,39 @@ static const float kInteriorFar = 12000.0f;
 
 void rendererInit()
 {
-	s_dvlb = DVLB_ParseFile((u32*)cell_shbin, cell_shbin_size);
-	shaderProgramInit(&s_program);
-	shaderProgramSetVsh(&s_program, &s_dvlb->DVLE[0]);
-	s_uProjection = shaderInstanceGetUniformLocation(s_program.vertexShader, "projection");
-	s_uModelView = shaderInstanceGetUniformLocation(s_program.vertexShader, "modelView");
-	s_uUvOffset = shaderInstanceGetUniformLocation(s_program.vertexShader, "uvOffset");
-	s_uFogVec = shaderInstanceGetUniformLocation(s_program.vertexShader, "fogVec");
-	s_uPosOffset = shaderInstanceGetUniformLocation(s_program.vertexShader, "posOffset");
-	s_uPosScale = shaderInstanceGetUniformLocation(s_program.vertexShader, "posScale");
-	s_uUvScale = shaderInstanceGetUniformLocation(s_program.vertexShader, "uvScale");
-	s_uTint = shaderInstanceGetUniformLocation(s_program.vertexShader, "tint");
-	s_uLightPos = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightPos");
-	s_uLightColor = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightColor");
-	s_uLamp = shaderInstanceGetUniformLocation(s_program.vertexShader, "lamp");
-	s_uSide = shaderInstanceGetUniformLocation(s_program.vertexShader, "sideLight");
-	s_uTorchVec = shaderInstanceGetUniformLocation(s_program.vertexShader, "torchVec");
-	s_uAmbient = shaderInstanceGetUniformLocation(s_program.vertexShader, "ambientAdd");
-	s_bGamma = shaderInstanceGetUniformLocation(s_program.vertexShader, "gammaOn");
-	s_bLightOn = shaderInstanceGetUniformLocation(s_program.vertexShader, "lightOn");
-	s_skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
-	shaderProgramInit(&s_skinProgram);
-	shaderProgramSetVsh(&s_skinProgram, &s_skinDvlb->DVLE[0]);
-	s_uBones = shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "bones");
+	g_gpu.dvlb = DVLB_ParseFile((u32*)cell_shbin, cell_shbin_size);
+	shaderProgramInit(&g_gpu.program);
+	shaderProgramSetVsh(&g_gpu.program, &g_gpu.dvlb->DVLE[0]);
+	g_gpu.uProjection = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "projection");
+	g_gpu.uModelView = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "modelView");
+	g_gpu.uUvOffset = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "uvOffset");
+	g_gpu.uFogVec = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "fogVec");
+	g_gpu.uPosOffset = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "posOffset");
+	g_gpu.uPosScale = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "posScale");
+	g_gpu.uUvScale = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "uvScale");
+	g_gpu.uTint = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "tint");
+	g_gpu.uLightPos = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "lightPos");
+	g_gpu.uLightColor = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "lightColor");
+	g_gpu.uLamp = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "lamp");
+	g_gpu.uSide = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "sideLight");
+	g_gpu.uTorchVec = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "torchVec");
+	g_gpu.uAmbient = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "ambientAdd");
+	g_gpu.bGamma = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "gammaOn");
+	g_gpu.bLightOn = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "lightOn");
+	g_gpu.skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
+	shaderProgramInit(&g_gpu.skinProgram);
+	shaderProgramSetVsh(&g_gpu.skinProgram, &g_gpu.skinDvlb->DVLE[0]);
+	g_gpu.uBones = shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, "bones");
 	// The frame's uniforms carry over between the two programs only if they sit in the same registers
 	static const char* const kShared[] = { "projection", "modelView", "uvOffset", "fogVec", "posOffset", "posScale",
 		"uvScale", "tint", "lightPos", "lightColor", "ambientAdd", "torchVec" };
-	s_skinReady = s_uBones >= 0;
+	g_gpu.skinReady = g_gpu.uBones >= 0;
 	for (const char* n : kShared)
-		s_skinReady &= shaderInstanceGetUniformLocation(s_program.vertexShader, n)
-			== shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, n);
-	s_skinReady &= s_bGamma == shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "gammaOn");
-	s_skinReady &= s_bLightOn == shaderInstanceGetUniformLocation(s_skinProgram.vertexShader, "lightOn");
-	if (!s_skinReady)
+		g_gpu.skinReady &= shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, n)
+			== shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, n);
+	g_gpu.skinReady &= g_gpu.bGamma == shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, "gammaOn");
+	g_gpu.skinReady &= g_gpu.bLightOn == shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, "lightOn");
+	if (!g_gpu.skinReady)
 	{
 		g_gpuSkinning = false;
 		logf("renderer: skin.v.pica's uniforms don't line up with cell.v.pica's: skinning stays on the CPU");
@@ -129,211 +71,65 @@ void rendererInit()
 
 void rendererExit()
 {
-	if (s_localTarget)
+	if (g_gpu.localTarget)
 	{
-		C3D_RenderTargetDelete(s_localTarget);
-		C3D_TexDelete(&s_localTex);
-		s_localTarget = nullptr;
+		C3D_RenderTargetDelete(g_gpu.localTarget);
+		C3D_TexDelete(&g_gpu.localTex);
+		g_gpu.localTarget = nullptr;
 	}
-	C3D_TexDelete(&s_fogRamp);
-	for (int i = 0; i < s_caustCount; i++)
-		C3D_TexDelete(&s_caust[i]);
-	s_caustCount = 0;
-	for (int i = 0; i < s_waterCount; i++)
-		C3D_TexDelete(&s_water[i]);
-	s_waterCount = 0;
-	shaderProgramFree(&s_program);
-	DVLB_Free(s_dvlb);
-	shaderProgramFree(&s_skinProgram);
-	DVLB_Free(s_skinDvlb);
+	C3D_TexDelete(&g_gpu.fogRamp);
+	for (int i = 0; i < g_gpu.caustCount; i++)
+		C3D_TexDelete(&g_gpu.caust[i]);
+	g_gpu.caustCount = 0;
+	for (int i = 0; i < g_gpu.waterCount; i++)
+		C3D_TexDelete(&g_gpu.water[i]);
+	g_gpu.waterCount = 0;
+	shaderProgramFree(&g_gpu.program);
+	DVLB_Free(g_gpu.dvlb);
+	shaderProgramFree(&g_gpu.skinProgram);
+	DVLB_Free(g_gpu.skinDvlb);
 }
 
-static void invalidateState();
-
-// Model-view and position offset uniforms, uploaded only when they change (skinned parts of an actor
-// share one).
-// The shader works in 24-bit floats (17 significant bits). Rebuilding world positions there
-// (posOffset + value * posScale, tens of thousands of units) rounded each cell's copy of a shared
-// terrain edge its own way: hairline cracks with the sky showing through on hardware (emulators
-// compute in 32-bit floats). Cell batches quantize on a power-of-two grid with their offset on it
-// (convert_cell.py write_batches), so for them the shader gets the offset less the camera snapped to
-// 64 units, and the snap goes into the matrix. posOffset + value * posScale is then a multiple of the
-// grid step within +-32768 units of the camera: exact in 24 bits, the same in every cell that shares
-// the vertex
-static C3D_Mtx s_mv;                              // as the caller set it
-static float s_batchOffset[3] = { 0.0f, 0.0f, 0.0f };
-static bool s_batchPacked = false;
-static C3D_Mtx s_boundMv;
-static float s_boundOffset[3];
-static bool s_mvValid = false;
-
-static void uploadTransform()
+void uploadTransform()
 {
-	bool snap = s_batchPacked && memcmp(&s_mv, &s_view, sizeof(s_mv)) == 0;
+	bool snap = g_gpu.batchPacked && memcmp(&g_gpu.mv, &g_gpu.view, sizeof(g_gpu.mv)) == 0;
 	float shift[3] = { 0.0f, 0.0f, 0.0f };
 	if (snap)
-		memcpy(shift, s_eyeSnap, sizeof(shift));
-	C3D_Mtx m = s_mv;
+		memcpy(shift, g_gpu.eyeSnap, sizeof(shift));
+	C3D_Mtx m = g_gpu.mv;
 	for (int i = 0; i < 4; i++)
-		m.r[i].w = s_mv.r[i].x * shift[0] + s_mv.r[i].y * shift[1] + s_mv.r[i].z * shift[2] + s_mv.r[i].w;
-	float off[3] = { s_batchOffset[0] - shift[0], s_batchOffset[1] - shift[1], s_batchOffset[2] - shift[2] };
-	if (s_mvValid && memcmp(&m, &s_boundMv, sizeof(m)) == 0 && memcmp(off, s_boundOffset, sizeof(off)) == 0)
+		m.r[i].w = g_gpu.mv.r[i].x * shift[0] + g_gpu.mv.r[i].y * shift[1] + g_gpu.mv.r[i].z * shift[2] + g_gpu.mv.r[i].w;
+	float off[3] = { g_gpu.batchOffset[0] - shift[0], g_gpu.batchOffset[1] - shift[1], g_gpu.batchOffset[2] - shift[2] };
+	if (g_gpu.mvValid && memcmp(&m, &g_gpu.boundMv, sizeof(m)) == 0 && memcmp(off, g_gpu.boundOffset, sizeof(off)) == 0)
 		return;
-	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uModelView, &m);
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uPosOffset, off[0], off[1], off[2], 0.0f);
-	s_boundMv = m;
-	memcpy(s_boundOffset, off, sizeof(off));
-	s_mvValid = true;
+	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uModelView, &m);
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uPosOffset, off[0], off[1], off[2], 0.0f);
+	g_gpu.boundMv = m;
+	memcpy(g_gpu.boundOffset, off, sizeof(off));
+	g_gpu.mvValid = true;
 }
 
-static void setModelView(const C3D_Mtx& mv)
-{
-	s_mv = mv;
-	uploadTransform();
-}
-
-static void bindPipeline()
+void bindPipeline()
 {
 	invalidateState();
-	s_mvValid = false;
+	g_gpu.mvValid = false;
 	// citro2d changes the program and vertex layout, so set ours up every frame
-	C3D_BindProgram(&s_program);
-	s_formatValid = false;      // citro2d changed the layout: the first batch sets ours up again
+	C3D_BindProgram(&g_gpu.program);
+	g_gpu.formatValid = false;      // citro2d changed the layout: the first batch sets ours up again
 	for (int i = 1; i < 6; i++)
 		C3D_TexEnvInit(C3D_GetTexEnv(i));
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uUvOffset, 0.0f, 0.0f, 0.0f, 0.0f);
-	s_uvOffset[0] = s_uvOffset[1] = 0.0f;
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uUvOffset, 0.0f, 0.0f, 0.0f, 0.0f);
+	g_gpu.uvOffset[0] = g_gpu.uvOffset[1] = 0.0f;
 	// Colour tint: the time of day's outdoors, none indoors (uniforms start at 0: always set)
-	const float* t = s_daylight ? s_land : nullptr;
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTint, t ? t[0] : 1.0f, t ? t[1] : 1.0f, t ? t[2] : 1.0f, 1.0f);
-	if (s_uAmbient >= 0)
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, 0.0f, 0.0f, 0.0f, s_invGamma);     // (the world's draws set it: setLight)
-	if (s_bGamma >= 0)
-		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bGamma, s_gammaOn);
-	if (s_uTorchVec >= 0)
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTorchVec, 0.0f, 0.0f, 0.0f, 1.0f);     // (no torch: past its reach everywhere)
-	s_torchStageOn = false;
-}
-
-void rendererSetNightEye(float add)
-{
-	s_ambientAdd = add;
-}
-
-void rendererSetGamma(float gamma)
-{
-	s_gammaOn = s_bGamma >= 0 && gamma > 0.0f && fabsf(gamma - 1.0f) > 0.001f;
-	s_invGamma = s_gammaOn ? 1.0f / gamma : 1.0f;
-}
-
-float rendererCurve(float v)
-{
-	return s_gammaOn && v > 0.0f ? powf(v, s_invGamma) : v;
-}
-
-// A 0xAABBGGRR colour through Gamma's curve (the fog: what the world fades into is curved as the world is)
-static u32 curveColor(u32 c)
-{
-	if (!s_gammaOn)
-		return c;
-	u32 out = c & 0xFF000000;
-	for (int sh = 0; sh < 24; sh += 8)
-		out |= (u32)(rendererCurve(((c >> sh) & 0xFF) / 255.0f) * 255.0f + 0.5f) << sh;
-	return out;
-}
-
-void rendererSetCarriedLight(const float pos[3], float radius, const float rgb[3])
-{
-	memcpy(s_light, pos, sizeof(s_light));
-	s_lightRadius = radius;
-	memcpy(s_lightRgb, rgb, sizeof(s_lightRgb));
-}
-
-static void updateLightRamp();
-
-// One light in this view's eye space: position (w = 1 / radius squared) and colour (off: no colour)
-static void putLight(int uPos, int uColor, const C3D_Mtx* view, const float pos[3], float radius, const float rgb[3])
-{
-	if (!view || radius <= 0.0f)
-	{
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, uColor, 0, 0, 0, 0);
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, uPos, 0, 0, 0, 0);
-		return;
-	}
-	float e[3];
-	for (int r = 0; r < 3; r++)
-		e[r] = view->r[r].x * pos[0] + view->r[r].y * pos[1] + view->r[r].z * pos[2] + view->r[r].w;
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, uPos, e[0], e[1], e[2], 1.0f / (radius * radius));
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, uColor, rgb[0], rgb[1], rgb[2], 0.0f);
-}
-
-// The carried light in this view's eye space (none: no view). Per pixel (first person) it is no
-// vertex work: the shaders put how far out its light reaches into the fog's texture coordinate (torchVec: the eye-space
-// depth over twice its radius, the torch being at the eye), the light ramp's rows hold its falloff in its colour, and the
-// torch stage adds texture x that before the fog. Depth rather than distance: at the screen's sides it reaches a little
-// further. Per vertex otherwise: lightColor x (1 - distance^2 / radius^2) at each vertex (shaders/cell.v.pica lightOn)
-static void setLight(const C3D_Mtx* view)
-{
-	if (s_uLightColor < 0 || s_uLightPos < 0)
-		return;
-	bool lit = view && s_lightRadius > 0.0f && (s_lightRgb[0] > 0.0f || s_lightRgb[1] > 0.0f || s_lightRgb[2] > 0.0f);
-	// (per pixel only with the torch at the eye: first person; a third-person or held camera lights per vertex)
-	float d2 = 0.0f;
-	for (int k = 0; k < 3; k++)
-		d2 += (s_light[k] - s_eye[k]) * (s_light[k] - s_eye[k]);
-	bool pixel = lit && s_uTorchVec >= 0 && d2 < kTorchAtEye * kTorchAtEye;
-	putLight(s_uLightPos, s_uLightColor, pixel ? nullptr : view, s_light, s_lightRadius, s_lightRgb);
-	if (s_uTorchVec >= 0)
-	{
-		if (pixel)
-			C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTorchVec, 0.0f, 0.0f, -1.0f / (kTorchReach * s_lightRadius), 0.0f);
-		else
-			C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTorchVec, 0.0f, 0.0f, 0.0f, 1.0f);
-	}
-	if (pixel)
-	{
-		updateLightRamp();
-		C3D_TexBind(1, &s_fogRamp);
-	}
-	if (view)
-		g_torchPerPixel = pixel ? 1 : lit ? 0 : -1;
-	if (pixel != s_torchStageOn)
-	{
-		s_torchStageOn = pixel;
-		invalidateState();                  // (setBatchState writes the torch stage, or clears it)
-	}
-	// (no light carried, or lit per pixel: its five instructions a vertex are skipped)
-	if (s_bLightOn >= 0)
-		C3D_BoolUnifSet(GPU_VERTEX_SHADER, s_bLightOn, lit && !pixel);
-	// Night Eye on the world's draws (none on the sky's: OpenMW adds it to the ambient light, which the sky doesn't take)
-	if (s_uAmbient >= 0)
-	{
-		float a = view ? s_ambientAdd : 0.0f;
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uAmbient, a, a, a, s_invGamma);
-	}
-	s_lightViewOn = view != nullptr;
-	if (view)
-		s_lightView = *view;
-}
-
-static bool s_uvOverrideOn = false;
-static float s_uvOverride[2] = { 0.0f, 0.0f };
-
-static float s_lastFog[2] = { 0.0f, 0.0f };
-
-void rendererFogRange(float& start, float& end)
-{
-	start = s_lastFog[0];
-	end = s_lastFog[1];
-}
-
-static bool s_underwaterOn = false;
-static float s_underwaterFog = 3.0f;
-
-void rendererSetUnderwater(bool on, float fogDepth)
-{
-	s_underwaterOn = on;
-	s_underwaterFog = fogDepth;
+	const float* t = g_gpu.daylight ? g_gpu.land : nullptr;
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uTint, t ? t[0] : 1.0f, t ? t[1] : 1.0f, t ? t[2] : 1.0f, 1.0f);
+	if (g_gpu.uAmbient >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uAmbient, 0.0f, 0.0f, 0.0f, g_gpu.invGamma);     // (the world's draws set it: setLight)
+	if (g_gpu.bGamma >= 0)
+		C3D_BoolUnifSet(GPU_VERTEX_SHADER, g_gpu.bGamma, g_gpu.gammaOn);
+	if (g_gpu.uTorchVec >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uTorchVec, 0.0f, 0.0f, 0.0f, 1.0f);     // (no torch: past its reach everywhere)
+	g_gpu.torchStageOn = false;
 }
 
 void rendererAlphaScale(float a)
@@ -353,200 +149,9 @@ void rendererAlphaScale(float a)
 
 void rendererUvOverride(bool on, float u, float v)
 {
-	s_uvOverrideOn = on;
-	s_uvOverride[0] = u;
-	s_uvOverride[1] = v;
-}
-
-static void setUvOffset(float u, float v)
-{
-	if (u == s_uvOffset[0] && v == s_uvOffset[1])
-		return;
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uUvOffset, u, v, 0.0f, 0.0f);
-	s_uvOffset[0] = u;
-	s_uvOffset[1] = v;
-}
-
-// ---- Fog: linear from fogStart to fogEnd (eye depth). The vertex shader writes the fog amount
-// to texture coordinate 1's x, texture unit 1 holds the light ramp, and the fog stage blends
-// towards the fog colour by its alpha, a 0..1 ramp across. (The PICA's own fog table is indexed by the non-linear depth
-// buffer value, which leaves almost no resolution past a few hundred units.) Down the ramp, the coordinate's y: the
-// player's torch lit per pixel, its colour x its falloff at y = depth / (twice its radius) (setLight), in the rgb
-
-static const int kFogRampWidth = 64, kLightRampRows = 32;
-static float s_rampRgb[3] = { -1.0f, -1.0f, -1.0f };     // the torch colour and gamma the ramp's rgb was built for
-static float s_rampGamma = -1.0f;
-static bool s_fogOn = false;
-static int s_spritesLeft = 0;          // this frame's particle sprites still to draw (g_profile.spriteBudget)
-static int s_spriteSlot = 0;           // where the frame's next sprite vertices go in rendererDrawSprites' ring
-static bool s_opaqueWater = false;     // rendererDrawLocalMap's opaqueWater, while it draws
-static int s_spritesAsked = 0, s_spritesDrawn = 0;      // this view's so far: wanted, and drawn within the budget
-static int s_spritesAskedLast = 0, s_spritesDrawnLast = 0;
-static float s_spritesWanted = 0, s_spritesWantedLast = 0;   // every visual's live particles, each weighted by nearness
-static u32 s_fogColor = 0;
-
-void rendererSetDaylight(const float land[3], const float sky[3], const float fog[3], bool outdoors)
-{
-	memcpy(s_land, land, sizeof(s_land));
-	memcpy(s_skyTint, sky, sizeof(s_skyTint));
-	s_dayFog = 0xFF000000 | ((u32)(fog[2] * 255) << 16) | ((u32)(fog[1] * 255) << 8) | (u32)(fog[0] * 255);
-	s_daylight = outdoors;
-}
-
-static void setTint(const float t[3])
-{
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTint, t[0], t[1], t[2], 1.0f);
-}
-
-static const float kNoTint[3] = { 1, 1, 1 };
-
-// The world's tint: the hour's outdoors, none indoors
-static const float* worldTint()
-{
-	return s_daylight ? s_land : kNoTint;
-}
-
-// A person's or creature's tint: its meshes carry the light where it was placed (Actor::tint, baked in when they load);
-// outdoors the hour darkens the sun's and the sky's share of it, not the lamps' (Actor::lamp), channel by channel
-static const float kPieceLight = 0.63f;    // a library's even light against a third-person piece's (about 0.5 / 0.8)
-static void actorTint(const Actor& a, float out[3])
-{
-	const float* t = worldTint();
-	for (int k = 0; k < 3; k++)
-	{
-		// (and the torch it holds out, on itself: Actor::heldLight, in the tint's units, light / 0.5 x 64)
-		// (and the lamps near where it stands now in place of those where it was placed: Actor::lampNow)
-		float all = a.tint[k], lamp = a.lamp[k] < a.tint[k] ? a.lamp[k] : a.tint[k], held = a.heldLight[k] * 128.0f;
-		float now = a.lampSplit ? a.lampNow[k] : lamp;
-		out[k] = all > 0.0f ? (t[k] * (all - lamp) + now + held) / all : t[k] + (now + held) / 64.0f;
-		// Dressed again from the third-person pieces (npcDress): their colours lack the placement's light a library's take
-		// as it loads, and are lit as the player's arms are (ambient 0.55 and a sun), not a library's even 0.5
-		if (a.dressed)
-			out[k] *= (all > 0.0f ? all / 64.0f : 1.0f) * kPieceLight;
-	}
-}
-
-void rendererSetSunSide(const float side[4])
-{
-	memcpy(s_sideNow, side, sizeof(s_sideNow));
-}
-
-// The batch's lamp light (shaders/cell.v.pica lamp): its colour x (1 - the hour's tint) / 16383, so tint x colour + this x the
-// vertex's brightness keeps the lamps' share whole; nothing indoors or on a batch without lamp light. On a side-lit
-// batch the low sun's light (sideLight: its colour, w 2 x direction / 255) and lamp.w -direction: shaders/cell.v.pica turns the
-// colours' alpha into facing x direction with them
-static void setLamp(const CellBatch& b)
-{
-	if (s_uLamp < 0)
-		return;
-	bool side = b.side && s_daylight && s_sideNow[3] != 0.0f;
-	float v[4] = { 0.0f, 0.0f, 0.0f, side ? -s_sideNow[3] : 0.0f };
-	if (s_daylight && (b.lamp[0] > 0.0f || b.lamp[1] > 0.0f || b.lamp[2] > 0.0f))
-		for (int k = 0; k < 3; k++)
-			v[k] = b.lamp[k] * (1.0f - s_land[k]) * (1.0f / 16383.0f);
-	g_lampLitBatches += v[0] > 0.0f || v[1] > 0.0f || v[2] > 0.0f;
-	float sd[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	if (side)
-		sd[0] = s_sideNow[0], sd[1] = s_sideNow[1], sd[2] = s_sideNow[2], sd[3] = 2.0f * s_sideNow[3] / 255.0f;
-	if (s_lampValid && memcmp(v, s_lampSet, sizeof(v)) == 0 && memcmp(sd, s_sideSet, sizeof(sd)) == 0)
-		return;
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uLamp, v[0], v[1], v[2], v[3]);
-	if (s_uSide >= 0)
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uSide, sd[0], sd[1], sd[2], sd[3]);
-	memcpy(s_lampSet, v, sizeof(v));
-	memcpy(s_sideSet, sd, sizeof(sd));
-	s_lampValid = true;
-}
-
-// The ramp's texel (x, y): 8x8 tiles in rows, texels in Morton order within a tile, RGBA8 stored a b g r. The first
-// row in memory is the texture's top (v = 1)
-static u8* rampTexel(int x, int y)
-{
-	int morton = (x & 1) | ((y & 1) << 1) | ((x & 2) << 1) | ((y & 2) << 2) | ((x & 4) << 2) | ((y & 4) << 3);
-	return (u8*)s_fogRamp.data + (((y / 8) * (kFogRampWidth / 8) + x / 8) * 64 + morton) * 4;
-}
-
-static void initFogRamp()
-{
-	C3D_TexInit(&s_fogRamp, kFogRampWidth, kLightRampRows, GPU_RGBA8);
-	for (int x = 0; x < kFogRampWidth; x++)
-		for (int y = 0; y < kLightRampRows; y++)
-		{
-			u8* t = rampTexel(x, y);
-			t[0] = (u8)(255 * x / (kFogRampWidth - 1));
-			t[1] = t[2] = t[3] = 0;
-		}
-	C3D_TexFlush(&s_fogRamp);
-	C3D_TexSetFilter(&s_fogRamp, GPU_LINEAR, GPU_LINEAR);
-	C3D_TexSetWrap(&s_fogRamp, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
-}
-
-// The ramp's rgb for the torch now carried (its colour, through Gamma's curve as the vertex light is), when either changed
-static void updateLightRamp()
-{
-	if (memcmp(s_rampRgb, s_lightRgb, sizeof(s_rampRgb)) == 0 && s_rampGamma == s_invGamma)
-		return;
-	memcpy(s_rampRgb, s_lightRgb, sizeof(s_rampRgb));
-	s_rampGamma = s_invGamma;
-	for (int y = 0; y < kLightRampRows; y++)
-	{
-		// (row 0, v = 1: twice the radius, nothing; the last row, v = 0: at the eye)
-		float d = kTorchReach * (1.0f - (float)y / (kLightRampRows - 1)), over = fminf(fmaxf(d - 1.0f, 0.0f), 1.0f);
-		float fall = kTorchFacing * fminf(1.0f, 1.0f / (3.0f * fmaxf(d, 0.001f))) * (1.0f - over * over);
-		u8 c[3];
-		for (int k = 0; k < 3; k++)
-			c[k] = y == 0 ? 0 : (u8)(fminf(1.0f, rendererCurve(s_lightRgb[k] * fall)) * 255.0f + 0.5f);
-		for (int x = 0; x < kFogRampWidth; x++)
-		{
-			u8* t = rampTexel(x, y);
-			t[1] = c[2];
-			t[2] = c[1];
-			t[3] = c[0];
-		}
-	}
-	C3D_TexFlush(&s_fogRamp);
-}
-
-// The horizon's scale of the exterior fog distance (main: the weather's alone): distant land is drawn that far with its
-// own fog ramp, whatever closed the detailed view in (the frame time, an Old 3DS's shorter view). Morrowind's
-// mountains stay on the horizon while the expensive world ends nearer (the MGE way)
-static float s_horizonScale = 0.0f;
-void rendererSetHorizon(float scale)
-{
-	s_horizonScale = scale;
-}
-
-static void setFogVec(float start, float end)
-{
-	// View space looks down -Z: fog = (-z - start) / (end - start)
-	float k = end > start ? 1.0f / (end - start) : 0.0f;
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uFogVec, 0.0f, 0.0f, -k, -start * k);
-}
-
-static void enableFog(const Cell& cell, float fogStart, float fogEnd)
-{
-	invalidateState();
-	setFogVec(fogStart, fogEnd);
-	s_fogColor = curveColor(s_daylight ? s_dayFog : 0xFF000000 | (cell.fog[2] << 16) | (cell.fog[1] << 8) | cell.fog[0]);    // 0xAABBGGRR
-	C3D_TexBind(1, &s_fogRamp);
-	C3D_TexEnv* env = C3D_GetTexEnv(kTevFog);
-	C3D_TexEnvInit(env);
-	// rgb = fog * ramp.a + previous * (1 - ramp.a); alpha unchanged
-	C3D_TexEnvSrc(env, C3D_RGB, GPU_CONSTANT, GPU_PREVIOUS, GPU_TEXTURE1);
-	C3D_TexEnvOpRgb(env, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_SRC_COLOR, GPU_TEVOP_RGB_SRC_ALPHA);
-	C3D_TexEnvFunc(env, C3D_RGB, GPU_INTERPOLATE);
-	C3D_TexEnvSrc(env, C3D_Alpha, GPU_PREVIOUS);
-	C3D_TexEnvFunc(env, C3D_Alpha, GPU_REPLACE);
-	C3D_TexEnvColor(env, s_fogColor);
-	s_fogOn = true;
-}
-
-static void disableFog()
-{
-	invalidateState();
-	setFogVec(0.0f, 0.0f);
-	C3D_TexEnvInit(C3D_GetTexEnv(kTevFog));
-	s_fogOn = false;
+	g_gpu.uvOverrideOn = on;
+	g_gpu.uvOverride[0] = u;
+	g_gpu.uvOverride[1] = v;
 }
 
 // ---- Culling: batch bounds against the view frustum and the fog distance
@@ -616,34 +221,9 @@ static bool boxVisible(const Frustum& fr, const float* bmin, const float* bmax, 
 	return true;
 }
 
-// ---- Batch drawing
-
-enum DrawMode { DRAW_WORLD, DRAW_SKY };
-
-static C3D_Mtx s_projection;
-static float s_eyeShift = 0.0f, s_farPlane = 1000.0f;
-static float s_time;
-static int s_glowCount = 0;
-
 static C3D_Tex* batchTexture(Cell& cell, const CellBatch& b)
 {
 	return b.tex >= 0 && b.tex < (int)cell.textures.size() ? cell.textures[b.tex] : nullptr;
-}
-
-// The last render state set, so consecutive draws with the same state skip re-setting it (each
-// citro3d state call re-sends GPU commands). Anything else that touches state invalidates it.
-static struct { bool valid; C3D_Tex* tex; u8 flags, alphaRef; int mode; float scrollU, scrollV; } s_last;
-
-static void invalidateState()
-{
-	s_last.valid = false;
-}
-
-static const float kWaterScroll = 0.06f;         // water texture repeats (1024 units) a second
-
-float rendererWaterScroll()
-{
-	return kWaterScroll;
 }
 
 // An enchanted actor mesh shimmers: its colour added over the lit texture in the free combiner stage, pulsing (no
@@ -668,10 +248,10 @@ static void glowStage(u32 glow)
 
 static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 {
-	if (s_last.valid && s_last.tex == tex && s_last.flags == b.flags && s_last.alphaRef == b.alphaRef
-		&& s_last.mode == mode && s_last.scrollU == b.scrollU && s_last.scrollV == b.scrollV)
+	if (g_gpu.last.valid && g_gpu.last.tex == tex && g_gpu.last.flags == b.flags && g_gpu.last.alphaRef == b.alphaRef
+		&& g_gpu.last.mode == mode && g_gpu.last.scrollU == b.scrollU && g_gpu.last.scrollV == b.scrollV)
 		return;
-	s_last = { true, tex, b.flags, b.alphaRef, (int)mode, b.scrollU, b.scrollV };
+	g_gpu.last = { true, tex, b.flags, b.alphaRef, (int)mode, b.scrollU, b.scrollV };
 	if (b.flags & BATCH_BLEND)
 	{
 		GPU_BLENDFACTOR dst = (b.flags & BATCH_ADDITIVE) ? GPU_ONE : GPU_ONE_MINUS_SRC_ALPHA;
@@ -699,7 +279,7 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 		// A model's own sliding texture (NiUVController: a waterfall's water falling), repeats a second
 		setUvOffset(fmodf(time * b.scrollU, 1.0f), fmodf(time * b.scrollV, 1.0f));
 	}
-	else if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && s_waterCount)
+	else if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && g_gpu.waterCount)
 		setUvOffset(0.0f, 0.0f);             // (the water's frames move it: drawBatchTex picks the frame)
 	else if (b.flags & BATCH_SCROLL)
 	{
@@ -722,8 +302,8 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 	else
 		setUvOffset(0.0f, 0.0f);
 
-	if (s_fogOn)
-		C3D_TexEnvColor(C3D_GetTexEnv(kTevFog), (b.flags & BATCH_ADDITIVE) ? 0xFF000000 : s_fogColor);
+	if (g_gpu.fogOn)
+		C3D_TexEnvColor(C3D_GetTexEnv(kTevFog), (b.flags & BATCH_ADDITIVE) ? 0xFF000000 : g_gpu.fogColor);
 
 	C3D_TexEnv* env = C3D_GetTexEnv(0);
 	C3D_TexEnvInit(env);
@@ -743,7 +323,7 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 	// The torch per pixel: texture x the ramp's light added (the light alone on an untextured batch); alpha as it is
 	env = C3D_GetTexEnv(kTevTorch);
 	C3D_TexEnvInit(env);
-	if (s_torchStageOn && mode != DRAW_SKY)
+	if (g_gpu.torchStageOn && mode != DRAW_SKY)
 	{
 		if (tex)
 		{
@@ -764,7 +344,7 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 static void bindVertexFormat(const CellBatch& b)
 {
 	bool packed = b.stride == CELL_VERTEX_SIZE_PACKED;
-	if (!s_formatValid || packed != s_packedBound)
+	if (!g_gpu.formatValid || packed != g_gpu.packedBound)
 	{
 		C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
 		AttrInfo_Init(attrInfo);
@@ -779,31 +359,31 @@ static void bindVertexFormat(const CellBatch& b)
 			AttrInfo_AddLoader(attrInfo, 1, GPU_FLOAT, 2);
 		}
 		AttrInfo_AddLoader(attrInfo, 2, GPU_UNSIGNED_BYTE, 4); // v2 = baked color
-		s_packedBound = packed;
+		g_gpu.packedBound = packed;
 	}
 	float q[8] = { b.posOffset[0], b.posOffset[1], b.posOffset[2], b.posScale[0], b.posScale[1], b.posScale[2],
 		b.uvScale[0], b.uvScale[1] };
-	if (!s_formatValid || memcmp(q, s_boundQuant, sizeof(q)) != 0)
+	if (!g_gpu.formatValid || memcmp(q, g_gpu.boundQuant, sizeof(q)) != 0)
 	{
 		// The offset goes up with the model-view (uploadTransform)
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uPosScale, q[3], q[4], q[5], 0.0f);
-		C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uUvScale, q[6], q[7], 1.0f, 1.0f);
-		memcpy(s_boundQuant, q, sizeof(q));
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uPosScale, q[3], q[4], q[5], 0.0f);
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uUvScale, q[6], q[7], 1.0f, 1.0f);
+		memcpy(g_gpu.boundQuant, q, sizeof(q));
 	}
-	if (memcmp(s_batchOffset, q, sizeof(s_batchOffset)) != 0 || s_batchPacked != packed)
+	if (memcmp(g_gpu.batchOffset, q, sizeof(g_gpu.batchOffset)) != 0 || g_gpu.batchPacked != packed)
 	{
-		memcpy(s_batchOffset, q, sizeof(s_batchOffset));
-		s_batchPacked = packed;
+		memcpy(g_gpu.batchOffset, q, sizeof(g_gpu.batchOffset));
+		g_gpu.batchPacked = packed;
 		uploadTransform();
 	}
-	s_formatValid = true;
+	g_gpu.formatValid = true;
 }
 
 // Overflowing the command buffer is a panic (a freeze on hardware): past this share the world
 // stops drawing, leaving room for the HUD and the bottom screen
 static const float kCmdBufLimit = 0.9f;
 
-static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
+void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 {
 	// A draw of no triangles hangs the PICA on hardware (emulators skip it)
 	if (b.numIndices < 3 || !b.verts || !b.indices)
@@ -815,11 +395,11 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 	}
 	// Water plays Morrowind's surface frames ([Water] SurfaceTexture, SurfaceFrameCount at SurfaceFPS, as OpenMW's
 	// simple water): the ripples change shape. One picture sliding looked still on the console
-	if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && s_waterCount)
-		tex = &s_water[(int)(fmaxf(0.0f, time) * s_waterFps) % s_waterCount];
+	if ((b.flags & BATCH_SCROLL) && mode != DRAW_SKY && g_gpu.waterCount)
+		tex = &g_gpu.water[(int)(fmaxf(0.0f, time) * g_gpu.waterFps) % g_gpu.waterCount];
 	setLamp(b);
 	// (the world map's baked cells: the sea drawn opaque, one even sea whatever lies under it)
-	if (s_opaqueWater && (b.flags & BATCH_SCROLL) && mode != DRAW_SKY)
+	if (g_gpu.opaqueWater && (b.flags & BATCH_SCROLL) && mode != DRAW_SKY)
 	{
 		CellBatch flat = b;
 		flat.flags &= ~(BATCH_BLEND | BATCH_ADDITIVE);
@@ -827,14 +407,14 @@ static void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float 
 	}
 	else
 		setBatchState(tex, b, mode, time);
-	if (s_uvOverrideOn)
-		setUvOffset(s_uvOverride[0], s_uvOverride[1]);
+	if (g_gpu.uvOverrideOn)
+		setUvOffset(g_gpu.uvOverride[0], g_gpu.uvOverride[1]);
 	bindVertexFormat(b);
 	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 	BufInfo_Init(bufInfo);
 	BufInfo_Add(bufInfo, b.verts, b.stride, 3, 0x210);
 	C3D_DrawElements(GPU_TRIANGLES, b.numIndices, C3D_UNSIGNED_SHORT, b.indices);
-	if (s_uvOverrideOn)
+	if (g_gpu.uvOverrideOn)
 		invalidateState();                          // (the next batch sets its own offset again)
 }
 
@@ -851,19 +431,6 @@ static int batchPass(const CellBatch& b)
 	return (b.flags & BATCH_BLEND) ? 2 : 0;
 }
 
-// GPU-skinned actor meshes (ActorMesh::gpuSkin) the actor loop queued, drawn with shaders/skin.v.pica after it: one switch of
-// program for them all. Each sends its bone palette (3 rows a bone) and draws its packed vertices as they are
-struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; float alpha = 1.0f; float tint[3] = { 1, 1, 1 }; };
-static std::vector<SkinDraw> s_skinQueue;
-
-// Blended draws of the frame, drawn back to front after everything solid (OpenMW's SORT_BACK_TO_FRONT bin): the
-// cell's blended batches by their bounds' middle, actors' rigid blended meshes by the actor. A Khajiit's ears (blended
-// hair) were drawn before the tapestry behind them, which then painted over them
-struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr;
-	float alpha = 1.0f;               // (an actor drawn see-through: Invisibility, Chameleon)
-	float tint[3] = { 1, 1, 1 }; };   // (an actor's: actorTint; a cell batch's: the world's)
-static std::vector<BlendDraw> s_blendQueue;
-
 // An actor's mesh as a batch: its flags' 128 is the weapon's (ACTOR_MESH_WEAPON), not BATCH_RISE, which a torch's fire
 // and smoke take from ActorMesh::rise
 static u8 actorBatchFlags(const ActorMesh& m)
@@ -873,12 +440,12 @@ static u8 actorBatchFlags(const ActorMesh& m)
 
 static int drawSkinQueue(float time)
 {
-	if (s_skinQueue.empty())
+	if (g_gpu.skinQueue.empty())
 		return 0;
 	int draws = 0;
 	static std::vector<float> pal(kSkinBones * 12);
-	C3D_BindProgram(&s_skinProgram);
-	for (auto& d : s_skinQueue)
+	C3D_BindProgram(&g_gpu.skinProgram);
+	for (auto& d : g_gpu.skinQueue)
 	{
 		const ActorMesh& m = *d.m;
 		if (m.numIndices < 3 || !m.verts || !m.indices)
@@ -907,18 +474,18 @@ static int drawSkinQueue(float time)
 		AttrInfo_AddLoader(attrInfo, 2, GPU_UNSIGNED_BYTE, 4);    // v2 = colour
 		AttrInfo_AddLoader(attrInfo, 3, GPU_UNSIGNED_BYTE, 4);    // v3 = palette entries
 		AttrInfo_AddLoader(attrInfo, 4, GPU_UNSIGNED_BYTE, 4);    // v4 = weights
-		s_formatValid = false;                                     // (the next cell batch sets its own up again)
+		g_gpu.formatValid = false;                                     // (the next cell batch sets its own up again)
 		actorSkinPalette(*d.a, m, pal.data());
 		for (size_t p = 0; p < m.palBone.size(); p++)
 			for (int r = 0; r < 3; r++)
 			{
 				const float* row = &pal[p * 12 + r * 4];
-				C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uBones + p * 3 + r, row[0], row[1], row[2], row[3]);
+				C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uBones + p * 3 + r, row[0], row[1], row[2], row[3]);
 			}
 		C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 		BufInfo_Init(bufInfo);
 		BufInfo_Add(bufInfo, m.verts, 24, 5, 0x43210);
-		bool flat = m.glow && !s_caustCount;
+		bool flat = m.glow && !g_gpu.caustCount;
 		if (flat)
 			glowStage(m.glow);
 		if (ghost)
@@ -929,7 +496,7 @@ static int drawSkinQueue(float time)
 		if (flat)
 			glowStage(0);
 		draws++;
-		if (m.glow && s_caustCount && !ghost)
+		if (m.glow && g_gpu.caustCount && !ghost)
 		{
 			// Enchanted armour and clothing shimmer as OpenMW's glow does: the caustic frames in the enchantment's
 			// colour added over the item (a second pass, as for a weapon). The colour added flat over the whole item
@@ -937,8 +504,8 @@ static int drawSkinQueue(float time)
 			CellBatch sb = b;
 			sb.flags = (b.flags & BATCH_TWO_SIDED) | BATCH_BLEND | BATCH_ADDITIVE | BATCH_DECAL;
 			sb.alphaRef = 0;
-			setBatchState(&s_caust[(int)(time * kCaustFps) % s_caustCount], sb, DRAW_WORLD, time);
-			C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uUvScale, m.uvQ * kCaustTiles, m.uvQ * kCaustTiles, 1.0f, 1.0f);
+			setBatchState(&g_gpu.caust[(int)(time * kCaustFps) % g_gpu.caustCount], sb, DRAW_WORLD, time);
+			C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uUvScale, m.uvQ * kCaustTiles, m.uvQ * kCaustTiles, 1.0f, 1.0f);
 			shimmerStage(m.glow);
 			C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
 			C3D_TexEnvInit(C3D_GetTexEnv(kTevGlow));
@@ -946,22 +513,21 @@ static int drawSkinQueue(float time)
 			draws++;
 		}
 	}
-	s_skinQueue.clear();
-	C3D_BindProgram(&s_program);
-	s_formatValid = false;
-	s_lampValid = false;                // (the palette wrote over shaders/cell.v.pica's lamp register)
+	g_gpu.skinQueue.clear();
+	C3D_BindProgram(&g_gpu.program);
+	g_gpu.formatValid = false;
+	g_gpu.lampValid = false;                // (the palette wrote over shaders/cell.v.pica's lamp register)
 	setTint(worldTint());
 	return draws;
 }
 
-
 static int drawBlendQueue(float time)
 {
-	std::stable_sort(s_blendQueue.begin(), s_blendQueue.end(), [](const BlendDraw& x, const BlendDraw& y) { return x.d2 > y.d2; });
+	std::stable_sort(g_gpu.blendQueue.begin(), g_gpu.blendQueue.end(), [](const BlendDraw& x, const BlendDraw& y) { return x.d2 > y.d2; });
 	int draws = 0;
 	float last = 1e30f;
 	g_blendOutOfOrder = 0;
-	for (const BlendDraw& bd : s_blendQueue)
+	for (const BlendDraw& bd : g_gpu.blendQueue)
 	{
 		g_blendOutOfOrder += bd.d2 > last * 1.0001f ? 1 : 0;
 		last = bd.d2;
@@ -970,7 +536,7 @@ static int drawBlendQueue(float time)
 			// (a blended skinned mesh: drawn with shaders/skin.v.pica on its own, in its place in the order)
 			SkinDraw sd = { bd.cell, bd.skinned, bd.mesh, bd.mv, bd.alpha };
 			memcpy(sd.tint, bd.tint, sizeof(sd.tint));
-			s_skinQueue.push_back(sd);
+			g_gpu.skinQueue.push_back(sd);
 			draws += drawSkinQueue(time);
 			continue;
 		}
@@ -988,7 +554,7 @@ static int drawBlendQueue(float time)
 				b.flags |= BATCH_BLEND;
 				rendererAlphaScale(bd.alpha);
 			}
-			bool flat = m.glow && !s_caustCount;
+			bool flat = m.glow && !g_gpu.caustCount;
 			if (flat)
 				glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)
 			drawBatch(*bd.cell, b, DRAW_WORLD, time);
@@ -1009,12 +575,12 @@ static int drawBlendQueue(float time)
 		}
 		draws++;
 	}
-	s_blendQueue.clear();
+	g_gpu.blendQueue.clear();
 	setTint(worldTint());
 	return draws;
 }
 
-static int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std::vector<u8>* visible, float time)
+int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std::vector<u8>* visible, float time)
 {
 	int draws = 0;
 	for (size_t i = 0; i < batches.size(); i++)
@@ -1026,125 +592,6 @@ static int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, co
 		draws++;
 	}
 	return draws;
-}
-
-std::vector<SkyBillboard> g_skyBillboards;
-float g_starAlpha = 0.0f;
-C3D_Tex* g_starTexture = nullptr;
-C3D_Tex* g_cloudTex[2] = { nullptr, nullptr };
-float g_cloudBlend = 0.0f;
-
-// The stars (a dome, tiled) and the sun / moons (squares toward the eye) around the camera, no depth
-static void drawSkyBodies(const C3D_Mtx& view, bool secondEye)
-{
-	static const int kMax = 16;
-	static u8* ring = nullptr;                   // this frame's billboard vertices (each eye its own)
-	static u16* quad = nullptr;
-	static u8* dome = nullptr;
-	static u16* domeIdx = nullptr;
-	static int domeVerts = 0, domeIndices = 0, slot = 0;
-	if (!ring)
-	{
-		ring = (u8*)lockedLinearAlloc(kMax * 2 * 4 * 24);
-		quad = (u16*)lockedLinearAlloc(6 * 2);
-		static const u16 q[6] = { 0, 1, 2, 0, 2, 3 };
-		if (quad)
-		{
-			memcpy(quad, q, sizeof(q));
-			GSPGPU_FlushDataCache(quad, sizeof(q));
-		}
-		// star dome: elevation rings 5..90 degrees, 12 around; the texture repeats 4 times around
-		const int seg = 12, rings = 5;
-		const float elev[rings] = { 0, 15, 35, 60, 90 };
-		domeVerts = (seg + 1) * rings;
-		dome = (u8*)lockedLinearAlloc(domeVerts * 24);
-		std::vector<u16> idx;
-		for (int r = 0; r < rings && dome; r++)
-			for (int i = 0; i <= seg; i++)
-			{
-				float e = elev[r] * 0.0174533f, a = 6.2831853f * i / seg;
-				float* p = (float*)(dome + (r * (seg + 1) + i) * 24);
-				p[0] = cosf(e) * sinf(a) * 2800.0f;
-				p[1] = cosf(e) * cosf(a) * 2800.0f;
-				p[2] = sinf(e) * 2800.0f;
-				p[3] = i * 4.0f / seg;
-				p[4] = r * 1.5f / (rings - 1);
-				u32 white = 0xFFFFFFFF;
-				memcpy(dome + (r * (seg + 1) + i) * 24 + 20, &white, 4);
-				if (r < rings - 1 && i < seg)
-				{
-					u16 v = r * (seg + 1) + i, u = v + seg + 1;
-					u16 t[6] = { v, (u16)(v + 1), (u16)(u + 1), v, (u16)(u + 1), u };
-					idx.insert(idx.end(), t, t + 6);
-				}
-			}
-		domeIndices = idx.size();
-		domeIdx = (u16*)lockedLinearAlloc(idx.size() * 2);
-		if (domeIdx)
-		{
-			memcpy(domeIdx, idx.data(), idx.size() * 2);
-			GSPGPU_FlushDataCache(domeIdx, idx.size() * 2);
-		}
-		if (dome)
-			GSPGPU_FlushDataCache(dome, domeVerts * 24);
-	}
-	if (!ring || !quad)
-		return;
-	C3D_Mtx skyView = view;
-	skyView.r[0].w = skyView.r[1].w = skyView.r[2].w = 0.0f;
-	setModelView(skyView);
-	static const float one[3] = { 1, 1, 1 };
-	setTint(one);
-	// the stars, fading in at night
-	if (g_starTexture && g_starAlpha > 0.01f && dome && domeIdx)
-	{
-		u8 a = (u8)(fminf(1.0f, g_starAlpha) * 255.0f);
-		for (int i = 0; i < domeVerts; i++)
-			dome[i * 24 + 23] = a;
-		GSPGPU_FlushDataCache(dome, domeVerts * 24);
-		CellBatch b = {};
-		b.tex = 0;
-		b.flags = BATCH_BLEND | BATCH_ADDITIVE | BATCH_TWO_SIDED;
-		b.numVerts = domeVerts;
-		b.numIndices = domeIndices;
-		b.verts = dome;
-		b.indices = domeIdx;
-		b.stride = CELL_VERTEX_SIZE;
-		drawBatchTex(g_starTexture, b, DRAW_SKY, 0.0f);
-	}
-	if (!secondEye)
-		slot = 0;
-	float right[3] = { skyView.r[0].x, skyView.r[0].y, skyView.r[0].z };
-	float up[3] = { skyView.r[1].x, skyView.r[1].y, skyView.r[1].z };
-	for (auto& sb : g_skyBillboards)
-	{
-		if (slot >= kMax * 2 || !sb.tex)
-			break;
-		u8* v = ring + (slot++) * 4 * 24;
-		static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };
-		static const float uv[4][2] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
-		float cr = cosf(sb.roll), sr = sinf(sb.roll);
-		for (int i = 0; i < 4; i++)
-		{
-			float cx = corner[i][0] * cr - corner[i][1] * sr, cy = corner[i][0] * sr + corner[i][1] * cr;
-			float* p = (float*)(v + i * 24);
-			for (int k = 0; k < 3; k++)
-				p[k] = sb.dir[k] * 2700.0f + (right[k] * cx + up[k] * cy) * sb.size;
-			p[3] = uv[i][0];
-			p[4] = uv[i][1];
-			memcpy(v + i * 24 + 20, &sb.rgba, 4);
-		}
-		GSPGPU_FlushDataCache(v, 4 * 24);
-		CellBatch b = {};
-		b.tex = 0;
-		b.flags = BATCH_BLEND | BATCH_TWO_SIDED | BATCH_CLAMP | (sb.additive ? BATCH_ADDITIVE : 0);
-		b.numVerts = 4;
-		b.numIndices = 6;
-		b.verts = v;
-		b.indices = quad;
-		b.stride = CELL_VERTEX_SIZE;
-		drawBatchTex(sb.tex, b, DRAW_SKY, 0.0f);
-	}
 }
 
 // Distance at which the stereo image sits on the screen surface (world units, ~1.7 m): nearer
@@ -1188,7 +635,7 @@ float rendererStereoPixels(float depth, float eyeShift)
 
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale)
 {
-	s_spritesLeft = g_profile.spriteBudget;
+	g_gpu.spritesLeft = g_profile.spriteBudget;
 	if (!secondEye)
 		g_lampLitBatches = 0;
 	MARK("draw world");
@@ -1204,12 +651,12 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		// with our view; ours reaches farther, and the fog spread over it left far things crisper than OpenMW's)
 		fogStart = fminf(fogEnd, kInteriorFogView * fogScale) * w.weatherFogStart();
 	}
-	if (fog && s_underwaterOn)
-		fogStart = fogEnd * (1.0f - s_underwaterFog);
+	if (fog && g_gpu.underwaterOn)
+		fogStart = fogEnd * (1.0f - g_gpu.underwaterFog);
 	// (outdoors: the distant land's reach, at least the detailed view's)
-	float horizonEnd = fog && !(here.flags & CELL_INTERIOR) ? fmaxf(fogEnd, viewEnd * s_horizonScale) : fogEnd;
-	s_lastFog[0] = fog ? fogStart : 0.0f;
-	s_lastFog[1] = fog ? fogEnd : 0.0f;
+	float horizonEnd = fog && !(here.flags & CELL_INTERIOR) ? fmaxf(fogEnd, viewEnd * g_gpu.horizonScale) : fogEnd;
+	g_gpu.lastFog[0] = fog ? fogStart : 0.0f;
+	g_gpu.lastFog[1] = fog ? fogEnd : 0.0f;
 	float farPlane = fog ? horizonEnd + 500.0f : kInteriorFar;
 	float time = w.time;
 
@@ -1224,22 +671,22 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	C3D_FVec target = FVec3_New(cam.pos[0] + sinf(cam.yaw) * cp, cam.pos[1] + cosf(cam.yaw) * cp,
 		cam.pos[2] + sinf(cam.pitch));
 	Mtx_LookAt(&view, eye, target, FVec3_New(0.0f, 0.0f, 1.0f), false);
-	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uProjection, &projection);
-	s_projection = projection;
-	s_eyeShift = eyeShift;
-	s_farPlane = farPlane;
-	s_view = view;
+	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uProjection, &projection);
+	g_gpu.projection = projection;
+	g_gpu.eyeShift = eyeShift;
+	g_gpu.farPlane = farPlane;
+	g_gpu.view = view;
 	for (int k = 0; k < 3; k++)
 	{
-		s_eyeSnap[k] = floorf(cam.pos[k] / 64.0f) * 64.0f;
-		s_eye[k] = cam.pos[k];
+		g_gpu.eyeSnap[k] = floorf(cam.pos[k] / 64.0f) * 64.0f;
+		g_gpu.eye[k] = cam.pos[k];
 	}
-	s_mvValid = false;
-	s_time = time;
+	g_gpu.mvValid = false;
+	g_gpu.time = time;
 	if (!secondEye)
 	{
-		s_glowCount = 0;              // the second eye's glows get their own vertices
-		s_spriteSlot = 0;             // (the frame's sprites from the ring's start: both eyes' fit it whole)
+		g_gpu.glowCount = 0;              // the second eye's glows get their own vertices
+		g_gpu.spriteSlot = 0;             // (the frame's sprites from the ring's start: both eyes' fit it whole)
 	}
 
 	int draws = 0;
@@ -1249,7 +696,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 
 	// Sky: centred on the camera (rotation only), no depth, no fog. Not from under water: the water's colour fills what
 	// the fog hides (the clear colour), as OpenMW's underwater fog does
-	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !s_underwaterOn)
+	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !g_gpu.underwaterOn)
 	{
 		C3D_Mtx skyView = view;
 		skyView.r[0].w = skyView.r[1].w = skyView.r[2].w = 0.0f;
@@ -1266,7 +713,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					c[i] = w.weatherColour(k == 0 ? 1 : 0, i);
 				setTint(c);
 			}
-			else if (layered && s_daylight)
+			else if (layered && g_gpu.daylight)
 			{
 				// Clouds: the fog's colour lifted by 0.13 (OpenMW's SkyManager::setWeather, their emission), so a sunset's
 				// clouds stand out warm against its sky rather than taking the sky's own colour
@@ -1300,15 +747,15 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				}
 			}
 			else
-				setTint(s_daylight ? s_skyTint : kOne);
+				setTint(g_gpu.daylight ? g_gpu.skyTint : kOne);
 			drawBatch(here, here.sky[k], DRAW_SKY, time);
 			draws++;
 		}
 	}
-	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !s_underwaterOn)
+	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !g_gpu.underwaterOn)
 		drawSkyBodies(view, secondEye);
 	setModelView(view);
-	setTint(s_daylight ? s_land : kOne);
+	setTint(g_gpu.daylight ? g_gpu.land : kOne);
 	setLight(&view);
 	if (fog)
 		enableFog(here, fogStart, fogEnd);
@@ -1417,7 +864,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 
 	// Enchanted things lying about shimmer: their own triangles in the cell's batches (Ref::ranges; the cell lists them
 	// when it loads, LoadedCell::glowRefs)
-	for (size_t k = 0; k < w.loaded.size() && s_caustCount && (g_renderParts & RENDER_OPAQUE); k++)
+	for (size_t k = 0; k < w.loaded.size() && g_gpu.caustCount && (g_renderParts & RENDER_OPAQUE); k++)
 	{
 		Cell& cell = w.loaded[k]->cell;
 		for (auto& g : w.loaded[k]->glowRefs)
@@ -1517,14 +964,14 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					{
 						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a, a.alpha };
 						memcpy(bd.tint, tint, sizeof(bd.tint));
-						s_blendQueue.push_back(bd);
+						g_gpu.blendQueue.push_back(bd);
 						continue;
 					}
 					if (m.gpuSkin)
 					{
 						SkinDraw sd = { &l->cell, &a, &m, placeMv };
 						memcpy(sd.tint, tint, sizeof(sd.tint));
-						s_skinQueue.push_back(sd);
+						g_gpu.skinQueue.push_back(sd);
 						continue;
 					}
 					if ((m.flags & BATCH_BLEND) || ghost)
@@ -1538,9 +985,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 							Mtx_Multiply(&bd.mv, &view, &model);
 						}
 						const Ref& ar = w.refs[a.ref];
-						if ((m.flags & ACTOR_MESH_WEAPON) && s_caustCount && ar.actor >= 0)
+						if ((m.flags & ACTOR_MESH_WEAPON) && g_gpu.caustCount && ar.actor >= 0)
 							bd.shimmer = w.game.enchantGlow(w.game.actors[ar.actor].weapon);
-						s_blendQueue.push_back(bd);
+						g_gpu.blendQueue.push_back(bd);
 						continue;
 					}
 					if (m.bone >= 0 && m.kind != ACTOR_SKINNED)
@@ -1553,7 +1000,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					else
 						setModelView(placeMv);
 					CellBatch b = { m.tex, actorBatchFlags(m), m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
-					bool flat = m.glow && !s_caustCount;
+					bool flat = m.glow && !g_gpu.caustCount;
 					if (flat)
 						glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)
 					drawBatch(l->cell, b, DRAW_WORLD, time);
@@ -1568,7 +1015,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					draws++;
 					// their weapon, enchanted, shimmers
 					const Ref& ar = w.refs[a.ref];
-					if ((m.flags & ACTOR_MESH_WEAPON) && s_caustCount && ar.actor >= 0)
+					if ((m.flags & ACTOR_MESH_WEAPON) && g_gpu.caustCount && ar.actor >= 0)
 						if (u32 glow = w.game.enchantGlow(w.game.actors[ar.actor].weapon))
 						{
 							drawShimmer(b, glow);
@@ -1594,7 +1041,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					c[j] = (b.bmin[j] + b.bmax[j]) * 0.5f - cam.pos[j];
 				BlendDraw bd = { c[0] * c[0] + c[1] * c[1] + c[2] * c[2], &w.loaded[k]->cell, &b, nullptr, view, 0 };
 				memcpy(bd.tint, worldTint(), sizeof(bd.tint));
-				s_blendQueue.push_back(bd);
+				g_gpu.blendQueue.push_back(bd);
 			}
 	}
 	draws += drawBlendQueue(time);
@@ -1604,129 +1051,45 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	return draws;
 }
 
-// ---- Local map: the interior seen straight down, rendered once into a texture in VRAM
-
-static const int kLocalMapSize = 256;
-
-C3D_Tex* rendererLocalMap()
-{
-	return s_localTarget ? &s_localTex : nullptr;
-}
-
-bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater)
-{
-	setLight(nullptr);
-	if (!s_localTarget)
-	{
-		if (!C3D_TexInitVRAM(&s_localTex, kLocalMapSize, kLocalMapSize, GPU_RGBA8))
-			return false;
-		s_localTarget = C3D_RenderTargetCreateFromTex(&s_localTex, GPU_TEXFACE_2D, 0, GPU_RB_DEPTH24_STENCIL8);
-		if (!s_localTarget)
-		{
-			C3D_TexDelete(&s_localTex);
-			return false;
-		}
-		C3D_TexSetFilter(&s_localTex, GPU_LINEAR, GPU_LINEAR);
-		C3D_TexSetWrap(&s_localTex, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
-	}
-	C3D_RenderTargetClear(s_localTarget, C3D_CLEAR_ALL, 0x0C0906FF, 0);
-	C3D_FrameDrawOn(s_localTarget);
-	bindPipeline();
-	C3D_FVUnifSet(GPU_VERTEX_SHADER, s_uTint, 1.0f, 1.0f, 1.0f, 1.0f);    // interiors: no time of day
-	disableFog();
-	// Looking down -Z from topZ: everything above it (upper floors) is behind the camera, and
-	// ceilings face away (culled), which leaves the floor plan
-	C3D_Mtx projection, view;
-	Mtx_Ortho(&projection, minX, minX + size, minY, minY + size, 0.0f, depth, false);
-	Mtx_Identity(&view);
-	Mtx_Translate(&view, 0.0f, 0.0f, -topZ, true);
-	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uProjection, &projection);
-	setModelView(view);
-	s_opaqueWater = opaqueWater;
-	for (int pass = 0; pass < 3; pass++)
-		for (LoadedCell* l : w.loaded)
-			drawBatches(l->cell, l->cell.batches, pass, nullptr, w.time);
-	s_opaqueWater = false;
-	setUvOffset(0.0f, 0.0f);
-	invalidateState();
-	s_mvValid = false;
-	return true;
-}
-
-// ---- Extra meshes after the world: projectiles in flight, then the first-person view model
-
-// (rendererDrawActor's actor drawn see-through: its alpha, Invisibility or Chameleon)
-static float s_meshAlpha = 1.0f;
-
 void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 {
 	C3D_Mtx mv;
 	if (model)
-		Mtx_Multiply(&mv, &s_view, model);
+		Mtx_Multiply(&mv, &g_gpu.view, model);
 	else
-		mv = s_view;
+		mv = g_gpu.view;
 	setModelView(mv);
 	CellBatch b = { -1, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f };
-	if (s_meshAlpha < 0.999f)
+	if (g_gpu.meshAlpha < 0.999f)
 	{
 		b.flags |= BATCH_BLEND;
-		rendererAlphaScale(s_meshAlpha);
-		drawBatchTex(tex, b, DRAW_WORLD, s_time);
+		rendererAlphaScale(g_gpu.meshAlpha);
+		drawBatchTex(tex, b, DRAW_WORLD, g_gpu.time);
 		rendererAlphaScale(1.0f);
 		return;
 	}
-	drawBatchTex(tex, b, DRAW_WORLD, s_time);
-}
-
-// ---- Enchanted items: Morrowind's shimmer, the 32 frames of textures\magicitem\caust played over the item and
-// added in the colour of its enchantment's first effect (OpenMW's addEnchantedGlow; it maps them by the view,
-// here by the item's own texture coordinates)
-
-
-// The water surface's frames (art/water/waterNN.t3x, the converter's from Morrowind.ini [Water]) and their rate
-int rendererWaterFrameCount()
-{
-	return s_waterCount;
-}
-
-void rendererLoadWaterFrames(const char* dataDir, float fps)
-{
-	if (fps > 0.0f)
-		s_waterFps = fps;
-	if (s_waterCount)
-		return;
-	for (int i = 0; i < 64; i++)
-	{
-		char path[256];
-		snprintf(path, sizeof(path), "%s/art/water/water%02d.t3x", dataDir, i);
-		if (!texImportFile(&s_water[i], path))
-			break;
-		C3D_TexSetFilter(&s_water[i], GPU_LINEAR, GPU_LINEAR);
-		C3D_TexSetWrap(&s_water[i], GPU_REPEAT, GPU_REPEAT);
-		s_waterCount = i + 1;
-	}
-	logf("renderer: %d water frames at %.0f a second", s_waterCount, s_waterFps);
+	drawBatchTex(tex, b, DRAW_WORLD, g_gpu.time);
 }
 
 void rendererLoadCaustics(const char* dataDir)
 {
-	if (s_caustCount)
+	if (g_gpu.caustCount)
 		return;
 	for (int i = 0; i < 32; i++)
 	{
 		char path[256];
 		snprintf(path, sizeof(path), "%s/art/magicitem/caust%02d.t3x", dataDir, i);
-		if (!texImportFile(&s_caust[i], path))
+		if (!texImportFile(&g_gpu.caust[i], path))
 			break;
-		C3D_TexSetFilter(&s_caust[i], GPU_LINEAR, GPU_LINEAR);
-		s_caustCount = i + 1;
+		C3D_TexSetFilter(&g_gpu.caust[i], GPU_LINEAR, GPU_LINEAR);
+		g_gpu.caustCount = i + 1;
 	}
-	logf("renderer: %d enchantment shimmer frames", s_caustCount);
+	logf("renderer: %d enchantment shimmer frames", g_gpu.caustCount);
 }
 
 int rendererCausticFrames()
 {
-	return s_caustCount;
+	return g_gpu.caustCount;
 }
 
 // The second pass over an enchanted batch, under the model view already set: the current frame x the colour
@@ -1750,7 +1113,7 @@ static void drawShimmer(CellBatch b, u32 rgb)
 	b.uvScale[0] *= kCaustTiles;
 	b.uvScale[1] *= kCaustTiles;
 	shimmerStage(rgb);
-	drawBatchTex(&s_caust[(int)(s_time * kCaustFps) % s_caustCount], b, DRAW_WORLD, s_time);
+	drawBatchTex(&g_gpu.caust[(int)(g_gpu.time * kCaustFps) % g_gpu.caustCount], b, DRAW_WORLD, g_gpu.time);
 	C3D_TexEnvInit(C3D_GetTexEnv(kTevGlow));
 }
 
@@ -1758,7 +1121,7 @@ void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex
 {
 	if (!glow)
 		rendererDrawMesh(m, model, tex);
-	else if (s_caustCount)
+	else if (g_gpu.caustCount)
 	{
 		rendererDrawMesh(m, model, tex);
 		drawShimmer({ -1, m.flags, m.alphaRef, m.numVerts, m.numIndices, m.verts, m.indices, {}, {}, 0.0f }, glow);
@@ -1788,14 +1151,14 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 		C3D_DepthMap(true, -0.1f, 0.9f);
 	// In 3D the arms (a few dozen units away) get their own focus near them: with the world's they
 	// would leap far out of the screen
-	if (viewModel && s_eyeShift != 0.0f)
+	if (viewModel && g_gpu.eyeShift != 0.0f)
 	{
 		C3D_Mtx projection;
-		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, s_farPlane,
-			s_eyeShift * 0.5f, kViewModelFocus, false);
-		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uProjection, &projection);
+		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane,
+			g_gpu.eyeShift * 0.5f, kViewModelFocus, false);
+		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uProjection, &projection);
 	}
-	s_meshAlpha = viewModel ? 1.0f : a.alpha;
+	g_gpu.meshAlpha = viewModel ? 1.0f : a.alpha;
 	for (int pass = 0; pass < 2; pass++)
 		for (auto& m : a.meshes)
 		{
@@ -1804,37 +1167,37 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 			C3D_Tex* tex = m.tex >= 0 && m.tex < (int)textures.size() ? textures[m.tex] : nullptr;
 			C3D_Mtx model;
 			actorMeshMatrix(a, m, &model);
-			rendererDrawMeshGlow(m, &model, tex, s_meshAlpha < 0.999f ? 0 : m.glow);     // (an enchanted item shimmers)
+			rendererDrawMeshGlow(m, &model, tex, g_gpu.meshAlpha < 0.999f ? 0 : m.glow);     // (an enchanted item shimmers)
 		}
-	s_meshAlpha = 1.0f;
+	g_gpu.meshAlpha = 1.0f;
 	if (viewModel)
 	{
 		C3D_DepthMap(true, -1.0f, 0.0f);
-		if (s_eyeShift != 0.0f)
-			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, s_uProjection, &s_projection);
+		if (g_gpu.eyeShift != 0.0f)
+			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uProjection, &g_gpu.projection);
 	}
-	setModelView(s_view);
+	setModelView(g_gpu.view);
 }
 
 void rendererViewAxes(float right[3], float up[3], float back[3])
 {
 	// the view matrix's rotation rows are the camera axes in world space
-	right[0] = s_view.r[0].x; right[1] = s_view.r[0].y; right[2] = s_view.r[0].z;
-	up[0] = s_view.r[1].x; up[1] = s_view.r[1].y; up[2] = s_view.r[1].z;
-	back[0] = s_view.r[2].x; back[1] = s_view.r[2].y; back[2] = s_view.r[2].z;
+	right[0] = g_gpu.view.r[0].x; right[1] = g_gpu.view.r[0].y; right[2] = g_gpu.view.r[0].z;
+	up[0] = g_gpu.view.r[1].x; up[1] = g_gpu.view.r[1].y; up[2] = g_gpu.view.r[1].z;
+	back[0] = g_gpu.view.r[2].x; back[1] = g_gpu.view.r[2].y; back[2] = g_gpu.view.r[2].z;
 }
 
 void rendererSpriteFrame()
 {
-	s_spritesAskedLast = s_spritesAsked;
-	s_spritesDrawnLast = s_spritesDrawn;
-	s_spritesWantedLast = s_spritesWanted;
-	s_spritesAsked = s_spritesDrawn = s_spritesWanted = 0;
+	g_gpu.spritesAskedLast = g_gpu.spritesAsked;
+	g_gpu.spritesDrawnLast = g_gpu.spritesDrawn;
+	g_gpu.spritesWantedLast = g_gpu.spritesWanted;
+	g_gpu.spritesAsked = g_gpu.spritesDrawn = g_gpu.spritesWanted = 0;
 }
 
 void rendererSpritesWanted(float n)
 {
-	s_spritesWanted += n;
+	g_gpu.spritesWanted += n;
 }
 
 // The base share of its particles each visual draws this frame: all of them while every visual's together fit the
@@ -1844,26 +1207,26 @@ void rendererSpritesWanted(float n)
 float rendererSpriteShare()
 {
 	float budget = (float)g_profile.spriteBudget;
-	return s_spritesWantedLast > budget ? budget / s_spritesWantedLast : 1.0f;
+	return g_gpu.spritesWantedLast > budget ? budget / g_gpu.spritesWantedLast : 1.0f;
 }
 
 float rendererSpritesWantedLast()
 {
-	return s_spritesWantedLast;
+	return g_gpu.spritesWantedLast;
 }
 
 void rendererSpriteCounts(int& asked, int& drawn)
 {
-	asked = s_spritesAskedLast;
-	drawn = s_spritesDrawnLast;
+	asked = g_gpu.spritesAskedLast;
+	drawn = g_gpu.spritesDrawnLast;
 }
 
 void rendererDrawSprites(const float* pos, const float* half, int n, C3D_Tex* tex, u32 rgba, const u32* colors, bool additive)
 {
-	s_spritesAsked += std::max(0, n);
-	n = std::min(n, s_spritesLeft);
-	s_spritesLeft -= std::max(0, n);
-	s_spritesDrawn += std::max(0, n);
+	g_gpu.spritesAsked += std::max(0, n);
+	n = std::min(n, g_gpu.spritesLeft);
+	g_gpu.spritesLeft -= std::max(0, n);
+	g_gpu.spritesDrawn += std::max(0, n);
 	static const int kMaxPerDraw = 100;                // quads one draw takes
 	static const int kRing = 2 * g_profile.spriteBudgetMax;   // all a frame's, both eyes, at the most the budget gets
 	static u8* ring = nullptr;
@@ -1888,15 +1251,15 @@ void rendererDrawSprites(const float* pos, const float* half, int n, C3D_Tex* te
 	// The GPU reads every eye's sprites after the frame is built: a ring that wrapped within the frame wrote the right
 	// eye's over the left eye's, and the left eye showed other particles' quads (the frame starts the ring at 0, and two
 	// eyes' budgets fill it at most)
-	if (s_spriteSlot + n > kRing)
+	if (g_gpu.spriteSlot + n > kRing)
 	{
-		monitorOnce("sprite ring", "the sprite ring is full (%d of %d quads this frame): sprites dropped", s_spriteSlot, kRing);
+		monitorOnce("sprite ring", "the sprite ring is full (%d of %d quads this frame): sprites dropped", g_gpu.spriteSlot, kRing);
 		return;
 	}
-	u8* v = ring + s_spriteSlot * 4 * 24;
-	s_spriteSlot += n;
-	float right[3] = { s_view.r[0].x, s_view.r[0].y, s_view.r[0].z };
-	float up[3] = { s_view.r[1].x, s_view.r[1].y, s_view.r[1].z };
+	u8* v = ring + g_gpu.spriteSlot * 4 * 24;
+	g_gpu.spriteSlot += n;
+	float right[3] = { g_gpu.view.r[0].x, g_gpu.view.r[0].y, g_gpu.view.r[0].z };
+	float up[3] = { g_gpu.view.r[1].x, g_gpu.view.r[1].y, g_gpu.view.r[1].z };
 	static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };
 	for (int q = 0; q < n; q++)
 		for (int i = 0; i < 4; i++)
@@ -1933,12 +1296,12 @@ void rendererDrawGlow(const float pos[3], float size, u32 rgba)
 		memcpy(indices, idx, sizeof(idx));
 		GSPGPU_FlushDataCache(indices, sizeof(idx));
 	}
-	if (!ring || s_glowCount >= kMaxGlows)
+	if (!ring || g_gpu.glowCount >= kMaxGlows)
 		return;
-	void* verts = ring + (s_glowCount++) * 4 * 24;
+	void* verts = ring + (g_gpu.glowCount++) * 4 * 24;
 	// Billboard: the view matrix's rotation rows are the camera axes in world space
-	float right[3] = { s_view.r[0].x, s_view.r[0].y, s_view.r[0].z };
-	float up[3] = { s_view.r[1].x, s_view.r[1].y, s_view.r[1].z };
+	float right[3] = { g_gpu.view.r[0].x, g_gpu.view.r[0].y, g_gpu.view.r[0].z };
+	float up[3] = { g_gpu.view.r[1].x, g_gpu.view.r[1].y, g_gpu.view.r[1].z };
 	static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };
 	u8* v = (u8*)verts;
 	for (int i = 0; i < 4; i++)
