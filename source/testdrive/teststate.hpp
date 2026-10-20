@@ -1,0 +1,25 @@
+#pragma once
+
+// Session's state for scripted test runs: the harness's switches and its monitors
+// Session derives from it: the members are Session's (s.testKit), kept here beside the code that uses them
+#include "mwbase/sessiontypes.hpp"
+
+struct TestState
+{
+	int testKit = 0;              // ENHANCEV2: the v2 test kit (2); the driver's v2 behaviours read kitV2()
+	struct Watch
+	{
+		float x = 0, y = 0, still = 0; bool told = false;
+		float off = 0; bool toldFloor = false;                       // standing off the floor under them
+		float anchorX = 0, anchorY = 0, moveT = 0; bool toldStuck = false;   // going somewhere, getting nowhere
+	};
+	// Engine-side checks (monitor: lines): the player's fall, doors, memory per cell
+	float playerAirT = 0.0f;
+	bool toldFall = false;
+	int monitorCell = -1;
+	std::map<std::string, std::vector<unsigned long>> cellMemory;
+	std::unordered_map<int, Watch> watches;
+	float monitorTimer = 0.0f;           // harness GOD: the player can't die, every blow lands and kills
+	int testPlaced = -1;                            // the actor PLACE last put in front of the player
+	std::set<int> testPlacedAll;                    // every actor PLACE / PLACEAT put somewhere (POSE keeps them there)
+};
