@@ -15,6 +15,7 @@ extern "C" u32 __ctru_heap_size;
 #include <tex3ds.h>
 #include <citro2d.h>
 #include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
 #include "mwbase/sessionhelpers.hpp"
 
 const RaceDef* World::race() const
@@ -168,10 +169,16 @@ void Session::playerControls(PlayerInput& in, bool menu)
 	// Encumbrance: the load (plus Burden, less Feather) against fEncumbranceStrMult x Strength; over it
 	// the player can't move, under it the load slows them (fEncumberedMoveEffect)
 	{
-		float weight = w.effectTotal(7) - w.effectTotal(8);
-		for (auto& it : w.inventory)
-			if (const Object* o = w.game.object(it.id))
-				weight += o->weight * it.count;
+		// (the pack weighed every fourth frame: a lookup by id per item each frame; a pickup shows within a few frames)
+		static float packWeight = 0.0f;
+		if (w.frame % 4 == 0 || w.frame < 4 || !cadenceOn(CAD_WEIGHT))
+		{
+			packWeight = 0.0f;
+			for (auto& it : w.inventory)
+				if (const Object* o = w.game.object(it))
+					packWeight += o->weight * it.count;
+		}
+		float weight = w.effectTotal(7) - w.effectTotal(8) + packWeight;
 		float capacity = w.game.gmstf("fencumbrancestrmult", 5.0f) * w.stats.attributes[ATTR_STRENGTH];
 		float load = capacity > 0.0f ? fmaxf(0.0f, weight) / capacity : 0.0f;
 		bool over = load > 1.0f;

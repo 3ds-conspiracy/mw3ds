@@ -154,7 +154,7 @@ void Session::updateEffects(float dt)
 			break;
 		case EFF_DISINTEGRATE_WEAPON: case EFF_DISINTEGRATE_ARMOR:
 			for (auto& it : w.inventory)
-				if (const Object* o = it.equipped ? w.game.object(it.id) : nullptr)
+				if (const Object* o = it.equipped ? w.game.object(it) : nullptr)
 					if (o->type == (a.effect == EFF_DISINTEGRATE_WEAPON ? "WEAP" : "ARMO"))
 					{
 						wearItem(&it, a.magnitude * step);

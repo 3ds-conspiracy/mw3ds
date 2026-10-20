@@ -244,7 +244,7 @@ bool Session::awarenessCheck(int ri)
 		float boots = 0.0f;
 		for (auto& it : w.inventory)
 			if (it.equipped)
-				if (const Object* o = w.game.object(it.id))
+				if (const Object* o = w.game.object(it))
 					if (o->recType == REC_ARMO && o->subtype == 5)
 						boots = o->weight;
 		sneakTerm = w.game.gmstf("fsneakskillmult", 1.0f) * s.skills[19] + 0.2f * s.attributes[ATTR_AGILITY]

@@ -248,6 +248,9 @@ LinearGuard::LinearGuard() {}
 LinearGuard::~LinearGuard() {}
 void* lockedLinearAlloc(size_t size) { return linearAlloc(size); }
 void lockedLinearFree(void* p) { linearFree(p); }
+bool inVram(const void*) { return false; }
+void texToVramLater(C3D_Tex*) {}       // (no VRAM: the pictures stay where they are)
+void texToVramNow() {}
 void deferredTexDelete(C3D_Tex* tex) { C3D_TexDelete(tex); }      // one thread: the GPU is done with it
 void linearRetire() {}
 bool linearReclaim() { return false; }
@@ -266,6 +269,12 @@ struct DspChannel
 	ndspWaveBuf* queue[kDspQueue];
 	int count = 0;
 	double pos = 0;
+	// DSP-ADPCM: the frames are decoded as play reaches them, the last few kept
+	int format = NDSP_FORMAT_MONO_PCM16;
+	s16 coefs[16] = {};
+	int h1 = 0, h2 = 0;
+	u32 decoded = 0;               // samples of the playing buffer decoded so far
+	s16 recent[4] = {};
 };
 DspChannel s_dsp[kDspChannels];
 FILE* s_wav = nullptr;
@@ -300,6 +309,16 @@ void nativeDspReset(int ch)
 		s_dsp[ch].queue[i]->status = NDSP_WBUF_DONE;
 	s_dsp[ch] = DspChannel();
 }
+void nativeDspFormat(int ch, int format)
+{
+	if (ch >= 0 && ch < kDspChannels)
+		s_dsp[ch].format = format;
+}
+void nativeDspCoefs(int ch, const u16* coefs)
+{
+	if (ch >= 0 && ch < kDspChannels)
+		memcpy(s_dsp[ch].coefs, coefs, sizeof(s_dsp[ch].coefs));
+}
 void nativeDspRate(int ch, float rate)
 {
 	if (ch >= 0 && ch < kDspChannels)
@@ -326,6 +345,41 @@ u32 nativeDspPos(int ch)
 	return ch >= 0 && ch < kDspChannels && s_dsp[ch].count ? (u32)s_dsp[ch].pos : 0;
 }
 
+namespace
+{
+// A buffer starting (or looping): the DSP-ADPCM decoder takes the buffer's start state, or carries on without one
+void adpcmStart(DspChannel& c, const ndspWaveBuf* b)
+{
+	c.decoded = 0;
+	if (b->adpcm_data)
+	{
+		c.h1 = b->adpcm_data->history0;
+		c.h2 = b->adpcm_data->history1;
+	}
+}
+
+// Sample p of the playing buffer (decoded up to p: play only moves forward)
+s16 adpcmAt(DspChannel& c, const ndspWaveBuf* b, u32 p)
+{
+	const u8* d = (const u8*)b->data_vaddr;
+	while (c.decoded <= p && c.decoded < b->nsamples)
+	{
+		u32 k = c.decoded, frame = k / 14, at = k % 14;
+		u8 head = d[frame * 8], byte = d[frame * 8 + 1 + at / 2];
+		int r = at % 2 ? byte & 15 : byte >> 4;
+		r = r >= 8 ? r - 16 : r;
+		int pi = (head >> 4) & 7;
+		int v = (((r * (1 << (head & 15))) * 2048) + 1024 + c.coefs[pi * 2] * c.h1 + c.coefs[pi * 2 + 1] * c.h2) >> 11;
+		v = v < -32768 ? -32768 : v > 32767 ? 32767 : v;
+		c.h2 = c.h1;
+		c.h1 = v;
+		c.recent[k & 3] = (s16)v;
+		c.decoded++;
+	}
+	return c.recent[(p < c.decoded ? p : c.decoded - 1) & 3];
+}
+}
+
 void nativeAudioFrame()
 {
 	if (!wavOn())
@@ -339,16 +393,30 @@ void nativeAudioFrame()
 		for (int i = 0; i < kDspFrameSamples && c.count; i++)
 		{
 			ndspWaveBuf* b = c.queue[0];
-			const s16* d = (const s16*)b->data_vaddr;
 			u32 n = b->nsamples, p = (u32)c.pos;
 			float f = (float)(c.pos - p);
-			float s0 = d[p], s1 = p + 1 < n ? d[p + 1] : s0;
+			float s0, s1;
+			if (c.format == NDSP_FORMAT_ADPCM)
+			{
+				if (c.decoded == 0)
+					adpcmStart(c, b);
+				s1 = adpcmAt(c, b, p + 1 < n ? p + 1 : p);
+				s0 = adpcmAt(c, b, p);
+				if (p + 1 >= n)
+					s1 = s0;
+			}
+			else
+			{
+				const s16* d = (const s16*)b->data_vaddr;
+				s0 = d[p], s1 = p + 1 < n ? d[p + 1] : s0;
+			}
 			float v = s0 + (s1 - s0) * f;
 			acc[i * 2] += v * c.mixL;
 			acc[i * 2 + 1] += v * c.mixR;
 			c.pos += step;
 			if (c.pos >= n)
 			{
+				c.decoded = 0;
 				if (b->looping)
 					c.pos -= n;
 				else

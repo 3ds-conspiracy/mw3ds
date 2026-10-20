@@ -54,6 +54,8 @@ void uiText(float x, float y, float scale, u32 color, const std::string& s);
 bool uiArt(const std::string& file, int w, int h, float x, float y, float dw = 0, float dh = 0);
 void uiArtDir(const char* dataDir);   // the folder uiArt reads from before a theme is loaded (the title screen)
 void uiArtFree();
+void uiArtIdle();
+void uiIconsRelease();
 void uiTextCentered(float cx, float y, float scale, u32 color, const std::string& s);
 void uiTextRight(float rx, float y, float scale, u32 color, const std::string& s);
 

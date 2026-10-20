@@ -2,6 +2,7 @@
 #include "components/interpreter/interpreter.hpp"
 
 #include <optional>
+#include <string_view>
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -21,12 +22,13 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 		: name.compare(0, 3, "set") == 0 ? 1 : name.compare(0, 3, "mod") == 0 ? 2 : -1;
 	if (op < 0)
 		return false;
-	std::string stat = name.substr(op == 3 ? 10 : 3);
+	std::string_view statName(name);       // (a view: no copy a call)
+	statName.remove_prefix(op == 3 ? 10 : 3);
 	bool player = onPlayer || !r;
 	PlayerStats& s = w.stats;
 	float arg = op == 0 ? 0.0f : argNum(c, n, 0);
 	// ModPCCrimeLevel: the bounty never goes below nothing
-	if (stat == "pccrimelevel" && op == 2)
+	if (statName == "pccrimelevel" && op == 2)
 	{
 		w.bounty = std::max(0, w.bounty + (int)arg);
 		w.globals["pccrimelevel"] = (float)w.bounty;
@@ -34,7 +36,7 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 		return true;
 	}
 	// GetLevel / SetLevel: the player's, or an actor's (the record's until a script sets it; -1 for objects)
-	if (stat == "level" && op <= 1)
+	if (statName == "level" && op <= 1)
 	{
 		if (player)
 		{
@@ -55,15 +57,15 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 		return true;
 	}
 	// GetHealthGetRatio and its kin: current over maximum
-	bool ratio = stat.size() > 8 && stat.compare(stat.size() - 8, 8, "getratio") == 0;
+	bool ratio = statName.size() > 8 && statName.compare(statName.size() - 8, 8, "getratio") == 0;
 	if (ratio)
 	{
 		if (op != 0)
 			return false;
-		stat.resize(stat.size() - 8);
+		statName.remove_suffix(8);
 	}
 	// Health / magicka / fatigue: Set / Mod change the maximum, ModCurrent the current value
-	int dyn = stat == "health" ? 0 : stat == "magicka" ? 1 : stat == "fatigue" ? 2 : -1;
+	int dyn = statName == "health" ? 0 : statName == "magicka" ? 1 : statName == "fatigue" ? 2 : -1;
 	if (dyn >= 0)
 	{
 		if (!player && r->actor < 0)
@@ -129,10 +131,10 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 		return false;
 	int attr = -1, skill = -1;
 	for (int i = 0; i < 8; i++)
-		if (stat == kAttrFuncs[i])
+		if (statName == kAttrFuncs[i])
 			attr = i;
 	for (int i = 0; i < 27; i++)
-		if (stat == kSkillFuncs[i])
+		if (statName == kSkillFuncs[i])
 			skill = i;
 	if (attr < 0 && skill < 0)
 		return false;

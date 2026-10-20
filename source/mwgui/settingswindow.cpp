@@ -216,13 +216,21 @@ void Session::drawOptions()
 				: viewMode == VIEW_MIN ? "View distance Min: the nearest fog, the smoothest frames."
 				: "View distance Auto: the fog moves with the frame rate.");
 		}
-		uiText(10, 162, 0.4f, col::textDim, how);
-		uiText(10, 176, 0.4f, col::textDim, "Gamma 1.00 is Morrowind's own; higher helps in sun.");
-		if (gammaAutoOn())
+		// Depth buffer: 24-bit, 16-bit while 3D is on (half the depth traffic of two eyes), or 16-bit always. A tap cycles
+		static const char* kDepthNames[3] = { "24-bit", "16-bit in 3D", "16-bit" };
+		if (choice(160, "Depth buffer", kDepthNames[g_depthMode]))
 		{
-			snprintf(text, sizeof(text), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
-			uiText(10, 190, 0.4f, col::textDim, text);
+			g_depthMode = (g_depthMode + 1) % 3;
+			changed = true;
+			notify(g_depthMode == DEPTH_24 ? "Depth buffer 24-bit." : g_depthMode == DEPTH_16_IN_3D
+				? "Depth buffer 16-bit while 3D is on: lighter frames in 3D." : "Depth buffer 16-bit: far surfaces may flicker.");
 		}
+		uiText(10, 186, 0.4f, col::textDim, how);
+		if (gammaAutoOn())
+			snprintf(text, sizeof(text), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
+		else
+			snprintf(text, sizeof(text), "Gamma 1.00 is Morrowind's own; higher helps in sun.");
+		uiText(10, 198, 0.4f, col::textDim, text);
 		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
 		closing = b == 1;
 		if (b == 0)
@@ -230,6 +238,7 @@ void Session::drawOptions()
 			g_gammaPct = 100;
 			g_autoGamma = -1;
 			viewMode = VIEW_AUTO;
+			g_depthMode = DEPTH_16_IN_3D;
 			changed = true;
 		}
 	}

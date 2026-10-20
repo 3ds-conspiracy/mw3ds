@@ -9,6 +9,8 @@
 
 float g_profActorsMs = 0.0f;          // debug profile accumulators, reported by main once a second
 float g_profWorldMs = 0.0f;
+float g_profDraw[DRAWP_COUNT];
+float g_detailScale = 1.0f, g_actorDetailScale = 1.0f;
 int g_drawnBatches = 0, g_culledBatches = 0;
 int g_skippedDraws = 0;               // draws dropped because the GPU command buffer was nearly full
 // Blended draws of the last frame made after a nearer blended one (OpenMW sorts them back to front: a blended surface
@@ -445,6 +447,7 @@ static int drawSkinQueue(float time)
 	int draws = 0;
 	static std::vector<float> pal(kSkinBones * 12);
 	C3D_BindProgram(&g_gpu.skinProgram);
+	bool layoutSet = false;
 	for (auto& d : g_gpu.skinQueue)
 	{
 		const ActorMesh& m = *d.m;
@@ -466,22 +469,27 @@ static int drawSkinQueue(float time)
 		setModelView(d.mv);
 		setTint(d.tint);
 		setBatchState(batchTexture(*d.cell, b), b, DRAW_WORLD, time);
+		// The skin's vertex layout, once for the queue: bindVertexFormat takes it for its own packed one and sends only
+		// the quantization (the queue's end tells it otherwise), unless something set another layout in between
+		bool layoutLost = !layoutSet || !g_gpu.formatValid || !g_gpu.packedBound;
 		bindVertexFormat(b);
-		C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
-		AttrInfo_Init(attrInfo);
-		AttrInfo_AddLoader(attrInfo, 0, GPU_SHORT, 4);            // v0 = position
-		AttrInfo_AddLoader(attrInfo, 1, GPU_SHORT, 2);            // v1 = texcoord
-		AttrInfo_AddLoader(attrInfo, 2, GPU_UNSIGNED_BYTE, 4);    // v2 = colour
-		AttrInfo_AddLoader(attrInfo, 3, GPU_UNSIGNED_BYTE, 4);    // v3 = palette entries
-		AttrInfo_AddLoader(attrInfo, 4, GPU_UNSIGNED_BYTE, 4);    // v4 = weights
-		g_gpu.formatValid = false;                                     // (the next cell batch sets its own up again)
+		if (layoutLost)
+		{
+			C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
+			AttrInfo_Init(attrInfo);
+			AttrInfo_AddLoader(attrInfo, 0, GPU_SHORT, 4);            // v0 = position
+			AttrInfo_AddLoader(attrInfo, 1, GPU_SHORT, 2);            // v1 = texcoord
+			AttrInfo_AddLoader(attrInfo, 2, GPU_UNSIGNED_BYTE, 4);    // v2 = colour
+			AttrInfo_AddLoader(attrInfo, 3, GPU_UNSIGNED_BYTE, 4);    // v3 = palette entries
+			AttrInfo_AddLoader(attrInfo, 4, GPU_UNSIGNED_BYTE, 4);    // v4 = weights
+			layoutSet = true;
+		}
 		actorSkinPalette(*d.a, m, pal.data());
-		for (size_t p = 0; p < m.palBone.size(); p++)
-			for (int r = 0; r < 3; r++)
-			{
-				const float* row = &pal[p * 12 + r * 4];
-				C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uBones + p * 3 + r, row[0], row[1], row[2], row[3]);
-			}
+		// (the palette's rows written in one go: three a bone)
+		int rows = (int)m.palBone.size() * 3;
+		C3D_FVec* bones = C3D_FVUnifWritePtr(GPU_VERTEX_SHADER, g_gpu.uBones, rows);
+		for (int r = 0; r < rows; r++)
+			bones[r] = FVec4_New(pal[r * 4], pal[r * 4 + 1], pal[r * 4 + 2], pal[r * 4 + 3]);
 		C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 		BufInfo_Init(bufInfo);
 		BufInfo_Add(bufInfo, m.verts, 24, 5, 0x43210);
@@ -633,6 +641,106 @@ float rendererStereoPixels(float depth, float eyeShift)
 	return (seen[axis] - centre[axis]) * sign * 200.0f;
 }
 
+// ---- Stereo: the right eye from the left eye's commands
+//
+// The world is built once a frame into the GPU's command list. In 3D the right eye needs the same draws with
+// another projection: instead of building them again on the CPU (the frame's biggest cost on the console), the
+// left eye's words are copied raw into the list for the right eye. Three things make the copy land right:
+// - the GPU's state the copied words start from must be the one the left eye started from: both eyes start from
+//   the same primed state (bindPipeline, fog off, no light, the lamp and layout caches cleared), and the left eye
+//   ends by priming it again, so the words after the copy stand on that state too
+// - the projection, the one thing that differs, is written before the copy and never inside it: the primed
+//   state is flushed into the list (a draw of nothing: dirty uniforms and registers go out at a draw) before the
+//   record's first word
+// - the right eye's framebuffer goes out in that same flush
+// The copy holds no CPU work (vertex rings written by the left eye are read again as they are) and no list
+// split (clears and target changes come before the record). A frame whose list can't hold a second copy
+// draws the right eye the old way
+// (the record as addresses: libctru moves the list's base and zeroes its offset at every split, such as the right
+// eye's clear and target change, so offsets taken before them don't hold)
+static const u32* s_replayFrom = nullptr;
+static u32 s_replayWords = 0;
+static int s_replayDraws = 0;
+int g_replayCount = 0, g_replayMissed = 0;
+static bool s_replayOn = false;
+
+// A draw of nothing: citro3d writes the dirty uniforms and registers before any draw, so the list holds the
+// primed state before the words that follow (the layout is set for it and left for the next batch to set again)
+static void flushState()
+{
+	C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
+	AttrInfo_Init(attrInfo);
+	for (int i = 0; i < 3; i++)
+		AttrInfo_AddLoader(attrInfo, i, GPU_FLOAT, 4);
+	C3D_ImmDrawBegin(GPU_TRIANGLES);
+	for (int v = 0; v < 3; v++)
+		for (int i = 0; i < 3; i++)
+			C3D_ImmSendAttrib(0.0f, 0.0f, 0.0f, 1.0f);
+	C3D_ImmDrawEnd();
+	g_gpu.formatValid = false;
+}
+
+// The state both eyes start from (and the left one ends on), with this eye's projection
+static void primeState(const C3D_Mtx& projection)
+{
+	bindPipeline();
+	C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uProjection, &projection);
+	disableFog();
+	setLight(nullptr);
+	g_gpu.lampValid = false;
+	g_gpu.mvValid = false;
+	flushState();
+}
+
+static void replayStart()
+{
+	s_replayOn = false;
+	primeState(g_gpu.projection);
+	u32* buf = nullptr;
+	u32 size = 0, at = 0;
+	GPUCMD_GetBuffer(&buf, &size, &at);
+	s_replayFrom = buf ? buf + at : nullptr;
+}
+
+void rendererReplayEnd(int draws)
+{
+	primeState(g_gpu.projection);
+	u32* buf = nullptr;
+	u32 size = 0, at = 0;
+	GPUCMD_GetBuffer(&buf, &size, &at);
+	s_replayWords = buf && s_replayFrom && buf + at > s_replayFrom ? (u32)(buf + at - s_replayFrom) : 0;
+	s_replayDraws = draws;
+	s_replayOn = s_replayWords > 0;
+}
+
+int rendererReplayWorld(float eyeShift)
+{
+	if (!s_replayOn)
+		return -1;
+	u32* buf = nullptr;
+	u32 size = 0, at = 0;
+	GPUCMD_GetBuffer(&buf, &size, &at);
+	u32 words = s_replayWords;
+	// (room for the copy and the HUDs after it: the renderer stops drawing past kCmdBufLimit of the list)
+	if (!buf || at + words + 4096 > (u32)(size * kCmdBufLimit))
+	{
+		g_replayMissed++;
+		return -1;
+	}
+	g_replayCount++;
+	C3D_Mtx projection;
+	if (eyeShift != 0.0f)
+		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane,
+			eyeShift, kStereoFocus, false);
+	else
+		Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane, false);
+	g_gpu.projection = projection;
+	g_gpu.eyeShift = eyeShift;
+	primeState(projection);
+	GPUCMD_AddRawCommands(s_replayFrom, words);
+	return s_replayDraws;
+}
+
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale)
 {
 	g_gpu.spritesLeft = g_profile.spriteBudget;
@@ -641,6 +749,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	MARK("draw world");
 	Cell& here = w.here();
 	bindPipeline();
+	u64 drawSince = svcGetSystemTick();
 	bool fog = here.fogEnd > 0.0f;
 	const float viewEnd = here.fogEnd;
 	float fogStart = here.fogStart * fogScale, fogEnd = viewEnd * fogScale;
@@ -692,6 +801,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	int draws = 0;
 	disableFog();
 	setLight(nullptr);
+	// The left eye's world is recorded from here (rendererReplayWorld draws the right eye from the record)
+	if (!secondEye)
+		replayStart();
 	static const float kOne[3] = { 1, 1, 1 };
 
 	// Sky: centred on the camera (rotation only), no depth, no fog. Not from under water: the water's colour fills what
@@ -706,6 +818,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		bool layered = here.sky.size() >= 2 && here.sky[1].tex < 0 && (here.sky[1].flags & BATCH_BLEND);
 		for (size_t k = 0; k < here.sky.size(); k++)
 		{
+			// The fog's dome is opaque in the fog's colour, the colour the screen was cleared to outdoors (engine.cpp):
+			// it would paint the screen over in the colour it already has
+			if (layered && k == 0 && w.game.hasWeather)
+				continue;
 			if (layered && k < 2)
 			{
 				float c[3];
@@ -754,6 +870,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	}
 	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !g_gpu.underwaterOn)
 		drawSkyBodies(view, secondEye);
+	drawProfAdd(DRAWP_SKY, drawSince);
 	setModelView(view);
 	setTint(g_gpu.daylight ? g_gpu.land : kOne);
 	setLight(&view);
@@ -765,9 +882,33 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	Frustum fr = makeFrustum(cam, fog ? fogEnd : 0.0f);
 	static std::vector<std::vector<u8>> visible;
 	int shown = 0, total = 0;
+	// The last frame's lists while the eye has hardly moved (4 units, a degree: well inside the frustum's 15% margin),
+	// for a few frames, with the same cells and the same reach: standing or turning slowly, the culling is skipped
+	static float listAt[5] = { 1e30f }, listReach[4];
+	static int listAge = 0;
+	static size_t listSig = 0;
+	size_t sig = w.loaded.size();
+	for (LoadedCell* l : w.loaded)
+		sig = sig * 31 + (size_t)l->cell.batches.data() + l->cell.batches.size();
+	float reach[4] = { fog ? fogEnd : 0.0f, fogScale, g_profile.detailScale, g_detailScale };
+	float dyaw = fabsf(remainderf(cam.yaw - listAt[3], 6.2831853f));
+	bool reuse = !secondEye && listAge < 6 && sig == listSig && memcmp(reach, listReach, sizeof(reach)) == 0
+		&& dyaw < 0.0175f && fabsf(cam.pitch - listAt[4]) < 0.0175f && fabsf(cam.pos[0] - listAt[0])
+		+ fabsf(cam.pos[1] - listAt[1]) + fabsf(cam.pos[2] - listAt[2]) < 4.0f && visible.size() == w.loaded.size();
 	if (!secondEye)
+	{
+		listAge = reuse ? listAge + 1 : 0;
+		if (!reuse)
+		{
+			memcpy(listAt, cam.pos, sizeof(cam.pos));
+			listAt[3] = cam.yaw, listAt[4] = cam.pitch;
+			memcpy(listReach, reach, sizeof(reach));
+			listSig = sig;
+		}
+	}
+	if (!secondEye && !reuse)
 		visible.resize(w.loaded.size());
-	for (size_t k = 0; k < w.loaded.size() && !secondEye; k++)
+	for (size_t k = 0; k < w.loaded.size() && !secondEye && !reuse; k++)
 	{
 		Cell& cell = w.loaded[k]->cell;
 		visible[k].resize(cell.batches.size());
@@ -792,7 +933,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 			const CellBatch& b = cell.batches[i];
 			// Clutter's own cutoff shrinks with the view; terrain blend layers only near the player
 			// (far chunks show their main texture, mostly under fog anyway)
-			float maxDist = b.maxDist * fogScale;
+			float maxDist = b.maxDist * fogScale * g_profile.detailScale * g_detailScale;
 			if (b.flags & BATCH_DECAL)
 				maxDist = kTerrainLayerDistance * fogScale;
 			visible[k][i] = boxVisible(fr, b.bmin, b.bmax, maxDist);
@@ -800,15 +941,16 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		}
 		total += cell.batches.size();
 	}
-	if (!secondEye)
+	if (!secondEye && !reuse)
 	{
 		g_drawnBatches = shown;
 		g_culledBatches = total - shown;
 	}
+	drawProfAdd(DRAWP_CULL, drawSince);
 
 	// Opaque batches of all loaded cells sorted by texture and state, so the state cache above
 	// skips most changes (order doesn't matter for them); terrain layers keep their order
-	struct OpaqueDraw { C3D_Tex* tex; u32 state; const CellBatch* b; };
+	struct OpaqueDraw { C3D_Tex* tex; u32 state; const CellBatch* b; size_t cell; };
 	static std::vector<OpaqueDraw> opaque;
 	if (!secondEye)
 		opaque.clear();
@@ -818,16 +960,18 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		for (size_t i = 0; i < cell.batches.size(); i++)
 			if (visible[k][i] && batchPass(cell.batches[i]) == 0)
 				opaque.push_back({ batchTexture(cell, cell.batches[i]),
-					(u32)cell.batches[i].flags | ((u32)cell.batches[i].alphaRef << 8), &cell.batches[i] });
+					(u32)cell.batches[i].flags | ((u32)cell.batches[i].alphaRef << 8), &cell.batches[i], k });
 	}
+	// (then by cell: a cell's batches share one position grid, so the transform goes up once for a run of them)
 	if (!secondEye)
 		std::sort(opaque.begin(), opaque.end(), [](const OpaqueDraw& a, const OpaqueDraw& b) {
-			return a.tex != b.tex ? a.tex < b.tex : a.state < b.state;
+			return a.tex != b.tex ? a.tex < b.tex : a.state != b.state ? a.state < b.state : a.cell < b.cell;
 		});
 	if (g_renderParts & RENDER_OPAQUE)
 		for (auto& d : opaque)
 			drawBatchTex(d.tex, *d.b, DRAW_WORLD, time);
 	draws += opaque.size();
+	drawProfAdd(DRAWP_OPAQUE, drawSince);
 
 	// Distant land past the loaded cells (drawn after them: what they cover fails the depth test)
 	if (fog && !(here.flags & CELL_INTERIOR) && (g_renderParts & RENDER_OPAQUE))
@@ -863,6 +1007,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		if (horizon)
 			setFogVec(fogStart, fogEnd);
 	}
+	drawProfAdd(DRAWP_DISTANT, drawSince);
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_LAYERS); k++)
 		draws += drawBatches(w.loaded[k]->cell, w.loaded[k]->cell.batches, 1, &visible[k], time);
 
@@ -914,11 +1059,12 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	// Animated actors: skinned meshes are already in world space, rigid parts ride their bone.
 	// Skip actors behind the camera or past the view distance; refresh deformation at 30 Hz
 	// (alternating actors), and at 7.5 Hz for actors far enough that nobody can tell.
+	drawProfAdd(DRAWP_LAYERS, drawSince);     // (the terrain layers, the shimmers and the doors)
 	u64 actorStart = svcGetSystemTick();
 	// (an Old 3DS draws people and creatures to 4000 outdoors: each is a re-skin and a dozen draws)
 	float maxDist = fog && !(here.flags & CELL_INTERIOR)
 		? fminf(fogEnd, g_profile.actorViewLimit > 0.0f ? g_profile.actorViewLimit : kActorViewDistance) : 4000.0f;
-	float detailDist = kActorDetailDistance * g_profile.actorDetailScale;
+	float detailDist = kActorDetailDistance * g_profile.actorDetailScale * g_actorDetailScale;
 	// (one pass: the blended meshes go to the blend queue, drawn back to front with the world's)
 	if (g_renderParts & RENDER_ACTORS)
 	{
@@ -1031,7 +1177,8 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		setTint(worldTint());
 	}
 
-	g_profActorsMs += (svcGetSystemTick() - actorStart) * 1000.0f / SYSCLOCK_ARM11;
+	drawSince = svcGetSystemTick();
+	g_profActorsMs += (drawSince - actorStart) * 1000.0f / SYSCLOCK_ARM11;
 
 	for (size_t k = 0; k < w.loaded.size() && (g_renderParts & RENDER_BLENDED); k++)
 	{
@@ -1049,6 +1196,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 			}
 	}
 	draws += drawBlendQueue(time);
+	drawProfAdd(DRAWP_BLEND, drawSince);
 	setModelView(view);
 	disableFog();
 	setUvOffset(0.0f, 0.0f);
@@ -1085,6 +1233,7 @@ void rendererLoadCaustics(const char* dataDir)
 		snprintf(path, sizeof(path), "%s/art/magicitem/caust%02d.t3x", dataDir, i);
 		if (!texImportFile(&g_gpu.caust[i], path))
 			break;
+		texToVramLater(&g_gpu.caust[i]);
 		C3D_TexSetFilter(&g_gpu.caust[i], GPU_LINEAR, GPU_LINEAR);
 		g_gpu.caustCount = i + 1;
 	}

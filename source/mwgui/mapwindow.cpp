@@ -18,6 +18,7 @@ bool Session::ensureMapTexture()
 	snprintf(path, sizeof(path), "%s/%s", w.dataDir, m.file.c_str());
 	if (texImportFile(&mapTex, path))
 	{
+		texToVramLater(&mapTex);
 		C3D_TexSetFilter(&mapTex, GPU_LINEAR, GPU_NEAREST);
 		mapLoaded = true;
 	}

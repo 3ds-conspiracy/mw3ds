@@ -27,6 +27,8 @@ struct Info
 	Atom sound;
 	std::vector<Cond> conds;
 	int disposition = 0;
-	Node script;
+	// Its result script, the converter's JSON of it on the card, compiled when the line is said: a fifth of the 20000
+	// lines have one, and as trees in the heap they and the empty ones took 2 MB
+	CardText script;
 	int uid = -1;                     // its number in load order (ClearInfoActor remembers it)
 };

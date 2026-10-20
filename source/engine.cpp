@@ -4,6 +4,7 @@
 #include <3ds.h>
 #include <citro2d.h>
 #include <citro3d.h>
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -18,6 +19,8 @@
 #include "platform/linear.hpp"
 #include "platform/memstat.hpp"
 #include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
+#include "mwrender/renderingmanager.hpp"
 #include "platform/gamma.hpp"
 #include "mwrender/screenshotmanager.hpp"
 #include "components/files/zfile.hpp"
@@ -57,6 +60,43 @@ extern "C" void userAppExit(void)
 
 static const char* const kSavePath = kAutosavePath;
 
+// The top screen's targets (the right eye drawn only while 3D is on): a pair with the 24-bit depth buffer and a pair
+// with the 16-bit one, both made at the start (Engine::topDepth16).
+// The colour buffer: 32-bit on both consoles (platform/console.hpp rgb565 keeps the 16-bit one, half the buffer and the
+// copy to the screen each frame: it banded the sky and the fog on an Old 3DS)
+void Engine::createTopTargets()
+{
+	GPU_COLORBUF colorFmt = g_profile.rgb565 ? GPU_RB_RGB565 : GPU_RB_RGBA8;
+	for (int d = 0; d < 2; d++)
+		for (int eye = 0; eye < 2; eye++)
+			topPair[d][eye] = C3D_RenderTargetCreate(240, 400, colorFmt, d ? GPU_RB_DEPTH16 : GPU_RB_DEPTH24_STENCIL8);
+	// (no room in VRAM for the second pair: 3D draws with the 24-bit one)
+	if (!topPair[1][0] || !topPair[1][1])
+	{
+		logf("display: no VRAM for the 16-bit depth targets, 3D keeps 24 bits");
+		for (int eye = 0; eye < 2; eye++)
+		{
+			if (topPair[1][eye])
+				C3D_RenderTargetDelete(topPair[1][eye]);
+			topPair[1][eye] = topPair[0][eye];
+		}
+	}
+	useTopDepth(false);
+}
+
+// The screen's output comes from the pair in use (the other pair keeps its buffers, drawn on nothing)
+void Engine::useTopDepth(bool depth16)
+{
+	u32 transfer = g_profile.rgb565 ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565, GX_TRANSFER_FMT_RGB565)
+		: DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGB8);
+	top = topPair[depth16][0];
+	topRight = topPair[depth16][1];
+	C3D_RenderTargetSetOutput(top, GFX_TOP, GFX_LEFT, transfer);
+	C3D_RenderTargetSetOutput(topRight, GFX_TOP, GFX_RIGHT, transfer);
+	topDepth16 = depth16;
+	logf("display: top depth %s", depth16 ? "16-bit" : "24-bit and stencil");
+}
+
 int Engine::go()
 {
 	if (!prepare())
@@ -76,14 +116,22 @@ bool Engine::prepare()
 		osSetSpeedupEnable(true);
 	// What this console can do: from its CPU and from the heap it got (platform/console.hpp)
 	consoleProfileInit(isNew3ds, __ctru_heap_size);
-	// A slow CPU's one game core is busy drawing: cells stream in on the system core (30% of it may be ours)
+	// A slow CPU's one game core is busy drawing: cells stream in on the system core. Half of it may be ours (a cell
+	// took 2.5 to 3.7 s to stream at 30%); the usual 30% if the system won't give that
+	u32 sysCorePercent = 0;
 	if (g_profile.slowCpu)
-		g_sysCoreThreads = R_SUCCEEDED(APT_SetAppCpuTimeLimit(30));
+	{
+		g_sysCoreThreads = R_SUCCEEDED(APT_SetAppCpuTimeLimit(50)) || R_SUCCEEDED(APT_SetAppCpuTimeLimit(30));
+		APT_GetAppCpuTimeLimit(&sysCorePercent);
+	}
 
 	// The Old 3DS's 16-bit colour buffer goes to a 16-bit top screen (see DISPLAY_TRANSFER_FLAGS). The screens'
 	// framebuffers are in VRAM, beside the render targets (a few MB of its 6 free): a MB of linear memory back for cells
 	platformClearVram();
 	gfxInit(g_profile.rgb565 ? GSP_RGB565_OES : GSP_BGR8_OES, GSP_BGR8_OES, true);
+	// The bottom screen keeps one framebuffer: a frame that doesn't draw it (the HUD is drawn every third frame) shows
+	// the last one drawn, not the one before that
+	gfxSetDoubleBuffering(GFX_BOTTOM, false);
 	// gfxInit lights the screens on buffers that hold whatever VRAM had (multicoloured static, on an Old 2DS and when
 	// started from FBI): they stay forced black until the first black frame below is up
 	GSPGPU_SetLcdForceBlack(1);
@@ -98,9 +146,11 @@ bool Engine::prepare()
 	crashHandlerInstall(0);
 	watchdogStart();
 	linearLockInit();
+	char sysCore[64] = "";
+	if (g_sysCoreThreads)
+		snprintf(sysCore, sizeof(sysCore), ", cells stream on the system core (%lu%% of it ours)", (unsigned long)sysCorePercent);
 	logf("MW3DS start, %s, heap %lu KB, linear %lu KB, memory mode %lu%s", isNew3ds ? "New 3DS" : "Old 3DS",
-		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, (unsigned long)osGetApplicationMemType(),
-		g_sysCoreThreads ? ", cells stream on the system core" : "");
+		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, (unsigned long)osGetApplicationMemType(), sysCore);
 	logf("console: %s CPU, %s heap (%d objects, %u KB of sounds kept)", g_profile.slowCpu ? "slow" : "fast",
 		g_profile.smallHeap ? "small" : "large", g_profile.refBudget, g_profile.soundCacheBytes / 1024);
 	gammaInit();
@@ -110,17 +160,8 @@ bool Engine::prepare()
 	logf("memory: %s, heap %lu KB, linear %lu KB (%lu KB free)", isNew3ds ? "New 3DS" : "Old 3DS",
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, linearSpaceFree() / 1024);
 
-	// The top screen's colour buffer: 32-bit on both consoles (platform/console.hpp rgb565 keeps the 16-bit one, half the buffer and
-	// the copy to the screen each frame: it banded the sky and the fog on an Old 3DS)
-	GPU_COLORBUF colorFmt = g_profile.rgb565 ? GPU_RB_RGB565 : GPU_RB_RGBA8;
-	u32 transfer = g_profile.rgb565 ? DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGB565, GX_TRANSFER_FMT_RGB565)
-		: DISPLAY_TRANSFER_FLAGS(GX_TRANSFER_FMT_RGBA8, GX_TRANSFER_FMT_RGB8);
 	logf("display: top screen %s", g_profile.rgb565 ? "16-bit, copied RGB565 to RGB565" : "24-bit, copied RGBA8 to RGB8");
-	top = C3D_RenderTargetCreate(240, 400, colorFmt, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetOutput(top, GFX_TOP, GFX_LEFT, transfer);
-	// Right eye for stereo 3D (only drawn while the 3D mode is on)
-	topRight = C3D_RenderTargetCreate(240, 400, colorFmt, GPU_RB_DEPTH24_STENCIL8);
-	C3D_RenderTargetSetOutput(topRight, GFX_TOP, GFX_RIGHT, transfer);
+	createTopTargets();
 	bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 	// A black frame at once, through the GPU, before the screens are let go of black. (Cleared by the CPU instead,
 	// the console stopped on a data abort: VRAM isn't the program's to write)
@@ -528,8 +569,14 @@ bool Engine::frame()
 	bool trace = loaded && traced < 3;
 	if (trace)
 		logf("frame %d: begin", traced);
+	// Pictures kept for long go to VRAM while nothing draws from them (platform/linear.hpp)
+	texToVramNow();
 	MARK("frame begin");
 	C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+	{
+		u64 since = workEnd;
+		drawProfAdd(DRAWP_WAIT, since);     // (how long the GPU still had on the last frame)
+	}
 	linearRetire();                         // the GPU is done with what the update freed
 	if (trace)
 		logf("frame %d: GPU done with the previous frame", traced);
@@ -568,8 +615,10 @@ bool Engine::frame()
 		platformRunOver();
 	}
 
+	u64 drawSince = svcGetSystemTick();
 	if (loaded)
 		session->updateLocalMap();
+	drawProfAdd(DRAWP_MAP, drawSince);
 
 	// Stereo 3D: eases in and out; the screen leaves 3D mode only once the depth is gone
 	float slider = osGet3DSliderState();
@@ -582,6 +631,10 @@ bool Engine::frame()
 		gfxSet3D(wantStereo);
 		stereoOn = wantStereo;
 	}
+	// (16 bits of depth: Options > Display, g_depthMode; a scripted run asks for it with DEPTH16:on)
+	bool want16 = g_testDepth16 || g_depthMode == DEPTH_16 || (g_depthMode == DEPTH_16_IN_3D && wantStereo);
+	if (want16 != topDepth16)
+		useTopDepth(want16);
 	// Half the eye separation in world units at full slider (a person's is ~4.5 units): depth
 	// between near and far scales with it. The focus (mwrender/renderingmanager.cpp) sets what sits on the screen
 	const float kMaxEyeShift = 3.0f;
@@ -644,13 +697,19 @@ bool Engine::frame()
 	float eyeCmd = 0.0f;
 	float aimDepth = stereoOn && loaded ? session->aimDepth() : 0.0f;
 	int hudDrawsLeft = 0, worldDrawsLeft = 0;
+	static int uiPeakTop = 0, uiPeakBottom = 0;     // the most UI pieces drawn in a frame this second (citro2d objects)
 	for (int eye = 0; eye < (stereoOn ? 2 : 1); eye++)
 	{
 		C3D_RenderTarget* target3d = eye ? topRight : top;
 		clearTop(target3d, clear);
 		C3D_FrameDrawOn(target3d);
 		float cmdBefore = C3D_GetCmdBufUsage();
-		if (loaded)
+		// The right eye from the left eye's recorded GPU words (mwrender/renderingmanager.cpp): the world and the
+		// extras in no CPU time. Without a record, or no room for it, it is drawn again
+		bool replayed = false;
+		if (loaded && eye == 1 && rendererReplayWorld(shift) >= 0)
+			replayed = true;
+		if (loaded && !replayed)
 		{
 			int worldDraws = rendererDrawWorld(session->w, cam, stereoOn ? (eye ? shift : -shift) : 0.0f, eye == 1, fogScale);
 			// Both eyes draw the same things (the second reuses the first's lists): a count that differs is
@@ -661,8 +720,12 @@ bool Engine::frame()
 				monitorOnce(("eyes:" + session->w.cellName()).c_str(), "the world drew %d things in the left eye and %d in the right (%s)",
 					worldDrawsLeft, worldDraws, session->w.cellName().c_str());
 		}
-		if (loaded && poseIndex >= autocam.size())
+		drawSince = svcGetSystemTick();
+		if (loaded && !replayed && poseIndex >= autocam.size())
 			session->drawExtras(cam.pos, eye == 1, !g_camHeld);
+		drawProfAdd(DRAWP_EXTRAS, drawSince);
+		if (loaded && eye == 0)
+			rendererReplayEnd(worldDrawsLeft);
 		if (eye == 0)
 			eyeCmd = C3D_GetCmdBufUsage() - cmdBefore;
 
@@ -709,11 +772,23 @@ bool Engine::frame()
 		// the left eye's HUD went out after the right eye's target was bound, and both HUDs landed in one eye
 		C2D_Flush();
 		C2D_ViewReset();
+		drawProfAdd(DRAWP_HUD, drawSince);
+		uiPeakTop = std::max(uiPeakTop, g_uiDraws);
 	}
-	C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
-	C2D_SceneBegin(bottom);
-	if (loaded)
-		session->drawBottom();
+	// The HUD (no menu, no message up) is drawn every third frame: 330 pieces of text and frame cost an Old 3DS 5 ms a
+	// frame, and its bars and clock don't need more. Menus and messages draw every frame (taps, scrolling)
+	bool hudOnly = loaded && session->screen == SCR_NONE && session->messages.empty() && !session->wantName;
+	if (!hudOnly || g_mainFrames % 3 == 0)
+	{
+		extern int g_uiDraws;
+		g_uiDraws = 0;
+		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
+		C2D_SceneBegin(bottom);
+		if (loaded)
+			session->drawBottom();
+		drawProfAdd(DRAWP_BOTTOM, drawSince);
+		uiPeakBottom = std::max(uiPeakBottom, g_uiDraws);
+	}
 	cmdPeak = fmaxf(cmdPeak, C3D_GetCmdBufUsage());
 	if (trace)
 		logf("frame %d: built (%d%% of the command buffer), submitting", traced, (int)(C3D_GetCmdBufUsage() * 100.0f));
@@ -746,19 +821,35 @@ bool Engine::frame()
 		session->cpuMs = C3D_GetProcessingTime();
 		session->gpuMs = C3D_GetDrawingTime();
 		extern float g_profActorsMs, g_profWorldMs;
-		float talk[3] = {};
 		extern int g_drawnBatches, g_culledBatches;
-		(void)talk;
-		logf("profile per frame: update %.2fms (world %.2f player %.2f stream %.2f ai %.2f scripts %.2f other %.2f) "
-			"actors drawn %.2fms, batches %d drawn %d culled, 3D %s",
-			g_profWorldMs / frames, g_profParts[PROF_WORLD] / frames, g_profParts[PROF_PLAYER] / frames,
-			g_profParts[PROF_STREAM] / frames, g_profParts[PROF_AI] / frames, g_profParts[PROF_SCRIPTS] / frames,
-			g_profParts[PROF_OTHER] / frames, g_profActorsMs / frames, g_drawnBatches, g_culledBatches,
-			stereoOn ? "on" : "off");
+		const float* pp = g_profParts;
+		// (ai is combatUpdate less the detection rays and the visual sweeps, which have their own parts)
+		logf("profile per frame: update %.2fms (world %.2f player %.2f stream %.2f ai %.2f scripts %.2f other %.2f "
+			"detect %.2f fx %.2f greet %.2f sound %.2f tail %.2f) actors drawn %.2fms, batches %d drawn %d culled, 3D %s",
+			g_profWorldMs / frames, pp[PROF_WORLD] / frames, pp[PROF_PLAYER] / frames, pp[PROF_STREAM] / frames,
+			(pp[PROF_AI] - pp[PROF_DETECT] - pp[PROF_FX]) / frames, pp[PROF_SCRIPTS] / frames, pp[PROF_OTHER] / frames,
+			pp[PROF_DETECT] / frames, pp[PROF_FX] / frames, pp[PROF_GREET] / frames, pp[PROF_SOUND] / frames,
+			pp[PROF_TAIL] / frames, g_profActorsMs / frames, g_drawnBatches, g_culledBatches, stereoOn ? "on" : "off");
+		const float* pd = g_profDraw;
+		logf("profile draw: wait %.2f sky %.2f cull %.2f opaque %.2f distant %.2f layers %.2f actors %.2f blend %.2f "
+			"extras %.2f hud %.2f bottom %.2f map %.2f ms, ui draws top %d bottom %d, "
+			"calls disp %d rays %d floors %d steps %d objects %d, replay %d/%d",
+			pd[DRAWP_WAIT] / frames, pd[DRAWP_SKY] / frames, pd[DRAWP_CULL] / frames, pd[DRAWP_OPAQUE] / frames,
+			pd[DRAWP_DISTANT] / frames, pd[DRAWP_LAYERS] / frames, g_profActorsMs / frames, pd[DRAWP_BLEND] / frames,
+			pd[DRAWP_EXTRAS] / frames, pd[DRAWP_HUD] / frames, pd[DRAWP_BOTTOM] / frames, pd[DRAWP_MAP] / frames,
+			uiPeakTop, uiPeakBottom, g_profCalls[PCALL_DISPOSITION] / frames, g_profCalls[PCALL_RAYS] / frames,
+			g_profCalls[PCALL_FLOORS] / frames, g_profCalls[PCALL_STEPS] / frames, g_profCalls[PCALL_OBJECTS] / frames,
+			g_replayCount, g_replayMissed);
+		g_replayCount = g_replayMissed = 0;
 		logf("view distance %d%%, frame work %.2fms", (int)(session->viewScale * 100.0f), session->workCost);
 		g_profActorsMs = g_profWorldMs = 0.0f;
 		for (auto& p : g_profParts)
 			p = 0.0f;
+		for (auto& p : g_profDraw)
+			p = 0.0f;
+		for (auto& c : g_profCalls)
+			c = 0;
+		uiPeakTop = uiPeakBottom = 0;
 		extern int g_skippedDraws;
 		logf("fps %.1f cpu %.2fms gpu %.2fms linearFree %luKB heapUsed %dKB gpu commands peak %d%%%s",
 			session->fps, session->cpuMs, session->gpuMs, linearSpaceFree() / 1024, mallinfo().uordblks / 1024,
@@ -779,6 +870,7 @@ bool Engine::frame()
 				mallinfo().fordblks / 1024, session->w.refsInMemory(), (int)session->w.refs.size());
 		}
 		uiCheckTheme();                   // the UI's textures still as loaded (a monitor)
+		uiArtIdle();                      // pictures not shown for a while give their memory back
 		frames = 0;
 		statTick = now;
 	}

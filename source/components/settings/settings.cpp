@@ -21,6 +21,7 @@ int g_lookSpeed = kLookDefaultPct, g_geTurnSpeed = 100;
 int g_stickZonePct = kStickZoneDefaultPct;
 bool g_invertY = false;
 bool g_subtitles = true;
+int g_depthMode = DEPTH_16_IN_3D;
 static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is off
 
 void Session::loadSettings()
@@ -39,6 +40,7 @@ void Session::loadSettings()
 		g_stickZonePct = kStickZoneDefaultPct;
 		g_invertY = false;
 		g_subtitles = true;
+		g_depthMode = DEPTH_24;          // (DEPTH16:on asks for the 16-bit buffer)
 	}
 	FILE* f = fopen(kSettingsPath, "r");
 	if (!f)
@@ -73,6 +75,8 @@ void Session::loadSettings()
 		// (an older file's geaim= is left unread: the GoldenEye aim looks at the look speed)
 		else if (strncmp(line, "inverty=", 8) == 0) g_invertY = strncmp(line + 8, "on", 2) == 0;
 		else if (strncmp(line, "subtitles=", 10) == 0) g_subtitles = strncmp(line + 10, "off", 3) != 0;
+		else if (strncmp(line, "depth=", 6) == 0 && !autotest)
+			g_depthMode = strncmp(line + 6, "24", 2) == 0 ? DEPTH_24 : strncmp(line + 6, "16in3d", 6) == 0 ? DEPTH_16_IN_3D : DEPTH_16;
 		else if (strncmp(line, "view=", 5) == 0)
 		{
 			viewMode = strncmp(line + 5, "min", 3) == 0 ? VIEW_MIN : strncmp(line + 5, "max", 3) == 0 ? VIEW_MAX
@@ -107,6 +111,7 @@ void Session::saveSettings()
 	fprintf(f, "lookspeed=%d\ngeturn=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_invertY ? "on" : "off");
 	fprintf(f, "stickzone=%d\n", g_stickZonePct);
 	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
+	fprintf(f, "depth=%s\n", g_depthMode == DEPTH_24 ? "24" : g_depthMode == DEPTH_16_IN_3D ? "16in3d" : "16");
 	fprintf(f, "view=%s\n", viewMode == VIEW_MIN ? "min" : viewMode == VIEW_MAX ? "max" : viewMode == VIEW_MID ? "mid" : "auto");
 	fprintf(f, "dynview=%s\n", viewMode == VIEW_AUTO ? "on" : "off");     // (for an older build reading the file)
 	fclose(f);

@@ -129,7 +129,7 @@ enum { C3D_RGB = 1, C3D_Alpha = 2, C3D_Both = 3 };
 // Every other GPU enumerant the game names is just a number here
 enum GpuEnum : int {
 	GPU_VERTEX_SHADER = 100, GPU_LINEAR, GPU_WRITE_COLOR, GPU_SCISSOR_NORMAL, GPU_SCISSOR_DISABLE, GPU_CLAMP_TO_EDGE,
-	GPU_BLEND_ADD, GPU_ALWAYS, GPU_SRC_ALPHA, GPU_PREVIOUS, GPU_REPLACE, GPU_RB_DEPTH24_STENCIL8, GPU_ONE_MINUS_SRC_ALPHA,
+	GPU_BLEND_ADD, GPU_ALWAYS, GPU_SRC_ALPHA, GPU_PREVIOUS, GPU_REPLACE, GPU_RB_DEPTH24_STENCIL8, GPU_RB_DEPTH16, GPU_ONE_MINUS_SRC_ALPHA,
 	GPU_ONE, GPU_NEAREST, GPU_RB_RGBA8, GPU_ZERO, GPU_TEVOP_RGB_SRC_COLOR, GPU_SHORT,
 	GPU_PRIMARY_COLOR, GPU_GREATER, GPU_FLOAT, GPU_CULL_NONE, GPU_CONSTANT, GPU_WRITE_ALL, GPU_UNSIGNED_BYTE,
 	GPU_TRIANGLES, GPU_TEXTURE1, GPU_TEXTURE0, GPU_TEXFACE_2D, GPU_TEVOP_RGB_SRC_ALPHA, GPU_TEVOP_A_SRC_ALPHA,
@@ -141,6 +141,7 @@ enum GpuEnum : int {
 };
 typedef int GPU_TEXTURE_FILTER_PARAM;
 typedef int GPU_COLORBUF;
+typedef int GPU_DEPTHBUF;
 typedef int GPU_TEXTURE_WRAP_PARAM;
 typedef int GPU_BLENDFACTOR;
 
@@ -221,6 +222,7 @@ void C3D_TexEnvOpRgb(C3D_TexEnv* env, int o1, int o2 = GPU_TEVOP_RGB_SRC_COLOR, 
 void C3D_TexEnvFunc(C3D_TexEnv* env, int mode, int func);
 void C3D_TexEnvColor(C3D_TexEnv* env, u32 color);
 void C3D_FVUnifSet(int type, int id, float x, float y, float z, float w);
+C3D_FVec* C3D_FVUnifWritePtr(int type, int id, int size);
 void C3D_BoolUnifSet(int type, int id, bool value);
 void C3D_FVUnifMtx4x4(int type, int id, const C3D_Mtx* m);
 C3D_AttrInfo* C3D_GetAttrInfo();
@@ -234,3 +236,10 @@ void C3D_BindProgram(shaderProgram_s* p);
 Tex3DS_Texture Tex3DS_TextureImport(const void* data, size_t size, C3D_Tex* tex, void* texcube, bool vram);
 Tex3DS_Texture Tex3DS_TextureImportStdio(FILE* f, C3D_Tex* tex, void* texcube, bool vram);
 void Tex3DS_TextureFree(Tex3DS_Texture t);
+
+// Stereo replay of the left eye's GPU words (mwrender/renderingmanager.cpp): nothing to copy on the PC
+inline void GPUCMD_GetBuffer(u32** addr, u32* size, u32* offset) { if (addr) *addr = nullptr; if (size) *size = 0; if (offset) *offset = 0; }
+inline void GPUCMD_AddRawCommands(const u32*, u32) {}
+inline void C3D_ImmDrawBegin(int) {}
+inline void C3D_ImmSendAttrib(float, float, float, float) {}
+inline void C3D_ImmDrawEnd() {}

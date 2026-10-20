@@ -518,7 +518,7 @@ static void startStreamJob(World& w, int index)
 	j->parseObjects = !w.cells[index].refsLoaded;
 	j->started = osGetTime();
 	// Below the main thread's priority: it runs while the main thread waits for the GPU. An Old 3DS has one core for
-	// the game, so there it goes to the system core (up to 30% of it, APT_SetAppCpuTimeLimit in main) and reads in
+	// the game, so there it goes to the system core (up to half of it, APT_SetAppCpuTimeLimit in engine.cpp) and reads in
 	// parallel; on the game's core if that can't be had
 	s32 prio = 0x30;
 	svcGetThreadPriority(&prio, CUR_THREAD_HANDLE);

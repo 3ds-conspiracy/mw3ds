@@ -3,7 +3,7 @@ cavern, the logos. Bink is decoded with ffmpeg (the imageio-ffmpeg package bring
 
   data/movies/<name>.mwv   'MWV1', u32 frames, u32 fps x 100, u32 w, u32 h (the picture inside the texture),
                            then per frame: u32 size, a .t3x (tex3ds, ETC1, 256 x 256 holding 256 x 192)
-  data/music/movie_<name>.snd   its sound, as the other music (IMA ADPCM 'SND2', mono)
+  data/music/movie_<name>.snd   its sound, as the other music (DSP-ADPCM 'SND3', mono)
 game.json "movies": {"mw_intro": {"file": ..., "sound": ...}, ...}
 
   python tools/convert/movies.py        (MW3DS_OUT picks the data folder)
@@ -19,6 +19,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+import dspadpcm
 from textures import OUT, tex3ds_path
 
 MOVIES = ["mw_intro", "mw_end", "mw_cavern", "bethesda logo", "mw_logo", "mw_credits"]
@@ -68,12 +69,21 @@ def convert(src, name):
         return {"file": f"movies/{stem}.mwv", "sound": "", "frames": len(frames), "bytes": out.stat().st_size}
     snd = OUT / "music" / f"movie_{stem}.snd"
     snd.parent.mkdir(parents=True, exist_ok=True)
-    samples = len(pcm) // 2
-    adpcm, _ = audioop.lin2adpcm(pcm, 2, None)
-    with open(snd, "wb") as f:
-        f.write(b"SND2" + struct.pack("<II", RATE, samples) + adpcm)
+    snd.write_bytes(dspadpcm.snd3(np.frombuffer(pcm[:len(pcm) // 2 * 2], dtype="<i2"), RATE, False))
     return {"file": f"movies/{stem}.mwv", "sound": f"movie_{stem}.snd", "frames": len(frames),
             "bytes": out.stat().st_size}
+
+
+def sound_to_snd3(snd):
+    """A sound an earlier conversion wrote as IMA ADPCM ('SND2') made DSP-ADPCM, without decoding the movie again."""
+    if not snd.exists():
+        return
+    data = snd.read_bytes()
+    if data[:4] != b"SND2":
+        return
+    rate, samples = struct.unpack_from("<II", data, 4)
+    pcm, _ = audioop.adpcm2lin(data[12:], 2, None)
+    snd.write_bytes(dspadpcm.snd3(np.frombuffer(pcm, dtype="<i2")[:samples], rate, False))
 
 
 def build_movies(data_files):
@@ -87,6 +97,7 @@ def build_movies(data_files):
         stem = movie_name(name)
         mwv, snd = OUT / "movies" / f"{stem}.mwv", OUT / "music" / f"movie_{stem}.snd"
         if mwv.exists():
+            sound_to_snd3(snd)
             out[stem] = {"file": f"movies/{stem}.mwv", "sound": snd.name if snd.exists() else "",
                          "frames": struct.unpack_from("<I", mwv.read_bytes()[:8], 4)[0], "bytes": mwv.stat().st_size}
             continue

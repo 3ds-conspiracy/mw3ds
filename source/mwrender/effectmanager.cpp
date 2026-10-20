@@ -290,7 +290,8 @@ void Session::updateWorldFx()
 		return;
 	w.forLoadedRefs([&](int ri) {
 		const Ref& r = w.refs[ri];
-		if (have.count(ri) || !r.visible())
+		// (the few objects with a visual are marked once at load: no string lookup for every ref every frame)
+		if (!r.obj || !(r.obj->fx & 1) || !r.visible() || have.count(ri))
 			return;
 		auto it = w.game.firstPerson.worldFx.find(r.idLower);
 		if (it == w.game.firstPerson.worldFx.end() || w.distanceToPlayer(ri) > kWorldFxRange)
@@ -361,6 +362,8 @@ void Session::updateCreatureFx(float dt)
 	std::unordered_set<int> seen;
 	w.forLoadedActors([&](int ri) {
 		const Ref& r = w.refs[ri];
+		if (!r.obj || !(r.obj->fx & 2))
+			return;
 		auto pc = w.game.firstPerson.cpfx.find(r.idLower);
 		Actor* a = pc != w.game.firstPerson.cpfx.end() && r.visible() ? w.actorOf(ri) : nullptr;
 		if (!a || w.distanceToPlayer(ri) > kVfxRange)

@@ -125,9 +125,9 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		// soundstarted:<sound id>: how many times that sound has been started (a count even with no audio device)
 		auto rec = w.game.sounds.find(lower(spaced(arg)));
 		// (or a voice line's file name, as a script says it: vo\w\m\hit_wm006.mp3)
-		auto voice = w.game.voices.find(lower(arg));
+		std::string voice;
 		v = rec != w.game.sounds.end() ? audioStartedCount(rec->second.file)
-			: voice != w.game.voices.end() ? audioStartedCount(voice->second) : -1;
+			: w.game.voiceFile(lower(arg), &voice) ? audioStartedCount(voice) : -1;
 		return true;
 	}
 	if (what == "movieplaying")
@@ -171,6 +171,19 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 	if (what == "weapondrawn")
 	{
 		v = s.weaponDrawn ? 1.0f : 0.0f;
+		return true;
+	}
+	// voicesecs:<voice path>: a voice line's length as its sound file's header has it (-1: no such line); soundcachekb:
+	// what the sound cache holds
+	if (what == "voicesecs")
+	{
+		std::string file;
+		v = w.game.voiceFile(lower(arg), &file) ? audioDuration(file) : -1.0f;
+		return true;
+	}
+	if (what == "soundcachekb")
+	{
+		v = audioCacheBytes() / 1024.0f;
 		return true;
 	}
 	// sounddenied: sounds that found every channel busy; loopsounds / loopheld: loops going / holding a channel
@@ -366,6 +379,11 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		{
 			const Actor* a = w.actorOf(ri);
 			v = a ? (a->lampNow[0] + a->lampNow[1] + a->lampNow[2]) / (3.0f * 64.0f) : -1.0f;
+		}
+		else if (what == "reftalk")         // how far its mouth is open (Actor::talkLevel: the voice's loudness, 0..1)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? a->talkLevel : -1.0f;
 		}
 		else if (what == "refheldlight")    // the light of the torch it holds out, on itself (Actor::heldLight, 0..1)
 		{

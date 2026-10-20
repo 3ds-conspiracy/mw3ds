@@ -781,8 +781,34 @@ static float f24(float v)
 	return v;
 }
 
+// C3D_FVUnifWritePtr's rows: taken into the uniforms (at the GPU's precision) before the next draw or single set
+static C3D_FVec s_unifStaged[96];
+static int s_stagedFrom = 96, s_stagedTo = 0;
+static void unifStagedTake()
+{
+	for (int id = s_stagedFrom; id < s_stagedTo; id++)
+	{
+		s_unif[id][0] = f24(s_unifStaged[id].x);
+		s_unif[id][1] = f24(s_unifStaged[id].y);
+		s_unif[id][2] = f24(s_unifStaged[id].z);
+		s_unif[id][3] = f24(s_unifStaged[id].w);
+	}
+	s_stagedFrom = 96, s_stagedTo = 0;
+}
+C3D_FVec* C3D_FVUnifWritePtr(int, int id, int size)
+{
+	static C3D_FVec spare[96];
+	if (id < 0 || size < 0 || id + size > 96)
+		return spare;
+	unifStagedTake();
+	s_stagedFrom = id, s_stagedTo = id + size;
+	for (int k = id; k < id + size; k++)
+		s_unifStaged[k] = FVec4_New(s_unif[k][0], s_unif[k][1], s_unif[k][2], s_unif[k][3]);
+	return &s_unifStaged[id];
+}
 void C3D_FVUnifSet(int, int id, float x, float y, float z, float w)
 {
+	unifStagedTake();
 	if (id < 0 || id >= 96)
 		return;
 	s_unif[id][0] = f24(x);
@@ -1110,6 +1136,7 @@ static bool usesSource(int s)
 
 void C3D_DrawElements(int, int count, int type, const void* indices)
 {
+	unifStagedTake();
 	C3D_RenderTarget* t = s_target;
 	if (!drawFrame() || !t || !s_buf.data || count < 3)
 		return;

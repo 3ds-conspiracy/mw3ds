@@ -125,7 +125,7 @@ void itemInfo(const Object* o, float y, const std::string& extra)
 
 void Session::drawBottom()
 {
-	uiRect(0, 0, 320, 240, C2D_Color32(10, 8, 6, 255));
+	// (the target is cleared to this colour already: main)
 	if (!messages.empty())
 	{
 		drawMessage();
@@ -207,6 +207,7 @@ void Session::closeScreen()
 	bookItem.clear();
 	bookPagesOf.clear();
 	bookSpread = 0;
+	uiIconsRelease();
 }
 
 void Session::updateWindows()

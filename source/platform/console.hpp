@@ -22,6 +22,7 @@ struct ConsoleProfile
 	float workCap;                   // one long frame (a cell arriving) counts as at most this, in ms
 	float actorViewLimit;            // people are drawn no farther than this (0: the renderer's own distance)
 	float actorDetailScale;          // of the renderer's full-detail distance for people
+	float detailScale;               // of the clutter's own cutoff (CellBatch::maxDist: the converter's size tiers)
 	unsigned skinEvery[3];           // a skinned pose is redone every n frames: near, middle, far
 	bool rgb565;                     // 16-bit colour for the 3D screen (half the bandwidth)
 	int cmdBufScale;                 // GPU command buffer, in libctru's default sizes

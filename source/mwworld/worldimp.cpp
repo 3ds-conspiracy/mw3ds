@@ -12,6 +12,7 @@ extern "C" u32 __ctru_heap_size;
 #include <malloc.h>
 #include "components/debug/debuglog.hpp"
 #include "mwworld/worldhelpers.hpp"
+#include "platform/console.hpp"
 
 float* ScriptInstance::local(const std::string& lowerName)
 {
@@ -480,8 +481,13 @@ int World::findRef(const std::string& id) const
 {
 	// The first active reference with that id, else the first at all. By an index of the interned ids (Atoms are one copy
 	// per text): a scan of every reference was milliseconds a call on an Old 3DS, and AI packages and scripts call it a frame
-	std::string l = lower(id);
-	const char* key = l.empty() ? nullptr : Atom::existing(l.data(), l.size());
+	// (ids are lowercase nearly always: a lowered copy only for one that isn't)
+	bool upper = false;
+	for (char ch : id)
+		upper |= ch >= 'A' && ch <= 'Z';
+	std::string l = upper ? lower(id) : std::string();
+	const std::string& low = upper ? l : id;
+	const char* key = low.empty() ? nullptr : Atom::existing(low.data(), low.size());
 	if (!key)
 		return -1;
 	for (int pass = 0; pass < 2; pass++)
@@ -608,6 +614,9 @@ void World::update(float dt)
 	// Pose only actors near enough to be drawn (the towns have many more than the office)
 	// and pose the far ones less often (their re-skinning is rarer too, mwrender/renderingmanager.cpp)
 	float reach = here().fogEnd > 0.0f && !(here().flags & CELL_INTERIOR) ? fminf(here().fogEnd * drawScale, kActorViewDistance) + 200.0f : 4200.0f;
+	// (no farther than the console draws them: an Old 3DS posed people to 6200 and drew them to 4000)
+	if (g_profile.actorViewLimit > 0.0f)
+		reach = fminf(reach, g_profile.actorViewLimit + 200.0f);
 	frame++;
 	for (LoadedCell* l : loaded)
 	{

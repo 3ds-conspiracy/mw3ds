@@ -24,7 +24,7 @@ InventoryItem* Session::playerWeaponItem()
 {
 	for (auto& it : w.inventory)
 		if (it.equipped)
-			if (const Object* o = w.game.object(it.id))
+			if (const Object* o = w.game.object(it))
 				if (o->recType == REC_WEAP && o->subtype < WEAP_ARROW)
 					return &it;
 	return nullptr;
@@ -33,7 +33,7 @@ InventoryItem* Session::playerWeaponItem()
 const Object* Session::playerWeapon()
 {
 	InventoryItem* it = playerWeaponItem();
-	return it ? w.game.object(it->id) : nullptr;
+	return it ? w.game.object(*it) : nullptr;
 }
 
 const Object* Session::playerAmmo()
@@ -46,7 +46,7 @@ const Object* Session::playerAmmo()
 	int want = wpn->subtype == WEAP_BOW ? WEAP_ARROW : WEAP_BOLT;
 	for (auto& it : w.inventory)
 		if (it.equipped && it.count > 0)
-			if (const Object* o = w.game.object(it.id))
+			if (const Object* o = w.game.object(it))
 				if (o->recType == REC_WEAP && o->subtype == want)
 					return o;
 	return nullptr;
@@ -54,7 +54,7 @@ const Object* Session::playerAmmo()
 
 int Session::itemCondition(const InventoryItem& it)
 {
-	const Object* o = w.game.object(it.id);
+	const Object* o = w.game.object(it);
 	int max = o ? o->health : 0;
 	return it.condition < 0 ? max : it.condition;
 }
@@ -62,7 +62,7 @@ int Session::itemCondition(const InventoryItem& it)
 // Wears an equipped weapon / armor piece down; one of a stack splits off first
 void Session::wearItem(InventoryItem* it, float amount)
 {
-	const Object* o = it ? w.game.object(it->id) : nullptr;
+	const Object* o = it ? w.game.object(*it) : nullptr;
 	if (!o || o->health <= 0)
 		return;
 	int cond = itemCondition(*it);
@@ -106,7 +106,7 @@ float Session::playerArmor()
 		slotRating[k] = unarmored;
 	for (auto& it : w.inventory)
 		if (it.equipped)
-			if (const Object* o = w.game.object(it.id))
+			if (const Object* o = w.game.object(it))
 				if (o->recType == REC_ARMO && o->subtype >= 0 && o->subtype < 11)
 				{
 					float wt = kArmorSlotBaseWeight[o->subtype];

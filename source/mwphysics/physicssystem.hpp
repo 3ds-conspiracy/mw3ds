@@ -4,16 +4,40 @@
 #include <cstdio>
 #include <vector>
 
+// Indices kept in 16 bits while they all fit (the converter writes them so: half the memory, and a town's cells hold a
+// few hundred thousand), in 32 when the file has wider ones or one is set past 16 bits
+struct IndexList
+{
+	std::vector<u16> narrow;
+	std::vector<u32> wide;
+	bool isWide = false;
+	u32 operator[](size_t i) const { return isWide ? wide[i] : narrow[i]; }
+	size_t size() const { return isWide ? wide.size() : narrow.size(); }
+	void set(size_t i, u32 v)
+	{
+		if (!isWide && v > 0xFFFF)
+		{
+			wide.assign(narrow.begin(), narrow.end());
+			std::vector<u16>().swap(narrow);
+			isWide = true;
+		}
+		if (isWide)
+			wide[i] = v;
+		else
+			narrow[i] = (u16)v;
+	}
+};
+
 // Static collision triangles of a cell, bucketed into a 2D (XY) grid.
 struct CollisionMesh
 {
 	std::vector<float> verts;     // xyz per vertex
-	std::vector<u32> tris;        // 3 vertex indices per triangle
+	IndexList tris;               // 3 vertex indices per triangle
 	float originX = 0, originY = 0, cellSize = 128;
 	u32 nx = 0, ny = 0;
 	std::vector<u32> cellStart;   // nx*ny+1 offsets into cellTris
-	std::vector<u32> cellTris;
-	std::vector<u32> stamp;       // per-triangle visit mark for queries
+	IndexList cellTris;
+	std::vector<u16> stamp;       // per-triangle visit mark for queries (queryId, started over when it passes 16 bits)
 	u32 queryId = 0;
 	u32 farVert = 0;              // 0: none yet; else 3 vertices far below everything (hidden triangles)
 };

@@ -81,10 +81,12 @@ void uiBeginFrame(const UiInput& in)
 	s_buttons.clear();
 }
 
-static bool loadTex(const std::string& path, C3D_Tex* tex, GPU_TEXTURE_FILTER_PARAM filter)
+static bool loadTex(const std::string& path, C3D_Tex* tex, GPU_TEXTURE_FILTER_PARAM filter, bool vram = false)
 {
 	if (!texImportFile(tex, path.c_str()))
 		return false;
+	if (vram)
+		texToVramLater(tex);
 	C3D_TexSetFilter(tex, filter, filter);
 	C3D_TexSetWrap(tex, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
 	return true;
@@ -150,6 +152,25 @@ bool uiArt(const std::string& file, int w, int h, float x, float y, float dw, fl
 	return true;
 }
 
+// Once a second from main: pictures not shown for a few seconds go (they went only when another picture first loaded,
+// so the last load screen's splash and the title picture sat in linear memory through play)
+void uiArtIdle()
+{
+	artEvict(osGetTime());
+}
+
+// The item icon pages let go when the last menu closes (up to a megabyte of linear memory that only menus draw from;
+// the next menu reads its pages again, as the first one did)
+void uiIconsRelease()
+{
+	for (auto& p : s_iconPages)
+		if (p.loaded)
+		{
+			deferredTexDelete(&p.tex);
+			p.loaded = false;
+		}
+}
+
 void uiArtFree()
 {
 	LinearGuard guard;
@@ -191,7 +212,7 @@ void uiLoadTheme(const char* dataDir, const UiThemeDef& def)
 	s_artDir = dataDir;
 	s_dataDir = dataDir;
 	std::string dir = std::string(dataDir) + "/";
-	if (!def.fontFile.empty() && def.fontLine > 0.0f && loadTex(dir + def.fontFile, &s_fontTex, GPU_LINEAR))
+	if (!def.fontFile.empty() && def.fontLine > 0.0f && loadTex(dir + def.fontFile, &s_fontTex, GPU_LINEAR, true))
 	{
 		s_fontOn = true;
 		memset(s_asciiHas, 0, sizeof(s_asciiHas));
@@ -203,7 +224,7 @@ void uiLoadTheme(const char* dataDir, const UiThemeDef& def)
 			}
 	}
 	if (!def.atlasFile.empty())
-		s_atlasOn = loadTex(dir + def.atlasFile, &s_atlasTex, GPU_NEAREST);
+		s_atlasOn = loadTex(dir + def.atlasFile, &s_atlasTex, GPU_NEAREST, true);
 	s_iconPages.resize(def.iconPages.size());
 	// Morrowind.ini colours
 	col::text = themeColor("normal", col::text);
@@ -223,6 +244,9 @@ void uiLoadTheme(const char* dataDir, const UiThemeDef& def)
 // their linear memory (the reported static: every letter and frame noise, the 3D world fine, until a restart)
 static u32 texelSum(const C3D_Tex& t)
 {
+	// (in VRAM no stray write of ours reaches it, and reading it back from there is slow)
+	if (inVram(t.data))
+		return 1;
 	const u32* p = (const u32*)t.data;
 	u32 n = C3D_TexCalcTotalSize(t.size, t.maxLevel) / 4, h = 2166136261u;
 	for (u32 i = 0; i < n; i++)

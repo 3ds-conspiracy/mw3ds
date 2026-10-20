@@ -54,6 +54,7 @@ void ViewModel::free(World& w)
 		set.actors[0].meshes.clear();
 	textures.clear();
 	builtFor.clear();
+	inputsFor.clear();
 }
 
 FpPiece* ViewModel::piece(World& w, const std::string& name)
@@ -386,6 +387,24 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 	if (!ready)
 		return;
 	int female = w.stats.female ? 1 : 0;
+	// What the parts are worked out from: the same as last frame (nearly always), the parts are too. Working them out
+	// looked up every worn item three times a frame
+	std::string inputs = w.stats.race;
+	inputs += female ? "|f|" : "|m|";
+	inputs += weaponId;
+	inputs += '|';
+	inputs += shieldId;
+	inputs += '|';
+	inputs += ammoId;
+	for (auto& it : w.inventory)
+		if (it.equipped)
+		{
+			inputs += '|';
+			inputs += it.id;
+		}
+	if (inputs == inputsFor && !(incomplete && (u32)osGetTime() >= retryAt))
+		return;
+	inputsFor = inputs;
 	std::string part[32];
 	u32 glow[32] = {};                // enchanted items glow
 	const FirstPersonDef& fp = w.game.firstPerson;
@@ -404,7 +423,7 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 		{
 			if (!it.equipped)
 				continue;
-			const Object* o = w.game.object(it.id);
+			const Object* o = w.game.object(it);
 			if (!o || (o->recType != REC_CLOT && o->recType != REC_ARMO))
 				continue;
 			int l = o->recType == REC_ARMO ? 1 : (o->subtype == CLOT_ROBE || o->subtype == CLOT_SKIRT) ? 2 : 0;

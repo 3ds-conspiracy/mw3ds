@@ -286,10 +286,10 @@ void Session::drawHud()
 	const InventoryItem* weapon = nullptr;
 	for (auto& it : w.inventory)
 		if (it.equipped)
-			if (const Object* o = w.game.object(it.id))
+			if (const Object* o = w.game.object(it))
 				if (o->recType == REC_WEAP)
 					weapon = &it;
-	const Object* wo = weapon ? w.game.object(weapon->id) : nullptr;
+	const Object* wo = weapon ? w.game.object(*weapon) : nullptr;
 	float by = 75;
 	uiRect(6, by, 36, 36, col::panel);
 	if (!(wo && uiIcon(wo->iconIx, 8, by + 2)))

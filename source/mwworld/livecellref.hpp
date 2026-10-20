@@ -30,7 +30,7 @@ struct Ref
 	bool spawnedRef = false;      // placed while playing (World::spawned owns the slot)
 	bool dropped = false;         // an item the player (or a script) dropped: `dropItem` is what it is
 	bool ally = false;            // summoned: fights for the player
-	std::string hitBy;            // HitOnMe: the weapon that hit it last (lowercase), until asked
+	Atom hitBy;                   // HitOnMe: the weapon that hit it last (lowercase), until asked
 	bool knockedOut = false;      // OnKnockout pending
 	int flee = -1;                // AI flee set by scripts (-1: the record's)
 	int alarm = -1;               // AI alarm set by scripts

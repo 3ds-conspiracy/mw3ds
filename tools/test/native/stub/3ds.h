@@ -58,6 +58,7 @@ inline Result GSPGPU_SetLcdForceBlack(u8) { return 0; }
 inline Result APT_CheckNew3DS(bool* b) { const char* o = getenv("NATIVE_OLD3DS"); *b = !(o && o[0] == '1'); return 0; }
 inline void osSetSpeedupEnable(bool) {}
 inline Result APT_SetAppCpuTimeLimit(u32) { return -1; }
+inline Result APT_GetAppCpuTimeLimit(u32* percent) { *percent = 0; return -1; }
 inline u32 osGetApplicationMemType() { const char* o = getenv("NATIVE_OLD3DS"); return o && o[0] == '1' ? 0 : 6; }
 // (from 1900 as the console counts: saves turn it into a date)
 inline u64 osGetTime() { return 2208988800000ULL + std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count(); }
@@ -69,6 +70,7 @@ inline void romfsExit() {}
 inline void gfxInitDefault() {}
 enum { GSP_RGBA8_OES = 0, GSP_BGR8_OES = 1, GSP_RGB565_OES = 2 };
 inline void gfxInit(int, int, bool) {}
+inline void gfxSetDoubleBuffering(int, bool) {}
 inline void gfxExit() {}
 // NATIVE_3D=<0..1>: the 3D slider (the game then draws both eyes; a SHOT saves the right one as <name>_r.bmp)
 inline bool& nativeStereo() { static bool on = false; return on; }
@@ -100,11 +102,13 @@ inline Result DSP_FlushDataCache(const void*, u32) { return 0; }
 void* linearAlloc(size_t size);
 void linearFree(void* p);
 size_t linearSpaceFree();
+inline u32 vramSpaceFree() { return 0; }          // (no VRAM: everything goes to "linear" memory)
 struct mallinfo_s { int uordblks, arena, fordblks; };
 
 // Sound: a buffer is finished the moment it is queued (no real-time playback in the tests)
-enum { NDSP_OUTPUT_STEREO, NDSP_INTERP_LINEAR, NDSP_FORMAT_MONO_PCM16, NDSP_WBUF_FREE = 0, NDSP_WBUF_QUEUED, NDSP_WBUF_PLAYING, NDSP_WBUF_DONE };
-struct ndspWaveBuf { const void* data_vaddr; u32 nsamples; u32 offset; bool looping; u16 sequence_id; u8 status; };
+enum { NDSP_OUTPUT_STEREO, NDSP_INTERP_LINEAR, NDSP_FORMAT_MONO_PCM16, NDSP_FORMAT_ADPCM, NDSP_WBUF_FREE = 0, NDSP_WBUF_QUEUED, NDSP_WBUF_PLAYING, NDSP_WBUF_DONE };
+struct ndspAdpcmData { u16 index; s16 history0; s16 history1; };
+struct ndspWaveBuf { const void* data_vaddr; u32 nsamples; ndspAdpcmData* adpcm_data; u32 offset; bool looping; u16 sequence_id; u8 status; };
 inline Result ndspInit() { return 0; }
 inline void ndspExit() {}
 inline void ndspSetOutputMode(int) {}
@@ -118,7 +122,10 @@ u32 nativeDspPos(int ch);
 inline void ndspChnReset(int ch) { nativeDspReset(ch); }
 inline void ndspChnSetInterp(int, int) {}
 inline void ndspChnSetRate(int ch, float r) { nativeDspRate(ch, r); }
-inline void ndspChnSetFormat(int, int) {}
+void nativeDspFormat(int ch, int format);
+void nativeDspCoefs(int ch, const u16* coefs);
+inline void ndspChnSetFormat(int ch, int f) { nativeDspFormat(ch, f); }
+inline void ndspChnSetAdpcmCoefs(int ch, u16* coefs) { nativeDspCoefs(ch, coefs); }
 inline void ndspChnSetMix(int ch, float* m) { nativeDspMix(ch, m); }
 inline void ndspChnWaveBufAdd(int ch, ndspWaveBuf* b) { if (!nativeDspAdd(ch, b)) b->status = NDSP_WBUF_DONE; }
 inline void hidScanInput() {}

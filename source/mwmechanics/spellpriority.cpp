@@ -84,7 +84,7 @@ float Session::npcEffectRating(int ri, const SpellEffect& e, bool withEnemy)
 			return 0.0f;
 		float weight = w.effectTotal(7) - w.effectTotal(8);
 		for (auto& it : w.inventory)
-			if (const Object* o = w.game.object(it.id))
+			if (const Object* o = w.game.object(it))
 				weight += o->weight * it.count;
 		float burden = weight - w.game.gmstf("fencumbrancestrmult", 5.0f) * w.stats.attributes[ATTR_STRENGTH];
 		if (burden > 0.0f || (e.min + e.max) * 0.5f <= -burden)
@@ -136,7 +136,7 @@ float Session::npcEffectRating(int ri, const SpellEffect& e, bool withEnemy)
 			return 0.0f;
 		bool armor = false;
 		for (auto& it : w.inventory)
-			if (const Object* o = it.equipped ? w.game.object(it.id) : nullptr)
+			if (const Object* o = it.equipped ? w.game.object(it) : nullptr)
 				armor |= o->recType == REC_ARMO;
 		if (!armor)
 			return 0.0f;

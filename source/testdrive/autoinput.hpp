@@ -140,6 +140,7 @@ std::vector<CamPose> loadAutocam(const RenderCamera& spawn);
 // What a scripted run's steps set for the frame loop: the frame cap, the controls' layout, the view held at a spot,
 // the HUD hidden, the world standing still (parseKeys)
 extern bool g_testFrameCap;
+extern bool g_testDepth16;          // DEPTH16:on: the top screen's 16-bit depth buffer in 2D (Engine::createTopTargets)
 extern int g_testLayout;
 extern bool g_camHeld, g_hudOff, g_halt;
 extern RenderCamera g_heldCam;

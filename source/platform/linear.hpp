@@ -28,6 +28,14 @@ void linearRetire();
 // worst). Every .t3x load goes through here. In mwrender/objects.cpp (built natively too)
 bool texImportFile(C3D_Tex* tex, const char* path);
 
+// A picture kept for long (the UI's font and frames, the water, the enchantment shimmer, the world map) moves into VRAM
+// between frames while VRAM has room above a reserve: out of linear memory, and the GPU reads it faster. Its C3D_Tex
+// must stay where it is until then, or go through deferredTexDelete (which drops it from the list). texToVramNow: the
+// engine, between frames (it waits for the GPU)
+void texToVramLater(C3D_Tex* tex);
+void texToVramNow();
+bool inVram(const void* p);              // (the PC build has none)
+
 struct LinearGuard
 {
 	LinearGuard();

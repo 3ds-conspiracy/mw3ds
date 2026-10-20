@@ -1,0 +1,26 @@
+# A talking mouth follows its voice line (Session::updateMouths, Actor::talkLevel): with DSP-ADPCM ('SND3') the sound
+# chip decodes the line, so the loudness comes from the envelope the converter writes beside the frames, not from
+# decoded samples. Fargoth says a line up close (once his greeting is over): the mouth opens while he speaks and
+# closes after. Shots for the eye; with NATIVE_AUDIO set the channel really plays and the envelope drives it
+# (without, the line's flap does)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+90 0 0 0 0 WALKTO:fargoth
+0.3 0 0 0 0 FACE:fargoth
+0.6 0 1 0
+0.3 0 0 0 0 FACE:fargoth
+8 0 0 0 0
+0.3 0 0 0 0 EXPECT:reftalk:fargoth:lt:0.05
+0.1 0 0 0 0 SAYLINE:fargoth
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0+SHOT
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0+SHOT
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:gt:0.02+SHOT
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0+SHOT
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0
+0.1 0 0 0 0 EXPECT:reftalk:fargoth:ge:0
+20 0 0 0 0
+0.3 0 0 0 0 EXPECT:reftalk:fargoth:lt:0.05+SHOT

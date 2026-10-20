@@ -8,6 +8,7 @@ static const float kLightBounds = 1.65f;     // OpenMW's light bounds multiplier
 #include <tex3ds.h>
 #include <citro2d.h>
 #include "mwbase/session.hpp"
+#include "components/debug/profile.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -22,7 +23,7 @@ void Session::updateLights()
 		float radius = 0.0f, rgb[3] = { 0, 0, 0 };
 		for (auto& it : w.inventory)
 			if (it.equipped)
-				if (const Object* o = w.game.object(it.id))
+				if (const Object* o = w.game.object(it))
 					if (o->recType == REC_LIGH && o->lightRadius > 0)
 					{
 						radius = (float)o->lightRadius;
@@ -36,6 +37,8 @@ void Session::updateLights()
 	}
 	// (people's torches light only people, not the world around: the console can't spare the vertex work; the player's
 	// light is the one live light)
+	// Every fourth frame: every lamp against every person each frame was a few ms of an Old 3DS's, for a tint that eases
+	if (w.frame % 4 == 0 || !cadenceOn(CAD_LIGHTS))
 	{
 		// People are lit by the lamps near where they stand now and by the torches others hold out near them (the
 		// converter lit them where they were placed): the light on a standing body's facing side, 1 / pi of it, at
@@ -59,16 +62,12 @@ void Session::updateLights()
 			if (!a || !a->torchOut)
 				return;
 			const Ref& r = w.refs[i];
-			const Object* npc = w.game.object(r.id);
-			for (size_t k = 0; npc && k < npc->items.size(); k++)
-				if (const Object* o = w.game.object(npc->items[k].second))
-					if (o->recType == REC_LIGH && o->lightRadius > 0 && (o->flags & 2))
-					{
-						Lamp L = { { r.pos[0], r.pos[1], r.pos[2] + 100.0f }, (float)o->lightRadius,
-							{ o->lightColor[0] / 255.0f, o->lightColor[1] / 255.0f, o->lightColor[2] / 255.0f }, i };
-						lamps.push_back(L);
-						break;
-					}
+			if (const Object* o = w.game.carriedLight(r.obj ? r.obj : w.game.object(r.id)))
+			{
+				Lamp L = { { r.pos[0], r.pos[1], r.pos[2] + 100.0f }, (float)o->lightRadius,
+					{ o->lightColor[0] / 255.0f, o->lightColor[1] / 255.0f, o->lightColor[2] / 255.0f }, i };
+				lamps.push_back(L);
+			}
 		});
 		w.forLoadedActors([&](int i) {
 			Actor* a = w.actorOf(i);

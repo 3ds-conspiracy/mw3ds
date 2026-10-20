@@ -27,7 +27,19 @@ static std::string s_dataDir;
 
 struct SoundHeader { char magic[4]; u32 rate, samples; };
 
-// IMA ADPCM ('SND2', encoded by Python's audioop.lin2adpcm: first sample in the high nibble)
+// 'SND3' (tools/convert/dspadpcm.py): the header, s16 coefs[16], u32 envelope bytes, the DSP-ADPCM frames (8 bytes
+// for 14 samples), then the envelope (a byte per 256 samples, sqrt(RMS) x 255). The DSP decodes the frames itself:
+// a sound is read into linear memory as it is, no CPU decoding, a little over a quarter of PCM16's room
+static bool isDsp(const SoundHeader& h) { return memcmp(h.magic, "SND3", 4) == 0; }
+static bool isSound(const SoundHeader& h)
+{
+	return isDsp(h) || memcmp(h.magic, "SND2", 4) == 0 || memcmp(h.magic, "SND1", 4) == 0;
+}
+static u32 dspBytes(u32 samples) { return (samples + 13) / 14 * 8; }
+static const u32 kEnvelopeBlock = 256;
+
+// IMA ADPCM ('SND2', from conversions before 'SND3', encoded by Python's audioop.lin2adpcm: first sample in the high
+// nibble)
 static const int kImaIndex[16] = { -1, -1, -1, -1, 2, 4, 6, 8, -1, -1, -1, -1, 2, 4, 6, 8 };
 static const int kImaStep[89] = {
 	7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 19, 21, 23, 25, 28, 31, 34, 37, 41, 45, 50, 55, 60, 66, 73, 80, 88,
@@ -72,8 +84,11 @@ static void adpcmDecode(AdpcmState& st, const u8*& in, s16* out, u32 n)
 
 struct CachedSound
 {
-	s16* data = nullptr;
-	u32 samples = 0, rate = 22050;
+	void* data = nullptr;          // DSP-ADPCM frames ('SND3'), else PCM16
+	u32 bytes = 0, samples = 0, rate = 22050;
+	bool dsp = false;
+	u16 coefs[16] = {};
+	std::vector<u8> envelope;      // ('SND3')
 	u64 lastUse = 0;
 };
 
@@ -89,6 +104,7 @@ static const int kMusicChannel = 23;
 struct Channel
 {
 	ndspWaveBuf buf;
+	ndspAdpcmData adpcm;           // the DSP's start (and loop) state: the first frame's header, no history
 	std::string file;
 	bool active = false;
 };
@@ -97,6 +113,7 @@ static Channel s_channels[kFxChannels];
 // Music streaming
 static const int kStreamBufs = 3;
 static const u32 kStreamSamples = 16384;
+static const u32 kStreamFrames = 1170;      // a 'SND3' buffer: 16380 samples in 9360 bytes (whole frames)
 static s16* s_streamData[kStreamBufs];
 static ndspWaveBuf s_streamBuf[kStreamBufs];
 static FILE* s_musicFile = nullptr;
@@ -104,6 +121,10 @@ static std::vector<std::string> s_playlist;
 static size_t s_track = 0;
 static bool s_musicLoop = true;       // audioMusicPlay's loop
 static bool s_musicAdpcm = false;
+static bool s_musicDsp = false;       // 'SND3': frames go to the DSP as they are
+static u16 s_musicCoefs[16];
+static ndspAdpcmData s_musicStart;
+static bool s_musicFirst = false;     // the next buffer is the track's first (the DSP's state starts over)
 static u32 s_musicLeft = 0;
 static AdpcmState s_musicState;
 static float s_musicVolume = 0.35f;
@@ -191,7 +212,7 @@ static void evict(u32 incoming, u32 limit)
 				oldest = it;
 		if (oldest == s_cache.end())
 			return;
-		s_cacheBytes -= oldest->second.samples * 2;
+		s_cacheBytes -= oldest->second.bytes;
 		lockedLinearFree(oldest->second.data);
 		s_cache.erase(oldest);
 	}
@@ -215,22 +236,29 @@ static CachedSound* load(const std::string& file)
 		return nullptr;
 	}
 	SoundHeader h;
-	if (fread(&h, sizeof(h), 1, f) != 1 || (memcmp(h.magic, "SND1", 4) != 0 && memcmp(h.magic, "SND2", 4) != 0))
+	if (fread(&h, sizeof(h), 1, f) != 1 || !isSound(h))
 	{
 		fclose(f);
 		return nullptr;
 	}
-	bool adpcm = memcmp(h.magic, "SND2", 4) == 0;
-	evict(h.samples * 2, g_profile.soundCacheBytes);
 	CachedSound s;
 	s.samples = h.samples;
 	s.rate = h.rate;
-	s.data = (s16*)lockedLinearAlloc(h.samples * 2);
+	s.dsp = isDsp(h);
+	u32 envelopeBytes = 0;
+	if (s.dsp && (fread(s.coefs, 2, 16, f) != 16 || fread(&envelopeBytes, 4, 1, f) != 1))
+	{
+		fclose(f);
+		return nullptr;
+	}
+	s.bytes = s.dsp ? dspBytes(h.samples) : h.samples * 2;
+	evict(s.bytes, g_profile.soundCacheBytes);
+	s.data = lockedLinearAlloc(s.bytes);
 	// (linear memory full: every sound not playing goes, then one more try)
 	if (!s.data)
 	{
-		evict(h.samples * 2, 0);
-		s.data = (s16*)lockedLinearAlloc(h.samples * 2);
+		evict(s.bytes, 0);
+		s.data = lockedLinearAlloc(s.bytes);
 	}
 	if (!s.data)
 	{
@@ -238,7 +266,16 @@ static CachedSound* load(const std::string& file)
 		monitorOnce(("snd:" + file).c_str(), "no memory for sound %s", file.c_str());
 		return nullptr;
 	}
-	if (adpcm)
+	if (s.dsp)
+	{
+		size_t got = fread(s.data, 1, s.bytes, f);
+		if (got < s.bytes)
+			memset((u8*)s.data + got, 0, s.bytes - got);
+		s.envelope.resize(envelopeBytes);
+		if (envelopeBytes && fread(s.envelope.data(), 1, envelopeBytes, f) != envelopeBytes)
+			s.envelope.clear();
+	}
+	else if (memcmp(h.magic, "SND2", 4) == 0)
 	{
 		// In pieces through a buffer on the stack: the whole packed sound in one block (150 KB for a long one) was
 		// one of the main thread's biggest heap requests, and an Old 3DS late in a session had no such block left
@@ -252,23 +289,26 @@ static CachedSound* load(const std::string& file)
 			if (got < bytes)
 				memset(packed + got, 0, bytes - got);
 			const u8* in = packed;
-			adpcmDecode(st, in, s.data + done, n);
+			adpcmDecode(st, in, (s16*)s.data + done, n);
 			done += n;
 		}
 	}
 	else
 		fread(s.data, 2, h.samples, f);
 	fclose(f);
-	DSP_FlushDataCache(s.data, h.samples * 2);
+	DSP_FlushDataCache(s.data, s.bytes);
 	s.lastUse = osGetTime();
-	s_cacheBytes += h.samples * 2;
+	s_cacheBytes += s.bytes;
 	CachedSound& slot = s_cache[file];
-	slot = s;
+	slot = std::move(s);
 	return &slot;
 }
 
 float audioDuration(const std::string& file)
 {
+	auto it = s_cache.find(file);
+	if (it != s_cache.end())
+		return it->second.rate ? (float)it->second.samples / it->second.rate : 0.0f;
 	MarkScope mark("sound probe");
 	std::string path = shardedPath(s_dataDir, "snd", file);
 	FILE* f = fopen(path.c_str(), "rb");
@@ -312,10 +352,17 @@ int audioPlay(const std::string& file, float volume, float pan, bool loop, float
 		ndspChnReset(ch);
 		ndspChnSetInterp(ch, NDSP_INTERP_LINEAR);
 		ndspChnSetRate(ch, (float)s->rate * pitch);
-		ndspChnSetFormat(ch, NDSP_FORMAT_MONO_PCM16);
+		ndspChnSetFormat(ch, s->dsp ? NDSP_FORMAT_ADPCM : NDSP_FORMAT_MONO_PCM16);
 		setMix(ch, volume, pan);
 		memset(&c.buf, 0, sizeof(c.buf));
 		c.buf.data_vaddr = s->data;
+		if (s->dsp)
+		{
+			ndspChnSetAdpcmCoefs(ch, s->coefs);
+			c.adpcm.index = *(const u8*)s->data;
+			c.adpcm.history0 = c.adpcm.history1 = 0;
+			c.buf.adpcm_data = &c.adpcm;
+		}
 		c.buf.nsamples = s->samples;
 		c.buf.looping = loop;
 		c.file = file;
@@ -342,8 +389,19 @@ float audioLoudness(int ch)
 	if (!audioPlaying(ch))
 		return 0.0f;
 	const Channel& c = s_channels[ch];
-	const s16* data = (const s16*)c.buf.data_vaddr;
 	u32 n = c.buf.nsamples, pos = ndspChnGetSamplePos(ch);
+	auto it = s_cache.find(c.file);
+	if (it != s_cache.end() && it->second.dsp)
+	{
+		// the converter's envelope: the 512 samples from here, as below
+		const std::vector<u8>& env = it->second.envelope;
+		u32 b = pos / kEnvelopeBlock;
+		if (b >= env.size())
+			return 0.0f;
+		float a = env[b] * (1.0f / 255.0f), z = (b + 1 < env.size() ? env[b + 1] : env[b]) * (1.0f / 255.0f);
+		return sqrtf((a * a * a * a + z * z * z * z) * 0.5f);
+	}
+	const s16* data = (const s16*)c.buf.data_vaddr;
 	u32 end = pos + 512 < n ? pos + 512 : n;
 	if (pos >= end)
 		return 0.0f;
@@ -387,14 +445,20 @@ static bool openTrack()
 		s_track++;
 		s_musicFile = fopen(path.c_str(), "rb");
 		SoundHeader h;
-		if (s_musicFile && fread(&h, sizeof(h), 1, s_musicFile) == 1 &&
-			(memcmp(h.magic, "SND1", 4) == 0 || memcmp(h.magic, "SND2", 4) == 0))
+		u32 envelopeBytes = 0;
+		if (s_musicFile && fread(&h, sizeof(h), 1, s_musicFile) == 1 && isSound(h) &&
+			(!isDsp(h) || (fread(s_musicCoefs, 2, 16, s_musicFile) == 16 && fread(&envelopeBytes, 4, 1, s_musicFile) == 1)))
 		{
 			ndspChnSetRate(kMusicChannel, (float)h.rate);
 			s_musicRateSet = s_musicFileRate = h.rate;
+			s_musicDsp = isDsp(h);
 			s_musicAdpcm = memcmp(h.magic, "SND2", 4) == 0;
+			ndspChnSetFormat(kMusicChannel, s_musicDsp ? NDSP_FORMAT_ADPCM : NDSP_FORMAT_MONO_PCM16);
+			if (s_musicDsp)
+				ndspChnSetAdpcmCoefs(kMusicChannel, s_musicCoefs);
 			s_musicLeft = h.samples;
 			s_musicState = AdpcmState();
+			s_musicFirst = true;
 			return true;
 		}
 		if (s_musicFile)
@@ -404,51 +468,80 @@ static bool openTrack()
 	return false;
 }
 
+// A track starts in a buffer of its own once the last one's buffers have played: the channel's rate, format and
+// DSP-ADPCM coefficients are the track's, and are set while nothing of another track is queued
+static bool streamIdle()
+{
+	for (int k = 0; k < kStreamBufs; k++)
+		if (s_streamBuf[k].status == NDSP_WBUF_QUEUED || s_streamBuf[k].status == NDSP_WBUF_PLAYING)
+			return false;
+	return true;
+}
+
 static bool fillStream(int i)
 {
+	if (!s_musicFile && (!streamIdle() || !openTrack()))
+		return false;            // (the list is over, played once; or the last track still plays out)
 	MarkScope mark("music read");
 	u32 got = 0;
-	while (got < kStreamSamples)
+	if (s_musicDsp)
 	{
-		if (!s_musicFile && !openTrack())
+		// the frames as they are: the DSP decodes them
+		u32 n = kStreamFrames * 14 < s_musicLeft ? kStreamFrames * 14 : s_musicLeft;
+		u32 bytes = dspBytes(n);
+		u32 read = fread(s_streamData[i], 1, bytes, s_musicFile);
+		if (read < bytes)
+			n = read / 8 * 14 < n ? read / 8 * 14 : n;
+		got = n;
+		s_musicLeft -= n;
+		if (s_musicLeft == 0 || read < bytes)
 		{
-			// the list is over (played once): the track's last samples go out, the rest of the buffer silent
-			if (!got)
-				return false;
-			memset(s_streamData[i] + got, 0, (kStreamSamples - got) * 2);
-			break;
+			fclose(s_musicFile);
+			s_musicFile = nullptr;
 		}
-		if (s_musicAdpcm)
+	}
+	else if (s_musicAdpcm)
+	{
+		u32 n = kStreamSamples < s_musicLeft ? kStreamSamples : s_musicLeft;
+		// bytes still needed: a pending low nibble covers the first sample
+		u32 bytes = (n + (s_musicState.low ? 0 : 1)) / 2;
+		u8 packed[kStreamSamples / 2 + 1];
+		u32 read = fread(packed, 1, bytes, s_musicFile);
+		if (read < bytes)
+			n = read * 2 + (s_musicState.low ? 1 : 0) < n ? read * 2 + (s_musicState.low ? 1 : 0) : n;
+		const u8* in = packed;
+		adpcmDecode(s_musicState, in, s_streamData[i], n);
+		got = n;
+		s_musicLeft -= n;
+		if (s_musicLeft == 0 || read < bytes)
 		{
-			u32 n = kStreamSamples - got < s_musicLeft ? kStreamSamples - got : s_musicLeft;
-			// bytes still needed: a pending low nibble covers the first sample
-			u32 bytes = (n + (s_musicState.low ? 0 : 1)) / 2;
-			u8 packed[kStreamSamples / 2 + 1];
-			u32 read = fread(packed, 1, bytes, s_musicFile);
-			if (read < bytes)
-				n = read * 2 + (s_musicState.low ? 1 : 0) < n ? read * 2 + (s_musicState.low ? 1 : 0) : n;
-			const u8* in = packed;
-			adpcmDecode(s_musicState, in, s_streamData[i] + got, n);
-			got += n;
-			s_musicLeft -= n;
-			if (s_musicLeft == 0 || read < bytes)
-			{
-				fclose(s_musicFile);
-				s_musicFile = nullptr;
-			}
-			continue;
+			fclose(s_musicFile);
+			s_musicFile = nullptr;
 		}
-		got += fread(s_streamData[i] + got, 2, kStreamSamples - got, s_musicFile);
+	}
+	else
+	{
+		got = fread(s_streamData[i], 2, kStreamSamples, s_musicFile);
 		if (got < kStreamSamples)
 		{
 			fclose(s_musicFile);
 			s_musicFile = nullptr;
 		}
 	}
-	DSP_FlushDataCache(s_streamData[i], kStreamSamples * 2);
+	if (!got)
+		return false;
+	DSP_FlushDataCache(s_streamData[i], s_musicDsp ? dspBytes(got) : got * 2);
 	memset(&s_streamBuf[i], 0, sizeof(ndspWaveBuf));
 	s_streamBuf[i].data_vaddr = s_streamData[i];
-	s_streamBuf[i].nsamples = kStreamSamples;
+	s_streamBuf[i].nsamples = got;
+	// a track's first buffer starts the DSP's decoding over; the others carry on from the buffer before
+	if (s_musicDsp && s_musicFirst)
+	{
+		s_musicStart.index = *(const u8*)s_streamData[i];
+		s_musicStart.history0 = s_musicStart.history1 = 0;
+		s_streamBuf[i].adpcm_data = &s_musicStart;
+	}
+	s_musicFirst = false;
 	if (s_musicRateSet != s_musicFileRate)
 		monitorOnce("musicrate", "music channel at rate %u, its file at %u", (unsigned)s_musicRateSet, (unsigned)s_musicFileRate);
 	ndspChnWaveBufAdd(kMusicChannel, &s_streamBuf[i]);
@@ -482,8 +575,10 @@ void audioMusicPlay(const std::vector<std::string>& files, float volume, bool lo
 	ndspChnReset(kMusicChannel);
 	s_musicRateSet = 0;
 	ndspChnSetInterp(kMusicChannel, NDSP_INTERP_LINEAR);
-	ndspChnSetFormat(kMusicChannel, NDSP_FORMAT_MONO_PCM16);
 	setMix(kMusicChannel, volume, 0.0f);
+	// (the reset dropped the queue: no buffer is the DSP's now)
+	for (int i = 0; i < kStreamBufs; i++)
+		memset(&s_streamBuf[i], 0, sizeof(ndspWaveBuf));
 	for (int i = 0; i < kStreamBufs; i++)
 		fillStream(i);
 }
@@ -493,7 +588,7 @@ void audioUpdate()
 	if (!s_enabled || s_playlist.empty())
 		return;
 	for (int i = 0; i < kStreamBufs; i++)
-		if (s_streamBuf[i].status == NDSP_WBUF_DONE)
+		if (s_streamBuf[i].status == NDSP_WBUF_DONE || s_streamBuf[i].status == NDSP_WBUF_FREE)
 			fillStream(i);
 }
 
@@ -765,17 +860,18 @@ void Session::say(int ref, const std::string& file, const std::string& text)
 			audioStop(channel);
 		channel = -1;
 	}
-	auto it = w.game.voices.find(key);
-	if (it != w.game.voices.end())
+	std::string voiceFile;
+	bool voiced = w.game.voiceFile(key, &voiceFile);
+	if (voiced)
 	{
-		duration = audioDuration(it->second);
 		float volume = 1.0f, pan = 0.0f;
 		if (ref >= 0)
 		{
 			float pos[3] = { w.refs[ref].pos[0], w.refs[ref].pos[1], w.refs[ref].pos[2] + 110.0f };
 			mix3d(pos, volume, pan, 300.0f, 2500.0f);
 		}
-		channel = audioPlay(it->second, volume, pan);
+		channel = audioPlay(voiceFile, volume, pan);
+		duration = audioDuration(voiceFile);       // (after: the line just loaded knows its length, no second open)
 	}
 	else if (!key.empty())     // (no file: a line of text only)
 	{
@@ -791,7 +887,7 @@ void Session::say(int ref, const std::string& file, const std::string& text)
 		w.refs[ref].helloTimer = fmaxf(w.refs[ref].helloTimer, duration + 20.0f);
 	}
 	// Subtitles off: a line that is heard isn't written too (Morrowind's and OpenMW's subtitles setting)
-	if (!text.empty() && (g_subtitles || it == w.game.voices.end()))
+	if (!text.empty() && (g_subtitles || !voiced))
 	{
 		std::string who = ref >= 0 && w.refs[ref].actor >= 0 ? w.game.actors[w.refs[ref].actor].name + ": " : "";
 		subtitle = who + text;

@@ -17,4 +17,11 @@ struct ContentItem : std::pair<int, std::string>
 // condition: wear of weapons / armor (-1 = as new; stacks with different wear are separate entries)
 // soul: soul gems holding one (the creature's id); such entries stack only with the same soul
 // charge: enchanted items' charge left (-1: full)
-struct InventoryItem { std::string id; int count; bool equipped; int condition = -1; std::string soul; float charge = -1.0f; };
+struct Object;
+struct InventoryItem
+{
+	std::string id; int count; bool equipped; int condition = -1; std::string soul; float charge = -1.0f;
+	// its record, once found (GameData::object(const InventoryItem&)), and the game data's generation it was found in
+	mutable const Object* obj = nullptr;
+	mutable unsigned objGeneration = 0;
+};

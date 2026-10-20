@@ -3,11 +3,12 @@
 #include <string>
 #include <vector>
 
-// Sound files are 'SND1' 22 kHz mono PCM16 (tools/convert/level.py) under <dataDir>/sound and /music.
+// Sound files are 'SND3' mono DSP-ADPCM, the DSP decoding them (tools/convert/dspadpcm.py), under <dataDir>/snd and
+// /music; data converted earlier may still hold 'SND2' (IMA ADPCM, decoded here) or 'SND1' (PCM16).
 bool audioInit(const char* dataDir);
 void audioExit();
-unsigned audioCacheBytes();                       // decoded sounds held (linear memory)
-void audioCacheClear();                        // decoded sounds freed (a session ending)
+unsigned audioCacheBytes();                       // sounds held (linear memory)
+void audioCacheClear();                           // sounds freed (a session ending)
 bool audioEnabled();
 
 int audioStartedCount(const std::string& file);   // sounds of this file started so far
@@ -17,7 +18,7 @@ int audioPlay(const std::string& file, float volume, float pan, bool loop = fals
 bool audioPlaying(int channel);
 void audioStop(int channel);
 void audioSetMix(int channel, float volume, float pan);
-float audioDuration(const std::string& file);      // seconds, read from the header
+float audioDuration(const std::string& file);      // seconds (a loaded sound's own; else read from the header)
 float audioLoudness(int channel);                  // RMS 0..1 around the current play position
 
 // Loops the playlist, streaming from disk. Call audioUpdate() every frame.

@@ -50,6 +50,7 @@ struct ViewModel
 	std::vector<C3D_Tex*> textures;           // indexed by the arm meshes' tex
 	std::unordered_map<std::string, FpPiece*> pieces;
 	std::string builtFor;                     // equipment key the meshes were put together for
+	std::string inputsFor;                    // what that key was worked out from (race, sex, in hand, worn)
 	bool incomplete = false;                  // a piece or texture was short when it was built: tried again
 	std::unordered_map<std::string, u32> failedAt;    // pieces that ran out of memory: when (ms), to try again later
 	u32 retryAt = 0;

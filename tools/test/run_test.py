@@ -35,7 +35,7 @@ def count(lines, pattern):
 
 
 def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=False, native=False, sd="", exe="",
-        saves="", draw=False, shots="", old3ds=False, pattern=DEFAULT_PATTERN):
+        saves="", draw=False, shots="", old3ds=False, pattern=DEFAULT_PATTERN, stereo=False):
     """Runs one case; returns the lines to print (the verdict last)."""
     mwtools.load_env()
     out = []
@@ -89,7 +89,7 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
         log = sd_app / "log.txt"
         shot_dir = sd_app
     else:
-        run_emu.run(inputs=inputs, wait=wait, start=start, data=data, app=app, emu=emu, fast=fast, old3ds=old3ds)
+        run_emu.run(inputs=inputs, wait=wait, start=start, data=data, app=app, emu=emu, fast=fast, old3ds=old3ds, stereo=stereo)
         log = Path(emu) / "user" / "sdmc" / "3ds" / "mw3ds" / "log.txt"
         shot_dir = log.parent
 
@@ -157,10 +157,11 @@ def main():
     ap.add_argument("--draw", action="store_true")
     ap.add_argument("--shots", default="")
     ap.add_argument("--old3ds", action="store_true")
+    ap.add_argument("--stereo", action="store_true", help="Azahar with the 3D slider at full (both eyes drawn)")
     ap.add_argument("--pattern", default=DEFAULT_PATTERN)
     a = ap.parse_args()
     for ln in run(a.test, a.start, a.data, a.wait, a.app, a.emu, a.fast, a.native, a.sd, a.exe, a.saves, a.draw,
-                  a.shots, a.old3ds, a.pattern):
+                  a.shots, a.old3ds, a.pattern, a.stereo):
         print(ln, flush=True)
 
 

@@ -22,8 +22,12 @@
 #include "mwgui/widgets.hpp"
 #include "mwworld/worldimp.hpp"
 
-// Update profile parts (Session::update; logged by main once a second)
-enum { PROF_WORLD, PROF_PLAYER, PROF_STREAM, PROF_AI, PROF_SCRIPTS, PROF_OTHER, PROF_COUNT };
+// Update profile parts (Session::update; logged by main once a second). PROF_AI is all of combatUpdate; the detection
+// rays and the visual sweeps inside it (PROF_DETECT, PROF_FX) are counted again on their own, and main takes them off
+// it when it logs. PROF_GREET, PROF_SOUND and PROF_TAIL are the update's end: monitors and greetings; the sounds; the
+// sky, dress, lights and visuals
+enum { PROF_WORLD, PROF_PLAYER, PROF_STREAM, PROF_AI, PROF_SCRIPTS, PROF_OTHER, PROF_DETECT, PROF_FX, PROF_GREET, PROF_SOUND,
+	PROF_TAIL, PROF_COUNT };
 extern float g_profParts[PROF_COUNT];
 
 #include "platform/console.hpp"
@@ -47,6 +51,11 @@ static const int kLookDefaultPct = 150;
 // Subtitles (Options > Display; settings.txt subtitles=on|off): spoken lines written on the top screen. Off, a line
 // with a voice is only heard; one with no voice file is still written (it would be lost otherwise)
 extern bool g_subtitles;
+// Depth buffer (Options > Display; settings.txt depth=24|16in3d|16): the top screen's depth buffer, 24 bits, 16 bits
+// while 3D is on (half the depth traffic for two eyes), or 16 always. 16 bits may show far surfaces fighting
+// (Engine::useTopDepth)
+enum { DEPTH_24 = 0, DEPTH_16_IN_3D = 1, DEPTH_16 = 2 };
+extern int g_depthMode;
 
 enum Screen
 {

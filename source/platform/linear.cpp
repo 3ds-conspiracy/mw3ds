@@ -1,11 +1,14 @@
 #include "platform/linear.hpp"
+#include "components/debug/debuglog.hpp"
 
+#include <algorithm>
 #include <vector>
 
 static RecursiveLock s_lock;
 static bool s_ready = false;
 static std::vector<void*> s_frees;          // waiting for the GPU (linearRetire)
 static std::vector<C3D_Tex> s_texDeletes;
+static std::vector<C3D_Tex*> s_toVram;      // texToVramLater
 
 void linearLockInit()
 {
@@ -110,6 +113,50 @@ void deferredTexDelete(C3D_Tex* tex)
 	LinearGuard g;
 	s_texDeletes.push_back(*tex);
 	tex->data = nullptr;
+	s_toVram.erase(std::remove(s_toVram.begin(), s_toVram.end(), tex), s_toVram.end());
+}
+
+// VRAM left for what is made there later, whatever the long-kept pictures take: the local map's 256 x 256 picture and
+// its depth (512 KB), and some to spare
+static const u32 kVramReserve = 768 * 1024;
+
+void texToVramLater(C3D_Tex* tex)
+{
+	LinearGuard g;
+	if (std::find(s_toVram.begin(), s_toVram.end(), tex) == s_toVram.end())
+		s_toVram.push_back(tex);
+}
+
+void texToVramNow()
+{
+	std::vector<C3D_Tex*> list;
+	{
+		LinearGuard g;
+		list.swap(s_toVram);
+	}
+	u32 moved = 0, bytes = 0;
+	for (C3D_Tex* tex : list)
+	{
+		if (!tex->data || inVram(tex->data))
+			continue;
+		u32 size = C3D_TexCalcTotalSize(tex->size, tex->maxLevel);
+		if (vramSpaceFree() < size + kVramReserve)
+			continue;
+		void* v = vramAlloc(size);
+		if (!v)
+			continue;
+		// (the GPU is idle once this returns: the last frame is done, and the copy too)
+		GSPGPU_FlushDataCache(tex->data, size);
+		C3D_SyncTextureCopy((u32*)tex->data, 0, (u32*)v, 0, size, 8);
+		void* old = tex->data;
+		tex->data = v;
+		linearFree(old);
+		moved++;
+		bytes += size;
+	}
+	if (!list.empty())
+		logf("vram: %lu of %u pictures moved there (%lu KB), %lu KB left", (unsigned long)moved, (unsigned)list.size(),
+			(unsigned long)(bytes / 1024), (unsigned long)(vramSpaceFree() / 1024));
 }
 
 void linearRetire()
@@ -121,4 +168,10 @@ void linearRetire()
 	for (auto& t : s_texDeletes)
 		C3D_TexDelete(&t);
 	s_texDeletes.clear();
+}
+
+bool inVram(const void* p)
+{
+	u32 a = (u32)p;
+	return a >= OS_VRAM_VADDR && a < OS_VRAM_VADDR + OS_VRAM_SIZE;
 }

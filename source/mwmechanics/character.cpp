@@ -130,7 +130,7 @@ bool Session::inSwing(int i, float* distOut)
 	if (r.actor < 0 || r.dead || !r.visible())
 		return false;
 	InventoryItem* wit = playerWeaponItem();
-	const float meleeAt = meleeReach(w, wit ? w.game.object(wit->id) : nullptr, false);
+	const float meleeAt = meleeReach(w, wit ? w.game.object(*wit) : nullptr, false);
 	float reach = meleeAt + kPlayerHalfLength + actorHalfLength(i);
 	float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
 	float dx = r.pos[0] - w.player.feet[0], dy = r.pos[1] - w.player.feet[1];
@@ -175,7 +175,7 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 		return charge;
 	}
 	InventoryItem* wit = playerWeaponItem();
-	const Object* wpn = wit ? w.game.object(wit->id) : nullptr;
+	const Object* wpn = wit ? w.game.object(*wit) : nullptr;
 	PlayerStats& s = w.stats;
 	// fFatigueAttackBase + load x fFatigueAttackMult + weapon weight x swing x fWeaponFatigueMult
 	s.fatigue = fmaxf(0.0f, s.fatigue - (w.game.gmstf("ffatigueattackbase", 2.0f)
@@ -262,8 +262,8 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	vm.group = vmGroup(wpn, toolItem != nullptr);
 	std::string shield;
 	for (auto& it : w.inventory)
-		if (it.equipped && w.game.object(it.id) && w.game.object(it.id)->recType == REC_ARMO
-			&& w.game.object(it.id)->subtype == ARMO_SHIELD)
+		if (it.equipped && w.game.object(it) && w.game.object(it)->recType == REC_ARMO
+			&& w.game.object(it)->subtype == ARMO_SHIELD)
 			shield = it.id;
 	bool oneHanded = vm.group == "1h" || vm.group == "HH";
 	bool casting = vm.action == VM_CAST;
@@ -287,7 +287,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		if (in)
 			ammoIn = ammo->id;
 	}
-	vm.rebuild(w, show && !casting ? (wpn ? wpn->id : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "",
+	vm.rebuild(w, show && !casting ? (wpn ? wpn->id.str() : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "",
 		ammoIn);
 	if (weaponDrawn && w.player.knockTimer > 0.0f && vm.action != VM_KNOCKDOWN)
 		vm.play(VM_KNOCKDOWN, "KnockDown");

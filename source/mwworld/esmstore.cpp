@@ -1,4 +1,5 @@
 #include "mwworld/esmstore.hpp"
+#include "components/debug/profile.hpp"
 
 #include <algorithm>
 #include <cstdio>
@@ -9,6 +10,8 @@
 #include "extern/cjson/cJSON.h"
 #include "components/debug/debuglog.hpp"
 #include "components/files/zfile.hpp"
+#include "mwworld/containerstore.hpp"
+#include <strings.h>
 #include "mwworld/esmhelpers.hpp"
 
 std::string lower(const std::string& s)
@@ -30,8 +33,82 @@ int Script::localIndex(const std::string& lowerName) const
 
 const Object* GameData::object(const std::string& id) const
 {
-	auto it = objects.find(lower(id));
+	g_profCalls[PCALL_OBJECTS]++;
+	// (ids are lowercase nearly always: looked up as they are, no lowered copy made)
+	for (char c : id)
+		if (c >= 'A' && c <= 'Z')
+		{
+			auto it = objects.find(lower(id));
+			return it == objects.end() ? nullptr : &it->second;
+		}
+	auto it = objects.find(id);
 	return it == objects.end() ? nullptr : &it->second;
+}
+
+// A voice line's sound file as tools/convert/level.py names it (snd_name of "Sound\\" + the path): the extension
+// off, anything but a-z, 0-9 and _ made _, ".snd"
+static std::string voiceName(const std::string& path)
+{
+	std::string name = "sound_";
+	size_t dot = path.rfind('.');
+	size_t end = dot != std::string::npos && path.find('\\', dot) == std::string::npos ? dot : path.size();
+	for (size_t i = 0; i < end; i++)
+	{
+		char ch = path[i];
+		ch = ch >= 'A' && ch <= 'Z' ? ch - 'A' + 'a' : ch;
+		name += (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9') || ch == '_' ? ch : '_';
+	}
+	return name + ".snd";
+}
+
+bool GameData::voiceFile(const std::string& path, std::string* file) const
+{
+	auto odd = voiceFiles.find(path);
+	if (odd != voiceFiles.end())
+	{
+		if (file)
+			*file = odd->second;
+		return true;
+	}
+	if (!voices.count(path))
+		return false;
+	if (file)
+		*file = voiceName(path);
+	return true;
+}
+
+// A person's torch (a light of its record's items that lights and can be carried: LHDT 0x2), found once per record:
+// every torch-holder's items were looked up every frame (its own light) and at each draw or sheathe
+const Object* GameData::carriedLight(const Object* actor) const
+{
+	if (!actor)
+		return nullptr;
+	if (carriedLightsGeneration != g_gameGeneration)
+	{
+		carriedLights.clear();
+		carriedLightsGeneration = g_gameGeneration;
+	}
+	auto found = carriedLights.find(actor);
+	if (found != carriedLights.end())
+		return found->second;
+	const Object* light = nullptr;
+	for (size_t k = 0; !light && k < actor->items.size(); k++)
+		if (const Object* o = object(actor->items[k].second))
+			if (o->recType == REC_LIGH && o->lightRadius > 0 && (o->flags & 2))
+				light = o;
+	carriedLights[actor] = light;
+	return light;
+}
+
+// An item's record, kept on it: the per-frame sweeps over the inventory (the HUD, the light, the view model, the armor
+// rating) asked the map for each item every frame. Found again when the game data changed or the item's id did
+const Object* GameData::object(const InventoryItem& it) const
+{
+	if (it.obj && it.objGeneration == g_gameGeneration && strcasecmp(it.obj->id.c_str(), it.id.c_str()) == 0)
+		return it.obj;
+	it.obj = object(it.id);
+	it.objGeneration = g_gameGeneration;
+	return it.obj;
 }
 
 const Script* GameData::script(const std::string& name) const
@@ -246,6 +323,17 @@ static const cJSON* section(const cJSON* root, const char* name)
 	return cJSON_GetObjectItemCaseSensitive(s_section, name);
 }
 
+// A dialogue line's result script on the card: the converter's JSON of it (Info::script)
+static CardText storeScript(const cJSON* list)
+{
+	if (cJSON_GetArraySize(list) == 0)
+		return CardText();
+	char* json = cJSON_PrintUnformatted(list);
+	CardText t = CardText::store(json ? json : "");
+	cJSON_free(json);
+	return t;
+}
+
 // The long texts gameLoad hands CardText::store, in the same order (objects, dialogue, journal): the card's copy is
 // written again from them. Keep it in step with gameLoad's sections (rewriteEnd checks the walk found the same texts)
 static void storeTexts(const cJSON* root)
@@ -256,7 +344,10 @@ static void storeTexts(const cJSON* root)
 	forSection(root, "dialogue", [&](const cJSON* it) {
 		const cJSON* ij;
 		cJSON_ArrayForEach(ij, arr(it, "infos"))
+		{
 			CardText::store(str(ij, "text"));
+			storeScript(arr(ij, "script"));
+		}
 	});
 	forSection(root, "journal", [&](const cJSON* it) {
 		const cJSON* e;
@@ -348,6 +439,9 @@ bool gameLoad(GameData& g, const char* path)
 		g.cells.push_back(c);
 	}
 	const cJSON* it;
+	// (as many as there are: grown by doubling it held half a megabyte of slack on an Old 3DS)
+	if (const cJSON* list = section(root, "actors"))
+		g.actors.reserve(cJSON_GetArraySize(list));
 	forSection(root, "actors", [&](const cJSON* it) {
 		ActorDef a;
 		a.id = str(it, "id"); a.name = str(it, "name"); a.race = str(it, "race"); a.cls = str(it, "class");
@@ -510,6 +604,7 @@ bool gameLoad(GameData& g, const char* path)
 				info.whoRank = num(who, "rank", -1);
 			}
 			info.text = CardText::store(str(ij, "text"));
+			info.script = storeScript(arr(ij, "script"));
 			info.sound = str(ij, "sound");
 			info.disposition = num(ij, "disp");
 			const cJSON* c;
@@ -525,7 +620,6 @@ bool gameLoad(GameData& g, const char* path)
 				cond.value = (float)cJSON_GetArrayItem(c, 3)->valuedouble;
 				info.conds.push_back(cond);
 			}
-			convertBlock(arr(ij, "script"), info.script, nullptr);
 			t.infos.push_back(std::move(info));
 		}
 		g.topics.push_back(std::move(t));
@@ -632,7 +726,12 @@ bool gameLoad(GameData& g, const char* path)
 
 	cJSON_ArrayForEach(it, arr(root, "sounds"))
 		g.sounds[it->string] = { str(it, "file"), (float)num(it, "volume", 1.0), (int)num(it, "min"), (int)num(it, "max") };
-	forSection(root, "voices", [&](const cJSON* it) { g.voices[it->string] = it->valuestring; });
+	forSection(root, "voices", [&](const cJSON* it) {
+		if (voiceName(it->string) == it->valuestring)
+			g.voices.insert(it->string);
+		else
+			g.voiceFiles[it->string] = it->valuestring;
+	});
 	cJSON_ArrayForEach(it, arr(root, "music_battle"))
 		if (cJSON_IsString(it))
 			g.battleMusic.push_back(it->valuestring);
@@ -1021,6 +1120,14 @@ bool gameLoad(GameData& g, const char* path)
 				break;
 		}
 	cJSON_Delete(root);
+	// The objects with a world visual or creature sprays carry a mark (Object::fx): the per-frame sweeps over the loaded
+	// refs test the mark instead of looking every id up
+	for (auto& wf : g.firstPerson.worldFx)
+		if (auto o = g.objects.find(lower(wf.first)); o != g.objects.end())
+			o->second.fx |= 1;
+	for (auto& cf : g.firstPerson.cpfx)
+		if (auto o = g.objects.find(lower(cf.first)); o != g.objects.end())
+			o->second.fx |= 2;
 	logf("game: %d objects, %d scripts, %d topics, %d journals, %d sounds, %d voices, heap used %d KB (%u KB of texts, %u KB of long texts)",
 		(int)g.objects.size(), (int)g.scripts.size(), (int)g.topics.size(), (int)g.journals.size(),
 		(int)g.sounds.size(), (int)g.voices.size(), mallinfo().uordblks / 1024, (unsigned)(Atom::poolBytes() / 1024),

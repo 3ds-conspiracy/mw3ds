@@ -45,8 +45,10 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   `Session::viewScale`, `Session::viewDrawn`, `Session::adaptView`, `platform/console.cpp`)
 - **Rain and storms shorten the view.** OpenMW draws the whole view and moves the fog's start in; drawing land hidden in
   thick fog cost both consoles their frame rate. (`World::weatherFogScale`)
-- **Small clutter stops at a distance by its size.** Each size tier vanishes at about 25 pixels on screen.
-  (`convert_cell.py detail_distance`)
+- **Small clutter stops at a distance by its size.** Each size tier vanishes at about 25 pixels on screen. An Old 3DS
+  stops it at 0.8 of that (the tiers' 2500 / 5000 / 10000 units as 2000 / 4000 / 8000): side by side
+  (`trial-detail-distance`, `trial-detail-balmora`) little was lost but far fence posts.
+  (`convert_cell.py detail_distance`, `ConsoleProfile::detailScale`)
 - **People and creatures past 6000 (4000 on an Old 3DS) aren't drawn; small pieces of them stop sooner.**
   (`kActorViewDistance`, `actorViewLimit`, `kActorDetailDistance`)
 - **People are re-posed on a cadence**, often up close, less often the smaller they are on screen. (`World::update`)
@@ -72,6 +74,10 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   same share. (`platform/console.cpp spriteBudget`, `Session` frame pacing, `mwrender/renderingmanager.cpp`)
 - **Far cells' objects are dropped from memory** past a reference budget, and read again when needed.
   (`platform/console.cpp refBudget`, `World::evictCells`)
+- **The sound cache holds 1 MB on an Old 3DS, 3 MB on a New 3DS** (sounds heard lately; the rest read from the card
+  again). OpenMW keeps far more. The sounds are DSP-ADPCM, a little over a quarter of PCM16, so this still holds nearly
+  twice the sounds the old 2 / 6 MB of decoded ones did. (`platform/console.cpp soundCacheBytes`,
+  `mwsound/soundmanagerimp.cpp`)
 - **An Old 3DS keeps textures to 128 texels and draws from Project Atlas's sheets** (fewer draws). A sheet's cap is per
   picture in it, its short side, the long side up to 1024: a 256 x 2048 sheet of eight pictures is 128 x 1024, the
   memory of the eight at 128 apiece (taken on the long side it was 16 x 128, each wall 16 texels across). Seyda Neen:

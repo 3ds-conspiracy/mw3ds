@@ -5,6 +5,7 @@
 #include <tex3ds.h>
 #include <citro2d.h>
 #include "mwbase/session.hpp"
+#include "components/debug/profile.hpp"
 
 #include <cmath>
 #include <cstdlib>
@@ -57,8 +58,26 @@ void Session::shutdown()
 		osGetTime() - t0, t1 - t0, t2 - t1, t3 - t2, t4 - t3, osGetTime() - t4);
 }
 
-// Per-frame time of each part of the update, summed until main logs them once a second
+// Per-frame time of each part of the update, summed until main logs them once a second; the hot paths' call counts
+// beside them (components/debug/profile.hpp)
 float g_profParts[PROF_COUNT];
+int g_profCalls[PCALL_COUNT];
+
+bool cadenceOn(int which)
+{
+	static int off = -1;
+	if (off < 0)
+	{
+		const char* e = getenv("MW3DS_NOCADENCE");
+		off = e ? atoi(e) : 0;
+	}
+	// The cadences that move when a person reacts (a sighting, a greeting a few frames later) are the slow CPU's: a fast
+	// one keeps every frame, and the scripted questlines keep their timing. The floor walk and the monitor gate change
+	// nothing a person does
+	if (!g_profile.slowCpu && which != CAD_FLOOR && which != CAD_MONITOR)
+		return false;
+	return !(off & which);
+}
 
 
 // The menus that stop the world (OpenMW: a GUI mode stops the simulation). Talk, barter and the other
@@ -168,23 +187,33 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		MARK("greetings");
 		greetings(dt);
 	}
+	profAdd(PROF_GREET, t);
 
 	updateMouths(dt);
 
 	updateFootsteps(in, menu, dt);
 
-	updateAmbience();
-	updateLoopSounds();
+	// (the loops' mixes every third frame: a lookup by name and trig per loop, and the ear can't tell)
+	if (w.frame % 3 == 0 || !cadenceOn(CAD_LOOPS))
+	{
+		updateAmbience();
+		updateLoopSounds();
+	}
 	updateWeatherEffects(dt);
 	updateMusic(dt);
+	profAdd(PROF_SOUND, t);
 	updateSky();
 	updateDress(dt);
+	profAdd(PROF_TAIL, t);
 	updateRegionSounds(dt);
+	profAdd(PROF_SOUND, t);
 	burnHeldLight(dt);
 	updateLights();
 	ageVfx(dt);
 	if (!playerDead && w.stats.health <= 0.0f)
 		playerDies();
 	updateFadeAndNotes(dt);
+	profAdd(PROF_TAIL, t);
 	audioUpdate();
+	profAdd(PROF_SOUND, t);
 }

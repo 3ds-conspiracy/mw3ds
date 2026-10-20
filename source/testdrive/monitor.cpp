@@ -14,6 +14,7 @@
 
 #include "mwsound/soundmanagerimp.hpp"
 #include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
 #include <malloc.h>
 
 void Session::noteHudMismatch(int left, int right)
@@ -55,6 +56,9 @@ void Session::monitorActors(float dt)
 	monitorTimer = 0.0f;
 	if (monitorCell != w.current)
 		monitorCellChanged();
+	// (the actor checks are the test runs': two floor queries a cell an actor each second is a hitch in play)
+	if (!autotest && cadenceOn(CAD_MONITOR))
+		return;
 	for (int i : w.loadedActors)
 	{
 		const Ref& r = w.refs[i];

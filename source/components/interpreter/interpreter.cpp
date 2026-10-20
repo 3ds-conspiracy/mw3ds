@@ -56,11 +56,25 @@ static float storeAs(char type, float v)
 	return type == 's' ? (float)(short)(int)v : v;
 }
 
+// `name` lowered is `low` (no lowered copy made: remoteVar compares every running script's name)
+static bool lowerEquals(const std::string& name, const std::string& low)
+{
+	if (name.size() != low.size())
+		return false;
+	for (size_t i = 0; i < name.size(); i++)
+	{
+		char ch = name[i];
+		if ((ch >= 'A' && ch <= 'Z' ? ch - 'A' + 'a' : ch) != low[i])
+			return false;
+	}
+	return true;
+}
+
 // ScriptName.var is a global script's variable, id.var one of that object's script
 static float* remoteVar(Ctx& c, const std::string& refId, const std::string& var, char* type = nullptr)
 {
 	for (auto& s : c.w.scripts)
-		if (s.ref < 0 && s.item.empty() && s.script && lower(s.script->name) == refId)
+		if (s.ref < 0 && s.item.empty() && s.script && lowerEquals(s.script->name, refId))
 			if (float* v = instVar(s, var, type))
 				return v;
 	int r = c.w.findRefAnywhere(refId);

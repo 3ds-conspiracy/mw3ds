@@ -329,6 +329,12 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 				sp.age = kSplashLife;
 			for (int t = 0; t < PTEX_COUNT; t++)
 			{
+				// (the far rain's sheet and the splashes are never drawn without rainExtras: their 70 KB stay free)
+				if (!g_profile.rainExtras && (t == PTEX_SHEET || t == PTEX_SPLASH))
+				{
+					s_precipTexOk[t] = false;
+					continue;
+				}
 				char path[256];
 				snprintf(path, sizeof(path), "%s/art/weather/%s.t3x", w.dataDir, names[t]);
 				s_precipTexOk[t] = texImportFile(&s_precipTex[t], path);

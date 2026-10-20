@@ -16,10 +16,9 @@ Writes into out/data/:
   cells/<cell>.json       reference table: ids, positions, bounds, hideable ranges, doors
   textures/*.t3x          sized for the 3DS screen (textures.py)
   game.json               objects, scripts, dialogue, journal, classes, races, ... (build_game.py)
-  sound/*.snd, music/*.snd  22 kHz mono PCM16 ('SND1', u32 rate, u32 samples, samples)
+  snd/*.snd, music/*.snd    mono DSP-ADPCM, the 3DS sound chip's own ('SND3', dspadpcm.py)
 """
 import argparse
-import audioop
 import faulthandler
 import zlib
 import json
@@ -34,6 +33,7 @@ import miniaudio
 import numpy as np
 
 import build_game
+import dspadpcm
 from actors import write_skeletons
 from animlayers import npc_skeletons
 from convert_cell import EXTERIOR_SUN_DIR, Converter
@@ -102,8 +102,9 @@ def snd_name(path):
     return safe_name(re.sub(r"\.[^.]+$", "", path.lower().replace("/", "\\"))) + ".snd"
 
 
-def convert_sound(arch, path, out_dir, rate=RATE, shard=False):
-    """path relative to Data Files (e.g. 'Sound\\Fx\\x.wav'); tries .mp3 when the .wav is missing."""
+def convert_sound(arch, path, out_dir, rate=RATE, shard=False, envelope=True):
+    """path relative to Data Files (e.g. 'Sound\\Fx\\x.wav'); tries .mp3 when the .wav is missing. envelope: the
+    loudness bytes a talking mouth follows (music goes without)."""
     cands = [path, re.sub(r"\.wav$", ".mp3", path, flags=re.I)]
     src = next((c for c in cands if arch.exists(c)), None)
     if src is None:
@@ -111,7 +112,7 @@ def convert_sound(arch, path, out_dir, rate=RATE, shard=False):
     out = out_dir / (shard_dir(snd_name(src)) if shard else "") / snd_name(src)
     out.parent.mkdir(parents=True, exist_ok=True)
     head = out.open("rb").read(12) if out.exists() else b""
-    if head[:4] != b"SND2" or struct.unpack_from("<I", head, 4)[0] != rate:
+    if head[:4] != b"SND3" or struct.unpack_from("<I", head, 4)[0] != rate:
         print(f"  decoding {src}", flush=True)       # the last one printed names the file a hard crash died on
         try:
             dec = miniaudio.decode(arch.read(src), output_format=miniaudio.SampleFormat.SIGNED16,
@@ -120,11 +121,9 @@ def convert_sound(arch, path, out_dir, rate=RATE, shard=False):
             print(f"  could not decode {src}: {e}", flush=True)
             return None
         samples = np.frombuffer(dec.samples, dtype="<i2")
-        # 'SND2': IMA ADPCM, 4 bits per sample (first sample in the high nibble), a quarter of PCM16
-        adpcm, _ = audioop.lin2adpcm(samples.tobytes(), 2, None)
+        # 'SND3': DSP-ADPCM, decoded by the 3DS's sound chip rather than its CPU
         out.parent.mkdir(parents=True, exist_ok=True)
-        with open(out, "wb") as f:
-            f.write(b"SND2" + struct.pack("<II", rate, len(samples)) + adpcm)
+        out.write_bytes(dspadpcm.snd3(samples, rate, envelope))
     return out.name
 
 
@@ -466,6 +465,8 @@ def main():
     faulthandler.enable()        # a native crash prints where it happened
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-tex", type=int, default=256, help="largest texture edge (texels)")
+    ap.add_argument("--no-mips", action="store_true",
+                    help="world textures without their smaller copies (an Old 3DS never draws them: a third less memory)")
     ap.add_argument("--towns", default=",".join(TOWNS),
                     help="comma-separated towns; the walkable land is the rectangle around them all")
     ap.add_argument("--interiors", choices=["all", "office", "none"], default="all",
@@ -487,7 +488,7 @@ def main():
     global START_CELL, OFFICE_CELL, TOWN
     START_CELL, OFFICE_CELL, TOWN = chargen_cells(db)
 
-    textures = TextureSet(arch, args.max_tex, args.force)
+    textures = TextureSet(arch, args.max_tex, args.force, mips=not args.no_mips)
     unshard_cells()              # the converter (and its cache) works on cells/<file>.*
     conv = Converter(db, arch, textures)
     towns = [t.strip() for t in args.towns.split(",") if t.strip()]
@@ -923,10 +924,10 @@ def main():
             game["voices"][v.lower().replace("/", "\\")] = name
         else:
             missing.append(v)
-    game["music"] = [n for n in (convert_sound(arch, m, OUT / "music") for m in MUSIC) if n]
-    game["music_battle"] = [n for n in (convert_sound(arch, m, OUT / "music") for m in MUSIC_BATTLE) if n]
+    game["music"] = [n for n in (convert_sound(arch, m, OUT / "music", envelope=False) for m in MUSIC) if n]
+    game["music_battle"] = [n for n in (convert_sound(arch, m, OUT / "music", envelope=False) for m in MUSIC_BATTLE) if n]
     # The title screen's (OpenMW's titleMusic), at a fixed name: music/music_special_morrowind_title.snd
-    game["music_title"] = convert_sound(arch, "Music/Special/morrowind title.mp3", OUT / "music") or ""
+    game["music_title"] = convert_sound(arch, "Music/Special/morrowind title.mp3", OUT / "music", envelope=False) or ""
     if missing:
         print(f"  {len(missing)} sounds not found in your Morrowind install (harmless, those play silent): "
               f"{missing[:8]}{' ...' if len(missing) > 8 else ''}")

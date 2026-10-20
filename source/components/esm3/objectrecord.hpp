@@ -10,9 +10,11 @@
 
 struct Object
 {
-	std::string id;
+	Atom id;                                           // (interned: the objects map holds the lowercase key)
 	Atom type, name, script, icon, sound, openSound, closeSound;
 	RecName recType = REC_OTHER;           // type as a number (components/esm/defs.hpp)
+	u8 fx = 0;                             // 1: a world visual of its own (FirstPersonDef::worldFx), 2: a creature's sprays
+	                                       // (cpfx); set once the game data is read, so the per-frame sweeps skip the rest
 	CardText text;                                     // a book's (read from the card when opened)
 	int iconIx = -1;                                   // item icon (ui/icons_*.t3x), -1 = none
 	float weight = 0.0f;

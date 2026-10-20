@@ -18,6 +18,7 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.workCap = 45.0f;
 		p.actorViewLimit = 0.0f;
 		p.actorDetailScale = 1.0f;
+		p.detailScale = 1.0f;
 		p.skinEvery[0] = 2, p.skinEvery[1] = 3, p.skinEvery[2] = 4;
 		p.rgb565 = false;
 		p.cmdBufScale = 8;           // room for both eyes of a busy town
@@ -37,14 +38,18 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.workCap = 70.0f;
 		p.actorViewLimit = 4000.0f;
 		p.actorDetailScale = 0.67f;
+		p.detailScale = 0.8f;        // (the size tiers' 2500 / 5000 / 10000 as 2000 / 4000 / 8000: trial-detail-distance)
 		p.skinEvery[0] = 2, p.skinEvery[1] = 4, p.skinEvery[2] = 6;
 		p.rgb565 = false;            // (16-bit banded the sky and the fog; the GPU and its memory are the New 3DS's)
-		p.cmdBufScale = 4;           // 1 MB of linear memory back (a second eye draws only while it fits: Session::stereoTarget)
+		p.cmdBufScale = 2;           // 1.5 MB of linear memory back: a busy town peaked at 18% of 1 MB (a second eye draws only
+		                             // while it fits: Session::stereoTarget)
 		p.goldenEyeAtStart = true;
 	}
 	p.smallHeap = heapBytes < (64u << 20);
 	p.refBudget = p.smallHeap ? 5000 : 20000;
-	p.soundCacheBytes = p.smallHeap ? 2u << 20 : 6u << 20;
+	// (sounds are DSP-ADPCM, a little over a quarter of the PCM16 the caps were once set for: half the bytes holds
+	// nearly twice the sounds)
+	p.soundCacheBytes = p.smallHeap ? 1u << 20 : 3u << 20;
 	p.cleanAtDoors = p.smallHeap;
 	p.streamWaitsForBlock = p.smallHeap;
 	p.spriteBudget = p.slowCpu ? 200 : 400;

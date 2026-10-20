@@ -27,6 +27,14 @@ struct Engine
 	C3D_RenderTarget* topRight = nullptr;      // the right eye (drawn only in stereo 3D)
 	C3D_RenderTarget* bottom = nullptr;
 	bool stereoOn = false;
+	// The top screen's depth buffer: 24 bits (and a stencil byte nothing uses) in 2D; 16 bits while 3D is on, half the
+	// depth traffic for the two eyes (a trial: 16 bits of depth may show far surfaces fighting on the console). Both
+	// pairs of targets are made at the start (making one mid-game crashed the emulator); the screen's output is
+	// pointed at the pair in use (top, topRight)
+	bool topDepth16 = false;
+	C3D_RenderTarget* topPair[2][2] = {};      // [depth16][eye]
+	void createTopTargets();
+	void useTopDepth(bool depth16);
 	const char* dataDir = nullptr;
 	Session* session = nullptr;
 	bool loaded = false;                       // the session started (else the frame shows "Load failed")

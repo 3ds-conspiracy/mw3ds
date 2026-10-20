@@ -14,6 +14,7 @@
 #include "components/debug/debuglog.hpp"
 
 extern const char* g_playerBlock;
+bool g_testDepth16 = false;
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
 
@@ -238,6 +239,14 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		logf("test: %s %s", verb.c_str(), a[1].c_str());
 		return true;
 	}
+	// DEPTH16:on|off: the top screen's 16-bit depth buffer in 2D too (Engine::createTopTargets takes it in 3D only): shots
+	// of far surfaces fighting, in the emulator
+	if (verb == "DEPTH16" && a.size() >= 2)
+	{
+		g_testDepth16 = a[1] == "on";
+		logf("test: depth16 %s", g_testDepth16 ? "on" : "off");
+		return true;
+	}
 	// SAYLINE:<npc>[:novoice]: the NPC speaks a line, voiced (the first voice file in the data) or text only
 	if (verb == "SAYLINE" && a.size() >= 2)
 	{
@@ -245,9 +254,10 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		if (ri < 0)
 			return fail("no " + a[1]);
 		bool voiced = !(a.size() >= 3 && a[2] == "novoice");
-		if (voiced && w.game.voices.empty())
+		if (voiced && w.game.voices.empty() && w.game.voiceFiles.empty())
 			return fail("no voice files in the data");
-		s.say(ri, voiced ? w.game.voices.begin()->first : "", voiced ? "A line spoken for the test." : "A line written for the test.");
+		std::string line = !voiced ? "" : !w.game.voices.empty() ? *w.game.voices.begin() : w.game.voiceFiles.begin()->first;
+		s.say(ri, line, voiced ? "A line spoken for the test." : "A line written for the test.");
 		logf("test: %s says a %s line", a[1].c_str(), voiced ? "voiced" : "text-only");
 		return true;
 	}

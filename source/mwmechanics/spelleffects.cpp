@@ -162,7 +162,7 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 				continue;
 			for (auto& it : w.inventory)
 			{
-				const Object* io = it.equipped ? w.game.object(it.id) : nullptr;
+				const Object* io = it.equipped ? w.game.object(it) : nullptr;
 				if (io && io->type == o->type && (o->recType == REC_WEAP || io->subtype == o->subtype))
 				{
 					it.equipped = false;

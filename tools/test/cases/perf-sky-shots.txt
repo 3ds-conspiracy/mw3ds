@@ -1,0 +1,18 @@
+# The sky for the eye (native shots, tools/test/run_test.py --shots): outdoors the fog's dome is no longer drawn (it
+# painted the screen in the colour it was cleared to) and the sky's dome leaves out its rings below the horizon (all
+# see-through there). Shots at noon, sunset, in fog and at night over Seyda Neen from the hill west of it: the same
+# picture as before the change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+0.3 0 0 0 0 TP:-14500:-72000:1300:88
+5 0 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 HOUR:19
+2 0 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 HOUR:12+SETWEATHER:2
+2 0 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 HOUR:23+SETWEATHER:0
+2 0 0 0 0
+0.3 0 0 0 0 SHOT

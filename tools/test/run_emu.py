@@ -62,7 +62,8 @@ def _montage(shots, out):
     grid.save(out)
 
 
-def run(cams=None, inputs=None, wait=60, keep=False, start=None, data="out/data", app="", emu="", fast=False, old3ds=False):
+def run(cams=None, inputs=None, wait=60, keep=False, start=None, data="out/data", app="", emu="", fast=False, old3ds=False,
+        stereo=False):
     """Runs one emulator session; returns the lines it printed."""
     emu_dir = Path(emu or mwtools.get_env("MW3DS_EMU_DIR", "the Azahar folder"))
     app_path = Path(app) if app else ROOT / "mw3ds.3dsx"
@@ -87,6 +88,9 @@ def run(cams=None, inputs=None, wait=60, keep=False, start=None, data="out/data"
         pairs += [("use_vsync", "false"), ("frame_limit", "900")]
     if old3ds:
         pairs += [("is_new_3ds", "false")]
+    # --stereo: the 3D slider at full, side by side on the window (the game draws both eyes)
+    if stereo:
+        pairs += [("factor_3d", "100"), ("render_3d", "1")]
     ini = emu_dir / "user" / "config" / "qt-config.ini"
     ini_backup = _set_ini(ini, pairs)
     proc = None
@@ -193,8 +197,9 @@ def main():
     ap.add_argument("--emu", default="")
     ap.add_argument("--fast", action="store_true")
     ap.add_argument("--old3ds", action="store_true")
+    ap.add_argument("--stereo", action="store_true")
     a = ap.parse_args()
-    for ln in run(a.cams, None, a.wait, a.keep, a.start, a.data, a.app, a.emu, a.fast, a.old3ds):
+    for ln in run(a.cams, None, a.wait, a.keep, a.start, a.data, a.app, a.emu, a.fast, a.old3ds, a.stereo):
         print(ln)
 
 

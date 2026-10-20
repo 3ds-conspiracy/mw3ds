@@ -34,6 +34,7 @@ void rendererLoadWaterFrames(const char* dataDir, float fps)
 		snprintf(path, sizeof(path), "%s/art/water/water%02d.t3x", dataDir, i);
 		if (!texImportFile(&g_gpu.water[i], path))
 			break;
+		texToVramLater(&g_gpu.water[i]);
 		C3D_TexSetFilter(&g_gpu.water[i], GPU_LINEAR, GPU_LINEAR);
 		C3D_TexSetWrap(&g_gpu.water[i], GPU_REPEAT, GPU_REPEAT);
 		g_gpu.waterCount = i + 1;

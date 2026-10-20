@@ -1,8 +1,22 @@
 #pragma once
 
+#include <3ds.h>
 #include <vector>
 
 #include "mwworld/worldimp.hpp"
+
+// The frame's drawing time by pass, summed until main logs it once a second ("profile draw"): the wait for the GPU
+// to finish the last frame, rendererDrawWorld's passes (the actors' is g_profActorsMs), then main's extras, top HUD,
+// bottom screen and local map
+enum { DRAWP_WAIT, DRAWP_SKY, DRAWP_CULL, DRAWP_OPAQUE, DRAWP_DISTANT, DRAWP_LAYERS, DRAWP_BLEND, DRAWP_EXTRAS, DRAWP_HUD,
+	DRAWP_BOTTOM, DRAWP_MAP, DRAWP_COUNT };
+extern float g_profDraw[DRAWP_COUNT];
+static inline void drawProfAdd(int pass, u64& since)
+{
+	u64 now = svcGetSystemTick();
+	g_profDraw[pass] += (now - since) * 1000.0f / SYSCLOCK_ARM11;
+	since = now;
+}
 
 // Camera in Morrowind coordinates (Z up). Yaw 0 looks north (+Y), positive turns toward +X.
 struct RenderCamera
@@ -17,6 +31,9 @@ enum
 	RENDER_EXTRAS = 64,          // projectiles and the first-person arms (Session::drawExtras)
 };
 extern u32 g_renderParts;
+// Scripted trials of shorter detail (DETAILSCALE:, ACTORDETAIL:): a scale on the clutter's own cutoff (CellBatch::maxDist,
+// without the fog moving) and on the distance past which people's small pieces aren't drawn. 1: as the console draws
+extern float g_detailScale, g_actorDetailScale;
 
 void rendererInit();
 void rendererExit();
@@ -26,6 +43,13 @@ void rendererExit();
 float rendererStereoPixels(float depth, float eyeShift);   // a stereo eye's offset of a point at that depth
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift = 0.0f, bool secondEye = false,
 	float fogScale = 1.0f);
+// Stereo: after the left eye's world and extras are drawn, the record ends (the GPU words from the start of
+// rendererDrawWorld to here); the right eye is then drawn from the record with its own projection, in no CPU time.
+// rendererReplayWorld returns the left eye's draw count, or -1 when there is no record or no room for it (draw
+// the eye the usual way then)
+void rendererReplayEnd(int draws);
+int rendererReplayWorld(float eyeShift);
+extern int g_replayCount, g_replayMissed;      // right eyes drawn from the record / drawn again (no room), per second
 // After rendererDrawWorld, in the same frame: one mesh with a model matrix (nullptr = world space)
 void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex);
 // Sky bodies for the next frames' sky pass: a textured square facing the eye in direction dir (unit,

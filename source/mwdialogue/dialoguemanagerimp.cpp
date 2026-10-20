@@ -7,6 +7,7 @@
 
 #include "components/debug/debuglog.hpp"
 #include "components/interpreter/interpreter.hpp"
+#include "extern/cjson/cJSON.h"
 #include "mwworld/worldimp.hpp"
 #include "mwdialogue/dialoguehelpers.hpp"
 
@@ -221,7 +222,15 @@ static void respond(Dialogue& d, World& w, ScriptHost& host, const Info& info, c
 	w.currentTopic = logTopic;
 	if (learnFirst)
 		learnTopics(w, info.text, d.ref);
-	scriptRunSnippet(w, host, info.script, d.ref);
+	// (its result script from the card, compiled now: Info::script)
+	Node script;
+	if (!info.script.empty())
+		if (cJSON* json = cJSON_Parse(info.script.str().c_str()))
+		{
+			scriptBlockFromJson(json, script, nullptr);
+			cJSON_Delete(json);
+		}
+	scriptRunSnippet(w, host, script, d.ref);
 	w.currentInfo = -1;
 	// Topics named in the line, after its result script (which may set the stage that gives the speaker an
 	// answer) and from the line as written, before substitution (OpenMW's order)

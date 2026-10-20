@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
 #include <3ds.h>
@@ -327,7 +328,7 @@ void Session::npcDuel(int ri, float dt)
 int Session::guardFoe(int ri)
 {
 	const Ref& r = w.refs[ri];
-	if (lower(w.game.actors[r.actor].cls) != "guard" || w.actorEffect(ri, 49) > 0.0f || r.calmUntil > w.time)
+	if (strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") != 0 || w.actorEffect(ri, 49) > 0.0f || r.calmUntil > w.time)
 		return -1;
 	const float radius = w.game.gmstf("falarmradius", 2000.0f);
 	int best = -1;
@@ -388,7 +389,7 @@ bool World::trapSoul(const std::string& creature, int soul)
 		const InventoryItem& it = inventory[i];
 		if (!it.soul.empty() || it.id.compare(0, 13, "misc_soulgem_") != 0)
 			continue;
-		const Object* o = game.object(it.id);
+		const Object* o = game.object(it);
 		float cap = (o ? o->value : 0) * game.gmstf("fsoulgemmult", 3.0f);
 		if (cap >= soul && cap < bestCap)
 		{
@@ -431,6 +432,9 @@ void Session::greetings(float dt)
 		Ref& r = w.refs[i];
 		if (r.actor < 0 || !w.active(i) || !r.visible() || r.dead)
 			continue;
+		// (each person every fourth frame: one in range who can't see the player cast a ray every frame)
+		if ((w.frame + i) % 4 != 0 && cadenceOn(CAD_GREET))
+			continue;
 		float d = w.distanceToPlayer(i);
 		if (r.greeted && d >= reset)
 			r.greeted = false;
@@ -460,7 +464,7 @@ void Session::burnHeldLight(float dt)
 	for (size_t i = 0; i < w.inventory.size(); i++)
 	{
 		InventoryItem& it = w.inventory[i];
-		const Object* o = it.equipped ? w.game.object(it.id) : nullptr;
+		const Object* o = it.equipped ? w.game.object(it) : nullptr;
 		if (!o || o->recType != REC_LIGH || o->lightTime <= 0.0f)
 			continue;
 		float left = (it.charge < 0.0f ? o->lightTime : it.charge) - dt;

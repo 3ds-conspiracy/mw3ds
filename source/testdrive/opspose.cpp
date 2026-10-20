@@ -9,6 +9,7 @@
 #include <queue>
 #include <tuple>
 #include "testdrive/testdrive.hpp"
+#include "mwrender/renderingmanager.hpp"
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
 
@@ -130,6 +131,13 @@ std::optional<bool> opsPose(Session& s, const std::vector<std::string>& a)
 	if (verb == "VIEWSCALE" && a.size() >= 2)
 	{
 		s.viewScale = s.viewDrawn = (float)atof(a[1].c_str());     // (drawn as set: the step hysteresis starts from it)
+		return true;
+	}
+	// DETAILSCALE:<x> / ACTORDETAIL:<x>: the clutter cutoff and people's small-piece distance scaled, the fog as it is
+	// (mwrender/renderingmanager.hpp): shots of what shorter detail would lose
+	if ((verb == "DETAILSCALE" || verb == "ACTORDETAIL") && a.size() >= 2)
+	{
+		(verb == "DETAILSCALE" ? g_detailScale : g_actorDetailScale) = (float)atof(a[1].c_str());
 		return true;
 	}
 	if (verb == "ADAPTVIEW" && a.size() >= 4)

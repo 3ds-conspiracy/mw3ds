@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
 #include <3ds.h>
@@ -335,7 +336,7 @@ int World::factionReaction(const std::string& a, const std::string& b) const
 	std::string la = lower(a), lb = lower(b);
 	int v = 0;
 	for (auto& f : game.factions)
-		if (lower(f.first) == la)
+		if (strcasecmp(f.first.c_str(), la.c_str()) == 0)      // (no copy of every faction's name per call)
 		{
 			auto r = f.second.reactions.find(lb);
 			if (r != f.second.reactions.end())
@@ -350,6 +351,7 @@ int World::disposition(int ri, bool clamp) const
 	const Ref& r = refs[ri];
 	if (r.actor < 0 || game.actors[r.actor].creature)
 		return r.disposition;
+	g_profCalls[PCALL_DISPOSITION]++;
 	const ActorDef& a = game.actors[r.actor];
 	float x = (float)r.disposition;
 	if (!a.race.empty() && lower(a.race) == lower(stats.race))

@@ -101,7 +101,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 	// A helmet takes the hair away (a coif or hood with a hair part of its own sets it back below)
 	for (auto& it : w.inventory)
 		if (it.equipped)
-			if (const Object* o = w.game.object(it.id))
+			if (const Object* o = w.game.object(it))
 				if (o->recType == REC_ARMO && o->subtype == 0)
 					part[SLOT_HAIR].clear();
 	for (int layer = 0; layer < 4; layer++)
@@ -109,7 +109,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 		{
 			if (!it.equipped)
 				continue;
-			const Object* o = w.game.object(it.id);
+			const Object* o = w.game.object(it);
 			if (!o || (o->recType != REC_CLOT && o->recType != REC_ARMO))
 				continue;
 			int l = o->recType == REC_ARMO ? 1 : o->subtype == CLOT_SKIRT ? 2 : o->subtype == CLOT_ROBE ? 3 : 0;
@@ -137,7 +137,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 	if (weaponOut)
 		for (auto& it : w.inventory)
 			if (it.equipped)
-				if (const Object* o = w.game.object(it.id))
+				if (const Object* o = w.game.object(it))
 					if (o->recType == REC_WEAP && o->subtype < WEAP_ARROW)
 					{
 						auto fit = w.game.firstPerson.items.find(lower(it.id));

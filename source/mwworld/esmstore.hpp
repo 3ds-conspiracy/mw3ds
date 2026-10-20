@@ -30,6 +30,7 @@
 #include "components/fallback/fallback.hpp"
 
 extern u32 g_gameGeneration;           // bumped whenever game data is loaded or handed on: caches of pointers into it
+struct InventoryItem;
 
 // First-person view model parts (tools/convert/firstperson.py): data/fp/<piece>.fpm files
 struct FpItem
@@ -136,7 +137,10 @@ struct GameData
 	std::unordered_map<int, MagicEffectDef> magicEffects;
 	std::vector<SkillDef> skills;
 	std::unordered_map<std::string, SoundDef> sounds;      // lowercase sound id
-	std::unordered_map<std::string, std::string> voices;   // lowercase "vo\...wav" path -> file
+	// Voice lines by their lowercase "vo\...mp3" path. Their files are named from it (voiceName: the converter's
+	// snd_name), so only the path is kept; the odd one whose file isn't is kept with its file
+	std::unordered_set<std::string> voices;
+	std::unordered_map<std::string, std::string> voiceFiles;
 	std::vector<std::string> music, battleMusic;
 	std::unordered_map<std::string, FactionDef> factions;
 	std::vector<QuizQuestion> quiz;                        // class generation questions
@@ -156,6 +160,11 @@ struct GameData
 	std::unordered_map<std::string, std::string> cellNames, phraseForms, topicKeywords;
 
 	const Object* object(const std::string& id) const;
+	const Object* object(const InventoryItem& it) const;     // found once, kept on the item
+	bool voiceFile(const std::string& path, std::string* file = nullptr) const;   // a voice line's sound file, if any
+	const Object* carriedLight(const Object* actor) const;   // the first light it carries that can be held out, or none
+	mutable std::unordered_map<const Object*, const Object*> carriedLights;   // (carriedLight's answers, in generation:)
+	mutable u32 carriedLightsGeneration = 0;
 	u32 enchantGlow(const std::string& itemId) const;   // an enchanted item's glow (0xRRGGBB: its first effect's colour), 0 none
 	const Script* script(const std::string& name) const;
 	std::string gmst(const char* name, const char* fallback = "") const;

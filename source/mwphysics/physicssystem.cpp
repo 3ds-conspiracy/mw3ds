@@ -4,33 +4,46 @@
 #include <cmath>
 
 #include "platform/memstat.hpp"
+#include "components/debug/profile.hpp"
 #include "components/misc/planes.hpp"
 
 // Reads n indices stored as u16 (width 2) or u32 (width 4), padded to 4 bytes; planes of
 // differences in format 7. These arrays are a cell's single biggest heap blocks: tryResize, so a
 // fragmented heap fails the load cleanly (the cell waits) instead of retrying the allocation forever
-static bool readIndices(FILE* f, std::vector<u32>& out, u32 n, u32 width, bool planar)
+static bool readIndices(FILE* f, IndexList& out, u32 n, u32 width, bool planar)
 {
-	if (!tryResize(out, n))
-		return false;
+	out.isWide = width == 4;
+	std::vector<u32>().swap(out.wide);
+	std::vector<u16>().swap(out.narrow);
 	if (width == 4)
 	{
-		bool ok = fread(out.data(), 4, n, f) == n;
+		if (!tryResize(out.wide, n))
+			return false;
+		bool ok = fread(out.wide.data(), 4, n, f) == n;
 		if (planar)
-			unpackInts((u8*)out.data(), n, 4);
+			unpackInts((u8*)out.wide.data(), n, 4);
 		return ok;
 	}
-	std::vector<u16> tmp;
-	if (!tryResize(tmp, n))
+	if (!tryResize(out.narrow, n))
 		return false;
-	bool ok = fread(tmp.data(), 2, n, f) == n;
+	bool ok = fread(out.narrow.data(), 2, n, f) == n;
 	if (planar)
-		unpackInts((u8*)tmp.data(), n, 2);
-	for (u32 i = 0; i < n; i++)
-		out[i] = tmp[i];
+		unpackInts((u8*)out.narrow.data(), n, 2);
 	if (n & 1)
 		fseek(f, 2, SEEK_CUR);
 	return ok;
+}
+
+// A query's visit marks: a new number each query, the marks cleared when it runs past 16 bits
+static void nextQuery(CollisionMesh& m)
+{
+	if (m.stamp.size() != m.tris.size() / 3)
+		m.stamp.assign(m.tris.size() / 3, 0);
+	if (++m.queryId > 0xFFFF)
+	{
+		std::fill(m.stamp.begin(), m.stamp.end(), 0);
+		m.queryId = 1;
+	}
 }
 
 bool collisionRead(CollisionMesh& m, FILE* f, u32 version)
@@ -81,9 +94,8 @@ bool collisionRead(CollisionMesh& m, FILE* f, u32 version)
 	}
 	fread(m.verts.data(), 4, numVerts * 3, f);
 	fread(&numTris, 4, 1, f);
-	if (!tryResize(m.tris, numTris * 3))
+	if (!readIndices(f, m.tris, numTris * 3, 4, false))
 		return false;
-	fread(m.tris.data(), 4, numTris * 3, f);
 	float grid[3];
 	fread(grid, 4, 3, f);
 	m.originX = grid[0];
@@ -94,9 +106,7 @@ bool collisionRead(CollisionMesh& m, FILE* f, u32 version)
 	if (!tryResize(m.cellStart, m.nx * m.ny + 1))
 		return false;
 	fread(m.cellStart.data(), 4, m.cellStart.size(), f);
-	if (!tryResize(m.cellTris, m.cellStart.back()))
-		return false;
-	return fread(m.cellTris.data(), 4, m.cellTris.size(), f) == m.cellTris.size();
+	return readIndices(f, m.cellTris, m.cellStart.back(), 4, false);
 }
 
 // Calls fn(triangle index) once for every triangle in grid cells overlapping the XY box.
@@ -105,9 +115,7 @@ static void forTrianglesIn(CollisionMesh& m, float x0, float y0, float x1, float
 {
 	if (m.nx == 0)
 		return;
-	if (m.stamp.size() != m.tris.size() / 3)
-		m.stamp.assign(m.tris.size() / 3, 0);
-	m.queryId++;
+	nextQuery(m);
 	int gx0 = (int)floorf((x0 - m.originX) / m.cellSize), gx1 = (int)floorf((x1 - m.originX) / m.cellSize);
 	int gy0 = (int)floorf((y0 - m.originY) / m.cellSize), gy1 = (int)floorf((y1 - m.originY) / m.cellSize);
 	if (gx0 < 0) gx0 = 0;
@@ -225,6 +233,7 @@ static bool landTriangle(const float* a, const float* b, const float* c)
 
 bool collisionFloor(CollisionMesh& m, float x, float y, float zTop, float zBottom, float* zOut, float maxSlope, float objectSlope)
 {
+	g_profCalls[PCALL_FLOORS]++;
 	// the normal's z against its length, squared: cos(maxSlope)^2 (a hot path: the usual limits as constants)
 	float minZ2 = maxSlope == 60.0f ? 0.25f : maxSlope == kWalkSlope ? 0.48255f : cosf(maxSlope * 0.017453293f) * cosf(maxSlope * 0.017453293f);
 	float objZ2 = objectSlope >= 90.0f ? 0.0f : objectSlope == kWalkSlope ? 0.48255f : cosf(objectSlope * 0.017453293f) * cosf(objectSlope * 0.017453293f);
@@ -302,17 +311,73 @@ bool collisionLandFloor(CollisionMesh& m, float x, float y, float zTop, float zB
 bool collisionFootFloor(CollisionMesh& m, float x, float y, float reach, float zTop, float zBottom, float* zOut, float maxSlope,
 	float objectSlope)
 {
+	// The five spots in one walk of the grid (they sit in one or two of its cells): each triangle's slope test, edges
+	// and 1 / det once, then the five points against it. Five walks with the slope test five times over cost a walking
+	// NPC an Old 3DS a good part of its frame
+	g_profCalls[PCALL_FLOORS]++;
 	static const float offs[5][2] = { { 0, 0 }, { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
-	bool found = false;
-	for (auto& o : offs)
+	if (!cadenceOn(CAD_FLOOR))
 	{
-		float z;
-		if (collisionFloor(m, x + o[0] * reach, y + o[1] * reach, zTop, zBottom, &z, maxSlope, objectSlope) && (!found || z > *zOut))
+		bool any = false;
+		for (auto& o : offs)
 		{
-			*zOut = z;
-			found = true;
+			float z;
+			if (collisionFloor(m, x + o[0] * reach, y + o[1] * reach, zTop, zBottom, &z, maxSlope, objectSlope) && (!any || z > *zOut))
+			{
+				*zOut = z;
+				any = true;
+			}
 		}
+		return any;
 	}
+	float minZ2 = maxSlope == 60.0f ? 0.25f : maxSlope == kWalkSlope ? 0.48255f : cosf(maxSlope * 0.017453293f) * cosf(maxSlope * 0.017453293f);
+	float objZ2 = objectSlope >= 90.0f ? 0.0f : objectSlope == kWalkSlope ? 0.48255f : cosf(objectSlope * 0.017453293f) * cosf(objectSlope * 0.017453293f);
+	bool found = false;
+	float best = zBottom;
+	forTrianglesIn(m, x - reach, y - reach, x + reach, y + reach, [&](u32 t) {
+		const float* a = &m.verts[m.tris[t * 3 + 0] * 3];
+		const float* b = &m.verts[m.tris[t * 3 + 1] * 3];
+		const float* c = &m.verts[m.tris[t * 3 + 2] * 3];
+		float det = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1]);
+		if (fabsf(det) < 1e-4f)
+			return;   // vertical wall
+		// (the triangle's reach in x and y against the five spots' box: most of a grid cell's triangles lie elsewhere)
+		float lo0 = fminf(a[0], fminf(b[0], c[0])), hi0 = fmaxf(a[0], fmaxf(b[0], c[0]));
+		float lo1 = fminf(a[1], fminf(b[1], c[1])), hi1 = fmaxf(a[1], fmaxf(b[1], c[1]));
+		if (hi0 < x - reach || lo0 > x + reach || hi1 < y - reach || lo1 > y + reach)
+			return;
+		float e1[3], e2[3];
+		sub(b, a, e1);
+		sub(c, a, e2);
+		float n[3] = { e1[1] * e2[2] - e1[2] * e2[1], e1[2] * e2[0] - e1[0] * e2[2], e1[0] * e2[1] - e1[1] * e2[0] };
+		float nz2 = n[2] * n[2], len2 = dot(n, n);
+		bool land = false, landKnown = false;
+		auto isLand = [&]() { if (!landKnown) { land = landTriangle(a, b, c); landKnown = true; } return land; };
+		if (nz2 < minZ2 * len2 && (maxSlope >= 60.0f || isLand() || nz2 < 0.25f * len2))
+			return;
+		if (nz2 < objZ2 * len2 && !isLand())
+			return;
+		float inv = 1.0f / det;
+		for (auto& o : offs)
+		{
+			float px = x + o[0] * reach, py = y + o[1] * reach;
+			if (px < lo0 || px > hi0 || py < lo1 || py > hi1)
+				continue;
+			float l1 = ((b[1] - c[1]) * (px - c[0]) + (c[0] - b[0]) * (py - c[1])) * inv;
+			float l2 = ((c[1] - a[1]) * (px - c[0]) + (a[0] - c[0]) * (py - c[1])) * inv;
+			float l3 = 1.0f - l1 - l2;
+			if (l1 < 0 || l2 < 0 || l3 < 0)
+				continue;
+			float z = l1 * a[2] + l2 * b[2] + l3 * c[2];
+			if (z <= zTop && z >= best)
+			{
+				best = z;
+				found = true;
+			}
+		}
+	});
+	if (found)
+		*zOut = best;
 	return found;
 }
 
@@ -324,9 +389,8 @@ bool collisionRaycast(CollisionMesh& m, const float a[3], const float b[3], floa
 {
 	if (m.nx == 0)
 		return false;
-	if (m.stamp.size() != m.tris.size() / 3)
-		m.stamp.assign(m.tris.size() / 3, 0);
-	m.queryId++;
+	g_profCalls[PCALL_RAYS]++;
+	nextQuery(m);
 	float d[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
 	float len = sqrtf(d[0] * d[0] + d[1] * d[1]);
 	int steps = (int)(len / (m.cellSize * 0.5f)) + 1;
@@ -399,12 +463,14 @@ void collisionHideTris(CollisionMesh& m, u32 first, u32 count, std::vector<u32>&
 		const float far[9] = { 0, 0, -1e6f, 1, 0, -1e6f, 0, 1, -1e6f };
 		m.verts.insert(m.verts.end(), far, far + 9);
 	}
-	saved.assign(m.tris.begin() + first * 3, m.tris.begin() + (first + count) * 3);
+	saved.resize(count * 3);
+	for (u32 k = 0; k < count * 3; k++)
+		saved[k] = m.tris[first * 3 + k];
 	for (u32 k = first; k < first + count; k++)
 	{
-		m.tris[k * 3] = m.farVert;
-		m.tris[k * 3 + 1] = m.farVert + 1;
-		m.tris[k * 3 + 2] = m.farVert + 2;
+		m.tris.set(k * 3, m.farVert);
+		m.tris.set(k * 3 + 1, m.farVert + 1);
+		m.tris.set(k * 3 + 2, m.farVert + 2);
 	}
 }
 
@@ -412,6 +478,7 @@ void collisionShowTris(CollisionMesh& m, u32 first, u32 count, std::vector<u32>&
 {
 	if (saved.size() != count * 3 || (first + count) * 3 > m.tris.size())
 		return;
-	std::copy(saved.begin(), saved.end(), m.tris.begin() + first * 3);
+	for (u32 k = 0; k < count * 3; k++)
+		m.tris.set(first * 3 + k, saved[k]);
 	saved.clear();
 }

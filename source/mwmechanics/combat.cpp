@@ -24,6 +24,7 @@
 #include <cstring>
 
 #include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
@@ -234,8 +235,8 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 	// A raised shield: automatic while the player faces the attacker (mid-swing too, as in OpenMW)
 	InventoryItem* shield = nullptr;
 	for (auto& it : w.inventory)
-		if (it.equipped && w.game.object(it.id) && w.game.object(it.id)->recType == REC_ARMO
-			&& w.game.object(it.id)->subtype == ARMO_SHIELD && itemCondition(it) > 0)
+		if (it.equipped && w.game.object(it) && w.game.object(it)->recType == REC_ARMO
+			&& w.game.object(it)->subtype == ARMO_SHIELD && itemCondition(it) > 0)
 			shield = &it;
 	float toAttacker = atan2f(r.pos[0] - w.player.feet[0], r.pos[1] - w.player.feet[1]);
 	// (OpenMW: within fCombatBlockLeftAngle .. fCombatBlockRightAngle of facing; not while down or paralyzed; melee
@@ -255,7 +256,7 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 		const Object* aw = w.game.object(def.weapon);
 		s.fatigue -= w.game.gmstf("ffatigueblockbase", 0.0f) + playerLoad * w.game.gmstf("ffatigueblockmult", 0.0f)
 			+ (aw && aw->recType == REC_WEAP ? aw->weight * 0.5f * w.game.gmstf("fweaponfatigueblockmult", 0.0f) : 0.0f);
-		const Object* so = w.game.object(shield->id);
+		const Object* so = w.game.object(*shield);
 		float wt = kArmorSlotBaseWeight[ARMO_SHIELD];
 		playSound(-1, so->weight <= wt * w.game.gmstf("flightmaxmod", 0.6f) + 0.0005f ? "Light Armor Hit"
 			: so->weight <= wt * w.game.gmstf("fmedmaxmod", 0.9f) + 0.0005f ? "Medium Armor Hit" : "Heavy Armor Hit");
@@ -275,7 +276,7 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 		bool armored = false;
 		for (auto& it : w.inventory)
 			if (it.equipped)
-				if (const Object* o = w.game.object(it.id))
+				if (const Object* o = w.game.object(it))
 					if (o->recType == REC_ARMO && (o->subtype == slot || (slot == 6 && o->subtype == 9) || (slot == 7 && o->subtype == 10)))
 					{
 						armored = true;
@@ -452,7 +453,7 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	{
 		// HitOnMe: which weapon hit it (scripts ask, e.g. the Heart of Lorkhan and Sunder / Keening)
 		const Object* wpn = playerWeapon();
-		w.refs[target].hitBy = wpn ? lower(wpn->id) : "";
+		w.refs[target].hitBy = wpn ? lower(wpn->id) : std::string();
 		w.refs[target].attacked = true;
 	}
 	Ref& t = w.refs[target];
@@ -607,7 +608,15 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		s.fatigue = fminf(s.fatigueMax, s.fatigue + (w.game.gmstf("ffatiguereturnbase", 2.5f)
 			+ w.game.gmstf("ffatiguereturnmult", 0.02f) * s.attributes[ATTR_ENDURANCE]) * dt);
 
+	// (the rays and the visual sweeps get their own profile parts, inside PROF_AI's: main takes them off it)
+	u64 profSince = svcGetSystemTick();
+	auto profPart = [&](int part) {
+		u64 now = svcGetSystemTick();
+		g_profParts[part] += (now - profSince) * 1000.0f / SYSCLOCK_ARM11;
+		profSince = now;
+	};
 	updateDetection(dt);
+	profPart(PROF_DETECT);
 
 	// X: the first press draws the weapon (or raises the fists); holding winds up, release strikes
 	// (a longer wind-up hits harder). Ranged weapons need ammunition equipped.
@@ -751,7 +760,8 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		// A torch is held out when it's time for torches, in place of the shield; in a fight the shield comes back
 		// (OpenMW's updateEquippedLight). Only by someone who carries one: OpenMW equips a light from the inventory,
 		// and without one nothing changes (the arm was raised round an empty hand, and the shield put away for nothing)
-		if (Actor* ta = w.actorOf(i))
+		// (every eighth frame each: a walk over every mesh of every person every frame, for a change that comes with the hour)
+		if (Actor* ta = w.actorOf(i); ta && ((w.frame + i) % 8 == 0 || !cadenceOn(CAD_TORCH)))
 		{
 			bool out = false;
 			for (const ActorMesh& m : ta->meshes)
@@ -767,18 +777,14 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			{
 				// The torch lights the one holding it (its own colour, the side of a body facing a hand-held light):
 				// people's torches light no one else and nothing around, the console can't spare the vertex work
-				const Object* npc = w.game.object(r.id);
-				const Object* light = nullptr;
-				for (size_t k = 0; out && npc && !light && k < npc->items.size(); k++)
-					if (const Object* o = w.game.object(npc->items[k].second))
-						if (o->recType == REC_LIGH && o->lightRadius > 0 && (o->flags & 2))     // (LHDT 0x2: can be carried)
-							light = o;
+				const Object* light = out ? w.game.carriedLight(r.obj ? r.obj : w.game.object(r.id)) : nullptr;
 				for (int k = 0; k < 3; k++)
 					ta->heldLight[k] = light ? light->lightColor[k] / 255.0f * kHeldLightShare : 0.0f;
 			}
 			ta->torchOut = out;
-			ta->alpha = actorSeeThrough(false, w.actorEffect(i, 39), w.actorEffect(i, 40));
 		}
+		if (Actor* ta = w.actorOf(i))
+			ta->alpha = actorSeeThrough(false, w.actorEffect(i, 39), w.actorEffect(i, 40));
 		// (held in a pose for a side-by-side screenshot, tools/test/sidebyside.py: no AI, no head turning)
 		if (const Actor* fa = w.actorOf(i))
 			if (fa->frozen)
@@ -816,8 +822,11 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				float reach = headTrack * (w.cells[w.current].interior ? headTrackIn : 1.0f);
 				float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1];
 				float dz = playerEyeZ(w.player) - (r.pos[2] + 110.0f);
-				float d = sqrtf(dx * dx + dy * dy + dz * dz);
-				if (w.distanceToPlayer(i) < reach && d > 1.0f)
+				float d2 = dx * dx + dy * dy + dz * dz;
+				// (out of reach with the head already straight: nothing to ease, most people most frames)
+				bool straight = d2 >= reach * reach && ac->headYaw == 0.0f && ac->headPitch == 0.0f && cadenceOn(CAD_HEAD);
+				float d = straight ? 0.0f : sqrtf(d2);
+				if (!straight && w.distanceToPlayer(i) < reach && d > 1.0f)
 				{
 					float diff = angleDiff(atan2f(dx, dy), r.rot[2]);
 					if (fabsf(diff) < 1.5708f)
@@ -828,13 +837,16 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 						pitch = fmaxf(-kPitch, fminf(kPitch, asinf(up)));
 					}
 				}
-				float ease = fminf(1.0f, dt * 5.0f);
-				ac->headYaw += (yaw - ac->headYaw) * ease;
-				ac->headPitch += (pitch - ac->headPitch) * ease;
-				if (fabsf(ac->headYaw) < 0.001f)
-					ac->headYaw = 0.0f;
-				if (fabsf(ac->headPitch) < 0.001f)
-					ac->headPitch = 0.0f;
+				if (!straight)
+				{
+					float ease = fminf(1.0f, dt * 5.0f);
+					ac->headYaw += (yaw - ac->headYaw) * ease;
+					ac->headPitch += (pitch - ac->headPitch) * ease;
+					if (fabsf(ac->headYaw) < 0.001f)
+						ac->headYaw = 0.0f;
+					if (fabsf(ac->headPitch) < 0.001f)
+						ac->headPitch = 0.0f;
+				}
 			}
 		// ToggleAI off (the console): they stand where they are, their packages and fights held
 		if (!w.aiEnabled)
@@ -857,7 +869,9 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			// a rat's 85: 1000, a mudcrab's 83: 600), once they've noticed the player
 			// (OpenMW's getFightTerm: fight + int(the distance and disposition terms); creatures count disposition 50;
 			// then line of sight and the awareness check)
-			float rating = fightTermOf(i, w.distanceToPlayer(i));        // (mwmechanics/formulas.cpp)
+			// (the rating four times a second each, spread over the frames: its disposition walks the factions by name,
+			// too much for every person every frame on an Old 3DS; a sighting waits at most three frames)
+			float rating = (w.frame + i) % 4 == 0 || !cadenceOn(CAD_FIGHT) ? fightTermOf(i, w.distanceToPlayer(i)) : 0.0f;    // (mwmechanics/formulas.cpp)
 			bool calm = r.calmUntil > w.time || w.actorEffect(i, w.game.actors[r.actor].creature ? 50 : 49) > 0.0f;
 			float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f }, eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
 			if (r.duelFoe >= 0 && !menu)
@@ -871,13 +885,13 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				npcDuel(i, dt);
 			else if (npcTalkStand(i, dt))
 				;
-			else if (w.bounty > 0 && lower(w.game.actors[r.actor].cls) == "guard" && !menu)
+			else if (w.bounty > 0 && strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0 && !menu)
 				guardCheck(i, dt);
 			else if (r.ally && !menu)
 				allyFight(i, dt);
 			else if (r.aiPackage > AIPKG_WANDER)
 				npcPackage(i, dt);
-			else if (w.distanceToPlayer(i) < kActorViewDistance + 500.0f)
+			else if (w.distanceToPlayer(i) < (g_profile.actorViewLimit > 0.0f ? g_profile.actorViewLimit : kActorViewDistance) + 500.0f)
 				npcWander(i, dt);         // as far as they're drawn: a far one left mid-walk would walk in place
 			else if (Actor* fa = w.actorOf(i))
 			{
@@ -897,8 +911,10 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	});
 	if (!menu)
 	{
+		profSince = svcGetSystemTick();
 		updateProjectiles(dt);
 		npcSummonsUpdate();
+		profPart(PROF_FX);
 	}
 }
 
@@ -930,7 +946,7 @@ void Session::strikeEnchantment(int target, const Object* missile)
 		return;
 	wit->charge = charge - cost;
 	useSkill(9, 3);                       // Enchant: an enchantment cast on a strike (SKDT use 3)
-	const Object* o = w.game.object(wit->id);
+	const Object* o = w.game.object(*wit);
 	for (auto& e : en->effects)
 		if (e.range == 0)
 			applyEffectToPlayer(e, o ? o->name.str() : en->id);

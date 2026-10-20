@@ -126,8 +126,8 @@ class TextureSet:
     """Collects every texture the level's cells use, then encodes each once at the
     largest size any use needs."""
 
-    def __init__(self, arch, max_size=256, force=False):
-        self.arch, self.max_size, self.force = arch, max_size, force
+    def __init__(self, arch, max_size=256, force=False, mips=True):
+        self.arch, self.max_size, self.force, self.mips = arch, max_size, force, mips
         self.req = {}                  # source path -> {"px": texels, "alpha": bool}
         self.whitened = {}             # output name -> {"src", "px", "alpha", "amount"}: a picture drawn whiter
         self.made = set()              # output names encoded elsewhere (particles.py's flipbook sheets): kept
@@ -185,12 +185,13 @@ class TextureSet:
                 sheet = is_sheet(path)
                 if not (entry and entry.get("src") == path and entry.get("limit") == limit
                         and entry.get("want_alpha") == r["alpha"] and entry.get("overlay", "") == overlay
-                        and entry.get("sheet", False) == sheet and tex_path(name).exists()):
+                        and entry.get("sheet", False) == sheet and entry.get("mips", True) == self.mips
+                        and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(path)))
                     img.load()
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
-                    entry = encode_one(tex3ds, img.convert("RGBA"), tex_path(name), limit, r["alpha"], sheet)
+                    entry = encode_one(tex3ds, img.convert("RGBA"), tex_path(name), limit, r["alpha"], sheet, self.mips)
                     entry.update({"src": path, "limit": limit, "want_alpha": r["alpha"], "overlay": overlay,
                                   "sheet": sheet})
                     cache[name] = entry
@@ -207,13 +208,14 @@ class TextureSet:
             entry = cache.get(name)
             try:
                 if not (entry and entry.get("src") == r["src"] and entry.get("limit") == limit
-                        and entry.get("whiten") == r["amount"] and tex_path(name).exists()):
+                        and entry.get("whiten") == r["amount"] and entry.get("mips", True) == self.mips
+                        and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(r["src"])))
                     img.load()
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
                     entry = encode_one(tex3ds, whiten_image(img.convert("RGBA"), r["amount"]), tex_path(name), limit,
-                                       r["alpha"])
+                                       r["alpha"], mips=self.mips)
                     entry.update({"src": r["src"], "limit": limit, "want_alpha": r["alpha"], "whiten": r["amount"]})
                     cache[name] = entry
                     stats["encoded"] += 1
@@ -228,10 +230,11 @@ class TextureSet:
             wanted.add(name)
             digest = hashlib.sha1(img.tobytes()).hexdigest()
             entry = cache.get(name)
-            if not (entry and entry.get("digest") == digest and tex_path(name).exists()):
+            if not (entry and entry.get("digest") == digest and entry.get("mips", True) == self.mips
+                    and tex_path(name).exists()):
                 tex3ds = tex3ds or tex3ds_path()
                 tex_path(name).parent.mkdir(parents=True, exist_ok=True)
-                entry = encode_one(tex3ds, img, tex_path(name), max(img.size), True)
+                entry = encode_one(tex3ds, img, tex_path(name), max(img.size), True, mips=self.mips)
                 entry.update({"src": "generated", "digest": digest})
                 cache[name] = entry
                 stats["encoded"] += 1
@@ -268,7 +271,7 @@ def whiten_image(img, amount):
     return Image.fromarray(a.clip(0, 255).astype(np.uint8), "RGBA")
 
 
-def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False):
+def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True):
     """A sheet (is_sheet) is capped on its short side, the long side up to MAX_SIDE: taken on the long side, an Old
     3DS's 128 left each of the eight pictures of a 256 x 2048 sheet 16 texels across."""
     w, h = img.size
@@ -283,6 +286,7 @@ def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False):
     with tempfile.TemporaryDirectory() as tmp:
         png = Path(tmp) / "in.png"
         img.save(png)
-        subprocess.run([tex3ds, "-f", "etc1a4" if has_alpha else "etc1", "-m", "triangle",
+        # (an Old 3DS draws every world texture at full size, never its smaller copies: its data carries none, a third less)
+        subprocess.run([tex3ds, "-f", "etc1a4" if has_alpha else "etc1", *(["-m", "triangle"] if mips else []),
                         "-o", str(out), str(png)], check=True, capture_output=True)
-    return {"size": [tw, th], "source_pot": [sw, sh], "alpha": has_alpha}
+    return {"size": [tw, th], "source_pot": [sw, sh], "alpha": has_alpha, "mips": mips}

@@ -133,14 +133,8 @@ void Session::adaptView(float workMs, float frameMs)
 	{
 		// Outdoors a steady 20 fps, the view giving way to keep it (below); indoors 30, 20 while a room is too heavy:
 		// two seconds past the 30 fps budget: 20; four seconds well under it: 30 again
-		bool outdoors = w.current >= 0 && !w.cells[w.current].interior;
+		// (outdoors too: it was held at 20 there whatever the work, and a quiet road at 22 ms of work ran at 20 for nothing)
 		int cap = frameCap;
-		if (outdoors)
-		{
-			cap = 20;
-			capFrames = 0;
-		}
-		else
 		{
 			bool slow = frameCap == 30 ? workCost > 31.0f : workCost < 24.0f;
 			capFrames = slow ? capFrames + 1 : 0;

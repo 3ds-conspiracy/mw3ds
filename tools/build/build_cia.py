@@ -135,7 +135,7 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
     cia = "build/mw3ds-o3ds.cia" if old3ds else "build/mw3ds.cia"
     convert_args = [] if small else ["--world"]
     if old3ds:
-        convert_args += ["--max-tex", "128"]
+        convert_args += ["--max-tex", "128", "--no-mips"]
         os.environ["MW3DS_OUT"] = "out/o3ds"
 
     # A CIA left by an earlier failed build must not be mistaken for this one

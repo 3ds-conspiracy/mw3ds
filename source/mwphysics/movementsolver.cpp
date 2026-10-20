@@ -5,6 +5,7 @@
 #include <cstring>
 
 #include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
@@ -44,6 +45,7 @@ static float actorRoomOver(Cell* const* cells, int count, float x, float y, floa
 
 bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 {
+	g_profCalls[PCALL_STEPS]++;
 	Ref& r = w.refs[ri];
 	float body[3] = { r.pos[0] + dirX * step, r.pos[1] + dirY * step, r.pos[2] + 70.0f };
 	// Outdoors the ground and walls past the cell's edge are the next cell's: every loaded cell whose collision

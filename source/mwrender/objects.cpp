@@ -61,6 +61,30 @@ static bool loadTexture(C3D_Tex* tex, const char* path)
 	return true;
 }
 
+// A blended batch's triangles whose three corners are fully see-through add nothing to the picture but cost the GPU
+// their fill: the sky dome's rings below the horizon (its share of the sky's colour is 0 there) cover half the screen.
+// They are left out of the index list (the colour's alpha is a vertex's last byte)
+static void trimClearTriangles(CellBatch& b)
+{
+	if (!(b.flags & BATCH_BLEND) || !b.verts || !b.indices)
+		return;
+	const u8* v = (const u8*)b.verts;
+	auto clear = [&](u16 i) { return i >= b.numVerts || v[i * b.stride + b.stride - 1] == 0; };
+	u32 kept = 0;
+	for (u32 t = 0; t + 2 < b.numIndices; t += 3)
+	{
+		if (clear(b.indices[t]) && clear(b.indices[t + 1]) && clear(b.indices[t + 2]))
+			continue;
+		for (int k = 0; k < 3; k++)
+			b.indices[kept + k] = b.indices[t + k];
+		kept += 3;
+	}
+	if (kept == b.numIndices)
+		return;
+	b.numIndices = kept;
+	GSPGPU_FlushDataCache(b.indices, kept * 2);
+}
+
 static bool readBatches(FILE* f, std::vector<CellBatch>& out, Cell& cell, u32 version)
 {
 	u32 count = 0;
@@ -383,6 +407,9 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 	}
 	if (ok && h.version >= 4)
 		ok = readBatches(f, cell.sky, cell, h.version);
+	if (ok)
+		for (CellBatch& b : cell.sky)
+			trimClearTriangles(b);
 	zclose(f);
 	int lamps = 0;
 	for (auto& b : cell.batches)

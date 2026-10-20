@@ -96,7 +96,11 @@ int main(int argc, char** argv)
 			fwrite(&nv, 4, 1, f);
 			fwrite(&nt, 4, 1, f);
 			fwrite(cell.collision.verts.data(), 4, nv * 3, f);
-			fwrite(cell.collision.tris.data(), 4, nt * 3, f);
+			for (uint32_t i = 0; i < nt * 3; i++)
+			{
+				uint32_t v = cell.collision.tris[i];
+				fwrite(&v, 4, 1, f);
+			}
 			fclose(f);
 		}
 	}
