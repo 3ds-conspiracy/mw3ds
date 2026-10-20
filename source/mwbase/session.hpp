@@ -497,6 +497,20 @@ struct Session : ScriptHost
 	bool merchantTrades(int ref, const Object* o);
 	int barterPrice(int ref, int value, bool buying);
 	void update(const PlayerInput& in, float dt);
+	// update's parts, in the order it runs them (each in the file OpenMW keeps that job in)
+	void updateWindows();
+	void updateCorprus();
+	void openPendingMenu();
+	void playerControls(PlayerInput& in, bool menu);
+	void playerMove(const PlayerInput& in, float dt, u64& t);
+	void aimAndActivate(const PlayerInput& in, bool menu);
+	void updateMouths(float dt);
+	void updateFootsteps(const PlayerInput& in, bool menu, float dt);
+	void updateRegionSounds(float dt);
+	void burnHeldLight(float dt);
+	void updateLights();
+	void ageVfx(float dt);
+	void updateFadeAndNotes(float dt);
 	void drawTop();
 	// Tooltip: what a menu has selected, in full on the top screen (as Morrowind's hover box);
 	// the screens fill it each frame, drawTop shows and clears it

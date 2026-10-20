@@ -15,6 +15,7 @@
 #include "mwbase/session.hpp"
 #include <cstdlib>
 #include <malloc.h>
+#include "mwsound/soundmanagerimp.hpp"
 
 namespace
 {
@@ -561,4 +562,24 @@ void Session::updateDress(float dt)
 			if (!npcDress(w, *l, a, d, left))
 				logf("npcdress: %s kept as it was (a piece wouldn't load)", d.id.c_str());
 		}
+}
+
+// Mouths follow the loudness of what each actor is saying (a flap if there's no audio)
+void Session::updateMouths(float dt)
+{
+	for (LoadedCell* l : w.loaded)
+	for (auto& a : l->actors.actors)
+	{
+		if (a.ref < 0)
+			continue;                        // detached (World::detachActor): not drawn, nobody's mouth
+		Ref& r = w.refs[a.ref];
+		float level = 0.0f;
+		if (r.voiceChannel >= 0 && !audioPlaying(r.voiceChannel))
+			r.voiceChannel = -1;             // (a finished line's channel goes to other sounds: stopping it later would cut them)
+		if (r.voiceChannel >= 0)
+			level = audioLoudness(r.voiceChannel);
+		else if (!sayDone(a.ref))
+			level = 0.2f + 0.15f * sinf(w.time * 14.0f);
+		a.talkLevel += (level - a.talkLevel) * fminf(1.0f, dt * 20.0f);
+	}
 }

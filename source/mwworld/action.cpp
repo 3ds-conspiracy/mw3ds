@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
-#include "mwbase/session.hpp"
 
 #include <cmath>
 #include <cstdlib>
@@ -13,6 +12,7 @@
 
 #include "components/debug/debuglog.hpp"
 #include <malloc.h>
+#include "mwbase/sessionhelpers.hpp"
 
 void Session::playerActivate(int ref)
 {
@@ -177,4 +177,24 @@ std::string Session::targetLabel(int ref)
 	if (r.count > 1)
 		name += " (" + std::to_string(r.count) + ")";
 	return name;
+}
+
+void Session::aimAndActivate(const PlayerInput& in, bool menu)
+{
+	float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+	float cp = cosf(w.player.pitch);
+	float dir[3] = { sinf(w.player.yaw) * cp, cosf(w.player.yaw) * cp, sinf(w.player.pitch) };
+	memcpy(listener, eye, sizeof(eye));
+	listener[3] = w.player.yaw;
+
+	// Telekinesis reaches farther (magnitude in feet, 22 units each)
+	target = menu ? -1 : worldPick(w, eye, dir, kReach + w.effectTotal(59) * 22.0f);
+	// (GoldenEye: on a tap of A, let go before it aimed; the press itself is kept from the screens either way)
+	bool goldenEye = g_controlLayout == CONTROLS_GOLDENEYE;
+	if (!menu && ((uiIn().down & KEY_A) || (goldenEye && in.activate)))
+	{
+		uiConsume(KEY_A);
+		if ((goldenEye ? in.activate : true) && target >= 0 && w.controlsEnabled)
+			playerActivate(target);
+	}
 }

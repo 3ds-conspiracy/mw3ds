@@ -372,3 +372,19 @@ void Session::drawHud()
 		openScreen(SCR_SAVES);
 	}
 }
+
+// fades back to clear after travel; scripts can hold it (FadeOut) or bring it back slowly (FadeIn)
+void Session::updateFadeAndNotes(float dt)
+{
+	if (fade > fadeTarget)
+		fade = fmaxf(fadeTarget, fade - dt * fadeRate);
+	else if (fade < fadeTarget)
+		fade = fminf(fadeTarget, fade + dt * fadeRate);
+	if (fade == fadeTarget && fadeTarget == 0.0f)
+		fadeRate = 2.5f;
+	for (size_t i = 0; i < notes.size();)
+		if (w.time > notes[i].until)
+			notes.erase(notes.begin() + i);
+		else
+			i++;
+}

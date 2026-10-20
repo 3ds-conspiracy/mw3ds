@@ -781,3 +781,30 @@ bool Session::sayDone(int ref)
 	auto it = sayUntil.find(ref);
 	return it == sayUntil.end() || w.time >= it->second;
 }
+
+// The region's ambient sounds outdoors in fair weather (Morrowind.ini: 1 to 5 s between; each by its chance)
+void Session::updateRegionSounds(float dt)
+{
+	if (w.current >= 0 && !w.cells[w.current].interior && w.weatherNow <= 3 && (ambientTimer -= dt) <= 0.0f)
+	{
+		ambientTimer = 1.0f + (rand() % 400) / 100.0f;
+		auto rg = w.game.regions.find(w.cells[w.current].region);
+		if (rg != w.game.regions.end() && !rg->second.ambient.empty())
+		{
+			int total = 0;
+			for (auto& a : rg->second.ambient)
+				total += a.second;
+			int roll = rand() % 100;
+			if (roll < total)
+				for (auto& a : rg->second.ambient)
+				{
+					if (roll < a.second)
+					{
+						playSound(-1, a.first);
+						break;
+					}
+					roll -= a.second;
+				}
+		}
+	}
+}

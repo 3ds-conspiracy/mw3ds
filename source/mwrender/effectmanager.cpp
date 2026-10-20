@@ -7,6 +7,12 @@
 #include <unordered_set>
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
+#include <array>
+#include <functional>
+#include <sys/stat.h>
+#include <tex3ds.h>
+#include <citro2d.h>
+#include <malloc.h>
 
 // Spell visuals' pieces (meshes, flipbook sheets, baked frames) stay loaded once seen, for the next cast; only with
 // linear memory running short are those no visual is playing let go (the next cast loads its own again: the log's
@@ -792,4 +798,31 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 			armsEyeSet = true;
 		}
 	}
+}
+
+// spell visuals age and go
+// A hit visual is attached to its target's own node (OpenMW: Animation::addEffect), so it goes where the target goes
+void Session::ageVfx(float dt)
+{
+	for (size_t i = 0; i < vfx.size();)
+		if ((vfx[i].age += dt) >= vfx[i].life && !vfx[i].world)
+			vfx.erase(vfx.begin() + i);
+		else
+		{
+			if (vfx[i].follow == -1)
+			{
+				memcpy(vfx[i].pos, w.player.feet, sizeof(vfx[i].pos));
+				vfx[i].yaw = w.player.yaw;
+			}
+			else if (vfx[i].follow >= 0 && vfx[i].follow < (int)w.refs.size())
+			{
+				memcpy(vfx[i].pos, w.refs[vfx[i].follow].pos, sizeof(vfx[i].pos));
+				vfx[i].yaw = w.refs[vfx[i].follow].rot[2];
+			}
+			if (!vfx[i].bone.empty())
+				vfxBonePos(vfx[i].follow, vfx[i].bone, vfx[i].pos);   // (else it stays where it was last)
+			if (vfx[i].until >= 0.0f && vfx[i].age > vfx[i].until)
+				vfx[i].age = vfx[i].until;
+			i++;
+		}
 }

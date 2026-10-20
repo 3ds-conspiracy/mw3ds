@@ -452,3 +452,27 @@ void Session::greetings(float dt)
 			say(i, info->sound, dialogueSubstitute(w, info->text, i));
 	}
 }
+
+// A held light burns down (OpenMW's updateEquippedLight): its time left (the stack's charge; -1 a fresh one) less the
+// frame's; one that burns out is gone, and the next of the stack is lit
+void Session::burnHeldLight(float dt)
+{
+	for (size_t i = 0; i < w.inventory.size(); i++)
+	{
+		InventoryItem& it = w.inventory[i];
+		const Object* o = it.equipped ? w.game.object(it.id) : nullptr;
+		if (!o || o->type != "LIGH" || o->lightTime <= 0.0f)
+			continue;
+		float left = (it.charge < 0.0f ? o->lightTime : it.charge) - dt;
+		if (left > 0.0f)
+		{
+			it.charge = left;
+			break;
+		}
+		logf("light: %s burned out", it.id.c_str());
+		it.charge = -1.0f;
+		if (--it.count <= 0)
+			w.inventory.erase(w.inventory.begin() + i);
+		break;
+	}
+}

@@ -11,6 +11,11 @@ extern "C" u32 __ctru_heap_size;
 #include <malloc.h>
 #include <unordered_set>
 #include "mwbase/session.hpp"
+#include <array>
+#include <functional>
+#include <sys/stat.h>
+#include <tex3ds.h>
+#include <citro2d.h>
 
 bool World::pcHasDisease(int type) const
 {
@@ -98,4 +103,26 @@ std::vector<std::string> Session::knownSpells()
 	for (auto& s : w.stats.spells)
 		add(s);
 	return out;
+}
+
+// Corprus: note when it was caught; a day later it is worse (the numbers follow)
+void Session::updateCorprus()
+{
+	bool corprus = w.pcHasCorprus();
+	if (corprus && w.corprusSince < 0.0f)
+		w.corprusSince = w.gameHour;
+	else if (!corprus && w.corprusSince > -1.5f)
+		w.corprusSince = -1.0f;                // (-2: cured, kept)
+	if (corprus && w.corprusLevel() != corprusShown)
+	{
+		if (corprusShown > 0)
+			notify("Your Corprus disease grows worse.");
+		corprusShown = w.corprusLevel();
+		PlayerStats& s = w.stats;
+		float hp = s.health, mp = s.magicka, fp = s.fatigue;
+		w.recomputeStats();
+		s.health = fminf(s.healthMax, hp);
+		s.magicka = fminf(s.magickaMax, mp);
+		s.fatigue = fminf(s.fatigueMax, fp);
+	}
 }

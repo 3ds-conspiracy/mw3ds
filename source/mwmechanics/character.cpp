@@ -7,6 +7,12 @@
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
+#include <array>
+#include <functional>
+#include <sys/stat.h>
+#include <tex3ds.h>
+#include <citro2d.h>
+#include <malloc.h>
 
 static const char* attackGroup(const Object* w)
 {
@@ -352,4 +358,30 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		}
 		body.update(w, dt, speed, w.player.swimming, w.player.sneaking, weaponDrawn, act);
 	}
+}
+
+// Footsteps while walking; OpenMW's Npc::getSoundIdFromSndGen picks the sound: none flying, "Swim" while
+// swimming, "FootWater" with the feet under the surface, else the ground's
+void Session::updateFootsteps(const PlayerInput& in, bool menu, float dt)
+{
+	float moving = fabsf(in.moveX) + fabsf(in.moveY);
+	bool wading = false;
+	if (w.current >= 0)
+	{
+		Cell& stepCell = w.here();
+		wading = stepCell.hasWater() && w.player.feet[2] < stepCell.waterZ;
+	}
+	if (!menu && !w.player.flying && (w.player.swimming || w.player.onGround) && moving > 0.2f)
+	{
+		stepTimer -= dt;
+		if (stepTimer <= 0.0f)
+		{
+			const char* side = stepLeft ? "Left" : "Right";
+			playSound(-1, std::string(w.player.swimming ? "Swim " : wading ? "FootWater" : "FootBare") + side);
+			stepLeft = !stepLeft;
+			stepTimer = w.player.swimming ? 0.65f : 0.42f;
+		}
+	}
+	else
+		stepTimer = 0.1f;
 }

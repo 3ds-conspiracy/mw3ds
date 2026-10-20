@@ -208,3 +208,51 @@ void Session::closeScreen()
 	bookPagesOf.clear();
 	bookSpread = 0;
 }
+
+void Session::updateWindows()
+{
+	revealLocalMap();
+	// A named place outdoors, once visited, is on the map
+	if (w.current >= 0 && w.current != mapCell)
+	{
+		mapCell = w.current;
+		if (!w.cells[mapCell].interior)
+		{
+			w.mapKnown.insert(lower(w.cells[mapCell].name));
+			w.mapCells.insert(World::mapCellKey(w.cells[mapCell].gx, w.cells[mapCell].gy));
+		}
+	}
+	// The journal opens on its newest page
+	if (screen != SCR_JOURNAL)
+	{
+		journalPage = 0;
+		journalPicking = false;
+	}
+	// The map screen starts centred on the player and gives its detail tiles back when it closes
+	if (screen != SCR_MAP)
+	{
+		mapViewSet = false;
+		freeMapTiles();
+		mapDoorTip = -1;
+		mapLocal = (w.current >= 0 && w.cells[w.current].interior) || mapLocalOutdoors;
+	}
+}
+
+void Session::openPendingMenu()
+{
+	if (!menuOpen() && !wantName && !pendingMenus.empty())
+	{
+		ScriptMenu m = pendingMenus.front();
+		pendingMenus.erase(pendingMenus.begin());
+		switch (m)
+		{
+		case SMENU_NAME: wantName = true; break;
+		case SMENU_RACE: openScreen(SCR_RACE); break;
+		case SMENU_CLASS: openScreen(SCR_CLASS_METHOD); break;
+		case SMENU_BIRTH: openScreen(SCR_BIRTH); break;
+		case SMENU_REVIEW: openScreen(SCR_REVIEW); break;
+		case SMENU_REST: openRest(false); break;
+		case SMENU_REST_BED: openRest(true); break;
+		}
+	}
+}
