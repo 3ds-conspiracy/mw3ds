@@ -618,6 +618,32 @@ void World::update(float dt)
 	if (g_profile.actorViewLimit > 0.0f)
 		reach = fminf(reach, g_profile.actorViewLimit + 200.0f);
 	frame++;
+	// An Old 3DS poses people by time (ConsoleProfile::poseHz), not every so many frames: near, middle and far rates,
+	// the near one only for the few most in view (ahead of the eye, the nearer and the more central the higher); the
+	// rest near take the middle's rate, and those out of view the far one
+	bool byTime = g_profile.poseHz[0] > 0.0f;
+	if (byTime)
+	{
+		static std::vector<std::pair<float, Actor*>> inView;
+		inView.clear();
+		float fwd[2] = { sinf(player.yaw), cosf(player.yaw) };
+		for (LoadedCell* l : loaded)
+			for (Actor& a : l->actors.actors)
+			{
+				float dx = a.place[3] - player.feet[0], dy = a.place[7] - player.feet[1];
+				float d2 = dx * dx + dy * dy, d = sqrtf(d2);
+				float ahead = d > 1.0f ? (dx * fwd[0] + dy * fwd[1]) / d : 1.0f;    // cosine off the eye's line
+				bool seen = ahead > 0.6f || (d < 150.0f && ahead > 0.0f);    // (or right beside the eye)
+				a.poseHz = !seen || d2 >= 3000.0f * 3000.0f ? g_profile.poseHz[2] : g_profile.poseHz[1];
+				if (seen && d2 < 1600.0f * 1600.0f)
+					inView.push_back({ ahead / fmaxf(d, 100.0f), &a });
+			}
+		size_t full = std::min(inView.size(), (size_t)g_profile.poseFull);
+		std::partial_sort(inView.begin(), inView.begin() + full, inView.end(),
+			[](const std::pair<float, Actor*>& x, const std::pair<float, Actor*>& y) { return x.first > y.first; });
+		for (size_t i = 0; i < full; i++)
+			inView[i].second->poseHz = g_profile.poseHz[0];
+	}
 	for (LoadedCell* l : loaded)
 	{
 		for (size_t k = 0; k < l->actors.actors.size(); k++)
@@ -631,6 +657,23 @@ void World::update(float dt)
 			if (!refs[a.ref].dead && !refs[a.ref].effects.empty() && actorEffect(a.ref, 45) > 0.0f)
 				continue;
 			a.pendingDt += dt;
+			if (byTime)
+			{
+				// (the time left over carries on, so 20 a second at 30 fps is every frame and a half; the first due time
+				// is staggered, so a crowd doesn't all come due in the same frame)
+				float interval = 1.0f / a.poseHz;
+				if (a.poseDue < 0.0f)
+					a.poseDue = (k % 4) * 0.25f * interval;
+				a.poseDue += dt;
+				if (a.poseDue + 1e-4f >= interval)
+				{
+					a.poseDue = fminf(a.poseDue - interval, interval);
+					actorAnimate(l->actors, a, a.pendingDt);
+					a.pendingDt = 0.0f;
+					a.poses++;
+				}
+				continue;
+			}
 			// One with skins shows a pose only when the renderer re-skins it (its rigid parts ride that pose too), so it is
 			// posed on the re-skin's cadence, and the renderer re-skins each new pose (the skipped frames' time is owed)
 			u32 every = a.skinned ? actorSkinEvery(d2) : actorPoseEvery(d2);
@@ -638,6 +681,7 @@ void World::update(float dt)
 			{
 				actorAnimate(l->actors, a, a.pendingDt);
 				a.pendingDt = 0.0f;
+				a.poses++;
 			}
 		}
 		l->cell.blockers.clear();

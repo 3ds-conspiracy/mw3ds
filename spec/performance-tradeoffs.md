@@ -51,7 +51,11 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   (`convert_cell.py detail_distance`, `ConsoleProfile::detailScale`)
 - **People and creatures past 6000 (4000 on an Old 3DS) aren't drawn; small pieces of them stop sooner.**
   (`kActorViewDistance`, `actorViewLimit`, `kActorDetailDistance`)
-- **People are re-posed on a cadence**, often up close, less often the smaller they are on screen. (`World::update`)
+- **People are re-posed on a cadence**, often up close, less often the smaller they are on screen. A New 3DS every
+  2nd, 3rd and 4th frame near, middle and far (at up to 60 fps). An Old 3DS (and 2DS) by time: 20 poses a second
+  for the five people nearest and most in view, 10 for the rest near and the middle distance, 6.7 far and out of
+  view (counted in frames it was every 2nd, 4th and 6th, 10, 5 and 3 a second at 20 fps: choppy). OpenMW poses
+  everyone every frame. (`World::update`, `actorSkinEvery`, `ConsoleProfile::poseHz`, `perf-o3ds-smooth-poses`)
 
 ## Rain and storms
 

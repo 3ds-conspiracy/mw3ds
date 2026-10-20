@@ -20,6 +20,8 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.actorDetailScale = 1.0f;
 		p.detailScale = 1.0f;
 		p.skinEvery[0] = 2, p.skinEvery[1] = 3, p.skinEvery[2] = 4;
+		p.poseHz[0] = p.poseHz[1] = p.poseHz[2] = 0.0f;
+		p.poseFull = 0;
 		p.rgb565 = false;
 		p.cmdBufScale = 8;           // room for both eyes of a busy town
 		p.goldenEyeAtStart = false;
@@ -40,6 +42,11 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.actorDetailScale = 0.67f;
 		p.detailScale = 0.8f;        // (the size tiers' 2500 / 5000 / 10000 as 2000 / 4000 / 8000: trial-detail-distance)
 		p.skinEvery[0] = 2, p.skinEvery[1] = 4, p.skinEvery[2] = 6;
+		// People are posed by time, not frames: counted in frames, a crowd that dropped the cap to 20 fps was posed
+		// 10, 5 and 3 times a second and looked choppy. Near, up to 20 a second for the five most in view (the rest
+		// near take the middle's 10), far 6.7; all the posing of a busy Balmora was under a millisecond of the frame
+		p.poseHz[0] = 20.0f, p.poseHz[1] = 10.0f, p.poseHz[2] = 20.0f / 3.0f;
+		p.poseFull = 5;
 		p.rgb565 = false;            // (16-bit banded the sky and the fog; the GPU and its memory are the New 3DS's)
 		p.cmdBufScale = 2;           // 1.5 MB of linear memory back: a busy town peaked at 18% of 1 MB (a second eye draws only
 		                             // while it fits: Session::stereoTarget)

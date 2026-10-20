@@ -12,6 +12,7 @@
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwsound/soundmanagerimp.hpp"
+#include "platform/console.hpp"
 
 extern const char* g_playerBlock;
 #include <malloc.h>
@@ -179,6 +180,15 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 	{
 		std::string file;
 		v = w.game.voiceFile(lower(arg), &file) ? audioDuration(file) : -1.0f;
+		return true;
+	}
+	// posefull: people posed at the near rate now (an Old 3DS's, by time: the few most in view)
+	if (what == "posefull")
+	{
+		v = 0;
+		for (LoadedCell* l : w.loaded)
+			for (const Actor& a : l->actors.actors)
+				v += g_profile.poseHz[0] > 0.0f && a.poseHz == g_profile.poseHz[0] ? 1 : 0;
 		return true;
 	}
 	if (what == "soundcachekb")
@@ -379,6 +389,11 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		{
 			const Actor* a = w.actorOf(ri);
 			v = a ? (a->lampNow[0] + a->lampNow[1] + a->lampNow[2]) / (3.0f * 64.0f) : -1.0f;
+		}
+		else if (what == "refposes" || what == "refposehz")    // poses made so far; its pose rate now (an Old 3DS's, by time)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = !a ? -1.0f : what == "refposes" ? (float)a->poses : a->poseHz;
 		}
 		else if (what == "reftalk")         // how far its mouth is open (Actor::talkLevel: the voice's loudness, 0..1)
 		{

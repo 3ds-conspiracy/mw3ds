@@ -24,6 +24,8 @@ struct ConsoleProfile
 	float actorDetailScale;          // of the renderer's full-detail distance for people
 	float detailScale;               // of the clutter's own cutoff (CellBatch::maxDist: the converter's size tiers)
 	unsigned skinEvery[3];           // a skinned pose is redone every n frames: near, middle, far
+	float poseHz[3];                 // or, when set, at most this many poses a second: near, middle, far (World::update)
+	int poseFull;                    // and with that, only this many of the people near get the near rate (the most in view)
 	bool rgb565;                     // 16-bit colour for the 3D screen (half the bandwidth)
 	int cmdBufScale;                 // GPU command buffer, in libctru's default sizes
 	bool goldenEyeAtStart;           // the GoldenEye control layout (no C-stick or ZL / ZR without a Circle Pad Pro)

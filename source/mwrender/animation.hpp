@@ -126,6 +126,9 @@ struct Actor
 	AnimMode mode = ANIM_IDLE;
 	s8 loopsLeft = -1;                 // looping group: more times round (LoopGroup's count), -1 for ever
 	float pendingDt = 0.0f;            // animation time owed while it was skipped (far away)
+	float poseDue = -1.0f;             // ConsoleProfile::poseHz: time toward the next pose (-1: not started); its rate now
+	float poseHz = 0.0f;
+	u32 poses = 0;                     // poses made (tests)
 	float headYaw = 0.0f;             // head turned this far (radians, around the actor's up axis)
 	float headPitch = 0.0f;           // and tilted (radians, up positive), after the turn
 	float rate = 1.0f;                 // animation speed: walk / run cycles follow how fast the actor moves

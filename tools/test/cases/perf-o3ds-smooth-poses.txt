@@ -1,0 +1,32 @@
+# console: old
+# People's animation on an Old 3DS (and 2DS) looked choppy: posed every 2nd, 4th and 6th frame near, middle and far,
+# so a crowd that dropped the cap to 20 fps got 10, 5 and 3 poses a second. They are posed by time now
+# (ConsoleProfile::poseHz): 20 a second near for the five most in view, 10 for the rest near and the middle, 6.7 far
+# and out of view. Fargoth in view: 20 a second (40 in two seconds of 1/30 s frames); turned away from: less. A
+# Balmora street, and eight creatures put in front: never more than five at the near rate
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+90 0 0 0 0 WALKTO:fargoth
+0.3 0 0 0 0 FACE:fargoth
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:refposehz:fargoth:eq:20
+0.1 0 0 0 0 SNAP:refposes:fargoth
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refposes:fargoth:ge:@37+EXPECT:refposes:fargoth:le:@46
+1.2 0 0 1
+0.3 0 0 0 0 EXPECT:refposehz:fargoth:lt:20
+0.3 0 0 0 0 GOTO:Balmora
+5 0 0 0 0
+0.3 0 0 0 0 EXPECT:posefull:le:5
+0.3 0 0 0 0 GOTO:Seyda_Neen
+3 0 0 0 0
+0.2 0 0 0 0 PLACE:mudcrab:250
+0.2 0 0 0 0 PLACE:scrib:300
+0.2 0 0 0 0 PLACE:rat:350
+0.2 0 0 0 0 PLACE:kwama%forager:400
+0.2 0 0 0 0 PLACE:nix-hound:450
+0.2 0 0 0 0 PLACE:alit:500
+0.2 0 0 0 0 PLACE:guar:550
+0.2 0 0 0 0 PLACE:cliff%racer:600
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:posefull:eq:5
