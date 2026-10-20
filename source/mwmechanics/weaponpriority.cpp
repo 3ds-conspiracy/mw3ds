@@ -21,7 +21,7 @@ float Session::npcWeaponRating(int ri, float dist)
 	const Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
 	const Object* wpn = w.game.object(def.weapon);
-	if (!wpn || wpn->type != "WEAP" || wpn->subtype == WEAP_ARROW || wpn->subtype == WEAP_BOLT)
+	if (!wpn || wpn->recType != REC_WEAP || wpn->subtype == WEAP_ARROW || wpn->subtype == WEAP_BOLT)
 		return 0.0f;
 	if (isRanged(wpn) && r.ammo <= 0)
 		return 0.0f;
@@ -57,7 +57,7 @@ float Session::npcWeaponRatingOf(int ri, const Object* wpn, float dist)
 	if (isRanged(wpn) && wpn->subtype != WEAP_THROWN)
 	{
 		const Object* am = w.game.object(def.ammo);
-		float arrows = am && am->type == "WEAP" && (am->subtype == WEAP_ARROW || am->subtype == WEAP_BOLT) ? npcWeaponRatingOf(ri, am, dist) : 0.0f;
+		float arrows = am && am->recType == REC_WEAP && (am->subtype == WEAP_ARROW || am->subtype == WEAP_BOLT) ? npcWeaponRatingOf(ri, am, dist) : 0.0f;
 		if (arrows <= 0.0f)
 			return 0.0f;
 		rating += arrows;

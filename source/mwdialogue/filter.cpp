@@ -129,7 +129,7 @@ static float filterFunction(World& w, const Cond& c, const Ref& speaker, int ref
 		for (auto& it : w.inventory)
 			if (it.equipped)
 				if (const Object* o = w.game.object(it.id))
-					if (o->type == "CLOT" || (o->type == "ARMO" && o->subtype != 8))
+					if (o->recType == REC_CLOT || (o->recType == REC_ARMO && o->subtype != 8))
 						sum += o->value;
 		return sum;
 	}

@@ -71,16 +71,16 @@ void Session::useQuickKey(int k)
 		notify("You have no " + (o ? o->name.str() : id) + ".");
 		return;
 	}
-	if ((o->type == "ALCH" || o->type == "INGR") && !o->effects.empty())
+	if ((o->recType == REC_ALCH || o->recType == REC_INGR) && !o->effects.empty())
 		consume(id);
-	else if (o->type == "BOOK")
+	else if (o->recType == REC_BOOK)
 	{
 		openScreen(SCR_BOOK);
 		bookItem = id;
 		playSound(-1, o->scroll ? "scroll" : "Book Open");
 	}
-	else if (o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH"
-		|| o->type == "LOCK" || o->type == "PROB")
+	else if (o->recType == REC_WEAP || o->recType == REC_ARMO || o->recType == REC_CLOT || o->recType == REC_LIGH
+		|| o->recType == REC_LOCK || o->recType == REC_PROB)
 	{
 		if (!w.inventory[idx].equipped && !equipItem(idx))
 			return;

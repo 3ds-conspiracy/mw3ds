@@ -132,7 +132,7 @@ std::optional<bool> opsStats(Session& s, const std::vector<std::string>& a)
 		{
 			int tool = carried(w, a[1]);
 			const Object* o = tool >= 0 ? w.game.object(w.inventory[tool].id) : nullptr;
-			if (!o || o->type != "REPA")
+			if (!o || o->recType != REC_REPA)
 				return fail(a[1] + " isn't a carried repair tool");
 			s.openRepair(-1, tool);
 		}
@@ -311,7 +311,7 @@ std::optional<bool> opsStats(Session& s, const std::vector<std::string>& a)
 			return fail(a[1] + " not carried");
 		// the inventory's Read (mwgui/inventorywindow.cpp): the book screen, which teaches its skill the first time
 		const Object* o = w.game.object(w.inventory[i].id);
-		if (!o || o->type != "BOOK")
+		if (!o || o->recType != REC_BOOK)
 			return fail(a[1] + " isn't a book");
 		s.openScreen(SCR_BOOK);
 		s.bookItem = w.inventory[i].id;

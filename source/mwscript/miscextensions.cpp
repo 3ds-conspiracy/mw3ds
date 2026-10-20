@@ -34,7 +34,7 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 	case F_ACTIVATE:
 		if (r && r->script >= 0)
 			w.scripts[r->script].suppress = false;
-		if (r && ((r->script >= 0 && w.scripts[r->script].buffered) || r->type == "CONT" || r->actor >= 0))
+		if (r && ((r->script >= 0 && w.scripts[r->script].buffered) || r->recType == REC_CONT || r->actor >= 0))
 			c.host.activate(ref);
 		return 0.0f;
 	// Which weapon hit this object last (asked once: the flag clears)
@@ -143,7 +143,7 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 		if (n.kids.size() > 0)
 			level = std::max(1, (int)argNum(c, n, 0));
 		r->lockLevel = level ? level : 100;
-		if (r->type == "DOOR" && !r->hasDest)
+		if (r->recType == REC_DOOR && !r->hasDest)
 			r->doorAngle = r->doorTarget = 0.0f;
 		return 0.0f;
 	}

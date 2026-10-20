@@ -183,7 +183,7 @@ void Session::npcWander(int ri, float dt)
 bool Session::npcSayTopic(int ri, const char* voiceTopic)
 {
 	const Ref& r = w.refs[ri];
-	if (r.dead || r.type != "NPC_" || !sayDone(ri) || w.distanceToPlayer(ri) > 2000.0f)
+	if (r.dead || r.recType != REC_NPC_ || !sayDone(ri) || w.distanceToPlayer(ri) > 2000.0f)
 		return false;
 	const Topic* t = w.game.topic(voiceTopic);
 	if (!t)

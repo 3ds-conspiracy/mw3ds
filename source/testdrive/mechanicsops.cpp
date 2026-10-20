@@ -61,7 +61,7 @@ bool leadSpot(Session& s, int victim, float* out)
 			for (int i : w.loadedActors)
 			{
 				const Ref& o = w.refs[i];
-				if (i != victim && o.type == "NPC_" && !o.dead && !o.ally && w.active(i))
+				if (i != victim && o.recType == REC_NPC_ && !o.dead && !o.ally && w.active(i))
 					nearest = fminf(nearest, hypotf(o.pos[0] - cx, o.pos[1] - cy));
 			}
 			if (nearest > best + 1.0f)

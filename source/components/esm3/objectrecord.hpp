@@ -1,6 +1,7 @@
 #pragma once
 
 // Items, lights, doors, containers and statics: one record for all (OpenMW keeps each in its load*.hpp)
+#include "components/esm/defs.hpp"
 #include "components/misc/atom.hpp"
 #include "components/misc/cardtext.hpp"
 #include <3ds/types.h>
@@ -11,6 +12,7 @@ struct Object
 {
 	std::string id;
 	Atom type, name, script, icon, sound, openSound, closeSound;
+	RecName recType = REC_OTHER;           // type as a number (components/esm/defs.hpp)
 	CardText text;                                     // a book's (read from the card when opened)
 	int iconIx = -1;                                   // item icon (ui/icons_*.t3x), -1 = none
 	float weight = 0.0f;

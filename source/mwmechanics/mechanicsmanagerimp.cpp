@@ -93,7 +93,7 @@ void Session::crimeSeen(int kind, int value, int victim)
 	for (int i : w.loadedActors)
 	{
 		Ref& r = w.refs[i];
-		if (r.type != "NPC_" || r.dead || r.ally || r.actor < 0 || !w.active(i) || w.time - r.lastSeen > 1.0f
+		if (r.recType != REC_NPC_ || r.dead || r.ally || r.actor < 0 || !w.active(i) || w.time - r.lastSeen > 1.0f
 			|| w.distanceToPlayer(i) > radius || r.ai == AI_COMBAT)
 			continue;
 		const ActorDef& def = w.game.actors[r.actor];
@@ -130,7 +130,7 @@ void Session::reportCrime(int victim, int amount)
 	for (int i : w.loadedActors)
 	{
 		const Ref& r = w.refs[i];
-		if (r.type != "NPC_" || r.dead || r.ally || r.actor < 0 || !w.active(i) || w.distanceToPlayer(i) > radius)
+		if (r.recType != REC_NPC_ || r.dead || r.ally || r.actor < 0 || !w.active(i) || w.distanceToPlayer(i) > radius)
 			continue;
 		if ((r.alarm >= 0 ? r.alarm : w.game.actors[r.actor].alarm) >= 100)
 		{
@@ -157,7 +157,7 @@ int Session::crimeWitness(int except)
 	for (int i : w.loadedActors)
 	{
 		const Ref& r = w.refs[i];
-		if (i != except && r.type == "NPC_" && !r.dead && !r.ally && w.active(i) && w.time - r.lastSeen < 1.0f
+		if (i != except && r.recType == REC_NPC_ && !r.dead && !r.ally && w.active(i) && w.time - r.lastSeen < 1.0f
 			&& w.distanceToPlayer(i) < 2000.0f)
 			return i;
 	}
@@ -168,7 +168,7 @@ void Session::takeOwned(int from, const std::string& item, int count)
 {
 	const Object* o = w.game.object(item);
 	if (from >= 0)
-		w.markStolen(item, count, w.refs[from].type == "NPC_" ? w.refs[from].idLower
+		w.markStolen(item, count, w.refs[from].recType == REC_NPC_ ? w.refs[from].idLower
 			: !w.refs[from].owner.empty() ? w.refs[from].owner : w.refs[from].ownerFaction);
 	else
 		w.markStolen(item, count, "");

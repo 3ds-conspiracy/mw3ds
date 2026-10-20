@@ -25,7 +25,7 @@ InventoryItem* Session::playerWeaponItem()
 	for (auto& it : w.inventory)
 		if (it.equipped)
 			if (const Object* o = w.game.object(it.id))
-				if (o->type == "WEAP" && o->subtype < WEAP_ARROW)
+				if (o->recType == REC_WEAP && o->subtype < WEAP_ARROW)
 					return &it;
 	return nullptr;
 }
@@ -47,7 +47,7 @@ const Object* Session::playerAmmo()
 	for (auto& it : w.inventory)
 		if (it.equipped && it.count > 0)
 			if (const Object* o = w.game.object(it.id))
-				if (o->type == "WEAP" && o->subtype == want)
+				if (o->recType == REC_WEAP && o->subtype == want)
 					return o;
 	return nullptr;
 }
@@ -81,9 +81,9 @@ void Session::wearItem(InventoryItem* it, float amount)
 	it->condition = cond - loss < 0 ? 0 : cond - loss;
 	if (it->condition == 0)
 	{
-		notify(o->name + (o->type == "WEAP" ? " is broken." : " is broken and gives no protection."));
+		notify(o->name + (o->recType == REC_WEAP ? " is broken." : " is broken and gives no protection."));
 		logf("combat: %s broke", o->id.c_str());
-		if (o->type == "WEAP")
+		if (o->recType == REC_WEAP)
 			it->equipped = false;
 	}
 }
@@ -107,7 +107,7 @@ float Session::playerArmor()
 	for (auto& it : w.inventory)
 		if (it.equipped)
 			if (const Object* o = w.game.object(it.id))
-				if (o->type == "ARMO" && o->subtype >= 0 && o->subtype < 11)
+				if (o->recType == REC_ARMO && o->subtype >= 0 && o->subtype < 11)
 				{
 					float wt = kArmorSlotBaseWeight[o->subtype];
 					int skill = o->weight <= wt * w.game.gmstf("flightmaxmod", 0.6f) + 0.0005f ? SKILL_LIGHT_ARMOR

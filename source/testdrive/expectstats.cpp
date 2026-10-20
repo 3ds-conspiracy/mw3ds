@@ -451,7 +451,7 @@ std::optional<bool> numberOfItems(Session& s, const std::string& what, const std
 			o = w.game.object(spaced(arg));
 		if (!o)
 			return false;
-		v = (o->type == "ARMO" || o->type == "CLOT") ? (float)o->flags : 0.0f;
+		v = (o->recType == REC_ARMO || o->recType == REC_CLOT) ? (float)o->flags : 0.0f;
 		return true;
 	}
 	if (what == "pickpocketchance")      // pickpocketchance:<npc>,<value term>: percent the victim does not notice (the player's Sneak and the rest)

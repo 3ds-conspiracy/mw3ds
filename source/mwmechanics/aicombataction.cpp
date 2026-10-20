@@ -21,7 +21,7 @@ bool Session::npcDrinkPotion(int ri, float dist)
 	{
 		const ContentItem& c = r.contents[i];
 		const Object* o = w.game.object(c.second);
-		if (c.first == 0 || !o || o->type != "ALCH")
+		if (c.first == 0 || !o || o->recType != REC_ALCH)
 			continue;
 		float rating = npcEffectsRating(ri, o->effects, false);      // (OpenMW's ratePotion: with no enemy)
 		if (rating > best)

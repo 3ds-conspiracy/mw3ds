@@ -36,7 +36,7 @@ static const float kHeldLightShare = 0.5f;           // a held torch's colour on
 bool waterCreatureCanFight(World& w, int ri)
 {
 	const Ref& r = w.refs[ri];
-	if (r.type != "CREA" || (w.game.actors[r.actor].afloat & 0x71) != 0x10)
+	if (r.recType != REC_CREA || (w.game.actors[r.actor].afloat & 0x71) != 0x10)
 		return true;
 	const Player& p = w.player;
 	if (w.underWater(p.feet[2] + 95.0f * 0.25f / 0.9f))
@@ -234,7 +234,7 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 	// A raised shield: automatic while the player faces the attacker (mid-swing too, as in OpenMW)
 	InventoryItem* shield = nullptr;
 	for (auto& it : w.inventory)
-		if (it.equipped && w.game.object(it.id) && w.game.object(it.id)->type == "ARMO"
+		if (it.equipped && w.game.object(it.id) && w.game.object(it.id)->recType == REC_ARMO
 			&& w.game.object(it.id)->subtype == ARMO_SHIELD && itemCondition(it) > 0)
 			shield = &it;
 	float toAttacker = atan2f(r.pos[0] - w.player.feet[0], r.pos[1] - w.player.feet[1]);
@@ -254,7 +254,7 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 		// fWeaponFatigueBlockMult
 		const Object* aw = w.game.object(def.weapon);
 		s.fatigue -= w.game.gmstf("ffatigueblockbase", 0.0f) + playerLoad * w.game.gmstf("ffatigueblockmult", 0.0f)
-			+ (aw && aw->type == "WEAP" ? aw->weight * 0.5f * w.game.gmstf("fweaponfatigueblockmult", 0.0f) : 0.0f);
+			+ (aw && aw->recType == REC_WEAP ? aw->weight * 0.5f * w.game.gmstf("fweaponfatigueblockmult", 0.0f) : 0.0f);
 		const Object* so = w.game.object(shield->id);
 		float wt = kArmorSlotBaseWeight[ARMO_SHIELD];
 		playSound(-1, so->weight <= wt * w.game.gmstf("flightmaxmod", 0.6f) + 0.0005f ? "Light Armor Hit"
@@ -276,7 +276,7 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 		for (auto& it : w.inventory)
 			if (it.equipped)
 				if (const Object* o = w.game.object(it.id))
-					if (o->type == "ARMO" && (o->subtype == slot || (slot == 6 && o->subtype == 9) || (slot == 7 && o->subtype == 10)))
+					if (o->recType == REC_ARMO && (o->subtype == slot || (slot == 6 && o->subtype == 9) || (slot == 7 && o->subtype == 10)))
 					{
 						armored = true;
 						float wt = kArmorSlotBaseWeight[o->subtype];
@@ -389,7 +389,7 @@ void Session::npcStrike(int ri)
 	Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
 	const Object* wpn = w.game.object(def.weapon);
-	if (wpn && (wpn->type != "WEAP" || isRanged(wpn)))
+	if (wpn && (wpn->recType != REC_WEAP || isRanged(wpn)))
 		wpn = nullptr;
 	float charge = frand();                    // the swing's strength (OpenMW's AI: uniform 0..1)
 	// The swing tires them: fFatigueAttackBase + fWeaponFatigueMult x weapon weight x swing (OpenMW's applyFatigueLoss)
@@ -771,7 +771,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				const Object* light = nullptr;
 				for (size_t k = 0; out && npc && !light && k < npc->items.size(); k++)
 					if (const Object* o = w.game.object(npc->items[k].second))
-						if (o->type == "LIGH" && o->lightRadius > 0 && (o->flags & 2))     // (LHDT 0x2: can be carried)
+						if (o->recType == REC_LIGH && o->lightRadius > 0 && (o->flags & 2))     // (LHDT 0x2: can be carried)
 							light = o;
 				for (int k = 0; k < 3; k++)
 					ta->heldLight[k] = light ? light->lightColor[k] / 255.0f * kHeldLightShare : 0.0f;
@@ -809,7 +809,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		// (x fInteriorHeadTrackMult indoors), only when the player is in front of them; the head turns at most 30 degrees
 		// and tilts at most 40 up or down to the player's eyes, easing there at 5 a second. (OpenMW also wants line of
 		// sight and that they noticed the player, and turns them to other people too: left out, for the 3DS's time)
-		if (r.type == "NPC_")
+		if (r.recType == REC_NPC_)
 			if (Actor* ac = w.actorOf(i))
 			{
 				float yaw = 0.0f, pitch = 0.0f;
@@ -867,7 +867,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				r.aggressor = true;
 				makeHostile(i);
 			}
-			else if (!menu && r.type == "NPC_" && (r.duelFoe = guardFoe(i)) >= 0)
+			else if (!menu && r.recType == REC_NPC_ && (r.duelFoe = guardFoe(i)) >= 0)
 				npcDuel(i, dt);
 			else if (npcTalkStand(i, dt))
 				;

@@ -286,7 +286,7 @@ void Session::drawHud()
 	for (auto& it : w.inventory)
 		if (it.equipped)
 			if (const Object* o = w.game.object(it.id))
-				if (o->type == "WEAP")
+				if (o->recType == REC_WEAP)
 					weapon = &it;
 	const Object* wo = weapon ? w.game.object(weapon->id) : nullptr;
 	float by = 75;

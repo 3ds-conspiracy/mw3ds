@@ -121,7 +121,7 @@ std::optional<bool> TestDriver::updateWaits(Session& s, PlayerInput& in, u32& do
 			return true;
 		}
 		// (or a container: the press from out there, still walking, went to the chest beside them: Adusamsi Assurnarairan)
-		if (s.kitV2() && s.screen == SCR_CONTAINER && talkTries < 5 && w.refs[ref].type == "NPC_" && !w.refs[ref].dead)
+		if (s.kitV2() && s.screen == SCR_CONTAINER && talkTries < 5 && w.refs[ref].recType == REC_NPC_ && !w.refs[ref].dead)
 		{
 			logf("drive: the press opened a container, not a talk with %s: closing it, again", id.c_str());
 			s.closeScreen();

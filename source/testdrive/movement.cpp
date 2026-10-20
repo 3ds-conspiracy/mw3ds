@@ -791,7 +791,7 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 			for (int i : w.loadedDoors)
 			{
 				const Ref& d = w.refs[i];
-				if (d.type != "DOOR" || d.hasDest || !d.visible())
+				if (d.recType != REC_DOOR || d.hasDest || !d.visible())
 					continue;
 				// (v2 kit: not one open already, or opening: a press shut it again, the East Empire Company's back room)
 				if (s.kitV2() && (d.doorTarget != 0.0f || d.doorAngle != 0.0f))

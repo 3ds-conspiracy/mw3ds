@@ -102,7 +102,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 	for (auto& it : w.inventory)
 		if (it.equipped)
 			if (const Object* o = w.game.object(it.id))
-				if (o->type == "ARMO" && o->subtype == 0)
+				if (o->recType == REC_ARMO && o->subtype == 0)
 					part[SLOT_HAIR].clear();
 	for (int layer = 0; layer < 4; layer++)
 		for (auto& it : w.inventory)
@@ -110,15 +110,15 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 			if (!it.equipped)
 				continue;
 			const Object* o = w.game.object(it.id);
-			if (!o || (o->type != "CLOT" && o->type != "ARMO"))
+			if (!o || (o->recType != REC_CLOT && o->recType != REC_ARMO))
 				continue;
-			int l = o->type == "ARMO" ? 1 : o->subtype == CLOT_SKIRT ? 2 : o->subtype == CLOT_ROBE ? 3 : 0;
+			int l = o->recType == REC_ARMO ? 1 : o->subtype == CLOT_SKIRT ? 2 : o->subtype == CLOT_ROBE ? 3 : 0;
 			if (l != layer)
 				continue;                 // (a shield shows on the arm, weapon out or not: OpenMW's updateCarriedLeftVisible)
-			if (o->type == "CLOT" && o->subtype == CLOT_ROBE)
+			if (o->recType == REC_CLOT && o->subtype == CLOT_ROBE)
 				for (int s : kRobeHides)
 					part[s].clear();
-			if (o->type == "CLOT" && o->subtype == CLOT_SKIRT)
+			if (o->recType == REC_CLOT && o->subtype == CLOT_SKIRT)
 				for (int s : kSkirtHides)
 					part[s].clear();
 			auto fit = t.items.find(lower(it.id));
@@ -138,7 +138,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 		for (auto& it : w.inventory)
 			if (it.equipped)
 				if (const Object* o = w.game.object(it.id))
-					if (o->type == "WEAP" && o->subtype < WEAP_ARROW)
+					if (o->recType == REC_WEAP && o->subtype < WEAP_ARROW)
 					{
 						auto fit = w.game.firstPerson.items.find(lower(it.id));
 						if (fit != w.game.firstPerson.items.end() && fit->second.slots.count(SLOT_WEAPON))
@@ -421,21 +421,21 @@ bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::v
 	// What it still wears, as npc.py's parts(): a helmet takes the hair; clothing, armor, skirts, then robes over all
 	for (auto& id : items)
 		if (const Object* o = w.game.object(id))
-			if (o->type == "ARMO" && o->subtype == 0)
+			if (o->recType == REC_ARMO && o->subtype == 0)
 				part[SLOT_HAIR].clear();
 	for (int layer = 0; layer < 4; layer++)
 		for (auto& id : items)
 		{
 			const Object* o = w.game.object(id);
-			if (!o || (o->type != "CLOT" && o->type != "ARMO"))
+			if (!o || (o->recType != REC_CLOT && o->recType != REC_ARMO))
 				continue;
-			int lr = o->type == "ARMO" ? 1 : o->subtype == CLOT_SKIRT ? 2 : o->subtype == CLOT_ROBE ? 3 : 0;
+			int lr = o->recType == REC_ARMO ? 1 : o->subtype == CLOT_SKIRT ? 2 : o->subtype == CLOT_ROBE ? 3 : 0;
 			if (lr != layer)
 				continue;
-			if (o->type == "CLOT" && o->subtype == CLOT_ROBE)
+			if (o->recType == REC_CLOT && o->subtype == CLOT_ROBE)
 				for (int s : kRobeHides)
 					part[s].clear();
-			if (o->type == "CLOT" && o->subtype == CLOT_SKIRT)
+			if (o->recType == REC_CLOT && o->subtype == CLOT_SKIRT)
 				for (int s : kSkirtHides)
 					part[s].clear();
 			auto fit = t.items.find(id);

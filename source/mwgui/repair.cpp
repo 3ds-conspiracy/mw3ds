@@ -17,7 +17,7 @@ void Session::drawRepair()
 	int gold = w.itemCount("gold_001");
 	const InventoryItem* tool = repairTool >= 0 && repairTool < (int)w.inventory.size() ? &w.inventory[repairTool] : nullptr;
 	const Object* to = tool ? w.game.object(tool->id) : nullptr;
-	if (repairRef < 0 && (!to || to->type != "REPA"))
+	if (repairRef < 0 && (!to || to->recType != REC_REPA))
 	{
 		screen = SCR_INVENTORY;              // the tool is used up
 		return;
@@ -31,7 +31,7 @@ void Session::drawRepair()
 	{
 		const InventoryItem& it = w.inventory[i];
 		const Object* o = w.game.object(it.id);
-		if (!o || o->health <= 0 || (o->type != "WEAP" && o->type != "ARMO") || itemCondition(it) >= o->health)
+		if (!o || o->health <= 0 || (o->recType != REC_WEAP && o->recType != REC_ARMO) || itemCondition(it) >= o->health)
 			continue;
 		items.push_back(i);
 		std::string row = o->name + "   " + std::to_string(itemCondition(it)) + "/" + std::to_string(o->health);

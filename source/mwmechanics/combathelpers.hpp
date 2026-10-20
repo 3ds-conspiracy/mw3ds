@@ -56,7 +56,7 @@ static inline std::string stanceGroup(const ActorSet& set, const Actor& a, const
 
 static inline float meleeReach(World& w, const Object* wpn, bool creature)
 {
-	if (wpn && wpn->type == "WEAP" && !isRanged(wpn))
+	if (wpn && wpn->recType == REC_WEAP && !isRanged(wpn))
 		return kCombatDistance * wpn->reach;
 	return creature ? kCombatDistance : kCombatDistance * w.game.gmstf("fhandtohandreach", 1.0f);
 }

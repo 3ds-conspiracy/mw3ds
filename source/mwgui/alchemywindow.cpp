@@ -17,7 +17,7 @@ void Session::drawAlchemy()
 	std::vector<std::string> ids, rows;
 	for (auto& it : w.inventory)
 		if (const Object* o = w.game.object(it.id))
-			if (o->type == "INGR")
+			if (o->recType == REC_INGR)
 			{
 				int used = 0;
 				for (auto& s : alchemySlots)

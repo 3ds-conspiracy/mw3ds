@@ -24,7 +24,7 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 	{
 		int i = carried(w, arg);
 		const Object* o = i >= 0 ? w.game.object(w.inventory[i].id) : nullptr;
-		if (!o || o->type != "LIGH")
+		if (!o || o->recType != REC_LIGH)
 			return false;
 		v = w.inventory[i].charge < 0.0f ? o->lightTime : w.inventory[i].charge;
 		return true;
@@ -55,7 +55,7 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		int ri = -1;
 		std::string dest = lower(spaced(arg));
 		w.forLoadedRefs([&](int i) {
-			if (ri < 0 && w.refs[i].type == "DOOR" && w.refs[i].hasDest && lower(w.refs[i].destCell) == dest)
+			if (ri < 0 && w.refs[i].recType == REC_DOOR && w.refs[i].hasDest && lower(w.refs[i].destCell) == dest)
 				ri = i;
 		});
 		const bool byDest = ri >= 0;

@@ -13,7 +13,7 @@ void Session::containerTake(int i, bool checkOwner)
 	if (i < 0 || i >= (int)c.contents.size())
 		return;
 	// (what a living, knocked-down NPC carries is theirs: taking it is a theft, with them as the owner)
-	if (checkOwner && (w.ownedByOther(containerRef) || (c.type == "NPC_" && !c.dead)))
+	if (checkOwner && (w.ownedByOther(containerRef) || (c.recType == REC_NPC_ && !c.dead)))
 		takeOwned(containerRef, c.contents[i].second, stockCount(c.contents[i].first));
 	w.takeStack(c.contents[i], stockCount(c.contents[i].first));   // (its wear, soul and charge come with it)
 	playSound(-1, "Item Misc Up");
@@ -35,7 +35,7 @@ bool Session::containerPut(int i)
 			notify(w.game.gmst("sbarterdialog12", "You cannot sell or give away conjured items."));
 			return false;
 		}
-	if (c.type == "CONT" && c.obj)
+	if (c.recType == REC_CONT && c.obj)
 	{
 		if (c.obj->organic)
 		{
@@ -97,7 +97,7 @@ void Session::drawContainer()
 		}
 	}
 	std::string load;
-	if (c.type == "CONT" && c.obj && c.obj->capacity > 0.0f)
+	if (c.recType == REC_CONT && c.obj && c.obj->capacity > 0.0f)
 	{
 		float weight = 0.0f;
 		for (auto& e : c.contents)
@@ -171,7 +171,7 @@ void Session::drawContainer()
 	int noFocus = -1;
 	// A body can be disposed of (not one with a script: a quest may need it)
 	Ref& owner = w.refs[containerRef];
-	bool corpse = (owner.type == "NPC_" || owner.type == "CREA") && owner.dead;
+	bool corpse = (owner.recType == REC_NPC_ || owner.recType == REC_CREA) && owner.dead;
 	const std::string takeAll = w.game.gmst("stakeall", "Take All") + " (X)", dispose = w.game.gmst("sdisposeofcorpse", "Dispose of Corpse");
 	std::vector<std::string> labels;
 	if (!putting)
@@ -207,7 +207,7 @@ void Session::drawContainer()
 		return;
 	else if (closing)
 	{
-		if (c.type == "CONT" && (!c.obj || !c.obj->organic))   // plants have no lid to close, bodies and pockets none
+		if (c.recType == REC_CONT && (!c.obj || !c.obj->organic))   // plants have no lid to close, bodies and pockets none
 			playSound(-1, "chest close");
 		closeScreen();
 	}

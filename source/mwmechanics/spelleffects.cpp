@@ -163,7 +163,7 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 			for (auto& it : w.inventory)
 			{
 				const Object* io = it.equipped ? w.game.object(it.id) : nullptr;
-				if (io && io->type == o->type && (o->type == "WEAP" || io->subtype == o->subtype))
+				if (io && io->type == o->type && (o->recType == REC_WEAP || io->subtype == o->subtype))
 				{
 					it.equipped = false;
 					b.prev = it.id;
@@ -322,7 +322,7 @@ bool Session::instantEffect(int effect, float magnitude)
 				for (size_t k = 0; k < idx.size() && !found; k++)
 				{
 					const Ref& d = w.refs[idx[k]];
-					if (d.type != "DOOR" || !d.hasDest || d.destUnconverted)
+					if (d.recType != REC_DOOR || !d.hasDest || d.destUnconverted)
 						continue;
 					if (d.destHasGrid)
 					{

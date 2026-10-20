@@ -40,7 +40,7 @@ int World::spawnActor(const std::string& id, const float pos[3], float yaw, int 
 	r.cell = c;
 	r.id = game.actors[d.actor].id;
 	r.idLower = lower(r.id);
-	r.type = d.type;
+	r.type = d.type; r.recType = recTypeOf(r.type.c_str());
 	memcpy(r.pos, pos, sizeof(r.pos));
 	memcpy(r.home, pos, sizeof(r.home));
 	r.rot[0] = r.rot[1] = 0.0f;
@@ -158,7 +158,7 @@ int World::dropItem(const InventoryItem& it, const float pos[3], float yaw, int 
 	r.cell = c;
 	r.id = it.id;
 	r.idLower = lower(it.id);
-	r.type = o->type;
+	r.type = o->type; r.recType = recTypeOf(r.type.c_str());
 	r.obj = o;
 	memcpy(r.pos, pos, sizeof(r.pos));
 	memcpy(r.home, pos, sizeof(r.home));
@@ -320,9 +320,9 @@ void World::placeAt(const std::string& id, int count, float dist, int dir, const
 		return;
 	const bool actor = game.spawns.count(lower(id)) != 0;
 	const Object* item = actor ? nullptr : game.object(lower(id));
-	if (!actor && (!item || (item->type != "MISC" && item->type != "WEAP" && item->type != "ARMO" && item->type != "CLOT"
-		&& item->type != "ALCH" && item->type != "INGR" && item->type != "BOOK" && item->type != "APPA"
-		&& item->type != "LOCK" && item->type != "PROB" && item->type != "REPA" && item->type != "LIGH")))
+	if (!actor && (!item || (item->recType != REC_MISC && item->recType != REC_WEAP && item->recType != REC_ARMO && item->recType != REC_CLOT
+		&& item->recType != REC_ALCH && item->recType != REC_INGR && item->recType != REC_BOOK && item->recType != REC_APPA
+		&& item->recType != REC_LOCK && item->recType != REC_PROB && item->recType != REC_REPA && item->recType != REC_LIGH)))
 	{
 		monitorOnce(("placeat:" + id).c_str(), "PlaceAtMe of %s: can't place that kind of record", id.c_str());
 		return;
@@ -637,7 +637,7 @@ void World::update(float dt)
 	{
 		Ref& ref = refs[i];
 		Cell& cell = cells[ref.cell].live->cell;
-		if (ref.type != "DOOR")
+		if (ref.recType != REC_DOOR)
 		{
 			// Moved / turned by scripts (gates, Dwemer doors, platforms): the box goes where it went, and
 			// blocks while it's turned less than ~17 degrees from where it started
@@ -860,7 +860,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		// A hatch in the ceiling (Sorkvild's, over the hall at Dagon Fel): its box reaches down round the player, so the eye is
 		// inside it. OpenMW picks by the mesh, which looks overhead: looking steeply up at a door whose origin is above the eye
 		// is that hatch, as near as the origin is
-		if (r.type == "DOOR" && r.pos[2] > eye[2] && dir[2] > 0.7f && eye[2] > r.boxMin[2] && eye[2] < r.boxMax[2]
+		if (r.recType == REC_DOOR && r.pos[2] > eye[2] && dir[2] > 0.7f && eye[2] > r.boxMin[2] && eye[2] < r.boxMax[2]
 			&& eye[0] >= r.boxMin[0] && eye[0] <= r.boxMax[0] && eye[1] >= r.boxMin[1] && eye[1] <= r.boxMax[1])
 		{
 			float t = r.pos[2] - eye[2];
@@ -873,7 +873,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		}
 		// A big statue (Molag Bal's at Bal Ur: a box 580 x 975 round its plinth and steps) is stood beside, with the eye
 		// inside its box. OpenMW picks by the mesh, which is only the statue: point at the middle part of the box then
-		if (r.type == "ACTI" && eyeInsideBox(r, eye) && r.boxMax[0] - r.boxMin[0] <= 1200.0f && r.boxMax[1] - r.boxMin[1] <= 1200.0f)
+		if (r.recType == REC_ACTI && eyeInsideBox(r, eye) && r.boxMax[0] - r.boxMin[0] <= 1200.0f && r.boxMax[1] - r.boxMin[1] <= 1200.0f)
 		{
 			float t = rayCoreEntry(r, eye, dir, bestT);
 			if (t >= 0.0f && t < bestT && t <= reach)
@@ -889,7 +889,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		const float* e = eye;
 		const float* d = dir;
 		float eyeDoor[3], dirDoor[3];
-		if (r.type == "DOOR" && r.doorAngle != 0.0f)
+		if (r.recType == REC_DOOR && r.doorAngle != 0.0f)
 		{
 			float rel[3] = { eye[0] - r.pos[0], eye[1] - r.pos[1], eye[2] - r.pos[2] };
 			doorSwing(r, r.doorAngle, rel, eyeDoor);
@@ -914,7 +914,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	// A person standing before such a statue, within its middle part (Derar Hlervu in front of Molag Bal's at Bal Ur): the
 	// statue's mesh is behind him, so the ray meets him first, as OpenMW's mesh pick does. Someone on the ray short of the
 	// statue's origin is what the crosshair means
-	if (best >= 0 && w.refs[best].type == "ACTI" && eyeInsideBox(w.refs[best], eye))
+	if (best >= 0 && w.refs[best].recType == REC_ACTI && eyeInsideBox(w.refs[best], eye))
 	{
 		const Ref& statue = w.refs[best];
 		float originT = (statue.pos[0] - eye[0]) * dir[0] + (statue.pos[1] - eye[1]) * dir[1] + (statue.pos[2] - eye[2]) * dir[2];
@@ -935,7 +935,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	// A body lying among a plant's leaves (Ralyn Othravel fallen in the Tower of Dawn's scathecraw bed): the plant's box
 	// is far bigger than its leaves and took the ray from every side. OpenMW's pick meets the meshes: a body the ray
 	// reaches inside the container's box is what the crosshair means
-	if (best >= 0 && w.refs[best].type == "CONT")
+	if (best >= 0 && w.refs[best].recType == REC_CONT)
 	{
 		const Ref& plant = w.refs[best];
 		float bodyT = reach;
@@ -992,7 +992,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	// shapes instead): an item the ray reaches is what the crosshair means unless the ray crosses the container's middle
 	// on the way to it. The middle: a column 0.7 of the box's narrower half-width round its centre (a round thing turned
 	// fills about 0.76 of it). Ajira's report lies between two baskets in the Balmora guild
-	if (best >= 0 && w.refs[best].type == "CONT")
+	if (best >= 0 && w.refs[best].recType == REC_CONT)
 	{
 		const Ref& box = w.refs[best];
 		int item = -1;
@@ -1038,7 +1038,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	// An activator is the same (the darts lying on the bed in the Llethri guard quarters): its box covers what lies on it,
 	// where OpenMW picks by the mesh's collision shape. An item whose box lies within the activator's and is on the ray
 	// is what the crosshair means
-	if (best >= 0 && w.refs[best].type == "ACTI")
+	if (best >= 0 && w.refs[best].recType == REC_ACTI)
 	{
 		const Ref& box = w.refs[best];
 		int item = -1;
@@ -1094,7 +1094,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 					vl *= fmaxf(low.boxMax[k] - low.boxMin[k], 1.0f);
 					vr *= fmaxf(r.boxMax[k] - r.boxMin[k], 1.0f);
 				}
-				within = vl >= 20.0f * vr && low.type == "MISC";
+				within = vl >= 20.0f * vr && low.recType == REC_MISC;
 			}
 			float t = within ? rayBoxEntry(r, eye, dir, upperT) : -1.0f;
 			if (t >= 0.0f && t < upperT)

@@ -141,7 +141,7 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		{
 			const Ref& t = w.refs[ri];
 			logf("drive: %s on %s at %.0f %.0f %.0f (%s%d)", a[0].c_str(), t.id.c_str(), t.pos[0], t.pos[1], t.pos[2],
-				(t.type == "DOOR" || t.type == "CONT") ? "lock " : "not a door or container, lock ", t.lockLevel);
+				(t.recType == REC_DOOR || t.recType == REC_CONT) ? "lock " : "not a door or container, lock ", t.lockLevel);
 		}
 		int was = s.target;
 		s.target = ri;

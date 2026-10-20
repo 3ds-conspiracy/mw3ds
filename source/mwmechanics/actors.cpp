@@ -71,7 +71,7 @@ void Session::killNpc(int ri, bool byPlayer)
 		for (int i : w.loadedActors)
 		{
 			const Ref& o = w.refs[i];
-			if (i != ri && o.type == "NPC_" && !o.dead && !o.ally && o.knockTimer <= 0.0f && w.active(i)
+			if (i != ri && o.recType == REC_NPC_ && !o.dead && !o.ally && o.knockTimer <= 0.0f && w.active(i)
 				&& w.distanceToPlayer(i) < alarmRadius)
 			{
 				witness = i;
@@ -206,7 +206,7 @@ void Session::npcDuel(int ri, float dt)
 	const ActorDef& def = w.game.actors[r.actor];
 	const ActorDef& fdef = w.game.actors[f.actor];
 	const Object* wpn = w.game.object(def.weapon);
-	if (wpn && (wpn->type != "WEAP" || isRanged(wpn)))
+	if (wpn && (wpn->recType != REC_WEAP || isRanged(wpn)))
 		wpn = nullptr;
 	Actor* a = w.actorOf(ri);
 	ActorSet* set = w.actorsOf(ri);
@@ -461,7 +461,7 @@ void Session::burnHeldLight(float dt)
 	{
 		InventoryItem& it = w.inventory[i];
 		const Object* o = it.equipped ? w.game.object(it.id) : nullptr;
-		if (!o || o->type != "LIGH" || o->lightTime <= 0.0f)
+		if (!o || o->recType != REC_LIGH || o->lightTime <= 0.0f)
 			continue;
 		float left = (it.charge < 0.0f ? o->lightTime : it.charge) - dt;
 		if (left > 0.0f)

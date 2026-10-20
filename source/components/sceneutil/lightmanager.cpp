@@ -23,7 +23,7 @@ void Session::updateLights()
 		for (auto& it : w.inventory)
 			if (it.equipped)
 				if (const Object* o = w.game.object(it.id))
-					if (o->type == "LIGH" && o->lightRadius > 0)
+					if (o->recType == REC_LIGH && o->lightRadius > 0)
 					{
 						radius = (float)o->lightRadius;
 						for (int k = 0; k < 3; k++)
@@ -62,7 +62,7 @@ void Session::updateLights()
 			const Object* npc = w.game.object(r.id);
 			for (size_t k = 0; npc && k < npc->items.size(); k++)
 				if (const Object* o = w.game.object(npc->items[k].second))
-					if (o->type == "LIGH" && o->lightRadius > 0 && (o->flags & 2))
+					if (o->recType == REC_LIGH && o->lightRadius > 0 && (o->flags & 2))
 					{
 						Lamp L = { { r.pos[0], r.pos[1], r.pos[2] + 100.0f }, (float)o->lightRadius,
 							{ o->lightColor[0] / 255.0f, o->lightColor[1] / 255.0f, o->lightColor[2] / 255.0f }, i };

@@ -15,9 +15,9 @@ int castTypesFor(const Object* o)
 {
 	if (!o)
 		return 0;
-	if (o->type == "BOOK")
+	if (o->recType == REC_BOOK)
 		return 1;
-	if (o->type == "WEAP")
+	if (o->recType == REC_WEAP)
 		return 2 | 4 | 8;
 	return 4 | 8;
 }

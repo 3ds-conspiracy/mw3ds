@@ -104,7 +104,7 @@ cJSON* World::refState(int i) const
 				cJSON_AddStringToObject(ai, "cell", r.aiCell.c_str());
 		}
 	}
-	if (r.type == "CONT" || r.type == "NPC_" || r.type == "CREA")
+	if (r.recType == REC_CONT || r.recType == REC_NPC_ || r.recType == REC_CREA)
 	{
 		cJSON* c = cJSON_AddArrayToObject(o, "contents");
 		for (auto& it : r.contents)

@@ -1,6 +1,7 @@
 #pragma once
 
 // A reference in a loaded cell (OpenMW's LiveCellRef, CellRef and RefData in one)
+#include "components/esm/defs.hpp"
 #include "mwworld/esmstore.hpp"
 #include "mwworld/containerstore.hpp"
 #include "mwmechanics/aipackage.hpp"
@@ -12,6 +13,7 @@ struct cJSON;
 struct Ref
 {
 	Atom id, idLower, type;
+	RecName recType = REC_OTHER;           // type as a number (components/esm/defs.hpp)
 	float pos[3], rot[3], scale = 1.0f;
 	int count = 1;
 	int lockLevel = 0;

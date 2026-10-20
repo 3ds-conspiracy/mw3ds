@@ -78,16 +78,16 @@ void Session::drawInventory()
 	const std::string useLabel = w.game.gmstLabel("suse", "Use");
 	if (o)
 	{
-		if (o->type == "BOOK")
+		if (o->recType == REC_BOOK)
 			labels.push_back("Read");
-		else if (!o->effects.empty() && (o->type == "ALCH" || o->type == "INGR"))
-			labels.push_back(o->type == "ALCH" ? "Drink" : "Eat");
-		else if (o->type == "APPA" || o->type == "REPA" || !w.inventory[sel].soul.empty())
+		else if (!o->effects.empty() && (o->recType == REC_ALCH || o->recType == REC_INGR))
+			labels.push_back(o->recType == REC_ALCH ? "Drink" : "Eat");
+		else if (o->recType == REC_APPA || o->recType == REC_REPA || !w.inventory[sel].soul.empty())
 			labels.push_back(useLabel);
 		if (!w.inventory[sel].soul.empty())
 			labels.push_back("Recharge");
-		else if (o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH"
-			|| o->type == "LOCK" || o->type == "PROB")
+		else if (o->recType == REC_WEAP || o->recType == REC_ARMO || o->recType == REC_CLOT || o->recType == REC_LIGH
+			|| o->recType == REC_LOCK || o->recType == REC_PROB)
 			labels.push_back(w.inventory[sel].equipped ? w.game.gmstLabel("sunequip", "Unequip") : w.game.gmstLabel("sequip", "Equip"));
 	}
 	if (o)
@@ -132,7 +132,7 @@ void Session::drawInventory()
 			screen = SCR_RECHARGE;
 			playSound(-1, "Menu Click");
 		}
-		else if (labels[b] == useLabel && o->type == "REPA")
+		else if (labels[b] == useLabel && o->recType == REC_REPA)
 		{
 			openRepair(-1, sel);
 			playSound(-1, "Menu Click");

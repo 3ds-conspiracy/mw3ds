@@ -162,7 +162,7 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	if (first && s.repair)
 		for (size_t i = 0; i < session->w.inventory.size(); i++)
 			if (const Object* o = session->w.game.object(session->w.inventory[i].id))
-				if (o->type == "REPA")
+				if (o->recType == REC_REPA)
 				{
 					session->openRepair(-1, i);
 					break;

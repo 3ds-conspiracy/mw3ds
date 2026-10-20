@@ -264,7 +264,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			if (lower(s.w.inventory[k].id) == want || lower(s.w.inventory[k].id) == want2)
 			{
 				const Object* o = s.w.game.object(s.w.inventory[k].id);
-				if (o && (o->type == "ALCH" || o->type == "INGR"))
+				if (o && (o->recType == REC_ALCH || o->recType == REC_INGR))
 				{
 					// the inventory's Drink / Eat
 					std::string item = s.w.inventory[k].id;
@@ -540,7 +540,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	}
 	Ref& r = pointGoal ? spot : w.refs[ref];
 	Player& p = w.player;
-	const bool trappedDoor = r.type == "DOOR" && !r.trap.empty() && !r.disarmed;
+	const bool trappedDoor = r.recType == REC_DOOR && !r.trap.empty() && !r.disarmed;
 	// they came to us: a ForceGreeting (Dagoth Gares) opened their dialogue on the way
 	if ((kind == ACTIVATE || kind == WALK) && s.dlg.open && s.dlg.ref == ref)
 	{
@@ -600,7 +600,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	// a door whose origin sits well outside its own mesh (an Ashlander yurt's: the model is placed 336 units from the
 	// reference, inside the tent): walk to where the door shows, its box's middle (other doors keep their origin: a cave
 	// door's box takes in the rock round it)
-	if (kind == ACTIVATE && !pointGoal && r.type == "DOOR" && r.boxMax[0] > r.boxMin[0])
+	if (kind == ACTIVATE && !pointGoal && r.recType == REC_DOOR && r.boxMax[0] > r.boxMin[0])
 	{
 		float ox = fmaxf(r.boxMin[0] - r.pos[0], fmaxf(0.0f, r.pos[0] - r.boxMax[0]));
 		float oy = fmaxf(r.boxMin[1] - r.pos[1], fmaxf(0.0f, r.pos[1] - r.boxMax[1]));
@@ -614,7 +614,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	float dist = sqrtf(dx * dx + dy * dy);
 	float want = kind == WALK ? (pointGoal ? 30.0f : 120.0f) : kind == KILL ? 90.0f : 100.0f;
 	// a big door (a Daedric ruin's oval one): its own mesh stops us at the face, a long way from the origin; at the box is there
-	if (kind == ACTIVATE && !pointGoal && r.type == "DOOR" && r.hasBox && dist > want && dist < 300.0f)
+	if (kind == ACTIVATE && !pointGoal && r.recType == REC_DOOR && r.hasBox && dist > want && dist < 300.0f)
 	{
 		float bx = fmaxf(r.boxMin[0] - p.feet[0], fmaxf(0.0f, p.feet[0] - r.boxMax[0]));
 		float by = fmaxf(r.boxMin[1] - p.feet[1], fmaxf(0.0f, p.feet[1] - r.boxMax[1]));
@@ -624,7 +624,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	// a big statue (Mehrunes Dagon's in Ald Sotha: a box 570 wide and 700 high, its origin 440 above the floor): its mesh stops
 	// us at its foot, far from the origin. Standing at the box, on a floor within its height, is at the statue
 	bool atStatue = false;
-	if (kind == ACTIVATE && !pointGoal && r.type == "ACTI" && r.hasBox && r.boxMax[0] - r.boxMin[0] > 400.0f && dist > want)
+	if (kind == ACTIVATE && !pointGoal && r.recType == REC_ACTI && r.hasBox && r.boxMax[0] - r.boxMin[0] > 400.0f && dist > want)
 	{
 		float bx = fmaxf(r.boxMin[0] - p.feet[0], fmaxf(0.0f, p.feet[0] - r.boxMax[0]));
 		float by = fmaxf(r.boxMin[1] - p.feet[1], fmaxf(0.0f, p.feet[1] - r.boxMax[1]));
@@ -652,7 +652,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		otherFloor = true;
 	// a hatch in the ceiling (Sorkvild's, over the hall): its origin is a floor up, its box is within the crosshair's reach
 	// of the eye from underneath it
-	if (otherFloor && kind == ACTIVATE && !pointGoal && r.type == "DOOR" && r.hasBox && dz > 0.0f && dist < 60.0f)
+	if (otherFloor && kind == ACTIVATE && !pointGoal && r.recType == REC_DOOR && r.hasBox && dz > 0.0f && dist < 60.0f)
 	{
 		float ez = p.feet[2] + PLAYER_EYE_HEIGHT - p.eyeDrop;
 		float gap = fmaxf(0.0f, r.boxMin[2] - ez);
@@ -662,7 +662,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	bool heldAbove = kind == ACTIVATE && descGaveUp && p.levitate > 0.0f && !p.onGround && dz < -60.0f;
 	// v2 kit: a talk (an ACTIVATE of someone) while hidden on the hide item: off, and the last second left to run out first
 	// ("Who's there?" and no services from one talked to unseen)
-	if (s.kitV2() && kind == ACTIVATE && (r.type == "NPC_" || r.type == "CREA"))
+	if (s.kitV2() && kind == ACTIVATE && (r.recType == REC_NPC_ || r.recType == REC_CREA))
 	{
 		if (hideUntil >= 0.0f)
 		{
@@ -686,7 +686,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		logf("drive: activated %s (crosshair, %.0f off)", id.c_str(), dist);
 		memcpy(pressAt, p.feet, sizeof(pressAt));
 		// (a door: watched as a trapped one is; still here after it, the press from there did nothing: walked on)
-		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.type == "NPC_" || r.type == "CREA") ? TALKWAIT : r.type == "DOOR" ? DOORWAIT : NONE;
+		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : r.recType == REC_DOOR ? DOORWAIT : NONE;
 		doorCell = w.current;
 		takeTimer = 0.0f;
 		return kind != NONE;
@@ -727,7 +727,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
 		memcpy(pressAt, p.feet, sizeof(pressAt));
-		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.type == "NPC_" || r.type == "CREA") ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
+		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
 		doorCell = w.current;
 		takeTimer = 0.0f;
 		return kind != NONE;
@@ -785,7 +785,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		// someone else in the line (the crosshair is on a living person who is not the target): no swing, step aside
 		// until the line is clear, as a player does not hit a bystander. One fighting us is no bystander: a player in a
 		// melee hits whoever of them is in front (Zainsipilu: Aranwen's guards between her and the player)
-		if (s.target >= 0 && s.target != ref && (w.refs[s.target].type == "NPC_" || w.refs[s.target].type == "CREA") && !w.refs[s.target].dead
+		if (s.target >= 0 && s.target != ref && (w.refs[s.target].recType == REC_NPC_ || w.refs[s.target].recType == REC_CREA) && !w.refs[s.target].dead
 			&& !(w.refs[s.target].ai == AI_COMBAT && w.refs[s.target].duelFoe < 0 && !w.refs[s.target].ally))
 		{
 			if (lineTimer <= 0.0f)
@@ -809,7 +809,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			for (int i : w.loadedActors)
 			{
 				const Ref& o = w.refs[i];
-				if (i != ref && o.type == "NPC_" && !o.dead && !o.ally && w.active(i) && w.distanceToPlayer(i) < radius)
+				if (i != ref && o.recType == REC_NPC_ && !o.dead && !o.ally && w.active(i) && w.distanceToPlayer(i) < radius)
 				{
 					near = i;
 					break;
@@ -962,7 +962,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
 		memcpy(pressAt, p.feet, sizeof(pressAt));
-		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.type == "NPC_" || r.type == "CREA") ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
+		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
 		doorCell = w.current;
 		takeTimer = 0.0f;
 		return kind != NONE;
@@ -970,7 +970,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	// v2 kit: hidden under something (a hammock hung over Caryarel's barrel): crouched (sneak lowers the eye), as a player
 	// would, and look again under it
 	// (not for a person: A pressed crouching is a pickpocket, the container screen, not a talk: Adusamsi Assurnarairan)
-	if (lookTimer > 1.6f && s.kitV2() && !crouchTried && !s.testSneak && r.type != "NPC_")
+	if (lookTimer > 1.6f && s.kitV2() && !crouchTried && !s.testSneak && r.recType != REC_NPC_)
 	{
 		crouchTried = true;
 		crouchSet = true;

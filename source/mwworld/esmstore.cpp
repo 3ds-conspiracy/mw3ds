@@ -430,7 +430,7 @@ bool gameLoad(GameData& g, const char* path)
 
 	forSection(root, "objects", [&](const cJSON* it) {
 		Object o;
-		o.id = str(it, "id"); o.type = str(it, "type"); o.name = str(it, "name"); o.script = str(it, "script");
+		o.id = str(it, "id"); o.type = str(it, "type"); o.recType = recTypeOf(o.type.c_str()); o.name = str(it, "name"); o.script = str(it, "script");
 		o.icon = str(it, "icon"); o.iconIx = num(it, "ic", -1); o.text = CardText::store(str(it, "text")); o.sound = str(it, "sound");
 		o.openSound = str(it, "open_sound"); o.closeSound = str(it, "close_sound");
 		o.weight = num(it, "weight"); o.value = num(it, "value"); o.armor = num(it, "armor");

@@ -123,7 +123,7 @@ void Session::drawDialogue()
 	bool travels = speaker.actor >= 0 && !w.game.actors[speaker.actor].travel.empty();
 	bool sells = speaker.actor >= 0 && !w.game.actors[speaker.actor].spells.empty();
 	bool trains = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x4000);
-	bool persuades = speaker.type == "NPC_";
+	bool persuades = speaker.recType == REC_NPC_;
 	bool makesSpells = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x8000);
 	bool enchants = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x10000);
 	bool repairs = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x20000);

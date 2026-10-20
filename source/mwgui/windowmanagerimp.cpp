@@ -84,8 +84,8 @@ bool inTab(const Object* o, int tab)
 {
 	if (tab == 0 || !o)
 		return true;
-	bool weapon = o->type == "WEAP", apparel = o->type == "ARMO" || o->type == "CLOT";
-	bool magic = o->magic || o->type == "ALCH" || o->scroll;
+	bool weapon = o->recType == REC_WEAP, apparel = o->recType == REC_ARMO || o->recType == REC_CLOT;
+	bool magic = o->magic || o->recType == REC_ALCH || o->scroll;
 	switch (tab)
 	{
 	case 1: return weapon;

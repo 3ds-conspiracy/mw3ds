@@ -16,6 +16,6 @@ static inline void bestApparatus(const World& w, float quality[4])
 		quality[k] = 0.0f;
 	for (auto& it : w.inventory)
 		if (const Object* o = w.game.object(it.id))
-			if (o->type == "APPA" && o->subtype >= 0 && o->subtype < 4)
+			if (o->recType == REC_APPA && o->subtype >= 0 && o->subtype < 4)
 				quality[o->subtype] = fmaxf(quality[o->subtype], o->quality);
 }

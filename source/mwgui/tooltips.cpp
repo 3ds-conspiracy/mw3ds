@@ -5,6 +5,7 @@
 
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
+#include "mwclass/classes.hpp"
 #include <algorithm>
 #include <array>
 #include <functional>
@@ -71,59 +72,9 @@ void Session::itemTip(const Object* o, const InventoryItem* it)
 	if (!o)
 		return;
 	tip.emplace_back(o->name, col::header);
+	// its type's lines: kind, damage or armor rating, condition, quality (mwclass/)
+	MWClass::toolTipStats(*this, *o, it);
 	char buf[96];
-	std::string typeLabel = w.game.gmst("stype", "Type");
-	if (typeLabel.empty() || typeLabel.back() != ':')
-		typeLabel += ":";
-	// Its kind, as OpenMW's tooltips name it: a weapon's skill, one or two handed for the melee ones ("Type: Long
-	// Blade, Two Handed"); armor's weight class (Light / Medium / Heavy Armor)
-	if (o->type == "WEAP" && o->subtype >= 0 && o->subtype <= WEAP_BOLT)
-	{
-		static const int kSkill[14] = { 22, 5, 5, 4, 4, 4, 7, 6, 6, 23, 23, 23, 23, 23 };
-		std::string kind = typeLabel + " " + skillName(w, kSkill[o->subtype]);
-		if (o->subtype < WEAP_BOW)
-			kind += ", " + (o->subtype == 0 || o->subtype == 1 || o->subtype == 3 || o->subtype == 7
-				? w.game.gmst("sonehanded", "One Handed") : w.game.gmst("stwohanded", "Two Handed"));
-		tip.emplace_back(kind, col::textDim);
-	}
-	else if (o->type == "ARMO" && o->subtype >= 0 && o->subtype < 11)
-	{
-		tip.emplace_back(typeLabel + " " + skillName(w, armorSkill(o)), col::textDim);    // Light / Medium / Heavy Armor
-	}
-	if (o->type == "WEAP")
-	{
-		bool ranged = o->subtype >= WEAP_BOW && o->subtype <= WEAP_BOLT;
-		if (ranged)
-			snprintf(buf, sizeof(buf), "Attack: %d - %d", o->chop[0], o->chop[1]), tip.emplace_back(buf, col::text);
-		else
-		{
-			snprintf(buf, sizeof(buf), "Chop: %d - %d", o->chop[0], o->chop[1]), tip.emplace_back(buf, col::text);
-			snprintf(buf, sizeof(buf), "Slash: %d - %d", o->slash[0], o->slash[1]), tip.emplace_back(buf, col::text);
-			snprintf(buf, sizeof(buf), "Thrust: %d - %d", o->thrust[0], o->thrust[1]), tip.emplace_back(buf, col::text);
-		}
-	}
-	else if (o->type == "ARMO")
-	{
-		snprintf(buf, sizeof(buf), "Armor Rating: %d", o->armor);
-		tip.emplace_back(buf, col::text);
-	}
-	if ((o->type == "WEAP" || o->type == "ARMO") && o->health > 0)
-	{
-		int cond = it && it->condition >= 0 ? it->condition : o->health;
-		snprintf(buf, sizeof(buf), "Condition: %d/%d", cond, o->health);
-		tip.emplace_back(buf, col::text);
-	}
-	if (o->type == "LOCK" || o->type == "PROB" || o->type == "REPA")
-	{
-		int uses = it && it->condition >= 0 ? it->condition : o->uses;
-		snprintf(buf, sizeof(buf), "Quality: %.2f   Uses: %d", o->quality, uses);
-		tip.emplace_back(buf, col::text);
-	}
-	if (o->type == "APPA")
-	{
-		snprintf(buf, sizeof(buf), "Quality: %.2f", o->quality);
-		tip.emplace_back(buf, col::text);
-	}
 	snprintf(buf, sizeof(buf), "Weight: %.1f   Value: %d", o->weight, o->value);
 	tip.emplace_back(buf, col::text);
 	if (it && !it->soul.empty())
@@ -134,19 +85,8 @@ void Session::itemTip(const Object* o, const InventoryItem* it)
 				soul = a.name;
 		tip.emplace_back(w.game.gmstLabel("ssoulgem", "Soul") + ": " + soul, col::text);
 	}
-	// potions: their effects; ingredients: as many as Alchemy reveals (fWortChanceValue each)
-	if (o->type == "ALCH")
-		for (auto& e : o->effects)
-			tip.emplace_back(effectLine(e, false), col::text);
-	if (o->type == "INGR")
-	{
-		int known = (int)(w.stats.skills[16] / w.game.gmstf("fwortchancevalue", 15.0f));
-		for (size_t k = 0; k < o->ingredient.size(); k++)
-			tip.emplace_back((int)k < known ? effectLabel(o->ingredient[k].effect, o->ingredient[k].skill, o->ingredient[k].attribute)
-				: std::string("?"), (int)k < known ? col::text : col::textDim);
-	}
-	if (o->type == "BOOK" && o->bookSkill >= 0)
-		tip.emplace_back(o->scroll ? "Scroll" : "Book", col::textDim);
+	// its type's: a potion's effects, an ingredient's known ones, a book or a scroll (mwclass/)
+	MWClass::toolTipContents(*this, *o);
 	// enchantment: how it's cast, its charge and effects
 	auto en = o->ench.empty() ? w.game.spells.end() : w.game.spells.find(o->ench);
 	if (en != w.game.spells.end())
@@ -180,8 +120,8 @@ std::vector<std::string> Session::targetPromptLines(int ref, float* scale)
 {
 	const Ref& t = w.refs[ref];
 	// (a creature alive: "Talk to" one with words of its own, else only its name, as OpenMW shows it)
-	bool talks = t.type == "CREA" && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));
-	std::string verb = t.dead ? "Search " : t.type == "NPC_" || talks ? "Talk to " : t.type == "CREA" ? "" : t.type == "DOOR" ? "Open " : "Use ";
+	bool talks = t.recType == REC_CREA && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));
+	std::string verb = t.dead ? "Search " : t.recType == REC_NPC_ || talks ? "Talk to " : t.recType == REC_CREA ? "" : t.recType == REC_DOOR ? "Open " : "Use ";
 	std::string use = "A: " + verb + targetLabel(ref);
 	// one line at the usual size; else two, a little smaller, and smaller still before anything is cut
 	float s = 0.45f;

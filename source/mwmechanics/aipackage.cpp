@@ -12,7 +12,7 @@
 // (a swimmer stays 50 under the surface, as a floating corpse), else a huge number
 float zMoverTop(World& w, const Ref& r, const Cell& cell)
 {
-	if (r.type != "CREA")
+	if (r.recType != REC_CREA)
 		return -1e9f;
 	u8 f = w.game.actors[r.actor].afloat;
 	if (f & 0x20)

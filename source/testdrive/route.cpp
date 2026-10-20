@@ -173,7 +173,7 @@ void walkTarget(const Ref& r, bool activate, float out[3])
 	out[0] = r.pos[0];
 	out[1] = r.pos[1];
 	out[2] = r.pos[2];
-	if (activate && r.type == "DOOR" && r.boxMax[0] > r.boxMin[0])
+	if (activate && r.recType == REC_DOOR && r.boxMax[0] > r.boxMin[0])
 	{
 		float ox = fmaxf(r.boxMin[0] - r.pos[0], fmaxf(0.0f, r.pos[0] - r.boxMax[0]));
 		float oy = fmaxf(r.boxMin[1] - r.pos[1], fmaxf(0.0f, r.pos[1] - r.boxMax[1]));
@@ -261,19 +261,19 @@ std::string handItem(Session& s, bool takeWeapon)
 	for (size_t k = 0; k < w.inventory.size(); k++)
 		if (w.inventory[k].equipped)
 			if (const Object* o = w.game.object(w.inventory[k].id))
-				if ((o->type == "WEAP" && o->subtype < WEAP_ARROW) || o->type == "LOCK" || o->type == "PROB")
+				if ((o->recType == REC_WEAP && o->subtype < WEAP_ARROW) || o->recType == REC_LOCK || o->recType == REC_PROB)
 					held = (int)k;
 	if (held < 0)
 		return "";
 	const Object* ho = w.game.object(w.inventory[held].id);
-	if (takeWeapon && ho && (ho->type == "LOCK" || ho->type == "PROB"))
+	if (takeWeapon && ho && (ho->recType == REC_LOCK || ho->recType == REC_PROB))
 	{
 		int best = -1;
 		float bestDmg = 0.0f;
 		for (size_t k = 0; k < w.inventory.size(); k++)
 		{
 			const Object* o = w.game.object(w.inventory[k].id);
-			if (!o || o->type != "WEAP" || o->subtype >= WEAP_BOW)
+			if (!o || o->recType != REC_WEAP || o->subtype >= WEAP_BOW)
 				continue;
 			float dmg = (float)std::max(o->chop[1], std::max(o->slash[1], o->thrust[1]));
 			if (dmg > bestDmg)

@@ -370,7 +370,7 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 			if (u32 glow = w.game.enchantGlow(r.id))
 				l->glowRefs.push_back({ i, glow });
 		// (lights, listed once too: Session lights people by those near where they stand now)
-		if (r.obj && r.obj->type == "LIGH" && r.obj->lightRadius > 0 && !(r.obj->flags & 0x20))     // (LHDT 0x20: off by default)
+		if (r.obj && r.obj->recType == REC_LIGH && r.obj->lightRadius > 0 && !(r.obj->flags & 0x20))     // (LHDT 0x20: off by default)
 			l->lightRefs.push_back(i);
 	}
 	lc.lastUsed = ++w.useTick;

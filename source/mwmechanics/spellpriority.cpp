@@ -137,7 +137,7 @@ float Session::npcEffectRating(int ri, const SpellEffect& e, bool withEnemy)
 		bool armor = false;
 		for (auto& it : w.inventory)
 			if (const Object* o = it.equipped ? w.game.object(it.id) : nullptr)
-				armor |= o->type == "ARMO";
+				armor |= o->recType == REC_ARMO;
 		if (!armor)
 			return 0.0f;
 		break;

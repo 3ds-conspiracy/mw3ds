@@ -13,8 +13,8 @@ void Session::consume(const std::string& itemId)
 		return;
 	for (auto& e : o->effects)
 		applyEffectToPlayer(e, o->name);
-	playSound(-1, o->type == "INGR" ? "Swallow" : "Drink");
+	playSound(-1, o->recType == REC_INGR ? "Swallow" : "Drink");
 	w.removeItem(itemId, 1);
-	if (o->type == "INGR")
+	if (o->recType == REC_INGR)
 		useSkill(16, 1);              // Alchemy: eating ingredients teaches their effects (SKDT use 1)
 }

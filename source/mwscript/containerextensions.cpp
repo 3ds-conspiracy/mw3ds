@@ -72,7 +72,7 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 		std::string id = goldId(argStr(c, n, 0));
 		if (onPlayer)
 			return (float)w.itemCount(id);
-		return r && (r->type == "CONT" || r->actor >= 0) ? (float)w.refItemCount(*r, id) : 0.0f;
+		return r && (r->recType == REC_CONT || r->actor >= 0) ? (float)w.refItemCount(*r, id) : 0.0f;
 	}
 	case F_ADDITEM:
 	case F_REMOVEITEM:
@@ -83,7 +83,7 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 			count = (u16)count;
 		const Object* o = w.game.object(id);
 		bool leveled = !o && w.game.leveled.count(id);
-		if ((!o && !leveled) || count == 0 || (!onPlayer && (!r || (r->type != "CONT" && r->actor < 0))))
+		if ((!o && !leveled) || count == 0 || (!onPlayer && (!r || (r->recType != REC_CONT && r->actor < 0))))
 			return 0.0f;
 		if (n.func == F_ADDITEM)
 		{
@@ -113,7 +113,7 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 		{
 			// an NPC wears what it carries of armor, clothes and weapons
 			const Object* o = r->actor >= 0 ? w.game.object(id) : nullptr;
-			return o && (o->type == "ARMO" || o->type == "CLOT" || o->type == "WEAP") && w.refItemCount(*r, id) > 0
+			return o && (o->recType == REC_ARMO || o->recType == REC_CLOT || o->recType == REC_WEAP) && w.refItemCount(*r, id) > 0
 				? 1.0f : 0.0f;
 		}
 		for (auto& it : w.inventory)

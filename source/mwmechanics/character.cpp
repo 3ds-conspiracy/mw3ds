@@ -262,7 +262,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	vm.group = vmGroup(wpn, toolItem != nullptr);
 	std::string shield;
 	for (auto& it : w.inventory)
-		if (it.equipped && w.game.object(it.id) && w.game.object(it.id)->type == "ARMO"
+		if (it.equipped && w.game.object(it.id) && w.game.object(it.id)->recType == REC_ARMO
 			&& w.game.object(it.id)->subtype == ARMO_SHIELD)
 			shield = it.id;
 	bool oneHanded = vm.group == "1h" || vm.group == "HH";

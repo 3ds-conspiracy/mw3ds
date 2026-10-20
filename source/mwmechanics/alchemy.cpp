@@ -116,7 +116,7 @@ bool Session::brewPotion()
 	}
 	float x = factor * q[0] * w.game.gmstf("fpotionstrengthmult", 0.5f);
 	Object potion;
-	potion.type = "ALCH";
+	potion.type = "ALCH"; potion.recType = recTypeOf(potion.type.c_str());
 	potion.weight = weight;
 	potion.value = (int)(x * w.game.gmstf("ialchemymod", 2.0f));
 	for (auto& e : shared)
@@ -166,7 +166,7 @@ bool Session::brewPotion()
 	potion.name = effectLabel(potion.effects[0].effect, potion.effects[0].skill, potion.effects[0].attribute) + " Potion";
 	// The look of a bought potion
 	for (auto& kv : w.game.objects)
-		if (kv.second.type == "ALCH" && kv.second.iconIx >= 0)
+		if (kv.second.recType == REC_ALCH && kv.second.iconIx >= 0)
 		{
 			potion.icon = kv.second.icon;
 			potion.iconIx = kv.second.iconIx;

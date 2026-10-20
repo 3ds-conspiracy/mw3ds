@@ -405,12 +405,12 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 			if (!it.equipped)
 				continue;
 			const Object* o = w.game.object(it.id);
-			if (!o || (o->type != "CLOT" && o->type != "ARMO"))
+			if (!o || (o->recType != REC_CLOT && o->recType != REC_ARMO))
 				continue;
-			int l = o->type == "ARMO" ? 1 : (o->subtype == CLOT_ROBE || o->subtype == CLOT_SKIRT) ? 2 : 0;
-			if (l != layer || (o->type == "ARMO" && o->subtype == 8))
+			int l = o->recType == REC_ARMO ? 1 : (o->subtype == CLOT_ROBE || o->subtype == CLOT_SKIRT) ? 2 : 0;
+			if (l != layer || (o->recType == REC_ARMO && o->subtype == 8))
 				continue;
-			if (o->type == "CLOT" && o->subtype == CLOT_ROBE)
+			if (o->recType == REC_CLOT && o->subtype == CLOT_ROBE)
 				for (int s : { 11, 12, 13, 14 })
 				{
 					part[s].clear();

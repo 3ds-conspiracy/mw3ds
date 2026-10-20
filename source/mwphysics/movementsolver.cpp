@@ -69,7 +69,7 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	}
 	float fz = -1e9f;
 	// people swim in deep water, the head out (creatures keep to their depth)
-	float swimZ = cell.hasWater() && r.type == "NPC_" ? cell.waterZ - kNpcSwimDepth : -1e9f;
+	float swimZ = cell.hasWater() && r.recType == REC_NPC_ ? cell.waterZ - kNpcSwimDepth : -1e9f;
 	// the floor under the feet, not under one point: the highest of the middle and four spots around it
 	// (as the player's), so a crack or a hatch's corner under the middle isn't a drop
 	bool found = false;
@@ -213,11 +213,11 @@ void Session::actorGravity(float dt)
 	for (int i : w.loadedActors)
 	{
 		Ref& r = w.refs[i];
-		if ((r.type != "NPC_" && r.type != "CREA") || !r.visible() || r.actor < 0)
+		if ((r.recType != REC_NPC_ && r.recType != REC_CREA) || !r.visible() || r.actor < 0)
 			continue;
 		// Creatures fall like anyone, but not the ones that fly, nor the ones that swim while they're in water
 		// (as in OpenMW, where every actor falls unless it flies or is held up by water)
-		bool creature = r.type == "CREA";
+		bool creature = r.recType == REC_CREA;
 		u8 afloat = w.game.actors[r.actor].afloat;
 		// A corpse in water floats up to where it would swim and stays there (OpenMW's CharacterController: the dead
 		// rise in water): a slaughterfish killed at the bottom comes up to the surface

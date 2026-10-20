@@ -8,7 +8,7 @@ static bool isTwoHanded(const Object* x)
 {
 	// long blade / blunt close / blunt wide / spear / axe two-handed, bow, crossbow
 	int t = x->subtype;
-	return x->type == "WEAP" && (t == 2 || t == 4 || t == 5 || t == 6 || t == 8 || t == 9 || t == 10);
+	return x->recType == REC_WEAP && (t == 2 || t == 4 || t == 5 || t == 6 || t == 8 || t == 9 || t == 10);
 }
 
 // OpenMW's canBeEquipped: a broken weapon or armor piece is refused, a beast race (Khajiit, Argonian: the race's flag)
@@ -24,21 +24,21 @@ int Session::canEquip(const InventoryItem& it, std::string* why)
 			*why = w.game.gmst(id, text);
 		return 0;
 	};
-	if ((o->type == "ARMO" || o->type == "WEAP") && o->health > 0 && itemCondition(it) <= 0)
+	if ((o->recType == REC_ARMO || o->recType == REC_WEAP) && o->health > 0 && itemCondition(it) <= 0)
 		return no("sinventorymessage1", "This object is broken and cannot be equipped until fixed.");
-	if (o->type == "ARMO" || o->type == "CLOT")
+	if (o->recType == REC_ARMO || o->recType == REC_CLOT)
 		for (auto& r : w.game.races)
 			if (r.beast && lower(r.id) == lower(w.stats.race))
 			{
 				if (o->flags & 1)
 					return no("snotifymessage13", "Beast races cannot wear full helmets.");
 				if (o->flags & 2)
-					return o->type == "ARMO" ? no("snotifymessage14", "Beast races cannot wear boots.")
+					return o->recType == REC_ARMO ? no("snotifymessage14", "Beast races cannot wear boots.")
 						: no("snotifymessage15", "Beast races cannot wear shoes.");
 			}
 	if (isTwoHanded(o))
 		return 2;
-	if (o->type == "ARMO" && o->subtype == ARMO_SHIELD)
+	if (o->recType == REC_ARMO && o->subtype == ARMO_SHIELD)
 		for (auto& p : w.inventory)
 			if (p.equipped)
 			{
@@ -67,19 +67,19 @@ bool Session::equipItem(int index, bool force)
 		return false;
 	}
 	auto hand = [](const Object* x) {
-		return (x->type == "WEAP" && x->subtype < WEAP_ARROW) || x->type == "LOCK" || x->type == "PROB";
+		return (x->recType == REC_WEAP && x->subtype < WEAP_ARROW) || x->recType == REC_LOCK || x->recType == REC_PROB;
 	};
-	auto shield = [](const Object* x) { return x->type == "ARMO" && x->subtype == ARMO_SHIELD; };
+	auto shield = [](const Object* x) { return x->recType == REC_ARMO && x->subtype == ARMO_SHIELD; };
 	// Which hand armor / gloves cover (-1 none, 0 left, 1 right)
 	auto handSide = [](const Object* x) {
-		if (x->type == "ARMO")
+		if (x->recType == REC_ARMO)
 			return x->subtype == 6 || x->subtype == 9 ? 0 : x->subtype == 7 || x->subtype == 10 ? 1 : -1;
-		if (x->type == "CLOT")
+		if (x->recType == REC_CLOT)
 			return x->subtype == 6 ? 0 : x->subtype == 5 ? 1 : -1;
 		return -1;
 	};
 	// Boots (armor 5) and shoes (clothing 1) are the one foot slot
-	auto foot = [](const Object* x) { return (x->type == "ARMO" && x->subtype == 5) || (x->type == "CLOT" && x->subtype == 1); };
+	auto foot = [](const Object* x) { return (x->recType == REC_ARMO && x->subtype == 5) || (x->recType == REC_CLOT && x->subtype == 1); };
 	int rings = 0, firstRing = -1;
 	for (size_t k = 0; k < w.inventory.size(); k++)
 	{
@@ -90,17 +90,17 @@ bool Session::equipItem(int index, bool force)
 		bool off = false;
 		if (hand(o) && hand(p))
 			off = true;
-		else if ((shield(o) && p->type == "LIGH") || (o->type == "LIGH" && shield(p)))
+		else if ((shield(o) && p->recType == REC_LIGH) || (o->recType == REC_LIGH && shield(p)))
 			off = true;
 		else if (foot(o) && foot(p))
 			off = true;
-		else if (o->type == "WEAP" && o->subtype >= WEAP_ARROW && p->type == "WEAP" && p->subtype >= WEAP_ARROW)
+		else if (o->recType == REC_WEAP && o->subtype >= WEAP_ARROW && p->recType == REC_WEAP && p->subtype >= WEAP_ARROW)
 			off = true;
 		else if (handSide(o) >= 0 && handSide(o) == handSide(p))
 			off = true;
-		else if (o->type == "ARMO" && p->type == "ARMO" && o->subtype == p->subtype)
+		else if (o->recType == REC_ARMO && p->recType == REC_ARMO && o->subtype == p->subtype)
 			off = true;
-		else if (o->type == "CLOT" && p->type == "CLOT" && o->subtype == p->subtype)
+		else if (o->recType == REC_CLOT && p->recType == REC_CLOT && o->subtype == p->subtype)
 		{
 			if (o->subtype == 8)           // rings: two may be worn
 			{
@@ -111,7 +111,7 @@ bool Session::equipItem(int index, bool force)
 			else
 				off = true;
 		}
-		else if (o->type == "LIGH" && p->type == "LIGH")
+		else if (o->recType == REC_LIGH && p->recType == REC_LIGH)
 			off = true;
 		if (off)
 			other.equipped = false;
@@ -145,16 +145,16 @@ void Session::equipPlayerItem(const std::string& id)
 	}
 	if (idx < 0)
 		return;
-	if ((o->type == "ALCH" || o->type == "INGR") && !o->effects.empty())
+	if ((o->recType == REC_ALCH || o->recType == REC_INGR) && !o->effects.empty())
 		consume(id);
-	else if (o->type == "BOOK")
+	else if (o->recType == REC_BOOK)
 	{
 		openScreen(SCR_BOOK);
 		bookItem = id;
 		playSound(-1, o->scroll ? "scroll" : "Book Open");
 	}
-	else if (o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH"
-		|| o->type == "LOCK" || o->type == "PROB")
+	else if (o->recType == REC_WEAP || o->recType == REC_ARMO || o->recType == REC_CLOT || o->recType == REC_LIGH
+		|| o->recType == REC_LOCK || o->recType == REC_PROB)
 	{
 		if (!w.inventory[idx].equipped)
 			equipItem(idx, true);

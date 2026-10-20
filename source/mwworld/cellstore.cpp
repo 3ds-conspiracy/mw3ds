@@ -132,7 +132,7 @@ bool parseRefs(const World& w, int cellIndex, ParsedRefs& out)
 		ref.cell = cellIndex;
 		ref.id = cJSON_GetObjectItem(r, "id")->valuestring;
 		ref.idLower = lower(ref.id);
-		ref.type = cJSON_GetObjectItem(r, "type")->valuestring;
+		ref.type = cJSON_GetObjectItem(r, "type")->valuestring; ref.recType = recTypeOf(ref.type.c_str());
 		readVec3(cJSON_GetObjectItem(r, "pos"), ref.pos);
 		readVec3(cJSON_GetObjectItem(r, "rot"), ref.rot);
 		memcpy(ref.home, ref.pos, sizeof(ref.home));
@@ -187,7 +187,7 @@ bool parseRefs(const World& w, int cellIndex, ParsedRefs& out)
 			ref.ranges.push_back({ cJSON_GetArrayItem(rg, 0)->valueint, (u32)cJSON_GetArrayItem(rg, 1)->valueint,
 				(u32)cJSON_GetArrayItem(rg, 2)->valueint });
 		ref.obj = w.game.object(ref.id);
-		if (ref.type == "CONT" || ref.type == "NPC_" || ref.type == "CREA")
+		if (ref.recType == REC_CONT || ref.recType == REC_NPC_ || ref.recType == REC_CREA)
 		{
 			unsigned seed = 2166136261u;
 			for (char ch : lc.file.view())
@@ -407,7 +407,7 @@ void World::respawnCell(int c)
 		Ref& r = refs[i];
 		if (r.cell != c && r.at != c)
 			continue;
-		if (refill && r.cell == c && r.type == "CONT" && r.obj && r.obj->respawn)
+		if (refill && r.cell == c && r.recType == REC_CONT && r.obj && r.obj->respawn)
 		{
 			r.contents.clear();
 			fillContents(game, r, stats.level, (unsigned)rand());

@@ -200,7 +200,7 @@ std::vector<std::pair<int, int>> Session::merchantGoods(int ref)
 	int place = w.placeOf(ref);
 	w.forLoadedRefs([&](int i) {
 		const Ref& c = w.refs[i];
-		if (c.type != "CONT" || c.contents.empty() || w.placeOf(i) != place || lower(c.owner) != m.idLower)
+		if (c.recType != REC_CONT || c.contents.empty() || w.placeOf(i) != place || lower(c.owner) != m.idLower)
 			return;
 		for (size_t k = 0; k < c.contents.size(); k++)
 			out.emplace_back(i, (int)k);

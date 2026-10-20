@@ -89,7 +89,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 		for (int i : w.loadedActors)
 		{
 			const Ref& r = w.refs[i];
-			if (r.visible() && (r.type == "NPC_" || r.dead) && w.distanceToPlayer(i) < 2000.0f && !actorAimable(w, i))
+			if (r.visible() && (r.recType == REC_NPC_ || r.dead) && w.distanceToPlayer(i) < 2000.0f && !actorAimable(w, i))
 			{
 				logf("check: %s can't be aimed at (at %.0f %.0f %.0f)", r.id.c_str(), r.pos[0], r.pos[1], r.pos[2]);
 				v++;

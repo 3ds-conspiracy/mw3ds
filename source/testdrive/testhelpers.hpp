@@ -102,7 +102,7 @@ static inline int findRef(Session& s, const std::string& id, bool byWalk = true,
 				return;
 			float dx = c.pos[0] - pf[0], dy = c.pos[1] - pf[1], dz = c.pos[2] - pf[2], d = dx * dx + dy * dy + dz * dz;
 			// (shared door ids: the one the player can walk to soonest, not the one nearest through a wall or a floor)
-			if (byWalk && c.type == "DOOR" && d < 1e11f)
+			if (byWalk && c.recType == REC_DOOR && d < 1e11f)
 				d = doorWalkRank(s, c, d);
 			if (d < best)
 			{

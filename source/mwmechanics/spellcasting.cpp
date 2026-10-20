@@ -286,7 +286,7 @@ void Session::releaseSpell(const SpellDef& sp, int school)
 			// Open / Lock on the door or container under the crosshair
 			Ref& o = w.refs[this->target];
 			int m = (int)(e.min + (e.max - e.min) * frand());
-			if (o.type != "DOOR" && o.type != "CONT")
+			if (o.recType != REC_DOOR && o.recType != REC_CONT)
 				continue;
 			if (e.effect == EFF_OPEN)
 			{

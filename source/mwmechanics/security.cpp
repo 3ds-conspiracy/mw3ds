@@ -13,7 +13,7 @@ InventoryItem* Session::playerToolItem()
 	for (auto& it : w.inventory)
 		if (it.equipped)
 			if (const Object* o = w.game.object(it.id))
-				if (o->type == "LOCK" || o->type == "PROB")
+				if (o->recType == REC_LOCK || o->recType == REC_PROB)
 					return &it;
 	return nullptr;
 }
@@ -27,8 +27,8 @@ void Session::useTool(InventoryItem& tool)
 	if (!o || target < 0)
 		return;
 	Ref& r = w.refs[target];
-	bool pick = o->type == "LOCK";
-	if (r.type != "DOOR" && r.type != "CONT")
+	bool pick = o->recType == REC_LOCK;
+	if (r.recType != REC_DOOR && r.recType != REC_CONT)
 		return;
 	if (pick ? r.lockLevel <= 0 : (r.trap.empty() || r.disarmed))
 		return;

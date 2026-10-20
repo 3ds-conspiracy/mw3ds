@@ -75,7 +75,7 @@ void Session::testGive(const std::string& id, int count, bool topUp)
 		logf("test: no item %s", id.c_str());
 		return;
 	}
-	bool ammo = o->type == "WEAP" && o->subtype >= 12;
+	bool ammo = o->recType == REC_WEAP && o->subtype >= 12;
 	int want = count > 0 ? count : ammo ? 50 : 1;
 	// (a chained chapter: only up to the count, so an item the last chapter's story handed over isn't doubled)
 	if (topUp)
@@ -84,7 +84,7 @@ void Session::testGive(const std::string& id, int count, bool topUp)
 		w.addItem(o->id, want);
 	// (lockpicks and probes are only added: equipping one would replace the weapon in hand, and OpenMW never equips on
 	// add; USELOCKPICK / USEPROBE / EQUIP hold one when a case needs it)
-	bool wearable = o->type == "WEAP" || o->type == "ARMO" || o->type == "CLOT" || o->type == "LIGH";
+	bool wearable = o->recType == REC_WEAP || o->recType == REC_ARMO || o->recType == REC_CLOT || o->recType == REC_LIGH;
 	for (size_t k = 0; k < w.inventory.size() && wearable; k++)
 		if (lower(w.inventory[k].id) == lower(o->id))
 			equipItem(k, true);
