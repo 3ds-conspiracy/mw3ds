@@ -29,8 +29,8 @@ C3D_Tex* Session::skyTex(const std::string& name)
 
 // Where the sun and the moons are (OpenMW's reading of Morrowind's sky): the sun rises in the east at
 // Sunrise Time and sets in the west at Sunset Time; each moon rises Daily Increment hours later every
-// day (from 16 Last Seed), turns 15 x Speed degrees an hour across the sky tilted by Axis Offset, and
-// goes through its 8 phases 3 days each, full on the first day; they fade in and out by the hour.
+// day (from 16 Last Seed), climbs 15 x Speed degrees an hour over the sky on a path turned by Axis Offset,
+// and goes through its 8 phases 3 days each, full on the first day; they fade in and out by the hour.
 // Clouds, rain and storms hide them.
 void Session::updateSky()
 {
@@ -66,14 +66,18 @@ void Session::updateSky()
 		glare.size = sun.size * 2.6f;              // the sun flash (tx_sun_flash_grey_05), white, as bright as the sun
 		glare.tex = skyTex(sky.glare);
 		glare.additive = false;                    // (blended by its own alpha, as OpenMW's sky draws it)
+		glare.afterClouds = true;
 		glare.rgba = 0x00FFFFFF | ((u32)a << 24);
 		g_skyBillboards.push_back(glare);
 	}
 	// the moons (OpenMW's MoonModel): each rises Daily Increment hours later every day, in a 24-day loop that skips the
 	// increments a day can't hold, and climbs 15 x Speed degrees an hour (at least half a turn in 23 hours) from the
-	// northern horizon over to the southern one, its path leaning west by its Axis Offset. Low on its path it is a disk
-	// the sky's own colour (shown here as nothing): textured from Fade End Angle, whole from Fade Start Angle, and
-	// gone below Moon Shadow Early Fade Angle under that; by the hour it fades in and out (Fade In / Out Start, Finish)
+	// north over to the south, its path turned by its Axis Offset (rising west of north). It is a disk in the sky's
+	// own colour with its phase's picture added over it (OpenMW's moon pass in sky.frag): by day a faint pale disk,
+	// by night the picture on the dark sky, hiding the stars behind it. The picture shows from Fade End Angle up its
+	// path, whole from Fade Start Angle; the disk is gone below Moon Shadow Early Fade Angle under Fade End; by the
+	// hour both fade in and out (Fade In / Out Start, Finish), and by the weather's Glare View (none overcast)
+	float glareView = w.sunVisibility();
 	for (int m = 0; m < 2; m++)
 	{
 		const MoonDef& md = sky.moons[m];
@@ -138,20 +142,43 @@ void Session::updateSky()
 			textured = 1.0f;
 		else if (angle >= 180.0f - md.fadeStartAngle && angle < 180.0f - md.fadeEndAngle)
 			textured = (180.0f - md.fadeEndAngle - angle) / fmaxf(0.01f, fade);
+		// (Moon::setState: north turned up its path by the angle first, then about the vertical by the Axis Offset, in
+		// osg's order, so the angle is its height over the horizon; its quad faces the eye, the picture's top edge
+		// ahead along its path, its u along the offset's east)
 		float a = angle * 0.0174533f, z = md.axisOffset * 0.0174533f;
-		moonDir[m][0] = -sinf(z);
+		moonDir[m][0] = -sinf(z) * cosf(a);
 		moonDir[m][1] = cosf(z) * cosf(a);
-		moonDir[m][2] = cosf(z) * sinf(a);
-		float alpha = clear * hourAlpha(h) * shadowAlpha(angle) * textured;
+		moonDir[m][2] = sinf(a);
+		float alpha = glareView * hourAlpha(h) * shadowAlpha(angle);
 		moonAlpha[m] = alpha;
 		if (alpha <= 0.01f)
 			continue;
 		SkyBillboard mb = {};
 		for (int k = 0; k < 3; k++)
 			mb.dir[k] = moonDir[m][k];
+		mb.fixed = true;
+		mb.axisU[0] = cosf(z);
+		mb.axisU[1] = sinf(z);
+		mb.axisU[2] = 0.0f;
+		mb.axisV[0] = -sinf(z) * sinf(a);
+		mb.axisV[1] = cosf(z) * sinf(a);
+		mb.axisV[2] = -cosf(a);
 		mb.size = 0.5f * 450.0f * md.size / 125.0f * 2.7f;
+		u8 a8 = (u8)(alpha * 255);
+		// the disk in the sky's colour, blended by its alpha; then the picture added, as bright as it is textured
+		if (!sky.circle[m].empty())
+		{
+			mb.tex = skyTex(sky.circle[m]);
+			u32 c = 0;
+			for (int i = 0; i < 3; i++)
+				c |= (u32)(fminf(1.0f, fmaxf(0.0f, w.weatherColour(0, i))) * 255) << (8 * i);
+			mb.rgba = c | ((u32)a8 << 24);
+			g_skyBillboards.push_back(mb);
+		}
 		mb.tex = skyTex(m == 0 ? sky.masser[phase] : sky.secunda[phase]);
-		mb.rgba = 0x00FFFFFF | ((u32)(alpha * 255) << 24);
+		u8 lit = (u8)(textured * 255);
+		mb.rgba = lit | (lit << 8) | (lit << 16) | ((u32)a8 << 24);
+		mb.additive = true;
 		g_skyBillboards.push_back(mb);
 	}
 	// the stars: from an hour after sunset to two before sunrise, fading over two hours
@@ -568,8 +595,9 @@ C3D_Tex* g_starTexture = nullptr;
 C3D_Tex* g_cloudTex[2] = { nullptr, nullptr };
 float g_cloudBlend = 0.0f;
 
-// The stars (a dome, tiled) and the sun / moons (squares toward the eye) around the camera, no depth
-void drawSkyBodies(const C3D_Mtx& view, bool secondEye)
+// The stars (a dome, tiled) and the sun / moons (squares toward the eye) around the camera, no depth: before the
+// clouds, as OpenMW's sky draws them; afterClouds: the pictures drawn over the clouds (the sun's glare)
+void drawSkyBodies(const C3D_Mtx& view, bool secondEye, bool afterClouds)
 {
 	static const int kMax = 16;
 	static u8* ring = nullptr;                   // this frame's billboard vertices (each eye its own)
@@ -630,7 +658,7 @@ void drawSkyBodies(const C3D_Mtx& view, bool secondEye)
 	static const float one[3] = { 1, 1, 1 };
 	setTint(one);
 	// the stars, fading in at night
-	if (g_starTexture && g_starAlpha > 0.01f && dome && domeIdx)
+	if (!afterClouds && g_starTexture && g_starAlpha > 0.01f && dome && domeIdx)
 	{
 		u8 a = (u8)(fminf(1.0f, g_starAlpha) * 255.0f);
 		for (int i = 0; i < domeVerts; i++)
@@ -646,24 +674,28 @@ void drawSkyBodies(const C3D_Mtx& view, bool secondEye)
 		b.stride = CELL_VERTEX_SIZE;
 		drawBatchTex(g_starTexture, b, DRAW_SKY, 0.0f);
 	}
-	if (!secondEye)
+	if (!secondEye && !afterClouds)
 		slot = 0;
 	float right[3] = { skyView.r[0].x, skyView.r[0].y, skyView.r[0].z };
 	float up[3] = { skyView.r[1].x, skyView.r[1].y, skyView.r[1].z };
 	for (auto& sb : g_skyBillboards)
 	{
+		if (sb.afterClouds != afterClouds)
+			continue;
 		if (slot >= kMax * 2 || !sb.tex)
 			break;
 		u8* v = ring + (slot++) * 4 * 24;
+		const float* ax = sb.fixed ? sb.axisU : right;
+		const float* ay = sb.fixed ? sb.axisV : up;
 		static const float corner[4][2] = { { -1, -1 }, { 1, -1 }, { 1, 1 }, { -1, 1 } };
 		static const float uv[4][2] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
-		float cr = cosf(sb.roll), sr = sinf(sb.roll);
+		float cr = sb.fixed ? 1.0f : cosf(sb.roll), sr = sb.fixed ? 0.0f : sinf(sb.roll);
 		for (int i = 0; i < 4; i++)
 		{
 			float cx = corner[i][0] * cr - corner[i][1] * sr, cy = corner[i][0] * sr + corner[i][1] * cr;
 			float* p = (float*)(v + i * 24);
 			for (int k = 0; k < 3; k++)
-				p[k] = sb.dir[k] * 2700.0f + (right[k] * cx + up[k] * cy) * sb.size;
+				p[k] = sb.dir[k] * 2700.0f + (ax[k] * cx + ay[k] * cy) * sb.size;
 			p[3] = uv[i][0];
 			p[4] = uv[i][1];
 			memcpy(v + i * 24 + 20, &sb.rgba, 4);

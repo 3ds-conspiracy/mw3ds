@@ -969,6 +969,11 @@ bool gameLoad(GameData& g, const char* path)
 			d.masser[k] = cJSON_IsString(a) ? a->valuestring : "";
 			d.secunda[k] = cJSON_IsString(b) ? b->valuestring : "";
 		}
+		for (int m = 0; m < 2; m++)
+		{
+			const cJSON* c = cJSON_GetArrayItem(cJSON_GetObjectItem(sb, "moon_circle"), m);
+			d.circle[m] = cJSON_IsString(c) ? c->valuestring : "";
+		}
 		const char* names[2] = { "masser", "secunda" };
 		for (int m = 0; m < 2; m++)
 			if (const cJSON* md = cJSON_GetObjectItem(cJSON_GetObjectItem(sb, "moons"), names[m]))

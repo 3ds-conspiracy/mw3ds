@@ -1,0 +1,33 @@
+# start: Seyda Neen
+# Issue 58: a big solid moon in the day sky. OpenMW draws each moon as a disk in the sky's own colour with the phase
+# picture added on top (sky.frag's moon pass), before the clouds, so by day it is a faint pale disk behind them; and it
+# turns the moon up its path first and by the Axis Offset after (rotX x rotZ in osg's order), so it climbs to
+# overhead. Ours drew the picture alone, solid, after the clouds (a dark ball on the day sky), and tilted the path by
+# the Axis Offset instead (Masser never above 55 degrees, always to the west).
+# 16 Last Seed: Masser is 65 degrees up its path at midnight, 87 at 4:00 and 121 at 7:30; Secunda 111 at 7:30.
+3 0 0 0 0 MSG
+0.5 0 0 0 0 GOD+FRAMECAP:off+SETWEATHER:0+HOUR:0
+1 0 0 0 0 EXPECT:moonalpha:0:ge:0.9+EXPECT:moonz:0:gt:0.85+EXPECT:moonx:0:gt:-0.4
+0.5 0 0 0 0 HOUR:4
+1 0 0 0 0 EXPECT:moonalpha:0:ge:0.9+EXPECT:moonz:0:gt:0.95
+# by night Masser is overhead, red on the dark sky (judged by the shot)
+1 0 0 0 0 TP:-10511:-71768:400:0+CAM:-10511:-71468:1500:0:80+POV:first+HUD:off+VMPOSE:off+HIDEACTORS:4000
+0.5 0 0 0 0 SHOT
+0.5 0 0 0 0 HOUR:7.5
+1 0 0 0 0 EXPECT:moonalpha:0:gt:0.7+EXPECT:moonz:0:gt:0.8+EXPECT:moonx:0:gt:0.2+EXPECT:moonz:1:gt:0.9+EXPECT:moonx:1:gt:0.2
+# by day: looking at Masser where it is (south-east, 59 degrees up) and where ours drew it (south-west, 44 up), no
+# dark shape on the sky in either
+1 0 0 0 0 CAM:-10511:-71468:1500:145:59
+0.5 0 0 0 0 SHOT
+1 0 0 0 0 CAM:-10511:-71468:1500:-126:52
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:shotdark:1:lt:1+EXPECT:shotdark:2:lt:1
+# low on its path (22:24, 40.5 degrees: just past Fade End Angle) Masser is its whole disk in the sky's colour, the
+# picture only starting to show: the alpha is the disk's, 1 (ours took the picture's 0.05 for it)
+0.5 0 0 0 0 HOUR:22.4
+1 0 0 0 0 EXPECT:moonalpha:0:ge:0.9
+# the weather's Glare View: overcast hides the moons (0), fog dims them (0.25)
+0.5 0 0 0 0 HOUR:0+SETWEATHER:3
+1 0 0 0 0 EXPECT:moonalpha:0:le:0.01
+0.5 0 0 0 0 SETWEATHER:2
+1 0 0 0 0 EXPECT:moonalpha:0:ge:0.2+EXPECT:moonalpha:0:le:0.3

@@ -829,7 +829,8 @@ def main():
     places = sorted({rec.id for xy, rec in db["CELL"].items() if isinstance(xy, tuple) and rec.id})
     game["map"] = build_map(db, arch, terrain, town_labels(db, places))
     # The sky's bodies: the sun (and its glare), Masser and Secunda in their 8 phases (full, waning to new,
-    # waxing back), the stars; Morrowind.ini's [Moons] and sunrise / sunset times drive them
+    # waxing back) and the round disk each is drawn on in the sky's colour, the stars; Morrowind.ini's [Moons] and
+    # sunrise / sunset times drive them
     phases = ["full", "three_wan", "half_wan", "one_wan", "new", "one_wax", "half_wax", "three_wax"]
     sky_tex = lambda n: textures.request("textures\\" + n + ".dds", 128, True) if arch.exists("textures\\" + n + ".dds") else ""
     moons = ini_section(ini, "Moons")
@@ -837,6 +838,7 @@ def main():
     game["sky_bodies"] = {
         "sun": sky_tex("tx_sun_05"), "glare": sky_tex("tx_sun_flash_grey_05"), "stars": sky_tex("tx_stars"),
         "masser": [sky_tex("tx_masser_" + p) for p in phases], "secunda": [sky_tex("tx_secunda_" + p) for p in phases],
+        "moon_circle": [sky_tex("tx_mooncircle_full_m"), sky_tex("tx_mooncircle_full_s")],
         "moons": {m: {k: float(moons.get(f"{m.capitalize()} {k}", "0") or 0) for k in
                       ("Size", "Fade In Start", "Fade In Finish", "Fade Out Start", "Fade Out Finish", "Axis Offset",
                        "Speed", "Daily Increment", "Fade Start Angle", "Fade End Angle", "Moon Shadow Early Fade Angle")}

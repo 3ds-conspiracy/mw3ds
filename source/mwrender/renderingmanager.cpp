@@ -813,11 +813,18 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		C3D_Mtx skyView = view;
 		skyView.r[0].w = skyView.r[1].w = skyView.r[2].w = 0.0f;
 		setModelView(skyView);
-		// (white fog and sky domes, then clouds: the domes take the hour's weather colours, the fog's at the horizon
-		// and the sky's overhead, as OpenMW draws its sky; an older cell's single baked gradient a tint)
+		// (white fog and sky domes, then the stars, sun and moons, then clouds: the domes take the hour's weather
+		// colours, the fog's at the horizon and the sky's overhead, as OpenMW draws its sky; an older cell's single
+		// baked gradient a tint)
 		bool layered = here.sky.size() >= 2 && here.sky[1].tex < 0 && (here.sky[1].flags & BATCH_BLEND);
+		bool bodiesDrawn = false;
 		for (size_t k = 0; k < here.sky.size(); k++)
 		{
+			if (layered && k >= 2 && !bodiesDrawn)
+			{
+				drawSkyBodies(view, secondEye, false);
+				bodiesDrawn = true;
+			}
 			// The fog's dome is opaque in the fog's colour, the colour the screen was cleared to outdoors (engine.cpp):
 			// it would paint the screen over in the colour it already has
 			if (layered && k == 0 && w.game.hasWeather)
@@ -867,9 +874,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 			drawBatch(here, here.sky[k], DRAW_SKY, time);
 			draws++;
 		}
+		if (!bodiesDrawn)
+			drawSkyBodies(view, secondEye, false);
+		drawSkyBodies(view, secondEye, true);
 	}
-	if (!here.sky.empty() && (g_renderParts & RENDER_SKY) && !g_gpu.underwaterOn)
-		drawSkyBodies(view, secondEye);
 	drawProfAdd(DRAWP_SKY, drawSince);
 	setModelView(view);
 	setTint(g_gpu.daylight ? g_gpu.land : kOne);

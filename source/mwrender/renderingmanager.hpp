@@ -52,9 +52,12 @@ int rendererReplayWorld(float eyeShift);
 extern int g_replayCount, g_replayMissed;      // right eyes drawn from the record / drawn again (no room), per second
 // After rendererDrawWorld, in the same frame: one mesh with a model matrix (nullptr = world space)
 void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex);
-// Sky bodies for the next frames' sky pass: a textured square facing the eye in direction dir (unit,
-// world axes), size its half width at the sky's radius; additive for the sun's glare and the stars
-struct SkyBillboard { float dir[3]; float size; C3D_Tex* tex; u32 rgba; bool additive; float roll; };
+// Sky bodies for the next frames' sky pass: a textured square in direction dir (unit, world axes), size its half
+// width at the sky's radius, facing the eye (turned by roll) or laid along its own two axes (fixed: the moons, as
+// OpenMW turns their quads); additive for a moon's picture; afterClouds: drawn over the clouds (the sun's glare, a
+// later bin in OpenMW)
+struct SkyBillboard { float dir[3]; float size; C3D_Tex* tex; u32 rgba; bool additive; float roll; bool afterClouds;
+	bool fixed; float axisU[3], axisV[3]; };
 extern std::vector<SkyBillboard> g_skyBillboards;
 extern float g_starAlpha;                         // the star dome: 0 by day
 // The light the player carries (a torch): world position, radius (0: none), colour 0..1. Lit per pixel while it is at

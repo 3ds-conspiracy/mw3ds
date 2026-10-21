@@ -88,12 +88,20 @@ around sunset (from the star settings and the 2-hour fading duration).
   shrink towards the horizon. (Ours: the same spread by elevation on a round dome, `convert_cell.sky_batches`.)
 - The moons (`MoonModel`, `Moon::setState`): each rises Daily Increment hours later every day (from 16 Last Seed, in a
   24-day loop that skips the increments a day can't hold) and climbs 15 x Speed degrees an hour (at least half a turn
-  in 23 hours) along `rotX(angle) x rotZ(Axis Offset) x north`: from the northern horizon over to the southern one,
-  the path leaning west by the Axis Offset. Below Fade End Angle up its path (Masser 40, Secunda 30) the moon is a
-  disk in the sky's colour; it is textured from there to Fade Start Angle (50), and the disk itself fades in over
-  Moon Shadow Early Fade Angle (0.5) below Fade End. By the hour: Fade In Start / Finish, Fade Out Start / Finish
-  (culled a minute before Fade Out Finish). The phase changes once the moon is out of sight at midnight.
-  (Ours: the disk in the sky's colour is drawn as nothing; it hides the stars in OpenMW.)
+  in 23 hours) along `rotX(angle) x rotZ(Axis Offset) x north`. In osg's order that turns north up by the angle
+  first and about the vertical by the Axis Offset after: the angle is the moon's height over the horizon (overhead
+  at 90), and its path runs from just west of north over to just east of south. The quad faces the eye, its
+  picture's top edge ahead along the path.
+- A moon is drawn in two layers (sky.frag's moon pass, Morrowind's two passes): a disk (tx_mooncircle_full_m / _s)
+  in the sky's colour, blended by its alpha, then the phase's picture added over it, scaled by the shadow blend.
+  By day that is a faint pale disk; by night the picture on the dark sky, hiding the stars behind it. The alpha is
+  the early fade (the disk fades in over Moon Shadow Early Fade Angle, 0.5, below Fade End) x the hour's fade (Fade
+  In Start / Finish, Fade Out Start / Finish, culled a minute before Fade Out Finish) x the weather's Glare View
+  (Clear and Cloudy 1, Foggy 0.25, the rest 0). The shadow blend: 0 below Fade End Angle up the path (Masser 40,
+  Secunda 30), rising to 1 at Fade Start Angle (50), so a low moon is the bare disk in the sky's colour. The phase
+  changes once the moon is out of sight at midnight.
+- The sky's draw order: the atmosphere, the stars, the sun, the moons, then the clouds over them all; the sun's
+  flash in a later bin, over the clouds.
 - The sun is a 450-unit quad 1000 units away; its flash (tx_sun_flash_grey_05) 2.6 times it, white. The moons are
   450 x size / 125 (Masser 55, Secunda 40). Looking toward the sun adds a full-screen glare: Sun Glare Fader Max
   (0.5) at the sun, gone at Fader Angle Max (30 degrees), twice the Fader Color, x the glare fade above x the

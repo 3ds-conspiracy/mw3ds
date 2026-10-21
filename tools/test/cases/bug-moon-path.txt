@@ -1,12 +1,13 @@
-# Masser and Secunda as OpenMW's MoonModel and Moon::setState have them: from the northern horizon over to the southern
-# one, the path leaning west by the moon's Axis Offset (Masser 35: always -sin 35 = -0.57 to the east), textured only
-# from Fade End Angle up its path (Masser 40): lower it is a disk the sky's colour. Ours ran east to west, tilted south,
-# and drew the whole moon down to 8 degrees off the horizon. On 16 Last Seed Masser rose at 17:00: at 20:00 it is 23
-# degrees up its path (not shown), at midnight about 60 (shown, high in the north-west, not the south-east).
+# Masser and Secunda as OpenMW's MoonModel and Moon::setState have them: from the north over to the south, the angle
+# up the path its height, the path turned by the moon's Axis Offset (rising west of north; issue 58 corrected the
+# midnight check, which had the path leaning west instead), textured only from Fade End Angle up its path (Masser 40):
+# lower it is a disk the sky's colour. Ours ran east to west, tilted south, and drew the whole moon down to 8 degrees
+# off the horizon. On 16 Last Seed Masser rose at 17:00: at 20:00 it is 23 degrees up its path (not shown), at
+# midnight about 65 (shown, high in the north-north-west, not the south-east).
 # Written with the fix (the old build has no moon checks)
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD+SETWEATHER:0+HOUR:20
 1 0 0 0 0 EXPECT:moonalpha:0:le:0.05
 0.3 0 0 0 0 HOUR:0
-1 0 0 0 0 EXPECT:moonalpha:0:ge:0.9+EXPECT:moonx:0:lt:-0.5+EXPECT:moonz:0:gt:0.5
+1 0 0 0 0 EXPECT:moonalpha:0:ge:0.9+EXPECT:moonx:0:lt:-0.2+EXPECT:moonx:0:gt:-0.4+EXPECT:moonz:0:gt:0.85
 1 0 0 0

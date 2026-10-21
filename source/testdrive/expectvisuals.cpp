@@ -305,7 +305,9 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
 		v = shotLuma(atoi(arg.c_str()));
 	else if (what == "shotspread")  // <n>: how far step shot n's top screen's pixels stray from its mean brightness (-1: none)
-		v = shotLuma(atoi(arg.c_str()), true);
+		v = shotLuma(atoi(arg.c_str()), 1);
+	else if (what == "shotdark")    // <n>: the percentage of step shot n's top screen darker than 0.6 x its mean (-1: none)
+		v = shotLuma(atoi(arg.c_str()), 2);
 	else if (what == "bodyalpha")   // how solid the player's third-person body is drawn (1; less under Invisibility, Chameleon)
 		v = s.body.set.actors.empty() ? -1.0f : s.body.set.actors[0].alpha;
 	else if (what == "sunelev" || what == "sunsize")   // the sun in the sky now: degrees over the horizon / its picture's

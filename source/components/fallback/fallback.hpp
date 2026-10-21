@@ -11,6 +11,7 @@ struct MoonDef { float size = 50, fadeInStart = 14, fadeInFinish = 15, fadeOutSt
 struct SkyBodiesDef
 {
 	std::string sun, glare, stars, masser[8], secunda[8];
+	std::string circle[2];            // Masser's and Secunda's disk (tx_mooncircle_full_m / _s), in the sky's colour
 	MoonDef moons[2];
 	float sunrise = 6, sunset = 18;
 };

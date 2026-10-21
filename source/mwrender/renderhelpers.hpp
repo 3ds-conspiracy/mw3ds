@@ -44,7 +44,7 @@ void updateLightRamp();
 void enableFog(const Cell& cell, float fogStart, float fogEnd);
 void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time);
 int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std::vector<u8>* visible, float time);
-void drawSkyBodies(const C3D_Mtx& view, bool secondEye);
+void drawSkyBodies(const C3D_Mtx& view, bool secondEye, bool afterClouds);
 extern int g_torchPerPixel;
 extern int g_lampLitBatches;
 static void setModelView(const C3D_Mtx& mv);
