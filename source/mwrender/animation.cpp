@@ -801,10 +801,12 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 	const Skeleton& sk = actorSkeleton(set, a.skeleton);
 	if (!sk.groups.empty())
 	{
-		// a walk / run cycle keeps pace with the actor (its root's speed at the actor's scale)
+		// a walk / run cycle keeps pace with the actor (its root's speed at the actor's scale), as OpenMW's speed
+		// multiplier: any cycle whose root moves at all (over 1 a second, OpenMW's test). Over 20 only, the Kwama
+		// Forager's slow crawl (14 a second, the actor 20) played at its own pace: its wriggle lagged OpenMW's
 		float gs = a.group < (int)sk.groupSpeed.size() ? sk.groupSpeed[a.group] : 0.0f;
 		float x = a.place[3], y = a.place[7];
-		if (gs > 20.0f && dt > 0.0f && a.lastXY[0] < 1e8f)
+		if (gs > 1.0f && dt > 0.0f && a.lastXY[0] < 1e8f)
 		{
 			float moved = sqrtf((x - a.lastXY[0]) * (x - a.lastXY[0]) + (y - a.lastXY[1]) * (y - a.lastXY[1])) / dt;
 			float scale = sqrtf(a.place[0] * a.place[0] + a.place[4] * a.place[4] + a.place[8] * a.place[8]);

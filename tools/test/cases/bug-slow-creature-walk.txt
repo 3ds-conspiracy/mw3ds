@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# A slow creature walks on to where it travels, in its walk, its cycle kept to its pace as OpenMW's speed multiplier
+# (speed / its walk's root speed: the Kwama Forager, Speed 5, walks 20 a second, its crawl's root 14: the cycle at about
+# 1.4). It played at 1.0 (only cycles whose root moved over 20 a second were scaled), its wriggle behind OpenMW's, and
+# after 2 s it was judged stuck (headway counted as 40 a second whatever the creature) and slid on in its Idle
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Pelagiad
+6 0 0 0
+1 0 0 0 0 PLACE:kwama%forager:200
+0.3 0 0 0 0 CONSEL:kwama%forager
+0.3 0 0 0 0 CON:SetFight%0+CON:StopCombat
+0.3 0 0 0 0 CON:AiTravel%3637%-60108%824
+1 0 0 0 0 EXPECT:refgroup:kwama%forager:WalkForward
+0.3 0 0 0 0 SNAP:refanimtime:kwama%forager
+4 0 0 0 0 EXPECT:refanimtime:kwama%forager:ge:@0.36
+0.3 0 0 0 0 EXPECT:refgroup:kwama%forager:WalkForward+EXPECT:refpkg:kwama%forager:eq:1

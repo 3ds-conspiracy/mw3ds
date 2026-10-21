@@ -180,12 +180,14 @@ void Session::npcPackage(int ri, float dt)
 		npcMoveTo(ri, goal, speed, dt, true);
 		r.moved = true;
 		// no headway for 2 s (a travel point beyond a wall): stand rather than walk in place; walk again
-		// once it gets somewhere
+		// once it gets somewhere. (Headway: 40 a second, or a third of its own pace for a slow one, as a chase counts
+		// it: the Kwama Forager walks 20 a second, was judged stuck after 2 s and slid along in its Idle)
 		r.chaseWindow += dt;
 		if (r.chaseWindow >= 1.0f)
 		{
 			float mx = r.pos[0] - r.chaseAnchor[0], my = r.pos[1] - r.chaseAnchor[1];
-			r.chaseStill = mx * mx + my * my < 40.0f * 40.0f ? r.chaseStill + r.chaseWindow : 0.0f;
+			float minGain = fminf(40.0f, speed * 0.33f) * r.chaseWindow;
+			r.chaseStill = mx * mx + my * my < minGain * minGain ? r.chaseStill + r.chaseWindow : 0.0f;
 			r.chaseAnchor[0] = r.pos[0];
 			r.chaseAnchor[1] = r.pos[1];
 			r.chaseWindow = 0.0f;
