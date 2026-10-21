@@ -2,7 +2,7 @@ r"""Record a native test case as an MP4 (video and sound).
 
 Usage:
   python tools/test/video.py <case> [--every N] [--fps F] [--frames A-B] [--out file.mp4] [--wait SECS] [--exe E] [--sd D]
-                              [--data out\world] [--start 'Seyda Neen'] [--no-audio]
+                              [--data out\world] [--start 'Seyda Neen'] [--no-audio] [--saves <folder>]
 
 Runs tools/test/run_test.py --native with NATIVE_VIDEO / NATIVE_AUDIO set (tools/test/native/native_gpu.cpp and
 native_stubs.cpp). The game draws every Nth frame (30 / N frames a second in the video) and pipes it to ffmpeg;
@@ -36,6 +36,7 @@ def main():
     ap.add_argument("--no-audio", action="store_true")
     ap.add_argument("--fps", default="", help="the video's frame rate (e.g. 24; default 30 / every)")
     ap.add_argument("--exe", default="", help="another native build (run_test.py --exe)")
+    ap.add_argument("--saves", default="", help="a folder of test_*.sav checkpoints put on the SD card (run_test.py --saves)")
     ap.add_argument("--sd", default="", help="its own SD folder (run_test.py --sd), so it can run beside other tests")
     a = ap.parse_args()
     ffmpeg = findFfmpeg()
@@ -58,6 +59,8 @@ def main():
         cmd += ["--exe", a.exe]
     if a.sd:
         cmd += ["--sd", a.sd]
+    if a.saves:
+        cmd += ["--saves", a.saves]
     r = subprocess.run(cmd, env=env, cwd=ROOT, capture_output=True, text=True)
     t1 = time.time()
     verdict = [l for l in r.stdout.splitlines() if l.startswith("RESULT") or "did not reach" in l]
