@@ -467,7 +467,7 @@ def write_case(shots, name):
         lines += gear(s)
         if "spawn" in s:
             # nobody else near, then the creature put there (shown again: the hiding caught it too)
-            sid = s["spawn"].replace(" ", "_")
+            sid = s["spawn"].replace(" ", "%")
             lines += [f"0.3 0 0 0 0 HIDEACTORS:{HIDE_RADIUS}", f"1 0 0 0 0 PLACE:{sid}:{fmt(300 + float(s.get('dist', SPAWN_DIST)))}",
                       f"0.1 0 0 0 0 ENABLE:{sid}"]
         if fp:
@@ -486,7 +486,7 @@ def write_case(shots, name):
         lines.append("1 0 0 0 0 " + "+".join(view))
         lines.append("0.5 0 0 0 0 SHOT")
         if "spawn" in s and (i + 1 == len(shots) or shots[i + 1].get("spawn") != s["spawn"]):
-            lines.append(f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '_')}")
+            lines.append(f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '%')}")
     case = ROOT / "tools" / "test" / "cases" / "scratch" / f"{name}.txt"
     case.parent.mkdir(parents=True, exist_ok=True)
     case.write_text("\n".join(lines) + "\n")
@@ -560,14 +560,14 @@ def vfx_steps(s):
     if "spawn" in s:
         # the actor wearing it, put at pos itself (PLACE in front of the player missed it by up to ~20 units where a
         # wall had nudged the player), holding its idle
-        sid = s["spawn"].replace(" ", "_")
+        sid = s["spawn"].replace(" ", "%")
         stand = [f"1 0 0 0 0 PLACEAT:{sid}:{fmt(px)}:{fmt(py)}:{fmt(pz)}", f"0.1 0 0 0 0 ENABLE:{sid}",
                  f"0.5 0 0 0 0 POSE:{s['spawn'].replace(' ', '%')}:{s['group']}:{min(s['at'], 0.998):.3f}:{s['face']}"]
     return ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view)] + stand + [
             f"{fmt(s['after'])} 0 0 0 0 VFX:{s['vfx'].replace(' ', '_')}:{fmt(px)}:{fmt(py)}:{fmt(pz)}"
             + (f":{int(s['effect'])}" if "effect" in s else ""),
             "0.1 0 0 0 0 HALT:on", "0.5 0 0 0 0 SHOT", "3 0 0 0 0 HALT:off"] + (
-            [f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '_')}"] if "spawn" in s else [])
+            [f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '%')}"] if "spawn" in s else [])
 
 
 def run_3ds(shots, out, name, emu, data, exe):

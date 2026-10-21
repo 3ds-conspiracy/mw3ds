@@ -14,6 +14,7 @@ local hideActors = false -- a cast shot: everyone near the player hidden once th
 local kHideRadius = 4000
 local started = false
 local spawned = {}       -- spawn= shots: the actor made for each id, kept for the next shot
+local lastAct = nil      -- the do= steps run last (a line's later shots don't run them again)
 
 local function findActor(cell, id, near)
 	local best, bestD = nil, math.huge
@@ -68,6 +69,21 @@ local function act(s, player)
 			world.createObject(a[2], 1):moveInto(types.Actor.inventory(player))
 		elseif a[1] == 'global' then
 			world.mwscript.getGlobalVariables(player)[a[2]] = tonumber(a[3])
+		elseif a[1] == 'spawn' then
+			-- spawn:<id>:x:y:z: a new actor there, made once (every shot of a do= line runs its steps again)
+			if not (spawned[a[2]] and spawned[a[2]]:isValid()) then
+				local o = world.createObject(a[2], 1)
+				o:teleport(player.cell, util.vector3(tonumber(a[3]), tonumber(a[4]), tonumber(a[5])), { onGround = true })
+				spawned[a[2]] = o
+			end
+		elseif a[1] == 'travel' then
+			-- travel:<id>:x:y:z: that actor walks there on OpenMW's own AI (its Travel package), from where it is now
+			local o = spawned[a[2]]
+			if o and o:isValid() then
+				o:sendEvent('MW3DS_SBS_Travel', { pos = util.vector3(tonumber(a[3]), tonumber(a[4]), tonumber(a[5])) })
+			else
+				print(string.format('MW3DS-SBS scene: no spawned %s to travel', a[2]))
+			end
 		elseif a[1] == 'kill' or a[1] == 'group' then
 			local found = nil
 			for _, list in ipairs({ player.cell:getAll(types.NPC), player.cell:getAll(types.Creature) }) do
@@ -93,8 +109,18 @@ local function setup(data)
 	local s = poses[data.index]
 	local player = world.players[1]
 	if s.act then
-		-- (a scene step: the world goes on from the last one, the clock running)
-		act(s, player)
+		-- (a scene step: the world goes on from the last one, the clock running. The shots of one do= line share its
+		-- steps: they run on the first only, the others just wait their time: a step run again every shot (a goto, a
+		-- travel) set the scene back each time)
+		if s.act ~= lastAct then
+			act(s, player)
+			lastAct = s.act
+		end
+		for id, o in pairs(spawned) do
+			if o:isValid() then
+				print(string.format('MW3DS-SBS %s at %.1f %.1f %.1f', id, o.position.x, o.position.y, o.position.z))
+			end
+		end
 		pending = { shot = s, index = data.index, frames = 0 }
 		return
 	end

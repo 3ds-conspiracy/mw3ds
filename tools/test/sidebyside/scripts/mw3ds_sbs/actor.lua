@@ -18,6 +18,12 @@ return {
 		MW3DS_SBS_Play = function(d)
 			anim.playQueued(self, d.group, {})
 		end,
+		-- a scene step: calm (Fight 0: no turning on the player) and walking to d.pos on its own AI
+		MW3DS_SBS_Travel = function(d)
+			types.Actor.stats.ai.fight(self).base = 0
+			I.AI.removePackages()
+			I.AI.startPackage({ type = 'Travel', destPosition = d.pos })
+		end,
 		MW3DS_SBS_Pose = function(d)
 			I.AI.removePackages()
 			h = d
