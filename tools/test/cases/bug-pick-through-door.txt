@@ -1,0 +1,30 @@
+# start: Seyda Neen
+# The crosshair doesn't pick someone behind a shut door: at Rotheran's arena the Nix-Hound comes at the player and
+# presses against the inside of its locked cage door. Its box pokes through the door, so the ray met it first, and an
+# Open spell aimed at the door landed on the hound ("the lock is too strong" never came, the door stayed locked).
+# OpenMW's pick meets the door's mesh: the door is what is aimed at, and the spell unlocks it. (The arena's other
+# fighters are taken away first: a Fire Storm cut the cast short)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SETSKILL:alteration:100
+0.3 0 0 0 0 SETATTR:willpower:100
+0.3 0 0 0 0 ADDEFFECT:13:50:50:0:2
+0.3 0 0 0 0 MAKESPELL:unlock
+0.3 0 0 0 0 GOTO:Rotheran,_Arena
+4 0 0 0
+0.3 0 0 0 0 CONSEL:dremora_lord
+0.3 0 0 0 0 CON:Disable
+0.3 0 0 0 0 CONSEL:irvsie_othran
+0.3 0 0 0 0 CON:Disable
+0.3 0 0 0 0 CONSEL:daynil_farandas
+0.3 0 0 0 0 CON:Disable
+0.3 0 0 0 0 TPIN:1570:782:-704:90
+10 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:nix-hound%blighted:le:120
+0.3 0 0 0 0 EXPECT:alive:nix-hound%blighted
+0.3 0 0 0 0 FACE:nix-hound%blighted:mid
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:target:eq:1+EXPECT:refaimed:nix-hound%blighted:eq:0
+1 0 0 0 0 CAST:mw3ds_test_unlock
+3 0 0 0 0 EXPECT:message:unlocked_its_target

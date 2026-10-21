@@ -893,6 +893,8 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 {
 	int best = -1;
 	float bestT = reach;
+	int shut = -1;           // the nearest shut door on the ray
+	float shutT = reach;
 	for (int i : w.loadedPickables)
 	{
 		const Ref& r = w.refs[i];
@@ -964,6 +966,25 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 			bestT = t;
 			best = i;
 		}
+		if (r.recType == REC_DOOR && r.doorAngle == 0.0f)
+		{
+			float tDoor = rayBoxEntry(r, e, d, reach, top);
+			if (tDoor >= 0.0f && tDoor < shutT)
+			{
+				shutT = tDoor;
+				shut = i;
+			}
+		}
+	}
+	// Someone pressed against the far side of a shut door (the Nix-Hound in its cage at Rotheran): their box pokes
+	// through it and the ray met it first. OpenMW's pick meets the door's mesh: one whose middle is past the door's face
+	// is behind it, and the door is what the crosshair means (an Open spell aimed at it landed on the creature)
+	if (best >= 0 && shut >= 0 && best != shut && w.refs[best].actor >= 0)
+	{
+		const Ref& r = w.refs[best];
+		float midT = (r.pos[0] - eye[0]) * dir[0] + (r.pos[1] - eye[1]) * dir[1] + (r.pos[2] - eye[2]) * dir[2];
+		if (midT > shutT)
+			best = shut;
 	}
 	// A person standing before such a statue, within its middle part (Derar Hlervu in front of Molag Bal's at Bal Ur): the
 	// statue's mesh is behind him, so the ray meets him first, as OpenMW's mesh pick does. Someone on the ray short of the
