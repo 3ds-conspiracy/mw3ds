@@ -107,6 +107,14 @@ it on twice).
   high), keeping to the side it took last; stuck again in the same place, it starts farther round and keeps to the
   way longer. Only with no opening does it use OpenMW's turn. `issue-20` (Drerel Indaren following the
   player down from the rock pillars west of Ald'ruhn) tests it.
+- **Shut doors** (`aipackage.cpp openDoors`, `obstacle.cpp getNearbyDoor`, the physics' line of sight): a closed door
+  holds an actor as a wall does, and line of sight stops at it (walls, land and doors), so nobody sees, starts a fight
+  with or strikes the player through one. An actor going somewhere (any package but wandering, or a fight) opens a
+  shut door it walks into, a load door never: at once when it is neither locked nor trapped, and a locked or trapped
+  one only with its key carried, which unlocks it and disarms the trap. Otherwise the door stays shut and holds it.
+  (OpenMW looks for the door within activation distance, 60 degrees either side of where the actor faces, on its way
+  to its next path point; ours is the door the body touches, which is that door.) `bug-npc-shut-doors` tests it:
+  Vedelea Othril in Odirniran's tower walked through the locked door and punched the player through it.
 - **Footsteps (follow, outdoors):** the player's position is noted every 120 units walked (48 kept, cleared by a
   jump over 700 units). A follower with no path grid route that has lost sight of the player for a second, or made no
   headway for a second, walks those footsteps for up to 10 s: the one nearest it first, then on in order, looking

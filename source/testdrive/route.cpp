@@ -73,7 +73,7 @@ static bool splitGridPath(Session& s, const float from[3], const float to[3], st
 		{
 			const float* a = w.pathPoints[near[j].second].pos;
 			float pa[3] = { a[0], a[1], a[2] + 50.0f }, pb[3] = { b[0], b[1], b[2] + 50.0f };
-			if (near[j].first < 3000.0f && fabsf(a[2] - b[2]) < 1500.0f && w.lineOfSight(pa, pb))
+			if (near[j].first < 3000.0f && fabsf(a[2] - b[2]) < 1500.0f && w.lineOfSight(pa, pb, false))
 			{
 				bestA = near[j].second;
 				bestB = gp[k].second;
@@ -196,7 +196,7 @@ bool planPath(Session& s, const float from[3], const float to[3], bool spot, std
 		float a[3] = { from[0], from[1], from[2] + 60.0f }, b[3] = { to[0], to[1], to[2] + 60.0f };
 		int first = w.nearestPathPoint(from);
 		if (first >= 0 && hypotf(w.pathPoints[first].pos[0] - from[0], w.pathPoints[first].pos[1] - from[1]) > gd + 200.0f
-			&& w.lineOfSight(a, b))
+			&& w.lineOfSight(a, b, false))
 		{
 			path.clear();
 			return false;
@@ -323,7 +323,7 @@ bool spotBeside(Session& s, const float aim[3], float fromZ, float out[2])
 			even = qt > aim[2] - 200.0f && qt < aim[2] + 150.0f;     // (a door's z is its middle)
 		}
 		float from[3] = { cx, cy, top + 60.0f }, to[3] = { aim[0], aim[1], aim[2] + 60.0f };
-		if (even && s.w.lineOfSight(from, to))
+		if (even && s.w.lineOfSight(from, to, false))
 		{
 			out[0] = cx;
 			out[1] = cy;

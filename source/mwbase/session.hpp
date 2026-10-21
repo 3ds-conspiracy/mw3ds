@@ -163,6 +163,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void updateDetection(float dt);
 	void knockDown(int ref, bool out);
 	bool npcMoveTo(int ref, const float target[3], float speed, float dt, bool faceMove);
+	void npcOpenDoor(int ref, int door);          // a shut door it walked into, opened if it may (OpenMW's openDoors)
 	void npcCastSpell(int ref);
 	void npcFire(int ref);
 	void playerFire(float charge);

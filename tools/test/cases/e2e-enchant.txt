@@ -37,6 +37,10 @@
 0.1 0 0 0 0 EXPECT:gold:lt:@0
 0.1 0 0 0 0 EXPECT:soul:misc_soulgem_petty:none
 # 2. Bag the first rat: the scroll on it, then the plain claymore until it dies
+# (the rats are behind the back room's shut door, which holds them: opened first, from the shop's side)
+30 0 0 0 0 WALKTO:@250,32,-128
+60 0 0 0 0 ACTIVATE:in_velothismall_ndoor_01
+1.5 0 0 0
 0.3 0 0 0 0 EQUIP:nordic%claymore
 1 0 0 0 0 CASTAT:rat_telvanni_unique_2:item:sc_fphyggisgemfeeder
 1.5 0 0 0

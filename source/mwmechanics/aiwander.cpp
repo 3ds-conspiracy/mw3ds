@@ -82,7 +82,7 @@ void Session::npcWander(int ri, float dt)
 			const PathPoint& pp = w.pathPoints[spots[k]];
 			spots.erase(spots.begin() + k);
 			float from[3] = { r.pos[0], r.pos[1], r.pos[2] + 50.0f }, to[3] = { pp.pos[0], pp.pos[1], pp.pos[2] + 50.0f };
-			if (!w.lineOfSight(from, to) && !w.findPath(r.pos, pp.pos, r.path))
+			if (!w.lineOfSight(from, to, false) && !w.findPath(r.pos, pp.pos, r.path))
 				continue;
 			r.wanderTo[0] = pp.pos[0];
 			r.wanderTo[1] = pp.pos[1];

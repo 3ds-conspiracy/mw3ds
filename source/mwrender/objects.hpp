@@ -90,7 +90,7 @@ struct __attribute__((packed)) CellActor
 };
 
 // Axis-aligned blocker updated every frame (closed swinging doors)
-struct CollisionBox { float min[3], max[3]; };
+struct CollisionBox { float min[3], max[3]; int door = -1; };     // (door: the swinging door's ref, else -1)
 
 // A swinging door: its own batches in object space, drawn with the door's transform
 struct DoorMesh

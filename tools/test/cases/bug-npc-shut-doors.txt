@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# Shut doors hold people as they hold the player, and hide the player from them (OpenMW's actors collide with doors, and
+# its line of sight stops at one). In Odirniran's tower Vedelea Othril, set on the player, stays behind the locked door
+# (lock 60, key_Odirniran) and lands no blow through it; with its key she unlocks it, opens the shut door after it and
+# reaches the player (OpenMW's AiPackage::openDoors). She ran straight through both and punched through them
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Odirniran,_Tower
+3 0 0 0
+1 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Odirniran,_Tower
+0.3 0 0 0 0 EXPECT:refdist:vedelea%othril:gt:1500
+0.3 0 0 0 0 HOSTILE:vedelea%othril
+12 0 0 0
+0.3 0 0 0 0 EXPECT:refcombat:vedelea%othril:eq:1
+0.3 0 0 0 0 EXPECT:refdist:vedelea%othril:gt:1200
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 REFADDITEM:vedelea%othril:key_odirniran:1
+20 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:vedelea%othril:lt:250
+0.3 0 0 0 0 SHOT

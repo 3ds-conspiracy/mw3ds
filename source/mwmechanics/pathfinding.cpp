@@ -8,13 +8,42 @@
 
 #include "mwworld/worldimp.hpp"
 
-bool World::lineOfSight(const float a[3], const float b[3])
+// The segment a..b passes through the box (the slab test)
+static bool segmentHitsBox(const float a[3], const float b[3], const float lo[3], const float hi[3])
+{
+	float t0 = 0.0f, t1 = 1.0f;
+	for (int k = 0; k < 3; k++)
+	{
+		float d = b[k] - a[k];
+		if (fabsf(d) < 1e-6f)
+		{
+			if (a[k] < lo[k] || a[k] > hi[k])
+				return false;
+			continue;
+		}
+		float u = (lo[k] - a[k]) / d, v = (hi[k] - a[k]) / d;
+		if (u > v)
+			std::swap(u, v);
+		t0 = fmaxf(t0, u);
+		t1 = fminf(t1, v);
+		if (t0 > t1)
+			return false;
+	}
+	return true;
+}
+
+// Walls, the land and closed doors (and gates a script swings shut) block it (OpenMW's getLineOfSight: World, HeightMap
+// and Door): an actor neither sees nor strikes through a shut door
+bool World::lineOfSight(const float a[3], const float b[3], bool doors)
 {
 	for (LoadedCell* l : loaded)
 	{
 		float t;
 		if (collisionRaycast(l->cell.collision, a, b, &t))
 			return false;
+		for (const CollisionBox& box : l->cell.blockers)
+			if (doors && segmentHitsBox(a, b, box.min, box.max))
+				return false;
 	}
 	return true;
 }
@@ -44,7 +73,7 @@ int World::nearestPathPoint(const float p[3])
 	{
 		const PathPoint& pp = pathPoints[near[k].second];
 		float to[3] = { pp.pos[0], pp.pos[1], pp.pos[2] + 50.0f };
-		if (lineOfSight(from, to))
+		if (lineOfSight(from, to, false))
 			return near[k].second;
 	}
 	return near.empty() ? -1 : near[0].second;
@@ -84,7 +113,7 @@ bool World::findPath(const float from[3], const float to[3], std::vector<int>& o
 			{
 				float a[3] = { pathPoints[cur].pos[0], pathPoints[cur].pos[1], pathPoints[cur].pos[2] + 50.0f };
 				float b[3] = { pathPoints[nb].pos[0], pathPoints[nb].pos[1], pathPoints[nb].pos[2] + 50.0f };
-				if (!lineOfSight(a, b))
+				if (!lineOfSight(a, b, false))
 					continue;             // across a wall: the border link isn't walkable
 			}
 			float c = cost[cur] + dist3(pathPoints[cur].pos, pathPoints[nb].pos);

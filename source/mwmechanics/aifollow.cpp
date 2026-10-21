@@ -86,7 +86,7 @@ const float* followGoal(World& w, Ref& r, const float* who, float dt)
 	if (!on)
 	{
 		// held up: no headway for a second, or the player out of sight for as long (and no path grid route to go by)
-		bool seen = w.lineOfSight(a, b);
+		bool seen = w.lineOfSight(a, b, false);
 		r.trailBlind = seen ? 0.0f : r.trailBlind + 0.3f;
 		if (!r.path.empty() || (r.chaseStill < 1.0f && r.trailBlind < 1.0f))
 			return who;
@@ -134,7 +134,7 @@ const float* followGoal(World& w, Ref& r, const float* who, float dt)
 	{
 		const float* q = trailFind(n);
 		float c[3] = { q ? q[0] : 0.0f, q ? q[1] : 0.0f, q ? q[2] + 50.0f : 0.0f };
-		if (q && w.lineOfSight(a, c) && fabsf(q[2] - r.pos[2]) < 60.0f)
+		if (q && w.lineOfSight(a, c, false) && fabsf(q[2] - r.pos[2]) < 60.0f)
 		{
 			p = q;
 			r.trailSeq = n;

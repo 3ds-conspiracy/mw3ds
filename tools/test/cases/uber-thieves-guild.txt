@@ -1245,8 +1245,6 @@
 0.5 0 0 0
 0.3 0 0 0 0 EQUIP:iron_longsword
 1 0 0 0
-60 0 0 0 0 KILL:skeleton
-1 0 0 0
 30 0 0 0 0 WALKTO:@4217,4197,14496
 # faced at the locked door (4288,4228): the walk's end leaves the facing to chance, and the lockpick and the press
 # met nothing when it ended a step further on
@@ -1261,6 +1259,10 @@
 1 0 0 0
 0.3 0 0 0 0 A
 2 0 0 0
+# the skeleton is behind the locked door, which holds it (a shut door holds people and creatures as it holds the
+# player): fought once the door is open
+60 0 0 0 0 KILL:skeleton
+1 0 0 0
 120 0 0 0 0 PICKUP:artifact_bittercup_01
 0.1 0 0 0 0 DOWN
 0.3 0 0 0
@@ -2054,6 +2056,15 @@
 0.3 0 0 0 0 USELOCKPICK:in_hlaalu_door:pick_grandmaster
 0.3 0 0 0 0 A
 2 0 0 0
+# Navil is behind the second door, locked 60 and trapped (paralysis), which holds him (a shut door holds people as
+# it holds the player): its trap disarmed and its lock picked too
+30 0 0 0 0 WALKTO:@3841,3139,15429
+0.3 0 0 0 0 FACE:@3776,3168
+0.5 0 0 0
+0.3 0 0 0 0 USEPROBE:in_hlaalu_door:probe_grandmaster
+1 0 0 0
+0.3 0 0 0 0 USELOCKPICK:in_hlaalu_door:pick_grandmaster
+1 0 0 0
 0.3 0 0 0 0 EQUIP:daedric_claymore
 1 0 0 0
 90 0 0 0 0 KILL:navil_ienith

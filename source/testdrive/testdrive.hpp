@@ -64,6 +64,7 @@ struct TestDriver
 	bool lookUpTried = false;        // v2: floated up once to look over what hid the target
 	float lookUpTimer = 0.0f, lookUpBase = 0.0f;
 	int unlockTries = 0;             // v2: scrolls cast on a locked door in the way (one rolled too low for the lock: again)
+	float unlockWait = 0.0f;         // (KILL: a foe behind a locked door: the scroll's spell lands before the door is pressed)
 	bool earlyTried = false;         // v2: pressed already on seeing its prompt from further than the walk's end
 	bool escortLoose = false;        // v2: an escort that stopped coming within 600 is left to catch up (till back in 250)
 	float escortWait = 0.0f, escortBest = 1e9f, escortSince = 0.0f;   // an escort fallen behind: how long, the nearest since

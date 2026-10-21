@@ -29,7 +29,8 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SHOT
-30 0 0 0 0 WALKTO:ex_cave_door_01
+# (45 s: Balis Sari, after the player, waits behind the cave's shut door now and meets them in the doorway)
+45 0 0 0 0 WALKTO:ex_cave_door_01
 40 0 0 0
 0.3 0 0 0 0 EXPECT:refdist:Dandsa:lt:1500
 20 0 0 0 0 DOORTO:outside

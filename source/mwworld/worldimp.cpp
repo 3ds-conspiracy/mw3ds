@@ -340,7 +340,7 @@ void World::placeAt(const std::string& id, int count, float dist, int dir, const
 		if (!actor)
 			break;
 		float from[3] = { pos[0], pos[1], pos[2] + 30.0f }, to[3] = { base[0], base[1], base[2] + 20.0f };
-		if (lineOfSight(from, to))
+		if (lineOfSight(from, to, false))
 			break;
 	}
 	// Onto the floor there
@@ -715,6 +715,7 @@ void World::update(float dt)
 				CollisionBox box;
 				memcpy(box.min, ref.boxMin, sizeof(box.min));
 				memcpy(box.max, ref.boxMax, sizeof(box.max));
+				box.door = i;
 				cell.blockers.push_back(box);
 			}
 		}

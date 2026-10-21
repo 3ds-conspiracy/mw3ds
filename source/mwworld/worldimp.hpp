@@ -373,7 +373,8 @@ struct World
 	const BirthDef* birthsign() const;
 	float distanceToPlayer(int ref) const;
 	// mwmechanics/pathfinding.cpp
-	bool lineOfSight(const float a[3], const float b[3]);
+	// (doors false: shut doors don't count: for walking, where a door is opened on the way, and for the test driver)
+	bool lineOfSight(const float a[3], const float b[3], bool doors = true);
 	int nearestPathPoint(const float p[3]);
 	bool findPath(const float from[3], const float to[3], std::vector<int>& out);   // path point indices
 	void update(float dt);

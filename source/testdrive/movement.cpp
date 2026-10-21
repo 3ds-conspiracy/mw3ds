@@ -1022,7 +1022,7 @@ char why[160];
 					float ang = a * 0.7854f, c = cosf(ang), sn = sinf(ang);
 					float ox = tx - (ux * c - uy * sn) * (want - 20.0f), oy = ty - (ux * sn + uy * c) * (want - 20.0f);
 					float from[3] = { ox, oy, r.pos[2] + 120.0f };
-					if (w.lineOfSight(from, eye))
+					if (w.lineOfSight(from, eye, false))
 					{
 						p.feet[0] = ox;
 						p.feet[1] = oy;

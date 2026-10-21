@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
 
@@ -30,10 +31,44 @@ static bool bodyWayClear(World& w, const float pos[3], float dx, float dy, float
 		{
 			float a[3] = { pos[0] + dy * side, pos[1] - dx * side, pos[2] + h };
 			float b[3] = { a[0] + dx * len, a[1] + dy * len, a[2] };
-			if (!w.lineOfSight(a, b))
+			if (!w.lineOfSight(a, b, false))
 				return false;
 		}
 	return true;
+}
+
+// A shut door an actor walked into (npcStep), as OpenMW's AiPackage::openDoors: one going somewhere opens it (a wanderer
+// opens none), not a load door, when it is neither locked nor trapped; a locked or trapped one only with its key carried
+// (Door::activate by an actor with the key unlocks it, and the key disarms the trap, as the player's does: lockGate).
+// Else it stays shut and holds them
+void Session::npcOpenDoor(int ri, int door)
+{
+	Ref& r = w.refs[ri];
+	Ref& d = w.refs[door];
+	if (d.hasDest || d.doorTarget != 0.0f || d.doorAngle != 0.0f)
+		return;
+	if (r.ai != AI_COMBAT && r.duelFoe < 0 && (r.aiPackage == AIPKG_WANDER || r.aiPackage == AIPKG_IDLE || r.aiPackage == AIPKG_NONE))
+		return;
+	// (OpenMW's canOpenDoors: people, and creatures that walk on two legs or carry weapons; a rat or a guar does not.
+	// The weapon flag isn't converted: a creature's own weapon stands for it)
+	const ActorDef& def = w.game.actors[r.actor];
+	if (def.creature && !(def.afloat & 0x01) && def.weapon.empty())
+		return;
+	bool locked = d.lockLevel > 0, trapped = !d.trap.empty() && !d.disarmed;
+	if (locked || trapped)
+	{
+		if (d.key.empty() || w.refItemCount(r, lower(d.key)) <= 0)
+			return;
+		if (locked)
+			d.lockLevel = -d.lockLevel;       // (the level is kept for Lock)
+		if (trapped)
+			d.disarmed = true;
+		logf("lock: %s opened %s with %s", r.id.c_str(), d.id.c_str(), d.key.c_str());
+	}
+	d.doorTarget = 1.5708f;
+	if (d.obj)
+		playSound(door, d.obj->openSound);
+	logf("ai: %s opens %s", r.id.c_str(), d.id.c_str());
 }
 
 // Walks toward `target`: straight when nothing is in the way, else along the path grid; steps
@@ -55,7 +90,7 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 		r.repathTimer = 0.8f + frand() * 0.4f;
 		float a[3] = { r.pos[0], r.pos[1], r.pos[2] + 50.0f }, b[3] = { target[0], target[1], target[2] + 50.0f };
 		// straight when nothing is in the way, unless an edge stopped the straight way lately
-		bool straight = w.time >= r.gridUntil && w.lineOfSight(a, b);
+		bool straight = w.time >= r.gridUntil && w.lineOfSight(a, b, false);
 		if (straight != r.straightWay)
 		{
 			// A script's AITravel that lost sight of its spot on a straight way that took it down while the spot is above,
@@ -84,7 +119,7 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 			// (kept when the straight way has failed and the route's last point sees the target: the strider
 			// platform at Gnisis ends in a cliff, and the grid's way down is the ramp 2000 units off)
 			float e[3] = { end[0], end[1], end[2] + 50.0f };
-			if (ex * ex + ey * ey > 600.0f * 600.0f && !(w.time < r.gridUntil && w.lineOfSight(e, b)))
+			if (ex * ex + ey * ey > 600.0f * 600.0f && !(w.time < r.gridUntil && w.lineOfSight(e, b, false)))
 				r.path.clear();
 			// outdoors, a route that begins by climbing back up over 200 while the target is below leads away too: the
 			// nearest point in sight was up the slope it was coming down. The straight way on, down the ledge that stopped

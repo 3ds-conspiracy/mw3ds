@@ -58,6 +58,37 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 			around[aroundCount++] = &l->cell;
 	for (int k = 0; k < aroundCount; k++)
 		collisionPushSphere(around[k]->collision, body, 22.0f, true);   // about a person's half width (Morrowind's boxes: 20..29)
+	// Closed doors (and gates a script swings shut) block as boxes, as they block the player (OpenMW's actors collide
+	// with doors); one walked into may be opened (npcOpenDoor). They walked through every shut door, locked ones too
+	for (int k = 0; k < aroundCount; k++)
+		for (const CollisionBox& b : around[k]->blockers)
+		{
+			if (body[2] < b.min[2] || body[2] > b.max[2])
+				continue;
+			float qx = fmaxf(b.min[0], fminf(body[0], b.max[0])), qy = fmaxf(b.min[1], fminf(body[1], b.max[1]));
+			float dx = body[0] - qx, dy = body[1] - qy, d2 = dx * dx + dy * dy;
+			if (d2 >= 22.0f * 22.0f)
+				continue;
+			if (b.door >= 0)
+				npcOpenDoor(ri, b.door);
+			if (d2 < 1e-4f)
+			{
+				// Inside it (a door shut on them): out through the nearest side, as the player leaves one
+				float exits[4] = { body[0] - b.min[0], b.max[0] - body[0], body[1] - b.min[1], b.max[1] - body[1] };
+				int e = 0;
+				for (int j = 1; j < 4; j++)
+					if (exits[j] < exits[e])
+						e = j;
+				if (e == 0) body[0] = b.min[0] - 22.0f;
+				if (e == 1) body[0] = b.max[0] + 22.0f;
+				if (e == 2) body[1] = b.min[1] - 22.0f;
+				if (e == 3) body[1] = b.max[1] + 22.0f;
+				continue;
+			}
+			float d = sqrtf(d2), push = (22.0f - d) / d;
+			body[0] += dx * push;
+			body[1] += dy * push;
+		}
 	// The player's body is in the way, as a wall is (OpenMW's actors collide with it; they don't shove it): no step
 	// closer than the two bodies' widths (the player's 22, the cylinder they push the player out of, 28). Stepping
 	// aside on the ledge in Abernanit, Alonisea Varys shoved the player off it

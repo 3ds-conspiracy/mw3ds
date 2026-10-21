@@ -95,7 +95,7 @@ bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refskate" || what == "refyaw" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "refdressed" || what == "refz" || what == "refclimb" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "reflampnow" || what == "refheldlight" || what == "reftalk" || what == "refposes" || what == "refposehz" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "voicesecs" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refrun" || what == "refdying" || what == "refknock" || what == "refsidesteps" || what == "refskate" || what == "refyaw" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "refdressed" || what == "refz" || what == "refclimb" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "reflampnow" || what == "refheldlight" || what == "reftalk" || what == "refposes" || what == "refmorpht" || what == "refgroupstarts" || what == "refposehz" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "refloopvol" || what == "soundstarted" || what == "voicesecs" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
@@ -766,7 +766,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			// strafe one way and then the other, no swing meanwhile
 			float c1[3] = { p.feet[0], p.feet[1], p.feet[2] + 100.0f }, c2[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };
 			float e1[3] = { p.feet[0], p.feet[1], ez }, e2[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f };
-			if (!w.lineOfSight(c1, c2) && !w.lineOfSight(e1, e2))
+			if (!w.lineOfSight(c1, c2, false) && !w.lineOfSight(e1, e2, false))
 			{
 				if (lineTimer <= 0.0f)
 					logf("drive: %s: something between us, going round it", id.c_str());
@@ -864,6 +864,50 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 					thenDo = again;
 				}
 				return true;
+			}
+		}
+		// A shut door between us and it (it holds them, and no blow goes through it): opened first, as a player would, once
+		// (a locked one stays shut). Before shut doors held anyone, the foe came through it
+		{
+			float eye[3] = { p.feet[0], p.feet[1], playerEyeZ(p) }, mid[3] = { r.pos[0], r.pos[1], r.pos[2] + 60.0f };
+			if (!w.lineOfSight(eye, mid) && w.lineOfSight(eye, mid, false))
+			{
+				int door = -1;
+				float bd = 300.0f * 300.0f;
+				for (int i : w.loadedDoors)
+				{
+					const Ref& d = w.refs[i];
+					if (d.recType != REC_DOOR || d.hasDest || !d.visible() || d.doorTarget != 0.0f || d.doorAngle != 0.0f || i == doorLast)
+						continue;
+					float ex = d.pos[0] - p.feet[0], ey = d.pos[1] - p.feet[1];
+					if (ex * ex + ey * ey < bd && fabsf(d.pos[2] - p.feet[2]) < 200.0f)
+					{
+						bd = ex * ex + ey * ey;
+						door = i;
+					}
+				}
+				// (v2 kit: a locked one unlocked first with what is carried, as on the way: an Ondusi's Unhinging scroll aimed at it)
+				if (door >= 0 && w.refs[door].lockLevel > 0 && w.time < unlockWait)
+					return true;
+				if (door >= 0 && s.kitV2() && w.refs[door].lockLevel > 0 && unlockTries < 3 && w.itemCount("sc_ondusisunhinging") > 0)
+				{
+					unlockTries++;
+					unlockWait = w.time + 1.5f;
+					const Ref& d = w.refs[door];
+					float ux = (d.boxMin[0] + d.boxMax[0]) * 0.5f - p.feet[0], uy = (d.boxMin[1] + d.boxMax[1]) * 0.5f - p.feet[1];
+					p.yaw = atan2f(ux, uy);
+					p.pitch = atan2f((d.boxMin[2] + d.boxMax[2]) * 0.5f - playerEyeZ(p), fmaxf(hypotf(ux, uy), 1.0f));
+					logf("drive: %s is behind %s, locked (%d): Ondusi's Unhinging on it", id.c_str(), d.id.c_str(), d.lockLevel);
+					s.castItem("sc_ondusisunhinging");
+					return true;
+				}
+				if (door >= 0)
+				{
+					logf("drive: %s is behind %s: opening it", id.c_str(), w.refs[door].id.c_str());
+					s.playerActivate(door);
+					doorLast = door;
+					return true;
+				}
 			}
 		}
 		// (a lockpick or probe in the weapon slot: the best carried weapon first, as a player would)
@@ -1062,7 +1106,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 					// (one we can walk straight to first: a straight line at knee height, not behind the bed or the
 					// table that hid it; the first seen spot is kept for when none is)
 					float from[3] = { p.feet[0], p.feet[1], p.feet[2] + 30.0f }, to[3] = { cx, cy, fz + 30.0f };
-					bool clear = w.lineOfSight(from, to);
+					bool clear = w.lineOfSight(from, to, false);
 					if (!seen || clear)
 					{
 						sx = cx;
