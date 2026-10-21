@@ -121,13 +121,18 @@ static void readSkeletons(FILE* f, std::vector<Skeleton>& out, u32 count)
 			if (strcasecmp(sk.bones[i].name, "bip01 head") == 0)
 				sk.headBone = i;
 		// How far each group's root walks a second (its loop): walk / run cycles are played at the
-		// actor's own speed, so feet don't slide
+		// actor's own speed, so feet don't slide. Only the movement groups (walk, run, sneak, swim: OpenMW's movement
+		// states carry the speed multiplier): an idle or a one-shot whose root drifts a little was slowed to half pace
+		// with the actor standing, and Sinnammu Mirpal, there to be escorted, never set out
 		sk.groupSpeed.assign(sk.groups.size(), 0.0f);
 		int at = sk.accumBone >= 0 ? sk.trackOfBone[sk.accumBone] : -1;
 		if (at >= 0 && !sk.tracks[at].trans.empty())
 			for (size_t g = 0; g < sk.groups.size(); g++)
 			{
 				const AnimGroup& ag = sk.groups[g];
+				if (strncasecmp(ag.name, "walk", 4) != 0 && strncasecmp(ag.name, "run", 3) != 0
+					&& strncasecmp(ag.name, "sneak", 5) != 0 && strncasecmp(ag.name, "swim", 4) != 0)
+					continue;
 				float t0 = ag.loopStart < ag.loopStop ? ag.loopStart : ag.start, t1 = ag.loopStart < ag.loopStop ? ag.loopStop : ag.stop;
 				if (t1 - t0 < 0.1f)
 					continue;
