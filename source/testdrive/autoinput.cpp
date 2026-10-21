@@ -83,6 +83,13 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 			step->camSet = 1;
 			continue;
 		}
+		// CAMREL:dx:dy:dz:yaw:pitch: the view held at the player's feet plus that offset (world axes), taken again at each
+		// step (a camera that follows them: tools/test/playfight.py)
+		if (sscanf(tok, "CAMREL:%f:%f:%f:%f:%f", &step->cam[0], &step->cam[1], &step->cam[2], &step->cam[3], &step->cam[4]) == 5)
+		{
+			step->camSet = 2;
+			continue;
+		}
 		if (strcmp(tok, "CAM:off") == 0)
 		{
 			step->camSet = 0;
@@ -144,7 +151,7 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		for (const char* verb : { "GOD", "EXPECT:", "WALKTO:", "FLYTO:", "HOPTO:", "ESCORT:", "KILL:", "ACTIVATE:", "PICKUP:", "EQUIP:", "DOORTO:", "LOOT:", "PUT:", "STRIKE:",
 				"SNAP:", "CLASS:", "SETSKILL:", "SETATTR:", "SKILLPROG:", "LEVELPROG:", "ENCHANTAT:", "ENCHITEM:", "ENCHGEM:",
 				"ENCHTYPE:", "ADDEFFECT:", "CONFIRM", "SPELLMAKE:", "TRAIN:", "BUY:", "SELL:", "LEVELUP:", "READ:", "FACE:", "DEPTH16:", "DETAILSCALE:", "ACTORDETAIL:",
-				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "TRUNCSAVE:", "REFHEALTH:", "REFADDITEM:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "VFX:", "PLACEAT:", "SPRITEBUDGET:", "NPCCAST:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "MEMLEAVE:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:", "STREAM:", "GAMMA:", "AUTOGAMMA:", "LUX:", "CAMLUMA:", "LOOKSPEED:", "GETURN:", "GEAIM:", "INVERTY:", "SUBTITLES:", "SAYLINE:", "CON:", "CONSEL", "MAPCELL:", "MAPSEEN:", "CLOCKSHIFT:", "VIEWSCALE:", "ADAPTVIEW:", "RESTMENU" })
+				"CASTAT:", "POSE:", "BONES:", "SLAY:", "HOSTILE:", "SAYTOPIC:", "TRUNCSAVE:", "REFHEALTH:", "REFADDITEM:", "VMPOSE:", "BODYPOSE:", "SCREEN:", "MAKESPELL:", "USEMADE", "EQUIPMADE", "RECHARGEMADE", "ATTRUPS:", "FILL", "DRINKBREWED", "CASTMADESPELL", "PROBE:", "ACTIVE:", "SETFATIGUE:", "SETMAGICKA:", "HIDEACTORS:", "TRACE:", "HEALTHMAX:", "VFX:", "PLACEAT:", "SPRITEBUDGET:", "NPCCAST:", "POV:", "SETREP:", "SETDISP:", "KNOW:", "SETBOUNTY:", "JOURNALADD:", "SETJOURNALINDEX:", "ADVANCE:", "ENABLE:", "DISABLE:", "ALARM:", "ROLL:", "RESISTROLL:", "REPAIRAT:", "REPAIRWITH:", "BUYSPELL:", "MOVIE:", "BARTER:", "BARTERSEL:", "TRAVEL:", "SAVESEL:", "SETWEATHER:", "CHANGEWEATHER:", "MODREGION:", "SETITEM:", "SETHEALTH:", "SETALARM:", "SETITEMHEALTH:", "SETITEMCHARGE:", "SETDEAD:", "SETTALKED:", "SETRACE:", "KNOCKDOWN:", "SNEAK", "WEREWOLF", "CLOTHVALUE:", "FATIGUEREGEN:", "GIVEPOTION:", "USE:", "USELOCKPICK:", "USEPROBE:", "SEED:", "PCNAME:", "PCRACE:", "PCSEX:", "TYPE:", "TOPICLOG:", "NOTIFY:", "MSGBOX:", "MEMHOLD:", "MEMLEAVE:", "UNSEEN", "ENHANCEV2", "MAKEITEM:", "UNTIL:", "FLOAT:", "HIDE:", "STREAM:", "GAMMA:", "AUTOGAMMA:", "LUX:", "CAMLUMA:", "LOOKSPEED:", "GETURN:", "GEAIM:", "INVERTY:", "SUBTITLES:", "SAYLINE:", "CON:", "CONSEL", "MAPCELL:", "MAPSEEN:", "CLOCKSHIFT:", "VIEWSCALE:", "ADAPTVIEW:", "RESTMENU" })
 			if (strncmp(tok, verb, strlen(verb)) == 0)
 				step->actions.push_back(tok);
 		if (strcmp(tok, "ENCHANT") == 0)

@@ -90,6 +90,29 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		s.testNoFatigueRegen = atoi(a[1].c_str()) == 0;
 		return true;
 	}
+	// HEALTHMAX:<n>: the player's Health and its maximum now n (a passive target that outlasts a long fight)
+	if (verb == "HEALTHMAX" && a.size() >= 2)
+	{
+		float n = (float)atof(a[1].c_str());
+		w.stats.healthBonus += n - w.stats.healthMax;
+		w.stats.healthMax = n;
+		w.stats.health = n;
+		return true;
+	}
+	// TRACE:<id>: log that actor every frame ("trace:" lines); TRACE:off stops
+	if (verb == "TRACE" && a.size() >= 2)
+	{
+		s.traceActor = a[1] == "off" ? "" : a[1];     // (% is a space; an id's own underscores stay)
+		for (auto& ch : s.traceActor)
+			if (ch == '%')
+				ch = ' ';
+		for (auto& ch : s.traceActor)
+			ch = (char)tolower((unsigned char)ch);
+		s.traceTime = 0.0f;
+		if (!s.traceActor.empty())
+			logf("trace: begin %s", s.traceActor.c_str());
+		return true;
+	}
 	// SEED:<n>: the random rolls (magnitudes, resistance, reflect, dispel) follow that seed from here
 	if (verb == "SEED" && a.size() >= 2)
 	{

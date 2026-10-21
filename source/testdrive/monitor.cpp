@@ -29,6 +29,32 @@ void Session::noteHudMismatch(int left, int right)
 // linear memory that shrinks each time the same cell is entered.
 void Session::monitorActors(float dt)
 {
+	// TRACE:<id>: every frame, each loaded actor with that id: where it is, which way it faces, what it plays and its
+	// health (tools/test/playfight.py reads these for the jitter report, the same numbers OpenMW's Lua logs)
+	if (!traceActor.empty())
+	{
+		traceTime += dt;
+		// (and the player, the one it fights: the same line with their feet, heading and health)
+		logf("trace: player %.3f %.2f %.2f %.2f %.4f - 0.000 %.0f", traceTime, w.player.feet[0], w.player.feet[1], w.player.feet[2],
+			w.player.yaw, w.stats.health);
+		for (int i : w.loadedActors)
+		{
+			const Ref& r = w.refs[i];
+			// (PLACE put one of this id somewhere: that one, among several of the id)
+			if (r.idLower != traceActor || (testPlaced >= 0 && w.refs[testPlaced].idLower == traceActor && i != testPlaced))
+				continue;
+			const Actor* a = w.actorOf(i);
+			const char* group = "-";
+			if (a && a->group >= 0)
+			{
+				const Skeleton& sk = actorSkeleton(*w.actorsOf(i), a->skeleton);
+				if (a->group < (int)sk.groups.size())
+					group = sk.groups[a->group].name;
+			}
+			logf("trace: %s %.3f %.2f %.2f %.2f %.4f %s %.3f %.0f", r.idLower.c_str(), traceTime, r.pos[0], r.pos[1], r.pos[2],
+				r.rot[2], group, a ? a->time : 0.0f, r.health);
+		}
+	}
 	// Skating: an actor going over the ground faster than a crawl (30 a second) while it plays an idle, its legs still
 	if (autotest && dt > 0.0f)
 		for (int i : w.loadedActors)

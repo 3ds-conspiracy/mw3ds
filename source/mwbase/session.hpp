@@ -214,6 +214,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void ageVfx(float dt);
 	void updateFadeAndNotes(float dt);
 	void drawTop();
+	void drawHurtFlash();
 	void itemTip(const Object* o, const InventoryItem* it);   // it: that one's wear and charge (nullptr: new)
 	void spellTip(const SpellDef& sp);
 	int armorSkill(const Object* o);      // the armor skill a piece of armor trains: by its weight for its slot

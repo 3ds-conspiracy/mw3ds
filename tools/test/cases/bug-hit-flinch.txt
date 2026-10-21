@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# Seen from outside (third person), the player's body flinches when a blow lands: one of the skeleton's Hit groups plays
+# over the walk or idle (OpenMW's hit state, Priority_Hit). Ours had no reaction on the body at all (the first-person arms
+# did). A Balmora guard on a player standing in the street. Written with the fix (EXPECT:bodyhits is new), so it shows the
+# fixed engine reacts, not that it failed before.
+1 0 0 0 0 TP:-22459:-14494:900:0+HEALTHMAX:2000+SEED:1+POV:third
+5 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000
+1 0 0 0 0 PLACE:hlaalu%guard_outside:150
+0.1 0 0 0 0 ENABLE:hlaalu%guard_outside
+0.1 0 0 0 0 HOSTILE:hlaalu%guard_outside
+8 0 0 0
+0.1 0 0 0 0 EXPECT:health:lt:1990+EXPECT:bodyhits:ge:1

@@ -347,6 +347,8 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 			act.action = BODY_CAST;
 			act.group = range == 2 ? "CastTarget" : range == 1 ? "CastTouch" : "CastSelf";
 		}
+		act.hit = bodyHit;
+		bodyHit = false;
 		act.charge = vm.charge;
 		act.speed = vm.speed;
 		act.strength = blowStrength;

@@ -22,6 +22,7 @@ struct BodyAct
 	float strength = 1.0f;                        // a blow let go: small / medium / large follow-through by it
 	const char* stance = "";                      // the weapon's family for its ready stance: 1h 2c 2w HH
 	float moveX = 0.0f, moveY = 0.0f;             // the stick against the facing (+y forward): which way they walk
+	bool hit = false;                             // just struck: a Hit group, unless a blow or cast is going (OpenMW: Priority_Hit)
 	bool airborne = false;                        // off the ground (jumping, falling): the jump
 	bool flying = false;                          // levitating: walks, never runs or sneaks (OpenMW)
 };
@@ -50,6 +51,7 @@ struct PlayerBody
 	std::string group;                            // the walk / idle group asked for last ("" after a blow or cast)
 	BodyAction acting = BODY_NONE;                // the arms' action being played
 	std::string actGroup;
+	u32 hitsPlayed = 0;                           // Hit groups played on being struck (tests: EXPECT:bodyhits)
 	bool followCut = false;                       // a blow's follow-through was chosen at its hit
 	bool stanceOut = false;                       // the walk / idle was chosen with the weapon out
 	bool swimOut = false;                         // ... and in the water (actorPlay's swimming groups)

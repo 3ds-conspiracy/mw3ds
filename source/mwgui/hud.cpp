@@ -44,6 +44,27 @@ void Session::drawIndicators(float dt)
 
 // ---- top screen overlay
 
+// The red wash when the player is hurt: a screen effect, drawn with the HUD hidden too (a test's HUD:off, OpenMW's hidden HUD
+// still shows its own)
+void Session::drawHurtFlash()
+{
+	if (hurtFlash <= 0.0f)
+		return;
+	// Red at the edges of the screen, fading to nothing toward the middle (OpenMW's hit overlay is a vignette too), not a
+	// wash over all of it: four bands, each a quad of two triangles with the colour at its outer side only
+	extern int g_uiDraws;
+	const u32 edge = C2D_Color32(200, 0, 0, (u8)(hurtFlash * 110)), none = C2D_Color32(200, 0, 0, 0);
+	auto quad = [&](float x, float y, float w, float h, u32 tl, u32 tr, u32 bl, u32 br) {
+		g_uiDraws++;
+		C2D_DrawTriangle(x, y, tl, x + w, y, tr, x, y + h, bl, 0.5f);
+		C2D_DrawTriangle(x, y + h, bl, x + w, y, tr, x + w, y + h, br, 0.5f);
+	};
+	quad(0, 0, 400, 50, edge, edge, none, none);          // top
+	quad(0, 190, 400, 50, none, none, edge, edge);        // bottom
+	quad(0, 0, 70, 240, edge, none, edge, none);          // left
+	quad(330, 0, 70, 240, none, edge, none, edge);        // right
+}
+
 void Session::drawTop()
 {
 	const UiInput& in = uiIn();
@@ -122,8 +143,7 @@ void Session::drawTop()
 		uiRect(150, 222, 100, 10, C2D_Color32(0, 0, 0, 170));
 		uiRect(151, 223, 98 * fmaxf(0.0f, e.health) / fmaxf(1.0f, e.healthMax), 8, col::health);
 	}
-	if (hurtFlash > 0.0f)
-		uiRect(0, 0, 400, 240, C2D_Color32(200, 0, 0, (u8)(hurtFlash * 90)));
+	drawHurtFlash();
 	// The selected item's or spell's tooltip
 	if (menuOpen() && !tip.empty())
 	{

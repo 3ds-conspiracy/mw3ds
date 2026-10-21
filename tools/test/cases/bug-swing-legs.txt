@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# A fighter walking on at a foe while it swings runs its legs under the blow (OpenMW blends the lower body's movement group
+# with the upper body's attack): ours played the blow on the whole body, so the legs stood and the body slid. A Balmora
+# guard after a player backing away at a slow walk. Written with the fix (EXPECT:reflegframes is new).
+1 0 0 0 0 TP:-22459:-14494:900:0+HEALTHMAX:2000+SEED:1
+5 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000
+1 0 0 0 0 PLACE:hlaalu%guard_outside:350
+0.1 0 0 0 0 ENABLE:hlaalu%guard_outside
+0.1 0 0 0 0 HOSTILE:hlaalu%guard_outside
+8 0 -0.31 0 0
+0.1 0 0 0 0 EXPECT:reflegframes:hlaalu%guard_outside:gt:10

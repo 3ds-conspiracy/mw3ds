@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# A fighter's side step (OpenMW's combat move: 0.1 - 0.2 s, left or right) runs at three quarters of its speed: Actor::
+# getCurrentSpeed takes mIsStrafing x 0.75. Ours ran sideways at the full run speed, so each step went a third too far
+# (a guard's up to 66 units against 49) and its dodges looked like lunges beside OpenMW's. A Balmora guard on a player
+# standing still, 8 s. Run speed 330 for this guard: the longest step must stay under 0.2 s x 0.75 x run speed = 60.
+1 0 0 0 0 TP:-22459:-14494:900:0+HEALTHMAX:2000+SEED:1
+5 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000
+1 0 0 0 0 PLACE:hlaalu%guard_outside:150
+0.1 0 0 0 0 ENABLE:hlaalu%guard_outside
+0.1 0 0 0 0 HOSTILE:hlaalu%guard_outside
+8 0 0 0
+0.1 0 0 0 0 EXPECT:refsidesteps:hlaalu%guard_outside:ge:1+EXPECT:refsidemax:hlaalu%guard_outside:gt:5+EXPECT:refsidemax:hlaalu%guard_outside:lt:60

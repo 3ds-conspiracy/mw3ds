@@ -36,6 +36,11 @@ throwing weapon, a target spell in hand). Then it picks a path grid point at ran
 connects to in that cell, runs there, and stands again once there, or once it is `fFleeDistance` away out of sight. With
 no path grid (or a fish) it runs straight away from the foe for 1 s, then stands again.
 
+Closing in (`AiCombat::execute`, `mShouldApproach`): a melee fighter (not a bow, a thrown weapon or a target spell)
+that is in range of its foe, with a clear line, keeps walking at the foe until their bounds are within 64 units, blow or
+no blow: it moves while it swings. Once there it stands (and takes its combat moves). Out of range again, mid-swing too,
+readiness is judged each frame, so it starts walking on again. A foe backing away is followed and struck.
+
 ## Choosing the next action (healing)
 
 `prepareNextAction` rates each option and takes the best, about once per blow: potions (`ratePotion`), on-use enchanted
@@ -142,6 +147,12 @@ it on twice).
    rated as `prepareNextAction` does (above). Tests `bug-npc-drinks-potion` (Arrille at a fifth of his health drinks a
    Quality Restore Health) and `bug-npc-keeps-potion` (at 95% he keeps it); written with the fix (their set-up steps
    REFADDITEM / REFHEALTH are new), the build before had no drinking at all.
+7. **Closing in** (2026-10-21, `playfight.py`): a guard after a player backing away at a slow walk never hit: it stood at
+   0.9 x its reach from the middles (about 154) and through every swing, so the blow fell on empty air; it also flipped
+   between its run and its idle at that edge. Now OpenMW's `mShouldApproach` (above): it comes to bounds-within-64
+   (about 112 from the middles, as OpenMW's guard did) and follows while it swings. Differs: the legs stay in the blow's
+   animation while it slides (one group at a time; OpenMW blends the legs). Test `bug-retreat-chase` (written before the
+   fix: fails before).
 
 Test: `openmw-spec-ai` (generated from the actor data): the fight term and the flee rating at several distances and
 dispositions (`Session::fightTermOf`, `fleeRatingOf`). Needs `python tools/test/openmw_specgen.py` on `out/world`.

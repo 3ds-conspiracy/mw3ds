@@ -1,0 +1,3 @@
+GLOBAL: scripts/mw3ds_pf/global.lua
+PLAYER: scripts/mw3ds_pf/player.lua
+NPC, CREATURE: scripts/mw3ds_pf/actor.lua

@@ -264,6 +264,17 @@ void PlayerBody::update(World& w, float dt, float speed, bool swimming, bool sne
 	}
 	else if (act.action == BODY_NONE)
 		acting = BODY_NONE;                     // a blow or cast already going plays out (ANIM_ONCE)
+	// Struck: one of its Hit groups plays once, over the walk or idle (a blow or cast going isn't cut: the first-person arms
+	// carry on with theirs)
+	if (act.hit && act.action == BODY_NONE && acting == BODY_NONE && a.mode != ANIM_HOLD)
+	{
+		std::string g = actorRandomGroup(set, a, "Hit");
+		if (actorPlay(set, a, g.empty() ? "Hit1" : g.c_str(), ANIM_ONCE))
+		{
+			group = "";
+			hitsPlayed++;
+		}
+	}
 	bool busy = a.mode == ANIM_ONCE || (a.mode == ANIM_HOLD && (acting == BODY_WINDUP || acting == BODY_DEATH));
 	float step = dt;
 	if (busy && a.mode == ANIM_HOLD && acting == BODY_WINDUP)

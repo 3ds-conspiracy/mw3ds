@@ -582,9 +582,10 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	}
 	if (first && s.camSet >= 0)
 	{
-		g_camHeld = s.camSet == 1;
-		g_heldCam = RenderCamera{ { s.cam[0], s.cam[1], s.cam[2] }, C3D_AngleFromDegrees(s.cam[3]),
-			C3D_AngleFromDegrees(s.cam[4]) };
+		g_camHeld = s.camSet >= 1;
+		const float* at = s.camSet == 2 ? session->w.player.feet : nullptr;     // (CAMREL: from the player's feet)
+		g_heldCam = RenderCamera{ { s.cam[0] + (at ? at[0] : 0.0f), s.cam[1] + (at ? at[1] : 0.0f), s.cam[2] + (at ? at[2] : 0.0f) },
+			C3D_AngleFromDegrees(s.cam[3]), C3D_AngleFromDegrees(s.cam[4]) };
 	}
 	if (first && s.hud >= 0)
 		g_hudOff = s.hud == 0;

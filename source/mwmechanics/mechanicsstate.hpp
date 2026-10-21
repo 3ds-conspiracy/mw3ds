@@ -17,7 +17,8 @@ struct MechanicsState
 	float castLock = 0.0f;            // the cast animation's whole group plays out (one upper-body state): nothing else starts
 	float castWait = 0.0f;            // no new cast for this long (when there's no animation to wait for)
 	float enemyUntil = 0.0f;
-	float hurtFlash = 0.0f;
+	float hurtFlash = 0.0f;
+	bool bodyHit = false;                        // struck: the third-person body plays a Hit group (PlayerBody::update)
 	u8 bloodModels = 0;               // the blood splat models hits have thrown so far (bits 0..2; the test driver's bloodmodels)
 	bool playerDead = false;
 	bool weaponDrawn = false;         // weapon (or fists) out: the view model shows it

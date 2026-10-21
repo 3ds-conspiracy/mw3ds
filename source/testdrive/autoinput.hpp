@@ -92,7 +92,7 @@ struct ScriptedInput
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
 	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned
 	int frameCap = -1;                // FRAMECAP:on|off: the Old 3DS's 30 / 20 fps cap in a scripted run (on unless a case says off)
-	int camSet = -1;                  // CAM:x:y:z:yaw:pitch (1) / CAM:off (0): the view held at that spot (degrees, pitch up positive)
+	int camSet = -1;                  // CAM:x:y:z:yaw:pitch (1) / CAMREL: the same from the player's feet (2) / CAM:off (0): the view held at that spot (degrees, pitch up positive)
 	float cam[5] = {};
 	int hud = -1;                     // HUD:off (0) / HUD:on (1): the top screen's HUD
 	int halt = -1;                    // HALT:on (1) / HALT:off (0): the world stands still (no time passes) while the script goes on

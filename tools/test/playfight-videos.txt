@@ -1,0 +1,5 @@
+# Filmed fights: python tools/test/playfight.py tools/test/playfight-videos.txt --video --seeds 1 (see playfight.py)
+# guar: flat open ashland east of Vvardenfell's middle, found from the land heights: no rock or tree within 1600
+guar     fighter=guar     seconds=10  at=97280,21398,1085,180  ground=785
+# a Balmora guard on a person who backs away slowly (Balmora's streets, south of the bridge)
+balmora-guard  fighter="hlaalu guard_outside"  seconds=8  retreat=90  wait=5  at=-22459,-14494,900,0  ground=504  follow=100,-300,150,348,-6

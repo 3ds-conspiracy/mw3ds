@@ -211,6 +211,7 @@ void Session::damagePlayer(float dmg, bool fatigueOnly)
 		playSound(-1, "Health Damage");
 	}
 	hurtFlash = 1.0f;
+	bodyHit = true;
 	sheatheTimer = 0.0f;
 	if (weaponDrawn && vm.action == VM_IDLE)
 		vm.play(VM_HIT, "Hit1");

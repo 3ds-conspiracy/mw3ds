@@ -40,6 +40,9 @@ struct Skeleton
 	// held out by the left arm alone (OpenMW's BlendMask_LeftArm), whatever the rest does
 	mutable int torchGroup = -2;
 	mutable std::vector<u8> leftArm;
+	// The upper body ("Bip01 Spine1" and under it, the arms and head too): what a blow plays while the legs run (OpenMW's
+	// BlendMask_UpperBody; everything else is the lower body)
+	mutable std::vector<u8> upper;
 };
 
 struct MorphTrack
@@ -130,6 +133,10 @@ struct Actor
 	float poseHz = 0.0f;
 	u32 poses = 0;                     // poses made (tests)
 	u32 groupStarts = 0;               // groups started (tests: a fighter flipping between running and standing)
+	int legGroup = -1;                 // a blow going while the actor walks on: the legs play this movement group on their own
+	float legTime = 0.0f;              // ... at this time (actorPlay clears it; aicombat sets it each frame it walks and swings)
+	u32 legFrames = 0;                 // frames its legs ran under a blow (tests: EXPECT:reflegframes)
+	float moveSpeed = 0.0f;            // how fast it moved over the ground last frame (units a second)
 	int lastMove = -1;                 // the movement cycle last left off, and where (actorPlay takes it up there again)
 	float lastMoveTime = 0.0f;
 	float headYaw = 0.0f;             // head turned this far (radians, around the actor's up axis)

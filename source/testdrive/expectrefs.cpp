@@ -339,6 +339,7 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		else if (what == "refpkg") v = r.aiPackage == AIPKG_IDLE ? -1.0f : (float)r.aiPackage;   // GetCurrentAIPackage
 		else if (what == "refpkgdone") v = r.aiDone ? 1.0f : 0.0f;                              // GetAIPackageDone
 		else if (what == "refknock") v = r.knockTimer;
+		else if (what == "refsidemax") v = r.sideMax;               // the longest side step it has made, units
 		else if (what == "refsidesteps") v = (float)r.sideSteps;     // side steps begun in a fight (OpenMW's combat moves)
 		else if (what == "refyaw") v = r.rot[2] * 57.29578f;          // which way it faces, degrees
 		else if (what == "refskate") v = s.skates.count(ri) ? s.skates[ri].secs : 0.0f;   // seconds moving while playing an idle
@@ -394,6 +395,11 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		{
 			const Actor* a = w.actorOf(ri);
 			v = !a ? -1.0f : what == "refposes" ? (float)a->poses : a->poseHz;
+		}
+		else if (what == "reflegframes")    // frames its legs ran under a blow (Actor::legFrames)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? (float)a->legFrames : -1.0f;
 		}
 		else if (what == "refgroupstarts")  // animation groups it has started so far (Actor::groupStarts)
 		{

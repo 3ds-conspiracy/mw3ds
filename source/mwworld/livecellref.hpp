@@ -46,7 +46,9 @@ struct Ref
 	float combatReact = 0.0f, sideTimer = 0.0f;
 	s8 sideStep = 0;
 	bool backingUp = false;
+	bool approach = true;            // in range of a melee target: walking on at it till their bounds are within 64 (OpenMW's mShouldApproach)
 	int sideSteps = 0;
+	float sideRun = 0.0f, sideMax = 0.0f;   // the side step going: units covered so far; the longest one made (tests: EXPECT:refsidemax)
 	bool destHasGrid = false;     // destination is outdoors: the exterior grid cell it lands in
 	int destGrid[2] = {};
 	float destPos[3], destRot[3];

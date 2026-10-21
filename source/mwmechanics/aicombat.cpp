@@ -68,12 +68,21 @@ bool Session::combatMove(int ri, Cell& cell, float dist, float facing, bool rang
 	}
 	if (r.sideStep != 0 && (r.sideTimer -= dt) <= 0.0f)
 		r.sideStep = 0;
+	if (r.sideStep == 0)
+	{
+		r.sideMax = fmaxf(r.sideMax, r.sideRun);
+		r.sideRun = 0.0f;
+	}
 	float fx = sinf(r.rot[2]), fy = cosf(r.rot[2]);
 	const char* group = nullptr;
 	if (r.backingUp && npcStep(ri, cell, -fx, -fy, actorRunSpeed(ri) * dt))
 		group = "RunBack";
-	else if (r.sideStep != 0 && npcStep(ri, cell, fy * r.sideStep, -fx * r.sideStep, actorRunSpeed(ri) * dt))
+	// (OpenMW's Actor::getCurrentSpeed: strafing, a quarter slower)
+	else if (r.sideStep != 0 && npcStep(ri, cell, fy * r.sideStep, -fx * r.sideStep, actorRunSpeed(ri) * dt * 0.75f))
+	{
+		r.sideRun += actorRunSpeed(ri) * dt * 0.75f;
 		group = r.sideStep > 0 ? "RunRight" : "RunLeft";
+	}
 	if (!group)
 		return false;
 	if (a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
@@ -274,6 +283,7 @@ void Session::npcCombat(int ri, float dt)
 		// ledge, a gap the grid doesn't cover): stand rather than run in place, and run again once it moves.
 		r.sideStep = 0;
 		r.backingUp = false;
+		r.approach = true;                 // (out of range: the next time in range it walks on to 64 again)
 		float was[2] = { r.pos[0], r.pos[1] };
 		npcMoveTo(ri, w.player.feet, actorRunSpeed(ri), dt, false);
 		float moved = hypotf(r.pos[0] - was[0], r.pos[1] - was[1]);
@@ -312,7 +322,36 @@ void Session::npcCombat(int ri, float dt)
 		r.chaseWindow = 0.0f;
 		r.chaseAnchor[0] = r.pos[0];
 		r.chaseAnchor[1] = r.pos[1];
-		if (!combatMove(ri, *cell, dist, diff, ranged, playerWeapon(), dt) && a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
+		// (OpenMW's AiCombat, in range of a melee target: it walks on at it until their bounds are within 64 (mShouldApproach),
+		// blow or no blow, so a foe backing away is followed and struck; then it stands and takes its combat moves. Ours stood
+		// at 0.9 x its reach and through every swing: a player walking back was out of reach when the blow fell)
+		bool closing = false;
+		if (attacking && dist > keep)
+			r.approach = true;             // (out of range mid-swing: OpenMW's readiness is judged each frame, so it follows again)
+		if (!ranged && r.approach)
+		{
+			if (dist - gap > 64.0f)
+				closing = true;
+			else
+				r.approach = false;
+		}
+		if (closing)
+		{
+			r.sideStep = 0;
+			r.backingUp = false;
+			npcMoveTo(ri, w.player.feet, actorRunSpeed(ri), dt, false);
+			// (mid-blow: the legs run under the swing)
+			if (attacking && a && a->mode == ANIM_ONCE)
+			{
+				std::string run = stanceGroup(*set, *a, "RunForward", wpn);
+				int lg = actorFindGroup(actorSkeleton(*set, a->skeleton), run.c_str());
+				a->legGroup = lg >= 0 ? lg : actorFindGroup(actorSkeleton(*set, a->skeleton), "RunForward");
+			}
+			if (!attacking && a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE)
+				&& !actorPlay(*set, *a, stanceGroup(*set, *a, "RunForward", wpn).c_str(), ANIM_LOOP))
+				actorPlay(*set, *a, "WalkForward", ANIM_LOOP);
+		}
+		else if (!combatMove(ri, *cell, dist, diff, ranged, playerWeapon(), dt) && a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
 		{
 			// ready to strike: the weapon's stance (its idles otherwise, left to run on)
 			std::string idle = stanceGroup(*set, *a, "Idle", wpn);

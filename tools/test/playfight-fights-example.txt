@@ -1,0 +1,3 @@
+# Example fights for tools/test/playfight.py (see its docstring)
+guar     fighter=guar     seconds=12
+fargoth  fighter=fargoth  seconds=12

@@ -21,6 +21,8 @@ struct TestState
 	std::unordered_map<int, Watch> watches;
 	struct Skate { float x = 0, y = 0, secs = 0; bool seen = false; };
 	std::unordered_map<int, Skate> skates;  // actors moving while they play an idle, seconds of it (EXPECT:refskate)
+	std::string traceActor;                         // TRACE:<id>: that actor's position, heading, group and health logged every frame
+	float traceTime = 0.0f;
 	float monitorTimer = 0.0f;           // harness GOD: the player can't die, every blow lands and kills
 	int loadScreens = 0;                            // trips through the loading screen (finishTravel): EXPECT:loadscreens
 	int testPlaced = -1;                            // the actor PLACE last put in front of the player

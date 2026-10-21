@@ -669,6 +669,7 @@ bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode)
 	a.mode = mode;
 	a.loopsLeft = -1;
 	a.groupStarts++;
+	a.legGroup = -1;                    // (a new group takes the whole body again)
 	a.time = mode == ANIM_LOOP && g == a.lastMove && a.lastMoveTime >= sk.groups[g].start && a.lastMoveTime < sk.groups[g].stop
 		? a.lastMoveTime : sk.groups[g].start;
 	// Both hands busy: fists, a spell, a two-handed weapon, a bow or crossbow (their groups: AttackHH, IdleSpell,
@@ -820,6 +821,7 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 		}
 		else
 			a.rate = 1.0f;
+		a.moveSpeed = dt > 0.0f && a.lastXY[0] < 1e8f ? sqrtf((x - a.lastXY[0]) * (x - a.lastXY[0]) + (y - a.lastXY[1]) * (y - a.lastXY[1])) / dt : 0.0f;
 		a.lastXY[0] = x;
 		a.lastXY[1] = y;
 		a.time += dt * a.rate;
@@ -883,9 +885,13 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 			if (strncasecmp(sk.groups[g].name, "Torch", sizeof(sk.groups[g].name)) == 0)
 				sk.torchGroup = (int)g;
 		sk.leftArm.assign(sk.bones.size(), 0);
+		sk.upper.assign(sk.bones.size(), 0);
 		for (size_t i = 0; i < sk.bones.size(); i++)
+		{
 			sk.leftArm[i] = strcasecmp(sk.bones[i].name, "Bip01 L Clavicle") == 0
 				|| (sk.bones[i].parent >= 0 && sk.leftArm[sk.bones[i].parent]);
+			sk.upper[i] = strcasecmp(sk.bones[i].name, "Bip01 Spine1") == 0 || (sk.bones[i].parent >= 0 && sk.upper[sk.bones[i].parent]);
+		}
 	}
 	bool dying = !sk.groups.empty() && strncasecmp(sk.groups[a.group].name, "Death", 5) == 0;
 	const AnimGroup* torch = a.torchOut && sk.torchGroup >= 0 && !dying ? &sk.groups[sk.torchGroup] : nullptr;
@@ -898,13 +904,27 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 	else
 		a.torchTime = -1.0f;
 
+	// A blow while it walks on (a fighter closing in on a foe backing away): the legs run on their own time, the blow plays
+	// on the upper body (OpenMW blends the two: the lower body keeps its movement group, the upper plays the attack)
+	const AnimGroup* legs = a.legGroup >= 0 && a.legGroup < (int)sk.groups.size() && a.mode == ANIM_ONCE && !dying && !sk.upper.empty()
+		? &sk.groups[a.legGroup] : nullptr;
+	if (legs)
+	{
+		a.legFrames++;
+		float gs = a.legGroup < (int)sk.groupSpeed.size() ? sk.groupSpeed[a.legGroup] : 0.0f;
+		float scale = sqrtf(a.place[0] * a.place[0] + a.place[4] * a.place[4] + a.place[8] * a.place[8]);
+		float rate = gs > 1.0f ? fmaxf(0.5f, fminf(1.8f, a.moveSpeed / (gs * scale))) : 1.0f;
+		a.legTime = a.legTime < legs->start || a.legTime > legs->stop ? legs->start : a.legTime + dt * rate;
+		if (a.legTime >= legs->stop)
+			a.legTime = legs->start + fmodf(a.legTime - legs->start, fmaxf(0.01f, legs->stop - legs->start));
+	}
 	for (size_t i = 0; i < sk.bones.size(); i++)
 	{
 		const SkelBone& b = sk.bones[i];
 		float local[12];
 		memcpy(local, b.rest, sizeof(local));
 		int ti = sk.trackOfBone[i];
-		float bt = torch && sk.leftArm[i] ? a.torchTime : a.time;
+		float bt = legs && !sk.upper[i] ? a.legTime : torch && sk.leftArm[i] ? a.torchTime : a.time;
 		if (ti >= 0)
 		{
 			const Track& tr = sk.tracks[ti];

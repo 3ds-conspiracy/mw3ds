@@ -757,6 +757,8 @@ bool Engine::frame()
 		{
 			if (!g_hudOff)
 				session->drawTop();
+			else
+				session->drawHurtFlash();
 		}
 		else
 			uiTextCentered(200, 110, 0.6f, col::header, "Load failed - see sdmc:/3ds/mw3ds/log.txt");

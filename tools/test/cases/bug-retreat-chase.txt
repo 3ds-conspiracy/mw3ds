@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# A Balmora guard on a player backing away at a slow walk (about 90 units a second). OpenMW's AiCombat keeps walking at the
+# target while it is within range and swings (mShouldApproach: on until the bounds are within 64 of each other), so the
+# blows land (the guard comes to about 112 from the middles). Ours stood still at 0.9 x its reach (about 154 from the middles) and for the whole
+# swing, so the player was out of reach by the time the blow fell: no hit in 8 s (health stays 2000), and a stop-go flip between its run and its
+# idle at the edge of that distance.
+1 0 0 0 0 TP:-22459:-14494:900:0+HEALTHMAX:2000+SEED:1
+5 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000
+1 0 0 0 0 PLACE:hlaalu%guard_outside:350
+0.1 0 0 0 0 ENABLE:hlaalu%guard_outside
+0.1 0 0 0 0 HOSTILE:hlaalu%guard_outside
+8 0 -0.31 0 0
+0.1 0 0 0 0 EXPECT:health:lt:1980
