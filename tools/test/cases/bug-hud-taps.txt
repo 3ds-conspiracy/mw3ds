@@ -1,0 +1,96 @@
+# start: Seyda Neen
+# The HUD's bottom screen (no menu open) opens a menu on the first tap of each button and of the mini map, whatever
+# frame the tap lands on: the HUD is drawn every third frame, and a tap read only while it draws was lost two times
+# in three. Each is tapped three times after waits a frame apart, so the taps fall on all three frames
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:1
+0.5 0 0 0
+0.3 0 0 0
+0.3 0 0 0 0 TAP:27:222
+0.3 0 0 0 0 EXPECT:screen:inventory
+0.3 0 0 0 0 SCREEN:none
+0.333 0 0 0
+0.3 0 0 0 0 TAP:27:222
+0.3 0 0 0 0 EXPECT:screen:inventory
+0.3 0 0 0 0 SCREEN:none
+0.367 0 0 0
+0.3 0 0 0 0 TAP:27:222
+0.3 0 0 0 0 EXPECT:screen:inventory
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0
+0.3 0 0 0 0 TAP:80:222
+0.3 0 0 0 0 EXPECT:screen:magic
+0.3 0 0 0 0 SCREEN:none
+0.333 0 0 0
+0.3 0 0 0 0 TAP:80:222
+0.3 0 0 0 0 EXPECT:screen:magic
+0.3 0 0 0 0 SCREEN:none
+0.367 0 0 0
+0.3 0 0 0 0 TAP:80:222
+0.3 0 0 0 0 EXPECT:screen:magic
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0
+0.3 0 0 0 0 TAP:133:222
+0.3 0 0 0 0 EXPECT:screen:journal
+0.3 0 0 0 0 SCREEN:none
+0.333 0 0 0
+0.3 0 0 0 0 TAP:133:222
+0.3 0 0 0 0 EXPECT:screen:journal
+0.3 0 0 0 0 SCREEN:none
+0.367 0 0 0
+0.3 0 0 0 0 TAP:133:222
+0.3 0 0 0 0 EXPECT:screen:journal
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0
+0.3 0 0 0 0 TAP:186:222
+0.3 0 0 0 0 EXPECT:screen:map
+0.3 0 0 0 0 SCREEN:none
+0.333 0 0 0
+0.3 0 0 0 0 TAP:186:222
+0.3 0 0 0 0 EXPECT:screen:map
+0.3 0 0 0 0 SCREEN:none
+0.367 0 0 0
+0.3 0 0 0 0 TAP:186:222
+0.3 0 0 0 0 EXPECT:screen:map
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0
+0.3 0 0 0 0 TAP:239:222
+0.3 0 0 0 0 EXPECT:screen:stats
+0.3 0 0 0 0 SCREEN:none
+0.333 0 0 0
+0.3 0 0 0 0 TAP:239:222
+0.3 0 0 0 0 EXPECT:screen:stats
+0.3 0 0 0 0 SCREEN:none
+0.367 0 0 0
+0.3 0 0 0 0 TAP:239:222
+0.3 0 0 0 0 EXPECT:screen:stats
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 SCREEN:none
+0.333 0 0 0
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 SCREEN:none
+0.367 0 0 0
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0
+0.3 0 0 0 0 TAP:250:90
+0.3 0 0 0 0 EXPECT:screen:map
+0.3 0 0 0 0 SCREEN:none
+0.333 0 0 0
+0.3 0 0 0 0 TAP:250:90
+0.3 0 0 0 0 EXPECT:screen:map
+0.3 0 0 0 0 SCREEN:none
+0.367 0 0 0
+0.3 0 0 0 0 TAP:250:90
+0.3 0 0 0 0 EXPECT:screen:map
+0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0
+0.3 0 0 0 0 TAP:27:222
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:screen:inventory

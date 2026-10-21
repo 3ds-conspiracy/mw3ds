@@ -776,9 +776,10 @@ bool Engine::frame()
 		uiPeakTop = std::max(uiPeakTop, g_uiDraws);
 	}
 	// The HUD (no menu, no message up) is drawn every third frame: 330 pieces of text and frame cost an Old 3DS 5 ms a
-	// frame, and its bars and clock don't need more. Menus and messages draw every frame (taps, scrolling)
+	// frame, and its bars and clock don't need more. Menus and messages draw every frame (taps, scrolling), and so does
+	// the HUD while a finger is on the screen or just lifted: its buttons, quick slots and map read the tap as they draw
 	bool hudOnly = loaded && session->screen == SCR_NONE && session->messages.empty() && !session->wantName;
-	if (!hudOnly || g_mainFrames % 3 == 0)
+	if (!hudOnly || g_mainFrames % 3 == 0 || ui.touching || ui.tapped)
 	{
 		extern int g_uiDraws;
 		g_uiDraws = 0;
