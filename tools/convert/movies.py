@@ -88,10 +88,11 @@ def sound_to_snd3(snd):
 
 def build_movies(data_files):
     """Converts each movie once (an existing .mwv is kept: minutes of work)."""
-    video = Path(data_files) / "Video"
+    from mwfiles import game_path
+    video = game_path(data_files, "Video")
     out = {}
     for name in MOVIES:
-        src = video / f"{name}.bik"
+        src = game_path(video, f"{name}.bik")
         if not src.exists():
             continue
         stem = movie_name(name)

@@ -8,6 +8,7 @@ names): win1252 (English, German, French ...), win1250 (Polish, Czech ...) or wi
 import hashlib
 import re
 import struct
+import unicodedata
 import zlib
 from pathlib import Path
 
@@ -86,24 +87,111 @@ class BSA:
             return f.read(size)
 
 
+# Windows finds a file by its name in any case, with either slash; Linux and macOS take a backslash for part of a
+# name and (Linux, and macOS on a case-sensitive volume) tell case apart. The game names files as Windows finds them
+WINDOWS = os.sep == "\\"
+
+
+def game_path(folder, name):
+    """folder / name as Windows finds it. Off Windows each part is matched by name, case aside (a copy of Morrowind on
+    Linux keeps Windows' mixed case: Data Files/Morrowind.esm, MORROWIND.BSA ...); the plain path when nothing matches.
+    On Windows the plain path, as it always was."""
+    path = Path(folder)
+    for part in re.split(r"[\\/]", str(name)):
+        if part in ("", "."):
+            continue
+        nxt = path / part
+        if not WINDOWS and not nxt.exists() and path.is_dir():
+            low = part.lower()
+            nxt = next((c for c in sorted(path.iterdir()) if c.name.lower() == low), nxt)
+        path = nxt
+    return path
+
+
+# (off Windows the folder's own case: "Data Files" as unpacked)
+DATA_FILES = game_path(MORROWIND_DIR, "Data Files")
+
+
+def loose_name(name):
+    """A game file name (any case, either slash) as Windows resolves it under a folder: lower case, backslashes, no
+    empty or "." parts, ".." taken back a part, trailing dots and spaces dropped from each part (as Windows drops them),
+    composed Unicode (a macOS volume may hand names back decomposed)."""
+    parts = []
+    for part in unicodedata.normalize("NFC", name).lower().replace("/", "\\").split("\\"):
+        if part == "..":
+            if parts:
+                parts.pop()
+            continue
+        part = part.rstrip(". ")
+        if part:
+            parts.append(part)
+    return "\\".join(parts)
+
+
+class LooseFiles:
+    """The files under a folder laid out like Data Files, by loose_name(): what Linux and macOS look loose files up in
+    (Sound\\Fx\\x.wav is one odd file name there, and Sound/Fx is not sound/fx). Read once, in sorted order, so two
+    files whose names differ only in case (possible in a mod unpacked on Linux) resolve the same way every run: the
+    first, with a line saying so. Linked folders are followed, each once (a link loop ends); a broken link is no file."""
+
+    def __init__(self, root):
+        self.files = {}
+        if not Path(root).is_dir():
+            return
+        seen = set()
+        twins = 0
+        for d, dirs, names in os.walk(root, followlinks=True):
+            real = os.path.realpath(d)
+            if real in seen:
+                dirs[:] = []
+                continue
+            seen.add(real)
+            dirs.sort()
+            for n in sorted(names):
+                full = os.path.join(d, n)
+                if not os.path.isfile(full):
+                    continue
+                key = loose_name(os.path.relpath(full, root).replace(os.sep, "\\"))
+                if key in self.files:
+                    twins += 1
+                    continue
+                self.files[key] = Path(full)
+        if twins:
+            print(f"  {root}: {twins} files share a name with another but for case: the first in sorted order is used")
+
+
 class Archives:
-    """Overlay folders override loose files in Data Files, which override BSA contents; later BSAs override earlier ones."""
+    """Overlay folders override loose files in Data Files, which override BSA contents; later BSAs override earlier ones.
+    On Windows a loose file is found by its plain path, as always; elsewhere through LooseFiles."""
 
     def __init__(self, bsa_names=("Morrowind.bsa", "Tribunal.bsa", "Bloodmoon.bsa")):
-        self.bsas = [BSA(DATA_FILES / n) for n in bsa_names if (DATA_FILES / n).exists()]
+        bsas = [game_path(DATA_FILES, n) for n in bsa_names]
+        self.bsas = [BSA(b) for b in bsas if b.exists()]
+        self.overlays = [] if WINDOWS else [LooseFiles(d) for d in OVERLAYS]
+        self.loose = None if WINDOWS else LooseFiles(DATA_FILES)
+
+    def loose_path(self, name):
+        """The file (on Windows: or folder) in an overlay or Data Files behind a game name, else None."""
+        if WINDOWS:
+            name = name.lower().replace("/", "\\")
+            for d in reversed(OVERLAYS):
+                if (d / name).exists():
+                    return d / name
+            return DATA_FILES / name if (DATA_FILES / name).exists() else None
+        name = loose_name(name)
+        for d in reversed(self.overlays):
+            if name in d.files:
+                return d.files[name]
+        return self.loose.files.get(name)
 
     def exists(self, name):
-        name = name.lower().replace("/", "\\")
-        return any((d / name).exists() for d in OVERLAYS) or (DATA_FILES / name).exists() or any(name in b.files for b in self.bsas)
+        return self.loose_path(name) is not None or any(name.lower().replace("/", "\\") in b.files for b in self.bsas)
 
     def read(self, name):
-        name = name.lower().replace("/", "\\")
-        for d in reversed(OVERLAYS):
-            if (d / name).exists():
-                return (d / name).read_bytes()
-        loose = DATA_FILES / name
-        if loose.exists():
+        loose = self.loose_path(name)
+        if loose is not None:
             return loose.read_bytes()
+        name = name.lower().replace("/", "\\")
         for b in reversed(self.bsas):
             if name in b.files:
                 return b.read(name)
@@ -113,8 +201,12 @@ class Archives:
         out = set()
         for b in self.bsas:
             out.update(b.files)
-        for d in OVERLAYS:
-            out.update(str(f.relative_to(d)).lower().replace("/", "\\") for f in d.rglob("*") if f.is_file())
+        if WINDOWS:
+            for d in OVERLAYS:
+                out.update(str(f.relative_to(d)).lower().replace("/", "\\") for f in d.rglob("*") if f.is_file())
+        else:
+            for d in self.overlays:
+                out.update(d.files)
         return out
 
 
@@ -170,9 +262,9 @@ def masters(path):
 def load_order():
     """[Morrowind.esm, plugins...] as paths, each plugin's masters checked: every one must be loaded before it,
     and none may be Tribunal.esm or Bloodmoon.esm (out of this project's scope)."""
-    order = [DATA_FILES / MASTER]
+    order = [game_path(DATA_FILES, MASTER)]
     for name in PLUGINS:
-        path = DATA_FILES / name
+        path = game_path(DATA_FILES, name)
         if not path.is_file():
             raise SystemExit(f"MW3DS_PLUGINS: {name} is not in {DATA_FILES}")
         loaded = {p.name.lower() for p in order}
@@ -187,13 +279,16 @@ def load_order():
 
 def content_key():
     """What converted data depends on besides the converters: the plugins (by content) and the text encoding.
-    Empty for plain Morrowind.esm in win1252, so caches made before plugins existed stay valid."""
+    Empty for plain Morrowind.esm in win1252 on Windows, so caches made before plugins existed stay valid."""
+    # (off Windows, loose files are found since LooseFiles: caches made before it hold the BSA's textures where an
+    # overlay or Data Files has its own, under the same overlay key)
+    tag = "" if os.sep == "\\" else "+loose"
     if not PLUGINS and ENCODING == "win1252":
-        return ""
+        return tag
     h = hashlib.sha1(ENCODING.encode())
     for path in load_order()[1:]:
         h.update(path.name.lower().encode() + b"\0" + hashlib.sha1(path.read_bytes()).digest())
-    return h.hexdigest()[:16]
+    return h.hexdigest()[:16] + tag
 
 
 def _i32(d, off=0):
@@ -469,7 +564,7 @@ def read_game(wanted=None):
     references by number (a plugin changes, deletes or adds some, MVRF moves one to another exterior cell);
     a topic's responses merge by INAM in the PNAM chain; LAND takes the later file's whole record."""
     if not PLUGINS:
-        yield from read_records(DATA_FILES / MASTER, wanted)
+        yield from read_records(game_path(DATA_FILES, MASTER), wanted)
         return
     for r in _merge():
         if not wanted or r.tag in wanted:

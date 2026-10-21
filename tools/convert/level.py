@@ -41,7 +41,7 @@ from distant import build_distant
 from creature import resolve_leveled
 from firstperson import FirstPerson
 from particles import build_pieces
-from mwfiles import CODEC, DATA_FILES, MASTER, Archives, cell_refs, load_db, read_game, safe_name, text
+from mwfiles import CODEC, DATA_FILES, MASTER, Archives, cell_refs, game_path, load_db, read_game, safe_name, text
 from npcstats import npc_stats, worn_items
 from terrain import CELL_SIZE
 from terrain import Terrain
@@ -177,7 +177,7 @@ def finite(x):
 
 
 def read_ini():
-    path = DATA_FILES.parent / "Morrowind.ini"
+    path = game_path(DATA_FILES.parent, "Morrowind.ini")
     return path.read_text(encoding=CODEC, errors="replace") if path.exists() else ""
 
 
@@ -240,7 +240,7 @@ def translation_files():
     -> the topic ("@form#" links in text); .mrk: topic -> the word that names it in text."""
     out = {}
     for ext in ("cel", "top", "mrk"):
-        path = DATA_FILES / f"{Path(MASTER).stem}.{ext}"
+        path = game_path(DATA_FILES, f"{Path(MASTER).stem}.{ext}")
         if not path.is_file():
             continue
         table = {}

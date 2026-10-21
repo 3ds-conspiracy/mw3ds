@@ -12,7 +12,7 @@ import re
 import math
 import struct
 
-from mwfiles import DATA_FILES, read_game, read_records, text
+from mwfiles import DATA_FILES, game_path, read_game, read_records, text
 from mwscript import ScriptError, compile_script, compile_snippet
 from creature import creature_stats
 from npcstats import bind, npc_items, npc_stats, weapon_damage
@@ -404,7 +404,7 @@ def plugin_journal_infos(quest_ids):
     of its own quests are in these two files, which replace its entries by INAM and add new ones."""
     out = {}
     for name in ("Tribunal.esm", "Bloodmoon.esm"):
-        path = DATA_FILES / name
+        path = game_path(DATA_FILES, name)
         if not path.exists():
             continue
         cur = None

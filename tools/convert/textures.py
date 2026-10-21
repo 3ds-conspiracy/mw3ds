@@ -209,14 +209,15 @@ class TextureSet:
             try:
                 if not (entry and entry.get("src") == r["src"] and entry.get("limit") == limit
                         and entry.get("whiten") == r["amount"] and entry.get("mips", True) == self.mips
-                        and tex_path(name).exists()):
+                        and entry.get("overlay", "") == overlay and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(r["src"])))
                     img.load()
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
                     entry = encode_one(tex3ds, whiten_image(img.convert("RGBA"), r["amount"]), tex_path(name), limit,
                                        r["alpha"], mips=self.mips)
-                    entry.update({"src": r["src"], "limit": limit, "want_alpha": r["alpha"], "whiten": r["amount"]})
+                    entry.update({"src": r["src"], "limit": limit, "want_alpha": r["alpha"], "whiten": r["amount"],
+                                  "overlay": overlay})
                     cache[name] = entry
                     stats["encoded"] += 1
             except Exception as e:

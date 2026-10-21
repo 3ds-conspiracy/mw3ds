@@ -15,6 +15,7 @@ from pathlib import Path
 
 from PIL import Image
 
+from mwfiles import game_path
 from textures import OUT, encode_image
 
 SPLASH_SIZE = (400, 240)          # the top screen
@@ -143,7 +144,7 @@ def build_art(arch, data_files, birthsigns=()):
     # shape; one picture slid over the water looked still on the console
     ini = {}
     try:
-        text = (Path(data_files).parent / "Morrowind.ini").read_text(encoding="latin-1", errors="replace")
+        text = game_path(Path(data_files).parent, "Morrowind.ini").read_text(encoding="latin-1", errors="replace")
         part = re.search(r"^\[Water\](.*?)(?=^\[|\Z)", text, re.M | re.S)
         for line in (part.group(1).splitlines() if part else []):
             k, eq, v = line.partition("=")
@@ -181,7 +182,7 @@ def build_art(arch, data_files, birthsigns=()):
     except (KeyError, OSError):
         pass
     # Loading screens
-    splash_dir = Path(data_files) / "Splash"
+    splash_dir = game_path(data_files, "Splash")
     for p in sorted(splash_dir.glob("*.tga")) if splash_dir.exists() else []:
         try:
             img = Image.open(p).convert("RGB").resize(SPLASH_SIZE, Image.LANCZOS)
