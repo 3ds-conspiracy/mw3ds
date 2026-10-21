@@ -20,6 +20,16 @@ Mirrors the OpenMW wiki page *Research:Movement*. Rules read from OpenMW's `mwcl
 - Strafing only (sideways): x 0.75.
 - Storm wind: walking into an ash storm or blizzard is slower by `fStromWalkMult` x the angle to the wind.
 
+## Movement cycles and morphs (2026-10-20)
+
+- A walk / run / sneak / swim cycle left off is taken up where it stopped when the same group plays next (OpenMW's
+  `CharacterController::refreshMovementAnims`: "start it from the point it ended"). Ours started the cycle over each
+  time: a fighter's 0.1 to 0.2 s side steps and a chase taken up again replayed the cycle's first quick steps, a shuffle.
+  `bug-fight-shuffle` tests it.
+- A mesh's own morphs (`NiGeomMorpherController`) run on the playing group's time when the mesh has no Talk / Blink keys
+  (OpenMW drives a mesh's controllers from the animation's time). Only heads' talk and blink ranges moved a morph, so the
+  Kwama Forager, all morph and no skin, slid along stiff. `issue-60` tests it.
+
 ## Jump
 
     a = min(Acrobatics, 50), b = max(0, Acrobatics - 50)

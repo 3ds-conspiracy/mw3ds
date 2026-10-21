@@ -646,10 +646,26 @@ bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode)
 		return false;
 	if (g == a.group && a.mode == mode && mode != ANIM_ONCE)
 		return true;                   // already playing
+	// A movement cycle (walking, running, sneaking, swimming) left off is taken up where it stopped when the same group
+	// plays next (OpenMW's refreshMovementAnims: "start it from the point it ended"). A fighter's short side steps and a
+	// chase taken up again started the cycle over each time, its first quick steps over and over: a shuffle
+	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	auto moving = [&](int k) {
+		const char* n = sk.groups[k].name;
+		return strncasecmp(n, "Walk", 4) == 0 || strncasecmp(n, "Run", 3) == 0 || strncasecmp(n, "Sneak", 5) == 0
+			|| strncasecmp(n, "SwimWalk", 8) == 0 || strncasecmp(n, "SwimRun", 7) == 0;
+	};
+	if (a.mode == ANIM_LOOP && a.group >= 0 && a.group < (int)sk.groups.size() && moving(a.group))
+	{
+		a.lastMove = a.group;
+		a.lastMoveTime = a.time;
+	}
 	a.group = g;
 	a.mode = mode;
 	a.loopsLeft = -1;
-	a.time = actorSkeleton(set, a.skeleton).groups[g].start;
+	a.groupStarts++;
+	a.time = mode == ANIM_LOOP && g == a.lastMove && a.lastMoveTime >= sk.groups[g].start && a.lastMoveTime < sk.groups[g].stop
+		? a.lastMoveTime : sk.groups[g].start;
 	// Both hands busy: fists, a spell, a two-handed weapon, a bow or crossbow (their groups: AttackHH, IdleSpell,
 	// CastTarget, RunForward2c, AttackBow ...); the shield is put away then (OpenMW's updateCarriedLeftVisible: the
 	// hand-to-hand and spell weapon types count as two-handed)
@@ -1034,6 +1050,11 @@ void actorDeform(ActorSet& set, Actor& a)
 			float t;
 			if (a.driveMorph)
 				t = a.driveT;
+			// A body that morphs on the animation's own timeline (no Talk / Blink keys: the Kwama Forager's wriggle, its
+			// NiGeomMorpherController run by the playing group's time, as OpenMW drives a mesh's controllers). It was held
+			// at time 0: the forager slid along stiff
+			else if (m.talk[1] <= m.talk[0] && m.blink[1] <= m.blink[0])
+				t = a.time;
 			else if (a.talkLevel > 0.01f)
 				t = m.talk[0] + (m.talk[1] - m.talk[0]) * fminf(1.0f, a.talkLevel * 2.0f);
 			else if (a.blinkTime >= 0.0f)

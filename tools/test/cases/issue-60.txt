@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# A Kwama Forager wriggles: its body's morphs (NiGeomMorpherController) run on the playing group's time, as OpenMW drives a
+# mesh's controllers. They were held at time 0 (only heads' Talk / Blink ranges moved a morph): it slid along stiff, as in a
+# T-pose. (Meshes are deformed on frames that are drawn: natively those a SHOT draws)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Pelagiad
+6 0 0 0
+1 0 0 0 0 PLACE:kwama%forager:160
+1 0 0 0
+0.3 0 0 0 0 FACE:kwama%forager
+0.3 0 0 0 0 EXPECT:refhasgroup:kwama%forager:Idle+EXPECT:refhasgroup:kwama%forager:WalkForward
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SNAP:refmorpht:kwama%forager
+0.7 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refmorpht:kwama%forager:ne:@
+0.3 0 0 0 0 HOSTILE:kwama%forager
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SNAP:refmorpht:kwama%forager
+0.7 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refmorpht:kwama%forager:ne:@+EXPECT:refmorpht:kwama%forager:gt:0

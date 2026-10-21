@@ -395,6 +395,23 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 			const Actor* a = w.actorOf(ri);
 			v = !a ? -1.0f : what == "refposes" ? (float)a->poses : a->poseHz;
 		}
+		else if (what == "refgroupstarts")  // animation groups it has started so far (Actor::groupStarts)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? (float)a->groupStarts : -1.0f;
+		}
+		else if (what == "refmorpht")       // the morph time its first morphing mesh holds (-1: none): a body's wriggle moves on
+		{
+			const Actor* a = w.actorOf(ri);
+			v = -1.0f;
+			if (a)
+				for (const auto& m : a->meshes)
+					if (m.hasMorph)
+					{
+						v = m.morphT;
+						break;
+					}
+		}
 		else if (what == "reftalk")         // how far its mouth is open (Actor::talkLevel: the voice's loudness, 0..1)
 		{
 			const Actor* a = w.actorOf(ri);

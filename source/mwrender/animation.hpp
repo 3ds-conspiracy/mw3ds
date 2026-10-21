@@ -129,6 +129,9 @@ struct Actor
 	float poseDue = -1.0f;             // ConsoleProfile::poseHz: time toward the next pose (-1: not started); its rate now
 	float poseHz = 0.0f;
 	u32 poses = 0;                     // poses made (tests)
+	u32 groupStarts = 0;               // groups started (tests: a fighter flipping between running and standing)
+	int lastMove = -1;                 // the movement cycle last left off, and where (actorPlay takes it up there again)
+	float lastMoveTime = 0.0f;
 	float headYaw = 0.0f;             // head turned this far (radians, around the actor's up axis)
 	float headPitch = 0.0f;           // and tilted (radians, up positive), after the turn
 	float rate = 1.0f;                 // animation speed: walk / run cycles follow how fast the actor moves

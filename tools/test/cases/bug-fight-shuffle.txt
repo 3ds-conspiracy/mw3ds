@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# A fighter's run cycle is taken up where it stopped when it runs again (OpenMW's refreshMovementAnims: "start it from the
+# point it ended"). Every short side step and every chase taken up again started the cycle over, its first quick steps
+# over and over: people shuffled up to the player in tiny fast steps. Fargoth chases the player backing off, stops in
+# reach, then chases again: his run picks up about where it was (the cycle may wrap meanwhile: 0.2 s allowed), not from
+# its first frame (0.37 s back here before)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD
+30 0 0 0 0 WALKTO:fargoth
+0.3 0 0 0 0 FACE:fargoth
+0.3 0 0 0 0 HOSTILE:fargoth
+2 0 0 0
+0.3 0 0 0 0 EXPECT:refcombat:fargoth:eq:1
+1.2 0 -1 0
+0.01 0 0 0 0 EXPECT:refgroup:fargoth:Run+SNAP:refanimtime:fargoth
+2 0 0 0
+0.3 0 -1 0
+0.01 0 0 0 0 EXPECT:refgroup:fargoth:Run+EXPECT:refanimtime:fargoth:ge:@-0.2
