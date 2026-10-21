@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# Fortify Intelligence moves maximum magicka, and current magicka keeps its share of it (Morrowind; OpenMW's
+# recalculateMagicka keeps the share too): Intelligence 100 (150 at 1.5 a point) fortified by 50 for 6 s is 225, half
+# a bar there is 112.5; when the spell ends the maximum is 150 again and the bar still half. Before, Intelligence moved
+# and magicka never did
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 SETATTR:intelligence:100
+0.3 0 0 0 0 SETSKILL:restoration:100
+0.3 0 0 0 0 ADDEFFECT:79:50:50:6:0:intelligence
+0.3 0 0 0 0 MAKESPELL:smart
+1 0 0 0 0 CAST:mw3ds_test_smart
+2 0 0 0
+0.3 0 0 0 0 EXPECT:attr:intelligence:eq:150+EXPECT:magickamax:eq:225
+0.3 0 0 0 0 SETMAGICKA:112.5
+0.3 0 0 0 0 EXPECT:magicka:ge:112
+8 0 0 0
+0.3 0 0 0 0 EXPECT:attr:intelligence:eq:100+EXPECT:magickamax:eq:150+EXPECT:magicka:ge:74+EXPECT:magicka:le:76

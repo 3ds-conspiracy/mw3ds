@@ -11,5 +11,4 @@ struct ActiveEffect
 	std::string source;
 	int ref = -1;                     // summons: the creature, gone when the effect ends
 	std::string item, prev;           // bound items: the item given, and what it replaced
-	float applied = 0;                // Fortify Maximum Magicka: the points it added to the maximum (taken off again as is)
 };

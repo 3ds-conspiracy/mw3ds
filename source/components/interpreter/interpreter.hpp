@@ -10,6 +10,10 @@ struct SpellEffect;
 // Menus scripts can open (EnableXMenu / ShowRestMenu)
 enum ScriptMenu { SMENU_NAME, SMENU_RACE, SMENU_CLASS, SMENU_BIRTH, SMENU_REVIEW, SMENU_REST, SMENU_REST_BED };
 
+// A spell an object casts by script (a shrine's blessing): from someone else, Spell Absorption and Reflect apply, but
+// no actor to answer
+constexpr int kCasterObject = -2;
+
 // What the interpreter needs from the rest of the game
 struct ScriptHost
 {
@@ -38,7 +42,7 @@ struct ScriptHost
 	virtual void hurtPlayer(float health) = 0;           // HurtStandingActor
 	virtual void sheathe() = 0;                          // PayFine: the weapon is put away
 	virtual void goToJail() = 0;                         // GotoJail
-	virtual void castEffect(int ref, const SpellEffect& e, const std::string& source, int casterRef = -1, float spellCost = 0.0f) = 0;   // ref -1: the player; casterRef: the actor that cast it (Cast)
+	virtual void castEffect(int ref, const SpellEffect& e, const std::string& source, int casterRef = -1, float spellCost = 0.0f) = 0;   // ref -1: the player; casterRef: the actor that cast it (Cast), kCasterObject an object
 	virtual void loopSound(int ref, const std::string& soundId, bool start, float volume = 1.0f, float pitch = 1.0f) = 0;   // PlayLoopSound3D / StopSound
 	virtual void streamMusic(const std::string& file) = 0;                         // StreamMusic
 	virtual bool soundPlaying(int ref, const std::string& soundId) = 0;            // GetSoundPlaying

@@ -1,0 +1,62 @@
+# start: Seyda Neen
+# The Drain Intelligence refill, LEGIT after the setup: with half magicka (75 of 150), Distraction bought from Heem-La at
+# Ald-ruhn's Mages Guild (its Drain Intelligence is then an effect the player knows), and at her spellmaking by taps:
+# Drain Intelligence, on Self, 100 for 1 s, bought; cast. Morrowind's rule (UESP, Drain Attribute and Cheats): a change
+# of Intelligence keeps current magicka the same share of the maximum, and at Intelligence 0 (no maximum) the game
+# counts the bar as full, so when the drain ends it is full
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 SETATTR:intelligence:100
+0.3 0 0 0 0 SETATTR:willpower:100
+0.3 0 0 0 0 SETSKILL:destruction:100
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 SETMAGICKA:75
+0.3 0 0 0 0 EXPECT:magickamax:eq:150+EXPECT:magicka:eq:75
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:heem_la
+1.5 0 0 0
+0.3 0 0 0 0 BUYSPELL:heem_la:distraction
+0.1 0 0 0 0 EXPECT:spell:distraction
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:heem_la
+1.5 0 0 0
+0.3 0 0 0 0 SPELLMAKE:heem_la
+1 0 0 0 0 EXPECT:screen:spellmake
+0.8 0 0 0 0 TAP:60:64
+0.6 0 0 0 0 SHOT
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 R+TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.3 0 0 0 0 TAP:208:162
+0.6 0 0 0 0 SHOT
+0.3 0 0 0 0 TYPE:Brain%Fog
+0.8 0 0 0 0 TAP:54:222
+0.8 0 0 0 0 TAP:160:222
+1 0 0 0 0 EXPECT:madespells:eq:1
+0.6 0 0 0 0 SHOT
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0 0 EXPECT:screen:none+EXPECT:magicka:eq:75
+0.3 0 0 0 0 CASTMADESPELL
+0.5 0 0 0 0 EXPECT:magicka:eq:65
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:magickamax:eq:0+EXPECT:magicka:eq:0
+3 0 0 0
+0.3 0 0 0 0 EXPECT:magickamax:eq:150+EXPECT:magicka:ge:149+EXPECT:magickalack:le:1

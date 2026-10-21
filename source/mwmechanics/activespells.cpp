@@ -181,13 +181,15 @@ void Session::updateEffects(float dt)
 		else
 			i++;
 	}
-	// Damage / Restore Attribute or Skill moved a whole point: the numbers follow (current bars kept)
+	// Damage / Restore Attribute or Skill moved a whole point: the numbers follow (current bars kept; magicka keeps its
+	// share of the maximum, full from none, as refitMagicka)
 	if (statsChanged)
 	{
-		float health = s.health, magicka = s.magicka, fatigue = s.fatigue;
+		float health = s.health, fatigue = s.fatigue;
+		float share = s.magickaMax > 0.0f ? s.magicka / s.magickaMax : 1.0f;
 		w.recomputeStats();
 		s.health = fminf(s.healthMax, health);
-		s.magicka = fminf(s.magickaMax, magicka);
+		s.magicka = s.magickaMax * share;
 		s.fatigue = fminf(s.fatigueMax, fatigue);
 	}
 }

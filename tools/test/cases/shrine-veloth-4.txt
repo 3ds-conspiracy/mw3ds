@@ -1,0 +1,27 @@
+# start: Seyda Neen
+# Written by tools/test/shrinegen.py: shrineveloth (Furn_shrine_Veloth_cure_01 in Andavel Ancestral Tomb), the blessing "Almsivi Restoration" asked for as a stranger
+# (a donation of 35, 35 of it taken by the script); casts almsivi restoration
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GIVE:Gold_001:500
+0.3 0 0 0 0 SETSKILL:destruction:100
+0.3 0 0 0 0 ADDEFFECT:22:20:20:1:0:strength
+0.3 0 0 0 0 MAKESPELL:hurtstr
+1 0 0 0 0 CAST:mw3ds_test_hurtstr
+3 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:strength:ge:19
+0.3 0 0 0 0 GOTO:Andavel_Ancestral_Tomb
+4 0 0 0
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:Furn_shrine_Veloth_cure_01
+1 0 0 0 0 EXPECT:message:receive_a_blessing
+0.4 0 0 0 0 A
+1 0 0 0 0 EXPECT:message:What_blessing_do_you_ask_for
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.4 0 0 0 0 A
+2 0 0 0
+0.3 0 0 0 0 EXPECT:gold:eq:@-35
+0.3 0 0 0 0 EXPECT:attrdamage:strength:lt:1

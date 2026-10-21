@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# Written by tools/test/shrinegen.py: shrinetemple (Furn_shrine_Tribunal_cure_01 in Ald Velothi, Outpost), the blessing "Almsivi Restoration" asked for as a stranger by an Atronach
+# (a donation of 35, 0 of it taken by the script); casts almsivi restoration, almsivi restore fighter, almsivi restore mage, almsivi restore stealth, almsivi restore other
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GIVE:Gold_001:500
+0.3 0 0 0 0 SPELL:wombburn
+0.5 0 0 0
+0.3 0 0 0 0 SETMAGICKA:10
+0.3 0 0 0 0 GOTO:Ald_Velothi,_Outpost
+4 0 0 0
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:Furn_shrine_Tribunal_cure_01
+1 0 0 0 0 EXPECT:message:receive_a_blessing
+0.4 0 0 0 0 A
+1 0 0 0 0 EXPECT:message:What_blessing_do_you_ask_for
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.4 0 0 0 0 A
+2 0 0 0
+0.3 0 0 0 0 EXPECT:gold:eq:@0
+0.3 0 0 0 0 EXPECT:magicka:gt:11

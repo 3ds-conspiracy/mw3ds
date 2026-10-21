@@ -21,6 +21,10 @@ struct PlayerStats
 	int skills[27] = {};
 	int level = 1;
 	float health = 50, healthMax = 50, magicka = 50, magickaMax = 50, fatigue = 100, fatigueMax = 100;
+	// What maximum magicka is made of (refitMagicka): magicka per point of Intelligence (fPCbaseMagickaMult and the
+	// race's and sign's Fortify Maximum Magicka abilities), the active spells' Fortify Maximum Magicka and Fortify
+	// Magicka. Rebuilt by recomputeStats, not saved
+	float magickaMult = 1.0f, magickaFortify = 0.0f, magickaFlat = 0.0f;
 	// Growth since character creation (recomputeStats adds it on top of race / class / sign)
 	float skillProgress[27] = {};
 	int skillBonus[27] = {};

@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# Written by tools/test/shrinegen.py: shrineroris (Furn_shrine_Roris_cure_01 in Ald-ruhn, Temple), the blessing "Cure Poison" asked for as a stranger
+# (a donation of 35, 35 of it taken by the script); casts cure poison touch
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GIVE:Gold_001:500
+0.3 0 0 0 0 ACTIVE:27:1:600
+0.3 0 0 0 0 EXPECT:effect:27:gt:0
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+4 0 0 0
+0.3 0 0 0 0 SNAP:gold
+60 0 0 0 0 ACTIVATE:Furn_shrine_Roris_cure_01
+1 0 0 0 0 EXPECT:message:receive_a_blessing
+0.4 0 0 0 0 A
+1 0 0 0 0 EXPECT:message:What_blessing_do_you_ask_for
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.4 0 0 0 0 A
+2 0 0 0
+0.3 0 0 0 0 EXPECT:gold:eq:@-35
+0.3 0 0 0 0 EXPECT:effect:27:eq:0

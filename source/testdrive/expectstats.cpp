@@ -28,12 +28,13 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 		v = what == "skill" ? (float)st.skills[k] : st.skillProgress[k];
 		return true;
 	}
-	if (what == "attr" || what == "attrups")
+	// attr: the base value; attrdamage: what Damage Attribute has taken off it until restored (a shrine's Restore Attributes)
+	if (what == "attr" || what == "attrups" || what == "attrdamage")
 	{
 		int k = attrIndex(w, arg);
 		if (k < 0 || k >= 8)
 			return false;
-		v = what == "attr" ? (float)st.attributes[k] : (float)st.attrSkillUps[k];
+		v = what == "attr" ? (float)st.attributes[k] : what == "attrdamage" ? st.attrDamage[k] : (float)st.attrSkillUps[k];
 		return true;
 	}
 	if (what == "effect") { v = w.effectTotal(atoi(arg.c_str())); return true; }

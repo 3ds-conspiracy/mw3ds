@@ -106,8 +106,10 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 		int t = target == "player" ? -1 : w.findRef(target);
 		if (t < 0 && target != "player")
 			return 0.0f;
-		// an actor casts it (Reflect can send it back); an object's spell has no caster to answer
-		int caster = r && r->actor >= 0 ? ref : -1;
+		// an actor casts it (Reflect can send it back); an object's spell (a shrine's blessing) comes from someone else
+		// too, as OpenMW's caster is the object: Spell Absorption takes it (an Atronach's magicka back at a shrine, issue
+		// #63), Reflect sends it back to nothing. It had no caster at all: neither ever rolled
+		int caster = r && r->actor >= 0 ? ref : r ? kCasterObject : -1;
 		for (auto& e : sp->second.effects)
 			c.host.castEffect(t, e, sp->second.name, caster, (float)sp->second.cost);
 		return 0.0f;

@@ -26,8 +26,13 @@ Mirrors the OpenMW wiki page *Research:Stats and Levelling*. Rules read from Ope
 - **Base health** is fixed at creation: `floor(0.5 x (Strength + Endurance))` of the creation attributes. It grows
   only by level-up gains. Later raises, Fortify and Drain do not move it. Max health = base + Fortify Health.
 - **Magicka:** `(fPCbaseMagickaMult [NPCs: fNPCbaseMagickaMult] + 0.1 x Fortify Maximum Magicka) x Intelligence`
-  (modified). Race and birthsign multipliers are Fortify Maximum Magicka abilities. When the maximum changes the
-  current value keeps its share of the maximum.
+  (modified), plus Fortify Magicka. Race and birthsign multipliers are Fortify Maximum Magicka abilities. When
+  Intelligence or the multiplier changes (Fortify, Drain, Damage, Restore Intelligence; Fortify Maximum Magicka)
+  the current value keeps its share of the maximum. **At a maximum of 0 we follow Morrowind, not OpenMW:** the
+  original game counts the share as full, so a Drain Intelligence that takes it to 0 fills the bar when it ends (the
+  "Drain Intelligence 100 for 1 s on Self" trick, UESP's Drain Attribute and Cheats pages). OpenMW's
+  `recalculateMagicka` counts it as 0 and the Morrowind Code Patch removes the trick; both leave the bar empty. The
+  engine does this for the player only (`refitMagicka`; tests `drain-int-refill`, `fortify-int-share`).
 - **Fatigue:** Strength + Willpower + Agility + Endurance (modified).
 - **Fatigue term:** `fFatigueBase - fFatigueMult x (1 - current / max)` (1.25 to 0.75; 1 when the max is 0). It
   scales nearly every skill roll.

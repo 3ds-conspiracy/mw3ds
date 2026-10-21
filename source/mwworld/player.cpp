@@ -144,6 +144,8 @@ void World::recomputeStats()
 	// OpenMW: base health is fixed at creation (floor of half Strength + Endurance) and grows only by the level-up
 	// gains; raised, fortified or drained attributes do not move it (spec/derived.md)
 	stats.healthMax = floorf(0.5f * (stats.attrCreation[ATTR_STRENGTH] + stats.attrCreation[ATTR_ENDURANCE])) + stats.healthBonus;
+	stats.magickaMult = magickaMult;
+	stats.magickaFortify = stats.magickaFlat = 0.0f;     // (reapplyEffects adds the active spells' back)
 	stats.magickaMax = a[ATTR_INTELLIGENCE] * magickaMult;
 	stats.fatigueMax = a[ATTR_STRENGTH] + a[ATTR_WILLPOWER] + a[ATTR_AGILITY] + a[ATTR_ENDURANCE];
 	stats.health = stats.healthMax;

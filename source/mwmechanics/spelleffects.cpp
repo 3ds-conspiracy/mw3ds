@@ -52,6 +52,19 @@ static void shiftStat(int& value, int& below, int by)
 	below = std::min(0, total);
 }
 
+// Maximum magicka made again from Intelligence: x (magicka per point + a tenth of the spells' Fortify Maximum
+// Magicka), plus Fortify Magicka. When Intelligence or the multiplier changes (keepShare), current magicka stays the same
+// share of the maximum; with no maximum before (Intelligence 0) the share counts as full, so a Drain Intelligence to 0
+// ending fills the bar, as in the original game (UESP's Drain Attribute; the Morrowind Code Patch and OpenMW give the
+// empty bar instead, we keep Morrowind's)
+void refitMagicka(PlayerStats& s, bool keepShare)
+{
+	float max = s.attributes[ATTR_INTELLIGENCE] * (s.magickaMult + 0.1f * s.magickaFortify) + s.magickaFlat;
+	if (keepShare)
+		s.magicka = s.magickaMax > 0.0f ? s.magicka * max / s.magickaMax : max;
+	s.magickaMax = max;
+}
+
 // Adds (sign 1) or removes (sign -1) a lasting effect's change to the player's numbers
 void applyFortify(World& w, ActiveEffect& a, float sign)
 {
@@ -61,27 +74,25 @@ void applyFortify(World& w, ActiveEffect& a, float sign)
 	{
 	case EFF_FORTIFY_ATTRIBUTE:
 		if (a.attribute >= 0 && a.attribute < 8) shiftStat(s.attributes[a.attribute], s.attrBelow[a.attribute], (int)lroundf(m));
+		if (a.attribute == ATTR_INTELLIGENCE) refitMagicka(s, true);
 		break;
 	case EFF_FORTIFY_SKILL: if (a.skill >= 0 && a.skill < 27) shiftStat(s.skills[a.skill], s.skillBelow[a.skill], (int)lroundf(m)); break;
 	case EFF_FORTIFY_HEALTH: s.healthMax += m; s.health += m; break;
-	case EFF_FORTIFY_MAGICKA: s.magickaMax += m; s.magicka += m; break;
+	case EFF_FORTIFY_MAGICKA: s.magickaFlat += m; refitMagicka(s, false); s.magicka += m; break;
 	case EFF_FORTIFY_FATIGUE: s.fatigueMax += m; s.fatigue += m; break;
 	case EFF_DRAIN_ATTRIBUTE: case EFF_ABSORB_ATTRIBUTE:
 		if (a.attribute >= 0 && a.attribute < 8) shiftStat(s.attributes[a.attribute], s.attrBelow[a.attribute], -(int)lroundf(m));
+		if (a.attribute == ATTR_INTELLIGENCE) refitMagicka(s, true);
 		break;
 	case EFF_DRAIN_SKILL: case EFF_ABSORB_SKILL:
 		if (a.skill >= 0 && a.skill < 27) shiftStat(s.skills[a.skill], s.skillBelow[a.skill], -(int)lroundf(m));
 		break;
 	case EFF_FORTIFY_MAX_MAGICKA:
-	{
-		// The points added are remembered: Intelligence may have changed by the time it ends (a Fortify Intelligence
-		// that began later), and taking off a different amount left the maximum lower (or higher) for good
-		float extra = sign > 0 ? m * 0.1f * s.attributes[ATTR_INTELLIGENCE] : -a.applied;
-		a.applied = sign > 0 ? extra : 0.0f;
-		s.magickaMax += extra;
-		s.magicka = fminf(s.magickaMax, s.magicka + (sign > 0 ? extra : 0.0f));
+		// (made again from Intelligence each time, so a Fortify Intelligence that began later can't leave the maximum
+		// off when this ends)
+		s.magickaFortify += m;
+		refitMagicka(s, true);
 		break;
-	}
 	default: break;          // attack, shield, jump, levitate, swift swim are read while active
 	}
 	// (Levitate is read while active too: Player::levitate, with collision. It used to switch on the free fly mode,
@@ -98,18 +109,20 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 		// Reflect and Spell Absorption, each its own roll: the magnitude is the percent chance the effect doesn't land
 		// (only for an effect another actor cast at the player, harmful or not). Reflected: it lands on the caster instead.
 		// Absorbed: the player gets the spell's cost as magicka.
-		if (casterRef >= 0 && w.effectTotal(EFF_REFLECT) > 0.0f && rand() % 100 < (int)w.effectTotal(EFF_REFLECT))
+		// (kCasterObject: an object's script cast it, a shrine's blessing: from someone else all the same, as in OpenMW)
+		bool fromOther = casterRef >= 0 || casterRef == kCasterObject;
+		if (fromOther && w.effectTotal(EFF_REFLECT) > 0.0f && rand() % 100 < (int)w.effectTotal(EFF_REFLECT))
 		{
 			notify("The spell was reflected.");
-			if (w.active(casterRef))
+			if (casterRef >= 0 && w.active(casterRef))
 				applyEffectToActor(casterRef, e, false);         // (a reflected spell isn't reflected again)
 			return;
 		}
-		if (casterRef >= 0 && w.effectTotal(EFF_SPELL_ABSORPTION) > 0.0f
+		if (fromOther && w.effectTotal(EFF_SPELL_ABSORPTION) > 0.0f
 			&& rand() % 100 < (int)w.effectTotal(EFF_SPELL_ABSORPTION))
 		{
 			notify("The spell was absorbed.");
-			w.stats.magicka += spellCost;
+			w.stats.magicka = fminf(w.stats.magickaMax, w.stats.magicka + spellCost);   // (OpenMW: no higher than the maximum)
 			return;
 		}
 	}
