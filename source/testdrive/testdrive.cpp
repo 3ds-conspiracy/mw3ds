@@ -405,6 +405,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			floodKeep = false;
 			fightRef = -1;
 			unlockTries = 0;
+			unlockDoor = -1;
 			earlyTried = false;
 			if (!retrying)
 			{
@@ -456,6 +457,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			floodKeep = false;
 			fightRef = -1;
 			unlockTries = 0;
+			unlockDoor = -1;
 			earlyTried = false;
 			if (!retrying)
 			{
@@ -889,7 +891,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				// (v2 kit: a locked one unlocked first with what is carried, as on the way: an Ondusi's Unhinging scroll aimed at it)
 				if (door >= 0 && w.refs[door].lockLevel > 0 && w.time < unlockWait)
 					return true;
-				if (door >= 0 && s.kitV2() && w.refs[door].lockLevel > 0 && unlockTries < 3 && w.itemCount("sc_ondusisunhinging") > 0)
+				if (door >= 0 && s.kitV2() && w.refs[door].lockLevel > 0 && unlockTriesLeft(door) && w.itemCount("sc_ondusisunhinging") > 0)
 				{
 					unlockTries++;
 					unlockWait = w.time + 1.5f;

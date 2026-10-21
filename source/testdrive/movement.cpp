@@ -901,7 +901,7 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 			// v2 kit: a locked one: unlocked first with what is carried (an Ondusi's Unhinging scroll, aimed at it), as a
 			// player would, then opened (Rotheran's arena: a kill's chase left us on the wrong side of a locked door). The
 			// scroll's magnitude is a roll: one too weak for the lock ("The lock is too strong") is followed by another
-			else if (s.kitV2() && door >= 0 && door != doorLast && w.refs[door].lockLevel > 0 && unlockTries < 3
+			else if (s.kitV2() && door >= 0 && door != doorLast && w.refs[door].lockLevel > 0 && unlockTriesLeft(door)
 				&& w.itemCount("sc_ondusisunhinging") > 0)
 			{
 				unlockTries++;
