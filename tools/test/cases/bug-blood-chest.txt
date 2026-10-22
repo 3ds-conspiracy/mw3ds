@@ -1,0 +1,34 @@
+# start: Seyda Neen
+# The blood a blade blow throws goes where the blow lands: OpenMW's combat script spawns it at the hit position, on the chest
+# of a person struck with a dagger, and it is a big dark splat there (a third of the torso across). Ours went to a random height
+# from 20 % up the body (a thin smear at the knees) and was a fraction of the size. Six blows on Fargoth (a durable target: GOD:2
+# keeps blows from killing outright, BOOST makes each one land): every splat is on the torso, 50 to 90 % up the body.
+# Written with the instrument (EXPECT:bloodlow / bloodhigh / bloodhits are new): it failed on the old random height
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2+HOUR:12+SETWEATHER:0+BOOST:100
+0.3 0 0 0 0 GIVE:iron_dagger
+0.3 0 0 0 0 TP:-10300:-71300:200:0
+4 0 0 0
+0.3 0 0 0 0 PLACE:fargoth:110
+0.3 0 0 0 0 SETALARM:fargoth:0
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 R
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.6 0 0 0 0 X
+0.6 0 0 0
+0.1 0 0 0 0 EXPECT:bloodhits:ge:4
+0.1 0 0 0 0 EXPECT:bloodlow:ge:0.5
+0.1 0 0 0 0 EXPECT:bloodhigh:le:0.9

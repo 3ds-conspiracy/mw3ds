@@ -113,6 +113,10 @@ void Session::knockDown(int ri, bool out)
 	logf("combat: %s knocked %s", r.id.c_str(), out ? "out" : "down");
 }
 
+// The blood splat's size against the model's own: OpenMW's is a big dark splat on the chest, ours bigger than the model's own
+// (its spray is not simulated here, so only the size is matched)
+static const float kBloodScale = 1.5f;
+
 // fatigueOnly: hand-to-hand on someone standing, which only tires (OpenMW: fists hurt fatigue or, on someone down or
 // paralyzed, health; never both)
 // spell: a damage spell's health, all at once or a tick a frame while it lasts. OpenMW's applyMagicEffect only takes
@@ -143,7 +147,8 @@ void Session::damageNpc(int ri, float dmg, bool fatigueOnly, bool spell)
 		playSound(ri, "Health Damage");
 		// the blood splat (Morrowind.ini [Blood]: red, a skeleton's white, a dwemer machine's gold sparks), one of the
 		// three models, where the blow lands: on the side facing the player, a quarter of the width either way along x,
-		// 20 to 100 % of the height up (OpenMW's getHitContact and spawnBloodEffect). (The picks from a hash of the
+		// 52 to 88 % of the height up (the chest and shoulders a blade lands on: OpenMW's combat script spawns it at the hit position, a big splat
+		// there; it was 20 to 100 %, a thin smear at the knees as often as not). (The picks from a hash of the
 		// moment, not rand(): a seeded test's dice stay as they were)
 		int blood = r.actor >= 0 ? w.game.actors[r.actor].blood : 0;
 		u32 h = ((u32)(w.time * 1000.0f) + (u32)ri * 2654435761u) * 2246822519u;
@@ -155,12 +160,16 @@ void Session::damageNpc(int ri, float dmg, bool fatigueOnly, bool spell)
 		else
 			dx = dy = 0.0f;
 		float at[3] = { r.pos[0] + dx * hy + hx * 2.0f * (((h >> 8) & 255) / 255.0f * 0.5f - 0.25f), r.pos[1] + dy * hy,
-			r.pos[2] + hz * (0.2f + 0.8f * ((h >> 16) & 255) / 255.0f) };
+			r.pos[2] + hz * (0.52f + 0.36f * ((h >> 16) & 255) / 255.0f) };
 		int model = (int)((h >> 24) % 3);
+		float frac = (at[2] - r.pos[2]) / fmaxf(1.0f, hz);
+		bloodHits++;
+		bloodLow = fminf(bloodLow, frac);
+		bloodHigh = fmaxf(bloodHigh, frac);
 		std::string id = "blood" + std::to_string(blood >= 0 && blood < 3 ? blood : 0);
-		if (model == 0 || !spawnVfx(id + "_" + std::to_string(model), at, 0.5f))
+		if (model == 0 || !spawnVfx(id + "_" + std::to_string(model), at, 0.5f, -2, 0.0f, kBloodScale))
 		{
-			if (spawnVfx(id, at, 0.5f))
+			if (spawnVfx(id, at, 0.5f, -2, 0.0f, kBloodScale))
 				bloodModels |= 1;
 		}
 		else

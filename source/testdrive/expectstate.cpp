@@ -25,6 +25,9 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	if (what == "level") v = (float)st.level;
 	else if (what == "levelprog") v = (float)st.levelProgress;
 	else if (what == "health") v = st.health;
+	else if (what == "bloodhits") v = (float)s.bloodHits;
+	else if (what == "bloodlow") v = s.bloodLow;
+	else if (what == "bloodhigh") v = s.bloodHigh;
 	else if (what == "bodyhits") v = (float)s.body.hitsPlayed;       // Hit groups the third-person body has played on being struck
 	else if (what == "healthmax") v = st.healthMax;
 	else if (what == "magicka") v = st.magicka;

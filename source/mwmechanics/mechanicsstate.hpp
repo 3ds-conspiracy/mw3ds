@@ -19,6 +19,8 @@ struct MechanicsState
 	float enemyUntil = 0.0f;
 	float hurtFlash = 0.0f;
 	bool bodyHit = false;                        // struck: the third-person body plays a Hit group (PlayerBody::update)
+	int bloodHits = 0;                // blood splats thrown by blows (tests: EXPECT:bloodhits) ...
+	float bloodLow = 2.0f, bloodHigh = -1.0f;   // ... and the lowest / highest fraction of the body's height one went to (bloodlow / bloodhigh)
 	u8 bloodModels = 0;               // the blood splat models hits have thrown so far (bits 0..2; the test driver's bloodmodels)
 	bool playerDead = false;
 	bool weaponDrawn = false;         // weapon (or fists) out: the view model shows it
