@@ -1,0 +1,1870 @@
+# start: Seyda Neen
+# data: tribunal
+# uber-trib-mournhold-barbarian-alone (copy of -3 up to the Barbarian quest, Thrud never asked): Tribunal's Mournhold side quests (MS_*), played LEGIT on the v2 test kit (ENHANCEV2). The way in
+# is Tribunal's own: at level 30 the Dark Brotherhood comes while the player sleeps (TR_DBAttack), the dart on the
+# assassin, a guard's word, Apelles Matius in Ebonheart, then Asciene Rane's transport to the Royal Palace.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:sc_divineintervention:10
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 HOUR:22
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+# TR_DBAttack: the Dark Brotherhood in the night
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:0
+3 0 0 0 0 SLEEP:8
+0.1 0 0 0 0 EXPECT:message:awakened
+2 0 0 0
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:1
+120 0 0 0 0 KILL:db_assassin4
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:db_assassin4
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:10
+60 0 0 0 0 LOOT:db_assassin4:ebony%dart_db_unique
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony%dart_db_unique:ge:1
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:20
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-11000,-70700,150
+120 0 0 0 0 FLYTO:@13700,-101300,800:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:Imperial%Guard_ebonhear
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:apelles%matius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Dark_Brotherhood
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:the_mainland
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Asciene_Rane
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@9802,-101914,1392:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:asciene%rane
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:transport_to_Mournhold
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace
+1 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mournhold,_Royal_Palace:_Reception_Area
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-arrive
+# MS_Summoner: Drathas Reyas's rumor in the Great Bazaar, Ovis Velas, then his brother in Velas Manor
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Plaza_Brindisi_Dorom
+10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:drathas%reyas
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:latest_rumors
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Plaza_Brindisi_Dorom
+10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:drathas%reyas,change:eq:1
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+60 0 0 0 0 WALKTO:@902,949,34
+3 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:ovis%velas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Summoner:eq:1
+60 0 0 0 0 LOOT:ovis%velas:key_velas
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_velas:ge:1
+60 0 0 0 0 ACTIVATE:drathas%reyas
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Summoner:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Velas_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Velas_Manor
+0.5 0 0 0
+60 0 0 0 0 WALKTO:gavis%velas
+10 0 0 0 0 UNTIL:talking
+0.3 0 0 0 0 TOPIC:my_unfortunate_brother
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Summoner:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:gavis%velas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Summoner:eq:30
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-summoner
+# MS_Warlords begins: Dovor Oren in the Vacant Manor wants Soscean's sword and cuirass (Soscean drinks in the Winged Guar)
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Vacant_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Vacant_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:dovor%oren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:business
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:10
+0.3 0 0 0 0 TOPIC:assist
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:20
+0.3 0 0 0 0 TOPIC:Soscean
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# MS_HolyElf, MS_Bouncer (+ _Galms): Godsreach and the Winged Guar (and Soscean there)
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:high_pockets
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:clay-brained_Nord
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_HolyElf:eq:10
+0.3 0 0 0 0 TOPIC:had_my_revenge
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_HolyElf:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 ESCORT:high_pockets
+120 0 0 0 0 DOORTO:Mournhold,_The_Winged_Guar
+10 0 0 0 0 UNTIL:cell:Mournhold,_The_Winged_Guar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:hession
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:some_work
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Bouncer:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 ESCORT:-
+60 0 0 0 0 ACTIVATE:holmar
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:back_for_another_round
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_HolyElf:eq:150
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:high_pockets
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_HolyElf:eq:200
+0.1 0 0 0 0 EXPECT:item:ring_of_icegrip:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:denegor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:causing_problems
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Bouncer:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ra'tesh
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:latest_rumors
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:reflocal:galms%seles,known:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 KILL:soscean
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:soscean
+60 0 0 0 0 LOOT:soscean:ebony%shortsword_soscean
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony%shortsword_soscean:eq:1
+60 0 0 0 0 LOOT:soscean:ebony_cuirass_soscean
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony_cuirass_soscean:eq:1
+60 0 0 0 0 ACTIVATE:galms%seles
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:game_of_shells
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Bouncer_Galms:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:hession
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:all_the_problems_out_there
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Bouncer:eq:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-winged-guar
+# MS_Warlords: Dovor Oren's 'cause' in the Vacant Manor, his four errands (+ MS_Warlords_a after)
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Vacant_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Vacant_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:dovor%oren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Soscean
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:40
+0.3 0 0 0 0 TOPIC:assist
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:felvan%ienith
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-warlords-soscean
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 KILL:elanande
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:elanande
+60 0 0 0 0 LOOT:elanande:ebony%war%axe_elanande
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony%war%axe_elanande:eq:1
+60 0 0 0 0 LOOT:elanande:extravagant_robe_02_elanande
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:extravagant_robe_02_elanande:eq:1
+120 0 0 0 0 DOORTO:Mournhold,_Vacant_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Vacant_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:felvan%ienith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Elanande
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:dovor%oren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assist
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:olvyne%dobar
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-warlords-elanande
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 KILL:bels%uvenim
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:bels%uvenim
+60 0 0 0 0 LOOT:bels%uvenim:silver%spear_uvenim
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:silver%spear_uvenim:eq:1
+60 0 0 0 0 LOOT:bels%uvenim:silver_helm_uvenim
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:silver_helm_uvenim:eq:1
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Vacant_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Vacant_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:olvyne%dobar
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Bels_Uvenim
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (Felvan confides only at disposition 90: a bribe or two, then his greeting again)
+60 0 0 0 0 ACTIVATE:felvan%ienith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 PERSUADE:5
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 PERSUADE:5
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:felvan%ienith
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:topiclisted:scared
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:dovor%oren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assist
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Suldreni_Salandas
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-warlords-uvenim
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 KILL:suldreni%salandas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:suldreni%salandas
+60 0 0 0 0 LOOT:suldreni%salandas:amulet_salandas
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:amulet_salandas:eq:1
+60 0 0 0 0 LOOT:suldreni%salandas:dwarven%mace_salandas
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:dwarven%mace_salandas:eq:1
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Vacant_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Vacant_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:dovor%oren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Suldreni_Salandas
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-warlords
+# MS_Warlords_a: Felvan and Olvyne talked into turning themselves in
+60 0 0 0 0 ACTIVATE:felvan%ienith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:scared
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords_a:eq:10
+0.3 0 0 0 0 TOPIC:scared
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords_a:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:olvyne%dobar
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:scared
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords_a:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+# two days on, away from the manor
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords_a:eq:35
+120 0 0 0 0 DOORTO:Mournhold,_Vacant_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Vacant_Manor
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dovor%oren
+60 0 0 0 0 ACTIVATE:dovor%oren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords_a:eq:40
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords:eq:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Guards'_Quarters
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Guards'_Quarters
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Jail
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Jail
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:felvan%ienith
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Warlords_a:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-warlords-a
+# MS_JobHunt, MS_Armor_Crafter, MS_ClutterCollector begin in the Craftsmen's Hall; MS_Thief in Sadri Manor
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Guards'_Quarters
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Guards'_Quarters
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Craftsmen's_Hall
+10 0 0 0 0 UNTIL:cell:Mournhold,_Craftsmen's_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ilnori_faustus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:don't_belong_here
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:become_an_adventurer
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_JobHunt:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:bols%indalen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:custom_armor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:ebony_armor
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Armor_Crafter:eq:1
+0.1 0 0 0 0 EXPECT:item:bk_custom_armor:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:detritus%caria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_collection
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ClutterCollector:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Sadri_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Sadri_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:golena%sadri
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:alvan%llarys
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Elbert_Nermarc
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Craftsmen's_Hall
+10 0 0 0 0 UNTIL:cell:Mournhold,_Craftsmen's_Hall
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:bols%indalen,change:eq:1
+60 0 0 0 0 ACTIVATE:bols%indalen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Ilnori_Faustus
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_JobHunt:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:elbert%nermarc
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Golena_Sadri
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:strange_devices
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-craftsmen
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:alvan%llarys
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 USELOCKPICK:EX_MH_door_02_sadri:pick_grandmaster
+0.3 0 0 0 0 USELOCKPICK:EX_MH_door_02_sadri:pick_grandmaster
+0.3 0 0 0 0 USELOCKPICK:EX_MH_door_02_sadri:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 DOORTO:Mournhold,_Sadri_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Sadri_Manor
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:dead:ordinator_mh_sadri
+120 0 0 0 0 DOORTO:Old_Mournhold|_Residential_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Residential_Sewers
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:50
+60 0 0 0 0 ACTIVATE:tadera%andules
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Old_Mournhold|_Forgotten_Sewer
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Forgotten_Sewer
+0.5 0 0 0
+# the crank floods the sewer: the crates float off the trapdoor to the east part, a trapdoor there climbs to Golena
+60 0 0 0 0 ACTIVATE:act_h20crank_-550_400
+25 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Forgotten_Sewer
+5 0 0 0
+0.1 0 0 0 0 EXPECT:playerx:gt:9000
+120 0 0 0 0 ACTIVATE:in_m_sewer_trapdoor_01
+5 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:gt:1300
+120 0 0 0 0 KILL:golena%sadri_a
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:golena%sadri_a
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:80
+120 0 0 0 0 ACTIVATE:Ex_MH_sewer_trapdoor_01
+5 0 0 0
+120 0 0 0 0 ACTIVATE:in_m_sewer_trapdoor_01_blkd
+5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Residential_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Residential_Sewers
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Sadri_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Sadri_Manor
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:alvan%llarys
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Golena_Sadri
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Thief:eq:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-thief
+# MS_BattleBots1 begins: Ignatius Flaccus wants scrap metal and Dwemer cogs
+120 0 0 0 0 DOORTO:Mournhold,_Ignatius_Flaccus'_House
+10 0 0 0 0 UNTIL:cell:Mournhold,_Ignatius_Flaccus'_House
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ignatius_flaccus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:repair_my_bots
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BattleBots1:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Reception_Area
+0.5 0 0 0
+# What Detritus Caria and Ignatius want is on Vvardenfell: Mark here, Effe-Tei's transport, Recall back
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1
+60 0 0 0 0 ACTIVATE:effe_tei
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:transport_to_Vvardenfell
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
+1 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+200 0 0 0 0 FLYTO:@73216,-66785,388:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Minabi
+10 0 0 0 0 UNTIL:cell:Minabi
+0.5 0 0 0
+60 0 0 0 0 PICKUP:misc_de_pot_redware_04
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_de_pot_redware_04:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+200 0 0 0 0 FLYTO:@44350,10814,1673:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sanabi
+10 0 0 0 0 UNTIL:cell:Sanabi
+0.5 0 0 0
+60 0 0 0 0 PICKUP:misc_com_metal_plate_03
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_com_metal_plate_03:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-trip-plate
+# Bthuand: Dwemer cogs and the Dwemer tableware (Arkngthand's door would not open: see the notes)
+200 0 0 0 0 FLYTO:@35968,129104,1008:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Bthuand
+10 0 0 0 0 UNTIL:cell:Bthuand
+0.5 0 0 0
+60 0 0 0 0 PICKUP:misc_dwrv_gear00
+1 0 0 0
+60 0 0 0 0 WALKTO:@1390,1700,-347
+60 0 0 0 0 PICKUP:misc_dwrv_gear00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_gear00:ge:2
+60 0 0 0 0 PICKUP:misc_dwrv_bowl00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_bowl00:ge:1
+60 0 0 0 0 PICKUP:misc_dwrv_goblet00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_goblet00:ge:1
+60 0 0 0 0 PICKUP:misc_dwrv_goblet10
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_goblet10:ge:1
+60 0 0 0 0 PICKUP:misc_dwrv_pitcher00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_pitcher00:ge:1
+60 0 0 0 0 PICKUP:misc_dwrv_mug00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_mug00:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-trip-bthuand
+# the third cog: Aleft (Bthuand's last one is behind driver limits)
+200 0 0 0 0 FLYTO:@-56015,13305,102:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Aleft
+10 0 0 0 0 UNTIL:cell:Aleft
+0.5 0 0 0
+60 0 0 0 0 PICKUP:misc_dwrv_gear00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_gear00:ge:3
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-trip-cogs
+200 0 0 0 0 FLYTO:@-24813,-10273,1077:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Balmora,_Nalcarya
+10 0 0 0 0 UNTIL:cell:Balmora,_Nalcarya
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:nalcarya_of_white_haven
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:nalcarya_of_white_haven:ingred_scrap_metal_01
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:item:ingred_scrap_metal_01:ge:10
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Milie_Hastien
+10 0 0 0 0 UNTIL:cell:Balmora,_Milie_Hastien
+0.5 0 0 0
+60 0 0 0 0 PICKUP:misc_clothbolt_02
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_clothbolt_02:ge:1
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+200 0 0 0 0 FLYTO:@3329,-57660,1646:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 USELOCKPICK:ex_common_door_01:pick_grandmaster
+0.3 0 0 0 0 USELOCKPICK:ex_common_door_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 DOORTO:Pelagiad,_Ahnassi's_House
+10 0 0 0 0 UNTIL:cell:Pelagiad,_Ahnassi's_House
+0.5 0 0 0
+60 0 0 0 0 PICKUP:misc_imp_silverware_pitcher
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_imp_silverware_pitcher:ge:1
+60 0 0 0 0 PICKUP:misc_com_silverware_fork
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_com_silverware_fork:ge:1
+60 0 0 0 0 PICKUP:misc_com_silverware_knife
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_com_silverware_knife:ge:1
+60 0 0 0 0 PICKUP:misc_com_silverware_spoon
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_com_silverware_spoon:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Reception_Area
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-trip
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Craftsmen's_Hall
+10 0 0 0 0 UNTIL:cell:Mournhold,_Craftsmen's_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:detritus%caria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_collection
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ClutterCollector:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:detritus%caria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_collection
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ClutterCollector:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:detritus%caria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_collection
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ClutterCollector:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:detritus%caria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_collection
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ClutterCollector:eq:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:detritus%caria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_collection
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ClutterCollector:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-clutter
+# MS_ClutterCollector done. MS_BattleBots1: scrap metal and cogs to Ignatius Flaccus, the bots repaired, the wager
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Ignatius_Flaccus'_House
+10 0 0 0 0 UNTIL:cell:Mournhold,_Ignatius_Flaccus'_House
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ignatius_flaccus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:repair_my_bots
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BattleBots1:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ignatius_flaccus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:repair_my_bots
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BattleBots1:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# the bots are ready once the player has left and come back
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Ignatius_Flaccus'_House
+10 0 0 0 0 UNTIL:cell:Mournhold,_Ignatius_Flaccus'_House
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ignatius_flaccus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:friendly_wager
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0
+90 0 0 0 0 UNTIL:journal:MS_BattleBots1:ge:70
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_BattleBots1:ge:70
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-battlebots1
+# MS_BattleBots2: Venasa Sarano tells of the Robot Arena, the house is locked, the bots run wild
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:venasa%sarano
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Robot_Arena
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BattleBots2:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 USELOCKPICK:EX_MH_door_02_ignatius:pick_grandmaster
+0.3 0 0 0 0 USELOCKPICK:EX_MH_door_02_ignatius:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 DOORTO:Mournhold,_Ignatius_Flaccus'_House
+10 0 0 0 0 UNTIL:cell:Mournhold,_Ignatius_Flaccus'_House
+0.5 0 0 0
+120 0 0 0 0 KILL:centurion_spider_bbot3
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:centurion_spider_bbot3
+120 0 0 0 0 KILL:centurion_steam_bbot4
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:centurion_steam_bbot4
+120 0 0 0 0 KILL:centurion_sphere_bbot5
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:centurion_sphere_bbot5
+120 0 0 0 0 KILL:centurion_sphere_bbot6
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:centurion_sphere_bbot6
+120 0 0 0 0 KILL:centurion_spider_bbot7
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:centurion_spider_bbot7
+120 0 0 0 0 KILL:centurion_steam_bbot8
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:centurion_steam_bbot8
+120 0 0 0 0 KILL:centurion_steam_bbot2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:centurion_steam_bbot2
+3 0 0 0
+60 0 0 0 0 ACTIVATE:ignatius_flaccus2
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BattleBots2:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-battlebots2
+# MS_BlackDart: Narisa Adus in the Bazaar Sewers, Variner's ghost in the Temple Sewers
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Bazaar_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Bazaar_Sewers
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:narisa%adus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Black_Dart_Gang
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BlackDart:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:narisa%adus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Variner's_ghost
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BlackDart:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Basement
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Basement
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers
+0.5 0 0 0
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-blackdart-pre
+60 0 0 0 0 ACTIVATE:ancestor_ghost_Variner
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:message
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BlackDart:eq:25
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-blackdart-ghost
+# MS_BlackDart: the gang in the Temple Sewers West is killed, Narisa pays
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers_West
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers_West
+0.5 0 0 0
+120 0 0 0 0 KILL:black%dart%gilur
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:black%dart%gilur
+120 0 0 0 0 KILL:black%dart%urvyn
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:black%dart%urvyn
+120 0 0 0 0 KILL:black%dart%malar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:black%dart%malar
+120 0 0 0 0 KILL:black%dart%adren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:black%dart%adren
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Basement
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Basement
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Bazaar_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Bazaar_Sewers
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:narisa%adus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Black_Dart_Gang
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BlackDart:eq:100
+0.1 0 0 0 0 EXPECT:item:Variner's%Ring:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# the ghost lets her sleep a night
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:narisa%adus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Variner's_ghost
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BlackDart:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-blackdart
+# MS_ScrollSales: Ten-Tongues Weerhat in the Pawnbroker, Ahnia in the Bazaar Sewers, Elbert Nermarc's book
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Pawnbroker
+10 0 0 0 0 UNTIL:cell:Mournhold,_Pawnbroker
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ten-tongues_weerhat
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Special_Offers
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ten-tongues_weerhat
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Special_Offers
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:3
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:ten-tongues_weerhat
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 PERSUADE:5
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 PERSUADE:5
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Ahnia
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Bazaar_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Bazaar_Sewers
+0.5 0 0 0
+120 0 0 0 0 KILL:ahnia
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:ahnia
+0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:40
+60 0 0 0 0 ACTIVATE:bk_ahnia
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:50
+0.3 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Pawnbroker
+10 0 0 0 0 UNTIL:cell:Mournhold,_Pawnbroker
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ten-tongues_weerhat
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Ahnia
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:60
+0.1 0 0 0 0 EXPECT:item:bk_nermarcnotes:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Craftsmen's_Hall
+10 0 0 0 0 UNTIL:cell:Mournhold,_Craftsmen's_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:elbert%nermarc
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:stolen_book
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-scrollsales
+# MS_Natural: Gaenor asks for gifts in the Temple Courtyard; refused, he is hit and vanishes, comes back rich
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:gaenor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Favor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Natural:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 STRIKE:gaenor:1.2
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Natural:ge:15
+# three days away from the courtyard, he is back
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:MS_Natural:ge:25
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+2 0 0 0
+120 0 0 0 0 KILL:gaenor_b
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Natural:eq:40
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-natural
+# MS_Museum: Torasa Aram, curator of the Museum of Artifacts
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Museum_of_Artifacts
+10 0 0 0 0 UNTIL:cell:Mournhold,_Museum_of_Artifacts
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:torasa%aram
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Museum_of_Artifacts
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Museum:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-museum
+# MS_Performers: Meryn Othralas casts the player as Clavides in The Horror of Castle Xyr; all lines right, then the assassin
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:meryn%othralas
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:its_own_drama
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:looks_like_Tarvus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Performers:eq:10
+0.1 0 0 0 0 EXPECT:item:bk_playscript:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:meryn%othralas
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_Performers:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# on the stage: Gureryne's lines, the player picks: 1 3 2 3 1 2 1 3
+60 0 0 0 0 WALKTO:Script_PlayScript
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 A
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 A
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 A
+30 0 0 0 0 UNTIL:message:Choose_your_line
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+120 0 0 0 0 KILL:dravil%indrano
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dravil%indrano
+0.1 0 0 0 0 EXPECT:journal:MS_Performers:eq:50
+60 0 0 0 0 ACTIVATE:meryn%othralas
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assassin_would_attack
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Performers:eq:120
+0.1 0 0 0 0 EXPECT:item:amulet%of%verbosity:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-performers
+# MS_MatchMaker: Marena Gilnith (Great Bazaar) wants to meet a man; Goval Ralen (Temple Courtyard) is the one
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:goval%ralen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:women
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_MatchMaker:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:marena%gilnith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Meet_someone_new
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_MatchMaker:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:goval%ralen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:women
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:marena%gilnith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Meet_someone_new
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_MatchMaker:eq:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:goval%ralen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Marena_Gilnith
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_MatchMaker:eq:110
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# three days pass away from Godsreach (the Craftsmen's Hall), then the meeting
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Craftsmen's_Hall
+10 0 0 0 0 UNTIL:cell:Mournhold,_Craftsmen's_Hall
+0.5 0 0 0
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+30 0 0 0
+# the date is on; a day on she is back in the Great Bazaar
+120 0 0 0 0 DOORTO:Mournhold,_Craftsmen's_Hall
+10 0 0 0 0 UNTIL:cell:Mournhold,_Craftsmen's_Hall
+0.5 0 0 0
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:marena%gilnith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Goval_Ralen
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_MatchMaker:eq:120
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-matchmaker
+
+# MS_CrimsonPlague (UESP Crimson_Plague): Gedna Relvel's tomb opened first, then Nerile, Geon, the rats, Athelyn
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Basement
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Basement
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers_East
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers_East
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Gardens
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Gardens
+0.5 0 0 0
+120 0 0 0 0 KILL:skeleton%warrior
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:skeleton%warrior
+120 0 0 0 0 KILL:skeleton%champion
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:skeleton%champion
+120 0 0 0 0 KILL:skeleton%champion
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:skeleton%champion
+60 0 0 0 0 USELOCKPICK:In_DB_door_oval_relvel:pick_grandmaster
+0.3 0 0 0 0 USELOCKPICK:In_DB_door_oval_relvel:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 DOORTO:Old_Mournhold|_Gedna_Relvel's_Tomb
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Gedna_Relvel's_Tomb
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Gardens
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Gardens
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers_East
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers_East
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Basement
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Basement
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+# (Mehra Helas's rumor, journal 10, is skipped: after the Natural fight she stays 'in combat' for good, see the notes; Nerile's Favor topic gives the same errand)
+60 0 0 0 0 ACTIVATE:nerile%andaren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Favor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Cure_Disease_potion
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:20
+0.1 0 0 0 0 EXPECT:item:p_cure_common_s:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Geon_Auline's_House
+10 0 0 0 0 UNTIL:cell:Mournhold,_Geon_Auline's_House
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:geon%auline
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Cure_Disease_potion
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Crimson Plague: the Hall of Ministry is overrun by rats (killed), Nerile's next favour, Athelyn Malas on the Temple steps
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+120 0 0 0 0 KILL:Rat_plague_hall1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall1
+120 0 0 0 0 KILL:Rat_plague_hall1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall1
+120 0 0 0 0 KILL:Rat_plague_hall1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall1
+120 0 0 0 0 KILL:Rat_plague_hall1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall1
+120 0 0 0 0 KILL:Rat_plague_hall1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall1
+120 0 0 0 0 KILL:Rat_plague_hall2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall2
+120 0 0 0 0 KILL:Rat_plague_hall1a
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall1a
+120 0 0 0 0 KILL:Rat_plague_hall1a
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague_hall1a
+60 0 0 0 0 ACTIVATE:nerile%andaren
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:ge:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:nerile%andaren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Favor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Cure_Disease_potion
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:athelyn%malas
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Cure_Disease_potion
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:nerile%andaren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Favor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Crimson_Plague
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-plague-80
+# Crimson Plague: Shunari Eye-Fly in the Temple Basement, cured with Nerile's scroll in the Temple Gardens
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Basement
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Basement
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:shunari%eye-fly
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:guard
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:help_Shunari
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:nerile%andaren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:help_Shunari
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:105
+0.1 0 0 0 0 EXPECT:item:sc_chridittepanacea:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Basement
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Basement
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers_East
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers_East
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Gardens
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Gardens
+0.5 0 0 0
+60 0 0 0 0 WALKTO:shunari%eye-fly
+60 0 0 0 0 CASTAT:shunari%eye-fly:item:sc_chridittepanacea
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:ge:110
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-plague-110
+# Crimson Plague: Shunari's tale, the passage in Gedna Relvel's tomb, the trigger on the floor
+120 0 0 0 0 KILL:Rat_plague
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:Rat_plague
+60 0 0 0 0 ACTIVATE:shunari%eye-fly
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Gedna_Relvel
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Crimson_Plague
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:120
+0.3 0 0 0 0 TOPIC:Gedna_Relvel
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:secret_passage
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:130
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Crimson Plague: the trigger in the tomb floor opens the way (140), Gedna Relvel is killed (150), Shunari and Nerile thank (160, 170)
+120 0 0 0 0 DOORTO:Old_Mournhold|_Gedna_Relvel's_Tomb
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Gedna_Relvel's_Tomb
+0.5 0 0 0
+120 0 0 0 0 WALKTO:act_plague_rock3
+120 0 0 0 0 WALKTO:@-2158,1944,-585
+5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:140
+300 0 0 0 0 KILL:lich_relvel
+3 0 0 0
+0.1 0 0 0 0 EXPECT:dead:lich_relvel
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:150
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Gardens
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Gardens
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:shunari%eye-fly
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Gedna_Relvel
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:160
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers_East
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers_East
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Temple_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Temple_Sewers
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Basement
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Basement
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Hall_of_Ministry
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Hall_of_Ministry
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:nerile%andaren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Crimson_Plague
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:170
+0.1 0 0 0 0 EXPECT:spell:grace_of_almsivi:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-crimsonplague
+# MS_EstateSale (UESP Estate_Sale): Geon Auline wants a Droth Dagger; bought from Arnsa Thendas for 600
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple:_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Geon_Auline's_House
+10 0 0 0 0 UNTIL:cell:Mournhold,_Geon_Auline's_House
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:geon%auline
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:collector
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_EstateSale:eq:10
+0.3 0 0 0 0 TOPIC:Droth_Dagger
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_EstateSale:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Thendas_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Thendas_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:arnsa%thendas
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Estate_Sale
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:particular_item
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_EstateSale:eq:50
+0.1 0 0 0 0 EXPECT:item:silver%dagger_droth_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Geon_Auline's_House
+10 0 0 0 0 UNTIL:cell:Mournhold,_Geon_Auline's_House
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:geon%auline
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Droth_Dagger
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_EstateSale:eq:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-estatesale
+# MS_Adulterer (UESP Infidelities): Deldrise Andoren asks to follow her husband Taren at night; Velyna Seran is killed, report for 1000
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Andoren_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Andoren_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:deldrise%andoren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:see_my_husband
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Adulterer:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+20 0 0 0 0 SLEEPUNTIL:23
+20 0 0 0 0 UNTIL:screen:none
+# 500 to 1024 from Taren starts his walk (20), farther than 500 all the way, within 2000 at the end (30)
+120 0 0 0 0 WALKTO:@450,-1600,210
+30 0 0 0 0 UNTIL:journal:MS_Adulterer:ge:20
+12 0 0 0
+60 0 0 0 0 WALKTO:@300,-1752,430
+60 0 0 0 0 UNTIL:journal:MS_Adulterer:ge:30
+0.1 0 0 0 0 EXPECT:journal:MS_Adulterer:eq:30
+120 0 0 0 0 KILL:velyna%seran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:velyna%seran
+0.1 0 0 0 0 EXPECT:journal:MS_Adulterer:eq:130
+120 0 0 0 0 DOORTO:Mournhold,_Andoren_Manor
+10 0 0 0 0 UNTIL:cell:Mournhold,_Andoren_Manor
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:deldrise%andoren
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Adulterer:eq:180
+0.1 0 0 0 0 EXPECT:item:Gold_001:ge:1000
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-mournhold-adulterer
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Old_Mournhold|_Residential_Sewers
+10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Residential_Sewers
+0.5 0 0 0
+120 0 0 0 0 KILL:alam%merys
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:alam%merys
+120 0 0 0 0 KILL:melur%savil
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:melur%savil
+120 0 0 0 0 KILL:drathas%nerus
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:drathas%nerus
+0.1 0 0 0 0 EXPECT:journal:MS_BarbarianBook_B:eq:1
+60 0 0 0 0 ACTIVATE:dilborn
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_BarbarianBook_B:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
