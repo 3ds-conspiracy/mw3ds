@@ -231,7 +231,7 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 	{
 		int pct = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(a[1].c_str())));
 		if (verb == "LOOKSPEED") g_lookSpeed = pct;
-		else if (verb == "GETURN") g_geTurnSpeed = pct;
+		else if (verb == "GETURN") g_geTurnSpeed = std::max(kGeTurnMinPct, std::min(kGeTurnMaxPct, atoi(a[1].c_str())));
 		else if (verb == "GEAIM") g_lookSpeed = pct;      // (the GoldenEye aim looks at the look speed)
 		else if (verb == "INVERTY") g_invertY = a[1] == "on";
 		else g_subtitles = a[1] != "off";

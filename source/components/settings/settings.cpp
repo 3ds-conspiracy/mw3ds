@@ -71,7 +71,7 @@ void Session::loadSettings()
 		else if (strncmp(line, "stickzone=", 10) == 0)
 			g_stickZonePct = std::max(kStickZoneMinPct, std::min(kStickZoneMaxPct, atoi(line + 10)));
 		else if (strncmp(line, "lookspeed=", 10) == 0) g_lookSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 10)));
-		else if (strncmp(line, "geturn=", 7) == 0) g_geTurnSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 7)));
+		else if (strncmp(line, "geturn=", 7) == 0) g_geTurnSpeed = std::max(kGeTurnMinPct, std::min(kGeTurnMaxPct, atoi(line + 7)));
 		// (an older file's geaim= is left unread: the GoldenEye aim looks at the look speed)
 		else if (strncmp(line, "inverty=", 8) == 0) g_invertY = strncmp(line + 8, "on", 2) == 0;
 		else if (strncmp(line, "subtitles=", 10) == 0) g_subtitles = strncmp(line + 10, "off", 3) != 0;

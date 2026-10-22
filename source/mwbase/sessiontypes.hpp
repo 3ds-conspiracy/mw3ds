@@ -44,10 +44,11 @@ extern int g_gyroAim;
 // (the console's own tilt)
 extern int g_lookSpeed, g_geTurnSpeed;
 extern bool g_invertY;
-static const int kLookMinPct = 50, kLookMaxPct = 200, kLookStepPct = 10;
+static const int kLookMinPct = 100, kLookMaxPct = 300, kLookStepPct = 10;      // (the bar's middle is 2.00x: 1.00x was too slow)
+static const int kGeTurnMinPct = 50, kGeTurnMaxPct = 200;
 // A new player's look speed, and Look's Default: quicker than 1.00x, which felt slow on the console (1.20x still did).
 // Scripted runs start at 1.00x whatever this is (Session's settings load), so the cases keep their timing
-static const int kLookDefaultPct = 150;
+static const int kLookDefaultPct = 200;
 // Subtitles (Options > Display; settings.txt subtitles=on|off): spoken lines written on the top screen. Off, a line
 // with a voice is only heard; one with no voice file is still written (it would be lost otherwise)
 extern bool g_subtitles;

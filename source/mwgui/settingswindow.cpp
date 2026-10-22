@@ -250,7 +250,7 @@ void Session::drawOptions()
 		snprintf(text, sizeof(text), "%.2fx", g_lookSpeed / 100.0f);
 		bar(50, "Look speed (sticks, D-pad, aiming)", text, g_lookSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
 		snprintf(text, sizeof(text), "%.2fx", g_geTurnSpeed / 100.0f);
-		bar(84, "GoldenEye turn (walking)", text, g_geTurnSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
+		bar(84, "GoldenEye turn (walking)", text, g_geTurnSpeed, kGeTurnMinPct, kGeTurnMaxPct, kLookStepPct);
 		snprintf(text, sizeof(text), "%d%%", g_stickZonePct);
 		bar(118, "Stick dead zone", text, g_stickZonePct, kStickZoneMinPct, kStickZoneMaxPct, kStickZoneStepPct);
 		if (choice(154, "Invert look", onOff(g_invertY)))
