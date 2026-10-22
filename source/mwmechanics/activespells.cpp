@@ -45,6 +45,8 @@ void Session::updateActorEffects(int ri, float dt)
 	Ref& r = w.refs[ri];
 	for (size_t i = 0; i < r.effects.size();)
 	{
+		if (r.effects[i].effect == EFF_LEVITATE && w.levitationDisabled)
+			r.effects[i].remaining = 0.0f;          // (DisableLevitation: theirs ends too)
 		const Ref::TimedEffect t = r.effects[i];
 		float step = fminf(dt, t.remaining);
 		float amount = t.magnitude * step;
@@ -114,7 +116,7 @@ void Session::updateEffects(float dt)
 	// block some (fMagicSunBlockedMult)
 	float sun = w.effectTotal(135);
 	// (not while a menu is up: resting and waiting fast-forward the hours, the game is paused)
-	if (sun > 0.0f && !playerDead && !menuOpen() && w.current >= 0 && !w.cells[w.current].interior)
+	if (sun > 0.0f && !playerDead && !menuOpen() && w.current >= 0 && w.cells[w.current].underSky())
 	{
 		float h = fmodf(w.gameHour, 24.0f);
 		float light = h > 6.0f && h < 20.0f ? sinf(3.14159f * (h - 6.0f) / 14.0f) : 0.0f;
@@ -127,6 +129,13 @@ void Session::updateEffects(float dt)
 	for (size_t i = 0; i < w.effects.size();)
 	{
 		ActiveEffect& a = w.effects[i];
+		// DisableLevitation (Tribunal's Mournhold): a Levitate on the player ends at once, and they are told (OpenMW's
+		// shouldRemoveEffect)
+		if (a.effect == EFF_LEVITATE && w.levitationDisabled && a.remaining > 0.0f)
+		{
+			a.remaining = 0.0f;
+			notify(w.game.gmst("slevitatedisabled", "Levitation magic does not work here."));
+		}
 		float step = fminf(dt, a.remaining);
 		switch (a.effect)
 		{

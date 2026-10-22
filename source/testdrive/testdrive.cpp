@@ -89,7 +89,7 @@ float doorWalkRank(Session& s, const Ref& r, float d3)
 // Numbers the checks compare. Kinds with an argument (a[1]) and those without; false: not a number kind
 bool hasArg(const std::string& what)
 {
-	return what == "levcandidates" || what == "levpick" || what == "levrolls" || what == "soulcapacity" || what == "stackcount"
+	return what == "mapnotehas" || what == "playerdist" || what == "levcandidates" || what == "levpick" || what == "levrolls" || what == "soulcapacity" || what == "stackcount"
 		|| what == "refexists" || what == "refenabled" || what == "refstock" || what == "merchantgold" || what == "followset"
 		|| what == "journalentries" || what == "questfinished" || what == "skill" || what == "skillprog" || what == "attr" || what == "attrups" || what == "attrdamage" || what == "effect"
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
@@ -158,6 +158,7 @@ bool TestDriver::playerToken(const std::string& tok)
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE",
+		"SHARE", "SHAREPUT", "SHARETAKE", "SHAREDONE", "MAPNOTE",
 		"ENCHANTAT", "ENCHANT", "ENCHITEM", "ENCHGEM", "ENCHTYPE", "ADDEFFECT", "CONFIRM", "TYPE", "LEVELUP",
 		"EQUIP", "USE", "READ", "DROP", "QUICKSET", "CAST", "CASTAT", "CASTMADESPELL", "USEMADE", "EQUIPMADE",
 		"RECHARGEMADE", "RECHARGE", "REPAIR", "REPAIRAT", "REPAIRWITH", "BUYSPELL", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "UNSEEN", "UNTIL", "FLOAT", "HIDE",
@@ -687,6 +688,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		earlyTried = true;
 		logf("drive: activated %s (crosshair, %.0f off)", id.c_str(), dist);
 		memcpy(pressAt, p.feet, sizeof(pressAt));
+		doorWasOpen = r.recType == REC_DOOR && r.doorTarget != 0.0f;
 		// (a door: watched as a trapped one is; still here after it, the press from there did nothing: walked on)
 		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : r.recType == REC_DOOR ? DOORWAIT : NONE;
 		doorCell = w.current;
@@ -729,6 +731,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
 		memcpy(pressAt, p.feet, sizeof(pressAt));
+		doorWasOpen = r.recType == REC_DOOR && r.doorTarget != 0.0f;
 		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
 		doorCell = w.current;
 		takeTimer = 0.0f;
@@ -1008,6 +1011,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
 		memcpy(pressAt, p.feet, sizeof(pressAt));
+		doorWasOpen = r.recType == REC_DOOR && r.doorTarget != 0.0f;
 		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
 		doorCell = w.current;
 		takeTimer = 0.0f;

@@ -390,16 +390,33 @@ def has_no_collision(nif):
     return False
 
 
-def collision_triangles(nif):
+def keyframed_blocks(nif):
+    """Blocks with an active NiKeyframeController (OpenMW's BulletNifLoader: their collision shapes are animated)."""
+    out = set()
+    for i, b in enumerate(nif.blocks):
+        c = nif.get(b.get("controller", -1))
+        while c:
+            if c["type"] == "NiKeyframeController":
+                out.add(i)
+                break
+            c = nif.get(c.get("next_controller", -1))
+    return out
+
+
+def collision_triangles(nif, local=None, parts=False):
     """World-space-ready collision soup in the NIF's root space: (Nx3 positions, Mx3 indices).
     Uses RootCollisionNode geometry when present (hidden flags ignored there),
-    otherwise the visible, unskinned geometry."""
+    otherwise the visible, unskinned geometry. local(block index, block): a node's own transform (an animation's pose,
+    particles.posed_local), else its rest one. parts: (positions, indices, n) with the n triangles that stay put first
+    and those under a keyframed node after them (OpenMW's animated collision shapes)."""
     if has_no_collision(nif):
         return None
-    pos_list, tri_list, count = [], [], 0
+    lists = {False: ([], []), True: ([], [])}     # animated? -> (positions, triangles)
+    count = {False: 0, True: 0}
+    keyed = keyframed_blocks(nif) if parts else set()
+    node = local or (lambda i, b: nif_local(b))
 
-    def add(b, m):
-        nonlocal count
+    def add(b, m, moving=False):
         if b["type"] not in ("NiTriShape", "NiTriStrips") or b["skin"] != -1:
             return
         d = nif.get(b["data"])
@@ -409,9 +426,10 @@ def collision_triangles(nif):
         if not tris:
             return
         p = np.array(d["vertices"]).reshape(-1, 3)
+        pos_list, tri_list = lists[moving]
         pos_list.append(p @ m[:3, :3].T + m[:3, 3])
-        tri_list.append(np.array(tris, dtype=np.int64).reshape(-1, 3) + count)
-        count += len(p)
+        tri_list.append(np.array(tris, dtype=np.int64).reshape(-1, 3) + count[moving])
+        count[moving] += len(p)
 
     rcn = [i for i, b in enumerate(nif.blocks) if b["type"] == "RootCollisionNode"]
     if rcn:
@@ -423,24 +441,30 @@ def collision_triangles(nif):
         def world(i):
             m = np.identity(4)
             while i is not None:
-                m = nif_local(nif.get(i)) @ m
+                m = node(i, nif.get(i)) @ m
                 i = parents.get(i)
             return m
 
-        def walk_all(i, m):
+        def walk_all(i, m, moving):
             b = nif.get(i)
             if b is None:
                 return
-            add(b, m)
+            moving = moving or i in keyed
+            add(b, m, moving)
             for c in b.get("children", []):
                 cb = nif.get(c)
                 if cb is not None:
-                    walk_all(c, m @ nif_local(cb))
+                    walk_all(c, m @ node(c, cb), moving)
         for i in rcn:
-            walk_all(i, world(i))
+            walk_all(i, world(i), False)
     else:
         walk_nif(nif, lambda b, m, p: add(b, m) if not b["name"].lower().startswith(
             ("tri editormarker", "tri shadow", "shadow")) else None)
-    if not pos_list:
+    still, moving = lists[False], lists[True]
+    if not still[0] and not moving[0]:
         return None
-    return np.concatenate(pos_list), np.concatenate(tri_list)
+    pos = np.concatenate(still[0] + moving[0])
+    tris = np.concatenate(still[1] + [t + count[False] for t in moving[1]])
+    if parts:
+        return pos, tris, sum(len(t) for t in still[1])
+    return pos, tris

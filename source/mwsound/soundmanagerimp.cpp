@@ -904,7 +904,7 @@ bool Session::sayDone(int ref)
 // The region's ambient sounds outdoors in fair weather (Morrowind.ini: 1 to 5 s between; each by its chance)
 void Session::updateRegionSounds(float dt)
 {
-	if (w.current >= 0 && !w.cells[w.current].interior && w.weatherNow <= 3 && (ambientTimer -= dt) <= 0.0f)
+	if (w.current >= 0 && w.cells[w.current].underSky() && w.weatherNow <= 3 && (ambientTimer -= dt) <= 0.0f)
 	{
 		ambientTimer = 1.0f + (rand() % 400) / 100.0f;
 		auto rg = w.game.regions.find(w.cells[w.current].region);

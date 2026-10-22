@@ -17,7 +17,38 @@ nodes. The C++ function tables (`source/components/compiler/extensions0.hpp`) ar
 (26,230 compiles, 0 differences, 2026-10-15). Run it after changing either compiler.
 
 `tools/test/script_gap.py` lists OpenMW's functions the engine does not run, and which master file uses each. None
-that Morrowind.esm uses is missing; the ones only Tribunal or Bloodmoon use are out of scope.
+that Morrowind.esm or Tribunal.esm uses is missing (Tribunal is an optional add-on: `internal`'s plan); the ones only
+Bloodmoon uses are out of scope.
+
+## Name arguments
+
+An argument OpenMW reads as a string (signature S, c, x, z: an object, a script, a cell, a topic) is the word as
+written, even where a local or global variable has the same name (OpenMW's StringParser): Calvus Horatius's
+"StartScript Contract_Calvus" starts the script Contract_Calvus though his own script has a local of that name. Both
+compilers (`mwscript.py` `arg(names_only)`, `compiler.cpp` `arg(namesOnly)`). Test: `trib-merc-contract`.
+
+## Tribunal's functions
+
+The 21 that Tribunal.esm's scripts and dialogue call and Morrowind.esm's don't, as OpenMW runs them:
+
+| Function | Rule | Code | Test |
+|---|---|---|---|
+| GetInterior | 1 in an interior (Mournhold's under-the-sky cells too: they are interiors) | `mwscript/cellextensions.cpp` | `trib-fn-basic` |
+| GetSquareRoot | the square root; a negative number reads 0 here (OpenMW stops the script) | `mwscript/miscextensions.cpp` | `trib-fn-basic` |
+| GetStat | always 0: a placeholder in the original game (OpenMW's OpGetStat) | `mwscript/statsextensions.cpp` | `trib-fn-basic` |
+| GetPCSneaking | the player holds the sneak stance | `mwscript/controlextensions.cpp` | `trib-fn-basic` |
+| GetWeaponDrawn | the player's weapon (or fists) out; a person or creature fighting | `mwscript/miscextensions.cpp`, `Session::isWeaponDrawn` | `trib-fn-basic` |
+| GetChameleon, GetParalysis | the effect's magnitude on the player or the actor | `mwscript/statsextensions.cpp` | `trib-fn-basic` |
+| Enable / DisableLevitation | off: every Levitate ends at once (the player told `sLevitateDisabled`), a new one too; kept in a save | `mwscript/miscextensions.cpp`, `mwmechanics/activespells.cpp`, `mwworld/player.cpp` | `trib-fn-levitation` |
+| GetCollidingPC, GetCollidingActor | the player / an actor touches the object (its box, within 2 units: from the side, or standing on it, as OpenMW's contact test) | `mwscript/miscextensions.cpp` | `trib-fn-objects` |
+| HurtCollidingActor | whoever touches it so loses that much health a second (a negative number heals); nothing in a menu | `mwscript/miscextensions.cpp` | `trib-sotha-traps` |
+| GetStandingActor | the player or an actor stands on its top | `mwscript/miscextensions.cpp` | `trib-fn-standing` |
+| SetDelete | 1: gone (disabled, saved so), 0: back | `mwscript/miscextensions.cpp` | `trib-fn-objects` |
+| ExplodeSpell | the player readies it; an object bursts the spell's area effects where it stands, always succeeding | `mwscript/miscextensions.cpp`, `Session::explodeSpell` | `trib-fn-objects` |
+| Face | an actor turns to look at the point (3 degrees is close enough), then goes on (OpenMW's AiFace) | `mwscript/aiextensions.cpp`, `Session::npcFace` | `trib-fn-objects` |
+| GetWaterLevel | outdoors 0 (the original game's oddity), an interior's water height, the lowest number with no water | `mwscript/cellextensions.cpp`, `mwworld/cellstore.cpp` | `trib-fn-waterlevel` |
+| Set / ModWaterLevel | the player's interior's water moves (its surface, swimming, the view under it); kept for the cell and in a save; nothing outdoors | as GetWaterLevel; the converter gives such a cell a surface over its whole floor plan | `trib-fn-waterlevel` |
+| PlaceItem, PlaceItemCell | a new object at the spot (the player's cell, or the one named): a person or creature as PlaceAtMe, an item lying there, any other object with its script running (drawn when it has a world visual); nothing for an unknown id or cell | `mwscript/transformationextensions.cpp`, `World::placeObject` | `trib-fn-placeitem` |
 
 ## The console (Options > Console)
 

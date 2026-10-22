@@ -547,9 +547,11 @@ def water_shapes(arch, terrain, gx, gy, water_z, sun, ambient, textures):
     return shapes
 
 
-def interior_water_shapes(arch, groups, water_z, sun, ambient, textures, chunk_of):
+def interior_water_shapes(arch, groups, water_z, sun, ambient, textures, chunk_of, everywhere=False):
     """An interior's water: a quad for every square of the floor plan where some triangle dips below
-    the water level, as the exteriors' water quads (same texture, colour and scrolling)."""
+    the water level, as the exteriors' water quads (same texture, colour and scrolling). everywhere: a square over
+    the whole floor plan, for a cell whose scripts raise and lower the water (SetWaterLevel: the engine moves the
+    surface; the floors hide what lies under them)."""
     tile = WATER_TILE
     tiles = set()
     for shapes in groups.values():
@@ -558,7 +560,7 @@ def interior_water_shapes(arch, groups, water_z, sun, ambient, textures, chunk_o
             if not len(tris):
                 continue
             tp = pos[tris]
-            low = tp.min(axis=1)[:, 2] < water_z
+            low = np.ones(len(tp), dtype=bool) if everywhere else tp.min(axis=1)[:, 2] < water_z
             for lo, hi in zip(tp.min(axis=1)[low], tp.max(axis=1)[low]):
                 for tx in range(int(math.floor(lo[0] / tile)), int(math.floor(hi[0] / tile)) + 1):
                     for ty in range(int(math.floor(lo[1] / tile)), int(math.floor(hi[1] / tile)) + 1):
@@ -652,6 +654,16 @@ def toggled_objects(db):
     canal's force field and bridges, the Boethiah shrine's scaffolds)."""
     texts = list(db["SCPT"].values()) + [i.zstr("BNAM") or "" for d in db["dialogue"] for i in d["infos"]]
     names = {m.group(1).strip().lower() for t in texts for m in TOGGLE.finditer(t)}
+    # ... and objects whose own script switches them with a bare Enable / Disable / SetDelete, or plays them a death
+    # group (Bamz-Amschend's cave-in: its collision goes when it is blown up) (Tribunal's Abandoned
+    # Crypt boulders and rockslide disable themselves: their collision stayed baked in, a wall where they were)
+    own = set()
+    for name, text in db["SCPT"].items():
+        for line in (text or "").replace("\r", "").split("\n"):
+            if re.match(r"(?i)\s*(enable|disable|setdelete\b|playgroup\s*,?\s*\"?death)", line.split(";")[0]):
+                own.add(name)
+                break
+    names |= {oid for oid, rec in db["objects"].items() if (rec.zstr("SCRI") or "").lower() in own}
     return {n for n in names if n in db["objects"] and db["objects"][n].tag not in ("NPC_", "CREA")}
 
 
@@ -687,9 +699,13 @@ class Converter:
         self.nif_cache = {}
         self.skeletons, self.skel_index = [], {}     # shared by every cell (cells/skeletons.skl)
         self.dynamic = moving_objects(db)
-        from particles import world_fx_kinds
+        from particles import animated_collision_objects, world_fx_kinds
         self.world_fx = world_fx_kinds(db, arch)
         self.toggled = toggled_objects(db)
+        self.anim_col = animated_collision_objects(db, arch)
+        # Scripts that move an interior's water (Tribunal's sewers: SetWaterLevel / ModWaterLevel)
+        self.water_scripts = {name for name, src in db["SCPT"].items()
+                              if re.search(r"\b(set|mod)waterlevel\b", src or "", re.I)}
         # Cell cache: a cell whose references, settings and converter code are unchanged since the last
         # run isn't converted again (out/cell_cache/<data folder>/<file>.json holds what convert returned)
         self.cache_dir = OUT.parent / "cell_cache" / OUT.name
@@ -821,9 +837,13 @@ class Converter:
                 self.nif_cache[key] = None
         return self.nif_cache[key]
 
-    def interior(self, cell_name, spawn=None):
+    def interior(self, cell_name, spawn=None, weather=None):
+        """An interior. One flagged to behave as an exterior (DATA 0x80, Tribunal's Mournhold: OpenMW's QuasiEx) is lit
+        as the exteriors are, by `weather` (the level's), its lamps kept apart for the night, with a sky dome and the
+        exteriors' fog; it stays an interior otherwise."""
         cell = self.db["CELL"][cell_name]
-        ambi = cell.get("AMBI")
+        # (Mournhold's sky cells have no AMBI: OpenMW's mood then is all zero, the weather lights them)
+        ambi = cell.get("AMBI") or bytes(12) + struct.pack("<f", 0.0)
         # Water as OpenMW reads it: the "has water" flag (DATA bit 1), the height from INTV (a whole
         # number, older records) or WHGT (a float), whichever comes last before the references; 0 if neither
         has_water = bool(struct.unpack_from("<I", cell.get("DATA"))[0] & 2)
@@ -841,7 +861,18 @@ class Converter:
                         "fog_start": 0.0, "fog_end": 0.0, "water_z": water_z if has_water else 0.0, "water": has_water,
                         "bounds": [0.0] * 4, "interior": True},
                "chunk": INTERIOR_CHUNK}
-        return self.convert(cell_name, cell_refs(cell), env, spawn)
+        if struct.unpack_from("<I", cell.get("DATA"))[0] & 0x80 and weather is not None:
+            env.update({"sky": True, "ambient": weather["ambient"], "sun": weather["sun"], "sun_dir": EXTERIOR_SUN_DIR,
+                        "weather": weather})
+            env["info"].update({"fog_start": FOG_START, "fog_end": FOG_END,
+                                "fog": [int(round(c * 255)) for c in weather["fog"]] + [255], "fog_density": 1.0})
+        refs = cell_refs(cell)
+        if has_water and self.water_scripts and any(
+                ((self.db["objects"].get((r.get("id") or "").lower()) or None) is not None
+                 and (self.db["objects"][(r.get("id") or "").lower()].zstr("SCRI") or "").lower() in self.water_scripts)
+                for r in refs):
+            env["water_moves"] = True
+        return self.convert(cell_name, refs, env, spawn)
 
     def exterior_cell(self, gx, gy, terrain, walk_bounds, weather, walkable, name, file, spawn=None):
         """One exterior grid cell. Walkable cells get their references, full-resolution terrain and
@@ -931,6 +962,7 @@ class Converter:
             if rec is None or rec.tag in SKIPPED_TYPES:
                 continue
             shapes = []
+            fx_box = None
             if rec.tag in ("NPC_", "CREA"):
                 actors.append({"id": rec.id, "name": rec.zstr("FNAM") or rec.id,
                                "pos": ref["pos"], "yaw": ref["rot"][2]})
@@ -955,9 +987,15 @@ class Converter:
                 # own mesh drawn where they are now, blocking at run time instead of in the baked collision
                 swing_door = (rec.tag == "DOOR" and "dest" not in ref) or ref["id"].lower() in self.dynamic
                 if rec.tag in COLLIDING_TYPES and not can_carry and not swing_door:   # swing doors block at run time
-                    col = collision_triangles(nif)
+                    # (a Clockwork City door: its moving collision kept apart, last, for the engine to switch as it
+                    # opens and shuts; its frame stays baked in)
+                    moves = ref["id"].lower() in self.anim_col
+                    col = collision_triangles(nif, parts=moves)
                     if col is not None:
-                        if ref["id"].lower() in self.toggled:
+                        if moves:
+                            col_ranges[ri] = (sum(len(x) for x in col_tris) + col[2], len(col[1]) - col[2])
+                            col = col[:2]
+                        elif ref["id"].lower() in self.toggled:
                             col_ranges[ri] = (sum(len(x) for x in col_tris), len(col[1]))
                         col_pos.append(col[0] @ m[:3, :3].T + m[:3, 3])
                         col_tris.append(col[1] + col_count)
@@ -967,6 +1005,12 @@ class Converter:
                 # left out, or all of it when it is animated; its collision stays)
                 wfx = self.world_fx.get(ref["id"].lower())
                 if wfx is not None:
+                    # (its box stays: the crosshair finds it by the box, and a pile drawn as a piece at run time has no
+                    # shapes left to take one from: Bamz-Amschend's cave-in could not be aimed at, so the satchel never
+                    # went on it in a run that is played, not scripted)
+                    if wfx and shapes:
+                        fp = np.concatenate([s["pos"] for s in shapes]) @ m[:3, :3].T + m[:3, 3]
+                        fx_box = [fp.min(0).round(1).tolist(), fp.max(0).round(1).tolist()]
                     shapes = [] if wfx else [s for s in shapes if "raw" in s]
                 if swing_door:
                     # Swinging door: kept in object space, drawn with its own transform
@@ -982,6 +1026,8 @@ class Converter:
             if allpos:
                 p = np.concatenate(allpos)
                 entry["bbox"] = [p.min(0).round(1).tolist(), p.max(0).round(1).tolist()]
+            elif fx_box is not None:
+                entry["bbox"] = fx_box
             if rec.tag in ("NPC_", "CREA"):
                 continue
             detail = 0.0
@@ -1006,7 +1052,8 @@ class Converter:
                 col_tris.append(tt + col_count)
                 col_count += len(tp)
         elif info["water"]:
-            for s in interior_water_shapes(self.arch, groups, info["water_z"], sun, ambient, textures, chunk_of):
+            for s in interior_water_shapes(self.arch, groups, info["water_z"], sun, ambient, textures, chunk_of,
+                                           env.get("water_moves", False)):
                 groups.setdefault((s["tex"], s["flags"], s["alpha_ref"], s["chunk"], 0.0), []).append(s)
 
         groups = merge_small_groups(groups)
@@ -1045,7 +1092,8 @@ class Converter:
                 use(s, (s["tex"], s["flags"]))
 
         ranges = {}
-        batches = make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges, split=not env["interior"])
+        outdoor_lit = not env["interior"] or env.get("sky", False)
+        batches = make_batches(groups, tex_index, lights, ambient, sun, sun_dir, ranges, split=outdoor_lit)
         for ri, rr in ranges.items():
             ref_out[ri]["ranges"] = rr
         door_meshes = []
@@ -1054,8 +1102,8 @@ class Converter:
             for s in shapes:
                 g.setdefault((s["tex"], s["flags"], s["alpha_ref"]), []).append(s)
             door_meshes.append({"ref": ri, "batches": make_batches(g, tex_index, lights, ambient, sun, sun_dir,
-                                                                   split=not env["interior"])})
-        if not env["interior"]:
+                                                                   split=outdoor_lit)})
+        if outdoor_lit:
             sky = sky_batches(self.arch, env["weather"], textures, tex_index, tex_names)
 
         if spawn:

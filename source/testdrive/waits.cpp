@@ -165,7 +165,11 @@ std::optional<bool> TestDriver::updateWaits(Session& s, PlayerInput& in, u32& do
 			float mx = pf[0] - pressAt[0], my = pf[1] - pressAt[1], mz = pf[2] - pressAt[2];
 			if (w.refs[ref].hasDest && mx * mx + my * my + mz * mz > 200.0f * 200.0f)
 				return false;
-			if (earlyTried &&w.refs[ref].doorTarget == 0.0f && w.refs[ref].trap.empty())
+			// (a door that stood open: the press shut it, as it should; not a press that did nothing. Pressed again it
+			// opened once more: Barenziah's Chambers' inner doors, left open, kept TR_Assassins' night from coming)
+			if (doorWasOpen)
+				return false;
+			if (earlyTried && w.refs[ref].doorTarget == 0.0f && w.refs[ref].trap.empty())
 			{
 				logf("drive: %s: the press from out there did nothing, walking on", id.c_str());
 				kind = ACTIVATE;

@@ -201,6 +201,17 @@ struct World
 	int nightDay() const;                         // 0 default, 1 interior in daylight, 2 exterior at night
 	bool underWater(float z) const;               // below the water of a loaded cell
 	bool teleportDisabled = false;
+	bool levitationDisabled = false;  // DisableLevitation (Tribunal's Mournhold): Levitate ends at once, saved (OpenMW's LEVT)
+	// SetWaterLevel / ModWaterLevel: an interior's water moved by a script (lowercase cell name -> height), saved and
+	// laid on the cell each time it is read (Tribunal's sewers)
+	std::unordered_map<std::string, float> waterLevels;
+	std::unordered_set<std::string> startScriptsDone;   // the data's start scripts this game has run (saved)
+	// The player's own notes on the map (Tribunal's: sEditNote / sDeleteNote): an interior's (its lowercase name) or the
+	// outdoors' (cell ""), at a world spot (saved)
+	struct MapNote { std::string cell; float x = 0.0f, y = 0.0f; std::string text; };
+	std::vector<MapNote> mapNotes;
+	float scriptWaterLevel() const;                // GetWaterLevel: the player's cell (0 outdoors, very low with no water)
+	void setScriptWaterLevel(float z);             // the player's interior's water to that height
 	bool aiEnabled = true;            // ToggleAI (the console): off, actors stand still
 	// (no longer written: ClearInfoActor only edits the Topics index) "actor id|info uid"
 	std::unordered_set<std::string> clearedInfos;
@@ -269,6 +280,11 @@ struct World
 	void sunSide(float out[4]) const;
 	// Places `count` of an id `dist` in front of (dir 0), behind (1), left of (2) or right of (3) a spot
 	void placeAt(const std::string& id, int count, float dist, int dir, const float base[3], float yaw);
+	// PlaceItem / PlaceItemCell: a new object of that id at that spot (cell -1: where the spot is); a person or
+	// creature, an item lying there, or any other object with its script running. Its ref, or -1
+	int placeObject(const std::string& id, int cell, const float pos[3], float yaw);
+	void loseCollision(int ref);                    // its collision gone for good, the object still drawn (saved: colGone)
+	void regainCollision(int ref);                  // back again (a Clockwork City door shut after it was opened)
 	void snapToFloor(float pos[3]);     // down onto the floor below (from a little above), never up
 	// How far above where it stands (the ground under its feet) a creature's model is drawn: its collision box rested on
 	// the highest ground under all of it (0 without a box)
@@ -304,6 +320,12 @@ struct World
 	// (per-frame loops use these instead of every loaded reference)
 	std::vector<int> loadedActors, loadedDoors, loadedPickables;
 	void rebuildLoadedLists();
+	// Moved / turned objects' shapes as boxes where the level placed them (World::update moves them with the object;
+	// worked out again for another object in that slot or a new scale), while their cell is loaded
+	struct MoverShape { int cell = -1, mesh = -1; float scale = 0.0f; std::vector<CollisionBox> boxes; };
+	std::unordered_map<int, MoverShape> moverShapes;
+	// Whether feet at f rest on this object (GetStandingPC / GetStandingActor; OpenMW's getActorStandingOn)
+	bool feetOnObject(int ref, const float* f) const;
 	template <typename Fn> void forLoadedActors(Fn fn)
 	{
 		for (size_t k = 0; k < loadedActors.size(); k++)

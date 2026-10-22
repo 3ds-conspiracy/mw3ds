@@ -331,6 +331,59 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		}
 		return true;
 	}
+	// SHARE:<ref>: a companion's Share opens, as the dialogue's Share button does (Tribunal: their script's "companion");
+	// SHAREPUT:<item> / SHARETAKE:<item>: one stack of it given to them / taken back, as a tap on it in the share does;
+	// SHAREDONE: its Close button (back to the conversation, or the mercenary's warning when the profit is below 0)
+	if (verb == "SHARE" && a.size() >= 2)
+	{
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || !s.isCompanion(ri))
+			return fail(a[1] + " is no companion");
+		if (notTalking(ri))
+			return fail("not talking to " + a[1] + " (LEGIT)");
+		s.containerRef = ri;
+		s.companionSharing = true;
+		s.companionWarning = s.pickpocketing = s.containerPutting = false;
+		s.screen = SCR_CONTAINER;
+		return true;
+	}
+	if ((verb == "SHAREPUT" || verb == "SHARETAKE") && a.size() >= 2)
+	{
+		if (s.screen != SCR_CONTAINER || !s.companionSharing || s.containerRef < 0)
+			return fail("no companion share open");
+		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
+		if (verb == "SHAREPUT")
+		{
+			for (size_t i = 0; i < w.inventory.size(); i++)
+				if (lower(w.inventory[i].id) == want || lower(w.inventory[i].id) == want2)
+					return s.containerPut((int)i) ? true : fail("put " + a[1] + ": refused");
+			return fail(a[1] + " not carried");
+		}
+		Ref& c = w.refs[s.containerRef];
+		for (size_t i = 0; i < c.contents.size(); i++)
+			if (lower(c.contents[i].second) == want || lower(c.contents[i].second) == want2)
+			{
+				s.containerTake((int)i, true);
+				return true;
+			}
+		return fail(a[1] + " not theirs");
+	}
+	if (verb == "SHAREDONE")
+	{
+		if (s.screen != SCR_CONTAINER || !s.companionSharing)
+			return fail("no companion share open");
+		s.companionShareClose();
+		return true;
+	}
+	// MAPNOTE:<n>: the map screen's n-th note (Tribunal's) shows its text, as a tap on its marker does
+	if (verb == "MAPNOTE" && a.size() >= 2)
+	{
+		int n = atoi(a[1].c_str());
+		if (s.screen != SCR_MAP || n < 0 || n >= (int)w.mapNotes.size())
+			return fail("no map note " + a[1] + " on the map screen");
+		(s.mapLocal ? s.mapDoorTip : s.mapPlaceTip) = WindowManagerState::kMapNoteId + n;
+		return true;
+	}
 	// BARTER:<ref>: the merchant's Barter screen opens, as the dialogue's Barter button does
 	if (verb == "BARTER" && a.size() >= 2)
 	{

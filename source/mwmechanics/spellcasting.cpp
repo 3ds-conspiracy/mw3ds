@@ -384,3 +384,17 @@ void Session::areaBurst(const SpellDef& sp, int range, const float at[3], int st
 		}
 	}
 }
+
+// ExplodeSpell on an object (Tribunal's dart traps): the spell's area effects burst where the object stands, whatever
+// their range, always succeeding; the player and everyone in reach are caught (OpenMW: CastSpell from the object at its
+// own position, mAlwaysSucceed)
+void Session::explodeSpell(int ref, const std::string& spell)
+{
+	auto sp = w.game.spells.find(spell);
+	if (ref < 0 || sp == w.game.spells.end())
+		return;
+	const Ref& r = w.refs[ref];
+	float at[3] = { r.pos[0], r.pos[1], r.pos[2] };
+	for (int range = 0; range < 3; range++)
+		areaBurst(sp->second, range, at, -2, -1);
+}

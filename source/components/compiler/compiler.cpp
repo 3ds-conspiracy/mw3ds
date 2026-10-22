@@ -540,7 +540,8 @@ struct Compiler
 				a = term(t, i);
 			else
 			{
-				a = arg(t, i);
+				// (a name argument is the word itself, never a variable of that name: OpenMW's StringParser)
+				a = arg(t, i, stringArg);
 				// an id of several words without quotes (HasSoulGem dagoth drals): the words that follow
 				while (inExpr && a->k == V::LIST && a->l[0]->s == "s" && i < t.size() && t[i].kind == 'i'
 					&& !isLocal(lower(t[i].text)) && !isGlobal(lower(t[i].text)))
@@ -553,7 +554,7 @@ struct Compiler
 		}
 	}
 
-	V* arg(const std::vector<Tok>& t, size_t& i)
+	V* arg(const std::vector<Tok>& t, size_t& i, bool namesOnly = false)
 	{
 		const Tok& k = t[i];
 		if (k.op("-") && i + 1 < t.size() && t[i + 1].kind == 'n')
@@ -581,9 +582,9 @@ struct Compiler
 		{
 			std::string name = lower(k.text);
 			i++;
-			if (isLocal(name))
+			if (!namesOnly && isLocal(name))
 				return list({ str("l"), str(name) });
-			if (isGlobal(name))
+			if (!namesOnly && isGlobal(name))
 				return list({ str("g"), str(name) });
 			return list({ str("s"), str(k.text) });
 		}

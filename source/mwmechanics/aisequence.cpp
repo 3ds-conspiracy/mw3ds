@@ -216,3 +216,22 @@ void Session::npcPackage(int ri, float dt)
 	}
 	w.syncActor(ri);
 }
+
+// Face x y: the actor turns on the spot to look at that point and is done within 3 degrees of it, its idle playing
+// (OpenMW's AiFace, stacked over whatever it did, which then goes on)
+void Session::npcFace(int ri, float dt)
+{
+	Ref& r = w.refs[ri];
+	if (Actor* a = w.actorOf(ri))
+		if (a->mode == ANIM_LOOP)
+			actorPlay(*w.actorsOf(ri), *a, "Idle", ANIM_IDLE);
+	float diff = angleDiff(atan2f(r.faceAt[0] - r.pos[0], r.faceAt[1] - r.pos[1]), r.rot[2]);
+	if (fabsf(diff) <= 3.0f * 3.14159265f / 180.0f)
+	{
+		r.facing = false;
+		return;
+	}
+	r.rot[2] += fmaxf(-kTurnSpeed * 0.5f * dt, fminf(kTurnSpeed * 0.5f * dt, diff));
+	r.moved = true;
+	w.syncActor(ri);
+}

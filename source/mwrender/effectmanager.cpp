@@ -271,6 +271,27 @@ static float vfxThinGrow(float share, float dist)
 // bridge) held at rest until a script plays one of its groups. Kept while the object shows and is near
 void Session::updateWorldFx()
 {
+	// a Clockwork City door's moving collision goes once it is open, comes back once it is shut (playObjectGroup)
+	for (auto it = objectCollision.begin(); it != objectCollision.end();)
+	{
+		const CollisionDue& c = it->second;
+		if (w.time < c.since || it->first >= (int)w.refs.size())
+		{
+			it = objectCollision.erase(it);
+			continue;
+		}
+		if (w.time < c.at)
+		{
+			++it;
+			continue;
+		}
+		if (c.gone)
+			w.loseCollision(it->first);
+		else
+			w.regainCollision(it->first);
+		logf("world: %s's collision %s", w.refs[it->first].id.c_str(), c.gone ? "moves away (open)" : "is back (shut)");
+		it = objectCollision.erase(it);
+	}
 	bool on = !w.game.firstPerson.worldFx.empty();
 	std::unordered_set<int> have;
 	for (size_t i = 0; i < vfx.size();)
@@ -319,6 +340,13 @@ void Session::updateWorldFx()
 			v.age = fminf(g->second.second, g->second.first + (float)(w.time - pg->second.second));
 			v.until = g->second.second;
 		}
+		else if (r.colGone && !d.away.empty())
+		{
+			// (a door left open in a save: at the end of its opening, as its collision is)
+			auto open = d.groups.find(d.away.begin()->first);
+			if (open != d.groups.end())
+				v.age = v.until = open->second.second;
+		}
 		vm.piece(w, v.piece);
 		vfx.push_back(v);
 	});
@@ -330,6 +358,30 @@ void Session::playObjectGroup(int ref, const std::string& group, bool loop)
 {
 	if (!loop)
 		objectGroups[ref] = { group, (float)w.time };
+	// A death group on an object (Bamz-Amschend's cave-in blown by the satchel charge: its boulders fly apart): its
+	// collision goes with it, as OpenMW's animated collision does (the shapes moved away by the group's end)
+	if (lower(group).compare(0, 5, "death") == 0 && ref >= 0 && ref < (int)w.refs.size() && w.refs[ref].colCount)
+	{
+		w.loseCollision(ref);
+		logf("world: %s's collision goes with its %s", w.refs[ref].id.c_str(), group.c_str());
+	}
+	// A door whose collision is animated (Sotha Sil's, opened by their levers): OpenMW moves its collision shapes with
+	// the animation (PhysicsSystem's animated objects). Here its moving part is switched: gone once the opening has
+	// carried it more than half its way, back once the closing has brought it more than half its way home
+	// (particles.py collision_moves). The door's frame stays solid
+	if (ref >= 0 && ref < (int)w.refs.size() && w.refs[ref].colCount && !loop)
+	{
+		auto d = w.game.firstPerson.worldFx.find(w.refs[ref].idLower);
+		if (d != w.game.firstPerson.worldFx.end())
+		{
+			std::string g = lower(group);
+			auto away = d->second.away.find(g), back = d->second.back.find(g);
+			if (away != d->second.away.end())
+				objectCollision[ref] = { w.time, w.time + away->second, true };
+			else if (back != d->second.back.end())
+				objectCollision[ref] = { w.time, w.time + back->second, false };
+		}
+	}
 	for (auto& v : vfx)
 		if (v.world && v.follow == ref)
 		{

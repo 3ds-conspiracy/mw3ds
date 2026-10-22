@@ -1,7 +1,7 @@
 """Side-by-side shots: the 3DS engine beside Morrowind's own look (OpenMW 0.51 on the user's Morrowind.esm), 400 x 240
 each, no HUD, the same camera, hour and actor pose on both sides. For comparing animations, models and lighting.
 
-    python tools/test/sidebyside.py <shots.txt> [--out build/sidebyside] [--pc-only] [--3ds-only] [--emu] [--data out/world]
+    python tools/test/sidebyside.py <shots.txt> [--out build/sidebyside] [--pc-only] [--3ds-only] [--emu] [--data out/world] [--tribunal]
 
 A shots file has one shot per line (# starts a comment), a name then key=value pairs (shell quoting):
 
@@ -73,6 +73,7 @@ OPENMW = Path(os.environ.get("MW3DS_OPENMW") or ROOT / "build" / "openmw-0.51")
 SBS = Path(os.environ.get("MW3DS_SBS_DIR") or ROOT / "build" / "openmw-sbs")
 MOD = Path(__file__).resolve().parent / "sidebyside"
 W, H = 400, 240
+TRIBUNAL = False         # --tribunal: OpenMW loads Tribunal.esm too
 SPAWN_DIST = 250         # spawn=: this far ahead of the camera
 # 3DS group -> (Morrowind group, start key, stop key) where the engine splits a group by its text keys
 OPENMW_GROUPS = {
@@ -302,8 +303,8 @@ def write_openmw_setup(shots):
         f"data={q(OPENMW / 'resources' / 'vfs-mw')}",
         f"data={q(data_files)}",
         f"data={q(data)}",
-        "fallback-archive=Morrowind.bsa",
-        "content=Morrowind.esm",
+        "fallback-archive=Morrowind.bsa"] + (["fallback-archive=Tribunal.bsa"] if TRIBUNAL else []) + [
+        "content=Morrowind.esm"] + (["content=Tribunal.esm"] if TRIBUNAL else []) + [
         "content=mw3ds_sbs.omwscripts",
         f"user-data={q(user)}"] + fallbacks + [""]))
     ini = mw / "Morrowind.ini"
@@ -621,12 +622,17 @@ def main():
     ap.add_argument("--pc-only", action="store_true")
     ap.add_argument("--3ds-only", dest="ds_only", action="store_true")
     ap.add_argument("--emu", action="store_true", help="the 3DS side in Azahar rather than the native build")
-    ap.add_argument("--data", default="out/world")
+    ap.add_argument("--data", default="")
+    ap.add_argument("--tribunal", action="store_true",
+                    help="the Tribunal add-on on both sides: OpenMW loads Tribunal.esm, the 3DS side out/tribunal")
     ap.add_argument("--exe", default="", help="another native build")
     ap.add_argument("--timeout", type=float, default=0, help="seconds for the OpenMW run (default 60 + 15 a shot)")
     a = ap.parse_args()
     shots = read_shots(a.shots)
     out = Path(a.out)
+    global TRIBUNAL
+    TRIBUNAL = a.tribunal
+    a.data = a.data or ("out/tribunal" if a.tribunal else "out/world")
     if not a.pc_only:
         run_3ds(shots, out, "sbs-" + Path(a.shots).stem + "-" + out.name, a.emu, a.data, a.exe)
     if not a.ds_only:

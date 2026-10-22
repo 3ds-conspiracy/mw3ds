@@ -166,7 +166,7 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		in.sneak = true;
 	w.player.waterWalk = w.effectTotal(2) > 0.0f;
 	w.player.slowFall = w.effectTotal(11) > 0.0f;
-	w.player.levitate = w.effectTotal(10);
+	w.player.levitate = w.levitationDisabled ? 0.0f : w.effectTotal(10);     // (DisableLevitation: no flying)
 	w.player.swimBoost = w.effectTotal(1);
 	// Encumbrance: the load (plus Burden, less Feather) against fEncumbranceStrMult x Strength; over it
 	// the player can't move, under it the load slows them (fEncumberedMoveEffect)
@@ -193,7 +193,7 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		// Storms (ash, blight, blizzard) blow out from Red Mountain: walking into them is slower,
 		// by fStromWalkMult x the angle between the wind and the way the player goes (OpenMW)
 		int wx = w.weatherNow;
-		if ((wx == 6 || wx == 7 || wx == 9) && w.current >= 0 && !w.cells[w.current].interior
+		if ((wx == 6 || wx == 7 || wx == 9) && w.current >= 0 && w.cells[w.current].underSky()
 			&& (fabsf(in.moveX) + fabsf(in.moveY)) > 0.1f)
 		{
 			float sx = w.player.feet[0] - 20480.0f, sy = w.player.feet[1] - 69632.0f;     // from Red Mountain

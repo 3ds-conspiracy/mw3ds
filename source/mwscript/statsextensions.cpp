@@ -11,6 +11,7 @@
 #include <unordered_set>
 
 #include "components/debug/debuglog.hpp"
+#include "mwmechanics/magiceffects.hpp"
 #include "mwworld/worldimp.hpp"
 #include "components/interpreter/interpreterhelpers.hpp"
 
@@ -192,6 +193,16 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 {
 	switch (n.func)
 	{
+	// GetStat: a placeholder in the original game, always 0 (OpenMW's GetStat; Tribunal's Gedna Relvel asks it for Level)
+	case F_GETSTAT: return 0.0f;
+	// GetChameleon / GetParalysis: the magnitude of that effect on the player or the reference (OpenMW's GetMagicEffect)
+	case F_GETCHAMELEON: case F_GETPARALYSIS:
+	{
+		int e = n.func == F_GETCHAMELEON ? EFF_CHAMELEON : EFF_PARALYZE;
+		if (onPlayer || !r)
+			return w.effectTotal(e);
+		return r->actor >= 0 ? w.actorEffect(ref, e) : 0.0f;
+	}
 	// An object's health is the item's condition (0 for things that don't wear)
 	case F_GETHEALTH:
 		return onPlayer || !r ? w.stats.health : r->actor >= 0 ? r->health : r->obj ? (float)r->obj->health : 0.0f;

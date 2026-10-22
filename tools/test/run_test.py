@@ -5,7 +5,8 @@
     python tools/test/run_test.py ui-g1-g9 --native --shots build/shots/ui   (each SHOT step saved there as a PNG of both screens)
     python tools/test/run_test.py perf-balmora --old3ds       (Azahar as an Old 3DS; natively, the game takes its Old 3DS profile)
 --saves <folder>: keep test_*.sav checkpoints there between native runs. --exe: another native build (build.py with
-MW3DS_NATIVE_BUILD). --native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with --draw.
+MW3DS_NATIVE_BUILD). A case with "# data: tribunal" in its first lines runs on the Tribunal data (out/tribunal).
+--native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with --draw.
 The last line is the verdict, "RESULT: PASS|FAIL (...)".
 """
 import argparse
@@ -48,6 +49,10 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
         m = re.match(r"^#\s*start:\s*(.+?)\s*$", inputs[0])
         if m:
             start = m.group(1)
+    # "# data: tribunal" in its first lines: a case of the Tribunal add-on, run on that conversion (MW3DS_TRIBUNAL_DATA,
+    # else out/tribunal) whatever --data says
+    if any(re.match(r"^#\s*data:\s*tribunal\s*$", ln) for ln in inputs[:5]):
+        data = os.environ.get("MW3DS_TRIBUNAL_DATA") or "out/tribunal"
     # "# console: old" in its first lines: a case for the Old 3DS profile alone (run_native_all leaves it out of New 3DS runs)
     if any(re.match(r"^#\s*console:\s*old\s*$", ln) for ln in inputs[:5]):
         old3ds = True

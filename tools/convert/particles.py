@@ -537,7 +537,9 @@ THIN = {"vfx_frostcast": {23: 2, 12: 5}, "vfx_hands": {10: 3, 19: 3}}
 # flipbook quad was cut off by it in a straight line; the Mysticism hit's sprays all take the effect's own particle
 # texture (Dispel's white sparkles, Detect Animal's ...), which a flipbook baked in the model's texture can't
 METHOD = {"vfx_soul_trap": "records", "steam_lavariver": "records", "in_strong_platform": "flip",
-          "dagoth ur death sparkles": "records", "vfx_hands": "records", "vfx_mysticismhit": "records"}
+          "dagoth ur death sparkles": "records", "vfx_hands": "records", "vfx_mysticismhit": "records",
+          # (Tribunal: Sotha Sil's sparks, a few bright dots rising: a flipbook frame blurred them into a glowing column)
+          "light_sotha_sparks": "records", "light_sotha_sparks_hi": "records"}
 
 
 def ensure_textures(arch, ts, meshes):
@@ -707,7 +709,8 @@ def make_piece(static_id, db, arch, fp, ts):
         # (every spray as a flipbook, moving emitters simulated on their path: trails too dense to thin, the
         # Strong platform's swirls of 480 particles each)
         moving, still = [], list(ss)
-    world = None if is_spell_visual(static_id) else world_entry(nif, "")
+    played = static_id.lower() in animated_collision_objects(db, arch)
+    world = None if is_spell_visual(static_id) else world_entry(nif, "", played)
     if world and world["groups"]:
         from firstperson import piece_name
         fp.light = room_light(db, static_id)
@@ -762,7 +765,7 @@ def make_piece(static_id, db, arch, fp, ts):
         report.append(f"  records: {len(moving)} sprays moving or flat -> {n} particles ({n * 36 // 1024 + 1} KB), peak "
                       f"{peak} live" + (f", thinned 1 in {k} -> {peak2}" if k > 1 else ""))
     if world is not None:
-        world = world_entry(nif, base)
+        world = world_entry(nif, base, played)
         report.append(f"  world object: {world}")
     return {"base": base, "meshes": meshes, "duration": duration, "report": report, "world": world}
 
@@ -812,11 +815,19 @@ def build_pieces(db, arch, ts, fp, fpj, log=print):
     fpj (game firstperson). The spell visuals' plain pieces they replace go."""
     replaced = set()
     statics = sorted(fpj["vfx"])
-    for sid in statics + [w for w in WORLD_FX if w not in fpj["vfx"]]:
+    anim = animated_collision_objects(db, arch)
+    shared = {}       # model -> its piece (Sotha Sil's eight doors of one model: one piece, read once)
+    for sid in statics + [w for w in WORLD_FX + sorted(anim) if w not in fpj["vfx"]]:
         if sid not in db["objects"] or not db["objects"][sid].zstr("MODL"):
             continue
         old = fpj["vfx"].get(sid)
-        r = make_piece(sid, db, arch, fp, ts)
+        model = db["objects"][sid].zstr("MODL").lower()
+        if sid in anim and model in shared:
+            r = shared[model]
+        else:
+            r = make_piece(sid, db, arch, fp, ts)
+            if sid in anim:
+                shared[model] = r
         fp.pieces[r["base"]] = r["meshes"]
         register(fpj, sid, r)
         if old and old != r["base"]:
@@ -860,19 +871,145 @@ def creatures_with_sprays(db, arch):
 WORLD_FX = ["furn_moldcave_pool00", "furn_lavacave_pool00", "furn_bonecave_pool00", "furn_mudcave_pool00",
             "furn_pycave_pool00", "steam_bluegreen", "steam_lavariver", "ex_lavaspark01", "ex_lavaspark03",
             "blight cloud", "in_strong_platform", "dagoth ur death sparkles", "in_akulakhan00", "in_dagoth_bridge00",
-            "akhul_steam"]
+            "akhul_steam",
+            # Tribunal's dart trap projectile (PlaceItem by the Forgotten Sewer's mines): a magic visual that flies;
+            # Sotha Sil's sparks (49 in the Chamber of Sohleh), shed as single sparks
+            "trapprojectile", "light_sotha_sparks", "light_sotha_sparks_hi",
+            # Bamz-Amschend's cave-in: its boulders fly apart in its Death1 when the satchel charge goes off
+            "act_dwe_cavein00"]
 
 
 def world_fx_kinds(db, arch):
     """{object id: True when animated (drawn whole as its piece), False when only its sprays are}."""
     from nif import Nif
     out = {}
-    for sid in WORLD_FX:
+    anim = animated_collision_objects(db, arch)
+    for sid in WORLD_FX + sorted(anim):
         rec = db["objects"].get(sid)
         if rec is None or not rec.zstr("MODL"):
             continue
-        out[sid] = bool(world_entry(Nif(arch.read("meshes/" + rec.zstr("MODL"))), "")["groups"])
+        out[sid] = bool(world_entry(Nif(arch.read("meshes/" + rec.zstr("MODL"))), "", sid in anim)["groups"])
     return out
+
+
+_ANIMATED_COLLISION = {}
+
+
+def animated_collision_objects(db, arch):
+    """Activators a script plays a group on (their own script's PlayGroup / LoopGroup, or another's "id"->PlayGroup),
+    other than a death group, whose model's collision is animated (OpenMW's animated collision shapes: nodes with a
+    NiKeyframeController under the RootCollisionNode): Tribunal's Clockwork City doors, opened by their levers. Drawn
+    as their pieces (world_entry keeps their groups) and their moving collision kept apart in the cell, so the engine
+    can take it away once the door is open and put it back once shut (world_entry's "away" / "back")."""
+    if id(db) in _ANIMATED_COLLISION:
+        return _ANIMATED_COLLISION[id(db)]
+    import re
+    from meshes import collision_triangles
+    from nif import Nif
+    named, own = set(), set()
+    for name, text in db["SCPT"].items():
+        for line in (text or "").replace("\r", "").split("\n"):
+            line = line.split(";")[0]
+            m = re.search(r'(?i)(?:"([^"\n]+)"|([\w\'-]+))\s*->\s*(?:playgroup|loopgroup)\s*,?\s*"?(\w+)', line)
+            if m:
+                if not m.group(3).lower().startswith("death"):
+                    named.add((m.group(1) or m.group(2)).strip().lower())
+                continue
+            m = re.match(r'(?i)\s*(?:playgroup|loopgroup)\s*,?\s*"?(\w+)', line)
+            if m and not m.group(1).lower().startswith("death"):
+                own.add(name)
+    out, moving = set(), {}
+    for oid, rec in db["objects"].items():
+        if rec.tag != "ACTI" or not rec.zstr("MODL"):
+            continue
+        if oid not in named and (rec.zstr("SCRI") or "").lower() not in own:
+            continue
+        model = rec.zstr("MODL").lower()
+        if model not in moving:
+            try:
+                col = collision_triangles(Nif(arch.read("meshes/" + model)), parts=True)
+                moving[model] = col is not None and col[2] < len(col[1])
+            except Exception:
+                moving[model] = False
+        if moving[model]:
+            out.add(oid)
+    _ANIMATED_COLLISION[id(db)] = out
+    return out
+
+
+def posed_local(nif, t):
+    """local(block index, block) for meshes.collision_triangles: each node's transform at t seconds into the model, its
+    keyframes sampled (as vfx_tracks does for the drawn shapes)."""
+    from firstperson import controller_time, xyz_matrix
+    from meshes import nif_local
+    from npc import quat_matrix, sample
+    keys = {}
+    for i, b in enumerate(nif.blocks):
+        c = nif.get(b.get("controller", -1))
+        while c:
+            if c["type"] == "NiKeyframeController" and nif.get(c.get("data", -1)):
+                keys[i] = (c, nif.get(c["data"]))
+                break
+            c = nif.get(c.get("next_controller", -1))
+
+    def local(i, b):
+        if i not in keys or "rotation" not in b:
+            return nif_local(b)
+        c, kd = keys[i]
+        tt = controller_time(c, t)
+        rot = np.array(b["rotation"]).reshape(3, 3)
+        trans, scale = np.array(b["translation"]), b["scale"]
+        if kd["rotations"]:
+            rot = quat_matrix(sample(kd["rotations"], tt, quat=True))
+        elif kd["xyz_rotations"]:
+            rot = xyz_matrix(*[sample(k, tt)[0] if k else 0.0 for k in kd["xyz_rotations"]])
+        if kd["translations"]:
+            trans = sample(kd["translations"], tt)
+        if kd["scales"]:
+            scale = sample(kd["scales"], tt)[0]
+        m = np.identity(4)
+        m[:3, :3] = rot * scale
+        m[:3, 3] = trans
+        return m
+    return local
+
+
+def collision_moves(nif, groups):
+    """({group: seconds}, {group: seconds}) for a model whose collision is animated: a group that leaves it away from
+    where it rests ("away": a door's opening) takes it away that long after the group starts, once every part that
+    moves is more than half its way there; a group that brings it back to rest ("back": the closing) puts it back once
+    every moved part is less than half its way from rest. (The cell's collision is the rest pose's: the engine switches
+    the moving part off and on, not following it, OpenMW's animated collision cut to its two ends.)"""
+    from meshes import collision_triangles
+    col = collision_triangles(nif, parts=True)
+    if col is None or col[2] >= len(col[1]):
+        return {}, {}
+    pick = np.unique(col[1][col[2]:])
+    rest = col[0][pick]
+
+    def at(t):
+        return collision_triangles(nif, posed_local(nif, t), parts=True)[0][pick]
+    away, back = {}, {}
+    for g, (start, stop) in groups.items():
+        if stop - start < 0.05:
+            continue
+        times = [start + k / 15.0 for k in range(int((stop - start) * 15.0) + 1)] + [stop]
+        dist = [np.linalg.norm(at(t) - rest, axis=1) for t in times]
+        if dist[-1].max() > 8.0:
+            moved, d = dist[-1] > 8.0, dist[-1]
+            ok = [bool(np.all(x[moved] >= 0.5 * d[moved])) for x in dist]
+            table = away
+        elif dist[0].max() > 8.0:
+            moved, d = dist[0] > 8.0, dist[0]
+            ok = [bool(np.all(x[moved] <= 0.5 * d[moved])) for x in dist]
+            table = back
+        else:
+            continue
+        k = len(ok)
+        while k > 0 and ok[k - 1]:
+            k -= 1
+        table[g] = round(times[min(k, len(times) - 1)] - start, 3)
+    return away, back
 
 
 def room_light(db, static_id):
@@ -902,10 +1039,12 @@ def is_spell_visual(static_id):
 _SPELL_VFX = None
 
 
-def world_entry(nif, base):
+def world_entry(nif, base, played=False):
     """How a world object's piece plays where it is placed: its animation groups from the text keys ("Death1":
     [start, stop]: an activator a script plays, held at rest until then), else over and over when its controllers
-    go round (a steaming pool, Dagoth Ur's death sparkles from when they are enabled at his death)."""
+    go round (a steaming pool, Dagoth Ur's death sparkles from when they are enabled at his death). played: one of
+    animated_collision_objects (a Clockwork City door): its groups kept, with when its collision goes and comes back
+    (collision_moves)."""
     groups = {}
     for b in nif.blocks:
         if b["type"] != "NiTextKeyExtraData":
@@ -918,10 +1057,14 @@ def world_entry(nif, base):
                         groups.setdefault(name, [0.0, 0.0])[0 if what == "start" else 1] = round(float(t), 3)
     # (only a model with a death group waits for a script, the collapse of the Akulakhan chamber; an ambient one with an
     # idle group of its own, the lava river's steam and sparks, goes round as the rest)
-    if not any(g.startswith("death") for g in groups):
+    away, back = collision_moves(nif, groups) if played and groups else ({}, {})
+    if not any(g.startswith("death") for g in groups) and not away and not back:
         groups = {}
     loop = not groups
-    return {"piece": base, "loop": loop, "groups": groups}
+    out = {"piece": base, "loop": loop, "groups": groups}
+    if away or back:
+        out["away"], out["back"] = away, back
+    return out
 
 
 def bsp_targets(nif, c, recs, seed=1):

@@ -54,6 +54,8 @@ struct ScriptHost
 	virtual bool centerOnCell(const std::string& name) { return false; }          // COC: false when there is no such place
 	virtual bool centerOnExterior(int x, int y) { return false; }                  // COE
 	virtual bool toggleGodMode() { return false; }                                 // TGM: on after the toggle
+	virtual bool isWeaponDrawn(int ref) { return false; }                         // GetWeaponDrawn: ref -1 the player
+	virtual void explodeSpell(int ref, const std::string& spell) {}              // ExplodeSpell on an object: its area bursts there
 };
 
 int scriptFunctionId(const std::string& lowerName);

@@ -13,7 +13,7 @@ struct WindowManagerState
 	std::vector<MessageState> messages;
 	std::vector<ScriptMenu> pendingMenus;
 	bool wantName = false;            // main loop shows the system keyboard between frames
-	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE, TEXT_CLASSNAME, TEXT_CLASSDESC };
+	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE, TEXT_CLASSNAME, TEXT_CLASSDESC, TEXT_MAPNOTE };
 	enum { VIEW_MIN, VIEW_AUTO, VIEW_MAX, VIEW_MID };
 	int wantText = TEXT_NONE;         // the same, for the name of the spell / item being made, the journal's search or the class being made
 	int travelCell = -1;              // door to another cell: main loop shows a loading screen, then finishTravel()
@@ -46,6 +46,12 @@ struct WindowManagerState
 	int mapDoorTip = -1;              // the door marker tapped on the local map: its destination shows
 	int mapPlaceTip = -1;             // the place marker tapped on the world map (game.map.labels): its name shows
 	std::vector<int> mapLabelCells;   // game.map.labels: how many exterior cells carry each name (its marker's size)
+	// Map notes (Tribunal): the one being written (-1: a new one at mapNoteAt), and a delete waiting for its Yes / No
+	static constexpr int kMapNoteId = 1 << 24;   // a note's marker id: kMapNoteId + its index in World::mapNotes
+	int mapNoteEdit = -1;
+	float mapNoteAt[2] = {};
+	std::string mapNoteCell;
+	bool mapNoteAsk = false;
 	// Interior fog of war (World::mapFog) as a texture over the local map, filled from it each time it is drawn
 	C3D_Tex fogTex;
 	bool fogTexReady = false;
@@ -82,6 +88,8 @@ struct WindowManagerState
 	int focus = 0;
 	int bookRef = -1, containerRef = -1;
 	bool pickpocketing = false;       // the container screen shows a living NPC's pockets (sneaking)
+	bool companionSharing = false;    // the container screen is a companion's share (Tribunal: their script's "companion")
+	bool companionWarning = false;    // ... and leaving it with the profit below 0 asks first (sCompanionWarningMessage)
 	std::string bookItem;
 	// The book open: its text cut into pages (for the book read, bookPagesOf), the spread shown (pages 2n, 2n + 1)
 	std::vector<UiPage> bookPages;

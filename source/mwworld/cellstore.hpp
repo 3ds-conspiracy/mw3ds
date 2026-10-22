@@ -15,6 +15,9 @@ struct LoadedCell
 	std::vector<int> lightRefs;                  // its lights (on by default): people are lit by those near them
 };
 
+// An interior's water surface moved to a new height (SetWaterLevel: mwworld/cellstore.cpp)
+void moveCellWater(Cell& c, float z);
+
 // One cell of the level: its references stay loaded, its geometry only while the player is in or
 // (outdoors) next to it. Exterior cells are 8192-unit grid squares.
 struct LevelCell
@@ -31,5 +34,9 @@ struct LevelCell
 	float freedAt = -1e9f;            // World::time when its geometry was last freed
 	float sea = 0.0f;                 // exterior: share of its ground under open water (converter)
 	bool noSleep = false;             // resting is illegal here (waiting only, or a bed)
-	Atom region;                      // exterior: its region (lowercase id)
+	bool sky = false;                 // an interior that behaves as an exterior (Tribunal's Mournhold, OpenMW's QuasiEx)
+	Atom region;                      // exterior (and an interior under the sky): its region (lowercase id)
+	// Under the sky: outdoors, or an interior that behaves as an exterior (the sky, the weather and its light, the sun
+	// and moons, region sounds); still an interior for GetInterior, torches, the map and loading
+	bool underSky() const { return !interior || sky; }
 };

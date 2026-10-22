@@ -30,6 +30,8 @@ cJSON* World::refState(int i) const
 		cJSON_AddNumberToObject(o, "enabled", 0);
 	if (r.pickedUp)
 		cJSON_AddNumberToObject(o, "taken", 1);
+	if (r.colGone)
+		cJSON_AddNumberToObject(o, "colgone", 1);
 	if (r.lockLevel)
 		cJSON_AddNumberToObject(o, "lock", r.lockLevel);
 	if (r.disarmed)
@@ -138,6 +140,7 @@ u32 World::refHash(int i) const
 	auto mixf = [&](float v) { mix(&v, sizeof(v)); };
 	mixi(r.enabled);
 	mixi(r.pickedUp);
+	mixi(r.colGone);
 	mixi(r.lockLevel);
 	mixi(r.disarmed);
 	mixf(r.doorTarget);
@@ -203,6 +206,7 @@ void World::applyRefState(Ref& r, const cJSON* it)
 	}
 	r.enabled = num(it, "enabled", 1) != 0;
 	r.pickedUp = num(it, "taken") != 0;
+	r.colGone = num(it, "colgone") != 0;
 	r.lockLevel = (int)num(it, "lock");
 	r.disarmed = num(it, "disarmed") != 0;
 	r.doorTarget = r.doorAngle = num(it, "door");

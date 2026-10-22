@@ -829,7 +829,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			if (Actor* ac = w.actorOf(i))
 			{
 				float yaw = 0.0f, pitch = 0.0f;
-				float reach = headTrack * (w.cells[w.current].interior ? headTrackIn : 1.0f);
+				float reach = headTrack * (!w.cells[w.current].underSky() ? headTrackIn : 1.0f);
 				float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1];
 				float dz = playerEyeZ(w.player) - (r.pos[2] + 110.0f);
 				float d2 = dx * dx + dy * dy + dz * dz;
@@ -897,6 +897,8 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				;
 			else if (w.bounty > 0 && strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0 && !menu)
 				guardCheck(i, dt);
+			else if (r.facing && !menu)
+				npcFace(i, dt);
 			else if (r.ally && !menu)
 				allyFight(i, dt);
 			else if (r.aiPackage > AIPKG_WANDER)

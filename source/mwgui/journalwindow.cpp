@@ -15,7 +15,9 @@ static const struct { const char* name; const char* prefixes; } kQuestLines[] = 
 	{ "Blades", "blades_" }, { "Fighters Guild", "fg_" }, { "Mages Guild", "mg_" }, { "Thieves Guild", "tg_" },
 	{ "Morag Tong", "mt_" }, { "Imperial Legion", "il_" }, { "Imperial Cult", "ic" }, { "Tribunal Temple", "tt_" },
 	{ "House Hlaalu", "hh_" }, { "House Redoran", "hr_" }, { "House Telvanni", "ht_" }, { "Daedric Quests", "da_" },
-	{ "Vampires", "va_" }, { "Other", "" },
+	{ "Vampires", "va_" },
+	// (Tribunal's, with the add-on: its main quest TR_ / TR05_ ..., Mournhold's own MS_ and Calvus's Merc_)
+	{ "Tribunal", "tr_ tr0" }, { "Mournhold", "ms_ merc_" }, { "Other", "" },
 };
 static const int kQuestLineCount = (int)(sizeof(kQuestLines) / sizeof(kQuestLines[0]));
 static const int kJournalPageEntries = 10;

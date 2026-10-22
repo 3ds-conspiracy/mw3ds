@@ -65,7 +65,7 @@ void World::forceWeather(int weather)
 void World::setWeatherHere(int weather)
 {
 	const LevelCell& lc = cells[current];
-	if (!lc.interior && !lc.region.empty())
+	if (lc.underSky() && !lc.region.empty())
 		weatherRegion = lc.region;
 	weatherCell = current;
 	if (!weatherRegion.empty())
@@ -137,7 +137,7 @@ void World::updateWeather(float dt)
 		changed = true;
 	}
 	const LevelCell& lc = cells[current];
-	if (!lc.interior && !lc.region.empty() && lc.region != weatherRegion)
+	if (lc.underSky() && !lc.region.empty() && lc.region != weatherRegion)
 	{
 		// walking over a border: a change to the new region's weather; arriving any other way (a door, travel):
 		// that weather at once
@@ -176,7 +176,7 @@ void World::updateWeather(float dt)
 		}
 	}
 	// wind: none indoors; outdoors each weather gusts about what it aims for, the two blending while changing
-	if (lc.interior)
+	if (!lc.underSky())
 		windCur = windNxt = windNow = 0.0f;
 	else
 	{
@@ -353,7 +353,7 @@ int World::nightDay() const
 {
 	const WeatherClock& c = game.weatherClock;
 	float h = fmodf(gameHour, 24.0f);
-	bool day = h >= c.sunrise && h <= c.sunset + c.sunsetDur, outdoors = current >= 0 && !cells[current].interior;
+	bool day = h >= c.sunrise && h <= c.sunset + c.sunsetDur, outdoors = current >= 0 && cells[current].underSky();
 	if (outdoors && !day)
 		return 2;
 	float glare = game.weatherTypes.empty() ? 1.0f : game.weatherTypes[std::min(weatherNow, (int)game.weatherTypes.size() - 1)].glare;
@@ -385,7 +385,7 @@ float World::weatherFogScale() const
 // clear, 1.0 fog, 1.1 an ash storm, 1.2 blight: fogged from the eye). Below -1.5 without weathers
 float World::weatherFogStart() const
 {
-	if (game.weatherTypes.empty() || current < 0 || cells[current].interior)
+	if (game.weatherTypes.empty() || current < 0 || !cells[current].underSky())
 		return -2.0f;
 	return fmaxf(-1.0f, fminf(0.95f, 1.0f - weatherFogDepth()));
 }
@@ -395,7 +395,7 @@ void World::daylight(float land[3], float sky[3], float fog[3]) const
 {
 	for (int c = 0; c < 3; c++)
 		land[c] = sky[c] = 1.0f;
-	if (!game.hasWeather || current < 0 || cells[current].interior)
+	if (!game.hasWeather || current < 0 || !cells[current].underSky())
 	{
 		for (int c = 0; c < 3; c++)
 			fog[c] = cells[current].live ? cells[current].live->cell.fog[c] / 255.0f : 0.0f;
@@ -418,7 +418,7 @@ void World::daylight(float land[3], float sky[3], float fog[3]) const
 void World::sunSide(float out[4]) const
 {
 	out[0] = out[1] = out[2] = out[3] = 0.0f;
-	if (!game.hasWeather || current < 0 || cells[current].interior)
+	if (!game.hasWeather || current < 0 || !cells[current].underSky())
 		return;
 	const WeatherClock& wc = game.weatherClock;
 	float h = fmodf(gameHour, 24.0f), nightStart = wc.sunset + wc.sunsetDur;

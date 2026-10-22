@@ -12,7 +12,7 @@ import re
 import math
 import struct
 
-from mwfiles import DATA_FILES, game_path, read_game, read_records, text
+from mwfiles import DATA_FILES, game_path, read_game, read_records, text, tribunal
 from mwscript import ScriptError, compile_script, compile_snippet
 from creature import creature_stats
 from npcstats import bind, npc_items, npc_stats, weapon_damage
@@ -218,7 +218,8 @@ def _npc_info(rec, db):
 # ---------------------------------------------------------------- magic effects
 
 # Magic effects' GMST names (sEffect<key>) by index: their display names
-EFFECT_KEYS = """WaterBreathing SwiftSwim WaterWalking Shield FireShield LightningShield FrostShield Burden Feather Jump Levitate SlowFall Lock Open FireDamage ShockDamage FrostDamage DrainAttribute DrainHealth DrainSpellpoints DrainFatigue DrainSkill DamageAttribute DamageHealth DamageMagicka DamageFatigue DamageSkill Poison WeaknesstoFire WeaknesstoFrost WeaknesstoShock WeaknesstoMagicka WeaknesstoCommonDisease WeaknesstoBlightDisease WeaknesstoCorprusDisease WeaknesstoPoison WeaknesstoNormalWeapons DisintegrateWeapon DisintegrateArmor Invisibility Chameleon Light Sanctuary NightEye Charm Paralyze Silence Blind Sound CalmHumanoid CalmCreature FrenzyHumanoid FrenzyCreature DemoralizeHumanoid DemoralizeCreature RallyHumanoid RallyCreature Dispel Soultrap Telekinesis Mark Recall DivineIntervention AlmsiviIntervention DetectAnimal DetectEnchantment DetectKey SpellAbsorption Reflect CureCommonDisease CureBlightDisease CureCorprusDisease CurePoison CureParalyzation RestoreAttribute RestoreHealth RestoreSpellPoints RestoreFatigue RestoreSkill FortifyAttribute FortifyHealth FortifySpellpoints FortifyFatigue FortifySkill FortifyMagickaMultiplier AbsorbAttribute AbsorbHealth AbsorbSpellPoints AbsorbFatigue AbsorbSkill ResistFire ResistFrost ResistShock ResistMagicka ResistCommonDisease ResistBlightDisease ResistCorprusDisease ResistPoison ResistNormalWeapons ResistParalysis RemoveCurse TurnUndead SummonScamp SummonClannfear SummonDaedroth SummonDremora SummonAncestralGhost SummonSkeletalMinion SummonLeastBonewalker SummonGreaterBonewalker SummonBonelord SummonWingedTwilight SummonHunger SummonGoldenSaint SummonFlameAtronach SummonFrostAtronach SummonStormAtronach FortifyAttackBonus CommandCreatures CommandHumanoids BoundDagger BoundLongsword BoundMace BoundBattleAxe BoundSpear BoundLongbow ExtraSpell BoundCuirass BoundHelm BoundBoots BoundShield BoundGloves Corpus Vampirism SummonCenturionSphere SunDamage StuntedMagicka""".split()
+EFFECT_KEYS = """WaterBreathing SwiftSwim WaterWalking Shield FireShield LightningShield FrostShield Burden Feather Jump Levitate SlowFall Lock Open FireDamage ShockDamage FrostDamage DrainAttribute DrainHealth DrainSpellpoints DrainFatigue DrainSkill DamageAttribute DamageHealth DamageMagicka DamageFatigue DamageSkill Poison WeaknesstoFire WeaknesstoFrost WeaknesstoShock WeaknesstoMagicka WeaknesstoCommonDisease WeaknesstoBlightDisease WeaknesstoCorprusDisease WeaknesstoPoison WeaknesstoNormalWeapons DisintegrateWeapon DisintegrateArmor Invisibility Chameleon Light Sanctuary NightEye Charm Paralyze Silence Blind Sound CalmHumanoid CalmCreature FrenzyHumanoid FrenzyCreature DemoralizeHumanoid DemoralizeCreature RallyHumanoid RallyCreature Dispel Soultrap Telekinesis Mark Recall DivineIntervention AlmsiviIntervention DetectAnimal DetectEnchantment DetectKey SpellAbsorption Reflect CureCommonDisease CureBlightDisease CureCorprusDisease CurePoison CureParalyzation RestoreAttribute RestoreHealth RestoreSpellPoints RestoreFatigue RestoreSkill FortifyAttribute FortifyHealth FortifySpellpoints FortifyFatigue FortifySkill FortifyMagickaMultiplier AbsorbAttribute AbsorbHealth AbsorbSpellPoints AbsorbFatigue AbsorbSkill ResistFire ResistFrost ResistShock ResistMagicka ResistCommonDisease ResistBlightDisease ResistCorprusDisease ResistPoison ResistNormalWeapons ResistParalysis RemoveCurse TurnUndead SummonScamp SummonClannfear SummonDaedroth SummonDremora SummonAncestralGhost SummonSkeletalMinion SummonLeastBonewalker SummonGreaterBonewalker SummonBonelord SummonWingedTwilight SummonHunger SummonGoldenSaint SummonFlameAtronach SummonFrostAtronach SummonStormAtronach FortifyAttackBonus CommandCreatures CommandHumanoids BoundDagger BoundLongsword BoundMace BoundBattleAxe BoundSpear BoundLongbow ExtraSpell BoundCuirass BoundHelm BoundBoots BoundShield BoundGloves Corpus Vampirism SummonCenturionSphere SunDamage StuntedMagicka SummonFabricant""".split()
+# (137, SummonFabricant, is Tribunal's: its record is in Tribunal.esm, so vanilla data never names it)
 
 
 def magic_effects(db):
@@ -613,9 +614,12 @@ def build(db, cells, actor_records, actor_cells):
     references' "actor" indices), actor_cells: the cells each is placed in."""
     errors = []
     # Short / long globals: the engine truncates the stored float (some hold leftover bytes, e.g.
-    # DestroyBlight 2e-35, which must read as 0 or the ending never starts)
-    globals_ = {k: (t, (float(int(v)) if math.isfinite(v) else 0.0) if t in ("s", "l") else v)
-                for k, (t, v) in db["GLOB"].items()}
+    # DestroyBlight 2e-35, which must read as 0 or the ending never starts); one out of an int's range is the int's
+    # lowest, cut to a short for a short (OpenMW's ESM::Variant: Tribunal's MuseumDonations, 7.6e23, is 0)
+    def whole(t, v):
+        i = int(v) if math.isfinite(v) and -2147483648.0 <= v <= 2147483647.0 else -2147483648
+        return float((i + 32768) % 65536 - 32768) if t == "s" else float(i)
+    globals_ = {k: (t, whole(t, v) if t in ("s", "l") else v) for k, (t, v) in db["GLOB"].items()}
     glob_names = {k: v[0] for k, v in globals_.items()}      # name -> type, for the compiler's whole-number division
 
     # Actors and their scripts' locals
@@ -863,7 +867,8 @@ def build(db, cells, actor_records, actor_cells):
         "cell": cells[0]["name"],
         "cells": [dict({"name": c["name"], "file": c["file"], "interior": c["interior"]},
                        **({"grid": c["grid"], "sea": c.get("sea", 0.0)} if "grid" in c else {}),
-                       **({"nosleep": True} if c.get("nosleep") else {})) for c in cells],
+                       **({"nosleep": True} if c.get("nosleep") else {}),
+                       **({"sky": True} if c.get("sky") else {})) for c in cells],
         "factions": factions,
         "actors": actors,
         "objects": objects,
@@ -884,5 +889,10 @@ def build(db, cells, actor_records, actor_cells):
         "start_items": player_items,
         "skip_chargen_items": extra_items,
         "ambient": {"water": water_sound or ""},
+        # The add-ons the data was converted with (the engine turns their rules on from this): "tribunal"
+        "addons": ["tribunal"] if tribunal() else [],
+        # The start scripts (SSCR: Tribunal's TribunalMain, MarkTRStartScript, TribFabAttackCheck), run as a game
+        # starts (OpenMW's GlobalScripts::addStartup)
+        "start_scripts": sorted({r.id.lower() for r in read_game({"SSCR"}) if r.id.lower() in compiled}),
     }
     return game, sorted(voice_files), errors

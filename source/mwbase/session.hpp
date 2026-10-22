@@ -105,6 +105,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void npcWander(int ref, float dt);
 	bool npcTalkStand(int ref, float dt);
 	void npcPackage(int ref, float dt);          // travel / follow / escort / activate packages
+	void npcFace(int ref, float dt);             // Face: turn to the point, then done
 	void npcDuel(int ref, float dt);              // StartCombat on another actor: it walks up to its foe and fights it
 	void allyFight(int ref, float dt);            // summoned creatures go for whoever fights the player
 	int guardFoe(int ref);                        // a guard's hostile creature in a fight nearby (-1: none)
@@ -244,6 +245,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	bool centerOnCell(const std::string& name) override;
 	bool centerOnExterior(int x, int y) override;
 	bool toggleGodMode() override { testGod = !testGod; testGodBlows = false; return testGod; }
+	bool isWeaponDrawn(int ref) override;
+	void explodeSpell(int ref, const std::string& spell) override;
 	bool moviePlaying() const { return movieFile != nullptr; }
 	void movieUpdate(float dt);                   // next frame when it's time; the end
 	void movieDraw();                             // on the top screen (main.cpp)
@@ -301,6 +304,9 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void playerActivate(int ref);
 	void pickUp(int ref);
 	void containerTake(int index, bool checkOwner);   // the open container's stack index into the inventory
+	bool isCompanion(int ref);                         // their script's "companion" is set: Share in dialogue (Tribunal)
+	void companionShareClose();                        // the share's Close: back to the conversation, or the warning
+	void mapNotesUi(float zoom, bool outside);         // the map screen's notes (Tribunal): write, edit, delete
 	bool containerPut(int inventoryIndex);            // an inventory stack into the open container (false: refused, a message says why)
 	void useDoor(int ref);
 	// A door's or container's lock and trap, in OpenMW's order: 0 stays shut (locked, no key), 1 its trap went off,

@@ -100,6 +100,7 @@ struct TestDriver
 	float pressAt[3] = {};           // DOORWAIT: where the player stood at the press
 	int doorCell = -1;               // DOORWAIT: the cell the press was made in
 	bool doorTrapped = false;        // DOORWAIT: the door carried a trap when pressed
+	bool doorWasOpen = false;        // DOORWAIT: the door stood open when pressed (the press shut it: shut is its result)
 	float sidestep = 0.0f, sidestepTimer = 0.0f, lastGoal = 1e9f;
 	bool pressA = false;
 	bool pickup = false;             // PICKUP: a book opens to read: Take it (TAKE waits for the screen)

@@ -494,7 +494,7 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	else if (what == "wprecip") v = w.weatherPrecip() ? 1.0f : 0.0f;
 	else if (what == "wtorches") v = w.useTorches() ? 1.0f : 0.0f;
 	else if (what == "wsunon") v = w.sunOn() ? 1.0f : 0.0f;
-	else if (what == "wskyon") v = w.current >= 0 && !w.cells[w.current].interior ? 1.0f : 0.0f;    // the sky is drawn outdoors only
+	else if (what == "wskyon") v = w.current >= 0 && w.cells[w.current].underSky() ? 1.0f : 0.0f;    // the sky is drawn under it only (outdoors, Mournhold)
 	else if (what == "wsunvis") v = w.sunVisibility();
 	else if (what == "wglarefade") v = w.glareFade();
 	else if (what == "wnightday") v = (float)w.nightDay();

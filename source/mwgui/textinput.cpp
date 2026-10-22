@@ -50,11 +50,28 @@ void Session::setText(bool confirmed, const std::string& text)
 		classDraft.desc = blank ? "" : text;
 		logf("chargen: class description \"%s\"", classDraft.desc.c_str());
 	}
+	// a map note written (a new one, or one edited: emptied, it goes)
+	else if (kind == TEXT_MAPNOTE)
+	{
+		if (mapNoteEdit >= 0 && mapNoteEdit < (int)w.mapNotes.size())
+		{
+			if (blank)
+				w.mapNotes.erase(w.mapNotes.begin() + mapNoteEdit);
+			else
+				w.mapNotes[mapNoteEdit].text = text;
+		}
+		else if (!blank)
+			w.mapNotes.push_back({ mapNoteCell, mapNoteAt[0], mapNoteAt[1], text });
+		logf("map: note \"%s\" (%d notes)", text.c_str(), (int)w.mapNotes.size());
+		mapNoteEdit = -1;
+	}
 }
 
 std::string Session::textNow()
 {
 	if (wantText == TEXT_CLASSNAME || wantText == TEXT_CLASSDESC)
 		return wantText == TEXT_CLASSNAME ? classDraft.name : classDraft.desc;
+	if (wantText == TEXT_MAPNOTE)
+		return mapNoteEdit >= 0 && mapNoteEdit < (int)w.mapNotes.size() ? w.mapNotes[mapNoteEdit].text : "";
 	return wantText == TEXT_SEARCH ? journalSearch : wantText == TEXT_CONSOLE ? consoleDraft : makeName;
 }

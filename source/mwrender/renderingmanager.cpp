@@ -754,7 +754,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	const float viewEnd = here.fogEnd;
 	float fogStart = here.fogStart * fogScale, fogEnd = viewEnd * fogScale;
 	// (outdoors the weather says where the fog starts, as OpenMW: a storm's from the eye)
-	if (fog && !(here.flags & CELL_INTERIOR) && w.weatherFogStart() > -1.5f)
+	if (fog && here.underSky() && w.weatherFogStart() > -1.5f)
 	{
 		// (at OpenMW's distance: its view distance x (1 - the weather's land fog depth), 2200 on a clear day, closing in
 		// with our view; ours reaches farther, and the fog spread over it left far things crisper than OpenMW's)

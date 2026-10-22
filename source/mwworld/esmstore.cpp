@@ -311,7 +311,42 @@ static const cJSON* section(const cJSON* root, const char* name)
 	size_t size = 0;
 	char* text = zreadAll(path.c_str(), &size);
 	if (!text)
-		return nullptr;
+	{
+		// An object section the converter split by its members (game_<name>_0.json, _1 ...: the Tribunal data's
+		// first person pieces): the parts' members gathered into one object again
+		cJSON* all = nullptr;
+		for (int k = 0;; k++)
+		{
+			std::string part = s_dataDir + "/game_" + name + "_" + std::to_string(k) + ".json";
+			char* t = zreadAll(part.c_str(), &size);
+			if (!t)
+				break;
+			cJSON* doc = cJSON_Parse(t);
+			free(t);
+			if (!doc)
+			{
+				logf("game: %s: JSON parse error", part.c_str());
+				break;
+			}
+			cJSON* v = cJSON_GetObjectItemCaseSensitive(doc, name);
+			if (v && cJSON_IsObject(v))
+			{
+				if (!all)
+				{
+					s_section = cJSON_CreateObject();
+					all = cJSON_AddObjectToObject(s_section, name);
+				}
+				while (v->child)
+				{
+					cJSON* m = cJSON_DetachItemViaPointer(v, v->child);
+					cJSON_AddItemToObject(all, m->string, m);
+				}
+			}
+			cJSON_Delete(doc);
+			logf("game: %s_%d (%u KB), heap used %d KB", name, k, (unsigned)(size / 1024), mallinfo().uordblks / 1024);
+		}
+		return all;
+	}
 	s_section = cJSON_Parse(text);
 	free(text);
 	if (!s_section)
@@ -435,6 +470,7 @@ bool gameLoad(GameData& g, const char* path)
 		}
 		c.sea = num(it0, "sea");
 		c.noSleep = cJSON_IsTrue(cJSON_GetObjectItem(it0, "nosleep"));
+		c.sky = cJSON_IsTrue(cJSON_GetObjectItem(it0, "sky"));
 		c.region = str(it0, "region");
 		g.cells.push_back(c);
 	}
@@ -637,7 +673,8 @@ bool gameLoad(GameData& g, const char* path)
 	cJSON_ArrayForEach(it, arr(root, "globals"))
 	{
 		std::string type = str(it, "type");
-		g.globals[it->string] = { type.empty() ? 'f' : type[0], (float)num(it, "value") };
+		char t = type.empty() ? 'f' : type[0];
+		g.globals[it->string] = { t, globalStoredValue(t, (float)num(it, "value")) };
 	}
 
 	forSection(root, "gmst", [&](const cJSON* it) {
@@ -837,6 +874,17 @@ bool gameLoad(GameData& g, const char* path)
 				if (const cJSON* v = cJSON_GetArrayItem(cJSON_GetArrayItem(cJSON_GetObjectItem(wc, "windows"), k), j))
 					c.win[k][j] = (float)v->valuedouble;
 	}
+	{
+		const cJSON* s;
+		g.startScripts.clear();
+		cJSON_ArrayForEach(s, cJSON_GetObjectItem(root, "start_scripts"))
+			if (cJSON_IsString(s))
+				g.startScripts.push_back(s->valuestring);
+		g.addons.clear();
+		cJSON_ArrayForEach(s, cJSON_GetObjectItem(root, "addons"))
+			if (cJSON_IsString(s))
+				g.addons.push_back(s->valuestring);
+	}
 	const cJSON* rg;
 	cJSON_ArrayForEach(rg, cJSON_GetObjectItem(root, "regions"))
 	{
@@ -1017,6 +1065,12 @@ bool gameLoad(GameData& g, const char* path)
 				if (cJSON_GetArraySize(gr) == 2)
 					d.groups[gr->string] = { (float)cJSON_GetArrayItem(gr, 0)->valuedouble,
 						(float)cJSON_GetArrayItem(gr, 1)->valuedouble };
+			cJSON_ArrayForEach(gr, cJSON_GetObjectItem(vf, "away"))
+				if (cJSON_IsNumber(gr))
+					d.away[gr->string] = (float)gr->valuedouble;
+			cJSON_ArrayForEach(gr, cJSON_GetObjectItem(vf, "back"))
+				if (cJSON_IsNumber(gr))
+					d.back[gr->string] = (float)gr->valuedouble;
 			g.firstPerson.worldFx[vf->string] = d;
 		}
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "cpfx"))

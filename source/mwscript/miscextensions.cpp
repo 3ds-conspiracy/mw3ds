@@ -9,8 +9,22 @@
 #include <cstring>
 #include <unordered_set>
 
+#include "components/debug/debuglog.hpp"
 #include "mwworld/worldimp.hpp"
 #include "components/interpreter/interpreterhelpers.hpp"
+
+// A body touching an object (OpenMW's "colliding": a contact with it, from the side or standing on it): the body's
+// circle (radius about its feet) within 2 units of the object's box, its height overlapping the box's or its feet on top
+static bool touchesBox(const Ref& o, const float* feet, float radius, float height)
+{
+	float dx = fmaxf(fmaxf(o.boxMin[0] - feet[0], feet[0] - o.boxMax[0]), 0.0f);
+	float dy = fmaxf(fmaxf(o.boxMin[1] - feet[1], feet[1] - o.boxMax[1]), 0.0f);
+	float reach = radius + 2.0f;
+	return dx * dx + dy * dy <= reach * reach && feet[2] <= o.boxMax[2] + 4.0f && feet[2] + height > o.boxMin[2];
+}
+
+// The player's and the actors' bodies for touchesBox (mwphysics/movementsolver.cpp's player, projectilemanager.cpp's actor)
+static const float kPlayerBodyRadius = 22.0f, kPlayerBodyHeight = 128.0f, kActorBodyRadius = 34.0f, kActorBodyHeight = 135.0f;
 
 std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlayer, int ref, Ref* r)
 {
@@ -150,14 +164,9 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 		return 0.0f;
 	}
 	case F_GETLOCKED: return r && r->lockLevel > 0 ? 1.0f : 0.0f;
+	// The player standing on this object (OpenMW's getPlayerStandingOn; World::feetOnObject)
 	case F_GETSTANDINGPC:
-	{
-		if (!r || !r->hasBox)
-			return 0.0f;
-		const float* f = w.player.feet;
-		bool over = f[0] >= r->boxMin[0] && f[0] <= r->boxMax[0] && f[1] >= r->boxMin[1] && f[1] <= r->boxMax[1];
-		return over && fabsf(f[2] - r->boxMax[2]) < 30.0f && w.player.onGround ? 1.0f : 0.0f;
-	}
+		return r && w.player.onGround && w.feetOnObject(ref, w.player.feet) ? 1.0f : 0.0f;
 	case F_RANDOM: return (float)(rand() % (int)fmaxf(1.0f, argNum(c, n, 0, 100.0f)));
 	case F_GETCURRENTTIME: return fmodf(w.gameHour, 24.0f);
 	case F_FALL: return 0.0f;       // (OpenMW runs nothing for Fall)
@@ -256,6 +265,100 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 	case F_ENABLETELEPORTING: case F_DISABLETELEPORTING:
 		w.teleportDisabled = n.func == F_DISABLETELEPORTING;
 		return 0.0f;
+	// Tribunal's Mournhold: no levitating there. Levitate on anyone ends at once while it is off, the player told so
+	// (mwmechanics/activespells.cpp; OpenMW's World::enableLevitation and shouldRemoveEffect)
+	case F_ENABLELEVITATION: case F_DISABLELEVITATION:
+		w.levitationDisabled = n.func == F_DISABLELEVITATION;
+		return 0.0f;
+	case F_GETSQUAREROOT:
+	{
+		// (OpenMW stops the script on a negative number; it reads 0 here, logged)
+		float v = argNum(c, n, 0);
+		if (v < 0.0f)
+		{
+			logf("script: GetSquareRoot of %g", v);
+			return 0.0f;
+		}
+		return sqrtf(v);
+	}
+	// The player, or a person or creature, touching this object from the side this frame (OpenMW's GetCollidingPC,
+	// GetCollidingActor); standing on top is GetStandingPC / GetStandingActor
+	case F_GETCOLLIDINGPC:
+		return r && r->hasBox && r->visible() && touchesBox(*r, w.player.feet, kPlayerBodyRadius, kPlayerBodyHeight) ? 1.0f : 0.0f;
+	case F_GETCOLLIDINGACTOR:
+	{
+		if (!r || !r->hasBox || !r->visible())
+			return 0.0f;
+		bool any = false;
+		w.forLoadedActors([&](int i) {
+			const Ref& a = w.refs[i];
+			if (i != ref && !a.dead && a.visible() && a.actor >= 0 && touchesBox(*r, a.pos, kActorBodyRadius, kActorBodyHeight))
+				any = true;
+		});
+		return any ? 1.0f : 0.0f;
+	}
+	// Anyone standing on this object: a person or creature, or the player (OpenMW's getActorStandingOn)
+	case F_GETSTANDINGACTOR:
+	{
+		if (!r || !r->hasBox || !r->visible())
+			return 0.0f;
+		bool any = w.player.onGround && w.feetOnObject(ref, w.player.feet);
+		w.forLoadedActors([&](int i) {
+			const Ref& a = w.refs[i];
+			if (i != ref && !a.dead && a.visible() && a.actor >= 0 && w.feetOnObject(ref, a.pos))
+				any = true;
+		});
+		return any ? 1.0f : 0.0f;
+	}
+	// Sotha Sil's spikes and blades: whoever touches the object loses this much health a second (a negative one heals);
+	// nothing while a menu is up (OpenMW's hurtCollidingActors)
+	case F_HURTCOLLIDINGACTOR:
+	{
+		if (!r || !r->hasBox || !r->visible() || c.host.menuMode())
+			return 0.0f;
+		float rate = argNum(c, n, 0);
+		if (touchesBox(*r, w.player.feet, kPlayerBodyRadius, kPlayerBodyHeight))
+		{
+			if (rate > 0.0f)
+				c.host.hurtPlayer(rate * c.dt);
+			else
+				w.stats.health = fminf(w.stats.healthMax, w.stats.health - rate * c.dt);
+		}
+		w.forLoadedActors([&](int i) {
+			Ref& a = w.refs[i];
+			if (i == ref || a.dead || !a.visible() || a.actor < 0 || !touchesBox(*r, a.pos, kActorBodyRadius, kActorBodyHeight))
+				return;
+			a.health = fminf(a.healthMax > 0.0f ? a.healthMax : a.health, a.health - rate * c.dt);
+			if (a.health <= 0.0f)
+				c.host.killActor(i);
+		});
+		return 0.0f;
+	}
+	// The player's or a person's weapon (or fists) out and ready (OpenMW: the draw state is Weapon)
+	case F_GETWEAPONDRAWN:
+		return c.host.isWeaponDrawn(onPlayer || !r ? -1 : ref) ? 1.0f : 0.0f;
+	// SetDelete 1: gone for good, as disabled (and saved so); 0 brings it back (OpenMW's deleteObject / undeleteObject)
+	case F_SETDELETE:
+		if (r && !onPlayer)
+			w.setEnabled(ref, argNum(c, n, 0) == 0.0f);
+		return 0.0f;
+	// ExplodeSpell id: the player only readies it, a person casts it; an object (Tribunal's dart traps) sets its area
+	// effects off where it stands, always succeeding (OpenMW's ExplodeSpell)
+	case F_EXPLODESPELL:
+	{
+		std::string id = lower(argStr(c, n, 0));
+		auto sp = w.game.spells.find(id);
+		if (sp == w.game.spells.end())
+		{
+			c.host.report("spellcasting failed: cannot find spell \"" + id + "\"");
+			return 0.0f;
+		}
+		if (onPlayer || !r)
+			w.stats.selectedSpell = sp->first;
+		else
+			c.host.explodeSpell(ref, sp->first);
+		return 0.0f;
+	}
 	case F_DONTSAVEOBJECT:
 		return 0.0f;
 	default:

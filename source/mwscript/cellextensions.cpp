@@ -16,6 +16,12 @@ std::optional<float> cellExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 {
 	switch (n.func)
 	{
+	// The player is in an interior: Mournhold's under-the-sky cells count (OpenMW's GetInterior)
+	case F_GETINTERIOR: return w.current >= 0 && w.cells[w.current].interior ? 1.0f : 0.0f;
+	// The water of the player's interior: read, set, or moved by so much (OpenMW's Get / Set / ModWaterLevel)
+	case F_GETWATERLEVEL: return w.scriptWaterLevel();
+	case F_SETWATERLEVEL: w.setScriptWaterLevel(argNum(c, n, 0)); return 0.0f;
+	case F_MODWATERLEVEL: w.setScriptWaterLevel(w.scriptWaterLevel() + argNum(c, n, 0)); return 0.0f;
 	case F_GETPCCELL: return w.current >= 0 && lower(displayCellName(w)).rfind(lower(argStr(c, n, 0)), 0) == 0 ? 1.0f : 0.0f;
 	// The player's cell changed since scripts last ran (a door, or outdoors a new grid cell)
 	case F_CELLCHANGED: return w.current != w.scriptCell ? 1.0f : 0.0f;

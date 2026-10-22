@@ -202,6 +202,7 @@ void Session::closeScreen()
 		crimeSeen(CRIME_PICKPOCKET, 0, containerRef), reportCrime(containerRef, (int)w.game.gmstf("icrimepickpocket", 25));
 	}
 	pickpocketing = false;
+	companionSharing = companionWarning = false;
 	screen = SCR_NONE;
 	bookRef = containerRef = -1;
 	bookItem.clear();

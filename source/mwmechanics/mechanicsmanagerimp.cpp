@@ -417,3 +417,13 @@ bool World::ownedByOther(int ri) const
 		return pcRankIn(r.ownerFaction) < r.ownerRank;
 	return false;
 }
+
+// GetWeaponDrawn: the player's weapon (or fists) out; a person or creature fighting has its weapon out (their draw state
+// follows the fight here)
+bool Session::isWeaponDrawn(int ref)
+{
+	if (ref < 0)
+		return weaponDrawn;
+	const Ref& r = w.refs[ref];
+	return r.actor >= 0 && !r.dead && r.ai == AI_COMBAT;
+}

@@ -11,6 +11,9 @@
                                                     copying to sdmc:/3ds/mw3ds/data
     python tools/build/build_cia.py --prebuilt      pack the mw3ds.elf / mw3ds.smdh already in the repo root instead of
                                                     building them (the release converter, tools/release, uses this)
+    python tools/build/build_cia.py --tribunal      with the Tribunal add-on (Tribunal.esm after Morrowind.esm): data in
+                                                    out/data-tribunal (out/o3ds-tribunal), build/mw3ds-tribunal.cia
+                                                    (mw3ds-o3ds-tribunal.cia); the same program runs both
 Needs .env filled in (see .env.example): MW3DS_MORROWIND_DIR, MW3DS_CTR_TOOLS_DIR, and on Windows MW3DS_MSYS2_DIR
 (not with --prebuilt).
 """
@@ -111,9 +114,12 @@ def fetch_mods(old3ds=False):
     return dirs
 
 
-def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=False, no_data=False, prebuilt=False):
+def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=False, no_data=False, prebuilt=False,
+        tribunal=False):
     os.chdir(ROOT)
     mwtools.load_env()
+    if tribunal:
+        os.environ["MW3DS_TRIBUNAL"] = "1"         # (the converters read it: tools/convert/mwfiles.py)
     if mods:
         dirs = fetch_mods(old3ds)
         if fetch_only:
@@ -133,10 +139,14 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
 
     data = "out/o3ds" if old3ds else "out/data"
     cia = "build/mw3ds-o3ds.cia" if old3ds else "build/mw3ds.cia"
+    if tribunal:
+        data += "-tribunal"
+        cia = cia[:-4] + "-tribunal.cia"
+    if tribunal or old3ds:
+        os.environ["MW3DS_OUT"] = data
     convert_args = [] if small else ["--world"]
     if old3ds:
         convert_args += ["--max-tex", "128", "--no-mips"]
-        os.environ["MW3DS_OUT"] = "out/o3ds"
 
     # A CIA left by an earlier failed build must not be mistaken for this one
     (ROOT / cia).unlink(missing_ok=True)
@@ -176,8 +186,10 @@ def main(mods=False):
     ap.add_argument("--fetch-only", action="store_true", help="with --mods: just download the mods and print the overlay folders")
     ap.add_argument("--no-data", action="store_true")
     ap.add_argument("--prebuilt", action="store_true")
+    ap.add_argument("--tribunal", action="store_true")
     a = ap.parse_args()
-    return run(a.small, a.skip_convert, a.old3ds, mods or getattr(a, "mods", False), a.fetch_only, a.no_data, a.prebuilt)
+    return run(a.small, a.skip_convert, a.old3ds, mods or getattr(a, "mods", False), a.fetch_only, a.no_data, a.prebuilt,
+               a.tribunal)
 
 
 if __name__ == "__main__":

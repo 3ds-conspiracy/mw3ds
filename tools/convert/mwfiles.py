@@ -29,8 +29,22 @@ if ENCODING not in ENCODINGS:
 CODEC = ENCODINGS[ENCODING]
 
 MASTER = "Morrowind.esm"
-# Masters this project leaves out: a plugin that needs one is refused
-OUT_OF_SCOPE = {"tribunal.esm", "bloodmoon.esm"}
+# The Tribunal add-on (MW3DS_TRIBUNAL=1, or a converter's --tribunal): Tribunal.esm loaded after Morrowind.esm and
+# before any plugin. Off, the data is exactly the vanilla game's
+TRIBUNAL = "Tribunal.esm"
+
+
+def tribunal():
+    """The Tribunal add-on is on (read each time: a converter's --tribunal sets it after this module is loaded)."""
+    return os.environ.get("MW3DS_TRIBUNAL", "").strip().lower() in ("1", "on", "yes", "true")
+
+
+def out_of_scope():
+    """Masters this project leaves out: a plugin that needs one is refused. Bloodmoon always; Tribunal unless the
+    add-on is on."""
+    return {"bloodmoon.esm"} | (set() if tribunal() else {"tribunal.esm"})
+
+
 PLUGINS = [p.strip() for p in os.environ.get("MW3DS_PLUGINS", "").split(";") if p.strip()]
 
 
@@ -261,16 +275,22 @@ def masters(path):
 
 def load_order():
     """[Morrowind.esm, plugins...] as paths, each plugin's masters checked: every one must be loaded before it,
-    and none may be Tribunal.esm or Bloodmoon.esm (out of this project's scope)."""
+    and none may be Bloodmoon.esm, or Tribunal.esm unless the add-on is on (out of this project's scope)."""
     order = [game_path(DATA_FILES, MASTER)]
+    if tribunal():
+        path = game_path(DATA_FILES, TRIBUNAL)
+        if not path.is_file():
+            raise SystemExit(f"MW3DS_TRIBUNAL: {TRIBUNAL} is not in {DATA_FILES}")
+        order.append(path)
     for name in PLUGINS:
         path = game_path(DATA_FILES, name)
         if not path.is_file():
             raise SystemExit(f"MW3DS_PLUGINS: {name} is not in {DATA_FILES}")
         loaded = {p.name.lower() for p in order}
         for m in masters(path):
-            if m.lower() in OUT_OF_SCOPE:
-                raise SystemExit(f"MW3DS_PLUGINS: {name} needs {m}; only Morrowind.esm content is supported")
+            if m.lower() in out_of_scope():
+                raise SystemExit(f"MW3DS_PLUGINS: {name} needs {m}; only Morrowind.esm content (and Tribunal.esm with "
+                                 f"the add-on: MW3DS_TRIBUNAL=1) is supported")
             if m.lower() not in loaded:
                 raise SystemExit(f"MW3DS_PLUGINS: {name} needs {m}, which is not loaded before it")
         order.append(path)
@@ -283,7 +303,7 @@ def content_key():
     # (off Windows, loose files are found since LooseFiles: caches made before it hold the BSA's textures where an
     # overlay or Data Files has its own, under the same overlay key)
     tag = "" if os.sep == "\\" else "+loose"
-    if not PLUGINS and ENCODING == "win1252":
+    if not PLUGINS and not tribunal() and ENCODING == "win1252":
         return tag
     h = hashlib.sha1(ENCODING.encode())
     for path in load_order()[1:]:
@@ -563,7 +583,7 @@ def read_game(wanted=None):
     record of the same type and ID replaces the whole record and one with DELE removes it; cells merge their
     references by number (a plugin changes, deletes or adds some, MVRF moves one to another exterior cell);
     a topic's responses merge by INAM in the PNAM chain; LAND takes the later file's whole record."""
-    if not PLUGINS:
+    if not PLUGINS and not tribunal():
         yield from read_records(game_path(DATA_FILES, MASTER), wanted)
         return
     for r in _merge():

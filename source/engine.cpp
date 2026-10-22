@@ -656,7 +656,7 @@ bool Engine::frame()
 		// Day and night outdoors: the light, sky and fog for this hour
 		float land[3], sky[3], dayFog[3];
 		session->w.daylight(land, sky, dayFog);
-		bool outdoors = !session->w.cells[session->w.current].interior && session->w.game.hasWeather;
+		bool outdoors = session->w.cells[session->w.current].underSky() && session->w.game.hasWeather;
 		// Night Eye adds light to everything, in the dark too (OpenMW's updateAmbient: the ambient + 0.7 x
 		// min(1, magnitude / 100)); it was a scale on the time of day's colour, near black at night: no help
 		rendererSetNightEye(0.7f * fminf(1.0f, session->w.effectTotal(43) / 100.0f));
