@@ -75,6 +75,10 @@ struct World
 	float markPos[3] = {}, markYaw = 0.0f;
 	float lastOutside[3] = {};    // the player's last spot outdoors (Intervention from inside)
 	int bounty = 0;               // crime: gold the guards want
+	// OpenMW's crime ids (Player::getNewCrimeId / recordCrimeId): the last crime's, and the last one paid off when the bounty
+	// went to 0 (a fine, jail, PayFine, SetPCCrimeLevel 0). Saved
+	int crimeIdNow = -1, crimeIdPaid = -1;
+	void crimePaid() { crimeIdPaid = crimeIdNow; }
 	// Factions the player belongs to: lowercase faction id -> rank (0 lowest); reputation in each
 	std::unordered_map<std::string, int> pcRank, pcFacRep;
 	int pcReputation = 0;

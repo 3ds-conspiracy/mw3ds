@@ -805,6 +805,10 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			return;
 		if (w.bounty <= 0)
 			r.alarmed = false;            // the crime is paid for: calm again (OpenMW's crime id)
+		// a witness of a crime paid for since, wherever it was paid (a guard in another cell, jail): calmed when next
+		// updated (OpenMW's Actors::updateActor). Mehra Helas stayed in the fight for good after the Natural assault
+		if (r.crimeId >= 0 && r.crimeId <= w.crimeIdPaid)
+			calmWitness(i);
 		// (the player's rule: fFatigueReturnBase + fFatigueReturnMult x their Endurance a second)
 		if (r.fatigue < r.fatigueMax && !menu)
 			r.fatigue = fminf(r.fatigueMax, r.fatigue + (w.game.gmstf("ffatiguereturnbase", 2.5f)

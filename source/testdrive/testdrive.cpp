@@ -377,6 +377,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		id = a[1];
 		kind = verb == "WALKTO" ? WALK : (verb == "KILL" || verb == "STRIKE") ? KILL : ACTIVATE;
 		diveOk = verb == "WALKTO" && a.size() >= 3 && a[2] == "dive";
+		ownPiece = verb == "DOORTO" && a.size() >= 3 && lower(a[2]) == "near";
 		pickup = verb == "PICKUP";
 		if (verb != "WALKTO")
 			retryToken = token;
@@ -442,7 +443,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		}
 		path.clear();
 		const float* t = s.w.refs[ref].pos;
-		if (planPath(s, s.w.player.feet, t, false, path))
+		if (planPath(s, s.w.player.feet, t, false, path, ownPiece))
 			logf("drive: %s %s, %d path points", verb.c_str(), id.c_str(), (int)path.size());
 		else
 			logf("drive: %s %s, straight", verb.c_str(), id.c_str());

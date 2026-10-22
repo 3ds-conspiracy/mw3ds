@@ -27,7 +27,7 @@ bool leadSpot(Session& s, int victim, float* out);
 bool mechanicsOp(Session& s, const std::vector<std::string>& a);
 bool splitDeadEnd(Session& s, const float from[3], const float to[3], float entry[3], int* entryIndex);
 void walkTarget(const Ref& r, bool activate, float out[3]);
-bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path);
+bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path, bool ownPiece = false);
 bool standsOnFloor(Session& s);
 std::string handItem(Session& s, bool takeWeapon);
 bool spotBeside(Session& s, const float aim[3], float fromZ, float out[2]);

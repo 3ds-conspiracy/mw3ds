@@ -88,6 +88,9 @@ struct TestDriver
 	int deadEntry = -1;              // a trial route to the goal's piece of a split grid: its point, walked to next
 	float deadGoal[3] = {};
 	bool diveOk = false;             // WALKTO:<where>:dive: when stuck, feel a way out by trial steps (swimming, jumping)
+	// DOORTO:<cell>:near: with the path grid split and the grid point nearest the door on another piece (a walkway over
+	// it), the route ends at the start's own piece's point nearest the door when one is within reach of it (planPath)
+	bool ownPiece = false;
 	bool lowFly = false;             // FLYTO:@x,y,z:low: a low cruise for caves and halls, trying lower before higher when blocked
 	float legTimer = 0.0f;
 	bool legJumped = false;

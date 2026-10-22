@@ -575,6 +575,7 @@ void World::applyCellState(int c)
 	};
 	const cJSON* it;
 	int skipped = 0;
+	bool movedIn = false;
 	cJSON_ArrayForEach(it, cJSON_GetObjectItem(st, "refs"))
 	{
 		int i = at(it, "i", "id");
@@ -592,9 +593,15 @@ void World::applyCellState(int c)
 				spawned.push_back(i);
 				if (cells[ac].live && refs[i].actor >= 0)
 					attachSpawned(i);
+				movedIn |= cells[ac].live != nullptr;
 			}
 		}
 	}
+	// (one moved into a cell already loaded joins its lists: the crosshair, the actors' updates. A save loaded in the
+	// Temple Gardens read the Temple basement after the Gardens, and Shunari Eye-Fly, moved there by PositionCell, could
+	// not be aimed at nor talked to until the next cell change)
+	if (movedIn)
+		rebuildLoadedLists();
 	cJSON_ArrayForEach(it, cJSON_GetObjectItem(st, "scripts"))
 	{
 		int i = at(it, "ref", "ref_id");

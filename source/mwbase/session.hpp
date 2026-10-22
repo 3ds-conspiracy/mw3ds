@@ -407,6 +407,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	// fight 100 they attack. kind: CRIME_* (value: a theft's worth)
 	enum { CRIME_THEFT, CRIME_PICKPOCKET, CRIME_TRESPASS, CRIME_ASSAULT, CRIME_MURDER };
 	void crimeSeen(int kind, int value, int victim);
+	void calmWitness(int ref);              // their crime is paid for: out of the fight, Fight and disposition back
 	void crimeAgainstFaction(const std::string& faction);
 	// The player took count of an owner's item: stolen; a crime when an NPC saw it
 	void takeOwned(int from, const std::string& item, int count);

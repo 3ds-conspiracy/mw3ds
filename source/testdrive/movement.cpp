@@ -675,7 +675,7 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 		repathTimer = 0.0f;
 		float to[3];
 		walkTarget(r, kind == ACTIVATE && !pointGoal, to);
-		if (planPath(s, p.feet, to, pointGoal, path))
+		if (planPath(s, p.feet, to, pointGoal, path, ownPiece))
 			logf("drive: route to %s found, %d path points", id.c_str(), (int)path.size());
 	}
 	if (waitRoute && path.empty())

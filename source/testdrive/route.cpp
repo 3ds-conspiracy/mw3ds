@@ -185,7 +185,37 @@ void walkTarget(const Ref& r, bool activate, float out[3])
 	}
 }
 
-bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path)
+// DOORTO:<cell>:near: the grid point nearest the door is on another piece of a split grid than the player's (Godsreach's
+// walkway over the Winged Guar's door: 305 from it, the street's point in front of the door 342), and a player walks up
+// to the door on their own piece instead: the route to the start's piece's point nearest the goal, when that one is
+// within kReach of it (else as before: crossing by sight)
+static bool ownPiecePath(Session& s, const float from[3], const float to[3], std::vector<int>& path)
+{
+	const float kReach = 450.0f;
+	World& w = s.w;
+	int st = w.nearestPathPoint(from);
+	if (st < 0)
+		return false;
+	std::vector<char> inS;
+	gridPiece(w, st, inS);
+	int best = -1;
+	float bestD = kReach;
+	for (size_t i = 0; i < inS.size(); i++)
+		if (inS[i] && gridDist(w.pathPoints[i].pos, to) < bestD)
+		{
+			bestD = gridDist(w.pathPoints[i].pos, to);
+			best = (int)i;
+		}
+	if (best < 0 || !w.findPath(from, w.pathPoints[best].pos, path))
+	{
+		path.clear();
+		return false;
+	}
+	logf("drive: split path grid: to point %d of the start's piece, %.0f from the goal (near)", best, bestD);
+	return true;
+}
+
+bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path, bool ownPiece)
 {
 	World& w = s.w;
 	// close and in plain sight (a shrine on a plateau with no grid near it, the nearest point at the foot of the hill): straight
@@ -205,6 +235,8 @@ bool planPath(Session& s, const float from[3], const float to[3], bool spot, std
 	if (!w.findPath(from, to, path))
 	{
 		path.clear();
+		if (ownPiece && ownPiecePath(s, from, to, path))
+			return true;
 		// the grid is in two pieces (Urshilaku Karma Burial): no route from here to the goal's piece
 		if (!splitGridPath(s, from, to, path))
 			return false;

@@ -36,6 +36,7 @@ void Session::drawArrest()
 	{
 		w.removeItem("gold_001", w.bounty);
 		w.bounty = 0;
+		w.crimePaid();
 		calm();
 		playSound(-1, "Item Gold Down");
 		closeScreen();
@@ -67,6 +68,7 @@ void Session::goToJail()
 	w.gameHour += 24.0f * days;
 	rechargeItems(24.0f * days * 3600.0f / w.timescale());
 	w.bounty = 0;
+	w.crimePaid();
 	w.globals["pccrimelevel"] = 0.0f;
 	w.confiscateStolen();
 	for (int d = 0; d < days; d++)

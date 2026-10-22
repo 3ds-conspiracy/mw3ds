@@ -68,6 +68,11 @@ cJSON* World::refState(int i) const
 			cJSON_AddNumberToObject(o, "aggressor", 1);
 		if (r.fight >= 0)
 			cJSON_AddNumberToObject(o, "fight", r.fight);
+		if (r.crimeId >= 0)
+		{
+			cJSON_AddNumberToObject(o, "crime", r.crimeId);
+			cJSON_AddNumberToObject(o, "crime_disp", r.crimeDisp);
+		}
 		if (r.reputation)
 			cJSON_AddNumberToObject(o, "rep", r.reputation);
 		if (r.level >= 0)
@@ -160,6 +165,8 @@ u32 World::refHash(int i) const
 		mixi(r.dead);
 		mixi(r.aggressor);
 		mixi(r.fight);
+		mixi(r.crimeId);
+		mixi(r.crimeDisp);
 		mixi(r.reputation);
 		mixi(r.level);
 		mixi(r.rank);
@@ -224,6 +231,8 @@ void World::applyRefState(Ref& r, const cJSON* it)
 		r.dead = num(it, "dead") != 0;
 		r.aggressor = num(it, "aggressor") != 0;
 		r.fight = (int)num(it, "fight", -1);
+		r.crimeId = (int)num(it, "crime", -1);
+		r.crimeDisp = (int)num(it, "crime_disp", 0);
 		r.reputation = (int)num(it, "rep");
 		r.level = (int)num(it, "level", -1);
 		r.rank = (int)num(it, "rank", -1);

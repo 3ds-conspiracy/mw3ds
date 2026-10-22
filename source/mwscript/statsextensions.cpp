@@ -33,6 +33,8 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 	{
 		w.bounty = std::max(0, w.bounty + (int)arg);
 		w.globals["pccrimelevel"] = (float)w.bounty;
+		if (w.bounty == 0)
+			w.crimePaid();              // (OpenMW's recordCrimeId: the witnesses calm down)
 		*out = 0.0f;
 		return true;
 	}
@@ -383,12 +385,15 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 	case F_SETPCCRIMELEVEL:
 		w.bounty = (int)argNum(c, n, 0);
 		w.globals["pccrimelevel"] = (float)w.bounty;
+		if (w.bounty == 0)
+			w.crimePaid();
 		return 0.0f;
 	// PayFine: the bounty goes, the stolen goods are taken back and the weapon is put away; PayFineThief only clears
-	// the bounty
+	// the bounty. Either way the crimes are paid for: their witnesses calm down (OpenMW's recordCrimeId)
 	case F_PAYFINE: case F_PAYFINETHIEF:
 		w.bounty = 0;
 		w.globals["pccrimelevel"] = 0.0f;
+		w.crimePaid();
 		if (n.func == F_PAYFINE)
 		{
 			w.confiscateStolen();
