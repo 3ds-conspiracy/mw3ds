@@ -1,0 +1,82 @@
+# start: Seyda Neen
+# Issue #61 as the reporter did it, LEGIT after the setup: beside a calm Ogrim in the wilds west of Balmora, Mark cast
+# there, Almsivi Intervention to Balmora's temple, Frostbite bought from Estirdalin at the Mages Guild, then in her
+# spellmaking menu by taps: Frost Damage, Range to Target, Min 15, Max 20, 5 s, named Cold Snap, bought; Recall to the
+# Ogrim and the spell cast at him. It takes 15 to 20 a second for 5 s (75 to 100 in all) and lands once: the report had
+# one cast kill and the hit sound repeat like a machine gun. (The Ogrim's Regenerate ability gives back 1 to 5 a second,
+# so it is 50 to 99 down when the spell is over; an EXPECT is read at its step's start, so the last one waits)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETSKILL:destruction:100
+0.3 0 0 0 0 SETSKILL:mysticism:100
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 SPELL:almsivi_intervention
+0.3 0 0 0 0 TP:-38500:-20500:450:0
+6 0 0 0
+1 0 0 0 0 PLACE:ogrim:350
+0.3 0 0 0 0 CONSEL:ogrim
+0.3 0 0 0 0 CON:SetFight%0+CON:StopCombat
+1 0 0 0 0 SHOT
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 CAST:mark
+3 0 0 0
+0.3 0 0 0 0 CAST:almsivi_intervention
+4 0 0 0
+10 0 0 0 0 UNTIL:cell:Balmora
+1 0 0 0 0 SHOT
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:estirdalin
+1.5 0 0 0
+0.3 0 0 0 0 BUYSPELL:estirdalin:frostbite
+0.1 0 0 0 0 EXPECT:spell:frostbite
+0.3 0 0 0 0 SPELLMAKE:estirdalin
+1 0 0 0 0 EXPECT:screen:spellmake
+0.5 0 0 0 0 SHOT
+0.6 0 0 0 0 TAP:60:112
+0.6 0 0 0 0 SHOT
+0.6 0 0 0 0 TAP:183:141
+0.6 0 0 0 0 TAP:183:141
+0.6 0 0 0 0 SHOT
+0.6 0 0 0 0 R+TAP:208:162
+0.4 0 0 0 0 TAP:208:162
+0.4 0 0 0 0 TAP:208:162
+0.4 0 0 0 0 TAP:208:162
+0.4 0 0 0 0 TAP:208:162
+0.4 0 0 0 0 TAP:292:162
+0.4 0 0 0 0 TAP:292:162
+0.4 0 0 0 0 TAP:292:162
+0.4 0 0 0 0 TAP:292:162
+0.4 0 0 0 0 TAP:292:162
+0.4 0 0 0 0 TAP:208:182
+0.4 0 0 0 0 TAP:208:182
+0.4 0 0 0 0 TAP:208:182
+0.4 0 0 0 0 TAP:208:182
+0.6 0 0 0 0 SHOT
+0.3 0 0 0 0 TYPE:Cold%Snap
+0.8 0 0 0 0 TAP:54:222
+0.8 0 0 0 0 SHOT
+0.8 0 0 0 0 TAP:160:222
+1 0 0 0 0 EXPECT:madespells:eq:1
+0.8 0 0 0 0 SHOT
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 CAST:recall
+4 0 0 0
+1 0 0 0 0 FACE:ogrim
+1 0 0 0 0 SHOT
+0.5 0 0 0 0 SNAP:refhealth:ogrim
+0.3 0 0 0 0 CASTMADESPELL
+1 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
+1 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
+1 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
+1 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
+1 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
+1.5 0 0 0
+2.5 0 0 0 0 EXPECT:refhealth:ogrim:le:@-50+EXPECT:refhealth:ogrim:ge:@-101

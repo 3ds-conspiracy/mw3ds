@@ -441,8 +441,10 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 					gx = run;
 				}
 			}
+			}
 			// The places the player has been to or learned about, each a marker (OpenMW's global map: a marker a
-			// named place, the bigger the more cells it covers; its name under the mouse)
+			// named place, the bigger the more cells it covers; its name under the mouse). The minimap shows them too
+			{
 			if (mapLabelCells.size() != m.labels.size())
 			{
 				mapLabelCells.assign(m.labels.size(), 0);
@@ -456,7 +458,7 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 				float sx, sy;
 				if (!w.mapKnown.count(lower(l.text)) || !toScreen(l.x, l.y, &sx, &sy))
 					continue;
-				float size = 8.0f + 2.0f * floorf(sqrtf((float)std::max(1, mapLabelCells[k])) - 1.0f) + (zoom >= 3.0f ? 2.0f : 0.0f);
+				float size = 12.0f + 2.0f * floorf(sqrtf((float)std::max(1, mapLabelCells[k])) - 1.0f) + (zoom >= 3.0f ? 2.0f : 0.0f);
 				markers.push_back({ sx, sy, size, (int)k, l.text });
 			}
 		}
@@ -521,7 +523,7 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 				if (fog->second[gj * fn + gi] >= 12)
 					return;
 			}
-			markers.push_back({ dx, dy, full ? 10.0f : 8.0f, i, w.game.cellLabel(r.destCell) });
+			markers.push_back({ dx, dy, full ? 14.0f : 11.0f, i, w.game.cellLabel(r.destCell) });
 		});
 		drawDetected([&](float mx, float my, float* sx, float* sy) {
 			*sx = ox + (mx - localMin[0]) / localSize * texSize * s;

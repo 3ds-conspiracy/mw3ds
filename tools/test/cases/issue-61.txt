@@ -1,0 +1,43 @@
+# start: Seyda Neen
+# A spell made at a spellmaker, Frost Damage 15 to 20 for 5 s on Target, cast at a foe: it takes 15 to 20 a second for
+# 5 s (75 to 100 in all), lands once with one hit sound and one hit effect (the report: one cast killed, the hit sound
+# like a machine gun). Made in the spellmaking menu at Estirdalin, bought with Confirm, cast as the made spell
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETSKILL:destruction:100
+0.3 0 0 0 0 SPELL:frostbite
+0.3 0 0 0 0 GIVE:Gold_001:3000
+0.3 0 0 0 0 TP:-22067:-14040:622:0
+6 0 0 0
+120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:estirdalin
+1.5 0 0 0
+0.3 0 0 0 0 SPELLMAKE:estirdalin
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:spellmake
+0.3 0 0 0 0 ADDEFFECT:16:15:20:5:2
+0.3 0 0 0 0 TAP:200:30
+0.3 0 0 0 0 TYPE:Cold%Snap
+0.3 0 0 0 0 TAP:54:222
+0.3 0 0 0 0 CONFIRM
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:madespells:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+1 0 0 0 0 PLACE:ogrim:300
+1 0 0 0 0 SETALARM:ogrim:0
+0.3 0 0 0 0 FACE:ogrim
+0.5 0 0 0 0 SNAP:refhealth:ogrim
+0.3 0 0 0 0 CASTMADESPELL
+1.5 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
+2 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
+4 0 0 0 0 EXPECT:refhealth:ogrim:ge:@-101
+0.3 0 0 0 0 EXPECT:refhealth:ogrim:le:@-74
+0.3 0 0 0 0 SHOT
