@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-db-attack: Tribunal's Dark Brotherhood attacks the sleeping player (dbAttackScript, started by the start script
+# MarkTRStartScript): at level 30 the chance is 90 percent; the player is woken ("You are awakened by a loud noise."),
+# an assassin of the level's kind (db_assassin4) is placed at them and the global DBAttack set.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3+GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:0
+2 0 0 0 0 SLEEP:8
+0.1 0 0 0 0 EXPECT:message:awakened
+3 0 0 0
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:1
+0.1 0 0 0 0 EXPECT:refdist:db_assassin4:lt:600
+0.5 0 0 0 0 SHOT

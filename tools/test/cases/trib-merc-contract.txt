@@ -1,0 +1,25 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-merc-contract: a name argument is the word itself, never a variable (OpenMW's StringParser): hiring Calvus
+# Horatius runs "StartScript Contract_Calvus" with his own script holding a local contract_Calvus, and the global
+# script Contract_Calvus starts (it counts his 30 days). It started a script "1" (the local's value) and the contract
+# never ran out.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7+GOD:2
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace:_Courtyard
+5 0 0 0
+0.3 0 0 0 0 CON:ScriptRunning%Contract_Calvus
+0.1 0 0 0 0 EXPECT:conval:eq:0
+60 0 0 0 0 ACTIVATE:calvus%horatius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:available_for_hire
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:3
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:Merc_Calvus:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 CON:ScriptRunning%Contract_Calvus
+0.1 0 0 0 0 EXPECT:conval:eq:1

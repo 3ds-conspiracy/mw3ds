@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# trib-vanilla-off: on the vanilla conversion (no Tribunal add-on) nothing of Tribunal's runs: no start script of its
+# is running, and levitation works as ever (nothing disables it).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+1 0 0 0
+0.3 0 0 0 0 CON:ScriptRunning%TribunalMain
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:ScriptRunning%dbAttackScript
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 ACTIVE:10:20:60
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:20

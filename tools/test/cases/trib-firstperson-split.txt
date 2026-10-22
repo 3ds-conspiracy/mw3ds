@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-firstperson-split: the Tribunal data's first person and visual pieces are bigger than one section file, so the
+# converter splits them (game_firstperson_0.json, _1); the game gathers the parts again: the player's body in third
+# person is dressed (Tribunal's adamantium armour on it), and a spell's cast shows its visual. (Without that the
+# body had no meshes at all and spells no visuals.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+BOOST:100
+0.3 0 0 0 0 GIVE:adamantium_cuirass:1
+0.3 0 0 0 0 EQUIP:adamantium_cuirass
+0.3 0 0 0 0 POV:third
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bodymeshes:gt:10
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 POV:first
+0.3 0 0 0 0 CAST:fire%bite
+0.6 0 0 0
+0.1 0 0 0 0 EXPECT:vfxcount:gt:0

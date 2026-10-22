@@ -1,0 +1,52 @@
+# start: Seyda Neen
+# trib-fn-basic: the plain script functions Tribunal's scripts call (OpenMW's rules), run from the console (its printed value):
+# GetSquareRoot (Tribunal's dart traps), GetStat (a placeholder: always 0, as OpenMW), GetInterior
+# (TribunalMain), GetPCSneaking (the proximity mines), GetWeaponDrawn (Trueflame's blade), GetChameleon (Gaenor),
+# GetParalysis (Golena Sadri's fight).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:goldeneye
+0.3 0 0 0 0 CON:GetSquareRoot%16
+0.1 0 0 0 0 EXPECT:conval:eq:4
+0.3 0 0 0 0 CON:GetSquareRoot%2.25
+0.1 0 0 0 0 EXPECT:conval:eq:1.5
+0.3 0 0 0 0 CON:player->GetStat%Level
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# Outdoors in Seyda Neen, then in an interior
+0.3 0 0 0 0 CON:GetInterior
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 CON:GetInterior
+0.1 0 0 0 0 EXPECT:conval:eq:1
+# Sneaking or not
+0.3 0 0 0 0 CON:GetPCSneaking
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 SNEAK:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:1
+0.3 0 0 0 0 CON:GetPCSneaking
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 SNEAK:0
+1 0 0 0
+# The weapon (fists) out, then away (X readies it on the GoldenEye layout)
+0.3 0 0 0 0 CON:player->GetWeaponDrawn
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 0 0 0 CON:player->GetWeaponDrawn
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.1 0 0 0 0 X
+1.5 0 0 0
+# Chameleon 25 and Paralysis 1 on the player: their magnitudes
+0.3 0 0 0 0 CON:player->GetChameleon
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 ACTIVE:40:25:30
+0.3 0 0 0 0 CON:player->GetChameleon
+0.1 0 0 0 0 EXPECT:conval:eq:25
+0.3 0 0 0 0 ACTIVE:45:1:3
+0.3 0 0 0 0 CON:player->GetParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:1
+4 0 0 0
+0.3 0 0 0 0 CON:player->GetParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:0

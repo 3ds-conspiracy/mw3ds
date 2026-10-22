@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# trib-fn-placeitem: PlaceItem / PlaceItemCell (Tribunal's dart mines, Sotha Sil's fabricant machine), OpenMW's
+# rules: a new object at the spot given in the player's cell, or in the cell named; a creature placed as PlaceAtMe
+# places it, an item as one lying there, an activator as an object of its own (its script runs); an id the game lacks
+# and a cell it lacks place nothing.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 TPIN:-150:-5541:-370:90
+2 0 0 0
+0.3 0 0 0 0 CON:PlaceItem%"misc_com_bucket_01"%-200%-5480%-376%0
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:misc_com_bucket_01:lt:150
+0.3 0 0 0 0 CON:PlaceItem%"furn_shrine_vivec_cure_02"%-260%-5480%-376%90
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:furn_shrine_vivec_cure_02:lt:200
+0.3 0 0 0 0 CON:PlaceItemCell%"scamp"%"Seyda%Neen,%Arrille's%Tradehouse"%-300%-5541%-376%0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refexists:scamp:eq:1
+0.1 0 0 0 0 EXPECT:refdist:scamp:lt:400
+# Nothing for an unknown id, and nothing in an unknown cell
+0.3 0 0 0 0 CON:PlaceItem%"no_such_thing_x"%-200%-5480%-376%0
+0.3 0 0 0 0 CON:PlaceItemCell%"misc_com_bucket_02"%"No%Such%Cell"%-200%-5480%-376%0
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refexists:misc_com_bucket_02:eq:0

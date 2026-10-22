@@ -1,0 +1,42 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-assassins-85: Tribunal's night in Barenziah's Chambers (TR_Assassins 80, Helseth's plan). barAssScript on
+# active_assassin_unique starts the assassins' creep (TR_Assassins 85) once it is a later day than
+# "King Hlaalu Helseth".FightDay, the hour is 20 or later (or 4 or earlier), the player is within 192 units and both of
+# the chambers' inner doors are shut: bardoor1Script / bardoor2Script flag doorcheck / door2check while their door is
+# open, and the script waits. ACTIVATE on the open door shuts it and leaves it shut. (The driver took the shut door
+# for a press that did nothing, pressed again and opened it: the night never came.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 JOURNAL:TR_Assassins:80
+0.3 0 0 0 0 SETGLOBAL:dayspassed:3
+0.3 0 0 0 0 SETGLOBAL:gamehour:23
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace:_Barenziah's_Chambers
+5 0 0 0
+60 0 0 0 0 ACTIVATE:barenziah
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,doorcheck:eq:1
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,door2check:eq:1
+60 0 0 0 0 WALKTO:@372,-250,-128
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:eq:80
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,daycheck:eq:0
+0.3 0 0 0 0 TPIN:372:-250:-100:0
+3 0 0 0
+60 0 0 0 0 ACTIVATE:In_MH_door_02_bar1_uni
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,doorcheck:eq:0
+60 0 0 0 0 WALKTO:@372,-250,-128
+2 0 0 0
+60 0 0 0 0 ACTIVATE:In_MH_door_02_bar2_uni
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,door2check:eq:0
+60 0 0 0 0 WALKTO:@372,-250,-128
+3 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,doorcheck:eq:0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,daycheck:eq:1
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:85

@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-moved-load: a person PositionCell moved to another cell can still be talked to after a save is loaded. Shunari
+# Eye-Fly's script moves her from the Temple basement to the Temple Gardens at Crimson Plague 105; after Save and Load
+# in the Gardens the crosshair found nothing ("hidden from here"), though the same walk without the load worked.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 JOURNAL:MS_CrimsonPlague:80
+0.3 0 0 0 0 GOTO:Mournhold_Temple:_Basement
+4 0 0 0
+0.3 0 0 0 0 JOURNAL:MS_CrimsonPlague:105
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refcell:shunari%eye-fly,Old%Mournhold:eq:1
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Temple_Gardens
+4 0 0 0
+0.3 0 0 0 0 SAVE:trib-moved-load
+3 0 0 0
+0.3 0 0 0 0 LOAD:trib-moved-load
+4 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Old_Mournhold:_Temple_Gardens
+0.3 0 0 0 0 LEGIT
+0.1 0 0 0 0 EXPECT:refcell:shunari%eye-fly,Old%Mournhold:eq:1
+0.1 0 0 0 0 EXPECT:refaimable:shunari%eye-fly:eq:1
+60 0 0 0 0 ACTIVATE:shunari%eye-fly
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:screen:dialogue

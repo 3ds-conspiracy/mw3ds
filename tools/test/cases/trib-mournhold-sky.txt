@@ -1,0 +1,31 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-mournhold-sky: Mournhold's city cells are interiors that behave as exteriors (OpenMW's QuasiEx): the sky, the
+# sun and the weather's light are there, day and night as outdoors, while GetInterior says interior; TribunalMain
+# (a start script) disables levitation in Mournhold: a Levitate ends there with sLevitateDisabled's message. An
+# ordinary Mournhold interior (the Craftsmen's Hall) has no sky. Shots at noon and midnight in Godsreach.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 GOTO:Mournhold,_Godsreach
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mournhold,_Godsreach
+0.1 0 0 0 0 EXPECT:wskyon:eq:1
+0.1 0 0 0 0 EXPECT:wnightday:eq:0
+0.3 0 0 0 0 CON:GetInterior
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.5 0 0 0 0 SHOT
+# The start script keeps levitation off here
+0.3 0 0 0 0 ACTIVE:10:20:60
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:0
+0.1 0 0 0 0 EXPECT:message:Levitation
+# Night under Mournhold's sky
+0.3 0 0 0 0 HOUR:23
+3 0 0 0
+0.1 0 0 0 0 EXPECT:wnightday:eq:2
+0.5 0 0 0 0 SHOT
+# Indoors in Mournhold: no sky
+0.3 0 0 0 0 GOTO:Mournhold,_Craftsmen's_Hall
+5 0 0 0
+0.1 0 0 0 0 EXPECT:wskyon:eq:0
