@@ -20,6 +20,26 @@ void World::restockGold(int ri)
 		return;
 	r.gold = game.actors[r.actor].gold;
 	r.lastBarter = gameHour;
+	// The restocking stacks (negative counts in the record) are back to their quantity too: a plain item the sales used up
+	// is added again (leveled lines keep what was picked)
+	if (!r.obj)
+		return;
+	for (auto& item : r.obj->items)
+	{
+		std::string id = lower(item.second);
+		if (item.first >= 0 || game.leveled.count(id) || !game.object(id))
+			continue;
+		bool found = false;
+		for (auto& c : r.contents)
+			if (c.second == id && c.first < 0 && c.plain())
+			{
+				c.first = item.first;
+				found = true;
+				break;
+			}
+		if (!found)
+			r.contents.emplace_back(item.first, id);
+	}
 }
 
 void World::pickUp(int ri)

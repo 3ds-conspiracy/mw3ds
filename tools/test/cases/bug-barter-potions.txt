@@ -1,0 +1,19 @@
+# bug-barter-potions: potions the player sold to Sharn gra-Muzgob (she trades potions, her record lists none) are in her
+# goods; buying one back leaves one fewer of the stack. Three sold, one bought back: two left.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 GIVE:potion_cyro_brandy_01:3
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+60 0 0 0 0 ACTIVATE:sharn_gra-muzgob
+1.5 0 0 0
+0.3 0 0 0 0 SELL:sharn_gra-muzgob:potion_cyro_brandy_01
+0.3 0 0 0 0 SELL:sharn_gra-muzgob:potion_cyro_brandy_01
+0.3 0 0 0 0 SELL:sharn_gra-muzgob:potion_cyro_brandy_01
+0.1 0 0 0 0 EXPECT:refstock:sharn_gra-muzgob,potion_cyro_brandy_01:eq:3
+0.3 0 0 0 0 BUY:sharn_gra-muzgob:potion_cyro_brandy_01
+0.1 0 0 0 0 EXPECT:refstock:sharn_gra-muzgob,potion_cyro_brandy_01:eq:2
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

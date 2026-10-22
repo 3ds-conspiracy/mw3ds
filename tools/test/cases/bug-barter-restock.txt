@@ -1,0 +1,23 @@
+# bug-barter-restock: buying from a merchant with restocking stock (a negative count in their record) uses the stock up, as
+# OpenMW's ContainerStore::subtractItems does: Ernand Thierry's coprinus, bought twice, leaves two fewer.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SETSKILL:alchemy:80
+0.3 0 0 0 0 SETATTR:personality:40
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 TP:-13192:19662:1657:0
+4 0 0 0
+# 1. The apparatus and the ingredients from Ernand
+120 0 0 0 0 DOORTO:Caldera,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Caldera,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ernand_thierry
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:refstock:ernand_thierry,ingred_coprinus_01
+0.3 0 0 0 0 BUY:ernand_thierry:ingred_coprinus_01
+0.3 0 0 0 0 BUY:ernand_thierry:ingred_coprinus_01
+0.1 0 0 0 0 EXPECT:refstock:ernand_thierry,ingred_coprinus_01:lt:@0
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
