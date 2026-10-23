@@ -41,6 +41,9 @@ void rendererExit();
 // eyeShift: stereo 3D eye offset (world units; 0 = mono). secondEye: the right eye of a stereo frame,
 // reusing the left eye's visibility, sorting and animation. fogScale: shorter view distance (3D).
 float rendererStereoPixels(float depth, float eyeShift);   // a stereo eye's offset of a point at that depth
+// Stereo 3D's far depth: the share of an eye's offset at infinity each doubling of the distance past ~8 m adds
+// (0: none, the plain stereo view). Set before the frame's eyes are drawn
+void rendererSetStereoCurve(float share);
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift = 0.0f, bool secondEye = false,
 	float fogScale = 1.0f);
 // Stereo: after the left eye's world and extras are drawn, the record ends (the GPU words from the start of

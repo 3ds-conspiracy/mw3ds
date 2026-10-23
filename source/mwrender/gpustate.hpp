@@ -46,6 +46,9 @@ struct GpuState
 	float invGamma = 1.0f;             // Gamma's exponent, 1 / gamma, in ambientAdd.w (rendererSetGamma)
 	bool gammaOn = false;
 	int bLightOn = -1;                 // shaders/cell.v.pica / shaders/skin.v.pica lightOn: the carried light's terms, skipped without one
+	int uStereoCurve = -1, bStereoOn = -1;   // ... stereoCurve / stereoOn: stereo 3D's far depth (rendererSetStereoCurve)
+	float stereoCurve[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	bool stereoCurveOn = false;
 	C3D_Mtx lightView;               // the view the lights were last put in (set again after a skinned run)
 	bool lightViewOn = false;
 	// Day and night outdoors (World::daylight): tint on the baked light, the sky's, and the fog colour
