@@ -13,6 +13,7 @@
 0.3 0 0 0 0 GIVE:sc_icarianflight:10
 0.3 0 0 0 0 GIVE:sc_divineintervention:10
 0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 GIVE:sc_ondusisunhinging:3
 0.3 0 0 0 0 SPELL:mark
 0.3 0 0 0 0 SPELL:recall
 0.3 0 0 0 0 SPELL:tower_key
@@ -1368,11 +1369,8 @@
 180 0 0 0 0 KILL:talmsa_falas
 2 0 0 0
 60 0 0 0 0 WALKTO:@110,3844,-1280
-1 0 0 0 0 FACE:@192,3844
-0.3 0 0 0 0 CAST:tower_key
-2 0 0 0
-0.3 0 0 0 0 A
-1 0 0 0
+# (the door on the way is locked, 30, its key on Milyn Faram behind it: the driver opens it with an Ondusi's Unhinging
+# from the kit. There is no tower_key spell: the cast that stood here did nothing, and the A after it pressed the ghost)
 120 0 0 0 0 DOORTO:Odirniran,_Tower
 10 0 0 0 0 UNTIL:cell:Odirniran,_Tower
 0.5 0 0 0
