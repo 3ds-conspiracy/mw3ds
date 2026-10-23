@@ -328,6 +328,13 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 			Actor* ra = w.actorOf(ri);
 			v = r.dead && ra && ra->time < actorSkeleton(*w.actorsOf(ri), ra->skeleton).groups[ra->group].stop - 0.05f ? 1.0f : 0.0f;
 		}
+		else if (what == "reflying")     // dead and lying: its death group held at its end (not stood up again by another group)
+		{
+			Actor* ra = w.actorOf(ri);
+			const Skeleton* rs = ra ? &actorSkeleton(*w.actorsOf(ri), ra->skeleton) : nullptr;
+			v = r.dead && rs && ra->group >= 0 && ra->group < (int)rs->groups.size()
+				&& strcasecmp(rs->groups[ra->group].name, r.deathGroup) == 0 && ra->time >= rs->groups[ra->group].stop - 0.05f ? 1.0f : 0.0f;
+		}
 		else if (what == "refrun")       // running (its run animation plays), not walking
 		{
 			Actor* ra = w.actorOf(ri);

@@ -1,0 +1,18 @@
+# A blow whose on-strike enchantment kills the target, whose shield then "blocked" the dead: the Block group played over
+# the death and ran out into an idle, so the body stood up and froze upright (a dire viperblade on Anise Romoran in
+# Shishi). The enchantment's Poison lands before the block and the damage (OpenMW), and the dead can't block
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:dire%viperblade
+0.3 0 0 0 0 EQUIP:dire%viperblade
+0.3 0 0 0 0 GOTO:Shishi
+8 0 0 0
+0.3 0 0 0 0 HOSTILE:anise%romoran
+0.3 0 0 0 0 REFHEALTH:anise%romoran:0.01
+90 0 0 0 0 KILL:anise%romoran
+0.05 0 0 0 0 EXPECT:dead:anise%romoran
+6 0 0 0
+0.3 0 0 0 0 EXPECT:refdying:anise%romoran:eq:0
+0.3 0 0 0 0 EXPECT:reflying:anise%romoran:eq:1

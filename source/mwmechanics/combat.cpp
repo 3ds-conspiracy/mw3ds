@@ -501,6 +501,10 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	// blow, and a blocked blow still casts). Arrows cast theirs in mwworld/projectilemanager.cpp
 	if (!ranged && !fatigueOnly)
 		strikeEnchantment(target);
+	// (it may have killed them: a body neither blocks nor takes the blow's damage and dies a second time; its shield's
+	// Block played over the death and the body stood up frozen, a dire viperblade on Anise Romoran)
+	if (t.dead)
+		return;
 
 	// Their shield, if they see it coming
 	const Object* shield = w.game.object(def.shield);
