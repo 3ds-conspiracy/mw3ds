@@ -193,7 +193,7 @@ void Session::drawOptions()
 		uiFrame(14, 88, 292, 12);
 		// Auto gamma: what this console reads the light with
 		GammaSensor sensor = gammaSensor();
-		if (choice(108, "Auto gamma", sensor == SENSOR_NONE ? "No light sensor" : onOff(gammaAutoOn()), sensor != SENSOR_NONE))
+		if (choice(106, "Auto gamma", sensor == SENSOR_NONE ? "No light sensor" : onOff(gammaAutoOn()), sensor != SENSOR_NONE))
 		{
 			g_autoGamma = gammaAutoOn() ? 0 : 1;
 			notify(!gammaAutoOn() ? "Auto gamma off." : sensor == SENSOR_QTM
@@ -207,7 +207,7 @@ void Session::drawOptions()
 		// shortest; Mid halfway; Auto between them with the frame rate (a New 3DS from the longest, closing in when slow;
 		// an Old 3DS from the shortest, opening out while there is room). A tap goes Auto, Max, Mid, Min
 		static const char* kViewNames[4] = { "Min", "Auto", "Max", "Mid" };
-		if (choice(134, "View distance", kViewNames[viewMode]))
+		if (choice(130, "View distance", kViewNames[viewMode]))
 		{
 			viewMode = viewMode == VIEW_AUTO ? VIEW_MAX : viewMode == VIEW_MAX ? VIEW_MID : viewMode == VIEW_MID ? VIEW_MIN : VIEW_AUTO;
 			changed = true;
@@ -218,19 +218,20 @@ void Session::drawOptions()
 		}
 		// Depth buffer: 24-bit, 16-bit while 3D is on (half the depth traffic of two eyes), or 16-bit always. A tap cycles
 		static const char* kDepthNames[3] = { "24-bit", "16-bit in 3D", "16-bit" };
-		if (choice(160, "Depth buffer", kDepthNames[g_depthMode]))
+		if (choice(154, "Depth buffer", kDepthNames[g_depthMode]))
 		{
 			g_depthMode = (g_depthMode + 1) % 3;
 			changed = true;
 			notify(g_depthMode == DEPTH_24 ? "Depth buffer 24-bit." : g_depthMode == DEPTH_16_IN_3D
 				? "Depth buffer 16-bit while 3D is on: lighter frames in 3D." : "Depth buffer 16-bit: far surfaces may flicker.");
 		}
-		uiText(10, 186, 0.4f, col::textDim, how);
+		// (the rows close up so the two hint lines clear the buttons)
+		uiText(10, 180, 0.4f, col::textDim, how);
 		if (gammaAutoOn())
 			snprintf(text, sizeof(text), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
 		else
 			snprintf(text, sizeof(text), "Gamma 1.00 is Morrowind's own; higher helps in sun.");
-		uiText(10, 198, 0.4f, col::textDim, text);
+		uiText(10, 192, 0.4f, col::textDim, text);
 		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
 		closing = b == 1;
 		if (b == 0)
