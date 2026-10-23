@@ -1,0 +1,18 @@
+# The Saves screen opened from the list in memory: opening it read every save's file on the card again (seconds on
+# the console). The first opening reads them; later openings, a new save and a delete read nothing more
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 B
+0.3 0 0 0 0 SNAP:savereads+SNAP:saves
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:saves:eq:@1+EXPECT:savenewestfirst:eq:1
+0.3 0 0 0 0 B
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves+EXPECT:savenewestfirst:eq:1+EXPECT:saves:eq:@1
+0.3 0 0 0 0 B
+0.3 0 0 0 0 EXPECT:savereads:eq:@0
+1 0 0 0

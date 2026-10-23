@@ -260,6 +260,26 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		logf("test: probe %.0f %.0f %.0f: floor%s", x, y, z, found.empty() ? " none" : found.c_str());
 		return true;
 	}
+	if (verb == "PROBEUP" && a.size() >= 4)
+	{
+		// PROBEUP:x:y:z: the first surface straight up from that spot in the loaded cells (collision, up to 4000 over it),
+		// logged: what roofs a spot over
+		float from[3] = { (float)atof(a[1].c_str()), (float)atof(a[2].c_str()), (float)atof(a[3].c_str()) };
+		float to[3] = { from[0], from[1], from[2] + 4000.0f };
+		Scene sc = w.scene();
+		float best = 1.0f;
+		for (Cell* c : sc.cells)
+		{
+			float t;
+			if (collisionRaycast(c->collision, from, to, &t) && t < best)
+				best = t;
+		}
+		if (best < 1.0f)
+			logf("test: probeup %.0f %.0f %.0f: roof %.0f", from[0], from[1], from[2], from[2] + best * 4000.0f);
+		else
+			logf("test: probeup %.0f %.0f %.0f: roof none", from[0], from[1], from[2]);
+		return true;
+	}
 	if (verb == "SCREEN" && a.size() >= 2)
 	{
 		int scr = screenByName(a[1]);

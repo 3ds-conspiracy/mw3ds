@@ -15,6 +15,7 @@
 
 extern const char* g_playerBlock;
 bool g_testDepth16 = false;
+float g_test3dSlider = -1.0f;
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
 
@@ -245,6 +246,22 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 	{
 		g_testDepth16 = a[1] == "on";
 		logf("test: depth16 %s", g_testDepth16 ? "on" : "off");
+		return true;
+	}
+	// SAVESRELOAD: the save list kept in memory dropped, so the next listing reads the card as at a start (the saves'
+	// index, then the .meta of saves it lacks)
+	if (verb == "SAVESRELOAD")
+	{
+		forgetSavesList();
+		logf("test: save list dropped");
+		return true;
+	}
+	// SLIDER3D:<0..1>|off: the 3D slider held at that setting (off: the console's own again): shots of each eye as the
+	// stereo depth changes along the slider
+	if (verb == "SLIDER3D" && a.size() >= 2)
+	{
+		g_test3dSlider = a[1] == "off" ? -1.0f : std::min(1.0f, std::max(0.0f, (float)atof(a[1].c_str())));
+		logf("test: 3d slider %.3f", g_test3dSlider);
 		return true;
 	}
 	// SAYLINE:<npc>[:novoice]: the NPC speaks a line, voiced (the first voice file in the data) or text only

@@ -46,6 +46,10 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 				break;
 			}
 	}
+	else if (what == "savereads")    // times the save list was read from the card (the Saves screen opened from memory)
+		v = (float)g_saveListReads;
+	else if (what == "savemetareads")    // .meta files opened listing the saves (the saves' index lacked them)
+		v = (float)g_saveMetaReads;
 	else if (what == "saverow")     // <n>: row n of the save list shows its date and time whole at the right (1), and not
 	{                                 // the character's name when all the saves are one character's; else 0
 		std::vector<SaveInfo> list = savesList(s.dataDir);

@@ -11,6 +11,7 @@
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 #include <array>
+#include <map>
 #include <functional>
 #include <tex3ds.h>
 #include <citro2d.h>
@@ -34,8 +35,37 @@ std::string g_lastSavePath;
 SaveInfo g_lastSaveInfo;
 // One past the highest save count on the card, known once savesList has read the saves (0: not read yet)
 static u32 g_nextOrder = 0;
+// The saves as savesList last read them, kept as the game writes and deletes them: on the console each save's file
+// checked and its .meta opened took a moment on the card, and the Saves screen read them all at every opening. Read
+// once (the title screen lists them at boot), then the list here. Files changed on the card behind the game's back
+// (over FTP) show at the next start
+static std::vector<SaveInfo> s_saveCache;
+static std::string s_saveCacheDir;
+static bool s_saveCacheOk = false;
+int g_saveListReads = 0, g_saveMetaReads = 0;
 
-static bool readInfo(const std::string& path, SaveInfo& out);
+static bool readInfo(const std::string& path, SaveInfo& out, bool listed = false);
+static void parseMeta(char* line, SaveInfo& out);
+// The player's saves' details in one file, so listing them reads it and the folder's names instead of opening a .meta
+// a save (with hundreds of saves, as many file opens on the card): a line a save written, "<file>\t<its .meta line>",
+// and "-\t<file>" a save deleted, the later line winning. A save it doesn't know (an older build's, or one copied
+// onto the card) is read from its .meta; then, or once it holds many more lines than saves, it is written again whole.
+// The .meta files are still written beside the saves (older builds read them)
+static const char* const kSaveIndex = "sdmc:/3ds/mw3ds/saves/index.txt";
+
+static std::string fileOf(const std::string& path)
+{
+	return path.substr(path.find_last_of('/') + 1);
+}
+
+static void appendIndex(const std::string& line)
+{
+	if (FILE* f = fopen(kSaveIndex, "a"))
+	{
+		fputs(line.c_str(), f);
+		fclose(f);
+	}
+}
 static std::vector<std::string> jsonFiles(const std::string& dir);
 
 void writeSaveMeta(const char* savePath, const std::string& name, const std::string& place, int level, u64 timeMs)
@@ -71,12 +101,36 @@ void writeSaveMeta(const char* savePath, const std::string& name, const std::str
 		s.order = order;
 		s.detail = "Level " + std::to_string(level) + ", " + formatTime(timeMs);
 	}
+	char line[320];
+	snprintf(line, sizeof(line), "%s\t%s\t%d\t%llu\t%lu\n", name.c_str(), place.c_str(), level, timeMs, (unsigned long)order);
 	std::string meta = std::string(savePath) + ".meta";
 	if (FILE* f = fopen(meta.c_str(), "w"))
 	{
-		fprintf(f, "%s\t%s\t%d\t%llu\t%lu\n", name.c_str(), place.c_str(), level, timeMs, (unsigned long)order);
+		fputs(line, f);
 		fclose(f);
 	}
+	if (order)
+		appendIndex(fileOf(savePath) + "\t" + line);
+	// the kept list as a fresh read would now find it: the save at the top of the player's own, the autosave first
+	if (!s_saveCacheOk)
+		return;
+	s_saveCache.erase(std::remove_if(s_saveCache.begin(), s_saveCache.end(),
+		[&](const SaveInfo& s) { return s.path == savePath; }), s_saveCache.end());
+	if (order)
+	{
+		addSaveToList(s_saveCache);
+		return;
+	}
+	SaveInfo a;
+	a.path = savePath;
+	a.autosave = true;
+	a.title = name == place ? name : name + " - " + place;
+	a.name = name;
+	a.place = place;
+	a.level = level;
+	a.time = timeMs;
+	a.detail = "Autosave, Level " + std::to_string(level) + ", " + formatTime(timeMs);
+	s_saveCache.insert(s_saveCache.begin(), a);
 }
 
 void addSaveToList(std::vector<SaveInfo>& list)
@@ -88,52 +142,58 @@ void addSaveToList(std::vector<SaveInfo>& list)
 	list.insert(list.begin() + at, g_lastSaveInfo);
 }
 
-static bool readInfo(const std::string& path, SaveInfo& out)
+// listed: the file came from the folder's own listing (no check that it is there: one card access less a save)
+static bool readInfo(const std::string& path, SaveInfo& out, bool listed)
 {
 	struct stat st;
-	if (stat(path.c_str(), &st) != 0)
+	if (!listed && stat(path.c_str(), &st) != 0)
 		return false;
 	out.path = path;
 	out.title = path.substr(path.find_last_of('/') + 1);
+	g_saveMetaReads++;
 	FILE* f = fopen((path + ".meta").c_str(), "r");
 	if (!f)
 		return true;
 	char line[256] = {};
 	if (fgets(line, sizeof(line), f))
-	{
-		line[strcspn(line, "\r\n")] = 0;
-		char* fields[5] = {};
-		int n = 0;
-		for (char* p = line; n < 5; n++)
-		{
-			fields[n] = p;
-			char* tab = strchr(p, '\t');
-			if (!tab)
-			{
-				n++;
-				break;
-			}
-			*tab = 0;
-			p = tab + 1;
-		}
-		if (n >= 2)
-		{
-			out.title = strcmp(fields[0], fields[1]) == 0 ? fields[0] : std::string(fields[0]) + " - " + fields[1];
-			out.name = fields[0];
-			out.place = fields[1];
-		}
-		if (n >= 3)
-		{
-			out.detail = std::string("Level ") + fields[2];
-			out.level = atoi(fields[2]);
-		}
-		if (n >= 4)
-			out.time = strtoull(fields[3], nullptr, 10);
-		if (n >= 5)
-			out.order = strtoul(fields[4], nullptr, 10);
-	}
+		parseMeta(line, out);
 	fclose(f);
 	return true;
+}
+
+// A .meta line (name, place, level, time, save count, tab-separated) into the save's row
+static void parseMeta(char* line, SaveInfo& out)
+{
+	line[strcspn(line, "\r\n")] = 0;
+	char* fields[5] = {};
+	int n = 0;
+	for (char* p = line; n < 5; n++)
+	{
+		fields[n] = p;
+		char* tab = strchr(p, '\t');
+		if (!tab)
+		{
+			n++;
+			break;
+		}
+		*tab = 0;
+		p = tab + 1;
+	}
+	if (n >= 2)
+	{
+		out.title = strcmp(fields[0], fields[1]) == 0 ? fields[0] : std::string(fields[0]) + " - " + fields[1];
+		out.name = fields[0];
+		out.place = fields[1];
+	}
+	if (n >= 3)
+	{
+		out.detail = std::string("Level ") + fields[2];
+		out.level = atoi(fields[2]);
+	}
+	if (n >= 4)
+		out.time = strtoull(fields[3], nullptr, 10);
+	if (n >= 5)
+		out.order = strtoul(fields[4], nullptr, 10);
 }
 
 static std::vector<std::string> jsonFiles(const std::string& dir)
@@ -154,6 +214,9 @@ static std::vector<std::string> jsonFiles(const std::string& dir)
 
 std::vector<SaveInfo> savesList(const char* dataDir)
 {
+	if (s_saveCacheOk && s_saveCacheDir == dataDir)
+		return s_saveCache;
+	g_saveListReads++;
 	std::vector<SaveInfo> out, mine, bundled;
 	SaveInfo info;
 	if (readInfo(kAutosavePath, info))
@@ -162,12 +225,57 @@ std::vector<SaveInfo> savesList(const char* dataDir)
 		info.detail = "Autosave" + (info.detail.empty() ? "" : ", " + info.detail);
 		out.push_back(info);
 	}
+	std::map<std::string, std::string> index;
+	int indexLines = 0;
+	if (FILE* f = fopen(kSaveIndex, "r"))
+	{
+		char line[400];
+		while (fgets(line, sizeof(line), f))
+		{
+			line[strcspn(line, "\r\n")] = 0;
+			char* tab = strchr(line, '\t');
+			if (!tab)
+				continue;
+			*tab = 0;
+			indexLines++;
+			if (strcmp(line, "-") == 0)
+				index.erase(tab + 1);
+			else
+				index[line] = tab + 1;
+		}
+		fclose(f);
+	}
+	size_t known = 0;
+	bool learned = false;
 	for (auto& p : jsonFiles(kSaveDir))
 	{
 		SaveInfo s;
-		if (readInfo(p, s))
+		auto it = index.find(fileOf(p));
+		if (it != index.end())
+		{
+			s.path = p;
+			s.title = it->first;
+			std::string line = it->second;
+			parseMeta(&line[0], s);
 			mine.push_back(s);
+			known++;
+		}
+		else if (readInfo(p, s, true))
+		{
+			mine.push_back(s);
+			learned = learned || !s.name.empty();
+		}
 	}
+	// (written again whole: saves it lacked, saves gone from the card, or many lines over the saves it lists)
+	if (learned || index.size() > known || indexLines > (int)known + 32)
+		if (FILE* f = fopen(kSaveIndex, "w"))
+		{
+			for (const SaveInfo& s : mine)
+				if (!s.name.empty())
+					fprintf(f, "%s\t%s\t%s\t%d\t%llu\t%lu\n", fileOf(s.path).c_str(), s.name.c_str(), s.place.c_str(),
+						s.level, s.time, (unsigned long)s.order);
+			fclose(f);
+		}
 	// Newest first: by the save count, then (older saves without one) by the time they were made
 	std::sort(mine.begin(), mine.end(), [](const SaveInfo& a, const SaveInfo& b) {
 		return a.order != b.order ? a.order > b.order : a.time > b.time;
@@ -176,7 +284,7 @@ std::vector<SaveInfo> savesList(const char* dataDir)
 	for (auto& p : jsonFiles(std::string(dataDir) + "/saves"))
 	{
 		SaveInfo s;
-		if (readInfo(p, s))
+		if (readInfo(p, s, true))
 		{
 			s.bundled = true;
 			s.detail = "Starting point" + (s.detail.empty() ? "" : ", " + s.detail);
@@ -191,7 +299,22 @@ std::vector<SaveInfo> savesList(const char* dataDir)
 		out[0].detail += ", " + formatTime(out[0].time);
 	out.insert(out.end(), mine.begin(), mine.end());
 	out.insert(out.end(), bundled.begin(), bundled.end());
+	s_saveCache = out;
+	s_saveCacheDir = dataDir;
+	s_saveCacheOk = true;
 	return out;
+}
+
+void forgetSavesList()
+{
+	s_saveCacheOk = false;
+}
+
+// A save deleted: gone from the kept list as well
+static void forgetSave(const std::string& path)
+{
+	s_saveCache.erase(std::remove_if(s_saveCache.begin(), s_saveCache.end(),
+		[&](const SaveInfo& s) { return s.path == path; }), s_saveCache.end());
 }
 
 std::string saveNewPath()
@@ -199,10 +322,13 @@ std::string saveNewPath()
 	mkdir("sdmc:/3ds", 0777);
 	mkdir("sdmc:/3ds/mw3ds", 0777);
 	mkdir(kSaveDir, 0777);
+	// the first number free: past those the kept list holds without asking the card (one check, of that one)
 	for (int i = 1; i < 1000; i++)
 	{
 		char path[96];
 		snprintf(path, sizeof(path), "%s/save_%03d.json", kSaveDir, i);
+		if (s_saveCacheOk && std::any_of(s_saveCache.begin(), s_saveCache.end(), [&](const SaveInfo& s) { return s.path == path; }))
+			continue;
 		struct stat st;
 		if (stat(path, &st) != 0)
 			return path;
@@ -282,6 +408,8 @@ void Session::drawSaves()
 				remove(saveList[list.selected].path.c_str());
 				remove((saveList[list.selected].path + ".meta").c_str());
 				logf("saves: deleted %s", saveList[list.selected].path.c_str());
+				forgetSave(saveList[list.selected].path);
+				appendIndex("-\t" + fileOf(saveList[list.selected].path) + "\n");
 				saveList = savesList(dataDir);
 				if (list.selected >= (int)saveList.size())
 					list.selected = (int)saveList.size() - 1;

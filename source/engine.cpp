@@ -625,7 +625,7 @@ bool Engine::frame()
 	drawProfAdd(DRAWP_MAP, drawSince);
 
 	// Stereo 3D: eases in and out; the screen leaves 3D mode only once the depth is gone
-	float slider = osGet3DSliderState();
+	float slider = g_test3dSlider >= 0.0f ? g_test3dSlider : osGet3DSliderState();
 	float target = loaded && !autoShotNow && poseIndex >= autocam.size() ? session->stereoTarget(slider, dt) : 0.0f;
 	float& amount = session->stereoAmount;
 	amount = target > amount ? fminf(target, amount + dt * 2.0f) : fmaxf(target, amount - dt * 2.0f);

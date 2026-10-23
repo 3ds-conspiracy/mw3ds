@@ -742,12 +742,13 @@ void C3D_TexEnvColor(C3D_TexEnv* env, u32 color) { env->color = color; }
 
 // ---- mwrender/renderingmanager.cpp's shader: uniform slots by name, as shaders/cell.v.pica declares them
 enum { U_PROJECTION = 0, U_MODELVIEW = 4, U_UVOFFSET = 8, U_FOGVEC, U_POSOFFSET, U_POSSCALE, U_UVSCALE, U_TINT, U_LIGHTPOS,
-	U_LIGHTCOLOR, U_AMBIENT, U_TORCHVEC, U_BONES };     // (U_BONES: shaders/skin.v.pica's palette, 3 rows a bone; U_AMBIENT: Night Eye;
-	                                                   // U_TORCHVEC: the torch's reach per pixel)
+	U_LIGHTCOLOR, U_AMBIENT, U_TORCHVEC, U_STEREOCURVE, U_BONES };     // (U_BONES: shaders/skin.v.pica's palette, 3 rows a bone;
+	// U_AMBIENT: Night Eye; U_TORCHVEC: the torch's reach per pixel; U_STEREOCURVE: stereo 3D's far depth)
 // shaders/cell.v.pica's lamp (the batch's lamp light, x each vertex's w) sits where shaders/skin.v.pica's palette starts, as on the
-// PICA. The bools in the order the shaders declare them: 0 Gamma's curve (light ^ ambientAdd.w), 1 the carried light
-enum { U_LAMP = U_BONES, U_SIDE, B_GAMMA = 0, B_LIGHTON };     // (U_SIDE: shaders/cell.v.pica sideLight, after lamp)
-static bool s_lightOn = false, s_gammaOn = false;
+// PICA. The bools in the order the shaders declare them: 0 Gamma's curve (light ^ ambientAdd.w), 1 the carried light, 2 stereo
+// 3D's far depth
+enum { U_LAMP = U_BONES, U_SIDE, B_GAMMA = 0, B_LIGHTON, B_STEREOON };     // (U_SIDE: shaders/cell.v.pica sideLight, after lamp)
+static bool s_lightOn = false, s_gammaOn = false, s_stereoOn = false;
 
 DVLB_s* DVLB_ParseFile(u32*, u32) { return new DVLB_s(); }
 void DVLB_Free(DVLB_s* d) { delete d; }
@@ -760,8 +761,8 @@ s8 shaderInstanceGetUniformLocation(shaderInstance_s*, const char* name)
 		{ "modelView", U_MODELVIEW }, { "uvOffset", U_UVOFFSET }, { "fogVec", U_FOGVEC }, { "posOffset", U_POSOFFSET },
 		{ "posScale", U_POSSCALE }, { "uvScale", U_UVSCALE }, { "tint", U_TINT }, { "lightPos", U_LIGHTPOS },
 		{ "lightColor", U_LIGHTCOLOR }, { "ambientAdd", U_AMBIENT }, { "torchVec", U_TORCHVEC }, { "bones", U_BONES },
-		{ "lamp", U_LAMP }, { "sideLight", U_SIDE },
-		{ "gammaOn", B_GAMMA }, { "lightOn", B_LIGHTON } };
+		{ "lamp", U_LAMP }, { "sideLight", U_SIDE }, { "stereoCurve", U_STEREOCURVE },
+		{ "gammaOn", B_GAMMA }, { "lightOn", B_LIGHTON }, { "stereoOn", B_STEREOON } };
 	for (auto& s : kSlots)
 		if (strcmp(s.name, name) == 0)
 			return s.slot;
@@ -822,6 +823,8 @@ void C3D_BoolUnifSet(int, int id, bool value)
 		s_lightOn = value;
 	else if (id == B_GAMMA)
 		s_gammaOn = value;
+	else if (id == B_STEREOON)
+		s_stereoOn = value;
 }
 void C3D_FVUnifMtx4x4(int, int id, const C3D_Mtx* m)
 {
@@ -1033,6 +1036,14 @@ static ClipV vertexShader(const u8* v)
 	ClipV o;
 	for (int i = 0; i < 4; i++)
 		o.p[i] = dp4(u[U_PROJECTION + i], r1);
+	// stereo 3D's far depth (stereoOn): doublings of the depth past the knee, up to the most, x the eye's offset at infinity
+	if (s_stereoOn)
+	{
+		const float* c = u[U_STEREOCURVE];
+		float d = std::min(c[2], std::max(0.0f, log2f(std::max(5.0f, o.p[3])) - c[1])) * c[0] * o.p[3];
+		o.p[0] = f24(o.p[0] + d * u[U_PROJECTION][2]);
+		o.p[1] = f24(o.p[1] + d * u[U_PROJECTION + 1][2]);
+	}
 	o.a[4] = u[U_UVOFFSET][0] + in[1][0] * u[U_UVSCALE][0];
 	o.a[5] = u[U_UVOFFSET][1] + in[1][1] * u[U_UVSCALE][1];
 	o.a[6] = u[U_FOGVEC][0] * r1[0] + u[U_FOGVEC][1] * r1[1] + u[U_FOGVEC][2] * r1[2] + u[U_FOGVEC][3] * r1[3];
