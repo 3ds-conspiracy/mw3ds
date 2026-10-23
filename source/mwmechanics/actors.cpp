@@ -111,7 +111,7 @@ void Session::killNpc(int ri, bool byPlayer)
 	}
 	w.syncActor(ri);
 	playSound(ri, "Body Fall Medium");
-	logf("combat: %s died", r.id.c_str());
+	logf("combat: %s died (%s)", r.id.c_str(), r.deathGroup);
 }
 
 // Health gone, whatever took it (blows, spells, traps, falls, scripts)

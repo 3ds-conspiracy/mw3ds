@@ -651,6 +651,28 @@ void World::update(float dt)
 			Actor& a = l->actors.actors[k];
 			float dx = a.place[3] - player.feet[0], dy = a.place[7] - player.feet[1];
 			float d2 = dx * dx + dy * dy;
+			// A body whose fall stops short of its end, or that plays something other than a death: once, with what it
+			// was doing (a person stayed frozen upright on a New 3DS in a fight in Shishi, never reproduced: the device's
+			// log should say what held it). Not while the world stands still under a menu, nor past the reach posed (those
+			// wait on purpose for the player to come near)
+			if (a.ref >= 0 && refs[a.ref].dead && dt > 0.0f && !a.frozen && refs[a.ref].visible() && d2 < reach * reach)
+			{
+				const Skeleton& sk = actorSkeleton(l->actors, a.skeleton);
+				const AnimGroup* g = a.group >= 0 && a.group < (int)sk.groups.size() ? &sk.groups[a.group] : nullptr;
+				const char* n = g ? g->name : "";
+				bool death = strncasecmp(n + (strncasecmp(n, "Swim", 4) == 0 ? 4 : 0), "Death", 5) == 0;
+				if (g && (!death || a.time < g->stop - 0.05f))
+				{
+					a.fallFor += dt;
+					if (a.fallFor > 3.0f * fmaxf(1.0f, g->stop - g->start))
+						monitorOnce(("fallstuck:" + refs[a.ref].id).c_str(),
+							"%s's death stuck: group %.*s (wanted %s), time %.2f of %.2f..%.2f, mode %d, poses %u, owed %.2f, "
+							"%.0f away", refs[a.ref].id.c_str(), (int)sizeof(g->name), n, refs[a.ref].deathGroup, a.time, g->start,
+							g->stop, (int)a.mode, a.poses, a.pendingDt, sqrtf(d2));
+				}
+				else
+					a.fallFor = 0.0f;
+			}
 			if (a.ref < 0 || !refs[a.ref].visible() || d2 >= reach * reach)
 				continue;
 			// (paralyzed, alive: it stands frozen mid-move, its animation's time held: OpenMW's skipAnim)
