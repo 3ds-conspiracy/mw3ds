@@ -449,7 +449,9 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	int travelPriceFor(int npcRef, float distance, int followers, bool interior);
 	bool trainSkill(int skill);                   // the training screen's Train button
 	void openBarter(int ref);
-	bool barterTrade(bool sell, int index, int price, int from = -1, int count = 1);   // count items bought (from's
+	int barterBalance();                          // the deal's worth to the player: what the merchant pays, less what they do
+	bool barterOffer();                           // the deal's Offer: settled at the haggled balance, or refused
+	bool barterTrade(bool sell, int index, int price, int from = -1, int count = 1, bool thanks = true);   // count items bought (from's
 	                                                                                    // contents: the merchant's or a
 	                                                                                    // chest of theirs) / sold
 	std::vector<std::pair<int, int>> merchantGoods(int ref);   // (reference, index into its contents; -1: the reference is the item itself, lying in the shop)

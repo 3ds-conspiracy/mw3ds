@@ -158,7 +158,13 @@ struct WindowManagerState
 	bool containerPutting = false;                    // the container screen shows the player's items (to put in)
 	int promptRows = 1;                                    // the lines it took last (the attack hint under it moves down for two)
 	bool deathAnySave = false;                    // any save to choose from (the game's starting points too)
-	int barterCount = 0;                          // barter: how many of the picked stack (0: not choosing yet)
+	int barterCount = 0;                          // barter: how many of the picked stack go in the deal (while counting)
+	bool barterCounting = false;                  // barter: the count picker is open for the picked stack
+	// barter: the deal being put together (OpenMW's trade window), what goes each way until the offer settles it: sold from
+	// the inventory (from -1, index into it) or bought from a merchant's holder (from: the reference, index into its
+	// contents; -1: the reference is the item itself)
+	struct BarterLine { bool sell; int from; int index; int count; };
+	std::vector<BarterLine> barterDeal;
 	bool deletingSave = false;                    // Saves screen: asking before deleting the selected save
 	int haggle = 0;                               // barter: the player's offer against the price, in 5% steps
 	std::string rechargeGem;                       // the soul gem Recharge was chosen on (its soul's creature)
