@@ -164,6 +164,15 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	// (a follower held up outdoors, going where the player went, steps down a ledge as the player did: OpenMW's
 	// actors fall off one where they walk)
 	float maxDrop = (r.trailUntil > w.time || r.dropUntil > w.time) && !w.cells[w.placeOf(ri)].interior ? 250.0f : 48.0f;
+	// One closing on a foe below goes off a ledge after it, down to the foe's own floor (OpenMW's fighters move straight at a
+	// foe in sight and walk off an edge): Larienna Macrina, on a step 59 over the centurion sphere fighting her in
+	// Nchurdamz, ran in place at its edge out of her reach and in the sphere's, and never followed the player on
+	if ((r.ai == AI_COMBAT || r.duelFoe >= 0) && !r.backingUp && r.sideStep == 0)
+	{
+		float foeZ = r.duelFoe >= 0 ? w.refs[r.duelFoe].pos[2] : w.player.feet[2];
+		if (fz >= foeZ - 16.0f)
+			maxDrop = fmaxf(maxDrop, fminf(250.0f, r.pos[2] - foeZ + 16.0f));
+	}
 	if (fz < r.pos[2] - maxDrop && fz > swimZ + 0.5f)
 	{
 		return false;
