@@ -183,12 +183,15 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	// straight at its point, or stepping aside when stuck) an actor climbs objects no steeper than the player's 46
 	// (OpenMW's sMaxSlope; its navigation mesh routes round the rest): the prison ship's guard walked straight at the
 	// hold's side, faces of 37 to 58 degrees, and up it. A follower of the player (it walks their footsteps) and a
-	// fighter keep 60, on the stairs the player takes
+	// fighter closing in keep 60, on the stairs the player takes; a fighter backing away or stepping aside climbs the
+	// player's 46 (Berengeval, backing off a blade in Tel Naga, went up the roots into a nook the player can't reach: the
+	// in-fight rule of npcClimbSlope, for objects)
 	float climb = npcClimbSlope(w, r);
 	bool onRoute = !r.path.empty() && r.stuckTimer >= 0.0f;
 	bool fighting = r.ai == AI_COMBAT || r.duelFoe >= 0;
+	bool closing = fighting && !r.backingUp && r.sideStep == 0;
 	bool follower = r.aiPackage == AIPKG_FOLLOW && r.aiTarget == "player" && !r.aiDone;
-	float objectClimb = onRoute || fighting || follower ? 90.0f : kWalkSlope;
+	float objectClimb = onRoute || closing || follower ? 90.0f : kWalkSlope;
 	bool wet = cell.hasWater() && r.pos[2] < cell.waterZ + 10.0f;
 	if ((climb < 60.0f || objectClimb < 90.0f) && fz > r.pos[2] + 2.0f && fz > swimZ + 0.5f && !wet)
 	{
