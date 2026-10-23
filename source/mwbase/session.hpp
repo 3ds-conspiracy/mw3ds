@@ -114,6 +114,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void makeHostile(int ref);
 	// spell: a damage effect (health only, no hit recoil, hurt sound, blood or voice: OpenMW's applyMagicEffect)
 	void damageNpc(int ref, float dmg, bool fatigueOnly, bool spell = false);
+	bool friendlyHit(int ref);     // the player's blow or harmful spell on one siding with them is forgiven
 	void actorGravity(float dt);
 	bool inSwing(int ref, float* dist = nullptr);         // a swing now would reach them
 	int swingTarget();                                   // who a swing now would strike (-1: nobody)

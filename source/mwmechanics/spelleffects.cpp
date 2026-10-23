@@ -423,7 +423,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 			if (mag <= 0.0f)
 			{
 				logf("magic: %s resists %d", r.id.c_str(), e.effect);
-				if (!r.dead)
+				if (!r.dead && byPlayer && !friendlyHit(ri))
 				{
 					bool peaceful = r.ai != AI_COMBAT;
 					makeHostile(ri);
@@ -576,7 +576,9 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 			timed(fmaxf(1.0f, dur));
 		break;
 	}
-	if (harmful(e.effect) && !r.dead)
+	// (the player's spell only: one cast by someone else turned whoever it struck on the player; on one siding with the
+	// player it is a friendly hit, as a blow is)
+	if (harmful(e.effect) && !r.dead && byPlayer && !friendlyHit(ri))
 	{
 		bool peaceful = r.ai != AI_COMBAT;
 		makeHostile(ri);
