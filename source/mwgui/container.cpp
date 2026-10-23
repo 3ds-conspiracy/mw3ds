@@ -61,11 +61,7 @@ bool Session::containerPut(int i)
 		w.refreshStats();
 	}
 	w.inventory.erase(w.inventory.begin() + i);
-	// with the last one gone its script stops (as World::removeItem)
-	if (w.itemCount(it.id) == 0)
-		for (auto& sc : w.scripts)
-			if (sc.item == it.id)
-				sc.running = false;
+	w.itemLeft(it.id);
 	// onto a stack of the same that is the player's (not one the container restocks), its wear, soul and charge kept
 	w.refAddStack(c, it);
 	playSound(-1, "Item Misc Down");

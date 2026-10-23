@@ -119,6 +119,7 @@ void Session::drawInventory()
 			}
 			if ((w.inventory[sel].count -= n) <= 0)
 				w.inventory.erase(w.inventory.begin() + sel);
+			w.itemLeft(it.id);
 			w.dropItemAt(it, w.player.feet, w.player.yaw, 50.0f);
 			playSound(-1, "Item Misc Down");
 			grid.selected = -1;

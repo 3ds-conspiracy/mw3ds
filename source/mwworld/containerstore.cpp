@@ -130,12 +130,20 @@ int World::removeItem(const std::string& id, int count)
 				i++;
 	if (wornGone)
 		refreshStats();                // its constant effects go with it
-	// An item's script runs while it is carried: with the last one gone it stops
-	if (want > count && itemCount(l) == 0)
+	if (want > count)
+		itemLeft(l);
+	return want - count;
+}
+
+// An item's script runs while it is carried: with the last one gone it stops (kept, its locals with it, for the item
+// coming back). Every way an item leaves the inventory ends here, not only removeItem
+void World::itemLeft(const std::string& id)
+{
+	std::string l = lower(id);
+	if (itemCount(l) == 0)
 		for (auto& s : scripts)
 			if (s.item == l)
 				s.running = false;
-	return want - count;
 }
 
 int World::refItemCount(const Ref& r, const std::string& id) const

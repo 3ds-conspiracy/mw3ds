@@ -347,6 +347,7 @@ struct World
 	void addItem(const std::string& id, int count);
 	void addStack(const InventoryItem& item);           // a whole item (a soul gem with its soul) joins the stack it fits
 	int removeItem(const std::string& id, int count);   // how many were removed
+	void itemLeft(const std::string& id);               // the last one carried gone (any way): its script stops
 	// The same for a container's or an actor's own contents (AddItem / RemoveItem / GetItemCount on them)
 	int refItemCount(const Ref& r, const std::string& id) const;
 	void refAddItem(Ref& r, const std::string& id, int count);

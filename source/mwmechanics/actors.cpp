@@ -475,8 +475,10 @@ void Session::burnHeldLight(float dt)
 		}
 		logf("light: %s burned out", it.id.c_str());
 		it.charge = -1.0f;
+		std::string id = it.id;
 		if (--it.count <= 0)
 			w.inventory.erase(w.inventory.begin() + i);
+		w.itemLeft(id);
 		break;
 	}
 }

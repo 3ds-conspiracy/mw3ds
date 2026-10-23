@@ -89,6 +89,14 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 				v = 1;
 		return true;
 	}
+	if (what == "itemscriptrunning")      // itemscriptrunning:<item>: 1 while a carried item's own script runs
+	{
+		v = 0;
+		for (auto& sc : w.scripts)
+			if ((sc.item == lower(arg) || sc.item == lower(spaced(arg))) && sc.running)
+				v = 1;
+		return true;
+	}
 	if (what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal")
 	{
 		// reflocal:<reference id>,<variable>: a local of that object's script (of the first with the id that isn't 0:

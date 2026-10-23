@@ -484,10 +484,7 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count, 
 					w.inventory.erase(w.inventory.begin() + items[sel].first);
 				if (worn)
 					w.refreshStats();
-				if (w.itemCount(id) == 0)
-					for (auto& sc : w.scripts)
-						if (sc.item == id)
-							sc.running = false;
+				w.itemLeft(id);
 			}
 			w.addItem("gold_001", price);
 			m.gold -= price;

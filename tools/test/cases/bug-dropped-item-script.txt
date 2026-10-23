@@ -1,0 +1,15 @@
+# An item's own script runs while it is carried and stops when the last one leaves (World::removeItem): dropped with
+# the Items menu's Drop button it went on running, with nothing to run on (a console save had four such: the
+# chargen dagger and stats sheet, a Dwemer puzzle box, a Legion cuirass)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVEPOTION:misc_dwrv_ark_cube00
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_ark_cube00:eq:1
+0.1 0 0 0 0 EXPECT:itemscriptrunning:misc_dwrv_ark_cube00:eq:1
+0.3 0 0 0 0 SCREEN:inventory
+0.3 0 0 0 0 INVSEL:misc_dwrv_ark_cube00
+0.5 0 0 0 0 TAP:80:222
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_dwrv_ark_cube00:eq:0
+0.1 0 0 0 0 EXPECT:itemscriptrunning:misc_dwrv_ark_cube00:eq:0

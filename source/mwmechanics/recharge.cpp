@@ -41,6 +41,7 @@ bool Session::rechargeItem(int item, int gem)
 	std::string gemId = w.inventory[gem].id;
 	if (--w.inventory[gem].count <= 0)
 		w.inventory.erase(w.inventory.begin() + gem);
+	w.itemLeft(gemId);
 	if (gemId == "misc_soulgem_azura")
 		w.addItem(gemId, 1);
 	logf("recharge: %s with soul %d, chance %.0f: %s", en->id.c_str(), soul, x, ok ? "done" : "failed");
