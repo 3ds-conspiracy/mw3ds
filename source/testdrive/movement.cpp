@@ -943,7 +943,13 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 				|| (s.testLegit && stuckTries == 2 && !diveOk && floodTries < 3 && p.levitate <= 0.0f
 					&& trialOk(path.empty() ? floodGoal : w.pathPoints[path.front()].pos) && (floodTries++, true)
 					&& floodRoute(s, path.empty() ? floodGoal : w.pathPoints[path.front()].pos, 80.0f, swimRoute, 60.0f)
-					&& (floodKeep = !path.empty(), true)))
+					&& (floodKeep = !path.empty(), true))
+				// LEGIT, in the water under a shore no search reached the goal from (a cliff below a hill town: Ald Velothi's
+				// pier, the way back up to the door): swim to the nearest beach first, as a player would; the walk plans
+				// again from the dry ground
+				|| (s.testLegit && stuckTries == 2 && floodTries < 3 && p.levitate <= 0.0f && w.here().hasWater()
+					&& p.feet[2] < w.here().waterZ && (floodTries++, true) && floodRoute(s, floodGoal, 80.0f, swimRoute, 200.0f, true, true)
+					&& (floodKeep = false, true)))
 			{
 				logf("drive: stuck at %.0f %.0f %.0f going to %s: following a route of %d trial steps", p.feet[0], p.feet[1], p.feet[2], id.c_str(), (int)swimRoute.size());
 				legTimer = 0.0f;

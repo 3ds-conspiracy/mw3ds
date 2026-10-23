@@ -61,7 +61,11 @@ static bool splitGridPath(Session& s, const float from[3], const float to[3], st
 	std::sort(sp.begin(), sp.end());
 	std::sort(gp.begin(), gp.end());
 	// (the goal's points nearest the goal first; for each the start's points nearest to it, seen from one another)
+	// (a first pass keeps to a crossing a player walks, a step down of 200 or less; only when there is none does a drop
+	// count, as a ledge over a pit does. Without it a balcony above the Rotheran arena's pit was "seen" from the pit
+	// floor, and the walk ran into the balcony's wall instead of taking the ramp at the west end.)
 	int bestA = -1, bestB = -1;
+	for (int pass = 0; pass < 2 && bestA < 0; pass++)
 	for (size_t k = 0; k < gp.size() && k < 12 && bestA < 0; k++)
 	{
 		const float* b = w.pathPoints[gp[k].second].pos;
@@ -73,7 +77,7 @@ static bool splitGridPath(Session& s, const float from[3], const float to[3], st
 		{
 			const float* a = w.pathPoints[near[j].second].pos;
 			float pa[3] = { a[0], a[1], a[2] + 50.0f }, pb[3] = { b[0], b[1], b[2] + 50.0f };
-			if (near[j].first < 3000.0f && fabsf(a[2] - b[2]) < 1500.0f && w.lineOfSight(pa, pb, false))
+			if (near[j].first < 3000.0f && fabsf(a[2] - b[2]) < (pass == 0 ? 200.0f : 1500.0f) && w.lineOfSight(pa, pb, false))
 			{
 				bestA = near[j].second;
 				bestB = gp[k].second;
