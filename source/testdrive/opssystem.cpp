@@ -138,7 +138,8 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		s.persuadeRoll = atoi(a[1].c_str());       // the die roll persuasion and enchanting use until ROLL:-1
 		return true;
 	}
-	// RESISTROLL:<0..99>: the die a creature or NPC resists the spell effects it is hit by with, until RESISTROLL:-1
+	// RESISTROLL:<0..99>: the die the player, a creature or an NPC resists the spell effects they are hit by with, until
+	// RESISTROLL:-1
 	if (verb == "RESISTROLL" && a.size() >= 2)
 	{
 		s.resistDie = atoi(a[1].c_str());

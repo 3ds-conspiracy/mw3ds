@@ -130,7 +130,8 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 	{
 		auto me = w.game.magicEffects.find(e.effect);
 		bool resistable = false;
-		float r = resistance(w, e.effect, me != w.game.magicEffects.end() && (me->second.flags & 0x8), castChance, resistable);
+		float r = resistance(w, e.effect, me != w.game.magicEffects.end() && (me->second.flags & 0x8), castChance, resistable,
+			resistDie);
 		if (resistable)
 		{
 			magnitude *= fmaxf(0.0f, 1.0f - r / 100.0f);
