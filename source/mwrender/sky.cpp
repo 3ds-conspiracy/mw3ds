@@ -245,8 +245,9 @@ void Session::updateWeatherEffects(float dt)
 // directions (turning is right) and sliding down at the drops' speed. A ring always has a side ahead, so nothing is
 // turned edge-on or swapped as the eye turns. Only a band of it, round the horizon (overhead and underfoot the streaks
 // are enough): a whole ring is a see-through layer over the whole screen, a band about 0.4 of it (sheets stacked
-// across the view, the screen's whole area each). The ring and the ripples are a New 3DS's alone
-// (ConsoleProfile::rainExtras)
+// across the view, the screen's whole area each). A second, fainter band twice as far out and narrower (about 0.2 of
+// the screen) puts rain behind that rain: depth to a storm, in 3D most of all. The rings and the ripples are a New
+// 3DS's alone (ConsoleProfile::rainExtras)
 namespace
 {
 	enum { PRECIP_RAIN, PRECIP_FLAKES, PRECIP_DUST, PRECIP_LAYERS };
@@ -254,9 +255,13 @@ namespace
 	const int kPrecipMax[PRECIP_LAYERS] = { 450, 240, 24 };
 	const float kPrecipBox[PRECIP_LAYERS][3] = { { 420, 420, 380 }, { 600, 600, 450 }, { 1100, 1100, 400 } };
 	const float kPrecipLift[PRECIP_LAYERS] = { 40, 100, 120 };   // the box's centre over the eye
-	const int kRingSides = 16, kRings = 1;
-	const float kRingRadius[kRings] = { 450.0f };
-	const int kRingRepeats[kRings] = { 16 };       // the picture round the ring (128 x 256 texels: 177 units across)
+	const int kRingSides = 16, kRings = 2;
+	const float kRingRadius[kRings] = { 900.0f, 450.0f };      // (the far one first: drawn behind)
+	const int kRingRepeats[kRings] = { 32, 16 };    // the picture round the ring (128 x 256 texels: 177 units across)
+	// each band's rows under and over the eye (faded out at both ends), and its strength: the far band a narrower
+	// slice of the view (from 4 under to 9 over the horizon against 8 and 16) and fainter, as rain behind rain
+	const float kRingRows[kRings][3] = { { -60.0f, 40.0f, 140.0f }, { -60.0f, 30.0f, 130.0f } };
+	const float kRingStrength[kRings] = { 0.45f, 0.7f };
 	// Drops landing: a ripple spreading on the ground or the water where one hit, round the eye (OpenMW ripples water
 	// alone, and only with its shaders; on the street they're what makes rain read as rain at this size)
 	const int kSplashes = 40;
@@ -284,7 +289,7 @@ namespace
 }
 // What the last frame drew, for the test driver: rain streaks, flakes, the far ring's quads, and rain particle 0's
 // place across the world (it stays put while the view turns: the particles hang in the world)
-int g_precipStreaks = 0, g_precipFlakes = 0, g_precipRing = 0;
+int g_precipStreaks = 0, g_precipFlakes = 0, g_precipRing = 0, g_precipFarRing = 0;     // (ring: the 450 band's quads)
 float g_precipX0 = 0.0f;
 namespace
 {
@@ -326,7 +331,7 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 	if (!secondEye)
 	{
 		s_precipDrawCount = 0;
-		g_precipStreaks = g_precipFlakes = g_precipRing = 0;
+		g_precipStreaks = g_precipFlakes = g_precipRing = g_precipFarRing = 0;
 		float dt = precipDt;
 		precipDt = 0.0f;
 		if (w.current < 0 || w.cells[w.current].interior || w.game.weatherTypes.empty())
@@ -403,18 +408,28 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 		rendererViewAxes(right, up, back);
 		u8* v = s_precipVerts;
 		int quads = 0;
-		// The far rain's ring, drawn first (it's behind the streaks): from 60 under the eye to 130 over it, faded out at
-		// both ends (no edge against the sky or the ground below a hill)
+		// The far rain's rings, drawn first (they're behind the streaks), the farther first: bands round the horizon,
+		// faded out at both ends (no edge against the sky or the ground below a hill)
 		s_precipClock = fmodf(s_precipClock + dt, 600.0f);
+		// The farther band goes while frames run under 30 a second (33.4 ms apart, the time between frames as the
+		// frame pacing smooths it: Session::adaptView) and comes back once they run past 33 (30 ms); the band 450 out
+		// and the streaks stay. It goes a little before the fog closes in (34.5 ms)
+		if (frameCost > 33.4f)
+			farRainOff = true;
+		else if (frameCost < 30.0f)
+			farRainOff = false;
 		if (rain >= 0.02f && g_profile.rainExtras && s_precipTexOk[PTEX_SHEET])
 			for (int r = 0; r < kRings; r++)
 			{
+				if (kRingRadius[r] > 600.0f && farRainOff)
+					continue;
 				float rad = kRingRadius[r], across = 2.0f * 3.14159265f * rad / kRingRepeats[r], tall = across * 2.0f;
 				float slide = s_precipClock * 575.0f / tall + r * 0.37f;
-				static const float rowZ[3] = { -60.0f, 30.0f, 130.0f }, rowA[3] = { 0.0f, 1.0f, 0.0f };
-				float strength = fminf(1.0f, rain) * 0.7f;
+				const float* rowZ = kRingRows[r];
+				static const float rowA[3] = { 0.0f, 1.0f, 0.0f };
+				float strength = fminf(1.0f, rain) * kRingStrength[r];
 				s_precipDraws[s_precipDrawCount++] = { quads, kRingSides * 2, PTEX_SHEET, true };
-				g_precipRing += kRingSides * 2;
+				(rad > 600.0f ? g_precipFarRing : g_precipRing) += kRingSides * 2;
 				for (int k = 0; k < kRingSides; k++)
 					for (int h = 0; h < 2; h++)
 					{

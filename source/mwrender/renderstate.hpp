@@ -35,6 +35,7 @@ struct RenderState
 	bool armsEyeSet = false;
 	std::unordered_map<std::string, C3D_Tex*> skyTextures;
 	float precipDt = 0.0f;                       // game time since the rain and ash last moved
+	bool farRainOff = false;                     // the far rain's farther band left out while frames run slow (sky.cpp)
 	float renderCost = 0.0f;          // smoothed per-frame render time (ms) of one eye
 	float eyeCmdUse = 0.0f;           // share of the GPU command buffer one eye's world takes
 	bool stereoCmdRoom = true;

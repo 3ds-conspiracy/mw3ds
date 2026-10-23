@@ -65,9 +65,12 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   built on the CPU in one pass a frame and drawn in a few draws (about 0.5 ms of an Old 3DS's CPU). The dust clouds
   fade out within 400 units of the eye: a 400-unit cloud near the eye is a see-through layer over most of the screen,
   and blending costs the GPU per pixel covered. (`Session::drawPrecipitation`)
-- **On an Old 3DS, the streaks alone; a New 3DS adds a far-rain ring and ripples.** The ring is one band of falling
-  drops round the horizon, 450 out, about 0.4 of the screen blended (a whole ring covered the screen, two of them about
-  2 ms of GPU in 3D); the ripples are up to 40 small quads and about two floor checks a frame. An Old 3DS has the least
+- **On an Old 3DS, the streaks alone; a New 3DS adds two far-rain rings and ripples.** The rings are bands of falling
+  drops round the horizon: one 450 out, about 0.4 of the screen blended, and a fainter, narrower one 900 out, about 0.2
+  of it (rain behind rain: depth to a storm, in 3D most of all). A whole ring covered the screen, two of them about 2 ms
+  of GPU in 3D; the two bands blend about 0.6 of it. The farther band goes while frames run under 30 a second and
+  comes back past 33 (`feat-rain-far-band-slow`). The ripples are up to 40 small quads and about two floor checks a
+  frame. An Old 3DS has the least
   to spare in a busy town, in 3D most of all. Neither is in OpenMW (it has no distant rain; its ripples are on water,
   with its shaders). Full rings, sheets stacked across the view, or a screen-wide rain picture were each tried or
   weighed and turned down for the blending cost. (`platform/console.cpp rainExtras`, `Session::drawPrecipitation`)
