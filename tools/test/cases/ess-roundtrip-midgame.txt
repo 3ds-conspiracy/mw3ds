@@ -1,0 +1,16 @@
+# start: save:sdmc:/3ds/mw3ds/test_ess078.sav
+# needs: build/ess-test/test_ess078.sav
+# A mid-game 3DS save sent to the PC format and back (tools/test/ess_roundtrip.py, one trip) loads as it was: the
+# level 8 Breton in Nchurdamz with her gold, Telvanni rank, quests and a spell she made. Needs the save at
+# build/ess-test/test_ess078.sav: the trip's pc_<name>.json from a backup of the player's own 3DS save
+# (Documents\mw3ds-save-backups\2026-10-18_n3ds\saves\save_078.json), never committed.
+4 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:cell:Nchurdamz,_Interior
+0.1 0 0 0 0 EXPECT:level:eq:8
+0.1 0 0 0 0 EXPECT:gold:eq:4202
+0.1 0 0 0 0 EXPECT:journal:HT_MineCure:eq:100
+0.1 0 0 0 0 EXPECT:journal:Blades_Gildan:eq:1
+0.1 0 0 0 0 EXPECT:spell:mw3ds_spell_27707
+0.1 0 0 0 0 EXPECT:spell:wild_levitate
+0.1 0 0 0 0 EXPECT:rank:telvanni:eq:5
+2 0 0 0 0 SHOT
