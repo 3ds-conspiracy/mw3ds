@@ -977,6 +977,11 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				fightTimer = 0.0f;
 			}
 			handItem(s, true);
+			// turned to it when it has gone round to the side (a swing reaches only within about 40 degrees of where we face:
+			// two twilights circling a corpse in Berandas stayed out of every blow)
+			float fdx = t.pos[0] - p.feet[0], fdy = t.pos[1] - p.feet[1], fd = sqrtf(fdx * fdx + fdy * fdy);
+			if (fd > 1.0f && (fdx * sinf(p.yaw) + fdy * cosf(p.yaw)) / fd < 0.75f)
+				p.yaw = atan2f(fdx, fdy);
 			fightTimer += dt;
 			in.attack = fmodf(fightTimer, 0.7f) < 0.4f;
 			frontFight = true;
