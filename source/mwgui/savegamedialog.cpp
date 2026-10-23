@@ -31,6 +31,9 @@ static std::string formatTime(u64 ms)
 
 s64 g_saveClockShiftMs = 0;
 std::string g_lastSavePath;
+SaveInfo g_lastSaveInfo;
+// One past the highest save count on the card, known once savesList has read the saves (0: not read yet)
+static u32 g_nextOrder = 0;
 
 static bool readInfo(const std::string& path, SaveInfo& out);
 static std::vector<std::string> jsonFiles(const std::string& dir);
@@ -39,18 +42,34 @@ void writeSaveMeta(const char* savePath, const std::string& name, const std::str
 {
 	timeMs += g_saveClockShiftMs;
 	// The save's count, one past the highest of the player's saves: the list is ordered by it, as the console's clock
-	// can be reset or set back (a save made then sorted below older ones by its time)
+	// can be reset or set back (a save made then sorted below older ones by its time). Taken from the list already
+	// read, as every directory read on the card right after the save's write took seconds on the console; the saves
+	// are read once only when nothing has listed them yet (a test's SAVE with the Saves screen never opened)
 	u32 order = 0;
 	if (strcmp(savePath, kAutosavePath) != 0)
 	{
 		g_lastSavePath = savePath;
-		for (auto& p : jsonFiles(kSaveDir))
+		if (g_nextOrder == 0)
 		{
-			SaveInfo s;
-			if (p != savePath && readInfo(p, s) && s.order > order)
-				order = s.order;
+			for (auto& p : jsonFiles(kSaveDir))
+			{
+				SaveInfo s;
+				if (p != savePath && readInfo(p, s) && s.order > order)
+					order = s.order;
+			}
+			g_nextOrder = order + 1;
 		}
-		order++;
+		order = g_nextOrder++;
+		SaveInfo& s = g_lastSaveInfo;
+		s = SaveInfo();
+		s.path = savePath;
+		s.title = name == place ? name : name + " - " + place;
+		s.name = name;
+		s.place = place;
+		s.level = level;
+		s.time = timeMs;
+		s.order = order;
+		s.detail = "Level " + std::to_string(level) + ", " + formatTime(timeMs);
 	}
 	std::string meta = std::string(savePath) + ".meta";
 	if (FILE* f = fopen(meta.c_str(), "w"))
@@ -58,6 +77,15 @@ void writeSaveMeta(const char* savePath, const std::string& name, const std::str
 		fprintf(f, "%s\t%s\t%d\t%llu\t%lu\n", name.c_str(), place.c_str(), level, timeMs, (unsigned long)order);
 		fclose(f);
 	}
+}
+
+void addSaveToList(std::vector<SaveInfo>& list)
+{
+	// newest of the player's own saves: right after the autosave row when there is one
+	size_t at = 0;
+	while (at < list.size() && list[at].autosave)
+		at++;
+	list.insert(list.begin() + at, g_lastSaveInfo);
 }
 
 static bool readInfo(const std::string& path, SaveInfo& out)
@@ -144,6 +172,7 @@ std::vector<SaveInfo> savesList(const char* dataDir)
 	std::sort(mine.begin(), mine.end(), [](const SaveInfo& a, const SaveInfo& b) {
 		return a.order != b.order ? a.order > b.order : a.time > b.time;
 	});
+	g_nextOrder = (mine.empty() ? 0 : mine[0].order) + 1;
 	for (auto& p : jsonFiles(std::string(dataDir) + "/saves"))
 	{
 		SaveInfo s;
@@ -277,8 +306,10 @@ void Session::drawSaves()
 	{
 		std::string path = saveNewPath();
 		if (w.saveGame(path.c_str()))
+		{
 			notify("Game saved.");
-		saveList = savesList(dataDir);
+			addSaveToList(saveList);
+		}
 	}
 	else if ((b == 1 || (pick >= 0 && (uiIn().down & KEY_A))) && canLoad)
 	{
