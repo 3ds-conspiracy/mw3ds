@@ -1,4 +1,4 @@
-// Text typed on the system keyboard: names of made spells and items, the journal search
+// Text typed on the system keyboard: names of made spells and items, the journal search, a barter offer
 #include <algorithm>
 #include <array>
 #include <functional>
@@ -50,11 +50,19 @@ void Session::setText(bool confirmed, const std::string& text)
 		classDraft.desc = blank ? "" : text;
 		logf("chargen: class description \"%s\"", classDraft.desc.c_str());
 	}
+	// the gold offered in a barter, typed on the number pad (OpenMW's balance field takes any number)
+	else if (kind == TEXT_OFFER && !blank && screen == SCR_BARTER)
+	{
+		haggleOffer = std::max(0, atoi(text.c_str()));
+		logf("barter: offer typed %d", haggleOffer);
+	}
 }
 
 std::string Session::textNow()
 {
 	if (wantText == TEXT_CLASSNAME || wantText == TEXT_CLASSDESC)
 		return wantText == TEXT_CLASSNAME ? classDraft.name : classDraft.desc;
+	if (wantText == TEXT_OFFER)
+		return std::to_string(barterHaggled(abs(barterBalance())));
 	return wantText == TEXT_SEARCH ? journalSearch : wantText == TEXT_CONSOLE ? consoleDraft : makeName;
 }

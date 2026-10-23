@@ -429,12 +429,16 @@ bool Engine::frame()
 			bool search = session->wantText == Session::TEXT_SEARCH;
 			bool console = session->wantText == Session::TEXT_CONSOLE;      // a script line (Options > Console)
 			bool classDesc = session->wantText == Session::TEXT_CLASSDESC;  // the made class's description (may be empty)
-			swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, console || classDesc ? 200 : 31);
-			swkbdSetHintText(&kb, console ? "Script line, e.g. Player->AddItem gold_001 100" : search ? "Search"
+			bool offer = session->wantText == Session::TEXT_OFFER;          // the gold offered in a barter: the number pad
+			if (offer)
+				swkbdInit(&kb, SWKBD_TYPE_NUMPAD, 2, 6);
+			else
+				swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, console || classDesc ? 200 : 31);
+			swkbdSetHintText(&kb, offer ? "Your offer (gold)" : console ? "Script line, e.g. Player->AddItem gold_001 100" : search ? "Search"
 				: classDesc ? "Describe your class" : session->wantText == Session::TEXT_CLASSNAME ? "Name your class"
 				: session->screen == SCR_ENCHANT ? "Name the item" : "Name the spell");
 			swkbdSetInitialText(&kb, session->textNow().c_str());
-			if (!search && !console && !classDesc)
+			if (!search && !console && !classDesc && !offer)
 				swkbdSetValidation(&kb, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
 			SwkbdButton button = swkbdInputText(&kb, text, sizeof(text));
 			session->setText(button == SWKBD_BUTTON_CONFIRM, text);

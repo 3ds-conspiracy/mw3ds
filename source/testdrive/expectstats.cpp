@@ -3,6 +3,7 @@
 #include <3ds.h>
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <deque>
 #include <map>
@@ -272,6 +273,9 @@ std::optional<bool> numberOfRules(Session& s, const std::string& what, const std
 		else v = (float)s.crimeBounty((int)a, (int)b);                              // kind (0 theft .. 4 murder), value
 		return true;
 	}
+	// The open barter deal: its balance (what the merchant pays, less what the player does) and the haggled offer on it
+	if (what == "barterbalance") { v = (float)s.barterBalance(); return true; }
+	if (what == "barteroffer") { v = (float)s.barterHaggled(abs(s.barterBalance())); return true; }
 	if (what == "barterprice" || what == "trainprice" || what == "travelprice")
 	{
 		// "<npc>,<value>,<1 buying / 0 selling>", "<npc>,<skill index>", "<npc>,<distance>,<followers>,<1 indoors>"

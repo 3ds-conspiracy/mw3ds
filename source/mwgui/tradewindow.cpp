@@ -117,13 +117,22 @@ void Session::drawBarter()
 		itemTip(o, barterSell ? &w.inventory[where[sel].second] : &state);
 	}
 	else if (!barterDeal.empty())
-		uiTextCentered(160, 194, 0.42f, col::textDim, "Y / X haggle, SELECT offers");
+		uiTextCentered(160, 194, 0.42f, col::textDim, "Y / X haggle, tap the total to type one, SELECT offers");
 	uiConsume(KEY_A | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
-	// Haggling: Y / X lower or raise the offer 5% of the balance at a time (the merchant may refuse)
+	// Haggling: Y / X (or - / +) lower or raise the offer 5% of the balance at a time, or a number is typed on the number
+	// pad (the merchant may refuse)
 	const UiInput& hin = uiIn();
-	if (hin.down & KEY_Y) haggle--;
-	if (hin.down & KEY_X) haggle++;
-	haggle = haggle < -19 ? -19 : haggle > 19 ? 19 : haggle;
+	int price0 = abs(balance), offer = barterHaggled(price0);
+	bool dealOn = !barterDeal.empty();
+	auto nudge = [&](int dir) {
+		// (in 5% steps of the balance from it, as Morrowind's; a typed offer goes to the nearest step first)
+		float step = std::max(1.0f, price0 * 0.05f);
+		int k = (int)roundf((offer - price0) / step) + dir;
+		haggleOffer = std::max(0, price0 + (int)roundf(step * k));
+		offer = haggleOffer;
+	};
+	if (dealOn && (hin.down & KEY_Y)) nudge(-1);
+	if (dealOn && (hin.down & KEY_X)) nudge(1);
 	auto setDealt = [&](int n) {
 		for (size_t k = 0; k < barterDeal.size(); k++)
 			if (barterDeal[k].sell == barterSell && barterDeal[k].from == where[sel].first && barterDeal[k].index == where[sel].second)
@@ -132,10 +141,12 @@ void Session::drawBarter()
 					barterDeal[k].count = n;
 				else
 					barterDeal.erase(barterDeal.begin() + k);
+				haggleOffer = -1;                         // (a new deal: the offer is its balance again, as OpenMW's)
 				return;
 			}
 		if (n > 0)
 			barterDeal.push_back({ barterSell, where[sel].first, where[sel].second, n });
+		haggleOffer = -1;
 	};
 	if (counting)
 	{
@@ -163,23 +174,37 @@ void Session::drawBarter()
 		}
 		return;
 	}
-	// The offer: what the player pays or gets, with the haggle on it
-	int price0 = abs(balance), offer = std::max(0, price0 + (int)roundf(price0 * 0.05f * haggle));
-	std::string offerLabel = barterDeal.empty() ? std::string("Offer")
-		: std::string(balance < 0 ? "Pay " : "Get ") + (offer != price0 ? std::to_string(offer) + " of " : std::string())
-			+ std::to_string(price0) + "g";
-	int focusNone = -1;
-	int b = buttonRow({ offerLabel, "Clear", w.game.gmst("sdone", "Done") }, focusNone);
+	// The balance, as OpenMW's TOTAL COST / TOTAL SOLD with its - / + haggle buttons and the number typed into it, then
+	// Offer, Clear, Done
+	if (uiButton(4, 208, 22, 28, "-", false, dealOn))
+		nudge(-1);
+	if (uiButton(114, 208, 22, 28, "+", false, dealOn))
+		nudge(1);
+	if (uiButton(28, 208, 84, 28, "", false, dealOn))
+	{
+		wantText = TEXT_OFFER;
+		playSound(-1, "Menu Click");
+	}
+	// (the label and the number fit inside the box's frame, 3 high top and bottom)
+	float labelH = uiLineHeight(0.28f) * 0.8f, numH = uiLineHeight(0.55f), top = 208 + (28 - labelH - numH) / 2;
+	uiTextCentered(70, top, 0.28f, col::textDim, balance < 0 ? w.game.gmst("stotalcost", "TOTAL COST") : w.game.gmst("stotalsold", "TOTAL SOLD"));
+	uiTextCentered(70, top + labelH, 0.55f, offer != price0 ? col::textOver : col::text, std::to_string(offer));
+	bool offerB = uiButton(140, 208, 58, 28, w.game.gmst("soffer", "Offer"));
+	bool clearB = uiButton(202, 208, 56, 28, "Clear");
+	bool doneB = uiButton(262, 208, 54, 28, w.game.gmst("sdone", "Done"));
+	int b = offerB ? 0 : clearB ? 1 : doneB ? 2 : -1;
 	if (b == 0 || (hin.down & KEY_SELECT))
 	{
-		if (!barterDeal.empty())
+		if (dealOn)
 			barterOffer();
+		else
+			notify(w.game.gmst("sbarterdialog11", "You need to trade items before making an offer."));
 		return;
 	}
 	if (b == 1)
 	{
 		barterDeal.clear();
-		haggle = 0;
+		haggleOffer = -1;
 		playSound(-1, "Menu Click");
 		return;
 	}
@@ -238,6 +263,12 @@ int Session::barterBalance()
 	return balance;
 }
 
+// What the player offers for a balance of price0: the balance itself until it is haggled or typed
+int Session::barterHaggled(int price0)
+{
+	return haggleOffer >= 0 ? haggleOffer : price0;
+}
+
 // The Offer button: the deal at the haggled balance (OpenMW's TradeWindow::onOfferButtonClicked). Only the balance has to
 // be there, with whichever side pays it; one of the merchant's own stolen goods refuses the lot, and a haggled offer may be
 // refused. Then everything changes hands and the balance moves once
@@ -247,7 +278,7 @@ bool Session::barterOffer()
 	int balance = barterBalance();
 	if (barterDeal.empty())
 		return false;
-	int price0 = abs(balance), offer = std::max(0, price0 + (int)roundf(price0 * 0.05f * haggle));
+	int price0 = abs(balance), offer = barterHaggled(price0);
 	bool playerPays = balance < 0;
 	for (const BarterLine& l : barterDeal)
 	{
@@ -309,7 +340,7 @@ bool Session::barterOffer()
 	playSound(-1, playerPays ? "Item Gold Down" : "Item Gold Up");
 	logf("barter: deal of %d lines, the player %s %d (balance %d)", (int)lines.size(), playerPays ? "pays" : "gets", offer, balance);
 	barterDeal.clear();
-	haggle = 0;
+	haggleOffer = -1;
 	// A deal done: the speaker's thanks join the talk (OpenMW's onTradeComplete)
 	dlg.history.push_back({ "", w.game.gmst("sbarterdialog5", "Thank you.") });
 	dlg.revision++;
@@ -322,7 +353,7 @@ void Session::openBarter(int ref)
 	barterSell = false;
 	barterDeal.clear();
 	barterCounting = false;
-	haggle = 0;
+	haggleOffer = -1;
 	list2 = UiList();
 	grid = UiGrid();
 	screen = SCR_BARTER;
