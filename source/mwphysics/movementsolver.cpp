@@ -336,7 +336,8 @@ void Session::actorGravity(float dt)
 		{
 			if (best > r.pos[2] - 40.0f)
 			{
-				// standing; placed a little above the floor (Ganciele Douar), or a step down: onto it
+				// standing; placed a little above the floor (Ganciele Douar), or a step down: onto it. The dead too (OpenMW's
+				// physics drops them like anyone): the bodies the game places in Shishi hung a foot above the floor
 				float dz = best - r.pos[2];
 				// (a creature's model drawn where its collision box comes to rest: World::actorBoxLift)
 				float lift = w.actorBoxLift(i);
@@ -346,7 +347,7 @@ void Session::actorGravity(float dt)
 					r.moved = true;
 					w.syncActor(i);
 				}
-				if (dz < -0.5f && !r.dead)
+				if (dz < -0.5f)
 				{
 					r.pos[2] = best;
 					r.fitBox();
