@@ -629,9 +629,11 @@ bool gameLoad(GameData& g, const char* path)
 		Journal& jn = g.journals[it->string];
 		jn.name = str(it, "name");
 		jn.title = str(it, "title");
+		// (the converter writes finished / restart as JSON true / false, not numbers: num() would read them as 0)
 		const cJSON* e;
 		cJSON_ArrayForEach(e, arr(it, "entries"))
-			jn.entries.push_back({ (int)num(e, "index"), CardText::store(str(e, "text")), num(e, "finished") != 0, num(e, "restart") != 0 });
+			jn.entries.push_back({ (int)num(e, "index"), CardText::store(str(e, "text")),
+				cJSON_IsTrue(cJSON_GetObjectItem(e, "finished")) != 0, cJSON_IsTrue(cJSON_GetObjectItem(e, "restart")) != 0 });
 	});
 
 	cJSON_ArrayForEach(it, arr(root, "globals"))
