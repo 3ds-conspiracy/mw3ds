@@ -83,6 +83,8 @@ struct WindowManagerState
 	int bookRef = -1, containerRef = -1;
 	bool pickpocketing = false;       // the container screen shows a living NPC's pockets (sneaking)
 	std::string bookItem;
+	bool bookFromItems = false;       // read from the Items menu: closing the book goes back to it, as it was
+	UiGrid bookItemsGrid;             // (the Items menu's selection and scroll then)
 	// The book open: its text cut into pages (for the book read, bookPagesOf), the spread shown (pages 2n, 2n + 1)
 	std::vector<UiPage> bookPages;
 	std::string bookPagesOf;

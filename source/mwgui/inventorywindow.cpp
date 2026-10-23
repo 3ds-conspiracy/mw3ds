@@ -154,7 +154,9 @@ void Session::drawInventory()
 			if (readRefused())
 				return;
 			std::string id = w.inventory[sel].id;
+			bookItemsGrid = grid;
 			openScreen(SCR_BOOK);
+			bookFromItems = true;
 			bookItem = id;
 			playSound(-1, o->scroll ? "scroll" : "Book Open");
 		}

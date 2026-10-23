@@ -342,6 +342,25 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		s.openBarter(ri);
 		return true;
 	}
+	// INVSEL:<id>: the Items menu's All tab, its selection on that item (the D-pad walking to it)
+	if (verb == "INVSEL" && a.size() >= 2 && s.screen == SCR_INVENTORY)
+	{
+		s.invTab = 0;
+		int at = 0;
+		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
+		for (auto& it : w.inventory)
+		{
+			if (it.id == "gold_001")
+				continue;
+			if (lower(it.id) == want || lower(it.id) == want2)
+			{
+				s.grid.selected = at;
+				return true;
+			}
+			at++;
+		}
+		return fail(a[1] + " is not carried");
+	}
 	// BARTERSEL:<id>: the barter grid's selection moves to that item (the D-pad walking to it)
 	if (verb == "BARTERSEL" && a.size() >= 2 && s.screen == SCR_BARTER && s.barterRef >= 0)
 	{
