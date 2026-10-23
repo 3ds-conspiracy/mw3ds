@@ -740,6 +740,35 @@ void World::update(float dt)
 				box.door = i;
 				cell.blockers.push_back(box);
 			}
+			// Open and at rest, the leaf blocks where it is drawn (OpenMW's door collision turns with the door): the closed
+			// box's corners turned about the door's origin as the renderer turns it. It walked through before. Not while it
+			// swings, nor round someone standing where it came to rest (they walk out of it)
+			else if (ref.visible() && ref.hasBox && ref.doorAngle == ref.doorTarget)
+			{
+				CollisionBox box;
+				for (int k = 0; k < 3; k++)
+				{
+					box.min[k] = 1e9f;
+					box.max[k] = -1e9f;
+				}
+				for (int c = 0; c < 8; c++)
+				{
+					float rel[3] = { ((c & 1) ? ref.boxMax[0] : ref.boxMin[0]) - ref.pos[0],
+						((c & 2) ? ref.boxMax[1] : ref.boxMin[1]) - ref.pos[1], ((c & 4) ? ref.boxMax[2] : ref.boxMin[2]) - ref.pos[2] };
+					float out[3];
+					doorSwing(ref, -ref.doorAngle, rel, out);
+					for (int k = 0; k < 3; k++)
+					{
+						box.min[k] = fminf(box.min[k], out[k] + ref.pos[k]);
+						box.max[k] = fmaxf(box.max[k], out[k] + ref.pos[k]);
+					}
+				}
+				const float* f = player.feet;
+				bool inside = f[0] > box.min[0] - 22.0f && f[0] < box.max[0] + 22.0f && f[1] > box.min[1] - 22.0f
+					&& f[1] < box.max[1] + 22.0f && f[2] + 128.0f > box.min[2] && f[2] < box.max[2];
+				if (!inside)
+					cell.blockers.push_back(box);
+			}
 		}
 	}
 	for (int i : loadedActors)
