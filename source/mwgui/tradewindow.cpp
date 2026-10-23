@@ -269,12 +269,13 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 			w.removeItem("gold_001", price);
 			m.gold += price;
 			w.takeStack(it, count);             // (a worn or part-charged one, or a filled gem, as it is)
-			// (a restocking quantity, a negative count, is used up by a sale as well, its magnitude going down: OpenMW's
-			// ContainerStore::subtractItems. It comes back with the purse, in World::restockGold)
-			bool restocking = it.first < 0;
-			it.first += restocking ? count : -count;
-			if (restocking ? it.first >= 0 : it.first <= 0)
-				holder.contents.erase(holder.contents.begin() + items[sel].first);
+			// (a restocking quantity, a negative count, is never used up by a sale: OpenMW's removeItem)
+			if (it.first > 0)
+			{
+				it.first -= count;
+				if (it.first <= 0)
+					holder.contents.erase(holder.contents.begin() + items[sel].first);
+			}
 			playSound(-1, "Item Gold Down");
 			// (Mercantile only rises with a haggled offer, in haggleAccepted: as in OpenMW)
 		}
