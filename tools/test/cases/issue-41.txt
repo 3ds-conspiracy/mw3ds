@@ -17,5 +17,6 @@
 0.3 0 0 0 0 BARTERSEL:bk_ashland_hymns
 0.5 0 0 0 0 SHOT
 0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
 0.3 0 0 0 0 EXPECT:item:bk_ashland_hymns:eq:1
 0.3 0 0 0 0 EXPECT:gold:lt:@0

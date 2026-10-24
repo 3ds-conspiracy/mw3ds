@@ -9,6 +9,7 @@
 0.3 0 0 0 0 SETATTR:intelligence:100
 0.3 0 0 0 0 SETATTR:willpower:100
 0.3 0 0 0 0 SETSKILL:destruction:100
+0.3 0 0 0 0 RESISTROLL:99
 0.3 0 0 0 0 GIVE:Gold_001:5000
 0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
 4 0 0 0

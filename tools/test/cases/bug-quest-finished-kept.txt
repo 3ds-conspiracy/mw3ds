@@ -1,0 +1,14 @@
+# A journal entry that ends a quest marks it finished, and a save keeps the mark (a save from the console had main
+# quest chapters ended in its journal and none finished: this shows whether the engine records them)
+3 0 0 0 0 MSG
+0.1 0 0 0 0 JOURNALADD:A1_1_FindSpymaster:1
+0.1 0 0 0 0 EXPECT:questfinished:a1_1_findspymaster:eq:0
+0.1 0 0 0 0 JOURNALADD:A1_1_FindSpymaster:18
+0.1 0 0 0 0 EXPECT:questfinished:a1_1_findspymaster:eq:1
+0.1 0 0 0 0 JOURNALADD:A1_2_AntabolisInformant:25
+0.1 0 0 0 0 EXPECT:questfinished:a1_2_antabolisinformant:eq:1
+1 0 0 0 0 SAVE:qfin
+0.5 0 0 0 0 LOAD:qfin
+3 0 0 0
+0.1 0 0 0 0 EXPECT:questfinished:a1_1_findspymaster:eq:1
+0.1 0 0 0 0 EXPECT:questfinished:a1_2_antabolisinformant:eq:1

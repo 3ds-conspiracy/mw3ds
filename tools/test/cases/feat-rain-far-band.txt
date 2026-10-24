@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# A second band of far rain on a New 3DS (spec/performance-tradeoffs.md): behind the band 450 out, a fainter, narrower
+# one 900 out, rain behind rain. Balmora at noon in rain: both bands drawn, 32 quads each; indoors none
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+GOTO:Balmora
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:4+HOUR:12+HIDEACTORS:4000
+2 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:ring:eq:32+EXPECT:precip:farring:eq:32+EXPECT:precip:streaks:gt:200
+0.3 0 0 0 0 GOTO:Balmora,_Eight_Plates
+3 0 0 0
+10 0 0 0
+0.1 0 0 0 0 EXPECT:precip:ring:eq:0+EXPECT:precip:farring:eq:0

@@ -457,6 +457,19 @@ void Session::testHit(const std::string& id)
 	logf("test: hit %s with %s", id.c_str(), wpn ? wpn->id.c_str() : "hands");
 }
 
+// The player's blow or harmful spell on a companion or a summon, one siding with them (OpenMW's friendlyHit): always
+// forgiven while it fights someone else, else the first three are and the fourth is not (dialogue's Friendly Hit counts
+// them). A Fireball cast at a foe that caught a summoned helper beside it turned the helper on the player at once
+bool Session::friendlyHit(int ri)
+{
+	Ref& r = w.refs[ri];
+	if (!w.followsPlayer(ri))
+		return false;
+	if (r.duelFoe >= 0)
+		return true;
+	return ++r.friendlyHits < 4;
+}
+
 // The player's blow or arrow reaches an NPC (hit chance already rolled)
 void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnly, bool ranged)
 {
@@ -483,13 +496,12 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	bool knockedDown = w.refs[target].knockTimer > 0.0f && w.actorEffect(target, 45) <= 0.0f;
 
 	// Being attacked makes them fight back; attacking someone peaceful is assault (the guards
-	// don't mind you killing mudcrabs, or whoever attacked you first). A companion forgives the
-	// first blows in melee (OpenMW: the 4th friendly hit is no longer forgiven, shots never are; dialogue's Friendly Hit
-	// counts them)
+	// don't mind you killing mudcrabs, or whoever attacked you first). A companion forgives blows in melee
+	// (friendlyHit); shots never are
 	bool wasPeaceful = t.ai != AI_COMBAT;
 	bool forgiven = false;
-	if (wasPeaceful && !ranged && w.followsPlayer(target))
-		forgiven = ++t.friendlyHits < 4;
+	if (wasPeaceful && !ranged)
+		forgiven = friendlyHit(target);
 	if (!forgiven)
 	{
 		makeHostile(target);
@@ -501,6 +513,10 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	// blow, and a blocked blow still casts). Arrows cast theirs in mwworld/projectilemanager.cpp
 	if (!ranged && !fatigueOnly)
 		strikeEnchantment(target);
+	// (it may have killed them: a body neither blocks nor takes the blow's damage and dies a second time; its shield's
+	// Block played over the death and the body stood up frozen, a dire viperblade on Anise Romoran)
+	if (t.dead)
+		return;
 
 	// Their shield, if they see it coming
 	const Object* shield = w.game.object(def.shield);

@@ -14,6 +14,7 @@
 0.3 0 0 0 0 L
 0.3 0 0 0 0 BARTERSEL:iron%arrow
 0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
 0.3 0 0 0 0 EXPECT:count:iron%arrow:eq:@0
 0.3 0 0 0 0 R
 0.3 0 0 0 0 RIGHT
@@ -26,6 +27,7 @@
 0.3 0 0 0 0 RIGHT
 0.3 0 0 0 0 LEFT
 0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
 0.3 0 0 0 0 EXPECT:count:iron%arrow:eq:@-11
 0.3 0 0 0 0 EXPECT:gold:eq:@11
 0.3 0 0 0 0 EXPECT:screen:barter
@@ -38,6 +40,7 @@
 0.3 0 0 0 0 RIGHT
 0.3 0 0 0 0 RIGHT
 0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
 0.3 0 0 0 0 EXPECT:count:iron%arrow:eq:@3
 0.3 0 0 0 0 EXPECT:gold:eq:@-3
 0.3 0 0 0 0 EXPECT:screen:barter
@@ -46,6 +49,7 @@
 0.3 0 0 0 0 A
 0.3 0 0 0 0 L
 0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
 0.3 0 0 0 0 EXPECT:count:iron%arrow:eq:@1
 0.3 0 0 0 0 EXPECT:gold:eq:@-1
 0.3 0 0 0 0 EXPECT:screen:barter

@@ -115,6 +115,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void makeHostile(int ref);
 	// spell: a damage effect (health only, no hit recoil, hurt sound, blood or voice: OpenMW's applyMagicEffect)
 	void damageNpc(int ref, float dmg, bool fatigueOnly, bool spell = false);
+	bool friendlyHit(int ref);     // the player's blow or harmful spell on one siding with them is forgiven
 	void actorGravity(float dt);
 	bool inSwing(int ref, float* dist = nullptr);         // a swing now would reach them
 	int swingTarget();                                   // who a swing now would strike (-1: nobody)
@@ -455,7 +456,10 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	int travelPriceFor(int npcRef, float distance, int followers, bool interior);
 	bool trainSkill(int skill);                   // the training screen's Train button
 	void openBarter(int ref);
-	bool barterTrade(bool sell, int index, int price, int from = -1, int count = 1);   // count items bought (from's
+	int barterBalance();                          // the deal's worth to the player: what the merchant pays, less what they do
+	int barterHaggled(int price0);                // that balance with the player's haggle on it
+	bool barterOffer();                           // the deal's Offer: settled at the haggled balance, or refused
+	bool barterTrade(bool sell, int index, int price, int from = -1, int count = 1, bool thanks = true);   // count items bought (from's
 	                                                                                    // contents: the merchant's or a
 	                                                                                    // chest of theirs) / sold
 	std::vector<std::pair<int, int>> merchantGoods(int ref);   // (reference, index into its contents; -1: the reference is the item itself, lying in the shop)

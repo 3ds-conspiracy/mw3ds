@@ -1,0 +1,47 @@
+# Bartering settles a deal by its balance, as OpenMW's trade window does: what is sold pays for what is bought, and only
+# the difference has to be there, with whichever side owes it. It traded one item at a time, each paid in full: a
+# sword sold for 5000 couldn't pay for one bought for 5000 when either side had less than that.
+# 1. The player has 100 gold: Argent Glow (443) bought with a dwarven claymore (562) sold; Arrille pays 118
+# 2. Arrille has 682, less than four weapons sold come to (744): a Vigor scroll (115) bought, he pays 629
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:dwarven_claymore
+0.3 0 0 0 0 GIVE:dwarven_battle_axe
+0.3 0 0 0 0 GIVE:dwarven_mace
+0.3 0 0 0 0 GIVE:silver_claymore
+0.3 0 0 0 0 GIVE:steel_claymore
+0.3 0 0 0 0 EXPECT:gold:eq:100+EXPECT:merchantgold:arrille:eq:800
+0.3 0 0 0 0 BARTER:arrille
+0.3 0 0 0 0 EXPECT:screen:barter
+# 1. (the scrolls are stacks: A asks how many, A again puts one in)
+0.3 0 0 0 0 BARTERSEL:sc_argentglow
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 L
+0.3 0 0 0 0 BARTERSEL:dwarven_claymore
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:count:dwarven_claymore:eq:1
+0.3 0 0 0 0 SELECT
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:count:sc_argentglow:eq:1+EXPECT:count:dwarven_claymore:eq:0
+0.3 0 0 0 0 EXPECT:gold:eq:218+EXPECT:merchantgold:arrille:eq:682
+# 2.
+0.3 0 0 0 0 BARTERSEL:dwarven_battle_axe
+0.3 0 0 0 0 A
+0.3 0 0 0 0 BARTERSEL:dwarven_mace
+0.3 0 0 0 0 A
+0.3 0 0 0 0 BARTERSEL:silver_claymore
+0.3 0 0 0 0 A
+0.3 0 0 0 0 BARTERSEL:steel_claymore
+0.3 0 0 0 0 A
+0.3 0 0 0 0 R
+0.3 0 0 0 0 BARTERSEL:sc_vigor
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:count:dwarven_battle_axe:eq:0+EXPECT:count:steel_claymore:eq:0+EXPECT:count:sc_vigor:eq:1
+0.3 0 0 0 0 EXPECT:gold:eq:847+EXPECT:merchantgold:arrille:eq:53

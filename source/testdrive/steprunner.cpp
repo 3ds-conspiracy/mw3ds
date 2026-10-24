@@ -222,9 +222,10 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	if (first && !s.soulKill.empty())
 	{
 		int ref = session->testFindRef(s.soulKill);
-		// a living one (several can share the id)
+		// a living one (several can share the id), when the one found (the test's own placed one first) isn't
 		std::string want = session->w.refs.size() && ref >= 0 ? session->w.refs[ref].idLower : "";
-		for (size_t i = 0; i < session->w.refs.size() && ref >= 0; i++)
+		bool alive = session->w.active(ref) && !session->w.refs[ref].dead;
+		for (size_t i = 0; i < session->w.refs.size() && ref >= 0 && !alive; i++)
 			if (session->w.refs[i].idLower == want && !session->w.refs[i].dead && session->w.active(i))
 			{
 				ref = i;

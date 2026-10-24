@@ -1,0 +1,12 @@
+# The dead the game places in Shishi lie on the floor: they hung a foot above it (placed there in the game's data, and
+# gravity set only the living down onto a floor up to 40 units below; OpenMW's physics lets the dead fall too)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Shishi
+8 0 0 0
+0.3 0 0 0 0 EXPECT:dead:indrel
+0.3 0 0 0 0 EXPECT:refabovefeet:indrel:le:2
+0.3 0 0 0 0 EXPECT:refabovefeet:amring:le:2
+0.3 0 0 0 0 EXPECT:refabovefeet:aditte%oges:le:2
+0.3 0 0 0 0 EXPECT:refabovefeet:marielle%amedee:le:2
+0.3 0 0 0 0 EXPECT:refabovefeet:lanie%endre:le:2

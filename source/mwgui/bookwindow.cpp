@@ -124,6 +124,13 @@ void Session::drawBook()
 	else if (close || (in.down & KEY_B))
 	{
 		playSound(-1, "Book Close");
+		// read from the Items menu: back to it, where it was (it closed to the game)
+		bool back = bookFromItems && bookRef < 0;
 		closeScreen();
+		if (back)
+		{
+			screen = SCR_INVENTORY;
+			grid = bookItemsGrid;
+		}
 	}
 }

@@ -138,7 +138,8 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		s.persuadeRoll = atoi(a[1].c_str());       // the die roll persuasion and enchanting use until ROLL:-1
 		return true;
 	}
-	// RESISTROLL:<0..99>: the die a creature or NPC resists the spell effects it is hit by with, until RESISTROLL:-1
+	// RESISTROLL:<0..99>: the die the player, a creature or an NPC resists the spell effects they are hit by with, until
+	// RESISTROLL:-1
 	if (verb == "RESISTROLL" && a.size() >= 2)
 	{
 		s.resistDie = atoi(a[1].c_str());
@@ -257,6 +258,26 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 				found += " " + std::to_string((int)fz);
 		}
 		logf("test: probe %.0f %.0f %.0f: floor%s", x, y, z, found.empty() ? " none" : found.c_str());
+		return true;
+	}
+	if (verb == "PROBEUP" && a.size() >= 4)
+	{
+		// PROBEUP:x:y:z: the first surface straight up from that spot in the loaded cells (collision, up to 4000 over it),
+		// logged: what roofs a spot over
+		float from[3] = { (float)atof(a[1].c_str()), (float)atof(a[2].c_str()), (float)atof(a[3].c_str()) };
+		float to[3] = { from[0], from[1], from[2] + 4000.0f };
+		Scene sc = w.scene();
+		float best = 1.0f;
+		for (Cell* c : sc.cells)
+		{
+			float t;
+			if (collisionRaycast(c->collision, from, to, &t) && t < best)
+				best = t;
+		}
+		if (best < 1.0f)
+			logf("test: probeup %.0f %.0f %.0f: roof %.0f", from[0], from[1], from[2], from[2] + best * 4000.0f);
+		else
+			logf("test: probeup %.0f %.0f %.0f: roof none", from[0], from[1], from[2]);
 		return true;
 	}
 	if (verb == "SCREEN" && a.size() >= 2)
@@ -394,6 +415,25 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 			return fail("not talking to " + a[1] + " (LEGIT)");
 		s.openBarter(ri);
 		return true;
+	}
+	// INVSEL:<id>: the Items menu's All tab, its selection on that item (the D-pad walking to it)
+	if (verb == "INVSEL" && a.size() >= 2 && s.screen == SCR_INVENTORY)
+	{
+		s.invTab = 0;
+		int at = 0;
+		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
+		for (auto& it : w.inventory)
+		{
+			if (it.id == "gold_001")
+				continue;
+			if (lower(it.id) == want || lower(it.id) == want2)
+			{
+				s.grid.selected = at;
+				return true;
+			}
+			at++;
+		}
+		return fail(a[1] + " is not carried");
 	}
 	// BARTERSEL:<id>: the barter grid's selection moves to that item (the D-pad walking to it)
 	if (verb == "BARTERSEL" && a.size() >= 2 && s.screen == SCR_BARTER && s.barterRef >= 0)

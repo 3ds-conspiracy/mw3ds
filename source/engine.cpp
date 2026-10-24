@@ -429,12 +429,16 @@ bool Engine::frame()
 			bool search = session->wantText == Session::TEXT_SEARCH;
 			bool console = session->wantText == Session::TEXT_CONSOLE;      // a script line (Options > Console)
 			bool classDesc = session->wantText == Session::TEXT_CLASSDESC;  // the made class's description (may be empty)
-			swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, console || classDesc ? 200 : 31);
-			swkbdSetHintText(&kb, console ? "Script line, e.g. Player->AddItem gold_001 100" : search ? "Search"
+			bool offer = session->wantText == Session::TEXT_OFFER;          // the gold offered in a barter: the number pad
+			if (offer)
+				swkbdInit(&kb, SWKBD_TYPE_NUMPAD, 2, 6);
+			else
+				swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, console || classDesc ? 200 : 31);
+			swkbdSetHintText(&kb, offer ? "Your offer (gold)" : console ? "Script line, e.g. Player->AddItem gold_001 100" : search ? "Search"
 				: classDesc ? "Describe your class" : session->wantText == Session::TEXT_CLASSNAME ? "Name your class"
 				: session->screen == SCR_ENCHANT ? "Name the item" : "Name the spell");
 			swkbdSetInitialText(&kb, session->textNow().c_str());
-			if (!search && !console && !classDesc)
+			if (!search && !console && !classDesc && !offer)
 				swkbdSetValidation(&kb, SWKBD_NOTEMPTY_NOTBLANK, 0, 0);
 			SwkbdButton button = swkbdInputText(&kb, text, sizeof(text));
 			session->setText(button == SWKBD_BUTTON_CONFIRM, text);
@@ -621,7 +625,7 @@ bool Engine::frame()
 	drawProfAdd(DRAWP_MAP, drawSince);
 
 	// Stereo 3D: eases in and out; the screen leaves 3D mode only once the depth is gone
-	float slider = osGet3DSliderState();
+	float slider = g_test3dSlider >= 0.0f ? g_test3dSlider : osGet3DSliderState();
 	float target = loaded && !autoShotNow && poseIndex >= autocam.size() ? session->stereoTarget(slider, dt) : 0.0f;
 	float& amount = session->stereoAmount;
 	amount = target > amount ? fminf(target, amount + dt * 2.0f) : fmaxf(target, amount - dt * 2.0f);
@@ -635,10 +639,19 @@ bool Engine::frame()
 	bool want16 = g_testDepth16 || g_depthMode == DEPTH_16 || (g_depthMode == DEPTH_16_IN_3D && wantStereo);
 	if (want16 != topDepth16)
 		useTopDepth(want16);
-	// Half the eye separation in world units at full slider (a person's is ~4.5 units): depth
-	// between near and far scales with it. The focus (mwrender/renderingmanager.cpp) sets what sits on the screen
+	// The slider's first third is the plain stereo view, its whole range: half the eye separation in world units
+	// grows to kMaxEyeShift (a person's is ~4.5 units) and depth between near and far scales with it. The focus
+	// (mwrender/renderingmanager.cpp) sets what sits on the screen
+	const float kNearDepthTo = 1.0f / 3.0f;
 	const float kMaxEyeShift = 3.0f;
-	float shift = slider * kMaxEyeShift * amount;
+	float nearDepth = fminf(1.0f, slider / kNearDepthTo);
+	float shift = nearDepth * kMaxEyeShift * amount;
+	// Past ~8 m a plain stereo view is flat (its depth goes as 1 / distance): the other two thirds add depth for
+	// each doubling of the distance beyond (mwrender/renderingmanager.cpp kStereoKnee), evenly up to kFarDepthShare,
+	// nearer things as the first third left them. Within the first third the shaders skip it (no GPU cost)
+	const float kFarDepthShare = 1.0f;
+	float farDepth = fminf(1.0f, fmaxf(0.0f, (slider - kNearDepthTo) / (1.0f - kNearDepthTo)));
+	rendererSetStereoCurve(stereoOn ? kFarDepthShare * farDepth : 0.0f);
 	// Outdoors the fog closes in while frames run long, and with the weather
 	float fogScale = 1.0f;
 	if (loaded && !session->w.cells[session->w.current].interior)
@@ -741,7 +754,7 @@ bool Engine::frame()
 		// The HUD (subtitles, notes, crosshair) floats a little in front of the world: flat on the screen
 		// surface, it sat behind what's nearer than the stereo focus (the speaker, the weapon) while
 		// covering it, a depth clash that makes text hard to read. Left eye right, right eye left
-		float hudShift = stereoOn ? slider * 3.0f : 0.0f;
+		float hudShift = stereoOn ? nearDepth * 3.0f : 0.0f;
 		C2D_ViewReset();
 		C2D_ViewTranslate(eye ? -hudShift : hudShift, 0.0f);
 		// The crosshair and the label of what it's on sit at the depth of what it points at (drawn

@@ -50,19 +50,22 @@ void rendererInit()
 	g_gpu.uAmbient = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "ambientAdd");
 	g_gpu.bGamma = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "gammaOn");
 	g_gpu.bLightOn = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "lightOn");
+	g_gpu.uStereoCurve = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "stereoCurve");
+	g_gpu.bStereoOn = shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, "stereoOn");
 	g_gpu.skinDvlb = DVLB_ParseFile((u32*)skin_shbin, skin_shbin_size);
 	shaderProgramInit(&g_gpu.skinProgram);
 	shaderProgramSetVsh(&g_gpu.skinProgram, &g_gpu.skinDvlb->DVLE[0]);
 	g_gpu.uBones = shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, "bones");
 	// The frame's uniforms carry over between the two programs only if they sit in the same registers
 	static const char* const kShared[] = { "projection", "modelView", "uvOffset", "fogVec", "posOffset", "posScale",
-		"uvScale", "tint", "lightPos", "lightColor", "ambientAdd", "torchVec" };
+		"uvScale", "tint", "lightPos", "lightColor", "ambientAdd", "torchVec", "stereoCurve" };
 	g_gpu.skinReady = g_gpu.uBones >= 0;
 	for (const char* n : kShared)
 		g_gpu.skinReady &= shaderInstanceGetUniformLocation(g_gpu.program.vertexShader, n)
 			== shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, n);
 	g_gpu.skinReady &= g_gpu.bGamma == shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, "gammaOn");
 	g_gpu.skinReady &= g_gpu.bLightOn == shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, "lightOn");
+	g_gpu.skinReady &= g_gpu.bStereoOn == shaderInstanceGetUniformLocation(g_gpu.skinProgram.vertexShader, "stereoOn");
 	if (!g_gpu.skinReady)
 	{
 		g_gpuSkinning = false;
@@ -111,6 +114,15 @@ void uploadTransform()
 	g_gpu.mvValid = true;
 }
 
+// Stereo 3D's far depth as rendererSetStereoCurve set it, from this log2 of the knee (the sky's: -1000, all of it)
+static void setStereoCurve(float kneeLog)
+{
+	if (g_gpu.uStereoCurve < 0 || g_gpu.bStereoOn < 0)
+		return;
+	C3D_BoolUnifSet(GPU_VERTEX_SHADER, g_gpu.bStereoOn, g_gpu.stereoCurveOn);
+	C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uStereoCurve, g_gpu.stereoCurve[0], kneeLog, g_gpu.stereoCurve[2], 0.0f);
+}
+
 void bindPipeline()
 {
 	invalidateState();
@@ -132,6 +144,7 @@ void bindPipeline()
 	if (g_gpu.uTorchVec >= 0)
 		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uTorchVec, 0.0f, 0.0f, 0.0f, 1.0f);     // (no torch: past its reach everywhere)
 	g_gpu.torchStageOn = false;
+	setStereoCurve(g_gpu.stereoCurve[1]);
 }
 
 void rendererAlphaScale(float a)
@@ -607,6 +620,11 @@ int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std
 static const float kStereoFocus = 120.0f;
 // ... and for the first-person arms and weapon, drawn with half the eye separation
 static const float kViewModelFocus = 30.0f;
+// Past this distance (world units, ~8 m: where a plain stereo view has spent 80% of its depth behind the screen)
+// each doubling of the distance adds depth (shaders/cell.v.pica stereoCurve), at most kStereoDoublings of them
+// (to ~270 m); nearer things are as the plain view draws them
+static const float kStereoKnee = 600.0f;
+static const float kStereoDoublings = 5.0f;
 // Terrain texture blend layers (decal batches) are drawn within this distance
 static const float kTerrainLayerDistance = 4000.0f;
 // Actor meshes under kActorDetailTris triangles are skipped past this distance
@@ -619,6 +637,14 @@ u32 g_renderParts = ~0u;
 // Where a point straight ahead at that depth lands for an eye (pixels along the screen's width, + right),
 // relative to where a flat (non-stereo) view puts it: what the 2D overlay adds to sit at that depth.
 // Measured through the same matrices the world uses, so axis and signs follow the tilt
+void rendererSetStereoCurve(float share)
+{
+	g_gpu.stereoCurveOn = share > 0.0f;
+	g_gpu.stereoCurve[0] = -share;       // (the eye's offset at infinity is -projection.z)
+	g_gpu.stereoCurve[1] = log2f(kStereoKnee);
+	g_gpu.stereoCurve[2] = kStereoDoublings;
+}
+
 float rendererStereoPixels(float depth, float eyeShift)
 {
 	if (eyeShift == 0.0f || depth <= kNear)
@@ -636,6 +662,13 @@ float rendererStereoPixels(float depth, float eyeShift)
 	ndc(flat, 0.0f, depth, centre);
 	ndc(flat, depth * 0.1f, depth, right);
 	ndc(eye, 0.0f, depth, seen);
+	// (and the far depth the shaders add: the same doublings past the knee)
+	if (g_gpu.stereoCurveOn)
+	{
+		float doublings = fminf(kStereoDoublings, fmaxf(0.0f, log2f(depth) - g_gpu.stereoCurve[1]));
+		seen[0] += g_gpu.stereoCurve[0] * doublings * eye.r[0].z;
+		seen[1] += g_gpu.stereoCurve[0] * doublings * eye.r[1].z;
+	}
 	int axis = fabsf(right[0] - centre[0]) > fabsf(right[1] - centre[1]) ? 0 : 1;
 	float sign = right[axis] > centre[axis] ? 1.0f : -1.0f;
 	return (seen[axis] - centre[axis]) * sign * 200.0f;
@@ -813,6 +846,8 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		C3D_Mtx skyView = view;
 		skyView.r[0].w = skyView.r[1].w = skyView.r[2].w = 0.0f;
 		setModelView(skyView);
+		// (in 3D the sky is farther than anything: all of the far depth, whatever its dome's radius)
+		setStereoCurve(-1000.0f);
 		// (white fog and sky domes, then the stars, sun and moons, then clouds: the domes take the hour's weather
 		// colours, the fog's at the horizon and the sky's overhead, as OpenMW draws its sky; an older cell's single
 		// baked gradient a tint)
@@ -879,6 +914,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 		drawSkyBodies(view, secondEye, true);
 	}
 	drawProfAdd(DRAWP_SKY, drawSince);
+	setStereoCurve(g_gpu.stereoCurve[1]);
 	setModelView(view);
 	setTint(g_gpu.daylight ? g_gpu.land : kOne);
 	setLight(&view);

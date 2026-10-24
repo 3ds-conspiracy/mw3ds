@@ -164,6 +164,15 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	// (a follower held up outdoors, going where the player went, steps down a ledge as the player did: OpenMW's
 	// actors fall off one where they walk)
 	float maxDrop = (r.trailUntil > w.time || r.dropUntil > w.time) && !w.cells[w.placeOf(ri)].interior ? 250.0f : 48.0f;
+	// One closing on a foe below goes off a ledge after it, down to the foe's own floor (OpenMW's fighters move straight at a
+	// foe in sight and walk off an edge): Larienna Macrina, on a step 59 over the centurion sphere fighting her in
+	// Nchurdamz, ran in place at its edge out of her reach and in the sphere's, and never followed the player on
+	if ((r.ai == AI_COMBAT || r.duelFoe >= 0) && !r.backingUp && r.sideStep == 0)
+	{
+		float foeZ = r.duelFoe >= 0 ? w.refs[r.duelFoe].pos[2] : w.player.feet[2];
+		if (fz >= foeZ - 16.0f)
+			maxDrop = fmaxf(maxDrop, fminf(250.0f, r.pos[2] - foeZ + 16.0f));
+	}
 	if (fz < r.pos[2] - maxDrop && fz > swimZ + 0.5f)
 	{
 		return false;
@@ -183,12 +192,15 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	// straight at its point, or stepping aside when stuck) an actor climbs objects no steeper than the player's 46
 	// (OpenMW's sMaxSlope; its navigation mesh routes round the rest): the prison ship's guard walked straight at the
 	// hold's side, faces of 37 to 58 degrees, and up it. A follower of the player (it walks their footsteps) and a
-	// fighter keep 60, on the stairs the player takes
+	// fighter closing in keep 60, on the stairs the player takes; a fighter backing away or stepping aside climbs the
+	// player's 46 (Berengeval, backing off a blade in Tel Naga, went up the roots into a nook the player can't reach: the
+	// in-fight rule of npcClimbSlope, for objects)
 	float climb = npcClimbSlope(w, r);
 	bool onRoute = !r.path.empty() && r.stuckTimer >= 0.0f;
 	bool fighting = r.ai == AI_COMBAT || r.duelFoe >= 0;
+	bool closing = fighting && !r.backingUp && r.sideStep == 0;
 	bool follower = r.aiPackage == AIPKG_FOLLOW && r.aiTarget == "player" && !r.aiDone;
-	float objectClimb = onRoute || fighting || follower ? 90.0f : kWalkSlope;
+	float objectClimb = onRoute || closing || follower ? 90.0f : kWalkSlope;
 	bool wet = cell.hasWater() && r.pos[2] < cell.waterZ + 10.0f;
 	if ((climb < 60.0f || objectClimb < 90.0f) && fz > r.pos[2] + 2.0f && fz > swimZ + 0.5f && !wet)
 	{
@@ -336,7 +348,8 @@ void Session::actorGravity(float dt)
 		{
 			if (best > r.pos[2] - 40.0f)
 			{
-				// standing; placed a little above the floor (Ganciele Douar), or a step down: onto it
+				// standing; placed a little above the floor (Ganciele Douar), or a step down: onto it. The dead too (OpenMW's
+				// physics drops them like anyone): the bodies the game places in Shishi hung a foot above the floor
 				float dz = best - r.pos[2];
 				// (a creature's model drawn where its collision box comes to rest: World::actorBoxLift)
 				float lift = w.actorBoxLift(i);
@@ -346,7 +359,7 @@ void Session::actorGravity(float dt)
 					r.moved = true;
 					w.syncActor(i);
 				}
-				if (dz < -0.5f && !r.dead)
+				if (dz < -0.5f)
 				{
 					r.pos[2] = best;
 					r.fitBox();

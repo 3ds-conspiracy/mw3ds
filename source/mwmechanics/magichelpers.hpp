@@ -62,11 +62,11 @@ static float resistRoll(const World& w, int e, bool noMagnitude, Total total, fl
 	return fminf(x + r, 100.0f);
 }
 
-static inline float resistance(const World& w, int e, bool noMagnitude, float castChance, bool& resistable)
+static inline float resistance(const World& w, int e, bool noMagnitude, float castChance, bool& resistable, int die = -1)
 {
 	const PlayerStats& s = w.stats;
 	return resistRoll(w, e, noMagnitude, [&](int k) { return w.effectTotal(k); }, (float)s.attributes[ATTR_WILLPOWER],
-		(float)s.attributes[ATTR_LUCK], s.fatigue, s.fatigueMax, castChance, resistable);
+		(float)s.attributes[ATTR_LUCK], s.fatigue, s.fatigueMax, castChance, resistable, die);
 }
 
 // Whether the effect changes a stat for as long as it lasts (undone when it ends)

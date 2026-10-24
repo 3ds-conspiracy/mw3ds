@@ -1,0 +1,14 @@
+# An open door's leaf blocks where it is drawn (OpenMW's door collision turns with the door): one turned open had no
+# collision at all and was walked through. It blocks once it has come to rest, not while it swings
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SETGLOBAL:chargenstate:10
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+60 0 0 0 0 WALKTO:in_c_door_arched
+0.3 0 0 0 0 EXPECT:doorleafblocks:in_c_door_arched
+60 0 0 0 0 ACTIVATE:in_c_door_arched
+3 0 0 0
+0.3 0 0 0 0 EXPECT:doorleafblocks:in_c_door_arched

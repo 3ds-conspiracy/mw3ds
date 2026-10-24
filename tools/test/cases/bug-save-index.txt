@@ -1,0 +1,27 @@
+# The saves' details in one index file: listing them at a start opened every save's .meta on the card (with hundreds of
+# saves, hundreds of file opens at the title screen). Saves written and deleted are in the index, so a fresh listing
+# opens no .meta; the list it gives is the one kept in memory
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 SNAP:saves
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:saves:eq:@3
+0.3 0 0 0 0 SAVESEL:newest
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 A
+0.3 0 0 0 0 LEFT
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:saves:eq:@2
+0.3 0 0 0 0 B
+0.3 0 0 0 0 SAVESRELOAD+SNAP:savemetareads+SNAP:savereads
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 EXPECT:savereads:eq:@1+EXPECT:savemetareads:eq:@0
+0.3 0 0 0 0 EXPECT:saves:eq:@2+EXPECT:savenewestfirst:eq:0
+0.3 0 0 0 0 B
+1 0 0 0

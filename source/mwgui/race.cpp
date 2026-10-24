@@ -41,7 +41,7 @@ void Session::drawRace()
 	const UiInput& in = uiIn();
 	// The C-stick turns the face on the top screen (its camera goes round the head), 150 degrees a second at full push
 	previewSpin += in.stickX * 2.6f * in.dt;
-	uiText(128, 234, 0.33f, col::textDim, "C-stick: turn the face");
+	uiText(128, 226, 0.33f, col::textDim, "C-stick: turn the face");     // (under OK, above the screen's edge)
 	// Head and hair: < > through the race's own (the face shows on the top screen)
 	for (int hair = 0; hair < 2; hair++)
 	{
@@ -66,7 +66,7 @@ void Session::drawRace()
 	}
 	if (uiButton(124, 164, 94, 24, "Male", !w.stats.female) || (in.down & KEY_L)) w.stats.female = false;
 	if (uiButton(222, 164, 94, 24, "Female", w.stats.female) || (in.down & KEY_R)) w.stats.female = true;
-	if (uiButton(124, 196, 192, 36, w.game.gmst("sok", "OK"), true) || (pick >= 0 && (in.down & KEY_A)))
+	if (uiButton(124, 196, 192, 28, w.game.gmst("sok", "OK"), true) || (pick >= 0 && (in.down & KEY_A)))
 	{
 		w.stats.race = r->id;
 		w.recomputeStats();

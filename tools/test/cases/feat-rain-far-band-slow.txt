@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# A New 3DS drops the far rain's farther band (900 out) while frames run under 30 a second and brings it back once
+# they run past 33; the band 450 out and the streaks stay (spec/performance-tradeoffs.md). Balmora at noon in rain:
+# frames 40 ms apart (25 a second), then 16.7 ms apart (60), handed to the frame pacing as the console's frames are
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+GOTO:Balmora
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:4+HOUR:12+HIDEACTORS:4000
+2 0 0 0
+0.1 0 0 0 0 EXPECT:precip:farring:eq:32+EXPECT:precip:ring:eq:32
+0.3 0 0 0 0 ADAPTVIEW:20:40:60
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:precip:farring:eq:0+EXPECT:precip:ring:eq:32+EXPECT:precip:streaks:gt:200
+0.3 0 0 0 0 ADAPTVIEW:12:16.7:80
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:precip:farring:eq:32+EXPECT:precip:ring:eq:32

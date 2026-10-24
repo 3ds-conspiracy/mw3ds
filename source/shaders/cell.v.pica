@@ -12,6 +12,11 @@
 .fvec ambientAdd                ; added to every vertex's light: Night Eye (OpenMW's ambient + 0.7 x magnitude / 100)
 .fvec torchVec                  ; the player's torch lit per pixel (first person): eye-space position . torchVec = how far
                                 ; out its light reaches there, 0 at the eye, 1 at its radius (renderer.cpp light ramp); (0, 0, 0, 1): none
+; Stereo 3D's far depth (renderingmanager.cpp rendererSetStereoCurve): past a knee distance each doubling of the depth
+; adds a share of the eye's own offset at infinity (-projection.z in the screen-width row), so the 1 / distance of a
+; plain stereo view doesn't leave everything past ~10 m on one flat plane. x: the share a doubling (negated),
+; y: log2 of the knee, z: the most doublings, w: unused. Nearer than the knee: nothing added
+.fvec stereoCurve
 ; Outdoors, the lamps' light the night leaves alone: the batch's lamp colour x (1 - tint) / 16383, times each vertex's
 ; brightness of it in the position's w (convert_cell.py lamp_channel); 0 for everything else. Not in skin.v.pica: its
 ; bone palette overwrites this register (renderer.cpp sets it again after a skinned run)
@@ -23,14 +28,16 @@
 .fvec sideLight
 .bool gammaOn                   ; on: the light is curved by Gamma (gamma.h); first, so skin.v.pica has it in the same register
 .bool lightOn                   ; on: the player carries a light (off: its terms skipped; second, as in skin.v.pica)
+.bool stereoOn                  ; on: stereo 3D's far depth (stereoCurve; third, as in skin.v.pica)
 
 ; Constants
 .constf consts(0.0, 1.0, 0.00392156862, 0.5)
 .alias  ones      consts.yyyy
 .alias  inv255    consts.zzzz
 .alias  half      consts.wwww
-.constf gammaConsts(0.001, 0.0, 0.0, 0.0)
+.constf gammaConsts(0.001, 5.0, 0.0, 0.0)
 .alias  gammaFloor gammaConsts.xxxx
+.alias  stereoFloor gammaConsts.yyyy     ; the depth stereoCurve takes the log of, at least the near plane's
 
 ; Outputs
 .out outpos position
@@ -56,10 +63,24 @@
 	dp4 r1.w, modelView[3], r0
 
 	; outpos = projection * r1
-	dp4 outpos.x, projection[0], r1
-	dp4 outpos.y, projection[1], r1
-	dp4 outpos.z, projection[2], r1
-	dp4 outpos.w, projection[3], r1
+	dp4 r13.x, projection[0], r1
+	dp4 r13.y, projection[1], r1
+	dp4 r13.z, projection[2], r1
+	dp4 r13.w, projection[3], r1
+	; Stereo 3D's far depth: doublings past the knee (0 to the most), x the depth (clip space), x the eye's offset at
+	; infinity in whichever row holds it (the other's z is 0)
+	ifu stereoOn
+		max r14, stereoFloor, r13.wwww
+		lg2 r14.x, r14.x
+		add r14, -stereoCurve.yyyy, r14.xxxx
+		max r14, consts.xxxx, r14
+		min r14, stereoCurve.zzzz, r14
+		mul r14, stereoCurve.xxxx, r14
+		mul r14, r13.wwww, r14
+		mad r13.x, r14.xxxx, projection[0].zzzz, r13.xxxx
+		mad r13.y, r14.xxxx, projection[1].zzzz, r13.yyyy
+	.end
+	mov outpos, r13
 
 	mov r2, intex
 	mul r2.xy, uvScale, r2

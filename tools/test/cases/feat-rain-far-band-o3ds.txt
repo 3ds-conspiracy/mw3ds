@@ -1,0 +1,10 @@
+# start: Seyda Neen
+# console: old
+# An Old 3DS draws the rain's streaks alone (spec/performance-tradeoffs.md): neither far-rain band in Balmora's rain
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+GOTO:Balmora
+3 0 0 0
+25 0 0 0
+0.3 0 0 0 0 SETWEATHER:4+HOUR:12+HIDEACTORS:4000
+2 0 0 0
+0.1 0 0 0 0 EXPECT:precip:ring:eq:0+EXPECT:precip:farring:eq:0

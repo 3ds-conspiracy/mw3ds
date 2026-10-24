@@ -31,10 +31,20 @@ struct SaveInfo
 void writeSaveMeta(const char* savePath, const std::string& name, const std::string& place, int level, u64 timeMs);
 // The test driver's CLOCKSHIFT: added to the time saves record (a console whose clock was reset or set back)
 extern s64 g_saveClockShiftMs;
-// The last of the player's own saves written (not the autosave)
+// The last of the player's own saves written (not the autosave), and its list row as savesList would read it back
 extern std::string g_lastSavePath;
-// Autosave first, then the player's saves newest first, then bundled ones
+extern SaveInfo g_lastSaveInfo;
+// The new row for a save just written, put where savesList would put it: after a save the list is updated from
+// memory, not read again (reading the card's directory again after a write took seconds on the console)
+void addSaveToList(std::vector<SaveInfo>& list);
+// Autosave first, then the player's saves newest first, then bundled ones. Read from the card once, then kept up to date
+// as the game saves and deletes (g_saveListReads: the times it read the card)
 std::vector<SaveInfo> savesList(const char* dataDir);
+extern int g_saveListReads;
+// .meta files opened listing the saves (those the saves' index lacked), and the kept list dropped so the next listing
+// reads the card as at a start (the test driver's SAVESRELOAD)
+extern int g_saveMetaReads;
+void forgetSavesList();
 // A new, unused path in kSaveDir
 std::string saveNewPath();
 

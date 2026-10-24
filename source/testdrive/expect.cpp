@@ -372,6 +372,29 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		ok = (int)s.screen == screenByName(a[1]);
 		snprintf(got, sizeof(got), "screen %d", (int)s.screen);
 	}
+	else if (what == "doorleafblocks" && a.size() >= 2)
+	{
+		// EXPECT:doorleafblocks:<door>: the middle of the door's leaf, where it is drawn now (turned open about its origin),
+		// is inside something that blocks walking
+		int ri = findRef(s, a[1], false);
+		if (ri < 0)
+			return false;
+		const Ref& r = w.refs[ri];
+		float rel[3], mid[3];
+		for (int k = 0; k < 3; k++)
+			rel[k] = (r.boxMin[k] + r.boxMax[k]) * 0.5f - r.pos[k];
+		doorSwing(r, -r.doorAngle, rel, mid);
+		for (int k = 0; k < 3; k++)
+			mid[k] += r.pos[k];
+		bool blocked = false;
+		for (LoadedCell* l : w.loaded)
+			for (const CollisionBox& b : l->cell.blockers)
+				blocked |= mid[0] >= b.min[0] && mid[0] <= b.max[0] && mid[1] >= b.min[1] && mid[1] <= b.max[1]
+					&& mid[2] >= b.min[2] && mid[2] <= b.max[2];
+		ok = blocked;
+		snprintf(got, sizeof(got), "%s at %.0f %.0f %.0f, turned %.2f", blocked ? "blocked" : "open", mid[0], mid[1], mid[2],
+			r.doorAngle);
+	}
 	else if ((what == "doorpick" || what == "doorpickclosed") && a.size() >= 2)
 	{
 		// EXPECT:doorpick:<door>: the crosshair, aimed from the player's eyes at the middle of the door as it is drawn now

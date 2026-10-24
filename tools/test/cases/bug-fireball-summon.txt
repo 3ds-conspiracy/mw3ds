@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# A Fireball cast at a foe that catches the player's summon beside it doesn't turn the summon on the player: one siding
+# with the player forgives a friendly hit while it fights someone (OpenMW's friendlyHit), and a blow or harmful spell
+# outside a fight three times. A summoned scamp in melee with a guar turned on the player at the first Fireball
+1 0 0 0 0 TP:-3514:-62273:520:0+HOUR:12
+0.3 0 0 0 0 SEED:2
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 SPELL:summon_scamp
+0.3 0 0 0 0 SPELL:fireball_large
+6 0 0 0
+0 0 0 0 0 SETUP-END
+# (the guar held still where it stands, POSE: only the scamp moves)
+0.3 0 0 0 0 POSE:guar:idle:0:180
+0.3 0 0 0 0 HOSTILE:guar
+0.5 0 0 0 0 CAST:summon_scamp
+6 0 0 0
+0.1 0 0 0 0 SNAP:refhealth:scamp_summon
+0.3 0 0 0 0 CASTAT:guar:fireball_large
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:scamp_summon:lt:@0
+0.1 0 0 0 0 EXPECT:refcombat:scamp_summon:eq:0
+0.1 0 0 0 0 EXPECT:refally:scamp_summon:eq:1

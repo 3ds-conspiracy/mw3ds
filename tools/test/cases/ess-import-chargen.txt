@@ -1,0 +1,24 @@
+# start: save:sdmc:/3ds/mw3ds/test_ess.sav
+# needs: build/ess-test/test_ess.sav
+# A PC save converted by tools/convert/ess.py loads as the character it was: a level 1 Dark Elf Acrobat (The
+# Apprentice) just out of character creation in Seyda Neen, the Caius Cosades quest begun, the clothes worn.
+# Needs the converted save, which comes from the player's own Morrowind save and so is never committed:
+#   python tools/convert/ess.py <the .ess> --data out/world --out build/ess-test
+#   copy build/ess-test/3ds/mw3ds/saves/pc_<name>.json to build/ess-test/test_ess.sav
+#   tools/test/run_test.py ess-import-chargen --native --data out/world (skipped without the save)
+3 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.1 0 0 0 0 EXPECT:level:eq:1
+0.1 0 0 0 0 EXPECT:healthmax:eq:45
+0.1 0 0 0 0 EXPECT:magickamax:eq:100
+0.1 0 0 0 0 EXPECT:gold:eq:87
+0.1 0 0 0 0 EXPECT:attr:agility:eq:50
+0.1 0 0 0 0 EXPECT:attr:willpower:eq:30
+0.1 0 0 0 0 EXPECT:skill:marksman:eq:40
+0.1 0 0 0 0 EXPECT:skill:acrobatics:eq:35
+0.1 0 0 0 0 EXPECT:skill:longblade:eq:10
+0.1 0 0 0 0 EXPECT:journal:A1_1_FindSpymaster:eq:1
+0.1 0 0 0 0 EXPECT:equipped:common_shirt_01:eq:1
+0.1 0 0 0 0 EXPECT:item:bk_a1_1_caiuspackage:eq:1
+0.1 0 0 0 0 EXPECT:item:chargen_dagger:eq:1
+2 0 0 0 0 SHOT

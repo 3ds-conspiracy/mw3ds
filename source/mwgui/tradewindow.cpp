@@ -1,21 +1,25 @@
 // Bartering: the merchant's goods, offers and haggling
+#include <algorithm>
 #include <cmath>
+#include <cstdlib>
 #include <cstdio>
 #include <cstring>
 #include "components/debug/debuglog.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 
-// Buying and selling at the merchant's price: a stack asks how many first (as OpenMW's count dialog)
+// Bartering as OpenMW's trade window: what to buy and what to sell is put together first (A, or tapping the picked item
+// again; a stack asks how many, 0 taking it back out of the deal), and one offer settles it. Only the balance is paid, by
+// whichever side owes it: a sword sold for 5000 pays for one bought for 5000, whatever gold either side has
 void Session::drawBarter()
 {
 	u32 keys = uiIn().down;
-	bool counting = barterCount > 0;
+	bool counting = barterCounting;
 	Ref& m = w.refs[barterRef];
 	int gold = w.itemCount("gold_001");
 	header(w.game.actors[m.actor].name, "Their " + std::to_string(m.gold) + "  You " + std::to_string(gold));
 
-	// Buy from their goods or sell yours (L / R switch)
+	// Buy from their goods or sell yours (L / R switch); the deal keeps both sides
 	bool sell = barterSell;
 	if (keys & (KEY_L | KEY_R) && !counting)
 		sell = !sell;
@@ -26,15 +30,20 @@ void Session::drawBarter()
 	if (sell != barterSell)
 	{
 		barterSell = sell;
-		barterCount = 0;
 		grid = UiGrid();
 		playSound(-1, "Menu Click");
 	}
+	auto inDeal = [&](bool sold, int from, int index) {
+		for (const BarterLine& l : barterDeal)
+			if (l.sell == sold && l.from == from && l.index == index)
+				return l.count;
+		return 0;
+	};
 
-	// cells: (index into merchant contents or player inventory, price)
-	std::vector<std::pair<int, int>> items;
+	// cells: (from, index) of each, and its price
+	std::vector<std::pair<int, int>> where;
+	std::vector<int> prices;
 	std::vector<UiGridItem> cells;
-	std::vector<std::pair<int, int>> goods;       // buying: (reference holding it, index in its contents)
 	if (!barterSell)
 		for (auto& g : merchantGoods(barterRef))
 		{
@@ -42,11 +51,11 @@ void Session::drawBarter()
 			const Object* o = w.game.object(good.second);
 			if (!merchantTrades(barterRef, o))
 				continue;
-			int price = barterPrice(barterRef, o->value, true);
-			items.emplace_back((int)goods.size(), price);
-			goods.push_back(g);
-			UiGridItem c = gridItem(o, good.second, stockCount(good.first), false);
-			if (price > gold)
+			where.push_back(g);
+			prices.push_back(barterPrice(barterRef, o->value, true));
+			int left = stockCount(good.first) - inDeal(false, g.first, g.second);
+			UiGridItem c = gridItem(o, good.second, left, false);
+			if (left <= 0)
 				c.flags |= UIGRID_DIM;
 			cells.push_back(c);
 		}
@@ -56,9 +65,13 @@ void Session::drawBarter()
 			const Object* o = w.game.object(w.inventory[i].id);
 			if (!merchantTrades(barterRef, o))
 				continue;
-			int price = barterPrice(barterRef, o->value, false);
-			items.emplace_back(i, price);
-			cells.push_back(gridItem(o, w.inventory[i].id, w.inventory[i].count, w.inventory[i].equipped));
+			where.emplace_back(-1, (int)i);
+			prices.push_back(barterPrice(barterRef, o->value, false));
+			int left = w.inventory[i].count - inDeal(true, -1, (int)i);
+			UiGridItem c = gridItem(o, w.inventory[i].id, left, w.inventory[i].equipped);
+			if (left <= 0)
+				c.flags |= UIGRID_DIM;
+			cells.push_back(c);
 		}
 	if (cells.empty())
 		uiTextCentered(160, 110, 0.5f, col::textDim, barterSell ? "Nothing they would buy" : "Nothing for sale");
@@ -70,117 +83,277 @@ void Session::drawBarter()
 		grid.selected = before;           // the D-pad picks the count now, not the item
 		pick = -1;
 	}
-	int sel = grid.selected >= 0 && grid.selected < (int)items.size() ? grid.selected : -1;
-	// How many of the picked item there are
-	int have = 0;
+	int sel = grid.selected >= 0 && grid.selected < (int)where.size() ? grid.selected : -1;
+	if (sel < 0)
+		barterCounting = counting = false;
+	// How many of the picked item there are, and how many of them are in the deal
+	int have = 0, dealt = 0;
 	if (sel >= 0)
-		have = barterSell ? w.inventory[items[sel].first].count
-			: stockCount(merchantGood(goods[items[sel].first]).first);
-	if (!counting || sel < 0)
-		barterCount = 0;
-	else
+	{
+		have = barterSell ? w.inventory[where[sel].second].count : stockCount(merchantGood(where[sel]).first);
+		dealt = inDeal(barterSell, where[sel].first, where[sel].second);
+	}
+	if (counting)
 	{
 		// D-pad left / right: one fewer / more, L / R: ten
 		if (keys & KEY_LEFT) barterCount--;
 		if (keys & KEY_RIGHT) barterCount++;
 		if (keys & KEY_L) barterCount -= 10;
 		if (keys & KEY_R) barterCount += 10;
-		barterCount = std::max(1, std::min(barterCount, have));
+		barterCount = std::max(dealt > 0 ? 0 : 1, std::min(barterCount, have));   // (0 takes one already in the deal out)
 	}
-	int total = sel >= 0 ? items[sel].second * std::max(1, barterCount) : 0;
+	int balance = barterBalance();
 	if (sel >= 0)
 	{
-		const Object* o = w.game.object(barterSell ? w.inventory[items[sel].first].id
-			: merchantGood(goods[items[sel].first]).second);
-		itemInfo(o, 191, counting ? std::to_string(barterCount) + " of " + std::to_string(have) + ": " + std::to_string(total) + " gold"
-			: std::to_string(items[sel].second) + " gold");
-		ContentItem e = barterSell ? ContentItem() : merchantGood(goods[items[sel].first]);
-		InventoryItem state = !barterSell ? InventoryItem{ lower(e.second), have, false, e.condition, e.soul, e.charge } : InventoryItem{};
-		itemTip(o, barterSell ? &w.inventory[items[sel].first] : &state);
-	}
-	uiConsume(KEY_A | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
-	int focusNone = -1;
-	int& focus = focusNone;
-	std::string action = barterSell ? w.game.gmstLabel("ssell", "Sell") : w.game.gmstLabel("sbuy", "Buy");
-	// Haggling: Y / X lower or raise the offer 5% of the price at a time (the merchant may refuse)
-	const UiInput& hin = uiIn();
-	if (hin.down & KEY_Y) haggle--;
-	if (hin.down & KEY_X) haggle++;
-	haggle = haggle < -19 ? -19 : haggle > 19 ? 19 : haggle;
-	int offer = 0, price0 = 0;
-	if (sel >= 0)
-	{
-		int price = counting ? total : items[sel].second;       // (the whole lot while choosing a count)
-		price0 = price;
-		offer = std::max(1, price + (int)roundf(price * 0.05f * haggle));
-		// "Buy (45 of 50g)" while haggling; Y / X change it
+		const Object* o = w.game.object(barterSell ? w.inventory[where[sel].second].id : merchantGood(where[sel]).second);
+		std::string info = std::to_string(prices[sel]) + " gold";
 		if (counting)
-			action += " " + std::to_string(barterCount);
-		action += offer != price ? " (" + std::to_string(offer) + " of " + std::to_string(price) + "g)"
-			: " (" + std::to_string(price) + (counting ? "g)" : "g, Y/X haggle)");
+			info = std::to_string(barterCount) + " of " + std::to_string(have) + ": " + std::to_string(prices[sel] * barterCount) + " gold";
+		else if (dealt > 0)
+			info += ", " + std::to_string(dealt) + " in the deal";
+		itemInfo(o, 191, info);
+		ContentItem e = barterSell ? ContentItem() : merchantGood(where[sel]);
+		InventoryItem state = !barterSell ? InventoryItem{ lower(e.second), have, false, e.condition, e.soul, e.charge } : InventoryItem{};
+		itemTip(o, barterSell ? &w.inventory[where[sel].second] : &state);
 	}
-	int b = -1;
-	if (!counting)
-		b = buttonRow({ action, w.game.gmst("sdone", "Done") }, focus);
-	else
+	else if (!barterDeal.empty())
+		uiTextCentered(160, 194, 0.42f, col::textDim, "Y / X haggle, tap the total to type one, SELECT offers");
+	uiConsume(KEY_A | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
+	// Haggling: Y / X (or - / +) lower or raise the offer 5% of the balance at a time, or a number is typed on the number
+	// pad (the merchant may refuse)
+	const UiInput& hin = uiIn();
+	int price0 = abs(balance), offer = barterHaggled(price0);
+	bool dealOn = !barterDeal.empty();
+	auto nudge = [&](int dir) {
+		// (in 5% steps of the balance from it, as Morrowind's; a typed offer goes to the nearest step first)
+		float step = std::max(1.0f, price0 * 0.05f);
+		int k = (int)roundf((offer - price0) / step) + dir;
+		haggleOffer = std::max(0, price0 + (int)roundf(step * k));
+		offer = haggleOffer;
+	};
+	if (dealOn && (hin.down & KEY_Y)) nudge(-1);
+	if (dealOn && (hin.down & KEY_X)) nudge(1);
+	auto setDealt = [&](int n) {
+		for (size_t k = 0; k < barterDeal.size(); k++)
+			if (barterDeal[k].sell == barterSell && barterDeal[k].from == where[sel].first && barterDeal[k].index == where[sel].second)
+			{
+				if (n > 0)
+					barterDeal[k].count = n;
+				else
+					barterDeal.erase(barterDeal.begin() + k);
+				haggleOffer = -1;                         // (a new deal: the offer is its balance again, as OpenMW's)
+				return;
+			}
+		if (n > 0)
+			barterDeal.push_back({ barterSell, where[sel].first, where[sel].second, n });
+		haggleOffer = -1;
+	};
+	if (counting)
 	{
-		// [-]  Buy 5 (50g)  [+]  Cancel: A buys, B (or Cancel) goes back to the grid
+		// [-]  Buy 5  [+]  Cancel: A sets how many go in the deal (0 takes them out), B (or Cancel) goes back to the grid
+		std::string label = barterCount == 0 ? std::string("None")
+			: (barterSell ? w.game.gmstLabel("ssell", "Sell") : w.game.gmstLabel("sbuy", "Buy")) + " " + std::to_string(barterCount);
+		bool set = false;
 		if (uiButton(4, 208, 40, 28, "-", false))
-			barterCount = std::max(1, barterCount - 1);
-		if (uiButton(48, 208, 160, 28, action, true))
-			b = 0;
+			barterCount = std::max(dealt > 0 ? 0 : 1, barterCount - 1);
+		if (uiButton(48, 208, 160, 28, label, true))
+			set = true;
 		if (uiButton(212, 208, 40, 28, "+", false))
 			barterCount = std::min(have, barterCount + 1);
 		if (uiButton(256, 208, 60, 28, w.game.gmst("scancel", "Cancel"), false) || (hin.down & KEY_B))
 		{
-			barterCount = 0;
+			barterCounting = false;
 			playSound(-1, "Menu Click");
 			return;
 		}
+		if (set || aKey)
+		{
+			setDealt(barterCount);
+			barterCounting = false;
+			playSound(-1, "Menu Click");
+		}
+		return;
 	}
-	// A, or tapping the selected item again, buys / sells it
-	if (sel >= 0 && pick >= 0 && (aKey || pick == before))
-		b = 0;
-	if (counting && aKey)
-		b = 0;
-	// A stack asks how many first
-	if (b == 0 && sel >= 0 && !counting && have > 1)
+	// The balance, as OpenMW's TOTAL COST / TOTAL SOLD with its - / + haggle buttons and the number typed into it, then
+	// Offer, Clear, Done
+	if (uiButton(4, 208, 22, 28, "-", false, dealOn))
+		nudge(-1);
+	if (uiButton(114, 208, 22, 28, "+", false, dealOn))
+		nudge(1);
+	if (uiButton(28, 208, 84, 28, "", false, dealOn))
 	{
-		barterCount = 1;
-		haggle = 0;
+		wantText = TEXT_OFFER;
+		playSound(-1, "Menu Click");
+	}
+	// (the label and the number fit inside the box's frame, 3 high top and bottom)
+	float labelH = uiLineHeight(0.28f) * 0.8f, numH = uiLineHeight(0.55f), top = 208 + (28 - labelH - numH) / 2;
+	uiTextCentered(70, top, 0.28f, col::textDim, balance < 0 ? w.game.gmst("stotalcost", "TOTAL COST") : w.game.gmst("stotalsold", "TOTAL SOLD"));
+	uiTextCentered(70, top + labelH, 0.55f, offer != price0 ? col::textOver : col::text, std::to_string(offer));
+	bool offerB = uiButton(140, 208, 58, 28, w.game.gmst("soffer", "Offer"));
+	bool clearB = uiButton(202, 208, 56, 28, "Clear");
+	bool doneB = uiButton(262, 208, 54, 28, w.game.gmst("sdone", "Done"));
+	int b = offerB ? 0 : clearB ? 1 : doneB ? 2 : -1;
+	if (b == 0 || (hin.down & KEY_SELECT))
+	{
+		if (dealOn)
+			barterOffer();
+		else
+			notify(w.game.gmst("sbarterdialog11", "You need to trade items before making an offer."));
+		return;
+	}
+	if (b == 1)
+	{
+		barterDeal.clear();
+		haggleOffer = -1;
 		playSound(-1, "Menu Click");
 		return;
 	}
-	bool refused = false;
-	if (b == 0 && sel >= 0 && offer != price0)
+	// A, or tapping the selected item again, puts it in the deal (or takes it out); a stack asks how many
+	if (sel >= 0 && pick >= 0 && (aKey || pick == before))
 	{
-		refused = !haggleAccepted(price0, offer);
-		if (refused)
+		if (have > 1)
 		{
-			notify(w.game.gmst("snotifymessage9", "Your offer has been refused."));
-			playSound(-1, "Menu Click");
+			barterCounting = true;
+			barterCount = dealt > 0 ? dealt : 1;
 		}
+		else
+			setDealt(dealt > 0 ? 0 : 1);
+		playSound(-1, "Menu Click");
+		return;
 	}
-	if (b == 0 && sel >= 0 && !refused)
-	{
-		int n = std::max(1, barterCount);
-		bool done = barterSell ? barterTrade(true, items[sel].first, offer, -1, n)
-			: barterTrade(false, goods[items[sel].first].second, offer, goods[items[sel].first].first, n);
-		if (done)
-			barterCount = 0;
-	}
-	else if (!counting && (b == 1 || (hin.down & KEY_B)))
+	if (b == 2 || (hin.down & KEY_B))
 	{
 		barterRef = -1;
+		barterDeal.clear();
 		screen = SCR_DIALOGUE;
 		playSound(-1, "Menu Click");
 	}
+}
+
+// What the deal is worth to the player: the price of what they sell less the price of what they buy (a line whose stack
+// has gone is dropped, one with fewer left than it holds comes down to what is left)
+int Session::barterBalance()
+{
+	int balance = 0;
+	for (size_t k = 0; k < barterDeal.size();)
+	{
+		const BarterLine& l = barterDeal[k];
+		const Object* o = nullptr;
+		int have = 0;
+		if (l.sell && l.index >= 0 && l.index < (int)w.inventory.size())
+		{
+			o = w.game.object(w.inventory[l.index].id);
+			have = w.inventory[l.index].count;
+		}
+		else if (!l.sell && l.from >= 0 && l.from < (int)w.refs.size() && l.index < (int)w.refs[l.from].contents.size())
+		{
+			ContentItem it = merchantGood({ l.from, l.index });
+			o = w.game.object(it.second);
+			have = stockCount(it.first);
+		}
+		if (!o || have <= 0)
+		{
+			barterDeal.erase(barterDeal.begin() + k);
+			continue;
+		}
+		barterDeal[k].count = std::min(barterDeal[k].count, have);
+		balance += (barterDeal[k].sell ? 1 : -1) * barterPrice(barterRef, o->value, !barterDeal[k].sell) * barterDeal[k].count;
+		k++;
+	}
+	return balance;
+}
+
+// What the player offers for a balance of price0: the balance itself until it is haggled or typed
+int Session::barterHaggled(int price0)
+{
+	return haggleOffer >= 0 ? haggleOffer : price0;
+}
+
+// The Offer button: the deal at the haggled balance (OpenMW's TradeWindow::onOfferButtonClicked). Only the balance has to
+// be there, with whichever side pays it; one of the merchant's own stolen goods refuses the lot, and a haggled offer may be
+// refused. Then everything changes hands and the balance moves once
+bool Session::barterOffer()
+{
+	Ref& m = w.refs[barterRef];
+	int balance = barterBalance();
+	if (barterDeal.empty())
+		return false;
+	int price0 = abs(balance), offer = barterHaggled(price0);
+	bool playerPays = balance < 0;
+	for (const BarterLine& l : barterDeal)
+	{
+		if (!l.sell || m.actor < 0)
+			continue;
+		auto sf = w.stolenFrom.find(w.inventory[l.index].id);
+		if (sf == w.stolenFrom.end())
+			continue;
+		std::string fac = lower(w.game.actors[m.actor].faction);
+		for (auto& o : sf->second)
+			if (o == m.idLower || (!fac.empty() && o == fac))
+			{
+				notify("That was stolen from me! I won't buy it back.");
+				return false;
+			}
+	}
+	if (playerPays ? w.itemCount("gold_001") < offer : m.gold < offer)
+	{
+		notify(playerPays ? w.game.gmst("sbarterdialog1", "You don't have enough gold.")
+			: w.game.gmst("sbarterdialog2", "The trader can't afford that."));
+		logf("barter: refused: %s (balance %d, offer %d)", playerPays ? "not enough gold" : "the merchant can't afford it", balance, offer);
+		return false;
+	}
+	if (offer != price0 && price0 > 0)
+	{
+		bool side = barterSell;
+		barterSell = !playerPays;                     // (judged as a sale when the merchant pays, a purchase when the player does)
+		bool ok = haggleAccepted(price0, offer);
+		barterSell = side;
+		if (!ok)
+		{
+			notify(w.game.gmst("snotifymessage9", "Your offer has been refused."));
+			playSound(-1, "Menu Click");
+			return false;
+		}
+	}
+	// (what is sold first, the last of the inventory first, then what is bought, the last of each holder's stacks first:
+	// the indices of the rest hold)
+	std::vector<BarterLine> lines = barterDeal;
+	std::sort(lines.begin(), lines.end(), [](const BarterLine& a, const BarterLine& b) {
+		if (a.sell != b.sell)
+			return a.sell;
+		if (a.from != b.from)
+			return a.from < b.from;
+		return a.index > b.index;
+	});
+	for (const BarterLine& l : lines)
+		barterTrade(l.sell, l.index, 0, l.from, l.count, false);
+	if (playerPays)
+	{
+		w.removeItem("gold_001", offer);
+		m.gold += offer;
+	}
+	else
+	{
+		w.addItem("gold_001", offer);
+		m.gold -= offer;
+	}
+	playSound(-1, playerPays ? "Item Gold Down" : "Item Gold Up");
+	logf("barter: deal of %d lines, the player %s %d (balance %d)", (int)lines.size(), playerPays ? "pays" : "gets", offer, balance);
+	barterDeal.clear();
+	haggleOffer = -1;
+	// A deal done: the speaker's thanks join the talk (OpenMW's onTradeComplete)
+	dlg.history.push_back({ "", w.game.gmst("sbarterdialog5", "Thank you.") });
+	dlg.revision++;
+	return true;
 }
 
 void Session::openBarter(int ref)
 {
 	barterRef = ref;
 	barterSell = false;
+	barterDeal.clear();
+	barterCounting = false;
+	haggleOffer = -1;
 	list2 = UiList();
 	grid = UiGrid();
 	screen = SCR_BARTER;
@@ -233,7 +406,7 @@ ContentItem Session::merchantGood(const std::pair<int, int>& g)
 	return it;
 }
 
-bool Session::barterTrade(bool sell, int index, int price, int from, int count)
+bool Session::barterTrade(bool sell, int index, int price, int from, int count, bool thanks)
 {
 	Ref& m = w.refs[barterRef];
 	Ref& holder = w.refs[from >= 0 ? from : barterRef];
@@ -269,12 +442,13 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 			w.removeItem("gold_001", price);
 			m.gold += price;
 			w.takeStack(it, count);             // (a worn or part-charged one, or a filled gem, as it is)
-			// (a restocking quantity, a negative count, is used up by a sale as well, its magnitude going down: OpenMW's
-			// ContainerStore::subtractItems. It comes back with the purse, in World::restockGold)
-			bool restocking = it.first < 0;
-			it.first += restocking ? count : -count;
-			if (restocking ? it.first >= 0 : it.first <= 0)
-				holder.contents.erase(holder.contents.begin() + items[sel].first);
+			// (a restocking quantity, a negative count, is never used up by a sale: OpenMW's removeItem)
+			if (it.first > 0)
+			{
+				it.first -= count;
+				if (it.first <= 0)
+					holder.contents.erase(holder.contents.begin() + items[sel].first);
+			}
 			playSound(-1, "Item Gold Down");
 			// (Mercantile only rises with a haggled offer, in haggleAccepted: as in OpenMW)
 		}
@@ -310,10 +484,7 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 					w.inventory.erase(w.inventory.begin() + items[sel].first);
 				if (worn)
 					w.refreshStats();
-				if (w.itemCount(id) == 0)
-					for (auto& sc : w.scripts)
-						if (sc.item == id)
-							sc.running = false;
+				w.itemLeft(id);
 			}
 			w.addItem("gold_001", price);
 			m.gold -= price;
@@ -336,7 +507,10 @@ bool Session::barterTrade(bool sell, int index, int price, int from, int count)
 		}
 	}
 	// A deal done: the speaker's thanks join the talk (OpenMW's onTradeComplete)
-	dlg.history.push_back({ "", w.game.gmst("sbarterdialog5", "Thank you.") });
-	dlg.revision++;
+	if (thanks)
+	{
+		dlg.history.push_back({ "", w.game.gmst("sbarterdialog5", "Thank you.") });
+		dlg.revision++;
+	}
 	return true;
 }

@@ -89,6 +89,14 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 				v = 1;
 		return true;
 	}
+	if (what == "itemscriptrunning")      // itemscriptrunning:<item>: 1 while a carried item's own script runs
+	{
+		v = 0;
+		for (auto& sc : w.scripts)
+			if ((sc.item == lower(arg) || sc.item == lower(spaced(arg))) && sc.running)
+				v = 1;
+		return true;
+	}
 	if (what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal")
 	{
 		// reflocal:<reference id>,<variable>: a local of that object's script (of the first with the id that isn't 0:
@@ -327,6 +335,13 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		{
 			Actor* ra = w.actorOf(ri);
 			v = r.dead && ra && ra->time < actorSkeleton(*w.actorsOf(ri), ra->skeleton).groups[ra->group].stop - 0.05f ? 1.0f : 0.0f;
+		}
+		else if (what == "reflying")     // dead and lying: its death group held at its end (not stood up again by another group)
+		{
+			Actor* ra = w.actorOf(ri);
+			const Skeleton* rs = ra ? &actorSkeleton(*w.actorsOf(ri), ra->skeleton) : nullptr;
+			v = r.dead && rs && ra->group >= 0 && ra->group < (int)rs->groups.size()
+				&& strcasecmp(rs->groups[ra->group].name, r.deathGroup) == 0 && ra->time >= rs->groups[ra->group].stop - 0.05f ? 1.0f : 0.0f;
 		}
 		else if (what == "refrun")       // running (its run animation plays), not walking
 		{

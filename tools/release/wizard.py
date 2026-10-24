@@ -321,6 +321,17 @@ class Wizard:
             row=row, column=1, columnspan=2, sticky="w", padx=28)
         row += 1
 
+        self.pc_saves = tk.BooleanVar(value=self.settings.get("pc_saves", True))
+        self.saves_check = ttk.Checkbutton(f, text="Bring my PC saves across (the .ess files in Morrowind's Saves "
+                                                   "folder)", variable=self.pc_saves)
+        self.saves_check.grid(row=row, column=1, columnspan=2, sticky="w", **pad)
+        row += 1
+        self.saves_note = ttk.Label(f, text="", foreground="#555", wraplength=640, justify="left")
+        self.saves_note.grid(row=row, column=1, columnspan=2, sticky="w", padx=28)
+        row += 1
+        ttk.Button(f, text="3DS saves to PC...", command=self.saves_to_pc).grid(row=row, column=1, sticky="w", **pad)
+        row += 1
+
         ttk.Label(f, text="Output").grid(row=row, column=0, sticky="nw", **pad)
         self.output_kind = tk.StringVar(value=self.settings.get("output_kind", "cia"))
         o = ttk.Frame(f)
@@ -385,7 +396,7 @@ class Wizard:
     def save_settings(self):
         s = {"morrowind": self.morrowind.get(), "console": self.console.get(), "language": self.language.get(),
              "plugins": self.chosen_plugins(), "mods": self.mods.get(), "output_kind": self.output_kind.get(),
-             "out_dir": self.out_dir.get(), "work": self.work.get()}
+             "out_dir": self.out_dir.get(), "work": self.work.get(), "pc_saves": self.pc_saves.get()}
         try:
             SETTINGS.write_text(json.dumps(s, indent=2), encoding="utf-8")
         except OSError:
@@ -440,6 +451,11 @@ class Wizard:
             elif name.lower() in chosen:
                 self.plugins.selection_set(i)
         self.show_plugin_count()
+        n = len(pc_save_files(folder))
+        self.saves_note.config(text=(f"{n} found. " if n else "None found in Saves. ") +
+                               "They go to 3ds\\mw3ds\\saves for the SD card: your character, inventory, journal, "
+                               "quests and what changed in the world. A save first sent from the 3DS comes back whole "
+                               "(its .mw3ds file beside it). Not: anything from Tribunal, Bloodmoon or other plugins.")
 
     def show_plugin_count(self):
         # (the converter refuses a plugin it cannot load: a refused one cannot be picked)
@@ -500,7 +516,8 @@ class Wizard:
         self.log.config(state="disabled")
         job = dict(morrowind=folder, work=work, out=out, old=self.console.get() == "old",
                    encoding=dict(LANGUAGES).get(self.language.get(), "win1252"), plugins=self.chosen_plugins(),
-                   mods=self.mods.get(), sd=self.output_kind.get() == "sd")
+                   mods=self.mods.get(), sd=self.output_kind.get() == "sd",
+                   saves=pc_save_files(folder) if self.pc_saves.get() else [])
         threading.Thread(target=self.run, args=(job,), daemon=True).start()
 
     def run(self, job):
@@ -584,6 +601,17 @@ class Wizard:
                 shutil.rmtree(dest)
             shutil.copytree(data, dest)
             say("data copied: put the 3ds folder on the root of the SD card (it merges with the one there).")
+        if job["saves"]:
+            data = work / "out" / ("o3ds" if job["old"] else "data")
+            say(f"converting {len(job['saves'])} PC saves ...")
+            r = subprocess.run([cmd[0], str(work / "tools" / "convert" / "ess.py"), *map(str, job["saves"]),
+                                "--data", str(data), "--out", str(out)], cwd=work, env=env, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, stdin=subprocess.DEVNULL, text=True, encoding="utf-8",
+                               errors="replace", creationflags=flags)
+            for line in r.stdout.splitlines():
+                say("  " + line)
+            # (a save that would not convert is listed; the CIA is still good)
+            job["saves_out"] = sorted((out / "3ds" / "mw3ds" / "saves").glob("pc_*.json"))
         return True
 
     def stop(self):
@@ -612,6 +640,48 @@ class Wizard:
             pass
         self.root.after(100, self.pump)
 
+    def saves_to_pc(self):
+        """3DS saves back to the PC game: needs a conversion done (the saves name the converted cells' objects) and
+        one PC save of the player's own, the template for what a 3DS save doesn't hold."""
+        folder = self.morrowind.get().strip()
+        work = APP if (APP / ".git").exists() else Path(self.work.get().strip())
+        data = work / "out" / ("o3ds" if self.console.get() == "old" else "data")
+        if not (data / "game.json").is_file():
+            messagebox.showerror(TITLE, "Convert the game first (Start): the 3DS saves are read against the "
+                                        "converted game, the same one your console runs.")
+            return
+        template = sorted(pc_save_files(folder), key=lambda p: p.stat().st_mtime)
+        if not template:
+            messagebox.showerror(TITLE, "Save once in the PC game first: a PC save of your own is needed for the parts "
+                                        "a 3DS save doesn't hold (its picture, the world map).")
+            return
+        saves = filedialog.askopenfilenames(
+            title="3DS saves (copied from the SD card's 3ds\\mw3ds\\saves folder; save.json is the autosave)",
+            filetypes=[("3DS saves", "*.json")])
+        if not saves:
+            return
+        out = Path(self.out_dir.get().strip()) / "PC saves"
+        python = Path(sys.executable).with_name("python.exe")
+        cmd = [str(python if python.is_file() else sys.executable), str(work / "tools" / "convert" / "ess_export.py"),
+               *saves, "--data", str(data), "--template", str(template[-1]), "--out", str(out)]
+        env = dict(os.environ, MW3DS_MORROWIND_DIR=folder,
+                   MW3DS_ENCODING=dict(LANGUAGES).get(self.language.get(), "win1252"))
+        self.write(f"3DS saves to PC (template {template[-1].name}) ...")
+        flags = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
+
+        def run():
+            r = subprocess.run(cmd, cwd=work, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                               stdin=subprocess.DEVNULL, text=True, encoding="utf-8", errors="replace",
+                               creationflags=flags)
+            for line in r.stdout.splitlines():
+                self.lines.put("  " + line)
+            self.root.after(0, lambda: messagebox.showinfo(TITLE, (
+                f"The PC saves are in {out}.\n\nCopy the .ess files and the .mw3ds files beside them into "
+                f"{Path(folder) / 'Saves'}, then load the .ess from the PC game's Load menu. The .mw3ds keeps what the "
+                "PC game has no place for, so the save comes back to the 3DS whole: leave it in the Saves folder.") if r.returncode == 0 else "The saves could not be converted: see the log."))
+        self.t0 = time.time()
+        threading.Thread(target=run, daemon=True).start()
+
     def finished(self, ok, job):
         self.progress.stop()
         self.progress.config(mode="determinate", value=100 if ok else 0)
@@ -622,6 +692,11 @@ class Wizard:
         if ok and not self.dry_run:
             how = ("Copy the 3ds folder to the root of your SD card, then install mw3ds.cia with FBI."
                    if job["sd"] else "Install mw3ds.cia with FBI (or another CIA installer).")
+            if job.get("saves_out"):
+                how += (f"\n\nYour {len(job['saves_out'])} PC saves are in 3ds\\mw3ds\\saves in the output folder. "
+                        "Copy that 3ds folder to the root of the SD card (it merges with the one there): they end up "
+                        "in sdmc:/3ds/mw3ds/saves and show in the game's Saves list, under Saves in the bottom "
+                        "screen's menu.")
             messagebox.showinfo(TITLE, f"Done in {mins:.0f} minutes.\n\n{how}\n\nThe CIA holds your own copy of the "
                                        "game: it is for your console only.")
             if os.name == "nt":
@@ -629,6 +704,12 @@ class Wizard:
         elif not ok:
             messagebox.showerror(TITLE, "The conversion did not finish: see the log in the window. To report a bug, "
                                         "attach converter-log.txt from the work folder.")
+
+
+def pc_save_files(folder):
+    """The PC game's saves: Morrowind's Saves folder (Steam, GOG and disc installs keep them there)."""
+    d = Path(folder) / "Saves" if folder else None
+    return sorted(d.glob("*.ess")) if d and d.is_dir() else []
 
 
 def kill_tree(pid):

@@ -57,8 +57,10 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 				count += w.inventory[i].count;
 				if (n.func == F_REMOVESOULGEM)
 				{
+					std::string id = w.inventory[i].id;
 					if (--w.inventory[i].count <= 0)
 						w.inventory.erase(w.inventory.begin() + i);
+					w.itemLeft(id);
 					return 1.0f;
 				}
 			}

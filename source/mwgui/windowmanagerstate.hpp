@@ -13,7 +13,7 @@ struct WindowManagerState
 	std::vector<MessageState> messages;
 	std::vector<ScriptMenu> pendingMenus;
 	bool wantName = false;            // main loop shows the system keyboard between frames
-	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE, TEXT_CLASSNAME, TEXT_CLASSDESC, TEXT_MAPNOTE };
+	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE, TEXT_CLASSNAME, TEXT_CLASSDESC, TEXT_OFFER, TEXT_MAPNOTE };
 	enum { VIEW_MIN, VIEW_AUTO, VIEW_MAX, VIEW_MID };
 	int wantText = TEXT_NONE;         // the same, for the name of the spell / item being made, the journal's search or the class being made
 	int travelCell = -1;              // door to another cell: main loop shows a loading screen, then finishTravel()
@@ -91,6 +91,8 @@ struct WindowManagerState
 	bool companionSharing = false;    // the container screen is a companion's share (Tribunal: their script's "companion")
 	bool companionWarning = false;    // ... and leaving it with the profit below 0 asks first (sCompanionWarningMessage)
 	std::string bookItem;
+	bool bookFromItems = false;       // read from the Items menu: closing the book goes back to it, as it was
+	UiGrid bookItemsGrid;             // (the Items menu's selection and scroll then)
 	// The book open: its text cut into pages (for the book read, bookPagesOf), the spread shown (pages 2n, 2n + 1)
 	std::vector<UiPage> bookPages;
 	std::string bookPagesOf;
@@ -164,9 +166,15 @@ struct WindowManagerState
 	bool containerPutting = false;                    // the container screen shows the player's items (to put in)
 	int promptRows = 1;                                    // the lines it took last (the attack hint under it moves down for two)
 	bool deathAnySave = false;                    // any save to choose from (the game's starting points too)
-	int barterCount = 0;                          // barter: how many of the picked stack (0: not choosing yet)
+	int barterCount = 0;                          // barter: how many of the picked stack go in the deal (while counting)
+	bool barterCounting = false;                  // barter: the count picker is open for the picked stack
+	// barter: the deal being put together (OpenMW's trade window), what goes each way until the offer settles it: sold from
+	// the inventory (from -1, index into it) or bought from a merchant's holder (from: the reference, index into its
+	// contents; -1: the reference is the item itself)
+	struct BarterLine { bool sell; int from; int index; int count; };
+	std::vector<BarterLine> barterDeal;
 	bool deletingSave = false;                    // Saves screen: asking before deleting the selected save
-	int haggle = 0;                               // barter: the player's offer against the price, in 5% steps
+	int haggleOffer = -1;                         // barter: the gold the player offers for the balance (-1: the balance)
 	std::string rechargeGem;                       // the soul gem Recharge was chosen on (its soul's creature)
 	int enchanterRef = -1, enchantItem = -1, enchantGem = -1, enchantType = -1;
 	std::vector<SpellEffect> makeEffects;        // spellmaking / enchanting: the effects being put together

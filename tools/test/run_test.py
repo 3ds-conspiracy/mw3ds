@@ -56,6 +56,12 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
     # "# console: old" in its first lines: a case for the Old 3DS profile alone (run_native_all leaves it out of New 3DS runs)
     if any(re.match(r"^#\s*console:\s*old\s*$", ln) for ln in inputs[:5]):
         old3ds = True
+    # "# needs: <file>" (repo-relative): a file the case reads from the SD card that can't be committed (made from the
+    # player's own saves). Copied there when it is here; without it the case is skipped, not failed
+    needs = [ROOT / m.group(1) for m in (re.match(r"^#\s*needs:\s*(.+?)\s*$", ln) for ln in inputs) if m]
+    missing = [str(n.relative_to(ROOT)) for n in needs if not n.is_file()]
+    if missing:
+        return [f"== {test}", "RESULT: PASS (skipped: needs " + ", ".join(missing) + ")"]
     if native:
         # The game built for the PC (tools/test/native/build.py): same case file, same log lines, no emulator
         # --sd: its own SD folder, so runs can go in parallel. --sd, --saves and --exe are relative to the repo, as the
@@ -71,6 +77,8 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
             Path(saves).mkdir(parents=True, exist_ok=True)
             for f in Path(saves).glob("test_*"):
                 shutil.copy2(f, sd_app)
+        for n in needs:
+            shutil.copy2(n, sd_app)
         mwtools.write_lines(sd_app / "autoinput.txt", inputs)
         mwtools.write_lines(sd_app / "start.txt", [start])
         env = dict(os.environ)
@@ -94,6 +102,8 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
         log = sd_app / "log.txt"
         shot_dir = sd_app
     else:
+        for n in needs:
+            shutil.copy2(n, Path(emu) / "user" / "sdmc" / "3ds" / "mw3ds")
         run_emu.run(inputs=inputs, wait=wait, start=start, data=data, app=app, emu=emu, fast=fast, old3ds=old3ds, stereo=stereo)
         log = Path(emu) / "user" / "sdmc" / "3ds" / "mw3ds" / "log.txt"
         shot_dir = log.parent

@@ -1,0 +1,16 @@
+# start: save:sdmc:/3ds/mw3ds/test_ess.sav
+# needs: build/ess-test/test_ess.sav
+# What changed in the world comes across with a PC save (tools/convert/ess.py): after character creation the
+# guards on the dock are gone, Fargoth is about, the papers and the dagger from the office are taken.
+# Needs the converted save at build/ess-test/test_ess.sav, made as
+# ess-import-chargen says.
+3 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:refenabled:chargen_dock_guard:eq:0
+0.1 0 0 0 0 EXPECT:refenabled:chargen_boat_guard_1:eq:0
+0.1 0 0 0 0 EXPECT:refenabled:fargoth:eq:1
+0.1 0 0 0 0 EXPECT:alive:fargoth
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census_and_Excise_Office
+0.1 0 0 0 0 EXPECT:refexists:chargen_statssheet:eq:0
+0.1 0 0 0 0 EXPECT:refexists:chargen_dagger:eq:0

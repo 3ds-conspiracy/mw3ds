@@ -1,0 +1,16 @@
+# A book read from the Items menu closes back to the Items menu, its selection kept (it closed to the game); one read
+# off the ground or a quick key still closes to the game
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GIVE:bk_seydaneentaxrecord
+0.3 0 0 0 0 SCREEN:inventory
+0.3 0 0 0 0 INVSEL:bk_seydaneentaxrecord
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:book
+0.3 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:inventory
+0.3 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none

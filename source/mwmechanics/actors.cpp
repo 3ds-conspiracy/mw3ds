@@ -111,7 +111,7 @@ void Session::killNpc(int ri, bool byPlayer)
 	}
 	w.syncActor(ri);
 	playSound(ri, "Body Fall Medium");
-	logf("combat: %s died", r.id.c_str());
+	logf("combat: %s died (%s)", r.id.c_str(), r.deathGroup);
 }
 
 // Health gone, whatever took it (blows, spells, traps, falls, scripts)
@@ -475,8 +475,10 @@ void Session::burnHeldLight(float dt)
 		}
 		logf("light: %s burned out", it.id.c_str());
 		it.charge = -1.0f;
+		std::string id = it.id;
 		if (--it.count <= 0)
 			w.inventory.erase(w.inventory.begin() + i);
+		w.itemLeft(id);
 		break;
 	}
 }

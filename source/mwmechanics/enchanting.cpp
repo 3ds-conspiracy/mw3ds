@@ -133,6 +133,7 @@ void Session::makeEnchantment(float points, int soul, float chance, int price)
 	// the soul goes in any case
 	if (--w.inventory[enchantGem].count <= 0)
 		w.inventory.erase(w.inventory.begin() + enchantGem);
+	w.itemLeft(gem);
 	if (gem == "misc_soulgem_azura")
 		w.addItem(gem, 1);
 	if (price > 0)

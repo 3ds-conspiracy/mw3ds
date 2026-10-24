@@ -183,6 +183,7 @@ void Session::openScreen(Screen s)
 	scroll = UiScroll();
 	focus = 0;
 	containerPutting = false;
+	bookFromItems = false;
 	playSound(-1, "Menu Click");
 }
 

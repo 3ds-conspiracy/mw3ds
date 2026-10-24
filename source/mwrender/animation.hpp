@@ -132,6 +132,7 @@ struct Actor
 	float poseDue = -1.0f;             // ConsoleProfile::poseHz: time toward the next pose (-1: not started); its rate now
 	float poseHz = 0.0f;
 	u32 poses = 0;                     // poses made (tests)
+	float fallFor = 0.0f;              // dead, world time its death has stood short of its end (World::update's check)
 	u32 groupStarts = 0;               // groups started (tests: a fighter flipping between running and standing)
 	int legGroup = -1;                 // a blow going while the actor walks on: the legs play this movement group on their own
 	float legTime = 0.0f;              // ... at this time (actorPlay clears it; aicombat sets it each frame it walks and swings)

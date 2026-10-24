@@ -221,11 +221,12 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		extern int g_lampLitBatches;
 		v = (float)g_lampLitBatches;
 	}
-	else if (what == "precip")          // <streaks|flakes|ring|x0>: the rain and ash the last frame drew (drawPrecipitation)
-	{
-		extern int g_precipStreaks, g_precipFlakes, g_precipRing;
+	else if (what == "precip")          // <streaks|flakes|ring|farring|x0>: the rain and ash the last frame drew (drawPrecipitation;
+	{                                   // ring: the far rain's band 450 out, farring: the one 900 out)
+		extern int g_precipStreaks, g_precipFlakes, g_precipRing, g_precipFarRing;
 		extern float g_precipX0;
-		v = arg == "flakes" ? (float)g_precipFlakes : arg == "ring" ? (float)g_precipRing : arg == "x0" ? g_precipX0 : (float)g_precipStreaks;
+		v = arg == "flakes" ? (float)g_precipFlakes : arg == "ring" ? (float)g_precipRing : arg == "farring" ? (float)g_precipFarRing
+			: arg == "x0" ? g_precipX0 : (float)g_precipStreaks;
 	}
 	else if (what == "torchpixel")      // the player's torch in the last view: per pixel 1, per vertex 0, none -1
 	{

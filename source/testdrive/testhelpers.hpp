@@ -196,11 +196,15 @@ static inline bool escortLagging(Session& s, const std::string& escort, float li
 // A route out of where the player is stuck, found by trying the player's own steps (the game's playerUpdate on a copy: run or
 // running jump, sixteen headings, swimming up / level / down) and following the cheapest-looking reached spot towards the goal.
 // Gives the spots reached on the way, from the first step. Stops after a number of spots tried, or 90 s of the machine's time.
+// shore: the way ashore, not to the goal: any dry ground above the water's surface ends it (the goal only steers the search).
+// A swimmer under a cliff has no route to a door on the hill above, and a search for one never finds the beach
 static inline bool floodRoute(Session& s, const float goal[3], float radius, std::vector<TestDriver::SwimLeg>& out, float maxDz = 200.0f,
-	bool dive = false)
+	bool dive = false, bool shore = false)
 {
 	struct Node { Player p; int parent; bool jump; int depth; float yaw, pitch; int frames; };
 	Scene sc = s.w.scene();
+	const bool wet = shore && sc.here && sc.here->hasWater();
+	const float dryZ = wet ? sc.here->waterZ + 10.0f : 0.0f;
 	// (a deque: room for 6000 reserved at once was a 726 KB block on the main thread, which an Old 3DS late in a session
 	// didn't have, and a `new` that fails there stops the game)
 	std::deque<Node> nodes;
@@ -251,7 +255,8 @@ static inline bool floodRoute(Session& s, const float goal[3], float radius, std
 								nodes.push_back({ p, bi, jmp != 0, nodes[bi].depth + 1, h * 3.14159265f / 8.0f, pi == 1 ? -0.7f : pi == 2 ? 0.7f : 0.0f, f + 1 });
 								seen[k] = ni;
 								open.push(Entry(cost(nodes[ni]), ni));
-								if (hypotf(p.feet[0] - goal[0], p.feet[1] - goal[1]) < radius && fabsf(p.feet[2] - goal[2]) < maxDz)
+								if (wet ? (p.onGround && !p.swimming && p.feet[2] > dryZ)
+									: hypotf(p.feet[0] - goal[0], p.feet[1] - goal[1]) < radius && fabsf(p.feet[2] - goal[2]) < maxDz)
 									found = ni;
 							}
 						}

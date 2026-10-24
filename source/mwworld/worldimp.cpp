@@ -884,6 +884,28 @@ void World::update(float dt)
 			Actor& a = l->actors.actors[k];
 			float dx = a.place[3] - player.feet[0], dy = a.place[7] - player.feet[1];
 			float d2 = dx * dx + dy * dy;
+			// A body whose fall stops short of its end, or that plays something other than a death: once, with what it
+			// was doing (a person stayed frozen upright on a New 3DS in a fight in Shishi, never reproduced: the device's
+			// log should say what held it). Not while the world stands still under a menu, nor past the reach posed (those
+			// wait on purpose for the player to come near)
+			if (a.ref >= 0 && refs[a.ref].dead && dt > 0.0f && !a.frozen && refs[a.ref].visible() && d2 < reach * reach)
+			{
+				const Skeleton& sk = actorSkeleton(l->actors, a.skeleton);
+				const AnimGroup* g = a.group >= 0 && a.group < (int)sk.groups.size() ? &sk.groups[a.group] : nullptr;
+				const char* n = g ? g->name : "";
+				bool death = strncasecmp(n + (strncasecmp(n, "Swim", 4) == 0 ? 4 : 0), "Death", 5) == 0;
+				if (g && (!death || a.time < g->stop - 0.05f))
+				{
+					a.fallFor += dt;
+					if (a.fallFor > 3.0f * fmaxf(1.0f, g->stop - g->start))
+						monitorOnce(("fallstuck:" + refs[a.ref].id).c_str(),
+							"%s's death stuck: group %.*s (wanted %s), time %.2f of %.2f..%.2f, mode %d, poses %u, owed %.2f, "
+							"%.0f away", refs[a.ref].id.c_str(), (int)sizeof(g->name), n, refs[a.ref].deathGroup, a.time, g->start,
+							g->stop, (int)a.mode, a.poses, a.pendingDt, sqrtf(d2));
+				}
+				else
+					a.fallFor = 0.0f;
+			}
 			if (a.ref < 0 || !refs[a.ref].visible() || d2 >= reach * reach)
 				continue;
 			// (paralyzed, alive: it stands frozen mid-move, its animation's time held: OpenMW's skipAnim)
@@ -968,6 +990,35 @@ void World::update(float dt)
 				memcpy(box.max, ref.boxMax, sizeof(box.max));
 				box.door = i;
 				cell.blockers.push_back(box);
+			}
+			// Open and at rest, the leaf blocks where it is drawn (OpenMW's door collision turns with the door): the closed
+			// box's corners turned about the door's origin as the renderer turns it. It walked through before. Not while it
+			// swings, nor round someone standing where it came to rest (they walk out of it)
+			else if (ref.visible() && ref.hasBox && ref.doorAngle == ref.doorTarget)
+			{
+				CollisionBox box;
+				for (int k = 0; k < 3; k++)
+				{
+					box.min[k] = 1e9f;
+					box.max[k] = -1e9f;
+				}
+				for (int c = 0; c < 8; c++)
+				{
+					float rel[3] = { ((c & 1) ? ref.boxMax[0] : ref.boxMin[0]) - ref.pos[0],
+						((c & 2) ? ref.boxMax[1] : ref.boxMin[1]) - ref.pos[1], ((c & 4) ? ref.boxMax[2] : ref.boxMin[2]) - ref.pos[2] };
+					float out[3];
+					doorSwing(ref, -ref.doorAngle, rel, out);
+					for (int k = 0; k < 3; k++)
+					{
+						box.min[k] = fminf(box.min[k], out[k] + ref.pos[k]);
+						box.max[k] = fmaxf(box.max[k], out[k] + ref.pos[k]);
+					}
+				}
+				const float* f = player.feet;
+				bool inside = f[0] > box.min[0] - 22.0f && f[0] < box.max[0] + 22.0f && f[1] > box.min[1] - 22.0f
+					&& f[1] < box.max[1] + 22.0f && f[2] + 128.0f > box.min[2] && f[2] < box.max[2];
+				if (!inside)
+					cell.blockers.push_back(box);
 			}
 		}
 	}

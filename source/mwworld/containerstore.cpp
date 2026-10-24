@@ -20,26 +20,6 @@ void World::restockGold(int ri)
 		return;
 	r.gold = game.actors[r.actor].gold;
 	r.lastBarter = gameHour;
-	// The restocking stacks (negative counts in the record) are back to their quantity too: a plain item the sales used up
-	// is added again (leveled lines keep what was picked)
-	if (!r.obj)
-		return;
-	for (auto& item : r.obj->items)
-	{
-		std::string id = lower(item.second);
-		if (item.first >= 0 || game.leveled.count(id) || !game.object(id))
-			continue;
-		bool found = false;
-		for (auto& c : r.contents)
-			if (c.second == id && c.first < 0 && c.plain())
-			{
-				c.first = item.first;
-				found = true;
-				break;
-			}
-		if (!found)
-			r.contents.emplace_back(item.first, id);
-	}
 }
 
 void World::pickUp(int ri)
@@ -150,12 +130,20 @@ int World::removeItem(const std::string& id, int count)
 				i++;
 	if (wornGone)
 		refreshStats();                // its constant effects go with it
-	// An item's script runs while it is carried: with the last one gone it stops
-	if (want > count && itemCount(l) == 0)
+	if (want > count)
+		itemLeft(l);
+	return want - count;
+}
+
+// An item's script runs while it is carried: with the last one gone it stops (kept, its locals with it, for the item
+// coming back). Every way an item leaves the inventory ends here, not only removeItem
+void World::itemLeft(const std::string& id)
+{
+	std::string l = lower(id);
+	if (itemCount(l) == 0)
 		for (auto& s : scripts)
 			if (s.item == l)
 				s.running = false;
-	return want - count;
 }
 
 int World::refItemCount(const Ref& r, const std::string& id) const

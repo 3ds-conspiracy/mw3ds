@@ -1,5 +1,7 @@
-# bug-barter-restock: buying from a merchant with restocking stock (a negative count in their record) uses the stock up, as
-# OpenMW's ContainerStore::subtractItems does: Ernand Thierry's coprinus, bought twice, leaves two fewer.
+# bug-barter-restock: buying from a merchant's restocking stock (a negative count in their record) never uses it up:
+# OpenMW's trade window leaves a restocking quantity in place (ContainerItemModel::removeItem while trading). Ernand
+# Thierry's coprinus, bought twice, is still there as before (it was used up, and a questline that bought one heart too
+# many from Nalcarya found none)
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:11
 0.3 0 0 0 0 GOD:2
@@ -18,6 +20,6 @@
 0.3 0 0 0 0 SNAP:refstock:ernand_thierry,ingred_coprinus_01
 0.3 0 0 0 0 BUY:ernand_thierry:ingred_coprinus_01
 0.3 0 0 0 0 BUY:ernand_thierry:ingred_coprinus_01
-0.1 0 0 0 0 EXPECT:refstock:ernand_thierry,ingred_coprinus_01:lt:@0
+0.1 0 0 0 0 EXPECT:refstock:ernand_thierry,ingred_coprinus_01:eq:@0
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none

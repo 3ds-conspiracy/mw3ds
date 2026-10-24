@@ -1,0 +1,95 @@
+# The barter screen's balance and its Offer, as OpenMW's trade window: TOTAL COST / TOTAL SOLD shows what the deal
+# comes to, - / + (or Y / X) haggle it 5% at a time or a number is typed for it, and the Offer button settles it. The
+# balance was only in the first button's label ("Pay 443g"), with nothing to tap to haggle and no way to type an offer.
+# 1. Offer on an empty deal trades nothing
+# 2. The Argent Glow scroll (about 443) is a cost the player's 100 gold can't pay: refused
+# 3. The dwarven claymore (about 562) sold with it: sold about 118. + / X nineteen times asks nearly twice that: refused;
+#    - back down, then 100 typed on the number pad (tapping the total): asking less than the price, it goes through
+# 4. Clear empties a deal
+1 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:dwarven_claymore
+0.3 0 0 0 0 GIVE:steel_claymore
+0.3 0 0 0 0 EXPECT:gold:eq:100+EXPECT:merchantgold:arrille:eq:800
+0.3 0 0 0 0 BARTER:arrille
+0.3 0 0 0 0 EXPECT:screen:barter
+# 1.
+0.3 0 0 0 0 EXPECT:barterbalance:eq:0
+0.3 0 0 0 0 TAP:169:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:gold:eq:100+EXPECT:merchantgold:arrille:eq:800+EXPECT:screen:barter
+# 2. (the scrolls are stacks: A asks how many, A again puts one in)
+0.3 0 0 0 0 BARTERSEL:sc_argentglow
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:barterbalance:lt:-400+EXPECT:barteroffer:gt:400
+0.3 0 0 0 0 TAP:169:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:count:sc_argentglow:eq:0+EXPECT:gold:eq:100+EXPECT:barterbalance:lt:-400
+# 3.
+0.3 0 0 0 0 L
+0.3 0 0 0 0 BARTERSEL:dwarven_claymore
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:barterbalance:ge:110+EXPECT:barterbalance:le:125
+0.3 0 0 0 0 TAP:125:222
+0.3 0 0 0 0 TAP:125:222
+0.3 0 0 0 0 EXPECT:barteroffer:ge:120+EXPECT:barteroffer:le:140
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.2 0 0 0 0 X
+0.3 0 0 0 0 EXPECT:barteroffer:gt:200
+0.3 0 0 0 0 TAP:169:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:count:dwarven_claymore:eq:1+EXPECT:gold:eq:100+EXPECT:barteroffer:gt:200
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.2 0 0 0 0 TAP:15:222
+0.3 0 0 0 0 EXPECT:barteroffer:ge:100+EXPECT:barteroffer:le:140
+0.3 0 0 0 0 TYPE:100
+0.3 0 0 0 0 TAP:70:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:barteroffer:eq:100
+0.3 0 0 0 0 TAP:169:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:count:sc_argentglow:eq:1+EXPECT:count:dwarven_claymore:eq:0+EXPECT:barterbalance:eq:0
+0.3 0 0 0 0 EXPECT:gold:eq:200+EXPECT:merchantgold:arrille:eq:700
+# 4.
+0.3 0 0 0 0 BARTERSEL:steel_claymore
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:barterbalance:gt:0
+0.3 0 0 0 0 TAP:230:222
+0.3 0 0 0 0 EXPECT:barterbalance:eq:0+EXPECT:count:steel_claymore:eq:1
