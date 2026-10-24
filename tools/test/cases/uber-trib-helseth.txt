@@ -560,6 +560,8 @@
 # paid (first button)
 60 0 0 0 0 ACTIVATE:ivulen%irano
 2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
@@ -826,47 +828,44 @@
 0.1 0 0 0 0 EXPECT:refenabled:in_moldboulder00_uni:eq:0
 0.1 0 0 0 0 EXPECT:refenabled:act_rockslide01:eq:0
 0.3 0 0 0 0 SAVE:uber-trib-helseth-crypt
-# BLOCKED (engine / converter): the crypt's boulders (cryptboulderScript on In_moldrock05_UNI, In_moldrock06_UNI,
-# In_moldboulder00_UNI, In_moldboulder01_UNI) and Act_Rockslide01 are disabled once TR_MazedBand >= 20, but the walk
-# west past them (path grid points -272,838 and -512,883) is still pushed back by a mesh: their collision stays. Barilzar
-# and everything after (TR_MazedBand 60+, the attack on Mournhold, TR_Bamz, King Helseth: TR_Champion, TR_Assassins) waits
-# on it. Repro: internal/uber/trib-helseth.md. The steps below are kept as they will run once that is fixed (#> lines).
-#> 180 0 0 0 0 KILL:lich_barilzar
-#> 2 0 0 0
-#> 0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:60
-#> 0.1 0 0 0 0 EXPECT:dead:lich_barilzar
-#> 60 0 0 0 0 LOOT:lich_barilzar:mazed_band
-#> 2 0 0 0
-#> 0.1 0 0 0 0 EXPECT:item:mazed_band:ge:1
-#> 0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:70
-#> 0.3 0 0 0 0 CAST:recall
-#> 10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Reception_Area
-#> 0.5 0 0 0
-#> 120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
-#> 10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Office_of_the_Lord_Archcanon
-#> 0.5 0 0 0
-#> 60 0 0 0 0 ACTIVATE:gavas_drin
-#> 2 0 0 0 0 UNTIL:talkready
-#> 0.3 0 0 0 0 TOPIC:Barilzar's_Mazed_Band
-#> 2 0 0 0 0 UNTIL:talkready
-#> 0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:90
-#> 0.3 0 0 0 0 B
-#> 0.5 0 0 0 0 B
-#> 2 0 0 0 0 UNTIL:screen:none
-#> 120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
-#> 10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Reception_Area
-#> 0.5 0 0 0
-#> 120 0 0 0 0 DOORTO:Mournhold_Temple|_High_Chapel
-#> 10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_High_Chapel
-#> 0.5 0 0 0
-#> 60 0 0 0 0 ACTIVATE:almalexia
-#> 2 0 0 0 0 UNTIL:talkready
-#> 0.3 0 0 0 0 TOPIC:Barilzar's_Mazed_Band
-#> 2 0 0 0 0 UNTIL:talkready
-#> 0.3 0 0 0 0 CHOICE:1
-#> 2 0 0 0 0 UNTIL:talkready
-#> 0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:100
-#> 0.3 0 0 0 0 B
-#> 0.5 0 0 0 0 B
-#> 2 0 0 0 0 UNTIL:screen:none
-#> 0.3 0 0 0 0 SAVE:uber-trib-helseth-mazedband
+# The crypt's boulders and the rockslide are disabled by the quest (trib-crypt-boulders): the way west is open.
+# Barilzar, then his band to the Temple:
+180 0 0 0 0 KILL:lich_barilzar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:60
+0.1 0 0 0 0 EXPECT:dead:lich_barilzar
+60 0 0 0 0 LOOT:lich_barilzar:mazed_band
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:mazed_band:ge:1
+0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:70
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Office_of_the_Lord_Archcanon
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:gavas_drin
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Barilzar's_Mazed_Band
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:90
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_High_Chapel
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_High_Chapel
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:almalexia
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Barilzar's_Mazed_Band
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_MazedBand:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-helseth-mazedband

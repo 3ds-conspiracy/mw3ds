@@ -122,6 +122,9 @@ struct TestDriver
 	float cruise = 0.0f, phaseTimer = 0.0f;
 	float outTimer = 0.0f;           // FLYTO: seconds left of a stretch sideways out from under an overhang
 	int outTries = 0;
+	float outStart[2] = { 0.0f, 0.0f };   // FLYTO: where the last stretch sideways began (it moved the body, or it was held)
+	float outDuty = 0.0f;             // ... the share of frames down is pressed while it sinks (its own: vertDuty paces the climb)
+	bool outSink = false;             // ... the last one moved it under 40: the next one lets go of the rise and sinks first
 	float flyAllow = 0.0f;           // FLYTO: seconds the leg may take (from its distance), beyond the step's own
 	float aim[3] = { 0, 0, 0 };     // FLYTO: the spot asked for (goal moves around it when a roof is in the way)
 	bool inAir = false;

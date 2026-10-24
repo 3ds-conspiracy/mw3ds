@@ -4,7 +4,7 @@
 # is Tribunal's own: at level 30 the Dark Brotherhood comes while the player sleeps (TR_DBAttack), the dart on the
 # assassin, a guard's word, Apelles Matius in Ebonheart, then Asciene Rane's transport to the Royal Palace.
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 SEED:8
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100

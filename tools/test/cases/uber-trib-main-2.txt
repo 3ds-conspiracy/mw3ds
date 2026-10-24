@@ -1624,14 +1624,9 @@
 # Lord's Mail for the Museum (Ebonheart, Underground Caves: Furius Acilius): Divine Intervention to Ebonheart, the route down from the shrine, Recall
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 10 0 0 0
-120 0 0 0 0 WALKTO:@9984,-99840,992
-120 0 0 0 0 WALKTO:@10240,-99584,776
-120 0 0 0 0 WALKTO:@10240,-99072,424
-120 0 0 0 0 WALKTO:@10240,-98560,184
-120 0 0 0 0 WALKTO:@9728,-98816,16
-120 0 0 0 0 WALKTO:@9728,-98304,0
-120 0 0 0 0 WALKTO:@10240,-97792,0
-120 0 0 0 0 WALKTO:@10496,-97536,0
+# (the way down from the Imperial Chapel on foot runs along the wall of the building under it and the walker climbed
+# onto its roof; the kit's levitation takes the player over it, then a few steps to the cave door)
+120 0 0 0 0 FLYTO:@10496,-97536,40
 120 0 0 0 0 WALKTO:@10815,-97802,-196
 120 0 0 0 0 DOORTO:Ebonheart,_Underground_Caves
 10 0 0 0 0 UNTIL:cell:Ebonheart,_Underground_Caves
@@ -1944,6 +1939,8 @@
 60 0 0 0 0 WALKTO:@4048,3560,12290
 120 0 0 0
 0.1 0 0 0 0 EXPECT:journal:TR_SothaSil:ge:70
+# (immune to normal weapons: the reforged Blade of Nerevar, enchanted)
+0.3 0 0 0 0 EQUIP:nerevarblade_01_flame
 120 0 0 0 0 KILL:almalexia_warrior
 3 0 0 0
 0.1 0 0 0 0 EXPECT:journal:TR_SothaSil:ge:100

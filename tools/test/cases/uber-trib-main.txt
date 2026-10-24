@@ -4,7 +4,7 @@
 # the hunt in Old Mournhold, then Almalexia's line (goblins, the Shrine of the Dead, the Mazed Band, the attack on
 # Mournhold, Bamz-Amschend, a show of power, the Missing Hand, Trueflame, Sotha Sil). Notes: internal/uber/trib-main.md
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 SEED:1
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100
@@ -15,6 +15,9 @@
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:50000
 0.3 0 0 0 0 GIVE:sc_divineintervention:20
+# two artifacts for the Museum's shield (Torasa Aram wants two donations): found on the way in the real game
+0.3 0 0 0 0 GIVE:ring_phynaster_unique
+0.3 0 0 0 0 GIVE:ring_warlock_unique
 0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
 0.3 0 0 0 0 GIVE:pick_grandmaster
 0.3 0 0 0 0 GIVE:probe_grandmaster
@@ -1675,7 +1678,21 @@
 2 0 0 0
 0.3 0 0 0 0 TOPIC:compensation
 2 0 0 0
-0.1 0 0 0 0 EXPECT:journal:TR_Blade:ge:40
+# the shield comes after two donations to the Museum: Phynaster's Ring and Syrabane's Warlock's Ring (choice 3: donate)
+0.3 0 0 0 0 TOPIC:Ring_of_Phynaster
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:3
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:global:museumdonations:ge:1
+0.3 0 0 0 0 TOPIC:Warlock's_Ring
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:3
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:global:museumdonations:ge:2
+0.3 0 0 0 0 TOPIC:compensation
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Blade:ge:45
+0.1 0 0 0 0 EXPECT:item:dwemer_shield_battle_unique:ge:1
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 1 0 0 0

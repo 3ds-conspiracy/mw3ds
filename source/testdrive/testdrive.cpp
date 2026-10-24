@@ -330,6 +330,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		underWait = -1.0f;
 		outTimer = 0.0f;
 		outTries = 0;
+		outSink = false;
 		inAir = false;
 		phaseTimer = elapsed = progressTimer = 0.0f;
 		memcpy(progressAt, p.feet, sizeof(progressAt));
