@@ -124,6 +124,8 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 		// too, as OpenMW's caster is the object: Spell Absorption takes it (an Atronach's magicka back at a shrine, issue
 		// #63), Reflect sends it back to nothing. It had no caster at all: neither ever rolled
 		int caster = r && r->actor >= 0 ? ref : r ? kCasterObject : -1;
+		if (caster == kCasterObject)
+			c.host.objectCastShown(ref, t, sp->first);
 		for (auto& e : sp->second.effects)
 			c.host.castEffect(t, e, sp->second.name, caster, (float)sp->second.cost);
 		return 0.0f;

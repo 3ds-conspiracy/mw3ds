@@ -93,6 +93,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "target") v = s.target >= 0 ? 1.0f : 0.0f;       // something under the crosshair
 	else if (what == "forcesneak") v = w.forceSneak ? 1.0f : 0.0f;    // the player forced to sneak
 	else if (what == "sneaking") v = w.player.sneaking ? 1.0f : 0.0f;  // the player sneaks now
+	else if (what == "hudeffecticons") v = s.hudEffectIcons;           // the HUD's active-effect icons
 	else if (what == "makepicking") v = s.makePick;                  // spellmaking / enchanting: choosing a skill (1) or attribute (2)
 	else if (what == "makeeffects") v = (float)s.makeEffects.size(); // ... the effects put together so far
 	else if (what == "sneakhidden") v = s.hidden ? 1.0f : 0.0f;       // the HUD's sneak eye shows (sneaking, nobody noticed)

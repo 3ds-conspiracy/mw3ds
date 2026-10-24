@@ -295,6 +295,17 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 		memcpy(travelPos, pos, sizeof(travelPos));
 		travelYaw = yaw;
 	}
+	// Cast by an object (a shrine's blessing): the spell's cast visual and sound on it, then its hit visual and sound on the
+	// target, as OpenMW's CastSpell plays them (playSpellCastingEffects; inflict). Targets -1: the player
+	void objectCastShown(int casterRef, int targetRef, const std::string& spellId) override
+	{
+		auto sp = w.game.spells.find(spellId);
+		if (sp == w.game.spells.end() || !w.active(casterRef))
+			return;
+		spellVfx(sp->second, 0, w.refs[casterRef].pos, casterRef, w.refs[casterRef].rot[2]);
+		playSound(casterRef, spellSound(sp->second, 0));
+		strikeEffects(sp->second, targetRef);
+	}
 	void castEffect(int ref, const SpellEffect& e, const std::string& source, int casterRef = -1, float spellCost = 0.0f) override
 	{
 		if (ref < 0)

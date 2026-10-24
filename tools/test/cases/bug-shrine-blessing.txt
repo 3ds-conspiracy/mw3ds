@@ -1,0 +1,36 @@
+# start: Seyda Neen
+# A shrine's blessing is cast as OpenMW's Cast by an object does: the spell's cast visual and sound on the shrine
+# (CastSpell::playSpellCastingEffects), then its hit visual and sound on the player (CastSpell::cast, inflict), and its
+# effects. The Shrine of Vivec's Fury in the High Fane: 35 gold (not of the Temple), "Vivec's Fury": Fortify Attack 5
+# for 2880 seconds. Ours put the effect on with no visual and no sound, so nothing showed that the blessing came. The
+# HUD shows an icon for each active effect, as Morrowind's does; a tap on it tells what it is and for how long.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:Gold_001:100
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+4 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_cast+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_vivec_cure_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:message:make_a_donation_of_35
+0.3 0 0 0 0 A
+1 0 0 0
+0.1 0 0 0 0 EXPECT:message:what_blessing_do_you_ask_for
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:vfxcount:ge:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:117:ge:5
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_cast:gt:@0
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:hudeffecticons:ge:1
+0.3 0 0 0 0 TAP:13:121
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:tipline:fortify_attack_5_pts
+0.1 0 0 0 0 EXPECT:tipline:min_left
+0.3 0 0 0 0 SHOT

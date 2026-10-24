@@ -1,0 +1,273 @@
+# start: Seyda Neen
+# shrines-saints: written by tools/test/specgen_shrines.py (edit the generator, not this file).
+# Every saint's shrine asked for its own blessing: the donation taken, the blessing's hit heard, its lasting effect on.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:Gold_001:1000
+# shrinearalor (Aralor's Intervention) in Ghostgate, Temple
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_aralor_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinedelyn (Shield of St. Delyn) in Ghostgate, Temple
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_delyn_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:effect:95:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinefelms (Felms' Glory) in Ghostgate, Temple
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_felms_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrineimperial (Restore Attributes) in Ald-ruhn, Guild of Mages
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_imp_altar_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-25
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinellothis (The Rock of Llothis) in Balmora, Temple
+0.3 0 0 0 0 GOTO:Balmora,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_llothis_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinemeris (Meris' Warding) in Ald-ruhn, Temple
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_meris_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:effect:96:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinenerevar (Spirit of Nerevar) in Ghostgate, Temple
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_nerevar_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrineolms (Olms' Benediction) in Ghostgate, Temple
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_olms_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:effect:94:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinerilm (Rilm's Grace) in Balmora, Temple
+0.3 0 0 0 0 GOTO:Balmora,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_rilm_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrineroris (Roris' Bloom) in Ald-ruhn, Temple
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_roris_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrineseryn (Seryn's Shield) in Ghostgate, Temple
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_seryn_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:effect:97:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinetemple (Lady's Grace shrine) in Ald Velothi, Outpost
+0.3 0 0 0 0 GOTO:Ald_Velothi,_Outpost
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_tribunal_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrineveloth (Veloth's Indwelling) in Andavel Ancestral Tomb
+0.3 0 0 0 0 GOTO:Andavel_Ancestral_Tomb
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_veloth_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:activespells:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinevivecfury (Vivec's Fury) in Ghostgate, Temple
+0.3 0 0 0 0 GOTO:Ghostgate,_Temple
+4 0 0 0
+0.1 0 0 0 0 SNAP:gold+SNAP:soundstarted:restoration_hit
+60 0 0 0 0 ACTIVATE:furn_shrine_vivec_cure_01
+1 0 0 0
+0.3 0 0 0 0 A
+1 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+1.3 0 0 0
+0.1 0 0 0 0 EXPECT:gold:eq:@-35
+0.1 0 0 0 0 EXPECT:soundstarted:restoration_hit:gt:@0
+0.1 0 0 0 0 EXPECT:effect:117:ge:5
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+# shrinevivechumility: no shrine placed
+# shrinevivecmystery: no shrine placed

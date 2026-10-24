@@ -147,6 +147,9 @@ struct WindowManagerState
 	// Tooltip: what a menu has selected, in full on the top screen (as Morrowind's hover box);
 	// the screens fill it each frame, drawTop shows and clears it
 	std::vector<std::pair<std::string, u32>> tip;
+	std::vector<std::string> effectTip;           // the HUD's tapped active-effect icon: its tooltip lines (OpenMW's hover)
+	float effectTipUntil = 0.0f;                  // ... shown on the top screen until then (world time)
+	int hudEffectIcons = 0;                       // tests: the active-effect icons the HUD drew
 	// A bordered box in the middle of the top screen (character creation: the class picture, the birthsign's
 	// constellation, health / magicka / fatigue): the screens fill it each frame, drawTop shows and clears it as it does the tip
 	struct TopModal

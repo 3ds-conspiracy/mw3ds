@@ -186,6 +186,9 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		ok = false;
 		for (auto& l : s.tip)
 			ok |= lower(l.first).find(want) != std::string::npos;
+		if (w.time < s.effectTipUntil)          // (the HUD's effect tooltip goes into the top screen's tip as it draws)
+			for (auto& l : s.effectTip)
+				ok |= lower(l).find(want) != std::string::npos;
 		if (what == "notipline")
 			ok = !ok;
 		snprintf(got, sizeof(got), "%.80s", s.tip.empty() ? "no tooltip" : (s.tip[0].first + (s.tip.size() > 1 ? " / " + s.tip[1].first : "")).c_str());

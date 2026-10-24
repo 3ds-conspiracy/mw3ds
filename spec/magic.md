@@ -121,6 +121,18 @@ How a visual looks and how long it plays (2026-10-14, side by side):
 - Differs (3DS cost, kept): sprays are not simulated (no particles flying, fading or spreading: a bolt's trail, the
   sparks running up the arms in first person); a spray is fixed quads at its emitter.
 
+## A spell cast by an object (mwscript Cast: a shrine's blessing)
+
+OpenMW's OpCast with an object as the caster: `CastSpell::playSpellCastingEffects` (each effect's cast visual and the
+school's cast sound on the object), then `cast` (the hit visual and sound on the target, the effects on it, always
+succeeding). Ours put the effects on silently (2026-10-24, `bug-shrine-blessing`): `Session::objectCastShown`. Every
+saint's shrine is asked for its blessing in `shrines-saints` (`tools/test/specgen_shrines.py`); the Temple's pilgrimage
+shrines are played in `uber-tribunal-temple`.
+
+The HUD (bottom screen, 3DS layout) shows an icon for each active effect, as Morrowind's does: spells, potions,
+blessings, abilities and what's worn, the same effect once. A tap shows its tooltip on the top screen for three
+seconds (the effect, its magnitude, the time left and where it came from): OpenMW's on hover.
+
 ## Findings
 
 2026-09-28 (spell cost, chance, school): see above.

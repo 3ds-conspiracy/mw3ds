@@ -144,8 +144,12 @@ void Session::drawTop()
 		uiRect(151, 223, 98 * fmaxf(0.0f, e.health) / fmaxf(1.0f, e.healthMax), 8, col::health);
 	}
 	drawHurtFlash();
+	// The HUD's tapped active-effect icon: its tooltip for a few seconds, the world going on (OpenMW's is a hover)
+	if (!menuOpen() && w.time < effectTipUntil && !effectTip.empty())
+		for (size_t i = 0; i < effectTip.size(); i++)
+			tip.emplace_back(effectTip[i], i == 0 ? col::header : col::text);
 	// The selected item's or spell's tooltip
-	if (menuOpen() && !tip.empty())
+	if ((menuOpen() || w.time < effectTipUntil) && !tip.empty())
 	{
 		const float scale = 0.45f, lh = uiLineHeight(scale);
 		float tw = 0.0f;
@@ -319,8 +323,49 @@ void Session::drawHud()
 	std::string spell = s.selectedSpell.empty() ? "" : w.game.spells[s.selectedSpell].name;
 	uiText(48, by + 18, 0.42f, spell.empty() ? col::textDim : col::link, spell.empty() ? "No spell" : spell);
 
+	// The active effects as Morrowind's HUD shows them: an icon for each (spells, potions, blessings, abilities, what's
+	// worn), the same effect once; a tap shows what it is, how strong and for how long (OpenMW's tooltip on hover)
+	struct Shown { int effect, attribute, skill; float magnitude, remaining; std::string source; };
+	std::vector<Shown> shown;
+	auto add = [&](int effect, int attribute, int skill, float magnitude, float remaining, const std::string& source) {
+		for (auto& sh : shown)
+			if (sh.effect == effect && sh.attribute == attribute && sh.skill == skill)
+			{
+				sh.magnitude += magnitude;
+				sh.remaining = fmaxf(sh.remaining, remaining);
+				return;
+			}
+		shown.push_back({ effect, attribute, skill, magnitude, remaining, source });
+	};
+	for (auto& e : w.effects)
+		add(e.effect, e.attribute, e.skill, e.magnitude, e.remaining, e.source);
+	for (auto& e : w.abilities)
+		add(e.effect, e.attribute, e.skill, e.magnitude, 1e9f, e.source);
+	hudEffectIcons = 0;
+	for (size_t k = 0; k < shown.size() && k < 10; k++)
+	{
+		auto me = w.game.magicEffects.find(shown[k].effect);
+		float ix = 6 + k * 17;
+		if (me == w.game.magicEffects.end() || me->second.iconIx < 0 || !uiIcon(me->second.iconIx, ix, 114, 15.0f))
+			continue;
+		hudEffectIcons++;
+		if (uiHit(ix, 114, 16, 16))
+		{
+			const Shown& sh = shown[k];
+			int flags = me->second.flags;
+			std::string line = effectLabel(sh.effect, sh.skill, sh.attribute);
+			if (!(flags & 0x8))
+				line += " " + std::to_string((int)roundf(sh.magnitude)) + " pts";
+			std::string left = sh.remaining > 1e8f ? "Constant" : sh.remaining >= 120.0f
+				? std::to_string((int)(sh.remaining / 60.0f)) + " min left" : std::to_string((int)ceilf(sh.remaining)) + " s left";
+			effectTip = { line, left + " (" + sh.source + ")" };
+			effectTipUntil = w.time + 3.0f;
+			playSound(-1, "Menu Click");
+		}
+	}
+
 	// Messages
-	float y = 116;
+	float y = 133;
 	for (auto& n : notes)
 	{
 		for (auto& line : uiWrap(n.text, 174, 0.42f))
