@@ -427,6 +427,9 @@ bool World::load(const char* dir, const std::string& startCell)
 	// Cells' objects are read when a cell is first needed (ensureRefs), not all at start
 	for (auto& g : game.globals)
 		globals[g.first] = g.second.value;
+	// DaysPassed: vanilla Morrowind.esm doesn't define it, Tribunal and Bloodmoon start it at 1 (OpenMW's World adds
+	// it so too): the day count from the first day, not one short
+	globals.emplace("dayspassed", 1.0f);
 	recomputeStats();
 	logf("world: %d cells, game data in %llu ms", (int)cells.size(), osGetTime() - loadStart);
 	int start = startCell.empty() ? -1 : cellIndex(startCell);

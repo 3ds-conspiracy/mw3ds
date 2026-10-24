@@ -159,7 +159,9 @@ class Exporter:
             if it.get("condition", -1) >= 0 or extra:
                 inv.append(("XIDX", struct.pack("<I", 0)))
                 inv += extra
-                inv.append(("XHLT", struct.pack("<i", max(0, it.get("condition", 0)))))
+                # (no condition on the 3DS: never worn down, at the item's full health)
+                cond = it.get("condition", -1)
+                inv.append(("XHLT", struct.pack("<i", cond if cond >= 0 else self.tables["health"].get(it["id"], 0))))
             if it.get("equipped"):
                 worn.append(("WIDX", struct.pack("<ii", k, 0)))
         out["NPCC"] = record("NPCC", [("NAME", zs(PLAYER_REF)), ("NPDT", struct.pack("<BBBBi", 50, 0, 0, 0, 0))]
@@ -329,6 +331,10 @@ class Exporter:
 
     def global_records(self, save):
         ours = {k.lower(): v for k, v in save.get("globals", {}).items()}
+        # the clock from the engine's own count of hours since the first day began (its DaysPassed global ran a day
+        # short in saves made before that was fixed): the hour of the day, and the days, from 1
+        hour = float(save.get("hour", ours.get("gamehour", 9.0)))
+        ours["gamehour"], ours["dayspassed"] = hour % 24.0, float(int(hour // 24.0) + 1)
         out, seen = [], set()
         for r in self.template:
             if r.tag != "GLOB":

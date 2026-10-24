@@ -56,15 +56,20 @@ def game_tables(data):
     journal = {}
     for p in sorted(data.glob("game_journal_*.json")):
         journal.update(read_game_json(p)["journal"])
-    objects = {}                     # id -> (record type, whether it wears out: weapons, armour keep a condition)
+    objects = {}                     # id -> (record type, whether it wears out: weapons, armour keep a condition,
+    health = {}                      #   tools their uses left), and id -> that condition when new
     for p in sorted(data.glob("game_objects_*.json")):
-        objects.update({k.lower(): (o.get("type", ""), "health" in o) for k, o in read_game_json(p)["objects"].items()})
+        for k, o in read_game_json(p)["objects"].items():
+            full = o.get("health", o.get("uses"))
+            objects[k.lower()] = (o.get("type", ""), full is not None)
+            if full is not None:
+                health[k.lower()] = int(full)
     spells = {k.lower() for k in read_game_json(data / "game_spells.json")["spells"]}
     skills = [s.get("specialization", -1) for s in read_game_json(data / "game.json")["skills"]]
     cells = {p.stem for p in (data / "cells").glob("*/*.cel")}
     globals_ = {k.lower() for k in read_game_json(data / "game.json").get("globals", {})}
-    return dict(races=races, classes=classes, signs=signs, journal=journal, objects=objects, spells=spells,
-                skills=skills, cells=cells, globals=globals_)
+    return dict(races=races, classes=classes, signs=signs, journal=journal, objects=objects, health=health,
+                spells=spells, skills=skills, cells=cells, globals=globals_)
 
 
 def journal_infos(esm):
@@ -177,8 +182,6 @@ def convert(ess, tables, infos, say):
     if not cls:
         raise ValueError(f"class {cls_id} isn't in the converted game")
     born_attrs, born_skills = creation_stats(race, cls, female, tables["skills"])
-    stats["attr_bonus"] = [base_attrs[i] - born_attrs[i] for i in range(8)]
-    stats["skill_bonus"] = [base_skills[s] - born_skills[s] for s in range(27)]
 
     pc = by["PCDT"][0]
     pnam = pc.get("PNAM")
@@ -199,6 +202,16 @@ def convert(ess, tables, infos, say):
     cur_attrs = struct.unpack_from("<16f", acdt, 80)
     stats["attr_damage"] = [max(0.0, round(cur_attrs[2 * i + 1] - cur_attrs[2 * i], 2)) for i in range(8)]
     stats["health_bonus"] = 0
+    # The base values: the reference's own (ACDT's attributes, CHRD's skills, whole numbers of any size) over the
+    # NPC record's bytes, which stop at 255
+    base_attrs = [int(round(cur_attrs[2 * i + 1])) for i in range(8)]
+    chrd = ref.get("CHRD")
+    if chrd and len(chrd) >= 216:
+        skills_now = struct.unpack_from("<54i", chrd)
+        base_skills = [skills_now[2 * s] for s in range(27)]
+        stats["skill_damage"] = [max(0, skills_now[2 * s] - skills_now[2 * s + 1]) for s in range(27)]
+    stats["attr_bonus"] = [base_attrs[i] - born_attrs[i] for i in range(8)]
+    stats["skill_bonus"] = [base_skills[s] - born_skills[s] for s in range(27)]
 
     made_spells, potions = made_records(by, tables)
     known = tables["spells"] | {m["id"] for m in made_spells}
@@ -220,7 +233,7 @@ def convert(ess, tables, infos, say):
     stats["books_read"] = []
     stats["quick_keys"] = ["", "", "", ""]
     stats["powers_used"] = {}
-    stats["skill_damage"] = [0] * 27
+    stats.setdefault("skill_damage", [0] * 27)
 
     # the inventory (NPCC of the player): its stacks, and what is worn
     npcc = next(r for r in by.get("NPCC", []) if r.id == PLAYER_REF)
@@ -232,7 +245,9 @@ def convert(ess, tables, infos, say):
             dropped.append(f"item {it['id']} x{it['count']}")
             continue
         o = {"id": iid, "count": it["count"], "equipped": int(i in worn)}
-        if it["condition"] >= 0 and tables["objects"].get(iid, ("", False))[1]:
+        # (a condition at the item's full health is one never worn down: the 3DS keeps no condition for it)
+        if (it["condition"] >= 0 and tables["objects"].get(iid, ("", False))[1]
+                and it["condition"] != tables["health"].get(iid)):
             o["condition"] = it["condition"]
         if it["soul"]:
             o["soul"] = it["soul"]
@@ -580,8 +595,16 @@ def merge(side, pc, engine_globals):
             # (topics are a set: the order they come back in doesn't count)
             unordered = k == "topics" and sorted(base.get(k) or []) == sorted(pc[k])
             out[k] = base.get(k) if unordered else keep(base.get(k), pc[k])
+    # (a spot on an exterior cell's edge names either cell: the 3DS's stays while the player stood still)
+    if (out.get("feet") is base.get("feet") and str(base.get("cell", "")).startswith("ext_")
+            and str(pc.get("cell", "")).startswith("ext_")):
+        out["cell"] = base["cell"]
     st = dict(base["stats"])
     for k in PC_STATS:
+        if k in ("race", "class", "birthsign") and str(base["stats"].get(k, "")).lower() == str(pc["stats"].get(k)).lower():
+            continue                         # (record ids: the case they are written in doesn't count)
+        if k == "class" and base["stats"].get(k) == "$custom" and "custom_class" in pc["stats"]:
+            continue                         # (the 3DS's name for a made class: the PC names it NEWCLASSID_CHARGEN)
         if k in pc["stats"]:
             st[k] = keep(base["stats"].get(k), pc["stats"][k])
         elif k == "custom_class":
@@ -598,7 +621,12 @@ def merge(side, pc, engine_globals):
     if ent(base.get("journal", [])) != ent(pc["journal"]):
         out["quests_finished"] = pc.get("quests_finished", [])
     g = dict(base.get("globals", {}))
+    # (the export wrote the clock from the 3DS's hour count: when that is what came back, the 3DS's own globals stay)
+    bh = float(base.get("hour", 0.0))
+    clock = {"gamehour": bh % 24.0, "dayspassed": float(int(bh // 24.0) + 1)}
     for k, v in pc.get("globals", {}).items():
+        if k in clock and k in g and same(v, clock[k]):
+            continue
         if k in g or k in engine_globals:
             g[k] = keep(g.get(k), v)
     out["globals"] = g
@@ -628,7 +656,9 @@ def merge(side, pc, engine_globals):
                 n.pop(f, None)
         for f, carrier in PC_REF_OPTIONAL.items():
             if carrier in e:
-                if f in e:
+                if f == "disp" and f in e and isinstance(n.get(f), (int, float))                         and max(0, min(255, int(n[f]))) == e[f]:
+                    pass                     # (the PC keeps a disposition in 0-255: one outside it comes back clamped)
+                elif f in e:
                     n[f] = keep(n.get(f), e[f])
                 elif n.get(f) != REF_DEFAULTS.get(f, object()):
                     n.pop(f, None)
@@ -639,7 +669,12 @@ def merge(side, pc, engine_globals):
     # scripts: their variables from the PC save, the rest (an item's script whose item is gone) as they were
     skey = lambda s: (s["name"].lower(), s.get("ref_c", ""), s.get("ref", -1), s.get("item", ""))
     scripts = {skey(s): s for s in base.get("scripts", [])}
+    # (an item picked up keeps on the 3DS the script it ran in the world, under its old place: the PC carries it)
+    carried = {(s["name"].lower(), s["item"]): skey(s) for s in base.get("scripts", []) if s.get("item")}
     for s in pc.get("scripts", []):
+        if skey(s) not in scripts and s.get("item") and (s["name"].lower(), s["item"]) in carried:
+            s = dict(s, **{k: v for k, v in scripts[carried[(s["name"].lower(), s["item"])]].items()
+                           if k in ("ref", "ref_c", "ref_id")})
         b = scripts.get(skey(s))
         if b:
             b = dict(b)

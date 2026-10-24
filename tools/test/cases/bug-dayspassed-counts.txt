@@ -1,0 +1,11 @@
+# DaysPassed counts the days since the game began, from 1 on the first (Morrowind.esm's value): a day later it is
+# 2. It went from 0 when no script had set it yet (a console save read 1 after 32 hours), so it ran a day short and
+# a PC save made from that save started its day count over
+3 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:1
+0.3 0 0 0 0 ADVANCE:24
+1 0 0 0
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:2
+0.3 0 0 0 0 ADVANCE:48
+1 0 0 0
+0.1 0 0 0 0 EXPECT:global:dayspassed:eq:4
