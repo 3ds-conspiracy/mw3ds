@@ -1,0 +1,35 @@
+# start: Seyda Neen
+# The player's footsteps follow the walk as OpenMW's do: a step where the moving animation's SoundGen keys fall, the
+# animation played at the speed the player goes, so a step comes every so far walked (base_anim.nif: a running cycle
+# carries the body 264 units with two steps, a sneaking one 124), and the sound is the boots' (OpenMW's
+# Npc::getSoundIdFromSndGen: bare without boots, else by their weight class: FootLight, FootMed, FootHeavy). Ours
+# stepped every 0.42 s at any pace, barefoot whatever was worn: sneaking 3 s went 8 steps over 315 units, the sneak
+# cycle gives 5.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 TP:-11500:-71500:150:0
+2 0 0 0
+0 0 0 0 0 SETUP-END
+# barefoot, sneaking (about 105 units a second): one left step every 124 units
+0.3 0 0 0 0 SNEAK:1
+0.1 0 0 0 0 SNAP:soundstarted:FootBareLeft+SNAP:soundstarted:FootBareRight
+6 0 1 0
+0.1 0 0 0 0 EXPECT:soundstarted:FootBareLeft:le:@6+EXPECT:soundstarted:FootBareLeft:ge:@4
+0.1 0 0 0 0 EXPECT:soundstarted:FootBareRight:le:@6+EXPECT:soundstarted:FootBareRight:ge:@4
+0.3 0 0 0 0 SNEAK:0
+# running in steel boots (heavy armor): the heavy step, no bare one
+0.3 0 0 0 0 GIVE:steel_boots
+1 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:steel_boots:eq:1
+0.1 0 0 0 0 SNAP:soundstarted:FootBareLeft+SNAP:soundstarted:FootHeavyLeft
+3 0 1 0
+0.1 0 0 0 0 EXPECT:soundstarted:FootHeavyLeft:ge:@2
+0.1 0 0 0 0 EXPECT:soundstarted:FootBareLeft:eq:@0
+# netch leather boots (light armor): the light step
+0.3 0 0 0 0 GIVE:netch_leather_boots
+1 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:netch_leather_boots:eq:1
+0.1 0 0 0 0 SNAP:soundstarted:FootLightLeft+SNAP:soundstarted:FootHeavyLeft
+3 0 1 0
+0.1 0 0 0 0 EXPECT:soundstarted:FootLightLeft:ge:@2
+0.1 0 0 0 0 EXPECT:soundstarted:FootHeavyLeft:eq:@0

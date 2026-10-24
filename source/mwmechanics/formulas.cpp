@@ -232,7 +232,7 @@ float Session::elementalShieldDamage(float magnitude, int destruction, int willp
 // where the sneak term is fSneakSkillMult x Sneak + 0.2 Agility + 0.1 Luck + boots' weight x fSneakBootMult while sneaking
 // (0 otherwise), against the observer's y = (Sneak + 0.2 Agility + 0.1 Luck - Blind) x fatigue x fSneakViewMult (player
 // in front) or fSneakNoViewMult (behind). Noticed when the observer's roll (0..99, rerolled every 5 seconds) >= x - y
-bool Session::awarenessCheck(int ri)
+bool Session::awarenessCheck(int ri, float* target, bool roll)
 {
 	Ref& r = w.refs[ri];
 	if (r.dead || r.actor < 0 || !r.visible())
@@ -264,6 +264,10 @@ bool Session::awarenessCheck(int ri)
 	bool behind = flat > 0.0f && (fx * dx + fy * dy) / flat < 0.0f;
 	float y = obsTerm * fatigueTermOf(r.fatigue, r.fatigueMax)
 		* (behind ? w.game.gmstf("fsneaknoviewmult", 0.5f) : w.game.gmstf("fsneakviewmult", 1.5f));
+	if (target)
+		*target = x - y;
+	if (r.awarenessRoll < 0 && !roll)
+		return x - y <= 0.0f;          // (no die yet: noticed only when any die would: a player not sneaking, unseen by magic)
 	if (r.awarenessRoll < 0)
 		r.awarenessRoll = rand() % 100;
 	return r.awarenessRoll >= x - y;

@@ -50,13 +50,25 @@ void Session::updateDetection(float dt)
 		float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f };
 		if (!w.lineOfSight(head, eye))
 			return;
-		if (awarenessCheck(i))
+		// (those siding with the player, followers and summons, neither take the eye away nor train Sneak: OpenMW's
+		// getActorsSidingWith, its bug 6133)
+		bool counts = d < useDist && !r.ally && !w.followsPlayer(i);
+		float target = 0.0f;
+		if (awarenessCheck(i, &target))
 		{
+			// (the moment someone starts noticing a sneaking player, logged: who, how far, in front or behind)
+			if (sneaking && w.time - r.lastSeen > 1.0f)
+			{
+				float fx = sinf(r.rot[2]), fy = cosf(r.rot[2]);
+				bool front = fx * (w.player.feet[0] - r.pos[0]) + fy * (w.player.feet[1] - r.pos[1]) > 0.0f;
+				logf("sneak: %s notices the player, %.0f away, %s them (roll %d over %.0f)", r.id.c_str(), d,
+					front ? "in front of" : "behind", r.awarenessRoll, target);
+			}
 			r.lastSeen = w.time;
-			if (d < useDist)
+			if (counts)
 				detected = true;
 		}
-		else if (d < useDist)
+		else if (counts)
 			avoidedNotice = true;
 	});
 	hidden = sneaking && !detected;

@@ -1,0 +1,34 @@
+# The HUD's sneak eye and who counts as having noticed the player (OpenMW's Actors::updateSneaking and
+# updateHeadTracking; spec/sneak.md). 1: someone who failed to notice a sneaking player doesn't turn their head to
+# them (ours turned every head in reach, so the eye showed while Arrille looked straight at the player).
+# 2: someone following the player (OpenMW: siding with them) doesn't take the eye away (ours counted them)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+3 0 0 0
+0.3 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 SETBOUNTY:0
+0 0 0 0 0 SETUP-END
+# 1. Sneak 100 and Chameleon 70 (under OpenMW's 75 that hides from head turning on its own): nobody can notice the
+#    player (x is far over any roll). Arrille, a step in front, stays unaware: the eye shows and his head stays straight
+0.3 0 0 0 0 SETSKILL:sneak:100
+0.3 0 0 0 0 ACTIVE:40:70:8
+0.3 0 0 0 0 SNEAK:1
+1 0 0 0 0 PLACE:arrille:150
+3 0 0 0
+0.1 0 0 0 0 EXPECT:sneakhidden:eq:1
+0.1 0 0 0 0 EXPECT:refheadpitch:arrille:gt:-2
+0.1 0 0 0 0 EXPECT:refheadpitch:arrille:lt:2
+# the Chameleon gone and standing up: he sees the player
+0.3 0 0 0 0 SNEAK:0
+8 0 0 0
+0.1 0 0 0 0 EXPECT:sneakhidden:eq:0
+# 2. Sneak 5: anyone in front notices. Arrille made to follow the player: he doesn't count, the eye shows
+0.3 0 0 0 0 SETSKILL:sneak:5
+0.3 0 0 0 0 CON:"arrille"->aifollow%player%0%0%0%0
+0.3 0 0 0 0 SNEAK:1
+1 0 0 0 0 PLACE:arrille:150
+3 0 0 0
+0.1 0 0 0 0 EXPECT:sneakhidden:eq:1
+1 0 0 0

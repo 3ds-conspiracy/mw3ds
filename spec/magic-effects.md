@@ -167,7 +167,7 @@ These add to the effect total and nothing else happens in `spelleffects.cpp`. Wh
 knowledge, outside the reading list; to verify when a test is written): Shield (3) armor rating; Burden (7) / Feather (8)
 carrying capacity; Jump (9) jump height; Levitate (10) allowed only if levitation is enabled (else removed with
 a message); Slowfall (11) fall damage; Swift Swim (1) swim speed; Water Walking (2) see below; Water Breathing (0) stops
-drowning (read in `mwrender/animation.cpp`: no damage while its magnitude is > 0); Chameleon (40) and Invisibility (39) hit chance
+drowning (read in `mwrender/animation.cpp`: no damage while its magnitude is > 0); Chameleon (40) and Invisibility (39) draw the player's body and first-person arms see-through alike (OpenMW's `setVisibility` on both views, `bug-chameleon-fp-arms`); their hit chance
 and detection; Light (41) the light on the actor; Sanctuary (42) the chance to be hit; Night Eye (43) brightness (a
 negative total is clamped away at the end of the effect, see its handler); Fortify Attack (117) the player's attack
 roll; Blind (47) the actor's own hit chance; Sound (48) the spell-cast chance (magic.md); Silence (46) forbids casting; Paralyze (45) freezes the actor; Charm (44) raises disposition;

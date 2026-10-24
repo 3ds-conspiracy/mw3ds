@@ -24,7 +24,8 @@ ENGINE_SOUNDS = [
     "Item Weapon Shortblade Up", "Item Clothes Up", "Item Lockpick Up", "Item Probe Up", "Item Repair Up",
     "Item Apparatus Up", "Item Armor Light Up", "Item Armor Medium Up", "Item Armor Heavy Up",
     "Menu Click", "Menu Size", "Book Open", "Book Close", "Book Page", "scroll", "Open Lock", "LockedDoor",
-    "LockedChest", "Disarm Trap", "Disarm Trap Fail", "Open Lock Fail", "FootBareLeft", "FootBareRight", "FootWaterLeft", "FootWaterRight", "Swim Left", "Swim Right", "chest open", "chest close", "Door Heavy Open",
+    "LockedChest", "Disarm Trap", "Disarm Trap Fail", "Open Lock Fail", "FootBareLeft", "FootBareRight", "FootLightLeft", "FootLightRight", "FootMedLeft", "FootMedRight",
+    "FootHeavyLeft", "FootHeavyRight", "FootWaterLeft", "FootWaterRight", "Swim Left", "Swim Right", "chest open", "chest close", "Door Heavy Open",
     "Door Heavy Close", "Door Latched One Open", "Door Latched One Close", "Door Stone Open",
     # combat
     "SwishS", "SwishM", "SwishL", "Weapon Swish", "Health Damage", "Hand To Hand Hit", "Hand To Hand Hit 2",

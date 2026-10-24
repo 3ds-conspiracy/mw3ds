@@ -93,6 +93,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "target") v = s.target >= 0 ? 1.0f : 0.0f;       // something under the crosshair
 	else if (what == "forcesneak") v = w.forceSneak ? 1.0f : 0.0f;    // the player forced to sneak
 	else if (what == "sneaking") v = w.player.sneaking ? 1.0f : 0.0f;  // the player sneaks now
+	else if (what == "sneakhidden") v = s.hidden ? 1.0f : 0.0f;       // the HUD's sneak eye shows (sneaking, nobody noticed)
 	else if (what == "thirdperson") v = s.thirdPerson ? 1.0f : 0.0f;  // the view is third person
 	else if (what == "viewcamz")    // third person or the face preview: the camera's height over the player's feet (else 0)
 	{

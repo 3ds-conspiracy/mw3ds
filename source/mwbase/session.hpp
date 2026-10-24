@@ -136,7 +136,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	bool shieldBlocks(float blockSkill, float agility, float luck, float fatigue, float fatigueMax, bool still,
 		float attackSkill, float attackAgility, float attackLuck, float attackFatigue, float attackFatigueMax, float charge);
 	bool npcAware(int ref);
-	bool awarenessCheck(int ref);                  // OpenMW's awarenessCheck of the player by this observer (cached roll)
+	bool awarenessCheck(int ref, float* target = nullptr, bool roll = true);   // OpenMW's awarenessCheck of the player by this
+	                                               // observer (cached roll; target: the x - y it must reach; roll false: no new die, none yet is unaware)
 	float fatigueTermOf(float fatigue, float fatigueMax);
 	float attackTermOf(int skill, int agility, int luck, float fatigue, float fatigueMax, float fortifyAttack, float blind);
 	float playerDefense(bool defenseless);         // the player's evasion + Chameleon / Invisibility terms
@@ -473,7 +474,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	bool effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, float y0 = 24.0f, int rows = 8);
 	std::vector<SpellEffect> knownEffects();
 	SpellEffect newEffect(const SpellEffect& from, int ranges);
-	bool brewPotion();                            // makes a potion of the chosen ingredients (they're used up)
+	bool brewPotion();
+	bool alchemyEffectKnown(size_t index);   // whether Alchemy names a potion's index-th effect (OpenMW's knownEffect)                            // makes a potion of the chosen ingredients (they're used up)
 	std::string effectLabel(int effect, int skill, int attribute);   // "Fortify Strength", "Restore Health"
 	void persuade(int kind);                      // 0 admire, 1 intimidate, 2 taunt, 3..5 bribe 10 / 100 / 1000
 	bool serviceRefused();                        // the speaker's Service Refusal, when their disposition is too low

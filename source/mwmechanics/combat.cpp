@@ -776,10 +776,14 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 
 	float headTrack = w.game.gmstf("fmaxheadtrackdistance", 400.0f);
 	float headTrackIn = w.game.gmstf("finteriorheadtrackmult", 0.5f);
+	const bool playerHidden = w.effectTotal(39) > 0.0f || w.effectTotal(40) >= 75.0f;   // Invisibility, Chameleon
 	const bool torches = w.useTorches();
 	// (the player's own body in third person, as see-through as anyone under Invisibility or Chameleon)
 	if (!body.set.actors.empty())
 		body.set.actors[0].alpha = actorSeeThrough(true, w.effectTotal(39), w.effectTotal(40));
+	// (and the first-person arms the same: OpenMW sets the player's whole animation, both views)
+	if (!vm.set.actors.empty())
+		vm.set.actors[0].alpha = actorSeeThrough(true, w.effectTotal(39), w.effectTotal(40));
 	w.forLoadedActors([&](int i) {
 		Ref& r = w.refs[i];
 		if (r.actor < 0 || r.dead || !r.visible())
@@ -853,13 +857,18 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		}
 		// People near the player turn their heads to them (OpenMW's updateHeadTracking): within fMaxHeadTrackDistance
 		// (x fInteriorHeadTrackMult indoors), only when the player is in front of them; the head turns at most 30 degrees
-		// and tilts at most 40 up or down to the player's eyes, easing there at 5 a second. (OpenMW also wants line of
-		// sight and that they noticed the player, and turns them to other people too: left out, for the 3DS's time)
+		// and tilts at most 40 up or down to the player's eyes, easing there at 5 a second. Only someone who noticed
+		// the player (the awareness check, on the roll the detection already made: a sneaking player they failed to notice
+		// gets no look, and the check takes no die of its own), and never at an
+		// invisible player or one under Chameleon 75 or more (OpenMW's isTargetMagicallyHidden). (OpenMW also wants
+		// line of sight, and turns them to other people too: left out, for the 3DS's time)
 		if (r.recType == REC_NPC_)
 			if (Actor* ac = w.actorOf(i))
 			{
 				float yaw = 0.0f, pitch = 0.0f;
 				float reach = headTrack * (!w.cells[w.current].underSky() ? headTrackIn : 1.0f);
+				if (playerHidden)
+					reach = 0.0f;
 				float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1];
 				float dz = playerEyeZ(w.player) - (r.pos[2] + 110.0f);
 				float d2 = dx * dx + dy * dy + dz * dz;
@@ -869,7 +878,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				if (!straight && w.distanceToPlayer(i) < reach && d > 1.0f)
 				{
 					float diff = angleDiff(atan2f(dx, dy), r.rot[2]);
-					if (fabsf(diff) < 1.5708f)
+					if (fabsf(diff) < 1.5708f && awarenessCheck(i, nullptr, false))
 					{
 						float up = dz / d;
 						const float kYaw = 0.5236f, kPitch = 0.6981f;

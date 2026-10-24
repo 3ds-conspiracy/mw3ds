@@ -59,9 +59,14 @@ fFatigueSwimWalkBase + load x ...Mult`, sneaking `fFatigueSneakBase + load x fFa
 ## Footsteps
 
 Each step plays by where the walker is (`Npc::getSoundIdFromSndGen`): flying, none; swimming, `Swim Left` / `Swim Right`;
-feet under the water's surface, `FootWaterLeft` / `FootWaterRight`; else on the ground `FootBareLeft` / `FootBareRight`
-(OpenMW picks light, medium or heavy boots by the boots' armor skill; the 3DS always plays the bare ones). The player
-steps every 0.42 s walking and 0.65 s swimming (OpenMW takes them from the animation's sound keys). Test: `issue-27`.
+feet under the water's surface, `FootWaterLeft` / `FootWaterRight`; else on the ground by the boots: none (or shoes),
+`FootBareLeft` / `FootBareRight`; boots by their armor skill, `FootLight`, `FootMed`, `FootHeavy` + `Left` / `Right`.
+
+A step comes where the moving animation's `SoundGen: Left` / `Right` keys fall, and OpenMW plays that animation at the
+speed the walker goes, so on the ground a step comes every so far walked. base_anim.nif's cycles: walking carries the
+body 203.5 units (right foot at 0.25 of the cycle, left at 0.65), running 263.6 (0.40, 0.75), sneaking 124.1 (0.16,
+0.56). Swimming steps every 0.65 s. Ours stepped every 0.42 s at any pace, barefoot whatever was worn (2026-10-24).
+Tests: `issue-27`, `bug-footsteps-gait`.
 
 ## Findings (2026-09-29)
 

@@ -1,0 +1,155 @@
+# uber-ministry-sneak: a mid-level thief through the main quest's Ministry of Truth (A2_4_MiloGone) without being seen:
+# Alvela Saram's entrance key, the Grand Inquisitor's key picked from his pocket, a door opened with it, a lock picked,
+# Mehra Milo reached. No Invisibility, no Open spells, no boots (their weight is taken off the sneak); where the sneak alone
+# can't do it, bought Potions of Shadow (Exclusive: Chameleon 20 for 60 s, 175 gold; each drunk adds its own, as OpenMW's). Played
+# LEGIT after the setup. Detection (spec/combat.md): an observer notices when a 0..99 roll (every 5 s) >= x - y; this
+# thief's x is (Sneak 65 + Agility 60 / 5 + Luck 50 / 10) x (0.5 + 0.002 x distance) x 1.25, an Ordinator's y 66 facing
+# the player, 22 with the player behind: in his face within 500 units is a near-certain catch, from behind at 300 about
+# one roll in six. So the way keeps out of the guards' sight and comes at the Grand Inquisitor from behind.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 CLASS:thief
+0.3 0 0 0 0 LEVEL:10
+0.3 0 0 0 0 SETSKILL:sneak:65
+0.3 0 0 0 0 SETSKILL:security:55
+0.3 0 0 0 0 SETATTR:agility:60
+0.3 0 0 0 0 SETATTR:luck:50
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:60
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 JOURNAL:A2_3_CorprusCure:50
+0.3 0 0 0 0 JOIN:blades:4
+0.3 0 0 0 0 KNOW:visit_anyone
+0.3 0 0 0 0 GIVE:pick_journeyman_01:3
+0.3 0 0 0 0 GIVE:Gold_001:200
+0.3 0 0 0 0 GIVE:sc_divineintervention
+0.3 0 0 0 0 GIVE:p_chameleon_e:11
+# Caius Cosades's orders (his talk moves Mehra Milo to the Ministry's cells)
+0.3 0 0 0 0 GOTO:Balmora,_Caius_Cosades'_House
+6 0 0 0
+30 0 0 0 0 ACTIVATE:caius_cosades
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:promoted_to_Operative
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:orders
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+# her note to Amaya, read in her quarters: her trail (10)
+0.3 0 0 0 0 GOTO:Vivec,_Milo's_Quarters
+6 0 0 0
+60 0 0 0 0 ACTIVATE:bk_notetoamaya
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 TP:31764:-101250:3340:180
+8 0 0 0
+0.1 0 0 0 0 EXPECT:item:pick_journeyman_01:ge:3
+0.1 0 0 0 0 EXPECT:skill:sneak:eq:65
+0.3 0 0 0 0 LEGIT
+# Alvela Saram (the Temple's canton): the entrance key (15)
+60 0 0 0 0 ACTIVATE:alvela_saram
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:visit_anyone
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICEVAL:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:15
+0.1 0 0 0 0 EXPECT:item:key_ministry_ext:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# into the Hall of Processing, sneaking from the door on
+0.3 0 0 0 0 SNEAK:1
+120 0 0 0 0 DOORTO:Ministry_of_Truth,_Hall_of_Processing
+10 0 0 0 0 UNTIL:cell:Ministry_of_Truth,_Hall_of_Processing
+1 0 0 0
+0.1 0 0 0 0 EXPECT:sneakhidden:eq:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-ministry-sneak-hall
+# the Grand Inquisitor (at his desk, facing west to it): waited out 300 units behind him, then in and his key lifted
+# from his pocket (at that reach this thief alone is noticed on a roll of about 51 or more: a near even chance each 5 s,
+# so three Potions of Shadow first: Chameleon 60 puts him out of reach of any roll)
+120 0 0 0 0 WALKTO:@-840,-830,20
+2 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:40:ge:60
+0.1 0 0 0 0 EXPECT:sneakhidden:eq:1
+0.1 0 0 0 0 SNAP:pickpocketchance:grand%inquisitor,0
+0.1 0 0 0 0 EXPECT:pickpocketchance:grand%inquisitor,0:ge:14
+60 0 0 0 0 LOOT:grand%inquisitor:key_ministry_sectors
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:key_ministry_sectors:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.1 0 0 0 0 EXPECT:refcombat:grand%inquisitor:eq:0
+0.1 0 0 0 0 SAVE:uber-ministry-sneak-key
+# through the inner door with the stolen key (lock 10) and on to the Prison Keep. Brelo Athelvis stands 166 units from
+# that door facing up the only way to it: passing in front of him at 150 this thief is noticed on any roll over about 9
+# (unseen there would want a sneak term near 150). Being seen is no crime: nobody does anything about it
+120 0 0 0 0 DOORTO:Ministry_of_Truth,_Prison_Keep
+10 0 0 0 0 UNTIL:cell:Ministry_of_Truth,_Prison_Keep
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.1 0 0 0 0 SAVE:uber-ministry-sneak-keep
+# the Holding Cells' west door, the one that lands by Mehra Milo's cell (lock 15, unowned: picking it is no crime): Security
+# 55 with a journeyman's pick (1.1) opens it on the formula's chance. The Prison Keep's Ordinators have Fight 90: one who
+# notices the player attacks (OpenMW's fight term reaching 100), no crime needed. Ervas Aradil watches that door from 290
+# units, 53 degrees off his facing, where this thief alone is noticed on about 62 rolls in 100. So Potions of Shadow
+# for the way through the Keep (walking past him at 210 in his face, Chameleon 60 still leaves a roll of 89 up: 80 is
+# out of every roll's reach) and four more at the door. The prisoners notice too, but do nothing
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:40:ge:80
+120 0 0 0 0 WALKTO:@-536,-2060,-366
+1 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.3 0 0 0 0 USE:p_chameleon_e
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:40:ge:80
+0.1 0 0 0 0 EXPECT:lockchance:15,1.1:ge:80
+0.3 0 0 0 0 USELOCKPICK:ex_velothicave_door_03:pick_journeyman_01
+2 0 0 0
+0.3 0 0 0 0 USELOCKPICK:ex_velothicave_door_03:pick_journeyman_01
+2 0 0 0
+0.3 0 0 0 0 USELOCKPICK:ex_velothicave_door_03:pick_journeyman_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:pick_journeyman_01:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.1 0 0 0 0 EXPECT:refcombat:ervas%aradil:eq:0+EXPECT:refcombat:favas%nilem:eq:0+EXPECT:refcombat:fadren%dalis:eq:0
+120 0 0 0 0 DOORTO:Ministry_of_Truth,_Holding_Cells
+10 0 0 0 0 UNTIL:cell:Ministry_of_Truth,_Holding_Cells
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+# Mehra Milo: the Divine Intervention scroll for her (20); standing up first (sneaking, a press opens pockets)
+0.3 0 0 0 0 SNEAK:0
+120 0 0 0 0 ACTIVATE:mehra_milo
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Divine_Intervention_scrolls
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICEVAL:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:A2_4_MiloGone:ge:20
+0.1 0 0 0 0 EXPECT:item:sc_divineintervention:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.1 0 0 0 0 EXPECT:refcombat:grand%inquisitor:eq:0

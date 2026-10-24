@@ -1,0 +1,36 @@
+# start: Seyda Neen
+# A door the player unlocked stays unlocked: through it and back, the house's door outside still opens without a pick,
+# the house's own door inside has no lock (Morrowind.esm gives it none), and after a save and load the same.
+# Fargoth's House: its front door (ex_nord_door_01 at -11958 -67957) is locked (25).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7+GOD:2+HOUR:12
+0.3 0 0 0 0 GIVE:pick_grandmaster:1
+0.3 0 0 0 0 SETSKILL:security:100
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:reflock:Seyda_Neen,_Fargoth's_House:gt:0
+60 0 0 0 0 WALKTO:@-11958,-67957,452
+0.3 0 0 0 0 USELOCKPICK:ex_nord_door_01:pick_grandmaster
+2 0 0 0
+0.3 0 0 0 0 USELOCKPICK:ex_nord_door_01:pick_grandmaster
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflock:Seyda_Neen,_Fargoth's_House:le:0
+60 0 0 0 0 DOORTO:Seyda_Neen,_Fargoth's_House
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Fargoth's_House
+1 0 0 0
+0.1 0 0 0 0 EXPECT:reflock:Seyda_Neen:le:0
+60 0 0 0 0 DOORTO:Seyda_Neen
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflock:Seyda_Neen,_Fargoth's_House:le:0
+# far away (the cell unloaded) and back
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+4 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+5 0 0 0
+0.1 0 0 0 0 EXPECT:reflock:Seyda_Neen,_Fargoth's_House:le:0
+1 0 0 0 0 SAVE:doorlock
+1 0 0 0 0 LOAD:doorlock
+5 0 0 0
+0.1 0 0 0 0 EXPECT:reflock:Seyda_Neen,_Fargoth's_House:le:0
+60 0 0 0 0 DOORTO:Seyda_Neen,_Fargoth's_House
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Fargoth's_House

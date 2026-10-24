@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# Chameleon and Invisibility show on the first-person arms as on the body (OpenMW's CharacterController::setVisibility
+# sets the player's whole animation, both views): Chameleon 50 draws them half see-through, Invisibility a quarter
+# solid. Ours drew the arms solid whatever was on the player.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0 0 0 0 0 SETUP-END
+1 0 0 0
+0.1 0 0 0 0 EXPECT:vmalpha:eq:1
+0.3 0 0 0 0 ACTIVE:40:50:6
+1 0 0 0
+0.1 0 0 0 0 EXPECT:vmalpha:lt:0.51+EXPECT:vmalpha:gt:0.49
+0.1 0 0 0 0 EXPECT:bodyalpha:lt:0.51
+0.5 0 0 0 0 SHOT
+6 0 0 0
+0.1 0 0 0 0 EXPECT:vmalpha:eq:1
+0.3 0 0 0 0 ACTIVE:39:1:4
+1 0 0 0
+0.1 0 0 0 0 EXPECT:vmalpha:lt:0.26+EXPECT:vmalpha:gt:0.24

@@ -1355,7 +1355,7 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 			g_gpu.eyeShift * 0.5f, kViewModelFocus, false);
 		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uProjection, &projection);
 	}
-	g_gpu.meshAlpha = viewModel ? 1.0f : a.alpha;
+	g_gpu.meshAlpha = a.alpha;
 	for (int pass = 0; pass < 2; pass++)
 		for (auto& m : a.meshes)
 		{

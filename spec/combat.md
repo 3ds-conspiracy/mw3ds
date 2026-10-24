@@ -47,7 +47,17 @@ Unaware = not in combat and failing OpenMW's awareness check:
 
 Not sneaking, the sneak term is 0, so only Chameleon or Invisibility can keep the player unnoticed. Chameleon 200 is not proof against a sharp observer: with y above 100 (Berwen: Sneak 47, Agility 65, Luck 40, y = 120) a roll of 80 or more still notices, so a theft in her shop is seen about one roll in five; a weak observer (y under 101) can never notice it. The observer's Blind lowers y. Detection for
 crime and the sneak indicator also needs line of sight. The Sneak skill trains every `fSneakUseDelay` seconds while
-someone within `fSneakUseDist` has the player in sight and nobody has noticed them.
+someone within `fSneakUseDist` has the player in sight and nobody has noticed them. Those siding with the player
+(followers, summons) neither take the sneak indicator away nor train Sneak (OpenMW's `getActorsSidingWith`).
+
+A head turns to the player only when its owner noticed them (OpenMW's `updateHeadTracking`: line of sight and the
+awareness check), never to a player under Invisibility or Chameleon 75 or more (`isTargetMagicallyHidden`). Ours turned
+every head in reach, so a sneaking player saw people look at them while the indicator said nobody had noticed
+(2026-10-24, `bug-sneak-eye`).
+
+Doors: a load door's two sides are two doors, each with its own lock in the data; unlocking one leaves the other as it
+is (the Ministry of Truth's doors are locked on both sides). A door unlocked stays unlocked through cell changes and
+saves (`bug-door-stays-unlocked`).
 
 ## Damage
 

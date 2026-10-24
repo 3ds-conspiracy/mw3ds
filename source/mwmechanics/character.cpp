@@ -362,28 +362,63 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	}
 }
 
+// The moving animations' steps (base_anim.nif: the ground one cycle carries the body, and where in the cycle its SoundGen
+// Right and Left keys fall). OpenMW plays the walk at the speed the player goes, so a step comes every so far walked
+struct Gait { float cycle, right, left; };
+static const Gait kWalkGait = { 203.5f, 0.25f, 0.65f }, kRunGait = { 263.6f, 0.4f, 0.75f }, kSneakGait = { 124.1f, 0.16f, 0.56f };
+
 // Footsteps while walking; OpenMW's Npc::getSoundIdFromSndGen picks the sound: none flying, "Swim" while
-// swimming, "FootWater" with the feet under the surface, else the ground's
+// swimming, "FootWater" with the feet under the surface, else the boots': bare without, else by their weight class
 void Session::updateFootsteps(const PlayerInput& in, bool menu, float dt)
 {
 	float moving = fabsf(in.moveX) + fabsf(in.moveY);
+	float walked = hypotf(w.player.feet[0] - stepFeet[0], w.player.feet[1] - stepFeet[1]);
+	stepFeet[0] = w.player.feet[0];
+	stepFeet[1] = w.player.feet[1];
 	bool wading = false;
 	if (w.current >= 0)
 	{
 		Cell& stepCell = w.here();
 		wading = stepCell.hasWater() && w.player.feet[2] < stepCell.waterZ;
 	}
-	if (!menu && !w.player.flying && (w.player.swimming || w.player.onGround) && moving > 0.2f)
+	if (menu || w.player.flying || !(w.player.swimming || w.player.onGround) || moving <= 0.2f)
+	{
+		stepTimer = 0.1f;
+		return;
+	}
+	if (w.player.swimming)
 	{
 		stepTimer -= dt;
 		if (stepTimer <= 0.0f)
 		{
-			const char* side = stepLeft ? "Left" : "Right";
-			playSound(-1, std::string(w.player.swimming ? "Swim " : wading ? "FootWater" : "FootBare") + side);
+			playSound(-1, std::string("Swim ") + (stepLeft ? "Left" : "Right"));
 			stepLeft = !stepLeft;
-			stepTimer = w.player.swimming ? 0.65f : 0.42f;
+			stepTimer = 0.65f;
 		}
+		return;
 	}
-	else
-		stepTimer = 0.1f;
+	if (walked > 100.0f || dt <= 0.0f)
+		return;                       // (a teleport, a load: no steps for it)
+	const Gait& g = w.player.sneaking ? kSneakGait : walked / dt > 200.0f ? kRunGait : kWalkGait;
+	float before = stepPhase;
+	stepPhase += walked / g.cycle;
+	bool right = (before < g.right && stepPhase >= g.right) || stepPhase >= 1.0f + g.right;
+	bool left = (before < g.left && stepPhase >= g.left) || stepPhase >= 1.0f + g.left;
+	stepPhase = fmodf(stepPhase, 1.0f);
+	if (!right && !left)
+		return;
+	const char* kind = wading ? "FootWater" : "FootBare";
+	if (!wading)
+		for (auto& it : w.inventory)
+			if (it.equipped)
+				if (const Object* o = w.game.object(it))
+					if (o->recType == REC_ARMO && o->subtype == 5)      // (boots)
+					{
+						int skill = armorSkill(o);
+						kind = skill == SKILL_LIGHT_ARMOR ? "FootLight" : skill == SKILL_MEDIUM_ARMOR ? "FootMed" : "FootHeavy";
+					}
+	if (right)
+		playSound(-1, std::string(kind) + "Right");
+	if (left)
+		playSound(-1, std::string(kind) + "Left");
 }

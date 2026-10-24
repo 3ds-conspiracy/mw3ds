@@ -44,6 +44,8 @@ struct MechanicsState
 	int target = -1;
 	float stepTimer = 0.0f;
 	bool stepLeft = false;
+	float stepPhase = 0.0f;          // how far into the moving animation's cycle the player's feet are (0..1)
+	float stepFeet[2] = {};          // where the feet were last frame (the ground walked since)
 	// NPCs' and creatures' own summons (OpenMW's AI casts them in a fight): the caster, the creature, when it goes;
 	// a summon being cast (castSpell -2) waits in pendingSummon. Not saved: a load starts with none
 	struct NpcSummon { int caster, creature; float ends; };
