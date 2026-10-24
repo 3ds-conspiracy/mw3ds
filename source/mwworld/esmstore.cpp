@@ -745,6 +745,16 @@ bool gameLoad(GameData& g, const char* path)
 	{
 		MagicEffectDef& me = g.magicEffects[atoi(it->string)];
 		me = { (int)num(it, "school"), (float)num(it, "cost", 1.0), (int)num(it, "flags"), str(it, "name") };
+		// Which work on a skill (0x1) or an attribute (0x2): set in code by OpenMW's loader (loadmgef.cpp HardcodedFlags), not
+		// in the record: Drain, Damage, Restore, Fortify and Absorb Skill / Attribute. Without them two ingredients with
+		// Fortify Strength and Fortify Agility counted as sharing an effect, and spellmaking couldn't ask which
+		{
+			int id = atoi(it->string);
+			if (id == 21 || id == 26 || id == 78 || id == 83 || id == 89)
+				me.flags |= 0x1;
+			if (id == 17 || id == 22 || id == 74 || id == 79 || id == 85)
+				me.flags |= 0x2;
+		}
 		me.cvfx = str(it, "cvfx"); me.bvfx = str(it, "bvfx"); me.hvfx = str(it, "hvfx"); me.avfx = str(it, "avfx");
 		me.iconIx = (int)num(it, "ic", -1);
 		me.snd[0] = str(it, "csnd"); me.snd[1] = str(it, "bsnd"); me.snd[2] = str(it, "hsnd"); me.snd[3] = str(it, "asnd");

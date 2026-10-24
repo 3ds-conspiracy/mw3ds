@@ -26,6 +26,9 @@ TESTS = ROOT / "tools" / "test" / "cases"
 
 # magic effect flags (the ESM's)
 TARGET_SKILL, TARGET_ATTR, NO_DURATION, NO_MAGNITUDE, HARMFUL = 0x1, 0x2, 0x4, 0x8, 0x10
+# (which effects work on a skill or an attribute isn't in the records: OpenMW's loader sets it, loadmgef.cpp
+# HardcodedFlags: Drain, Damage, Restore, Fortify and Absorb Skill / Attribute)
+SKILL_EFFECTS, ATTR_EFFECTS = {21, 26, 78, 83, 89}, {17, 22, 74, 79, 85}
 CAST_SELF, CAST_TOUCH, CAST_TARGET, SPELLMAKING, ENCHANTING, APPLIED_ONCE = 0x40, 0x80, 0x100, 0x200, 0x400, 0x1000
 SCHOOLS = ["alteration", "conjuration", "destruction", "illusion", "mysticism", "restoration"]
 ATTRS = ["strength", "intelligence", "willpower", "agility", "speed", "endurance", "personality", "luck"]
@@ -284,7 +287,7 @@ def gen_alchemy(d, rng, count):
         if o.get("type") == "INGR" and o.get("effects"):
             fx = []
             for eff, sk, at in o["ingr"]:
-                fl = d.effects[eff]["flags"] if eff in d.effects else 0
+                fl = (d.effects[eff]["flags"] if eff in d.effects else 0) | (TARGET_SKILL if eff in SKILL_EFFECTS else 0)                     | (TARGET_ATTR if eff in ATTR_EFFECTS else 0)
                 fx.append((eff, sk if fl & TARGET_SKILL else -1, at if fl & TARGET_ATTR else -1) if eff >= 0 else None)
             ingr[oid] = {"id": oid, "fx": [k for k in fx if k]}
     appa = {}

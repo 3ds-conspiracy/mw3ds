@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# Two ingredients share an effect that works on an attribute or a skill only when it is the same one (OpenMW's
+# Alchemy::listEffects with the effects' TargetAttribute / TargetSkill flags, which its loader sets: they aren't in the
+# records). Dreugh wax has Fortify Strength, fire salts Fortify Agility, and nothing else in common: no potion. Ours
+# didn't have those flags and made a Fortify Strength potion of them.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:apparatus_a_mortar_01
+0.3 0 0 0 0 GIVE:ingred_dreugh_wax_01
+0.3 0 0 0 0 GIVE:ingred_fire_salts_01
+0.3 0 0 0 0 SETSKILL:alchemy:100
+0.3 0 0 0 0 SETATTR:intelligence:100+SETATTR:luck:100
+1 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 SNAP:brewed
+0.3 0 0 0 0 BREW:ingred_dreugh_wax_01:ingred_fire_salts_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:brewed:eq:@0
+0.1 0 0 0 0 EXPECT:message:your_potion_failed

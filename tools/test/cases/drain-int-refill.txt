@@ -27,6 +27,8 @@
 0.3 0 0 0 0 SPELLMAKE:heem_la
 1 0 0 0 0 EXPECT:screen:spellmake
 0.8 0 0 0 0 TAP:60:64
+# (Drain Attribute asks which, as OpenMW's Select Attribute: Intelligence)
+0.3 0 0 0 0 MAKETARGET:intelligence
 0.6 0 0 0 0 SHOT
 0.4 0 0 0 0 R+TAP:208:162
 0.4 0 0 0 0 R+TAP:208:162

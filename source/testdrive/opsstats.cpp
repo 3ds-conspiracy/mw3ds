@@ -166,6 +166,32 @@ std::optional<bool> opsStats(Session& s, const std::vector<std::string>& a)
 		s.enchantType = atoi(a[1].c_str());
 		return true;
 	}
+	// MAKEPICK:<effect>: the spellmaking / enchanting screen's list of effects the player knows, tapped on that effect (refused
+	// when it isn't in it); MAKETARGET:<skill or attribute>: the choice of which, tapped on that one
+	if (verb == "MAKEPICK" && a.size() >= 2)
+	{
+		int want = atoi(a[1].c_str());
+		for (auto& e : s.knownEffects())
+			if (e.effect == want)
+			{
+				s.makeEffects.push_back(s.newEffect(e, 7));
+				s.makeSel = (int)s.makeEffects.size() - 1;
+				s.askEffectTarget();
+				return true;
+			}
+		return fail("effect " + a[1] + " isn't in the list");
+	}
+	if (verb == "MAKETARGET" && a.size() >= 2)
+	{
+		if (!s.makePick || s.makeSel < 0 || s.makeSel >= (int)s.makeEffects.size())
+			return fail("no skill or attribute being chosen");
+		int k = s.makePick == 1 ? skillIndex(w, a[1]) : attrIndex(w, a[1]);
+		if (k < 0)
+			return fail(a[1] + " isn't a " + (s.makePick == 1 ? "skill" : "attribute"));
+		(s.makePick == 1 ? s.makeEffects[s.makeSel].skill : s.makeEffects[s.makeSel].attribute) = k;
+		s.makePick = 0;
+		return true;
+	}
 	if (verb == "ADDEFFECT" && a.size() >= 6)
 	{
 		// ADDEFFECT:effect:min:max:duration:range[:attribute or skill or "-"[:area]]

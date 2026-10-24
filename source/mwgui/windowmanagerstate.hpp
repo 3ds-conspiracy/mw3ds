@@ -177,10 +177,14 @@ struct WindowManagerState
 	int haggleOffer = -1;                         // barter: the gold the player offers for the balance (-1: the balance)
 	std::string rechargeGem;                       // the soul gem Recharge was chosen on (its soul's creature)
 	int enchanterRef = -1, enchantItem = -1, enchantGem = -1, enchantType = -1;
+	int enchantPick = 0;                          // enchanting: the item (1) or soul gem (2) being chosen in the grid, 0 none
+	UiGrid craftGrid;                             // that grid, and the alchemy screen's ingredients
 	std::vector<SpellEffect> makeEffects;        // spellmaking / enchanting: the effects being put together
 	std::string makeName;                        // and the name it gets (OpenMW's name box)
 	std::string makeNameItem;                    // enchanting: the item that name was taken from
 	int makeSel = -1;
+	int makePick = 0;                            // ... the selected effect's skill (1) or attribute (2) being chosen, 0 none
+	UiList makePickList;
 	std::vector<std::string> alchemySlots;        // up to four ingredients chosen
 	// rest / wait, levelling, the calendar (mwgui/waitdialog.cpp)
 	int restHours = 1;                // chosen on the rest screen

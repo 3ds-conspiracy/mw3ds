@@ -472,6 +472,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	float effectCost(const SpellEffect& e);
 	float madeSpellCost(const std::vector<SpellEffect>& effects);
 	bool effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, float y0 = 24.0f, int rows = 8);
+	void askEffectTarget();                      // the effect just added: its skill or attribute to be chosen
 	std::vector<SpellEffect> knownEffects();
 	SpellEffect newEffect(const SpellEffect& from, int ranges);
 	bool brewPotion();

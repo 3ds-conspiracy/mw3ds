@@ -32,6 +32,16 @@ value `= int(x * iAlchemyMod)`.
 
 Effects: for each ingredient in slot order, each of its four effects (by its id and, for skill or attribute
 effects, the skill or attribute) that is not listed yet and is also on a later ingredient.
+Which effects work on a skill or an attribute isn't in the records: OpenMW's loader sets it (`HardcodedFlags`):
+Drain, Damage, Restore, Fortify and Absorb Skill (21, 26, 78, 83, 89) and Attribute (17, 22, 74, 79, 85). Ours had no
+such flags and counted Fortify Strength and Fortify Agility as one effect (2026-10-24, `bug-ingredient-attribute`).
+
+Spellmaking and enchanting list each magic effect the player's spells have once; adding one that works on a skill or
+an attribute asks which (OpenMW's Select Skill / Select Attribute), any of them, and it can be changed after. Ours
+offered only the spells' own versions: knowing Fortify Strength gave Fortify Strength and nothing else
+(`bug-spellmake-any-attribute`). The screens (3DS layout): the item and soul gem in slots with their pictures, picked
+from a grid; the cast type with a line saying what it does; points, cast cost, charge, price or chance; effects with
+their icons; the spell's cost and cast chance; alchemy's ingredients, apparatus and the potion's effects as pictures.
 
 Per effect: magnitude `= (x / fPotionT1MagMult) / base` (1 with no magnitude), duration
 `= (x / fPotionT1DurMult) / base` (1 with no duration); the apparatus then changes each of the two that exist:

@@ -15,6 +15,7 @@ void Session::openEnchanting(int enchanter)
 	makeNameItem.clear();
 	enchantItem = enchantGem = -1;
 	enchantType = -1;
+	enchantPick = 0;
 	list2 = UiList();
 	std::vector<int> items, gems;
 	enchantChoices(items, gems);
@@ -37,6 +38,25 @@ void Session::syncEnchantName()
 	makeNameItem = id;
 }
 
+// A slot as Morrowind's window has one: a framed box with the chosen thing's picture in it (empty: what goes there), its
+// caption, name and a note beside it; a tap anywhere on it is the slot's
+static bool craftSlot(float x, float y, float w, int icon, const std::string& caption, const std::string& name,
+	const std::string& note)
+{
+	uiFrame(x, y, 36, 36);
+	if (icon < 0 || !uiIcon(icon, x + 2, y + 2, 32.0f))
+		uiTextCentered(x + 18, y + 13, 0.3f, col::textDim, "?");
+	uiText(x + 40, y + 1, 0.32f, col::textDim, caption);
+	uiText(x + 40, y + 12, 0.4f, col::text, name);
+	if (!note.empty())
+		uiText(x + 40, y + 25, 0.3f, col::textDim, note);
+	return uiHit(x, y, w, 36);
+}
+
+// What each cast type does, under its button (the button alone named it and left the player guessing)
+static const char* kCastHelp[4] = { "Used up when cast", "Casts on whoever it strikes", "Cast at will from its charge",
+	"Always on while worn" };
+
 void Session::drawEnchanting()
 {
 	int gold = w.itemCount("gold_001");
@@ -53,6 +73,39 @@ void Session::drawEnchanting()
 		enchantItem = items.empty() ? -1 : items[0];
 	if (indexIn(gems, enchantGem) < 0)
 		enchantGem = gems.empty() ? -1 : gems[0];
+	int noFocus = -1;
+	// Choosing the item or the soul gem: the candidates' pictures in a grid, as the inventory shows them
+	if (enchantPick)
+	{
+		const std::vector<int>& from = enchantPick == 1 ? items : gems;
+		uiText(6, 24, 0.4f, col::textDim, enchantPick == 1 ? "Choose the item to enchant" : "Choose a filled soul gem");
+		std::vector<UiGridItem> cells;
+		for (int i : from)
+		{
+			const Object* o = w.game.object(w.inventory[i].id);
+			std::string label = o ? o->name.str() : w.inventory[i].id;
+			if (enchantPick == 2)
+				for (auto& a : w.game.actors)
+					if (lower(a.id) == w.inventory[i].soul)
+						label = a.name + " (" + std::to_string(w.soulValue(w.inventory[i])) + ")";
+			cells.push_back({ o ? o->iconIx : -1, w.inventory[i].count, 0, label });
+		}
+		int pick = uiItemGrid(craftGrid, 4, 40, 312, 140, cells);
+		if (craftGrid.selected >= 0 && craftGrid.selected < (int)cells.size())
+			uiTextCentered(160, 186, 0.4f, col::text, cells[craftGrid.selected].label);
+		if (pick >= 0 && pick < (int)from.size())
+		{
+			(enchantPick == 1 ? enchantItem : enchantGem) = from[pick];
+			enchantPick = 0;
+			playSound(-1, "Menu Click");
+		}
+		else if (buttonRow({ w.game.gmst("sback", "Back") }, noFocus) == 0 || (uiIn().down & KEY_B))
+		{
+			enchantPick = 0;
+			playSound(-1, "Menu Click");
+		}
+		return;
+	}
 	const Object* item = enchantItem >= 0 ? w.game.object(w.inventory[enchantItem].id) : nullptr;
 	int soul = enchantGem >= 0 ? w.soulValue(w.inventory[enchantGem]) : 0;
 	int types = castTypesFor(item);
@@ -63,21 +116,35 @@ void Session::drawEnchanting()
 				enchantType = t;
 				break;
 			}
-	// Item / soul gem / cast type: tap to go to the next one
-	if (uiButton(4, 24, 154, 18, item ? item->name : "No item to enchant") && !items.empty())
-		enchantItem = items[(indexIn(items, enchantItem) + 1) % items.size()];
-	std::string gemLabel = "No soul gem";
+	syncEnchantName();
+	// The item and the soul gem, each in its slot with its picture: a tap chooses another from a grid
+	if (craftSlot(4, 24, 154, item ? item->iconIx : -1, "Item", item ? makeName : "Nothing to enchant",
+			items.size() > 1 ? "Tap to choose another" : "") && !items.empty())
+	{
+		enchantPick = 1;
+		craftGrid = UiGrid();
+		craftGrid.selected = std::max(0, indexIn(items, enchantItem));
+		playSound(-1, "Menu Click");
+	}
+	const Object* gem = enchantGem >= 0 ? w.game.object(w.inventory[enchantGem].id) : nullptr;
+	std::string soulName = "No filled soul gem";
 	if (enchantGem >= 0)
 	{
-		gemLabel = w.game.gmstLabel("ssoulgem", "Soul") + " " + std::to_string(soul);
+		soulName = w.game.gmstLabel("ssoulgem", "Soul");
 		for (auto& a : w.game.actors)
 			if (lower(a.id) == w.inventory[enchantGem].soul)
-				gemLabel = a.name + " (" + std::to_string(soul) + ")";
+				soulName = a.name;
 	}
-	if (uiButton(162, 24, 154, 18, gemLabel) && !gems.empty())
-		enchantGem = gems[(indexIn(gems, enchantGem) + 1) % gems.size()];
+	if (craftSlot(162, 24, 154, gem ? gem->iconIx : -1, w.game.gmstLabel("ssoulgem", "Soul"), soulName,
+			enchantGem >= 0 ? "Soul " + std::to_string(soul) : "") && !gems.empty())
+	{
+		enchantPick = 2;
+		craftGrid = UiGrid();
+		craftGrid.selected = std::max(0, indexIn(gems, enchantGem));
+		playSound(-1, "Menu Click");
+	}
 	static const char* kCastKeys[4] = { "sitemcastonce", "sitemcastwhenstrikes", "sitemcastwhenused", "sitemcastconstant" };
-	if (uiButton(4, 46, 154, 18, enchantType >= 0 ? w.game.gmstLabel(kCastKeys[enchantType], kCastNames[enchantType]) : "-") && types)
+	if (uiButton(4, 64, 154, 18, enchantType >= 0 ? w.game.gmstLabel(kCastKeys[enchantType], kCastNames[enchantType]) : "-") && types)
 	{
 		for (int k = 1; k <= 4; k++)
 			if (types & (1 << ((enchantType + k) % 4)))
@@ -89,10 +156,13 @@ void Session::drawEnchanting()
 		for (auto& e : makeEffects)
 			e.range = enchantType == 3 ? 0 : enchantType == 1 && e.range == 0 ? 1 : e.range;
 	}
+	if (enchantType >= 0)
+		uiText(6, 84, 0.3f, col::textDim, kCastHelp[enchantType]);
 	// Ranges this cast type allows: constant self only, on strike touch / target
 	int ranges = enchantType == 3 ? 1 : enchantType == 1 ? 6 : 7;
 	std::vector<SpellEffect> known = knownEffects(), usable;
 	std::vector<std::string> rows;
+	std::vector<int> icons;
 	for (auto& e : known)
 	{
 		SpellEffect n = newEffect(e, ranges);
@@ -102,24 +172,36 @@ void Session::drawEnchanting()
 			continue;
 		usable.push_back(n);
 		rows.push_back(effectLabel(e.effect, e.skill, e.attribute));
+		auto me = w.game.magicEffects.find(e.effect);
+		icons.push_back(me != w.game.magicEffects.end() ? me->second.iconIx : -1);
 	}
-	int pick = uiList(list2, 4, 68, 130, 136, rows, 0.4f, true);
+	int pick = uiList(list2, 4, 98, 130, 106, rows, 0.4f, true, nullptr, &icons);
 	if (pick >= 0 && pick < (int)usable.size() && makeEffects.size() < 4)
 	{
 		makeEffects.push_back(usable[pick]);
 		makeSel = makeEffects.size() - 1;
+		askEffectTarget();
 		playSound(-1, "Menu Click");
 	}
-	effectEditor(makeEffects, makeSel, ranges, 68, 4);
-	syncEnchantName();
+	effectEditor(makeEffects, makeSel, ranges, 92, 3);
+	// The numbers OpenMW's window shows: points against what the soul holds, the cast cost, the charge, the price or chance
 	EnchantCalc c = enchantCalc();
-	char info[96];
+	char line[64];
+	snprintf(line, sizeof(line), "Enchantment %.0f / %.0f", c.points, c.capacity);
+	uiText(164, 63, 0.34f, c.points > c.capacity ? col::health : col::textDim, line);
+	snprintf(line, sizeof(line), "Cast %d", enchantType == 3 ? 0 : (int)enchantCastCost(c.points));
+	uiText(270, 63, 0.34f, col::textDim, line);
+	snprintf(line, sizeof(line), "Charge %d", soul);
+	uiText(164, 75, 0.34f, col::textDim, line);
 	if (enchanterRef >= 0)
-		snprintf(info, sizeof(info), "Points %.0f/%.0f  Price %d", c.points, c.capacity, c.price);
+		snprintf(line, sizeof(line), "Price %d", c.price);
 	else
-		snprintf(info, sizeof(info), "Points %.0f/%.0f  Chance %d%%", c.points, c.capacity, std::max(0, (int)c.chance));
-	uiText(162, 50, 0.38f, col::textDim, info);
-	int b = makeButtons(w.game.gmst("senchanting", "Enchant"));
+		snprintf(line, sizeof(line), "Chance %d%%", std::max(0, (int)c.chance));
+	uiText(240, 75, 0.34f, col::textDim, line);
+	// (the new item's name is in its slot: the first button renames it, no longer a second copy of it)
+	// (at an enchanter it is bought, as OpenMW's Buy; by the player's own hand, made)
+	std::string make = enchanterRef >= 0 ? w.game.gmst("sbuy", "Buy") + " (" + std::to_string(c.price) + ")" : "Enchant";
+	int b = buttonRow({ w.game.gmst("srename", "Rename"), make, w.game.gmst("sclose", "Close") }, noFocus);
 	if (b == 0)
 	{
 		playSound(-1, "Menu Click");

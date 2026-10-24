@@ -55,6 +55,35 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 {
 	float cy = y0 + maxRows * 13 + 4;          // the selected one's controls below the rows
 	bool changed = false;
+	// Which skill or attribute the selected effect works on: the list in the effects' place until one is tapped (B: the
+	// effect taken back out, as OpenMW's Cancel)
+	if (makePick && sel >= 0 && sel < (int)fx.size())
+	{
+		std::vector<std::string> rows;
+		int n = makePick == 1 ? 27 : 8;
+		for (int k = 0; k < n; k++)
+			rows.push_back(makePick == 1 ? skillName(w, k) : attrName(w, k));
+		uiText(138, y0 - 2, 0.34f, col::textDim, makePick == 1 ? w.game.gmstLabel("schooseskill", "Which skill?")
+			: w.game.gmstLabel("schooseattribute", "Which attribute?"));
+		int pick = uiList(makePickList, 136, y0 + 10, 182, 200 - y0 - 10, rows, 0.4f, true);
+		if (pick >= 0 && pick < n)
+		{
+			(makePick == 1 ? fx[sel].skill : fx[sel].attribute) = pick;
+			makePick = 0;
+			playSound(-1, "Menu Click");
+			return true;
+		}
+		if (uiIn().down & KEY_B)
+		{
+			uiConsume(KEY_B);
+			fx.erase(fx.begin() + sel);
+			sel = fx.empty() ? -1 : (int)fx.size() - 1;
+			makePick = 0;
+			return true;
+		}
+		return false;
+	}
+	makePick = 0;
 	// The rows are drawn as list rows in a frame, as the effect list beside them: a framed button 12 high has no
 	// room left for its text
 	if (!fx.empty())
@@ -74,10 +103,14 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 		float ry = y0 + k * 13;
 		if ((int)k == sel)
 			uiRect(138, ry, 178, 13, col::select);
+		// (the effect's own icon at the row's left, as OpenMW's effect rows have)
+		auto me = w.game.magicEffects.find(e.effect);
+		bool icon = me != w.game.magicEffects.end() && me->second.iconIx >= 0 && uiIcon(me->second.iconIx, 139, ry + 0.5f, 12.0f);
+		float tx = icon ? 153.0f : 141.0f;
 		float scale = 0.4f;
-		while (scale > 0.33f && uiTextWidth(row, scale) > 172)
+		while (scale > 0.33f && uiTextWidth(row, scale) > 316 - tx - 2)
 			scale -= 0.02f;
-		uiText(141, ry + (13 - uiLineHeight(scale)) / 2, scale, (int)k == sel ? col::textOver : col::text, row);
+		uiText(tx, ry + (13 - uiLineHeight(scale)) / 2, scale, (int)k == sel ? col::textOver : col::text, row);
 		if (uiHit(138, ry, 178, 13))
 			sel = k;
 	}
@@ -101,6 +134,14 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 			}
 		}
 		changed = true;
+	}
+	// (one that works on a skill or an attribute: which, tap to choose again)
+	if ((flags & 0x3) && uiButton(222, cy + 42, 94, 16, (flags & 0x1) ? skillName(w, std::max(0, e.skill)) : attrName(w, std::max(0, e.attribute))))
+	{
+		makePick = (flags & 0x1) ? 1 : 2;
+		makePickList = UiList();
+		playSound(-1, "Menu Click");
+		return false;
 	}
 	if (uiButton(232, cy, 84, 18, "Remove"))
 	{
@@ -142,7 +183,9 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 	return changed;
 }
 
-// Effects the player can put into a spell: every effect of the spells they know
+// The effects the player's spells have, each once (OpenMW's SpellCreationDialog lists magic effects, not the spells'
+// versions of them): one that works on a skill or an attribute has it chosen when it is added (OpenMW's Select Skill /
+// Select Attribute), any of them, not only those the spells happen to name
 std::vector<SpellEffect> Session::knownEffects()
 {
 	std::vector<SpellEffect> out;
@@ -151,11 +194,25 @@ std::vector<SpellEffect> Session::knownEffects()
 		{
 			bool have = false;
 			for (auto& f : out)
-				have |= f.effect == e.effect && f.skill == e.skill && f.attribute == e.attribute;
+				have |= f.effect == e.effect;
 			if (!have)
-				out.push_back(e);
+			{
+				SpellEffect n = e;
+				n.skill = n.attribute = -1;
+				out.push_back(n);
+			}
 		}
 	return out;
+}
+
+// An effect just added that works on a skill or an attribute: the choice of which comes up at once
+void Session::askEffectTarget()
+{
+	if (makeSel < 0 || makeSel >= (int)makeEffects.size())
+		return;
+	int flags = effectFlags(makeEffects[makeSel].effect);
+	makePick = (flags & 0x1) ? 1 : (flags & 0x2) ? 2 : 0;
+	makePickList = UiList();
 }
 
 // A new effect as it first appears: magnitude 1, a second, the first range it allows
@@ -187,19 +244,32 @@ void Session::drawSpellmaking()
 	header(w.game.gmst("sspellmakingmenutitle", "Spellmaking"), "Gold " + std::to_string(gold));
 	std::vector<SpellEffect> known = knownEffects();
 	std::vector<std::string> rows;
+	std::vector<int> icons;
 	for (auto& e : known)
+	{
 		rows.push_back(effectLabel(e.effect, e.skill, e.attribute));
-	int pick = uiList(list2, 4, 24, 130, 176, rows, 0.4f, true);
+		auto me = w.game.magicEffects.find(e.effect);
+		icons.push_back(me != w.game.magicEffects.end() ? me->second.iconIx : -1);
+	}
+	int pick = uiList(list2, 4, 24, 130, 176, rows, 0.4f, true, nullptr, &icons);
 	if (pick >= 0 && pick < (int)known.size() && makeEffects.size() < 8)
 	{
 		makeEffects.push_back(newEffect(known[pick], 7));
 		makeSel = makeEffects.size() - 1;
+		askEffectTarget();
 		playSound(-1, "Menu Click");
 	}
 	effectEditor(makeEffects, makeSel, 7);
 	float cost = 0.0f;
 	int price = spellmakePrice(&cost);
-	uiText(232, 176, 0.38f, col::textDim, "Cost " + std::to_string((int)roundf(cost)));
+	// The spell's magicka cost and the player's chance to cast it, as OpenMW's window shows them (its chance of the
+	// spell as made: calcSpellBaseSuccessChance)
+	SpellDef made;
+	made.type = 0;
+	made.cost = (int)roundf(cost);
+	made.effects = makeEffects;
+	uiText(232, 170, 0.38f, col::textDim, "Cost " + std::to_string((int)roundf(cost)));
+	uiText(232, 183, 0.38f, col::textDim, "Chance " + std::to_string(makeEffects.empty() ? 0 : std::max(0, castChance(made))) + "%");
 	int b = makeButtons("Buy (" + std::to_string(price) + ")");
 	if (b == 0)
 	{
