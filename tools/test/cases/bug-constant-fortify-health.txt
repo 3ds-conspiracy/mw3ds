@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# A worn constant-effect Fortify Health / Magicka raises the maximum while it is worn (OpenMW keeps a constant
+# enchantment as a spell that never ends): Maras's Skirt (Fortify Health 5) and the Hortator's Belt (Fortify Magicka
+# 20) left the maxima as they were. An ability's the same (Tribunal's Her Reflected Glory: trib-spells).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 SNAP:healthmax
+0.3 0 0 0 0 GIVE:maras_skirt
+1 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:maras_skirt:eq:1
+0.1 0 0 0 0 EXPECT:healthmax:eq:@5
+0.1 0 0 0 0 SNAP:magickamax
+0.3 0 0 0 0 GIVE:hortatorbelt
+1 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:hortatorbelt:eq:1
+0.1 0 0 0 0 EXPECT:magickamax:eq:@20

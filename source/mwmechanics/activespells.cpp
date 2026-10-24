@@ -190,6 +190,15 @@ void Session::updateEffects(float dt)
 		else
 			i++;
 	}
+	// Abilities and worn constant enchantments: their Restore Health / Magicka / Fatigue work every second as a spell's
+	// do (OpenMW keeps an ability as a spell that never ends; a constant Restore Health ring did nothing)
+	if (!playerDead)
+		for (auto& a : w.abilities)
+		{
+			if (a.effect == EFF_RESTORE_HEALTH) s.health = fminf(s.healthMax, s.health + a.magnitude * dt);
+			else if (a.effect == EFF_RESTORE_MAGICKA) s.magicka = fminf(s.magickaMax, s.magicka + a.magnitude * dt);
+			else if (a.effect == EFF_RESTORE_FATIGUE) s.fatigue = fminf(s.fatigueMax, s.fatigue + a.magnitude * dt);
+		}
 	// Damage / Restore Attribute or Skill moved a whole point: the numbers follow (current bars kept; magicka keeps its
 	// share of the maximum, full from none, as refitMagicka)
 	if (statsChanged)

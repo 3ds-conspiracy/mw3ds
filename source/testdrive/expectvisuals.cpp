@@ -303,6 +303,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	}
 	else if (what == "savevalid")   // <name>: 1 when test_<name>.sav reads whole (a damaged one is refused)
 		v = World::savedCell(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
+	else if (what == "saveneeds")   // <name>: 1 when test_<name>.sav was made with an add-on the data lacks (refused)
+		v = w.saveMissingAddon(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
 	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
 		v = shotLuma(atoi(arg.c_str()));
 	else if (what == "shotspread")  // <n>: how far step shot n's top screen's pixels stray from its mean brightness (-1: none)

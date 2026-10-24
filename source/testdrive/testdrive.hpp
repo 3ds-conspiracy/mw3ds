@@ -110,6 +110,7 @@ struct TestDriver
 	float takeTimer = 0.0f;
 	int takeTries = 0;               // PICKUP: presses that took nothing (the item was just past reach on the press's frame)
 	float strikeFor = 0.0f;          // STRIKE: seconds of swings, then done (0: KILL, until dead)
+	std::string strikeUntil;         // STRIKE:<ref>:<secs>:<global>: done early once that global is 1 or more
 	bool killUnseen = false;         // KILL:<id>:unseen: no blow while anyone else could report the murder
 	float unseenLimit = 0.0f, unseenTimer = 0.0f;   // UNSEEN:<secs>: waiting for nobody to be watching
 	std::string lootItem;            // LOOT: what to take once its container screen is open

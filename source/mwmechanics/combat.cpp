@@ -27,6 +27,7 @@
 #include "components/debug/profile.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
+#include "mwmechanics/magiceffects.hpp"
 
 static const float kHeldLightShare = 0.5f;           // a held torch's colour on its holder (Actor::heldLight), against OpenMW
 
@@ -815,6 +816,15 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		if (const Actor* fa = w.actorOf(i))
 			if (fa->frozen)
 				return;
+		// their abilities' Restore Health / Fatigue / Magicka work every second, as a spell's do (Tribunal's Imperfect
+		// rebuilds itself: regen_imperfect; Gedna Relvel's refill)
+		if (!menu && !r.dead && r.actor >= 0)
+			for (auto& c : w.game.actors[r.actor].constEffects)
+			{
+				if (c.first == EFF_RESTORE_HEALTH) r.health = fminf(r.healthMax, r.health + c.second * dt);
+				else if (c.first == EFF_RESTORE_FATIGUE) r.fatigue = fminf(r.fatigueMax, r.fatigue + c.second * dt);
+				else if (c.first == EFF_RESTORE_MAGICKA) r.magicka = fminf(r.magickaMax, r.magicka + c.second * dt);
+			}
 		if (!r.effects.empty() && !menu)
 			updateActorEffects(i, dt);
 		if (r.dead)

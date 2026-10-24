@@ -103,6 +103,7 @@ void World::recomputeStats()
 	// Abilities' and worn constant enchantments' fortifies and drains are modifiers on top (OpenMW's modified value):
 	// only the base is held to 100, so the Boots of Blinding Speed take Speed past it
 	int attrMod[8] = {}, skillMod[27] = {};
+	float healthMod = 0.0f, magickaMod = 0.0f, fatigueMod = 0.0f;      // Fortify Health / Magicka / Fatigue
 	for (auto& id : abilities)
 	{
 		auto it = game.spells.find(lower(id));
@@ -123,6 +124,9 @@ void World::recomputeStats()
 			if (e.effect == 79 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] += e.min;
 			else if (e.effect == 83 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] += e.min;
 			else if (e.effect == 84) magickaMult += e.min / 10.0f;
+			else if (e.effect == 80) healthMod += e.min;
+			else if (e.effect == 81) magickaMod += e.min;
+			else if (e.effect == 82) fatigueMod += e.min;
 			else if (e.effect == 17 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] -= e.min;
 			else if (e.effect == 21 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] -= e.min;
 			else          // resistances, weaknesses, night eye ...: read while they last (for good)
@@ -143,11 +147,13 @@ void World::recomputeStats()
 	const int* a = stats.attributes;
 	// OpenMW: base health is fixed at creation (floor of half Strength + Endurance) and grows only by the level-up
 	// gains; raised, fortified or drained attributes do not move it (spec/derived.md)
-	stats.healthMax = floorf(0.5f * (stats.attrCreation[ATTR_STRENGTH] + stats.attrCreation[ATTR_ENDURANCE])) + stats.healthBonus;
+	stats.healthMax = floorf(0.5f * (stats.attrCreation[ATTR_STRENGTH] + stats.attrCreation[ATTR_ENDURANCE])) + stats.healthBonus
+		+ healthMod;
 	stats.magickaMult = magickaMult;
-	stats.magickaFortify = stats.magickaFlat = 0.0f;     // (reapplyEffects adds the active spells' back)
-	stats.magickaMax = a[ATTR_INTELLIGENCE] * magickaMult;
-	stats.fatigueMax = a[ATTR_STRENGTH] + a[ATTR_WILLPOWER] + a[ATTR_AGILITY] + a[ATTR_ENDURANCE];
+	stats.magickaFortify = 0.0f;
+	stats.magickaFlat = magickaMod;      // (reapplyEffects adds the active spells' back)
+	stats.magickaMax = a[ATTR_INTELLIGENCE] * magickaMult + magickaMod;
+	stats.fatigueMax = a[ATTR_STRENGTH] + a[ATTR_WILLPOWER] + a[ATTR_AGILITY] + a[ATTR_ENDURANCE] + fatigueMod;
 	stats.health = stats.healthMax;
 	stats.magicka = stats.magickaMax;
 	stats.fatigue = stats.fatigueMax;

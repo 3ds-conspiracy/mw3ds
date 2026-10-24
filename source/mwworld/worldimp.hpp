@@ -359,6 +359,7 @@ struct World
 	bool saveGame(const char* path, bool legacy = false) const;
 	static std::string savedCell(const char* path);     // "" when there is no usable save
 	bool applySave(const char* path);                   // after load(dataDir, savedCell(path))
+	std::string saveMissingAddon(const char* path) const;   // the add-on the save needs that the data lacks, or ""
 	int findRef(const std::string& id) const;            // by object id, case-insensitive; loaded cells first
 	int findRefAnywhere(const std::string& id);          // also reads cells that hold it (scripts)
 	bool ensureRefs(int cell);                           // reads a cell's objects if not yet

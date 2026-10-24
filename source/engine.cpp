@@ -313,10 +313,16 @@ bool Engine::retryFromTitle(bool& loadedOut)
 {
 	while (!loadedOut && session->saveUnreadable)
 	{
+		// (a save made with Tribunal on data converted without it: told why)
+		std::string needs = session->saveNeeds;
+		if (!needs.empty())
+			needs[0] = (char)toupper((unsigned char)needs[0]);
+		std::string notice = needs.empty() ? "That save couldn't be read. Choose another, or a new game."
+			: "That save needs the " + needs + " add-on, which this game data doesn't have. Choose another, or a new game.";
 		delete session;
 		session = new Session();
 		session->dataDir = dataDir;
-		std::string pick = titleScreen(top, bottom, dataDir, "That save couldn't be read. Choose another, or a new game.");
+		std::string pick = titleScreen(top, bottom, dataDir, notice.c_str());
 		if (pick == "quit")
 			return false;
 		drawLoading(top, bottom, "Loading...");

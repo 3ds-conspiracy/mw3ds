@@ -141,8 +141,9 @@ def normal_weapon_resistance(rec, db):
 
 # Effects an actor's abilities, diseases and curses keep on it for good that matter when it is the target or the
 # defender (OpenMW reads them from its active spells): resistances and weaknesses, the elemental shields, Shield,
-# Sanctuary, Chameleon, Invisibility, Reflect, Spell Absorption, Fortify Attack, Blind
-CONSTANT_TARGET_EFFECTS = set(range(28, 37)) | set(range(90, 100)) | {3, 4, 5, 6, 39, 40, 42, 47, 67, 68, 117}
+# Sanctuary, Chameleon, Invisibility, Reflect, Spell Absorption, Fortify Attack, Blind; and the Restore Health / Magicka /
+# Fatigue that work on it every second (Tribunal's Imperfect rebuilds itself)
+CONSTANT_TARGET_EFFECTS = set(range(28, 37)) | set(range(90, 100)) | {3, 4, 5, 6, 39, 40, 42, 47, 67, 68, 75, 76, 77, 117}
 
 
 def constant_effects(rec, db):

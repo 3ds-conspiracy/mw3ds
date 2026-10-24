@@ -101,7 +101,7 @@ bool hasArg(const std::string& what)
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "shotdark" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "texlod" || what == "regionchance" || what == "regionweather"
+		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "saveneeds" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "shotdark" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "texlod" || what == "regionchance" || what == "regionweather"
 		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
 }
 
@@ -366,6 +366,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		}
 		// PUT:<container>:<item>: open it as LOOT does, then put the carried item in (the Inventory page's tap)
 		strikeFor = verb == "STRIKE" ? (a.size() >= 3 ? (float)atof(a[2].c_str()) : 5.0f) : 0.0f;
+		strikeUntil = verb == "STRIKE" && a.size() >= 4 ? lower(a[3]) : "";
 		killUnseen = verb == "KILL" && a.size() >= 3 && lower(a[2]) == "unseen";
 		if (leading && verb == "KILL")
 		{
@@ -783,7 +784,9 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				return true;
 			}
 		}
-		if (strikeFor > 0.0f && swingTimer >= strikeFor)
+		// (STRIKE's global: the fight's own end, a duel won: no blow after it)
+		auto until = strikeUntil.empty() ? w.globals.end() : w.globals.find(strikeUntil);
+		if (strikeFor > 0.0f && (swingTimer >= strikeFor || (until != w.globals.end() && until->second >= 1.0f)))
 		{
 			logf("drive: struck %s for %.1f s", id.c_str(), swingTimer);
 			kind = NONE;

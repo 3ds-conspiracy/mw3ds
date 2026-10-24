@@ -1,0 +1,548 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-enchantments: written by tools/test/specgen_tribunal.py (edit the generator, not this file).
+# Every enchantment Tribunal adds, on an item that carries it, checked by what it does.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0.3 0 0 0 0 SETSKILL:destruction:600
+0.3 0 0 0 0 SETSKILL:alteration:600
+0.3 0 0 0 0 SETSKILL:illusion:600
+0.3 0 0 0 0 SETSKILL:conjuration:600
+0.3 0 0 0 0 SETSKILL:mysticism:600
+0.3 0 0 0 0 SETSKILL:restoration:600
+0.3 0 0 0 0 SETATTR:willpower:100+SETATTR:luck:100
+0.3 0 0 0 0 RESISTROLL:99
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 EFFECT:90:100:100000:0
+0.3 0 0 0 0 EFFECT:91:100:100000:0
+0.3 0 0 0 0 EFFECT:92:100:100000:0
+0.3 0 0 0 0 EFFECT:97:100:100000:0
+0 0 0 0 0 SETUP-END
+# almalexia's blessing_en on ebony spear_blessed_unique (constant)
+0.3 0 0 0 0 SNAP:effect:3
+0.3 0 0 0 0 SNAP:skill:spear
+1.0 0 0 0 0 GIVE:ebony%spear_blessed_unique
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:3:ge:@30
+0.3 0 0 0 0 EXPECT:skill:spear:ge:@10
+0.3 0 0 0 0 EXPECT:equipped:ebony%spear_blessed_unique:eq:1
+# almalexia_blade on sword of almalexia (on strike)
+1.0 0 0 0 0 GIVE:sword%of%almalexia
+1.0 0 0 0 0 EQUIP:sword%of%almalexia
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:sword%of%almalexia
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:sword%of%almalexia:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# am_verbosity_en on amulet of verbosity (when used)
+1.0 0 0 0 0 GIVE:amulet%of%verbosity
+0.3 0 0 0 0 SNAP:charge:amulet%of%verbosity
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:skill:speechcraft
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:amulet%of%verbosity
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:skill:speechcraft:ge:@20
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:amulet%of%verbosity:lt:@0
+# amulet_gaenor_en on amulet_gaenor (constant)
+0.3 0 0 0 0 SNAP:attr:luck
+1.0 0 0 0 0 GIVE:amulet_gaenor
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:luck:ge:@15
+0.3 0 0 0 0 EXPECT:equipped:amulet_gaenor:eq:1
+# amulet_salandas_en on amulet_salandas (when used)
+1.0 0 0 0 0 GIVE:amulet_salandas
+0.3 0 0 0 0 SNAP:charge:amulet_salandas
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:skill:bluntweapon
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:amulet_salandas
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:117:ge:5
+0.3 0 0 0 0 EXPECT:skill:bluntweapon:ge:@1
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:amulet_salandas:lt:@0
+# axe_elanande_en on ebony war axe_elanande (on strike)
+1.0 0 0 0 0 GIVE:ebony%war%axe_elanande
+1.0 0 0 0 0 EQUIP:ebony%war%axe_elanande
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:ebony%war%axe_elanande
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:ebony%war%axe_elanande:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# belt_goval_en on belt_goval (constant)
+0.3 0 0 0 0 SNAP:attr:personality
+0.3 0 0 0 0 SNAP:skill:speechcraft
+1.0 0 0 0 0 GIVE:belt_goval
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:personality:ge:@5
+0.3 0 0 0 0 EXPECT:skill:speechcraft:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:belt_goval:eq:1
+# bipolar blade_en on bipolar blade (on strike)
+1.0 0 0 0 0 GIVE:bipolar%blade
+1.0 0 0 0 0 EQUIP:bipolar%blade
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bipolar%blade
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bipolar%blade:lt:@0
+#   calms and frenzies at once: its other effects checked
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# black_dart_en on black dart (on strike)
+1.0 0 0 0 0 GIVE:black%dart:5
+1.0 0 0 0 0 EQUIP:black%dart
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# bleeder_dart_en on bleeder dart (on strike)
+1.0 0 0 0 0 GIVE:bleeder%dart:5
+1.0 0 0 0 0 EQUIP:bleeder%dart
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:todd,23:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# carmine_dart_en on carmine dart (on strike)
+1.0 0 0 0 0 GIVE:carmine%dart:5
+1.0 0 0 0 0 EQUIP:carmine%dart
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:todd,25:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# cuirass_soscean_en on ebony_cuirass_soscean (constant)
+0.3 0 0 0 0 SNAP:healthmax
+1.0 0 0 0 0 GIVE:ebony_cuirass_soscean
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:healthmax:ge:@50
+0.3 0 0 0 0 EXPECT:equipped:ebony_cuirass_soscean:eq:1
+# dagger_symmachus_en on glass dagger_symmachus_unique (constant)
+0.3 0 0 0 0 SNAP:skill:shortblade
+0.3 0 0 0 0 SNAP:attr:endurance
+0.3 0 0 0 0 SNAP:effect:68
+1.0 0 0 0 0 GIVE:glass%dagger_symmachus_unique
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:shortblade:ge:@10
+0.3 0 0 0 0 EXPECT:attr:endurance:ge:@10
+0.3 0 0 0 0 EXPECT:effect:68:ge:@10
+0.3 0 0 0 0 EXPECT:equipped:glass%dagger_symmachus_unique:eq:1
+# db_poison on adamantium_shortsword_db (on strike)
+1.0 0 0 0 0 GIVE:adamantium_shortsword_db
+1.0 0 0 0 0 EQUIP:adamantium_shortsword_db
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:adamantium_shortsword_db
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:adamantium_shortsword_db:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# durgok's shield on goblin_shield_durgok_uni (constant)
+0.3 0 0 0 0 SETATTR:personality:60
+0.3 0 0 0 0 SETATTR:speed:60
+0.3 0 0 0 0 SNAP:attr:personality
+0.3 0 0 0 0 SNAP:effect:75
+0.3 0 0 0 0 SNAP:attr:speed
+1.0 0 0 0 0 GIVE:goblin_shield_durgok_uni
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:personality:le:@-50
+0.3 0 0 0 0 EXPECT:effect:75:ge:@1
+0.3 0 0 0 0 EXPECT:attr:speed:le:@-10
+0.3 0 0 0 0 EXPECT:equipped:goblin_shield_durgok_uni:eq:1
+# dwrv_dart_area_shock on centurion_projectile_dart_shock (on strike)
+1.0 0 0 0 0 GIVE:centurion_projectile_dart_shock:5
+1.0 0 0 0 0 EQUIP:centurion_projectile_dart_shock
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:todd,15:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# ebony_arrow_sadri_en on ebony arrow_sadri (on strike)
+1.0 0 0 0 0 GIVE:long%bow
+1.0 0 0 0 0 EQUIP:long%bow
+1.0 0 0 0 0 GIVE:ebony%arrow_sadri:5
+1.0 0 0 0 0 EQUIP:ebony%arrow_sadri
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# flensing on gravedigger (on strike)
+1.0 0 0 0 0 GIVE:gravedigger
+1.0 0 0 0 0 EQUIP:gravedigger
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:gravedigger
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:gravedigger:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,23:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# helm_uvenim_en on silver_helm_uvenim (when used)
+1.0 0 0 0 0 GIVE:silver_helm_uvenim
+0.3 0 0 0 0 SNAP:charge:silver_helm_uvenim
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:silver_helm_uvenim
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:65:ge:10
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:silver_helm_uvenim:lt:@0
+# helseth's collar_en on helseth's collar (constant)
+0.3 0 0 0 0 SNAP:skill:sneak
+0.3 0 0 0 0 SNAP:skill:security
+0.3 0 0 0 0 SNAP:attr:speed
+1.0 0 0 0 0 GIVE:helseth's%collar
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:sneak:ge:@10
+0.3 0 0 0 0 EXPECT:skill:security:ge:@10
+0.3 0 0 0 0 EXPECT:attr:speed:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:helseth's%collar:eq:1
+# helseth_ring_en on helseth's ring (constant)
+0.3 0 0 0 0 SNAP:effect:68
+0.3 0 0 0 0 SNAP:effect:93
+0.3 0 0 0 0 SNAP:effect:99
+0.3 0 0 0 0 SNAP:effect:75
+0.3 0 0 0 0 SNAP:effect:77
+1.0 0 0 0 0 GIVE:helseth's%ring
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:68:ge:@100
+0.3 0 0 0 0 EXPECT:effect:93:ge:@100
+0.3 0 0 0 0 EXPECT:effect:99:ge:@100
+0.3 0 0 0 0 EXPECT:effect:75:ge:@10
+0.3 0 0 0 0 EXPECT:effect:77:ge:@10
+0.3 0 0 0 0 EXPECT:equipped:helseth's%ring:eq:1
+# her boot_en on indoril_almalexia_boots (constant)
+0.3 0 0 0 0 SNAP:attr:agility
+1.0 0 0 0 0 GIVE:indoril_almalexia_boots
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:agility:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_boots:eq:1
+# her curiass_en on indoril_almalexia_cuirass (constant)
+0.3 0 0 0 0 SNAP:skill:heavyarmor
+1.0 0 0 0 0 GIVE:indoril_almalexia_cuirass
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:heavyarmor:ge:@10
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_cuirass:eq:1
+# her dart_en on her dart (on strike)
+1.0 0 0 0 0 GIVE:her%dart:5
+1.0 0 0 0 0 EQUIP:her%dart
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:todd,14:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,16:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,15:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,47:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# her greaves_en on indoril_almalexia_greaves (constant)
+0.3 0 0 0 0 SNAP:skill:mediumarmor
+1.0 0 0 0 0 GIVE:indoril_almalexia_greaves
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:mediumarmor:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_greaves:eq:1
+# her helm_en on indoril_almalexia_helmet (constant)
+0.3 0 0 0 0 SNAP:effect:68
+1.0 0 0 0 0 GIVE:indoril_almalexia_helmet
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:68:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_helmet:eq:1
+# her left gauntlet_en on indoril_almalexia_gauntlet_l (constant)
+0.3 0 0 0 0 SNAP:attr:strength
+1.0 0 0 0 0 GIVE:indoril_almalexia_gauntlet_l
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_gauntlet_l:eq:1
+# her left pauldron_en on indoril_almalexia_pauldron_l (constant)
+0.3 0 0 0 0 SNAP:effect:97
+1.0 0 0 0 0 GIVE:indoril_almalexia_pauldron_l
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:97:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_pauldron_l:eq:1
+# her right gauntlet_en on indoril_almalexia_gauntlet_r (constant)
+0.3 0 0 0 0 SNAP:effect:117
+1.0 0 0 0 0 GIVE:indoril_almalexia_gauntlet_r
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:117:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_gauntlet_r:eq:1
+# her right pauldron_en on indoril_almalexia_pauldron_r (constant)
+0.3 0 0 0 0 SNAP:effect:99
+1.0 0 0 0 0 GIVE:indoril_almalexia_pauldron_r
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:99:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_pauldron_r:eq:1
+# her scimitar_en on ebony scimitar_her (on strike)
+1.0 0 0 0 0 GIVE:ebony%scimitar_her
+1.0 0 0 0 0 EQUIP:ebony%scimitar_her
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:ebony%scimitar_her
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:ebony%scimitar_her:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,85:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# her shield_en on indoril_almalexia_shield (constant)
+0.3 0 0 0 0 SNAP:skill:block
+1.0 0 0 0 0 GIVE:indoril_almalexia_shield
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:block:ge:@10
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_shield:eq:1
+# king's_oath_en on king's_oath (on strike)
+#   nothing in the game data gives or carries the item
+# king's_oath_pc_en on king's_oath_pc (on strike)
+1.0 0 0 0 0 GIVE:king's_oath_pc
+1.0 0 0 0 0 EQUIP:king's_oath_pc
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:king's_oath_pc
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:king's_oath_pc:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,23:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# mace_salandas_en on dwarven mace_salandas (on strike)
+1.0 0 0 0 0 GIVE:dwarven%mace_salandas
+1.0 0 0 0 0 EQUIP:dwarven%mace_salandas
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:dwarven%mace_salandas
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:dwarven%mace_salandas:lt:@0
+0.3 0 0 0 0 EXPECT:refcombat:todd:eq:1
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# mace_slurring_en on mace of slurring (on strike)
+1.0 0 0 0 0 GIVE:mace%of%slurring
+1.0 0 0 0 0 EQUIP:mace%of%slurring
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:mace%of%slurring
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:mace%of%slurring:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,21:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# mazedband on mazed_band_end (when used)
+1.0 0 0 0 0 GIVE:mazed_band_end
+0.3 0 0 0 0 SNAP:charge:mazed_band_end
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:mazed_band_end
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:137:ge:1
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:mazed_band_end:lt:@0
+# nerevar_blade on nerevarblade_01_flame (on strike)
+1.0 0 0 0 0 GIVE:nerevarblade_01_flame
+1.0 0 0 0 0 EQUIP:nerevarblade_01_flame
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:nerevarblade_01_flame
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:nerevarblade_01_flame:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# robe_elanande_en on extravagant_robe_02_elanande (when used)
+1.0 0 0 0 0 GIVE:extravagant_robe_02_elanande
+0.3 0 0 0 0 SNAP:charge:extravagant_robe_02_elanande
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:extravagant_robe_02_elanande
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:40:ge:70
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:extravagant_robe_02_elanande:lt:@0
+# robe_lich_en on robe_lich_unique (when used)
+1.0 0 0 0 0 GIVE:robe_lich_unique
+0.3 0 0 0 0 SNAP:charge:robe_lich_unique
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:robe_lich_unique
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:robe_lich_unique:lt:@0
+# sc_chridittespanacea_en on sc_chridittepanacea (cast once)
+1.0 0 0 0 0 GIVE:sc_chridittepanacea
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:item:sc_chridittepanacea
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:item:sc_chridittepanacea:eq:0
+# spear_uvenim_en on silver spear_uvenim (on strike)
+1.0 0 0 0 0 GIVE:silver%spear_uvenim
+1.0 0 0 0 0 EQUIP:silver%spear_uvenim
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:silver%spear_uvenim
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:silver%spear_uvenim:lt:@0
+0.3 0 0 0 0 EXPECT:refflee:todd:eq:1
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# spite_en on spite_dart (on strike)
+#   nothing in the game data gives or carries the item
+# stendarr_hammer_en on stendar_hammer_unique (on strike)
+1.0 0 0 0 0 GIVE:stendar_hammer_unique
+1.0 0 0 0 0 EQUIP:stendar_hammer_unique
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:stendar_hammer_unique
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:stendar_hammer_unique:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# sword_soscean_en on ebony shortsword_soscean (on strike)
+1.0 0 0 0 0 GIVE:ebony%shortsword_soscean
+1.0 0 0 0 0 EQUIP:ebony%shortsword_soscean
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:ebony%shortsword_soscean
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:ebony%shortsword_soscean:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000

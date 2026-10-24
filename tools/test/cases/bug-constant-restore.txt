@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# A worn constant-effect Restore Health works every second, as a spell's does (OpenMW keeps a constant enchantment as a
+# spell that never ends): the Amulet of the Necromancer's Restore Health 1 gave nothing back before.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0.3 0 0 0 0 GIVE:necromancers_amulet_uniq
+1 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:equipped:necromancers_amulet_uniq:eq:1
+0.3 0 0 0 0 SETHEALTH:0.5
+0.1 0 0 0 0 SNAP:health
+5 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@3
+0.1 0 0 0 0 EXPECT:health:le:@7

@@ -133,6 +133,21 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 			return fail(a[1] + " not carried");
 		return true;
 	}
+	// ADDONS:<a,b>: the add-ons the loaded data says it was converted with (ADDONS: none: as vanilla data says), for a
+	// save's add-on check without a second data set
+	if (verb == "ADDONS")
+	{
+		w.game.addons.clear();
+		std::string list = a.size() >= 2 ? lower(a[1]) : "";
+		for (size_t p = 0; !list.empty() && p != std::string::npos;)
+		{
+			size_t c = list.find(',', p);
+			w.game.addons.push_back(list.substr(p, c == std::string::npos ? std::string::npos : c - p));
+			p = c == std::string::npos ? c : c + 1;
+		}
+		logf("test: data add-ons now %d", (int)w.game.addons.size());
+		return true;
+	}
 	if (verb == "ROLL" && a.size() >= 2)
 	{
 		s.persuadeRoll = atoi(a[1].c_str());       // the die roll persuasion and enchanting use until ROLL:-1

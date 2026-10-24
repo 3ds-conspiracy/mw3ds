@@ -56,6 +56,14 @@ stops itself. Code: `Session::startGameScripts`, `GameData::startScripts`.
 |---|---|---|
 | Effect 137, Summon Fabricant: calls Fabricant_summon (sMagicFabricantID) | same | `mwmechanics/spelleffects.cpp` `summonCreature` |
 | DisableLevitation ends every Levitate at once (the player told sLevitateDisabled); a new one too | same | [scripting.md](scripting.md) |
+| An ability's or a worn constant enchantment's Restore Health / Magicka / Fatigue works every second, as a spell's (OpenMW keeps an ability as a spell that never ends): the Imperfect's Rebuild, Gedna Relvel's Refill, a constant Restore Health ring (vanilla too) | same | `mwmechanics/activespells.cpp` (the player), `mwmechanics/combat.cpp` (actors: their `const_effects`) |
+| An ability's or a worn constant enchantment's Fortify Health / Magicka / Fatigue raises the maximum while it lasts: Her Reflected Glory, Maras's Skirt, the Hortator's Belt (vanilla too) | same | `mwworld/player.cpp` `recomputeStats` |
+
+Every spell, ability, disease and power Tribunal adds, every enchantment on an item, every creature and every armour
+and weapon has a check in `trib-spells`, `trib-enchantments`, `trib-creatures` and `trib-gear`, written by
+`tools/test/specgen_tribunal.py` from Tribunal.esm and the converted data. Records nothing in the game reaches (no
+item carries them, nothing places them: Master Fire / Shock Trap, Her Tamed Lightning, King's Oath (the guards'),
+the Spite Dart, the Goblin Officer, two Centurion and Fabricant variants) get a note instead.
 
 ## The Clockwork City's doors
 
@@ -95,4 +103,8 @@ An interior's notes show on its local map, the outdoors' on the outdoor local ma
 
 ## Not done (yet)
 
+- Barilzar's Heavy Eyes (Blind and Burden on a target): the combat AI casts harm, healing, summons and wards only
+  (`npcstats.combat_spells`), OpenMW's spellpriority rates Blind and Burden too. A vanilla rule as much as Tribunal's.
+- A creature's leveled weapon (the goblins' goblin_weapons_random) is its list's lowest entry for good
+  (`build_game.resolve_leveled_item`), never rolled by the player's level: the goblins never carry the Goblin Club.
 - Barter's "Seller Max" button (sMaxSale): the 3DS barter screen haggles item by item (3DS UI).

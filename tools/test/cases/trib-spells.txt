@@ -1,0 +1,519 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-spells: written by tools/test/specgen_tribunal.py (edit the generator, not this file).
+# Every spell, ability, disease and power Tribunal adds, checked by what it does.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0.3 0 0 0 0 SETSKILL:destruction:600
+0.3 0 0 0 0 SETSKILL:alteration:600
+0.3 0 0 0 0 SETSKILL:illusion:600
+0.3 0 0 0 0 SETSKILL:conjuration:600
+0.3 0 0 0 0 SETSKILL:mysticism:600
+0.3 0 0 0 0 SETSKILL:restoration:600
+0.3 0 0 0 0 SETATTR:willpower:100+SETATTR:luck:100
+0.3 0 0 0 0 RESISTROLL:99
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 EFFECT:90:100:100000:0
+0.3 0 0 0 0 EFFECT:91:100:100000:0
+0.3 0 0 0 0 EFFECT:92:100:100000:0
+0.3 0 0 0 0 EFFECT:97:100:100000:0
+0 0 0 0 0 SETUP-END
+# almalexia's blessing (spell, Almalexia's Blessing)
+0.3 0 0 0 0 SPELL:almalexia's%blessing
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:almalexia's%blessing
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,79:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# almalexia's light (power, Almalexia's Light)
+0.3 0 0 0 0 SPELL:almalexia's%light
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 EFFECT:22:10:1:3
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:agility:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:5
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:endurance:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:intelligence:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:7
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:luck:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:6
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:personality:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:4
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:speed:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:0
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:strength:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:willpower:gt:0
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:almalexia's%light
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:attrdamage:agility:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:endurance:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:intelligence:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:luck:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:personality:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:speed:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:strength:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:willpower:lt:10
+0.5 0 0 0
+# almalexia's shield (ability, Almalexia's Shield)
+#   on gavas drin, who has it: checked at the end
+# almalexia's wrath (spell, Almalexia's Wrath)
+0.3 0 0 0 0 SPELL:almalexia's%wrath
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:almalexia's%wrath
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,28:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# blood curse: fatigue (spell, Blood Curse: Fatigue)
+0.3 0 0 0 0 SPELL:blood%curse:%fatigue
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:blood%curse:%fatigue
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,25:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# crimson_plague (disease, Crimson Plague)
+0.3 0 0 0 0 SETSKILL:acrobatics:60
+0.3 0 0 0 0 SETSKILL:athletics:60
+0.3 0 0 0 0 SETATTR:strength:60
+0.3 0 0 0 0 SETATTR:endurance:60
+0.3 0 0 0 0 SNAP:effect:20
+0.3 0 0 0 0 SNAP:skill:acrobatics
+0.3 0 0 0 0 SNAP:skill:athletics
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 SNAP:attr:endurance
+0.3 0 0 0 0 SPELL:crimson_plague
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:20:ge:@100
+0.3 0 0 0 0 EXPECT:skill:acrobatics:le:@-10
+0.3 0 0 0 0 EXPECT:skill:athletics:le:@-10
+0.3 0 0 0 0 EXPECT:attr:strength:le:@-10
+0.3 0 0 0 0 EXPECT:attr:endurance:le:@-10
+# dire shockball (spell, Dire Shockball)
+0.3 0 0 0 0 SPELL:dire%shockball
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:dire%shockball
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# fireball_bar_uni (spell, Barenziah's Fire)
+0.3 0 0 0 0 SPELL:fireball_bar_uni
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:fireball_bar_uni
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,14:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# gaenor_abilities (ability, Gaenor's Abilities)
+#   on gaenor, who has it: checked at the end
+# gaenor_spell (spell, Gaenor's Escape)
+0.3 0 0 0 0 SPELL:gaenor_spell
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:gaenor_spell
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# grace of almsivi (power, Grace of Almsivi)
+0.3 0 0 0 0 SPELL:grace%of%almsivi
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SETHEALTH:0.3
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 SETFATIGUE:5
+0.3 0 0 0 0 SNAP:fatigue
+0.3 0 0 0 0 SPELL:rotbone
+0.3 0 0 0 0 EXPECT:diseases:ge:1
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:grace%of%almsivi
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:health:gt:@0
+0.3 0 0 0 0 EXPECT:fatigue:gt:@0
+0.3 0 0 0 0 EXPECT:diseases:eq:0
+0.5 0 0 0
+# heavy_eyes_unique (spell, Harthoon's Heavy Eyes)
+#   only lich_barilzar know it; not a spell they cast in a fight (open)
+# her_hand (ability, Her Hand)
+#   on salas valor, who has it: checked at the end
+# her_hand_2 (ability, Her Hand)
+#   on arnas therethi, who has it: checked at the end
+# her_ironskin (ability, Her Ironskin)
+0.3 0 0 0 0 SNAP:skill:mediumarmor
+0.3 0 0 0 0 SNAP:skill:heavyarmor
+0.3 0 0 0 0 SNAP:skill:lightarmor
+0.3 0 0 0 0 SNAP:skill:unarmored
+0.3 0 0 0 0 SPELL:her_ironskin
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:mediumarmor:ge:@5
+0.3 0 0 0 0 EXPECT:skill:heavyarmor:ge:@5
+0.3 0 0 0 0 EXPECT:skill:lightarmor:ge:@5
+0.3 0 0 0 0 EXPECT:skill:unarmored:ge:@5
+# her_mirror (ability, Her Mirror)
+#   on salas valor, who has it: checked at the end
+# her_mirror_2 (ability, Her Mirror)
+#   on arnas therethi, who has it: checked at the end
+# her_protection (ability, Her Guard Against Terror)
+0.3 0 0 0 0 SNAP:effect:99
+0.3 0 0 0 0 SPELL:her_protection
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:99:ge:@20
+# her_reflected_glory (ability, Her Reflected Glory)
+0.3 0 0 0 0 SNAP:healthmax
+0.3 0 0 0 0 SPELL:her_reflected_glory
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:healthmax:ge:@10
+# her_tamed_lightning (ability, Her Tamed Lightning)
+#   nothing in the game uses it
+# proj_trap_spell (spell, Projectile Trap Spell)
+0.3 0 0 0 0 SPELL:proj_trap_spell
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:proj_trap_spell
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,14:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# prox_mine_fire (spell, Proximity Mine Fire)
+0.3 0 0 0 0 SPELL:prox_mine_fire
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:prox_mine_fire
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# prox_mine_frost (spell, Proximity Mine Frost)
+0.3 0 0 0 0 SPELL:prox_mine_frost
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:prox_mine_frost
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# prox_mine_life (spell, Proximity Mine Life)
+0.3 0 0 0 0 SPELL:prox_mine_life
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:prox_mine_life
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# prox_mine_poison (spell, Proximity Mine Poison)
+0.3 0 0 0 0 SPELL:prox_mine_poison
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:prox_mine_poison
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# prox_mine_shock (spell, Proximity Mine Shock)
+0.3 0 0 0 0 SPELL:prox_mine_shock
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:prox_mine_shock
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# regen_imperfect (ability, Rebuild)
+#   on imperfect, who has it: checked at the end
+# relvel_damage (spell, Gedna's Damage)
+0.3 0 0 0 0 SPELL:relvel_damage
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:relvel_damage
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# relvel_regenerate (ability, Gedna's Refill)
+#   on lich_relvel, who has it: checked at the end
+# relvel_shield (ability, Gedna's Barrier)
+#   on lich_relvel, who has it: checked at the end
+# resist fire_100 (ability, Resist Fire)
+#   on goblin_grunt, who has it: checked at the end
+# resist normal weapons_50 (ability, Resist Normal Weapons)
+#   on karrod, who has it: checked at the end
+# resist paralysis_100 (ability, Resist Paralysis)
+#   on almalexia, who has it: checked at the end
+# resist paralysis_50 (ability, Resist Paralysis)
+#   on fabricant_hulkin_attack, who has it: checked at the end
+# rotbone (disease, Rotbone)
+0.3 0 0 0 0 SNAP:effect:20
+0.3 0 0 0 0 SPELL:rotbone
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:20:ge:@3
+# royal_blood (ability, Royal Blood)
+#   on diradeni farano, who has it: checked at the end
+# royal_resistance (ability, Royal Resistance)
+#   on diradeni farano, who has it: checked at the end
+# shockimperfect (spell, Fabricant Shock)
+0.3 0 0 0 0 SPELL:shockimperfect
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:shockimperfect
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,30:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# trap_fire_killer (spell, Master Fire Trap)
+#   nothing in the game uses it
+# trap_frost_killer (spell, Master Frost Trap)
+0.3 0 0 0 0 SPELL:trap_frost_killer
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:trap_frost_killer
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,16:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# trap_poison_killer (spell, Master Poison Trap)
+0.3 0 0 0 0 SPELL:trap_poison_killer
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:trap_poison_killer
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# trap_shock_killer (spell, Master Shock Trap)
+#   nothing in the game uses it
+# almalexia's shield on gavas drin
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_Office_of_the_Lord_Archcanon
+0.3 0 0 0 0 EXPECT:refeffect:gavas%drin,68:ge:30
+0.3 0 0 0 0 EXPECT:refeffect:gavas%drin,98:ge:30
+0.3 0 0 0 0 EXPECT:refeffect:gavas%drin,99:ge:30
+0.3 0 0 0 0 EXPECT:refeffect:gavas%drin,97:ge:30
+# gaenor_abilities on gaenor
+3.0 0 0 0 0 GOTO:Mournhold,_Temple_Courtyard
+0.3 0 0 0 0 EXPECT:refeffect:gaenor,93:ge:80
+0.3 0 0 0 0 EXPECT:refeffect:gaenor,68:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:gaenor,75:ge:1
+# her_hand on salas valor
+3.0 0 0 0 0 GOTO:Mournhold,_Godsreach
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,117:ge:45
+# her_hand_2 on arnas therethi
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_High_Chapel
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,117:ge:45
+# her_mirror on salas valor
+3.0 0 0 0 0 GOTO:Mournhold,_Godsreach
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,68:ge:40
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,42:ge:40
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,90:ge:75
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,91:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,97:ge:20
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,92:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:salas%valor,99:ge:45
+# her_mirror_2 on arnas therethi
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_High_Chapel
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,68:ge:40
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,75:ge:3
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,90:ge:75
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,91:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,97:ge:20
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,92:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:arnas%therethi,99:ge:45
+# regen_imperfect on imperfect
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Dome_of_the_Imperfect
+0.3 0 0 0 0 EXPECT:refeffect:imperfect,76:ge:1
+0.3 0 0 0 0 EXPECT:refeffect:imperfect,75:ge:1
+# relvel_regenerate on lich_relvel
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Gedna_Relvel's_Tomb
+0.3 0 0 0 0 EXPECT:refeffect:lich_relvel,76:ge:1
+0.3 0 0 0 0 EXPECT:refeffect:lich_relvel,75:ge:1
+0.3 0 0 0 0 EXPECT:refeffect:lich_relvel,77:ge:1
+# relvel_shield on lich_relvel
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Gedna_Relvel's_Tomb
+0.3 0 0 0 0 EXPECT:refeffect:lich_relvel,93:ge:600
+# resist fire_100 on goblin_grunt
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Abandoned_Passageway
+0.3 0 0 0 0 EXPECT:refeffect:goblin_grunt,90:ge:100
+# resist normal weapons_50 on karrod
+3.0 0 0 0 0 GOTO:Mournhold,_Royal_Palace_Throne_Room
+0.3 0 0 0 0 EXPECT:refeffect:karrod,98:ge:50
+# resist paralysis_100 on almalexia
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_High_Chapel
+0.3 0 0 0 0 EXPECT:refeffect:almalexia,99:ge:100
+# resist paralysis_50 on fabricant_hulkin_attack
+3.0 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+0.3 0 0 0 0 EXPECT:refeffect:fabricant_hulkin_attack,99:ge:50
+# royal_blood on diradeni farano
+3.0 0 0 0 0 GOTO:Mournhold,_Royal_Palace_Throne_Room
+0.3 0 0 0 0 EXPECT:refeffect:diradeni%farano,117:ge:50
+# royal_resistance on diradeni farano
+3.0 0 0 0 0 GOTO:Mournhold,_Royal_Palace_Throne_Room
+0.3 0 0 0 0 EXPECT:refeffect:diradeni%farano,90:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:diradeni%farano,97:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:diradeni%farano,91:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:diradeni%farano,99:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:diradeni%farano,92:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:diradeni%farano,68:ge:50

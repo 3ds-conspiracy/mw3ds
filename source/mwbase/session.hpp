@@ -35,6 +35,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	PlayerBody body;
 	void viewCamera(RenderCamera& cam);
 	bool saveUnreadable = false;      // start(): the save asked for is there but won't read (nothing started over it)
+	std::string saveNeeds;            // ... because it was made with this add-on, which the data lacks ("tribunal")
 	void revealLocalMap();            // the squares round the player come out of the fog
 	bool drawLocalFog(float ox, float oy, float picture);
 	float frameDt = 1.0f / 30.0f;     // this frame's time, menus open or not (main.cpp; the map's D-pad panning)

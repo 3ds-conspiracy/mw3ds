@@ -1,0 +1,554 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-gear: written by tools/test/specgen_tribunal.py (edit the generator, not this file).
+# Every armour and weapon Tribunal adds: carried, then worn or held.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0 0 0 0 0 SETUP-END
+# adamantium boots (Adamantium Boots)
+1.0 0 0 0 0 GIVE:adamantium%boots
+0.3 0 0 0 0 EXPECT:item:adamantium%boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium%boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_bracer_left (Adamantium Left Bracer)
+1.0 0 0 0 0 GIVE:adamantium_bracer_left
+0.3 0 0 0 0 EXPECT:item:adamantium_bracer_left:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_bracer_left:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_bracer_right (Adamantium Right Bracer)
+1.0 0 0 0 0 GIVE:adamantium_bracer_right
+0.3 0 0 0 0 EXPECT:item:adamantium_bracer_right:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_bracer_right:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_cuirass (Adamantium Cuirass)
+1.0 0 0 0 0 GIVE:adamantium_cuirass
+0.3 0 0 0 0 EXPECT:item:adamantium_cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_greaves (Adamantium Greaves)
+1.0 0 0 0 0 GIVE:adamantium_greaves
+0.3 0 0 0 0 EXPECT:item:adamantium_greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_helm (Adamantium Helm)
+1.0 0 0 0 0 GIVE:adamantium_helm
+0.3 0 0 0 0 EXPECT:item:adamantium_helm:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_helm:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_pauldron_left (Adamantium Left Pauldron)
+1.0 0 0 0 0 GIVE:adamantium_pauldron_left
+0.3 0 0 0 0 EXPECT:item:adamantium_pauldron_left:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_pauldron_left:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_pauldron_right (Adamantium Right Pauldron)
+1.0 0 0 0 0 GIVE:adamantium_pauldron_right
+0.3 0 0 0 0 EXPECT:item:adamantium_pauldron_right:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_pauldron_right:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# addamantium_helm (Adamantium Helm)
+1.0 0 0 0 0 GIVE:addamantium_helm
+0.3 0 0 0 0 EXPECT:item:addamantium_helm:ge:1
+0.3 0 0 0 0 EXPECT:equipped:addamantium_helm:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bloodworm_helm_unique_x (Bloodworm Helm)
+1.0 0 0 0 0 GIVE:bloodworm_helm_unique_x
+0.3 0 0 0 0 EXPECT:item:bloodworm_helm_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bloodworm_helm_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# boots of blinding speed_x (Boots of Blinding Speed)
+1.0 0 0 0 0 GIVE:boots%of%blinding%speed_x
+0.3 0 0 0 0 EXPECT:item:boots%of%blinding%speed_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:boots%of%blinding%speed_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# boots_apostle_unique_x (Boots of the Apostle)
+1.0 0 0 0 0 GIVE:boots_apostle_unique_x
+0.3 0 0 0 0 EXPECT:item:boots_apostle_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:boots_apostle_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# cuirass_savior_unique_x (Cuirass of the Savior's Hide)
+1.0 0 0 0 0 GIVE:cuirass_savior_unique_x
+0.3 0 0 0 0 EXPECT:item:cuirass_savior_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:cuirass_savior_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood boots (Dark Brotherhood Boots)
+1.0 0 0 0 0 GIVE:darkbrotherhood%boots
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood cuirass (Dark Brotherhood Cuirass)
+1.0 0 0 0 0 GIVE:darkbrotherhood%cuirass
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood gauntlet_l (Dark Brotherhood Left Gauntlet)
+1.0 0 0 0 0 GIVE:darkbrotherhood%gauntlet_l
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%gauntlet_l:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%gauntlet_l:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood gauntlet_r (Dark Brotherhood Right Gauntlet)
+1.0 0 0 0 0 GIVE:darkbrotherhood%gauntlet_r
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%gauntlet_r:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%gauntlet_r:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood greaves (Dark Brotherhood Greaves)
+1.0 0 0 0 0 GIVE:darkbrotherhood%greaves
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood helm (Dark Brotherhood Helm)
+1.0 0 0 0 0 GIVE:darkbrotherhood%helm
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%helm:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%helm:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood pauldron_l (Dark Brotherhood Left Pauldron)
+1.0 0 0 0 0 GIVE:darkbrotherhood%pauldron_l
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%pauldron_l:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%pauldron_l:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# darkbrotherhood pauldron_r (Dark Brotherhood Right Pauldron)
+1.0 0 0 0 0 GIVE:darkbrotherhood%pauldron_r
+0.3 0 0 0 0 EXPECT:item:darkbrotherhood%pauldron_r:ge:1
+0.3 0 0 0 0 EXPECT:equipped:darkbrotherhood%pauldron_r:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# dragonbone_cuirass_unique_x (Dragonbone cuirass)
+1.0 0 0 0 0 GIVE:dragonbone_cuirass_unique_x
+0.3 0 0 0 0 EXPECT:item:dragonbone_cuirass_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:dragonbone_cuirass_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# dwemer_shield_battle_unique (Dwemer Battle Shield)
+1.0 0 0 0 0 GIVE:dwemer_shield_battle_unique
+0.3 0 0 0 0 EXPECT:item:dwemer_shield_battle_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:dwemer_shield_battle_unique:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# ebon_plate_cuirass_unique_x (Ebony Mail)
+1.0 0 0 0 0 GIVE:ebon_plate_cuirass_unique_x
+0.3 0 0 0 0 EXPECT:item:ebon_plate_cuirass_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebon_plate_cuirass_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# ebony_cuirass_soscean (Soscean's Cuirass)
+1.0 0 0 0 0 GIVE:ebony_cuirass_soscean
+0.3 0 0 0 0 EXPECT:item:ebony_cuirass_soscean:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony_cuirass_soscean:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# ebony_shield_auriel_x (Auriel's Shield)
+1.0 0 0 0 0 GIVE:ebony_shield_auriel_x
+0.3 0 0 0 0 EXPECT:item:ebony_shield_auriel_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony_shield_auriel_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# goblin_shield (Goblin Buckler)
+1.0 0 0 0 0 GIVE:goblin_shield
+0.3 0 0 0 0 EXPECT:item:goblin_shield:ge:1
+0.3 0 0 0 0 EXPECT:equipped:goblin_shield:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# goblin_shield_durgok_uni (Goblin Buckler)
+1.0 0 0 0 0 GIVE:goblin_shield_durgok_uni
+0.3 0 0 0 0 EXPECT:item:goblin_shield_durgok_uni:ge:1
+0.3 0 0 0 0 EXPECT:equipped:goblin_shield_durgok_uni:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helm_bearclaw_unique_x (Helm of Oreyn Bearclaw)
+1.0 0 0 0 0 GIVE:helm_bearclaw_unique_x
+0.3 0 0 0 0 EXPECT:item:helm_bearclaw_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helm_bearclaw_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_boots (Royal Guard Boots)
+1.0 0 0 0 0 GIVE:helsethguard_boots
+0.3 0 0 0 0 EXPECT:item:helsethguard_boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_cuirass (Royal Guard Cuirass)
+1.0 0 0 0 0 GIVE:helsethguard_cuirass
+0.3 0 0 0 0 EXPECT:item:helsethguard_cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_gauntlet_left (Royal Guard Left Gauntlet)
+1.0 0 0 0 0 GIVE:helsethguard_gauntlet_left
+0.3 0 0 0 0 EXPECT:item:helsethguard_gauntlet_left:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_gauntlet_left:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_gauntlet_right (Royal Guard Right Gauntlet)
+1.0 0 0 0 0 GIVE:helsethguard_gauntlet_right
+0.3 0 0 0 0 EXPECT:item:helsethguard_gauntlet_right:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_gauntlet_right:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_greaves (Royal Guard Greaves)
+1.0 0 0 0 0 GIVE:helsethguard_greaves
+0.3 0 0 0 0 EXPECT:item:helsethguard_greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_helmet (Royal Guard Helm)
+1.0 0 0 0 0 GIVE:helsethguard_helmet
+0.3 0 0 0 0 EXPECT:item:helsethguard_helmet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_helmet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_pauldron_left (Royal Guard Left Pauldron)
+1.0 0 0 0 0 GIVE:helsethguard_pauldron_left
+0.3 0 0 0 0 EXPECT:item:helsethguard_pauldron_left:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_pauldron_left:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# helsethguard_pauldron_right (Royal Guard Right Pauldron)
+1.0 0 0 0 0 GIVE:helsethguard_pauldron_right
+0.3 0 0 0 0 EXPECT:item:helsethguard_pauldron_right:ge:1
+0.3 0 0 0 0 EXPECT:equipped:helsethguard_pauldron_right:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_boots (Her Hand's Boots)
+1.0 0 0 0 0 GIVE:indoril_almalexia_boots
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_cuirass (Her Hand's Cuirass)
+1.0 0 0 0 0 GIVE:indoril_almalexia_cuirass
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_gauntlet_l (Her Hand's Left Gauntlet)
+1.0 0 0 0 0 GIVE:indoril_almalexia_gauntlet_l
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_gauntlet_l:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_gauntlet_l:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_gauntlet_r (Her Hand's Right Gauntlet)
+1.0 0 0 0 0 GIVE:indoril_almalexia_gauntlet_r
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_gauntlet_r:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_gauntlet_r:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_greaves (Her Hand's Greaves)
+1.0 0 0 0 0 GIVE:indoril_almalexia_greaves
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_helmet (Her Hand's Helmet)
+1.0 0 0 0 0 GIVE:indoril_almalexia_helmet
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_helmet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_helmet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_pauldron_l (Her Hand's Left Pauldron)
+1.0 0 0 0 0 GIVE:indoril_almalexia_pauldron_l
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_pauldron_l:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_pauldron_l:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_pauldron_r (Her Hand's Right Pauldron)
+1.0 0 0 0 0 GIVE:indoril_almalexia_pauldron_r
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_pauldron_r:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_pauldron_r:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_almalexia_shield (Her Hand's Shield)
+1.0 0 0 0 0 GIVE:indoril_almalexia_shield
+0.3 0 0 0 0 EXPECT:item:indoril_almalexia_shield:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_shield:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_boots (Her Hand's Boots)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_boots
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_cuirass (Her Hand's Cuirass)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_cuirass
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_gauntlet_l (Her Hand's Left Gauntlet)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_gauntlet_l
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_gauntlet_l:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_gauntlet_l:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_gauntlet_r (Her Hand's Right Gauntlet)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_gauntlet_r
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_gauntlet_r:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_gauntlet_r:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_greaves (Her Hand's Greaves)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_greaves
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_helmet (Her Hand's Helmet)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_helmet
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_helmet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_helmet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_pauldron_l (Her Hand's Left Pauldron)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_pauldron_l
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_pauldron_l:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_pauldron_l:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_pauldron_r (Her Hand's Right Pauldron)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_pauldron_r
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_pauldron_r:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_pauldron_r:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# indoril_mh_guard_shield (Her Hand's Shield)
+1.0 0 0 0 0 GIVE:indoril_mh_guard_shield
+0.3 0 0 0 0 EXPECT:item:indoril_mh_guard_shield:ge:1
+0.3 0 0 0 0 EXPECT:equipped:indoril_mh_guard_shield:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# lords_cuirass_unique_x (Lord's Mail)
+1.0 0 0 0 0 GIVE:lords_cuirass_unique_x
+0.3 0 0 0 0 EXPECT:item:lords_cuirass_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:lords_cuirass_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# silver_helm_uvenim (Imperial Silver Helm)
+1.0 0 0 0 0 GIVE:silver_helm_uvenim
+0.3 0 0 0 0 EXPECT:item:silver_helm_uvenim:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver_helm_uvenim:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# spell_breaker_unique_x (Spell Breaker)
+1.0 0 0 0 0 GIVE:spell_breaker_unique_x
+0.3 0 0 0 0 EXPECT:item:spell_breaker_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:spell_breaker_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# tenpaceboots_x (Ten Pace Boots)
+1.0 0 0 0 0 GIVE:tenpaceboots_x
+0.3 0 0 0 0 EXPECT:item:tenpaceboots_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:tenpaceboots_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# towershield_eleidon_unique_x (Eleidon's Ward)
+1.0 0 0 0 0 GIVE:towershield_eleidon_unique_x
+0.3 0 0 0 0 EXPECT:item:towershield_eleidon_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:towershield_eleidon_unique_x:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# adamantium_axe (Admantium Axe)
+1.0 0 0 0 0 GIVE:adamantium_axe
+0.3 0 0 0 0 EXPECT:item:adamantium_axe:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_axe:eq:1
+# adamantium_claymore (Adamantium Claymore)
+1.0 0 0 0 0 GIVE:adamantium_claymore
+0.3 0 0 0 0 EXPECT:item:adamantium_claymore:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_claymore:eq:1
+# adamantium_mace (Adamantium Mace)
+1.0 0 0 0 0 GIVE:adamantium_mace
+0.3 0 0 0 0 EXPECT:item:adamantium_mace:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_mace:eq:1
+# adamantium_shortsword (Adamantium Shortsword)
+1.0 0 0 0 0 GIVE:adamantium_shortsword
+0.3 0 0 0 0 EXPECT:item:adamantium_shortsword:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_shortsword:eq:1
+# adamantium_shortsword_db (Adamantium Jinkblade of Wounds)
+1.0 0 0 0 0 GIVE:adamantium_shortsword_db
+0.3 0 0 0 0 EXPECT:item:adamantium_shortsword_db:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_shortsword_db:eq:1
+# adamantium_spear (Adamantium Spear)
+1.0 0 0 0 0 GIVE:adamantium_spear
+0.3 0 0 0 0 EXPECT:item:adamantium_spear:ge:1
+0.3 0 0 0 0 EXPECT:equipped:adamantium_spear:eq:1
+# bipolar blade (BiPolar Blade)
+1.0 0 0 0 0 GIVE:bipolar%blade
+0.3 0 0 0 0 EXPECT:item:bipolar%blade:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bipolar%blade:eq:1
+# bipolar blade_x (BiPolar Blade)
+1.0 0 0 0 0 GIVE:bipolar%blade_x
+0.3 0 0 0 0 EXPECT:item:bipolar%blade_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bipolar%blade_x:eq:1
+# black dart (Black Dart)
+1.0 0 0 0 0 GIVE:black%dart
+0.3 0 0 0 0 EXPECT:item:black%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:black%dart:eq:1
+# bladepiece_01 (Odd Dwemer Weapon)
+1.0 0 0 0 0 GIVE:bladepiece_01
+0.3 0 0 0 0 EXPECT:item:bladepiece_01:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bladepiece_01:eq:1
+# bleeder dart (Bleeder Dart)
+1.0 0 0 0 0 GIVE:bleeder%dart
+0.3 0 0 0 0 EXPECT:item:bleeder%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bleeder%dart:eq:1
+# carmine dart (Carmine Dart)
+1.0 0 0 0 0 GIVE:carmine%dart
+0.3 0 0 0 0 EXPECT:item:carmine%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:carmine%dart:eq:1
+# centurion_projectile_dart (Dwarven Dart)
+1.0 0 0 0 0 GIVE:centurion_projectile_dart
+0.3 0 0 0 0 EXPECT:item:centurion_projectile_dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:centurion_projectile_dart:eq:1
+# centurion_projectile_dart_shock (Dwarven Shock Dart)
+1.0 0 0 0 0 GIVE:centurion_projectile_dart_shock
+0.3 0 0 0 0 EXPECT:item:centurion_projectile_dart_shock:ge:1
+0.3 0 0 0 0 EXPECT:equipped:centurion_projectile_dart_shock:eq:1
+# claymore_chrysamere_unique_x (Chrysamere)
+1.0 0 0 0 0 GIVE:claymore_chrysamere_unique_x
+0.3 0 0 0 0 EXPECT:item:claymore_chrysamere_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:claymore_chrysamere_unique_x:eq:1
+# claymore_iceblade_unique_x (Ice Blade of the Monarch)
+1.0 0 0 0 0 GIVE:claymore_iceblade_unique_x
+0.3 0 0 0 0 EXPECT:item:claymore_iceblade_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:claymore_iceblade_unique_x:eq:1
+# daedric dagger_bar (Daedric Dagger)
+1.0 0 0 0 0 GIVE:daedric%dagger_bar
+0.3 0 0 0 0 EXPECT:item:daedric%dagger_bar:ge:1
+0.3 0 0 0 0 EXPECT:equipped:daedric%dagger_bar:eq:1
+# daedric warhammer_ttgd_x (Veloth's Judgement)
+1.0 0 0 0 0 GIVE:daedric%warhammer_ttgd_x
+0.3 0 0 0 0 EXPECT:item:daedric%warhammer_ttgd_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:daedric%warhammer_ttgd_x:eq:1
+# dagger_fang_unique_x (Fang of Haynekhtnamet)
+1.0 0 0 0 0 GIVE:dagger_fang_unique_x
+0.3 0 0 0 0 EXPECT:item:dagger_fang_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:dagger_fang_unique_x:eq:1
+# dwarven mace_salandas (Suldreni's Mace)
+1.0 0 0 0 0 GIVE:dwarven%mace_salandas
+0.3 0 0 0 0 EXPECT:item:dwarven%mace_salandas:ge:1
+0.3 0 0 0 0 EXPECT:equipped:dwarven%mace_salandas:eq:1
+# ebony arrow_sadri (PoisonGrip Arrow)
+1.0 0 0 0 0 GIVE:ebony%arrow_sadri
+0.3 0 0 0 0 EXPECT:item:ebony%arrow_sadri:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony%arrow_sadri:eq:1
+# ebony dart_db_unique (A Carved Ebony Dart)
+1.0 0 0 0 0 GIVE:ebony%dart_db_unique
+0.3 0 0 0 0 EXPECT:item:ebony%dart_db_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony%dart_db_unique:eq:1
+# ebony scimitar (Ebony Scimitar)
+1.0 0 0 0 0 GIVE:ebony%scimitar
+0.3 0 0 0 0 EXPECT:item:ebony%scimitar:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony%scimitar:eq:1
+# ebony scimitar_her (Her Ebony Scimitar)
+1.0 0 0 0 0 GIVE:ebony%scimitar_her
+0.3 0 0 0 0 EXPECT:item:ebony%scimitar_her:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony%scimitar_her:eq:1
+# ebony shortsword_soscean (Soscean's Shortsword)
+1.0 0 0 0 0 GIVE:ebony%shortsword_soscean
+0.3 0 0 0 0 EXPECT:item:ebony%shortsword_soscean:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony%shortsword_soscean:eq:1
+# ebony spear_blessed_unique (Blessed Spear)
+1.0 0 0 0 0 GIVE:ebony%spear_blessed_unique
+0.3 0 0 0 0 EXPECT:item:ebony%spear_blessed_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony%spear_blessed_unique:eq:1
+# ebony war axe_elanande (Elanande's War Axe)
+1.0 0 0 0 0 GIVE:ebony%war%axe_elanande
+0.3 0 0 0 0 EXPECT:item:ebony%war%axe_elanande:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony%war%axe_elanande:eq:1
+# ebony_bow_auriel_x (Auriel's Bow)
+1.0 0 0 0 0 GIVE:ebony_bow_auriel_x
+0.3 0 0 0 0 EXPECT:item:ebony_bow_auriel_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:ebony_bow_auriel_x:eq:1
+# fine black dart (Fine Black Dart)
+1.0 0 0 0 0 GIVE:fine%black%dart
+0.3 0 0 0 0 EXPECT:item:fine%black%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:fine%black%dart:eq:1
+# fine bleeder dart (Fine Bleeder Dart)
+1.0 0 0 0 0 GIVE:fine%bleeder%dart
+0.3 0 0 0 0 EXPECT:item:fine%bleeder%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:fine%bleeder%dart:eq:1
+# fine carmine dart (Fine Carmine Dart)
+1.0 0 0 0 0 GIVE:fine%carmine%dart
+0.3 0 0 0 0 EXPECT:item:fine%carmine%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:fine%carmine%dart:eq:1
+# fine spring dart (Fine Spring Dart)
+1.0 0 0 0 0 GIVE:fine%spring%dart
+0.3 0 0 0 0 EXPECT:item:fine%spring%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:fine%spring%dart:eq:1
+# glass dagger_symmachus_unique (Dagger of Symmachus)
+1.0 0 0 0 0 GIVE:glass%dagger_symmachus_unique
+0.3 0 0 0 0 EXPECT:item:glass%dagger_symmachus_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:glass%dagger_symmachus_unique:eq:1
+# glass dagger_symmachus_unique_x (Dagger of Symmachus)
+1.0 0 0 0 0 GIVE:glass%dagger_symmachus_unique_x
+0.3 0 0 0 0 EXPECT:item:glass%dagger_symmachus_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:glass%dagger_symmachus_unique_x:eq:1
+# goblin_club (Goblin Club)
+#   nothing in the game data gives or carries it
+# goblin_sword (Goblin Sword)
+1.0 0 0 0 0 GIVE:goblin_sword
+0.3 0 0 0 0 EXPECT:item:goblin_sword:ge:1
+0.3 0 0 0 0 EXPECT:equipped:goblin_sword:eq:1
+# gravedigger (Gravedigger)
+1.0 0 0 0 0 GIVE:gravedigger
+0.3 0 0 0 0 EXPECT:item:gravedigger:ge:1
+0.3 0 0 0 0 EXPECT:equipped:gravedigger:eq:1
+# her dart (Her Dart)
+1.0 0 0 0 0 GIVE:her%dart
+0.3 0 0 0 0 EXPECT:item:her%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:her%dart:eq:1
+# katana_goldbrand_unique_x (Goldbrand)
+1.0 0 0 0 0 GIVE:katana_goldbrand_unique_x
+0.3 0 0 0 0 EXPECT:item:katana_goldbrand_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:katana_goldbrand_unique_x:eq:1
+# king's_oath (King's Oath)
+#   nothing in the game data gives or carries it
+# king's_oath_pc (King's Oath)
+1.0 0 0 0 0 GIVE:king's_oath_pc
+0.3 0 0 0 0 EXPECT:item:king's_oath_pc:ge:1
+0.3 0 0 0 0 EXPECT:equipped:king's_oath_pc:eq:1
+# longbow_shadows_unique_x (Bow of Shadows)
+1.0 0 0 0 0 GIVE:longbow_shadows_unique_x
+0.3 0 0 0 0 EXPECT:item:longbow_shadows_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:longbow_shadows_unique_x:eq:1
+# longsword_umbra_unique_x (Umbra Sword)
+1.0 0 0 0 0 GIVE:longsword_umbra_unique_x
+0.3 0 0 0 0 EXPECT:item:longsword_umbra_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:longsword_umbra_unique_x:eq:1
+# mace of molag bal_unique_x (Mace of Molag Bal)
+1.0 0 0 0 0 GIVE:mace%of%molag%bal_unique_x
+0.3 0 0 0 0 EXPECT:item:mace%of%molag%bal_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:mace%of%molag%bal_unique_x:eq:1
+# mace of slurring (Mace of Slurring)
+1.0 0 0 0 0 GIVE:mace%of%slurring
+0.3 0 0 0 0 EXPECT:item:mace%of%slurring:ge:1
+0.3 0 0 0 0 EXPECT:equipped:mace%of%slurring:eq:1
+# mace of slurring_x (Mace of Slurring)
+1.0 0 0 0 0 GIVE:mace%of%slurring_x
+0.3 0 0 0 0 EXPECT:item:mace%of%slurring_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:mace%of%slurring_x:eq:1
+# nerevarblade_01 (Trueflame)
+1.0 0 0 0 0 GIVE:nerevarblade_01
+0.3 0 0 0 0 EXPECT:item:nerevarblade_01:ge:1
+0.3 0 0 0 0 EXPECT:equipped:nerevarblade_01:eq:1
+# nerevarblade_01_flame (Trueflame)
+1.0 0 0 0 0 GIVE:nerevarblade_01_flame
+0.3 0 0 0 0 EXPECT:item:nerevarblade_01_flame:ge:1
+0.3 0 0 0 0 EXPECT:equipped:nerevarblade_01_flame:eq:1
+# silver dagger_droth_unique (Droth Dagger)
+1.0 0 0 0 0 GIVE:silver%dagger_droth_unique
+0.3 0 0 0 0 EXPECT:item:silver%dagger_droth_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%dagger_droth_unique:eq:1
+# silver dagger_droth_unique_a (Droth Dagger)
+1.0 0 0 0 0 GIVE:silver%dagger_droth_unique_a
+0.3 0 0 0 0 EXPECT:item:silver%dagger_droth_unique_a:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%dagger_droth_unique_a:eq:1
+# silver dagger_iryon_unique (Iryon Dagger)
+1.0 0 0 0 0 GIVE:silver%dagger_iryon_unique
+0.3 0 0 0 0 EXPECT:item:silver%dagger_iryon_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%dagger_iryon_unique:eq:1
+# silver dagger_othril_unique (Othril Dagger)
+1.0 0 0 0 0 GIVE:silver%dagger_othril_unique
+0.3 0 0 0 0 EXPECT:item:silver%dagger_othril_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%dagger_othril_unique:eq:1
+# silver dagger_rathalas_unique (Rathalas Dagger)
+1.0 0 0 0 0 GIVE:silver%dagger_rathalas_unique
+0.3 0 0 0 0 EXPECT:item:silver%dagger_rathalas_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%dagger_rathalas_unique:eq:1
+# silver spear_uvenim (Silver Spear)
+1.0 0 0 0 0 GIVE:silver%spear_uvenim
+0.3 0 0 0 0 EXPECT:item:silver%spear_uvenim:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%spear_uvenim:eq:1
+# spear_mercy_unique_x (Spear of Bitter Mercy)
+1.0 0 0 0 0 GIVE:spear_mercy_unique_x
+0.3 0 0 0 0 EXPECT:item:spear_mercy_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:spear_mercy_unique_x:eq:1
+# spite_dart (Spite Dart)
+#   nothing in the game data gives or carries it
+# spring dart (Spring Dart)
+1.0 0 0 0 0 GIVE:spring%dart
+0.3 0 0 0 0 EXPECT:item:spring%dart:ge:1
+0.3 0 0 0 0 EXPECT:equipped:spring%dart:eq:1
+# staff_hasedoki_unique_x (Staff of Hasedoki)
+1.0 0 0 0 0 GIVE:staff_hasedoki_unique_x
+0.3 0 0 0 0 EXPECT:item:staff_hasedoki_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:staff_hasedoki_unique_x:eq:1
+# staff_magnus_unique_x (Staff of Magnus)
+1.0 0 0 0 0 GIVE:staff_magnus_unique_x
+0.3 0 0 0 0 EXPECT:item:staff_magnus_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:staff_magnus_unique_x:eq:1
+# stendar_hammer_unique (Stendarr's Hammer)
+1.0 0 0 0 0 GIVE:stendar_hammer_unique
+0.3 0 0 0 0 EXPECT:item:stendar_hammer_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:stendar_hammer_unique:eq:1
+# stendar_hammer_unique_x (Stendarr's Hammer)
+1.0 0 0 0 0 GIVE:stendar_hammer_unique_x
+0.3 0 0 0 0 EXPECT:item:stendar_hammer_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:stendar_hammer_unique_x:eq:1
+# sword of almalexia (Hopesfire)
+1.0 0 0 0 0 GIVE:sword%of%almalexia
+0.3 0 0 0 0 EXPECT:item:sword%of%almalexia:ge:1
+0.3 0 0 0 0 EXPECT:equipped:sword%of%almalexia:eq:1
+# warhammer_crusher_unique_x (Skull Crusher)
+1.0 0 0 0 0 GIVE:warhammer_crusher_unique_x
+0.3 0 0 0 0 EXPECT:item:warhammer_crusher_unique_x:ge:1
+0.3 0 0 0 0 EXPECT:equipped:warhammer_crusher_unique_x:eq:1

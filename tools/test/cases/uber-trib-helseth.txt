@@ -12,13 +12,15 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:8:2000
 0.3 0 0 0 0 ENHANCEV2
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:50000
-0.3 0 0 0 0 GIVE:sc_divineintervention:10
-0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 GIVE:sc_divineintervention:20
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
 0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster
 0.3 0 0 0 0 SPELL:mark
 0.3 0 0 0 0 SPELL:recall
 0.3 0 0 0 0 HOUR:22
@@ -869,3 +871,362 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 0.3 0 0 0 0 SAVE:uber-trib-helseth-mazedband
+# --- from here: the attack on Mournhold and Bamz-Amschend as uber-trib-main plays them, then King Helseth's own quests
+# TR_MHAttack: the fabricants attack the Plaza the day after the Mazed Band (TribFabAttackCheck: day changes, player out of the Plaza)
+2 0 0 0 0 SLEEP:24
+1 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Plaza_Brindisi_Dorom
+10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_MHAttack:ge:10
+120 0 0 0 0 KILL:fabricant_hulkin_attack
+120 0 0 0 0 KILL:fabricant_hulkin_attack
+120 0 0 0 0 KILL:fabricant_hulkin_attack
+120 0 0 0 0 KILL:fabricant_hulkin_attack
+120 0 0 0 0 KILL:fabricant_verm_attack
+120 0 0 0 0 KILL:fabricant_verm_attack
+120 0 0 0 0 KILL:fabricant_verm_attack
+120 0 0 0 0 KILL:fabricant_verm_attack
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_MHAttack:ge:30
+60 0 0 0 0 ACTIVATE:guard_highord_attack
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_MHAttack:ge:105
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Reception_Area
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:fedris_hler
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_MHAttack:ge:115
+0.3 0 0 0 0 TOPIC:investigate_the_disturbance
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_Bamz:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-trib-helseth-mhattack
+# TR_Bamz: Fedris sent me to Bamz-Amschend (Bamz 10); watching the fight near fab_cent_fight_watcher gives 50, Fedris 105
+# The Plaza's ladder (Ex_MH_Pav_Ladder_01) sits inside the rubble the attack leaves: from the plateau beside it
+# (0 -126 405), turned to it and looking down (D-pad down half a second), A takes it down to Bamz-Amschend
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Plaza_Brindisi_Dorom
+10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
+0.5 0 0 0
+120 0 0 0 0 WALKTO:@0,-126,405
+0.3 0 0 0 0 FACE:@28,-62
+0.5 0 0 0 0 DOWN
+0.3 0 0 0
+0.3 0 0 0 0 A
+10 0 0 0 0 UNTIL:cell:Bamz-Amschend,_Hearthfire_Hall
+2 0 0 0
+120 0 0 0 0 WALKTO:fab_cent_fight_watcher
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_Bamz:ge:50
+# TR_Bamz 105: back up the ladder, Fedris Hler
+120 0 0 0 0 DOORTO:Mournhold,_Plaza_Brindisi_Dorom
+10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Great_Bazaar
+10 0 0 0 0 UNTIL:cell:Mournhold,_Great_Bazaar
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold_Temple|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold_Temple|_Reception_Area
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:fedris_hler
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:investigate_the_disturbance
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_Bamz:ge:105
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+1 0 0 0
+0.3 0 0 0 0 SAVE:uber-trib-helseth-bamz
+
+# King Helseth: the way from the Temple to the Throne Room
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace_Throne_Room
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace_Throne_Room
+0.5 0 0 0
+# TR_Assassins: Helseth's informant, then the plot
+60 0 0 0 0 ACTIVATE:king%hlaalu%helseth
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:bit_of_misinformation
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:threat_to_our_monarchy
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:see_us_dead
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:plot
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:this_matter
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 WALKTO:@1038,-599,221
+120 0 0 0 0 DOORTO:Mournhold,_The_Winged_Guar
+10 0 0 0 0 UNTIL:cell:Mournhold,_The_Winged_Guar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:bakh%gro-sham
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:uncle's_farm
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:what_you_should_know
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:disturbing_information
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Courtyard
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:plitinius%mero
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:plot
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Barenziah's_Chambers
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Barenziah's_Chambers
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:barenziah
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:plot
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace_Throne_Room
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace_Throne_Room
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:king%hlaalu%helseth
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:plot
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:protect_Barenziah
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:80
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-helseth-assassins80
+
+# the night after: Barenziah's chambers, at nightfall, within 192 of the activator
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Barenziah's_Chambers
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Barenziah's_Chambers
+0.5 0 0 0
+120 0 0 0 0 WALKTO:@372,-300,-91
+# (the doors the walk in opened are shut again: the script waits for both closed)
+60 0 0 0 0 ACTIVATE:In_MH_door_02_bar1_uni
+2 0 0 0 0
+60 0 0 0 0 ACTIVATE:In_MH_door_02_bar2_uni
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,doorcheck:eq:0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,door2check:eq:0
+120 0 0 0 0 WALKTO:@372,-300,-91
+0.1 0 0 0 0 EXPECT:refdist:active_assassin_unique:lt:192
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,doorcheck:eq:0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,door2check:eq:0
+20 0 0 0 0 SLEEPUNTIL:21
+20 0 0 0 0 UNTIL:screen:none
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:hour:ge:20
+60 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:85
+0.1 0 0 0 0 EXPECT:refdist:active_assassin_unique:lt:192
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,doonce:ge:1
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,doorcheck:ge:0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,door2check:ge:0
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,daycheck:ge:1
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,creepstate:ge:1
+0.1 0 0 0 0 EXPECT:reflocal:active_assassin_unique,distancecheck:ge:0
+0.1 0 0 0 0 EXPECT:reflocal:king%hlaalu%helseth,fightday:ge:0
+0.1 0 0 0 0 EXPECT:global:dayspassed:ge:1
+# the three assassins fight: all dead is TR_Assassins 90
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 KILL:hels_assassin1
+120 0 0 0 0 KILL:hels_assassin2
+120 0 0 0 0 KILL:hels_assassin3
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:90
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace_Throne_Room
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace_Throne_Room
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:king%hlaalu%helseth
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:protect_Barenziah
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Assassins:ge:100
+0.1 0 0 0 0 EXPECT:item:helseth's%collar:ge:1
+0.3 0 0 0 0 TOPIC:service_to_your_king
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:prove_yourself
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Karrod
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:fight_my_champion
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Champion:ge:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-helseth-champion20
+
+# Ra'Tesh (the Winged Guar) can be paid to tire Karrod: the bribe
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Reception_Area
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Reception_Area
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+120 0 0 0 0 WALKTO:@1038,-599,221
+120 0 0 0 0 DOORTO:Mournhold,_The_Winged_Guar
+10 0 0 0 0 UNTIL:cell:Mournhold,_The_Winged_Guar
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ra'tesh
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Karrod
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:losing_a_new_customer
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Champion:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# the duel is the next day: a night's sleep, then Helseth
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Courtyard
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace|_Imperial_Cult_Services
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace_Throne_Room
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace_Throne_Room
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:king%hlaalu%helseth
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:fight_my_champion
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Champion:ge:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 EQUIP:daedric_longsword
+# (strikes, not a kill: the guards are pacified for the duel, and Karrod's script ends it at 100 health)
+120 0 0 0 0 STRIKE:karrod:6
+120 0 0 0 0 STRIKE:karrod:6
+120 0 0 0 0 STRIKE:karrod:6
+120 0 0 0 0 STRIKE:karrod:6
+3 0 0 0
+0.1 0 0 0 0 EXPECT:global:karrodbeaten:ge:1
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:king%hlaalu%helseth
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:fight_my_champion
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_Champion:ge:80
+0.1 0 0 0 0 EXPECT:item:glass%dagger_symmachus_unique:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-helseth-champion80
+# Champion 100: Helseth's plans (after the duel, TR_Assassins done)
+60 0 0 0 0 ACTIVATE:king%hlaalu%helseth
+2 0 0 0
+0.3 0 0 0 0 TOPIC:plans_for_you
+2 0 0 0
+0.3 0 0 0 0 TOPIC:recent_events
+2 0 0 0
+0.3 0 0 0 0 TOPIC:learn_more_about_the_attacks
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_Champion:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 SAVE:uber-trib-helseth-champion100

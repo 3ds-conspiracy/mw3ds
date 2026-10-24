@@ -1,0 +1,31 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-journal-questlines: with the add-on the journal's questlines gain "Tribunal" (its main quest: TR_, TR05_ ...)
+# and "Mournhold" (the city's own MS_ quests and Calvus's Merc_); ZR goes from all entries to the main quest, then
+# past the empty ones to Tribunal and Mournhold. A Tribunal quest at its finishing stage (TR_DBAttack 100) counts as
+# finished, one at an early stage (TR05_People 1) does not.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 JOURNAL:A1_1_FindSpymaster:1
+0.3 0 0 0 0 JOURNAL:TR_DBAttack:10
+0.3 0 0 0 0 JOURNAL:TR_DBAttack:100
+0.3 0 0 0 0 JOURNAL:TR05_People:1
+0.3 0 0 0 0 JOURNAL:MS_Museum:10
+0.3 0 0 0 0 JOURNAL:Merc_Calvus:10
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:questfinished:TR_DBAttack:eq:1
+0.1 0 0 0 0 EXPECT:questfinished:TR05_People:eq:0
+0.5 0 0 0 0 SCREEN:journal
+0.3 0 0 0 0 EXPECT:journalcat:eq:0
+0.3 0 0 0 0 EXPECT:journalshown:ge:4
+0.3 0 0 0 0 ZR
+0.3 0 0 0 0 EXPECT:journalcat:eq:1
+0.3 0 0 0 0 ZR
+0.3 0 0 0 0 EXPECT:journalcat:eq:15
+0.3 0 0 0 0 EXPECT:journalshown:eq:3
+0.3 0 0 0 0 ZR
+0.3 0 0 0 0 EXPECT:journalcat:eq:16
+0.3 0 0 0 0 EXPECT:journalshown:eq:2
+0.3 0 0 0 0 ZR
+0.3 0 0 0 0 EXPECT:journalcat:eq:0
+0.3 0 0 0 0 B

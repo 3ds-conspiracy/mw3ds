@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-imperfect-rebuild: the Imperfect's ability Rebuild (regen_imperfect: Restore Health 1 and Restore Magicka 1)
+# gives it its health back every second; an actor's abilities' restores did nothing before. Gedna Relvel's Refill
+# (relvel_regenerate) is the same rule.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Sotha_Sil,_Dome_of_the_Imperfect
+3 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 REFHEALTH:imperfect:0.9
+0.1 0 0 0 0 SNAP:refhealth:imperfect
+5 0 0 0
+0.1 0 0 0 0 EXPECT:alive:imperfect
+0.1 0 0 0 0 EXPECT:refhealth:imperfect:ge:@3
+0.1 0 0 0 0 EXPECT:refhealth:imperfect:le:@8
