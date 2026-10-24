@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# trib-fn-standing: GetStandingActor (Tribunal's TestMoveRock; OpenMW's getActorStandingOn): 1 while the player stands
+# on the object's top, 0 once they step off. Arrille's crate in his cellar (on top of the stack).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 TPIN:-49:-5582:-270:90
+3 0 0 0
+0.3 0 0 0 0 CON:"crate_01_arrille"->GetStandingActor
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 TPIN:-200:-5541:-370:90
+2 0 0 0
+0.3 0 0 0 0 CON:"crate_01_arrille"->GetStandingActor
+0.1 0 0 0 0 EXPECT:conval:eq:0

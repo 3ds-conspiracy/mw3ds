@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-crypt-boulders: objects whose own script disables them (Tribunal's Abandoned Crypt boulders and rockslide,
+# TR_MazedBand) take their collision with them: the player walks through where they were, as in OpenMW. (Their
+# collision was baked into the cell's: an invisible wall.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7+GOD:2
+0.3 0 0 0 0 JOURNAL:TR_MazedBand:20
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Abandoned_Crypt
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:in_moldrock05_uni:eq:0
+0.1 0 0 0 0 EXPECT:refenabled:act_rockslide01:eq:0
+0.3 0 0 0 0 TPIN:24:931:-100:270
+3 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@-272,838,-85
+60 0 0 0 0 WALKTO:@-512,883,-6
+0.1 0 0 0 0 EXPECT:playerdist:-512,883:lt:100

@@ -303,6 +303,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	}
 	else if (what == "savevalid")   // <name>: 1 when test_<name>.sav reads whole (a damaged one is refused)
 		v = World::savedCell(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
+	else if (what == "saveneeds")   // <name>: 1 when test_<name>.sav was made with an add-on the data lacks (refused)
+		v = w.saveMissingAddon(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
 	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
 		v = shotLuma(atoi(arg.c_str()));
 	else if (what == "shotspread")  // <n>: how far step shot n's top screen's pixels stray from its mean brightness (-1: none)
@@ -495,7 +497,7 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	else if (what == "wprecip") v = w.weatherPrecip() ? 1.0f : 0.0f;
 	else if (what == "wtorches") v = w.useTorches() ? 1.0f : 0.0f;
 	else if (what == "wsunon") v = w.sunOn() ? 1.0f : 0.0f;
-	else if (what == "wskyon") v = w.current >= 0 && !w.cells[w.current].interior ? 1.0f : 0.0f;    // the sky is drawn outdoors only
+	else if (what == "wskyon") v = w.current >= 0 && w.cells[w.current].underSky() ? 1.0f : 0.0f;    // the sky is drawn under it only (outdoors, Mournhold)
 	else if (what == "wsunvis") v = w.sunVisibility();
 	else if (what == "wglarefade") v = w.glareFade();
 	else if (what == "wnightday") v = (float)w.nightDay();

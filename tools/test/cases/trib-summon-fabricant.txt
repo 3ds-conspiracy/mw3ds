@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-summon-fabricant: Tribunal's magic effect 137, Summon Fabricant (sMagicFabricantID: Fabricant_summon), from
+# Barilzar's Mazed Band (its finished form, mazed_band_end: cast when used, 120 s): the fabricant comes, on the
+# player's side.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+BOOST:100
+0.3 0 0 0 0 GIVE:mazed_band_end:1
+1 0 0 0
+0.3 0 0 0 0 CAST:item:mazed_band_end
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:fabricant_summon:lt:400
+0.5 0 0 0 0 SHOT

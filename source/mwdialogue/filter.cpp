@@ -189,8 +189,8 @@ static int passes(World& w, const Info& info, int ref, int choice, bool invert =
 		case '1':
 			if (c.func == 50 && choice < 0)
 				return 0;     // choice responses only answer a choice
-			if (c.func == 59 && w.cells[w.placeOf(ref)].interior)
-				return 0;     // weather is not asked indoors
+			if (c.func == 59 && !w.cells[w.placeOf(ref)].underSky())
+				return 0;     // weather is not asked indoors (it is under Mournhold's sky: OpenMW's, not the original's)
 			value = filterFunction(w, c, speaker, ref, choice);
 			break;
 		case '2':

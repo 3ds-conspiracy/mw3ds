@@ -1,0 +1,44 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-map-notes: Tribunal's map notes (OpenMW's custom markers, sEditNote / sDeleteNote): on the map screen Y writes a
+# note at the view's centre, a tap on its marker shows its text, X edits it, Y on it asks "Delete Note?" and Yes takes
+# it away; notes are kept in a save. Shots of the note on the local map.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+5 0 0 0
+0.3 0 0 0 0 SCREEN:map
+1 0 0 0
+0.1 0 0 0 0 EXPECT:mapnotes:eq:0
+0.3 0 0 0 0 TYPE:Arrille's%stash
+0.3 0 0 0 0 Y
+1 0 0 0
+0.1 0 0 0 0 EXPECT:mapnotes:eq:1
+0.1 0 0 0 0 EXPECT:mapnotehas:arrille's_stash:eq:1
+0.5 0 0 0 0 SHOT
+# A tap on the note's marker (MAPNOTE:0) shows it; X edits it
+0.3 0 0 0 0 MAPNOTE:0
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 TYPE:Bottom%shelf
+0.3 0 0 0 0 X
+1 0 0 0
+0.1 0 0 0 0 EXPECT:mapnotes:eq:1
+0.1 0 0 0 0 EXPECT:mapnotehas:bottom_shelf:eq:1
+# Kept in a save
+0.3 0 0 0 0 B
+1 0 0 0 0 SAVE:tribnotes
+0.5 0 0 0 0 LOAD:tribnotes
+5 0 0 0
+0.1 0 0 0 0 EXPECT:mapnotes:eq:1
+# Deleted after the question
+0.3 0 0 0 0 SCREEN:map
+1 0 0 0
+0.3 0 0 0 0 MAPNOTE:0
+0.5 0 0 0
+0.3 0 0 0 0 Y
+0.5 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:mapnotes:eq:0

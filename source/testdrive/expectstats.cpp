@@ -101,6 +101,14 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 	if (what == "yaw") { v = w.player.yaw * 180.0f / 3.14159265f; return true; }
 	if (what == "pitch") { v = w.player.pitch * 180.0f / 3.14159265f; return true; }
 	// how far the player went on the flat since SNAP:moved
+	// playerdist:<x>,<y>: how far the player stands from that spot on the ground (units)
+	if (what == "playerdist")
+	{
+		float p[2] = {};
+		sscanf(arg.c_str(), "%f,%f", &p[0], &p[1]);
+		v = hypotf(w.player.feet[0] - p[0], w.player.feet[1] - p[1]);
+		return true;
+	}
 	if (what == "moved") { v = hypotf(w.player.feet[0] - s_movedFrom[0], w.player.feet[1] - s_movedFrom[1]); return true; }
 	if (what == "fallmult") { v = w.effectTotal(11) > 0.0f ? 0.25f : 1.0f; return true; }     // gravity while falling
 	if (what == "swimspeed") { v = w.effectTotal(1); return true; }                           // Swift Swim's magnitude as read

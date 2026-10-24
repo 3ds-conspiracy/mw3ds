@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-start-scripts: with the Tribunal add-on a game runs Tribunal's start scripts (SSCR) as OpenMW's addStartup does:
+# TribunalMain (levitation and teleporting by the cell), TribFabAttackCheck (the fabricants' attack on Mournhold), and
+# MarkTRStartScript, which starts dbAttackScript (the Dark Brotherhood's night attacks) and stops itself; each once, kept
+# through a save and a load.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+1 0 0 0
+0.3 0 0 0 0 CON:ScriptRunning%TribunalMain
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:ScriptRunning%TribFabAttackCheck
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:ScriptRunning%dbAttackScript
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:ScriptRunning%MarkTRStartScript
+0.1 0 0 0 0 EXPECT:conval:eq:0
+1 0 0 0 0 SAVE:tribstart
+0.5 0 0 0 0 LOAD:tribstart
+5 0 0 0
+0.3 0 0 0 0 CON:ScriptRunning%dbAttackScript
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:ScriptRunning%MarkTRStartScript
+0.1 0 0 0 0 EXPECT:conval:eq:0

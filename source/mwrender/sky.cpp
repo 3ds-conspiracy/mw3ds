@@ -36,7 +36,7 @@ void Session::updateSky()
 {
 	g_skyBillboards.clear();
 	g_starAlpha = 0.0f;
-	if (w.current < 0 || w.cells[w.current].interior)
+	if (w.current < 0 || !w.cells[w.current].underSky())
 		return;
 	const SkyBodiesDef& sky = w.game.skyBodies;
 	GameDate d = w.date();
@@ -204,7 +204,7 @@ void Session::updateSky()
 
 void Session::updateWeatherEffects(float dt)
 {
-	bool outside = w.current >= 0 && !w.cells[w.current].interior && !w.game.weatherTypes.empty();
+	bool outside = w.current >= 0 && w.cells[w.current].underSky() && !w.game.weatherTypes.empty();
 	int wt = w.weatherShown();       // (OpenMW: the old weather's loops until the new one's rain threshold)
 	std::string want;
 	if (outside && wt < (int)w.game.weatherTypes.size())
@@ -334,7 +334,7 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 		g_precipStreaks = g_precipFlakes = g_precipRing = g_precipFarRing = 0;
 		float dt = precipDt;
 		precipDt = 0.0f;
-		if (w.current < 0 || w.cells[w.current].interior || w.game.weatherTypes.empty())
+		if (w.current < 0 || !w.cells[w.current].underSky() || w.game.weatherTypes.empty())
 			return;
 		Cell& here = w.here();
 		if (here.hasWater() && eye[2] < here.waterZ)       // (OpenMW: none under water)

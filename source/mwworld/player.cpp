@@ -103,6 +103,7 @@ void World::recomputeStats()
 	// Abilities' and worn constant enchantments' fortifies and drains are modifiers on top (OpenMW's modified value):
 	// only the base is held to 100, so the Boots of Blinding Speed take Speed past it
 	int attrMod[8] = {}, skillMod[27] = {};
+	float healthMod = 0.0f, magickaMod = 0.0f, fatigueMod = 0.0f;      // Fortify Health / Magicka / Fatigue
 	for (auto& id : abilities)
 	{
 		auto it = game.spells.find(lower(id));
@@ -123,6 +124,9 @@ void World::recomputeStats()
 			if (e.effect == 79 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] += e.min;
 			else if (e.effect == 83 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] += e.min;
 			else if (e.effect == 84) magickaMult += e.min / 10.0f;
+			else if (e.effect == 80) healthMod += e.min;
+			else if (e.effect == 81) magickaMod += e.min;
+			else if (e.effect == 82) fatigueMod += e.min;
 			else if (e.effect == 17 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] -= e.min;
 			else if (e.effect == 21 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] -= e.min;
 			else          // resistances, weaknesses, night eye ...: read while they last (for good)
@@ -143,11 +147,13 @@ void World::recomputeStats()
 	const int* a = stats.attributes;
 	// OpenMW: base health is fixed at creation (floor of half Strength + Endurance) and grows only by the level-up
 	// gains; raised, fortified or drained attributes do not move it (spec/derived.md)
-	stats.healthMax = floorf(0.5f * (stats.attrCreation[ATTR_STRENGTH] + stats.attrCreation[ATTR_ENDURANCE])) + stats.healthBonus;
+	stats.healthMax = floorf(0.5f * (stats.attrCreation[ATTR_STRENGTH] + stats.attrCreation[ATTR_ENDURANCE])) + stats.healthBonus
+		+ healthMod;
 	stats.magickaMult = magickaMult;
-	stats.magickaFortify = stats.magickaFlat = 0.0f;     // (reapplyEffects adds the active spells' back)
-	stats.magickaMax = a[ATTR_INTELLIGENCE] * magickaMult;
-	stats.fatigueMax = a[ATTR_STRENGTH] + a[ATTR_WILLPOWER] + a[ATTR_AGILITY] + a[ATTR_ENDURANCE];
+	stats.magickaFortify = 0.0f;
+	stats.magickaFlat = magickaMod;      // (reapplyEffects adds the active spells' back)
+	stats.magickaMax = a[ATTR_INTELLIGENCE] * magickaMult + magickaMod;
+	stats.fatigueMax = a[ATTR_STRENGTH] + a[ATTR_WILLPOWER] + a[ATTR_AGILITY] + a[ATTR_ENDURANCE] + fatigueMod;
 	stats.health = stats.healthMax;
 	stats.magicka = stats.magickaMax;
 	stats.fatigue = stats.fatigueMax;
@@ -166,7 +172,7 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		in.sneak = true;
 	w.player.waterWalk = w.effectTotal(2) > 0.0f;
 	w.player.slowFall = w.effectTotal(11) > 0.0f;
-	w.player.levitate = w.effectTotal(10);
+	w.player.levitate = w.levitationDisabled ? 0.0f : w.effectTotal(10);     // (DisableLevitation: no flying)
 	w.player.swimBoost = w.effectTotal(1);
 	// Encumbrance: the load (plus Burden, less Feather) against fEncumbranceStrMult x Strength; over it
 	// the player can't move, under it the load slows them (fEncumberedMoveEffect)
@@ -193,7 +199,7 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		// Storms (ash, blight, blizzard) blow out from Red Mountain: walking into them is slower,
 		// by fStromWalkMult x the angle between the wind and the way the player goes (OpenMW)
 		int wx = w.weatherNow;
-		if ((wx == 6 || wx == 7 || wx == 9) && w.current >= 0 && !w.cells[w.current].interior
+		if ((wx == 6 || wx == 7 || wx == 9) && w.current >= 0 && w.cells[w.current].underSky()
 			&& (fabsf(in.moveX) + fabsf(in.moveY)) > 0.1f)
 		{
 			float sx = w.player.feet[0] - 20480.0f, sy = w.player.feet[1] - 69632.0f;     // from Red Mountain

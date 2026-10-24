@@ -259,7 +259,11 @@ void World::refreshHidden()
 		const LevelCell& lc = cells[l->index];
 		for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
 			if (refs[i].visible())
+			{
 				showRanges(*this, refs[i]);
+				if (refs[i].colGone)
+					hideCollision(*this, refs[i]);
+			}
 			else
 				hideRanges(*this, refs[i]);
 	}
@@ -314,6 +318,13 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 {
 	LevelCell& lc = w.cells[index];
 	w.respawnCell(index);               // before it is live: revived actors come in standing
+	// (water a script moved stays where it was put)
+	if (lc.interior)
+	{
+		auto wl = w.waterLevels.find(lower(lc.name.str()));
+		if (wl != w.waterLevels.end())
+			moveCellWater(l->cell, wl->second);
+	}
 	lc.live = l;
 	w.loaded.push_back(l);
 	// A cell that comes back within a few seconds of being freed: the border between two cells thrashes it
@@ -364,6 +375,8 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 		w.syncActor(i);
 		if (!w.refs[i].visible())
 			hideRanges(w, w.refs[i]);
+		else if (w.refs[i].colGone)
+			hideCollision(w, w.refs[i]);
 		// enchanted things lying about shimmer: listed once here, not looked for every frame (mwrender/renderingmanager.cpp)
 		const Ref& r = w.refs[i];
 		if (r.obj && !r.obj->ench.empty() && !r.ranges.empty())

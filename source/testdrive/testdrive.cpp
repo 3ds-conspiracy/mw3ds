@@ -89,7 +89,7 @@ float doorWalkRank(Session& s, const Ref& r, float d3)
 // Numbers the checks compare. Kinds with an argument (a[1]) and those without; false: not a number kind
 bool hasArg(const std::string& what)
 {
-	return what == "levcandidates" || what == "levpick" || what == "levrolls" || what == "soulcapacity" || what == "stackcount"
+	return what == "mapnotehas" || what == "playerdist" || what == "levcandidates" || what == "levpick" || what == "levrolls" || what == "soulcapacity" || what == "stackcount"
 		|| what == "refexists" || what == "refenabled" || what == "refstock" || what == "merchantgold" || what == "followset"
 		|| what == "journalentries" || what == "questfinished" || what == "skill" || what == "skillprog" || what == "attr" || what == "attrups" || what == "attrdamage" || what == "effect"
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
@@ -101,7 +101,7 @@ bool hasArg(const std::string& what)
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "shotdark" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "texlod" || what == "regionchance" || what == "regionweather"
+		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "saveneeds" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "shotdark" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "texlod" || what == "regionchance" || what == "regionweather"
 		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
 }
 
@@ -158,6 +158,7 @@ bool TestDriver::playerToken(const std::string& tok)
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "INVSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE",
+		"SHARE", "SHAREPUT", "SHARETAKE", "SHAREDONE", "MAPNOTE",
 		"ENCHANTAT", "ENCHANT", "ENCHITEM", "ENCHGEM", "ENCHTYPE", "ADDEFFECT", "CONFIRM", "TYPE", "LEVELUP",
 		"EQUIP", "USE", "READ", "DROP", "QUICKSET", "CAST", "CASTAT", "CASTMADESPELL", "USEMADE", "EQUIPMADE",
 		"RECHARGEMADE", "RECHARGE", "REPAIR", "REPAIRAT", "REPAIRWITH", "BUYSPELL", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "UNSEEN", "UNTIL", "FLOAT", "HIDE",
@@ -329,6 +330,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		underWait = -1.0f;
 		outTimer = 0.0f;
 		outTries = 0;
+		outSink = false;
 		inAir = false;
 		phaseTimer = elapsed = progressTimer = 0.0f;
 		memcpy(progressAt, p.feet, sizeof(progressAt));
@@ -364,6 +366,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		}
 		// PUT:<container>:<item>: open it as LOOT does, then put the carried item in (the Inventory page's tap)
 		strikeFor = verb == "STRIKE" ? (a.size() >= 3 ? (float)atof(a[2].c_str()) : 5.0f) : 0.0f;
+		strikeUntil = verb == "STRIKE" && a.size() >= 4 ? lower(a[3]) : "";
 		killUnseen = verb == "KILL" && a.size() >= 3 && lower(a[2]) == "unseen";
 		if (leading && verb == "KILL")
 		{
@@ -376,6 +379,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		id = a[1];
 		kind = verb == "WALKTO" ? WALK : (verb == "KILL" || verb == "STRIKE") ? KILL : ACTIVATE;
 		diveOk = verb == "WALKTO" && a.size() >= 3 && a[2] == "dive";
+		ownPiece = verb == "DOORTO" && a.size() >= 3 && lower(a[2]) == "near";
 		pickup = verb == "PICKUP";
 		if (verb != "WALKTO")
 			retryToken = token;
@@ -441,7 +445,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 		}
 		path.clear();
 		const float* t = s.w.refs[ref].pos;
-		if (planPath(s, s.w.player.feet, t, false, path))
+		if (planPath(s, s.w.player.feet, t, false, path, ownPiece))
 			logf("drive: %s %s, %d path points", verb.c_str(), id.c_str(), (int)path.size());
 		else
 			logf("drive: %s %s, straight", verb.c_str(), id.c_str());
@@ -687,6 +691,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		earlyTried = true;
 		logf("drive: activated %s (crosshair, %.0f off)", id.c_str(), dist);
 		memcpy(pressAt, p.feet, sizeof(pressAt));
+		doorWasOpen = r.recType == REC_DOOR && r.doorTarget != 0.0f;
 		// (a door: watched as a trapped one is; still here after it, the press from there did nothing: walked on)
 		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : r.recType == REC_DOOR ? DOORWAIT : NONE;
 		doorCell = w.current;
@@ -729,6 +734,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
 		memcpy(pressAt, p.feet, sizeof(pressAt));
+		doorWasOpen = r.recType == REC_DOOR && r.doorTarget != 0.0f;
 		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
 		doorCell = w.current;
 		takeTimer = 0.0f;
@@ -778,7 +784,9 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				return true;
 			}
 		}
-		if (strikeFor > 0.0f && swingTimer >= strikeFor)
+		// (STRIKE's global: the fight's own end, a duel won: no blow after it)
+		auto until = strikeUntil.empty() ? w.globals.end() : w.globals.find(strikeUntil);
+		if (strikeFor > 0.0f && (swingTimer >= strikeFor || (until != w.globals.end() && until->second >= 1.0f)))
 		{
 			logf("drive: struck %s for %.1f s", id.c_str(), swingTimer);
 			kind = NONE;
@@ -1013,6 +1021,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		down |= KEY_A;
 		logf("drive: activated %s (crosshair)", id.c_str());
 		memcpy(pressAt, p.feet, sizeof(pressAt));
+		doorWasOpen = r.recType == REC_DOOR && r.doorTarget != 0.0f;
 		kind = pickup ? TAKE : !lootItem.empty() ? LOOTWAIT : (r.recType == REC_NPC_ || r.recType == REC_CREA) ? TALKWAIT : trappedDoor ? DOORWAIT : NONE;
 		doorCell = w.current;
 		takeTimer = 0.0f;

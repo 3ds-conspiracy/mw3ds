@@ -1,0 +1,495 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-creatures: written by tools/test/specgen_tribunal.py (edit the generator, not this file).
+# Every creature Tribunal adds: it is drawn, stands and animates, and dies.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0 0 0 0 0 SETUP-END
+# almalexia (Almalexia, r\Almelexia.NIF)
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_High_Chapel
+0.3 0 0 0 0 EXPECT:refmeshes:almalexia:gt:0
+0.3 0 0 0 0 EXPECT:alive:almalexia
+0.3 0 0 0 0 EXPECT:refhealth:almalexia:gt:0
+0.3 0 0 0 0 SLAY:almalexia
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:almalexia
+# almalexia_warrior (Almalexia, r\Almelexia_warrior.NIF)
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Dome_of_Sotha_Sil
+0.3 0 0 0 0 EXPECT:refmeshes:almalexia_warrior:gt:0
+0.3 0 0 0 0 EXPECT:alive:almalexia_warrior
+0.3 0 0 0 0 EXPECT:refhealth:almalexia_warrior:gt:0
+0.3 0 0 0 0 SLAY:almalexia_warrior
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:almalexia_warrior
+# ancestor_ghost_greater (Greater Ancestor Ghost, r\AncestorGhost.NIF)
+0.3 0 0 0 0 PLACE:ancestor_ghost_greater:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:ancestor_ghost_greater:gt:0
+0.3 0 0 0 0 EXPECT:alive:ancestor_ghost_greater
+0.3 0 0 0 0 EXPECT:refhealth:ancestor_ghost_greater:gt:0
+0.3 0 0 0 0 SLAY:ancestor_ghost_greater
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:ancestor_ghost_greater
+# ancestor_ghost_variner (Variner's Ghost, r\AncestorGhost.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Temple_Sewers
+0.3 0 0 0 0 EXPECT:refmeshes:ancestor_ghost_variner:gt:0
+0.3 0 0 0 0 EXPECT:alive:ancestor_ghost_variner
+0.3 0 0 0 0 EXPECT:refhealth:ancestor_ghost_variner:gt:0
+0.3 0 0 0 0 SLAY:ancestor_ghost_variner
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:ancestor_ghost_variner
+# centurion_projectile (Centurion Archer, r\SphereArcher.NIF)
+0.3 0 0 0 0 PLACE:centurion_projectile:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_projectile:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_projectile
+0.3 0 0 0 0 EXPECT:refhealth:centurion_projectile:gt:0
+0.3 0 0 0 0 SLAY:centurion_projectile
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_projectile
+# centurion_projectile_c (Centurion Archer, r\SphereArcher.NIF)
+3.0 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_projectile_c:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_projectile_c
+0.3 0 0 0 0 EXPECT:refhealth:centurion_projectile_c:gt:0
+0.3 0 0 0 0 SLAY:centurion_projectile_c
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_projectile_c
+# centurion_sphere_bbot1 (Centurion Sphere, r\Sphere_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_sphere_bbot1:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_sphere_bbot1
+0.3 0 0 0 0 EXPECT:refhealth:centurion_sphere_bbot1:gt:0
+0.3 0 0 0 0 SLAY:centurion_sphere_bbot1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_sphere_bbot1
+# centurion_sphere_bbot5 (Centurion Sphere, r\Sphere_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_sphere_bbot5:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_sphere_bbot5
+0.3 0 0 0 0 EXPECT:refhealth:centurion_sphere_bbot5:gt:0
+0.3 0 0 0 0 SLAY:centurion_sphere_bbot5
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_sphere_bbot5
+# centurion_sphere_bbot6 (Centurion Sphere, r\Sphere_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_sphere_bbot6:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_sphere_bbot6
+0.3 0 0 0 0 EXPECT:refhealth:centurion_sphere_bbot6:gt:0
+0.3 0 0 0 0 SLAY:centurion_sphere_bbot6
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_sphere_bbot6
+# centurion_spider_bbot1 (Centurion Spider, r\G_CenturionSpider.NIF)
+#   nothing in the game data places it
+# centurion_spider_bbot3 (Centurion Spider, r\G_CenturionSpider.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_spider_bbot3:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_spider_bbot3
+0.3 0 0 0 0 EXPECT:refhealth:centurion_spider_bbot3:gt:0
+0.3 0 0 0 0 SLAY:centurion_spider_bbot3
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_spider_bbot3
+# centurion_spider_bbot7 (Centurion Spider, r\G_CenturionSpider.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_spider_bbot7:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_spider_bbot7
+0.3 0 0 0 0 EXPECT:refhealth:centurion_spider_bbot7:gt:0
+0.3 0 0 0 0 SLAY:centurion_spider_bbot7
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_spider_bbot7
+# centurion_spider_dead (Centurion Spider, r\G_CenturionSpider.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_spider_dead:gt:0
+#   no health: it lies dead where it is placed
+0.3 0 0 0 0 EXPECT:dead:centurion_spider_dead
+# centurion_steam_a_c (Advanced Steam Centurion, r\Steam_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_steam_a_c:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_steam_a_c
+0.3 0 0 0 0 EXPECT:refhealth:centurion_steam_a_c:gt:0
+0.3 0 0 0 0 SLAY:centurion_steam_a_c
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_steam_a_c
+# centurion_steam_advance (Advanced Steam Centurion, r\Steam_Centurions.NIF)
+0.3 0 0 0 0 PLACE:centurion_steam_advance:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_steam_advance:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_steam_advance
+0.3 0 0 0 0 EXPECT:refhealth:centurion_steam_advance:gt:0
+0.3 0 0 0 0 SLAY:centurion_steam_advance
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_steam_advance
+# centurion_steam_bbot2 (Steam Centurion, r\Steam_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_steam_bbot2:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_steam_bbot2
+0.3 0 0 0 0 EXPECT:refhealth:centurion_steam_bbot2:gt:0
+0.3 0 0 0 0 SLAY:centurion_steam_bbot2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_steam_bbot2
+# centurion_steam_bbot4 (Steam Centurion, r\Steam_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_steam_bbot4:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_steam_bbot4
+0.3 0 0 0 0 EXPECT:refhealth:centurion_steam_bbot4:gt:0
+0.3 0 0 0 0 SLAY:centurion_steam_bbot4
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_steam_bbot4
+# centurion_steam_bbot8 (Steam Centurion, r\Steam_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Ignatius_Flaccus'_House
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_steam_bbot8:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_steam_bbot8
+0.3 0 0 0 0 EXPECT:refhealth:centurion_steam_bbot8:gt:0
+0.3 0 0 0 0 SLAY:centurion_steam_bbot8
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_steam_bbot8
+# centurion_steam_c_l (Advanced Steam Centurion, r\Steam_Centurions.NIF)
+3.0 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:centurion_steam_c_l:gt:0
+0.3 0 0 0 0 EXPECT:alive:centurion_steam_c_l
+0.3 0 0 0 0 EXPECT:refhealth:centurion_steam_c_l:gt:0
+0.3 0 0 0 0 SLAY:centurion_steam_c_l
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:centurion_steam_c_l
+# dremora_lord_khash_uni (Khash-Ti Dhrur, r\Dremora.NIF)
+3.0 0 0 0 0 GOTO:Norenen-dur,_Citadel_of_Myn_Dhrur
+0.3 0 0 0 0 EXPECT:refmeshes:dremora_lord_khash_uni:gt:0
+0.3 0 0 0 0 EXPECT:alive:dremora_lord_khash_uni
+0.3 0 0 0 0 EXPECT:refhealth:dremora_lord_khash_uni:gt:0
+0.3 0 0 0 0 SLAY:dremora_lord_khash_uni
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:dremora_lord_khash_uni
+# durzog_diseased (Diseased Durzog, r\Durzog.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Residential_Sewers
+0.3 0 0 0 0 EXPECT:refmeshes:durzog_diseased:gt:0
+0.3 0 0 0 0 EXPECT:alive:durzog_diseased
+0.3 0 0 0 0 EXPECT:refhealth:durzog_diseased:gt:0
+0.3 0 0 0 0 SLAY:durzog_diseased
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:durzog_diseased
+# durzog_war (War Durzog, r\Durzog_collar.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Abandoned_Passageway
+0.3 0 0 0 0 EXPECT:refmeshes:durzog_war:gt:0
+0.3 0 0 0 0 EXPECT:alive:durzog_war
+0.3 0 0 0 0 EXPECT:refhealth:durzog_war:gt:0
+0.3 0 0 0 0 SLAY:durzog_war
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:durzog_war
+# durzog_war_trained (War Durzog, r\Durzog_collar.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Armory_Ruins
+0.3 0 0 0 0 EXPECT:refmeshes:durzog_war_trained:gt:0
+0.3 0 0 0 0 EXPECT:alive:durzog_war_trained
+0.3 0 0 0 0 EXPECT:refhealth:durzog_war_trained:gt:0
+0.3 0 0 0 0 SLAY:durzog_war_trained
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:durzog_war_trained
+# durzog_wild (Wild Durzog, r\Durzog.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Palace_Sewers
+0.3 0 0 0 0 EXPECT:refmeshes:durzog_wild:gt:0
+0.3 0 0 0 0 EXPECT:alive:durzog_wild
+0.3 0 0 0 0 EXPECT:refhealth:durzog_wild:gt:0
+0.3 0 0 0 0 SLAY:durzog_wild
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:durzog_wild
+# durzog_wild_weaker (Wild Durzog, r\Durzog.NIF)
+0.3 0 0 0 0 PLACE:durzog_wild_weaker:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:durzog_wild_weaker:gt:0
+0.3 0 0 0 0 EXPECT:alive:durzog_wild_weaker
+0.3 0 0 0 0 EXPECT:refhealth:durzog_wild_weaker:gt:0
+0.3 0 0 0 0 SLAY:durzog_wild_weaker
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:durzog_wild_weaker
+# dwarven ghost_radac (Radac Stungnthumz, r\DwarvenSpecter.NIF)
+3.0 0 0 0 0 GOTO:Bamz-Amschend,_Radac's_Forge
+0.3 0 0 0 0 EXPECT:refmeshes:dwarven%ghost_radac:gt:0
+0.3 0 0 0 0 EXPECT:alive:dwarven%ghost_radac
+0.3 0 0 0 0 EXPECT:refhealth:dwarven%ghost_radac:gt:0
+0.3 0 0 0 0 SLAY:dwarven%ghost_radac
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:dwarven%ghost_radac
+# fabricant_hulkin_attack (Hulking Fabricant, r\Fabricant_Hulking.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_hulkin_attack:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_hulkin_attack
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_hulkin_attack:gt:0
+0.3 0 0 0 0 SLAY:fabricant_hulkin_attack
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_hulkin_attack
+# fabricant_hulking (Hulking Fabricant, r\Fabricant_Hulking.NIF)
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Chamber_of_Sohleh
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_hulking:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_hulking
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_hulking:gt:0
+0.3 0 0 0 0 SLAY:fabricant_hulking
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_hulking
+# fabricant_hulking_attac (Hulking Fabricant, r\Fabricant_Hulking.NIF)
+#   nothing in the game data places it
+# fabricant_hulking_c (Hulking Fabricant, r\Fabricant_Hulking.NIF)
+3.0 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_hulking_c:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_hulking_c
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_hulking_c:gt:0
+0.3 0 0 0 0 SLAY:fabricant_hulking_c
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_hulking_c
+# fabricant_hulking_c_l (Hulking Fabricant, r\Fabricant_Hulking.NIF)
+3.0 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_hulking_c_l:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_hulking_c_l
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_hulking_c_l:gt:0
+0.3 0 0 0 0 SLAY:fabricant_hulking_c_l
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_hulking_c_l
+# fabricant_hulking_ss (Hulking Fabricant, r\Fabricant_Hulking.NIF)
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Hall_of_Sallaemu
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_hulking_ss:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_hulking_ss
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_hulking_ss:gt:0
+0.3 0 0 0 0 SLAY:fabricant_hulking_ss
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_hulking_ss
+# fabricant_machine_1 (Verminous Fabricant, r\Fabricant.NIF)
+0.3 0 0 0 0 PLACE:fabricant_machine_1:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_machine_1:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_machine_1
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_machine_1:gt:0
+0.3 0 0 0 0 SLAY:fabricant_machine_1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_machine_1
+# fabricant_summon (Verminous Fabricant, r\Fabricant.NIF)
+0.3 0 0 0 0 PLACE:fabricant_summon:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_summon:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_summon
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_summon:gt:0
+0.3 0 0 0 0 SLAY:fabricant_summon
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_summon
+# fabricant_verm_attack (Verminous Fabricant, r\Fabricant.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_verm_attack:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_verm_attack
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_verm_attack:gt:0
+0.3 0 0 0 0 SLAY:fabricant_verm_attack
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_verm_attack
+# fabricant_verminous (Verminous Fabricant, r\Fabricant.NIF)
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Central_Gearworks
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_verminous:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_verminous
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_verminous:gt:0
+0.3 0 0 0 0 SLAY:fabricant_verminous
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_verminous
+# fabricant_verminous-rs (Verminous Fabricant, r\Fabricant.NIF)
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Chamber_of_Sohleh
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_verminous-rs:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_verminous-rs
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_verminous-rs:gt:0
+0.3 0 0 0 0 SLAY:fabricant_verminous-rs
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_verminous-rs
+# fabricant_verminous_c (Verminous Fabricant, r\Fabricant.NIF)
+3.0 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_verminous_c:gt:0
+0.3 0 0 0 0 EXPECT:alive:fabricant_verminous_c
+0.3 0 0 0 0 EXPECT:refhealth:fabricant_verminous_c:gt:0
+0.3 0 0 0 0 SLAY:fabricant_verminous_c
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:fabricant_verminous_c
+# fabricant_verminousdead (Verminous Fabricant, r\Fabricant.NIF)
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Outer_Flooded_Halls
+0.3 0 0 0 0 EXPECT:refmeshes:fabricant_verminousdead:gt:0
+#   no health: it lies dead where it is placed
+0.3 0 0 0 0 EXPECT:dead:fabricant_verminousdead
+# goblin_bruiser (Goblin Bruiser, r\Goblin02.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Battlefield
+0.3 0 0 0 0 EXPECT:refmeshes:goblin_bruiser:gt:0
+0.3 0 0 0 0 EXPECT:alive:goblin_bruiser
+0.3 0 0 0 0 EXPECT:refhealth:goblin_bruiser:gt:0
+0.3 0 0 0 0 SLAY:goblin_bruiser
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:goblin_bruiser
+# goblin_footsoldier (Goblin Footsoldier, r\Goblin01.NIF)
+0.3 0 0 0 0 PLACE:goblin_footsoldier:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:goblin_footsoldier:gt:0
+0.3 0 0 0 0 EXPECT:alive:goblin_footsoldier
+0.3 0 0 0 0 EXPECT:refhealth:goblin_footsoldier:gt:0
+0.3 0 0 0 0 SLAY:goblin_footsoldier
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:goblin_footsoldier
+# goblin_grunt (Goblin, r\Goblin01.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Abandoned_Passageway
+0.3 0 0 0 0 EXPECT:refmeshes:goblin_grunt:gt:0
+0.3 0 0 0 0 EXPECT:alive:goblin_grunt
+0.3 0 0 0 0 EXPECT:refhealth:goblin_grunt:gt:0
+0.3 0 0 0 0 SLAY:goblin_grunt
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:goblin_grunt
+# goblin_handler (Goblin Handler, r\Goblin02.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Armory_Ruins
+0.3 0 0 0 0 EXPECT:refmeshes:goblin_handler:gt:0
+0.3 0 0 0 0 EXPECT:alive:goblin_handler
+0.3 0 0 0 0 EXPECT:refhealth:goblin_handler:gt:0
+0.3 0 0 0 0 SLAY:goblin_handler
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:goblin_handler
+# goblin_officer (Goblin Officer, r\Goblin02.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Battlefield
+0.3 0 0 0 0 EXPECT:refmeshes:goblin_officer:gt:0
+0.3 0 0 0 0 EXPECT:alive:goblin_officer
+0.3 0 0 0 0 EXPECT:refhealth:goblin_officer:gt:0
+0.3 0 0 0 0 SLAY:goblin_officer
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:goblin_officer
+# goblin_officeruni (Goblin Officer, r\Goblin03.NIF)
+#   nothing in the game data places it
+# goblin_warchief1 (Warchief Durgoc, r\Goblin03.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Tears_of_Amun-Shae
+0.3 0 0 0 0 EXPECT:refmeshes:goblin_warchief1:gt:0
+0.3 0 0 0 0 EXPECT:alive:goblin_warchief1
+0.3 0 0 0 0 EXPECT:refhealth:goblin_warchief1:gt:0
+0.3 0 0 0 0 SLAY:goblin_warchief1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:goblin_warchief1
+# goblin_warchief2 (Warchief Kurog, r\Goblin03.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Tears_of_Amun-Shae
+0.3 0 0 0 0 EXPECT:refmeshes:goblin_warchief2:gt:0
+0.3 0 0 0 0 EXPECT:alive:goblin_warchief2
+0.3 0 0 0 0 EXPECT:refhealth:goblin_warchief2:gt:0
+0.3 0 0 0 0 SLAY:goblin_warchief2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:goblin_warchief2
+# golden saint_velas1 (Golden Saint, r\Golden Saint.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Velas_Manor
+0.3 0 0 0 0 EXPECT:refmeshes:golden%saint_velas1:gt:0
+0.3 0 0 0 0 EXPECT:alive:golden%saint_velas1
+0.3 0 0 0 0 EXPECT:refhealth:golden%saint_velas1:gt:0
+0.3 0 0 0 0 SLAY:golden%saint_velas1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:golden%saint_velas1
+# golden saint_velas2 (Golden Saint, r\Golden Saint.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Velas_Manor
+0.3 0 0 0 0 EXPECT:refmeshes:golden%saint_velas2:gt:0
+0.3 0 0 0 0 EXPECT:alive:golden%saint_velas2
+0.3 0 0 0 0 EXPECT:refhealth:golden%saint_velas2:gt:0
+0.3 0 0 0 0 SLAY:golden%saint_velas2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:golden%saint_velas2
+# imperfect (Imperfect, r\Fabricant_Imperfect.NIF)
+3.0 0 0 0 0 GOTO:Sotha_Sil,_Dome_of_the_Imperfect
+0.3 0 0 0 0 EXPECT:refmeshes:imperfect:gt:0
+0.3 0 0 0 0 EXPECT:alive:imperfect
+0.3 0 0 0 0 EXPECT:refhealth:imperfect:gt:0
+0.3 0 0 0 0 SLAY:imperfect
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:imperfect
+# lich (Lich, r\Liche.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Abandoned_Crypt
+0.3 0 0 0 0 EXPECT:refmeshes:lich:gt:0
+0.3 0 0 0 0 EXPECT:alive:lich
+0.3 0 0 0 0 EXPECT:refhealth:lich:gt:0
+0.3 0 0 0 0 SLAY:lich
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:lich
+# lich_barilzar (Barilzar, r\Liche_King.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Abandoned_Crypt
+0.3 0 0 0 0 EXPECT:refmeshes:lich_barilzar:gt:0
+0.3 0 0 0 0 EXPECT:alive:lich_barilzar
+0.3 0 0 0 0 EXPECT:refhealth:lich_barilzar:gt:0
+0.3 0 0 0 0 SLAY:lich_barilzar
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:lich_barilzar
+# lich_profane_unique (Profane Acolyte, r\Liche.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Temple_Shrine
+0.3 0 0 0 0 EXPECT:refmeshes:lich_profane_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:lich_profane_unique
+0.3 0 0 0 0 EXPECT:refhealth:lich_profane_unique:gt:0
+0.3 0 0 0 0 SLAY:lich_profane_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:lich_profane_unique
+# lich_relvel (Gedna Relvel, r\Liche.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Gedna_Relvel's_Tomb
+0.3 0 0 0 0 EXPECT:refmeshes:lich_relvel:gt:0
+0.3 0 0 0 0 EXPECT:alive:lich_relvel
+0.3 0 0 0 0 EXPECT:refhealth:lich_relvel:gt:0
+0.3 0 0 0 0 SLAY:lich_relvel
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:lich_relvel
+# ogrim titan_velas (Ogrim Titan, r\Clannfear_Daddy.NIF)
+3.0 0 0 0 0 GOTO:Mournhold,_Velas_Manor
+0.3 0 0 0 0 EXPECT:refmeshes:ogrim%titan_velas:gt:0
+0.3 0 0 0 0 EXPECT:alive:ogrim%titan_velas
+0.3 0 0 0 0 EXPECT:refhealth:ogrim%titan_velas:gt:0
+0.3 0 0 0 0 SLAY:ogrim%titan_velas
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:ogrim%titan_velas
+# rat_pack_rerlas (Pack Rat, r\PackRat.NIF)
+0.3 0 0 0 0 PLACE:rat_pack_rerlas:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:rat_pack_rerlas:gt:0
+0.3 0 0 0 0 EXPECT:alive:rat_pack_rerlas
+0.3 0 0 0 0 EXPECT:refhealth:rat_pack_rerlas:gt:0
+0.3 0 0 0 0 SLAY:rat_pack_rerlas
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:rat_pack_rerlas
+# rat_plague (Infected Rat, r\Rust rat.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Gedna_Relvel's_Tomb
+0.3 0 0 0 0 EXPECT:refmeshes:rat_plague:gt:0
+0.3 0 0 0 0 EXPECT:alive:rat_plague
+0.3 0 0 0 0 EXPECT:refhealth:rat_plague:gt:0
+0.3 0 0 0 0 SLAY:rat_plague
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:rat_plague
+# rat_plague_hall1 (Infected Rat, r\Rust rat.NIF)
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_Hall_of_Ministry
+0.3 0 0 0 0 EXPECT:refmeshes:rat_plague_hall1:gt:0
+0.3 0 0 0 0 EXPECT:alive:rat_plague_hall1
+0.3 0 0 0 0 EXPECT:refhealth:rat_plague_hall1:gt:0
+0.3 0 0 0 0 SLAY:rat_plague_hall1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:rat_plague_hall1
+# rat_plague_hall1a (Infected Rat, r\Rust rat.NIF)
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_Hall_of_Ministry
+0.3 0 0 0 0 EXPECT:refmeshes:rat_plague_hall1a:gt:0
+0.3 0 0 0 0 EXPECT:alive:rat_plague_hall1a
+0.3 0 0 0 0 EXPECT:refhealth:rat_plague_hall1a:gt:0
+0.3 0 0 0 0 SLAY:rat_plague_hall1a
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:rat_plague_hall1a
+# rat_plague_hall2 (Infected Rat, r\Rust rat.NIF)
+3.0 0 0 0 0 GOTO:Mournhold_Temple:_Hall_of_Ministry
+0.3 0 0 0 0 EXPECT:refmeshes:rat_plague_hall2:gt:0
+#   no health: it lies dead where it is placed
+0.3 0 0 0 0 EXPECT:dead:rat_plague_hall2
+# rat_rerlas (Rat, r\Rust rat.NIF)
+0.3 0 0 0 0 PLACE:rat_rerlas:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:rat_rerlas:gt:0
+0.3 0 0 0 0 EXPECT:alive:rat_rerlas
+0.3 0 0 0 0 EXPECT:refhealth:rat_rerlas:gt:0
+0.3 0 0 0 0 SLAY:rat_rerlas
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:rat_rerlas
+# scrib_rerlas (Scrib, r\MineScrib.NIF)
+0.3 0 0 0 0 PLACE:scrib_rerlas:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:scrib_rerlas:gt:0
+0.3 0 0 0 0 EXPECT:alive:scrib_rerlas
+0.3 0 0 0 0 EXPECT:refhealth:scrib_rerlas:gt:0
+0.3 0 0 0 0 SLAY:scrib_rerlas
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:scrib_rerlas
+# skeleton_relvel (Skeleton Champion, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Old_Mournhold:_Gedna_Relvel's_Tomb
+0.3 0 0 0 0 EXPECT:refmeshes:skeleton_relvel:gt:0
+0.3 0 0 0 0 EXPECT:alive:skeleton_relvel
+0.3 0 0 0 0 EXPECT:refhealth:skeleton_relvel:gt:0
+0.3 0 0 0 0 SLAY:skeleton_relvel
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:skeleton_relvel

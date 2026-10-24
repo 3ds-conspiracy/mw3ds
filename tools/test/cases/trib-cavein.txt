@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-cavein: Bamz-Amschend's collapsed rocks (act_dwe_cavein00, TR_ShowPower's way to the Karstangz-Bcharn): a
+# satchel charge placed on them (cavein_script: Yes, five seconds) blows them apart (PlayGroup Death1) and their
+# collision goes with them, as OpenMW's animated collision: the door behind them is reached on foot. (The rocks stayed
+# solid where they were drawn, and the way on was shut.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:dwemer_satchel00:1
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Radac's_Forge
+5 0 0 0
+0.3 0 0 0 0 TPIN:-2722:9798:13420:270
+3 0 0 0
+60 0 0 0 0 ACTIVATE:act_dwe_cavein00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:message:satchel
+0.3 0 0 0 0 A
+1 0 0 0
+60 0 0 0 0 WALKTO:@-2200,9800,13280
+8 0 0 0
+0.5 0 0 0 0 SHOT
+120 0 0 0 0 DOORTO:Bamz-Amschend,_Passage_of_the_Walker
+1 0 0 0
+0.3 0 0 0 0 A
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Bamz-Amschend,_Passage_of_the_Walker

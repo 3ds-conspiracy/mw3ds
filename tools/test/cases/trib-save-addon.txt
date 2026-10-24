@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-save-addon: a save made with the Tribunal add-on keeps it in the save ("addons"), and data converted without it
+# refuses that save (its cells and people aren't there): the title says the save needs the Tribunal add-on. A save
+# made without the add-on loads on Tribunal data, as OpenMW adds content to a save. (ADDONS: stands in for the vanilla
+# data: the add-ons the loaded data says it has.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0 0 0 0 0 SETUP-END
+1 0 0 0 0 SAVE:withtrib
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:savevalid:withtrib:eq:1
+0.1 0 0 0 0 EXPECT:saveneeds:withtrib:eq:0
+# the same save, read by data without the add-on
+0.3 0 0 0 0 ADDONS:
+0.1 0 0 0 0 EXPECT:saveneeds:withtrib:eq:1
+# a save made without it, read by Tribunal data
+1 0 0 0 0 SAVE:vanilla
+0.5 0 0 0
+0.3 0 0 0 0 ADDONS:tribunal
+0.1 0 0 0 0 EXPECT:saveneeds:vanilla:eq:0
+0.1 0 0 0 0 EXPECT:savevalid:vanilla:eq:1
+0.1 0 0 0 0 EXPECT:saveneeds:withtrib:eq:0

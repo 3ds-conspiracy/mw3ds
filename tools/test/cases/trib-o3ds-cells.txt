@@ -1,0 +1,27 @@
+# start: Seyda Neen
+# data: tribunal
+# console: old
+# trib-o3ds-cells: with the Old 3DS profile (slow CPU, small heap) the biggest Tribunal cells load and draw without a
+# memory monitor: Mournhold's under-the-sky cells, the Craftsmen's Hall and the Winged Guar (the largest), Old
+# Mournhold's sewers and Gedna Relvel's tomb (19 actors), Bamz-Amschend and Sotha Sil's halls.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Mournhold,_Godsreach
+6 0 0 0
+0.3 0 0 0 0 GOTO:Mournhold,_Great_Bazaar
+6 0 0 0
+0.3 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+6 0 0 0
+0.3 0 0 0 0 GOTO:Mournhold,_Craftsmen's_Hall
+6 0 0 0
+0.3 0 0 0 0 GOTO:Mournhold,_The_Winged_Guar
+6 0 0 0
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Forgotten_Sewer
+6 0 0 0
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Gedna_Relvel's_Tomb
+6 0 0 0
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+6 0 0 0
+0.3 0 0 0 0 GOTO:Sotha_Sil,_Hall_of_Delirium
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Sotha_Sil,_Hall_of_Delirium

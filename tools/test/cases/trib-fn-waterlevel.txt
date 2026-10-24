@@ -1,0 +1,51 @@
+# start: Seyda Neen
+# trib-fn-waterlevel: GetWaterLevel / SetWaterLevel / ModWaterLevel (Tribunal's sewers: the cranks, the torch lever,
+# the trapdoors), OpenMW's rules: outdoors GetWaterLevel is 0 and setting it does nothing; in an interior with water it
+# reads the cell's height and a script moves it, the player swimming once it rises over them; the height stays when
+# the player leaves and comes back, and through a save and a load (a save from before it moved has the cell's own
+# height back).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:SetWaterLevel%500
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# Addamasartus has water; the player stands dry at first
+0.3 0 0 0 0 GOTO:Addamasartus
+4 0 0 0
+0.3 0 0 0 0 TPIN:-1100:3500:-554:300
+3 0 0 0
+0.1 0 0 0 0 EXPECT:swimming:eq:0
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:-760
+1 0 0 0 0 SAVE:tribwater0
+0.3 0 0 0 0 CON:SetWaterLevel%-200
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:-200
+2 0 0 0
+0.1 0 0 0 0 EXPECT:swimming:eq:1
+0.3 0 0 0 0 CON:ModWaterLevel%-1000
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:-1200
+2 0 0 0
+0.1 0 0 0 0 EXPECT:swimming:eq:0
+0.3 0 0 0 0 CON:SetWaterLevel%-200
+# Out and back in: still risen
+0.3 0 0 0 0 GOTO:Seyda_Neen
+4 0 0 0
+0.3 0 0 0 0 GOTO:Addamasartus
+4 0 0 0
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:-200
+# Through a save and a load
+1 0 0 0 0 SAVE:tribwater
+0.3 0 0 0 0 CON:SetWaterLevel%-900
+0.5 0 0 0 0 LOAD:tribwater
+5 0 0 0
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:-200
+0.5 0 0 0 0 LOAD:tribwater0
+5 0 0 0
+0.3 0 0 0 0 CON:GetWaterLevel
+0.1 0 0 0 0 EXPECT:conval:eq:-760

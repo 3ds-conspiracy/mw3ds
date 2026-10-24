@@ -127,7 +127,8 @@ void Session::drawDialogue()
 	bool makesSpells = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x8000);
 	bool enchants = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x10000);
 	bool repairs = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x20000);
-	int services = merchant + travels + sells + trains + persuades + makesSpells + enchants + repairs;
+	bool shares = isCompanion(dlg.ref);         // (Tribunal's companions: their script's "companion" not 0)
+	int services = merchant + travels + sells + trains + persuades + makesSpells + enchants + repairs + shares;
 	int pick = uiWrapList(list, 214, 24, 104, 180 - 26 * services, rows, 0.38f, !choosing);
 	float sy = 206 - 26 * services;
 	if (persuades && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("spersuasion", "Persuasion")))
@@ -138,6 +139,19 @@ void Session::drawDialogue()
 		return;
 	}
 	if (persuades)
+		sy += 26;
+	// Share: the companion's things and the player's, both ways, no barter (OpenMW: never refused)
+	if (shares && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("scompanionshare", "Share")))
+	{
+		containerRef = dlg.ref;
+		companionSharing = true;
+		companionWarning = pickpocketing = containerPutting = false;
+		grid = UiGrid();
+		screen = SCR_CONTAINER;
+		playSound(-1, "Menu Click");
+		return;
+	}
+	if (shares)
 		sy += 26;
 	if (merchant && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("sbarter", "Barter"))
 		&& !serviceRefused())

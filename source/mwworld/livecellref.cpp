@@ -30,6 +30,8 @@ cJSON* World::refState(int i) const
 		cJSON_AddNumberToObject(o, "enabled", 0);
 	if (r.pickedUp)
 		cJSON_AddNumberToObject(o, "taken", 1);
+	if (r.colGone)
+		cJSON_AddNumberToObject(o, "colgone", 1);
 	if (r.lockLevel)
 		cJSON_AddNumberToObject(o, "lock", r.lockLevel);
 	if (r.disarmed)
@@ -66,6 +68,11 @@ cJSON* World::refState(int i) const
 			cJSON_AddNumberToObject(o, "aggressor", 1);
 		if (r.fight >= 0)
 			cJSON_AddNumberToObject(o, "fight", r.fight);
+		if (r.crimeId >= 0)
+		{
+			cJSON_AddNumberToObject(o, "crime", r.crimeId);
+			cJSON_AddNumberToObject(o, "crime_disp", r.crimeDisp);
+		}
 		if (r.reputation)
 			cJSON_AddNumberToObject(o, "rep", r.reputation);
 		if (r.level >= 0)
@@ -138,6 +145,7 @@ u32 World::refHash(int i) const
 	auto mixf = [&](float v) { mix(&v, sizeof(v)); };
 	mixi(r.enabled);
 	mixi(r.pickedUp);
+	mixi(r.colGone);
 	mixi(r.lockLevel);
 	mixi(r.disarmed);
 	mixf(r.doorTarget);
@@ -157,6 +165,8 @@ u32 World::refHash(int i) const
 		mixi(r.dead);
 		mixi(r.aggressor);
 		mixi(r.fight);
+		mixi(r.crimeId);
+		mixi(r.crimeDisp);
 		mixi(r.reputation);
 		mixi(r.level);
 		mixi(r.rank);
@@ -203,6 +213,7 @@ void World::applyRefState(Ref& r, const cJSON* it)
 	}
 	r.enabled = num(it, "enabled", 1) != 0;
 	r.pickedUp = num(it, "taken") != 0;
+	r.colGone = num(it, "colgone") != 0;
 	r.lockLevel = (int)num(it, "lock");
 	r.disarmed = num(it, "disarmed") != 0;
 	r.doorTarget = r.doorAngle = num(it, "door");
@@ -220,6 +231,8 @@ void World::applyRefState(Ref& r, const cJSON* it)
 		r.dead = num(it, "dead") != 0;
 		r.aggressor = num(it, "aggressor") != 0;
 		r.fight = (int)num(it, "fight", -1);
+		r.crimeId = (int)num(it, "crime", -1);
+		r.crimeDisp = (int)num(it, "crime_disp", 0);
 		r.reputation = (int)num(it, "rep");
 		r.level = (int)num(it, "level", -1);
 		r.rank = (int)num(it, "rank", -1);

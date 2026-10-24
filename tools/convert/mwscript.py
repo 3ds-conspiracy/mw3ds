@@ -379,7 +379,9 @@ class Compiler:
             if ch in "lfX":
                 a, i = self.term(toks, i)
             else:
-                a, i = self.arg(toks, i)
+                # (a name argument is the word itself, never a variable of that name: OpenMW's StringParser. Calvus's
+                # "StartScript Contract_Calvus" from his dialogue, with a local contract_calvus, started script "1")
+                a, i = self.arg(toks, i, names_only=ch in "Scxz")
                 # An id of several words without quotes (HasSoulGem dagoth drals): the words that follow
                 while in_expr and isinstance(a, list) and a[0] == "s" and i < len(toks) and toks[i][0] == "id" \
                         and not any(n == toks[i][1].lower() for _, n in self.locals) \
@@ -389,8 +391,9 @@ class Compiler:
             args.append(a)
         return args, i
 
-    def arg(self, toks, i):
-        """Function arguments: strings, numbers, variables; bare words are strings (object ids)."""
+    def arg(self, toks, i, names_only=False):
+        """Function arguments: strings, numbers, variables; bare words are strings (object ids). names_only: a bare
+        word is always a string, even where a variable has its name."""
         kind, text = toks[i]
         if kind == "op" and text == "-" and i + 1 < len(toks) and toks[i + 1][0] == "num":
             n = toks[i + 1][1]
@@ -403,6 +406,8 @@ class Compiler:
             return ["s", text], i + 1
         if kind == "id":
             name = text.lower()
+            if names_only:
+                return ["s", text], i + 1
             if any(n == name for _, n in self.locals):
                 return ["l", name], i + 1
             if name in self.globals:

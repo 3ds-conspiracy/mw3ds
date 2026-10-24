@@ -41,7 +41,8 @@ LANGUAGES = [
     ("Russian", "win1251"), ("Ukrainian", "win1251"),
 ]
 CODECS = {"win1252": "cp1252", "win1250": "cp1250", "win1251": "cp1251"}
-# Masters this project leaves out (mwfiles.OUT_OF_SCOPE): a plugin needing one is refused by the converter
+# Masters this project leaves out (mwfiles.out_of_scope(); the wizard has no Tribunal option yet): a plugin needing one is
+# refused by the converter
 OUT_OF_SCOPE = {"tribunal.esm", "bloodmoon.esm"}
 NEED_GB = 5                                            # whole island: mods 0.6 + data 1.1 + caches 0.2 + CIA 1.1, and room
 NEED_RAM_GB = 4

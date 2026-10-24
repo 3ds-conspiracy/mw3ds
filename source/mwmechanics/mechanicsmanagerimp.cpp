@@ -91,6 +91,8 @@ void Session::crimeSeen(int kind, int value, int victim)
 	static const float fightDef[5] = { 50.0f, 25.0f, 25.0f, 100.0f, 50.0f };
 	float dispTerm = w.game.gmstf(disp[kind], dispDef[kind]) * (kind == CRIME_THEFT ? (float)value : 1.0f);
 	float fightTerm = w.game.gmstf(fight[kind], fightDef[kind]);
+	// a new crime id, given to everyone it stirs (OpenMW's reportCrime): they calm down once it is paid for
+	int id = ++w.crimeIdNow;
 	for (int i : w.loadedActors)
 	{
 		Ref& r = w.refs[i];
@@ -119,7 +121,27 @@ void Session::crimeSeen(int kind, int value, int victim)
 		}
 		r.fight = base + (int)term;
 		r.disposition += (int)dispTerm;
+		r.crimeId = id;
+		if (i != victim)
+			r.crimeDisp += (int)dispTerm;       // (a witness's is given back then; the victim's stays, as OpenMW's permanent one)
 	}
+}
+
+// A witness (or victim) of a crime now paid for calms down (OpenMW's Actors::updateActor, "if you've paid for your
+// crimes"): out of the fight, Fight back to their own, no longer alarmed, the disposition the crime took given back
+void Session::calmWitness(int ri)
+{
+	Ref& r = w.refs[ri];
+	stopCombat(ri);
+	r.fight = -1;
+	r.alarmed = false;
+	r.attacked = false;
+	r.disposition -= r.crimeDisp;
+	r.crimeDisp = 0;
+	r.crimeId = -1;
+	if (Actor* a = w.actorOf(ri))
+		a->showWeapon = false;
+	logf("crime: %s calms down, the crime paid for", r.id.c_str());
 }
 
 void Session::reportCrime(int victim, int amount)
@@ -145,7 +167,12 @@ void Session::reportCrime(int victim, int amount)
 		return;
 	}
 	if (victim >= 0 && w.refs[victim].actor >= 0 && !w.game.actors[w.refs[victim].actor].creature)
+	{
 		crimeAgainstFaction(w.game.actors[w.refs[victim].actor].faction);
+		// (the victim fighting back calms down with the witnesses once it is paid for: OpenMW sets its crime id when reported)
+		if (!w.refs[victim].dead && w.crimeIdNow >= 0)
+			w.refs[victim].crimeId = w.crimeIdNow;
+	}
 	w.bounty += amount;
 	w.globals["pccrimelevel"] = (float)w.bounty;
 	notify("Crime reported. Your bounty is " + std::to_string(w.bounty) + " gold.");
@@ -416,4 +443,14 @@ bool World::ownedByOther(int ri) const
 	if (!r.ownerFaction.empty())
 		return pcRankIn(r.ownerFaction) < r.ownerRank;
 	return false;
+}
+
+// GetWeaponDrawn: the player's weapon (or fists) out; a person or creature fighting has its weapon out (their draw state
+// follows the fight here)
+bool Session::isWeaponDrawn(int ref)
+{
+	if (ref < 0)
+		return weaponDrawn;
+	const Ref& r = w.refs[ref];
+	return r.actor >= 0 && !r.dead && r.ai == AI_COMBAT;
 }

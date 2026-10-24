@@ -1,0 +1,10 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-museum-donations: Tribunal.esm stores the short global MuseumDonations as FLTV bytes that read as 7.6e23. A short
+# or long global's stored float is cast as OpenMW's ESM::Variant reads it (out of an int's range: the int's lowest, then
+# cut to a short: 0), so it starts at 0 and Torasa Aram doesn't hand over the shield before any donation. (It read as
+# 7.6e23: "donations >= 2" was true from the start.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.1 0 0 0 0 EXPECT:global:museumdonations:eq:0
+0.1 0 0 0 0 EXPECT:global:museumdonations:lt:2

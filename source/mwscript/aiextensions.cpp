@@ -19,6 +19,16 @@ std::optional<float> aiExtensions(Ctx& c, const Node& n, World& w, bool onPlayer
 	{
 	// The player is the one thing fought here, so "player" is the only target: fighting them, or (OpenMW) with no
 	// fight on, being in the middle of talking to them
+	// Face x y: a person or creature turns to look at the point, then goes on (OpenMW's AiFace; the player can't be
+	// made to). Its third number, which some scripts give, is not read
+	case F_FACE:
+		if (r && !onPlayer && r->actor >= 0)
+		{
+			r->faceAt[0] = argNum(c, n, 0);
+			r->faceAt[1] = argNum(c, n, 1);
+			r->facing = true;
+		}
+		return 0.0f;
 	case F_GETTARGET:
 		return r && r->actor >= 0 && lower(argStr(c, n, 0)) == "player" && (r->ai == AI_COMBAT || c.host.talkingTo(ref))
 			? 1.0f : 0.0f;

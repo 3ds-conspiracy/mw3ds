@@ -88,6 +88,9 @@ struct TestDriver
 	int deadEntry = -1;              // a trial route to the goal's piece of a split grid: its point, walked to next
 	float deadGoal[3] = {};
 	bool diveOk = false;             // WALKTO:<where>:dive: when stuck, feel a way out by trial steps (swimming, jumping)
+	// DOORTO:<cell>:near: with the path grid split and the grid point nearest the door on another piece (a walkway over
+	// it), the route ends at the start's own piece's point nearest the door when one is within reach of it (planPath)
+	bool ownPiece = false;
 	bool lowFly = false;             // FLYTO:@x,y,z:low: a low cruise for caves and halls, trying lower before higher when blocked
 	float legTimer = 0.0f;
 	bool legJumped = false;
@@ -100,12 +103,14 @@ struct TestDriver
 	float pressAt[3] = {};           // DOORWAIT: where the player stood at the press
 	int doorCell = -1;               // DOORWAIT: the cell the press was made in
 	bool doorTrapped = false;        // DOORWAIT: the door carried a trap when pressed
+	bool doorWasOpen = false;        // DOORWAIT: the door stood open when pressed (the press shut it: shut is its result)
 	float sidestep = 0.0f, sidestepTimer = 0.0f, lastGoal = 1e9f;
 	bool pressA = false;
 	bool pickup = false;             // PICKUP: a book opens to read: Take it (TAKE waits for the screen)
 	float takeTimer = 0.0f;
 	int takeTries = 0;               // PICKUP: presses that took nothing (the item was just past reach on the press's frame)
 	float strikeFor = 0.0f;          // STRIKE: seconds of swings, then done (0: KILL, until dead)
+	std::string strikeUntil;         // STRIKE:<ref>:<secs>:<global>: done early once that global is 1 or more
 	bool killUnseen = false;         // KILL:<id>:unseen: no blow while anyone else could report the murder
 	float unseenLimit = 0.0f, unseenTimer = 0.0f;   // UNSEEN:<secs>: waiting for nobody to be watching
 	std::string lootItem;            // LOOT: what to take once its container screen is open
@@ -118,6 +123,9 @@ struct TestDriver
 	float cruise = 0.0f, phaseTimer = 0.0f;
 	float outTimer = 0.0f;           // FLYTO: seconds left of a stretch sideways out from under an overhang
 	int outTries = 0;
+	float outStart[2] = { 0.0f, 0.0f };   // FLYTO: where the last stretch sideways began (it moved the body, or it was held)
+	float outDuty = 0.0f;             // ... the share of frames down is pressed while it sinks (its own: vertDuty paces the climb)
+	bool outSink = false;             // ... the last one moved it under 40: the next one lets go of the rise and sinks first
 	float flyAllow = 0.0f;           // FLYTO: seconds the leg may take (from its distance), beyond the step's own
 	float aim[3] = { 0, 0, 0 };     // FLYTO: the spot asked for (goal moves around it when a roof is in the way)
 	bool inAir = false;

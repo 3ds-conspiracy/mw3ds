@@ -1,0 +1,43 @@
+# start: Seyda Neen
+# trib-fn-objects: script functions on objects that Tribunal's scripts call, on a crate in Arrille's Tradehouse cellar
+# (OpenMW's rules): GetCollidingPC is 1 while the player presses against its side and 0 a step away, GetCollidingActor
+# 0 with nobody touching it; ExplodeSpell bursts Fire Storm's area where the crate stands (the player beside it is
+# burnt); SetDelete 1 takes it away, SetDelete 0 brings it back. Face turns Fargoth to look east.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+# West of the crate (-38, -5541), facing it, walking into it
+0.3 0 0 0 0 TPIN:-150:-5541:-370:90
+2 0 0 0
+0.3 0 0 0 0 CON:"crate_01_armor_steel"->GetCollidingPC
+0.1 0 0 0 0 EXPECT:conval:eq:0
+2 0 1 0
+0.3 0 0.4 0 0 CON:"crate_01_armor_steel"->GetCollidingPC
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:"crate_01_armor_steel"->GetCollidingActor
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# Fire Storm's area (10 ft, 213 units) from the crate reaches the player beside it
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 CON:"crate_01_armor_steel"->ExplodeSpell%"fire%storm"
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:health:lt:@0
+1.2 0 -1 0
+0.5 0 0 0
+0.3 0 0 0 0 CON:"crate_01_armor_steel"->GetCollidingPC
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# Gone, and back
+0.3 0 0 0 0 CON:"crate_01_armor_steel"->SetDelete%1
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:crate_01_armor_steel:eq:0
+0.3 0 0 0 0 CON:"crate_01_armor_steel"->SetDelete%0
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:crate_01_armor_steel:eq:1
+# Fargoth turns to look east (a point far along +X from him)
+0.3 0 0 0 0 GOTO:Seyda_Neen
+4 0 0 0
+0.3 0 0 0 0 CON:"fargoth"->AiWander%0%0%0%0
+0.3 0 0 0 0 CON:"fargoth"->Face%60000%-71468
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refyaw:fargoth:ge:75
+0.1 0 0 0 0 EXPECT:refyaw:fargoth:le:105

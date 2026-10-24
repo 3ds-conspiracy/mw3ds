@@ -1,0 +1,44 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-combat-ends: Gaenor (MS_Natural) refused and struck in the Temple Courtyard, before Mehra Helas; the fine paid
+# away from the courtyard (PayFine, as a guard's greeting does), a day later Mehra Helas is no longer fighting and can be
+# talked to (OpenMW's crime ids: a witness calms down once the crime she saw is paid for). She stayed in combat for good
+# ("This character is in combat").
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:gold_001:2000
+0.3 0 0 0 0 GOTO:Mournhold,_Temple_Courtyard
+4 0 0 0
+60 0 0 0 0 ACTIVATE:gaenor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Favor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MS_Natural:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 STRIKE:gaenor:1.2
+3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:gt:0
+0.1 0 0 0 0 EXPECT:refcombat:mehra%helas:eq:1
+120 0 0 0 0 DOORTO:Mournhold,_Godsreach
+10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
+0.5 0 0 0
+0.3 0 0 0 0 CON:PayFine
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+20 0 0 0 0 SLEEP:24
+20 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:mehra%helas:eq:0
+60 0 0 0 0 ACTIVATE:mehra%helas
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:talking

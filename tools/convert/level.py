@@ -301,11 +301,11 @@ def leveled_creatures(db, lid, depth=0):
 
 
 def spawn_ids(db):
-    """Ids scripts and dialogue place with PlaceAtPC / PlaceAtMe (quoted or bare)."""
+    """Ids scripts and dialogue place with PlaceAtPC / PlaceAtMe / PlaceItem / PlaceItemCell (quoted or bare)."""
     texts = list(db["SCPT"].values()) + [i.zstr("BNAM") or "" for d in db["dialogue"] for i in d["infos"]]
     out = set()
     for t in texts:
-        for m in re.finditer(r'place(?:atpc|atme)[\s,]+(?:"([^"]+)"|([^\s,"]+))', t, re.I):
+        for m in re.finditer(r'place(?:atpc|atme|itemcell|item)[\s,]+(?:"([^"]+)"|([^\s,"]+))', t, re.I):
             out.add((m.group(1) or m.group(2)).strip().lower())
     return out
 
@@ -426,7 +426,7 @@ def _worker_cell(item):
     conv = _W["conv"]
     try:
         if item[0] == "i":
-            conv.interior(item[1])
+            conv.interior(item[1], weather=_W["weather"])
             file = _W["file"](item[1])
         else:
             _, gx, gy, walkable, name, file = item
@@ -476,9 +476,13 @@ def main():
     ap.add_argument("--force", action="store_true", help="re-encode textures and sounds")
     ap.add_argument("--jobs", type=int, default=0,
                     help="processes converting cells (0: by threads and free memory; 1: one, as before)")
+    ap.add_argument("--tribunal", action="store_true",
+                    help="the Tribunal add-on: Tribunal.esm after Morrowind.esm (or MW3DS_TRIBUNAL=1)")
     ap.add_argument("--world", action="store_true",
                     help="the whole island: every interior, all land walkable (with MW3DS_OUT=out/world to try it)")
     args = ap.parse_args()
+    if args.tribunal:
+        os.environ["MW3DS_TRIBUNAL"] = "1"         # (the cell processes inherit it)
 
     t0 = time.time()
     db = load_db()
@@ -547,14 +551,15 @@ def main():
             entry = door_dest(db, EXTERIOR, ENTRY_DOOR, OFFICE_CELL)
             cspawn = (entry[:3], entry[5])
         try:
-            c = conv.interior(name, spawn=cspawn)
+            c = conv.interior(name, spawn=cspawn, weather=weather(ini, args.weather))
         except Exception as e:
             print(f"  FAILED {name}: {type(e).__name__}: {e}", flush=True)
             failed.append((name, f"{type(e).__name__}: {e}"))
             continue
-        # CELL DATA flag 4: sleeping here is illegal (only waiting, or a bed)
-        nosleep = bool(struct.unpack("<I", db["CELL"][name].get("DATA")[:4])[0] & 4)
-        cells.append(dict(c, name=name, interior=True, nosleep=nosleep))
+        # CELL DATA flag 4: sleeping here is illegal (only waiting, or a bed); flag 0x80: an interior that behaves
+        # as an exterior, under the sky with the weather (Tribunal's Mournhold; OpenMW's QuasiEx)
+        flags = struct.unpack("<I", db["CELL"][name].get("DATA")[:4])[0]
+        cells.append(dict(c, name=name, interior=True, nosleep=bool(flags & 4), sky=bool(flags & 0x80)))
     grid = {}
     for gy in range(y0 - 1, y1 + 2):
         for gx in range(x0 - 1, x1 + 2):
@@ -752,7 +757,8 @@ def main():
         game["leveled"][r.id.lower()] = {"all": flags & 1, "none": (r.get("NNAM") or b"\0")[0],
                                          "e": [[lvl, cid.lower()] for lvl, cid in db["LEVC"].get(r.id.lower(), [])]}
     for c in game["cells"]:
-        rec = db["CELL"].get(tuple(c["grid"])) if "grid" in c else None
+        # (an interior under the sky, Tribunal's Mournhold, has its region's weather too)
+        rec = db["CELL"].get(tuple(c["grid"])) if "grid" in c else db["CELL"].get(c["name"]) if c.get("sky") else None
         if rec is not None and rec.zstr("RGNN"):
             c["region"] = rec.zstr("RGNN").lower()
     # their ambient loops (rain, ash storm, blight) and thunder

@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# trib-fn-levitation: DisableLevitation (Tribunal's Mournhold, TribunalMain) ends a Levitate on the player at once with
+# sLevitateDisabled's message, and a new one too; EnableLevitation lets it last again. The switch is kept in a save
+# (OpenMW's World::enableLevitation, shouldRemoveEffect, LEVT).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 ACTIVE:10:20:60
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:20
+0.3 0 0 0 0 CON:DisableLevitation
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:0
+0.1 0 0 0 0 EXPECT:message:Levitation
+# A new Levitate ends at once while it is off, through a save and a load as well
+1 0 0 0 0 SAVE:triblev
+0.5 0 0 0 0 LOAD:triblev
+5 0 0 0
+0.3 0 0 0 0 ACTIVE:10:20:60
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:0
+0.3 0 0 0 0 CON:EnableLevitation
+0.3 0 0 0 0 ACTIVE:10:20:60
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:10:eq:20

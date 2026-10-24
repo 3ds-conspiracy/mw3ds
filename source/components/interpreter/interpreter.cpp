@@ -270,12 +270,12 @@ int magicEffectIndex(const std::string& arg)
 		"summonflameatronach", "summonfrostatronach", "summonstormatronach", "fortifyattackbonus", "commandcreature",
 		"commandhumanoid", "bounddagger", "boundlongsword", "boundmace", "boundbattleaxe", "boundspear", "boundlongbow",
 		"extraspell", "boundcuirass", "boundhelm", "boundboots", "boundshield", "boundgloves", "corprus", "vampirism",
-		"summoncenturionsphere", "sundamage", "stuntedmagicka" };    // effects 100 on
+		"summoncenturionsphere", "sundamage", "stuntedmagicka", "summonfabricant" };    // effects 100 on (137: Tribunal's)
 	std::string a = lower(arg);
 	if (a.compare(0, 7, "seffect") == 0)
 		a = a.substr(7);
 	if (!a.empty() && isdigit((unsigned char)a[0]))
-		return atoi(a.c_str()) <= 136 ? atoi(a.c_str()) : -1;
+		return atoi(a.c_str()) <= 137 ? atoi(a.c_str()) : -1;
 	for (size_t i = 0; i < sizeof(names) / sizeof(names[0]); i++)
 		if (a == names[i])
 			return i;

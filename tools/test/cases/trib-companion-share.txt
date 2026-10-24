@@ -1,0 +1,35 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-companion-share: Tribunal's companion share (OpenMW's CompanionWindow): Calvus Horatius, the mercenary, once
+# his script says he is a companion, offers Share; what the player gives him adds its value to his "minimumprofit",
+# what is taken back takes it off; leaving with the profit below 0 brings his warning (sCompanionWarningMessage), and
+# going back to the share keeps it open.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:misc_com_bucket_01:1
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace:_Courtyard
+5 0 0 0
+0.3 0 0 0 0 CON:set%"calvus%horatius".companion%to%1
+0.3 0 0 0 0 CON:set%"calvus%horatius".minimumprofit%to%0
+60 0 0 0 0 ACTIVATE:calvus_horatius
+2 0 0 0
+0.3 0 0 0 0 SHARE:calvus_horatius
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:sharing:eq:1
+0.3 0 0 0 0 SHAREPUT:misc_com_bucket_01
+0.3 0 0 0 0 CON:"calvus%horatius".minimumprofit
+0.1 0 0 0 0 EXPECT:conval:gt:0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SHARETAKE:misc_com_bucket_01
+0.3 0 0 0 0 CON:"calvus%horatius".minimumprofit
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# Owed: the warning
+0.3 0 0 0 0 CON:set%"calvus%horatius".minimumprofit%to%-50
+0.3 0 0 0 0 SHAREDONE
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:companionwarn:eq:1
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:companionwarn:eq:0
+0.1 0 0 0 0 EXPECT:sharing:eq:1

@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-skybreak-walk: Bamz-Amschend, Skybreak Gallery (TR_ShowPower's Karstangz-Bcharn): the player can walk from the door's
+# landing spot to the weather machine. act_dwe_weather00 (the weather sign, a ring wall the script turns to 280 degrees)
+# became one solid box of its whole bounding box (World::updateDoors, turned non-door), so the player was held in it.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Skybreak_Gallery
+5 0 0 0
+0.3 0 0 0 0 TPIN:4224:1336:12330:0
+2 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:@4224,3200,12400
+0.1 0 0 0 0 EXPECT:cell:Bamz-Amschend,_Skybreak_Gallery

@@ -6,12 +6,37 @@
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 
+// A companion's "minimumprofit" (their script's local; Tribunal's mercenaries): what they have been given less what was
+// taken from them, at the items' values (OpenMW's CompanionItemModel); nullptr when their script has none
+static float* companionProfit(World& w, int ref)
+{
+	if (ref < 0 || w.refs[ref].script < 0 || w.refs[ref].script >= (int)w.scripts.size())
+		return nullptr;
+	return w.scripts[w.refs[ref].script].local("minimumprofit");
+}
+
+// Talking to someone whose script says they are a companion ("companion" not 0): Share (OpenMW's DialogueWindow)
+bool Session::isCompanion(int ref)
+{
+	if (ref < 0 || w.refs[ref].script < 0 || w.refs[ref].script >= (int)w.scripts.size())
+		return false;
+	const float* v = w.scripts[w.refs[ref].script].local("companion");
+	return v && (int)*v != 0;
+}
+
 // One stack out of the open container into the player's inventory (the owner's claim when it has one)
 void Session::containerTake(int i, bool checkOwner)
 {
 	Ref& c = w.refs[containerRef];
 	if (i < 0 || i >= (int)c.contents.size())
 		return;
+	if (companionSharing)
+	{
+		checkOwner = false;              // (a companion's share is the player's to take)
+		const Object* o = w.game.object(c.contents[i].second);
+		if (float* p = companionProfit(w, containerRef))
+			*p -= (float)((o ? o->value : 0) * stockCount(c.contents[i].first));
+	}
 	// (what a living, knocked-down NPC carries is theirs: taking it is a theft, with them as the owner)
 	if (checkOwner && (w.ownedByOther(containerRef) || (c.recType == REC_NPC_ && !c.dead)))
 		takeOwned(containerRef, c.contents[i].second, stockCount(c.contents[i].first));
@@ -64,9 +89,27 @@ bool Session::containerPut(int i)
 	w.itemLeft(it.id);
 	// onto a stack of the same that is the player's (not one the container restocks), its wear, soul and charge kept
 	w.refAddStack(c, it);
+	if (companionSharing)
+		if (float* p = companionProfit(w, containerRef))
+			*p += (float)((o ? o->value : 0) * it.count);
 	playSound(-1, "Item Misc Down");
 	logf("container: put %s x%d into %s", it.id.c_str(), it.count, c.id.c_str());
 	return true;
+}
+
+// A companion's share closed: back to the conversation, unless the mercenary is owed (their profit below 0: the warning)
+void Session::companionShareClose()
+{
+	float* p = companionProfit(w, containerRef);
+	if (p && *p < 0.0f)
+		companionWarning = true;
+	else
+	{
+		companionSharing = false;
+		containerRef = -1;
+		screen = SCR_DIALOGUE;
+	}
+	playSound(-1, "Menu Click");
 }
 
 void Session::drawContainer()
@@ -101,7 +144,43 @@ void Session::drawContainer()
 				weight += eo->weight * stockCount(e.first);
 		load = std::to_string((int)weight) + "/" + std::to_string((int)c.obj->capacity);
 	}
+	// A companion's share: their profit so far, when their script keeps one (sProfitValue)
+	if (companionSharing)
+		if (float* p = companionProfit(w, containerRef))
+			load = w.game.gmst("sprofitvalue", "Profit:") + " " + std::to_string((int)*p);
 	header(title, load);
+	// Leaving with the profit below 0: the mercenary warns they will quit (OpenMW's CompanionWindow::exit); they quit,
+	// or the share stays open
+	if (companionSharing && companionWarning)
+	{
+		uiPanel(20, 60, 280, 120);
+		std::vector<std::string> lines = uiWrap(w.game.gmst("scompanionwarningmessage",
+			"Your mercenary is poorer now than when he contracted with you.  Your mercenary will quit if you do not give him "
+			"gold or goods to bring his Profit to a positive value."), 268, 0.42f);
+		float ly = 66;
+		for (auto& l : lines)
+		{
+			uiText(26, ly, 0.42f, col::text, l);
+			ly += uiLineHeight(0.42f);
+		}
+		std::vector<std::string> labels = { w.game.gmst("scompanionwarningbuttonone", "Let the mercenary quit."),
+			w.game.gmst("scompanionwarningbuttontwo", "Return to Companion Share display.") };
+		if (uiButton(24, 150, 134, 24, labels[0]))
+		{
+			// (they quit: the share and the conversation close, their contract script sees it)
+			companionWarning = companionSharing = false;
+			screen = SCR_DIALOGUE;
+			closeScreen();
+			playSound(-1, "Menu Click");
+		}
+		else if (uiButton(162, 150, 134, 24, labels[1]) || (uiIn().down & KEY_B))
+		{
+			companionWarning = false;
+			playSound(-1, "Menu Click");
+		}
+		uiConsume(KEY_A | KEY_B | KEY_X | KEY_L | KEY_R | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
+		return;
+	}
 	int gridY = canPut ? 44 : 26;
 	std::vector<UiGridItem> cells;
 	std::vector<int> mine;             // putting: the inventory index of each cell
@@ -201,6 +280,8 @@ void Session::drawContainer()
 			take(0);
 	if (caught)
 		return;
+	else if (closing && companionSharing)
+		companionShareClose();
 	else if (closing)
 	{
 		if (c.recType == REC_CONT && (!c.obj || !c.obj->organic))   // plants have no lid to close, bodies and pockets none

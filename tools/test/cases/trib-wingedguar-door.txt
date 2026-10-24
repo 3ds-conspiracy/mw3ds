@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-wingedguar-door: the walk from Godsreach's gate to the Winged Guar's street door. The path grid point nearest the
+# door is on the walkway over it (a piece of the grid of its own); DOORTO:<cell>:near ends the route at the street's
+# point in front of the door instead of crossing to the walkway by sight (stuck at 686 -613 221, then warped).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Mournhold,_Godsreach
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Mournhold,_The_Winged_Guar:near
+10 0 0 0 0 UNTIL:cell:Mournhold,_The_Winged_Guar
+0.1 0 0 0 0 EXPECT:cell:Mournhold,_The_Winged_Guar

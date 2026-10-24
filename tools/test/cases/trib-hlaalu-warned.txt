@@ -1,0 +1,52 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-hlaalu-warned: the other way through TR08_Hlaalu: each of the three Hlaalu conspirators, shown the evidence, is
+# warned and let go ("Warn ... and let him escape"): each one's escape stage (TR08_Hlaalu_Hloggar / _Berano / _Alen 1),
+# gone at once, no fight, no bounty; Tienius Delitian then has nobody executed to pay for.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 JOURNAL:TR08_Hlaalu:70
+0.3 0 0 0 0 KNOW:evidence_of_conspiracy
+0.3 0 0 0 0 GOTO:Mournhold,_Temple_Courtyard
+3 0 0 0
+0 0 0 0 0 SETUP-END
+180 0 0 0 0 ACTIVATE:forven%berano
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:evidence_of_conspiracy
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:TR08_Hlaalu_Berano:eq:1
+0.1 0 0 0 0 EXPECT:refenabled:forven%berano:eq:0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 GOTO:Mournhold,_Bookseller
+3 0 0 0
+60 0 0 0 0 ACTIVATE:bedal%alen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:evidence_of_conspiracy
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:TR08_Hlaalu_Alen:eq:1
+0.1 0 0 0 0 EXPECT:refenabled:bedal%alen:eq:0
+0.3 0 0 0 0 GOTO:Old_Mournhold:_West_Sewers
+3 0 0 0
+180 0 0 0 0 ACTIVATE:hloggar%the%bloody
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:evidence_of_conspiracy
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+2 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:journal:TR08_Hlaalu_Hloggar:eq:1
+0.1 0 0 0 0 EXPECT:refenabled:hloggar%the%bloody:eq:0
+0.1 0 0 0 0 EXPECT:journal:TR08_Hlaalu_Berano_A:eq:0
+0.1 0 0 0 0 EXPECT:bounty:eq:0

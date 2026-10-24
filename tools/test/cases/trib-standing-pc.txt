@@ -1,0 +1,22 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-standing-pc: GetStandingPC (OpenMW's getPlayerStandingOn: the object the player's feet rest on). Gedna Relvel's
+# tomb: at Crimson Plague 130 the floor stone act_plague_rock3 (moved by its script, so no baked collision) sinks under
+# the player standing on it, and its script sets the journal to 140. Its drawn box top is 50 units over where the feet
+# rest on it, so a feet-against-box-top test never fired.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 JOURNAL:MS_CrimsonPlague:130
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Gedna_Relvel's_Tomb
+4 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:130
+0.3 0 0 0 0 TPIN:-1990:1944:-480:270
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:130
+0.3 0 0 0 0 CON:"act_plague_rock3"->GetStandingPC
+0.1 0 0 0 0 EXPECT:conval:eq:0
+60 0 0 0 0 WALKTO:@-2158,1944,-585
+0.3 0 0 0 0 CON:"act_plague_rock3"->GetStandingPC
+0.1 0 0 0 0 EXPECT:conval:eq:1
+6 0 0 0
+0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:140

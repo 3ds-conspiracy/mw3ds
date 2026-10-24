@@ -34,6 +34,7 @@ int takeSlots(std::vector<std::pair<int, int>>& free, int n);
 void freeSlots(std::vector<std::pair<int, int>>& free, int first, int n);
 void appendRefs(World& w, int cellIndex, ParsedRefs& p);
 void hideRanges(World& w, Ref& ref);
+void hideCollision(World& w, Ref& ref);
 void showRanges(World& w, Ref& ref);
 
 static inline bool isItemType(const std::string& t)

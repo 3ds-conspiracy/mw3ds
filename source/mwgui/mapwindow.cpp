@@ -217,6 +217,15 @@ static void drawMapMarker(float cx, float cy, float size, bool lit)
 	ringRect(x + 1 + t, y + 1 + t, size - 2 - 2 * t, size - 2 - 2 * t, 1.0f, dim);
 }
 
+// A map note's marker (Tribunal's notes): a small red square, brighter while its text shows (OpenMW's custom marker)
+static const int kMapNoteId = WindowManagerState::kMapNoteId;
+static void drawNoteMarker(float cx, float cy, bool lit)
+{
+	float x = roundf(cx - 4), y = roundf(cy - 4);
+	uiRect(x, y, 8, 8, C2D_Color32(20, 8, 6, 200));
+	uiRect(x + 1, y + 1, 6, 6, lit ? C2D_Color32(255, 90, 60, 255) : C2D_Color32(200, 40, 30, 255));
+}
+
 // A marker's name in a framed box above it (below when there's no room), kept inside the view
 static void drawMapTip(const std::string& name, float mx, float my, float x, float y, float vw)
 {
@@ -462,6 +471,15 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 				markers.push_back({ sx, sy, size, (int)k, l.text });
 			}
 		}
+		// The player's notes outdoors (Tribunal)
+		{
+			for (size_t k = 0; k < w.mapNotes.size(); k++)
+			{
+				float sx, sy;
+				if (w.mapNotes[k].cell.empty() && toScreen(w.mapNotes[k].x, w.mapNotes[k].y, &sx, &sy))
+					markers.push_back({ sx, sy, 8.0f, kMapNoteId + (int)k, w.mapNotes[k].text });
+			}
+		}
 		if (outside)
 		{
 			drawDetected(toScreen);
@@ -525,6 +543,20 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 			}
 			markers.push_back({ dx, dy, full ? 14.0f : 11.0f, i, w.game.cellLabel(r.destCell) });
 		});
+		// The player's notes here (Tribunal): an interior's own, or the outdoors'
+		{
+			std::string here = outside ? std::string() : lower(w.cells[w.current].name.str());
+			for (size_t k = 0; k < w.mapNotes.size(); k++)
+			{
+				const World::MapNote& nt = w.mapNotes[k];
+				if (nt.cell != here)
+					continue;
+				float tx = (nt.x - localMin[0]) / localSize * texSize, ty = (localMin[1] + localSize - nt.y) / localSize * texSize;
+				float dx = roundf(ox + tx * s), dy = roundf(oy + ty * s);
+				if (dx >= x && dx <= x + vw && dy >= y && dy <= y + vh)
+					markers.push_back({ dx, dy, 8.0f, kMapNoteId + (int)k, nt.text });
+			}
+		}
 		drawDetected([&](float mx, float my, float* sx, float* sy) {
 			*sx = ox + (mx - localMin[0]) / localSize * texSize * s;
 			*sy = oy + (localMin[1] + localSize - my) / localSize * texSize * s;
@@ -533,10 +565,14 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 		ax = ox + px * s;
 		ay = oy + py * s;
 		arrow = true;
-		// the fog over the picture, the markers under it drawn first
+		// the fog over the picture, the markers under it drawn first (notes over it: the player wrote them)
 		for (auto& mk : markers)
-			drawMapMarker(mk.sx, mk.sy, mk.size, false);
+			if (mk.id < kMapNoteId)
+				drawMapMarker(mk.sx, mk.sy, mk.size, false);
 		drawLocalFog(ox, oy, picture);
+		for (auto& mk : markers)
+			if (mk.id >= kMapNoteId)
+				drawNoteMarker(mk.sx, mk.sy, false);
 	}
 	else
 		uiTextCentered(x + vw / 2, y + vh / 2 - 8, 0.45f, col::textDim, outside && !local ? "No map" : "...");
@@ -562,11 +598,21 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 	}
 	if (!local)
 		for (auto& mk : markers)
-			drawMapMarker(mk.sx, mk.sy, mk.size, mk.id == pinned);
+		{
+			if (mk.id >= kMapNoteId)
+				drawNoteMarker(mk.sx, mk.sy, mk.id == pinned);
+			else
+				drawMapMarker(mk.sx, mk.sy, mk.size, mk.id == pinned);
+		}
 	else
 		for (auto& mk : markers)
 			if (mk.id == pinned)
-				drawMapMarker(mk.sx, mk.sy, mk.size, true);
+			{
+				if (mk.id >= kMapNoteId)
+					drawNoteMarker(mk.sx, mk.sy, true);
+				else
+					drawMapMarker(mk.sx, mk.sy, mk.size, true);
+			}
 	if (arrow)
 		drawPlayerArrow(ax, ay, w.player.yaw);
 	for (auto& mk : markers)
@@ -607,6 +653,10 @@ void Session::drawMap()
 		}
 	}
 	drawMapView(0, 22, 320, 184, zoom, true, mapLocal);
+	// Tribunal's map notes: Y writes one at the view's centre (its cross), X edits the one whose text shows, Y on it asks
+	// to delete it (sDeleteNote); with the add-on only
+	if (w.game.tribunal())
+		mapNotesUi(zoom, outside);
 	// The other map (Morrowind's World / Local button), zoom - and +, Close. The D-pad pans, so it doesn't move
 	// the buttons' focus
 	uiConsume(KEY_LEFT | KEY_RIGHT);
@@ -636,4 +686,70 @@ void Session::drawMap()
 		mapZoomIdx++;
 	if (uiButton(236, 208, 80, 28, w.game.gmst("sclose", "Close")) || (in.down & KEY_B))
 		closeScreen();
+}
+
+// Tribunal's map notes on the map screen (OpenMW: a custom marker, its note written in sEditNote's dialog and deleted
+// after sDeleteNote's question): Y writes a new one at the view's centre, X edits the one whose text shows, Y on it asks
+// to delete it. Notes are the outdoors' (cell "") or an interior's
+void Session::mapNotesUi(float zoom, bool outside)
+{
+	const UiInput& in = uiIn();
+	(void)zoom;
+	int& pinned = mapLocal ? mapDoorTip : mapPlaceTip;
+	int note = pinned >= kMapNoteId && pinned - kMapNoteId < (int)w.mapNotes.size() ? pinned - kMapNoteId : -1;
+	// the cross the new note goes under, the hint
+	uiRect(158, 22 + 92 - 0.5f, 5, 1, col::textDim);
+	uiRect(160 - 0.5f, 22 + 90, 1, 5, col::textDim);
+	uiText(4, 192, 0.36f, col::textDim, note >= 0 ? "X: edit note   Y: delete" : "Y: note here");
+	if (mapNoteAsk)
+	{
+		uiPanel(70, 80, 180, 70);
+		uiTextCentered(160, 92, 0.45f, col::text, w.game.gmst("sdeletenote", "Delete Note?"));
+		bool yes = uiButton(84, 116, 70, 24, w.game.gmst("syes", "Yes")) || (in.down & KEY_A);
+		bool no = uiButton(166, 116, 70, 24, w.game.gmst("sno", "No")) || (in.down & KEY_B);
+		if (yes && note >= 0)
+		{
+			w.mapNotes.erase(w.mapNotes.begin() + note);
+			pinned = -1;
+			logf("map: note deleted (%d notes)", (int)w.mapNotes.size());
+		}
+		if (yes || no)
+		{
+			mapNoteAsk = false;
+			playSound(-1, "Menu Click");
+		}
+		uiConsume(KEY_A | KEY_B | KEY_X | KEY_Y);
+		return;
+	}
+	if ((in.down & KEY_X) && note >= 0)
+	{
+		mapNoteEdit = note;
+		wantText = TEXT_MAPNOTE;
+		playSound(-1, "Menu Click");
+	}
+	else if ((in.down & KEY_Y) && note >= 0)
+		mapNoteAsk = true;
+	else if (in.down & KEY_Y)
+	{
+		// the view's centre as a world spot
+		if (mapLocal)
+		{
+			// (before the local map is drawn its bounds aren't known: the note goes where the player stands)
+			bool ready = localMapCell == (outside ? -2 : w.current);
+			mapNoteAt[0] = ready ? localMin[0] + mapCX / 256.0f * localSize : w.player.feet[0];
+			mapNoteAt[1] = ready ? localMin[1] + localSize - mapCY / 256.0f * localSize : w.player.feet[1];
+			mapNoteCell = outside ? std::string() : lower(w.cells[w.current].name.str());
+		}
+		else
+		{
+			const MapDef& m = w.game.map;
+			mapNoteAt[0] = m.originX + mapCX * m.unitsPerPixel;
+			mapNoteAt[1] = m.originY + (m.height - mapCY) * m.unitsPerPixel;
+			mapNoteCell.clear();
+		}
+		mapNoteEdit = -1;
+		wantText = TEXT_MAPNOTE;
+		playSound(-1, "Menu Click");
+	}
+	uiConsume(KEY_X | KEY_Y);
 }

@@ -212,6 +212,22 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 		if (outTimer > 0.0f)
 		{
 			outTimer -= dt;
+			// (a stretch after one that moved the body under 40 units: the head held against a ceiling's edge, pushed back by
+			// it, no way round moved the body, Red Mountain's rim on the way to Bthuand. Let go of the rise and sink for the
+			// first half second, as a player does before going round a roof's edge)
+			if (outSink && outTimer > (s.kitV2() ? 4.0f : 2.5f) - 0.5f)
+			{
+				in.up = false;
+				in.down = true;
+				if (s.kitV2() && p.flySpeed > 500.0f)
+				{
+					outDuty += 500.0f / p.flySpeed;
+					if (outDuty >= 1.0f)
+						outDuty -= 1.0f;
+					else
+						in.down = false;
+				}
+			}
 			// (v2 kit: its first try is the open sky below, an extra one: v1's four ways round follow it as they were)
 			p.yaw = atan2f(dx, dy) + (s.kitV2() ? outTries - 1 : outTries) * 1.5708f;
 			// (v2 kit: to the nearest open sky found, not a guessed way round; there, the rise is tried again)
@@ -246,6 +262,9 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 				fail("can't climb (a ceiling): fly out of the building first");
 				return false;
 			}
+			outSink = outTries > 2 && hypotf(p.feet[0] - outStart[0], p.feet[1] - outStart[1]) < 40.0f;
+			outStart[0] = p.feet[0];
+			outStart[1] = p.feet[1];
 			logf("drive: FLYTO %s: no rise at %.0f %.0f %.0f, stepping out sideways (way %d)", id.c_str(), p.feet[0], p.feet[1], p.feet[2], outTries);
 			outAimed = false;
 			if (s.kitV2() && outTries == 1)   // (first: the nearest open sky; then v1's ways round, 2000 units)
@@ -675,7 +694,7 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 		repathTimer = 0.0f;
 		float to[3];
 		walkTarget(r, kind == ACTIVATE && !pointGoal, to);
-		if (planPath(s, p.feet, to, pointGoal, path))
+		if (planPath(s, p.feet, to, pointGoal, path, ownPiece))
 			logf("drive: route to %s found, %d path points", id.c_str(), (int)path.size());
 	}
 	if (waitRoute && path.empty())

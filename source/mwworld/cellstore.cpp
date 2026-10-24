@@ -46,6 +46,51 @@ static void readVec3(const cJSON* a, float* out)
 // An actor reference's starting state from its record: stats, AI package, arrows
 // What a container / NPC / creature holds: its record's items, leveled lists picked for the player's
 // level (seeded, so the same each time the cell is read; "each": every one of the count separately)
+// An interior's water at a new height: its surface batches move with it (the converter gives a cell whose scripts move
+// the water a surface over its whole floor plan: the floors hide what lies below them)
+void moveCellWater(Cell& c, float z)
+{
+	float d = z - c.waterZ;
+	c.waterZ = z;
+	if (d == 0.0f)
+		return;
+	for (auto& b : c.batches)
+		if (b.flags & BATCH_SCROLL)
+		{
+			b.posOffset[2] += d;
+			b.bmin[2] += d;
+			b.bmax[2] += d;
+		}
+}
+
+// GetWaterLevel (OpenMW): outdoors 0 (the original game's oddity, the sea is at -1), an interior's water height, or the
+// lowest number there is for one with no water
+float World::scriptWaterLevel() const
+{
+	if (current < 0 || !cells[current].interior)
+		return 0.0f;
+	const LoadedCell* l = cells[current].live;
+	auto it = waterLevels.find(lower(cells[current].name.str()));
+	if (l && l->cell.hasWater())
+		return l->cell.waterZ;
+	if (it != waterLevels.end())
+		return it->second;
+	return -3.4e38f;
+}
+
+// SetWaterLevel / ModWaterLevel: the player's interior only (OpenMW refuses an exterior); kept for the cell
+void World::setScriptWaterLevel(float z)
+{
+	if (current < 0 || !cells[current].interior)
+	{
+		logf("script: can't set the water level outdoors");
+		return;
+	}
+	waterLevels[lower(cells[current].name.str())] = z;
+	if (LoadedCell* l = cells[current].live)
+		moveCellWater(l->cell, z);
+}
+
 void fillContents(const GameData& g, Ref& ref, int level, unsigned seed)
 {
 	if (!ref.obj)
@@ -376,8 +421,8 @@ void appendRefs(World& w, int cellIndex, ParsedRefs& p)
 			continue;
 		}
 		w.pendingSpawns.erase(w.pendingSpawns.begin() + k);
-		int ri = w.spawnActor(p.id, p.pos, p.yaw, cellIndex);
-		if (ri >= 0)
+		int ri = w.placeObject(p.id, cellIndex, p.pos, p.yaw);      // (a person or creature, or an object a script placed)
+		if (ri >= 0 && w.refs[ri].actor >= 0)
 		{
 			w.refs[ri].health = p.health;
 			w.refs[ri].dead = p.dead;
@@ -530,6 +575,7 @@ void World::applyCellState(int c)
 	};
 	const cJSON* it;
 	int skipped = 0;
+	bool movedIn = false;
 	cJSON_ArrayForEach(it, cJSON_GetObjectItem(st, "refs"))
 	{
 		int i = at(it, "i", "id");
@@ -547,9 +593,15 @@ void World::applyCellState(int c)
 				spawned.push_back(i);
 				if (cells[ac].live && refs[i].actor >= 0)
 					attachSpawned(i);
+				movedIn |= cells[ac].live != nullptr;
 			}
 		}
 	}
+	// (one moved into a cell already loaded joins its lists: the crosshair, the actors' updates. A save loaded in the
+	// Temple Gardens read the Temple basement after the Gardens, and Shunari Eye-Fly, moved there by PositionCell, could
+	// not be aimed at nor talked to until the next cell change)
+	if (movedIn)
+		rebuildLoadedLists();
 	cJSON_ArrayForEach(it, cJSON_GetObjectItem(st, "scripts"))
 	{
 		int i = at(it, "ref", "ref_id");

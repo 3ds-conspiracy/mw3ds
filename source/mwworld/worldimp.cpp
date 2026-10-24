@@ -193,6 +193,75 @@ int World::dropItem(const InventoryItem& it, const float pos[3], float yaw, int 
 	return slot;
 }
 
+// PlaceItem / PlaceItemCell (OpenMW's placeObject): a person or creature placed as PlaceAtMe places them, an item as one
+// dropped there, anything else (Tribunal's dart trap projectile, an activator) as an object of its own with its script
+// running from the start (drawn when it has a world visual: particles.WORLD_FX). Nothing for an id the game lacks
+int World::placeObject(const std::string& id, int cell, const float pos[3], float yaw)
+{
+	std::string l = lower(id);
+	if (game.spawns.count(l))
+		return spawnActor(l, pos, yaw, cell);
+	const Object* o = game.object(l);
+	if (!o)
+	{
+		// (Tribunal's Bamz-Amschend fight watcher places in_dwe_all_tribunal, which no file has: OpenMW stops that
+		// script with an error, the original game places nothing either)
+		logf("world: can't place %s (no such object)", id.c_str());
+		return -1;
+	}
+	switch (o->recType)
+	{
+	case REC_MISC: case REC_WEAP: case REC_ARMO: case REC_CLOT: case REC_ALCH: case REC_INGR: case REC_BOOK:
+	case REC_APPA: case REC_LOCK: case REC_PROB: case REC_REPA: case REC_LIGH:
+		return dropItem({ l, 1, false }, pos, yaw, cell);
+	default: break;
+	}
+	int c = cell >= 0 ? cell : current;
+	if (cell < 0 && c >= 0 && !cells[c].interior)
+	{
+		int g = gridCell((int)floorf(pos[0] / 8192.0f), (int)floorf(pos[1] / 8192.0f));
+		if (g >= 0 && cells[g].live)
+			c = g;
+	}
+	if (c < 0)
+		return -1;
+	Ref r;
+	r.cell = c;
+	r.id = o->id.str();
+	r.idLower = l;
+	r.type = o->type; r.recType = o->recType;
+	r.obj = o;
+	memcpy(r.pos, pos, sizeof(r.pos));
+	memcpy(r.home, pos, sizeof(r.home));
+	r.rot[0] = r.rot[1] = 0.0f;
+	r.rot[2] = yaw;
+	r.count = 1;
+	r.moved = true;
+	r.hasBox = true;
+	for (int k = 0; k < 3; k++)
+	{
+		r.boxMin[k] = pos[k] - (k < 2 ? 16.0f : 0.0f);
+		r.boxMax[k] = pos[k] + (k < 2 ? 16.0f : 32.0f);
+	}
+	memcpy(r.start, pos, sizeof(r.pos));
+	memcpy(r.boxStart, r.boxMin, sizeof(r.boxMin));
+	memcpy(r.boxStart + 3, r.boxMax, sizeof(r.boxMax));
+	int slot = takeSlots(freeRefs, 1);
+	if (slot < 0)
+	{
+		slot = refs.size();
+		refs.emplace_back();
+	}
+	refs[slot] = std::move(r);
+	refs[slot].spawnedRef = true;
+	refsChanged();
+	spawned.push_back(slot);
+	rebuildLoadedLists();
+	startScriptFor(slot);
+	logf("world: placed %s at %.0f %.0f %.0f", id.c_str(), pos[0], pos[1], pos[2]);
+	return slot;
+}
+
 int World::dropItemAt(const InventoryItem& it, const float base[3], float yaw, float dist)
 {
 	float pos[3] = { base[0] + sinf(yaw) * dist, base[1] + cosf(yaw) * dist, base[2] };
@@ -419,6 +488,7 @@ bool World::load(const char* dir, const std::string& startCell)
 		lc.gy = c.gy;
 		lc.sea = c.sea;
 		lc.noSleep = c.noSleep;
+		lc.sky = c.sky;
 		lc.region = c.region;
 		if (!c.interior)
 			gridIndex[((long long)c.gx << 32) ^ (unsigned)c.gy] = cells.size();
@@ -562,12 +632,39 @@ void hideRanges(World& w, Ref& ref)
 		ref.savedIndices.push_back(0);   // marker: hidden
 }
 
+// A visible object whose collision went with its death group (World::collisionGone): only its collision hidden
+void hideCollision(World& w, Ref& ref)
+{
+	LoadedCell* live = w.cells[ref.cell].live;
+	if (live && ref.colCount && ref.savedCol.empty())
+		collisionHideTris(live->cell.collision, ref.colFirst, ref.colCount, ref.savedCol);
+}
+
+void World::loseCollision(int ri)
+{
+	if (ri < 0 || ri >= (int)refs.size() || !refs[ri].colCount)
+		return;
+	refs[ri].colGone = true;
+	hideCollision(*this, refs[ri]);
+}
+
+void World::regainCollision(int ri)
+{
+	if (ri < 0 || ri >= (int)refs.size() || !refs[ri].colGone)
+		return;
+	Ref& ref = refs[ri];
+	ref.colGone = false;
+	LoadedCell* live = cells[ref.cell].live;
+	if (live && ref.visible())
+		collisionShowTris(live->cell.collision, ref.colFirst, ref.colCount, ref.savedCol);
+}
+
 void showRanges(World& w, Ref& ref)
 {
 	LoadedCell* live = w.cells[ref.cell].live;
 	if (!live)
 		return;
-	if (ref.colCount)
+	if (ref.colCount && !ref.colGone)
 		collisionShowTris(live->cell.collision, ref.colFirst, ref.colCount, ref.savedCol);
 	size_t pos = 0;
 	for (auto& r : ref.ranges)
@@ -606,6 +703,142 @@ float World::distanceToPlayer(int ri) const
 		return 100000.0f;
 	float dx = r.pos[0] - player.feet[0], dy = r.pos[1] - player.feet[1], dz = r.pos[2] - player.feet[2];
 	return sqrtf(dx * dx + dy * dy + dz * dz);
+}
+
+// A moved / turned object's own shape as boxes. OpenMW keeps an object's collision shape with it as a script moves or
+// turns it (PhysicsSystem::updatePosition / updateRotation); here the converter keeps such an object out of the baked
+// collision and only its drawn mesh is loaded, so the shape comes from that mesh, placed as the level placed it. Its
+// triangles are laid on a grid in XY (32-unit squares, wider for a huge object), each square taking the height and the
+// reach of the triangles over it, and squares in a row with the same heights join into one box. A ring wall stays a ring
+// with its inside free (Tribunal's weather machine in Skybreak Gallery: the player lands inside it), a portcullis its
+// bars. Worked out once per object (World::update keeps them, moved with the object), not every frame
+static void moverBoxes(const Ref& ref, const DoorMesh& mesh, std::vector<CollisionBox>& out)
+{
+	// the drawn transform (RenderingManager): translate * X(-x) * Y(-y) * Z(-z) * scale, at the placed spot and angles
+	float cx = cosf(-ref.startRot[0]), sx = sinf(-ref.startRot[0]);
+	float cy = cosf(-ref.startRot[1]), sy = sinf(-ref.startRot[1]);
+	float cz = cosf(-ref.start[3]), sz = sinf(-ref.start[3]);
+	auto place = [&](const float* v, float* o)
+	{
+		float x = v[0] * ref.scale, y = v[1] * ref.scale, z = v[2] * ref.scale;
+		float x1 = cz * x - sz * y, y1 = sz * x + cz * y;
+		float x2 = cy * x1 + sy * z, z2 = -sy * x1 + cy * z;
+		o[0] = ref.start[0] + x2;
+		o[1] = ref.start[1] + cx * y1 - sx * z2;
+		o[2] = ref.start[2] + sx * y1 + cx * z2;
+	};
+	std::vector<float> tris;     // 9 floats a triangle, in the world
+	float lo[2] = { 1e30f, 1e30f }, hi[2] = { -1e30f, -1e30f };
+	for (const CellBatch& b : mesh.batches)
+	{
+		if (!b.verts || !b.indices)
+			continue;
+		const u8* base = (const u8*)b.verts;
+		for (u32 t = 0; t + 2 < b.numIndices; t += 3)
+		{
+			float tri[9];
+			bool ok = true;
+			for (int k = 0; k < 3 && ok; k++)
+			{
+				u32 vi = b.indices[t + k];
+				ok = vi < b.numVerts;
+				if (!ok)
+					break;
+				const u8* v = base + vi * b.stride;
+				float local[3];
+				if (b.stride == CELL_VERTEX_SIZE_PACKED)
+					for (int a = 0; a < 3; a++)
+						local[a] = b.posOffset[a] + ((const s16*)v)[a] * b.posScale[a];
+				else
+					memcpy(local, v, sizeof(local));
+				place(local, tri + k * 3);
+				for (int a = 0; a < 2; a++)
+				{
+					lo[a] = fminf(lo[a], tri[k * 3 + a]);
+					hi[a] = fmaxf(hi[a], tri[k * 3 + a]);
+				}
+			}
+			if (ok)
+				tris.insert(tris.end(), tri, tri + 9);
+		}
+	}
+	if (tris.empty())
+		return;
+	float cs = 32.0f;
+	while (((hi[0] - lo[0]) / cs + 1.0f) * ((hi[1] - lo[1]) / cs + 1.0f) > 4096.0f)
+		cs *= 2.0f;
+	int nx = (int)((hi[0] - lo[0]) / cs) + 1, ny = (int)((hi[1] - lo[1]) / cs) + 1;
+	// each square: the height range of the triangles over it, and their reach inside it (a thin wall stays thin)
+	struct Square { float z0 = 1e30f, z1 = -1e30f, x0 = 1e30f, x1 = -1e30f, y0 = 1e30f, y1 = -1e30f; };
+	std::vector<Square> sq((size_t)nx * ny);
+	for (size_t t = 0; t + 8 < tris.size(); t += 9)
+	{
+		const float* p = &tris[t];
+		float tx0 = fminf(p[0], fminf(p[3], p[6])), tx1 = fmaxf(p[0], fmaxf(p[3], p[6]));
+		float ty0 = fminf(p[1], fminf(p[4], p[7])), ty1 = fmaxf(p[1], fmaxf(p[4], p[7]));
+		float tz0 = fminf(p[2], fminf(p[5], p[8])), tz1 = fmaxf(p[2], fmaxf(p[5], p[8]));
+		int ix0 = (int)((tx0 - lo[0]) / cs), ix1 = std::min(nx - 1, (int)((tx1 - lo[0]) / cs));
+		int iy0 = (int)((ty0 - lo[1]) / cs), iy1 = std::min(ny - 1, (int)((ty1 - lo[1]) / cs));
+		for (int iy = iy0; iy <= iy1; iy++)
+			for (int ix = ix0; ix <= ix1; ix++)
+			{
+				// the square and the triangle (seen from above) overlap unless one of the triangle's edges parts them
+				float rx0 = lo[0] + ix * cs, ry0 = lo[1] + iy * cs, rx1 = rx0 + cs, ry1 = ry0 + cs;
+				bool apart = false;
+				for (int e = 0; e < 3 && !apart; e++)
+				{
+					const float* a = p + e * 3;
+					const float* b = p + ((e + 1) % 3) * 3;
+					float nxv = a[1] - b[1], nyv = b[0] - a[0];
+					float t0 = 1e30f, t1 = -1e30f, r0 = 1e30f, r1 = -1e30f;
+					for (int k = 0; k < 3; k++)
+					{
+						float d = nxv * p[k * 3] + nyv * p[k * 3 + 1];
+						t0 = fminf(t0, d);
+						t1 = fmaxf(t1, d);
+					}
+					for (int k = 0; k < 4; k++)
+					{
+						float d = nxv * (k & 1 ? rx1 : rx0) + nyv * (k & 2 ? ry1 : ry0);
+						r0 = fminf(r0, d);
+						r1 = fmaxf(r1, d);
+					}
+					apart = r1 < t0 || r0 > t1;
+				}
+				if (apart)
+					continue;
+				Square& s = sq[(size_t)iy * nx + ix];
+				s.z0 = fminf(s.z0, tz0);
+				s.z1 = fmaxf(s.z1, tz1);
+				s.x0 = fminf(s.x0, fmaxf(tx0, rx0));
+				s.x1 = fmaxf(s.x1, fminf(tx1, rx1));
+				s.y0 = fminf(s.y0, fmaxf(ty0, ry0));
+				s.y1 = fmaxf(s.y1, fminf(ty1, ry1));
+			}
+	}
+	for (int iy = 0; iy < ny; iy++)
+		for (int ix = 0; ix < nx;)
+		{
+			Square run = sq[(size_t)iy * nx + ix++];
+			if (run.z0 > run.z1)
+				continue;
+			for (; ix < nx; ix++)
+			{
+				const Square& s = sq[(size_t)iy * nx + ix];
+				if (s.z0 > s.z1 || fabsf(s.z0 - run.z0) > 8.0f || fabsf(s.z1 - run.z1) > 8.0f)
+					break;
+				run.z0 = fminf(run.z0, s.z0);
+				run.z1 = fmaxf(run.z1, s.z1);
+				run.x0 = fminf(run.x0, s.x0);
+				run.x1 = fmaxf(run.x1, s.x1);
+				run.y0 = fminf(run.y0, s.y0);
+				run.y1 = fmaxf(run.y1, s.y1);
+			}
+			CollisionBox box;
+			box.min[0] = run.x0; box.min[1] = run.y0; box.min[2] = run.z0;
+			box.max[0] = run.x1; box.max[1] = run.y1; box.max[2] = run.z1;
+			out.push_back(box);
+		}
 }
 
 void World::update(float dt)
@@ -717,17 +950,35 @@ void World::update(float dt)
 		Cell& cell = cells[ref.cell].live->cell;
 		if (ref.recType != REC_DOOR)
 		{
-			// Moved / turned by scripts (gates, Dwemer doors, platforms): the box goes where it went, and
-			// blocks while it's turned less than ~17 degrees from where it started
+			// Moved / turned by scripts (gates, Dwemer doors, platforms, a ring wall): its own shape as boxes (moverBoxes),
+			// gone where it went, blocking while it's turned less than ~17 degrees from where it started (the turn
+			// itself is left out, as for its box before). A ring wall used to be one box of all of it, holding a player
+			// who stood inside it (Skybreak Gallery)
 			float turned = fmaxf(fabsf(angleDelta(ref.rot[2], ref.start[3])),
 				fmaxf(fabsf(angleDelta(ref.rot[0], ref.startRot[0])), fabsf(angleDelta(ref.rot[1], ref.startRot[1]))));
 			ref.fitBox();
-			if (ref.visible() && ref.hasBox && turned < 0.3f)
+			if (ref.visible() && turned < 0.3f && ref.doorMesh < (int)cell.doors.size() && cell.doors[ref.doorMesh].ref == i)
 			{
-				CollisionBox box;
-				memcpy(box.min, ref.boxMin, sizeof(box.min));
-				memcpy(box.max, ref.boxMax, sizeof(box.max));
-				cell.blockers.push_back(box);
+				MoverShape& ms = moverShapes[i];
+				if (ms.cell != ref.cell || ms.mesh != ref.doorMesh || ms.scale != ref.scale)
+				{
+					ms.cell = ref.cell;
+					ms.mesh = ref.doorMesh;
+					ms.scale = ref.scale;
+					ms.boxes.clear();
+					moverBoxes(ref, cell.doors[ref.doorMesh], ms.boxes);
+				}
+				float d[3] = { ref.pos[0] - ref.start[0], ref.pos[1] - ref.start[1], ref.pos[2] - ref.start[2] };
+				for (const CollisionBox& b : ms.boxes)
+				{
+					CollisionBox box = b;
+					for (int k = 0; k < 3; k++)
+					{
+						box.min[k] += d[k];
+						box.max[k] += d[k];
+					}
+					cell.blockers.push_back(box);
+				}
 			}
 			continue;
 		}
@@ -784,6 +1035,31 @@ void World::update(float dt)
 
 static bool isActivatable(const Ref& r);
 
+// OpenMW keeps, for each actor, the object its ground trace last hit (MovementSolver; Actor::getStandingOnPtr), and
+// GetStandingPC / GetStandingActor ask whether that is this object. An object scripts move has no baked collision here,
+// only its boxes (moverBoxes): feet over one of them, from its bottom to a little over its top, are on it. A floor stone
+// sunk into a sloping floor (Tribunal's act_plague_rock3 in Gedna Relvel's tomb: drawn top 50 over the floor that holds
+// the feet) has the feet inside its shape, where OpenMW's body rests on its top. Any other object: feet over its box,
+// at its top
+bool World::feetOnObject(int ri, const float* f) const
+{
+	const Ref& r = refs[ri];
+	if (!r.hasBox || !r.visible())
+		return false;
+	auto ms = moverShapes.find(ri);
+	if (ms != moverShapes.end() && !ms->second.boxes.empty())
+	{
+		float d[3] = { r.pos[0] - r.start[0], r.pos[1] - r.start[1], r.pos[2] - r.start[2] };
+		for (const CollisionBox& b : ms->second.boxes)
+			if (f[0] >= b.min[0] + d[0] && f[0] <= b.max[0] + d[0] && f[1] >= b.min[1] + d[1] && f[1] <= b.max[1] + d[1]
+				&& f[2] >= b.min[2] + d[2] - 2.0f && f[2] <= b.max[2] + d[2] + 30.0f)
+				return true;
+		return false;
+	}
+	return f[0] >= r.boxMin[0] && f[0] <= r.boxMax[0] && f[1] >= r.boxMin[1] && f[1] <= r.boxMax[1]
+		&& fabsf(f[2] - r.boxMax[2]) < 30.0f;
+}
+
 float angleDelta(float a, float b)
 {
 	float d = fmodf(a - b, 6.2831853f);
@@ -797,6 +1073,11 @@ void World::rebuildLoadedLists()
 	loadedActors.clear();
 	loadedDoors.clear();
 	loadedPickables.clear();
+	for (auto it = moverShapes.begin(); it != moverShapes.end();)
+	{
+		bool keep = it->first < (int)refs.size() && refs[it->first].cell >= 0 && cells[refs[it->first].cell].live;
+		it = keep ? std::next(it) : moverShapes.erase(it);
+	}
 	forLoadedRefs([&](int i) {
 		const Ref& r = refs[i];
 		if (r.actor >= 0)

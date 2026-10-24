@@ -27,6 +27,7 @@
 #include "components/debug/profile.hpp"
 #include "mwbase/session.hpp"
 #include "mwmechanics/combathelpers.hpp"
+#include "mwmechanics/magiceffects.hpp"
 
 static const float kHeldLightShare = 0.5f;           // a held torch's colour on its holder (Actor::heldLight), against OpenMW
 
@@ -815,12 +816,25 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		if (const Actor* fa = w.actorOf(i))
 			if (fa->frozen)
 				return;
+		// their abilities' Restore Health / Fatigue / Magicka work every second, as a spell's do (Tribunal's Imperfect
+		// rebuilds itself: regen_imperfect; Gedna Relvel's refill)
+		if (!menu && !r.dead && r.actor >= 0)
+			for (auto& c : w.game.actors[r.actor].constEffects)
+			{
+				if (c.first == EFF_RESTORE_HEALTH) r.health = fminf(r.healthMax, r.health + c.second * dt);
+				else if (c.first == EFF_RESTORE_FATIGUE) r.fatigue = fminf(r.fatigueMax, r.fatigue + c.second * dt);
+				else if (c.first == EFF_RESTORE_MAGICKA) r.magicka = fminf(r.magickaMax, r.magicka + c.second * dt);
+			}
 		if (!r.effects.empty() && !menu)
 			updateActorEffects(i, dt);
 		if (r.dead)
 			return;
 		if (w.bounty <= 0)
 			r.alarmed = false;            // the crime is paid for: calm again (OpenMW's crime id)
+		// a witness of a crime paid for since, wherever it was paid (a guard in another cell, jail): calmed when next
+		// updated (OpenMW's Actors::updateActor). Mehra Helas stayed in the fight for good after the Natural assault
+		if (r.crimeId >= 0 && r.crimeId <= w.crimeIdPaid)
+			calmWitness(i);
 		// (the player's rule: fFatigueReturnBase + fFatigueReturnMult x their Endurance a second)
 		if (r.fatigue < r.fatigueMax && !menu)
 			r.fatigue = fminf(r.fatigueMax, r.fatigue + (w.game.gmstf("ffatiguereturnbase", 2.5f)
@@ -845,7 +859,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			if (Actor* ac = w.actorOf(i))
 			{
 				float yaw = 0.0f, pitch = 0.0f;
-				float reach = headTrack * (w.cells[w.current].interior ? headTrackIn : 1.0f);
+				float reach = headTrack * (!w.cells[w.current].underSky() ? headTrackIn : 1.0f);
 				float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1];
 				float dz = playerEyeZ(w.player) - (r.pos[2] + 110.0f);
 				float d2 = dx * dx + dy * dy + dz * dz;
@@ -913,6 +927,8 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				;
 			else if (w.bounty > 0 && strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0 && !menu)
 				guardCheck(i, dt);
+			else if (r.facing && !menu)
+				npcFace(i, dt);
 			else if (r.ally && !menu)
 				allyFight(i, dt);
 			else if (r.aiPackage > AIPKG_WANDER)

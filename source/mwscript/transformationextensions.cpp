@@ -18,6 +18,27 @@ std::optional<float> transformationExtensions(Ctx& c, const Node& n, World& w, b
 	switch (n.func)
 	{
 	// PlaceAtPC / PlaceAtMe id count distance direction (0 front, 1 back, 2 left, 3 right)
+	// PlaceItem id x y z zRot: a new one at that spot in the player's cell (outdoors the cell under it); PlaceItemCell id
+	// cell x y z zRot: in that cell (OpenMW's PlaceItem / PlaceItemCell; the angle in degrees)
+	case F_PLACEITEM: case F_PLACEITEMCELL:
+	{
+		bool inCell = n.func == F_PLACEITEMCELL;
+		int k = inCell ? 2 : 1;
+		int cell = -1;
+		if (inCell)
+		{
+			cell = w.cellIndex(argStr(c, n, 1));
+			if (cell < 0)
+			{
+				c.host.report("unknown cell (" + argStr(c, n, 1) + ")");
+				logf("script: PlaceItemCell: unknown cell %s", argStr(c, n, 1).c_str());
+				return 0.0f;
+			}
+		}
+		float pos[3] = { argNum(c, n, k), argNum(c, n, k + 1), argNum(c, n, k + 2) };
+		w.placeObject(argStr(c, n, 0), cell, pos, argNum(c, n, k + 3) * 3.14159265f / 180.0f);
+		return 0.0f;
+	}
 	case F_PLACEATPC: case F_PLACEATME:
 	{
 		bool atPC = n.func == F_PLACEATPC || !r;

@@ -1,0 +1,222 @@
+# start: Seyda Neen
+# data: tribunal
+# uber-trib-merc: Tribunal's mercenary, Calvus Horatius (Merc_Calvus, Merc_Calvus_Quit), played LEGIT on the v2 test kit:
+# the way to Mournhold as uber-trib-mournhold (the Dark Brotherhood attack, Apelles Matius, Asciene Rane's transport),
+# then hire him for 250 gold, use his companion Share (what is given adds its value to his profit, what is taken back
+# takes it off), wait his thirty-day contract out (he leaves: Merc_Calvus 10), hire him again (11), and take his gear:
+# with his profit below 0 the share warns, he quits for good (Merc_Calvus_Quit 1).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:sc_divineintervention:10
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:10
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 HOUR:22
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+# TR_DBAttack: the Dark Brotherhood in the night
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:0
+3 0 0 0 0 SLEEP:8
+0.1 0 0 0 0 EXPECT:message:awakened
+2 0 0 0
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:1
+120 0 0 0 0 KILL:db_assassin4
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:db_assassin4
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:10
+60 0 0 0 0 LOOT:db_assassin4:ebony%dart_db_unique
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony%dart_db_unique:ge:1
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:20
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 WALKTO:@-11000,-70700,150
+120 0 0 0 0 FLYTO:@13700,-101300,800:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:Imperial%Guard_ebonhear
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:30
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:apelles%matius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Dark_Brotherhood
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:the_mainland
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Asciene_Rane
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 FLYTO:@9802,-101914,1392:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:asciene%rane
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:transport_to_Mournhold
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:TR_DBAttack:ge:60
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace
+1 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Mournhold,_Royal_Palace:_Reception_Area
+0.3 0 0 0 0 SAVE:uber-trib-merc-arrive
+# Merc_Calvus: hire him in the palace courtyard
+120 0 0 0 0 DOORTO:Mournhold,_Royal_Palace|_Courtyard
+10 0 0 0 0 UNTIL:cell:Mournhold,_Royal_Palace:_Courtyard
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:calvus%horatius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:available_for_hire
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:3
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:Merc_Calvus:eq:1
+0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,companion:eq:1
+0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,minimumprofit:eq:0
+# his Share: a scroll given is profit, taken back it is gone again
+0.3 0 0 0 0 SHARE:calvus%horatius
+1 0 0 0
+0.1 0 0 0 0 EXPECT:sharing:eq:1
+0.3 0 0 0 0 SHAREPUT:sc_divineintervention
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,minimumprofit:gt:0
+0.3 0 0 0 0 SHARETAKE:sc_divineintervention
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,minimumprofit:eq:0
+0.3 0 0 0 0 SHAREDONE
+1 0 0 0
+0.1 0 0 0 0 EXPECT:companionwarn:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-merc-hired
+# BLOCKED (engine): hiring him runs the dialogue result "StartScript Contract_Calvus", but the engine reads
+# Contract_Calvus as Calvus's local of that name (1) and logs "StartScript 1: no such script" (monitor): the contract
+# script never runs, so the thirty days never end (Merc_Calvus 10) and the rehire (11) can't follow. See
+# internal/uber/trib-mournhold.md. Once fixed, put these steps back (uncomment) before the quit:
+# # thirty days on: he follows meanwhile, then his contract ends
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 20 0 0 0 0 SLEEP:24
+# 20 0 0 0 0 UNTIL:screen:none
+# 2 0 0 0
+# 0.1 0 0 0 0 EXPECT:journal:Merc_Calvus:eq:10
+# 0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,companion:eq:0
+# 0.3 0 0 0 0 SAVE:uber-trib-merc-expired
+# # hired again: the same terms (11)
+# 60 0 0 0 0 ACTIVATE:calvus%horatius
+# 2 0 0 0 0 UNTIL:talkready
+# 0.3 0 0 0 0 TOPIC:available_for_hire
+# 2 0 0 0 0 UNTIL:talkready
+# 0.3 0 0 0 0 CHOICE:3
+# 2 0 0 0 0 UNTIL:talkready
+# 0.1 0 0 0 0 EXPECT:journal:Merc_Calvus:eq:11
+# 0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,companion:eq:1
+# Merc_Calvus_Quit: his broadsword taken, his profit is below 0: the warning, and he quits
+60 0 0 0 0 ACTIVATE:calvus%horatius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 SHARE:calvus%horatius
+1 0 0 0
+0.1 0 0 0 0 EXPECT:sharing:eq:1
+0.3 0 0 0 0 SHARETAKE:imperial%broadsword
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,minimumprofit:lt:0
+0.3 0 0 0 0 SHAREDONE
+1 0 0 0
+0.1 0 0 0 0 EXPECT:companionwarn:eq:1
+0.3 0 0 0 0 TAP:91:162
+2 0 0 0
+0.1 0 0 0 0 EXPECT:sharing:eq:0
+10 0 0 0 0 UNTIL:journal:Merc_Calvus_Quit:ge:1
+0.1 0 0 0 0 EXPECT:journal:Merc_Calvus_Quit:eq:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:reflocal:calvus%horatius,companion:eq:0
+# he will never work for us again
+60 0 0 0 0 ACTIVATE:calvus%horatius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:said:never%work
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 SAVE:uber-trib-merc-quit

@@ -17,6 +17,8 @@ std::optional<float> controlExtensions(Ctx& c, const Node& n, World& w, bool onP
 	switch (n.func)
 	{
 	// Force flags are the referenced actor's own (the player's, with no reference): only the player's sneak acts
+	// The player is sneaking (OpenMW's GetPCSneaking: the mechanics' isSneaking, the stance held)
+	case F_GETPCSNEAKING: return w.player.sneaking ? 1.0f : 0.0f;
 	case F_FORCESNEAK: case F_CLEARFORCESNEAK: case F_GETFORCESNEAK:
 	case F_FORCERUN: case F_CLEARFORCERUN: case F_GETFORCERUN:
 	case F_FORCEJUMP: case F_CLEARFORCEJUMP: case F_GETFORCEJUMP:

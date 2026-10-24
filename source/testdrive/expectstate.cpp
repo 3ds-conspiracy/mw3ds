@@ -28,6 +28,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "bloodhits") v = (float)s.bloodHits;
 	else if (what == "bloodlow") v = s.bloodLow;
 	else if (what == "bloodhigh") v = s.bloodHigh;
+	else if (what == "bodymeshes") v = s.body.set.actors.empty() ? 0.0f : (float)s.body.set.actors[0].meshes.size();   // the third-person body's meshes
 	else if (what == "bodyhits") v = (float)s.body.hitsPlayed;       // Hit groups the third-person body has played on being struck
 	else if (what == "healthmax") v = st.healthMax;
 	else if (what == "magicka") v = st.magicka;
@@ -76,6 +77,16 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 				v++;
 	}
 	else if (what == "bounty") v = (float)w.bounty;
+	else if (what == "mapnotes") v = (float)w.mapNotes.size();                    // the player's map notes (Tribunal)
+	else if (what == "mapnotehas")      // <text, underscores for spaces>: a map note holds it, 1
+	{
+		v = 0.0f;
+		for (auto& nt : w.mapNotes)
+			if (lower(nt.text).find(lower(spaced(arg))) != std::string::npos)
+				v = 1.0f;
+	}
+	else if (what == "companionwarn") v = s.companionWarning ? 1.0f : 0.0f;      // the mercenary's warning is up
+	else if (what == "sharing") v = s.screen == SCR_CONTAINER && s.companionSharing ? 1.0f : 0.0f;   // a companion's share is open
 	else if (what == "conval") v = s.console.hasValue ? s.console.lastValue : -999999.0f;   // the last console expression's value
 	else if (what == "conerr") v = s.console.lastError ? 1.0f : 0.0f;                    // the last console line did not run
 	else if (what == "armor") v = s.playerArmor();              // the player's armor rating

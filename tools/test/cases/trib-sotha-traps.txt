@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-sotha-traps: Sotha Sil's floor spikes (Collide_damage_100: HurtCollidingActor 100) hurt whoever touches them, the
+# player 100 health a second (OpenMW's hurtCollidingActors); a step away they don't.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HEALTHMAX:5000
+0.3 0 0 0 0 GOTO:Sotha_Sil,_Hall_of_Delirium
+5 0 0 0
+# Clear of them first
+0.3 0 0 0 0 TPIN:-1150:3200:700:0
+3 0 0 0
+0.3 0 0 0 0 SNAP:health
+1 0 0 0
+0.1 0 0 0 0 EXPECT:health:eq:@0
+# On them: about 100 a second
+0.3 0 0 0 0 TPIN:-896:3200:700:0
+1 0 0 0
+0.3 0 0 0 0 SNAP:health
+2 0 0 0
+0.1 0 0 0 0 EXPECT:health:lt:@0
+0.5 0 0 0 0 SHOT

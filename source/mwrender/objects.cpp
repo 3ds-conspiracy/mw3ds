@@ -332,7 +332,7 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 			cell.fogStart = kExteriorFogStart;
 			cell.fogEnd = kExteriorFogEnd;
 		}
-		cell.waterZ = h4.waterZ;
+		cell.waterZ = cell.waterZBaked = h4.waterZ;
 		memcpy(cell.bounds, h4.bounds, sizeof(cell.bounds));
 	}
 	memcpy(cell.spawn, h.spawn, sizeof(cell.spawn));

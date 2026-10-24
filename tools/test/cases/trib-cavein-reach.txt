@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# data: tribunal
+# trib-cavein-reach: Bamz-Amschend's collapsed rocks (act_dwe_cavein00) can be aimed at and activated by a player
+# standing before them (LEGIT: the crosshair has to find the pile, as in a run that is played). The pile is drawn at
+# run time as its own piece (particles.WORLD_FX), and had no box left to be found by: "hidden from here, and no spot
+# round it where the crosshair finds it". Needs data converted with the box kept (convert_cell, fx_box).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:dwemer_satchel00:1
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Radac's_Forge
+5 0 0 0
+0.3 0 0 0 0 TPIN:-2722:9798:13300:270
+2 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:act_dwe_cavein00
+1 0 0 0
+0.1 0 0 0 0 EXPECT:message:satchel

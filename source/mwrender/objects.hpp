@@ -107,6 +107,7 @@ struct Cell
 	float fogDensity;
 	float fogStart = 0, fogEnd = 0;   // linear distance fog; fogEnd 0 = none (an interior of fog density 0)
 	float waterZ = 0;                 // with CELL_WATER
+	float waterZBaked = 0;            // the height the file gave it (a script may move waterZ: SetWaterLevel)
 	float bounds[4] = {};             // walkable area: min x, min y, max x, max y (all 0 = unbounded)
 	std::vector<CellBatch> sky;       // drawn around the camera, before everything else
 	std::vector<C3D_Tex*> textures;       // from the TextureCache; nullptr = missing
@@ -120,6 +121,8 @@ struct Cell
 	std::vector<CollisionBox> blockers;
 
 	bool hasWater() const { return flags & CELL_WATER; }
+	// Lit and fogged by the weather: outdoors, or an interior with a sky (Tribunal's Mournhold)
+	bool underSky() const { return !(flags & CELL_INTERIOR) || (flags & CELL_SKY); }
 	bool bounded() const { return bounds[2] > bounds[0]; }
 	u32 textureBytes = 0, geometryBytes = 0, numTris = 0;
 };

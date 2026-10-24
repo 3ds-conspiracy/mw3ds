@@ -17,7 +17,8 @@ static const char* summonCreature(int e)
 		"atronach_frost_summon", "atronach_storm_summon" };
 	if (e >= 102 && e <= 116)
 		return ids[e - 102];
-	return e == 134 ? "centurion_sphere_summon" : nullptr;
+	// (137: Tribunal's Summon Fabricant, sMagicFabricantID)
+	return e == 134 ? "centurion_sphere_summon" : e == 137 ? "fabricant_summon" : nullptr;
 }
 
 const char* summonCreatureId(int effect)

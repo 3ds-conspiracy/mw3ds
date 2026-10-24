@@ -78,6 +78,7 @@ struct Ref
 
 	bool enabled = true;          // Enable / Disable
 	bool pickedUp = false;        // taken into the inventory
+	bool colGone = false;         // its collision gone with its death group (Bamz-Amschend's cave-in blown: saved)
 	float doorAngle = 0.0f, doorTarget = 0.0f;
 	int script = -1;              // index into World::scripts
 	std::vector<u16> savedIndices;
@@ -103,8 +104,13 @@ struct Ref
 	bool aggressor = false;       // started the fight (killing them isn't murder)
 	int duelFoe = -1;             // StartCombat on another actor: the ref it fights (not saved; -1: none)
 	bool alarmed = false;         // a guard come to arrest the player (OpenMW's Alarmed, for the dialogue filter)
+	// The player's crime they saw or suffered (OpenMW's NpcStats crime id; -1 none) and the disposition it took from them:
+	// once that crime is paid for (World::crimeIdPaid) they calm down (Session::calmWitness). Saved
+	int crimeId = -1, crimeDisp = 0;
 	bool moved = false;           // pos / rot[2] changed while fighting (placement must follow)
 	int ai = 0;                   // AI_IDLE, AI_COMBAT
+	bool facing = false;          // Face x y: turning to look at that point, then back to what it did (OpenMW's AiFace)
+	float faceAt[2] = {};
 	float attackTimer = 0.0f, hitAt = -1.0f;
 	float home[3] = {};           // where the level placed them (wandering stays near it)
 	float wanderTo[2] = {}, wanderTimer = 0.0f;

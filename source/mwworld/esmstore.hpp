@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "components/misc/atom.hpp"
 #include "components/misc/cardtext.hpp"
 #include "mwgui/uitheme.hpp"
@@ -63,8 +64,14 @@ struct FirstPersonDef
 	std::unordered_map<std::string, float> vfxLength;  // spell visual piece -> seconds it plays (its longest controller)
 	std::unordered_map<std::string, std::string> cpfx;  // creature id -> its sprays' sprite piece (particles.py)
 	// World objects drawn as a visual where they are placed (particles.py world_entry): a steaming pool over
-	// and over, an activator held at rest until a script plays one of its groups (start, stop on its timeline)
-	struct WorldFxDef { std::string piece; bool loop = false; std::unordered_map<std::string, std::pair<float, float>> groups; };
+	// and over, an activator held at rest until a script plays one of its groups (start, stop on its timeline).
+	// away / back: a door whose collision is animated (the Clockwork City's): a group that takes its moving collision
+	// away (its opening) or puts it back (its closing), so many seconds after the group starts (particles.py collision_moves)
+	struct WorldFxDef
+	{
+		std::string piece; bool loop = false; std::unordered_map<std::string, std::pair<float, float>> groups;
+		std::unordered_map<std::string, float> away, back;
+	};
 	std::unordered_map<std::string, WorldFxDef> worldFx;
 	std::unordered_map<std::string, std::unordered_map<int, std::string>> races[2];   // [female] race -> slot -> piece
 	std::unordered_map<std::string, FpItem> items;                                   // lowercase item id
@@ -104,6 +111,9 @@ struct GameData
 	// Weather colours (sky, fog, ambient, sun) at sunrise, day, sunset, night: day and night outdoors
 	float weather[4][4][3] = {};
 	bool hasWeather = false;
+	std::vector<std::string> startScripts;        // the data's start scripts (SSCR, Tribunal's): run once a game has them
+	std::vector<std::string> addons;              // what the data was converted with besides Morrowind.esm ("tribunal")
+	bool tribunal() const { return std::find(addons.begin(), addons.end(), "tribunal") != addons.end(); }
 	std::vector<WeatherType> weatherTypes;       // in the regions' chance order
 	float weatherHours = 20.0f;                   // game hours between weather rolls
 	WeatherClock weatherClock;
