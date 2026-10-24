@@ -2,6 +2,7 @@
 # A spell made at a spellmaker, Frost Damage 15 to 20 for 5 s on Target, cast at a foe: it takes 15 to 20 a second for
 # 5 s (75 to 100 in all), lands once with one hit sound and one hit effect (the report: one cast killed, the hit sound
 # like a machine gun). Made in the spellmaking menu at Estirdalin, bought with Confirm, cast as the made spell
+# (cast at an ancestor guardian: no abilities, no spells of its own; an ogrim's Regenerate gives back a point a second)
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:7
 0.3 0 0 0 0 GOD
@@ -31,13 +32,13 @@
 1 0 0 0 0 EXPECT:screen:none
 0.3 0 0 0 0 GOTO:Seyda_Neen
 6 0 0 0
-1 0 0 0 0 PLACE:ogrim:300
-1 0 0 0 0 SETALARM:ogrim:0
-0.3 0 0 0 0 FACE:ogrim
-0.5 0 0 0 0 SNAP:refhealth:ogrim
+1 0 0 0 0 PLACE:ancestor_guardian_fgdd:300
+1 0 0 0 0 SETALARM:ancestor_guardian_fgdd:0
+0.3 0 0 0 0 FACE:ancestor_guardian_fgdd
+0.5 0 0 0 0 SNAP:refhealth:ancestor_guardian_fgdd
 0.3 0 0 0 0 CASTMADESPELL
-1.5 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
-2 0 0 0 0 EXPECT:refhealth:ogrim:ge:0
-4 0 0 0 0 EXPECT:refhealth:ogrim:ge:@-101
-0.3 0 0 0 0 EXPECT:refhealth:ogrim:le:@-74
+1.5 0 0 0 0 EXPECT:refhealth:ancestor_guardian_fgdd:ge:0
+2 0 0 0 0 EXPECT:refhealth:ancestor_guardian_fgdd:ge:0
+4 0 0 0 0 EXPECT:refhealth:ancestor_guardian_fgdd:ge:@-101
+0.3 0 0 0 0 EXPECT:refhealth:ancestor_guardian_fgdd:le:@-74
 0.3 0 0 0 0 SHOT
