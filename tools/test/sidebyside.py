@@ -38,6 +38,10 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
                           its VFX step); nobody near; ptex=texture gives it a particle texture (OpenMW's override),
                           effect=n the magic effect whose particle texture the 3DS side gives it (the one with that PTEX);
                           stand=id puts that actor at pos, holding its idle, to wear it (the camera must look at pos)
+    ui=alchemy|enchanting|spellmaking   a menu open over the world: the alchemy screen, or an NPC's enchanting or
+                          spellmaking service (npc=id, the one nearest the camera); give=id[:n],... carried first (the
+                          apparatus, soul gems, ingredients). The 3DS side shoots both its screens (the menus are on the
+                          bottom one), OpenMW its whole window (--res: its size); the sheet shows them side by side
     cast=id after=t,...   the player casts that spell (level, ahead) and the world stands still t seconds after the
                           cast began: one shot per t (bolts in flight, cast and hit visuals). The player stands at
     from=x,y,z,yaw        from= (their feet, degrees), or at cam with view=fp; skills, Willpower and Luck at 100 and
@@ -75,6 +79,8 @@ MOD = Path(__file__).resolve().parent / "sidebyside"
 W, H = 400, 240
 TRIBUNAL = False         # --tribunal: OpenMW loads Tribunal.esm too
 SPAWN_DIST = 250         # spawn=: this far ahead of the camera
+RES = (W, H)             # --res: OpenMW's window (a menu shot reads better bigger)
+UI_MODES = {"alchemy": "Alchemy", "enchanting": "Enchanting", "spellmaking": "SpellCreation"}
 # 3DS group -> (Morrowind group, start key, stop key) where the engine splits a group by its text keys
 OPENMW_GROUPS = {
     "castself": ("spellcast", "self start", "self stop"),
@@ -281,6 +287,13 @@ def write_openmw_setup(shots):
                 f.append(f"ptex = {lua_str(s['ptex'])}")
         if "do" in s:
             f.append(f"act = {lua_str(s['do'])}, after = {s['after']}")
+        if "ui" in s:
+            f.append(f"ui = {lua_str(UI_MODES[s['ui']])}")
+            if "npc" in s:
+                f.append(f"target = {lua_str(s['npc'].lower())}")
+        if "give" in s:
+            items = [(g.split(":") + ["1"])[:2] for g in s["give"].split(",")]
+            f.append("give = { " + ", ".join(f"{{ {lua_str(i.lower())}, {int(n)} }}" for i, n in items) + " }")
         if "cast" in s:
             fx, fy, fz, fyaw = s["from"]
             f.append(f"cast = {lua_str(s['cast'].lower())}, after = {s['after']}")
@@ -318,7 +331,7 @@ def write_openmw_setup(shots):
     # The 3DS's top screen: 400 x 240, a 60 degree vertical field of view (mwrender/renderingmanager.cpp kFovY)
     (SBS / "settings.cfg").write_text("\n".join([
         "# Written by tools/test/sidebyside.py",
-        "[Video]", "resolution x = 400", "resolution y = 240", "window mode = 2", "window border = true",
+        "[Video]", f"resolution x = {RES[0]}", f"resolution y = {RES[1]}", "window mode = 2", "window border = true",
         "vsync mode = 0", "framerate limit = 60", "",
         "[Camera]", "field of view = 60", "",
         "[General]", "screenshot format = png", "",
@@ -405,7 +418,7 @@ def run_openmw(shots, out, timeout):
                     if img is None:
                         print(f"openmw: screenshot for {name} never finished")
                         continue
-                    if img.size != (W, H):
+                    if img.size != (W, H) and RES == (W, H):
                         print(f"openmw: screenshot is {img.size[0]} x {img.size[1]}, scaled to {W} x {H}")
                         img = img.resize((W, H), Image.LANCZOS)
                     img.save(out / f"{name}.png")
@@ -485,6 +498,9 @@ def write_case(shots, name):
                 pose += f":{s['face']}"
             view.append(pose)
         lines.append("1 0 0 0 0 " + "+".join(view))
+        if "ui" in s:
+            lines += ui_steps(s)
+            continue
         lines.append("0.5 0 0 0 0 SHOT")
         if "spawn" in s and (i + 1 == len(shots) or shots[i + 1].get("spawn") != s["spawn"]):
             lines.append(f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '%')}")
@@ -492,6 +508,19 @@ def write_case(shots, name):
     case.parent.mkdir(parents=True, exist_ok=True)
     case.write_text("\n".join(lines) + "\n")
     return case
+
+
+def ui_steps(s):
+    """A menu shot: what it wants carried, the menu opened (an NPC's service from where they stand), both screens shot,
+    the menu closed again."""
+    steps = []
+    for g in s.get("give", "").split(","):
+        if g:
+            i, n = (g.split(":") + ["1"])[:2]
+            steps.append(f"0.3 0 0 0 0 GIVE:{i.replace(' ', '%')}:{n}")
+    npc = s.get("npc", "").replace(" ", "%")
+    open_ = {"alchemy": "SCREEN:alchemy", "enchanting": f"ENCHANTAT:{npc}", "spellmaking": f"SPELLMAKE:{npc}"}[s["ui"]]
+    return steps + [f"1 0 0 0 0 {open_}", "1 0 0 0", "0.5 0 0 0 0 SHOT", "0.5 0 0 0 0 SCREEN:none"]
 
 
 # (every cast succeeds and none runs short of Magicka: global.lua sets the same in OpenMW)
@@ -596,7 +625,8 @@ def run_3ds(shots, out, name, emu, data, exe):
         print(f"3ds: {len(pngs)} shots for {len(shots)} wanted")
     (out / "3ds").mkdir(parents=True, exist_ok=True)
     for s, png in zip(shots, pngs):
-        Image.open(png).convert("RGB").crop((0, 0, W, H)).save(out / "3ds" / f"{s['name']}.png")
+        img = Image.open(png).convert("RGB")
+        (img if "ui" in s else img.crop((0, 0, W, H))).save(out / "3ds" / f"{s['name']}.png")
 
 
 # ---- Putting them together
@@ -604,13 +634,18 @@ def run_3ds(shots, out, name, emu, data, exe):
 def compose(shots, out):
     for s in shots:
         a, b = out / "3ds" / f"{s['name']}.png", out / "pc" / f"{s['name']}.png"
-        img = Image.new("RGB", (W * 2, H), (0, 0, 0))
+        # (a menu shot: the 3DS's two screens, 400 x 480, beside OpenMW's whole window at that height)
+        ui = "ui" in s
+        sh = H * 2 if ui else H
+        wide = [W, round(RES[0] * sh / RES[1]) if ui else W]
+        img = Image.new("RGB", (sum(wide), sh), (0, 0, 0))
         for i, (p, label) in enumerate(((a, "3DS"), (b, "OpenMW"))):
+            x0 = sum(wide[:i])
             if p.exists():
-                img.paste(Image.open(p).convert("RGB").resize((W, H)), (W * i, 0))
+                img.paste(Image.open(p).convert("RGB").resize((wide[i], sh)), (x0, 0))
             d = ImageDraw.Draw(img)
-            d.rectangle((W * i + 4, 4, W * i + 8 + 7 * len(label), 18), fill=(0, 0, 0))
-            d.text((W * i + 6, 5), label, fill=(255, 255, 255))
+            d.rectangle((x0 + 4, 4, x0 + 8 + 7 * len(label), 18), fill=(0, 0, 0))
+            d.text((x0 + 6, 5), label, fill=(255, 255, 255))
         img.save(out / f"{s['name']}.png")
         print(f"sidebyside: {out / (s['name'] + '.png')}")
 
@@ -626,12 +661,15 @@ def main():
     ap.add_argument("--tribunal", action="store_true",
                     help="the Tribunal add-on on both sides: OpenMW loads Tribunal.esm, the 3DS side out/tribunal")
     ap.add_argument("--exe", default="", help="another native build")
+    ap.add_argument("--res", default="", help="OpenMW's window, WxH (default 400x240: the top screen's)")
     ap.add_argument("--timeout", type=float, default=0, help="seconds for the OpenMW run (default 60 + 15 a shot)")
     a = ap.parse_args()
     shots = read_shots(a.shots)
     out = Path(a.out)
-    global TRIBUNAL
+    global TRIBUNAL, RES
     TRIBUNAL = a.tribunal
+    if a.res:
+        RES = tuple(int(v) for v in a.res.lower().split("x"))
     a.data = a.data or ("out/tribunal" if a.tribunal else "out/world")
     if not a.pc_only:
         run_3ds(shots, out, "sbs-" + Path(a.shots).stem + "-" + out.name, a.emu, a.data, a.exe)

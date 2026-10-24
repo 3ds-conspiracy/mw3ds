@@ -185,6 +185,12 @@ local function setup(data)
 			world.createObject(id, id == s.ammo and 50 or 1):moveInto(inv)
 		end
 	end
+	-- a menu shot's items (give=: apparatus, soul gems, ingredients)
+	for _, g in ipairs(s.give or {}) do
+		if inv:countOf(g[1]) < g[2] then
+			world.createObject(g[1], g[2] - inv:countOf(g[1])):moveInto(inv)
+		end
+	end
 	if s.spawn then
 		-- a new one (made once per id), s.spawn units ahead of the camera, facing it (s.face)
 		local a = spawned[s.actor]

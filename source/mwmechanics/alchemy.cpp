@@ -65,6 +65,14 @@ std::vector<Object::IngredientEffect> commonEffects(const World& w, const std::v
 	return out;
 }
 
+// The player's Alchemy names a potion's effects two at a time, the first two at fWortChanceValue, the next two at twice it
+// and so on (OpenMW's Alchemy::knownEffect): the rest show as "?" (a potion's tooltip, the brewing screen's list)
+bool Session::alchemyEffectKnown(size_t index)
+{
+	float skill = (float)w.stats.skills[16], wort = w.game.gmstf("fwortchancevalue", 15.0f);
+	return skill >= wort * (float)(index / 2 + 1) && index < 8;
+}
+
 // x = (Alchemy + Intelligence / 10 + Luck / 10) x mortar quality x fPotionStrengthMult; each shared
 // effect gets magnitude x / fPotionT1MagMult / base cost and duration x / fPotionT1DurMult / base cost,
 // raised by the retort (the alembic lowers harmful ones) and the calcinator. Fails when a d100 beats

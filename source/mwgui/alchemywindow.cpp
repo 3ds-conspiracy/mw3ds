@@ -53,15 +53,11 @@ void Session::drawAlchemy()
 			break;
 		}
 	}
-	int known = std::min(4, 1 + w.stats.skills[16] / std::max(1, (int)w.game.gmstf("fwortchancevalue", 15.0f)));
 	float y = 116;
+	size_t index = 0;
 	for (auto& e : commonEffects(w, alchemySlots))
 	{
-		bool seen = false;
-		for (auto& id : alchemySlots)
-			if (const Object* o = w.game.object(id))
-				for (size_t k = 0; k < o->ingredient.size() && (int)k < known; k++)
-					seen |= sameEffect(o->ingredient[k], e);
+		bool seen = alchemyEffectKnown(index++);      // (the potion-to-be's effects in order, as OpenMW's window)
 		uiText(162, y, 0.4f, seen ? col::text : col::textDim, seen ? effectLabel(e.effect, e.skill, e.attribute) : "?");
 		y += 14;
 	}

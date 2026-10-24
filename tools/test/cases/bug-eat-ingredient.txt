@@ -1,0 +1,40 @@
+# start: Seyda Neen
+# Eating an ingredient tries its first effect only (OpenMW's rollIngredientEffect, index 0): a roll 0..99 at or under
+# x = (Alchemy + 0.2 Intelligence + 0.1 Luck) x the fatigue term works it, for int(roll / min(x, 100) x 0.25 x) seconds
+# (a no-magnitude effect at 1); over x it does nothing ("... has no effect on you"). The ingredient is eaten either way
+# and Alchemy trains only when it works. Ours put on every effect the ingredient has, at the record's own numbers, and
+# a bite never failed whatever the eater's Alchemy.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:5+GOD:2+HOUR:12
+0.3 0 0 0 0 GIVE:ingred_coprinus_01:8
+1 0 0 0
+0 0 0 0 0 SETUP-END
+# a master of it: x = (100 + 20 + 10) x 1.25 = 162, every roll works
+0.3 0 0 0 0 SETSKILL:alchemy:100
+0.3 0 0 0 0 SETATTR:intelligence:100+SETATTR:luck:100
+0.3 0 0 0 0 USE:ingred_coprinus_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:item:ingred_coprinus_01:eq:7
+0.1 0 0 0 0 EXPECT:waterwalking:eq:1
+0.1 0 0 0 0 EXPECT:effect:27:eq:0
+0.1 0 0 0 0 EXPECT:effect:20:eq:0
+# a novice: x = (5 + 2 + 1) x 1.25 = 10, about one bite in nine works; six eaten
+45 0 0 0
+0.3 0 0 0 0 SETSKILL:alchemy:5
+0.3 0 0 0 0 SETATTR:intelligence:10+SETATTR:luck:10
+0.1 0 0 0 0 SNAP:skillprog:alchemy
+0.3 0 0 0 0 USE:ingred_coprinus_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:message:has_no_effect_on_you
+0.3 0 0 0 0 USE:ingred_coprinus_01
+0.5 0 0 0
+0.3 0 0 0 0 USE:ingred_coprinus_01
+0.5 0 0 0
+0.3 0 0 0 0 USE:ingred_coprinus_01
+0.5 0 0 0
+0.3 0 0 0 0 USE:ingred_coprinus_01
+0.5 0 0 0
+0.3 0 0 0 0 USE:ingred_coprinus_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:item:ingred_coprinus_01:eq:1
+0.1 0 0 0 0 EXPECT:effect:27:eq:0

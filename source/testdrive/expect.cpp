@@ -178,13 +178,16 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		snprintf(got, sizeof(got), "%s", !it ? "no made item carried" : !en ? "no enchantment"
 			: (std::to_string(en->effects.size()) + " effects, type " + std::to_string(en->type - ENCH_ONCE)).c_str());
 	}
-	else if (what == "tipline" && a.size() >= 2)
+	else if ((what == "tipline" || what == "notipline") && a.size() >= 2)
 	{
-		// EXPECT:tipline:<text>: the top screen's tooltip has a line holding that text (underscores for spaces)
+		// EXPECT:tipline:<text>: the top screen's tooltip has a line holding that text (underscores for spaces);
+		// EXPECT:notipline:<text>: none does
 		std::string want = lower(spaced(a[1]));
 		ok = false;
 		for (auto& l : s.tip)
 			ok |= lower(l.first).find(want) != std::string::npos;
+		if (what == "notipline")
+			ok = !ok;
 		snprintf(got, sizeof(got), "%.80s", s.tip.empty() ? "no tooltip" : (s.tip[0].first + (s.tip.size() > 1 ? " / " + s.tip[1].first : "")).c_str());
 	}
 	else if (what == "refweapon" && a.size() >= 3)

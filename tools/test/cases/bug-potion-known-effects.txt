@@ -1,0 +1,37 @@
+# start: Seyda Neen
+# A potion's tooltip names only the effects the player's Alchemy knows (OpenMW's Alchemy::knownEffect on the potion's
+# effects in order): the first two at fWortChanceValue (15), the next two at twice it, and so on; the rest read "?".
+# An ingredient's tooltip, one effect per 15 points. The Potion of Heroism has six: Fortify Health, Restore Health,
+# Fortify Fatigue, Restore Fatigue, Fortify Attack, Shield. Ours named every effect of every potion.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:p_heroism_s
+0.3 0 0 0 0 GIVE:ingred_coprinus_01
+1 0 0 0
+0 0 0 0 0 SETUP-END
+# Alchemy 5: nothing known
+0.3 0 0 0 0 SETSKILL:alchemy:5
+0.3 0 0 0 0 SCREEN:inventory
+0.3 0 0 0 0 INVSEL:p_heroism_s
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:tipline:?
+0.1 0 0 0 0 EXPECT:notipline:fortify_health
+0.3 0 0 0 0 B
+0.5 0 0 0
+# Alchemy 30: the first four named, Fortify Attack and Shield not
+0.3 0 0 0 0 SETSKILL:alchemy:30
+0.3 0 0 0 0 SCREEN:inventory
+0.3 0 0 0 0 INVSEL:p_heroism_s
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:tipline:fortify_health
+0.1 0 0 0 0 EXPECT:tipline:restore_fatigue
+0.1 0 0 0 0 EXPECT:notipline:fortify_attack
+0.1 0 0 0 0 EXPECT:notipline:shield
+0.1 0 0 0 0 EXPECT:tipline:?
+# the ingredient at 30: Water Walking and Drain Fatigue named, Poison not
+0.3 0 0 0 0 INVSEL:ingred_coprinus_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:tipline:water_walking
+0.1 0 0 0 0 EXPECT:notipline:poison
+0.3 0 0 0 0 B
+0.5 0 0 0

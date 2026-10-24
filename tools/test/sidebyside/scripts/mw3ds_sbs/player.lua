@@ -9,6 +9,7 @@
 local camera = require('openmw.camera')
 local core = require('openmw.core')
 local input = require('openmw.input')
+local nearby = require('openmw.nearby')
 local self = require('openmw.self')
 local types = require('openmw.types')
 local util = require('openmw.util')
@@ -224,8 +225,19 @@ return {
 				end
 			elseif state == 'setup' or state == 'ready' then
 				placeCamera()
-				-- a message box or menu left open would be in the shot
-				if I.UI.getMode() then
+				-- a message box or menu left open would be in the shot; a menu shot's own menu (ui=) opened and kept
+				local s = poses[index]
+				if s.ui and posed then
+					if I.UI.getMode() ~= s.ui then
+						local target = nil
+						for _, a in ipairs(nearby.actors) do
+							if s.target and a.recordId == s.target then
+								target = a
+							end
+						end
+						I.UI.setMode(s.ui, target and { target = target } or nil)
+					end
+				elseif I.UI.getMode() then
 					I.UI.setMode()
 				end
 				if not posed and (updateArms() or updateCast()) then

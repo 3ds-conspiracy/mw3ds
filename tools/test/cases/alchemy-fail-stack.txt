@@ -1,0 +1,46 @@
+# start: Seyda Neen
+# Brewing's luck and its potions (OpenMW's Alchemy::createSingle): a brew fails when a roll 0..99 beats the alchemy
+# factor (Alchemy + 0.1 Intelligence + 0.1 Luck), the ingredients lost all the same and no Alchemy learned; one that
+# works trains Alchemy, and the same potion brewed again joins the first one's stack (OpenMW finds the record it made).
+# Coprinus and bittercup pods share Water Walking.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:4+GOD:2
+0.3 0 0 0 0 GIVE:apparatus_j_mortar_01
+0.3 0 0 0 0 GIVE:ingred_coprinus_01:12
+0.3 0 0 0 0 GIVE:ingred_bc_ampoule_pod:12
+1 0 0 0
+0 0 0 0 0 SETUP-END
+# a novice: factor 5 + 1 + 1 = 7, most brews fail; six tried, the pairs used up whatever comes of them
+0.3 0 0 0 0 SETSKILL:alchemy:5
+0.3 0 0 0 0 SETATTR:intelligence:10+SETATTR:luck:10
+0.1 0 0 0 0 SNAP:brewed+SNAP:skillprog:alchemy
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:item:ingred_coprinus_01:eq:6
+0.1 0 0 0 0 EXPECT:item:ingred_bc_ampoule_pod:eq:6
+0.1 0 0 0 0 EXPECT:message:your_potion_failed
+# (one of the six worked: it alone taught)
+0.1 0 0 0 0 EXPECT:brewed:eq:@1
+0.1 0 0 0 0 EXPECT:skillprog:alchemy:gt:@0
+# a master: factor 100 + 10 + 10, none fails; three of the same potion, one stack of three (Alchemy 100 learns no more)
+0.3 0 0 0 0 SETSKILL:alchemy:100
+0.3 0 0 0 0 SETATTR:intelligence:100+SETATTR:luck:100
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.1 0 0 0 0 SNAP:brewed
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:brewed:eq:@2
+0.1 0 0 0 0 EXPECT:item:ingred_coprinus_01:eq:3
