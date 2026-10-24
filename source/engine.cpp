@@ -129,9 +129,10 @@ bool Engine::prepare()
 	// framebuffers are in VRAM, beside the render targets (a few MB of its 6 free): a MB of linear memory back for cells
 	platformClearVram();
 	gfxInit(g_profile.rgb565 ? GSP_RGB565_OES : GSP_BGR8_OES, GSP_BGR8_OES, true);
-	// The bottom screen keeps one framebuffer: a frame that doesn't draw it (the HUD is drawn every third frame) shows
-	// the last one drawn, not the one before that
-	gfxSetDoubleBuffering(GFX_BOTTOM, false);
+	// The bottom screen is double-buffered as the top one is: with one framebuffer each frame was drawn into the picture
+	// being shown, and scrolling text tore (part of the screen a frame ahead of the rest). A frame that doesn't draw it
+	// (the HUD is drawn every third frame) doesn't swap it either: citro3d swaps a screen only when a target on it was
+	// drawn, so the last one drawn stays up
 	// gfxInit lights the screens on buffers that hold whatever VRAM had (multicoloured static, on an Old 2DS and when
 	// started from FBI): they stay forced black until the first black frame below is up
 	GSPGPU_SetLcdForceBlack(1);
@@ -717,7 +718,13 @@ bool Engine::frame()
 	float aimDepth = stereoOn && loaded ? session->aimDepth() : 0.0f;
 	int hudDrawsLeft = 0, worldDrawsLeft = 0;
 	static int uiPeakTop = 0, uiPeakBottom = 0;     // the most UI pieces drawn in a frame this second (citro2d objects)
-	for (int eye = 0; eye < (stereoOn ? 2 : 1); eye++)
+	// Paused (a menu, a message, a talk) on a console held under 60 fps (an Old 3DS: 30 or 20): the world stands still,
+	// so the top screen keeps the rate it had (drawn every second or third frame; a frame that skips it doesn't swap it)
+	// and the frames go to the bottom screen, where the menu is, at 60. Character creation's turning face keeps its
+	bool pausedBoost = loaded && session->menuOpen() && session->frameCap < 60 && !session->previewFace && !session->autotest;
+	int topEvery = pausedBoost ? (session->frameCap <= 20 ? 3 : 2) : 1;
+	bool drawTopNow = topEvery == 1 || g_mainFrames % topEvery == 0;
+	for (int eye = 0; drawTopNow && eye < (stereoOn ? 2 : 1); eye++)
 	{
 		C3D_RenderTarget* target3d = eye ? topRight : top;
 		clearTop(target3d, clear);
@@ -821,7 +828,7 @@ bool Engine::frame()
 		logf("frame %d: submitted", traced++);
 	// The frame rate the session asks for (an Old 3DS: 30 or 20, Session::adaptView)
 	static int capNow = 60;
-	int capWant = session->autotest && !g_testFrameCap ? 60 : session->frameCap;
+	int capWant = session->autotest && !g_testFrameCap ? 60 : pausedBoost ? 60 : session->frameCap;
 	if (loaded && capWant != capNow)
 	{
 		capNow = capWant;
