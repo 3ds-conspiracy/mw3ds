@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# data: tribunal
+# Thick weather over Mournhold (an interior under the sky) closes the view in as it does outdoors: the drawn view is
+# 0.69 / the weather's fog depth of the whole (World::weatherFogScale; an ash storm 0.63), so the fog is whole where
+# the drawing stops, as OpenMW's storm hides Godsreach's far houses. Ours skipped every interior, Mournhold too, and its
+# storm fog ended at the full 7168 with the far houses standing clear.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Mournhold,_Godsreach
+0.3 0 0 0 0 WEATHER:6
+4 0 0 0 0
+0.3 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:weathernow:eq:6
+0.1 0 0 0 0 EXPECT:wfogscale:lt:0.7+EXPECT:fogrange:end:lt:5000

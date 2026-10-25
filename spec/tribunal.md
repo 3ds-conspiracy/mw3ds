@@ -31,6 +31,7 @@ OpenMW's useTorches) that take the outdoors' sky:
 | The region's weather (Mournhold Region), wind, storms, rain | `World::underSky()` in the weather | `mwworld/weather.cpp` |
 | Region ambient sounds, sun damage, storm walking, the head-tracking reach | as outdoors | `mwsound/soundmanagerimp.cpp`, `mwmechanics/activespells.cpp`, `mwworld/player.cpp`, `mwmechanics/combat.cpp` |
 | Dialogue's weather condition | asked there (OpenMW; the original game doesn't: OpenMW calls that a bug) | `mwdialogue/filter.cpp` |
+| The weather's fog over the outdoor view, closing in with thick weather as outdoors (an ash storm draws 0.63 of it) | `objects.cpp` (the exteriors' fog range), `World::weatherFogScale`, `engine.cpp` | `bug-mournhold-weather-fog`, `bug-mournhold-storm-fog` |
 
 ## Start scripts (SSCR)
 
@@ -79,6 +80,12 @@ OpenMW moves those collision shapes with the animation every frame (`mwphysics/o
 
 Differs on purpose: switched at two points instead of followed frame by frame (moving collision costs the console
 more; see open question 5 about the traps, which this does not touch). Tests: `trib-sotha-doors`, `trib-sotha-doors-shut`.
+
+Sotha Sil's steam vents (act_sotha_fabsteam, act_sotha_steam00 / 10) are animated activators too: their sprays run on
+the group's clock, as OpenMW runs an animated object's particle controllers (`Animation::addAnimSource`), so they show
+nothing at rest and steam once in the Idle2 a script plays (the Imperfect as it wakes, the Dome of Serlyn's machine
+doors). Drawn as world particle pieces with their groups (`particles.py WORLD_FX`, `scripted_group_objects`). Tests:
+`trib-imperfect-steam`, `trib-mournhold-scripted`.
 
 ## Globals
 

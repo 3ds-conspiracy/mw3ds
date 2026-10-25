@@ -659,10 +659,13 @@ bool Engine::frame()
 	const float kFarDepthShare = 1.0f;
 	float farDepth = fminf(1.0f, fmaxf(0.0f, (slider - kNearDepthTo) / (1.0f - kNearDepthTo)));
 	rendererSetStereoCurve(stereoOn ? kFarDepthShare * farDepth : 0.0f);
-	// Outdoors the fog closes in while frames run long, and with the weather
+	// Outdoors the fog closes in while frames run long, and with the weather; an interior under the sky (Mournhold)
+	// with the weather only
 	float fogScale = 1.0f;
 	if (loaded && !session->w.cells[session->w.current].interior)
 		fogScale = session->viewNow() * session->w.weatherFogScale();
+	else if (loaded && session->w.cells[session->w.current].underSky())
+		fogScale = session->w.weatherFogScale();
 	// (the horizon: distant land as far as the weather lets one see, not shortened with the detailed view; under
 	// water no farther than the murk)
 	rendererSetHorizon(loaded ? session->w.weatherFogScale() : 0.0f);
