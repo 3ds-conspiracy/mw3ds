@@ -1,0 +1,22 @@
+# start: Seyda Neen
+# data: tribunal
+# Hopesfire and the flaming Trueflame carry a spray of glow down their blades (VFX_Liteglow, vfx_fireglow), the only
+# weapons in the game with one; OpenMW draws it on the held blade. Our first-person weapon piece kept only real
+# meshes and dropped the spray, so both blades showed bare.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GIVE:iron%saber
+0.3 0 0 0 0 EQUIP:iron%saber
+0.3 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.1 0 0 0 0 EXPECT:vmmeshes:ge:13
+0.3 0 0 0 0 GIVE:sword%of%almalexia
+0.3 0 0 0 0 EQUIP:sword%of%almalexia
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1+EXPECT:vmpiece:almalexia:eq:1
+0.1 0 0 0 0 EXPECT:vmmeshes:ge:14
+0.3 0 0 0 0 GIVE:nerevarblade_01_flame
+0.3 0 0 0 0 EQUIP:nerevarblade_01_flame
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:vmpiece:nerevarblade_flame:eq:1+EXPECT:vmmeshes:ge:14

@@ -145,7 +145,7 @@ def skin_vertices(nif, inst, pos, nrm, skeleton):
     return out_p, out_n
 
 
-def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, loops=False):
+def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, loops=False, along_emitter=False):
     """Flattens a NIF into shapes. Rigid shapes come out in the NIF's root space;
     skinned shapes are skipped unless `skeleton` (bone name -> posed matrix) is given,
     then they come out in skeleton space and are marked "skinned". `bind_pose` draws a skinned
@@ -160,7 +160,7 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, 
 
     def visit(b, m, props):
         if b["type"] in ("NiRotatingParticles", "NiAutoNormalParticles"):
-            s = particle_shape(arch, nif, b, props, node_world, loops)
+            s = particle_shape(arch, nif, b, props, node_world, loops, along_emitter)
             if s:
                 shapes.append(s)
             return
@@ -289,7 +289,7 @@ def particle_fall(nif, ctrl, m):
     return 0.0
 
 
-def particle_shape(arch, nif, b, props, node_world, loops=False):
+def particle_shape(arch, nif, b, props, node_world, loops=False, along_emitter=False):
     """Approximates a particle emitter (candle / torch flame) as three crossed vertical quads
     at the emitter, sized from the particle settings, drawn unlit with the particles' blending."""
     ctrl = nif.get(b["controller"])
@@ -338,7 +338,11 @@ def particle_shape(arch, nif, b, props, node_world, loops=False):
         uv += [(0, v1), (u1, v1), (u1, 0), (0, 0)]
         tris += [base, base + 1, base + 2, base, base + 2, base + 3]
     pos = np.array(pos, dtype=float)
-    # Emitter origin, but keep the flame upright in its parent's frame
+    # Emitter origin, but keep the flame upright in its parent's frame; a held weapon's spray (Hopesfire's glow) leaves
+    # along its emitter's own axis, up the blade, whichever way the blade is held
+    if along_emitter:
+        rot = emitter[:3, :3] / np.maximum(np.linalg.norm(emitter[:3, :3], axis=0), 1e-6)
+        pos = pos @ rot.T
     pos = pos + emitter[:3, 3]
     n = len(pos)
 

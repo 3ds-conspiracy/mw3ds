@@ -275,10 +275,14 @@ class FirstPerson:
         bone = bones.get(bone_name.lower())
         mirror = bone_name.startswith("Left")
         meshes = []
-        part_shapes = extract_shapes(self.arch, nif, skeleton=bones)
+        part_shapes = extract_shapes(self.arch, nif, skeleton=bones, along_emitter=slot == SLOT_WEAPON)
         # (a model with a skinned shape goes on as a skin: its rigid shapes dropped, as npc.py and OpenMW's attach)
         as_skin = slot != SLOT_WEAPON and any(s["skinned"] for s in part_shapes)
         for s in part_shapes:
+            if "raw" not in s and slot == SLOT_WEAPON and not s["skinned"]:
+                # a held weapon's spray (Hopesfire's glow, the flaming Trueflame's fire down the blade): its quads, in the
+                # weapon's own space, ride the weapon bone with the blade
+                s["raw"] = {"pos": np.asarray(s["pos"], dtype=float), "node": np.identity(4)}
             if "raw" not in s or (as_skin and not s["skinned"]):
                 continue
             if s["skinned"]:

@@ -310,7 +310,7 @@ class NpcBuilder:
         wnif = self.nif("meshes\\" + wrec.zstr("MODL")) if wrec is not None and wrec.zstr("MODL") else None
         wbone = bones.get("weapon bone")
         if wnif is not None and wbone is not None:
-            for s in extract_shapes(self.arch, wnif):
+            for s in extract_shapes(self.arch, wnif, along_emitter=True):
                 s["bone"], s["mirror"], s["weapon"] = "weapon bone", False, True
                 s["pos"] = s["pos"] @ wbone[:3, :3].T + wbone[:3, 3]
                 s["nrm"] = s["nrm"] @ wbone[:3, :3].T
