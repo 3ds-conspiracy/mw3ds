@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: tribunal
+# Almsivi Intervention from deep in Tribunal (Bamz-Amschend) looks for the nearest way outdoors door by door, as OpenMW's
+# getClosestMarker. Tribunal's cells never lead outdoors, so the search goes through all of them; ours read each one's
+# objects into memory for good (about 12000 of 832 bytes) and an Old 3DS ran out of heap entering Vivec's next canton.
+# The search reads their doors and keeps nothing.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Radac's_Forge
+2 0 0 0 0
+0.1 0 0 0 0 SNAP:worldslots
+0.3 0 0 0 0 GIVE:sc_almsiviintervention
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+4 0 0 0 0
+
+0.1 0 0 0 0 EXPECT:worldslots:lt:@3000
+# on the memory checker (build.py --mem, NATIVE_OLD3DS=1) the heap stays well under the Old 3DS's 39 MB
+0.1 0 0 0 0 EXPECT:heappeak:lt:30000

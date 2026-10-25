@@ -205,6 +205,37 @@ void World::postChargenRef(Ref& r)
 		}
 }
 
+bool World::cellExits(int ci, std::vector<DoorExit>& out)
+{
+	out.clear();
+	if (ci < 0)
+		return false;
+	auto take = [&](const Ref& d) {
+		if (d.recType != REC_DOOR || !d.hasDest || d.destUnconverted)
+			return;
+		DoorExit e;
+		e.outdoors = d.destHasGrid;
+		memcpy(e.pos, d.destPos, sizeof(e.pos));
+		e.cell = d.destHasGrid ? -1 : cellIndex(d.destCell);
+		out.push_back(e);
+	};
+	if (cells[ci].refsLoaded)
+	{
+		for (int i = cells[ci].refBase; i < cells[ci].refBase + cells[ci].refCount; i++)
+			take(refs[i]);
+		return true;
+	}
+	// (parsed and dropped: from Tribunal's cells, whose doors never lead outdoors, an Intervention's search read the
+	// whole of Mournhold, Old Mournhold, Bamz-Amschend and Norenen-dur into memory, about 12000 objects of 832 bytes,
+	// and the Old 3DS ran out of heap at the next town)
+	ParsedRefs p;
+	if (!parseRefs(*this, ci, p))
+		return false;
+	for (const Ref& d : p.refs)
+		take(d);
+	return true;
+}
+
 bool World::ensureRefs(int cellIndex)
 {
 	if (cellIndex >= 0)

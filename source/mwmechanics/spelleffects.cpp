@@ -318,6 +318,7 @@ bool Session::instantEffect(int effect, float magnitude)
 		// that leads out, counting interiors door by door (OpenMW's getClosestMarker); the last spot outdoors when
 		// no way out is found
 		const float* from = w.player.feet;
+		float outPos[3];
 		if (w.cells[w.current].interior)
 		{
 			from = w.lastOutside;
@@ -328,25 +329,22 @@ bool Session::instantEffect(int effect, float magnitude)
 				std::vector<int> next;
 				for (int c : now)
 					seen.push_back(c);
-				// the doors of cells not in memory are read from the data (OpenMW follows the cells' records)
-				std::vector<int> idx;
-				for (int c : now)
-					if (w.ensureRefs(c))
-						for (int i = w.cells[c].refBase; i < w.cells[c].refBase + w.cells[c].refCount; i++)
-							idx.push_back(i);
-				for (size_t k = 0; k < idx.size() && !found; k++)
+				// the doors of cells not in memory are read from the data and not kept (OpenMW follows the cells' records)
+				std::vector<World::DoorExit> exits;
+				for (int c0 : now)
 				{
-					const Ref& d = w.refs[idx[k]];
-					if (d.recType != REC_DOOR || !d.hasDest || d.destUnconverted)
+					if (found || !w.cellExits(c0, exits))
 						continue;
-					if (d.destHasGrid)
+					for (const World::DoorExit& d : exits)
 					{
-						from = d.destPos;
-						found = true;
-					}
-					else
-					{
-						int c = w.cellIndex(d.destCell);
+						if (d.outdoors)
+						{
+							memcpy(outPos, d.pos, sizeof(outPos));
+							from = outPos;
+							found = true;
+							break;
+						}
+						int c = d.cell;
 						if (c >= 0 && std::find(seen.begin(), seen.end(), c) == seen.end() && std::find(next.begin(), next.end(), c) == next.end())
 							next.push_back(c);
 					}

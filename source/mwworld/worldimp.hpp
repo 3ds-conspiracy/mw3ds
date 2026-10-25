@@ -364,6 +364,10 @@ struct World
 	int findRef(const std::string& id) const;            // by object id, case-insensitive; loaded cells first
 	int findRefAnywhere(const std::string& id);          // also reads cells that hold it (scripts)
 	bool ensureRefs(int cell);                           // reads a cell's objects if not yet
+	// A cell's doors that lead somewhere: (outdoors, the spot there, the interior cell index or -1), read from its objects
+	// when they are in memory, else from its file without keeping them (a search through many cells: the Interventions)
+	struct DoorExit { bool outdoors; float pos[3]; int cell; };
+	bool cellExits(int cell, std::vector<DoorExit>& out);
 	// A game that starts past character creation: what its scripts leave behind is set on each object as its cell is read in
 	// (the Census Office's inner door unlocked, the people's "state" at the end), without reading cells ahead of the player
 	bool postChargen = false;
