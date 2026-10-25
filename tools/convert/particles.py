@@ -710,7 +710,8 @@ def make_piece(static_id, db, arch, fp, ts):
         # Strong platform's swirls of 480 particles each)
         moving, still = [], list(ss)
     played = static_id.lower() in animated_collision_objects(db, arch)
-    world = None if is_spell_visual(static_id) else world_entry(nif, "", played)
+    scripted = static_id.lower() in scripted_group_objects(db)
+    world = None if is_spell_visual(static_id) else world_entry(nif, "", played, scripted)
     if world and world["groups"]:
         from firstperson import piece_name
         fp.light = room_light(db, static_id)
@@ -765,7 +766,7 @@ def make_piece(static_id, db, arch, fp, ts):
         report.append(f"  records: {len(moving)} sprays moving or flat -> {n} particles ({n * 36 // 1024 + 1} KB), peak "
                       f"{peak} live" + (f", thinned 1 in {k} -> {peak2}" if k > 1 else ""))
     if world is not None:
-        world = world_entry(nif, base, played)
+        world = world_entry(nif, base, played, scripted)
         report.append(f"  world object: {world}")
     return {"base": base, "meshes": meshes, "duration": duration, "report": report, "world": world}
 
@@ -876,7 +877,10 @@ WORLD_FX = ["furn_moldcave_pool00", "furn_lavacave_pool00", "furn_bonecave_pool0
             # Sotha Sil's sparks (49 in the Chamber of Sohleh), shed as single sparks
             "trapprojectile", "light_sotha_sparks", "light_sotha_sparks_hi",
             # Bamz-Amschend's cave-in: its boulders fly apart in its Death1 when the satchel charge goes off
-            "act_dwe_cavein00"]
+            "act_dwe_cavein00",
+            # Sotha Sil's steam vents (the Imperfect's bursts once in its Idle2 as it wakes) and Mournhold's pavilion
+            # fountain spray: as crossed quads they stood as solid white columns
+            "act_sotha_fabsteam", "act_sotha_steam00", "act_sotha_steam10", "ex_mh_pav_water_spray"]
 
 
 def world_fx_kinds(db, arch):
@@ -888,7 +892,8 @@ def world_fx_kinds(db, arch):
         rec = db["objects"].get(sid)
         if rec is None or not rec.zstr("MODL"):
             continue
-        out[sid] = bool(world_entry(Nif(arch.read("meshes/" + rec.zstr("MODL"))), "", sid in anim)["groups"])
+        out[sid] = bool(world_entry(Nif(arch.read("meshes/" + rec.zstr("MODL"))), "", sid in anim,
+                                    sid in scripted_group_objects(db))["groups"])
     return out
 
 
@@ -903,9 +908,32 @@ def animated_collision_objects(db, arch):
     can take it away once the door is open and put it back once shut (world_entry's "away" / "back")."""
     if id(db) in _ANIMATED_COLLISION:
         return _ANIMATED_COLLISION[id(db)]
-    import re
     from meshes import collision_triangles
     from nif import Nif
+    out, moving = set(), {}
+    for oid in scripted_group_objects(db):
+        model = db["objects"][oid].zstr("MODL").lower()
+        if model not in moving:
+            try:
+                col = collision_triangles(Nif(arch.read("meshes/" + model)), parts=True)
+                moving[model] = col is not None and col[2] < len(col[1])
+            except Exception:
+                moving[model] = False
+        if moving[model]:
+            out.add(oid)
+    _ANIMATED_COLLISION[id(db)] = out
+    return out
+
+
+_SCRIPTED_GROUPS = {}
+
+
+def scripted_group_objects(db):
+    """Activators a script plays a group other than a death group on: their own script's PlayGroup / LoopGroup, or
+    another's "id"->PlayGroup (the Imperfect's script wakes its steam vent with act_sotha_fabsteam->PlayGroup Idle2)."""
+    if id(db) in _SCRIPTED_GROUPS:
+        return _SCRIPTED_GROUPS[id(db)]
+    import re
     named, own = set(), set()
     for name, text in db["SCPT"].items():
         for line in (text or "").replace("\r", "").split("\n"):
@@ -918,22 +946,9 @@ def animated_collision_objects(db, arch):
             m = re.match(r'(?i)\s*(?:playgroup|loopgroup)\s*,?\s*"?(\w+)', line)
             if m and not m.group(1).lower().startswith("death"):
                 own.add(name)
-    out, moving = set(), {}
-    for oid, rec in db["objects"].items():
-        if rec.tag != "ACTI" or not rec.zstr("MODL"):
-            continue
-        if oid not in named and (rec.zstr("SCRI") or "").lower() not in own:
-            continue
-        model = rec.zstr("MODL").lower()
-        if model not in moving:
-            try:
-                col = collision_triangles(Nif(arch.read("meshes/" + model)), parts=True)
-                moving[model] = col is not None and col[2] < len(col[1])
-            except Exception:
-                moving[model] = False
-        if moving[model]:
-            out.add(oid)
-    _ANIMATED_COLLISION[id(db)] = out
+    out = {oid for oid, rec in db["objects"].items() if rec.tag == "ACTI" and rec.zstr("MODL")
+           and (oid in named or (rec.zstr("SCRI") or "").lower() in own)}
+    _SCRIPTED_GROUPS[id(db)] = out
     return out
 
 
@@ -1039,12 +1054,14 @@ def is_spell_visual(static_id):
 _SPELL_VFX = None
 
 
-def world_entry(nif, base, played=False):
+def world_entry(nif, base, played=False, scripted=False):
     """How a world object's piece plays where it is placed: its animation groups from the text keys ("Death1":
     [start, stop]: an activator a script plays, held at rest until then), else over and over when its controllers
     go round (a steaming pool, Dagoth Ur's death sparkles from when they are enabled at his death). played: one of
     animated_collision_objects (a Clockwork City door): its groups kept, with when its collision goes and comes back
-    (collision_moves)."""
+    (collision_moves). scripted: a script plays a group on it (scripted_group_objects): its groups kept, its sprays on
+    the group's clock as OpenMW runs an animated object's particle controllers (Animation::addAnimSource), so the
+    Imperfect's steam vent bursts once in the Idle2 its script plays and stands still at rest."""
     groups = {}
     for b in nif.blocks:
         if b["type"] != "NiTextKeyExtraData":
@@ -1058,7 +1075,7 @@ def world_entry(nif, base, played=False):
     # (only a model with a death group waits for a script, the collapse of the Akulakhan chamber; an ambient one with an
     # idle group of its own, the lava river's steam and sparks, goes round as the rest)
     away, back = collision_moves(nif, groups) if played and groups else ({}, {})
-    if not any(g.startswith("death") for g in groups) and not away and not back:
+    if not any(g.startswith("death") for g in groups) and not away and not back and not scripted:
         groups = {}
     loop = not groups
     out = {"piece": base, "loop": loop, "groups": groups}

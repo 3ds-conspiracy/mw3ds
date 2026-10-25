@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# data: tribunal
+# The Imperfect's steam vent (act_sotha_fabsteam) bursts once as it wakes: its script plays the vent's Idle2 when the
+# player comes within 1500 and disables it 8 s later. OpenMW runs an animated object's sprays on its group's clock, so
+# at rest (Idle, time 0) the vent shows nothing and Idle2 sends steam out of its four nozzles for a second. Ours drew
+# the sprays as crossed quads that stood over the Imperfect as a solid white column all the time.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Sotha_Sil,_Dome_of_the_Imperfect
+0.3 0 0 0 0 TPIN:3904:3250:12400:0
+1 0 0 0 0
+0.1 0 0 0 0 EXPECT:vfxpiece:fabsteam:eq:1
+0.3 0 0 0 0 TPIN:4100:4000:12400:0
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:vfxpiece:fabsteam:eq:1
+10 0 0 0 0
+0.1 0 0 0 0 EXPECT:vfxpiece:fabsteam:eq:0

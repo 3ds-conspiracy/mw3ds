@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# data: tribunal
+# Bamz-Amschend's Hearthfire Hall: a steam centurion's script starts a fight with a hulking fabricant the first time it
+# runs (cent_fab_attack: StartCombat "fabricant_hulking_C_L"), and in OpenMW the hall's centurions and fabricants are
+# at war when the player walks in. The centurion walks the hall to its foe and they fight to a death.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SEED:1
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 TPIN:5800:3000:12400:0
+6 0 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:centurion_steam_c_l,doonce:eq:1
+0.1 0 0 0 0 EXPECT:refduel:centurion_steam_c_l:eq:1
+0.1 0 0 0 0 SNAP:refhealth:fabricant_hulking_c_l
+50 0 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:fabricant_hulking_c_l:lt:@0

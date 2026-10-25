@@ -307,6 +307,7 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		else if (what == "refdisp") v = (float)w.disposition(ri);
 		else if (what == "refflee") v = r.fleeing ? 1.0f : 0.0f;
 		else if (what == "refcombat") v = r.ai == AI_COMBAT ? 1.0f : 0.0f;
+		else if (what == "refduel") v = r.duelFoe >= 0 ? 1.0f : 0.0f;      // fighting another actor (StartCombat on it)
 		else if (what == "refvfx")       // spell visuals kept to it (a cast's while it casts, a hit's)
 		{
 			v = 0.0f;
