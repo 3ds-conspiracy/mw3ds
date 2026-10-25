@@ -1,0 +1,73 @@
+# start: Seyda Neen
+# Footsteps keep an even beat when the pad sits near the walk / run line (OpenMW's walk or run follows the speed asked
+# for, as our body's does: over 200 runs): steps alternate feet, one each per cycle. Ours chose the gait from the
+# distance each frame moved, and the walk's and run's keys fall at different points of the cycle, so a gait flipping
+# frame to frame fired the same foot twice in a row and steps out of time.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0.3 0 0 0 0 TP:-11500:-71500:150:0
+2 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 SNAP:soundstarted:FootBareLeft+SNAP:soundstarted:FootBareRight+SNAP:footrepeat
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0.55 0
+0.1 0 0.75 0
+0.1 0 0 0 0 EXPECT:footrepeat:eq:@0
+0.1 0 0 0 0 EXPECT:soundstarted:FootBareLeft:le:@7+EXPECT:soundstarted:FootBareRight:le:@7

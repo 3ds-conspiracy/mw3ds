@@ -399,11 +399,26 @@ void Session::updateFootsteps(const PlayerInput& in, bool menu, float dt)
 	}
 	if (walked > 100.0f || dt <= 0.0f)
 		return;                       // (a teleport, a load: no steps for it)
-	const Gait& g = w.player.sneaking ? kSneakGait : walked / dt > 200.0f ? kRunGait : kWalkGait;
+	// walk or run by the speed the pad asks for, as the body's animation picks it (over 200 runs); the frame's own
+	// distance jumps about on the device and flipped the gait frame to frame
+	float asked = sqrtf(in.moveX * in.moveX + in.moveY * in.moveY) * w.player.runSpeed * w.player.loadSpeed;
+	int gait = w.player.sneaking ? 2 : asked > 200.0f ? 1 : 0;
+	static const Gait* kGaits[3] = { &kWalkGait, &kRunGait, &kSneakGait };
+	const Gait& g = *kGaits[gait];
+	if (gait != stepGait)
+	{
+		// (the new cycle taken up as far between the feet's keys as the old one was: the beat goes on even)
+		const Gait& o = *kGaits[stepGait];
+		float p = stepPhase < o.right ? stepPhase + 1.0f : stepPhase;
+		float f = p < o.left ? (p - o.right) / (o.left - o.right) : (p - o.left) / (1.0f + o.right - o.left);
+		stepPhase = fmodf(p < o.left ? g.right + f * (g.left - g.right) : g.left + f * (1.0f + g.right - g.left), 1.0f);
+		stepGait = gait;
+	}
 	float before = stepPhase;
 	stepPhase += walked / g.cycle;
-	bool right = (before < g.right && stepPhase >= g.right) || stepPhase >= 1.0f + g.right;
-	bool left = (before < g.left && stepPhase >= g.left) || stepPhase >= 1.0f + g.left;
+	// (and feet take turns: never the same one twice)
+	bool right = stepLast != 0 && ((before < g.right && stepPhase >= g.right) || stepPhase >= 1.0f + g.right);
+	bool left = stepLast != 1 && ((before < g.left && stepPhase >= g.left) || stepPhase >= 1.0f + g.left);
 	stepPhase = fmodf(stepPhase, 1.0f);
 	if (!right && !left)
 		return;
@@ -418,7 +433,15 @@ void Session::updateFootsteps(const PlayerInput& in, bool menu, float dt)
 						kind = skill == SKILL_LIGHT_ARMOR ? "FootLight" : skill == SKILL_MEDIUM_ARMOR ? "FootMed" : "FootHeavy";
 					}
 	if (right)
+	{
+		stepRepeats += stepLast == 0;
+		stepLast = 0;
 		playSound(-1, std::string(kind) + "Right");
+	}
 	if (left)
+	{
+		stepRepeats += stepLast == 1;
+		stepLast = 1;
 		playSound(-1, std::string(kind) + "Left");
+	}
 }

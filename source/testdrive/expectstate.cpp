@@ -96,6 +96,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "hudeffecticons") v = s.hudEffectIcons;           // the HUD's active-effect icons
 	else if (what == "makepicking") v = s.makePick;                  // spellmaking / enchanting: choosing a skill (1) or attribute (2)
 	else if (what == "makeeffects") v = (float)s.makeEffects.size(); // ... the effects put together so far
+	else if (what == "footrepeat") v = (float)s.stepRepeats;         // footsteps on the same foot twice in a row
 	else if (what == "sneakhidden") v = s.hidden ? 1.0f : 0.0f;       // the HUD's sneak eye shows (sneaking, nobody noticed)
 	else if (what == "thirdperson") v = s.thirdPerson ? 1.0f : 0.0f;  // the view is third person
 	else if (what == "viewcamz")    // third person or the face preview: the camera's height over the player's feet (else 0)
