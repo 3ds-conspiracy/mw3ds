@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# Mournhold is an interior that behaves as an exterior: OpenMW gives it the sky and the weather's fog, not the cell's
+# own (WeatherManager::update and the sky run for exteriors and quasi-exteriors alike). On a clear noon the fog starts at
+# the view distance x (1 - 0.69) and is the weather's colour; ours drew it thick and white over the city's far walls.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+0.3 0 0 0 0 WEATHER:0
+4 0 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:fogrange:start:ge:2000+EXPECT:fogrange:end:ge:7000
+0.3 0 0 0 0 EXPECT:weathernow:eq:0+EXPECT:wfogdepth:lt:0.8
+1 0 0 0 0

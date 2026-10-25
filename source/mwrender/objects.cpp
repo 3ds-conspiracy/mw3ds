@@ -326,8 +326,9 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 		cell.fogStart = h4.fogStart;
 		cell.fogEnd = h4.fogEnd;
 		// Outdoors the view reaches past the loaded cells now (distant land): the converter's
-		// 1800 / 6000 was the loaded cells' edge
-		if (cell.fogEnd > 0.0f && !(cell.flags & CELL_INTERIOR))
+		// 1800 / 6000 was the loaded cells' edge. An interior under the sky (Mournhold) has the weather's fog over the
+		// same view, as OpenMW's quasi-exteriors
+		if (cell.fogEnd > 0.0f && (!(cell.flags & CELL_INTERIOR) || (cell.flags & CELL_SKY)))
 		{
 			cell.fogStart = kExteriorFogStart;
 			cell.fogEnd = kExteriorFogEnd;

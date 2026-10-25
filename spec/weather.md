@@ -202,7 +202,10 @@ State: current weather, next weather (none outside a transition), queued weather
 region proceeds). But for interiors (not exterior or quasi-exterior) it then switches the sky off, stops the
 ambient / rain / thunder sounds, sets all wind speeds to 0, and returns before computing any colour, fog, ambient or
 sun: the cell's own lighting applies. Exteriors compute the whole result every frame. A quasi-exterior (an interior
-cell flagged as such, e.g. Mournhold) counts as exterior.
+cell flagged as such, e.g. Mournhold) counts as exterior: its fog is the weather's over the same view as outdoors
+(from the view distance x (1 - fog depth) to the view distance, 2222 to 7168 on a clear noon), never the cell's own
+fog density. Ours kept the converter's interior 6000 end, so Mournhold's far walls sat in thick fog. Test:
+`bug-mournhold-weather-fog`.
 
 ## Wind, storms, thunder
 
