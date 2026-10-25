@@ -535,11 +535,19 @@ def gear(s):
     return [f"0.2 0 0 0 0 GIVE:{i.replace(' ', '_')}" for i in ids]
 
 
+def go_steps(s, x, y, z, yaw):
+    """(lines before, setup token): into the shot's interior first (GOTO, then TPIN) when it names one, else TP outside."""
+    if "cell" in s:
+        return [f"0.5 0 0 0 0 GOTO:{s['cell'].replace(' ', '_')}"], f"TPIN:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}"
+    return [], f"TP:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}"
+
+
 def body_steps(s):
     """The player's body in third person at from=, seen from cam, holding the group (BODYPOSE), nobody near."""
     x, y, z, yaw, pitch = s["cam"]
     fx, fy, fz, fyaw = s["from"]
-    setup = [f"TP:{fmt(fx)}:{fmt(fy)}:{fmt(fz)}:{fmt(fyaw)}"]
+    pre, tp = go_steps(s, fx, fy, fz, fyaw)
+    setup = [tp]
     if "hour" in s:
         setup.append(f"HOUR:{s['hour']}")
     view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:third", "HUD:off", "VMPOSE:off",
@@ -547,7 +555,7 @@ def body_steps(s):
     if "weather" in s:
         view.append(weather_step(s))
     at = f"{min(s['at'], 0.998):.3f}"
-    return ["1 0 0 0 0 " + "+".join(setup)] + gear(s) + ["1 0 0 0 0 " + "+".join(view),
+    return pre + ["1 0 0 0 0 " + "+".join(setup)] + gear(s) + ["1 0 0 0 0 " + "+".join(view),
             f"0.5 0 0 0 0 BODYPOSE:{s['group']}:{at}", "0.5 0 0 0 0 SHOT", "0.1 0 0 0 0 BODYPOSE:off"]
 
 
@@ -556,7 +564,8 @@ def cast_steps(s):
     later for the SHOT, then going on long enough for the bolt and its visuals to be gone."""
     x, y, z, yaw, pitch = s["cam"]
     fx, fy, fz, fyaw = s["from"]
-    setup = [f"TP:{fmt(fx)}:{fmt(fy)}:{fmt(fz)}:{fmt(fyaw)}"]
+    pre, tp = go_steps(s, fx, fy, fz, fyaw)
+    setup = [tp]
     if "hour" in s:
         setup.append(f"HOUR:{s['hour']}")
     fp = s.get("view") == "fp"
@@ -568,7 +577,7 @@ def cast_steps(s):
     if "weather" in s:
         view.append(weather_step(s))
     view += [f"SETSKILL:{k}:100" for k in CAST_SKILLS]
-    return ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view),
+    return pre + ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view),
             f"{fmt(s['after'])} 0 0 0 0 CAST:{s['cast'].replace(' ', '_')}",
             "0.1 0 0 0 0 HALT:on", "0.5 0 0 0 0 SHOT", "3 0 0 0 0 HALT:off"]
 
@@ -578,7 +587,8 @@ def vfx_steps(s):
     stopped `after` seconds later for the SHOT, then going on for it to be gone."""
     x, y, z, yaw, pitch = s["cam"]
     bx, by = x - math.sin(math.radians(yaw)) * 300, y - math.cos(math.radians(yaw)) * 300
-    setup = [f"TP:{fmt(bx)}:{fmt(by)}:{fmt(z)}:{fmt(yaw)}"]
+    pre, tp = go_steps(s, bx, by, z, yaw)
+    setup = [tp]
     if "hour" in s:
         setup.append(f"HOUR:{s['hour']}")
     view = [f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}", "POV:first", "HUD:off", "VMPOSE:off",
@@ -593,7 +603,7 @@ def vfx_steps(s):
         sid = s["spawn"].replace(" ", "%")
         stand = [f"1 0 0 0 0 PLACEAT:{sid}:{fmt(px)}:{fmt(py)}:{fmt(pz)}", f"0.1 0 0 0 0 ENABLE:{sid}",
                  f"0.5 0 0 0 0 POSE:{s['spawn'].replace(' ', '%')}:{s['group']}:{min(s['at'], 0.998):.3f}:{s['face']}"]
-    return ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view)] + stand + [
+    return pre + ["1 0 0 0 0 " + "+".join(setup), "1 0 0 0 0 " + "+".join(view)] + stand + [
             f"{fmt(s['after'])} 0 0 0 0 VFX:{s['vfx'].replace(' ', '_')}:{fmt(px)}:{fmt(py)}:{fmt(pz)}"
             + (f":{int(s['effect'])}" if "effect" in s else ""),
             "0.1 0 0 0 0 HALT:on", "0.5 0 0 0 0 SHOT", "3 0 0 0 0 HALT:off"] + (

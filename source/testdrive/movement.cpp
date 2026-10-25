@@ -552,6 +552,21 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 		lagAt = 1500.0f;
 	if ((kind == WALK || kind == ACTIVATE) && escortLagging(s, escort, lagAt, &e))
 	{
+		// (LEGIT, v2 kit: held back by a fight of theirs, what they fight is fought with them, as a player helps an
+		// escort rather than stand and wait: Larienna Macrina and Nchurdamz's centurion sphere, its Shock Shield up)
+		const int foe = w.refs[e].duelFoe;
+		if (s.testLegit && s.kitV2() && fightRef < 0 && foe >= 0 && foe < (int)w.refs.size() && !w.refs[foe].dead
+			&& w.refs[foe].visible() && w.distanceToPlayer(foe) < 600.0f
+			&& std::find(fightGaveUp.begin(), fightGaveUp.end(), foe) == fightGaveUp.end())
+		{
+			logf("drive: %s fights %s on the way: helping", escort.c_str(), w.refs[foe].id.c_str());
+			fightRef = foe;
+			fightHelp = true;
+			fightTimer = 0.0f;
+			progressTimer = 0.0f;
+			memcpy(progressAt, p.feet, sizeof(progressAt));
+			return true;
+		}
 		if ((int)(elapsed / 5.0f) != (int)((elapsed - dt) / 5.0f))
 			logf("drive: waiting for %s (%.0f away, at %.0f %.0f %.0f, ai %d)", escort.c_str(), w.distanceToPlayer(e), w.refs[e].pos[0],
 				w.refs[e].pos[1], w.refs[e].pos[2], (int)w.refs[e].ai);
@@ -596,7 +611,7 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 			int t = s.swingTarget();
 			return t >= 0 && t != fightRef && w.refs[t].ai != AI_COMBAT;
 		};
-		bool fightOver = f.dead || !f.visible() || f.ai != AI_COMBAT || f.duelFoe >= 0 || fd > 600.0f || fightTimer > 20.0f;
+		bool fightOver = f.dead || !f.visible() || (!fightHelp && (f.ai != AI_COMBAT || f.duelFoe >= 0)) || fd > 600.0f || fightTimer > 20.0f;
 		if (fightOver && fightHold && friendInReach())
 		{
 			// over with the blow still held: turned away from them before it goes
@@ -607,6 +622,11 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 		if (fightOver)
 		{
 			fightHold = false;
+			// (fought the whole while and still standing: not again this walk, it can't be reached; Rotheran's arena
+			// dremora casting from its cage had the walk turning back to it until the step timed out)
+			if (!f.dead && fightTimer > 20.0f)
+				fightGaveUp.push_back(fightRef);
+			fightHelp = false;
 			logf("drive: %s %s after %.1f s: on to %s", f.id.c_str(), f.dead ? "dead" : "no longer in the way", fightTimer, id.c_str());
 			fightRef = -1;
 			progressTimer = 0.0f;
@@ -843,7 +863,8 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 					const Ref& a = w.refs[i];
 					float ex = a.pos[0] - p.feet[0], ey = a.pos[1] - p.feet[1], e = hypotf(ex, ey);
 					// (not the one we walk to: a talk or an escort goes on as asked)
-					if (i != ref && a.visible() && !a.dead && !a.ally && a.ai == AI_COMBAT && a.duelFoe < 0 && e < ad && fabsf(a.pos[2] - p.feet[2]) < 150.0f)
+					if (i != ref && a.visible() && !a.dead && !a.ally && a.ai == AI_COMBAT && a.duelFoe < 0 && e < ad && fabsf(a.pos[2] - p.feet[2]) < 150.0f
+						&& std::find(fightGaveUp.begin(), fightGaveUp.end(), i) == fightGaveUp.end())
 					{
 						ad = e;
 						attacker = i;
@@ -912,6 +933,7 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 			{
 				logf("drive: %s attacks us on the way to %s: fighting it", w.refs[attacker].id.c_str(), id.c_str());
 				fightRef = attacker;
+				fightHelp = false;
 				fightTimer = 0.0f;
 				progressTimer = 0.0f;
 				memcpy(progressAt, p.feet, sizeof(progressAt));

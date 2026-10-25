@@ -84,6 +84,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:TG_SS_Generosity1:50
+0.3 0 0 0 0 SETGLOBAL:tgglove:1
 0.3 0 0 0 0 JOIN:thieves_guild:0
 0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
 8 0 0 0
@@ -100,6 +101,7 @@
 3 0 0 0
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 JOURNAL:TG_SS_Generosity1:1
+0.3 0 0 0 0 SETGLOBAL:tgglove:1
 0.3 0 0 0 0 JOIN:thieves_guild:0
 0.3 0 0 0 0 GOTO:Vivec,_Simine_Fralinie:_Bookseller
 8 0 0 0

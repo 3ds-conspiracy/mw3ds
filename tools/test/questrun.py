@@ -60,6 +60,32 @@ def exact(op, v):
     return {"=": v, ">=": v, ">": v + 1, "<": v - 1, "<=": v, "!=": v + 1}.get(op, v)
 
 
+def holds(op, x, v):
+    return {"=": x == v, ">=": x >= v, ">": x > v, "<": x < v, "<=": x <= v, "!=": x != v}.get(op, False)
+
+
+def fail(op, v):
+    """A value for which `x op v` is false."""
+    return {"=": v + 1, ">=": v - 1, ">": v, "<": v, "<=": v + 1, "!=": v}.get(op, v + 1)
+
+
+def blockers(dial, info, who, defaults):
+    """Conditions to add so the responses ahead of this one (said first when they match) don't: one of the same
+    speaker whose only conditions are globals that hold as the game starts (Stacey's "You aren't wearing the gloves"
+    while TGglove is 0, before the Hlervu Locket's stages): each such global set to a value it doesn't match."""
+    out = []
+    for other in dial["infos"]:
+        if other is info:
+            break
+        if (other.zstr("ONAM") or "").lower() != who.lower():
+            continue
+        oc = conds(other)
+        if oc and all(c[0] == "2" for c in oc) and all(holds(op, defaults.get(n.lower(), 0.0), val) for _, _, op, n, val in oc):
+            _, fn, op, n, val = oc[0]
+            out.append(("2", fn, "=", n, fail(op, val)))
+    return out
+
+
 def choice_parents(dial, info, cs, depth=0):
     """The chain of choices leading to a response that needs Choice = k: [(parent conds, k), ...] from the
     first line said to the last choice. None when no parent offers it."""
@@ -128,6 +154,11 @@ def main():
     quests = {d["name"].lower() for d in db["dialogue"] if d["type"] == 4}
     # People and things Startup hides until their quests bring them in
     hidden = {m.lower() for m in re.findall(r'(?im)^\s*"?([^"\n]+?)"?\s*->\s*disable', db["SCPT"].get("startup", ""))}
+    # globals as the game starts (their GLOB value)
+    glob_default = {}
+    for r in read_game({"GLOB"}):
+        fl = r.get("FLTV")
+        glob_default[r.id.lower()] = struct.unpack("<f", fl[:4])[0] if fl and len(fl) >= 4 else 0.0
     openers = {}
     for dial in db["dialogue"]:
         if dial["type"] not in (0, 2):           # topics, greetings
@@ -156,6 +187,7 @@ def main():
                 # beforehand: that would hide the offer itself
                 by_parents = {jq.lower() for _, _, par in chain for jq, _ in JOURNAL_SET.findall(par.zstr("BNAM") or "")}
                 allc = [c for c in allc if not (c[0] == "4" and c[3].lower() in by_parents)]
+                allc += blockers(dial, info, who, glob_default)
                 choices = [k for _, k, _ in chain]
                 key = (q, v) if args.stages else q
                 better = key not in openers or v < openers[key][1] or (v == openers[key][1] and len(choices) < len(openers[key][5]))
@@ -164,10 +196,6 @@ def main():
 
     # globals a quest's conditions need are put back after it (pcvampire left at 1 made every later
     # NPC in the batch curse the player and turn hostile)
-    glob_default = {}
-    for r in read_game({"GLOB"}):
-        fl = r.get("FLTV")
-        glob_default[r.id.lower()] = struct.unpack("<f", fl[:4])[0] if fl and len(fl) >= 4 else 0.0
     tests, plan = [], {}
     rows = sorted(openers.items(), key=lambda kv: str(where.get(kv[1][4].lower(), ("~", ""))[1]))
     for k in range(0, len(rows), args.batch):

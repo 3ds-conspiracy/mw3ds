@@ -51,8 +51,26 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
             start = m.group(1)
     # "# data: tribunal" in its first lines: a case of the Tribunal add-on, run on that conversion (MW3DS_TRIBUNAL_DATA,
     # else out/tribunal) whatever --data says
-    if any(re.match(r"^#\s*data:\s*tribunal\s*$", ln) for ln in inputs[:5]):
+    tribunal_case = any(re.match(r"^#\s*data:\s*tribunal\s*$", ln) for ln in inputs[:5])
+    if tribunal_case:
         data = os.environ.get("MW3DS_TRIBUNAL_DATA") or "out/tribunal"
+    on_tribunal = "tribunal" in str(data).replace("\\", "/").lower()
+    # "# data: vanilla": a case about the game without the add-on (trib-vanilla-off): skipped on the Tribunal data
+    if on_tribunal and any(re.match(r"^#\s*data:\s*vanilla\s*$", ln) for ln in inputs[:5]):
+        return [f"== {test}", "RESULT: PASS (skipped: vanilla data only)"]
+    # A vanilla case on the Tribunal data plays as someone the Dark Brotherhood has already given up on (TR_DBAttack 50,
+    # dbattackScript's end): the add-on's assassins otherwise strike at the first rest, and a vanilla case can't rest
+    # with one about ("enemies are nearby")
+    if on_tribunal and not tribunal_case:
+        # (a token on the case's first step, not a step of its own: the run's timeline stays the vanilla one's)
+        first = next((i for i, ln in enumerate(inputs) if ln.strip() and not ln.lstrip().startswith("#")), None)
+        if first is not None:
+            parts = inputs[first].split()
+            if len(parts) >= 6:
+                parts[5] += "+JOURNAL:tr_dbattack:50"
+            else:
+                parts = (parts + ["0"] * 5)[:5] + ["JOURNAL:tr_dbattack:50"]
+            inputs = inputs[:first] + [" ".join(parts)] + inputs[first + 1:]
     # "# console: old" in its first lines: a case for the Old 3DS profile alone (run_native_all leaves it out of New 3DS runs)
     if any(re.match(r"^#\s*console:\s*old\s*$", ln) for ln in inputs[:5]):
         old3ds = True

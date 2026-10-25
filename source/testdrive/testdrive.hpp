@@ -81,6 +81,8 @@ struct TestDriver
 	float backTimer = 0.0f;          // a swinging door holding us back: backing off it a moment
 	int backTries = 0;
 	int fightRef = -1;               // a walk held up by an attacker in the way: fighting it first
+	bool fightHelp = false;          // the fight is our escort's (its foe duels them, not us)
+	std::vector<int> fightGaveUp;    // attackers this walk fought 20 s without reaching (a caged one casting through the bars)
 	float fightTimer = 0.0f;
 	bool fightHold = false;          // the attack pressed last frame (kept so while someone peaceful is where the blow would land)
 	bool frontFight = false;         // fighting one who attacks us from in front of what we came to use

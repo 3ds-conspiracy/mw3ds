@@ -408,6 +408,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			deadEntry = -1;
 			floodKeep = false;
 			fightRef = -1;
+			fightHelp = false;
 			unlockTries = 0;
 			unlockDoor = -1;
 			earlyTried = false;
@@ -422,6 +423,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			lookUpTimer = 0.0f;
 			escortLoose = false;
 			backTries = 0;
+			fightGaveUp.clear();
 			backTimer = 0.0f;
 			descGaveUp = false;
 			lastGoal = 1e9f;
@@ -460,6 +462,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			deadEntry = -1;
 			floodKeep = false;
 			fightRef = -1;
+			fightHelp = false;
 			unlockTries = 0;
 			unlockDoor = -1;
 			earlyTried = false;
@@ -474,6 +477,7 @@ bool TestDriver::start(Session& s, const std::string& token)
 			lookUpTimer = 0.0f;
 			escortLoose = false;
 			backTries = 0;
+			fightGaveUp.clear();
 			backTimer = 0.0f;
 		descGaveUp = false;
 		lastGoal = 1e9f;

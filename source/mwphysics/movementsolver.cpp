@@ -173,6 +173,17 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 		if (fz >= foeZ - 16.0f)
 			maxDrop = fmaxf(maxDrop, fminf(250.0f, r.pos[2] - foeZ + 16.0f));
 	}
+	// Indoors, one following the player who stands below goes off a ledge to them, down to their floor, as one in a fight
+	// does (the same Larienna Macrina, perched on the dead sphere, stood at its edge while the player waited below).
+	// Outdoors the player's footsteps lead them down instead (trailUntil above)
+	if ((r.aiPackage == AIPKG_FOLLOW || r.aiPackage == AIPKG_ESCORT) && r.ai != AI_COMBAT && r.duelFoe < 0
+		&& w.cells[w.placeOf(ri)].interior
+		&& (r.aiTarget.empty() || r.aiTarget == "player") && !r.backingUp && r.sideStep == 0)
+	{
+		float leaderZ = w.player.feet[2];
+		if (fz >= leaderZ - 16.0f)
+			maxDrop = fmaxf(maxDrop, fminf(250.0f, r.pos[2] - leaderZ + 16.0f));
+	}
 	if (fz < r.pos[2] - maxDrop && fz > swimZ + 0.5f)
 	{
 		return false;

@@ -63,6 +63,7 @@
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 EFFECT:133:1:99999
 0.3 0 0 0 0 SETGLOBAL:vampclan:1
+0.3 0 0 0 0 SETGLOBAL:vampkills:12
 0.3 0 0 0 0 JOURNAL:VA_VampHunter:80
 0.3 0 0 0 0 GOTO:Ashmelech
 8 0 0 0

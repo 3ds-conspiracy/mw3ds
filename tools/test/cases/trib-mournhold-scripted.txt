@@ -1,0 +1,40 @@
+# start: Seyda Neen
+# data: tribunal
+# Three of Tribunal's small scripted things: the plaza fountains' loop (Sound_MournFount: PlayLoopSound3DVP
+# "MournSpray", stopped and disabled once the fabricants attack), King Helseth kept disabled on his throne until
+# TR_Bamz 50 (helsethScript), and Sotha Sil's steam vents in the Dome of Serlyn, out while their machine door is
+# shut and steaming once it opens (sothasteam1Script / 2: Enable, PlayGroup Idle2).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+0.3 0 0 0 0 TPIN:429:1000:100:0
+3 0 0 0 0
+0.1 0 0 0 0 EXPECT:refloopvol:sound_mournspray,mournspray:gt:0
+0.3 0 0 0 0 SETGLOBAL:fabattack:1
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:sound_mournspray:eq:0
+0.3 0 0 0 0 SETGLOBAL:fabattack:0
+# Helseth: not on his throne before TR_Bamz 50, there after
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace_Throne_Room
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:king_hlaalu_helseth:eq:0
+0.3 0 0 0 0 JOURNAL:tr_bamz:50
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:king_hlaalu_helseth:eq:1
+# the Dome of Serlyn's vents: out with the door shut, steaming when it opens
+0.3 0 0 0 0 GOTO:Sotha_Sil,_Dome_of_Serlyn
+0.3 0 0 0 0 TPIN:4352:4600:12500:0
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:act_sotha_steam00:eq:0+EXPECT:vfxpiece:sotha_steam:eq:0
+0.3 0 0 0 0 SETLOCAL:act_sotha_mach_door1:state:1
+0.3 0 0 0 0 SETLOCAL:act_sotha_mach_door2:state:1
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:act_sotha_steam00:eq:1+EXPECT:vfxpiece:sotha_steam:ge:4
+# Helseth struck by the player under 400 health: his script sees OnPCHitMe and sets kingHit (then StartCombat; the test
+# blow kills him, so only the flag is checked)
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace_Throne_Room
+2 0 0 0 0
+0.3 0 0 0 0 REFHEALTH:king_hlaalu_helseth:0.3
+0.3 0 0 0 0 HIT:king_hlaalu_helseth
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:global:kinghit:eq:1

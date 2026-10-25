@@ -1,4 +1,5 @@
 # start: Seyda Neen
+# data: vanilla
 # trib-vanilla-off: on the vanilla conversion (no Tribunal add-on) nothing of Tribunal's runs: no start script of its
 # is running, and levitation works as ever (nothing disables it).
 3 0 0 0 0 MSG
