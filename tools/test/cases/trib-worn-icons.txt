@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: tribunal
+# Tribunal's worn artifacts: Helseth's Collar (a constant effect) puts its effects on the player while worn, and the
+# HUD shows their icons; Barilzar's Mazed Band (cast when used) adds none just by being worn.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12
+0.3 0 0 0 0 GOTO:Mournhold,_Godsreach
+2 0 0 0 0
+0.1 0 0 0 0 SNAP:hudeffecticons
+0.3 0 0 0 0 GIVE:mazed_band_end
+1 0 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:mazed_band_end:eq:1+EXPECT:hudeffecticons:eq:@0
+0.3 0 0 0 0 GIVE:helseth's%collar
+1 0 0 0 0
+0.3 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:equipped:helseth's%collar:eq:1+EXPECT:abilitiesshown:ge:3+EXPECT:hudeffecticons:gt:@0

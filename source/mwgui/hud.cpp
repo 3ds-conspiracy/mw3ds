@@ -283,6 +283,35 @@ void Session::drawQuickStrip()
 	}
 }
 
+// The active effects the HUD shows an icon for: spells, potions, blessings, and abilities and worn constant effects
+// (the fortifies folded into the stats too: OpenMW lists every active effect), the same effect once
+std::vector<ActiveEffect> Session::hudEffects()
+{
+	std::vector<ActiveEffect> shown;
+	auto add = [&](const ActiveEffect& e, float remaining) {
+		for (auto& sh : shown)
+			if (sh.effect == e.effect && sh.attribute == e.attribute && sh.skill == e.skill)
+			{
+				sh.magnitude += e.magnitude;
+				sh.remaining = fmaxf(sh.remaining, remaining);
+				return;
+			}
+		ActiveEffect one;
+		one.effect = e.effect;
+		one.attribute = e.attribute;
+		one.skill = e.skill;
+		one.magnitude = e.magnitude;
+		one.remaining = remaining;
+		one.source = e.source;
+		shown.push_back(one);
+	};
+	for (auto& e : w.effects)
+		add(e, e.remaining);
+	for (auto& e : w.abilitiesShown)
+		add(e, 1e9f);
+	return shown;
+}
+
 void Session::drawHud()
 {
 	const PlayerStats& s = w.stats;
@@ -323,24 +352,9 @@ void Session::drawHud()
 	std::string spell = s.selectedSpell.empty() ? "" : w.game.spells[s.selectedSpell].name;
 	uiText(48, by + 18, 0.42f, spell.empty() ? col::textDim : col::link, spell.empty() ? "No spell" : spell);
 
-	// The active effects as Morrowind's HUD shows them: an icon for each (spells, potions, blessings, abilities, what's
-	// worn), the same effect once; a tap shows what it is, how strong and for how long (OpenMW's tooltip on hover)
-	struct Shown { int effect, attribute, skill; float magnitude, remaining; std::string source; };
-	std::vector<Shown> shown;
-	auto add = [&](int effect, int attribute, int skill, float magnitude, float remaining, const std::string& source) {
-		for (auto& sh : shown)
-			if (sh.effect == effect && sh.attribute == attribute && sh.skill == skill)
-			{
-				sh.magnitude += magnitude;
-				sh.remaining = fmaxf(sh.remaining, remaining);
-				return;
-			}
-		shown.push_back({ effect, attribute, skill, magnitude, remaining, source });
-	};
-	for (auto& e : w.effects)
-		add(e.effect, e.attribute, e.skill, e.magnitude, e.remaining, e.source);
-	for (auto& e : w.abilities)
-		add(e.effect, e.attribute, e.skill, e.magnitude, 1e9f, e.source);
+	// The active effects as Morrowind's HUD shows them (hudEffects); a tap shows what it is, how strong and for how
+	// long (OpenMW's tooltip on hover)
+	std::vector<ActiveEffect> shown = hudEffects();
 	hudEffectIcons = 0;
 	for (size_t k = 0; k < shown.size() && k < 10; k++)
 	{
@@ -351,7 +365,7 @@ void Session::drawHud()
 		hudEffectIcons++;
 		if (uiHit(ix, 114, 16, 16))
 		{
-			const Shown& sh = shown[k];
+			const ActiveEffect& sh = shown[k];
 			int flags = me->second.flags;
 			std::string line = effectLabel(sh.effect, sh.skill, sh.attribute);
 			if (!(flags & 0x8))

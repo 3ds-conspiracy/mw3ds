@@ -131,7 +131,10 @@ shrines are played in `uber-tribunal-temple`.
 
 The HUD (bottom screen, 3DS layout) shows an icon for each active effect, as Morrowind's does: spells, potions,
 blessings, abilities and what's worn, the same effect once. A tap shows its tooltip on the top screen for three
-seconds (the effect, its magnitude, the time left and where it came from): OpenMW's on hover.
+seconds (the effect, its magnitude, the time left and where it came from): OpenMW's on hover. Every effect of an
+ability or a worn constant effect is listed, its Fortify / Drain Attribute, Skill, Health, Magicka and Fatigue too,
+though those are folded into the stats (`World::abilitiesShown`, `Session::hudEffects`); ours left them out, so
+Helseth's Collar or a birthsign's fortify showed no icon. Test: `trib-worn-icons`.
 
 ## Findings
 

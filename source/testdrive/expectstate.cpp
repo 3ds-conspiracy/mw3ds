@@ -93,7 +93,17 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "target") v = s.target >= 0 ? 1.0f : 0.0f;       // something under the crosshair
 	else if (what == "forcesneak") v = w.forceSneak ? 1.0f : 0.0f;    // the player forced to sneak
 	else if (what == "sneaking") v = w.player.sneaking ? 1.0f : 0.0f;  // the player sneaks now
-	else if (what == "hudeffecticons") v = s.hudEffectIcons;           // the HUD's active-effect icons
+	else if (what == "hudeffecticons")      // the HUD's active-effect icons (those of its effects with an icon)
+	{
+		v = 0;
+		for (auto& e : s.hudEffects())
+		{
+			auto me = w.game.magicEffects.find(e.effect);
+			v += me != w.game.magicEffects.end() && me->second.iconIx >= 0;
+		}
+		v = fminf(v, 10.0f);
+	}
+	else if (what == "abilitiesshown") v = (float)w.abilitiesShown.size();   // effects of abilities and worn constant effects
 	else if (what == "makepicking") v = s.makePick;                  // spellmaking / enchanting: choosing a skill (1) or attribute (2)
 	else if (what == "makeeffects") v = (float)s.makeEffects.size(); // ... the effects put together so far
 	else if (what == "footrepeat") v = (float)s.stepRepeats;         // footsteps on the same foot twice in a row

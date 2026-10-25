@@ -69,6 +69,7 @@ struct World
 
 	std::vector<ActiveEffect> effects;
 	std::vector<ActiveEffect> abilities;   // race / birthsign abilities' other effects (resistances ...), for good
+	std::vector<ActiveEffect> abilitiesShown;   // every effect of the abilities and worn constant effects (the HUD's icons)
 	float corprusSince = -1.0f;   // gameHour the player caught Corprus (-1: hasn't); it worsens by the day
 	int corprusLevel() const { return corprusSince < 0.0f ? 1 : std::min(20, 1 + (int)((gameHour - corprusSince) / 24.0f)); }
 	int markCell = -1;            // Mark: where Recall goes

@@ -342,6 +342,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 
 	// screens (mwgui/hud.cpp, mwgui/messagebox.cpp)
 	void drawHud();
+	std::vector<ActiveEffect> hudEffects();
 	void drawQuickStrip();
 	void drawMessage();
 	void drawDialogue();

@@ -100,6 +100,7 @@ void World::recomputeStats()
 			abilities.push_back(id);
 	}
 	this->abilities.clear();
+	abilitiesShown.clear();
 	// Abilities' and worn constant enchantments' fortifies and drains are modifiers on top (OpenMW's modified value):
 	// only the base is held to 100, so the Boots of Blinding Speed take Speed past it
 	int attrMod[8] = {}, skillMod[27] = {};
@@ -121,6 +122,7 @@ void World::recomputeStats()
 				continue;                                  // cured: the Corprus effect is gone
 			if (e.effect == 17 || e.effect == 79)
 				e.min *= scale;
+			abilitiesShown.push_back({ e.effect, e.attribute, e.skill, (float)e.min, 1e9f, it->second.name });
 			if (e.effect == 79 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] += e.min;
 			else if (e.effect == 83 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] += e.min;
 			else if (e.effect == 84) magickaMult += e.min / 10.0f;
