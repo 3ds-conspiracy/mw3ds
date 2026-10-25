@@ -288,6 +288,15 @@ def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True):
         png = Path(tmp) / "in.png"
         img.save(png)
         # (an Old 3DS draws every world texture at full size, never its smaller copies: its data carries none, a third less)
-        subprocess.run([tex3ds, "-f", "etc1a4" if has_alpha else "etc1", *(["-m", "triangle"] if mips else []),
-                        "-o", str(out), str(png)], check=True, capture_output=True)
+        cmd = [tex3ds, "-f", "etc1a4" if has_alpha else "etc1", *(["-m", "triangle"] if mips else []), "-o", str(out), str(png)]
+        # tex3ds can fail under memory pressure and leave a cut-short file behind, which the game then fails to read
+        # (it shipped in a build as a 4 KB stub): once more, and never a partial file on disk
+        for attempt in (1, 2):
+            try:
+                subprocess.run(cmd, check=True, capture_output=True)
+                break
+            except subprocess.CalledProcessError:
+                Path(out).unlink(missing_ok=True)
+                if attempt == 2:
+                    raise
     return {"size": [tw, th], "source_pot": [sw, sh], "alpha": has_alpha, "mips": mips}
