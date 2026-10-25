@@ -151,9 +151,16 @@ ssize_t decode_utf8(uint32_t* out, const unsigned char* p)
 // ---- linear heap: plain memory
 static size_t s_linearUsed = 0;
 static std::map<void*, size_t> s_linearSizes;
+#ifdef NATIVE_MEMCAP
+extern "C" void* nativeOutsideAlloc(size_t n);     // (the memory checker: not out of the capped C++ heap)
+#endif
 void* linearAlloc(size_t size)
 {
+#ifdef NATIVE_MEMCAP
+	void* p = nativeOutsideAlloc(size);
+#else
 	void* p = malloc(size ? size : 1);
+#endif
 	if (p)
 	{
 		s_linearUsed += size;

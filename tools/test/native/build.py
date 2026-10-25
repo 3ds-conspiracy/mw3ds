@@ -3,6 +3,8 @@ Compiles with zig (python -m ziglang) against the stand-in 3DS headers in tools/
 zlib from its source (fetched once into build/native/zlib).
     python tools/test/native/build.py            # rebuilds what changed
     MW3DS_NATIVE_BUILD=build/native-x python ...   # another build folder (a second session's own build)
+    python tools/test/native/build.py --mem      # the memory checker: build\native-mem, 32-bit as the console, its
+                                                 # heap capped at the console's (native_heap.cpp; NATIVE_OLD3DS=1: 39 MB)
 """
 import io
 import os
@@ -16,7 +18,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).parent
-BUILD = ROOT / os.environ.get("MW3DS_NATIVE_BUILD", "build/native")
+# --mem: the memory checker (native_heap.cpp): 32-bit, so pointers and the game's structs are the console's size, and
+# malloc capped at the console's heap
+MEM = "--mem" in sys.argv
+BUILD = ROOT / os.environ.get("MW3DS_NATIVE_BUILD", "build/native-mem" if MEM else "build/native")
+TARGET = ["-target", "x86-windows-gnu"] if MEM else []
 ZLIB = BUILD / "zlib"
 ZLIB_URL = "https://github.com/madler/zlib/archive/refs/tags/v1.3.1.tar.gz"
 ZLIB_SRC = ["adler32", "compress", "crc32", "deflate", "inffast", "inflate", "inftrees", "trees", "uncompr", "zutil"]
@@ -37,7 +43,7 @@ RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGl
 RENDERER_DEFINES = re.compile(r"^[A-Za-z_][\w:<>*& ]*\b(?:" + "|".join(RENDERER_RENAMES) + r")\([^;]*\)\s*\n\{", re.M)
 # no fused multiply-add: the 3DS's VFP rounds every operation, and a host-CPU build would round some differently
 CXXFLAGS = [os.environ.get("MW3DS_NATIVE_OPT", "-O1"), "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "source"),
-            "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h")]
+            "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h"), *(["-DNATIVE_MEMCAP"] if MEM else [])]
 
 
 def zig(*args):
@@ -64,7 +70,7 @@ def compile_one(src, obj, cxx):
         flags = flags + [f"-D{n}={n}_sw" for n in RENDERER_RENAMES]
     if src.stem == "native_gpu":
         flags = flags + ["-O2"]         # the rasterizer: every pixel of both screens, each frame it draws
-    cmd = zig("c++" if cxx else "cc", "-c", src.as_posix(), "-o", obj.as_posix(), *flags)
+    cmd = zig("c++" if cxx else "cc", *TARGET, "-c", src.as_posix(), "-o", obj.as_posix(), *flags)
     r = subprocess.run(cmd, capture_output=True, text=True)
     return None if r.returncode == 0 else f"{src.name}:\n{r.stderr[:3000]}"
 
@@ -114,6 +120,8 @@ def main():
     jobs.append((HERE / "main_native.cpp", objdir / "main_native.o", True))
     jobs.append((HERE / "native_stubs.cpp", objdir / "native_stubs.o", True))
     jobs.append((HERE / "native_gpu.cpp", objdir / "native_gpu.o", True))
+    if MEM:
+        jobs.append((HERE / "native_heap.cpp", objdir / "native_heap.o", True))
     for z in ZLIB_SRC:
         jobs.append((ZLIB / (z + ".c"), objdir / ("z_" + z + ".o"), False))
     with ThreadPoolExecutor(max_workers=os.cpu_count() or 4) as pool:
@@ -122,7 +130,8 @@ def main():
         print("\n".join(errors))
         sys.exit(1)
     exe = BUILD / "mw3ds-native.exe"
-    r = subprocess.run(zig("c++", *[o.as_posix() for _, o, _ in jobs], "-o", exe.as_posix()), capture_output=True, text=True)
+    r = subprocess.run(zig("c++", *TARGET, *[o.as_posix() for _, o, _ in jobs], *(["-lkernel32"] if MEM else []), "-o",
+                           exe.as_posix()), capture_output=True, text=True)
     if r.returncode:
         print(r.stderr[:6000])
         sys.exit(1)

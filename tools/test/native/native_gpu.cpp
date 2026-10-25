@@ -63,8 +63,19 @@ struct C3D_RenderTarget
 static std::vector<C3D_RenderTarget*> s_targets;
 static C3D_RenderTarget* s_target = nullptr;
 
+// The memory checker (build.py --mem): what only this software renderer holds (its screens, its decoded textures) and
+// what the console keeps in linear memory (the textures) comes from outside the capped C++ heap
+#ifdef NATIVE_MEMCAP
+extern "C" void nativeOutsideEnter();
+extern "C" void nativeOutsideLeave();
+struct OutsideHeap { OutsideHeap() { nativeOutsideEnter(); } ~OutsideHeap() { nativeOutsideLeave(); } };
+#else
+struct OutsideHeap {};
+#endif
+
 static C3D_RenderTarget* newTarget(int w, int h)
 {
+	OutsideHeap outside;
 	auto* t = new C3D_RenderTarget();
 	t->w = w;
 	t->h = h;
@@ -146,7 +157,10 @@ static void decodeTex(const C3D_Tex* t, TexImage& img)
 	int w = t->width, h = t->height;
 	img.w = w;
 	img.h = h;
-	img.px.assign(w * h, 0xFFFF00FF);
+	{
+		OutsideHeap outside;
+		img.px.assign(w * h, 0xFFFF00FF);
+	}
 	const u8* d = (const u8*)t->data;
 	if (!d || w < 8 || h < 8)
 		return;
@@ -473,7 +487,10 @@ bool C3D_TexInit(C3D_Tex* t, u16 w, u16 h, int fmt)
 		t->data = nullptr;
 		return false;
 	}
-	t->data = calloc(1, t->size ? t->size : 1);
+	{
+		OutsideHeap outside;
+		t->data = calloc(1, t->size ? t->size : 1);
+	}
 	t->native = nullptr;
 	return t->data != nullptr;
 }

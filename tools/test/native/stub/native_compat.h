@@ -67,8 +67,15 @@ inline CharWidthInfo* fontGetCharWidthInfo(void*, int) { static CharWidthInfo c 
 ssize_t decode_utf8(uint32_t* out, const unsigned char* in);
 
 // ---- heap
+#ifdef NATIVE_MEMCAP
+// the memory checker's arena (native_heap.cpp): newlib's numbers
+struct NativeMallinfo { int uordblks, fordblks; };
+extern "C" NativeMallinfo nativeMallinfo();
+#define mallinfo() nativeMallinfo()
+#else
 struct mallinfo_t { int uordblks, fordblks; };
 #define mallinfo() mallinfo_t{ 0, 0 }
+#endif
 
 // ---- the error screen, the crash handler: nothing to install
 #define WRITE_DATA_TO_HANDLER_STACK 0

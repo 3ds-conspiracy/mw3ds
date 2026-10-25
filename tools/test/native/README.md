@@ -47,6 +47,24 @@ All cases, several at a time, with a saved summary:
 python tools/test/run_native_all.py --ignore-warnings
 ```
 
+## The memory checker
+
+A second build, `build\native-mem`, for heap problems an Old 3DS would hit: it is 32-bit (the game's structs and
+pointers the console's size) and its `malloc` is capped at the console's C++ heap (`native_heap.cpp`: 39 MB with the
+Old 3DS profile, else the New 3DS's), with dlmalloc's chunk layout, the reserve and the console's out-of-heap lines.
+What the console keeps outside that heap (textures in linear memory, this renderer's own screens and decoded textures)
+is allocated outside it. Its session heap measured within 2% of Azahar's (20.9 MB against 21.2 MB).
+
+```sh
+python tools\test\native\build.py --mem
+python tools/test/run_native_all.py --mem --ignore-warnings          # every case, Old 3DS profile, capped heap
+tools/test/run_test.py <case> --native --old3ds --exe build/native-mem/mw3ds-native.exe
+```
+
+A case that needs more heap than an Old 3DS has logs `crash: out of memory (new)` and ends; `EXPECT:heappeak` reads the
+peak. Not the console's allocator to the byte (holes fall a little differently), and it says nothing of VRAM or the GPU:
+Azahar stays the final check. Slightly slower than the 64-bit build.
+
 ## Flags
 
 `run_test.py` (one case):

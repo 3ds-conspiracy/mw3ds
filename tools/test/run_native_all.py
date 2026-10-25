@@ -10,6 +10,9 @@ Each case gets its own SD folder (build/native/sd-<slot>), so they do not touch 
 --exe / --sd-root / --no-latest: another native build (build.py with MW3DS_NATIVE_BUILD), its own SD folders, and no copy
 to build/native-results/latest (a second session's run that leaves the first one's alone)
 --old3ds: every case with the Old 3DS profile (slow CPU, small heap: source/platform/console.hpp), as run_test.py --old3ds
+--mem: the memory checker (build.py --mem: 32-bit, the heap capped at the Old 3DS's 39 MB) with the Old 3DS profile, its
+own SD folders (build/native-mem/sd-<slot>), no copy to latest: a case that needs more heap than an Old 3DS has runs out
+("crash: out of memory") as the console would
 """
 import argparse
 import csv
@@ -122,9 +125,14 @@ def main():
     ap.add_argument("--sd-root", default="build/native")
     ap.add_argument("--no-latest", action="store_true")
     ap.add_argument("--old3ds", action="store_true")
+    ap.add_argument("--mem", action="store_true")
     a = ap.parse_args()
 
     jobs = a.jobs if a.jobs > 0 else max(1, (os.cpu_count() or 2) - 2)
+    if a.mem:
+        a.exe = a.exe or "build/native-mem/mw3ds-native.exe"
+        a.sd_root = "build/native-mem" if a.sd_root == "build/native" else a.sd_root
+        a.old3ds = a.no_latest = True
     default_exe = ROOT / mwtools.NATIVE_EXE
     if not a.exe and (a.build or not default_exe.exists()):
         if subprocess.run([sys.executable, str(mwtools.TEST_DIR / "native" / "build.py")]).returncode != 0:

@@ -33,7 +33,7 @@ extern "C" {
 __declspec(dllimport) void *__stdcall GetCurrentThread();
 __declspec(dllimport) void *__stdcall GetCurrentProcess();
 __declspec(dllimport) int __stdcall DuplicateHandle(void *, void *, void *, void **, unsigned long, int, unsigned long);
-__declspec(dllimport) void *__stdcall CreateThread(void *, unsigned long long, unsigned long (__stdcall *)(void *), void *, unsigned long, unsigned long *);
+__declspec(dllimport) void *__stdcall CreateThread(void *, size_t, unsigned long (__stdcall *)(void *), void *, unsigned long, unsigned long *);
 __declspec(dllimport) unsigned long __stdcall SuspendThread(void *);
 __declspec(dllimport) unsigned long __stdcall ResumeThread(void *);
 __declspec(dllimport) int __stdcall GetThreadContext(void *, void *);
@@ -89,6 +89,7 @@ static void ncProfDump()
 static void nativeCrashInstall()
 {
 	SetUnhandledExceptionFilter(ncFilter);
+#ifndef NATIVE_MEMCAP          // (the profiler reads the 64-bit build's instruction pointer)
 	if (getenv("NATIVE_PROF") && !ncProfHits)
 	{
 		ncProfHits = new std::unordered_map<unsigned long long, unsigned>();
@@ -96,17 +97,21 @@ static void nativeCrashInstall()
 		DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &ncProfMain, 0, 0, 2);
 		CreateThread(0, 0, ncProfRun, 0, 0, 0);
 	}
+#endif
 }
 
+// (not in the memory checker, build.py --mem: its operator new is the C++ library's, on native_heap.cpp's malloc, as the
+// console's is; this one adds 16 bytes to every block)
+#ifndef NATIVE_MEMCAP
 // NATIVE_GUARD=1: every operator new gets its own pages with a no-access page right behind it, and a freed block is
 // decommitted and its address never reused: a use after free or an overrun then faults at the access, and ncFilter
 // logs where. Off by default (runtime switch), slow.
 #include <new>
 extern "C" {
-__declspec(dllimport) void *__stdcall VirtualAlloc(void *, unsigned long long, unsigned long, unsigned long);
+__declspec(dllimport) void *__stdcall VirtualAlloc(void *, size_t, unsigned long, unsigned long);
 __declspec(dllimport) unsigned long __stdcall GetLastError();
-__declspec(dllimport) int __stdcall VirtualFree(void *, unsigned long long, unsigned long);
-__declspec(dllimport) int __stdcall VirtualProtect(void *, unsigned long long, unsigned long, unsigned long *);
+__declspec(dllimport) int __stdcall VirtualFree(void *, size_t, unsigned long);
+__declspec(dllimport) int __stdcall VirtualProtect(void *, size_t, unsigned long, unsigned long *);
 }
 static int ncGuard = -1;
 static long long ncLive, ncLivePages;
@@ -193,3 +198,4 @@ void operator delete(void *p) noexcept { ncFree(p); }
 void operator delete[](void *p) noexcept { ncFree(p); }
 void operator delete(void *p, size_t) noexcept { ncFree(p); }
 void operator delete[](void *p, size_t) noexcept { ncFree(p); }
+#endif
