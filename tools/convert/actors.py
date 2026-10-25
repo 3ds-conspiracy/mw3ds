@@ -35,6 +35,9 @@ IDLE_GROUPS = ["Idle"] + [f"Idle{i}" for i in range(2, 10)]
 # down or out: DeathKnockDown / DeathKnockOut)
 MOVE_GROUPS = ["RunForward", "WalkForward", "Hit1", "Hit2", "Hit3", "Hit4", "Hit5", "Death1", "Death2", "Death3", "Death4",
                "Death5", "DeathKnockDown", "DeathKnockOut", "KnockDown", "KnockOut", "Torch"]
+# The ready stance's movement groups (hand to hand, one-handed, two-handed, two-handed wide)
+STANCE_GROUPS = ["Idle1h", "Idle2c", "Idle2w", "IdleHH", "WalkForward1h", "WalkForward2c", "WalkForward2w",
+                 "WalkForwardHH", "RunForward1h", "RunForward2c", "RunForward2w", "RunForwardHH"]
 # Attacks: exported name -> text key group ("Chop ..." keys); the runtime picks one by weapon type.
 # The group's hit moment is stored as its loop start.
 ATTACK_GROUPS = {"AttackHH": "handtohand", "Attack1h": "weapononehand", "Attack2c": "weapontwohand",
@@ -69,6 +72,15 @@ def animation_groups(nif):
                 marks.setdefault((group, what), t)
     groups = []
     for g in IDLE_GROUPS + MOVE_GROUPS:
+        gl = g.lower()
+        if (gl, "start") in marks and (gl, "stop") in marks:
+            start, stop = marks[(gl, "start")], marks[(gl, "stop")]
+            groups.append({"name": g, "start": start, "stop": stop,
+                           "loop_start": marks.get((gl, "loop start"), start),
+                           "loop_stop": marks.get((gl, "loop stop"), stop)})
+    # With a weapon out (an armed creature's own: the sphere archers' unfolded stance), OpenMW plays the movement group
+    # with the weapon's short group on (CharacterController: Idle1h, RunForward1h) when the skeleton has it
+    for g in STANCE_GROUPS:
         gl = g.lower()
         if (gl, "start") in marks and (gl, "stop") in marks:
             start, stop = marks[(gl, "start")], marks[(gl, "stop")]

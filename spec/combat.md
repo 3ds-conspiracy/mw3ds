@@ -70,7 +70,12 @@ saves (`bug-door-stays-unlocked`).
 - **Creatures:** their attack's `min + (max - min) x swing` (no Strength term). Only creatures with the CREA
   "Weapon and Shield" flag (skeletons, dremora, golden saints) carry a weapon: the best one they hold, chosen as
   for an NPC. With it, the weapon's chop / slash / thrust `min + (max - min) x swing`, still no Strength term
-  (`Creature::hit`), with their combat skill as the weapon skill. (Their weapons do not wear here.)
+  (`Creature::hit`), with their combat skill as the weapon skill. (Their weapons do not wear here.) A weapon its
+  own script gives it counts too (OpenMW's autoEquip once AddItem has run): Tribunal's sphere archers get their
+  shock darts from replenishammoShock (`creature.py script_weapon`). Darts or arrows added to an actor count as
+  ammunition, and each shot leaves what it carries (`World::refAddItem`, `npcFire`). With a weapon out an armed
+  creature plays its model's ready-stance groups when it has them (Idle1h, RunForward1h: `actors.py STANCE_GROUPS`),
+  the archers unfolding. Test: `trib-sphere-archer`.
 - **Critical strike:** a melee blow by the player on an unaware victim, x `fCombatCriticalStrikeMult`. A missile on an
   unaware victim, and any blow on a knocked-down victim, x `fCombatKODamageMult` instead.
 - **Resist Normal Weapons:** a weapon that is neither silver, magical nor enchanted does `x (1 - min(1, resist -

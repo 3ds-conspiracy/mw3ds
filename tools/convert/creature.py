@@ -14,7 +14,7 @@ import numpy as np
 from meshes import extract_shapes, nif_local, ref_matrix, walk_nif
 from nif import Nif, NifError
 from npc import item_parts, skeleton_pose, text_key_time
-from npcstats import best_shield, bind, combat_spells, combat_weapon
+from npcstats import THROWN, best_shield, bind, combat_spells, combat_weapon, weapon_type
 
 
 def resolve_leveled(db, lid, depth=0):
@@ -43,7 +43,27 @@ def creature_weapon(rec, db, skills):
         return "", "", ""
     bind(db)
     weapon, ammo = combat_weapon(rec, db["objects"], skills)
+    if not weapon:
+        weapon = script_weapon(rec, db) or ""
     return weapon or "", ammo or "", best_shield(rec, db["objects"]) or ""
+
+
+def script_weapon(rec, db):
+    """A weapon the creature's own script gives it (AddItem with no target): what OpenMW's autoEquip would arm it
+    with once the script runs, the Dwemer sphere archers' shock darts (replenishammoShock adds 5, more when it runs
+    low). Thrown weapons first, they are its ammunition too."""
+    import re
+    text = db["SCPT"].get((rec.zstr("SCRI") or "").lower()) or ""
+    found = []
+    for line in text.splitlines():
+        line = line.split(";")[0]
+        m = re.match(r'(?i)\s*additem\s*,?\s*"?([^",]+?)"?\s*,?\s*\d+\s*$', line)
+        if m:
+            w = db["objects"].get(m.group(1).strip().lower())
+            if w is not None and w.tag == "WEAP" and w.id not in found:
+                found.append(w.id)
+    found.sort(key=lambda i: weapon_type(db["objects"][i.lower()]) != THROWN)
+    return found[0] if found else None
 
 
 _arch = None

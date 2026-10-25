@@ -19,6 +19,10 @@ void Session::npcFire(int ri)
 	if (!wpn || r.ammo <= 0)
 		return;
 	r.ammo--;
+	// (a thrown one leaves what it carries: the sphere archers' script counts its darts with GetItemCount and tops
+	// them up. Arrows and bolts stay as they were, the archers' fights in the quest runs unchanged)
+	if (wpn->subtype == WEAP_THROWN)
+		w.refRemoveItem(r, def.weapon, 1);
 	float from[3] = { r.pos[0] + sinf(r.rot[2]) * 30.0f, r.pos[1] + cosf(r.rot[2]) * 30.0f, r.pos[2] + 110.0f };
 	float to[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] + 90.0f };
 	float d[3] = { to[0] - from[0], to[1] - from[1], to[2] - from[2] };

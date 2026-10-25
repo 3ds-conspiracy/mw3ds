@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# data: tribunal
+# The fabricants' attack on Plaza Brindisi Dorom (TribFabAttackCheck sets FabAttack the day after the Mazed Band is
+# done): the fabricants and the rubble come in (fab_attack_1 / _enable), the six pavilion fountain sprays go off
+# (fab_attack_disable), the journal gets TR_MHattack 10 and the fabricants go for the High Ordinators and Helseth's
+# guards (StartCombat in their scripts).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SEED:2
+0.3 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+3 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:fabricant_hulkin_attack:eq:0+EXPECT:refenabled:ex_mh_pav_rubble_01:eq:0
+0.1 0 0 0 0 EXPECT:vfxpiece:pav_water_spray:ge:1
+0.3 0 0 0 0 SETGLOBAL:fabattack:1
+3 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:fabricant_hulkin_attack:eq:1+EXPECT:refenabled:fabricant_verm_attack:eq:1
+0.1 0 0 0 0 EXPECT:refenabled:ex_mh_pav_rubble_01:eq:1
+0.1 0 0 0 0 EXPECT:refenabled:ex_mh_pav_water_spray:eq:0+EXPECT:vfxpiece:pav_water_spray:eq:0
+0.1 0 0 0 0 EXPECT:journal:tr_mhattack:ge:10
+0.1 0 0 0 0 EXPECT:refduel:fabricant_hulkin_attack:eq:1

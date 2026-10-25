@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: tribunal
+# Tribunal's Dwemer sphere archers (centurion_projectile_c) are armed by their script, not their inventory:
+# replenishammoShock adds 5 shock darts and 5 more whenever fewer than 2 are left. OpenMW's autoEquip arms the archer
+# with them, it unfolds into its ready stance (its model's Idle1h / RunForward1h: thrown weapons take the 1h groups)
+# and throws them, each dart leaving what it carries. Ours fought with nothing it carried (only scrap metal), so it
+# rolled at the player as a closed ball and never threw (OpenMW's blue shock hits in Hearthfire Hall).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SEED:3
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0.3 0 0 0 0 TPIN:5872:3300:12400:0
+1 0 0 0 0
+0.1 0 0 0 0 EXPECT:refhasgroup:centurion_projectile_c:Idle1h
+0.1 0 0 0 0 SNAP:soundstarted:SwishM
+0.3 0 0 0 0 CON:"centurion_projectile_c"->StartCombat%player
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:soundstarted:SwishM:gt:@0
+0.1 0 0 0 0 EXPECT:reflocal:centurion_projectile_c,isdead:eq:0
