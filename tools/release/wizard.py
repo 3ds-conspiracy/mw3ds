@@ -41,8 +41,8 @@ LANGUAGES = [
     ("Russian", "win1251"), ("Ukrainian", "win1251"),
 ]
 CODECS = {"win1252": "cp1252", "win1250": "cp1250", "win1251": "cp1251"}
-# Masters this project leaves out (mwfiles.out_of_scope(); the wizard has no Tribunal option yet): a plugin needing one is
-# refused by the converter
+# Masters a plugin may not need (mwfiles.out_of_scope(): Tribunal itself is the add-on box, not a plugin's master): a
+# plugin needing one is refused by the converter
 OUT_OF_SCOPE = {"tribunal.esm", "bloodmoon.esm"}
 NEED_GB = 5                                            # whole island: mods 0.6 + data 1.1 + caches 0.2 + CIA 1.1, and room
 NEED_RAM_GB = 4
@@ -321,6 +321,16 @@ class Wizard:
             row=row, column=1, columnspan=2, sticky="w", padx=28)
         row += 1
 
+        # Tribunal: the add-on, when Tribunal.esm and Tribunal.bsa are in Data Files (build_cia.py --tribunal)
+        self.tribunal = tk.BooleanVar(value=self.settings.get("tribunal", False))
+        self.tribunal_check = ttk.Checkbutton(f, text="Add Tribunal (Mournhold, its quests and items)",
+                                              variable=self.tribunal)
+        self.tribunal_check.grid(row=row, column=1, columnspan=2, sticky="w", **pad)
+        row += 1
+        self.tribunal_note = ttk.Label(f, text="", foreground="#555", wraplength=640, justify="left")
+        self.tribunal_note.grid(row=row, column=1, columnspan=2, sticky="w", padx=28)
+        row += 1
+
         self.pc_saves = tk.BooleanVar(value=self.settings.get("pc_saves", True))
         self.saves_check = ttk.Checkbutton(f, text="Bring my PC saves across (the .ess files in Morrowind's Saves "
                                                    "folder)", variable=self.pc_saves)
@@ -396,7 +406,8 @@ class Wizard:
     def save_settings(self):
         s = {"morrowind": self.morrowind.get(), "console": self.console.get(), "language": self.language.get(),
              "plugins": self.chosen_plugins(), "mods": self.mods.get(), "output_kind": self.output_kind.get(),
-             "out_dir": self.out_dir.get(), "work": self.work.get(), "pc_saves": self.pc_saves.get()}
+             "out_dir": self.out_dir.get(), "work": self.work.get(), "pc_saves": self.pc_saves.get(),
+             "tribunal": self.tribunal.get()}
         try:
             SETTINGS.write_text(json.dumps(s, indent=2), encoding="utf-8")
         except OSError:
@@ -451,11 +462,22 @@ class Wizard:
             elif name.lower() in chosen:
                 self.plugins.selection_set(i)
         self.show_plugin_count()
+        self.show_tribunal(folder)
         n = len(pc_save_files(folder))
         self.saves_note.config(text=(f"{n} found. " if n else "None found in Saves. ") +
                                "They go to 3ds\\mw3ds\\saves for the SD card: your character, inventory, journal, "
                                "quests and what changed in the world. A save first sent from the 3DS comes back whole "
                                "(its .mw3ds file beside it). Not: anything from Tribunal, Bloodmoon or other plugins.")
+
+    def show_tribunal(self, folder):
+        data = Path(folder) / "Data Files"
+        have = (data / "Tribunal.esm").is_file() and (data / "Tribunal.bsa").is_file()
+        if not have:
+            self.tribunal.set(False)
+        self.tribunal_check.config(state="normal" if have else "disabled")
+        self.tribunal_note.config(text="Saves made with it need a Tribunal build to load; a game without it plays on "
+                                       "with it added." if have else "Not found: Tribunal.esm and Tribunal.bsa go in "
+                                       "Data Files (the Game of the Year edition has them).")
 
     def show_plugin_count(self):
         # (the converter refuses a plugin it cannot load: a refused one cannot be picked)
@@ -516,7 +538,7 @@ class Wizard:
         self.log.config(state="disabled")
         job = dict(morrowind=folder, work=work, out=out, old=self.console.get() == "old",
                    encoding=dict(LANGUAGES).get(self.language.get(), "win1252"), plugins=self.chosen_plugins(),
-                   mods=self.mods.get(), sd=self.output_kind.get() == "sd",
+                   mods=self.mods.get(), sd=self.output_kind.get() == "sd", tribunal=self.tribunal.get(),
                    saves=pc_save_files(folder) if self.pc_saves.get() else [])
         threading.Thread(target=self.run, args=(job,), daemon=True).start()
 
@@ -564,6 +586,7 @@ class Wizard:
                "--prebuilt"]
         cmd += ["--mods"] if job["mods"] else []
         cmd += ["--old3ds"] if job["old"] else []
+        cmd += ["--tribunal"] if job.get("tribunal") else []
         cmd += ["--no-data"] if job["sd"] else []
         cmd += ["--small"] if job.get("small") else []        # (only the Balmora area: for trying the converter out)
         say(f"language: {job['encoding']}, plugins: {', '.join(job['plugins']) or 'none'}")
@@ -589,12 +612,13 @@ class Wizard:
         # Hand over the results
         out = job["out"]
         out.mkdir(parents=True, exist_ok=True)
-        cia = work / "build" / ("mw3ds-o3ds.cia" if job["old"] else "mw3ds.cia")
+        trib = "-tribunal" if job.get("tribunal") else ""
+        cia = work / "build" / (("mw3ds-o3ds" if job["old"] else "mw3ds") + trib + ".cia")
         # (moved, not copied: a second gigabyte for nothing; the next run packs a new one)
         shutil.move(cia, out / "mw3ds.cia")
         say(f"CIA: {out / 'mw3ds.cia'}")
         if job["sd"]:
-            data = work / "out" / ("o3ds" if job["old"] else "data")
+            data = work / "out" / (("o3ds" if job["old"] else "data") + trib)
             dest = out / "3ds" / "mw3ds" / "data"
             say(f"copying the data to {dest} ...")
             if dest.exists():
@@ -602,7 +626,7 @@ class Wizard:
             shutil.copytree(data, dest)
             say("data copied: put the 3ds folder on the root of the SD card (it merges with the one there).")
         if job["saves"]:
-            data = work / "out" / ("o3ds" if job["old"] else "data")
+            data = work / "out" / (("o3ds" if job["old"] else "data") + trib)
             say(f"converting {len(job['saves'])} PC saves ...")
             r = subprocess.run([cmd[0], str(work / "tools" / "convert" / "ess.py"), *map(str, job["saves"]),
                                 "--data", str(data), "--out", str(out)], cwd=work, env=env, stdout=subprocess.PIPE,
@@ -645,7 +669,7 @@ class Wizard:
         one PC save of the player's own, the template for what a 3DS save doesn't hold."""
         folder = self.morrowind.get().strip()
         work = APP if (APP / ".git").exists() else Path(self.work.get().strip())
-        data = work / "out" / ("o3ds" if self.console.get() == "old" else "data")
+        data = work / "out" / (("o3ds" if self.console.get() == "old" else "data") + ("-tribunal" if self.tribunal.get() else ""))
         if not (data / "game.json").is_file():
             messagebox.showerror(TITLE, "Convert the game first (Start): the 3DS saves are read against the "
                                         "converted game, the same one your console runs.")
