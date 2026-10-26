@@ -11,6 +11,7 @@ Output: out/data/textures/<name>.t3x (ETC1, or ETC1A4 when alpha matters), mipma
 Sizes chosen per run are cached in out/texture_cache.json so unchanged textures
 are not re-encoded, and .t3x files no level cell uses any more are removed.
 """
+import errno
 import hashlib
 import io
 import json
@@ -163,7 +164,7 @@ class TextureSet:
         tex3ds = None
         migrate_flat(OUT / "textures", OUT / "tex", "*.t3x")
         (OUT / "tex").mkdir(parents=True, exist_ok=True)
-        stats = {"count": 0, "encoded": 0, "bytes": 0, "full_bytes": 0, "failed": []}
+        stats = {"count": 0, "encoded": 0, "bytes": 0, "full_bytes": 0, "failed": [], "broken": []}
         # the mod folders laid over Data Files (mwfiles.OVERLAYS): with others, the same path can be another picture
         # (and the plugins: they come with their own loose textures, which may replace others)
         overlay = ";".join(str(d) for d in OVERLAYS) + content_key()
@@ -198,6 +199,9 @@ class TextureSet:
                     stats["encoded"] += 1
             except Exception as e:           # missing or unreadable: the cell draws it untextured
                 stats["failed"].append(f"{path}: {e}")
+                # (a picture that is there but couldn't be written: tex3ds failing, a full disk; the build stops)
+                if isinstance(e, subprocess.CalledProcessError) or getattr(e, "errno", None) == errno.ENOSPC:
+                    stats["broken"].append(f"{path}: {e}")
                 continue
             stats["count"] += 1
             stats["bytes"] += etc_bytes(entry["size"], entry["alpha"])
@@ -222,6 +226,8 @@ class TextureSet:
                     stats["encoded"] += 1
             except Exception as e:
                 stats["failed"].append(f"{r['src']} (whitened): {e}")
+                if isinstance(e, subprocess.CalledProcessError) or getattr(e, "errno", None) == errno.ENOSPC:
+                    stats["broken"].append(f"{r['src']} (whitened): {e}")
                 continue
             stats["count"] += 1
             stats["bytes"] += etc_bytes(entry["size"], entry["alpha"])

@@ -26,6 +26,7 @@ import math
 import os
 import re
 import struct
+import sys
 import time
 from pathlib import Path
 
@@ -874,6 +875,11 @@ def main():
     tstats = textures.encode()
     for e in tstats["failed"][:8]:
         print("  texture skipped:", e)
+    if tstats["broken"]:
+        # (shipped, each would be a hole in the world: better no build than a broken one)
+        for e in tstats["broken"]:
+            print("  texture not written:", e)
+        sys.exit(f"textures: {len(tstats['broken'])} could not be written (disk full? tex3ds failing?): convert again")
     print(f"textures: {tstats['count']} ({tstats['encoded']} encoded this run), {tstats['bytes'] // 1024} KB "
           f"in memory at screen-sized resolution vs {tstats['full_bytes'] // 1024} KB at a flat {args.max_tex} cap")
     # What the 3DS linear heap holds: one interior, or the 3 x 3 exterior cells around the player
