@@ -154,7 +154,9 @@ bool TestDriver::playerToken(const std::string& tok)
 {
 	static const char* const kPlayer[] = {
 		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "ZR", "FRAMECAP", "GYRO", "CONTROLS", "GYROAIM", "TAP", "DRAG", "TOUCH", "STICKDOWN",
-		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT",
+		// (SEED: the dice made repeatable from there, nothing given or set: a long run seeds a section whose outcome is a
+		// script's roll, so a change before it doesn't flip it)
+		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT", "SEED",
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "INVSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE", "MAKEPICK", "MAKETARGET",
