@@ -107,6 +107,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "makepicking") v = s.makePick;                  // spellmaking / enchanting: choosing a skill (1) or attribute (2)
 	else if (what == "makeeffects") v = (float)s.makeEffects.size(); // ... the effects put together so far
 	else if (what == "footrepeat") v = (float)s.stepRepeats;         // footsteps on the same foot twice in a row
+	else if (what == "enemiesnear") v = s.enemiesNear() ? 1.0f : 0.0f;   // rest refused: enemies about
 	else if (what == "watervolume") v = s.waterVolume;                // the near-water sound's volume (0..1, OpenMW's rule)
 	else if (what == "footeven")    // the last two gaps between footsteps, the shorter as a percent of the longer (100: even)
 	{

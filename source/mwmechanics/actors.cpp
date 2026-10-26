@@ -190,12 +190,13 @@ void Session::allyFight(int ri, float dt)
 
 // StartCombat on another actor (not the player): OpenMW gives it a combat package with that actor as the target. It
 // walks up to its foe and swings (hit chance, damage and armor as for a blow on the player, no block or crit), the
-// foe takes up the fight against it, and a death ends it. The player's own fights come first (AI_COMBAT: npcCombat)
+// foe takes up the fight against it, and a death ends it, or the foe being disabled (AiCombat ends on a target not
+// enabled). The player's own fights come first (AI_COMBAT: npcCombat)
 void Session::npcDuel(int ri, float dt)
 {
 	Ref& r = w.refs[ri];
 	const int fi = r.duelFoe;
-	if (fi < 0 || fi >= (int)w.refs.size() || w.refs[fi].dead || w.refs[fi].actor < 0 || !w.sameSpace(fi, ri))
+	if (fi < 0 || fi >= (int)w.refs.size() || w.refs[fi].dead || w.refs[fi].actor < 0 || !w.refs[fi].visible() || !w.sameSpace(fi, ri))
 	{
 		r.duelFoe = -1;
 		r.hitAt = -1.0f;

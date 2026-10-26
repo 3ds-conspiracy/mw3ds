@@ -11,12 +11,14 @@ static const int kRestFramesPerHour = 4;
 
 // ---- Rest and wait
 
+// (OpenMW asks the actors in the scene, MechanicsManager::getEnemiesNearby: a disabled one is out of it, whatever it was
+// doing when it went)
 bool Session::enemiesNear()
 {
 	bool enemies = false;
 	w.forLoadedRefs([&](int i) {
 		const Ref& r = w.refs[i];
-		enemies |= r.ai == AI_COMBAT && !r.dead && w.distanceToPlayer(i) < 3000.0f;
+		enemies |= r.ai == AI_COMBAT && !r.dead && r.visible() && w.distanceToPlayer(i) < 3000.0f;
 	});
 	return enemies;
 }

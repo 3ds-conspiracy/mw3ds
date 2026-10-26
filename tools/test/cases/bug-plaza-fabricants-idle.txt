@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: tribunal
+# Plaza Brindisi Dorom before the fabricants' attack (FabAttack 0: the Mazed Band not done): the attack's fabricants
+# stay disabled, nobody fights and the player may rest. OpenMW takes a disabled actor out of the scene: it stops
+# acting, and an actor fighting it drops the fight (AiCombat ends on a target not enabled). Ours placed them live
+# until their scripts disabled them on their first frame; a guard picked a fight with one in that moment, kept fighting
+# it disabled, and the disabled fighters counted as enemies nearby ("You can't rest here enemies are nearby").
+3 0 0 0 0 MSG
+0.3 0 0 0 0 HOUR:12+SEED:2
+0.3 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+0 0 0 0 0 SETUP-END
+15 0 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:fabricant_verm_attack:eq:0+EXPECT:refenabled:fabricant_hulkin_attack:eq:0
+0.1 0 0 0 0 EXPECT:refduel:fabricant_verm_attack:eq:0
+0.1 0 0 0 0 EXPECT:refduel:guard_helseth_attack:eq:0+EXPECT:refduel:guard_highord_attack:eq:0
+0.1 0 0 0 0 EXPECT:enemiesnear:eq:0

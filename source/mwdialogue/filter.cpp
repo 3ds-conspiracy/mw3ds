@@ -53,7 +53,7 @@ static float filterFunction(World& w, const Cond& c, const Ref& speaker, int ref
 		for (int i : w.loadedActors)
 		{
 			const Ref& o = w.refs[i];
-			if (o.ai == AI_COMBAT && !o.dead && !o.ally && o.actor >= 0 && w.game.actors[o.actor].creature
+			if (o.ai == AI_COMBAT && !o.dead && o.visible() && !o.ally && o.actor >= 0 && w.game.actors[o.actor].creature
 				&& hypotf(o.pos[0] - speaker.pos[0], o.pos[1] - speaker.pos[1]) < 1500.0f)
 				return 1.0f;
 		}
