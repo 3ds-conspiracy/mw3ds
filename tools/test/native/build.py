@@ -68,6 +68,10 @@ def compile_one(src, obj, cxx):
     flags = CXXFLAGS if cxx else ["-O2", "-w", "-I", str(ZLIB), "-I", str(ROOT / "source"), "-DNO_FSEEKO"]
     if cxx and src.is_relative_to(ROOT / "source") and RENDERER_DEFINES.search(src.read_text(encoding="utf-8", errors="replace")):
         flags = flags + [f"-D{n}={n}_sw" for n in RENDERER_RENAMES]
+    # (the memory checker: the console inflates a cell file as it reads it, ~60 KB; this build has no fopencookie and
+    # inflates it whole, so native_heap.cpp wraps zopen to take that copy outside the console's heap)
+    if MEM and src.stem == "zfile":
+        flags = flags + ["-Dzopen=zopenWhole"]
     if src.stem == "native_gpu":
         flags = flags + ["-O2"]         # the rasterizer: every pixel of both screens, each frame it draws
     cmd = zig("c++" if cxx else "cc", *TARGET, "-c", src.as_posix(), "-o", obj.as_posix(), *flags)

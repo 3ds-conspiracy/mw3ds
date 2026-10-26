@@ -285,3 +285,15 @@ NativeMallinfo nativeMallinfo()
 	return m;
 }
 }
+
+// A compressed file opened for reading (components/files/zfile.cpp, built as zopenWhole here): the console inflates it
+// as it is read, holding zlib's state and ~60 KB; this build inflates the whole file into one block, which the console
+// never asks for, so that block (and the stream over it, freed at fclose) comes from outside the arena
+FILE* zopenWhole(const char* path);
+FILE* zopen(const char* path)
+{
+	nativeOutsideEnter();
+	FILE* f = zopenWhole(path);
+	nativeOutsideLeave();
+	return f;
+}
