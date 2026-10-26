@@ -363,9 +363,13 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 }
 
 // The moving animations' steps (base_anim.nif: the ground one cycle carries the body, and where in the cycle its SoundGen
-// Right and Left keys fall). OpenMW plays the walk at the speed the player goes, so a step comes every so far walked
+// Right and Left keys fall). OpenMW plays the walk at the speed the player goes, so a step comes every so far walked.
+// The cycle is the group's loop (Loop Start to Loop Stop), where it plays on: the run's feet fall half a loop apart
 struct Gait { float cycle, right, left; };
-static const Gait kWalkGait = { 203.5f, 0.25f, 0.65f }, kRunGait = { 263.6f, 0.4f, 0.75f }, kSneakGait = { 124.1f, 0.16f, 0.56f };
+// Every step (and stroke) plays at OpenMW's footsteps volume, 0.2 of the sound's own ([Sound] "footsteps volume": a
+// soundgen Left / Right is MWSound::Type::Foot)
+static const float kFootstepsVolume = 0.2f;
+static const Gait kWalkGait = { 203.5f, 0.133f, 0.667f }, kRunGait = { 263.6f, 0.357f, 0.857f }, kSneakGait = { 124.1f, 0.130f, 0.565f };
 
 // Footsteps while walking; OpenMW's Npc::getSoundIdFromSndGen picks the sound: none flying, "Swim" while
 // swimming, "FootWater" with the feet under the surface, else the boots': bare without, else by their weight class
@@ -391,7 +395,7 @@ void Session::updateFootsteps(const PlayerInput& in, bool menu, float dt)
 		stepTimer -= dt;
 		if (stepTimer <= 0.0f)
 		{
-			playSound(-1, std::string("Swim ") + (stepLeft ? "Left" : "Right"));
+			playSound(-1, std::string("Swim ") + (stepLeft ? "Left" : "Right"), kFootstepsVolume);
 			stepLeft = !stepLeft;
 			stepTimer = 0.65f;
 		}
@@ -422,6 +426,9 @@ void Session::updateFootsteps(const PlayerInput& in, bool menu, float dt)
 	stepPhase = fmodf(stepPhase, 1.0f);
 	if (!right && !left)
 		return;
+	stepAt[0] = stepAt[1];
+	stepAt[1] = stepAt[2];
+	stepAt[2] = w.time;
 	const char* kind = wading ? "FootWater" : "FootBare";
 	if (!wading)
 		for (auto& it : w.inventory)
@@ -436,12 +443,12 @@ void Session::updateFootsteps(const PlayerInput& in, bool menu, float dt)
 	{
 		stepRepeats += stepLast == 0;
 		stepLast = 0;
-		playSound(-1, std::string(kind) + "Right");
+		playSound(-1, std::string(kind) + "Right", kFootstepsVolume);
 	}
 	if (left)
 	{
 		stepRepeats += stepLast == 1;
 		stepLast = 1;
-		playSound(-1, std::string(kind) + "Left");
+		playSound(-1, std::string(kind) + "Left", kFootstepsVolume);
 	}
 }

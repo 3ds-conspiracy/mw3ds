@@ -63,10 +63,14 @@ feet under the water's surface, `FootWaterLeft` / `FootWaterRight`; else on the 
 `FootBareLeft` / `FootBareRight`; boots by their armor skill, `FootLight`, `FootMed`, `FootHeavy` + `Left` / `Right`.
 
 A step comes where the moving animation's `SoundGen: Left` / `Right` keys fall, and OpenMW plays that animation at the
-speed the walker goes, so on the ground a step comes every so far walked. base_anim.nif's cycles: walking carries the
-body 203.5 units (right foot at 0.25 of the cycle, left at 0.65), running 263.6 (0.40, 0.75), sneaking 124.1 (0.16,
-0.56). Swimming steps every 0.65 s. Ours stepped every 0.42 s at any pace, barefoot whatever was worn (2026-10-24).
-Tests: `issue-27`, `bug-footsteps-gait`.
+speed the walker goes, so on the ground a step comes every so far walked. base_anim.nif's cycles, each the group's
+loop (Loop Start to Loop Stop, where it plays on): walking carries the body 203.5 units (right foot at 0.133 of the
+loop, left at 0.667), running 263.6 (0.357, 0.857: half a loop apart), sneaking 124.1 (0.130, 0.565). Swimming steps
+every 0.65 s. Ours stepped every 0.42 s at any pace, barefoot whatever was worn (2026-10-24); then placed the keys by
+the group's whole Start..Stop span, which limped the run 35 / 65 (2026-10-25). Every step plays at OpenMW's footsteps
+volume, 0.2 of the sound's own ([Sound] footsteps volume; MWSound::Type::Foot): ours played them at full volume.
+Tests: `issue-27`, `bug-footsteps-gait`, `bug-footsteps-run-even`, `bug-footsteps-walk-even`, `bug-footsteps-sneak-even`,
+`bug-footsteps-volume`.
 
 ## Findings (2026-09-29)
 

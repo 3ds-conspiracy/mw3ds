@@ -107,6 +107,12 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "makepicking") v = s.makePick;                  // spellmaking / enchanting: choosing a skill (1) or attribute (2)
 	else if (what == "makeeffects") v = (float)s.makeEffects.size(); // ... the effects put together so far
 	else if (what == "footrepeat") v = (float)s.stepRepeats;         // footsteps on the same foot twice in a row
+	else if (what == "watervolume") v = s.waterVolume;                // the near-water sound's volume (0..1, OpenMW's rule)
+	else if (what == "footeven")    // the last two gaps between footsteps, the shorter as a percent of the longer (100: even)
+	{
+		float a = s.stepAt[1] - s.stepAt[0], b = s.stepAt[2] - s.stepAt[1];
+		v = s.stepAt[0] < 0.0f || a <= 0.0f || b <= 0.0f ? 0.0f : 100.0f * fminf(a, b) / fmaxf(a, b);
+	}
 	else if (what == "worldslots") v = (float)w.refs.size();          // object slots the world holds (each 832 bytes)
 	else if (what == "sneakhidden") v = s.hidden ? 1.0f : 0.0f;       // the HUD's sneak eye shows (sneaking, nobody noticed)
 	else if (what == "thirdperson") v = s.thirdPerson ? 1.0f : 0.0f;  // the view is third person

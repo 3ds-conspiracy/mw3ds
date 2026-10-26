@@ -139,6 +139,13 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 			: w.game.voiceFile(lower(arg), &voice) ? audioStartedCount(voice) : -1;
 		return true;
 	}
+	if (what == "soundvolume")
+	{
+		// soundvolume:<sound id>: the volume that sound last started at (its record's, the caller's and the 3D mix's)
+		auto rec = w.game.sounds.find(lower(spaced(arg)));
+		v = rec != w.game.sounds.end() ? audioStartVolume(rec->second.file) : -1.0f;
+		return true;
+	}
 	if (what == "movieplaying")
 	{
 		v = s.moviePlaying() ? 1.0f : 0.0f;

@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# The sound of water nearby follows OpenMW's rule (SoundManager::updateWaterSound, WaterSoundUpdater; Morrowind.ini's
+# NearWater values): outdoors within 1024 units of the water's height, twice the share of an 8 x 8 grid of points
+# 1000 units around the player whose land lies under the sea's level, so full at the shore, fading a few steps inland,
+# silent away from it. Ours played it within 12000 units of any coastal cell, scaled by how much of the cell was sea:
+# a drone over the whole of Seyda Neen. Written with the fix (the value it reads is new).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0.3 0 0 0 0 TP:-17000:-76000:150:0
+3 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:watervolume:eq:1
+0.3 0 0 0 0 TP:-10200:-73200:150:0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:watervolume:gt:0.5+EXPECT:watervolume:lt:1
+0.3 0 0 0 0 TP:-11500:-71500:150:0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:watervolume:gt:0+EXPECT:watervolume:lt:0.3
+0.3 0 0 0 0 GOTO:Pelagiad
+3 0 0 0
+0.1 0 0 0 0 EXPECT:watervolume:eq:0

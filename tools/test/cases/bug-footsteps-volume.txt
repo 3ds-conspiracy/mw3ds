@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# Footsteps play at OpenMW's footsteps volume, 0.2 of the sound's own (its [Sound] "footsteps volume"; every soundgen
+# Left / Right step is MWSound::Type::Foot). Ours played them at the full effects volume, five times louder: in glass
+# boots (FootLight) a step peaked at the top of the 3DS's mix, and with the ambient sounds under it the mix clipped.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0.3 0 0 0 0 TP:-11500:-71500:150:0
+0.2 0 0 0 0 GIVE:glass_boots+WEAR:glass_boots
+2 0 0 0
+0 0 0 0 0 SETUP-END
+3 0 1 0
+0.1 0 0 0 0 EXPECT:soundstarted:FootLightLeft:ge:2+EXPECT:soundvolume:FootLightLeft:le:0.2+EXPECT:soundvolume:FootLightLeft:gt:0

@@ -7,6 +7,8 @@
 struct SoundState
 {
 	int waterChannel = -1;            // looping shore ambience in cells with water
+	float waterVolume = 0.0f;         // ... its volume now (0..1, before the sound's own: tests read it)
+	float waterNext = 0.0f;           // ... when the shore around the player is sampled next (w.time)
 	float listener[4] = {};           // x, y, z, yaw of the camera for 3D sound
 	int uiVoiceChannel = -1;          // voice lines not tied to an actor (class questions)
 	// Sounds that loop on an object (PlayLoopSound3D), mixed by distance each frame, until stopped or left

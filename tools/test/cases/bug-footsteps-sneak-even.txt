@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# Footsteps keep an even beat at a sneak: base_anim.nif's SneakForward loops between its Loop Start and Loop Stop keys, and its
+# SoundGen keys fall at 0.130 and 0.565 of that loop (43 / 57). Ours placed them by the group's whole Start..Stop span, which
+# put the run's feet 35 / 65 apart: a limp, heard as choppy footsteps (most with boots: FootLight and the others are
+# short, sharp sounds). footeven: the last two gaps between steps, the shorter as a percent of the longer.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0.3 0 0 0 0 TP:-11500:-71500:150:0
+2 0 0 0
+0.1 0 0 0 0 SNEAK:1
+0 0 0 0 0 SETUP-END
+8 0 1 0
+0.1 0 0 0 0 EXPECT:footeven:ge:75

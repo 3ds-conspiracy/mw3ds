@@ -19,6 +19,7 @@
 #include <tex3ds.h>
 #include <citro2d.h>
 #include "mwbase/session.hpp"
+#include "mwphysics/physicssystem.hpp"
 #include <cstdlib>
 #include <malloc.h>
 
@@ -134,10 +135,16 @@ bool audioEnabled() { return s_enabled; }
 // How often each sound file was started, and how often a sound found no free channel (tests read them)
 static std::unordered_map<std::string, int> s_started;
 static int s_denied = 0;
+static std::unordered_map<std::string, float> s_startVolume;   // the volume each file last started at
 int audioStartedCount(const std::string& file)
 {
 	auto it = s_started.find(file);
 	return it == s_started.end() ? 0 : it->second;
+}
+float audioStartVolume(const std::string& file)
+{
+	auto it = s_startVolume.find(file);
+	return it == s_startVolume.end() ? -1.0f : it->second;
 }
 int audioDeniedCount() { return s_denied; }
 
@@ -338,7 +345,10 @@ int audioPlay(const std::string& file, float volume, float pan, bool loop, float
 	if (!s_enabled)
 	{
 		if (!loop)
+		{
 			s_started[file]++;               // no sound device (an emulator without the DSP firmware): the start still counts
+			s_startVolume[file] = volume;
+		}
 		return -1;
 	}
 	CachedSound* s = load(file);
@@ -369,6 +379,7 @@ int audioPlay(const std::string& file, float volume, float pan, bool loop, float
 		c.active = true;
 		ndspChnWaveBufAdd(ch, &c.buf);
 		s_started[file]++;
+		s_startVolume[file] = volume;
 		return ch;
 	}
 	s_denied++;
@@ -592,25 +603,50 @@ void audioUpdate()
 			fillStream(i);
 }
 
-// Shore ambience: loops while the cell has water, louder the closer the player is to its level
+// The sound of water nearby (OpenMW's SoundManager::updateWaterSound and WaterSoundUpdater; the fallback values are
+// Morrowind.ini's [Water] NearWater*): under the water, full; outdoors within 1024 units of the water's height, twice
+// the share of an 8 x 8 grid of points 1000 units around the player whose land lies under the sea's level (0), so it
+// plays at the shore and fades a few steps inland; indoors in a cell with water, within 512 units of its level, louder
+// the closer. The grid is sampled four times a second (OpenMW every frame)
 void Session::updateAmbience()
 {
-	// Only open water counts: the whole world shares one water level, so Balmora's river is "sea"
-	// too. The converter measured each cell's share of ground well under the water (a coast is a
-	// third or more, a river a few percent); nearby cells over the threshold make the sound, fading
-	// with distance.
-	float sea = 0.0f;
-	for (LoadedCell* l : w.loaded)
+	static const float kRadius = 1000.0f, kOutdoorTolerance = 1024.0f, kIndoorTolerance = 512.0f;
+	static const int kPoints = 8;
+	if (w.time >= waterNext || w.time < waterNext - 1.0f)
 	{
-		const LevelCell& c = w.cells[l->index];
-		if (c.interior)
-			continue;
-		float dx = (c.gx + 0.5f) * 8192.0f - w.player.feet[0], dy = (c.gy + 0.5f) * 8192.0f - w.player.feet[1];
-		float near = fmaxf(0.0f, 1.0f - sqrtf(dx * dx + dy * dy) / 12000.0f);
-		sea = fmaxf(sea, fminf(1.0f, fmaxf(0.0f, (c.sea - 0.2f) / 0.3f)) * near);
+		waterNext = w.time + 0.25f;
+		float volume = 0.0f;
+		Cell& here = w.here();
+		if (w.current >= 0 && here.hasWater())
+		{
+			float dist = fabsf(here.waterZ - w.player.feet[2]);
+			bool interior = w.cells[w.current].interior;
+			if (playerEyeZ(w.player) < here.waterZ)
+				volume = 1.0f;
+			else if (!interior && dist < kOutdoorTolerance)
+			{
+				Scene scene = w.scene();
+				const float step = kRadius * 2.0f / (kPoints - 1);
+				int under = 0;
+				for (int x = 0; x < kPoints; x++)
+					for (int y = 0; y < kPoints; y++)
+					{
+						float px = w.player.feet[0] - kRadius + x * step, py = w.player.feet[1] - kRadius + y * step;
+						float z = -1e9f, got;
+						for (Cell* c : scene.cells)
+							if (collisionLandFloor(c->collision, px, py, 1e6f, -1e6f, &got) && got > z)
+								z = got;
+						under += z < 0.0f;          // (no land there: the open sea)
+					}
+				volume = under * 2.0f / (kPoints * kPoints);
+			}
+			else if (interior && dist < kIndoorTolerance)
+				volume = (kIndoorTolerance - dist) / kIndoorTolerance;
+		}
+		waterVolume = fminf(1.0f, volume);
 	}
-	bool want = sea > 0.02f && !w.game.waterSound.empty();
-	if (!want)
+	auto it = w.game.sounds.find(lower(w.game.waterSound));
+	if (waterVolume <= 0.0f || w.game.waterSound.empty() || it == w.game.sounds.end())
 	{
 		if (waterChannel >= 0)
 		{
@@ -619,11 +655,7 @@ void Session::updateAmbience()
 		}
 		return;
 	}
-	auto it = w.game.sounds.find(lower(w.game.waterSound));
-	if (it == w.game.sounds.end())
-		return;
-	float height = w.player.feet[2] - w.here().waterZ;
-	float volume = it->second.volume * sea * fmaxf(0.0f, fminf(1.0f, 1.0f - height / 900.0f)) * 0.7f;
+	float volume = it->second.volume * waterVolume;
 	if (waterChannel < 0 || !audioPlaying(waterChannel))
 		waterChannel = audioPlay(it->second.file, volume, 0.0f, true);
 	else

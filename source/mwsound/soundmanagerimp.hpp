@@ -12,6 +12,7 @@ void audioCacheClear();                           // sounds freed (a session end
 bool audioEnabled();
 
 int audioStartedCount(const std::string& file);   // sounds of this file started so far
+float audioStartVolume(const std::string& file);  // the volume it last started at (before the effects slider; -1: never)
 int audioDeniedCount();                           // sounds that found no free channel
 // Returns a channel id, or -1 if nothing plays (no DSP firmware, missing file, no free channel).
 int audioPlay(const std::string& file, float volume, float pan, bool loop = false, float pitch = 1.0f);
