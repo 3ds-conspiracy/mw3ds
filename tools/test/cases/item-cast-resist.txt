@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# data: tribunal
+# An enchanted item's bolt is resisted as a cast at 100% (OpenMW's getEffectMultiplier: no spell, castChance 100), not
+# at the player's chance for the enchantment as a spell (0 for the Amulet of Admonition's 107 points at Illusion 20,
+# which left Dandras Vules, Willpower 73, resisting its Paralyze 96 times in 100 instead of 48).
+# Resist die 55: his x is (73 + 40 / 10) x fatigue term x 50 / 100, at most 48, so the Paralyze lands; resisted at
+# the old chance of 0, x was (73 + 4) x at least 0.75, never under 57.
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Moril_Manor,_North_Building
+3 0 0 0
+0.1 0 0 0 0 GOD+GIVE:amulet%of%admonition+RESISTROLL:55+SEED:7
+90 0 0 0 0 WALKTO:dandras%vules
+2 0 0 0 0 CASTAT:dandras%vules:item:amulet%of%admonition
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:dandras%vules,45:gt:0
