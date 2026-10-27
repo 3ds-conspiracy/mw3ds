@@ -27,7 +27,10 @@ return {
 		MW3DS_SBS_Pose = function(d)
 			I.AI.removePackages()
 			h = d
-			if h.group and not anim.hasGroup(self, h.group) then
+			-- (one with no animation at all, a disabled actor such as Glenmoril's raven before its quest, stands as it is:
+			-- an error here stopped the shots after it)
+			local ok, has = pcall(anim.hasGroup, self, h.group or '')
+			if h.group and not (ok and has) then
 				print(string.format('MW3DS-SBS %s has no group %s', self.recordId, h.group))
 				h.group = nil
 			end

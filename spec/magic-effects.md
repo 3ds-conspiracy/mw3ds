@@ -204,11 +204,13 @@ All of them are resisted by Resist Magicka (R / W) except Command (not listed in
 ### 4.7 Summons, bound items, soul trap, disintegrate, lock and open, travel
 
 - **Summons** (102..116, 134; the creature id comes from a game setting per effect, e.g. `sMagicScampID`): the creature
-  is placed near the summoner (120 units), made to follow and help it, and recorded under the effect. If the placement
+  is placed 120 units in front of the summoner, or to its right, its left or behind it when the world or a shut door is
+  between that spot (30 up) and the summoner (`safePlaceObject`; ours `summonSpot`, test `bug-summon-blocked-front`),
+  made to follow and help it, and recorded under the effect. If the placement
   fails the effect stays active with no creature. When the effect ends the creature is removed. While active, if the
   summoned creature dies (and its death animation is over) the summoning effect is **purged**, so a new one can be
-  cast. Not resisted. Only in a loaded cell. (Wolf, Bear, Bonewolf and the two spare creature summons exist in OpenMW's
-  list; this repo's data has none of them.)
+  cast. Not resisted. Only in a loaded cell. (Wolf, Bear and Bonewolf: Bloodmoon's 138..140, with the add-on; the two
+  spare creature summons have no data.)
 - **Bound items** (120..125, 127..131; the item id from a game setting, e.g. `sMagicBoundDaggerID`; Bound Gloves adds both
   gauntlets): the item is added and equipped; the weapon slot also draws the weapon. If it cannot be equipped (beast
   races: boots, helm) the effect ends at once. At the end the item is removed, and on the player the previously equipped

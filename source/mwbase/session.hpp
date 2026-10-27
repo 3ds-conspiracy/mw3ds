@@ -9,6 +9,7 @@
 
 // The running game: world state, dialogue, menus, and everything scripts call into.
 const char* summonCreatureId(int effect);    // the creature a summoning effect calls (mwmechanics/spelleffects.cpp), nullptr if none
+void summonSpot(World& w, const float caster[3], float yaw, float out[3]);   // where it comes (mwmechanics/summoning.cpp)
 float npcClimbSlope(const World& w, const Ref& r);   // the steepest land an actor walks up now, degrees (mwphysics/movementsolver.cpp)
 
 struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, SoundState, TestState
@@ -220,6 +221,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void updateFadeAndNotes(float dt);
 	void drawTop();
 	void drawHurtFlash();
+	void drawWerewolfView();
+	const char* hudHandArt();             // the HUD art the weapon box shows with nothing held ("werewolf_hand"), or null
 	void itemTip(const Object* o, const InventoryItem* it);   // it: that one's wear and charge (nullptr: new)
 	void spellTip(const SpellDef& sp);
 	int armorSkill(const Object* o);      // the armor skill a piece of armor trains: by its weight for its slot

@@ -183,6 +183,7 @@ struct ActorSet
 	std::vector<Actor> actors;
 	u32 bytes = 0;
 	u32 skinnedGpu = 0, skinnedCpu = 0;   // skinned meshes read: drawn by shaders/skin.v.pica / re-skinned on the CPU
+	u8 cellLight[3] = { 0, 0, 0 };        // the cell's light without lamps (x 64, .act 5), for those placed while playing
 };
 
 // A cell's .act: version 3 lists placements whose meshes are in library files (under dataDir), their
@@ -191,9 +192,10 @@ bool actorsLoad(ActorSet& set, const char* path, const char* dataDir, const std:
 struct Cell;
 struct TextureCache;
 // A creature / NPC placed while playing: its meshes from a library file (dataDir/lib); textures the cell
-// doesn't list yet are added to it. Returns its index in set.actors, -1 when it couldn't be read.
+// doesn't list yet are added to it, lit by tint (x 64; none: the library's even light). Returns its index in
+// set.actors, -1 when it couldn't be read.
 int actorsAddFromLibrary(ActorSet& set, Cell& cell, TextureCache& cache, const char* dataDir, const std::string& lib,
-	int ref, int skeleton, const float place[12]);
+	int ref, int skeleton, const float place[12], const u8* tint = nullptr);
 // cells/skeletons.skl: skeletons shared by every cell's actors (.act version 2 carries none). With
 // cells/skel_<k>.skl present each is read when an actor first needs it (skeletonEnsure)
 extern std::vector<Skeleton> g_sharedSkeletons;

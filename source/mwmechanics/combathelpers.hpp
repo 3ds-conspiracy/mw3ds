@@ -61,6 +61,16 @@ static inline float meleeReach(World& w, const Object* wpn, bool creature)
 	return creature ? kCombatDistance : kCombatDistance * w.game.gmstf("fhandtohandreach", 1.0f);
 }
 
+// ... and the reach an actor swings from: a person in wolf form fCombatDistanceWerewolfMod farther (OpenMW's
+// getMaxAttackDistance)
+static inline float actorMeleeReach(World& w, const Ref& r, const Object* wpn, bool creature)
+{
+	float reach = meleeReach(w, wpn, creature);
+	if (!creature && r.werewolf)
+		reach *= 1.0f + w.game.gmstf("fcombatdistancewerewolfmod", 0.3f);
+	return reach;
+}
+
 // The hit cone (getHitContact): fCombatAngleXY / 90 is the sine of the widest angle off the attacker's facing
 static inline float hitAngle(World& w)
 {

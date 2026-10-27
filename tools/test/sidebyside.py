@@ -26,6 +26,11 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
                           near) and holds the group (Attack1h, ...)
     weapon=id ammo=id shield=id   the player carries and equips these (fp and actor=player shots)
     wear=id,id,...        armor and clothing the player wears (gauntlets, robes ...), on both sides
+    werewolf=1            the player in Bloodmoon's werewolf form (with --bloodmoon; OpenMW's types.NPC.setWerewolf, the
+                          3DS's WEREWOLF): the wolf's own first-person arms (view=fp, hand-to-hand groups) or body
+                          (actor=player). The form stays for the shots after: put the werewolf shots last in a file
+    enable=1              ... the actor enabled first (one a quest keeps out of the world until it is needed: Glenmoril's
+                          raven, the swimmer)
     hide=1                both sides hide every person and creature within 4000 units (one wandering into a
                           plain shot of the world)
     spawn=id [dist=d]     a new actor (a creature) 250 (d) units ahead of the camera, facing it, is the shot's actor
@@ -265,6 +270,8 @@ def write_openmw_setup(shots):
             f.append("fp = true")
         if s.get("hide"):
             f.append("hide = true")
+        if s.get("enable"):
+            f.append("enable = true")
         if s.get("body"):
             fx, fy, fz, fyaw = s["from"]
             f.append(f"body = true, fromX = {fx}, fromY = {fy}, fromZ = {fz}, fromYaw = {math.radians(fyaw)!r}")
@@ -277,6 +284,8 @@ def write_openmw_setup(shots):
                 f.append(f"{k} = {lua_str(s[k].lower())}")
         if "wear" in s:
             f.append("wear = { " + ", ".join(lua_str(w.lower()) for w in s["wear"].split(",")) + " }")
+        if s.get("werewolf"):
+            f.append("werewolf = true")
         if "spell" in s:
             f.append(f"spell = {lua_str(s['spell'].lower())}")
         if "face" in s:
@@ -497,6 +506,8 @@ def write_case(shots, name):
             view.append(f"HIDEACTORS:{HIDE_RADIUS}")
         if "weather" in s:
             view.append(weather_step(s))      # (after the teleport: the region it lands in)
+        if not fp and "actor" in s and s.get("enable"):
+            view.append(f"ENABLE:{s['actor'].replace(' ', '%')}")
         if not fp and "actor" in s and "group" in s:
             pose = f"POSE:{s['actor'].replace(' ', '%')}:{s['group']}:{at}"
             if "face" in s:
@@ -537,7 +548,7 @@ HIDE_RADIUS = 4000
 def gear(s):
     """Steps that GIVE (add and equip) the shot's weapon, ammunition, shield and worn items: one GIVE a step."""
     ids = [s[k] for k in ("weapon", "ammo", "shield") if k in s] + (s["wear"].split(",") if "wear" in s else [])
-    return [f"0.2 0 0 0 0 GIVE:{i.replace(' ', '_')}" for i in ids]
+    return [f"0.2 0 0 0 0 GIVE:{i.replace(' ', '_')}" for i in ids] + (["0.2 0 0 0 0 WEREWOLF:1"] if s.get("werewolf") else [])
 
 
 def go_steps(s, x, y, z, yaw):
@@ -576,8 +587,9 @@ def cast_steps(s):
     fp = s.get("view") == "fp"
     # (seen from cam, the player is in the picture: their body, in third person)
     view = ["CAM:off" if fp else f"CAM:{fmt(x)}:{fmt(y)}:{fmt(z)}:{fmt(yaw)}:{fmt(pitch)}",
-            "POV:first" if fp else "POV:third", "HUD:off", "VMPOSE:off", "SETMAGICKA:1000",
-            "SETATTR:willpower:100", "SETATTR:luck:100",
+            "POV:first" if fp else "POV:third", "HUD:off", "VMPOSE:off",
+            # (Intelligence first: magicka is held to its maximum, below a 68-point Call Wolf for the default player)
+            "SETATTR:intelligence:100", "SETMAGICKA:1000", "SETATTR:willpower:100", "SETATTR:luck:100",
             f"HIDEACTORS:{HIDE_RADIUS}"]
     if "weather" in s:
         view.append(weather_step(s))
@@ -615,7 +627,7 @@ def vfx_steps(s):
             [f"0.1 0 0 0 0 DISABLE:{s['spawn'].replace(' ', '%')}"] if "spawn" in s else [])
 
 
-def run_3ds(shots, out, name, emu, data, exe):
+def run_3ds(shots, out, name, emu, data, exe, old3ds=False):
     case = write_case(shots, name)
     raw = out / "3ds-raw"
     if raw.exists():
@@ -629,6 +641,8 @@ def run_3ds(shots, out, name, emu, data, exe):
             own = ROOT / "build" / "native-sbs" / "mw3ds-native.exe"
             exe = str(own if own.exists() else ROOT / "build" / "native" / "mw3ds-native.exe")
         cmd += ["--native", "--exe", exe, "--sd", os.environ.get("MW3DS_SBS_SD") or str(ROOT / "build" / "native-sbs" / "sd")]
+    if old3ds:
+        cmd += ["--old3ds"]           # (the game's Old 3DS profile: its view, budgets and cuts)
     print("3ds:", case.relative_to(ROOT), "emulator" if emu else "native")
     r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     for ln in r.stdout.splitlines():
@@ -683,6 +697,7 @@ def main():
     ap.add_argument("--pc-only", action="store_true")
     ap.add_argument("--3ds-only", dest="ds_only", action="store_true")
     ap.add_argument("--emu", action="store_true", help="the 3DS side in Azahar rather than the native build")
+    ap.add_argument("--old3ds", action="store_true", help="the 3DS side as an Old 3DS (its profile's cuts)")
     ap.add_argument("--data", default="")
     ap.add_argument("--tribunal", action="store_true",
                     help="the Tribunal add-on on both sides: OpenMW loads Tribunal.esm, the 3DS side out/tribunal")
@@ -693,8 +708,6 @@ def main():
     ap.add_argument("--res", default="", help="OpenMW's window, WxH (default 400x240: the top screen's)")
     ap.add_argument("--timeout", type=float, default=0, help="seconds for the OpenMW run (default 60 + 15 a shot)")
     a = ap.parse_args()
-    shots = read_shots(a.shots)
-    out = Path(a.out)
     global TRIBUNAL, BLOODMOON, RES
     if a.res:
         RES = tuple(int(v) for v in a.res.lower().split("x"))
@@ -702,8 +715,13 @@ def main():
     BLOODMOON = a.bloodmoon
     # (Bloodmoon loads after Tribunal: with Bloodmoon, OpenMW gets Tribunal too when the 3DS data was converted with it)
     TRIBUNAL = a.tribunal or (a.bloodmoon and "tribunal" in data_addons(a.data))
+    # (the add-ons' records too where a shot looks one up: vfx= Bloodmoon's sprigganup)
+    os.environ["MW3DS_BLOODMOON"] = "1" if BLOODMOON else ""
+    os.environ["MW3DS_TRIBUNAL"] = "1" if TRIBUNAL else ""
+    shots = read_shots(a.shots)
+    out = Path(a.out)
     if not a.pc_only:
-        run_3ds(shots, out, "sbs-" + Path(a.shots).stem + "-" + out.name, a.emu, a.data, a.exe)
+        run_3ds(shots, out, "sbs-" + Path(a.shots).stem + "-" + out.name, a.emu, a.data, a.exe, a.old3ds)
     if not a.ds_only:
         run_openmw(shots, out / "pc", a.timeout or 60 + 15 * len(shots))
     compose(shots, out)

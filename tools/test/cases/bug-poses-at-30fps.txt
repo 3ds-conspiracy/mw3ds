@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# console: new
+# A New 3DS posed people every 2nd, 3rd and 4th frame, counted in frames for 60 fps: at 30 fps (a heavy town, the 3D
+# slider up) the nearest moved at 15 poses a second and looked slow. Below 50 fps the steps then shortened to keep about
+# 30, 20 and 15 a second; since 2026-10-27 people are posed by time instead (perf-new3ds-pose-budget), the nearest in
+# view 30 a second at any frame rate. THROTTLE:30 runs the frames that slow
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 TP:-10660:-71400:220:0
+2 0 0 0
+0.3 0 0 0 0 MOVETO:fargoth
+1 0 0 0
+0.3 0 0 0 0 THROTTLE:30
+1 0 0 0
+0.1 0 0 0 0 SNAP:refposes:fargoth
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refposes:fargoth:ge:@45
+0.3 0 0 0 0 THROTTLE:0

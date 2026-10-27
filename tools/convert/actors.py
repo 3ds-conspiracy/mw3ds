@@ -340,12 +340,12 @@ def write_actor_library(path, meshes, tex_names):
         tmp.unlink()
 
 
-def write_actor_placements(path, actors):
-    """.act version 4: per actor its reference, skeleton, placement, idles, light tint (rgb x 64, pad), the lamps'
+def write_actor_placements(path, actors, cell_light=(0, 0, 0)):
+    """.act version 5: per actor its reference, skeleton, placement, idles, light tint (rgb x 64, pad), the lamps'
     share of it (rgb x 64, pad: what night outdoors leaves alone) and the library file with its meshes (u16 length +
-    path under the data folder)."""
+    path under the data folder); then the cell's light without lamps (rgb x 64, pad): those placed while playing."""
     with open(path, "wb") as f:
-        f.write(b"MWA1" + struct.pack("<II", 4, 0))
+        f.write(b"MWA1" + struct.pack("<II", 5, 0))
         f.write(struct.pack("<I", len(actors)))
         for a in actors:
             f.write(struct.pack("<ii12f", a["ref"], a["skeleton"], *mat34(a["place"])))
@@ -354,6 +354,7 @@ def write_actor_placements(path, actors):
             f.write(bytes(a.get("lamp", [0, 0, 0])) + b"\x00")
             lib = a["lib"].encode("latin-1")
             f.write(struct.pack("<H", len(lib)) + lib)
+        f.write(bytes(cell_light) + b"\x00")
 
 
 def write_actors(path, actors):

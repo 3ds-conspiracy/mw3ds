@@ -185,6 +185,10 @@ local function setup(data)
 			world.createObject(id, id == s.ammo and 50 or 1):moveInto(inv)
 		end
 	end
+	-- werewolf=1: the player in werewolf form (it stays for the shots after, as the 3DS side's)
+	if s.werewolf and not types.NPC.isWerewolf(player) then
+		types.NPC.setWerewolf(player, true)
+	end
 	-- a menu shot's items (give=: apparatus, soul gems, ingredients)
 	for _, g in ipairs(s.give or {}) do
 		if inv:countOf(g[1]) < g[2] then
@@ -254,6 +258,9 @@ local function poseActor(p)
 		print(string.format('MW3DS-SBS no actor %s near shot %d', s.actor, p.index))
 		player:sendEvent('MW3DS_SBS_Posed', { index = p.index })
 		return
+	end
+	if s.enable then
+		a.enabled = true
 	end
 	local rot = a.startingRotation
 	if s.face then

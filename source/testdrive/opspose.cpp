@@ -175,7 +175,7 @@ std::optional<bool> opsPose(Session& s, const std::vector<std::string>& a)
 		}
 		if (a.size() < 3)
 			return fail("VMPOSE wants a group and a point");
-		const Skeleton& sk = s.vm.set.skeletons[0];
+		const Skeleton& sk = s.vm.set.skeletons[s.vm.set.actors[0].skeleton];
 		int g = -1;
 		for (size_t k = 0; k < sk.groups.size() && g < 0; k++)
 			if (strncasecmp(sk.groups[k].name, a[1].c_str(), sizeof(sk.groups[k].name)) == 0)

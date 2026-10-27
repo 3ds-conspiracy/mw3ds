@@ -1176,6 +1176,17 @@ static bool usesSource(int s)
 	return false;
 }
 
+// The console's GPU time for the frame just sent, priced from its work (mwrender/renderingmanager.cpp gpuModelMs) when a
+// test asks for it (GPUMODEL:on: the dynamic view then answers a heavy view as the console's would); else 0, as the PC
+// build always had
+extern bool g_testGpuModel;
+extern u32 g_lastDraws, g_lastTris;
+float gpuModelMs(u32 draws, u32 tris);
+float C3D_GetDrawingTime()
+{
+	return g_testGpuModel ? gpuModelMs(g_lastDraws, g_lastTris) : 0.0f;
+}
+
 void C3D_DrawElements(int, int count, int type, const void* indices)
 {
 	unifStagedTake();
@@ -1559,23 +1570,27 @@ void rendererDrawGlow_sw(const float pos[3], float size, u32 rgba);
 bool rendererDrawLocalMap_sw(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater);
 C3D_Tex* rendererLocalMap_sw();
 
+// (GPUMODEL:on: every frame's world and actors go through the renderer, without a pixel drawn, so their draws and
+// triangles are counted and priced)
+static bool drawOrPrice() { return drawFrame() || g_testGpuModel; }
+
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool secondEye, float fogScale)
 {
-	return drawFrame() ? rendererDrawWorld_sw(w, cam, eyeShift, secondEye, fogScale) : 0;
+	return drawOrPrice() ? rendererDrawWorld_sw(w, cam, eyeShift, secondEye, fogScale) : 0;
 }
 void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex)
 {
-	if (drawFrame())
+	if (drawOrPrice())
 		rendererDrawMesh_sw(m, model, tex);
 }
 void rendererDrawMeshGlow(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex, u32 glow)
 {
-	if (drawFrame())
+	if (drawOrPrice())
 		rendererDrawMeshGlow_sw(m, model, tex, glow);
 }
 void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel)
 {
-	if (drawFrame())
+	if (drawOrPrice())
 		rendererDrawActor_sw(a, textures, viewModel);
 }
 void rendererDrawGlow(const float pos[3], float size, u32 rgba)

@@ -61,13 +61,23 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   stops it at 0.8 of that (the tiers' 2500 / 5000 / 10000 units as 2000 / 4000 / 8000): side by side
   (`trial-detail-distance`, `trial-detail-balmora`) little was lost but far fence posts.
   (`convert_cell.py detail_distance`, `ConsoleProfile::detailScale`)
+- **Mournhold's big areas under the sky are treated as outdoors** (user, 2026-10-27, after the Great Bazaar ran about
+  20 fps in 3D): the dynamic view and its fog close in there when frames run long, small clutter stops by its size
+  (the Bazaar from its entrance in 3D: 199000 triangles to 178000; the dynamic view takes little more, the whole area
+  fits in its shortest reach), and the cell is cut in 2048-unit pieces for culling. Shared models don't reach them:
+  every placement there is lamp lit, and a shared model has no lamp light. OpenMW draws them whole. Other interiors
+  keep their whole view. (`Session::adaptView`, `engine.cpp` fogScale, `convert_cell.py` sky interiors;
+  `perf-mournhold-sky-interiors`, `bug-bazaar-3d-view`)
 - **People and creatures past 6000 (4000 on an Old 3DS) aren't drawn; small pieces of them stop sooner.**
   (`kActorViewDistance`, `actorViewLimit`, `kActorDetailDistance`)
-- **People are re-posed on a cadence**, often up close, less often the smaller they are on screen. A New 3DS every
-  2nd, 3rd and 4th frame near, middle and far (at up to 60 fps). An Old 3DS (and 2DS) by time: 20 poses a second
-  for the two people nearest and most in view, 10 for the rest near and the middle distance, 6.7 far and out of
-  view (counted in frames it was every 2nd, 4th and 6th, 10, 5 and 3 a second at 20 fps: choppy). OpenMW poses
-  everyone every frame. (`World::update`, `actorSkinEvery`, `ConsoleProfile::poseHz`, `perf-o3ds-smooth-poses`)
+- **People are re-posed on a budget, by time, not every frame.** A New 3DS: 30 poses a second for the three people
+  most in view, 15 for the rest near and the middle distance, 10 far and out of view (user, 2026-10-27: the Old 3DS's
+  way a step up). Counted in frames it was every 2nd, 3rd and 4th frame, tuned for 60 fps: at 30 fps the nearest moved
+  at 15 a second and looked slow; shortening the steps below 50 fps fixed that but posed a Balmora street 1.8 x as
+  often (6772 poses in 20 s against 3715) and the town ran slower; the budget makes 4467. An Old 3DS (and 2DS): 20 a
+  second for the two most in view, 10 for the rest near and the middle, 6.7 far and out of view (counted in frames it
+  was 10, 5 and 3 a second at 20 fps: choppy). OpenMW poses everyone every frame. (`World::update`,
+  `ConsoleProfile::poseHz`, `perf-new3ds-pose-budget`, `perf-o3ds-smooth-poses`, `bug-poses-at-30fps`)
 
 ## Rain and storms
 

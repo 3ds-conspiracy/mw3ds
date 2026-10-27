@@ -15,7 +15,7 @@ import struct
 from mwfiles import DATA_FILES, bloodmoon, game_path, read_game, read_records, text, tribunal
 from mwscript import ScriptError, compile_script, compile_snippet
 from creature import creature_stats
-from npcstats import bind, npc_items, npc_stats, weapon_damage
+from npcstats import HARMFUL_EFFECTS, bind, npc_items, npc_stats, weapon_damage
 
 ITEM_TYPES = {"MISC", "BOOK", "ALCH", "INGR", "WEAP", "ARMO", "CLOT", "LIGH", "APPA", "LOCK", "PROB", "REPA"}
 # Engine sounds used by the runtime (item pickup, doors, UI, journal, footsteps)
@@ -268,7 +268,7 @@ def hardcoded_flags(k):
     0x10 harmful, 0x20 its hit visual repeats while it lasts, 0x40 / 0x80 / 0x100 castable on self / touch / target."""
     no_magnitude = {0, 2, 39, 45, 46, 58, 60, 61, 62, 63, 69, 70, 71, 72, 73, 132, 133, 134} | set(range(102, 117))         | set(range(120, 132))
     no_duration = {12, 13, 57, 60, 61, 62, 63, 69, 70, 71, 72, 73}
-    harmful = {7, 45, 46, 47, 48, 51, 52, 53, 54, 58, 135, 136} | set(range(14, 39)) | set(range(85, 90))
+    harmful = HARMFUL_EFFECTS
     self_only = {43, 59, 60, 61, 62, 63, 64, 65, 66, 126, 132, 133, 134} | set(range(102, 117)) | set(range(120, 132))
     others_only = {12, 13, 44, 58, 101, 118, 119} | set(range(49, 57)) | set(range(85, 90))
     f = 0

@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: bloodmoon
+# Someone placed while playing (PlaceAtPC, a summons, a leveled spawn) was lit at the library's even light (tint 1),
+# a placed person outdoors at noon by the daylight where they stand (about 2): spawned people stood out dark against
+# OpenMW's (werewolf side-by-side, round 2: bm_werewolf_wild01 placed in Seyda Neen and on Solstheim). They now take
+# the cell's own light without lamps (the converter writes it in the .act); a person changing into a werewolf keeps
+# their light on the wolf's body
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:reftint:darvame%hleran:gt:1.5+SNAP:reftint:darvame%hleran
+0.3 0 0 0 0 PLACE:bm_werewolf_wild01:300
+1 0 0 0 0 ENABLE:bm_werewolf_wild01
+0.1 0 0 0 0 EXPECT:reftint:bm_werewolf_wild01:gt:1.5
+0.3 0 0 0 0 CON:"darvame%hleran"->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refwerewolf:darvame%hleran:eq:2+EXPECT:reftint:darvame%hleran:eq:@0

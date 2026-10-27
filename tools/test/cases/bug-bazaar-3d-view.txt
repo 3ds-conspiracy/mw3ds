@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# data: tribunal
+# console: new
+# Mournhold's Great Bazaar, from its entrance along the bridge: a New 3DS with the 3D slider up fell to about 20 fps.
+# Some 212000 triangles went to the GPU for the two eyes (106000 without 3D), nearly all of the cell however the camera
+# turned: the converter cut interiors into 4096-unit chunks, and the Bazaar's batches each held most of it, so the
+# frustum left little out. Interiors under the sky are now chunked as outdoors (2048). GPUMODEL:on prices each frame's
+# drawing as the console's GPU would (gpuModelMs); fpsest is the frame rate that gives. Measured after the change:
+# 198950 (the cell's 92000 nearly all in view from here: chunking took 6 %); the bound holds that, more is a detail
+# cut (build/report-morning/perf-later.md). With small clutter stopping by its size there too: 178176
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Mournhold,_Great_Bazaar
+5 0 0 0
+0.3 0 0 0 0 FACE:@-805,-454,24
+1 0 0 0
+0.3 0 0 0 0 SLIDER3D:1+GPUMODEL:on
+1 0 0 0
+# (the whole view measured: the dynamic view closes in here since the area is treated as outdoors)
+0.3 0 0 0 0 VIEWSCALE:1
+0.1 0 0 0 0 EXPECT:gputris:lt:185000+EXPECT:viewscale:ge:0.95+EXPECT:gpuest:ge:0+EXPECT:fpsest:ge:0

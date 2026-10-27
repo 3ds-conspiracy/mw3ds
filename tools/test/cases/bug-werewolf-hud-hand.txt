@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# data: bloodmoon
+# In wolf form, with nothing held, the HUD's weapon box shows the werewolf's claw (OpenMW's unsetSelectedWeapon:
+# icons\k\tx_werewolf_hand.dds); ours showed the "Fist" text. Back in their own form, the 3DS's "Fist" again.
+# (Written with the fix: the check is new)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:hudwolfhand:eq:0
+0.3 0 0 0 0 WEREWOLF:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:hudwolfhand:eq:1
+0.3 0 0 0 0 WEREWOLF:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:hudwolfhand:eq:0

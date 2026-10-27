@@ -16,6 +16,9 @@
 extern const char* g_playerBlock;
 bool g_testDepth16 = false;
 float g_test3dSlider = -1.0f;
+bool g_testGpuModel = false;
+int g_testThrottleFps = 0;
+float g_testCpuScale = 0.0f;
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
 
@@ -264,6 +267,24 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 	{
 		g_test3dSlider = a[1] == "off" ? -1.0f : std::min(1.0f, std::max(0.0f, (float)atof(a[1].c_str())));
 		logf("test: 3d slider %.3f", g_test3dSlider);
+		return true;
+	}
+	// GPUMODEL:on|off[:<cpu scale>]: the PC build's GPU time for each frame priced from its draws and triangles
+	// (gpuModelMs), so the dynamic view closes in where the console's GPU would fall behind; off: 0, as the PC build has.
+	// The scale: how many times slower the console's CPU runs this build's frame work (EXPECT:cpuest, fpsest; 0 unknown)
+	if (verb == "GPUMODEL" && a.size() >= 2)
+	{
+		g_testGpuModel = a[1] == "on";
+		g_testCpuScale = a.size() >= 3 ? (float)atof(a[2].c_str()) : 0.0f;
+		logf("test: gpu model %s, cpu scale %.1f", g_testGpuModel ? "on" : "off", g_testCpuScale);
+		return true;
+	}
+	// THROTTLE:<fps>|0: each frame waits out the rest of 1/fps (the PC build runs as fast as it can: this is a console
+	// running that slow, for what changes with the frame rate)
+	if (verb == "THROTTLE" && a.size() >= 2)
+	{
+		g_testThrottleFps = atoi(a[1].c_str());
+		logf("test: frames throttled to %d fps", g_testThrottleFps);
 		return true;
 	}
 	// SAYLINE:<npc>[:novoice]: the NPC speaks a line, voiced (the first voice file in the data) or text only

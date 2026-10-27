@@ -227,7 +227,7 @@ void Session::npcDuel(int ri, float dt)
 	r.moved = true;
 	if (a)
 		a->showWeapon = wpn != nullptr;
-	const float meleeAt = meleeReach(w, wpn, def.creature);
+	const float meleeAt = actorMeleeReach(w, r, wpn, def.creature);
 	float reach = meleeAt + actorHalfLength(ri) + actorHalfLength(fi);   // (npcCombat)
 	bool attacking = r.hitAt >= 0.0f;
 	Cell* cell = w.cellOf(ri);

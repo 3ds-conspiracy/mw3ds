@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A person in wolf form swings from fCombatDistanceWerewolfMod (0.3) farther than with bare hands (OpenMW's
+# getMaxAttackDistance: fCombatDistance x 1.3); as themselves again after UndoWerewolf
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 SNAP:refmeleereach:darvame%hleran
+0.3 0 0 0 0 CON:"darvame%hleran"->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refmeleereach:darvame%hleran:gt:@38+EXPECT:refmeleereach:darvame%hleran:lt:@39
+0.3 0 0 0 0 CON:"darvame%hleran"->undowerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refmeleereach:darvame%hleran:eq:@0

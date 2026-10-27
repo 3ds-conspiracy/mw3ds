@@ -187,7 +187,7 @@ class TextureSet:
                 if not (entry and entry.get("src") == path and entry.get("limit") == limit
                         and entry.get("want_alpha") == r["alpha"] and entry.get("overlay", "") == overlay
                         and entry.get("sheet", False) == sheet and entry.get("mips", True) == self.mips
-                        and tex_path(name).exists()):
+                        and (not entry.get("alpha") or entry.get("clear_kept")) and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(path)))
                     img.load()
                     tex3ds = tex3ds or tex3ds_path()
@@ -213,7 +213,8 @@ class TextureSet:
             try:
                 if not (entry and entry.get("src") == r["src"] and entry.get("limit") == limit
                         and entry.get("whiten") == r["amount"] and entry.get("mips", True) == self.mips
-                        and entry.get("overlay", "") == overlay and tex_path(name).exists()):
+                        and entry.get("overlay", "") == overlay and (not entry.get("alpha") or entry.get("clear_kept"))
+                        and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(r["src"])))
                     img.load()
                     tex3ds = tex3ds or tex3ds_path()
@@ -238,7 +239,7 @@ class TextureSet:
             digest = hashlib.sha1(img.tobytes()).hexdigest()
             entry = cache.get(name)
             if not (entry and entry.get("digest") == digest and entry.get("mips", True) == self.mips
-                    and tex_path(name).exists()):
+                    and (not entry.get("alpha") or entry.get("clear_kept")) and tex_path(name).exists()):
                 tex3ds = tex3ds or tex3ds_path()
                 tex_path(name).parent.mkdir(parents=True, exist_ok=True)
                 entry = encode_one(tex3ds, img, tex_path(name), max(img.size), True, mips=self.mips)
@@ -288,8 +289,22 @@ def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True):
     while (min(tw, th) if sheet else max(tw, th)) > limit or max(tw, th) > MAX_SIDE:
         tw, th = max(8, tw // 2), max(8, th // 2)
     if (tw, th) != (w, h):
-        img = img.resize((tw, th), Image.LANCZOS)
+        small = img.resize((tw, th), Image.LANCZOS)
+        if img.mode == "RGBA" and img.getextrema()[3][0] == 0:
+            # (Pillow weighs colour by alpha: a fully see-through texel comes out black; it keeps its own colour, from a
+            # plain resize, as a model drawing the picture solid shows it: a riekling's skin is see-through almost all
+            # over for its blended fur, its body drawn solid with it, OpenMW showing the colours)
+            px = np.asarray(small).copy()
+            clear = px[..., 3] == 0
+            px[clear, :3] = np.asarray(img.convert("RGB").resize((tw, th), Image.LANCZOS))[clear]
+            small = Image.fromarray(px, "RGBA")
+        img = small
     has_alpha = want_alpha and img.getextrema()[3][0] < 255
+    if has_alpha:
+        # tex3ds blackens a texel of alpha 0; at 1 it keeps its colour and the 4-bit alpha still rounds it to 0
+        px = np.asarray(img).copy()
+        px[px[..., 3] == 0, 3] = 1
+        img = Image.fromarray(px, "RGBA")
     with tempfile.TemporaryDirectory() as tmp:
         png = Path(tmp) / "in.png"
         img.save(png)
@@ -305,4 +320,4 @@ def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True):
                 Path(out).unlink(missing_ok=True)
                 if attempt == 2:
                     raise
-    return {"size": [tw, th], "source_pot": [sw, sh], "alpha": has_alpha, "mips": mips}
+    return {"size": [tw, th], "source_pot": [sw, sh], "alpha": has_alpha, "mips": mips, "clear_kept": has_alpha}

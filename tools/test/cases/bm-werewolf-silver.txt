@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A silver weapon's blow on a werewolf takes fWereWolfSilverWeaponDamageMult times its damage (OpenMW's
+# applyWerewolfDamageMult), on a person a script turned into one as on the player in wolf form; on anyone else, and
+# with a weapon that isn't silver, as it is
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:silveron:silver%longsword,darvame%hleran:eq:1+EXPECT:silveron:silver%longsword,player:eq:1
+0.3 0 0 0 0 CON:"darvame%hleran"->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:silveron:silver%longsword,darvame%hleran:eq:2+EXPECT:silveron:iron%longsword,darvame%hleran:eq:1
+0.3 0 0 0 0 CON:player->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:silveron:silver%longsword,player:eq:2+EXPECT:silveron:iron%longsword,player:eq:1

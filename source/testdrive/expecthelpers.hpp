@@ -26,7 +26,8 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 // How bright step shot n's top screen is, 0..255 (its pixels' mean); -1: no such shot. Kind 1 (spread): how far its
 // pixels' brightness (the mean of a pixel's three channels) strays from their mean instead (standard deviation: clouds
 // against the sky, a pattern against a flat colour); kind 2 (dark): the percentage of its pixels under 0.6 x the mean
-// (a dark shape on a bright sky)
+// (a dark shape on a bright sky); kind 3 (black): the percentage of them all but black, brightness under 16 (a model
+// drawn without its picture's colours)
 static inline float shotLuma(int n, int kind = 0)
 {
 	char path[64];
@@ -48,11 +49,11 @@ static inline float shotLuma(int n, int kind = 0)
 			}
 			double px = (double)(half / 3), mean = sum / px;
 			v = kind == 1 ? (float)sqrt(fmax(0.0, sq / px - mean * mean)) : (float)mean;
-			if (kind == 2)
+			if (kind == 2 || kind == 3)
 			{
 				int dark = 0;
 				for (size_t i = 0; i < half; i += 3)
-					dark += (top[i] + top[i + 1] + top[i + 2]) / 3.0 < 0.6 * mean;
+					dark += (top[i] + top[i + 1] + top[i + 2]) / 3.0 < (kind == 2 ? 0.6 * mean : 16.0);
 				v = (float)(100.0 * dark / px);
 			}
 		}

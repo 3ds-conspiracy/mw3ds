@@ -46,19 +46,31 @@ The player's form (OpenMW's setWerewolf, Player::setWerewolfStats and the rules 
 | Using anything but a door is refused (`sWerewolfRefusal`) with a `Wolf*` sound by its kind (NPC, creature, container, activator, item: one of the numbered set at random); a script's OnActivate still runs first | `mwworld/action.cpp werewolfRefused`, `Session::playRandomSound` |
 | No inventory or magic screen, no casting, no quick keys (differs, 3DS UI: OpenMW hides the two windows; our Items and Magic buttons say so) | `mwgui/windowmanagerimp.cpp openScreen`, `mwbase/session.cpp` |
 | Waiting only, no sleep (`sWerewolfRestMessage`) | `mwgui/waitdialog.cpp` |
+| The HUD's weapon box with nothing held shows the claw (`icons\k\tx_werewolf_hand.dds`, OpenMW's unsetSelectedWeapon); in their own form the 3DS's "Fist" stays (3DS UI, kept) | `Session::hudHandArt` (case `bug-werewolf-hud-hand`) |
 | ForceGreeting ignored unless the speaker's script has a local `allowwerewolfforcegreeting` | `mwscript/dialogueextensions.cpp` |
 | Claws: hand to hand as health damage x the `WerewolfClawMult` global (25 when the data lacks it) x `fHandtoHandHealthPer`, with WolfHit, for the player and for a werewolf person | `World::werewolfClaw`; `character.cpp`, `combat.cpp`, `actors.cpp` |
-| A silver weapon on a werewolf: x `fWereWolfSilverWeaponDamageMult` (WEAP flag 2) | `World::silverOnWerewolf` |
+| A silver weapon on a werewolf: x `fWereWolfSilverWeaponDamageMult` (WEAP flag 2) | `World::silverOnWerewolf` (case `bm-werewolf-silver`) |
 | A person killed in wolf form counts toward GetWerewolfKills (people only, as OpenMW's Npc::onHit) | `actors.cpp killNpc` |
-| Running with claws put away x `fWereWolfRunMult`; encumbrance 0 | `mwworld/player.cpp` |
-| People's fight term + `iWerewolfFightMod` against the player in wolf form or once `PCKnownWerewolf` is 1; people under `iWereWolfLevelToAttack` rate fleeing at `iWereWolfFleeMod` | `mwmechanics/formulas.cpp` |
-| Seen changing (a person within `fAlarmRadius`, in sight, who notices): `sWerewolfAlarmMessage`, `PCKnownWerewolf` 1, bounty + `iWereWolfBounty` if any of them has Alarm above 0 | `Session::werewolfWitnesses` |
+| Running with claws put away x `fWereWolfRunMult`; encumbrance 0 | `mwworld/player.cpp` (case `bm-werewolf-run`) |
+| A werewolf person swings from `fCombatDistanceWerewolfMod` farther (OpenMW's getMaxAttackDistance) | `actorMeleeReach` (case `bm-werewolf-reach`) |
+| A werewolf person, aimed at, shows as `sWerewolfPopup` (OpenMW's Npc::getName) | `Session::targetLabel` (case `bm-werewolf-popup`) |
+| People's fight term + `iWerewolfFightMod` against the player in wolf form or once `PCKnownWerewolf` is 1; people under `iWereWolfLevelToAttack` rate fleeing at `iWereWolfFleeMod` | `mwmechanics/formulas.cpp` (case `bm-werewolf-reactions`) |
+| Seen changing (a person within `fAlarmRadius`, in sight, who notices): `sWerewolfAlarmMessage`, `PCKnownWerewolf` 1, bounty + `iWereWolfBounty` if any of them has Alarm above 0 | `Session::werewolfWitnesses` (case `bm-werewolf-reactions`) |
 | Attacking or killing a werewolf person is no crime; guards don't come to arrest a werewolf | `character.cpp`, `combat.cpp`, `actors.cpp`, `guardCheck` |
 
 Drawing: a werewolf person is drawn as the `bm_werewolf_default` creature's model (the converter makes it placeable:
 `level.py`), their own model hidden and shown again on UndoWerewolf (`World::werewolfBody`, again when their cell loads);
 the player's first-person view takes the werewolf's own skeleton and skin (`firstperson.py WEREWOLF_1ST`,
-`ViewModel::rebuild`); the fur overlay over the top screen in first person (`artassets.py`, `Session::drawTop`).
+`ViewModel::rebuild`), the world seen at `General_Werewolf_FOV` (Morrowind.ini [General] Werewolf FOV, 100 degrees
+up and down; the arms keep 60: case `bug-werewolf-fov`); the fur overlay over the top screen in first person, the HUD
+hidden or not (`artassets.py`, `Session::drawWerewolfView`); in third person the player's body is the library's werewolf
+(`PlayerBody::rebuildWolf`, case `bug-werewolf-body`). A person changing keeps their own light on the wolf's body
+(`World::werewolfBody`, case `bug-spawned-light`), and anyone placed while playing (PlaceAtPC, summons, leveled spawns)
+is lit as a placement there is: the cell's light without lamps, which the converter writes into its `.act` (version
+5), the lamps near where it stands added at run time (case `bug-spawned-light`; the library's even light stood out
+dark). Rieklings' skin (`tx_bm_iceminion_01`) is see-through almost everywhere, for their blended fur, the body drawn
+solid with it: the texture converter keeps a see-through texel's colour (Pillow's resize and tex3ds blackened them;
+case `bug-riekling-black`). Not done: the unseen WerewolfRobe OpenMW puts on (nothing shows it).
 
 ## Script functions
 

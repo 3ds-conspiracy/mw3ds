@@ -20,8 +20,11 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.actorDetailScale = 1.0f;
 		p.detailScale = 1.0f;
 		p.skinEvery[0] = 2, p.skinEvery[1] = 3, p.skinEvery[2] = 4;
-		p.poseHz[0] = p.poseHz[1] = p.poseHz[2] = 0.0f;
-		p.poseFull = 0;
+		// People are posed by time, as on an Old 3DS, a step above it (user, 2026-10-27): 30 a second for the three most in
+		// view, 15 for the rest near and the middle, 10 far. Counted in frames with the steps shortened below 50 fps, a
+		// Balmora street at 30 fps was posed 1.8 x as often and ran slower (perf-new3ds-pose-budget)
+		p.poseHz[0] = 30.0f, p.poseHz[1] = 15.0f, p.poseHz[2] = 10.0f;
+		p.poseFull = 3;
 		p.rgb565 = false;
 		p.cmdBufScale = 8;           // room for both eyes of a busy town
 		p.goldenEyeAtStart = false;

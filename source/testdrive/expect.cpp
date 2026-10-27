@@ -121,7 +121,7 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		const char* g = "";
 		if (s.vm.ready)
 		{
-			const Skeleton& sk = s.vm.set.skeletons[0];
+			const Skeleton& sk = s.vm.set.skeletons[s.vm.set.actors[0].skeleton];
 			int k = s.vm.set.actors[0].group;
 			g = k >= 0 && k < (int)sk.groups.size() ? sk.groups[k].name : "";
 		}

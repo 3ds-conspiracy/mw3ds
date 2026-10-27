@@ -11,6 +11,7 @@
 #include <tuple>
 #include "testdrive/testdrive.hpp"
 #include "mwbase/session.hpp"
+#include "mwmechanics/combathelpers.hpp"
 #include "components/debug/debuglog.hpp"
 
 extern const char* g_playerBlock;
@@ -209,6 +210,69 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 		return true;
 	}
 	if (what == "playerdefense") { v = s.playerDefense(false); return true; }
+	// the player's running speed over what the stats alone give (fWereWolfRunMult in wolf form, claws put away)
+	if (what == "playerrunmult")
+	{
+		float base = s.runSpeedFor(w.stats.attributes[ATTR_SPEED], w.stats.skills[8]);
+		v = base > 0.0f ? w.player.runSpeed / base : 0.0f;
+		return true;
+	}
+	// refmeleereach:<ref>: how far it swings from with what it holds (a person in wolf form farther)
+	if (what == "refmeleereach")
+	{
+		int ri = findRef(s, arg);
+		if (ri < 0 || w.refs[ri].actor < 0)
+			return false;
+		const ActorDef& def = w.game.actors[w.refs[ri].actor];
+		const Object* wpn = w.game.object(def.weapon);
+		if (wpn && isRanged(wpn))
+			wpn = nullptr;
+		v = actorMeleeReach(w, w.refs[ri], wpn, def.creature);
+		return true;
+	}
+	// labelis:<ref>,<text>: what aiming at them shows (their name, a werewolf's sWerewolfPopup ...) is that text, 1; else 0
+	if (what == "labelis")
+	{
+		size_t c = arg.find(',');
+		int ri = c == std::string::npos ? -1 : findRef(s, arg.substr(0, c));
+		if (ri < 0)
+			return false;
+		v = s.targetLabel(ri) == arg.substr(c + 1) ? 1.0f : 0.0f;
+		return true;
+	}
+	// silveron:<weapon>,<ref or player>: the damage that weapon's blow takes on them for its silver (a werewolf's
+	// fWereWolfSilverWeaponDamageMult, else 1)
+	if (what == "silveron")
+	{
+		size_t c = arg.find(',');
+		if (c == std::string::npos)
+			return false;
+		const Object* wpn = w.game.object(lower(arg.substr(0, c)));
+		std::string who = arg.substr(c + 1);
+		int ri = who == "player" ? -1 : findRef(s, who);
+		if (who != "player" && ri < 0)
+			return false;
+		v = w.silverOnWerewolf(wpn, ri);
+		return true;
+	}
+	// combatspell:<actor id>,<spell>: 1 when that NPC or creature record has the spell among those it casts in a fight
+	if (what == "combatspell")
+	{
+		size_t c = arg.find(',');
+		if (c == std::string::npos)
+			return false;
+		std::string who = lower(spaced(arg.substr(0, c))), sp = lower(spaced(arg.substr(c + 1)));
+		for (const ActorDef& d : w.game.actors)
+			if (lower(d.id) == who || lower(d.id) == lower(arg.substr(0, c)))
+			{
+				v = 0.0f;
+				for (const Atom& id : d.combatSpells)
+					if (lower(id) == sp || lower(id) == lower(arg.substr(c + 1)))
+						v = 1.0f;
+				return true;
+			}
+		return false;
+	}
 	if (what == "runspeedfor" || what == "jumpspeedfor")
 	{
 		// "<speed>,<athletics>" / "<acrobatics>,<jump>,<load>,<running>,<fatigue term>"

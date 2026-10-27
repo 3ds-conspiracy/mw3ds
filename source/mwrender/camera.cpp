@@ -124,6 +124,9 @@ void Session::adaptView(float workMs, float frameMs)
 	u64 tick = svcGetSystemTick();
 	if (frameMs <= 0.0f)
 		frameMs = adaptTick ? (float)(tick - adaptTick) * 1000.0f / SYSCLOCK_ARM11 : workMs;
+	// (a frame takes at least its work: the GPU's drawing too. On the console the time between frames already holds it;
+	// the PC build's GPU estimate (GPUMODEL:on) shows here only through this)
+	frameMs = fmaxf(frameMs, workMs);
 	adaptTick = tick;
 	// One long frame (a cell arriving) shouldn't shrink the view: each counts at most as a slow one
 	workCost += (fminf(workMs, g_profile.workCap) - workCost) * 0.1f;
@@ -160,7 +163,8 @@ void Session::adaptView(float workMs, float frameMs)
 	else if (workCost < spriteMs - 6.0f)
 		sb = std::min(g_profile.spriteBudgetMax, sb + 2);
 	float minScale = g_profile.viewScaleMin, maxScale = g_profile.viewScaleMax;
-	if (w.current < 0 || w.cells[w.current].interior)
+	// (Mournhold's big areas under the sky adapt as outdoors: case perf-mournhold-sky-interiors)
+	if (w.current < 0 || !w.cells[w.current].underSky())
 	{
 		// (indoors the view is whole whatever this says: the Old 3DS keeps its outdoor view for the way out)
 		if (!g_profile.keepViewIndoors)

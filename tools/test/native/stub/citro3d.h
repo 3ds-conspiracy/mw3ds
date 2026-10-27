@@ -189,7 +189,7 @@ void C3D_FrameEnd(u8 flags);
 void C3D_FrameDrawOn(C3D_RenderTarget* t);
 inline float C3D_GetCmdBufUsage() { return 0; }
 inline float C3D_GetProcessingTime() { return 0; }
-inline float C3D_GetDrawingTime() { return 0; }
+float C3D_GetDrawingTime();     // native_gpu.cpp: 0, or the GPU estimate with GPUMODEL:on
 C3D_RenderTarget* C3D_RenderTargetCreate(int width, int height, int colorFmt, int depthFmt);
 C3D_RenderTarget* C3D_RenderTargetCreateFromTex(C3D_Tex* tex, int face, int level, int depthFmt);
 void C3D_RenderTargetSetOutput(C3D_RenderTarget* t, int screen, int side, u32 flags);

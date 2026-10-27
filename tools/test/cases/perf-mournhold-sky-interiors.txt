@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# data: tribunal
+# console: new
+# Mournhold's big areas under the sky (the Great Bazaar, the plazas, the courtyards) get the outdoor savings
+# (user, 2026-10-27, after the Bazaar ran ~20 fps in 3D): the dynamic view closes the fog in when frames run long,
+# and small clutter stops at a distance by its size. (Repeated statics share no copy there: every placement is lamp
+# lit, and a shared model has no lamp light.) An ordinary interior keeps its whole view. (ADAPTVIEW:<work ms>:<frame ms>:<frames> feeds the view frames of that cost)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Mournhold,_Great_Bazaar
+5 0 0 0
+0.1 0 0 0 0 EXPECT:detailbatches:ge:20
+0.1 0 0 0 0 ADAPTVIEW:30.5:41.7:100+VIEWSCALE:1
+0.1 0 0 0 0 ADAPTVIEW:30.5:41.7:300
+0.1 0 0 0 0 EXPECT:viewscale:lt:0.9
+0.1 0 0 0 0 ADAPTVIEW:15:16.7:100
+0.1 0 0 0 0 ADAPTVIEW:15:16.7:300
+0.1 0 0 0 0 EXPECT:viewscale:ge:0.99
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+3 0 0 0
+0.1 0 0 0 0 ADAPTVIEW:30.5:41.7:100+VIEWSCALE:1
+0.1 0 0 0 0 ADAPTVIEW:30.5:41.7:300
+0.1 0 0 0 0 EXPECT:viewscale:eq:1+EXPECT:detailbatches:eq:0

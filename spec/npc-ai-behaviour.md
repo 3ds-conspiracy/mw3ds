@@ -44,7 +44,9 @@ readiness is judged each frame, so it starts walking on again. A foe backing awa
 ## Choosing the next action (healing)
 
 `prepareNextAction` rates each option and takes the best, about once per blow: potions (`ratePotion`), on-use enchanted
-items, the weapons carried (`rateWeapon`), and the spells known (`rateSpell`). A potion is drunk at once when chosen,
+items, the weapons carried (`rateWeapon`), and the spells known (`rateSpell`: every spell or power of the actor with a
+harmful effect at touch or target, a heal, a summon or a ward on itself; the converter's `combat_spells` once kept only
+the damage ones, so Hircine never paralyzed and the draugr never cursed: test `bug-creature-harmful-spells`). A potion is drunk at once when chosen,
 then 0.75 s to the next choice.
 
     rateWeapon = (mean damage (melee: (slash^2 + thrust^2 + chop^2) / (slash + thrust + chop); bow: chop; thrown: chop x 2)

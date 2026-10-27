@@ -65,18 +65,37 @@ void Session::drawHurtFlash()
 	quad(330, 0, 70, 240, none, edge, none, edge);        // right
 }
 
+// The werewolf's view: the fur at the screen's edges over the whole top screen, in first person (OpenMW's
+// setWerewolfOverlay, shown with the first-person view), under every other mark. Part of the view, not the HUD: drawn
+// with the HUD hidden too
+void Session::drawWerewolfView()
+{
+	if (!w.stats.werewolf || thirdPerson)
+		return;
+	auto fur = w.game.art.hud.find("werewolf_overlay");
+	if (fur != w.game.art.hud.end())
+		uiArt(fur->second.file, fur->second.w, fur->second.h, 0, 0, 400, 240);
+}
+
+// With no weapon, a werewolf's weapon box shows the claw (OpenMW's unsetSelectedWeapon: tx_werewolf_hand); in their
+// own form the 3DS's "Fist" stays
+const char* Session::hudHandArt()
+{
+	if (!w.stats.werewolf)
+		return nullptr;
+	for (auto& it : w.inventory)
+		if (it.equipped)
+			if (const Object* o = w.game.object(it))
+				if (o->recType == REC_WEAP)
+					return nullptr;
+	return w.game.art.hud.count("werewolf_hand") ? "werewolf_hand" : nullptr;
+}
+
 void Session::drawTop()
 {
 	const UiInput& in = uiIn();
 	(void)in;
-	// The werewolf's view: the fur at the screen's edges over the whole top screen, in first person (OpenMW's
-	// setWerewolfOverlay, shown with the first-person view), under every other mark
-	if (w.stats.werewolf && !thirdPerson)
-	{
-		auto fur = w.game.art.hud.find("werewolf_overlay");
-		if (fur != w.game.art.hud.end())
-			uiArt(fur->second.file, fur->second.w, fur->second.h, 0, 0, 400, 240);
-	}
+	drawWerewolfView();
 	// (aimShift: in 3D, the crosshair and the label sit at the depth of what's aimed at)
 	float ax = aimShift;
 	if (!indicators.empty())
@@ -353,7 +372,12 @@ void Session::drawHud()
 	const Object* wo = weapon ? w.game.object(*weapon) : nullptr;
 	float by = 75;
 	uiRect(6, by, 36, 36, col::panel);
-	if (!(wo && uiIcon(wo->iconIx, 8, by + 2)))
+	if (const char* hand = wo ? nullptr : hudHandArt())
+	{
+		const auto& art = w.game.art.hud.find(hand)->second;
+		uiArt(art.file, art.w, art.h, 8, by + 2, 32, 32);
+	}
+	else if (!(wo && uiIcon(wo->iconIx, 8, by + 2)))
 		uiTextCentered(24, by + 18 - uiLineHeight(0.36f) / 2, 0.36f, col::textDim, wo ? wo->name.str().substr(0, 3) : "Fist");
 	uiFrame(6, by, 36, 36);
 	uiText(48, by + 1, 0.42f, col::text, wo ? wo->name.str() : w.game.gmstLabel("sskillhandtohand", "Hand-to-hand"));

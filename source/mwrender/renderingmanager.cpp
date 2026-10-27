@@ -12,6 +12,28 @@ float g_profWorldMs = 0.0f;
 float g_profDraw[DRAWP_COUNT];
 float g_detailScale = 1.0f, g_actorDetailScale = 1.0f;
 int g_drawnBatches = 0, g_culledBatches = 0;
+// The frame's drawing work as sent to the GPU, both eyes (an eye replayed from the other's record counts the record's):
+// draw calls and triangles. Logged each second with the console's own GPU time (engine.cpp), and priced by gpuModelMs
+u32 g_frameDraws = 0, g_frameTris = 0;
+u32 g_lastDraws = 0, g_lastTris = 0;         // the frame just sent (engine.cpp)
+float g_lastCpuMs = 0.0f;                   // ... and its CPU time, update and drawing commands
+static u32 s_replayTris = 0, s_replayDrawCalls = 0, s_recordTris = 0, s_recordDraws = 0;
+
+static inline void countDraw(u32 indices)
+{
+	g_frameDraws++;
+	g_frameTris += indices / 3;
+}
+
+// What a frame's drawing would cost the console's GPU, in ms: per triangle and per draw call, both eyes. A first
+// estimate from one report, the Great Bazaar from its entrance along the bridge on a New 3DS (212000 triangles and 660
+// draws for the two eyes): about 20 fps with the 3D slider up, its full 30 without; the log's "gpu work" beside the
+// console's "gpu" ms is what to fit it to
+static const float kGpuMsPerTri = 0.0002f, kGpuMsPerDraw = 0.004f;
+float gpuModelMs(u32 draws, u32 tris)
+{
+	return tris * kGpuMsPerTri + draws * kGpuMsPerDraw;
+}
 int g_sharedDrawn = 0;                       // shared models' placements the last view drew (tests)
 int g_worldDraws = 0;                        // draws the last view of the world made (the left eye's; tests)
 int g_skippedDraws = 0;               // draws dropped because the GPU command buffer was nearly full
@@ -27,7 +49,9 @@ static const float kCaustTiles = 2.0f;           // the 32 x 32 frame repeated t
 static void drawShimmer(CellBatch b, u32 rgb);
 static void shimmerStage(u32 rgb);
 
-static const float kFovY = 60.0f;
+static const float kFovY = 60.0f;      // the first-person arms' view, always (OpenMW's own first-person field of view)
+// The world's: kFovY, or wider seen through a werewolf's eyes in first person (OpenMW's General_Werewolf_FOV; engine.cpp)
+float g_worldFovY = kFovY;
 static const float kNear = 5.0f;
 static const float kInteriorFar = 12000.0f;
 
@@ -189,7 +213,7 @@ static Frustum makeFrustum(const RenderCamera& cam, float farDist)
 	float r[3] = { cy, -sy, 0.0f };
 	float u[3] = { -sy * sp, -cy * sp, cp };           // r x f
 	// A little wider than the real view so nothing pops at the edges
-	float tanV = tanf(C3D_AngleFromDegrees(kFovY) * 0.5f) * 1.15f;
+	float tanV = tanf(C3D_AngleFromDegrees(g_worldFovY) * 0.5f) * 1.15f;
 	float tanH = tanV * C3D_AspectRatioTop;
 	for (int k = 0; k < 3; k++)
 	{
@@ -437,6 +461,7 @@ void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 	}
 	else
 		BufInfo_Add(bufInfo, b.verts, b.stride, 3, 0x210);
+	countDraw(b.numIndices);
 	C3D_DrawElements(GPU_TRIANGLES, b.numIndices, C3D_UNSIGNED_SHORT, b.indices);
 	if (g_gpu.uvOverrideOn)
 		invalidateState();                          // (the next batch sets its own offset again)
@@ -520,6 +545,7 @@ static int drawSkinQueue(float time)
 			glowStage(m.glow);
 		if (ghost)
 			rendererAlphaScale(d.alpha);
+		countDraw(m.numIndices);
 		C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
 		if (ghost)
 			rendererAlphaScale(1.0f);
@@ -537,6 +563,7 @@ static int drawSkinQueue(float time)
 			setBatchState(&g_gpu.caust[(int)(time * kCaustFps) % g_gpu.caustCount], sb, DRAW_WORLD, time);
 			C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uUvScale, m.uvQ * kCaustTiles, m.uvQ * kCaustTiles, 1.0f, 1.0f);
 			shimmerStage(m.glow);
+			countDraw(m.numIndices);
 			C3D_DrawElements(GPU_TRIANGLES, m.numIndices, C3D_UNSIGNED_SHORT, m.indices);
 			C3D_TexEnvInit(C3D_GetTexEnv(kTevGlow));
 			invalidateState();
@@ -715,8 +742,8 @@ float rendererStereoPixels(float depth, float eyeShift)
 	if (eyeShift == 0.0f || depth <= kNear)
 		return 0.0f;
 	C3D_Mtx flat, eye;
-	Mtx_PerspTilt(&flat, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, depth * 2.0f, false);
-	Mtx_PerspStereoTilt(&eye, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, depth * 2.0f, eyeShift,
+	Mtx_PerspTilt(&flat, C3D_AngleFromDegrees(g_worldFovY), C3D_AspectRatioTop, kNear, depth * 2.0f, false);
+	Mtx_PerspStereoTilt(&eye, C3D_AngleFromDegrees(g_worldFovY), C3D_AspectRatioTop, kNear, depth * 2.0f, eyeShift,
 		kStereoFocus, false);
 	auto ndc = [](const C3D_Mtx& m, float x, float z, float out[2]) {
 		C3D_FVec c = Mtx_MultiplyFVec4(&m, FVec4_New(x, 0.0f, -z, 1.0f));
@@ -798,6 +825,8 @@ static void replayStart()
 	u32 size = 0, at = 0;
 	GPUCMD_GetBuffer(&buf, &size, &at);
 	s_replayFrom = buf ? buf + at : nullptr;
+	s_recordTris = g_frameTris;
+	s_recordDraws = g_frameDraws;
 }
 
 void rendererReplayEnd(int draws)
@@ -808,6 +837,8 @@ void rendererReplayEnd(int draws)
 	GPUCMD_GetBuffer(&buf, &size, &at);
 	s_replayWords = buf && s_replayFrom && buf + at > s_replayFrom ? (u32)(buf + at - s_replayFrom) : 0;
 	s_replayDraws = draws;
+	s_replayTris = g_frameTris - s_recordTris;
+	s_replayDrawCalls = g_frameDraws - s_recordDraws;
 	s_replayOn = s_replayWords > 0;
 }
 
@@ -828,14 +859,16 @@ int rendererReplayWorld(float eyeShift)
 	g_replayCount++;
 	C3D_Mtx projection;
 	if (eyeShift != 0.0f)
-		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane,
+		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(g_worldFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane,
 			eyeShift, kStereoFocus, false);
 	else
-		Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane, false);
+		Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(g_worldFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane, false);
 	g_gpu.projection = projection;
 	g_gpu.eyeShift = eyeShift;
 	primeState(projection);
 	GPUCMD_AddRawCommands(s_replayFrom, words);
+	g_frameTris += s_replayTris;
+	g_frameDraws += s_replayDrawCalls;
 	return s_replayDraws;
 }
 
@@ -869,10 +902,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 
 	C3D_Mtx projection, view;
 	if (eyeShift != 0.0f)
-		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, farPlane,
+		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(g_worldFovY), C3D_AspectRatioTop, kNear, farPlane,
 			eyeShift, kStereoFocus, false);
 	else
-		Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, farPlane, false);
+		Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(g_worldFovY), C3D_AspectRatioTop, kNear, farPlane, false);
 	float cp = cosf(cam.pitch);
 	C3D_FVec eye = FVec3_New(cam.pos[0], cam.pos[1], cam.pos[2]);
 	C3D_FVec target = FVec3_New(cam.pos[0] + sinf(cam.yaw) * cp, cam.pos[1] + cosf(cam.yaw) * cp,
@@ -1493,12 +1526,16 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 	if (viewModel)
 		C3D_DepthMap(true, -0.1f, 0.9f);
 	// In 3D the arms (a few dozen units away) get their own focus near them: with the world's they
-	// would leap far out of the screen
-	if (viewModel && g_gpu.eyeShift != 0.0f)
+	// would leap far out of the screen. And their own view always, the world's wider one or not (a werewolf's)
+	const bool ownProjection = viewModel && (g_gpu.eyeShift != 0.0f || g_worldFovY != kFovY);
+	if (ownProjection)
 	{
 		C3D_Mtx projection;
-		Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane,
-			g_gpu.eyeShift * 0.5f, kViewModelFocus, false);
+		if (g_gpu.eyeShift != 0.0f)
+			Mtx_PerspStereoTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane,
+				g_gpu.eyeShift * 0.5f, kViewModelFocus, false);
+		else
+			Mtx_PerspTilt(&projection, C3D_AngleFromDegrees(kFovY), C3D_AspectRatioTop, kNear, g_gpu.farPlane, false);
 		C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uProjection, &projection);
 	}
 	g_gpu.meshAlpha = a.alpha;
@@ -1516,7 +1553,7 @@ void rendererDrawActor(Actor& a, const std::vector<C3D_Tex*>& textures, bool vie
 	if (viewModel)
 	{
 		C3D_DepthMap(true, -1.0f, 0.0f);
-		if (g_gpu.eyeShift != 0.0f)
+		if (ownProjection)
 			C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, g_gpu.uProjection, &g_gpu.projection);
 	}
 	setModelView(g_gpu.view);

@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# data: bloodmoon
+# Rieklings were black (creatures side-by-side): their skin's picture (tx_bm_iceminion_01) is see-through almost
+# everywhere (its fur pieces blend with it), the body drawn solid with it as OpenMW does. The converter's resize
+# (Pillow's, alpha-weighted) and tex3ds both blackened every fully see-through texel, so the solid body showed black.
+# A riekling close up at noon, nothing else near: next to none of the screen is black
+3 0 0 0 0 MSG
+0.3 0 0 0 0 TP:-172000:184000:704:0+HOUR:12+GOD:2+SETWEATHER:0
+2 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000+PLACE:BM_riekling:90
+0.5 0 0 0 0 ENABLE:BM_riekling+HUD:off+POV:first+CAM:-172000:183960:745:0:-14
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:refmeshes:BM_riekling:gt:0+EXPECT:shotblack:0:lt:3

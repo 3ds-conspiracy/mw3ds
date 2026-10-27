@@ -244,7 +244,7 @@ void Session::npcCombat(int ri, float dt)
 		wpn = nullptr;                                     // out of arrows: fists
 	// (from the middles: the reach and both half lengths. It was fCombatDistance x 0.9 for a creature, whatever its size:
 	// a guar, 120 long each way of its middle, bit with its head through the player)
-	const float gap = actorHalfLength(ri) + kPlayerHalfLength, meleeAt = meleeReach(w, wpn, def.creature);
+	const float gap = actorHalfLength(ri) + kPlayerHalfLength, meleeAt = actorMeleeReach(w, r, wpn, def.creature);
 	float reach = meleeAt + gap;
 	bool attacking = r.hitAt >= 0.0f;
 	float eyeA[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };

@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A summoned creature comes 120 units in front of its caster, or to the right, the left or behind when something solid
+# is in the way (OpenMW's safePlaceObject: a ray from the spot back to the caster). Ours put it 128 ahead whatever was
+# there: facing a wall, the creature landed on the far side of it (summons side-by-side: OpenMW's wolf came to the
+# player's side where the ground ahead rose). The player walks into a wall of Arrille's Tradehouse, then summons
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 SETSKILL:conjuration:100+SETATTR:intelligence:100+SETATTR:willpower:100+SETATTR:luck:100
+0.3 0 0 0 0 SPELL:bm_summonwolf
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+2 0 0 0
+0 0 0 0 0 SETUP-END
+3 0 1 0
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_summonwolf
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:138:ge:1+EXPECT:refsight:bm_wolf_grey_summon:eq:1+EXPECT:refdist:bm_wolf_grey_summon:lt:200

@@ -1,0 +1,9 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A fighter weighs every spell in its list (OpenMW's rateSpell over the actor's spells), harmful ones of any kind at
+# a target or by touch: Hircine's hunting aspect paralyzes with Hunter's Venom (Paralyze, Burden), the draugr curse
+# with Eddard's Wrath (Damage Fatigue and Magicka). The converter kept only the damage spells (fire, frost, shock,
+# Damage / Drain Health, ...) as fighting spells, so neither was ever cast (Bloodmoon spells side-by-side: the two
+# spells were missing from the data)
+3 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:combatspell:bm_hircine_huntaspect,bm_paralyze_hirc:eq:1+EXPECT:combatspell:bm_draugr01,bm_draugr_curse:eq:1+EXPECT:spellcost:bm_paralyze_hirc:eq:46+EXPECT:spellcost:bm_draugr_curse:eq:200

@@ -29,6 +29,8 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "bloodlow") v = s.bloodLow;
 	else if (what == "bloodhigh") v = s.bloodHigh;
 	else if (what == "bodymeshes") v = s.body.set.actors.empty() ? 0.0f : (float)s.body.set.actors[0].meshes.size();   // the third-person body's meshes
+	else if (what == "bodywolf")     // the third-person body is the werewolf's own model (in wolf form), 1; else 0
+		v = s.body.wolf && !s.body.set.actors.empty() && !s.body.set.actors[0].meshes.empty() ? 1.0f : 0.0f;
 	else if (what == "bodyhits") v = (float)s.body.hitsPlayed;       // Hit groups the third-person body has played on being struck
 	else if (what == "healthmax") v = st.healthMax;
 	else if (what == "magicka") v = st.magicka;
@@ -238,6 +240,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "swings") v = (float)s.swingCount;       // blows the player let go
 	else if (what == "casts") v = (float)s.castCount;         // spells the player cast
 	else if (what == "vmaction") v = (float)s.vm.action;
+	else if (what == "hudwolfhand") v = s.hudHandArt() ? 1.0f : 0.0f;   // the weapon box shows the werewolf's claw
 	else if (what == "spells") v = (float)st.spells.size();
 	else return false;
 	return true;

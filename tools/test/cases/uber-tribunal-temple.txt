@@ -253,6 +253,9 @@
 1 0 0 0
 0.1 0 0 0 0 EXPECT:journal:TT_Ghostgate:ge:100
 0.3 0 0 0 0 SAVE:uber-tribunal-temple-ghostgate
+# (dice seeded from here: where Ghostgate's temple people wander shifts with the data, and Nilvyn Drothan could stand
+# in front of Uvoo Llaren)
+0.1 0 0 0 0 SEED:1
 200 0 0 0 0 FLYTO:@19715,38300,1300:6000
 0.3 0 0 0 0 CAST:dispel
 0.1 0 0 0 0 FLOAT:off

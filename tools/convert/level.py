@@ -916,6 +916,10 @@ def main():
     # left out for vanilla and Tribunal data, which stay as they were)
     if bloodmoon() and moons.get("Script Color"):
         game["sky_bodies"]["script_color"] = [int(c) for c in moons["Script Color"].split(";")[0].split(",")[:3]]
+    # Bloodmoon's werewolf seen from its own eyes: the wider view ([General] Werewolf FOV, OpenMW's General_Werewolf_FOV,
+    # a vertical angle)
+    if bloodmoon():
+        game["werewolf"] = {"fov": float(ini_section(ini, "General").get("Werewolf FOV", "100") or 100)}
     # Distant land past the loaded cells (tools/convert/distant.py)
     wx = weather(ini, args.weather)
     # (stored as it is, not zlib'd: the game reads each cell's big objects from the card when it needs them)

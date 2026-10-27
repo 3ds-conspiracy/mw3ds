@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: bloodmoon
+# The player in wolf form seen in third person: OpenMW draws the werewolf's own model and animations (wolf\skin.nif as
+# the skeleton, the werewolf race's parts). Ours kept the human body, a thin dark figure in the werewolf side-by-side.
+# The body is now the library's werewolf (as werewolf NPCs change into), and the human one again on changing back
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 POV:third
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bodywolf:eq:0+EXPECT:bodymeshes:gt:0
+0.3 0 0 0 0 WEREWOLF:1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bodywolf:eq:1+EXPECT:bodymeshes:gt:0
+0.3 0 0 0 0 WEREWOLF:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bodywolf:eq:0+EXPECT:bodymeshes:gt:0

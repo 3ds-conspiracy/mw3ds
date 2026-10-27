@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: bloodmoon
+# Through a werewolf's eyes in first person the world is seen wider: OpenMW sets the field of view to
+# General_Werewolf_FOV (Morrowind.ini [General] Werewolf FOV, 100 degrees up and down) and back in third person. Ours
+# kept 60: the werewolf side-by-side's first-person shots showed half the land OpenMW's did
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:fovy:eq:60
+0.3 0 0 0 0 WEREWOLF:1
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:fovy:eq:100
+0.3 0 0 0 0 POV:third
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:fovy:eq:60
+0.3 0 0 0 0 POV:first+WEREWOLF:0
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:fovy:eq:60

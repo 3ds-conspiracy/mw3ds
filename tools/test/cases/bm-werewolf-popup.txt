@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A person in wolf form, aimed at, shows as "Werewolf" (sWerewolfPopup; OpenMW's Npc::getName), not by their name;
+# as themselves again after UndoWerewolf
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:labelis:darvame%hleran,Darvame%Hleran:eq:1
+0.3 0 0 0 0 CON:"darvame%hleran"->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:labelis:darvame%hleran,Werewolf:eq:1
+0.3 0 0 0 0 CON:"darvame%hleran"->undowerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:labelis:darvame%hleran,Darvame%Hleran:eq:1

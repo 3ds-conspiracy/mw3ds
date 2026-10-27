@@ -488,13 +488,17 @@
 10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
 120 0 0 0 0 DOORTO:Raven_Rock,_Mine
 10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
-# (near him, unseen: he sets off; followed at a distance to the storage room)
+# (near him, unseen: he sets off; followed at a distance to the storage room. Hidden by the kit's item as well as
+# sneaking: his notice rolls went the player's way only by luck, and a busier machine's frame times lost it)
+1 0 0 0 0 HIDE:180
 0.3 0 0 0 0 SNEAK:1
-120 0 0 0 0 WALKTO:@2438,1250,12873
+# (behind him, south: the spot north of him stood in his way, and he waited there for good on an Old 3DS)
+120 0 0 0 0 WALKTO:@2440,1060,12873
 120 0 0 0 0 UNTIL:reflocal:uryn%maren,urynmove:ge:13
 120 0 0 0 0 WALKTO:@5600,3417,12791
 2 0 0 0
 0.3 0 0 0 0 SNEAK:0
+0.1 0 0 0 0 HIDE:off
 0.1 0 0 0 0 EXPECT:journal:CO_6:ge:50
 60 0 0 0 0 ACTIVATE:uryn%maren
 2 0 0 0 0 UNTIL:talkready

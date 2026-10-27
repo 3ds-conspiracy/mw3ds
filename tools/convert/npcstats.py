@@ -22,7 +22,10 @@ SKILL_MARKSMAN = 23
 ARMOR_SHIELD = 8
 # Magic effects an actor's combat AI knows how to use: harm (fire, frost, shock, poison, damage
 # health / magicka / fatigue, drain health) cast at the player, restore health on itself
-HARM_EFFECTS = {14, 15, 16, 23, 24, 25, 27, 86}
+# The harmful effects (OpenMW's Harmful flag: Burden, the damages, drains, weaknesses, Paralyze, Silence, Blind, Sound,
+# Calm / Frenzy / Demoralize / Rally of others, Soul Trap, the absorbs, Corprus): a fighter casts a spell with one at a
+# target or by touch, the engine weighing which (spellpriority.cpp). build_game.py flags them harmful (0x10)
+HARMFUL_EFFECTS = {7, 45, 46, 47, 48, 51, 52, 53, 54, 58, 135, 136} | set(range(14, 39)) | set(range(85, 90))
 HEAL_EFFECTS = {75}
 # Armor rating weight per ARMO slot (helm, cuirass, pauldrons, greaves, boots, gauntlets, shield, bracers)
 ARMOR_SLOT_WEIGHT = [0.1, 0.3, 0.1, 0.1, 0.1, 0.1, 0.05, 0.05, 0.1, 0.05, 0.05]
@@ -225,7 +228,7 @@ WARD_EFFECTS = {3, 4, 5, 6, 42, 67, 68, 79, 80, 82, 117}
 
 def combat_spells(rec, spel):
     """Spells from the actor's NPCS list that its combat AI casts: harmful ones at a target or by
-    touch, self-healing, summonings and wards on itself."""
+    touch (of any harmful effect: OpenMW rates every spell an actor has), self-healing, summonings and wards on itself."""
     out = []
     for t, d in rec.subs:
         if t != "NPCS":
@@ -235,7 +238,7 @@ def combat_spells(rec, spel):
         if sp is None or struct.unpack_from("<i", sp.get("SPDT"))[0] not in (0, 5):     # spells and powers
             continue
         effects = [struct.unpack_from("<hbbiiiii", e) for tt, e in sp.subs if tt == "ENAM"]
-        harm = any(e[0] in HARM_EFFECTS and e[3] in (1, 2) for e in effects)
+        harm = any(e[0] in HARMFUL_EFFECTS and e[3] in (1, 2) for e in effects)
         heal = any(e[0] in HEAL_EFFECTS and e[3] == 0 for e in effects)
         self_cast = any(e[0] in SUMMON_EFFECTS or (e[0] in WARD_EFFECTS and e[3] == 0) for e in effects)
         if harm or heal or self_cast:

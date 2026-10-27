@@ -1018,6 +1018,12 @@ bool gameLoad(GameData& g, const char* path)
 		cJSON_ArrayForEach(a, cJSON_GetObjectItem(art, "book"))
 			g.art.book[lower(a->string)] = one(a);
 	}
+	if (const cJSON* ww = cJSON_GetObjectItem(root, "werewolf"))
+	{
+		if (const cJSON* v = cJSON_GetObjectItem(ww, "fov"))
+			if (cJSON_IsNumber(v))
+				g.firstPerson.werewolfFov = (float)v->valuedouble;
+	}
 	if (const cJSON* sb = cJSON_GetObjectItem(root, "sky_bodies"))
 	{
 		SkyBodiesDef& d = g.skyBodies;

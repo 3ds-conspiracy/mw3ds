@@ -142,6 +142,8 @@ std::vector<CamPose> loadAutocam(const RenderCamera& spawn);
 // the HUD hidden, the world standing still (parseKeys)
 extern bool g_testFrameCap;
 extern bool g_testDepth16;          // DEPTH16:on: the top screen's 16-bit depth buffer in 2D (Engine::createTopTargets)
+extern int g_testThrottleFps;       // THROTTLE:<fps>: each frame waits out the rest of 1/fps (engine.cpp)
+extern bool g_testGpuModel;         // GPUMODEL:on|off: the PC build prices each frame's drawing as the console's GPU would
 extern float g_test3dSlider;        // SLIDER3D:<0..1>: the 3D slider held there (engine.cpp; -1: the console's own)
 extern int g_testLayout;
 extern bool g_camHeld, g_hudOff, g_halt;

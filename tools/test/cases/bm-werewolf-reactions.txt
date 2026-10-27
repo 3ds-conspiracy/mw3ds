@@ -1,0 +1,20 @@
+# start: Seyda Neen
+# data: bloodmoon
+# How people take the player in wolf form (OpenMW): their Fight towards the player is iWerewolfFightMod (100) higher
+# (isAggressive), and one under level iWereWolfLevelToAttack (20) rates fleeing at iWereWolfFleeMod (100, vanillaRateFlee:
+# with the distance's 20 - 0.005 x 200, 119). Fargoth sees the change: the player is a known werewolf (PCKnownWerewolf
+# 1, sWerewolfAlarmMessage), so the Fight bonus stays once human again; with his Alarm of 0 no bounty. (In wolf form
+# a little more than 100: the werewolf's Personality lowers his disposition, which the rating counts too)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0
+0.3 0 0 0 0 MOVETO:fargoth
+1 0 0 0
+0.1 0 0 0 0 SNAP:fightterm:fargoth,200+SNAP:fleerating:fargoth,200+EXPECT:global:pcknownwerewolf:eq:0
+0.3 0 0 0 0 CON:player->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:fightterm:fargoth,200:ge:@100+EXPECT:fleerating:fargoth,200:eq:119
+0.1 0 0 0 0 EXPECT:global:pcknownwerewolf:eq:1+EXPECT:bounty:eq:0
+0.3 0 0 0 0 CON:player->undowerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:fightterm:fargoth,200:eq:@100+EXPECT:fleerating:fargoth,200:eq:@0

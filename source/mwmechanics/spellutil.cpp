@@ -58,6 +58,9 @@ int Session::castChance(const SpellDef& sp)
 	// (OpenMW's getEffectMultiplier: castChance only for an ESM::Spell)
 	if (sp.type == 5 || sp.type >= ENCH_ONCE)
 		return 100;
+	// A spell flagged "always succeeds" (SPDT flags 4: Bloodmoon's Call Wolf and Call Bear) too (OpenMW's F_Always)
+	if (sp.flags & 4)
+		return 100;
 	const PlayerStats& s = w.stats;
 	float lowest = 0.0f;
 	spellSchool(sp, &lowest);

@@ -99,7 +99,8 @@ void World::attachSpawned(int ri)
 	}
 	float c = cosf(r.rot[2]), s = sinf(r.rot[2]);
 	float place[12] = { c, s, 0.0f, r.pos[0], -s, c, 0.0f, r.pos[1], 0.0f, 0.0f, 1.0f, r.pos[2] };
-	r.anim = actorsAddFromLibrary(l->actors, l->cell, textures, dataDir, lib, ri, skel, place);
+	// (lit by the cell's light as a placement there is: the library's even light stood out dark)
+	r.anim = actorsAddFromLibrary(l->actors, l->cell, textures, dataDir, lib, ri, skel, place, l->actors.cellLight);
 	CellActor ca = {};
 	strncpy(ca.id, r.id.c_str(), sizeof(ca.id) - 1);
 	strncpy(ca.name, game.actors[r.actor].name.c_str(), sizeof(ca.name) - 1);
@@ -126,9 +127,16 @@ void World::werewolfBody(int ri)
 			return;
 		float c = cosf(r.rot[2]), s = sinf(r.rot[2]);
 		float place[12] = { c, s, 0.0f, r.pos[0], -s, c, 0.0f, r.pos[1], 0.0f, 0.0f, 1.0f, r.pos[2] };
-		int wolf = actorsAddFromLibrary(l->actors, l->cell, textures, dataDir, sp->second.lib, ri, sp->second.skeleton, place);
+		// (in the light their own body has where it stands)
+		u8 tint[3];
+		memcpy(tint, set->actors[r.anim].tint, sizeof(tint));
+		int wolf = actorsAddFromLibrary(l->actors, l->cell, textures, dataDir, sp->second.lib, ri, sp->second.skeleton, place,
+			tint);
 		if (wolf < 0)
 			return;
+		const Actor& human = set->actors[r.anim];
+		memcpy(set->actors[wolf].lamp, human.lamp, sizeof(human.lamp));
+		set->actors[wolf].lampSplit = human.lampSplit;
 		set->actors[r.anim].ref = -1;          // (their own model kept, not drawn)
 		r.humanAnim = r.anim;
 		r.anim = wolf;
@@ -916,9 +924,10 @@ void World::update(float dt)
 	if (g_profile.actorViewLimit > 0.0f)
 		reach = fminf(reach, g_profile.actorViewLimit + 200.0f);
 	frame++;
-	// An Old 3DS poses people by time (ConsoleProfile::poseHz), not every so many frames: near, middle and far rates,
+	// Both consoles pose people by time (ConsoleProfile::poseHz), not every so many frames: near, middle and far rates,
 	// the near one only for the few most in view (ahead of the eye, the nearer and the more central the higher); the
-	// rest near take the middle's rate, and those out of view the far one
+	// rest near take the middle's rate, and those out of view the far one. (A profile without rates poses every few
+	// frames: actorSkinEvery / actorPoseEvery)
 	bool byTime = g_profile.poseHz[0] > 0.0f;
 	if (byTime)
 	{

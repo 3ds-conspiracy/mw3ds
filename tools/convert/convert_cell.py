@@ -1003,8 +1003,13 @@ class Converter:
                         "bounds": [0.0] * 4, "interior": True},
                "chunk": INTERIOR_CHUNK}
         if struct.unpack_from("<I", cell.get("DATA"))[0] & 0x80 and weather is not None:
+            # (under the sky, Mournhold's long views: chunked as outdoors, so what is behind the camera or past the
+            # fog is left out. In 4096 chunks the Great Bazaar's batches each held most of it, and all of it was drawn
+            # from its entrance: case bug-bazaar-3d-view)
+            # and given the outdoor savings (user, 2026-10-27): small clutter stops by its size, repeated statics share
+            # one copy (the engine's dynamic view closes in there too: case perf-mournhold-sky-interiors)
             env.update({"sky": True, "ambient": weather["ambient"], "sun": weather["sun"], "sun_dir": EXTERIOR_SUN_DIR,
-                        "weather": weather})
+                        "weather": weather, "chunk": EXTERIOR_CHUNK, "share": True})
             env["info"].update({"fog_start": FOG_START, "fog_end": FOG_END,
                                 "fog": [int(round(c * 255)) for c in weather["fog"]] + [255], "fog_density": 1.0})
         refs = cell_refs(cell)
@@ -1181,7 +1186,7 @@ class Converter:
             if rec.tag in ("NPC_", "CREA"):
                 continue
             detail = 0.0
-            if not env["interior"] and allpos:
+            if (not env["interior"] or env.get("sky")) and allpos:
                 detail = detail_distance(float(np.linalg.norm(p.max(0) - p.min(0))))
             for s in shapes:
                 s["ref"] = ri if rec.tag != "STAT" else None
@@ -1298,7 +1303,8 @@ class Converter:
                             "lib": self.actor_library(a["id"], a["shapes"], sk),
                             "meshes": self.library_meshes[a["id"]],     # (for the memory estimate below)
                             "tint": tint, "lamp": lamp})
-        write_actor_placements(base.with_suffix(".act"), act_out)
+        # (and the light there without lamps: people placed while playing, lit as a placement is)
+        write_actor_placements(base.with_suffix(".act"), act_out, light_tint(np.zeros(3), [], ambient, sun)[0])
         nv = sum(len(b["verts"]) for b in batches)
         nt = sum(len(b["idx"]) for b in batches) // 3
         size = base.with_suffix(".cel").stat().st_size + base.with_suffix(".act").stat().st_size

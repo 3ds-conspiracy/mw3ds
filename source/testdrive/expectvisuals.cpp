@@ -208,7 +208,31 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	else if (what == "wfogscale") v = w.weatherFogScale();      // the share of the view drawn in this weather
 	else if (what == "framecap") v = (float)s.frameCap;          // the frame rate the console holds to (Old 3DS: 30 or 20)
 	else if (what == "colorbits") v = g_profile.rgb565 ? 16.0f : 32.0f;   // the 3D screen's colour buffer
-	else if (what == "viewscale") v = s.viewScale;              // the adaptive view distance outdoors (1: the whole view)
+	else if (what == "viewscale") v = s.viewScale;              // the adaptive view distance (1: the whole view)
+	else if (what == "fovy")         // the world's field of view, up and down, in degrees (a werewolf's first person: wider)
+	{
+		extern float g_worldFovY;
+		v = g_worldFovY;
+	}
+	// The last frame's drawing work, both eyes (mwrender/renderingmanager.cpp), and what the console's GPU would take for it
+	// cpuest: its CPU time on this build times GPUMODEL's scale (-1 with no scale); fpsest: the frame rate the console
+	// would show, the slower of the two in whole screen refreshes (60 a second), at most the frame cap
+	else if (what == "gpudraws" || what == "gputris" || what == "gpuest" || what == "cpuest" || what == "fpsest")
+	{
+		extern u32 g_lastDraws, g_lastTris;
+		extern float g_lastCpuMs, g_testCpuScale;
+		float gpuModelMs(u32 draws, u32 tris);
+		float gpu = gpuModelMs(g_lastDraws, g_lastTris), cpu = g_testCpuScale > 0.0f ? g_lastCpuMs * g_testCpuScale : -1.0f;
+		if (what == "gpudraws") v = (float)g_lastDraws;
+		else if (what == "gputris") v = (float)g_lastTris;
+		else if (what == "gpuest") v = gpu;
+		else if (what == "cpuest") v = cpu;
+		else
+		{
+			float refreshes = ceilf(fmaxf(gpu, cpu) / (1000.0f / 60.0f) - 0.001f);
+			v = fminf((float)s.frameCap, 60.0f / fmaxf(1.0f, refreshes));
+		}
+	}
 	else if (what == "viewdrawn") v = s.viewDrawn;              // ... as drawn: in steps, held while viewScale saws (Session::viewDrawn)
 	else if (what == "hudcaption")    // the cell name under the HUD's minimap is this cell's, 1; else 0
 	{
@@ -324,6 +348,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		v = shotLuma(atoi(arg.c_str()), 1);
 	else if (what == "shotdark")    // <n>: the percentage of step shot n's top screen darker than 0.6 x its mean (-1: none)
 		v = shotLuma(atoi(arg.c_str()), 2);
+	else if (what == "shotblack")   // <n>: the percentage of step shot n's top screen all but black (under 16 of 255)
+		v = shotLuma(atoi(arg.c_str()), 3);
 	else if (what == "vmalpha")     // how solid the first-person arms are drawn (1; less under Invisibility, Chameleon)
 		v = s.vm.set.actors.empty() ? -1.0f : s.vm.set.actors[0].alpha;
 	else if (what == "bodyalpha")   // how solid the player's third-person body is drawn (1; less under Invisibility, Chameleon)
@@ -399,6 +425,21 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		v = (float)g_sharedDrawn;
 	else if (what == "worlddraws")     // draws the last view of the world made (each one CPU time on the console)
 		v = (float)g_worldDraws;
+	else if (what == "totalposes")     // poses made so far by every loaded person and creature (the CPU's animation work)
+	{
+		v = 0.0f;
+		for (LoadedCell* l : w.loaded)
+			for (const Actor& a : l->actors.actors)
+				v += (float)a.poses;
+	}
+	else if (what == "detailbatches")  // this cell's batches and shared placements that stop at a distance by their size
+	{
+		v = 0.0f;
+		for (const CellBatch& b : w.here().batches)
+			v += b.maxDist > 0.0f ? 1.0f : 0.0f;
+		for (const auto& p : w.here().places)
+			v += p.maxDist > 0.0f ? 1.0f : 0.0f;
+	}
 	else if (what == "sidebatches")  // this cell's batches lit from the side by the low sun (their colours' alpha the facing)
 	{
 		v = 0.0f;

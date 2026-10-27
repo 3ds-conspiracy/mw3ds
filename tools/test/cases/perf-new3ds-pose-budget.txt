@@ -1,0 +1,30 @@
+# console: new
+# A New 3DS poses people by time, as an Old 3DS does, a step above it (user, 2026-10-27): 30 a second for the three
+# most in view, 15 for the rest near and the middle, 10 far and out of view (ConsoleProfile::poseHz). Counted in
+# frames with the steps shortened below 50 fps, a Balmora street at 30 fps made 1.8 x the poses (6772 against 3715 in
+# 20 s) and the town ran slower. Fargoth in view: 30 a second (60 in two seconds at 30 fps); turned away: less. Eight
+# creatures put in front: only three at the near rate
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0
+90 0 0 0 0 WALKTO:fargoth
+0.3 0 0 0 0 FACE:fargoth
+1 0 0 0 0 THROTTLE:30
+0.3 0 0 0 0 EXPECT:refposehz:fargoth:eq:30
+0.1 0 0 0 0 SNAP:refposes:fargoth
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:refposes:fargoth:ge:@55+EXPECT:refposes:fargoth:le:@64
+1.2 0 0 1
+0.3 0 0 0 0 EXPECT:refposehz:fargoth:lt:30
+0.3 0 0 0 0 GOTO:Seyda_Neen
+3 0 0 0 0
+0.2 0 0 0 0 PLACE:mudcrab:250
+0.2 0 0 0 0 PLACE:scrib:300
+0.2 0 0 0 0 PLACE:rat:350
+0.2 0 0 0 0 PLACE:kwama%forager:400
+0.2 0 0 0 0 PLACE:nix-hound:450
+0.2 0 0 0 0 PLACE:alit:500
+0.2 0 0 0 0 PLACE:guar:550
+0.2 0 0 0 0 PLACE:cliff%racer:600
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:posefull:eq:3
+0.3 0 0 0 0 THROTTLE:0

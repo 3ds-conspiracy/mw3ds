@@ -62,6 +62,9 @@ struct FirstPersonDef
 	// Bloodmoon's werewolf seen from its eyes (tools/convert/firstperson.py werewolf): its skeleton in fp/skeletons.skl
 	// and its skin's piece (-1 / "" without the add-on)
 	int werewolfSkeleton = -1;
+	// ... the world seen wider through its eyes (Morrowind.ini [General] Werewolf FOV, a vertical angle: OpenMW's
+	// General_Werewolf_FOV; level.py "werewolf")
+	float werewolfFov = 100.0f;
 	std::string werewolfPiece;
 	std::unordered_map<std::string, std::string> vfx;   // spell visual static id -> piece
 	std::unordered_map<int, std::string> ptex;          // magic effect -> its particle texture (a piece's fx shapes take it)

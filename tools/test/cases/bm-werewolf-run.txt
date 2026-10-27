@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: bloodmoon
+# In wolf form the player runs fWereWolfRunMult faster with the claws put away, and at the stats' speed with them out
+# (OpenMW's Npc::getMoveSpeed); as a person, at the stats' speed either way. (X readies the claws, ZL+X puts them away)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0 0 0 0 0 SETUP-END
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:playerrunmult:eq:1
+0.3 0 0 0 0 CON:player->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0+EXPECT:playerrunmult:eq:1.3
+0.1 0 0 0 0 X
+2 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1+EXPECT:playerrunmult:eq:1
+0.1 0 0 0 0 ZL+X
+2 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0+EXPECT:playerrunmult:eq:1.3

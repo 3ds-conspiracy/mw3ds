@@ -174,6 +174,12 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		}
 		return true;
 	}
+	if (what == "vmbone")             // vmbone:<bone>: how far a first-person bone is from the eye as drawn (camera: 0)
+	{
+		float p[3];
+		v = s.vm.boneFromEye(lower(arg).c_str(), p) ? sqrtf(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]) : -1.0f;
+		return true;
+	}
 	if (what == "bowstring")          // how far back the held bow's string is drawn (0 at rest, 1 fully back)
 	{
 		v = s.vm.ready && !s.vm.set.actors.empty() ? actorMorphWeight(s.vm.set.actors[0]) : 0.0f;
@@ -394,6 +400,12 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		else if (what == "refally") v = r.ally ? 1.0f : 0.0f;
 		else if (what == "refdist") v = w.distanceToPlayer(ri);      // 100000: in another interior
 		else if (what == "refaimed") v = s.target == ri ? 1.0f : 0.0f;   // the crosshair is on it
+		else if (what == "refsight")        // 1: nothing solid (the world, a shut door) between the player's waist and its
+		{
+			float a[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] + 60.0f };
+			float b[3] = { r.pos[0], r.pos[1], r.pos[2] + 60.0f };
+			v = w.lineOfSight(a, b, true) ? 1.0f : 0.0f;
+		}
 		else if (what == "refabove")        // units over the floor under it, as it is drawn (99999: no floor)
 		{
 			float floorZ = -1e9f;

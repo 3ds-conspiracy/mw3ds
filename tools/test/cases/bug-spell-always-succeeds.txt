@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A spell flagged "always succeeds" (SPDT flags 4) is cast at 100 % whatever the caster's skill (OpenMW's
+# getSpellSuccessChance: F_Always). Ours ignored the flag: Call Wolf and Call Bear (flags 5, cost 68) failed for the
+# side-by-side's caster at Conjuration 100; Summon Bonewolf (cost 45) only got through on its low cost. A spell
+# without the flag still rolls (fire bite stays low at these skills)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 SETSKILL:conjuration:5+SETSKILL:destruction:5+SETATTR:willpower:30+SETATTR:luck:30
+0.3 0 0 0 0 SPELL:bm_summonwolf
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:castchance:bm_summonwolf:eq:100+EXPECT:castchance:bm_summonbear:eq:100+EXPECT:castchance:bm_summonbonewolf:eq:100+EXPECT:castchance:fire%bite:lt:50
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_summonwolf
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:138:ge:1+EXPECT:refmeshes:bm_wolf_grey_summon:gt:0

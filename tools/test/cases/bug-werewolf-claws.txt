@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# data: bloodmoon
+# The first-person claws in wolf form (werewolf side-by-side, round 1). The werewolf's first-person skeleton is the
+# view model's second one: the arms must play its own hand-to-hand groups, readied and swinging, and the Camera bone
+# stays at the eye in both forms. VMPOSE and vmgroup read the human skeleton's groups in wolf form (the chop shot held
+# the wrong moment): fixed in the driver, this case was written with that fix
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 POV:first
+1 0 0 0
+0.1 0 0 0 0 EXPECT:vmbone:camera:lt:1
+0.3 0 0 0 0 WEREWOLF:1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:vmpiece:werewolf:eq:1+EXPECT:vmbone:camera:lt:1
+0.2 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:vmgroup:IdleHH
+0.5 0 0 0 0 X
+0.1 0 0 0 0 EXPECT:vmgroup:HHChop
+1.5 0 0 0
+0.3 0 0 0 0 WEREWOLF:0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:vmbone:camera:lt:1

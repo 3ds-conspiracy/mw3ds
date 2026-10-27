@@ -7,6 +7,25 @@
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
 
+// Where a summoned creature comes: 120 units in front of its caster, else to its right, its left or behind it when the
+// world or a shut door is between that spot (30 up, for slopes) and the caster (OpenMW's safePlaceObject, direction 0
+// then 3, 2, 1); the last tried when every side is blocked. It lands on the ground there (spawnActor)
+void summonSpot(World& w, const float caster[3], float yaw, float out[3])
+{
+	const float d = 120.0f, s = sinf(yaw), c = cosf(yaw);
+	const float sides[4][2] = { { s, c }, { c, -s }, { -c, s }, { -s, -c } };     // ahead, right, left, behind
+	const float to[3] = { caster[0], caster[1], caster[2] + 20.0f };
+	for (int k = 0; k < 4; k++)
+	{
+		out[0] = caster[0] + sides[k][0] * d;
+		out[1] = caster[1] + sides[k][1] * d;
+		out[2] = caster[2];
+		const float from[3] = { out[0], out[1], out[2] + 30.0f };
+		if (w.lineOfSight(from, to, true))
+			return;
+	}
+}
+
 // The summoned creature comes in a flash beside its caster and goes for the player, for the spell's duration; a ward's
 // effects land on the caster, with their hit
 void Session::npcSummonRelease(int ri, const SpellDef& sp)
@@ -29,7 +48,8 @@ void Session::npcSummonRelease(int ri, const SpellDef& sp)
 		const char* id = summonCreatureId(e.effect);
 		if (!id)
 			continue;
-		float pos[3] = { r.pos[0] + sinf(r.rot[2]) * 128.0f, r.pos[1] + cosf(r.rot[2]) * 128.0f, r.pos[2] };
+		float pos[3];
+		summonSpot(w, r.pos, r.rot[2], pos);
 		int ci = w.spawnActor(id, pos, r.rot[2]);
 		if (ci < 0)
 			return;

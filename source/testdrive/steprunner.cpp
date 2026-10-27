@@ -206,9 +206,12 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 			logf("drive: FAIL cast %s: not a known spell or a carried item (LEGIT)", s.cast.c_str());
 		else
 		{
-			// the id as given when there is such a spell (or item), else with '_' as spaces
+			// the id when there is such a spell (or item), lower case as spells are kept (the side-by-side's
+			// CAST:BM_summonwolf selected nothing), else with '_' as spaces
 			std::string sel = s.cast;
-			if (sel.compare(0, 5, "item:") != 0 && !session->w.game.spells.count(lower(sel)))
+			if (sel.compare(0, 5, "item:") != 0 && session->w.game.spells.count(lower(sel)))
+				sel = lower(sel);
+			else if (sel.compare(0, 5, "item:") != 0)
 			{
 				std::string sp = lower(sel);
 				std::replace(sp.begin(), sp.end(), '_', ' ');

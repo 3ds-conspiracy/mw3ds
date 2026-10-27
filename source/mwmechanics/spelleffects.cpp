@@ -156,8 +156,8 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 	// Summons: the creature appears beside the player and fights for them until the spell ends
 	if (const char* creature = summonCreature(e.effect))
 	{
-		float pos[3] = { w.player.feet[0] + sinf(w.player.yaw) * 128.0f, w.player.feet[1] + cosf(w.player.yaw) * 128.0f,
-			w.player.feet[2] };
+		float pos[3];
+		summonSpot(w, w.player.feet, w.player.yaw, pos);
 		a.ref = w.spawnActor(creature, pos, w.player.yaw);
 		if (a.ref < 0)
 			return;

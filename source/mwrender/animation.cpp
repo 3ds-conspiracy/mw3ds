@@ -486,7 +486,7 @@ static bool readLibrary(ActorSet& set, Actor& a, const std::string& path, const 
 }
 
 int actorsAddFromLibrary(ActorSet& set, Cell& cell, TextureCache& cache, const char* dataDir, const std::string& lib,
-	int ref, int skeleton, const float place[12])
+	int ref, int skeleton, const float place[12], const u8* tint)
 {
 	if (set.skeletons.empty())
 		skeletonEnsure(skeleton);
@@ -496,8 +496,16 @@ int actorsAddFromLibrary(ActorSet& set, Cell& cell, TextureCache& cache, const c
 	a.skeleton = skeleton;
 	memcpy(a.place, place, sizeof(a.place));
 	memset(a.idle, 0, sizeof(a.idle));
-	static const u8 even[4] = { 64, 64, 64, 0 };
-	if (!readLibrary(set, a, std::string(dataDir) + "/" + lib, cell.textureNames, even, &cell, &cache, dataDir)
+	u8 light[4] = { 64, 64, 64, 0 };     // (none given: the library's even light)
+	if (tint && (tint[0] || tint[1] || tint[2]))
+	{
+		// (lit as a placement there is, no lamps of its own: Actor::lampNow brings those near where it stands)
+		memcpy(light, tint, 3);
+		memcpy(a.tint, tint, 3);
+		memset(a.lamp, 0, sizeof(a.lamp));
+		a.lampSplit = true;
+	}
+	if (!readLibrary(set, a, std::string(dataDir) + "/" + lib, cell.textureNames, light, &cell, &cache, dataDir)
 		|| a.meshes.empty())
 	{
 		// a read that broke off midway (memory short): the meshes it did load give their buffers back
@@ -600,6 +608,13 @@ bool actorsLoad(ActorSet& set, const char* path, const char* dataDir, const std:
 		// Desynchronize idles so actors don't breathe in unison
 		a.time = sk.groups.empty() ? 0.0f : sk.groups[0].start + (rand() % 1000) / 1000.0f * (sk.groups[0].stop - sk.groups[0].start);
 		a.blinkTimer = 1.0f + (rand() % 3000) / 1000.0f;
+	}
+	// The cell's daylight (or room light) without lamps, as a placement there is lit: for people placed while playing
+	if (version >= 5)
+	{
+		u8 light[4] = { 0, 0, 0, 0 };
+		if (fread(light, 1, 4, f) == 4)
+			memcpy(set.cellLight, light, 3);
 	}
 	zclose(f);
 	logf("actors: %d actors, %d skeletons, %lu KB, skinned meshes %lu on the GPU, %lu on the CPU", (int)set.actors.size(),

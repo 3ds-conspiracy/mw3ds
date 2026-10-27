@@ -282,7 +282,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	const Object* ammo = show && !casting && wpn ? playerAmmo() : nullptr;
 	if (ammo && ammo != wpn && (vm.group == "Bow" || vm.group == "Xbow") && vm.ready)
 	{
-		const Skeleton& sk = vm.set.skeletons[0];
+		const Skeleton& sk = vm.set.skeletons[vm.set.actors[0].skeleton];
 		const Actor& arms = vm.set.actors[0];
 		const char* g = arms.group >= 0 && arms.group < (int)sk.groups.size() ? sk.groups[arms.group].name : "";
 		auto mark = [&](const char* name) {

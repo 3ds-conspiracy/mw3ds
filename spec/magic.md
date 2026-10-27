@@ -43,6 +43,12 @@ Silence makes it 0. With less magicka than the cost the chance shown is 0.
    `Session::spellSchool`.
 3. **Sound applied after the fatigue term.** OpenMW subtracts Sound before multiplying. `Session::castChance`.
 
+## Findings (2026-10-27)
+
+1. **"Always succeeds" ignored.** A spell with SPDT flag 4 (Bloodmoon's Call Wolf, Call Bear, Summon Bonewolf) rolled
+   like any other; now 100, for the player (`Session::castChance`) and in a fighter's spell rating
+   (`aicombataction.cpp`). Test `bug-spell-always-succeeds`.
+
 ## Resistance (OpenMW: `spellresistance.cpp`, `MagicEffect::getResistanceEffect` / `getWeaknessEffect`)
 
 An incoming harmful effect is resisted by: fire, frost and shock damage by Resist Fire / Frost / Shock (weakened by
