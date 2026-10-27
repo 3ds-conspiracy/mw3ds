@@ -407,7 +407,13 @@ void Session::npcCombat(int ri, float dt)
 					logf("combat: %s's summon fizzles", r.id.c_str());
 				}
 				else
+				{
 					npcSummonRelease(ri, sp);
+					// (the summoned creature joins the cell's actors, whose list may move: this one's actor is looked
+					// up again. The old pointer's write landed in freed memory, which a mesh of another cell's actor
+					// later held, and freeing it corrupted the heap: uber-imperial-cult, Daynil Farandas's scamp)
+					a = w.actorOf(ri);
+				}
 			}
 			if (a)
 				a->showWeapon = wpn != nullptr;
