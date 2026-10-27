@@ -1,3 +1,5 @@
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS keeps its mipmaps (the Old 3DS draws at full size))
 # The New 3DS keeps its textures' smaller copies (mipmaps) far off: only an Old 3DS, drawing from Project Atlas's
 # sheets, draws its world textures at full size (bug-o3ds-atlas-mips). Without them far ground shimmers
 3 0 0 0 0 MSG

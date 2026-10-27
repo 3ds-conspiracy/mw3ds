@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# data: bloodmoon
+# The werewolf player's claws: hand to hand as health damage times the WerewolfClawMult global (OpenMW's
+# getHandToHandDamage), a person killed counts toward GetWerewolfKills (the hunger ends on one), a WolfHit growl.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD
+4 0 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 CON:player->becomewerewolf
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:werewolf:eq:1+EXPECT:werewolfkills:eq:0
+120 0 0 0 0 KILL:darvame%hleran
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:darvame%hleran+EXPECT:werewolfkills:eq:1

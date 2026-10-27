@@ -7,6 +7,7 @@
 #include "mwrender/objectpaging.hpp"
 
 #include <algorithm>
+#include <deque>
 #include <citro3d.h>
 #include <cmath>
 #include <cstring>
@@ -44,6 +45,9 @@ void updateLightRamp();
 void enableFog(const Cell& cell, float fogStart, float fogEnd);
 void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time);
 int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std::vector<u8>* visible, float time);
+void sharedPlaceView(const C3D_Mtx& view, const SharedPlace& p, C3D_Mtx* out);
+struct Ref;
+int drawSharedPass(Cell& cell, int pass, const C3D_Mtx& view, float time, const std::deque<Ref>& refs);
 void drawSkyBodies(const C3D_Mtx& view, bool secondEye, bool afterClouds);
 extern int g_torchPerPixel;
 extern int g_lampLitBatches;

@@ -155,6 +155,13 @@ void Session::drawInventory()
 			if (readRefused())
 				return;
 			std::string id = w.inventory[sel].id;
+			// its script holds PCSkipEquip 1: not read, only OnPCEquip set for the script to act (OpenMW's useItem: the
+			// sealed Hlaalu treasury papers, Bloodmoon's Sovngarde book)
+			if (float* skip = w.itemScriptLocal(id, "pcskipequip"); skip && *skip == 1.0f)
+			{
+				w.setItemScriptLocal(id, "onpcequip", 1.0f);
+				return;
+			}
 			bookItemsGrid = grid;
 			openScreen(SCR_BOOK);
 			bookFromItems = true;

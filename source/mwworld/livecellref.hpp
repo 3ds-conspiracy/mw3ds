@@ -85,6 +85,7 @@ struct Ref
 
 	// actors
 	int anim = -1;                // index into World::actors while its cell is loaded
+	int humanAnim = -1;           // a werewolf's own model, hidden while the wolf body is drawn (World::werewolfBody)
 	int cellActor = -1;           // index into Cell::actors (collision cylinder)
 	int hello = -1;               // SetHello (-1: the record's; saved)
 	struct TimedEffect { int effect; float magnitude, remaining; int key = -1; };   // key: the attribute or skill of a drain / fortify / absorb
@@ -184,6 +185,13 @@ struct Ref
 	bool aiDone = false;          // GetAIPackageDone
 	bool aiRepeat = false;        // the script's reset argument: the package starts over when it finishes
 	bool aiActive = true;         // AIFollow from a script waits to see its target first (OpenMW's activation)
+
+	// Bloodmoon's: a werewolf (BecomeWerewolf on an NPC; World::setWerewolf), the magic effect stats its scripts set
+	// (ModResistFire ...: effect, amount, counted into World::actorEffect), and SetScale's size over the level's
+	// placement (its drawing and its collision cylinder follow it); all saved, the first two gone with Resurrect
+	bool werewolf = false;
+	std::vector<std::pair<s16, s16>> scriptEffects;
+	float scaleFactor = 1.0f;
 
 	bool visible() const { return enabled && !pickedUp; }
 	struct InventoryItemLite { int condition = -1; std::string soul; float charge = -1.0f; } dropState;

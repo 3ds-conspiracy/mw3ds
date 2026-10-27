@@ -880,7 +880,10 @@ WORLD_FX = ["furn_moldcave_pool00", "furn_lavacave_pool00", "furn_bonecave_pool0
             "act_dwe_cavein00",
             # Sotha Sil's steam vents (the Imperfect's bursts once in its Idle2 as it wakes) and Mournhold's pavilion
             # fountain spray: as crossed quads they stood as solid white columns
-            "act_sotha_fabsteam", "act_sotha_steam00", "act_sotha_steam10", "ex_mh_pav_water_spray"]
+            "act_sotha_fabsteam", "act_sotha_steam00", "act_sotha_steam10", "ex_mh_pav_water_spray",
+            # Bloodmoon: the werewolf's change flash (were_morph: the scripts place it where a wilderness werewolf or
+            # the Skaal changes, and it removes itself) and the spriggan's rise as it gets up again (spriggan_summon)
+            "wildwerewolf", "bm_wereeffect2", "bm_wereeffect3", "sprigganup"]
 
 
 def world_fx_kinds(db, arch):

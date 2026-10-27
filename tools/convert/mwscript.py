@@ -21,7 +21,7 @@ TOKEN = re.compile(r'''
     (?P<str>"[^"\n]*"?)
   | (?P<id2>\d+[A-Za-z_'`][A-Za-z0-9_'`]*(?:-[A-Za-z0-9_'`]+)*)
   | (?P<num>\d+\.\d*|\.\d+|\d+)
-  | (?P<op>->|==|!=|<>|<=|>=|=<|=>|<|>|=|\+|-|\*|/|\(|\)|\[|\]|,|\.)
+  | (?P<op>->|(?:==|!=|<>|<=|>=|=<|=>|<|>|=)[=<>]*|\+|-|\*|/|\(|\)|\[|\]|,|\.)
   | (?P<id>[A-Za-z_][A-Za-z0-9_'`]*(?:-[A-Za-z0-9_'`]+)*)
 ''', re.VERBOSE)
 
@@ -148,6 +148,12 @@ NO_REF_NEEDED = {
 
 _ATTRS = ("strength", "intelligence", "willpower", "agility", "speed", "endurance", "personality", "luck")
 _DYN = ("health", "magicka", "fatigue")
+# The magic effect stats scripts read and change (OpenMW's extensions0.cpp loop: Get / Set / Mod + each): Bloodmoon's
+# spriggans ModResistFire 100 and the like
+_EFFECTS = ("resistmagicka", "resistfire", "resistfrost", "resistshock", "resistdisease", "resistblight",
+            "resistcorprus", "resistpoison", "resistparalysis", "resistnormalweapons", "waterbreathing", "chameleon",
+            "waterwalking", "swimspeed", "superjump", "flying", "armorbonus", "castpenalty", "silence", "blindness",
+            "paralysis", "invisible", "attackbonus", "defendbonus")
 _SKILLS = ("block", "armorer", "mediumarmor", "heavyarmor", "bluntweapon", "longblade", "axe", "spear", "athletics",
            "enchant", "destruction", "alteration", "illusion", "conjuration", "mysticism", "restoration", "alchemy",
            "unarmored", "security", "sneak", "acrobatics", "lightarmor", "shortblade", "marksman", "mercantile",
@@ -166,6 +172,8 @@ def func_info(name):
             return "f", "x"
         if stat.endswith("getratio") and stat[:-8] in _DYN:
             return "f", ""
+        if stat in _EFFECTS:
+            return "l", ""
     return None
 
 
@@ -178,6 +186,8 @@ def instr_signature(name):
             stat = name[len(prefix):]
             if stat in _ATTRS or stat in _SKILLS or stat in _DYN:
                 return "f"
+            if stat in _EFFECTS and prefix != "modcurrent":
+                return "l"
     return None
 
 
@@ -204,6 +214,10 @@ def tokenize(line):
             text = text.strip('"')
         elif kind == "op" and text in ("[", "]"):
             text = "(" if text == "[" else ")"      # OpenMW reads brackets as parentheses
+        elif kind == "op" and len(text) > 2 and text[0] in "=<>!":
+            # A run of comparison characters is one operator, read by its first two (OpenMW's scanner, with a warning):
+            # = is ==, < or > then = is <= or >=, else < or >; ! is !=. Bloodmoon's plantScript has "<== 512"
+            text = "==" if text[0] == "=" else "!=" if text[0] == "!" else text[0] + ("=" if text[1] == "=" else "")
         out.append((kind, text))
         pos = m.end()
     return out
@@ -586,8 +600,8 @@ def engine_functions():
     statFunction's attribute / skill names), so the list follows the code as it grows."""
     src = (ROOT / "source/components/interpreter/scriptfunctions.hpp").read_text(encoding="utf-8", errors="replace")
     names = set(re.findall(r'X\(\w+, "(\w+)"\)', src))
-    # statFunction: Get / Set / Mod + attribute or skill, Get / Set / Mod / ModCurrent + health etc.
-    for table in ("kAttrFuncs", "kSkillFuncs"):
+    # statFunction: Get / Set / Mod + attribute, skill or magic effect stat, Get / Set / Mod / ModCurrent + health etc.
+    for table in ("kAttrFuncs", "kSkillFuncs", "kEffectFuncs"):
         m = re.search(table + r"\[\d+\] = \{(.*?)\};", src, re.S)
         for stat in re.findall(r'"(\w+)"', m.group(1)) if m else []:
             names |= {"get" + stat, "set" + stat, "mod" + stat}

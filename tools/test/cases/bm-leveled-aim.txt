@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A person a leveled list picks for a spot (Solstheim's reavers, smugglers and hags: drawn from their own library, not
+# the cell's) can be aimed at: they get a person's box as anyone placed by a script does. Theirs had none, so the
+# crosshair never found them: no blow, no talk, no searching the body.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 TP:-168588:164500:600:0
+5 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:refbox:bm_reaver_10:eq:1

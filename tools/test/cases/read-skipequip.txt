@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# data: vanilla
+# Using an item whose script holds PCSkipEquip 1 only sets its OnPCEquip, for the script to act (OpenMW's
+# InventoryWindow::useItem): Hlaalu's sealed treasury report asks to break the seal instead of opening. Bloodmoon's
+# "Sovngarde, a Reexamination" moves Betrayal at Brodir Grove on so when read.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0.3 0 0 0 0 GIVE:bk_treasuryreport
+2 0 0 0 0 SETUP-END
+0.3 0 0 0 0 READ:bk_treasuryreport
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none+EXPECT:message:break_the_seal

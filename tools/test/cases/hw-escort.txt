@@ -17,6 +17,9 @@
 1 0 0 0
 0.3 0 0 0 0 GOTO:Abernanit
 8 0 0 0
+# (the rat that comes at the player in the cave, killed first: one that bites the player is fought by whoever
+# follows the player, as in OpenMW, and Dandsa would chase it off before coming along)
+60 0 0 0 0 KILL:rat
 0.3 0 0 0 0 TALK:Dandsa
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:travel_together

@@ -1,0 +1,20 @@
+# start: Seyda Neen
+# data: bloodmoon
+# Activating a living creature with no words whose script sets "companion" opens its share straight away (OpenMW's
+# DialogueWindow with no greeting): the Ritual of Beasts' wounded bear, whose riekling arrow is taken from it that way.
+# Closing the share goes back to the game, not to a talk.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 JOURNAL:BM_Beasts:20
+0.3 0 0 0 0 TP:-158694:183600:900:0
+4 0 0 0 0
+0.3 0 0 0 0 SETDEAD:bm_riekling_be_unique1+SETDEAD:bm_riekling_be_unique2+SETDEAD:bm_riekling_be_unique3+SETDEAD:bm_riekling_be_unique4+SETDEAD:bm_riekling_be_unique5
+0.3 0 0 0 0 SETGLOBAL:riekkilled:5
+2 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:journal:BM_Beasts:eq:30
+60 0 0 0 0 ACTIVATE:bm_bear_be_unique
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container+EXPECT:refitem:bm_bear_be_unique,bm_arrow_riekling_uni:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none

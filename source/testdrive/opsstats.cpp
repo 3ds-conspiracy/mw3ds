@@ -339,6 +339,12 @@ std::optional<bool> opsStats(Session& s, const std::vector<std::string>& a)
 		const Object* o = w.game.object(w.inventory[i].id);
 		if (!o || o->recType != REC_BOOK)
 			return fail(a[1] + " isn't a book");
+		if (float* skip = w.itemScriptLocal(w.inventory[i].id, "pcskipequip"); skip && *skip == 1.0f)
+		{
+			w.setItemScriptLocal(w.inventory[i].id, "onpcequip", 1.0f);     // (its script acts instead: the inventory's rule)
+			logf("test: reading %s: its script takes it (PCSkipEquip)", a[1].c_str());
+			return true;
+		}
 		s.openScreen(SCR_BOOK);
 		s.bookItem = w.inventory[i].id;
 		logf("test: reading %s", a[1].c_str());

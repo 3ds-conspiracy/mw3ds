@@ -1,11 +1,14 @@
 """Builds build/mw3ds.cia with the converted game data packed into its RomFS.
 New 3DS settings: 124MB app memory mode, 804MHz CPU, L2 cache.
     python tools/build/make_cia.py [--no-data] [--data out/world] [--out build/mw3ds-o3ds.cia] [--prebuilt]
+    python tools/build/make_cia.py [--old3ds] [--tribunal] [--bloodmoon]   the folder and CIA names build_cia.py gives
   --no-data   the program only (~2 MB): the game reads its data from sdmc:/3ds/mw3ds/data
               (the whole island copied there by card reader); no Wi-Fi update checks either
   --data      pack that data (default out/data, the Balmora area)
   --out       write the CIA there (default build/mw3ds.cia)
   --prebuilt  do not run make: pack the mw3ds.elf and mw3ds.smdh already in the repo root
+  --old3ds, --tribunal, --bloodmoon   change the defaults of --data and --out to that build's (out/o3ds-tribunal,
+              build/mw3ds-o3ds-tribunal.cia, ...; see names()); nothing else differs
 The CIA's title version (FBI, System Settings > Data Management) is the release's: MW3DS_VERSION, else the release
 converter's VERSION.txt, else the git tag on this commit (else the latest tag).
 The HOME menu banner's sound is the start of Morrowind's title music, taken from your Data Files when the CIA is packed
@@ -124,6 +127,18 @@ def banner_with_tune(dest):
     return dest
 
 
+def names(old3ds=False, tribunal=False, bloodmoon=False):
+    """The data folder and the CIA of a build: out/data (out/o3ds) and build/mw3ds.cia (mw3ds-o3ds.cia), each add-on
+    adding its name in load order: out/data-tribunal-bloodmoon, build/mw3ds-tribunal-bloodmoon.cia."""
+    data = "out/o3ds" if old3ds else "out/data"
+    cia = "build/mw3ds-o3ds" if old3ds else "build/mw3ds"
+    for on, name in ((tribunal, "tribunal"), (bloodmoon, "bloodmoon")):
+        if on:
+            data += "-" + name
+            cia += "-" + name
+    return data, cia + ".cia"
+
+
 def build(data="out/data", out="build/mw3ds.cia", no_data=False):
     """Builds the program and the CIA; returns the exit code."""
     mwtools.load_env()
@@ -176,11 +191,15 @@ def pack(data="out/data", out="build/mw3ds.cia", no_data=False):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--no-data", action="store_true")
-    ap.add_argument("--data", default="out/data")
-    ap.add_argument("--out", default="build/mw3ds.cia")
+    ap.add_argument("--data")
+    ap.add_argument("--out")
     ap.add_argument("--prebuilt", action="store_true")
+    ap.add_argument("--old3ds", action="store_true")
+    ap.add_argument("--tribunal", action="store_true")
+    ap.add_argument("--bloodmoon", action="store_true")
     a = ap.parse_args()
-    return (pack if a.prebuilt else build)(a.data, a.out, a.no_data)
+    data, out = names(a.old3ds, a.tribunal, a.bloodmoon)
+    return (pack if a.prebuilt else build)(a.data or data, a.out or out, a.no_data)
 
 
 if __name__ == "__main__":

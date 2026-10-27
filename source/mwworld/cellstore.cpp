@@ -534,6 +534,9 @@ std::string World::cellStateText(int c) const
 		bool set = !s.running;
 		for (float v : s.locals)
 			set |= v != 0.0f;
+		// (character creation's scripts: their locals start as postChargenRef leaves them, "done", so a zero here is a
+		// change to keep too: reading the cell's objects again would mark the script done over it)
+		set |= refs[s.ref].idLower.compare(0, 7, "chargen") == 0;
 		if (set)
 		{
 			cJSON_AddItemToArray(sc, scriptState(s));

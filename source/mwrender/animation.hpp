@@ -8,7 +8,9 @@
 
 // Animated NPCs from cells/<cell>.act (tools/convert/actors.py documents the layout).
 
-struct RotKey { float t, w, x, y, z; };
+// A rotation key's unit quaternion in 16 bits a part (x 32767; the files hold floats): 12 bytes a key, not 20. The
+// keys are most of a skeleton's memory (a person's 1.5 MB, the beast races' 1.9), all of it the heap's
+struct RotKey { float t; s16 w, x, y, z; };
 struct VecKey { float t, x, y, z; };
 struct ScaleKey { float t, s; };
 
@@ -71,7 +73,7 @@ struct ActorMesh
 	std::vector<int> palBone;
 	std::vector<float> palMat;         // 12 floats (3x4) per palette entry
 	std::vector<u8> infIndex;          // per vertex: palette index[4]
-	std::vector<float> infWeight;      // per vertex: weight[4]
+	std::vector<u8> infWeight;         // per vertex: weight[4] x 255 (as the file has them)
 	std::vector<u8> infCount;          // influences in use per vertex (sorted strongest first)
 	float talk[2], blink[2];
 	// Skinned on the GPU (shaders/skin.v.pica): verts are then 24-byte packed vertices (s16 position x posQ, s16 texture
@@ -162,6 +164,7 @@ struct Actor
 	// library is (mwrender/renderingmanager.cpp actorTint scales it back)
 	u32 wornMask = ~0u;
 	bool dressed = false;
+	float scaleFactor = 1.0f;          // SetScale's factor its place already holds (World::syncActor brings it to the Ref's)
 };
 
 // How solid an actor is drawn under Invisibility and Chameleon (OpenMW's CharacterController::setVisibility): invisible,

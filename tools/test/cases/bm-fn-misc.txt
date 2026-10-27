@@ -1,0 +1,161 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-fn-misc: the script functions Bloodmoon's scripts call that Morrowind's and Tribunal's don't, as OpenMW runs them,
+# from the console: "<==" read as "<=" (OpenMW's scanner; plantScript's GetDistance Player <== 512); GetWeaponType
+# (ColonyBaro: -1 empty hand, -2 lockpick, -3 probe, else the weapon's type; a person's own weapon, a creature none);
+# the magic effect stats (the spriggans' ModResistFire 100 and the 71 others: Get reads the effect less its weakness,
+# a shield counted with its element's resistance, Set and Mod change the part scripts set, kept in a save, a creature's
+# too); SetScale / GetScale / ModScale on a creature (drawn bigger, its collision cylinder grows; a save: bm-spriggan);
+# the werewolf's script side (BecomeWerewolf, IsWerewolf, GetWerewolfKills, SetWerewolfAcrobatics, UndoWerewolf on the
+# player and a person, a creature never one; kept in a save; the dialogue's Werewolf function: a werewolf greets with a
+# growl); GetPCInJail while a jail term runs; GetPCTraveling while a shipmaster's trip takes the player (S'virr in Khuul
+# to Fort Frostmoth), 0 once there.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+# <== is <= (and ==> ==, a run of = < > read by its first two)
+0.3 0 0 0 0 CON:5%<==%5
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:6%<==%5
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:4%<==%5
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:5%>==%6
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# GetWeaponType: the starting dagger (type 0 short blade), a lockpick, a probe, a long sword (type 1), the right hand
+# empty once the sword is dropped
+0.3 0 0 0 0 CON:player->GetWeaponType
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 GIVE:pick_apprentice_01
+0.3 0 0 0 0 GIVE:probe_apprentice_01
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EQUIP:pick_apprentice_01
+0.5 0 0 0
+0.3 0 0 0 0 CON:player->GetWeaponType
+0.1 0 0 0 0 EXPECT:conval:eq:-2
+0.3 0 0 0 0 EQUIP:probe_apprentice_01
+0.5 0 0 0
+0.3 0 0 0 0 CON:player->GetWeaponType
+0.1 0 0 0 0 EXPECT:conval:eq:-3
+0.3 0 0 0 0 EQUIP:iron_longsword
+0.5 0 0 0
+0.3 0 0 0 0 CON:player->GetWeaponType
+0.1 0 0 0 0 EXPECT:conval:eq:1
+3 0 0 0 0 DROP:iron%longsword
+0.5 0 0 0
+0.3 0 0 0 0 CON:player->GetWeaponType
+0.1 0 0 0 0 EXPECT:conval:eq:-1
+# The magic effect stats on the player: Mod adds, Weakness to Fire counts against Resist Fire, a fire shield with it,
+# Set brings Get to the value, Cast Penalty is Sound's (negative)
+0.3 0 0 0 0 CON:player->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:player->ModResistFire%100
+0.3 0 0 0 0 CON:player->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:100+EXPECT:effect:90:eq:100
+0.3 0 0 0 0 ACTIVE:28:20:4
+0.3 0 0 0 0 CON:player->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:80
+0.3 0 0 0 0 CON:player->SetResistFire%30
+0.3 0 0 0 0 CON:player->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:30+EXPECT:effect:90:eq:50
+5 0 0 0
+0.3 0 0 0 0 CON:player->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:50
+0.3 0 0 0 0 ACTIVE:4:10:4
+0.3 0 0 0 0 CON:player->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:60
+0.3 0 0 0 0 CON:player->ModCastPenalty%20
+0.3 0 0 0 0 CON:player->GetCastPenalty
+0.1 0 0 0 0 EXPECT:conval:eq:20+EXPECT:effect:48:eq:-20
+0.3 0 0 0 0 CON:player->ModResistParalysis%100
+0.3 0 0 0 0 CON:player->GetResistParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:100
+5 0 0 0
+# A spriggan: SetScale, ModScale, GetScale; drawn bigger and its cylinder grows; its own magic effect stats
+0.3 0 0 0 0 PLACEAT:BM_spriggan:-10500:-71000:200
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refscale:bm_spriggan:eq:1+EXPECT:refradius:bm_spriggan:eq:28
+0.3 0 0 0 0 CON:"BM_spriggan"->SetScale%1.2
+0.3 0 0 0 0 CON:"BM_spriggan"->GetScale
+0.1 0 0 0 0 EXPECT:conval:ge:1.19+EXPECT:conval:le:1.21
+0.1 0 0 0 0 EXPECT:refdrawscale:bm_spriggan:ge:1.19+EXPECT:refdrawscale:bm_spriggan:le:1.21
+0.1 0 0 0 0 EXPECT:refradius:bm_spriggan:ge:33.5+EXPECT:refradius:bm_spriggan:le:33.7
+0.3 0 0 0 0 CON:"BM_spriggan"->ModScale%0.1
+0.3 0 0 0 0 CON:"BM_spriggan"->GetScale
+0.1 0 0 0 0 EXPECT:conval:ge:1.29+EXPECT:conval:le:1.31
+0.1 0 0 0 0 EXPECT:refdrawscale:bm_spriggan:ge:1.29+EXPECT:refdrawscale:bm_spriggan:le:1.31
+0.3 0 0 0 0 CON:"BM_spriggan"->ModResistParalysis%100
+0.3 0 0 0 0 CON:"BM_spriggan"->GetResistParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:100
+0.3 0 0 0 0 CON:"BM_spriggan"->GetWeaponType
+0.1 0 0 0 0 EXPECT:conval:eq:-1
+# The werewolf's script side: the player changes (kills from nothing), a creature never does
+0.3 0 0 0 0 CON:player->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:player->BecomeWerewolf
+0.3 0 0 0 0 CON:player->SetWerewolfAcrobatics
+0.3 0 0 0 0 CON:player->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:GetWerewolfKills
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:"BM_spriggan"->BecomeWerewolf
+0.3 0 0 0 0 CON:"BM_spriggan"->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# Through a save and a load
+1 0 0 0 0 SAVE:bmfnmisc
+0.3 0 0 0 0 CON:player->UndoWerewolf
+0.3 0 0 0 0 CON:player->ModResistFire%-50
+0.3 0 0 0 0 CON:player->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.5 0 0 0 0 LOAD:bmfnmisc
+3 0 0 0
+0.3 0 0 0 0 CON:player->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:player->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:50
+0.3 0 0 0 0 CON:player->GetCastPenalty
+0.1 0 0 0 0 EXPECT:conval:eq:20
+0.3 0 0 0 0 CON:player->UndoWerewolf
+0.3 0 0 0 0 CON:player->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# A person: her weapon, and as a werewolf she greets with a growl (the dialogue's Werewolf function)
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 CON:elone->GetWeaponType
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:elone->BecomeWerewolf
+0.3 0 0 0 0 CON:elone->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:1
+60 0 0 0 0 WALKTO:elone
+4 0 0 0
+0.3 0 0 0 0 SAYTOPIC:elone:Hello
+0.1 0 0 0 0 EXPECT:subtitlehas:Growl:eq:1
+0.3 0 0 0 0 CON:elone->UndoWerewolf
+0.3 0 0 0 0 CON:elone->IsWerewolf
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# Travel: up while S'virr's boat takes the player to Fort Frostmoth, down once there
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GOTO:Khuul
+4 0 0 0
+0.3 0 0 0 0 TP:-69100:142050:400:0
+3 0 0 0
+0.3 0 0 0 0 CON:GetPCTraveling
+0.1 0 0 0 0 EXPECT:conval:eq:0
+120 0 0 0 0 WALKTO:s'virr
+60 0 0 0 0 ACTIVATE:s'virr
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:s'virr:Fort+CON:GetPCTraveling
+0.1 0 0 0 0 EXPECT:conval:eq:1
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+3 0 0 0
+0.3 0 0 0 0 CON:GetPCTraveling
+0.1 0 0 0 0 EXPECT:conval:eq:0
+1 0 0 0
+# Jail: up while the term is served, then down
+0.3 0 0 0 0 CON:GetPCInJail
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 SETBOUNTY:100
+0.3 0 0 0 0 CON:GotoJail+CON:GetPCInJail
+0.1 0 0 0 0 EXPECT:conval:eq:1
+3 0 0 0
+0.3 0 0 0 0 CON:GetPCInJail
+0.1 0 0 0 0 EXPECT:conval:eq:0

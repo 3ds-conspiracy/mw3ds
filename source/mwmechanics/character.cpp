@@ -191,6 +191,8 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 	}
 
 	Ref& t = w.refs[target];
+	if (w.playerHitAttempt < 0)
+		w.playerHitAttempt = target;
 	const ActorDef& def = w.game.actors[t.actor];
 	const int* pa = s.attributes;
 	int skill = weaponSkill(wpn);
@@ -217,9 +219,9 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 			monitorOnce(("legitmiss:" + t.id).c_str(), "the player's blow at %s missed (chance %d%%) in a LEGIT run", t.id.c_str(), (int)chance);
 		if (wit && !(testGod && testGodBlows))
 			wearItem(wit, 0.0f);          // a miss still wears the weapon by 1 (OpenMW's reduceWeaponCondition)
-		bool wasPeaceful = t.ai != AI_COMBAT;
+		bool wasPeaceful = t.ai != AI_COMBAT && t.duelFoe < 0;     // (one fighting another actor: no crime)
 		makeHostile(target);
-		if (wasPeaceful && !def.creature && !t.aggressor)
+		if (wasPeaceful && !def.creature && !t.aggressor && !t.werewolf)
 			crimeSeen(CRIME_ASSAULT, 0, target), reportCrime(target, kBountyAssault);
 		return 0.0f;      // (a miss follows through as the weakest blow: OpenMW)
 	}
@@ -233,7 +235,7 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 		if (wpn->health > 0)
 			dmg *= (float)itemCondition(*wit) / wpn->health;
 		wearItem(playerWeaponItem(), dmg * w.game.gmstf("fweapondamagemult", 0.1f));
-		playerHitsNpc(target, dmg * roll.damage, skill, false, false);
+		playerHitsNpc(target, dmg * roll.damage * w.silverOnWerewolf(wpn, target), skill, false, false);
 	}
 	else    // fists: GBAC leaves the damage alone while the target still has fatigue
 	{
@@ -241,7 +243,12 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 		// health damage x fHandtoHandHealthPer (OpenMW's getHandToHandDamage)
 		float lo = w.game.gmstf("fminhandtohandmult", 0.1f), hi = w.game.gmstf("fmaxhandtohandmult", 0.5f);
 		float dmg = s.skills[SKILL_HAND_TO_HAND] * (lo + (hi - lo) * charge);
-		if (t.knockTimer > 0.0f)
+		if (s.werewolf)          // a werewolf's claws wound (World::werewolfClaw), with a WolfHit
+		{
+			playerHitsNpc(target, w.werewolfClaw(dmg) * roll.damage, SKILL_HAND_TO_HAND, false, false);
+			playRandomSound(-1, "wolfhit");
+		}
+		else if (t.knockTimer > 0.0f)
 			playerHitsNpc(target, dmg * w.game.gmstf("fhandtohandhealthper", 0.1f) * roll.damage, SKILL_HAND_TO_HAND, false, false);
 		else
 			playerHitsNpc(target, dmg * (t.fatigue > 0.0f ? 1.0f : roll.damage), SKILL_HAND_TO_HAND, true, false);

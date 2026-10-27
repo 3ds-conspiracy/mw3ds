@@ -1,0 +1,25 @@
+# start: Seyda Neen
+# data: bloodmoon
+# In wolf form the player can't use things (OpenMW's getWerewolfRefusalAction, the windows it hides, canRest): talking
+# to someone is refused with sWerewolfRefusal and a WolfNPC growl; the inventory and the magic screens don't open;
+# resting is waiting only (sWerewolfRestMessage); casting is refused. Back in human form all of it works again.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 CON:player->becomewerewolf
+0.5 0 0 0
+0.3 0 0 0 0 TAP:25:222
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none+EXPECT:message:cannot_do_this_as_a_werewolf
+0.3 0 0 0 0 TAP:80:222
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none
+60 0 0 0 0 ACTIVATE:darvame_hleran
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none+EXPECT:soundstarted:wolfnpc1:ge:0
+0.3 0 0 0 0 CON:player->undowerewolf
+0.5 0 0 0
+0.3 0 0 0 0 TAP:25:222
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:screen:inventory
+0.3 0 0 0 0 SCREEN:none

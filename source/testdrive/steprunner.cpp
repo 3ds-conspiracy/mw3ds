@@ -256,6 +256,8 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	}
 	// SLEEPUNTIL:h: whole hours from now to the next time the clock reads h (a full day when it already does)
 	int sleepHours = s.sleep;
+	if (first && s.sleepTo >= 0)
+		sleepHours = ((s.sleepTo % 24) - (int)floorf(fmodf(session->w.gameHour, 24.0f)) + 24) % 24;
 	if (first && s.sleepUntil >= 0)
 	{
 		int now = (int)floorf(fmodf(session->w.gameHour, 24.0f));

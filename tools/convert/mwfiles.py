@@ -32,17 +32,30 @@ MASTER = "Morrowind.esm"
 # The Tribunal add-on (MW3DS_TRIBUNAL=1, or a converter's --tribunal): Tribunal.esm loaded after Morrowind.esm and
 # before any plugin. Off, the data is exactly the vanilla game's
 TRIBUNAL = "Tribunal.esm"
+# The Bloodmoon add-on (MW3DS_BLOODMOON=1, or a converter's --bloodmoon): Bloodmoon.esm loaded after Tribunal.esm (when
+# that is on too) and before any plugin. It must come after Tribunal: both issue the add-ons' werewolf, companion and
+# summon settings, and Bloodmoon's values are the ones the game was played with (Morrowind.ini's GameFile order)
+BLOODMOON = "Bloodmoon.esm"
+
+
+def _flag(name):
+    return os.environ.get(name, "").strip().lower() in ("1", "on", "yes", "true")
 
 
 def tribunal():
     """The Tribunal add-on is on (read each time: a converter's --tribunal sets it after this module is loaded)."""
-    return os.environ.get("MW3DS_TRIBUNAL", "").strip().lower() in ("1", "on", "yes", "true")
+    return _flag("MW3DS_TRIBUNAL")
+
+
+def bloodmoon():
+    """The Bloodmoon add-on is on (read each time, as tribunal())."""
+    return _flag("MW3DS_BLOODMOON")
 
 
 def out_of_scope():
-    """Masters this project leaves out: a plugin that needs one is refused. Bloodmoon always; Tribunal unless the
+    """Masters this project leaves out: a plugin that needs one is refused. Tribunal and Bloodmoon unless their
     add-on is on."""
-    return {"bloodmoon.esm"} | (set() if tribunal() else {"tribunal.esm"})
+    return (set() if bloodmoon() else {"bloodmoon.esm"}) | (set() if tribunal() else {"tribunal.esm"})
 
 
 PLUGINS = [p.strip() for p in os.environ.get("MW3DS_PLUGINS", "").split(";") if p.strip()]
@@ -274,13 +287,16 @@ def masters(path):
 
 
 def load_order():
-    """[Morrowind.esm, plugins...] as paths, each plugin's masters checked: every one must be loaded before it,
-    and none may be Bloodmoon.esm, or Tribunal.esm unless the add-on is on (out of this project's scope)."""
+    """[Morrowind.esm, Tribunal.esm, Bloodmoon.esm, plugins...] as paths (each add-on only when it is on), each
+    plugin's masters checked: every one must be loaded before it, and none may be an add-on that is off (out of
+    this project's scope)."""
     order = [game_path(DATA_FILES, MASTER)]
-    if tribunal():
-        path = game_path(DATA_FILES, TRIBUNAL)
+    for on, name, env in ((tribunal(), TRIBUNAL, "MW3DS_TRIBUNAL"), (bloodmoon(), BLOODMOON, "MW3DS_BLOODMOON")):
+        if not on:
+            continue
+        path = game_path(DATA_FILES, name)
         if not path.is_file():
-            raise SystemExit(f"MW3DS_TRIBUNAL: {TRIBUNAL} is not in {DATA_FILES}")
+            raise SystemExit(f"{env}: {name} is not in {DATA_FILES}")
         order.append(path)
     for name in PLUGINS:
         path = game_path(DATA_FILES, name)
@@ -289,8 +305,9 @@ def load_order():
         loaded = {p.name.lower() for p in order}
         for m in masters(path):
             if m.lower() in out_of_scope():
-                raise SystemExit(f"MW3DS_PLUGINS: {name} needs {m}; only Morrowind.esm content (and Tribunal.esm with "
-                                 f"the add-on: MW3DS_TRIBUNAL=1) is supported")
+                raise SystemExit(f"MW3DS_PLUGINS: {name} needs {m}; only Morrowind.esm content (and Tribunal.esm or "
+                                 f"Bloodmoon.esm with their add-on: MW3DS_TRIBUNAL=1, MW3DS_BLOODMOON=1) is "
+                                 f"supported")
             if m.lower() not in loaded:
                 raise SystemExit(f"MW3DS_PLUGINS: {name} needs {m}, which is not loaded before it")
         order.append(path)
@@ -303,7 +320,7 @@ def content_key():
     # (off Windows, loose files are found since LooseFiles: caches made before it hold the BSA's textures where an
     # overlay or Data Files has its own, under the same overlay key)
     tag = "" if os.sep == "\\" else "+loose"
-    if not PLUGINS and not tribunal() and ENCODING == "win1252":
+    if not PLUGINS and not tribunal() and not bloodmoon() and ENCODING == "win1252":
         return tag
     h = hashlib.sha1(ENCODING.encode())
     for path in load_order()[1:]:
@@ -583,7 +600,7 @@ def read_game(wanted=None):
     record of the same type and ID replaces the whole record and one with DELE removes it; cells merge their
     references by number (a plugin changes, deletes or adds some, MVRF moves one to another exterior cell);
     a topic's responses merge by INAM in the PNAM chain; LAND takes the later file's whole record."""
-    if not PLUGINS and not tribunal():
+    if not PLUGINS and not tribunal() and not bloodmoon():
         yield from read_records(game_path(DATA_FILES, MASTER), wanted)
         return
     for r in _merge():

@@ -48,6 +48,8 @@ enum { CELL_INTERIOR = 1, CELL_WATER = 2, CELL_SKY = 4 };
 static const int CELL_VERTEX_SIZE = 24;
 // Packed layout: s16 pos[4] (w: the lamp light's brightness, CellBatch::lamp), s16 uv[2], u8 rgba[4]
 static const int CELL_VERTEX_SIZE_PACKED = 16;
+// A shared model's (format 11): s16 pos[4] (w 0: no lamp light), s16 uv[2]; the colours come from the placement drawn
+static const int CELL_VERTEX_SIZE_SHARED = 12;
 
 // Exterior view distance (linear fog, world units): OpenMW's viewing distance, its default and Morrowind's farthest
 // slider setting, never farther; the dynamic view (Session::viewScale) only shortens it, the fog with it. The start is
@@ -81,6 +83,31 @@ struct CellBatch
 	// Format 10 (outdoors, opaque): the colours' alpha is how much each vertex faces east (0..255: -1..1), lit by the
 	// low sun's light at run time (shaders/cell.v.pica sideLight), not an alpha
 	bool side = false;
+	// Format 11, a shared model's batch: its vertices hold no colour, a placement's are drawn with them (u8 rgba a
+	// vertex, a second vertex buffer: set on the copy drawn); colorAt is its first vertex's among the model's colours
+	const void* colors = nullptr;
+	u32 colorAt = 0;
+};
+
+// Format 11: a static placed many times in a heavy cell (Solstheim's pines) keeps its vertices once, in its own space
+// (Cell::shared), and each placement only its baked colours, 4 bytes a vertex (tools/convert/convert_cell.py
+// share_models). Drawn once a placement with its own transform
+struct SharedModel
+{
+	u32 firstBatch = 0, numBatches = 0;   // its batches in Cell::shared
+	u32 numVerts = 0;                     // over its batches: a placement's colours
+	u32 firstPlace = 0, numPlaces = 0;   // its placements in Cell::places
+	u8* colors = nullptr;                 // linear memory: sets x numVerts x u8 rgba
+	u32 sets = 0;                         // 1: one for every placement (a tree or plant: one baked light); else one a placement
+};
+
+struct SharedPlace
+{
+	float m[12];                          // model -> world, 3 x 4 rows
+	float bmin[3], bmax[3];               // world-space bounds
+	float maxDist;                        // not drawn farther than this (small clutter); 0 = any distance
+	u32 model;                            // in Cell::models
+	int ref;                              // its reference (the cell's index; World's once the cell is in): not drawn while disabled
 };
 
 struct __attribute__((packed)) CellActor
@@ -113,7 +140,10 @@ struct Cell
 	std::vector<C3D_Tex*> textures;       // from the TextureCache; nullptr = missing
 	std::vector<std::string> textureNames;
 	std::vector<CellBatch> batches;
-	float batchMin[3] = {}, batchMax[3] = {};   // all the batches' boxes in one (the renderer's, for batchBoundsOf batches)
+	std::vector<CellBatch> shared;        // format 11: the shared models' batches (SharedModel), in their own space
+	std::vector<SharedModel> models;
+	std::vector<SharedPlace> places;
+	float batchMin[3] = {}, batchMax[3] = {};   // all the batches' and placements' boxes in one (the renderer's, for batchBoundsOf batches)
 	size_t batchBoundsOf = 0;
 	CollisionMesh collision;
 	std::vector<CellActor> actors;

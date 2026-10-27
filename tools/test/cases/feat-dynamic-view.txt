@@ -1,3 +1,5 @@
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS profile's fog range (the Old 3DS closes in to 2150))
 # Outdoors the view is OpenMW's and never farther: fog from its viewing distance (7168) x (1 - the weather's land fog
 # depth) to 7168 (FogManager::configure), 2222 to 7168 on a clear day (Seyda Neen). The dynamic view only shortens it
 # while frames run long (Session::viewScale), the fog moving in with it. Options > Video > Dynamic view off keeps the

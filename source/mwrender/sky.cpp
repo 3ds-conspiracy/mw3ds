@@ -151,6 +151,9 @@ void Session::updateSky()
 		moonDir[m][2] = sinf(a);
 		float alpha = glareView * hourAlpha(h) * shadowAlpha(angle);
 		moonAlpha[m] = alpha;
+		// (Bloodmoon's TurnMoonRed: Secunda's picture in [Moons] Script Color, OpenMW's SkyManager::setMoonColour)
+		for (int k = 0; k < 3; k++)
+			moonTint[m][k] = m == 1 && w.moonRed ? sky.scriptColor[k] : 255;
 		if (alpha <= 0.01f)
 			continue;
 		SkyBillboard mb = {};
@@ -176,8 +179,10 @@ void Session::updateSky()
 			g_skyBillboards.push_back(mb);
 		}
 		mb.tex = skyTex(m == 0 ? sky.masser[phase] : sky.secunda[phase]);
-		u8 lit = (u8)(textured * 255);
-		mb.rgba = lit | (lit << 8) | (lit << 16) | ((u32)a8 << 24);
+		u32 lit = 0;
+		for (int k = 0; k < 3; k++)
+			lit |= (u32)(textured * moonTint[m][k]) << (8 * k);
+		mb.rgba = lit | ((u32)a8 << 24);
 		mb.additive = true;
 		g_skyBillboards.push_back(mb);
 	}
@@ -247,11 +252,17 @@ void Session::updateWeatherEffects(float dt)
 // are enough): a whole ring is a see-through layer over the whole screen, a band about 0.4 of it (sheets stacked
 // across the view, the screen's whole area each). A second, fainter band twice as far out and narrower (about 0.2 of
 // the screen) puts rain behind that rain: depth to a storm, in 3D most of all. The rings and the ripples are a New
-// 3DS's alone (ConsoleProfile::rainExtras)
+// 3DS's alone (ConsoleProfile::rainExtras).
+// Bloodmoon's snow and blizzard take the flakes' places: each a small sheet of snow.nif's flakes (artassets.py packs a
+// four dozen of Tx_BM_Snowflakes_01's specks on one), turned to the eye, ConsoleProfile::snowFlakes of them (as many as the
+// ash flakes on a New 3DS, half on an Old one: spec/performance-tradeoffs.md). Snow falls slowly (Weather_Precip_Gravity
+// 575 x Snow Gravity Scale 0.1: snow.nif's 60) and hardly drifts; a blizzard's are blown hard along its wind (blizzard.nif:
+// 210 a second, tilted 70 degrees off the vertical, with gravity) and its clouds (Tx_BM_Blizzard_01) roll in the dust's
+// places, faster than ash's (300)
 namespace
 {
 	enum { PRECIP_RAIN, PRECIP_FLAKES, PRECIP_DUST, PRECIP_LAYERS };
-	enum { PTEX_RAIN, PTEX_FLAKE, PTEX_ASH, PTEX_BLIGHT, PTEX_SHEET, PTEX_SPLASH, PTEX_COUNT };
+	enum { PTEX_RAIN, PTEX_FLAKE, PTEX_ASH, PTEX_BLIGHT, PTEX_SHEET, PTEX_SPLASH, PTEX_SNOW, PTEX_BLIZZARD, PTEX_COUNT };
 	const int kPrecipMax[PRECIP_LAYERS] = { 450, 240, 24 };
 	const float kPrecipBox[PRECIP_LAYERS][3] = { { 420, 420, 380 }, { 600, 600, 450 }, { 1100, 1100, 400 } };
 	const float kPrecipLift[PRECIP_LAYERS] = { 40, 100, 120 };   // the box's centre over the eye
@@ -290,7 +301,8 @@ namespace
 // What the last frame drew, for the test driver: rain streaks, flakes, the far ring's quads, and rain particle 0's
 // place across the world (it stays put while the view turns: the particles hang in the world)
 int g_precipStreaks = 0, g_precipFlakes = 0, g_precipRing = 0, g_precipFarRing = 0;     // (ring: the 450 band's quads)
-float g_precipX0 = 0.0f;
+int g_precipSnow = 0, g_precipDust = 0, g_precipBlizzard = 0;     // snow flake sheets, dust clouds, blizzard clouds of those
+float g_precipX0 = 0.0f, g_precipWind[2] = {};       // (wind: the flakes' way across the ground, a unit vector)
 namespace
 {
 
@@ -331,7 +343,7 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 	if (!secondEye)
 	{
 		s_precipDrawCount = 0;
-		g_precipStreaks = g_precipFlakes = g_precipRing = g_precipFarRing = 0;
+		g_precipStreaks = g_precipFlakes = g_precipRing = g_precipFarRing = g_precipSnow = g_precipDust = g_precipBlizzard = 0;
 		float dt = precipDt;
 		precipDt = 0.0f;
 		if (w.current < 0 || !w.cells[w.current].underSky() || w.game.weatherTypes.empty())
@@ -351,12 +363,14 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 		// a thunderstorm's Max Raindrops 650 against the rain's 450
 		float rain = amount(WEATHER_RAIN) * (450.0f / 650.0f) + amount(WEATHER_THUNDER);
 		float ash = amount(WEATHER_ASH), blight = amount(WEATHER_BLIGHT);
-		if (rain < 0.02f && ash + blight < 0.02f)
+		float snow = amount(WEATHER_SNOW), blizzard = amount(WEATHER_BLIZZARD);
+		if (rain < 0.02f && ash + blight < 0.02f && snow + blizzard < 0.02f)
 			return;
 		if (!s_precipTexTried)
 		{
 			s_precipTexTried = true;
-			static const char* names[PTEX_COUNT] = { "rain", "ash_flake", "ash_cloud", "blight_cloud", "rain_sheet", "splash" };
+			static const char* names[PTEX_COUNT] = { "rain", "ash_flake", "ash_cloud", "blight_cloud", "rain_sheet", "splash",
+				"snow_flake", "blizzard_cloud" };
 			for (auto& sp : s_splash)
 				sp.age = kSplashLife;
 			for (int t = 0; t < PTEX_COUNT; t++)
@@ -388,22 +402,39 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 				}
 				GSPGPU_FlushDataCache(s_precipIndices, kPrecipQuads * 6 * 2);
 			}
-			logf("weather: rain %d, flake %d, ash %d, blight %d, rain sheet %d, splash %d textures", s_precipTexOk[0],
-				s_precipTexOk[1], s_precipTexOk[2], s_precipTexOk[3], s_precipTexOk[4], s_precipTexOk[5]);
+			logf("weather: rain %d, flake %d, ash %d, blight %d, rain sheet %d, splash %d, snow %d, blizzard %d textures",
+				s_precipTexOk[0], s_precipTexOk[1], s_precipTexOk[2], s_precipTexOk[3], s_precipTexOk[4], s_precipTexOk[5],
+				s_precipTexOk[6], s_precipTexOk[7]);
 		}
 		if (!s_precipVerts || !s_precipIndices)
 			return;
-		// Storms blow out from Red Mountain (OpenMW's calculateStormDirection)
-		float sx = eye[0] - 20480.0f, sy = eye[1] - 69632.0f, sl = sqrtf(sx * sx + sy * sy);
-		float wind[2] = { sl > 1.0f ? sx / sl : 0.0f, sl > 1.0f ? sy / sl : 1.0f };
+		// Storms blow out from Red Mountain, a blizzard north (OpenMW's calculateStormDirection: World::stormDirection)
+		float wind[2];
+		w.stormDirection(w.weatherShown(), eye, wind);
 		// Each layer's velocity: rain straight down (Rain Speed's tilt by a wind of 0.3 is under a degree); flakes
 		// blown with the wind and falling slowly (Morrowind's fall at 900, pushed 270 sideways on average: at 30 frames
 		// a second each jumped 30 units a frame, a flicker of dark rain rather than ash on the wind); the dust with
-		// the wind at its sprays' 75 to 375, rising on its gravity
-		float vel[PRECIP_LAYERS][3] = { { 0, 0, -575.0f }, { wind[0] * 360.0f, wind[1] * 360.0f, -220.0f },
-			{ wind[0] * 225.0f, wind[1] * 225.0f, 40.0f } };
-		int want[PRECIP_LAYERS] = { (int)(kPrecipMax[0] * fminf(1.0f, rain)), (int)(kPrecipMax[1] * fminf(1.0f, ash + blight)),
-			(int)(kPrecipMax[2] * fminf(1.0f, ash + blight)) };
+		// the wind at its sprays' 75 to 375, rising on its gravity. Snow and the blizzard as the comment above
+		bool snowy = snow + blizzard > ash + blight;
+		float ashy = ash + blight, snowAll = fmaxf(0.001f, snow + blizzard), bz = blizzard / snowAll;
+		float flakeVel[3] = { wind[0] * 360.0f, wind[1] * 360.0f, -220.0f };
+		if (snowy)
+		{
+			flakeVel[0] = wind[0] * (8.0f + 242.0f * bz);
+			flakeVel[1] = wind[1] * (8.0f + 242.0f * bz);
+			flakeVel[2] = -57.5f - 92.5f * bz;
+		}
+		bool blizzardDust = blizzard > ashy;
+		float dustVel[3] = { wind[0] * (blizzardDust ? 300.0f : 225.0f), wind[1] * (blizzardDust ? 300.0f : 225.0f),
+			blizzardDust ? -40.0f : 40.0f };
+		float vel[PRECIP_LAYERS][3] = { { 0, 0, -575.0f }, { flakeVel[0], flakeVel[1], flakeVel[2] },
+			{ dustVel[0], dustVel[1], dustVel[2] } };
+		g_precipWind[0] = wind[0];
+		g_precipWind[1] = wind[1];
+		int flakes = snowy ? (int)(std::min(g_profile.snowFlakes, kPrecipMax[1]) * fminf(1.0f, snow + blizzard))
+			: (int)(kPrecipMax[1] * fminf(1.0f, ashy));
+		int want[PRECIP_LAYERS] = { (int)(kPrecipMax[0] * fminf(1.0f, rain)), flakes,
+			(int)(kPrecipMax[2] * fminf(1.0f, fmaxf(ashy, blizzard))) };
 		float right[3], up[3], back[3];
 		rendererViewAxes(right, up, back);
 		u8* v = s_precipVerts;
@@ -477,7 +508,8 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 						q -= box[k] * floorf(q / box[k] + 0.5f);
 					P.pos[i][k] = c[k] + q;
 				}
-			int tex = L == PRECIP_RAIN ? PTEX_RAIN : L == PRECIP_FLAKES ? PTEX_FLAKE : blight > ash ? PTEX_BLIGHT : PTEX_ASH;
+			int tex = L == PRECIP_RAIN ? PTEX_RAIN : L == PRECIP_FLAKES ? (snowy ? PTEX_SNOW : PTEX_FLAKE)
+				: blizzardDust ? PTEX_BLIZZARD : blight > ash ? PTEX_BLIGHT : PTEX_ASH;
 			s_precipDraws[s_precipDrawCount++] = { quads, n, tex, false };
 			if (L == PRECIP_RAIN)
 			{
@@ -485,7 +517,15 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 				g_precipX0 = P.pos[0][0];
 			}
 			else if (L == PRECIP_FLAKES)
+			{
 				g_precipFlakes = n;
+				g_precipSnow = snowy ? n : 0;
+			}
+			else
+			{
+				g_precipDust = n;
+				g_precipBlizzard = blizzardDust ? n : 0;
+			}
 			float vl = sqrtf(vel[L][0] * vel[L][0] + vel[L][1] * vel[L][1] + vel[L][2] * vel[L][2]);
 			float axis[3] = { vel[L][0] / vl, vel[L][1] / vl, vel[L][2] / vl };
 			for (int i = 0; i < n; i++)
@@ -498,9 +538,24 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 				float fade = fminf(1.0f, (1.0f - edge) * 4.0f);
 				if (L == PRECIP_DUST)
 				{
-					// clouds turned to the eye, 400 across (the sprays' size), gone within 150 of it
-					float a = fade * fminf(1.0f, fmaxf(0.0f, (d - 150.0f) / 250.0f));
+					// clouds turned to the eye, 400 across (the sprays' size), gone within 150 of it; a blizzard's fainter
+					// (blizzard.nif's stream from 2500 away: few come near; its fog is thick already)
+					float a = fade * fminf(1.0f, fmaxf(0.0f, (d - 150.0f) / 250.0f)) * (blizzardDust ? 0.5f : 1.0f);
 					float half = 200.0f, ar[3], au[3];
+					for (int k = 0; k < 3; k++)
+					{
+						ar[k] = right[k] * half;
+						au[k] = up[k] * half;
+					}
+					precipQuad(v + quads * 96, p, ar, au, precipColour(255, 255, 255, a), false);
+				}
+				else if (snowy && L == PRECIP_FLAKES)
+				{
+					// a sheet of flakes turned to the eye, 60 across (its specks a unit or so: snow.nif's are 75 across with
+					// a few dozen; fewer, smaller sheets showed clumps), gone within 40 of it (a sheet near the eye would
+					// cover the screen in big blurred flakes)
+					float a = fade * fminf(1.0f, fmaxf(0.0f, (d - 40.0f) / 60.0f));
+					float half = 30.0f, ar[3], au[3];
 					for (int k = 0; k < 3; k++)
 					{
 						ar[k] = right[k] * half;
@@ -591,6 +646,11 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 		}
 		GSPGPU_FlushDataCache(s_precipVerts, quads * 96);
 	}
+	// Snow is lit as snow.nif's material has it (emissive 0.3, the weather's ambient and its sun), not by the baked light's
+	// day tint the rest takes: under that the white flakes came out grey specks against a grey sky
+	float snowLight[3];
+	for (int c = 0; c < 3; c++)
+		snowLight[c] = fminf(1.0f, 0.3f + w.weatherColour(2, c) + 0.5f * w.weatherColour(3, c));
 	for (int k = 0; k < s_precipDrawCount; k++)
 	{
 		const PrecipDraw& d = s_precipDraws[k];
@@ -600,7 +660,12 @@ void Session::drawPrecipitation(const float eye[3], bool secondEye)
 		m.numIndices = d.n * 6;
 		m.verts = s_precipVerts + d.first * 96;
 		m.indices = s_precipIndices;
+		bool snowLit = d.tex == PTEX_SNOW || d.tex == PTEX_BLIZZARD;
+		if (snowLit)
+			setTint(snowLight);
 		rendererDrawMesh(m, nullptr, s_precipTexOk[d.tex] ? &s_precipTex[d.tex] : nullptr);
+		if (snowLit)
+			setTint(worldTint());
 	}
 }
 

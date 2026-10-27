@@ -48,6 +48,10 @@ void Session::killNpc(int ri, bool byPlayer)
 {
 	Ref& r = w.refs[ri];
 	r.diedAt = w.gameHour;
+	// A person the werewolf player kills counts toward GetWerewolfKills (the hunger ends on one; OpenMW's Npc::onHit
+	// counts people, not creatures)
+	if (byPlayer && w.stats.werewolf && !r.dead && r.actor >= 0 && !w.game.actors[r.actor].creature)
+		w.stats.werewolfKills++;
 	// An essential person: the prophecy can't be fulfilled now (Morrowind says so, and plays on)
 	if (r.actor >= 0 && w.game.actors[r.actor].essential && !r.dead)
 		messageBox(w.game.gmst("skilledessential", "With this character's death, the thread of prophecy is severed. "
@@ -63,7 +67,8 @@ void Session::killNpc(int ri, bool byPlayer)
 			logf("soultrap: %s (soul %d)", def.id.c_str(), def.soul);
 		}
 	}
-	if (byPlayer && r.actor >= 0 && !w.game.actors[r.actor].creature && !r.aggressor)
+	// (one fighting another actor is no victim: OpenMW's canCommitCrimeAgainst, as for a blow on them in playerHitsNpc)
+	if (byPlayer && r.actor >= 0 && !w.game.actors[r.actor].creature && !r.aggressor && !r.werewolf && r.duelFoe < 0)
 	{
 		// Murder is a crime when anyone else could report it: OpenMW counts any living NPC within the alarm radius
 		// (hearing is enough, not just sight); a kill with nobody about, a writ carried out alone, isn't one
@@ -280,17 +285,23 @@ void Session::npcDuel(int ri, float dt)
 			else
 			{
 				blowSound(fi, roll);
+				// HitOnMe: the weapon that hit it, whoever held it (OpenMW's onHit sets the last hit object for any attacker):
+				// Valbrandr Barrow's draugr tells Ingmar's axe from the player's blows so
+				f.hitBy = wpn ? lower(wpn->id) : std::string();
 				bool fatigueOnly = false;
 				float dmg;
 				if (def.creature && (wpn || !def.attack.empty()))
 					dmg = creatureDamage(def, wpn, charge, r.attackKind) * roll.damage;
 				else if (wpn)
-					dmg = weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage;
-				else    // fists tire (health only on someone down)
+					dmg = weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage
+						* w.silverOnWerewolf(wpn, fi);
+				else    // fists tire (health only on someone down; a werewolf's claws always wound)
 				{
 					float lo = w.game.gmstf("fminhandtohandmult", 0.1f), hi = w.game.gmstf("fmaxhandtohandmult", 0.5f);
 					dmg = def.skills[SKILL_HAND_TO_HAND] * (lo + (hi - lo) * charge);
-					if (f.knockTimer > 0.0f)
+					if (w.isWerewolf(ri))
+						dmg = w.werewolfClaw(dmg) * roll.damage;
+					else if (f.knockTimer > 0.0f)
 						dmg *= w.game.gmstf("fhandtohandhealthper", 0.1f);
 					else
 						fatigueOnly = true;
@@ -361,6 +372,24 @@ bool World::followsPlayer(int ri) const
 	const Ref& r = refs[ri];
 	if ((r.aiPackage == AIPKG_FOLLOW || r.aiPackage == AIPKG_ESCORT) && r.aiTarget == "player")
 		return true;
+	// one following someone who follows the player counts too (OpenMW's getActorsFollowing takes followers of
+	// followers): Bloodmoon's colony miners follow Gidar Verothan, who follows the player (a few links at most)
+	if (r.aiPackage == AIPKG_FOLLOW && !r.aiTarget.empty())
+	{
+		int at = ri;
+		for (int link = 0; link < 4; link++)
+		{
+			const Ref& f = refs[at];
+			if (f.aiPackage != AIPKG_FOLLOW && f.aiPackage != AIPKG_ESCORT)
+				return false;
+			if (f.aiTarget == "player")
+				return true;
+			int next = findRef(f.aiTarget);
+			if (next < 0 || next == ri || refs[next].dead || refs[next].actor < 0)
+				return false;
+			at = next;
+		}
+	}
 	for (auto& e : effects)
 		if (e.ref == ri)
 			return true;

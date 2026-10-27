@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# data: vanilla
+# A follower takes up the player's fight: the first one to swing at the player (or that the player swings at) is the
+# player's "hit attempt" foe, and those following the player attack it (OpenMW's engageCombat with the ally's hit
+# attempt actor). Bloodmoon's Ingmar kills the Valbrandr draugr this way while the player only draws it off.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 TP:-11900:-70500:300:0
+2 0 0 0
+0.3 0 0 0 0 CON:"fargoth"->aifollow%player%0%0%0%0
+10 0 0 0 0 WALKTO:fargoth
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refcell:fargoth,Seyda%Neen,%Arrille:eq:1
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 CON:player->placeatpc%"rat"%1%150%1
+1 0 0 0
+# (the player's swing makes it the player's hit attempt foe)
+10 0 0 0 0 STRIKE:rat:1
+15 0 0 0
+0.1 0 0 0 0 EXPECT:refduel:fargoth:eq:1

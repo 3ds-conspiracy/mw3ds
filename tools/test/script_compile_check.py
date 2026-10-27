@@ -47,7 +47,8 @@ def tables_text():
               "static const char* kScNoRefNeeded[] = {"]
     lines += [f"\t{q(n)}," for n in sorted(mwscript.NO_REF_NEEDED)]
     lines += ["};", ""]
-    for name, seq in (("kScAttrs", mwscript._ATTRS), ("kScDynamics", mwscript._DYN), ("kScSkills", mwscript._SKILLS)):
+    for name, seq in (("kScAttrs", mwscript._ATTRS), ("kScDynamics", mwscript._DYN), ("kScSkills", mwscript._SKILLS),
+                      ("kScEffects", mwscript._EFFECTS)):
         lines.append(f"static const char* {name}[] = {{ " + ", ".join(q(s) for s in seq) + " };")
     return "\n".join(lines) + "\n"
 

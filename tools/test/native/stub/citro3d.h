@@ -163,7 +163,8 @@ struct C3D_TexEnv
 	u32 color;
 };
 struct C3D_AttrInfo { int count; int format[8]; int elements[8]; };
-struct C3D_BufInfo { const void* data; int stride; };
+// (up to two vertex buffers: the second holds the attributes from `split` on, a shared model's colours)
+struct C3D_BufInfo { const void* data; int stride; const void* data2; int stride2; int split; };
 struct Tex3DS_SubTexture { u16 width, height; float left, top, right, bottom; };
 typedef void* Tex3DS_Texture;
 struct C2D_Image { C3D_Tex* tex; const Tex3DS_SubTexture* subtex; };

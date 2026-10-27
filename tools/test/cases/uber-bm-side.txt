@@ -1,0 +1,712 @@
+# start: Seyda Neen
+# data: bloodmoon
+# uber-bm-side: Bloodmoon's side quests played LEGIT on the v2 kit (ENHANCEV2) from Khuul: the Missionary, the Moon
+# Sugar Mystery, ...
+# Notes: internal/uber/bm-side.md
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:8:2000
+0.3 0 0 0 0 ENHANCEV2
+# (Tribunal's Dark Brotherhood attack at a rest is Tribunal's questline, not this one's: as if seen through)
+0.3 0 0 0 0 JOURNAL:tr_dbattack:50
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:sc_divineintervention:20
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster
+0.3 0 0 0 0 GIVE:repair_grandmaster_01:5
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GOTO:Khuul
+4 0 0 0
+# (by S'virr's boat on Khuul's shore)
+0.3 0 0 0 0 TP:-68964:141900:300:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# Before sailing: Louis Beauchamp outside the Ald'ruhn Mages Guild lost an airship sent to Solstheim for an amulet
+# (The Patchwork Airship, BM_Airship 40); by Khuul's silt strider there and back
+120 0 0 0 0 ACTIVATE:seldus%nerendus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:seldus%nerendus:Ald
+6 0 0 0
+120 0 0 0 0 ACTIVATE:louis%beauchamp
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_airship
+0.3 0 0 0 0 TOPIC:Hrothmund's_Barrow
+0.3 0 0 0 0 TOPIC:recover_the_amulet
+0.3 0 0 0 0 TOPIC:crew_has_failed_me
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_Airship:ge:40
+# An Island to the North (BM_Rumors): Louis has heard of Solstheim and of the boat from Khuul (50); Basks-in-the-Sun
+# greets the player on the fort's dock (100)
+0.3 0 0 0 0 TOPIC:Solstheim
+0.1 0 0 0 0 EXPECT:journal:BM_Rumors:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:navam%veran
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:navam%veran:Khuul
+6 0 0 0
+# To Solstheim: S'virr's boat from Khuul to Fort Frostmoth
+120 0 0 0 0 ACTIVATE:s'virr
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:s'virr:Fort
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Fort_Frostmoth
+60 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_Rumors:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (Rebellion at Frostmoth first, as in uber-bm-main: Captain Severia Gratius of the Moon Sugar Mystery takes over
+# the fort once it is done; the steps copied)
+# BM_Morale: Captain Carius finds his men edgy; the morale has been low
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Carius'_Chambers
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Carius'_Chambers
+60 0 0 0 0 ACTIVATE:falx%carius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Fort_Frostmoth
+0.3 0 0 0 0 TOPIC:edgy
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:10
+0.3 0 0 0 0 TOPIC:disturbing_trends
+0.3 0 0 0 0 TOPIC:morale_has_been_low
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# ... the priest Antonius Nuncius keeps a desk in the Armory, its liquor locked away (the desk's script marks it found)
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Armory
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Armory
+60 0 0 0 0 USELOCKPICK:de_p_desk_nuncius:pick_grandmaster
+60 0 0 0 0 LOOT:de_p_desk_nuncius:potion_local_brew_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:global:foundbooze:eq:1+EXPECT:item:potion_local_brew_01:ge:1
+# a drink loosens a guard's tongue: the fort has gone dry
+60 0 0 0 0 ACTIVATE:bm_imperial%guard
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:booze
+0.3 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 TOPIC:dry_fort
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# Carius never banned the drink: the shipments stopped; someone points at the priest
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Carius'_Chambers
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Carius'_Chambers
+60 0 0 0 0 ACTIVATE:falx%carius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:morale_has_been_low
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# Antonius Nuncius at the Imperial Cult Shrine (a guard says where): caught with the liquor, he asks the player to keep
+# his secret
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+60 0 0 0 0 ACTIVATE:bm_imperial%guard
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Antonius_Nuncius
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:antonius%nuncius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:dry_fort
+0.3 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 TOPIC:shipments_stopped_arriving
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:90
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:eq:93+EXPECT:item:key_nuncius:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# ... and Carius hears it was all a misunderstanding
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Carius'_Chambers
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Carius'_Chambers
+60 0 0 0 0 ACTIVATE:falx%carius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:morale_has_been_low
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:110+EXPECT:item:p_cure_common_s:ge:3
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-morale
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+# The Missionary (BM_Missionary): Jeleen in the fort's shrine misses Mirisa, a missionary gone to Thirsk (10);
+# Brynjolfr, Thirsk's chieftain, says Erich the Unworthy locked her in his room upstairs (30); the chamber's lock
+# picked, Mirisa tells her tale (50) and follows the player back (60) to the shrine (100); Jeleen pays (110)
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:jeleen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:important_cult_matter
+0.3 0 0 0 0 TOPIC:local_savages
+0.3 0 0 0 0 TOPIC:missionary_work
+0.3 0 0 0 0 TOPIC:Mirisa_never_returned
+0.1 0 0 0 0 EXPECT:journal:BM_Missionary:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 FLYTO:@-153022,191000,2100
+60 0 0 0 0 ACTIVATE:brynjolfr
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Mirisa_never_returned
+0.1 0 0 0 0 EXPECT:journal:BM_Missionary:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 WALKTO:@-155136,189440,1736
+120 0 0 0 0 DOORTO:Solstheim,_Thirsk
+10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
+# (upstairs by the stairs in the south-east corner; Erich's chamber door at the top, lock 50)
+60 0 0 0 0 WALKTO:@490,-216,-254
+60 0 0 0 0 WALKTO:@577,-664,-41
+60 0 0 0 0 WALKTO:@507,-509,262
+60 0 0 0 0 WALKTO:@373,-167,263
+60 0 0 0 0 WALKTO:@343,244,262
+60 0 0 0 0 WALKTO:@117,340,262
+60 0 0 0 0 USELOCKPICK:in_thirsk_door:pick_grandmaster
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:mirisa
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:held_prisoner
+0.1 0 0 0 0 EXPECT:journal:BM_Missionary:ge:50
+0.3 0 0 0 0 TOPIC:travel_together
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Missionary:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 ESCORT:mirisa
+60 0 0 0 0 WALKTO:@373,-167,263
+60 0 0 0 0 WALKTO:@507,-509,262
+60 0 0 0 0 WALKTO:@577,-664,-41
+60 0 0 0 0 WALKTO:@490,-216,-254
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Thirsk
+# (on foot to the fort with her: the planner's way south)
+60 0 0 0 0 WALKTO:@-155200,190080,1950
+60 0 0 0 0 WALKTO:@-155392,188416,1688
+60 0 0 0 0 WALKTO:@-156416,187392,1576
+60 0 0 0 0 WALKTO:@-156672,185856,968
+60 0 0 0 0 WALKTO:@-157440,185088,744
+60 0 0 0 0 WALKTO:@-157696,184832,704
+60 0 0 0 0 WALKTO:@-158976,183552,704
+60 0 0 0 0 WALKTO:@-159488,183040,704
+60 0 0 0 0 WALKTO:@-159744,182528,704
+60 0 0 0 0 WALKTO:@-160256,180992,704
+60 0 0 0 0 WALKTO:@-160256,180736,720
+60 0 0 0 0 WALKTO:@-160512,179200,784
+60 0 0 0 0 WALKTO:@-160768,178176,784
+60 0 0 0 0 WALKTO:@-161024,178176,776
+60 0 0 0 0 WALKTO:@-161280,177920,768
+60 0 0 0 0 WALKTO:@-161536,176896,720
+60 0 0 0 0 WALKTO:@-161280,176640,720
+60 0 0 0 0 WALKTO:@-162048,175104,880
+60 0 0 0 0 WALKTO:@-163072,173824,840
+60 0 0 0 0 WALKTO:@-163072,173568,848
+60 0 0 0 0 WALKTO:@-163072,173312,840
+60 0 0 0 0 WALKTO:@-162816,171776,704
+60 0 0 0 0 WALKTO:@-162816,170240,784
+60 0 0 0 0 WALKTO:@-163072,169984,744
+60 0 0 0 0 WALKTO:@-163584,169472,656
+60 0 0 0 0 WALKTO:@-163584,167936,712
+60 0 0 0 0 WALKTO:@-163584,167680,704
+60 0 0 0 0 WALKTO:@-163840,167424,696
+60 0 0 0 0 WALKTO:@-163840,166912,696
+60 0 0 0 0 WALKTO:@-164608,165376,696
+60 0 0 0 0 WALKTO:@-164864,163840,656
+60 0 0 0 0 WALKTO:@-165120,163072,624
+60 0 0 0 0 WALKTO:@-165120,162560,616
+60 0 0 0 0 WALKTO:@-165120,162304,600
+60 0 0 0 0 WALKTO:@-165888,161024,296
+60 0 0 0 0 WALKTO:@-166144,160768,208
+60 0 0 0 0 WALKTO:@-166400,160512,144
+60 0 0 0 0 WALKTO:@-166912,160000,40
+60 0 0 0 0 WALKTO:@-168192,158720,64
+60 0 0 0 0 WALKTO:@-168704,158464,176
+60 0 0 0 0 WALKTO:@-169216,157952,288
+60 0 0 0 0 WALKTO:@-169472,157696,352
+60 0 0 0 0 WALKTO:@-169984,156928,536
+60 0 0 0 0 WALKTO:@-170496,156416,672
+60 0 0 0 0 WALKTO:@-170752,156160,696
+60 0 0 0 0 WALKTO:@-171520,155392,696
+60 0 0 0 0 WALKTO:@-171776,155136,744
+60 0 0 0 0 WALKTO:@-171776,154880,728
+60 0 0 0 0 WALKTO:@-171776,154624,712
+60 0 0 0 0 WALKTO:@-172544,153088,704
+60 0 0 0 0 WALKTO:@-173824,151808,704
+60 0 0 0 0 WALKTO:@-174848,151040,704
+60 0 0 0 0 WALKTO:@-175104,150784,704
+60 0 0 0 0 WALKTO:@-175616,150272,704
+60 0 0 0 0 WALKTO:@-175616,149760,704
+60 0 0 0 0 WALKTO:@-176384,148992,704
+60 0 0 0 0 WALKTO:@-177408,147712,896
+60 0 0 0 0 WALKTO:@-176910,146054,974
+60 0 0 0 0 WALKTO:@-175504,145172,786
+60 0 0 0 0 WALKTO:@-174848,143616,972
+60 0 0 0 0 WALKTO:@-174580,143857,1026
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+0.3 0 0 0 0 ESCORT:-
+6 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Missionary:ge:100
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:jeleen
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_Missionary:ge:110
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-missionary
+# The Moon Sugar Mystery (BM_MoonSugar): Captain Severia Gratius at the fort hunts the moon sugar poisoner (10) and
+# sends the player after him (30); Jeleen, poisoned, remembers a silly song (40); Uncle Sweetshare in his workshop is
+# the poisoner (50): spared, he gives up his white helm and his sugar-sharing (70); the helm to Severia (100)
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+60 0 0 0 0 ACTIVATE:severia%gratius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:moon_sugar_investigation
+0.1 0 0 0 0 EXPECT:journal:BM_MoonSugar:ge:10
+0.3 0 0 0 0 TOPIC:Imperial_matter
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_MoonSugar:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:jeleen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:moon_sugar_investigation
+0.3 0 0 0 0 TOPIC:silly_song
+0.1 0 0 0 0 EXPECT:journal:BM_MoonSugar:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 FLYTO:@-159017,174324,1000
+120 0 0 0 0 DOORTO:Solstheim,_Uncle_Sweetshare's_Workshop
+10 0 0 0 0 UNTIL:cell:Solstheim,_Uncle_Sweetshare's_Workshop
+60 0 0 0 0 ACTIVATE:uncle%sweetshare
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:moon_sugar_investigation
+0.3 0 0 0 0 TOPIC:Uncle_Sweetshare
+0.1 0 0 0 0 EXPECT:journal:BM_MoonSugar:ge:50
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_MoonSugar:ge:70+EXPECT:item:fur_colovian_helm_white:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+60 0 0 0 0 ACTIVATE:severia%gratius
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_MoonSugar:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-moonsugar
+# Ingmar in a Bind (BM_Ingmar): young Ingmar must kill the draugr of Valbrandr Barrow himself to be a man (10); the
+# player agrees to be its distraction only (30: no blow of the player's may land on it, 40); Ingmar kills it (50),
+# goes home (60) and gives the player a belt there (100)
+120 0 0 0 0 FLYTO:@-159700,167950,1200
+60 0 0 0 0 ACTIVATE:ingmar
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Valbrandr_draugr
+0.1 0 0 0 0 EXPECT:journal:BM_Ingmar:ge:10
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_Ingmar:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+4 0 0 0
+120 0 0 0 0 DOORTO:Solstheim,_Valbrandr_Barrow
+10 0 0 0 0 UNTIL:cell:Solstheim,_Valbrandr_Barrow
+# (a few steps in, then the player only waits: the draugr comes for the player and Ingmar strikes it)
+60 0 0 0 0 WALKTO:@4224,4000,16000
+# (once it comes, the player steps back toward the door: in the narrow passage Ingmar can't get past the player)
+8 0 0 0
+30 0 0 0 0 WALKTO:@4224,4330,16000
+120 0 0 0 0 UNTIL:journal:BM_Ingmar:ge:50
+0.1 0 0 0 0 EXPECT:journal:BM_Ingmar:eq:50
+60 0 0 0 0 ACTIVATE:ingmar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Ingmar:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+# (landed by his door, in the next cell north of the village's middle: an Old 3DS leaves that neighbour unloaded for room until
+# the player is in it)
+120 0 0 0 0 FLYTO:@-158400,213300,3150
+120 0 0 0 0 DOORTO:Skaal_Village,_Ingmar's_House
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Ingmar's_House
+60 0 0 0 0 ACTIVATE:ingmar
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Ingmar:ge:100+EXPECT:item:belt%of%orc's%strength:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-ingmar
+# The Sad Seer (BM_SadSeer): Geilir the Mumbling, alone since his family drowned, talks to a skull, Oddfrid
+# White-Lip, stolen back by draugr (10); the player will fetch it (30) from Kolbjorn Barrow (37); Geilir has his friend
+# again (40) and she tells the player's future (100)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-211094,175351,700
+120 0 0 0 0 DOORTO:Solstheim,_Geilir_the_Mumbling's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Geilir_the_Mumbling's_Dwelling
+60 0 0 0 0 ACTIVATE:geilir%the%mumbling
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_only_friend
+0.1 0 0 0 0 EXPECT:journal:BM_SadSeer:ge:10
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_SadSeer:ge:30
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-189765,145112,1900
+120 0 0 0 0 DOORTO:Solstheim,_Kolbjorn_Barrow
+10 0 0 0 0 UNTIL:cell:Solstheim,_Kolbjorn_Barrow
+180 0 0 0 0 PICKUP:misc_skull_oddfrid
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_SadSeer:ge:37+EXPECT:item:misc_skull_oddfrid:ge:1
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-211094,175351,700
+120 0 0 0 0 DOORTO:Solstheim,_Geilir_the_Mumbling's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Geilir_the_Mumbling's_Dwelling
+60 0 0 0 0 ACTIVATE:geilir%the%mumbling
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_SadSeer:ge:40
+0.3 0 0 0 0 TOPIC:tell_your_future
+0.1 0 0 0 0 EXPECT:journal:BM_SadSeer:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-sadseer
+# The Cursed Captain (BM_CursedCaptain): Thormoor Gray-Wave, the captain who drowned Geilir's family asleep at the
+# rudder, was cursed never to sleep (10, 30); Geilir, Oddfrid back, lifts it (40); Thormoor can sleep (50) and, rested,
+# waits in the Thirsk mead hall with a key to Gyldenhul (100)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-217829,187000,1300
+60 0 0 0 0 ACTIVATE:thormoor%gray-wave
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:that_night_at_sea
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:ge:10
+0.3 0 0 0 0 TOPIC:eternal_wakefulness
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-211094,175351,700
+120 0 0 0 0 DOORTO:Solstheim,_Geilir_the_Mumbling's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Geilir_the_Mumbling's_Dwelling
+60 0 0 0 0 ACTIVATE:geilir%the%mumbling
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:eternal_wakefulness
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-217829,187000,1300
+60 0 0 0 0 ACTIVATE:thormoor%gray-wave
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-153022,191000,2100
+60 0 0 0 0 WALKTO:@-155136,189440,1736
+120 0 0 0 0 DOORTO:Solstheim,_Thirsk
+10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
+60 0 0 0 0 WALKTO:@490,-216,-254
+60 0 0 0 0 WALKTO:@577,-664,-41
+60 0 0 0 0 WALKTO:@507,-509,262
+60 0 0 0 0 WALKTO:@373,-167,263
+60 0 0 0 0 ACTIVATE:thormoor_thirsk
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:ge:100+EXPECT:item:key_gyldenhul:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-captain
+# A Woman Scorned (BM_WomanScorned): Kjolver wants Erna the Quiet, her husband Brandr's lover, dead (10, 30: taken
+# on); Erna's note at her house in Skaal Village says she walks by the Isild (40); she dies there (50), Brandr fights
+# for her and dies too (45), and her ring goes to Kjolver (100)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-193231,177695,1500
+120 0 0 0 0 DOORTO:Solstheim,_Kjolver's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Kjolver's_Dwelling
+60 0 0 0 0 ACTIVATE:kjolver
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:dark_business
+0.1 0 0 0 0 EXPECT:journal:BM_WomanScorned:ge:10
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_WomanScorned:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-158977,212303,3100
+120 0 0 0 0 DOORTO:Skaal_Village,_Erna_the_Quiet's_House
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Erna_the_Quiet's_House
+60 0 0 0 0 ACTIVATE:sc_erna
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:journal:BM_WomanScorned:ge:40
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-166429,201300,500
+240 0 0 0 0 KILL:erna%the%quiet
+240 0 0 0 0 KILL:brandr
+2 0 0 0
+60 0 0 0 0 LOOT:erna%the%quiet:expensive_ring_erna
+0.1 0 0 0 0 EXPECT:refdying:erna%the%quiet:eq:0+EXPECT:item:expensive_ring_erna:ge:1
+120 0 0 0 0 FLYTO:@-193231,177695,1500
+120 0 0 0 0 DOORTO:Solstheim,_Kjolver's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Kjolver's_Dwelling
+60 0 0 0 0 ACTIVATE:kjolver
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:dark_business
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_WomanScorned:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-scorned
+# A Wife's Retribution (BM_Retribution): Kolfinna asks wergild for her husband Gustav, killed by Sigvatr the Strong:
+# his gem, Pinetear (10, 30); Sigvatr at the Altar of Thrond, won over (bribes, disposition 90), confesses and gives it
+# up (50); Kolfinna is paid (100)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-168097,162578,400
+120 0 0 0 0 DOORTO:Solstheim,_Kolfinna's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Kolfinna's_Dwelling
+60 0 0 0 0 ACTIVATE:kolfinna
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Sigvatr_the_Strong
+0.3 0 0 0 0 TOPIC:wergild
+0.1 0 0 0 0 EXPECT:journal:BM_Retribution:ge:10
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Retribution:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-181487,191200,1300
+60 0 0 0 0 ACTIVATE:sigvatr%the%strong
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 PERSUADE:5
+0.3 0 0 0 0 PERSUADE:5
+0.3 0 0 0 0 PERSUADE:5
+0.3 0 0 0 0 PERSUADE:5
+0.1 0 0 0 0 EXPECT:refdisp:sigvatr%the%strong:ge:90
+0.3 0 0 0 0 TOPIC:wergild
+0.1 0 0 0 0 EXPECT:journal:BM_Retribution:ge:50+EXPECT:item:ingred_emerald_pinetear:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-168097,162578,400
+120 0 0 0 0 DOORTO:Solstheim,_Kolfinna's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Kolfinna's_Dwelling
+60 0 0 0 0 ACTIVATE:kolfinna
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:wergild
+0.1 0 0 0 0 EXPECT:journal:BM_Retribution:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-retribution
+# The Patchwork Airship (BM_Airship): the wreck west of the Altar of Thrond; the dead captain's journal (60) tells of
+# Hrothmund's Barrow under the wolf's eye of Hrothmund's Bane, whose name is Ondjage (Airship_a 20); a draugr and a
+# bonewolf keep the Amulet of Infectious Charm; both brought back to Louis in Ald'ruhn (by Basks's boat and the
+# strider): journal and amulet both (100)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-189929,195200,1300
+60 0 0 0 0 PICKUP:bk_airship_captains_journal
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:journal:BM_Airship:ge:60+EXPECT:item:bk_airship_captains_journal:ge:1
+120 0 0 0 0 FLYTO:@-194388,209594,3300
+60 0 0 0 0 ACTIVATE:bm_ic_door_pelt_wolf
+2 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 A
+2 0 0 0
+60 0 0 0 0 ACTIVATE:bm_ic_door_pelt_wolf
+0.1 0 0 0 0 EXPECT:journal:BM_Airship_a:ge:20
+# (the right name opens the door: the next press goes in)
+10 0 0 0 0 UNTIL:cell:Solstheim,_Hrothmund's_Barrow
+180 0 0 0 0 PICKUP:amulet%of%infectious%charm
+0.1 0 0 0 0 EXPECT:item:amulet%of%infectious%charm:ge:1
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-174024,136824,600
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Khuul
+6 0 0 0
+120 0 0 0 0 FLYTO:@-65939,135420,1200
+120 0 0 0 0 ACTIVATE:seldus%nerendus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:seldus%nerendus:Ald
+6 0 0 0
+120 0 0 0 0 ACTIVATE:louis%beauchamp
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Airship:ge:100+EXPECT:item:amulet%of%infectious%charm:eq:0
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-airship
+# Betrayal at Brodir Grove (BM_BrodirGrove): Ulfgar the Unending, five hundred years looking for Sovngarde (10, 20);
+# a new copy of "Sovngarde, a Reexamination" from Bereditte Jastal in the Thirsk mead hall, read (30), suggests the way
+# lies through a glorious death; Ulfgar asks for one (40, 60), is given it, and his ghost at Brodir Grove thanks the
+# player (100)
+120 0 0 0 0 FLYTO:@-185827,170172,1200
+120 0 0 0 0 DOORTO:Solstheim,_Ulfgar_the_Unending's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Ulfgar_the_Unending's_Dwelling
+60 0 0 0 0 ACTIVATE:ulfgar%the%unending
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:barbarian's_sad_tale
+0.1 0 0 0 0 EXPECT:journal:BM_BrodirGrove:ge:10
+0.3 0 0 0 0 TOPIC:Brodir_Grove
+0.3 0 0 0 0 TOPIC:Sovngarde
+0.3 0 0 0 0 TOPIC:failed_in_our_quest
+0.1 0 0 0 0 EXPECT:journal:BM_BrodirGrove:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-153022,191000,2100
+60 0 0 0 0 WALKTO:@-155136,189440,1736
+120 0 0 0 0 DOORTO:Solstheim,_Thirsk
+10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
+60 0 0 0 0 WALKTO:@490,-216,-254
+60 0 0 0 0 WALKTO:@577,-664,-41
+60 0 0 0 0 WALKTO:@507,-509,262
+60 0 0 0 0 ACTIVATE:bereditte%jastal
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:bereditte%jastal:bk_sovngarde
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 READ:bk_sovngarde
+2 0 0 0
+0.5 0 0 0 0 B
+2 0 0 0
+0.5 0 0 0 0 A
+0.1 0 0 0 0 EXPECT:journal:BM_BrodirGrove:ge:30
+60 0 0 0 0 WALKTO:@577,-664,-41
+60 0 0 0 0 WALKTO:@490,-216,-254
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-185827,170172,1200
+120 0 0 0 0 DOORTO:Solstheim,_Ulfgar_the_Unending's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Ulfgar_the_Unending's_Dwelling
+60 0 0 0 0 ACTIVATE:ulfgar%the%unending
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_BrodirGrove:ge:40
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_BrodirGrove:ge:60
+0.5 0 0 0 0 B
+4 0 0 0
+300 0 0 0 0 KILL:ulfgar%the%unending
+4 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:journal:BM_BrodirGrove:ge:90
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-184273,168300,1300
+60 0 0 0 0 ACTIVATE:ulfgar_ghost
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_BrodirGrove:ge:100
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-brodir
+# Tymvaul in the Well (BM_Tymvaul): old Lassnr of the Skaal lost his son Tymvaul down their well (10) and gives the
+# player its key (30); below, in Rimhull, Tymvaul wears the necromantic Mantle of Woe (40) and, told his father loves
+# him, gives it up (50); Lassnr hears his son lives (100)
+120 0 0 0 0 FLYTO:@-158977,212303,3100
+120 0 0 0 0 DOORTO:Skaal_Village,_Lassnr's_House
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Lassnr's_House
+60 0 0 0 0 ACTIVATE:lassnr
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:old_man's_anguish
+0.1 0 0 0 0 EXPECT:journal:BM_Tymvaul:ge:10
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_Tymvaul:ge:30+EXPECT:item:key_lassnr_well:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-165982,211000,2950
+120 0 0 0 0 DOORTO:Solstheim,_Rimhull
+10 0 0 0 0 UNTIL:cell:Solstheim,_Rimhull
+180 0 0 0 0 ACTIVATE:tymvaul
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Mantle_of_Woe
+0.1 0 0 0 0 EXPECT:journal:BM_Tymvaul:ge:40
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_Tymvaul:ge:50+EXPECT:item:mantle%of%woe:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-158977,212303,3100
+120 0 0 0 0 DOORTO:Skaal_Village,_Lassnr's_House
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Lassnr's_House
+60 0 0 0 0 ACTIVATE:lassnr
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:old_man's_anguish
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Tymvaul:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-tymvaul
+# Brynjolfr's fur armor (BM_FurArmor): the smith in Thirsk, asked about custom fur armor, tells of snow bears (5) and snow wolves (7) and gives his
+# list of custom snow wolf and snow bear armor (10, sc_fur_armor)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-153600,190976,2000
+60 0 0 0 0 ACTIVATE:brynjolfr
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:custom_fur_armor
+0.3 0 0 0 0 TOPIC:snow_bears
+0.1 0 0 0 0 EXPECT:journal:BM_FurArmor:ge:5
+0.3 0 0 0 0 TOPIC:snow_wolves
+0.1 0 0 0 0 EXPECT:journal:BM_FurArmor:ge:7
+0.3 0 0 0 0 TOPIC:snow_wolf_armor
+0.1 0 0 0 0 EXPECT:journal:BM_FurArmor:ge:10+EXPECT:item:sc_fur_armor:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-side-furarmor
+# Bloodskal (BM_Bloodskal01): the blade in Bloodskal Barrow, west of Raven Rock; taking it wakes the barrow's dead (10)
+120 0 0 0 0 FLYTO:@-205933,169386,1100
+60 0 0 0 0 WALKTO:@-205933,169386,935
+# (the barrow's door is locked: level 20)
+60 0 0 0 0 USELOCKPICK:Ex_BM_tomb_door_02:pick_grandmaster
+120 0 0 0 0 DOORTO:Solstheim,_Bloodskal_Barrow
+10 0 0 0 0 UNTIL:cell:Solstheim,_Bloodskal_Barrow
+240 0 0 0 0 WALKTO:BM_nordic_silver_lgswd_bloodska
+60 0 0 0 0 PICKUP:BM_nordic_silver_lgswd_bloodska
+0.1 0 0 0 0 EXPECT:journal:BM_Bloodskal01:ge:10+EXPECT:item:BM_nordic_silver_lgswd_bloodska:ge:1
+4 0 0 0
+0.3 0 0 0 0 SAVE:uber-bm-side-bloodskal

@@ -1,4 +1,6 @@
 # start: Seyda Neen
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS profile's rain bands)
 # A New 3DS drops the far rain's farther band (900 out) while frames run under 30 a second and brings it back once
 # they run past 33; the band 450 out and the streaks stay (spec/performance-tradeoffs.md). Balmora at noon in rain:
 # frames 40 ms apart (25 a second), then 16.7 ms apart (60), handed to the frame pacing as the console's frames are

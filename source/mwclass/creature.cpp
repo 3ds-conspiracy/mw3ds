@@ -21,6 +21,17 @@ void MWClass::Creature::activate(Session& s, int ref)
 	logf("activate: creature %s: services %x, speaker %d, ai %d -> %s", r.idLower.c_str(),
 		r.actor >= 0 ? w.game.actors[r.actor].services : 0, (int)w.game.speakers.count(r.idLower), r.ai,
 		talking ? "talk" : "nothing");
+	// One with no words whose script says it is a companion opens the share straight away (OpenMW's DialogueWindow
+	// with no greeting: Bloodmoon's wounded bear, BM_bear_be_unique, whose arrow is taken that way)
+	if (!talking && r.ai != AI_COMBAT && s.isCompanion(ref))
+	{
+		s.containerRef = ref;
+		s.companionSharing = true;
+		s.companionWarning = s.pickpocketing = s.containerPutting = false;
+		s.grid = UiGrid();
+		s.screen = SCR_CONTAINER;
+		return;
+	}
 	if (!talking)
 		return;
 	Actor::talk(s, ref);

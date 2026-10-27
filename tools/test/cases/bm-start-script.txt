@@ -1,0 +1,37 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-start-script: Bloodmoon's start script (BMStartUpScript, its SSCR record) runs once in a new game: it starts
+# WereCheckScript and bloodmoonScript, disables the people and things later quests bring (Gaea Artoria in Fort
+# Frostmoth until BM_Smugglers, Afer Flaccus's guard in Raven Rock until the colony grows) and stops itself. Its
+# disables hold in cells not yet seen, through a save and a load, and it does not run again after one.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+2 0 0 0
+0.3 0 0 0 0 CON:ScriptRunning%BMStartUpScript
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:ScriptRunning%WereCheckScript
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 CON:ScriptRunning%bloodmoonScript
+0.1 0 0 0 0 EXPECT:conval:eq:1
+1 0 0 0 0 SAVE:bmstart
+0.5 0 0 0 0 LOAD:bmstart
+3 0 0 0
+0.3 0 0 0 0 CON:ScriptRunning%BMStartUpScript
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 CON:ScriptRunning%WereCheckScript
+0.1 0 0 0 0 EXPECT:conval:eq:1
+0.3 0 0 0 0 GOTO:Fort_Frostmoth,_General_Quarters,_Upper_Level
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:gaea_artoria:eq:0
+0.3 0 0 0 0 GOTO:Raven_Rock
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:afer_flaccus_guard:eq:0
+1 0 0 0 0 SAVE:bmstart2
+0.5 0 0 0 0 LOAD:bmstart2
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:afer_flaccus_guard:eq:0
+0.3 0 0 0 0 CON:ScriptRunning%BMStartUpScript
+0.1 0 0 0 0 EXPECT:conval:eq:0
+0.3 0 0 0 0 GOTO:Fort_Frostmoth,_General_Quarters,_Upper_Level
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:gaea_artoria:eq:0

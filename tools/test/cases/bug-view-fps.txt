@@ -1,4 +1,6 @@
 # start: Seyda Neen
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS view grows back to the full view scale)
 # The New 3DS's view distance closes in when the frame rate falls under 30, whatever the frames' measured work says.
 # Outdoors with 3D on the console ran 23-25 fps while the GPU's 30-31 ms of work sat between the view's thresholds
 # (shrink past 34 ms, grow under 30): the view stayed long and the frame rate low. Frames that miss a 60 Hz refresh

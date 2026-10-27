@@ -94,7 +94,9 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 	}
 	if (verb == "WEREWOLF" && a.size() >= 2)
 	{
-		s.werewolf = atoi(a[1].c_str()) != 0;
+		// (the change BecomeWerewolf / UndoWerewolf make, unseen: the token's checks predate witnesses and a bounty)
+		s.w.setWerewolf(-1, atoi(a[1].c_str()) != 0);
+		s.w.werewolfJustChanged = false;
 		return true;
 	}
 	// KNOCKDOWN:<npc>: they lie knocked down for a long while (their pockets open to anyone)
@@ -273,9 +275,35 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		bool voiced = !(a.size() >= 3 && a[2] == "novoice");
 		if (voiced && w.game.voices.empty() && w.game.voiceFiles.empty())
 			return fail("no voice files in the data");
-		std::string line = !voiced ? "" : !w.game.voices.empty() ? *w.game.voices.begin() : w.game.voiceFiles.begin()->first;
+		// (the first by name, not by the set's order: that is the hash's, another line on the 32-bit memory build)
+		std::string line;
+		if (voiced && !w.game.voices.empty())
+			line = *std::min_element(w.game.voices.begin(), w.game.voices.end());
+		else if (voiced)
+			line = w.game.voiceFiles.begin()->first;
 		s.say(ri, line, voiced ? "A line spoken for the test." : "A line written for the test.");
 		logf("test: %s says a %s line", a[1].c_str(), voiced ? "voiced" : "text-only");
+		return true;
+	}
+	// LOOPSOUND:<object id>|last:<sound>: the object plays the sound in a loop (PlayLoopSound3D); `last` is the loaded
+	// reference stored last in the reference list, whose cell goes first when the list shrinks
+	if (verb == "LOOPSOUND" && a.size() >= 3)
+	{
+		int ri = -1;
+		if (a[1] == "last")
+		{
+			for (int i = (int)w.refs.size() - 1; i >= 0 && ri < 0; i--)
+				if (w.active(i) && w.refs[i].visible())
+					ri = i;
+		}
+		else
+			ri = s.testFindRef(a[1]);
+		if (ri < 0)
+			return fail("no " + a[1]);
+		if (!w.game.sounds.count(lower(a[2])))
+			return fail("no sound " + a[2]);
+		s.loopSound(ri, a[2], true);
+		logf("test: %s loops %s", w.refs[ri].idLower.c_str(), a[2].c_str());
 		return true;
 	}
 	if ((verb == "GAMMA" || verb == "AUTOGAMMA" || verb == "LUX" || verb == "CAMLUMA") && a.size() >= 2)

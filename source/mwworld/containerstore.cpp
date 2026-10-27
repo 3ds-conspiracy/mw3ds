@@ -254,6 +254,15 @@ int World::soulValue(const InventoryItem& it) const
 	return 0;
 }
 
+float* World::itemScriptLocal(const std::string& itemId, const char* name)
+{
+	for (auto& s : scripts)
+		if (s.item == itemId)
+			if (float* v = s.local(name))
+				return v;
+	return nullptr;
+}
+
 void World::setItemScriptLocal(const std::string& itemId, const char* name, float value)
 {
 	for (auto& s : scripts)

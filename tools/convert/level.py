@@ -42,7 +42,7 @@ from distant import build_distant
 from creature import resolve_leveled
 from firstperson import FirstPerson
 from particles import build_pieces
-from mwfiles import CODEC, DATA_FILES, MASTER, Archives, cell_refs, game_path, load_db, read_game, safe_name, text
+from mwfiles import CODEC, DATA_FILES, MASTER, Archives, bloodmoon, cell_refs, game_path, load_db, read_game, safe_name, text
 from npcstats import npc_stats, worn_items
 from terrain import CELL_SIZE
 from terrain import Terrain
@@ -316,6 +316,52 @@ def town_cells(db, town):
     return [xy for xy, rec in db["CELL"].items() if isinstance(xy, tuple) and (rec.id or "").lower() == town.lower()]
 
 
+# Shared models (convert_cell.share_models) in the 3 x 3 spots whose placed models hold more vertices than this: above
+# Vvardenfell's busiest (554 k, around Molag Mar's (9, -1); vanilla and Tribunal data are written as before), under
+# Solstheim's pine forests (up to 1.17 M around the Hirstaang Forest's (-24, 20), 30 MB of batches against linear
+# memory's 24 MB budget). Counted from the models' own vertices (every NiTriShapeData), before any cell is converted
+SHARE_WINDOW_VERTICES = 600000
+
+
+def heavy_spots(db, arch):
+    """The exterior cells of every 3 x 3 spot over SHARE_WINDOW_VERTICES: their repeated statics share one copy."""
+    from mwfiles import MODEL_TYPES
+    from nif import Nif
+    counts = {}
+
+    def vertices(model):
+        if model not in counts:
+            n = 0
+            try:
+                for b in Nif(arch.read("meshes\\" + model)).blocks:
+                    if b and b.get("type") == "NiTriShapeData" and b.get("vertices"):
+                        n += len(b["vertices"]) // 3
+            except Exception:
+                pass
+            counts[model] = n
+        return counts[model]
+
+    objects = db["objects"]
+    per = {}
+    for xy, cell in db["CELL"].items():
+        if not isinstance(xy, tuple):
+            continue
+        n = 0
+        for r in cell_refs(cell):
+            rec = None if r.get("deleted") else objects.get(r["id"].lower())
+            if rec is None or rec.tag not in MODEL_TYPES or rec.tag in ("CREA", "BODY"):
+                continue
+            model = rec.zstr("MODL")
+            if model:
+                n += vertices(model.lower())
+        per[xy] = n
+    heavy = set()
+    for (x, y) in per:
+        if sum(per.get((x + i, y + j), 0) for i in (-1, 0, 1) for j in (-1, 0, 1)) > SHARE_WINDOW_VERTICES:
+            heavy.update((x + i, y + j) for i in (-1, 0, 1) for j in (-1, 0, 1))
+    return heavy
+
+
 def exterior_name(db, xy):
     """What GetPCCell and door labels call an exterior cell: its own name, else its region's."""
     rec = db["CELL"].get(xy)
@@ -430,11 +476,11 @@ def _worker_cell(item):
             conv.interior(item[1], weather=_W["weather"])
             file = _W["file"](item[1])
         else:
-            _, gx, gy, walkable, name, file = item
+            _, gx, gy, walkable, name, file, share = item
             if _W["terrain"] is None:
                 x0, y0, x1, y1 = _W["bounds"]
                 _W["terrain"] = Terrain(_W["db"], x0 - 1, y0 - 1, x1 + 1, y1 + 1)
-            conv.exterior_cell(gx, gy, _W["terrain"], _W["walk"], _W["weather"], walkable, name, file, None)
+            conv.exterior_cell(gx, gy, _W["terrain"], _W["walk"], _W["weather"], walkable, name, file, None, share)
     except Exception:
         return False
     meta_path = conv.cache_dir / (file + ".json")
@@ -479,11 +525,15 @@ def main():
                     help="processes converting cells (0: by threads and free memory; 1: one, as before)")
     ap.add_argument("--tribunal", action="store_true",
                     help="the Tribunal add-on: Tribunal.esm after Morrowind.esm (or MW3DS_TRIBUNAL=1)")
+    ap.add_argument("--bloodmoon", action="store_true",
+                    help="the Bloodmoon add-on: Bloodmoon.esm after Morrowind.esm and Tribunal.esm (or MW3DS_BLOODMOON=1)")
     ap.add_argument("--world", action="store_true",
                     help="the whole island: every interior, all land walkable (with MW3DS_OUT=out/world to try it)")
     args = ap.parse_args()
     if args.tribunal:
         os.environ["MW3DS_TRIBUNAL"] = "1"         # (the cell processes inherit it)
+    if args.bloodmoon:
+        os.environ["MW3DS_BLOODMOON"] = "1"
 
     t0 = time.time()
     db = load_db()
@@ -535,10 +585,15 @@ def main():
     start_xy = (int(spawn[0][0] // CELL_SIZE), int(spawn[0][1] // CELL_SIZE)) if spawn else \
         (named[0] if not chargen else None)
 
+    heavy = heavy_spots(db, arch)
+    if heavy:
+        print(f"shared models in {len(heavy)} exterior cells (3 x 3 spots over {SHARE_WINDOW_VERTICES} placed vertices)",
+              flush=True)
     jobs = args.jobs or default_jobs()
     if jobs > 1:
         items = [("i", n) for n in interiors if n not in (START_CELL, OFFICE_CELL)]
-        items += [("e", gx, gy, x0 <= gx <= x1 and y0 <= gy <= y1, exterior_name(db, (gx, gy)), exterior_file((gx, gy)))
+        items += [("e", gx, gy, x0 <= gx <= x1 and y0 <= gy <= y1, exterior_name(db, (gx, gy)), exterior_file((gx, gy)),
+                   (gx, gy) in heavy)
                   for gy in range(y0 - 1, y1 + 2) for gx in range(x0 - 1, x1 + 2) if (gx, gy) != start_xy]
         parallel_cells(items, jobs, args.max_tex, (x0, y0, x1, y1), walk, args.weather)
     cells = []
@@ -568,7 +623,8 @@ def main():
             name = exterior_name(db, (gx, gy))
             try:
                 c = conv.exterior_cell(gx, gy, terrain, walk, weather(ini, args.weather), walkable, name,
-                                       exterior_file((gx, gy)), spawn if (gx, gy) == start_xy else None)
+                                       exterior_file((gx, gy)), spawn if (gx, gy) == start_xy else None,
+                                       (gx, gy) in heavy)
             except Exception as e:
                 print(f"  FAILED exterior {gx},{gy}: {type(e).__name__}: {e}", flush=True)
                 failed.append((f"exterior {gx},{gy}", f"{type(e).__name__}: {e}"))
@@ -610,7 +666,11 @@ def main():
     # ... and the creatures the soul gem tests (tools/test/cases/openmw-spec-world.txt) place by hand
     test_spawns = {"ancestor_guardian_fgdd", "dagoth daynil", "netch_bull_ranched", "kwama queen_abaesen",
                   "centurion_spider_tga1", "netch_betty_ilgn", "guar"}
-    for sid in sorted(spawn_ids(db) | summons | sleepers | test_spawns):
+    # ... and Bloodmoon's werewolf body (wolf\skinNPC.nif as a creature, placed by no one): what a person drawn as a
+    # werewolf shows, the player seen from outside included (OpenMW draws them all on the wolf skeleton with its skin);
+    # without the add-on there is no such record and nothing is added
+    werewolf_body = {"bm_werewolf_default"}
+    for sid in sorted(spawn_ids(db) | summons | sleepers | test_spawns | werewolf_body):
         rec = db["objects"].get(sid)
         if rec is None and sid in db["LEVC"]:
             rec = resolve_leveled(db, sid)
@@ -852,6 +912,10 @@ def main():
                    for m in ("masser", "secunda")},
         "sunrise": float(wsec.get("Sunrise Time", "6")), "sunset": float(wsec.get("Sunset Time", "18")),
     }
+    # Bloodmoon's red moon: Secunda in [Moons] Script Color after TurnMoonRed (the engine's own 255, 20, 20 without it;
+    # left out for vanilla and Tribunal data, which stay as they were)
+    if bloodmoon() and moons.get("Script Color"):
+        game["sky_bodies"]["script_color"] = [int(c) for c in moons["Script Color"].split(";")[0].split(",")[:3]]
     # Distant land past the loaded cells (tools/convert/distant.py)
     wx = weather(ini, args.weather)
     # (stored as it is, not zlib'd: the game reads each cell's big objects from the card when it needs them)

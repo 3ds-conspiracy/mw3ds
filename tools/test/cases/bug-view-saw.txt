@@ -1,4 +1,6 @@
 # start: Seyda Neen
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS profile's dynamic view saw)
 # The view the frame is drawn with holds still while the adaptive view scale saws. With the frame cost hovering at its
 # threshold the scale stepped down 0.004-0.006 and up 0.002 from frame to frame, and the fog's reach moved with it
 # every frame: on an Old 3DS at its short view (fog ending a few hundred units out) the walkways' edges in the fog

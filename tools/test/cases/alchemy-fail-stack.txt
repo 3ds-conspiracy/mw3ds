@@ -14,6 +14,8 @@
 0.3 0 0 0 0 SETSKILL:alchemy:5
 0.3 0 0 0 0 SETATTR:intelligence:10+SETATTR:luck:10
 0.1 0 0 0 0 SNAP:brewed+SNAP:skillprog:alchemy
+# (the dice seeded here: the Old 3DS profile's actors use rolls before this, and a 7% brew would not land the one success)
+0.1 0 0 0 0 SEED:6
 0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod
 0.5 0 0 0
 0.3 0 0 0 0 BREW:ingred_coprinus_01:ingred_bc_ampoule_pod

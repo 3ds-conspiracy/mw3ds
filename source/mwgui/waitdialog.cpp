@@ -38,7 +38,8 @@ void Session::openRest(bool bed)
 		return;
 	}
 	restBed = bed;
-	restSleep = bed || w.current < 0 || !w.cells[w.current].noSleep;
+	// (a werewolf only waits: OpenMW's canRest gives no sleep in wolf form, the menu says so)
+	restSleep = bed || ((w.current < 0 || !w.cells[w.current].noSleep) && !w.stats.werewolf);
 	restDone = -1;
 	restHours = restHours < 1 ? 1 : restHours > 24 ? 24 : restHours;
 	openScreen(SCR_REST);
@@ -178,6 +179,7 @@ void Session::drawRest()
 	}
 
 	std::string ask = restSleep ? w.game.gmst("srestmenu1", "How many hours?")
+		: w.stats.werewolf ? w.game.gmst("swerewolfrestmessage", "You cannot rest in werewolf form.")
 		: w.game.gmst("srestillegal", "Resting here is illegal. You'll need to find a bed.");
 	std::vector<std::string> lines = uiWrap(ask, 300, 0.42f);
 	for (size_t i = 0; i < lines.size() && i < 2; i++)

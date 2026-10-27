@@ -44,4 +44,11 @@ struct PlayerStats
 	// Quick keys (ZL + D-pad up / right / down / left): "inv:<item>" or "magic:<spell or item:id>"
 	std::string quickKeys[4];
 	std::unordered_map<std::string, int> powerUsedDay;
+	// Bloodmoon's werewolf (OpenMW's NpcStats): in wolf form, kills since the last change to it, and whether
+	// SetWerewolfAcrobatics was asked for; saved. The state alone: the form's own rules read it (World::setWerewolf)
+	bool werewolf = false, werewolfAcrobatics = false;
+	int werewolfKills = 0;
+	// Magic effect stats scripts set (ModResistFire 100 ...: OpenMW's MagicEffects base): effect, amount; counted into
+	// World::effectTotal, never running out; saved
+	std::vector<std::pair<int, int>> scriptEffects;
 };

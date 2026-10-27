@@ -65,6 +65,7 @@ void Session::drawArrest()
 void Session::goToJail()
 {
 	int days = w.bounty / 100 > 1 ? w.bounty / 100 : 1;
+	w.pcInJail = 2;                      // (GetPCInJail: the scripts running now and the next ones see the term)
 	w.gameHour += 24.0f * days;
 	rechargeItems(24.0f * days * 3600.0f / w.timescale());
 	w.bounty = 0;

@@ -1,0 +1,576 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-enchantments: written by tools/test/specgen_bloodmoon.py (edit the generator, not this file).
+# Every enchantment Bloodmoon adds, on an item that carries it, checked by what it does.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0.3 0 0 0 0 SETSKILL:destruction:600
+0.3 0 0 0 0 SETSKILL:alteration:600
+0.3 0 0 0 0 SETSKILL:illusion:600
+0.3 0 0 0 0 SETSKILL:conjuration:600
+0.3 0 0 0 0 SETSKILL:mysticism:600
+0.3 0 0 0 0 SETSKILL:restoration:600
+0.3 0 0 0 0 EFFECT:83:500:100000:10
+0.3 0 0 0 0 EFFECT:83:500:100000:11
+0.3 0 0 0 0 EFFECT:83:500:100000:12
+0.3 0 0 0 0 EFFECT:83:500:100000:13
+0.3 0 0 0 0 EFFECT:83:500:100000:14
+0.3 0 0 0 0 EFFECT:83:500:100000:15
+0.3 0 0 0 0 SETATTR:willpower:100+SETATTR:luck:100
+0.3 0 0 0 0 RESISTROLL:99
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 EFFECT:90:100:100000:0
+0.3 0 0 0 0 EFFECT:91:100:100000:0
+0.3 0 0 0 0 EFFECT:92:100:100000:0
+0.3 0 0 0 0 EFFECT:97:100:100000:0
+0 0 0 0 0 SETUP-END
+# bearkind on bm bear helmet_ber (when used)
+1.0 0 0 0 0 GIVE:bm%bear%helmet_ber
+0.3 0 0 0 0 SNAP:charge:bm%bear%helmet_ber
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:skill:handtohand
+0.3 0 0 0 0 SNAP:attr:agility
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:bm%bear%helmet_ber
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:skill:handtohand:ge:@10
+0.3 0 0 0 0 EXPECT:attr:agility:ge:@10
+0.3 0 0 0 0 EXPECT:effect:117:ge:10
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm%bear%helmet_ber:lt:@0
+# bloodletting_en on bm nordic silver axe_ber (on strike)
+#   nothing in the game data gives or carries the item
+# bm bloodaxe on bm reaver battle axe (on strike)
+1.0 0 0 0 0 GIVE:bm%reaver%battle%axe
+1.0 0 0 0 0 EQUIP:bm%reaver%battle%axe
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm%reaver%battle%axe
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm%reaver%battle%axe:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,22:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,23:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# bm_aesliip on bm_ring_aesliip (constant)
+0.3 0 0 0 0 SNAP:attr:willpower
+0.3 0 0 0 0 SNAP:magickamax
+1.0 0 0 0 0 GIVE:bm_ring_aesliip
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:willpower:ge:@10
+0.3 0 0 0 0 EXPECT:magickamax:ge:@75
+0.3 0 0 0 0 EXPECT:equipped:bm_ring_aesliip:eq:1
+# bm_amulspd on bm_amulspd1 (constant)
+0.3 0 0 0 0 SNAP:attr:speed
+0.3 0 0 0 0 SNAP:skill:acrobatics
+0.3 0 0 0 0 SNAP:skill:athletics
+1.0 0 0 0 0 GIVE:bm_amulspd1
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:speed:ge:@10
+0.3 0 0 0 0 EXPECT:skill:acrobatics:ge:@15
+0.3 0 0 0 0 EXPECT:skill:athletics:ge:@15
+0.3 0 0 0 0 EXPECT:equipped:bm_amulspd1:eq:1
+# bm_amulstr on bm_amulstr1 (constant)
+0.3 0 0 0 0 SNAP:attr:strength
+0.3 0 0 0 0 SNAP:effect:117
+1.0 0 0 0 0 GIVE:bm_amulstr1
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:ge:@10
+0.3 0 0 0 0 EXPECT:effect:117:ge:@15
+0.3 0 0 0 0 EXPECT:equipped:bm_amulstr1:eq:1
+# bm_arrowslay_en on bm_ebonyarrow_s (on strike)
+1.0 0 0 0 0 GIVE:long%bow
+1.0 0 0 0 0 EQUIP:long%bow
+1.0 0 0 0 0 GIVE:bm_ebonyarrow_s:5
+1.0 0 0 0 0 EQUIP:bm_ebonyarrow_s
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# bm_heartfang on bm_axe_heartfang_unique (on strike)
+1.0 0 0 0 0 GIVE:bm_axe_heartfang_unique
+1.0 0 0 0 0 EQUIP:bm_axe_heartfang_unique
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm_axe_heartfang_unique
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm_axe_heartfang_unique:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,29:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# bm_hunter_axe on bm_hunter_battleaxe_unique (constant)
+#   nothing in the game data gives or carries the item
+# bm_hunterspear on bm_hunterspear_unique (on strike)
+1.0 0 0 0 0 GIVE:bm_hunterspear_unique
+1.0 0 0 0 0 EQUIP:bm_hunterspear_unique
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm_hunterspear_unique
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm_hunterspear_unique:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,7:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# bm_icefire on bm ice longsword_fg_unique (on strike)
+1.0 0 0 0 0 GIVE:bm%ice%longsword_fg_unique
+1.0 0 0 0 0 EQUIP:bm%ice%longsword_fg_unique
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm%ice%longsword_fg_unique
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm%ice%longsword_fg_unique:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,14:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,28:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# bm_mace on bm_mace_aevar_uni (on strike)
+1.0 0 0 0 0 GIVE:bm_mace_aevar_uni
+1.0 0 0 0 0 EQUIP:bm_mace_aevar_uni
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm_mace_aevar_uni
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm_mace_aevar_uni:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# bm_wolfspirit on bm wolf helmet_heartfang (constant)
+0.3 0 0 0 0 SNAP:attr:agility
+0.3 0 0 0 0 SNAP:skill:sneak
+1.0 0 0 0 0 GIVE:bm%wolf%helmet_heartfang
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:agility:ge:@5
+0.3 0 0 0 0 EXPECT:skill:sneak:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%helmet_heartfang:eq:1
+# chieftainblade_en on bm nordic silver longsword_cft (when used)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%longsword_cft
+0.3 0 0 0 0 SNAP:charge:bm%nordic%silver%longsword_cft
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:attr:personality
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:item:bm%nordic%silver%longsword_cft
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:42:ge:1
+0.3 0 0 0 0 EXPECT:attr:personality:ge:@1
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm%nordic%silver%longsword_cft:lt:@0
+# deadlyslay_en on bm_ring_marksman (constant)
+0.3 0 0 0 0 SNAP:skill:marksman
+0.3 0 0 0 0 SNAP:effect:43
+1.0 0 0 0 0 GIVE:bm_ring_marksman
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:marksman:ge:@20
+0.3 0 0 0 0 EXPECT:effect:43:ge:@20
+0.3 0 0 0 0 EXPECT:equipped:bm_ring_marksman:eq:1
+# deceit_en on bm_black_glove_l_s (constant)
+0.3 0 0 0 0 SNAP:skill:sneak
+1.0 0 0 0 0 GIVE:bm_black_glove_l_s
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:sneak:ge:@20
+0.3 0 0 0 0 EXPECT:equipped:bm_black_glove_l_s:eq:1
+# deepfreeze_en on warhammer_rammekald_unique (on strike)
+1.0 0 0 0 0 GIVE:warhammer_rammekald_unique
+1.0 0 0 0 0 EQUIP:warhammer_rammekald_unique
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:warhammer_rammekald_unique
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:warhammer_rammekald_unique:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# detect animal eddard on bm bear helmet eddard (constant)
+0.3 0 0 0 0 SNAP:effect:64
+1.0 0 0 0 0 GIVE:bm%bear%helmet%eddard
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:64:ge:@150
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%helmet%eddard:eq:1
+# frost bolt_eddard on bm_nordic_silver_lgswd_bloodska (on strike)
+1.0 0 0 0 0 GIVE:bm_nordic_silver_lgswd_bloodska
+1.0 0 0 0 0 EQUIP:bm_nordic_silver_lgswd_bloodska
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm_nordic_silver_lgswd_bloodska
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm_nordic_silver_lgswd_bloodska:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# frostgore_en on bm frostgore (on strike)
+1.0 0 0 0 0 GIVE:bm%frostgore
+1.0 0 0 0 0 EQUIP:bm%frostgore
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm%frostgore
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm%frostgore:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,16:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# honorguard_en on imperial shortsword severio (when used)
+1.0 0 0 0 0 GIVE:imperial%shortsword%severio
+0.3 0 0 0 0 SNAP:charge:imperial%shortsword%severio
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:attr:personality
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:item:imperial%shortsword%severio
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:attr:personality:ge:@1
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:imperial%shortsword%severio:lt:@0
+# infectious charm_en on amulet of infectious charm (when used)
+1.0 0 0 0 0 GIVE:amulet%of%infectious%charm
+0.3 0 0 0 0 SNAP:charge:amulet%of%infectious%charm
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:attr:personality
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:amulet%of%infectious%charm
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:attr:personality:ge:@30
+0.3 0 0 0 0 EXPECT:effect:32:ge:30
+0.3 0 0 0 0 EXPECT:effect:20:ge:30
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:amulet%of%infectious%charm:lt:@0
+# lightning strike_en on nordic claymore_stormfang (on strike)
+1.0 0 0 0 0 GIVE:nordic%claymore_stormfang
+1.0 0 0 0 0 EQUIP:nordic%claymore_stormfang
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:nordic%claymore_stormfang
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:nordic%claymore_stormfang:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# lucky_break_en on lucky_break (when used)
+1.0 0 0 0 0 GIVE:lucky_break
+0.3 0 0 0 0 SNAP:charge:lucky_break
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:attr:luck
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:lucky_break
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:attr:luck:ge:@1
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:lucky_break:lt:@0
+# mantle_woe_en on mantle of woe (constant)
+0.3 0 0 0 0 SETATTR:personality:60
+0.3 0 0 0 0 SNAP:attr:personality
+0.3 0 0 0 0 SNAP:effect:36
+0.3 0 0 0 0 SNAP:magickamax
+0.3 0 0 0 0 SNAP:effect:135
+0.3 0 0 0 0 SNAP:skill:conjuration
+1.0 0 0 0 0 GIVE:mantle%of%woe
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:attr:personality:le:@-60
+0.3 0 0 0 0 EXPECT:effect:36:ge:@20
+0.3 0 0 0 0 EXPECT:magickamax:ge:@50
+0.3 0 0 0 0 EXPECT:effect:135:ge:@20
+0.3 0 0 0 0 EXPECT:skill:conjuration:ge:@50
+0.3 0 0 0 0 EXPECT:equipped:mantle%of%woe:eq:1
+# paralysis weapon on bm nordic silver axe_spurius (on strike)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%axe_spurius
+1.0 0 0 0 0 EQUIP:bm%nordic%silver%axe_spurius
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm%nordic%silver%axe_spurius
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm%nordic%silver%axe_spurius:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# poison arrow_en on steel arrow_carnius (on strike)
+1.0 0 0 0 0 GIVE:long%bow
+1.0 0 0 0 0 EQUIP:long%bow
+1.0 0 0 0 0 GIVE:steel%arrow_carnius:5
+1.0 0 0 0 0 EQUIP:steel%arrow_carnius
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SETSKILL:marksman:100
+0.3 0 0 0 0 FACE:todd
+1.2 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,47:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# restoration_en: no item carries it
+# roguenecro_en on bm_ebony_staff_necro (when used)
+1.0 0 0 0 0 GIVE:bm_ebony_staff_necro
+0.3 0 0 0 0 SNAP:charge:bm_ebony_staff_necro
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:bm_ebony_staff_necro
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:108:ge:1
+0.3 0 0 0 0 EXPECT:effect:23:ge:1
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm_ebony_staff_necro:lt:@0
+# sc_bodily_restoration_en on sc_bodily_restoration (cast once)
+1.0 0 0 0 0 GIVE:sc_bodily_restoration
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 EFFECT:22:10:1:3
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:agility:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:5
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:endurance:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:1
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:intelligence:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:7
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:luck:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:6
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:personality:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:4
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:speed:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:0
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:strength:gt:0
+0.3 0 0 0 0 EFFECT:22:10:1:2
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:attrdamage:willpower:gt:0
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:sc_bodily_restoration
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:attrdamage:agility:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:endurance:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:intelligence:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:luck:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:personality:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:speed:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:strength:lt:10
+0.3 0 0 0 0 EXPECT:attrdamage:willpower:lt:10
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:item:sc_bodily_restoration:eq:0
+# sc_chappy_sniper_test_en on sc_hiddenkiller (cast once)
+1.0 0 0 0 0 GIVE:sc_hiddenkiller
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:skill:marksman
+0.3 0 0 0 0 SNAP:skill:sneak
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:item:sc_hiddenkiller
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:skill:marksman:ge:@100
+0.3 0 0 0 0 EXPECT:skill:sneak:ge:@60
+0.3 0 0 0 0 EXPECT:effect:40:ge:50
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:item:sc_hiddenkiller:eq:0
+# sc_savagetyranny_en on sc_savagetyranny (cast once)
+1.0 0 0 0 0 GIVE:sc_savagetyranny
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:item:sc_savagetyranny
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,118:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:item:sc_savagetyranny:eq:0
+# seasplitter_en on bm_saber_seasplitter (on strike)
+1.0 0 0 0 0 GIVE:bm_saber_seasplitter
+1.0 0 0 0 0 EQUIP:bm_saber_seasplitter
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm_saber_seasplitter
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm_saber_seasplitter:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# severedleg_en: no item carries it
+# shadowstrike_en on bm_ebonylongsword_s (on strike)
+1.0 0 0 0 0 GIVE:bm_ebonylongsword_s
+1.0 0 0 0 0 EQUIP:bm_ebonylongsword_s
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm_ebonylongsword_s
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm_ebonylongsword_s:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,27:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,40:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# snow shield on bm_bear_boots_snow (constant)
+0.3 0 0 0 0 SNAP:effect:91
+1.0 0 0 0 0 GIVE:bm_bear_boots_snow
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:91:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_boots_snow:eq:1
+# snowprince_en on steel spear snow prince (on strike)
+1.0 0 0 0 0 GIVE:steel%spear%snow%prince
+1.0 0 0 0 0 EQUIP:steel%spear%snow%prince
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:steel%spear%snow%prince
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:steel%spear%snow%prince:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,29:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# tracker longsword on bm nordic_longsword_tracker (on strike)
+1.0 0 0 0 0 GIVE:bm%nordic_longsword_tracker
+1.0 0 0 0 0 EQUIP:bm%nordic_longsword_tracker
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# treachery_en on bm_black_glove_r_s (constant)
+0.3 0 0 0 0 SNAP:skill:security
+1.0 0 0 0 0 GIVE:bm_black_glove_r_s
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:security:ge:@20
+0.3 0 0 0 0 EXPECT:equipped:bm_black_glove_r_s:eq:1
+# whitewalker_en on bm_nordic01_robe_whitewalk (constant)
+0.3 0 0 0 0 SNAP:effect:40
+0.3 0 0 0 0 SNAP:effect:16
+0.3 0 0 0 0 SNAP:effect:29
+0.3 0 0 0 0 SNAP:effect:18
+1.0 0 0 0 0 GIVE:bm_nordic01_robe_whitewalk
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:40:ge:@50
+0.3 0 0 0 0 EXPECT:effect:16:ge:@5
+0.3 0 0 0 0 EXPECT:effect:29:ge:@5
+0.3 0 0 0 0 EXPECT:effect:18:ge:@5
+0.3 0 0 0 0 EXPECT:equipped:bm_nordic01_robe_whitewalk:eq:1
+# winterwound_en on bm winterwound dagger (on strike)
+1.0 0 0 0 0 GIVE:bm%winterwound%dagger
+1.0 0 0 0 0 EQUIP:bm%winterwound%dagger
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:charge:bm%winterwound%dagger
+0.3 0 0 0 0 HIT:todd
+0.8 0 0 0
+0.3 0 0 0 0 EXPECT:charge:bm%winterwound%dagger:lt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,16:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,38:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+# wolfwalking_en on wolfwalkers (constant)
+0.3 0 0 0 0 SNAP:skill:athletics
+0.3 0 0 0 0 SNAP:attr:speed
+1.0 0 0 0 0 GIVE:wolfwalkers
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:skill:athletics:ge:@10
+0.3 0 0 0 0 EXPECT:attr:speed:ge:@10
+0.3 0 0 0 0 EXPECT:equipped:wolfwalkers:eq:1

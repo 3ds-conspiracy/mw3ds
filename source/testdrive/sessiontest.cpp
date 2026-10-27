@@ -35,8 +35,10 @@ static std::string underscoresToSpaces(std::string s)
 
 int Session::testFindRef(const std::string& id)
 {
+	// (a placed ref's slot can be past the end by now: the Old 3DS profile's evictions shrink the reference list)
+	const int nrefs = (int)w.refs.size();
 	// the creature the test placed, even once it is dead: another with its id (a spawn in a loaded neighbour) is not it
-	if (testPlaced >= 0 && w.active(testPlaced))
+	if (testPlaced >= 0 && testPlaced < nrefs && w.active(testPlaced))
 	{
 		const std::string& pid = w.refs[testPlaced].idLower;
 		if (pid == lower(id) || pid == lower(underscoresToSpaces(id)))
@@ -44,7 +46,7 @@ int Session::testFindRef(const std::string& id)
 	}
 	// (or one PLACEAT put somewhere: ten people placed, one of them an Imperial Guard among many)
 	for (int i : testPlacedAll)
-		if (w.active(i) && (w.refs[i].idLower == lower(id) || w.refs[i].idLower == lower(underscoresToSpaces(id))))
+		if (i < nrefs && w.active(i) && (w.refs[i].idLower == lower(id) || w.refs[i].idLower == lower(underscoresToSpaces(id))))
 			return i;
 	int ref = w.findRef(id);
 	if (!w.active(ref))
@@ -126,6 +128,14 @@ void Session::testPlaceAt(const std::string& id, const float at[3], float yaw)
 	w.syncActor(ri);
 	testPlaced = ri;
 	testPlacedAll.insert(ri);
+	testPlacedCell.clear();
+	testPlacedLocal = -1;
+	if (!r.spawnedRef && r.cell >= 0)
+	{
+		const LevelCell& lc = w.cells[r.cell];
+		testPlacedCell = lc.file;
+		testPlacedLocal = ri - lc.refBase;
+	}
 	logf("test: placed %s at %.0f %.0f %.0f", r.id.c_str(), to[0], to[1], to[2]);
 }
 

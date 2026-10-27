@@ -1049,6 +1049,9 @@ bool gameLoad(GameData& g, const char* path)
 				o.earlyFadeAngle = num(md, "Moon Shadow Early Fade Angle", 0.5f);
 			}
 		d.sunrise = num(sb, "sunrise", 6); d.sunset = num(sb, "sunset", 18);
+		if (const cJSON* sc = cJSON_GetObjectItem(sb, "script_color"))
+			for (int k = 0; k < 3 && k < cJSON_GetArraySize(sc); k++)
+				d.scriptColor[k] = (u8)std::max(0, std::min(255, cJSON_GetArrayItem(sc, k)->valueint));
 	}
 	if (const cJSON* fp = section(root, "firstperson"))
 	{
@@ -1060,6 +1063,11 @@ bool gameLoad(GameData& g, const char* path)
 				cJSON_ArrayForEach(slot, cJSON_GetObjectItem(race, female ? "f" : "m"))
 					g.firstPerson.races[female][race->string][atoi(slot->string)] = slot->valuestring;
 			}
+		if (const cJSON* ww = cJSON_GetObjectItem(fp, "werewolf"))
+		{
+			g.firstPerson.werewolfSkeleton = (int)num(ww, "skeleton", -1);
+			g.firstPerson.werewolfPiece = str(ww, "piece");
+		}
 		const cJSON* vf;
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "vfx"))
 			if (cJSON_IsString(vf))

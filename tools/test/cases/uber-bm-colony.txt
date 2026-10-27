@@ -1,0 +1,1109 @@
+# start: Seyda Neen
+# data: bloodmoon
+# uber-bm-colony: Bloodmoon's Raven Rock colony (the East Empire Company's quests, CO_1 to CO_13, the Factor's
+# Estate, then In Search of the Falmer in the colony's bar) played LEGIT on the v2 kit (ENHANCEV2) from Khuul. Notes: internal/uber/bm-colony.md
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:8:2000
+0.3 0 0 0 0 ENHANCEV2
+# (Tribunal's Dark Brotherhood attack at a rest is Tribunal's questline, not this one's: as if seen through)
+0.3 0 0 0 0 JOURNAL:tr_dbattack:50
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:sc_divineintervention:20
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster
+0.3 0 0 0 0 GIVE:repair_grandmaster_01:5
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GOTO:Khuul
+4 0 0 0
+# (by S'virr's boat on Khuul's shore)
+0.3 0 0 0 0 TP:-68964:141900:300:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# Before sailing: five bittergreen petals from the Gnisis temple, by Khuul's silt strider (Razing the Forest poisons
+# the spriggans' grove with them; no one on Solstheim has any)
+120 0 0 0 0 ACTIVATE:seldus%nerendus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:seldus%nerendus:Gnisis
+6 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Temple
+10 0 0 0 0 UNTIL:cell:Gnisis,_Temple
+60 0 0 0 0 ACTIVATE:zanmulk%sammalamus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUY:zanmulk%sammalamus:ingred_bittergreen_petals_01
+0.3 0 0 0 0 BUY:zanmulk%sammalamus:ingred_bittergreen_petals_01
+0.3 0 0 0 0 BUY:zanmulk%sammalamus:ingred_bittergreen_petals_01
+0.3 0 0 0 0 BUY:zanmulk%sammalamus:ingred_bittergreen_petals_01
+0.3 0 0 0 0 BUY:zanmulk%sammalamus:ingred_bittergreen_petals_01
+0.1 0 0 0 0 EXPECT:item:ingred_bittergreen_petals_01:ge:5
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Gnisis
+120 0 0 0 0 ACTIVATE:punibi%yahaz
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:punibi%yahaz:Khuul
+6 0 0 0
+# To Solstheim: S'virr's boat from Khuul to Fort Frostmoth
+120 0 0 0 0 ACTIVATE:s'virr
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:s'virr:Fort
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Fort_Frostmoth
+# Establish the Mine (CO_1): Carnius Magius in the Imperial Cult Shrine takes the player into the East Empire
+# Company and sends three miners on the docks to the site (10); led there (20: Basks-In-The-Sun's boat to the shore
+# below Raven Rock, the miners with the player) to Falco Galenus (30), who wants four more pieces of ebony (40);
+# mined from the rocks north of him, back to Carnius (50, a stock certificate)
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:East_Empire_Company
+0.3 0 0 0 0 TOPIC:join_the_East_Empire_Company
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:rank:East_Empire_Company:ge:0
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_1:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:gidar%verothan
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:ready_to_go
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_1:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (the miners gathered at Basks-In-The-Sun first: a follower further than 800 stays on the dock)
+0.3 0 0 0 0 ESCORT:gidar%verothan
+120 0 0 0 0 WALKTO:basks_in_the_sun
+0.3 0 0 0 0 ESCORT:-
+8 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:sabinus%oranius:lt:700+EXPECT:refdist:gamin%girith:lt:700
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:gidar%verothan:lt:1000+EXPECT:refdist:sabinus%oranius:lt:1000+EXPECT:refdist:gamin%girith:lt:1000
+0.3 0 0 0 0 ESCORT:gidar%verothan
+300 0 0 0 0 WALKTO:falco%galenus
+0.3 0 0 0 0 ESCORT:-
+4 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_1:ge:30
+60 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_1:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 LOOT:rock_ebony_01_colony:ingred_raw_ebony_01
+60 0 0 0 0 LOOT:rock_ebony_02_colony:ingred_raw_ebony_01
+60 0 0 0 0 LOOT:rock_ebony_07_colony:ingred_raw_ebony_01
+60 0 0 0 0 LOOT:rock_ebony_06_colony:ingred_raw_ebony_01
+0.1 0 0 0 0 EXPECT:item:ingred_raw_ebony_01:ge:5
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_1:ge:50+EXPECT:item:bk_BM_stockcert:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-mine
+# A Blocked Door (CO_2): three days on (Carnius's word; the colony's timer), Falco has trouble at the site (10); Falco
+# wants Hroldar the Strange, a Nord squatting at the mine's door, gone without killing (20); Hroldar won't go (30);
+# Falco allows a beating (40): fists only, the sword put away; beaten, Hroldar leaves (50); Falco pays (70), and
+# Carnius hears it (90)
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:2
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_2:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:get_rid_of_him
+0.1 0 0 0 0 EXPECT:journal:CO_2:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:hroldar%the%strange
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_2:ge:30
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:get_rid_of_him
+0.1 0 0 0 0 EXPECT:journal:CO_2:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (each punch is assault, reported by the colonists and stirring them: OpenMW's rule; three put him down)
+0.3 0 0 0 0 UNEQUIP:daedric_longsword
+120 0 0 0 0 STRIKE:hroldar%the%strange:20
+4 0 0 0
+120 0 0 0 0 ACTIVATE:hroldar%the%strange
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_2:eq:50
+0.5 0 0 0 0 B
+0.3 0 0 0 0 EQUIP:daedric_longsword
+# (away to the fort and back by boat: out of sight, the colonists' anger passes; the fine is paid to the fort's guard
+# when he next calls the player over)
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:get_rid_of_him
+0.1 0 0 0 0 EXPECT:journal:CO_2:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_2:ge:90
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-door
+# Missing Supply Ship (CO_3): three days on, Carnius wants the supply ship's manifest (10); no ship came, says Falco
+# (20); Gamin saw a light to the north-west (30, 40); the wreck on the west coast (50) with three draugr and its one
+# survivor, Apronia Alfena, who is walked back to Falco (CO_3b); Falco (60); Carnius pays for another ship (70). Falco,
+# told, asks for the miner's picks it carried (CO_3a 10): the six from its hold are paid for (20)
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:3
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_3:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_3:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:gamin%girith
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:seen_anything
+0.1 0 0 0 0 EXPECT:journal:CO_3:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:seen_anything
+0.1 0 0 0 0 EXPECT:journal:CO_3:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-216500,178000,600
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_3:ge:50
+240 0 0 0 0 KILL:draugr_co_3
+240 0 0 0 0 KILL:draugr_co_3
+240 0 0 0 0 KILL:draugr_co_3
+# (the six miner's picks in the wreck's hold, for Falco's CO_3a below)
+120 0 0 0 0 DOORTO:Raven_Rock,_Supply_Ship
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Supply_Ship
+60 0 0 0 0 PICKUP:miner's%pick
+60 0 0 0 0 PICKUP:miner's%pick
+60 0 0 0 0 PICKUP:miner's%pick
+60 0 0 0 0 PICKUP:miner's%pick
+60 0 0 0 0 PICKUP:miner's%pick
+0.1 0 0 0 0 EXPECT:item:miner's%pick:ge:5
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+# (the sixth is in the cabin, on the chest: its own door on the deck)
+120 0 0 0 0 ACTIVATE:Ex_co_ship_cabindoor
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Supply_Ship
+60 0 0 0 0 PICKUP:miner's%pick
+0.1 0 0 0 0 EXPECT:item:miner's%pick:ge:6
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+60 0 0 0 0 ACTIVATE:apronia%alfena
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:go_with_you
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_3b:ge:10
+0.5 0 0 0 0 B
+# (back on foot with her: the planner's way along the coast)
+0.3 0 0 0 0 ESCORT:apronia%alfena
+60 0 0 0 0 WALKTO:@-216957,178399,142
+60 0 0 0 0 WALKTO:@-216576,178176,176
+60 0 0 0 0 WALKTO:@-215808,177664,256
+60 0 0 0 0 WALKTO:@-215040,176896,272
+60 0 0 0 0 WALKTO:@-214784,175872,280
+60 0 0 0 0 WALKTO:@-214016,175104,400
+60 0 0 0 0 WALKTO:@-213248,174336,344
+60 0 0 0 0 WALKTO:@-212992,174080,328
+60 0 0 0 0 WALKTO:@-211968,174080,328
+60 0 0 0 0 WALKTO:@-211200,173568,288
+60 0 0 0 0 WALKTO:@-210432,172800,288
+60 0 0 0 0 WALKTO:@-210176,172544,304
+60 0 0 0 0 WALKTO:@-209920,172288,328
+60 0 0 0 0 WALKTO:@-209152,171776,392
+60 0 0 0 0 WALKTO:@-208640,171008,392
+60 0 0 0 0 WALKTO:@-208384,170496,392
+60 0 0 0 0 WALKTO:@-208128,170240,400
+60 0 0 0 0 WALKTO:@-207360,169728,456
+60 0 0 0 0 WALKTO:@-207104,169472,504
+60 0 0 0 0 WALKTO:@-207104,168448,736
+60 0 0 0 0 WALKTO:@-206848,168192,864
+60 0 0 0 0 WALKTO:@-206080,167424,1200
+60 0 0 0 0 WALKTO:@-205312,166912,1216
+60 0 0 0 0 WALKTO:@-204544,166144,1216
+60 0 0 0 0 WALKTO:@-204288,165888,1216
+60 0 0 0 0 WALKTO:@-203776,165120,1224
+60 0 0 0 0 WALKTO:@-203520,164352,1088
+60 0 0 0 0 WALKTO:@-203264,164096,1040
+60 0 0 0 0 WALKTO:@-202613,163260,1057
+60 0 0 0 0 WALKTO:@-202146,162441,1167
+60 0 0 0 0 WALKTO:@-201753,162014,1142
+60 0 0 0 0 WALKTO:@-201403,161113,1112
+60 0 0 0 0 WALKTO:@-200547,160730,1057
+60 0 0 0 0 WALKTO:@-199651,160578,902
+60 0 0 0 0 WALKTO:@-199241,160143,839
+60 0 0 0 0 WALKTO:@-198094,160316,832
+60 0 0 0 0 WALKTO:@-197322,160351,869
+120 0 0 0 0 WALKTO:falco%galenus
+0.3 0 0 0 0 ESCORT:-
+4 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_3b:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:seen_anything
+0.1 0 0 0 0 EXPECT:journal:CO_3:ge:60
+0.3 0 0 0 0 TOPIC:pick_axes
+0.1 0 0 0 0 EXPECT:journal:CO_3a:ge:10
+0.3 0 0 0 0 TOPIC:pick_axes
+0.1 0 0 0 0 EXPECT:journal:CO_3a:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_3:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-ship
+# Making a Choice (CO_Choice): three days on, Falco asks the player's help against Carnius's schemes (22): aiding
+# him (CHOICE 1: 40, Falco's side from now on). Setting up Shop (CO_4): Falco would build a smith or a trader (20):
+# the smith (30); Carnius is told (50) and pays; the smithy goes up in some days
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:5
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:crossroads
+0.3 0 0 0 0 TOPIC:aiding_me
+0.1 0 0 0 0 EXPECT:journal:CO_Choice:ge:22
+0.3 0 0 0 0 TOPIC:aiding_me
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_Choice:eq:40+EXPECT:global:colonyside:eq:1
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:decision
+0.1 0 0 0 0 EXPECT:journal:CO_4:ge:20
+0.3 0 0 0 0 TOPIC:decision
+0.3 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_4:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:decision
+0.1 0 0 0 0 EXPECT:journal:CO_4:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-choice
+# The smithy goes up (CO_4 80 after four days; Carnius told, 100). Supply Route Problems (CO_5): Baro Egnatius, the
+# new ship's captain, won't carry the ore without an extra payment (20, 30); Apronia, whose escort Elberoth was his
+# partner, gives the player Elberoth's saber (40, 50); Falco: let Baro believe what he will (55); shown the saber,
+# Baro gives in (60); Falco pays (80)
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_4:ge:80
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:CO_4:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:extra_payment
+0.1 0 0 0 0 EXPECT:journal:CO_5:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:baro%egnatius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:extra_payment
+0.1 0 0 0 0 EXPECT:journal:CO_5:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:extra_payment
+0.1 0 0 0 0 EXPECT:journal:CO_5:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:apronia%alfena
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Elberoth
+0.3 0 0 0 0 TOPIC:his_saber
+0.1 0 0 0 0 EXPECT:journal:CO_5:ge:50+EXPECT:item:steel%saber_elberoth:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Elberoth
+0.1 0 0 0 0 EXPECT:journal:CO_5:ge:55
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (the saber shown: held drawn within his sight, 512)
+0.3 0 0 0 0 EQUIP:steel%saber_elberoth
+120 0 0 0 0 WALKTO:baro%egnatius
+0.05 0 0 0 0 X
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:baro%egnatius,saberout:eq:1
+120 0 0 0 0 ACTIVATE:baro%egnatius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:his_saber
+0.1 0 0 0 0 EXPECT:journal:CO_5:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:extra_payment
+0.1 0 0 0 0 EXPECT:journal:CO_5:ge:80
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-payment
+# To Catch a Thief (CO_6): ore goes missing; Falco suspects Uryn Maren (10) and gives the key to his house (20): the
+# chest there is empty (30); in the mine, Uryn, once the player is near, slips off to a storage room deep inside and
+# is followed there at a distance (talking to him on the way ends it: 100) (40, 50); caught, he names Carnius (60);
+# Falco (65); Carnius denies it (70); Uryn is found dead in his cell, Falco pays (80)
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:10
+0.3 0 0 0 0 TOPIC:Uryn_Maren
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:20+EXPECT:item:key_maryn:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Uryn_Maren's_House
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Uryn_Maren's_House
+60 0 0 0 0 ACTIVATE:com_chest_02_maryn
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:30
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Uryn_Maren
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+# (near him, unseen: he sets off; followed at a distance to the storage room)
+0.3 0 0 0 0 SNEAK:1
+120 0 0 0 0 WALKTO:@2438,1250,12873
+120 0 0 0 0 UNTIL:reflocal:uryn%maren,urynmove:ge:13
+120 0 0 0 0 WALKTO:@5600,3417,12791
+2 0 0 0
+0.3 0 0 0 0 SNEAK:0
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:50
+60 0 0 0 0 ACTIVATE:uryn%maren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:explanation
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Uryn_Maren
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:65
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Uryn_Maren
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Uryn_Maren
+0.1 0 0 0 0 EXPECT:journal:CO_6:ge:80
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-thief
+# Bar Brawl (CO_7): old Seler Favelnim picks fights in the bar (10); his wife Dralora says he is sick and tired of
+# feeling useless (30); he wants to die fighting (40); talked out of it, for his wife's sake (60); Falco rewards the
+# mercy (80)
+# (four days in Uryn's empty house: the colony's timer, ColonyState 10)
+120 0 0 0 0 DOORTO:Raven_Rock,_Uryn_Maren's_House
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Uryn_Maren's_House
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:10
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:Seler_Favelnim
+0.1 0 0 0 0 EXPECT:journal:CO_7:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:dralora%favelnim
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_husband
+0.1 0 0 0 0 EXPECT:journal:CO_7:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Bar
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Bar
+60 0 0 0 0 ACTIVATE:seler%favelnim
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:CO_7:ge:40
+0.5 0 0 0 0 B
+# (he fights with his fists: answered in kind until he is too tired to go on, 50)
+0.3 0 0 0 0 UNEQUIP:daedric_longsword
+30 0 0 0 0 STRIKE:seler%favelnim:3
+4 0 0 0
+30 0 0 0 0 UNTIL:journal:CO_7:ge:50
+0.3 0 0 0 0 EQUIP:daedric_longsword
+60 0 0 0 0 ACTIVATE:seler%favelnim
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:fight_me
+0.3 0 0 0 0 CHOICE:2
+0.3 0 0 0 0 CHOICE:2
+0.3 0 0 0 0 CHOICE:2
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:CO_7:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Seler_Favelnim
+0.1 0 0 0 0 EXPECT:journal:CO_7:ge:80
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-brawl
+# Discovery in the Mine (CO_8): the miners found a burial cavern of strange ice; Falco sends the player to Graring,
+# an outcast Nord by Lake Fjalding (10), whom Coventina Celata is sent to kill: she dies first (20); Graring tells of
+# Stalhrim and gives his Nordic pick (30); chipped from the mine's cavern (40) and shown to him, he will forge it (50);
+# Falco (60)
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_8:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-171000,202300,800
+240 0 0 0 0 KILL:coventina%celata
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_8:ge:20+EXPECT:refdying:graring:eq:0
+60 0 0 0 0 ACTIVATE:graring
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Stalhrim
+0.3 0 0 0 0 TOPIC:sacred
+0.3 0 0 0 0 TOPIC:misuse_it
+0.1 0 0 0 0 EXPECT:journal:CO_8:ge:30+EXPECT:item:BM%Nordic%Pick:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-198700,161900,1300
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+# (the Stalhrim sits up on the cavern wall: from below it, aimed at and chipped)
+180 0 0 0 0 WALKTO:@4764,6235,12032
+0.3 0 0 0 0 FACE:contain_bm_stalhrim_01:mid
+60 0 0 0 0 LOOT:contain_bm_stalhrim_01:ingred_raw_Stalhrim_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_8:ge:40
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 FLYTO:@-171000,202300,800
+60 0 0 0 0 ACTIVATE:graring
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Stalhrim
+0.1 0 0 0 0 EXPECT:journal:CO_8:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-198000,160700,1200
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.1 0 0 0 0 EXPECT:journal:CO_8:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-stalhrim
+# Race Against the Clock (CO_9): Falco's report must reach Carnius within the day's deadline (10); he is not at the
+# fort: Constans Atrius says he is out at Brodir Grove looking at sites (20; where is the colony's dice, reseeded
+# just before); handed over in time (50); Falco pays (60)
+# (the dice reseeded first: where Carnius goes is the colony's roll, and the route below is for one of its three)
+0.3 0 0 0 0 SEED:7
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+# (and again at the topic, in its own step: the people's rolls between the two differ by profile, and with the seed a step
+# before the topic the dice came out another way on a run's way here)
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 SEED:2+TOPIC:report
+0.1 0 0 0 0 EXPECT:global:carniusloc:eq:0
+0.1 0 0 0 0 EXPECT:journal:CO_9:ge:10+EXPECT:item:bk_colonyreport:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:constans%atrius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:report
+0.1 0 0 0 0 EXPECT:journal:CO_9:eq:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 FLYTO:@-182810,170400,1300
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:report
+0.1 0 0 0 0 EXPECT:journal:CO_9:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-198000,160700,1200
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:report
+0.1 0 0 0 0 EXPECT:journal:CO_9:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-report
+# Razing the Forest (CO_10): spriggans from a grove attack the colony in waves; each rises again twice (20, 30);
+# Unel Lloran, the builder, can't fell the grove's trees without getting at their roots (40); the miners met roots in
+# the old shaft (55); Unel is led there (60, 70): the roots drink from a pool, poisoned with five bittergreen
+# petals (80, 90); Falco (100)
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:Spriggans
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+240 0 0 0 0 KILL:bm_spriggan_co1
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co1
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co1
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co2
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co2
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co2
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co3
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co3
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co3
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co4
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co4
+4 0 0 0
+240 0 0 0 0 KILL:bm_spriggan_co4
+4 0 0 0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:30
+120 0 0 0 0 DOORTO:Raven_Rock,_Bar
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Bar
+60 0 0 0 0 ACTIVATE:unel%lloran
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:grove
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+# (the miners' word on the roots, 50, is skipped: finding the roots in the old shaft gives 55 anyway)
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+180 0 0 0 0 DOORTO:Raven_Rock,_Abandoned_Mine_Shaft
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Abandoned_Mine_Shaft
+120 0 0 0 0 WALKTO:act_ex_colony_root_1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:55
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+180 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 DOORTO:Raven_Rock,_Bar
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Bar
+60 0 0 0 0 ACTIVATE:unel%lloran
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:roots
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 ESCORT:unel%lloran
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+180 0 0 0 0 DOORTO:Raven_Rock,_Abandoned_Mine_Shaft
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Abandoned_Mine_Shaft
+120 0 0 0 0 WALKTO:act_ex_colony_root_4
+0.3 0 0 0 0 ESCORT:-
+20 0 0 0 0 UNTIL:journal:CO_10:ge:70
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:unel%lloran
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:roots
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:80
+0.3 0 0 0 0 TOPIC:roots
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:90
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+180 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:grove
+0.1 0 0 0 0 EXPECT:journal:CO_10:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-grove
+# Hiring Guards (CO_11): the colony needs guards; Falco asks the player to find volunteers among the colonists (10):
+# Afer Flaccus in the bar, Gratian Caerellius in the mine and Garnas Uvalen all accept (30, 40, 50); Falco outfits
+# the three (60)
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:hire_guards
+0.1 0 0 0 0 EXPECT:journal:CO_11:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Bar
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Bar
+60 0 0 0 0 ACTIVATE:afer%flaccus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:hire_guards
+0.1 0 0 0 0 EXPECT:global:aferguard:eq:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:garnas%uvalen
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:hire_guards
+0.1 0 0 0 0 EXPECT:global:garnasguard:eq:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+120 0 0 0 0 ACTIVATE:gratian%caerellius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:hire_guards
+0.1 0 0 0 0 EXPECT:global:gratianguard:eq:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+180 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:hire_guards
+0.3 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_11:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-guards
+# Protect Falco (CO_12): Falco fears for his life; the player stays by him (10): an archer, Baslod, shoots at him
+# (20) (killed at once here), and two more, Capiton Popillius and Cimber Valerius, come at Falco: both die
+# (100); Falco gives his Stalhrim shield (110)
+# (a few days for the guards' training, away from Raven Rock: the colony's timer moves only while the player is
+# elsewhere; rested in the fort's shrine, back by boat)
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:20
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:assassinated
+0.1 0 0 0 0 EXPECT:journal:CO_12:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (the archer is killed as soon as he shows himself, ten seconds on; then the two who follow)
+12 0 0 0
+120 0 0 0 0 KILL:baslod
+30 0 0 0 0 UNTIL:journal:CO_12:ge:20
+0.5 0 0 0 0 B
+240 0 0 0 0 KILL:capiton%popillius
+240 0 0 0 0 KILL:cimber%valerius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_12:eq:100
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assassinated
+0.1 0 0 0 0 EXPECT:journal:CO_12:eq:110+EXPECT:item:BM_ice_shield:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-falco
+# Under Siege (CO_13): days on, Carnius won't send the new silver swords; Falco sends the player to the fort for them
+# (1); Constans hands them over (5) and, the player away, 'Skaal' raiders strike the colony and hole up in the mine
+# (10); all ten die, and one, Toralf, carries a note (20): they were Carnius's mercenaries dressed as Skaal (30);
+# Carnius, confronted, fights (40) and dies (60)
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:21
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:CO_13:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:constans%atrius
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:CO_13:ge:5+EXPECT:item:silver%longsword:ge:3
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Skaal_attack
+0.1 0 0 0 0 EXPECT:journal:CO_13:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:Raven_Rock,_Mine
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine
+240 0 0 0 0 KILL:toralf_b
+240 0 0 0 0 KILL:audmund_b
+240 0 0 0 0 KILL:ormvard_b
+240 0 0 0 0 KILL:valgeir_b
+240 0 0 0 0 KILL:bryngrim_b
+240 0 0 0 0 KILL:balfring
+240 0 0 0 0 KILL:eifid
+240 0 0 0 0 KILL:fjorkvar
+240 0 0 0 0 KILL:vigunn
+240 0 0 0 0 KILL:alfbrand_b
+60 0 0 0 0 LOOT:toralf_b:bk_colony_toralf
+0.1 0 0 0 0 EXPECT:global:colonynord:ge:10+EXPECT:item:bk_colony_toralf:ge:1
+180 0 0 0 0 DOORTO:Raven_Rock,_Mine_Entrance
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Mine_Entrance
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Raven_Rock
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Skaal_attack
+0.1 0 0 0 0 EXPECT:journal:CO_13:ge:20
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:CO_13:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:carnius%magius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Skaal_attack
+0.1 0 0 0 0 EXPECT:journal:CO_13:ge:40
+240 0 0 0 0 KILL:carnius%magius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_13:ge:60
+0.3 0 0 0 0 SAVE:uber-bm-colony-siege
+# The Factor's Estate (CO_Estate): Carnius gone, the colony is the player's to run; three days on, Falco has the old
+# plans for the Factor's estate (four days on; ColonyState 30) (10); Aldam Berendus has torches at three sites (20) and follows the
+# player to one (30): the west one, chosen (40); built while the player is away (50)
+# (Falco hears of Carnius's death: the player is the Factor now, ColonyState 23; four days away from the colony)
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:23
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:colonystate:eq:30
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 ACTIVATE:falco%galenus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assignment
+0.3 0 0 0 0 TOPIC:estate
+0.1 0 0 0 0 EXPECT:journal:CO_Estate:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 ACTIVATE:aldam%berendus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:estate
+0.1 0 0 0 0 EXPECT:journal:CO_Estate:ge:20
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:aldam%berendus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:estate
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_Estate:ge:30
+0.5 0 0 0 0 B
+0.3 0 0 0 0 ESCORT:aldam%berendus
+180 0 0 0 0 WALKTO:colony_torch_1
+0.3 0 0 0 0 ESCORT:-
+6 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:aldam%berendus,torch:eq:1
+60 0 0 0 0 ACTIVATE:aldam%berendus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:estate
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:CO_Estate:ge:40
+0.5 0 0 0 0 B
+# (built in some days, the player away: at the fort's shrine)
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_Estate:ge:50
+0.3 0 0 0 0 SAVE:uber-bm-colony-estate
+# In Search of the Falmer (BM_Falmer): Athellor in the Raven Rock bar believes he is of Falmer blood (10, 20, 30) and
+# hires the player to search Solstheim's old places (50); "The Fall of the Snow Prince" in Jolgeirr Barrow is the proof
+# he wanted (100) (the bar stands once the colony has grown: after the estate here)
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 ACTIVATE:basks_in_the_sun
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven
+6 0 0 0
+120 0 0 0 0 DOORTO:Raven_Rock,_Bar
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Bar
+60 0 0 0 0 ACTIVATE:athellor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:some_research
+0.3 0 0 0 0 TOPIC:absurd_notion
+0.3 0 0 0 0 TOPIC:Elven_ancestry
+0.1 0 0 0 0 EXPECT:journal:BM_Falmer:ge:30
+0.3 0 0 0 0 TOPIC:hire_an_explorer
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Falmer:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-192987,183850,1800
+120 0 0 0 0 DOORTO:Solstheim,_Jolgeirr_Barrow
+10 0 0 0 0 UNTIL:cell:Solstheim,_Jolgeirr_Barrow
+180 0 0 0 0 PICKUP:bk_snowprince
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:item:bk_snowprince:ge:1
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-198000,160700,1200
+120 0 0 0 0 DOORTO:Raven_Rock,_Bar
+10 0 0 0 0 UNTIL:cell:Raven_Rock,_Bar
+60 0 0 0 0 ACTIVATE:athellor
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_Falmer:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-colony-falmer

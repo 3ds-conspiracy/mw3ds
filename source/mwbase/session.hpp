@@ -70,6 +70,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void giveItems(const std::vector<std::pair<int, std::string>>& items);
 	void updateAmbience();
 	void updateLoopSounds();
+	void dropDeadLoops();
 	void stopLoopSounds();
 	void updateWeatherEffects(float dt);
 	void updateSky();
@@ -238,6 +239,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void say(int ref, const std::string& file, const std::string& text) override;
 	bool sayDone(int ref) override;
 	void playSound(int ref, const std::string& soundId, float volume = 1.0f, float pitch = 1.0f, bool script = false) override;
+	// One of a family of numbered sounds at random ("wolfhit": WolfHit1..3; OpenMW's Store<Sound>::searchRandom)
+	void playRandomSound(int ref, const std::string& prefix, float volume = 1.0f);
 	void loopSound(int ref, const std::string& soundId, bool start, float volume = 1.0f, float pitch = 1.0f) override;
 	void streamMusic(const std::string& file) override;
 	bool soundPlaying(int ref, const std::string& soundId) override;
@@ -326,16 +329,16 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	// A door's or container's lock and trap, in OpenMW's order: 0 stays shut (locked, no key), 1 its trap went off,
 	// 2 free to open
 	int lockGate(int ref, const char* lockedSound);
-	bool werewolfRefused();                       // a werewolf is refused by everything but doors: the message
+	bool werewolfRefused(int ref = -1);           // a werewolf is refused by everything but doors: the message
 	bool readRefused();                           // a book in the pack can't be read in a fight: the message
 	// Beast races and broken pieces: OpenMW's canBeEquipped: 0 refused (message in why), 1 ok, 2 a two-hander, 3 a shield with one
 	int canEquip(const InventoryItem& it, std::string* why);
 	bool testSneak = false;                       // SNEAK:1: the player sneaks (tests)
-	bool werewolf = false;                        // WEREWOLF:1: the player is a werewolf (refusals only: no other change of form)
 	void openScreen(Screen s);
 	void closeScreen();
 	void mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist, bool inverse = false);
 	void greetings(float dt);
+	void werewolfWitnesses();                     // the player just changed into a werewolf: who saw it
 	std::string targetLabel(int ref);
 	std::vector<std::string> targetPopupLines(int ref);    // the name over the crosshair, wrapped to fit the top screen
 	std::vector<std::string> targetPromptLines(int ref, float* scale = nullptr);   // "A: Open <name>" on the bottom screen: one or two lines, at that scale

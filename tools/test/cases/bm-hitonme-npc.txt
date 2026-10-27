@@ -1,0 +1,20 @@
+# start: Seyda Neen
+# data: bloodmoon
+# HitOnMe answers for blows from anyone, not just the player's (OpenMW's onHit sets the last hit object whoever the
+# attacker is). Valbrandr Barrow's draugr asks HitOnMe Solvistapp, Ingmar's axe, on every hit it takes: with only the
+# player's blows counted, Ingmar's own killing blows read as the player's interference (BM_Ingmar 40).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 JOURNAL:BM_Ingmar:30
+0.3 0 0 0 0 TP:-159700:167950:1200:0
+3 0 0 0
+0.3 0 0 0 0 CON:"ingmar"->aifollow%player%0%0%0%0
+60 0 0 0 0 WALKTO:ingmar
+120 0 0 0 0 DOORTO:Solstheim,_Valbrandr_Barrow
+10 0 0 0 0 UNTIL:cell:Solstheim,_Valbrandr_Barrow
+0 0 0 0 0 SETUP-END
+60 0 0 0 0 WALKTO:@4224,4000,16000
+8 0 0 0
+30 0 0 0 0 WALKTO:@4224,4330,16000
+120 0 0 0 0 UNTIL:journal:BM_Ingmar:ge:40
+0.1 0 0 0 0 EXPECT:journal:BM_Ingmar:eq:50

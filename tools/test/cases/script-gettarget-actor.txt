@@ -1,0 +1,25 @@
+# start: Seyda Neen
+# data: bloodmoon
+# GetTarget naming another actor is true while that actor is the one fought (OpenMW: the combat target's id), not only
+# for the player: Falco Galenus fighting Baslod moves Carnius's assassination plot on (CO_12a 30: ColonyAssassin waits
+# for "Falco Galenus"->GetTarget "Baslod")
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 SETGLOBAL:colonyside:2
+0.3 0 0 0 0 SETGLOBAL:colonystate:20
+0.3 0 0 0 0 JOURNAL:CO_12a:10
+0.3 0 0 0 0 GOTO:Raven_Rock
+4 0 0 0 0
+0.3 0 0 0 0 STARTSCRIPT:ColonyAssassinItems
+0.3 0 0 0 0 STARTSCRIPT:ColonyAssassin
+2 0 0 0 0
+0.3 0 0 0 0 GIVE:steel%longbow_carnius
+0.3 0 0 0 0 GIVE:steel%arrow_carnius
+0.3 0 0 0 0 EQUIP:steel%longbow_carnius
+0.3 0 0 0 0 TP:-201759:160816:1700:0
+3 0 0 0 0
+0.05 0 0 0 0 X
+3 0 0 0 0
+0.1 0 0 0 0 EXPECT:journal:CO_12a:ge:20
+60 0 0 0 0 UNTIL:journal:CO_12a:ge:30
+0.1 0 0 0 0 EXPECT:journal:CO_12a:eq:30

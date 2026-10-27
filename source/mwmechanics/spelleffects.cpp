@@ -17,7 +17,11 @@ static const char* summonCreature(int e)
 		"atronach_frost_summon", "atronach_storm_summon" };
 	if (e >= 102 && e <= 116)
 		return ids[e - 102];
-	// (137: Tribunal's Summon Fabricant, sMagicFabricantID)
+	// (137: Tribunal's Summon Fabricant, sMagicFabricantID; 138-140: Bloodmoon's Summon Wolf, Bear and Bonewolf,
+	// sMagicCreature01ID-03ID as Bloodmoon.esm sets them; OpenMW reads the same settings)
+	static const char* bm[] = { "bm_wolf_grey_summon", "bm_bear_black_summon", "bm_wolf_bone_summon" };
+	if (e >= 138 && e <= 140)
+		return bm[e - 138];
 	return e == 134 ? "centurion_sphere_summon" : e == 137 ? "fabricant_summon" : nullptr;
 }
 
@@ -425,7 +429,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 				logf("magic: %s resists %d", r.id.c_str(), e.effect);
 				if (!r.dead && byPlayer && !friendlyHit(ri))
 				{
-					bool peaceful = r.ai != AI_COMBAT;
+					bool peaceful = r.ai != AI_COMBAT && r.duelFoe < 0;
 					makeHostile(ri);
 					if (peaceful && !def.creature)
 						crimeSeen(CRIME_ASSAULT, 0, ri), reportCrime(ri, kBountyAssault);
@@ -555,7 +559,11 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 		timed(fmaxf(1.0f, dur));              // (their disposition reads it while it lasts: OpenMW's Charm)
 		return;
 	case EFF_COMMAND_HUMANOID: case EFF_COMMAND_CREATURE:
-		// Follows the player for the spell's duration (game hours from its seconds)
+		// Follows the player for the spell's duration (game hours from its seconds); the Humanoid one (odd id) commands
+		// people, the Creature one creatures: on the other kind it lasts and does nothing (OpenMW)
+		timed(fmaxf(1.0f, dur));
+		if ((e.effect & 1) == (def.creature ? 1 : 0))
+			return;
 		r.ai = AI_IDLE;
 		r.aiPackage = AIPKG_FOLLOW;
 		r.aiTarget = "player";
@@ -571,8 +579,11 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 		r.soulTrapUntil = w.time + fmaxf(1.0f, dur);
 		break;
 	default:
-		if ((e.effect >= EFF_WEAKNESS_FIRE && e.effect <= EFF_WEAKNESS_NORMAL_WEAPONS)
-			|| (e.effect >= EFF_RESIST_FIRE && e.effect <= EFF_RESIST_PARALYSIS))
+		// (Burden, Feather, the Disintegrates and Damage Attribute / Skill last on them too, as OpenMW keeps every
+		// effect of a spell active for its duration; what they do to a person's gear and load isn't kept here)
+		if ((e.effect >= EFF_WEAKNESS_FIRE && e.effect <= EFF_DISINTEGRATE_ARMOR)
+			|| (e.effect >= EFF_RESIST_FIRE && e.effect <= EFF_RESIST_PARALYSIS) || e.effect == EFF_BURDEN
+			|| e.effect == EFF_FEATHER || e.effect == EFF_DAMAGE_ATTRIBUTE || e.effect == EFF_DAMAGE_SKILL)
 			timed(fmaxf(1.0f, dur));
 		break;
 	}
@@ -580,7 +591,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 	// player it is a friendly hit, as a blow is)
 	if (harmful(e.effect) && !r.dead && byPlayer && !friendlyHit(ri))
 	{
-		bool peaceful = r.ai != AI_COMBAT;
+		bool peaceful = r.ai != AI_COMBAT && r.duelFoe < 0;
 		makeHostile(ri);
 		if (peaceful && !def.creature)
 			crimeSeen(CRIME_ASSAULT, 0, ri), reportCrime(ri, kBountyAssault);

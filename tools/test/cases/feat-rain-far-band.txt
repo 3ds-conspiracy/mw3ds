@@ -1,4 +1,6 @@
 # start: Seyda Neen
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS profile's rain bands)
 # A second band of far rain on a New 3DS (spec/performance-tradeoffs.md): behind the band 450 out, a fainter, narrower
 # one 900 out, rain behind rain. Balmora at noon in rain: both bands drawn, 32 quads each; indoors none
 3 0 0 0 0 MSG

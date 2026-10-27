@@ -1,0 +1,30 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: new
+# bm-weather-snow: Bloodmoon's snow falls (it drew nothing). In the Isinfier Plains at noon in snow: flake sheets drawn,
+# as many as ash's flakes on a New 3DS (240: spec/performance-tradeoffs.md), no rain and no clouds, slowly
+# (Snow Gravity Scale 0.1: a wind hardly felt), no ambient loop, the cloud picture and fog of [Weather Snow]; a storm it
+# isn't (no slower walking either way). Indoors none.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Raven_Rock
+6 0 0 0
+0.3 0 0 0 0 TP:-184320:184320:1500:0
+8 0 0 0
+0.3 0 0 0 0 SETWEATHER:8+HOUR:12+HIDEACTORS:4000
+3 0 0 0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 CON:GetCurrentWeather
+0.1 0 0 0 0 EXPECT:conval:eq:8+EXPECT:wprecip:eq:1+EXPECT:wstorm:eq:0+EXPECT:cloudtex:8:eq:1
+0.1 0 0 0 0 EXPECT:precip:snow:eq:240+EXPECT:precip:flakes:eq:240+EXPECT:precip:streaks:eq:0+EXPECT:precip:dust:eq:0
+0.1 0 0 0 0 EXPECT:wloopis::eq:1
+2 0 1 0
+0.1 0 0 0 0 SNAP:loadspeed
+0.3 0 0 0 0 TP:-184320:184320:1500:180
+3 0 0 0
+2 0 1 0
+0.1 0 0 0 0 EXPECT:loadspeed:eq:@0
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+6 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:snow:eq:0+EXPECT:precip:flakes:eq:0

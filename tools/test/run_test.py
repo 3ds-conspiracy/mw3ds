@@ -5,16 +5,20 @@
     python tools/test/run_test.py ui-g1-g9 --native --shots build/shots/ui   (each SHOT step saved there as a PNG of both screens)
     python tools/test/run_test.py perf-balmora --old3ds       (Azahar as an Old 3DS; natively, the game takes its Old 3DS profile)
 --saves <folder>: keep test_*.sav checkpoints there between native runs. --exe: another native build (build.py with
-MW3DS_NATIVE_BUILD). A case with "# data: tribunal" in its first lines runs on the Tribunal data (out/tribunal).
+MW3DS_NATIVE_BUILD). A case with "# data: tribunal" in its first lines runs on the Tribunal data (out/tribunal) unless
+--data already holds Tribunal (out/tb); "# data: bloodmoon" on the Tribunal + Bloodmoon data (out/tb) unless --data
+already holds Bloodmoon; "# data: vanilla" is skipped on data with an add-on.
 --native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with --draw.
 The last line is the verdict, "RESULT: PASS|FAIL (...)".
 """
 import argparse
+import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+import zlib
 from collections import Counter
 from pathlib import Path
 
@@ -35,6 +39,21 @@ def count(lines, pattern):
     return sum(1 for ln in lines if rx.search(ln))
 
 
+def data_addons(data):
+    """The add-ons a data folder was converted with (game.json "addons": "tribunal", "bloodmoon"); without a
+    game.json, guessed from the folder's name (out/tribunal, out/data-tribunal-bloodmoon, out/tb)."""
+    path = Path(data) if Path(data).is_absolute() else ROOT / data
+    try:
+        raw = (path / "game.json").read_bytes()
+        # (zlib-packed behind an 8-byte "MWZ1" + length header, as level.py writes it)
+        return set(json.loads(zlib.decompress(raw[8:]) if raw[:4] == b"MWZ1" else raw).get("addons", []))
+    except (OSError, ValueError, zlib.error):
+        name = path.name.lower()
+        if name == "tb":
+            return {"tribunal", "bloodmoon"}
+        return {a for a in ("tribunal", "bloodmoon") if a in name}
+
+
 def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=False, native=False, sd="", exe="",
         saves="", draw=False, shots="", old3ds=False, pattern=DEFAULT_PATTERN, stereo=False):
     """Runs one case; returns the lines to print (the verdict last)."""
@@ -50,18 +69,27 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
         if m:
             start = m.group(1)
     # "# data: tribunal" in its first lines: a case of the Tribunal add-on, run on that conversion (MW3DS_TRIBUNAL_DATA,
-    # else out/tribunal) whatever --data says
+    # else out/tribunal) unless --data holds Tribunal already (out/tb: Tribunal + Bloodmoon). "# data: bloodmoon": a
+    # case of the Bloodmoon add-on, run on the Tribunal + Bloodmoon data (MW3DS_BLOODMOON_DATA, else out/tb) unless
+    # --data holds Bloodmoon already
     tribunal_case = any(re.match(r"^#\s*data:\s*tribunal\s*$", ln) for ln in inputs[:5])
-    if tribunal_case:
+    bloodmoon_case = any(re.match(r"^#\s*data:\s*bloodmoon\s*$", ln) for ln in inputs[:5])
+    addons = data_addons(data)
+    if bloodmoon_case and "bloodmoon" not in addons:
+        data = os.environ.get("MW3DS_BLOODMOON_DATA") or "out/tb"
+        addons = data_addons(data)
+    elif tribunal_case and "tribunal" not in addons:
         data = os.environ.get("MW3DS_TRIBUNAL_DATA") or "out/tribunal"
-    on_tribunal = "tribunal" in str(data).replace("\\", "/").lower()
-    # "# data: vanilla": a case about the game without the add-on (trib-vanilla-off): skipped on the Tribunal data
-    if on_tribunal and any(re.match(r"^#\s*data:\s*vanilla\s*$", ln) for ln in inputs[:5]):
+        addons = data_addons(data)
+    on_tribunal = "tribunal" in addons
+    # "# data: vanilla": a case about the game without the add-ons (trib-vanilla-off): skipped on data with one
+    if addons and any(re.match(r"^#\s*data:\s*vanilla\s*$", ln) for ln in inputs[:5]):
         return [f"== {test}", "RESULT: PASS (skipped: vanilla data only)"]
     # A vanilla case on the Tribunal data plays as someone the Dark Brotherhood has already given up on (TR_DBAttack 50,
     # dbattackScript's end): the add-on's assassins otherwise strike at the first rest, and a vanilla case can't rest
-    # with one about ("enemies are nearby")
-    if on_tribunal and not tribunal_case:
+    # with one about ("enemies are nearby"). A Bloodmoon case is written for the Tribunal + Bloodmoon data and keeps
+    # the attacks, as a Tribunal case does
+    if on_tribunal and not tribunal_case and not bloodmoon_case:
         # (a token on the case's first step, not a step of its own: the run's timeline stays the vanilla one's)
         first = next((i for i, ln in enumerate(inputs) if ln.strip() and not ln.lstrip().startswith("#")), None)
         if first is not None:
@@ -80,6 +108,7 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
     missing = [str(n.relative_to(ROOT)) for n in needs if not n.is_file()]
     if missing:
         return [f"== {test}", "RESULT: PASS (skipped: needs " + ", ".join(missing) + ")"]
+    exit_code = None
     if native:
         # The game built for the PC (tools/test/native/build.py): same case file, same log lines, no emulator
         # --sd: its own SD folder, so runs can go in parallel. --sd, --saves and --exe are relative to the repo, as the
@@ -114,6 +143,7 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
             proc.wait(timeout=wait)
         except subprocess.TimeoutExpired:
             mwtools.kill_tree(proc)
+        exit_code = proc.returncode
         if saves:
             for f in sd_app.glob("test_*"):
                 shutil.copy2(f, saves)
@@ -132,7 +162,8 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
     out += [ln for ln in lines if rx.search(ln)]
     ended = any("autoinput: end" in ln.lower() for ln in lines)
     if not ended:
-        out.append("(did not reach the end)")
+        # (the native build's exit code: a crash its handler could not report, such as a heap check's fast fail, shows here)
+        out.append("(did not reach the end" + (f", exit code {exit_code & 0xffffffff:#x}" if exit_code not in (None, 0) else "") + ")")
     # Memory faults the emulator saw (reads / writes of unmapped memory: a crash on hardware), by code address
     faults = []
     if not native:

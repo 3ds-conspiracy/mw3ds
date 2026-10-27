@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# A talk left open under another screen (a guard's crime greeting that comes up while the player rests, the rest menu
+# over it) is closed with that screen: the dialogue's state does not stay open with no screen, which held the player
+# still (nothing under the crosshair, no movement) and failed the colony's walk out of the Imperial Cult Shrine on an Old 3DS
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+60 0 0 0 0 ACTIVATE:fargoth
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:talking:eq:1
+0.3 0 0 0 0 SCREEN:rest
+0.3 0 0 0 0 SCREEN:none
+0.1 0 0 0 0 EXPECT:screen:none
+0.1 0 0 0 0 EXPECT:menuopen:eq:0

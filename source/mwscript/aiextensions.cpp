@@ -30,8 +30,17 @@ std::optional<float> aiExtensions(Ctx& c, const Node& n, World& w, bool onPlayer
 		}
 		return 0.0f;
 	case F_GETTARGET:
-		return r && r->actor >= 0 && lower(argStr(c, n, 0)) == "player" && (r->ai == AI_COMBAT || c.host.talkingTo(ref))
-			? 1.0f : 0.0f;
+	{
+		// The id of the one they fight (OpenMW: the combat target's); the player also while they greet the player.
+		// Another actor fought is a StartCombat foe (Falco Galenus at Baslod, ColonyAssassin)
+		std::string t = lower(argStr(c, n, 0));
+		if (!r || r->actor < 0)
+			return 0.0f;
+		if (t == "player")
+			return r->ai == AI_COMBAT || c.host.talkingTo(ref) ? 1.0f : 0.0f;
+		int foe = r->duelFoe;
+		return r->ai != AI_COMBAT && foe >= 0 && !w.refs[foe].dead && w.refs[foe].idLower == t ? 1.0f : 0.0f;
+	}
 	case F_GETLOS: case F_GETLINEOFSIGHT: case F_GETDETECTED:
 	{
 		std::string t = lower(argStr(c, n, 0));

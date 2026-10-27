@@ -15,6 +15,34 @@
 #include "mwworld/worldimp.hpp"
 #include "components/interpreter/interpreterhelpers.hpp"
 
+// Get / Set / Mod + a magic effect stat (OpenMW's Get / Set / ModMagicEffect): Get reads the effect's magnitude on the
+// player or the actor less its opposite's (Resist Fire less Weakness to Fire; CastPenalty is Sound's, negative), Resist
+// Fire, Frost and Shock with that element's shield added; Mod adds to the part scripts set (it never runs out: saved,
+// gone with Resurrect), Set moves that part so Get reads the value. Not an actor: 0, nothing changes
+static float effectStat(Ctx& c, int op, int stat, bool player, Ref* r, int ref, float arg)
+{
+	World& w = c.w;
+	if (!player && r->actor < 0)
+		return 0.0f;
+	auto total = [&](int e) { return e < 0 ? 0.0f : player ? w.effectTotal(e) : w.actorEffect(ref, e); };
+	int pos = kEffectStatIds[stat][0], neg = kEffectStatIds[stat][1];
+	auto now = [&]() {
+		float v = total(pos) - total(neg);
+		if (pos == EFF_RESIST_FIRE) v += total(EFF_FIRE_SHIELD);
+		if (pos == EFF_RESIST_SHOCK) v += total(EFF_LIGHTNING_SHIELD);
+		if (pos == EFF_RESIST_FROST) v += total(EFF_FROST_SHIELD);
+		return (float)(int)v;
+	};
+	if (op == 0)
+		return now();
+	int delta = (int)arg - (op == 1 ? (int)now() : 0);
+	if (pos >= 0)
+		w.modScriptEffect(player ? -1 : ref, pos, delta);
+	else
+		w.modScriptEffect(player ? -1 : ref, neg, -delta);
+	return 0.0f;
+}
+
 bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* out)
 {
 	World& w = c.w;
@@ -132,6 +160,12 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 	}
 	if (ratio || op == 3)
 		return false;
+	for (int i = 0; i < 24; i++)
+		if (statName == kEffectFuncs[i])
+		{
+			*out = effectStat(c, op, i, player, r, ref, arg);
+			return true;
+		}
 	int attr = -1, skill = -1;
 	for (int i = 0; i < 8; i++)
 		if (statName == kAttrFuncs[i])
@@ -197,14 +231,28 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 	{
 	// GetStat: a placeholder in the original game, always 0 (OpenMW's GetStat; Tribunal's Gedna Relvel asks it for Level)
 	case F_GETSTAT: return 0.0f;
-	// GetChameleon / GetParalysis: the magnitude of that effect on the player or the reference (OpenMW's GetMagicEffect)
+	// GetChameleon / GetParalysis: the magnitude of that effect on the player or the reference (OpenMW's GetMagicEffect,
+	// as the rest of the magic effect stats: statFunction)
 	case F_GETCHAMELEON: case F_GETPARALYSIS:
-	{
-		int e = n.func == F_GETCHAMELEON ? EFF_CHAMELEON : EFF_PARALYZE;
-		if (onPlayer || !r)
-			return w.effectTotal(e);
-		return r->actor >= 0 ? w.actorEffect(ref, e) : 0.0f;
-	}
+		return effectStat(c, 0, n.func == F_GETCHAMELEON ? 11 : 20, onPlayer || !r, r, ref, 0.0f);
+	// Bloodmoon's werewolf: BecomeWerewolf / UndoWerewolf change the player or a person (not a creature), IsWerewolf
+	// asks, GetWerewolfKills is the player's kills since the change, SetWerewolfAcrobatics marks the form's Acrobatics
+	// asked for (OpenMW's statsextensions.cpp; World::setWerewolf)
+	case F_BECOMEWEREWOLF: case F_UNDOWEREWOLF:
+		if (onPlayer || r)
+			w.setWerewolf(onPlayer || !r ? -1 : ref, n.func == F_BECOMEWEREWOLF);
+		return 0.0f;
+	case F_ISWEREWOLF:
+		return (onPlayer || r) && w.isWerewolf(onPlayer || !r ? -1 : ref) ? 1.0f : 0.0f;
+	case F_GETWEREWOLFKILLS:
+		return (float)w.stats.werewolfKills;
+	case F_SETWEREWOLFACROBATICS:
+		if ((onPlayer || !r) && w.stats.werewolf && !w.stats.werewolfAcrobatics)
+		{
+			w.stats.werewolfAcrobatics = true;
+			w.refreshStats();                  // (the form's Acrobatics: recomputeStats)
+		}
+		return 0.0f;
 	// An object's health is the item's condition (0 for things that don't wear)
 	case F_GETHEALTH:
 		return onPlayer || !r ? w.stats.health : r->actor >= 0 ? r->health : r->obj ? (float)r->obj->health : 0.0f;
@@ -232,13 +280,17 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 	case F_RESURRECT:
 		if (onPlayer && w.stats.health <= 0.0f)
 			w.stats.health = w.stats.healthMax;
-		// A dead actor comes back as new: what scripts changed on it is gone
+		// A dead actor comes back as new: what scripts changed on it is gone (OpenMW drops its stats: its health back
+		// to the record's, the magic effect stats scripts set, the werewolf), its size stays (a spriggan grows)
 		if (r && r->actor >= 0 && r->dead)
 		{
 			r->dead = r->died = false;
 			r->statDelta.clear();
 			r->spells.clear();
 			r->noSpells.clear();
+			r->scriptEffects.clear();
+			r->werewolf = false;
+			r->healthMax = (float)std::max(w.game.actors[r->actor].health, 1);
 			r->health = r->healthMax;
 			r->ai = AI_IDLE;
 			if (r->anim >= 0)

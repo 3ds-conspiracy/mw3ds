@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# data: vanilla
+# Position on someone outdoors moves them to the exterior cell at the new spot (OpenMW's World::moveObject: an
+# exterior reference changes cell with its position; only one in an interior stays in it). Bloodmoon's werewolf attack
+# brings Korst Wind-Eye from Lake Fjalding to Skaal Village with Position; he stayed in the lake's cell, out of reach.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:refcell:fargoth,Seyda%Neen:eq:1
+0.3 0 0 0 0 CON:"fargoth"->position%-20000%-12000%1000%0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refcell:fargoth,Balmora:eq:1+EXPECT:refcell:fargoth,Seyda%Neen:eq:0

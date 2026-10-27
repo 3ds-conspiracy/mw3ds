@@ -394,7 +394,22 @@ std::optional<bool> numberOfRules(Session& s, const std::string& what, const std
 	if (what == "refexists")             // the creature the test placed (even once cleared), else any placed one with that id
 	{
 		if (s.testPlaced >= 0)
-			v = w.refs[s.testPlaced].cell >= 0 && !w.refs[s.testPlaced].pickedUp ? 1.0f : 0.0f;
+		{
+			// The creature the test placed: its slot while that still holds it; once an unloaded cell's slots were given out
+			// again (the Old 3DS's eviction) it is where its cell's own objects now put it, or, one placed in play, waiting
+			// with its cell
+			const std::string want = lower(spaced(arg));
+			const Ref* p = s.testPlaced < (int)w.refs.size() && w.refs[s.testPlaced].idLower == want ? &w.refs[s.testPlaced] : nullptr;
+			if (!p && !s.testPlacedCell.empty())
+				for (const LevelCell& lc : w.cells)
+					if (lc.file == s.testPlacedCell && lc.refsLoaded && s.testPlacedLocal >= 0 && s.testPlacedLocal < lc.refCount
+						&& w.refs[lc.refBase + s.testPlacedLocal].idLower == want)
+						p = &w.refs[lc.refBase + s.testPlacedLocal];
+			bool waiting = false;
+			for (const World::PendingSpawn& ps : w.pendingSpawns)
+				waiting |= ps.id == want;
+			v = (p && p->cell >= 0 && !p->pickedUp) || (!p && waiting) ? 1.0f : 0.0f;
+		}
 		else
 		{
 			int ri = w.findRefAnywhere(spaced(arg));

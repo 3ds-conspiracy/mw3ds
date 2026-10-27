@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: old
+# bm-o3ds-snow: an Old 3DS draws half the snow a New 3DS does (120 flake sheets against 240: spec/
+# performance-tradeoffs.md), and a blizzard's flakes and clouds the same way (its clouds as ash's: 24).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Raven_Rock
+6 0 0 0
+0.3 0 0 0 0 TP:-184320:184320:1500:0
+8 0 0 0
+0.3 0 0 0 0 SETWEATHER:8+HOUR:12+HIDEACTORS:4000
+3 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:snow:eq:120+EXPECT:precip:dust:eq:0
+0.3 0 0 0 0 SETWEATHER:9
+3 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:precip:snow:eq:120+EXPECT:precip:blizzard:eq:24

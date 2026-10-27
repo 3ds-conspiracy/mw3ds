@@ -167,6 +167,12 @@ def guess_encoding(strings):
     return "win1252"
 
 
+def addon_suffix(tribunal, bloodmoon):
+    """What the add-ons add to the data folder's and CIA's names (build_cia.py, make_cia.names): "-tribunal",
+    "-bloodmoon", "-tribunal-bloodmoon"."""
+    return ("-tribunal" if tribunal else "") + ("-bloodmoon" if bloodmoon else "")
+
+
 def sample_lines(strings, encoding, n=3):
     """A few game strings with letters outside ASCII (they show a wrong code page at once), else any."""
     pick = [s for s in strings if any(b >= 0x80 for b in s) and len(s) < 60][:n] or [s for s in strings if len(s) < 60][:n]
@@ -331,6 +337,16 @@ class Wizard:
         self.tribunal_note.grid(row=row, column=1, columnspan=2, sticky="w", padx=28)
         row += 1
 
+        # Bloodmoon: the add-on, when Bloodmoon.esm and Bloodmoon.bsa are in Data Files (build_cia.py --bloodmoon)
+        self.bloodmoon = tk.BooleanVar(value=self.settings.get("bloodmoon", False))
+        self.bloodmoon_check = ttk.Checkbutton(f, text="Add Bloodmoon (Solstheim, its quests and items)",
+                                               variable=self.bloodmoon)
+        self.bloodmoon_check.grid(row=row, column=1, columnspan=2, sticky="w", **pad)
+        row += 1
+        self.bloodmoon_note = ttk.Label(f, text="", foreground="#555", wraplength=640, justify="left")
+        self.bloodmoon_note.grid(row=row, column=1, columnspan=2, sticky="w", padx=28)
+        row += 1
+
         self.pc_saves = tk.BooleanVar(value=self.settings.get("pc_saves", True))
         self.saves_check = ttk.Checkbutton(f, text="Bring my PC saves across (the .ess files in Morrowind's Saves "
                                                    "folder)", variable=self.pc_saves)
@@ -407,7 +423,7 @@ class Wizard:
         s = {"morrowind": self.morrowind.get(), "console": self.console.get(), "language": self.language.get(),
              "plugins": self.chosen_plugins(), "mods": self.mods.get(), "output_kind": self.output_kind.get(),
              "out_dir": self.out_dir.get(), "work": self.work.get(), "pc_saves": self.pc_saves.get(),
-             "tribunal": self.tribunal.get()}
+             "tribunal": self.tribunal.get(), "bloodmoon": self.bloodmoon.get()}
         try:
             SETTINGS.write_text(json.dumps(s, indent=2), encoding="utf-8")
         except OSError:
@@ -463,6 +479,7 @@ class Wizard:
                 self.plugins.selection_set(i)
         self.show_plugin_count()
         self.show_tribunal(folder)
+        self.show_bloodmoon(folder)
         n = len(pc_save_files(folder))
         self.saves_note.config(text=(f"{n} found. " if n else "None found in Saves. ") +
                                "They go to 3ds\\mw3ds\\saves for the SD card: your character, inventory, journal, "
@@ -478,6 +495,16 @@ class Wizard:
         self.tribunal_note.config(text="Saves made with it need a Tribunal build to load; a game without it plays on "
                                        "with it added." if have else "Not found: Tribunal.esm and Tribunal.bsa go in "
                                        "Data Files (the Game of the Year edition has them).")
+
+    def show_bloodmoon(self, folder):
+        data = Path(folder) / "Data Files"
+        have = (data / "Bloodmoon.esm").is_file() and (data / "Bloodmoon.bsa").is_file()
+        if not have:
+            self.bloodmoon.set(False)
+        self.bloodmoon_check.config(state="normal" if have else "disabled")
+        self.bloodmoon_note.config(text="Saves made with it need a Bloodmoon build to load; a game without it plays on "
+                                        "with it added." if have else "Not found: Bloodmoon.esm and Bloodmoon.bsa go in "
+                                        "Data Files (the Game of the Year edition has them).")
 
     def show_plugin_count(self):
         # (the converter refuses a plugin it cannot load: a refused one cannot be picked)
@@ -539,6 +566,7 @@ class Wizard:
         job = dict(morrowind=folder, work=work, out=out, old=self.console.get() == "old",
                    encoding=dict(LANGUAGES).get(self.language.get(), "win1252"), plugins=self.chosen_plugins(),
                    mods=self.mods.get(), sd=self.output_kind.get() == "sd", tribunal=self.tribunal.get(),
+                   bloodmoon=self.bloodmoon.get(),
                    saves=pc_save_files(folder) if self.pc_saves.get() else [])
         threading.Thread(target=self.run, args=(job,), daemon=True).start()
 
@@ -587,6 +615,7 @@ class Wizard:
         cmd += ["--mods"] if job["mods"] else []
         cmd += ["--old3ds"] if job["old"] else []
         cmd += ["--tribunal"] if job.get("tribunal") else []
+        cmd += ["--bloodmoon"] if job.get("bloodmoon") else []
         cmd += ["--no-data"] if job["sd"] else []
         cmd += ["--small"] if job.get("small") else []        # (only the Balmora area: for trying the converter out)
         say(f"language: {job['encoding']}, plugins: {', '.join(job['plugins']) or 'none'}")
@@ -612,7 +641,7 @@ class Wizard:
         # Hand over the results
         out = job["out"]
         out.mkdir(parents=True, exist_ok=True)
-        trib = "-tribunal" if job.get("tribunal") else ""
+        trib = addon_suffix(job.get("tribunal"), job.get("bloodmoon"))
         cia = work / "build" / (("mw3ds-o3ds" if job["old"] else "mw3ds") + trib + ".cia")
         # (moved, not copied: a second gigabyte for nothing; the next run packs a new one)
         shutil.move(cia, out / "mw3ds.cia")
@@ -669,7 +698,8 @@ class Wizard:
         one PC save of the player's own, the template for what a 3DS save doesn't hold."""
         folder = self.morrowind.get().strip()
         work = APP if (APP / ".git").exists() else Path(self.work.get().strip())
-        data = work / "out" / (("o3ds" if self.console.get() == "old" else "data") + ("-tribunal" if self.tribunal.get() else ""))
+        data = work / "out" / (("o3ds" if self.console.get() == "old" else "data") +
+                               addon_suffix(self.tribunal.get(), self.bloodmoon.get()))
         if not (data / "game.json").is_file():
             messagebox.showerror(TITLE, "Convert the game first (Start): the 3DS saves are read against the "
                                         "converted game, the same one your console runs.")

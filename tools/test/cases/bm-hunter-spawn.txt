@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# data: bloodmoon
+# Player->GetDistance <object> is the player's distance to it (OpenMW's GetDistance on an explicit player reference).
+# Dream of Hircine's spawner in the Tombs of Skaalara sends each new Skaal hunter from the spot farthest from the
+# player, comparing Player->GetDistance to three markers: at 100000 for all three it sent none and the quest stuck.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+JOURNAL:BM_Ceremony2:10
+0.3 0 0 0 0 GOTO:Solstheim,_Tombs_of_Skaalara
+4 0 0 0
+0.3 0 0 0 0 SETGLOBAL:huntersdead:5
+120 0 0 0 0 WALKTO:@-16,-7000,-111
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:reflocal:active_bm_huntercentral,distancea:lt:10000
+25 0 0 0
+0.1 0 0 0 0 EXPECT:global:huntercount:ge:1

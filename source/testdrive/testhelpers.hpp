@@ -100,6 +100,9 @@ static inline int findRef(Session& s, const std::string& id, bool byWalk = true,
 				return;
 			if (c.dead && !wantDead)
 				return;
+			// (one already taken from a heap of them is gone: the supply ship's miner's picks, one PICKUP each)
+			if (c.pickedUp)
+				return;
 			float dx = c.pos[0] - pf[0], dy = c.pos[1] - pf[1], dz = c.pos[2] - pf[2], d = dx * dx + dy * dy + dz * dz;
 			// (shared door ids: the one the player can walk to soonest, not the one nearest through a wall or a floor)
 			if (byWalk && c.recType == REC_DOOR && d < 1e11f)

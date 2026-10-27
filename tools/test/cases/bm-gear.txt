@@ -1,0 +1,602 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-gear: written by tools/test/specgen_bloodmoon.py (edit the generator, not this file).
+# Every armour and weapon Bloodmoon adds: carried, then worn or held.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0 0 0 0 0 SETUP-END
+# bm bear boots (Bear Boots)
+1.0 0 0 0 0 GIVE:bm%bear%boots
+0.3 0 0 0 0 EXPECT:item:bm%bear%boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear cuirass (Bear Cuirass)
+1.0 0 0 0 0 GIVE:bm%bear%cuirass
+0.3 0 0 0 0 EXPECT:item:bm%bear%cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear greaves (Bear Greaves)
+1.0 0 0 0 0 GIVE:bm%bear%greaves
+0.3 0 0 0 0 EXPECT:item:bm%bear%greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear helmet (Bear Helmet)
+1.0 0 0 0 0 GIVE:bm%bear%helmet
+0.3 0 0 0 0 EXPECT:item:bm%bear%helmet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%helmet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear helmet eddard (Helm of Bear Scent)
+1.0 0 0 0 0 GIVE:bm%bear%helmet%eddard
+0.3 0 0 0 0 EXPECT:item:bm%bear%helmet%eddard:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%helmet%eddard:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear helmet_ber (Helmet of Bearkind)
+1.0 0 0 0 0 GIVE:bm%bear%helmet_ber
+0.3 0 0 0 0 EXPECT:item:bm%bear%helmet_ber:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%helmet_ber:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear left gauntlet (Bear Left Gauntlet)
+1.0 0 0 0 0 GIVE:bm%bear%left%gauntlet
+0.3 0 0 0 0 EXPECT:item:bm%bear%left%gauntlet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%left%gauntlet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear left pauldron (Bear Left Pauldron)
+1.0 0 0 0 0 GIVE:bm%bear%left%pauldron
+0.3 0 0 0 0 EXPECT:item:bm%bear%left%pauldron:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%left%pauldron:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear right gauntlet (Bear Right Gauntlet)
+1.0 0 0 0 0 GIVE:bm%bear%right%gauntlet
+0.3 0 0 0 0 EXPECT:item:bm%bear%right%gauntlet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%right%gauntlet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear right pauldron (Bear Right Pauldron)
+1.0 0 0 0 0 GIVE:bm%bear%right%pauldron
+0.3 0 0 0 0 EXPECT:item:bm%bear%right%pauldron:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%right%pauldron:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm bear shield (Bear Shield)
+1.0 0 0 0 0 GIVE:bm%bear%shield
+0.3 0 0 0 0 EXPECT:item:bm%bear%shield:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%bear%shield:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf boots (Wolf Boots)
+1.0 0 0 0 0 GIVE:bm%wolf%boots
+0.3 0 0 0 0 EXPECT:item:bm%wolf%boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf cuirass (Wolf Cuirass)
+1.0 0 0 0 0 GIVE:bm%wolf%cuirass
+0.3 0 0 0 0 EXPECT:item:bm%wolf%cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf greaves (Wolf Greaves)
+1.0 0 0 0 0 GIVE:bm%wolf%greaves
+0.3 0 0 0 0 EXPECT:item:bm%wolf%greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf helmet (Wolf Helmet)
+1.0 0 0 0 0 GIVE:bm%wolf%helmet
+0.3 0 0 0 0 EXPECT:item:bm%wolf%helmet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%helmet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf helmet_heartfang (Helm of the Wolf's Heart)
+1.0 0 0 0 0 GIVE:bm%wolf%helmet_heartfang
+0.3 0 0 0 0 EXPECT:item:bm%wolf%helmet_heartfang:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%helmet_heartfang:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf left gauntlet (Wolf Left Gauntlet)
+1.0 0 0 0 0 GIVE:bm%wolf%left%gauntlet
+0.3 0 0 0 0 EXPECT:item:bm%wolf%left%gauntlet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%left%gauntlet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf left pauldron (Wolf Left Pauldron)
+1.0 0 0 0 0 GIVE:bm%wolf%left%pauldron
+0.3 0 0 0 0 EXPECT:item:bm%wolf%left%pauldron:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%left%pauldron:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf right gauntlet (Wolf Right Gauntlet)
+1.0 0 0 0 0 GIVE:bm%wolf%right%gauntlet
+0.3 0 0 0 0 EXPECT:item:bm%wolf%right%gauntlet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%right%gauntlet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf right pauldron (Wolf Right Pauldron)
+1.0 0 0 0 0 GIVE:bm%wolf%right%pauldron
+0.3 0 0 0 0 EXPECT:item:bm%wolf%right%pauldron:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%right%pauldron:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm wolf shield (Wolf Shield)
+1.0 0 0 0 0 GIVE:bm%wolf%shield
+0.3 0 0 0 0 EXPECT:item:bm%wolf%shield:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%wolf%shield:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_boots_snow (Snow Bear Boots)
+1.0 0 0 0 0 GIVE:bm_bear_boots_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_boots_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_boots_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_cuirass_snow (Snow Bear Cuirass)
+1.0 0 0 0 0 GIVE:bm_bear_cuirass_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_cuirass_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_cuirass_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_greaves_snow (Snow Bear Greaves)
+1.0 0 0 0 0 GIVE:bm_bear_greaves_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_greaves_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_greaves_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_helmet_snow (Snow Bear Helmet)
+1.0 0 0 0 0 GIVE:bm_bear_helmet_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_helmet_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_helmet_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_left_gauntlet_snow (Snow Bear Left Gauntlet)
+1.0 0 0 0 0 GIVE:bm_bear_left_gauntlet_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_left_gauntlet_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_left_gauntlet_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_left_pauldron_snow (Snow Bear Left Pauldron)
+1.0 0 0 0 0 GIVE:bm_bear_left_pauldron_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_left_pauldron_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_left_pauldron_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_right_gauntlet_snow (Snow Bear Right Gauntlet)
+1.0 0 0 0 0 GIVE:bm_bear_right_gauntlet_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_right_gauntlet_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_right_gauntlet_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_bear_right_pauldron_snow (Snow Bear Right Pauldron)
+1.0 0 0 0 0 GIVE:bm_bear_right_pauldron_snow
+0.3 0 0 0 0 EXPECT:item:bm_bear_right_pauldron_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_bear_right_pauldron_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice minion_shield1 (Riekling Shield)
+1.0 0 0 0 0 GIVE:bm_ice%minion_shield1
+0.3 0 0 0 0 EXPECT:item:bm_ice%minion_shield1:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice%minion_shield1:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_boots (Ice Armor Boots)
+1.0 0 0 0 0 GIVE:bm_ice_boots
+0.3 0 0 0 0 EXPECT:item:bm_ice_boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_cuirass (Ice Armor Cuirass)
+1.0 0 0 0 0 GIVE:bm_ice_cuirass
+0.3 0 0 0 0 EXPECT:item:bm_ice_cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_gauntletl (Ice Armor Left Gauntlet)
+1.0 0 0 0 0 GIVE:bm_ice_gauntletl
+0.3 0 0 0 0 EXPECT:item:bm_ice_gauntletl:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_gauntletl:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_gauntletr (Ice Armor Right Gauntlet)
+1.0 0 0 0 0 GIVE:bm_ice_gauntletr
+0.3 0 0 0 0 EXPECT:item:bm_ice_gauntletr:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_gauntletr:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_greaves (Ice Armor Greaves)
+1.0 0 0 0 0 GIVE:bm_ice_greaves
+0.3 0 0 0 0 EXPECT:item:bm_ice_greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_helmet (Ice Armor Helmet)
+1.0 0 0 0 0 GIVE:bm_ice_helmet
+0.3 0 0 0 0 EXPECT:item:bm_ice_helmet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_helmet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_pauldronl (Ice Armor Left Pauldron)
+1.0 0 0 0 0 GIVE:bm_ice_pauldronl
+0.3 0 0 0 0 EXPECT:item:bm_ice_pauldronl:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_pauldronl:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_pauldronr (Ice Armor Right Pauldron)
+1.0 0 0 0 0 GIVE:bm_ice_pauldronr
+0.3 0 0 0 0 EXPECT:item:bm_ice_pauldronr:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_pauldronr:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_ice_shield (Ice Shield)
+1.0 0 0 0 0 GIVE:bm_ice_shield
+0.3 0 0 0 0 EXPECT:item:bm_ice_shield:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_shield:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_boots (Nordic Mail Boots)
+1.0 0 0 0 0 GIVE:bm_nordicmail_boots
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_boots:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_boots:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_cuirass (Nordic Mail Cuirass)
+1.0 0 0 0 0 GIVE:bm_nordicmail_cuirass
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_cuirass:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_cuirass:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_gauntletl (Nordic Mail Left Gauntlet)
+1.0 0 0 0 0 GIVE:bm_nordicmail_gauntletl
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_gauntletl:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_gauntletl:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_gauntletr (Nordic Mail Right Gauntlet)
+1.0 0 0 0 0 GIVE:bm_nordicmail_gauntletr
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_gauntletr:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_gauntletr:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_greaves (Nordic Mail Greaves)
+1.0 0 0 0 0 GIVE:bm_nordicmail_greaves
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_greaves:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_greaves:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_helmet (Nordic Mail Helmet)
+1.0 0 0 0 0 GIVE:bm_nordicmail_helmet
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_helmet:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_helmet:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_pauldronl (Nordic Mail Left Pauldron)
+1.0 0 0 0 0 GIVE:bm_nordicmail_pauldronl
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_pauldronl:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_pauldronl:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_pauldronr (Nordic Mail Right Pauldron)
+1.0 0 0 0 0 GIVE:bm_nordicmail_pauldronr
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_pauldronr:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_pauldronr:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_nordicmail_shield (Nordic Mail Shield)
+1.0 0 0 0 0 GIVE:bm_nordicmail_shield
+0.3 0 0 0 0 EXPECT:item:bm_nordicmail_shield:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordicmail_shield:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_boots_snow (Snow Wolf Boots)
+1.0 0 0 0 0 GIVE:bm_wolf_boots_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_boots_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_boots_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_cuirass_snow (Snow Wolf Cuirass)
+1.0 0 0 0 0 GIVE:bm_wolf_cuirass_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_cuirass_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_cuirass_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_greaves_snow (Snow Wolf Greaves)
+1.0 0 0 0 0 GIVE:bm_wolf_greaves_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_greaves_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_greaves_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_helmet_snow (Snow Wolf Helmet)
+1.0 0 0 0 0 GIVE:bm_wolf_helmet_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_helmet_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_helmet_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_left_gauntlet_snow (Snow Wolf Left Gauntlet)
+1.0 0 0 0 0 GIVE:bm_wolf_left_gauntlet_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_left_gauntlet_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_left_gauntlet_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_left_pauldron_snow (Snow Wolf Left Pauldron)
+1.0 0 0 0 0 GIVE:bm_wolf_left_pauldron_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_left_pauldron_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_left_pauldron_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_right_gauntlet_snow (Snow Wolf Right Gauntlet)
+1.0 0 0 0 0 GIVE:bm_wolf_right_gauntlet_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_right_gauntlet_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_right_gauntlet_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm_wolf_right_pauldron_snow (Snow Wolf Right Pauldron)
+1.0 0 0 0 0 GIVE:bm_wolf_right_pauldron_snow
+0.3 0 0 0 0 EXPECT:item:bm_wolf_right_pauldron_snow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_wolf_right_pauldron_snow:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# fur_colovian_helm_red (Red Colovian Fur Helm)
+#   nothing in the game data gives or carries it
+# fur_colovian_helm_white (White Colovian Fur Helm)
+1.0 0 0 0 0 GIVE:fur_colovian_helm_white
+0.3 0 0 0 0 EXPECT:item:fur_colovian_helm_white:ge:1
+0.3 0 0 0 0 EXPECT:equipped:fur_colovian_helm_white:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_boots_ancient (Ancient Steel Boots)
+1.0 0 0 0 0 GIVE:steel_boots_ancient
+0.3 0 0 0 0 EXPECT:item:steel_boots_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_boots_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_cuirass_ancient (Ancient Steel Cuirass)
+1.0 0 0 0 0 GIVE:steel_cuirass_ancient
+0.3 0 0 0 0 EXPECT:item:steel_cuirass_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_cuirass_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_gauntlet_left_ancient (Ancient Steel Left Gauntlet)
+1.0 0 0 0 0 GIVE:steel_gauntlet_left_ancient
+0.3 0 0 0 0 EXPECT:item:steel_gauntlet_left_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_gauntlet_left_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_gauntlet_right_ancient (Ancient Steel Right Gauntlet)
+1.0 0 0 0 0 GIVE:steel_gauntlet_right_ancient
+0.3 0 0 0 0 EXPECT:item:steel_gauntlet_right_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_gauntlet_right_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_greaves_ancient (Ancient Steel Greaves)
+1.0 0 0 0 0 GIVE:steel_greaves_ancient
+0.3 0 0 0 0 EXPECT:item:steel_greaves_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_greaves_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_helm_ancient (Ancient Steel Helm)
+1.0 0 0 0 0 GIVE:steel_helm_ancient
+0.3 0 0 0 0 EXPECT:item:steel_helm_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_helm_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_pauldron_left_ancient (Ancient Steel Left Pauldron)
+1.0 0 0 0 0 GIVE:steel_pauldron_left_ancient
+0.3 0 0 0 0 EXPECT:item:steel_pauldron_left_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_pauldron_left_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_pauldron_right_ancient (Ancient Steel Right Pauldron)
+1.0 0 0 0 0 GIVE:steel_pauldron_right_ancient
+0.3 0 0 0 0 EXPECT:item:steel_pauldron_right_ancient:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel_pauldron_right_ancient:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# steel_towershield_ancient (Ancient Steel Tower Shield)
+#   nothing in the game data gives or carries it
+# wolfwalkers (Paws of the Wolf-Runner)
+1.0 0 0 0 0 GIVE:wolfwalkers
+0.3 0 0 0 0 EXPECT:item:wolfwalkers:ge:1
+0.3 0 0 0 0 EXPECT:equipped:wolfwalkers:eq:1
+0.3 0 0 0 0 EXPECT:armor:gt:0
+# bm frostgore (Frostgore)
+1.0 0 0 0 0 GIVE:bm%frostgore
+0.3 0 0 0 0 EXPECT:item:bm%frostgore:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%frostgore:eq:1
+# bm huntsman axe (Huntsman Axe)
+1.0 0 0 0 0 GIVE:bm%huntsman%axe
+0.3 0 0 0 0 EXPECT:item:bm%huntsman%axe:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%huntsman%axe:eq:1
+# bm huntsman crossbow (Huntsman Crossbow)
+1.0 0 0 0 0 GIVE:bm%huntsman%crossbow
+0.3 0 0 0 0 EXPECT:item:bm%huntsman%crossbow:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%huntsman%crossbow:eq:1
+# bm huntsman longsword (Huntsman Longsword)
+1.0 0 0 0 0 GIVE:bm%huntsman%longsword
+0.3 0 0 0 0 EXPECT:item:bm%huntsman%longsword:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%huntsman%longsword:eq:1
+# bm huntsman spear (Huntsman Spear)
+1.0 0 0 0 0 GIVE:bm%huntsman%spear
+0.3 0 0 0 0 EXPECT:item:bm%huntsman%spear:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%huntsman%spear:eq:1
+# bm huntsman war axe (Huntsman War Axe)
+1.0 0 0 0 0 GIVE:bm%huntsman%war%axe
+0.3 0 0 0 0 EXPECT:item:bm%huntsman%war%axe:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%huntsman%war%axe:eq:1
+# bm huntsmanbolt (Huntsman Bolt)
+1.0 0 0 0 0 GIVE:bm%huntsmanbolt
+0.3 0 0 0 0 EXPECT:item:bm%huntsmanbolt:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%huntsmanbolt:eq:1
+# bm ice dagger (Stalhrim Dagger)
+1.0 0 0 0 0 GIVE:bm%ice%dagger
+0.3 0 0 0 0 EXPECT:item:bm%ice%dagger:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%ice%dagger:eq:1
+# bm ice longsword (Stalhrim Longsword)
+1.0 0 0 0 0 GIVE:bm%ice%longsword
+0.3 0 0 0 0 EXPECT:item:bm%ice%longsword:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%ice%longsword:eq:1
+# bm ice longsword_fg_unique (Stalhrim Longsword of Flame)
+1.0 0 0 0 0 GIVE:bm%ice%longsword_fg_unique
+0.3 0 0 0 0 EXPECT:item:bm%ice%longsword_fg_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%ice%longsword_fg_unique:eq:1
+# bm ice mace (Stalhrim Mace)
+1.0 0 0 0 0 GIVE:bm%ice%mace
+0.3 0 0 0 0 EXPECT:item:bm%ice%mace:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%ice%mace:eq:1
+# bm ice war axe (Stalhrim War Axe)
+1.0 0 0 0 0 GIVE:bm%ice%war%axe
+0.3 0 0 0 0 EXPECT:item:bm%ice%war%axe:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%ice%war%axe:eq:1
+# bm nord leg (Severed Nord Leg)
+1.0 0 0 0 0 GIVE:bm%nord%leg
+0.3 0 0 0 0 EXPECT:item:bm%nord%leg:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nord%leg:eq:1
+# bm nordic pick (Ancient Nordic Pick Axe)
+1.0 0 0 0 0 GIVE:bm%nordic%pick
+0.3 0 0 0 0 EXPECT:item:bm%nordic%pick:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%pick:eq:1
+# bm nordic silver axe (Nordic Silver Axe)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%axe
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%axe:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%axe:eq:1
+# bm nordic silver axe_ber (Berserker Silver Axe)
+#   nothing in the game data gives or carries it
+# bm nordic silver axe_spurius (Nordic Axe of Paralysis)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%axe_spurius
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%axe_spurius:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%axe_spurius:eq:1
+# bm nordic silver battleaxe (Nordic Silver Battleaxe)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%battleaxe
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%battleaxe:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%battleaxe:eq:1
+# bm nordic silver battleaxe_ber (Berserker Silver Battleaxe)
+#   nothing in the game data gives or carries it
+# bm nordic silver claymore (Nordic Silver Claymore)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%claymore
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%claymore:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%claymore:eq:1
+# bm nordic silver claymore_ber (Berserker Silver Claymore)
+#   nothing in the game data gives or carries it
+# bm nordic silver dagger (Nordic Silver Dagger)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%dagger
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%dagger:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%dagger:eq:1
+# bm nordic silver longsword (Nordic Silver Longsword)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%longsword
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%longsword:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%longsword:eq:1
+# bm nordic silver longsword_ber (Berserker Silver Longsword)
+#   nothing in the game data gives or carries it
+# bm nordic silver longsword_cft (Clanbringer)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%longsword_cft
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%longsword_cft:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%longsword_cft:eq:1
+# bm nordic silver mace (Nordic Silver Mace)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%mace
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%mace:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%mace:eq:1
+# bm nordic silver shortsword (Nordic Silver Shortsword)
+1.0 0 0 0 0 GIVE:bm%nordic%silver%shortsword
+0.3 0 0 0 0 EXPECT:item:bm%nordic%silver%shortsword:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic%silver%shortsword:eq:1
+# bm nordic_longsword_tracker (Nordic Silver Longsword)
+1.0 0 0 0 0 GIVE:bm%nordic_longsword_tracker
+0.3 0 0 0 0 EXPECT:item:bm%nordic_longsword_tracker:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%nordic_longsword_tracker:eq:1
+# bm reaver battle axe (Blood Axe)
+1.0 0 0 0 0 GIVE:bm%reaver%battle%axe
+0.3 0 0 0 0 EXPECT:item:bm%reaver%battle%axe:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%reaver%battle%axe:eq:1
+# bm riekling lance (Riekling Lance)
+#   nothing in the game data gives or carries it
+# bm riekling sword (Riekling Blade)
+1.0 0 0 0 0 GIVE:bm%riekling%sword
+0.3 0 0 0 0 EXPECT:item:bm%riekling%sword:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%riekling%sword:eq:1
+# bm riekling sword_rusted (Rusted Riekling Blade)
+1.0 0 0 0 0 GIVE:bm%riekling%sword_rusted
+0.3 0 0 0 0 EXPECT:item:bm%riekling%sword_rusted:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%riekling%sword_rusted:eq:1
+# bm silver dagger wolfender (Wolfender Silver Dagger)
+1.0 0 0 0 0 GIVE:bm%silver%dagger%wolfender
+0.3 0 0 0 0 EXPECT:item:bm%silver%dagger%wolfender:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%silver%dagger%wolfender:eq:1
+# bm winterwound dagger (Winterwound Dagger)
+1.0 0 0 0 0 GIVE:bm%winterwound%dagger
+0.3 0 0 0 0 EXPECT:item:bm%winterwound%dagger:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm%winterwound%dagger:eq:1
+# bm_arrow_riekling_uni (Chitin Arrow)
+1.0 0 0 0 0 GIVE:bm_arrow_riekling_uni
+0.3 0 0 0 0 EXPECT:item:bm_arrow_riekling_uni:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_arrow_riekling_uni:eq:1
+# bm_axe_heartfang_unique (Nordic Silver Battleaxe)
+1.0 0 0 0 0 GIVE:bm_axe_heartfang_unique
+0.3 0 0 0 0 EXPECT:item:bm_axe_heartfang_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_axe_heartfang_unique:eq:1
+# bm_dagger_wolfgiver (Wolfgiver Silver Dagger)
+1.0 0 0 0 0 GIVE:bm_dagger_wolfgiver
+0.3 0 0 0 0 EXPECT:item:bm_dagger_wolfgiver:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_dagger_wolfgiver:eq:1
+# bm_ebony_staff_necro (Staff of Carnal Channeling)
+1.0 0 0 0 0 GIVE:bm_ebony_staff_necro
+0.3 0 0 0 0 EXPECT:item:bm_ebony_staff_necro:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ebony_staff_necro:eq:1
+# bm_ebonyarrow_s (Ebony Arrow of Slaying)
+1.0 0 0 0 0 GIVE:bm_ebonyarrow_s
+0.3 0 0 0 0 EXPECT:item:bm_ebonyarrow_s:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ebonyarrow_s:eq:1
+# bm_ebonylongsword_s (Shadowsting)
+1.0 0 0 0 0 GIVE:bm_ebonylongsword_s
+0.3 0 0 0 0 EXPECT:item:bm_ebonylongsword_s:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ebonylongsword_s:eq:1
+# bm_hunter_battleaxe_unique (Nordic Silver Battleaxe)
+#   nothing in the game data gives or carries it
+# bm_hunterspear_unique (Spear of the Hunter)
+1.0 0 0 0 0 GIVE:bm_hunterspear_unique
+0.3 0 0 0 0 EXPECT:item:bm_hunterspear_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_hunterspear_unique:eq:1
+# bm_ice_minion_lance (Riekling Lance)
+1.0 0 0 0 0 GIVE:bm_ice_minion_lance
+0.3 0 0 0 0 EXPECT:item:bm_ice_minion_lance:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_ice_minion_lance:eq:1
+# bm_mace_aevar_uni (Mace of Aevar Stone-Singer)
+1.0 0 0 0 0 GIVE:bm_mace_aevar_uni
+0.3 0 0 0 0 EXPECT:item:bm_mace_aevar_uni:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_mace_aevar_uni:eq:1
+# bm_nordic_silver_lgswd_bloodska (Bloodskal)
+1.0 0 0 0 0 GIVE:bm_nordic_silver_lgswd_bloodska
+0.3 0 0 0 0 EXPECT:item:bm_nordic_silver_lgswd_bloodska:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_nordic_silver_lgswd_bloodska:eq:1
+# bm_saber_seasplitter (Seasplitter)
+1.0 0 0 0 0 GIVE:bm_saber_seasplitter
+0.3 0 0 0 0 EXPECT:item:bm_saber_seasplitter:ge:1
+0.3 0 0 0 0 EXPECT:equipped:bm_saber_seasplitter:eq:1
+# imperial shortsword severio (Severia's Imperial Shortsword)
+1.0 0 0 0 0 GIVE:imperial%shortsword%severio
+0.3 0 0 0 0 EXPECT:item:imperial%shortsword%severio:ge:1
+0.3 0 0 0 0 EXPECT:equipped:imperial%shortsword%severio:eq:1
+# lucky_break (Haakon's Lucky Break)
+1.0 0 0 0 0 GIVE:lucky_break
+0.3 0 0 0 0 EXPECT:item:lucky_break:ge:1
+0.3 0 0 0 0 EXPECT:equipped:lucky_break:eq:1
+# nordic claymore_stormfang (Stormfang)
+1.0 0 0 0 0 GIVE:nordic%claymore_stormfang
+0.3 0 0 0 0 EXPECT:item:nordic%claymore_stormfang:ge:1
+0.3 0 0 0 0 EXPECT:equipped:nordic%claymore_stormfang:eq:1
+# silver arrow_thirsk_0 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_0
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_0:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_0:eq:1
+# silver arrow_thirsk_1 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_1
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_1:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_1:eq:1
+# silver arrow_thirsk_2 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_2
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_2:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_2:eq:1
+# silver arrow_thirsk_3 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_3
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_3:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_3:eq:1
+# silver arrow_thirsk_4 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_4
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_4:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_4:eq:1
+# silver arrow_thirsk_5 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_5
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_5:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_5:eq:1
+# silver arrow_thirsk_6 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_6
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_6:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_6:eq:1
+# silver arrow_thirsk_7 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_7
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_7:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_7:eq:1
+# silver arrow_thirsk_8 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_8
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_8:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_8:eq:1
+# silver arrow_thirsk_9 (Silver Arrow)
+1.0 0 0 0 0 GIVE:silver%arrow_thirsk_9
+0.3 0 0 0 0 EXPECT:item:silver%arrow_thirsk_9:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%arrow_thirsk_9:eq:1
+# silver axe of paralysis (Silver Axe of Paralysis)
+1.0 0 0 0 0 GIVE:silver%axe%of%paralysis
+0.3 0 0 0 0 EXPECT:item:silver%axe%of%paralysis:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%axe%of%paralysis:eq:1
+# silver staff of paralysis (Silver Staff of Paralysis)
+1.0 0 0 0 0 GIVE:silver%staff%of%paralysis
+0.3 0 0 0 0 EXPECT:item:silver%staff%of%paralysis:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%staff%of%paralysis:eq:1
+# silver sword of paralysis (Silver Sword of Paralysis)
+1.0 0 0 0 0 GIVE:silver%sword%of%paralysis
+0.3 0 0 0 0 EXPECT:item:silver%sword%of%paralysis:ge:1
+0.3 0 0 0 0 EXPECT:equipped:silver%sword%of%paralysis:eq:1
+# solvistapp (Solvistapp)
+1.0 0 0 0 0 GIVE:solvistapp
+0.3 0 0 0 0 EXPECT:item:solvistapp:ge:1
+0.3 0 0 0 0 EXPECT:equipped:solvistapp:eq:1
+# steel arrow_carnius (Poisoned Arrow)
+1.0 0 0 0 0 GIVE:steel%arrow_carnius
+0.3 0 0 0 0 EXPECT:item:steel%arrow_carnius:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel%arrow_carnius:eq:1
+# steel longbow_carnius (Steel Longbow)
+1.0 0 0 0 0 GIVE:steel%longbow_carnius
+0.3 0 0 0 0 EXPECT:item:steel%longbow_carnius:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel%longbow_carnius:eq:1
+# steel saber_elberoth (Elberoth's Saber)
+1.0 0 0 0 0 GIVE:steel%saber_elberoth
+0.3 0 0 0 0 EXPECT:item:steel%saber_elberoth:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel%saber_elberoth:eq:1
+# steel spear snow prince (Spear of the Snow Prince)
+1.0 0 0 0 0 GIVE:steel%spear%snow%prince
+0.3 0 0 0 0 EXPECT:item:steel%spear%snow%prince:ge:1
+0.3 0 0 0 0 EXPECT:equipped:steel%spear%snow%prince:eq:1
+# warhammer_rammekald_unique (Rammekald)
+1.0 0 0 0 0 GIVE:warhammer_rammekald_unique
+0.3 0 0 0 0 EXPECT:item:warhammer_rammekald_unique:ge:1
+0.3 0 0 0 0 EXPECT:equipped:warhammer_rammekald_unique:eq:1

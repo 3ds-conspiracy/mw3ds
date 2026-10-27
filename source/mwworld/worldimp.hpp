@@ -199,6 +199,7 @@ struct World
 	int weatherShown() const;                     // the weather whose rain, storm and loops show (OpenMW's threshold)
 	bool weatherPrecip() const;                   // rain, snow or blight falling (not an ash storm)
 	bool weatherStorm() const;
+	void stormDirection(int weather, const float at[2], float out[2]) const;   // where a storm blows to (unit, x y)
 	float sunVisibility() const;                  // glare view, blended as OpenMW does
 	float glareFade() const;                      // 0 at night, 1 at midday
 	bool sunOn() const;
@@ -206,6 +207,25 @@ struct World
 	int nightDay() const;                         // 0 default, 1 interior in daylight, 2 exterior at night
 	bool underWater(float z) const;               // below the water of a loaded cell
 	bool teleportDisabled = false;
+	bool moonRed = false;             // TurnMoonRed / TurnMoonWhite: Secunda in [Moons] Script Color (Bloodmoon; saved)
+	// GetPCTraveling / GetPCInJail: the script runs still to see a trip or a jail term (Session::travelGo, goToJail)
+	int pcTraveling = 0, pcInJail = 0;
+	// Bloodmoon's werewolf, the player (ref -1) or an NPC: the state, its kills reset on a change to it (OpenMW's
+	// MechanicsManager::setWerewolf; mwmechanics/mechanicsmanagerimp.cpp). What the form changes reads this state
+	void setWerewolf(int ref, bool on);
+	void scaleObject(int ref, float scale);       // SetScale
+	bool isWerewolf(int ref) const;
+	// the player's hit attempt foe (OpenMW's CreatureStats::getHitAttemptActor on the player): the first in a fight with
+	// the player to swing at them, or the first the player swings at; the player's followers take it on (-1: none)
+	int playerHitAttempt = -1;
+	bool werewolfJustChanged = false;              // the player became one this frame: the session looks for witnesses
+	// A werewolf's claws: hand to hand as health damage times the WerewolfClawMult global (25, 35 after the first
+	// dream; OpenMW's getHandToHandDamage) times fHandtoHandHealthPer; a silver weapon on a werewolf does
+	// fWereWolfSilverWeaponDamageMult times its damage (applyWerewolfDamageMult). Both in mwmechanics/mechanicsmanagerimp.cpp
+	float werewolfClaw(float handToHand) const;
+	float silverOnWerewolf(const struct Object* weapon, int target) const;
+	// A magic effect stat a script changed (Mod<effect>: OpenMW's MagicEffects::modifyBase) on the player (ref -1) or an actor
+	void modScriptEffect(int ref, int effect, int delta);
 	bool levitationDisabled = false;  // DisableLevitation (Tribunal's Mournhold): Levitate ends at once, saved (OpenMW's LEVT)
 	// SetWaterLevel / ModWaterLevel: an interior's water moved by a script (lowercase cell name -> height), saved and
 	// laid on the cell each time it is read (Tribunal's sewers)
@@ -295,6 +315,9 @@ struct World
 	// the highest ground under all of it (0 without a box)
 	float actorBoxLift(int ri);
 	void attachSpawned(int ri);       // its mesh and collision in its (loaded) cell
+	// A person drawn as what they are: in wolf form Bloodmoon's werewolf body (the bm_werewolf_default creature's
+	// library: OpenMW draws a werewolf on the wolf skeleton with its skin), else their own model again
+	void werewolfBody(int ri);
 	int refsInMemory() const;
 	// Moves the objects of the cells used longest ago (not loaded, nothing pointing into them: inUse)
 	// out of memory until at most `budget` remain; returns how many cells went
@@ -421,6 +444,8 @@ struct World
 	bool deferEnable(const std::string& id, bool on);   // true: remembered, nothing read
 	void stopGlobalScript(const std::string& name);
 	void setItemScriptLocal(const std::string& itemId, const char* local, float value);
+	// a carried item's script local (nullptr when it has no running script or no such local)
+	float* itemScriptLocal(const std::string& itemId, const char* local);
 };
 
 // Nearest activatable reference along the view ray within reach, or -1.

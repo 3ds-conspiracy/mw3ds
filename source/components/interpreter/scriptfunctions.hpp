@@ -75,7 +75,7 @@
 	X(GETSTANDINGACTOR, "getstandingactor") X(GETCOLLIDINGPC, "getcollidingpc") \
 	X(GETCOLLIDINGACTOR, "getcollidingactor") X(HURTCOLLIDINGACTOR, "hurtcollidingactor") X(EXPLODESPELL, "explodespell") \
 	X(GETWATERLEVEL, "getwaterlevel") X(SETWATERLEVEL, "setwaterlevel") X(MODWATERLEVEL, "modwaterlevel") \
-	X(PLACEITEM, "placeitem") X(PLACEITEMCELL, "placeitemcell")
+	X(PLACEITEM, "placeitem") X(PLACEITEMCELL, "placeitemcell") 	X(GETPCTRAVELING, "getpctraveling") X(GETPCINJAIL, "getpcinjail") X(GETWEAPONTYPE, "getweapontype") 	X(SETSCALE, "setscale") X(GETSCALE, "getscale") X(MODSCALE, "modscale") X(TURNMOONRED, "turnmoonred") 	X(TURNMOONWHITE, "turnmoonwhite") X(BECOMEWEREWOLF, "becomewerewolf") X(UNDOWEREWOLF, "undowerewolf") 	X(ISWEREWOLF, "iswerewolf") X(SETWEREWOLFACROBATICS, "setwerewolfacrobatics") X(GETWEREWOLFKILLS, "getwerewolfkills")
 
 enum ScriptFunction
 {
@@ -97,3 +97,12 @@ static const char* const kSkillFuncs[27] = { "block", "armorer", "mediumarmor", 
 	"axe", "spear", "athletics", "enchant", "destruction", "alteration", "illusion", "conjuration", "mysticism",
 	"restoration", "alchemy", "unarmored", "security", "sneak", "acrobatics", "lightarmor", "shortblade", "marksman",
 	"mercantile", "speechcraft", "handtohand" };
+// Get / Set / Mod + these: a magic effect's magnitude on an actor (OpenMW's Stats loop in extensions0.cpp: Bloodmoon's
+// spriggans ModResistFire 100); kEffectStatIds holds the effect each reads and the one counted against it (-1: none)
+static const char* const kEffectFuncs[24] = { "resistmagicka", "resistfire", "resistfrost", "resistshock",
+	"resistdisease", "resistblight", "resistcorprus", "resistpoison", "resistparalysis", "resistnormalweapons",
+	"waterbreathing", "chameleon", "waterwalking", "swimspeed", "superjump", "flying", "armorbonus", "castpenalty",
+	"silence", "blindness", "paralysis", "invisible", "attackbonus", "defendbonus" };
+static const short kEffectStatIds[24][2] = { { 93, 31 }, { 90, 28 }, { 91, 29 }, { 92, 30 }, { 94, 32 }, { 95, 33 },
+	{ 96, 34 }, { 97, 35 }, { 99, -1 }, { 98, 36 }, { 0, -1 }, { 40, -1 }, { 2, -1 }, { 1, -1 }, { 9, -1 }, { 10, -1 },
+	{ 3, -1 }, { -1, 48 }, { 46, -1 }, { 47, -1 }, { 45, -1 }, { 39, -1 }, { 117, -1 }, { 42, -1 } };

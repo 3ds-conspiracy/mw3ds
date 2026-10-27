@@ -78,6 +78,18 @@ static bool readBatchBuffers(FILE* f, ActorMesh& m, ActorSet& set, const u8* tin
 std::vector<Skeleton> g_sharedSkeletons;
 static void sampleVec(const std::vector<VecKey>& keys, float t, float* v);
 
+// The file's keys (f32 time, w, x, y, z) into RotKey's 16-bit parts
+static void readRotKeys(FILE* f, std::vector<RotKey>& out, u32 count)
+{
+	out.resize(count);
+	float k[5];
+	for (u32 i = 0; i < count && fread(k, 4, 5, f) == 5; i++)
+	{
+		auto part = [](float v) { return (s16)lroundf(fmaxf(-1.0f, fminf(1.0f, v)) * 32767.0f); };
+		out[i] = { k[0], part(k[1]), part(k[2]), part(k[3]), part(k[4]) };
+	}
+}
+
 static void readSkeletons(FILE* f, std::vector<Skeleton>& out, u32 count)
 {
 	out.resize(count);
@@ -100,7 +112,8 @@ static void readSkeletons(FILE* f, std::vector<Skeleton>& out, u32 count)
 			Track& t = sk.tracks[i];
 			u32 k = 0;
 			rd(f, t.bone);
-			rd(f, k); t.rot.resize(k); fread(t.rot.data(), sizeof(RotKey), k, f);
+			rd(f, k);
+			readRotKeys(f, t.rot, k);
 			rd(f, k); t.trans.resize(k); fread(t.trans.data(), sizeof(VecKey), k, f);
 			rd(f, k); t.scale.resize(k); fread(t.scale.data(), sizeof(ScaleKey), k, f);
 			if (t.bone >= 0 && t.bone < (int)sk.bones.size())
@@ -295,7 +308,7 @@ static bool gpuSkinMesh(ActorMesh& m, const std::vector<u8>& inf)
 	m.gpuSkin = true;
 	std::vector<float>().swap(m.src);
 	std::vector<u8>().swap(m.infIndex);
-	std::vector<float>().swap(m.infWeight);
+	std::vector<u8>().swap(m.infWeight);
 	std::vector<u8>().swap(m.infCount);
 	return true;
 }
@@ -346,7 +359,7 @@ static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 					if (inf[v * 8 + 4 + k])
 					{
 						m.infIndex[v * 4 + n] = inf[v * 8 + k];
-						m.infWeight[v * 4 + n] = inf[v * 8 + 4 + k] * (1.0f / 255.0f);
+						m.infWeight[v * 4 + n] = inf[v * 8 + 4 + k];
 						n++;
 					}
 				m.infCount[v] = n;
@@ -710,20 +723,21 @@ static size_t keyBefore(const std::vector<K>& keys, float t)
 
 static void sampleRot(const std::vector<RotKey>& keys, float t, float* q)
 {
+	const float kPart = 1.0f / 32767.0f;
 	size_t i = keyBefore(keys, t);
-	const RotKey& a = keys[i];
-	if (i + 1 >= keys.size() || t <= a.t)
+	const RotKey& ka = keys[i];
+	float a[4] = { ka.w * kPart, ka.x * kPart, ka.y * kPart, ka.z * kPart };
+	if (i + 1 >= keys.size() || t <= ka.t)
 	{
-		q[0] = a.w; q[1] = a.x; q[2] = a.y; q[3] = a.z;
+		memcpy(q, a, sizeof(a));
 		return;
 	}
-	const RotKey& b = keys[i + 1];
-	float f = (t - a.t) / fmaxf(b.t - a.t, 1e-6f);
-	float s = (a.w * b.w + a.x * b.x + a.y * b.y + a.z * b.z) < 0.0f ? -1.0f : 1.0f;
-	q[0] = a.w + (s * b.w - a.w) * f;
-	q[1] = a.x + (s * b.x - a.x) * f;
-	q[2] = a.y + (s * b.y - a.y) * f;
-	q[3] = a.z + (s * b.z - a.z) * f;
+	const RotKey& kb = keys[i + 1];
+	float b[4] = { kb.w * kPart, kb.x * kPart, kb.y * kPart, kb.z * kPart };
+	float f = (t - ka.t) / fmaxf(kb.t - ka.t, 1e-6f);
+	float s = (a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3]) < 0.0f ? -1.0f : 1.0f;
+	for (int k = 0; k < 4; k++)
+		q[k] = a[k] + (s * b[k] - a[k]) * f;
 	float len = sqrtf(q[0] * q[0] + q[1] * q[1] + q[2] * q[2] + q[3] * q[3]);
 	for (int k = 0; k < 4; k++)
 		q[k] /= len;
@@ -1050,7 +1064,7 @@ void actorDeform(ActorSet& set, Actor& a)
 			u8* out = (u8*)m.verts;
 			const float* s = m.src.data();
 			const u8* ix = m.infIndex.data();
-			const float* wt = m.infWeight.data();
+			const u8* wt = m.infWeight.data();
 			for (u32 v = 0; v < m.numVerts; v++, s += 3, ix += 4, wt += 4)
 			{
 				float* o = (float*)(out + v * 24);
@@ -1063,9 +1077,9 @@ void actorDeform(ActorSet& set, Actor& a)
 				float acc[3] = { 0, 0, 0 };
 				for (int k = 0; k < n; k++)
 				{
-					float p[3];
+					float p[3], wk = wt[k] * (1.0f / 255.0f);
 					xform(&mats[ix[k] * 12], s, p);
-					acc[0] += p[0] * wt[k]; acc[1] += p[1] * wt[k]; acc[2] += p[2] * wt[k];
+					acc[0] += p[0] * wk; acc[1] += p[1] * wk; acc[2] += p[2] * wk;
 				}
 				o[0] = acc[0]; o[1] = acc[1]; o[2] = acc[2];
 			}

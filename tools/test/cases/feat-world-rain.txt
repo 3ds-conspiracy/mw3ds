@@ -1,4 +1,6 @@
 # start: Seyda Neen
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS profile's rain ring)
 # Rain and ash hang in the world (OpenMW's SkyManager: particles kept in a box round the eye, wrapped to its far side as
 # the eye leaves them behind). Ours were dashes drawn over the screen that moved with every turn of the view and sat
 # flat on the HUD in 3D. Balmora at noon in rain: streaks drawn, the far-rain ring on a New 3DS (spec/performance-

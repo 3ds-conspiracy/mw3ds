@@ -57,7 +57,8 @@ is allocated outside it. Its session heap measured within 2% of Azahar's (20.9 M
 
 ```sh
 python tools\test\native\build.py --mem
-python tools/test/run_native_all.py --mem --ignore-warnings          # every case, Old 3DS profile, capped heap
+python tools/test/run_native_all.py --mem --ignore-warnings          # every case on its console's capped heap
+python tools/test/run_native_all.py --mem --old3ds --ignore-warnings # every case as an Old 3DS (39 MB)
 tools/test/run_test.py <case> --native --old3ds --exe build/native-mem/mw3ds-native.exe
 ```
 

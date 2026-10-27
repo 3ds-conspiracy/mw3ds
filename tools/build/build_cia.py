@@ -14,6 +14,10 @@
     python tools/build/build_cia.py --tribunal      with the Tribunal add-on (Tribunal.esm after Morrowind.esm): data in
                                                     out/data-tribunal (out/o3ds-tribunal), build/mw3ds-tribunal.cia
                                                     (mw3ds-o3ds-tribunal.cia); the same program runs both
+    python tools/build/build_cia.py --bloodmoon     with the Bloodmoon add-on (Bloodmoon.esm after Morrowind.esm, and
+                                                    after Tribunal.esm with --tribunal too): out/data-bloodmoon,
+                                                    build/mw3ds-bloodmoon.cia; with both out/data-tribunal-bloodmoon,
+                                                    build/mw3ds-tribunal-bloodmoon.cia (the o3ds ones to match)
 Needs .env filled in (see .env.example): MW3DS_MORROWIND_DIR, MW3DS_CTR_TOOLS_DIR, and on Windows MW3DS_MSYS2_DIR
 (not with --prebuilt).
 """
@@ -28,7 +32,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import mwtools
-from make_cia import build, pack
+from make_cia import build, names, pack
 
 ROOT = mwtools.ROOT
 
@@ -115,11 +119,13 @@ def fetch_mods(old3ds=False):
 
 
 def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=False, no_data=False, prebuilt=False,
-        tribunal=False):
+        tribunal=False, bloodmoon=False):
     os.chdir(ROOT)
     mwtools.load_env()
     if tribunal:
         os.environ["MW3DS_TRIBUNAL"] = "1"         # (the converters read it: tools/convert/mwfiles.py)
+    if bloodmoon:
+        os.environ["MW3DS_BLOODMOON"] = "1"
     if mods:
         dirs = fetch_mods(old3ds)
         if fetch_only:
@@ -137,12 +143,8 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
     if not (ctr / ("makerom.exe" if mwtools.IS_WINDOWS else "makerom")).exists():
         raise SystemExit(f"makerom not found in {ctr}")
 
-    data = "out/o3ds" if old3ds else "out/data"
-    cia = "build/mw3ds-o3ds.cia" if old3ds else "build/mw3ds.cia"
-    if tribunal:
-        data += "-tribunal"
-        cia = cia[:-4] + "-tribunal.cia"
-    if tribunal or old3ds:
+    data, cia = names(old3ds, tribunal, bloodmoon)
+    if tribunal or bloodmoon or old3ds:
         os.environ["MW3DS_OUT"] = data
     convert_args = [] if small else ["--world"]
     if old3ds:
@@ -187,9 +189,10 @@ def main(mods=False):
     ap.add_argument("--no-data", action="store_true")
     ap.add_argument("--prebuilt", action="store_true")
     ap.add_argument("--tribunal", action="store_true")
+    ap.add_argument("--bloodmoon", action="store_true")
     a = ap.parse_args()
     return run(a.small, a.skip_convert, a.old3ds, mods or getattr(a, "mods", False), a.fetch_only, a.no_data, a.prebuilt,
-               a.tribunal)
+               a.tribunal, a.bloodmoon)
 
 
 if __name__ == "__main__":

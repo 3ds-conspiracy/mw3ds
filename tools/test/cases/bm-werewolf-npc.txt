@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A person a script turns into a werewolf (BecomeWerewolf on an NPC) is drawn as Bloodmoon's werewolf body, the
+# bm_werewolf_default creature's model (OpenMW draws a werewolf on the wolf skeleton with its skin), and as themselves
+# again after UndoWerewolf; IsWerewolf answers for them.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:refwerewolf:darvame%hleran:eq:0+SNAP:refmeshes:darvame%hleran
+0.3 0 0 0 0 CON:"darvame%hleran"->becomewerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refwerewolf:darvame%hleran:eq:2+EXPECT:refmeshes:darvame%hleran:ne:@0
+0.3 0 0 0 0 CON:"darvame%hleran"->undowerewolf
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refwerewolf:darvame%hleran:eq:0+EXPECT:refmeshes:darvame%hleran:eq:@0

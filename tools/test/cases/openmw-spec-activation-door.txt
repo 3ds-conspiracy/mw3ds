@@ -31,6 +31,8 @@
 0.3 0 0 0 0 GOTO:Mudan,_Lost_Dwemer_Checkpoint
 3 0 0 0
 0.3 0 0 0 0 GIVE:key_door_Mudan00
+# (the shallows' small fish that bite someone walking through, on one profile's cells and not another's, would hurt the player too)
+0.3 0 0 0 0 SLAYALL:slaughterfish_small
 0.3 0 0 0 0 SNAP:health
 60 0 0 0 0 DOORTO:Mudan,_Central_Vault
 4 0 0 0

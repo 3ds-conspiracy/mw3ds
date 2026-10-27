@@ -29,12 +29,21 @@ void Session::playerActivate(int ref)
 	activate(ref);
 }
 
-// A werewolf can't use things (OpenMW's sWerewolfRefusal)
-bool Session::werewolfRefused()
+// A werewolf can't use things (OpenMW's sWerewolfRefusal), with a growl by what it was: one of the Wolf* sounds
+// of the thing's kind at random (WolfNPC1-3, WolfCreature1-3, WolfContainer1-2, WolfActivator1, WolfItem1-3: OpenMW's
+// getWerewolfRefusalSoundId and searchRandom)
+bool Session::werewolfRefused(int ref)
 {
-	if (!werewolf)
+	if (!w.stats.werewolf)
 		return false;
 	notify(w.game.gmst("swerewolfrefusal", "You cannot use items while in werewolf form."));
+	if (ref >= 0)
+	{
+		RecName t = w.refs[ref].recType;
+		const char* kind = t == REC_NPC_ ? "wolfnpc" : t == REC_CREA ? "wolfcreature" : t == REC_CONT ? "wolfcontainer"
+			: t == REC_ACTI ? "wolfactivator" : "wolfitem";
+		playRandomSound(-1, kind);
+	}
 	return true;
 }
 
@@ -51,7 +60,7 @@ bool Session::readRefused()
 // when someone saw it and reports it the sleep is refused too
 bool Session::bedRefused(int bed)
 {
-	if (werewolf)
+	if (w.stats.werewolf)
 	{
 		notify(w.game.gmst("swerewolfrefusal", "You cannot use items while in werewolf form."));
 		return true;
@@ -78,7 +87,7 @@ void Session::activate(int ref)
 	if (!r.visible())
 		return;
 	// A werewolf is refused by everything but doors (OpenMW's getWerewolfRefusalAction)
-	if (r.recType != REC_DOOR && werewolfRefused())
+	if (r.recType != REC_DOOR && werewolfRefused(ref))
 		return;
 	// what it does is its type's: talk, search, open, read, take ... (mwclass/)
 	MWClass::activate(*this, ref);

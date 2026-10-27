@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# data: bloodmoon
+# PICKUP of an id lying in a heap takes a new one each time (the supply ship's miner's picks, six round a crate in its
+# hold: Falco's CO_3a): one already taken is gone, not the nearest to aim at again
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 GOTO:Raven_Rock,_Supply_Ship
+4 0 0 0 0
+60 0 0 0 0 PICKUP:miner's%pick
+60 0 0 0 0 PICKUP:miner's%pick
+60 0 0 0 0 PICKUP:miner's%pick
+0.1 0 0 0 0 EXPECT:item:miner's%pick:ge:3

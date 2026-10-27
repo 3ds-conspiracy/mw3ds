@@ -1,0 +1,31 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: new
+# bm-shared-pines: Solstheim's pine forests hold each repeated tree once (cell format 11's shared models,
+# tools/convert/convert_cell.py share_models): the Hirstaang Forest's 3x3 spot (-24, 20), the heaviest of the world,
+# loads with its trees as shared models, draws them, and leaves linear memory to spare (it had 1.5 MB with the trees
+# copied into the batches), at about the draws of the batched trees (counted on the frames a shot draws natively).
+# Shots of the forest and Raven Rock for a look against the batched trees.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-192512:167936:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:sharedmodels:models:ge:60
+0.1 0 0 0 0 EXPECT:sharedmodels:places:ge:400
+0.1 0 0 0 0 EXPECT:linearfree:ge:8000
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:shareddrawn:ge:10
+0.1 0 0 0 0 EXPECT:worlddraws:lt:1500
+1 0 0 0.5 0
+0.5 0 0 0 0 SHOT
+# Raven Rock (-24, 19): its trees a script clears as the colony grows are shared too
+0.3 0 0 0 0 TP:-192512:159744:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:sharedmodels:places:ge:300
+0.1 0 0 0 0 EXPECT:linearfree:ge:8000
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:shareddrawn:ge:5
+0.1 0 0 0 0 EXPECT:worlddraws:lt:1500

@@ -95,14 +95,15 @@ bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "reflegframes" || what == "refsidemax" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refduel" || what == "refrun" || what == "refdying" || what == "reflying" || what == "refknock" || what == "refsidesteps" || what == "refskate" || what == "refyaw" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "refdressed" || what == "refz" || what == "refclimb" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "reflampnow" || what == "refheldlight" || what == "reftalk" || what == "refposes" || what == "refmorpht" || what == "refgroupstarts" || what == "refposehz" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "itemscriptrunning" || what == "refloopvol" || what == "soundstarted" || what == "soundvolume" || what == "voicesecs" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "reflegframes" || what == "refsidemax" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refduel" || what == "refrun" || what == "refdying" || what == "reflying" || what == "refknock" || what == "refsidesteps" || what == "refskate" || what == "refyaw" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "refdressed" || what == "refz" || what == "refclimb" || what == "refwerewolf" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "reflampnow" || what == "refheldlight" || what == "reftalk" || what == "refposes" || what == "refmorpht" || what == "refgroupstarts" || what == "refposehz" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "itemscriptrunning" || what == "refloopvol" || what == "soundstarted" || what == "soundvolume" || what == "voicesecs" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
 		|| what == "blockchance" || what == "elemshield" || what == "runspeedfor" || what == "jumpspeedfor" || what == "npcwalk"
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
-		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "saveneeds" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "shotdark" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "texside" || what == "texlod" || what == "regionchance" || what == "regionweather"
-		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip";
+		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "savevalid" || what == "saveneeds" || what == "shotluma" || what == "shotlumagain" || what == "shotspread" || what == "shotdark" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "sharedmodels" || what == "texside" || what == "texlod" || what == "regionchance" || what == "regionweather"
+		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip"
+		|| what == "refscale" || what == "refdrawscale" || what == "refradius" || what == "stormdir" || what == "moontint" || what == "subtitlehas" || what == "wloopis";
 }
 
 // "@": the value SNAP recorded for the same check; "@1" / "@-2.5": that plus / minus so much
@@ -162,8 +163,8 @@ bool TestDriver::playerToken(const std::string& tok)
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "INVSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE", "MAKEPICK", "MAKETARGET",
 		"SHARE", "SHAREPUT", "SHARETAKE", "SHAREDONE", "MAPNOTE",
 		"ENCHANTAT", "ENCHANT", "ENCHITEM", "ENCHGEM", "ENCHTYPE", "ADDEFFECT", "CONFIRM", "TYPE", "LEVELUP",
-		"EQUIP", "USE", "READ", "DROP", "QUICKSET", "CAST", "CASTAT", "CASTMADESPELL", "USEMADE", "EQUIPMADE",
-		"RECHARGEMADE", "RECHARGE", "REPAIR", "REPAIRAT", "REPAIRWITH", "BUYSPELL", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "UNSEEN", "UNTIL", "FLOAT", "HIDE",
+		"EQUIP", "UNEQUIP", "USE", "READ", "DROP", "QUICKSET", "CAST", "CASTAT", "CASTMADESPELL", "USEMADE", "EQUIPMADE",
+		"RECHARGEMADE", "RECHARGE", "REPAIR", "REPAIRAT", "REPAIRWITH", "BUYSPELL", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "SLEEPTO", "UNSEEN", "UNTIL", "FLOAT", "HIDE",
 	};
 	size_t colon = tok.find(':');
 	std::string name = tok.substr(0, colon);
@@ -260,6 +261,23 @@ bool TestDriver::start(Session& s, const std::string& token)
 	}
 	if (mechanicsOp(s, a))
 		return false;
+	// UNEQUIP:<item>: take a worn or held item off, as tapping it on the Inventory page does (a fistfight: the weapon
+	// put away)
+	if (verb == "UNEQUIP" && a.size() >= 2)
+	{
+		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
+		for (size_t k = 0; k < s.w.inventory.size(); k++)
+			if (s.w.inventory[k].equipped && (lower(s.w.inventory[k].id) == want || lower(s.w.inventory[k].id) == want2))
+			{
+				s.w.inventory[k].equipped = false;
+				s.playSound(-1, "Item Misc Up");
+				s.w.refreshStats();
+				logf("test: unequipped %s", s.w.inventory[k].id.c_str());
+				return false;
+			}
+		logf("drive: FAIL unequip %s: not worn or held", a[1].c_str());
+		return false;
+	}
 	if (verb == "EQUIP" && a.size() >= 2)
 	{
 		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
@@ -801,11 +819,20 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		// someone else in the line (the crosshair is on a living person who is not the target): no swing, step aside
 		// until the line is clear, as a player does not hit a bystander. One fighting us is no bystander: a player in a
 		// melee hits whoever of them is in front (Zainsipilu: Aranwen's guards between her and the player)
-		if (s.target >= 0 && s.target != ref && (w.refs[s.target].recType == REC_NPC_ || w.refs[s.target].recType == REC_CREA) && !w.refs[s.target].dead
-			&& !(w.refs[s.target].ai == AI_COMBAT && w.refs[s.target].duelFoe < 0 && !w.refs[s.target].ally))
+		// The swing strikes the nearest actor in its arc, not the one under the crosshair: one nearer than the target in it
+		// is in the way too (the wounded bear among the rieklings of the Ritual of Beasts took the blows meant for them)
+		int inWay = s.target;
+		if (inWay < 0 || inWay == ref)
+		{
+			int sw = s.swingTarget();
+			if (sw >= 0 && sw != ref)
+				inWay = sw;
+		}
+		if (inWay >= 0 && inWay != ref && (w.refs[inWay].recType == REC_NPC_ || w.refs[inWay].recType == REC_CREA) && !w.refs[inWay].dead
+			&& !(w.refs[inWay].ai == AI_COMBAT && w.refs[inWay].duelFoe < 0 && !w.refs[inWay].ally))
 		{
 			if (lineTimer <= 0.0f)
-				logf("drive: %s is in the way to %s, stepping aside", w.refs[s.target].id.c_str(), id.c_str());
+				logf("drive: %s is in the way to %s, stepping aside", w.refs[inWay].id.c_str(), id.c_str());
 			lineTimer += dt;
 			// (a short step either way does not clear a big one, a queen: after 3 s walk round it, facing the target, one way for
 			// 6 s then the other, as a player goes round to another side)

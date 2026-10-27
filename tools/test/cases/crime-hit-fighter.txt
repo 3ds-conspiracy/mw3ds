@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# Striking someone already fighting another actor is no assault (OpenMW's canCommitCrimeAgainst: not while engaged with
+# an actor): Rothis Nethan in his Arena duel with Brethas Deras (vivecArenaScript's StartCombat), struck by the
+# player, reports nothing. Raven Rock's Protect Falco: Baslod and the two who follow him at Falco, struck down
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7+GOD:2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Waistworks
+3 0 0 0
+0.3 0 0 0 0 JOURNAL:HR_CowardDisgrace:50
+0.3 0 0 0 0 STARTSCRIPT:vivecArenaScript
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Pit
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refduel:rothis%nethan:eq:1
+0.3 0 0 0 0 SETALARM:rothis%nethan:100+SETALARM:brethas%deras:100
+20 0 0 0 0 STRIKE:rothis%nethan:1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0

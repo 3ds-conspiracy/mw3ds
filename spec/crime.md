@@ -10,6 +10,11 @@ it is the victim and knows (an assault always counts), or the crime is murder (a
 line of sight and passes the awareness check. A crime nobody saw is not reported (an unseen assault still starts the
 victim's fight, and a guard victim reports it).
 
+No crime at all against someone who could not be its victim (`canCommitCrimeAgainst`): a creature, one already fighting
+the player, one engaged in a fight with any actor (Baslod rushing Falco in Raven Rock's Protect Falco), one pursuing the
+player, a werewolf, a vampire. The blow still starts their fight (case `crime-hit-fighter`). The same holds for the killing blow: a kill of one engaged with another actor is no murder (case
+`crime-kill-fighter`).
+
 ## Reported and paid
 
 A seen crime is put on record when a witness within the radius has AI Alarm of at least 100. The bounty added:

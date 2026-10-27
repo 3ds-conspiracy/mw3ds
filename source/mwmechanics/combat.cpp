@@ -232,6 +232,8 @@ void Session::damagePlayer(float dmg, bool fatigueOnly)
 // A blow (or arrow) from an actor reaches the player: block, armor, wear, knockdown
 void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool unarmed, bool ranged)
 {
+	if (w.playerHitAttempt < 0)
+		w.playerHitAttempt = ri;                  // (the player's hit attempt foe: see allyTakesPlayersFight)
 	Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
 	PlayerStats& s = w.stats;
@@ -427,15 +429,20 @@ void Session::npcStrike(int ri)
 	if (def.creature && (wpn || !def.attack.empty()))
 		npcHitsPlayer(ri, creatureDamage(def, wpn, charge, r.attackKind) * roll.damage, false, weaponSkill(wpn), !wpn);
 	else if (wpn)
-		npcHitsPlayer(ri, weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage, false,
-			weaponSkill(wpn));
+		npcHitsPlayer(ri, weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage
+			* w.silverOnWerewolf(wpn, -1), false, weaponSkill(wpn));
 	else    // fists: GBAC leaves them alone while the player still has fatigue (they only tire)
 	{
 		// Hand to hand: Hand-to-hand x (fMinHandToHandMult + (fMax - fMin) x swing); on a player who is down or
 		// paralyzed it is health damage x fHandtoHandHealthPer (OpenMW's getHandToHandDamage)
 		float lo = w.game.gmstf("fminhandtohandmult", 0.1f), hi = w.game.gmstf("fmaxhandtohandmult", 0.5f);
 		float dmg = def.skills[SKILL_HAND_TO_HAND] * (lo + (hi - lo) * charge);
-		if (w.player.knockTimer > 0.0f || w.effectTotal(45) > 0.0f)
+		if (w.isWerewolf(ri))      // a werewolf's claws wound (World::werewolfClaw)
+		{
+			npcHitsPlayer(ri, w.werewolfClaw(dmg) * roll.damage, false, SKILL_HAND_TO_HAND, true);
+			playRandomSound(ri, "wolfhit");
+		}
+		else if (w.player.knockTimer > 0.0f || w.effectTotal(45) > 0.0f)
 			npcHitsPlayer(ri, dmg * w.game.gmstf("fhandtohandhealthper", 0.1f) * roll.damage, false, SKILL_HAND_TO_HAND, true);
 		else
 			npcHitsPlayer(ri, dmg * (w.stats.fatigue > 0.0f ? 1.0f : roll.damage), true, SKILL_HAND_TO_HAND, true);
@@ -498,15 +505,17 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 
 	// Being attacked makes them fight back; attacking someone peaceful is assault (the guards
 	// don't mind you killing mudcrabs, or whoever attacked you first). A companion forgives blows in melee
-	// (friendlyHit); shots never are
-	bool wasPeaceful = t.ai != AI_COMBAT;
+	// (friendlyHit); shots never are. One already fighting another actor is no victim of a crime either (OpenMW's
+	// canCommitCrimeAgainst: not while engaged with an actor: Baslod at Falco)
+	bool wasPeaceful = t.ai != AI_COMBAT && t.duelFoe < 0;
 	bool forgiven = false;
 	if (wasPeaceful && !ranged)
 		forgiven = friendlyHit(target);
 	if (!forgiven)
 	{
 		makeHostile(target);
-		if (wasPeaceful && !def.creature && !t.aggressor)
+		// (a werewolf is no one's victim of a crime: OpenMW's canCommitCrimeAgainst)
+		if (wasPeaceful && !def.creature && !t.aggressor && !t.werewolf)
 			crimeSeen(CRIME_ASSAULT, 0, target), reportCrime(target, kBountyAssault);
 	}
 
@@ -626,6 +635,13 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	hurtFlash = fmaxf(0.0f, hurtFlash - dt * 2.0f);
 	if (playerDead)
 		return;
+	// the player's hit attempt foe is forgotten once it is dead, out of the fight or gone (OpenMW's Actors::update)
+	if (w.playerHitAttempt >= 0)
+	{
+		const Ref& h = w.refs[w.playerHitAttempt];
+		if (h.dead || !w.active(w.playerHitAttempt) || (h.ai != AI_COMBAT && h.duelFoe < 0))
+			w.playerHitAttempt = -1;
+	}
 
 	// Fatigue comes back: fFatigueReturnBase + fFatigueReturnMult x endurance per second
 	if (testFatiguePin >= 0.0f)
@@ -925,12 +941,19 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f }, eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
 			if (r.duelFoe >= 0 && !menu)
 				npcDuel(i, dt);
-			else if (rating >= 100.0f && !menu && !calm && npcAware(i) && w.lineOfSight(head, eye) && waterCreatureCanFight(w, i))
+			// (never one on the player's side: a summon or a companion with a high Fight follows instead; OpenMW keeps the
+			// player's followers out of picking a fight with them)
+			else if (rating >= 100.0f && !r.ally && !menu && !calm && npcAware(i) && w.lineOfSight(head, eye) && waterCreatureCanFight(w, i))
 			{
 				r.aggressor = true;
 				makeHostile(i);
 			}
 			else if (!menu && r.recType == REC_NPC_ && (r.duelFoe = guardFoe(i)) >= 0)
+				npcDuel(i, dt);
+			// one following the player takes on the player's hit attempt foe (OpenMW's engageCombat: an ally's hit attempt
+			// actor): Bloodmoon's Ingmar kills the Valbrandr draugr while the player only draws it off
+			else if (!menu && !r.ally && w.playerHitAttempt >= 0 && w.playerHitAttempt != i && w.followsPlayer(i)
+				&& w.sameSpace(i, w.playerHitAttempt) && (r.duelFoe = w.playerHitAttempt) >= 0)
 				npcDuel(i, dt);
 			else if (npcTalkStand(i, dt))
 				;

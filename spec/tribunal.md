@@ -3,7 +3,7 @@
 Tribunal.esm comes in only when the data is converted with the add-on (`level.py --tribunal`, or `MW3DS_TRIBUNAL=1`
 for every converter). Without it the data is the vanilla game's, byte for byte as before, and the engine behaves as
 before: everything below reads what the data says (`game.json`'s `"addons"`, cells' `"sky"`, `"start_scripts"`),
-never a build switch. Bloodmoon stays out of scope (a plugin needing it is refused).
+never a build switch. Bloodmoon is the other add-on ([bloodmoon.md](bloodmoon.md)); it loads after Tribunal.
 
 OpenMW's code: `apps/openmw/mwworld/{worldimp,cellstore,scene}.cpp` (QuasiEx), `mwscript/globalscripts.cpp`
 (addStartup), `mwgui/companionwindow.cpp`, `mwgui/companionitemmodel.cpp`, `mwgui/dialogue.cpp` (isCompanion),
@@ -15,7 +15,7 @@ OpenMW's code: `apps/openmw/mwworld/{worldimp,cellstore,scene}.cpp` (QuasiEx), `
 | Rule | Ours | Code |
 |---|---|---|
 | Tribunal.esm loads after Morrowind.esm and before any plugin; its records replace Morrowind's by type and id, INFOs merge in their topic's chain, as OpenMW merges a load order | same | `tools/convert/mwfiles.py` `load_order`, `read_game` |
-| A plugin needing Tribunal.esm is allowed only with the add-on; one needing Bloodmoon.esm never | same | `mwfiles.out_of_scope` |
+| A plugin needing Tribunal.esm is allowed only with the add-on (Bloodmoon.esm likewise with its own) | same | `mwfiles.out_of_scope` |
 | The converted data says which add-ons it holds | `game.json` `"addons": ["tribunal"]` | `build_game.py`, `GameData::addons` |
 
 ## Mournhold: interiors under the sky (CELL flag 0x80, OpenMW's QuasiEx)

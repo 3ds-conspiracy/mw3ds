@@ -19,7 +19,8 @@ struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; fl
 // hair) were drawn before the tapestry behind them, which then painted over them
 struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr;
 	float alpha = 1.0f;               // (an actor drawn see-through: Invisibility, Chameleon)
-	float tint[3] = { 1, 1, 1 }; };   // (an actor's: actorTint; a cell batch's: the world's)
+	float tint[3] = { 1, 1, 1 };      // (an actor's: actorTint; a cell batch's: the world's)
+	const void* colors = nullptr; };  // (a shared model's batch: the placement's colours, CellBatch::colors)
 
 struct GpuState
 {

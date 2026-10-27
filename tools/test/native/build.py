@@ -42,7 +42,7 @@ RENDERER_RENAMES = ["rendererDrawWorld", "rendererDrawMesh", "rendererDrawMeshGl
 # a definition: the name and its parameters at the start of a line, the body on the next ("{")
 RENDERER_DEFINES = re.compile(r"^[A-Za-z_][\w:<>*& ]*\b(?:" + "|".join(RENDERER_RENAMES) + r")\([^;]*\)\s*\n\{", re.M)
 # no fused multiply-add: the 3DS's VFP rounds every operation, and a host-CPU build would round some differently
-CXXFLAGS = [os.environ.get("MW3DS_NATIVE_OPT", "-O1"), "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "source"),
+CXXFLAGS = [*os.environ.get("MW3DS_NATIVE_OPT", "-O1").split(), "-std=c++17", "-w", "-fno-strict-aliasing", "-ffp-contract=off", *(["-DNATIVE_NEWLIB_RAND"] if os.environ.get("NATIVE_NEWLIB_RAND") else []), "-I", str(HERE / "stub"), "-I", str(ROOT / "source"),
             "-I", str(ZLIB), "-include", str(HERE / "stub" / "native_compat.h"), *(["-DNATIVE_MEMCAP"] if MEM else [])]
 
 

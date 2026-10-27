@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# data: bloodmoon
+# The Ritual of Water's Swimmer, a horker on an island, leads the player (AiEscort) north to Stahlman's Gorge once the
+# player comes within 256: it walks off the island's shore into the sea and swims on while the player keeps up.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 JOURNAL:BM_Stones:30+JOURNAL:BM_Water:10
+0.3 0 0 0 0 TP:-216163:200480:300:0
+4 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:journal:BM_Water:eq:50+EXPECT:refpkg:bm_horker_swim_unique:eq:2
+60 0 0 0 0 WALKTO:@-216230,201030,60
+15 0 0 0
+0.1 0 0 0 0 EXPECT:refz:bm_horker_swim_unique:lt:0

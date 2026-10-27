@@ -14,6 +14,7 @@ struct RenderState
 	std::string weatherSound;
 	float thunderIn = 10.0f;
 	float moonDir[2][3] = {}, moonAlpha[2] = {};     // where Masser and Secunda are and how much of each shows (updateSky)
+	u8 moonTint[2][3] = {};                          // and the colour each picture is drawn in (Secunda red: TurnMoonRed)
 	float dressTimer = 0.0f;                       // until the next look at what loaded NPCs still wear (updateDress)
 	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
 	// Animation::addEffect), or at a spot (an area burst, blood)

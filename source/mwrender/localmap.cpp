@@ -48,7 +48,10 @@ bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float to
 	g_gpu.opaqueWater = opaqueWater;
 	for (int pass = 0; pass < 3; pass++)
 		for (LoadedCell* l : w.loaded)
+		{
 			drawBatches(l->cell, l->cell.batches, pass, nullptr, w.time);
+			drawSharedPass(l->cell, pass, view, w.time, w.refs);
+		}
 	g_gpu.opaqueWater = false;
 	setUvOffset(0.0f, 0.0f);
 	invalidateState();

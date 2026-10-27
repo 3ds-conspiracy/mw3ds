@@ -18,6 +18,9 @@ float World::actorEffect(int ri, int effect) const
 	for (auto& t : r.effects)
 		if (t.effect == effect)
 			total += t.magnitude;
+	for (auto& s : r.scriptEffects)          // (Mod<effect> from a script: OpenMW's base magnitude)
+		if (s.first == effect)
+			total += s.second;
 	return total;
 }
 
@@ -30,7 +33,34 @@ float World::effectTotal(int effect) const
 	for (auto& a : abilities)
 		if (a.effect == effect)
 			total += a.magnitude;
+	for (auto& s : stats.scriptEffects)
+		if (s.first == effect)
+			total += s.second;
 	return total;
+}
+
+void World::modScriptEffect(int ref, int effect, int delta)
+{
+	if (effect < 0 || delta == 0)
+		return;
+	if (ref < 0)
+	{
+		for (auto& s : stats.scriptEffects)
+			if (s.first == effect)
+			{
+				s.second += delta;
+				return;
+			}
+		stats.scriptEffects.push_back({ effect, delta });
+		return;
+	}
+	for (auto& s : refs[ref].scriptEffects)
+		if (s.first == effect)
+		{
+			s.second = (s16)std::max(-32768, std::min(32767, s.second + delta));
+			return;
+		}
+	refs[ref].scriptEffects.push_back({ (s16)effect, (s16)std::max(-32768, std::min(32767, delta)) });
 }
 
 void World::reapplyEffects()

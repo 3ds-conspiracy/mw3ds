@@ -860,11 +860,20 @@ int AttrInfo_AddLoader(C3D_AttrInfo* info, int, int format, int count)
 	return info->count++;
 }
 C3D_BufInfo* C3D_GetBufInfo() { return &s_buf; }
-void BufInfo_Init(C3D_BufInfo* info) { info->data = nullptr; info->stride = 0; }
-int BufInfo_Add(C3D_BufInfo* info, const void* data, ptrdiff_t stride, int, u64)
+void BufInfo_Init(C3D_BufInfo* info) { info->data = nullptr; info->stride = 0; info->data2 = nullptr; info->stride2 = 0; info->split = 8; }
+// The game's layouts: one buffer of every attribute in order, or (a shared model's batch) a second one holding the
+// attributes after the first one's
+int BufInfo_Add(C3D_BufInfo* info, const void* data, ptrdiff_t stride, int attribCount, u64)
 {
+	if (info->data)
+	{
+		info->data2 = data;
+		info->stride2 = (int)stride;
+		return 1;
+	}
 	info->data = data;
 	info->stride = (int)stride;
+	info->split = attribCount;
 	return 0;
 }
 
@@ -1010,12 +1019,17 @@ static void readAttr(const u8* v, int fmt, int n, float out[4])
 
 static int attrSize(int fmt) { return fmt == GPU_FLOAT ? 4 : fmt == GPU_SHORT ? 2 : 1; }
 
-static ClipV vertexShader(const u8* v)
+static ClipV vertexShader(const u8* v, const u8* v2 = nullptr)
 {
 	float in[5][4] = {};
 	int off = 0;
 	for (int i = 0; i < s_attr.count && i < 5; i++)
 	{
+		if (v2 && i == s_buf.split)
+		{
+			v = v2;          // (the second buffer's attributes)
+			off = 0;
+		}
 		readAttr(v + off, s_attr.format[i], s_attr.elements[i], in[i]);
 		off += attrSize(s_attr.format[i]) * s_attr.elements[i];
 	}
@@ -1176,7 +1190,8 @@ void C3D_DrawElements(int, int count, int type, const void* indices)
 	static std::vector<ClipV> xf;
 	xf.resize(maxIndex + 1);
 	for (int i = 0; i <= maxIndex; i++)
-		xf[i] = vertexShader(verts + (size_t)i * s_buf.stride);
+		xf[i] = vertexShader(verts + (size_t)i * s_buf.stride,
+			s_buf.data2 ? (const u8*)s_buf.data2 + (size_t)i * s_buf.stride2 : nullptr);
 
 	bool need0 = usesSource(GPU_TEXTURE0) && s_units[0], need1 = usesSource(GPU_TEXTURE1) && s_units[1];
 	V4 consts[6];

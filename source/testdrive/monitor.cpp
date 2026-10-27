@@ -41,7 +41,7 @@ void Session::monitorActors(float dt)
 		{
 			const Ref& r = w.refs[i];
 			// (PLACE put one of this id somewhere: that one, among several of the id)
-			if (r.idLower != traceActor || (testPlaced >= 0 && w.refs[testPlaced].idLower == traceActor && i != testPlaced))
+			if (r.idLower != traceActor || (testPlaced >= 0 && testPlaced < (int)w.refs.size() && w.refs[testPlaced].idLower == traceActor && i != testPlaced))
 				continue;
 			const Actor* a = w.actorOf(i);
 			const char* group = "-";

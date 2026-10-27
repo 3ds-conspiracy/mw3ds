@@ -15,6 +15,7 @@
 #include "mwsound/soundmanagerimp.hpp"
 
 extern const char* g_playerBlock;
+extern int g_sharedDrawn, g_worldDraws;
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
 #include "testdrive/expecthelpers.hpp"
@@ -216,6 +217,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	}
 	else if (what == "torchtime") v = w.useTorches() ? 1.0f : 0.0f;   // time for torches here (night, a dark interior)
 	else if (what == "subtitle") v = w.time < s.subtitleUntil && !s.subtitle.empty() ? 1.0f : 0.0f;   // a spoken line written now
+	else if (what == "subtitlehas")     // <text, '_' a space>: the last line spoken (its subtitle) holds it, 1
+		v = lower(s.subtitle).find(lower(spaced(arg))) != std::string::npos ? 1.0f : 0.0f;
 	else if (what == "lampbatches")     // batches the last view drew with lamp light the night left alone (outdoors)
 	{
 		extern int g_lampLitBatches;
@@ -223,10 +226,20 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	}
 	else if (what == "precip")          // <streaks|flakes|ring|farring|x0>: the rain and ash the last frame drew (drawPrecipitation;
 	{                                   // ring: the far rain's band 450 out, farring: the one 900 out)
-		extern int g_precipStreaks, g_precipFlakes, g_precipRing, g_precipFarRing;
-		extern float g_precipX0;
+		// (snow: the flakes that were snow's sheets; dust: the clouds, blizzard: those that were a blizzard's; windx /
+		// windy: the way the flakes and clouds blew across the ground)
+		extern int g_precipStreaks, g_precipFlakes, g_precipRing, g_precipFarRing, g_precipSnow, g_precipDust, g_precipBlizzard;
+		extern float g_precipX0, g_precipWind[2];
 		v = arg == "flakes" ? (float)g_precipFlakes : arg == "ring" ? (float)g_precipRing : arg == "farring" ? (float)g_precipFarRing
-			: arg == "x0" ? g_precipX0 : (float)g_precipStreaks;
+			: arg == "x0" ? g_precipX0 : arg == "snow" ? (float)g_precipSnow : arg == "dust" ? (float)g_precipDust
+			: arg == "blizzard" ? (float)g_precipBlizzard : arg == "windx" ? g_precipWind[0] : arg == "windy" ? g_precipWind[1]
+			: (float)g_precipStreaks;
+	}
+	else if (what == "stormdir")        // <x|y>: where the storm of the weather now blows the player (World::stormDirection)
+	{
+		float d[2];
+		w.stormDirection(w.weatherNow, w.player.feet, d);
+		v = arg == "x" ? d[0] : d[1];
 	}
 	else if (what == "torchpixel")      // the player's torch in the last view: per pixel 1, per vertex 0, none -1
 	{
@@ -362,12 +375,30 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		s.updateSky();
 		v = what == "moonx" ? s.moonDir[m][0] : what == "moonz" ? s.moonDir[m][2] : s.moonAlpha[m];
 	}
+	else if (what == "moonred") v = w.moonRed ? 1.0f : 0.0f;          // TurnMoonRed's state
+	else if (what == "moontint")        // <0 Masser | 1 Secunda>,<0 r | 1 g | 2 b>: the colour its picture is drawn in (0..255)
+	{
+		size_t comma = arg.find(',');
+		int m = atoi(arg.c_str()) ? 1 : 0, k = comma == std::string::npos ? 0 : std::max(0, std::min(2, atoi(arg.c_str() + comma + 1)));
+		s.updateSky();
+		v = (float)s.moonTint[m][k];
+	}
 	else if (what == "sunside")     // <0..3>: the light from the side now (World::sunSide): r, g, b on a wall facing it, w +1 east
 	{
 		float side[4];
 		w.sunSide(side);
 		v = side[std::clamp(atoi(arg.c_str()), 0, 3)];
 	}
+	else if (what == "sharedmodels")   // the loaded cells' shared models (format 11: Solstheim's pines) and their placements
+	{
+		v = 0.0f;
+		for (LoadedCell* l : w.loaded)
+			v += arg == "places" ? (float)l->cell.places.size() : (float)l->cell.models.size();
+	}
+	else if (what == "shareddrawn")    // shared models' placements the last view drew
+		v = (float)g_sharedDrawn;
+	else if (what == "worlddraws")     // draws the last view of the world made (each one CPU time on the console)
+		v = (float)g_worldDraws;
 	else if (what == "sidebatches")  // this cell's batches lit from the side by the low sun (their colours' alpha the facing)
 	{
 		v = 0.0f;
@@ -495,6 +526,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 			return false;
 	}
 	else if (what == "wwind") v = w.windNow;
+	else if (what == "wloopis") v = lower(s.weatherSound) == lower(spaced(arg)) ? 1.0f : 0.0f;   // <sound, '_' a space>: the weather's loop now
+	else if (what == "loadspeed") v = w.player.loadSpeed;     // the player's speed factor from the load and a storm blowing against them
 	else if (what == "wstorm") v = w.weatherStorm() ? 1.0f : 0.0f;
 	else if (what == "wprecip") v = w.weatherPrecip() ? 1.0f : 0.0f;
 	else if (what == "wtorches") v = w.useTorches() ? 1.0f : 0.0f;

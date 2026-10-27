@@ -17,8 +17,15 @@ nodes. The C++ function tables (`source/components/compiler/extensions0.hpp`) ar
 (26,230 compiles, 0 differences, 2026-10-15). Run it after changing either compiler.
 
 `tools/test/script_gap.py` lists OpenMW's functions the engine does not run, and which master file uses each. None
-that Morrowind.esm or Tribunal.esm uses is missing (Tribunal is an optional add-on: `internal`'s plan); the ones only
-Bloodmoon uses are out of scope.
+that Morrowind.esm, Tribunal.esm or Bloodmoon.esm uses is missing (both add-ons are optional: [tribunal.md](tribunal.md),
+[bloodmoon.md](bloodmoon.md)). With both add-ons in the load order: 32,911 compiles (1,207 scripts), 0 differences
+(2026-10-26: `MW3DS_TRIBUNAL=1 MW3DS_BLOODMOON=1 script_compile_check.py`).
+
+A run of comparison characters is one operator, read by its first two as OpenMW's scanner reads it (with a warning):
+`=` then anything is `==`, `<` or `>` then `=` is `<=` / `>=`, else `<` / `>`, `!` then anything `!=`. Bloodmoon's
+plantScript has `GetDistance Player <== 512` (it failed to compile: the strange seeds could not be planted). Both
+compilers (`mwscript.py` `tokenize`, `compiler.cpp` `tokenize`); spaces inside a run (OpenMW takes `< =` as `<`) are not
+read so: no script has one. Test: `bm-fn-misc`.
 
 ## Name arguments
 
@@ -49,6 +56,30 @@ The 21 that Tribunal.esm's scripts and dialogue call and Morrowind.esm's don't, 
 | GetWaterLevel | outdoors 0 (the original game's oddity), an interior's water height, the lowest number with no water | `mwscript/cellextensions.cpp`, `mwworld/cellstore.cpp` | `trib-fn-waterlevel` |
 | Set / ModWaterLevel | the player's interior's water moves (its surface, swimming, the view under it); kept for the cell and in a save; nothing outdoors | as GetWaterLevel; the converter gives such a cell a surface over its whole floor plan | `trib-fn-waterlevel` |
 | PlaceItem, PlaceItemCell | a new object at the spot (the player's cell, or the one named): a person or creature as PlaceAtMe, an item lying there, any other object with its script running (drawn when it has a world visual); nothing for an unknown id or cell | `mwscript/transformationextensions.cpp`, `World::placeObject` | `trib-fn-placeitem` |
+
+## Bloodmoon's functions
+
+The 16 that Bloodmoon.esm's scripts and dialogue call and the other two masters don't (Bloodmoon is an optional add-on:
+[bloodmoon.md](bloodmoon.md)), with the rest of the Stats loop they belong to, as OpenMW runs them:
+
+| Function | Rule | Code | Test |
+|---|---|---|---|
+| Get / Set / Mod + ResistMagicka, ResistFire, ResistFrost, ResistShock, ResistDisease, ResistBlight, ResistCorprus, ResistPoison, ResistParalysis, ResistNormalWeapons, WaterBreathing, Chameleon, WaterWalking, SwimSpeed, SuperJump, Flying, ArmorBonus, CastPenalty, Silence, Blindness, Paralysis, Invisible, AttackBonus, DefendBonus (72; the spriggans' ModResist*) | Get: the effect's magnitude on the player or the actor less its opposite's (Resist Fire less Weakness to Fire ...; CastPenalty is Sound's, counted negative), Resist Fire / Frost / Shock with that element's shield added; a whole number. Mod adds to the part scripts set, which is counted into every effect total (resisting, Levitate, Chameleon ...), never runs out, is saved, and goes with Resurrect (OpenMW drops the actor's stats). Set moves that part so Get reads the value. Not an actor: 0. Both compilers know the 72 (`mwscript.py` `_EFFECTS`, `extensions0.hpp` `kScEffects`) | `mwscript/statsextensions.cpp` `effectStat`, `World::modScriptEffect`, `effectTotal` / `actorEffect` | `bm-fn-misc`, `bm-spriggan` |
+| GetChameleon, GetParalysis | the same Get (Tribunal's: now through the same rule) | `mwscript/statsextensions.cpp` | `trib-fn-basic` |
+| SetScale, GetScale, ModScale | the reference's size (OpenMW's scaleObject, unclamped). A person or creature is drawn that much bigger and its collision cylinder grows (28 x the change); a door is drawn so; an object baked into the cell's batches keeps its size (logged: no Bloodmoon script scales one). Kept in a save for a reference of a cell; Resurrect keeps it (the spriggan grows on her last life). The player: not scaled | `mwscript/transformationextensions.cpp`, `World::scaleObject`, `World::syncActor` | `bm-fn-misc`, `bm-spriggan` |
+| GetWeaponType | the right hand's: a weapon's type (0 short blade .. 13 bolt), -2 a lockpick, -3 a probe, -1 empty or anything else; a person holds the weapon it fights with while it carries it, a creature nothing (ColonyBaro) | `mwscript/containerextensions.cpp` | `bm-fn-misc` |
+| GetPCTraveling | 1 from a travel service's Go until the first scripts after the arrival have run (OpenMW: set on the click, cleared by the next world update) | `mwscript/miscextensions.cpp`, `Session::travelGo` | `bm-fn-misc` |
+| GetPCInJail | 1 for the scripts running when a jail term is served and the next ones (OpenMW: while the jail window is up; ours is instant) | `mwscript/miscextensions.cpp`, `Session::goToJail` | `bm-fn-misc` |
+| TurnMoonRed, TurnMoonWhite | Secunda's picture in [Moons] Script Color (255, 20, 20) until white again; kept in a save (OpenMW forgets it on a load, and bloodmoonScript turns it red only once), white in a new game | `mwscript/skyextensions.cpp`, `mwrender/sky.cpp` | `bm-moon-red` |
+| BecomeWerewolf, UndoWerewolf | the player or a person (not a creature) changes; turning into one counts kills from nothing again (OpenMW's NpcStats::setWerewolf). The state only, saved: the form's stats, refusals, combat and look come with the werewolf work ([bloodmoon.md](bloodmoon.md)) | `mwscript/statsextensions.cpp`, `World::setWerewolf` | `bm-fn-misc` |
+| IsWerewolf | 1 for a werewolf person or the player; a creature 0 | as above | `bm-fn-misc` |
+| GetWerewolfKills | the player's kills since the change (counting them: the werewolf work) | as above | `bm-fn-misc` |
+| SetWerewolfAcrobatics | marks the player's werewolf Acrobatics asked for (the stat itself: the werewolf work) | as above | `bm-fn-misc` |
+| Dialogue function 72 (Werewolf) | the speaker is a werewolf person: Bloodmoon's 7 growls (Hello, Idle, Attack, Hit, Flee) | `mwdialogue/filter.cpp` | `bm-fn-misc` |
+| Dialogue function 73 (PCWerewolfKills) | the player's werewolf kills (no response asks it) | `mwdialogue/filter.cpp` | none (nothing uses it) |
+
+Not done: a creature placed by a script (PlaceAtMe) keeps only where it stands and its health in a save (as before),
+so not its size or magic effect stats; the spriggans that matter are the cells' own.
 
 ## The console (Options > Console)
 
@@ -96,6 +127,12 @@ Main starts Startup, VampireCheck and CharGen; CharGen disables the controls, ju
 fighting and magic, moves the player into the Imperial Prison Ship, sets the Bitter Coast cloudy
 (`ChangeWeather "Bitter Coast Region" 1`), sets CharGenState to 10 and stops. The engine does the same
 (`Session` new game); it used to set CharGen's results by hand, without the weather.
+
+## GetTarget
+
+`x->GetTarget <id>` (OpenMW `OpGetTarget`): true when the actor's combat target has that id; with no combat target,
+`GetTarget player` is also true while the actor greets the player. Another actor fought by StartCombat counts (Falco
+Galenus at Baslod: Bloodmoon's ColonyAssassin waits for it; case `script-gettarget-actor`).
 
 ## Findings
 

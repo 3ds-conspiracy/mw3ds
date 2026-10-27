@@ -1,0 +1,70 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-spriggan: a spriggan dies three times (Bloodmoon's Spriggan scripts, here Raven Rock's ColonySpriggan1, on the hill
+# once CO_10 starts): killed, the rising effect is placed (sprigganup) and a second later she gets up again (Resurrect),
+# grown back to her size (SetScale 1.0), her health 2 over the record's (ModHealth), resisting paralysis and poison
+# (ModResistParalysis / Poison 100); killed again, she rises bigger (SetScale 1.2), her health back to the record's and 3
+# over (Resurrect drops what scripts set: OpenMW gives her new stats), resisting paralysis, poison, magic, fire and frost
+# 100 each (not 200: the second life's went with her; fire reads 50: her Weakness to
+# Fire 50 counts against it); a save and a load keep her size and resistances; the third death is for good.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Raven_Rock
+6 0 0 0
+0.3 0 0 0 0 TP:-191900:160300:1400:0
+4 0 0 0
+# (the creatures about out of the way: she comes back once CO_10 starts, as her script has it)
+0.3 0 0 0 0 HIDEACTORS:30000
+1 0 0 0
+0.3 0 0 0 0 SETJOURNALINDEX:CO_10:10
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refenabled:bm_spriggan_co1:eq:1+EXPECT:reflocal:bm_spriggan_co1,deathvar:eq:0
+0.1 0 0 0 0 SNAP:refhealthmax:bm_spriggan_co1+SNAP:refscale:bm_spriggan_co1
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:0
+# The first death: she rises a second later with the effect
+0.3 0 0 0 0 SLAY:bm_spriggan_co1
+0.3 0 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:bm_spriggan_co1:le:0+EXPECT:reflocal:bm_spriggan_co1,deathvar:eq:1
+0.1 0 0 0 0 EXPECT:refenabled:sprigganup:eq:1
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:bm_spriggan_co1:gt:0+EXPECT:reflocal:bm_spriggan_co1,playonce:eq:1
+0.1 0 0 0 0 EXPECT:refhealthmax:bm_spriggan_co1:eq:@2+EXPECT:refscale:bm_spriggan_co1:eq:1
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:100
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistPoison
+0.1 0 0 0 0 EXPECT:conval:eq:100
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:-50
+# The second: bigger, health from the record again, five resistances
+0.3 0 0 0 0 SLAY:bm_spriggan_co1
+0.3 0 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:bm_spriggan_co1:le:0+EXPECT:reflocal:bm_spriggan_co1,deathvar:eq:2
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:bm_spriggan_co1:gt:0+EXPECT:reflocal:bm_spriggan_co1,playonce:eq:2
+0.1 0 0 0 0 EXPECT:refhealthmax:bm_spriggan_co1:eq:@3
+0.1 0 0 0 0 EXPECT:refscale:bm_spriggan_co1:ge:1.19+EXPECT:refscale:bm_spriggan_co1:le:1.21
+0.1 0 0 0 0 EXPECT:refdrawscale:bm_spriggan_co1:ge:1.19+EXPECT:refdrawscale:bm_spriggan_co1:le:1.21
+0.1 0 0 0 0 EXPECT:refradius:bm_spriggan_co1:ge:33.5
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:100
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistMagicka
+0.1 0 0 0 0 EXPECT:conval:eq:100
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:50
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistFrost
+0.1 0 0 0 0 EXPECT:conval:eq:100
+# Kept through a save and a load
+1 0 0 0 0 SAVE:bmspriggan
+0.5 0 0 0 0 LOAD:bmspriggan
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refscale:bm_spriggan_co1:ge:1.19+EXPECT:refscale:bm_spriggan_co1:le:1.21
+0.1 0 0 0 0 EXPECT:refdrawscale:bm_spriggan_co1:ge:1.19+EXPECT:refdrawscale:bm_spriggan_co1:le:1.21
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistFire
+0.1 0 0 0 0 EXPECT:conval:eq:50
+0.3 0 0 0 0 CON:"BM_spriggan_co1"->GetResistParalysis
+0.1 0 0 0 0 EXPECT:conval:eq:100
+# The third death is the last
+0.3 0 0 0 0 SLAY:bm_spriggan_co1
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refhealth:bm_spriggan_co1:le:0+EXPECT:reflocal:bm_spriggan_co1,deathvar:eq:3

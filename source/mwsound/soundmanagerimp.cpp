@@ -714,6 +714,16 @@ void Session::playSound(int ref, const std::string& soundId, float volume, float
 	}
 }
 
+void Session::playRandomSound(int ref, const std::string& prefix, float volume)
+{
+	std::vector<std::string> ids;
+	for (int k = 1; k <= 9; k++)
+		if (w.game.sounds.count(prefix + std::to_string(k)))
+			ids.push_back(prefix + std::to_string(k));
+	if (!ids.empty())
+		playSound(ref, ids[rand() % ids.size()], volume);
+}
+
 void Session::loopSound(int ref, const std::string& soundId, bool start, float volume, float pitch)
 {
 	std::string id = lower(soundId);
@@ -752,16 +762,14 @@ bool Session::soundPlaying(int ref, const std::string& soundId)
 	return false;
 }
 
-// A loop holds a sound channel only while it can be heard, and only the loudest few do: a town's fires or a
-// Dwemer ruin's steam and machinery are dozens of loops, which at a channel each (silent or not) used up all
-// of them and left every other sound without one
-void Session::updateLoopSounds()
+// Loops whose object is gone (its cell not loaded, or disabled) stop. Before a cell's objects leave memory too: the
+// reference list shrinks under their slots, and a stale number reads the freed end of it
+void Session::dropDeadLoops()
 {
-	static const size_t kMaxLoops = 12;
 	for (size_t k = 0; k < loopSounds.size();)
 	{
 		LoopSound& l = loopSounds[k];
-		if (!w.active(l.ref) || !w.refs[l.ref].visible())
+		if (l.ref < 0 || l.ref >= (int)w.refs.size() || !w.active(l.ref) || !w.refs[l.ref].visible())
 		{
 			audioStop(l.channel);
 			loopSounds.erase(loopSounds.begin() + k);
@@ -769,6 +777,15 @@ void Session::updateLoopSounds()
 		}
 		k++;
 	}
+}
+
+// A loop holds a sound channel only while it can be heard, and only the loudest few do: a town's fires or a
+// Dwemer ruin's steam and machinery are dozens of loops, which at a channel each (silent or not) used up all
+// of them and left every other sound without one
+void Session::updateLoopSounds()
+{
+	static const size_t kMaxLoops = 12;
+	dropDeadLoops();
 	static std::vector<float> vols, pans, order;
 	vols.assign(loopSounds.size(), 0.0f);
 	pans.assign(loopSounds.size(), 0.0f);

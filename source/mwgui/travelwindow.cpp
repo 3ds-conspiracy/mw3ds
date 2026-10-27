@@ -171,6 +171,7 @@ bool Session::travelGo(int sel)
 		rechargeItems(hours * 3600.0f / w.timescale());
 	}
 	travelCell = dest;
+	w.pcTraveling = 1;                   // (GetPCTraveling: up until the first scripts after the trip have run)
 	memcpy(travelPos, d.pos, sizeof(travelPos));
 	travelYaw = d.rot[2];
 	logf("travel: %s to %s for %d gold", def.name.c_str(), d.cell.c_str(), price);

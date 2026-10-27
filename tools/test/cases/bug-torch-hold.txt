@@ -8,6 +8,9 @@
 0.3 0 0 0 0 GOD+SEED:1
 0.3 0 0 0 0 GOTO:Ald-ruhn
 3 0 0 0
+# (beside a guard: the Old 3DS poses people only as far as it draws them, 4000 units, and the town's gate is farther)
+0.3 0 0 0 0 TP:-13159:55000:2450:0
+3 0 0 0
 25 0 0 0
 0.3 0 0 0 0 SETWEATHER:Clear+HOUR:22
 1 0 0 0

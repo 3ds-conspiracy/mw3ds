@@ -1,0 +1,33 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-moon-red: Bloodmoon's red moon. TurnMoonRed draws Secunda's picture in [Moons] Script Color (255, 20, 20), Masser
+# as it was; kept through a save and a load; TurnMoonWhite brings it back. bloodmoonScript (running from the start
+# script) turns it red once BM_FrostGiant1 reaches 70 and white again at BM_WildHunt 100. Seyda Neen at night.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 SETWEATHER:0+HOUR:23
+2 0 0 0
+0.1 0 0 0 0 EXPECT:moonred:eq:0+EXPECT:moontint:1,0:eq:255+EXPECT:moontint:1,1:eq:255+EXPECT:moontint:1,2:eq:255
+0.3 0 0 0 0 CON:TurnMoonRed
+1 0 0 0
+0.1 0 0 0 0 EXPECT:moonred:eq:1+EXPECT:moontint:1,0:eq:255+EXPECT:moontint:1,1:eq:20+EXPECT:moontint:1,2:eq:20
+0.1 0 0 0 0 EXPECT:moontint:0,0:eq:255+EXPECT:moontint:0,1:eq:255+EXPECT:moontint:0,2:eq:255
+1 0 0 0 0 SAVE:bmmoon
+0.3 0 0 0 0 CON:TurnMoonWhite
+1 0 0 0
+0.1 0 0 0 0 EXPECT:moonred:eq:0+EXPECT:moontint:1,1:eq:255
+0.5 0 0 0 0 LOAD:bmmoon
+3 0 0 0
+0.3 0 0 0 0 SETWEATHER:0+HOUR:23
+1 0 0 0
+0.1 0 0 0 0 EXPECT:moonred:eq:1+EXPECT:moontint:1,1:eq:20
+0.3 0 0 0 0 CON:TurnMoonWhite
+1 0 0 0
+0.1 0 0 0 0 EXPECT:moonred:eq:0
+# The quest's own script
+0.3 0 0 0 0 SETJOURNALINDEX:BM_FrostGiant1:70
+2 0 0 0
+0.1 0 0 0 0 EXPECT:moonred:eq:1+EXPECT:moontint:1,2:eq:20
+0.3 0 0 0 0 SETJOURNALINDEX:BM_WildHunt:100
+2 0 0 0
+0.1 0 0 0 0 EXPECT:moonred:eq:0+EXPECT:moontint:1,2:eq:255

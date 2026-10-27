@@ -27,4 +27,8 @@ struct TestState
 	int loadScreens = 0;                            // trips through the loading screen (finishTravel): EXPECT:loadscreens
 	int testPlaced = -1;                            // the actor PLACE last put in front of the player
 	std::set<int> testPlacedAll;                    // every actor PLACE / PLACEAT put somewhere (POSE keeps them there)
+	// Where the last placed one stands in its cell's own objects (cell file, index in them), for one that was in the
+	// cell's data: an unloaded cell's slots are given out again and it comes back in another (the Old 3DS's eviction)
+	std::string testPlacedCell;
+	int testPlacedLocal = -1;
 };

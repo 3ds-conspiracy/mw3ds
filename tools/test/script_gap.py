@@ -60,6 +60,10 @@ def our_names():
     for d in DYN:
         names |= {"get" + d, "set" + d, "mod" + d, "modcurrent" + d, "get" + d + "getratio"}
     names |= {"getlevel", "setlevel", "modpccrimelevel"}
+    # the magic effect stats statFunction takes (kEffectFuncs)
+    m = re.search(r"kEffectFuncs\[\d+\] = \{(.*?)\};", src, re.S)
+    for e in re.findall(r'"(\w+)"', m.group(1)) if m else []:
+        names |= {"get" + e, "set" + e, "mod" + e}
     return names
 
 

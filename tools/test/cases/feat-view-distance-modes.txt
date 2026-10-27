@@ -1,3 +1,5 @@
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS profile's view distance modes)
 # Options > Video > View distance: Min, Mid, Auto, Max (it was Dynamic view on / off). Max is the console's longest view
 # whatever the speed (a New 3DS: OpenMW's 7168), Min its shortest (0.6 of it: 4300), Mid halfway (0.8: 5734), Auto between
 # them with the frame rate. A tap goes Auto, Max, Mid, Min, Auto. Reached as a player would (START, Options, R to Video)

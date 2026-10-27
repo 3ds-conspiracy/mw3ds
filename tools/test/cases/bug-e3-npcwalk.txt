@@ -15,7 +15,11 @@
 0.3 0 0 0 0 EXPECT:journal:il_damsel:eq:50
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
-1 0 0 0
+# (the two smugglers who turn on the player once she agrees, fought off first: Dandsa, following, runs at whoever attacks
+# the player, as in OpenMW, and the checks below are of her walk)
+120 0 0 0 0 KILL:alonisea%varys
+120 0 0 0 0 KILL:balis%sari
+10 0 0 0
 0.3 0 0 0 0 SHOT
 0.3 0 0 0 0 EXPECT:refrun:Dandsa:eq:0
 2 0 0 0

@@ -12,7 +12,7 @@ import re
 import math
 import struct
 
-from mwfiles import DATA_FILES, game_path, read_game, read_records, text, tribunal
+from mwfiles import DATA_FILES, bloodmoon, game_path, read_game, read_records, text, tribunal
 from mwscript import ScriptError, compile_script, compile_snippet
 from creature import creature_stats
 from npcstats import bind, npc_items, npc_stats, weapon_damage
@@ -37,6 +37,12 @@ ENGINE_SOUNDS = [
     "bowPull", "bowShoot", "crossbowPull", "crossbowShoot", "Item Weapon Blunt Up", "Item Weapon Bow Up",
     "Item Weapon Longblade Up", "Item Weapon Spear Up", "Item Weapon Crossbow Up", "DefaultLand",
     "destruction bolt", "repair", "repair fail",
+    # Bloodmoon's werewolf, picked by family at random (OpenMW's searchRandom): a refusal by what was used, the claws'
+    # swing and hit, readying them, the run (records only with the add-on: nothing changes without it)
+    "WolfActivator1", "WolfContainer1", "WolfContainer2", "WolfCreature1", "WolfCreature2", "WolfCreature3",
+    "WolfItem1", "WolfItem2", "WolfItem3", "WolfNPC1", "WolfNPC2", "WolfNPC3", "WolfHit1", "WolfHit2", "WolfHit3",
+    "WolfSwing", "WolfSwing1", "WolfSwing2", "WolfSwing3", "WolfEquip1", "WolfEquip2", "WolfEquip3", "WolfEquip4",
+    "WolfEquip5", "WolfRun",
 ]
 
 
@@ -220,8 +226,10 @@ def _npc_info(rec, db):
 # ---------------------------------------------------------------- magic effects
 
 # Magic effects' GMST names (sEffect<key>) by index: their display names
-EFFECT_KEYS = """WaterBreathing SwiftSwim WaterWalking Shield FireShield LightningShield FrostShield Burden Feather Jump Levitate SlowFall Lock Open FireDamage ShockDamage FrostDamage DrainAttribute DrainHealth DrainSpellpoints DrainFatigue DrainSkill DamageAttribute DamageHealth DamageMagicka DamageFatigue DamageSkill Poison WeaknesstoFire WeaknesstoFrost WeaknesstoShock WeaknesstoMagicka WeaknesstoCommonDisease WeaknesstoBlightDisease WeaknesstoCorprusDisease WeaknesstoPoison WeaknesstoNormalWeapons DisintegrateWeapon DisintegrateArmor Invisibility Chameleon Light Sanctuary NightEye Charm Paralyze Silence Blind Sound CalmHumanoid CalmCreature FrenzyHumanoid FrenzyCreature DemoralizeHumanoid DemoralizeCreature RallyHumanoid RallyCreature Dispel Soultrap Telekinesis Mark Recall DivineIntervention AlmsiviIntervention DetectAnimal DetectEnchantment DetectKey SpellAbsorption Reflect CureCommonDisease CureBlightDisease CureCorprusDisease CurePoison CureParalyzation RestoreAttribute RestoreHealth RestoreSpellPoints RestoreFatigue RestoreSkill FortifyAttribute FortifyHealth FortifySpellpoints FortifyFatigue FortifySkill FortifyMagickaMultiplier AbsorbAttribute AbsorbHealth AbsorbSpellPoints AbsorbFatigue AbsorbSkill ResistFire ResistFrost ResistShock ResistMagicka ResistCommonDisease ResistBlightDisease ResistCorprusDisease ResistPoison ResistNormalWeapons ResistParalysis RemoveCurse TurnUndead SummonScamp SummonClannfear SummonDaedroth SummonDremora SummonAncestralGhost SummonSkeletalMinion SummonLeastBonewalker SummonGreaterBonewalker SummonBonelord SummonWingedTwilight SummonHunger SummonGoldenSaint SummonFlameAtronach SummonFrostAtronach SummonStormAtronach FortifyAttackBonus CommandCreatures CommandHumanoids BoundDagger BoundLongsword BoundMace BoundBattleAxe BoundSpear BoundLongbow ExtraSpell BoundCuirass BoundHelm BoundBoots BoundShield BoundGloves Corpus Vampirism SummonCenturionSphere SunDamage StuntedMagicka SummonFabricant""".split()
-# (137, SummonFabricant, is Tribunal's: its record is in Tribunal.esm, so vanilla data never names it)
+EFFECT_KEYS = """WaterBreathing SwiftSwim WaterWalking Shield FireShield LightningShield FrostShield Burden Feather Jump Levitate SlowFall Lock Open FireDamage ShockDamage FrostDamage DrainAttribute DrainHealth DrainSpellpoints DrainFatigue DrainSkill DamageAttribute DamageHealth DamageMagicka DamageFatigue DamageSkill Poison WeaknesstoFire WeaknesstoFrost WeaknesstoShock WeaknesstoMagicka WeaknesstoCommonDisease WeaknesstoBlightDisease WeaknesstoCorprusDisease WeaknesstoPoison WeaknesstoNormalWeapons DisintegrateWeapon DisintegrateArmor Invisibility Chameleon Light Sanctuary NightEye Charm Paralyze Silence Blind Sound CalmHumanoid CalmCreature FrenzyHumanoid FrenzyCreature DemoralizeHumanoid DemoralizeCreature RallyHumanoid RallyCreature Dispel Soultrap Telekinesis Mark Recall DivineIntervention AlmsiviIntervention DetectAnimal DetectEnchantment DetectKey SpellAbsorption Reflect CureCommonDisease CureBlightDisease CureCorprusDisease CurePoison CureParalyzation RestoreAttribute RestoreHealth RestoreSpellPoints RestoreFatigue RestoreSkill FortifyAttribute FortifyHealth FortifySpellpoints FortifyFatigue FortifySkill FortifyMagickaMultiplier AbsorbAttribute AbsorbHealth AbsorbSpellPoints AbsorbFatigue AbsorbSkill ResistFire ResistFrost ResistShock ResistMagicka ResistCommonDisease ResistBlightDisease ResistCorprusDisease ResistPoison ResistNormalWeapons ResistParalysis RemoveCurse TurnUndead SummonScamp SummonClannfear SummonDaedroth SummonDremora SummonAncestralGhost SummonSkeletalMinion SummonLeastBonewalker SummonGreaterBonewalker SummonBonelord SummonWingedTwilight SummonHunger SummonGoldenSaint SummonFlameAtronach SummonFrostAtronach SummonStormAtronach FortifyAttackBonus CommandCreatures CommandHumanoids BoundDagger BoundLongsword BoundMace BoundBattleAxe BoundSpear BoundLongbow ExtraSpell BoundCuirass BoundHelm BoundBoots BoundShield BoundGloves Corpus Vampirism SummonCenturionSphere SunDamage StuntedMagicka SummonFabricant SummonCreature01 SummonCreature02 SummonCreature03
+SummonCreature04 SummonCreature05""".split()
+# (137, SummonFabricant, is Tribunal's: its record is in Tribunal.esm, so vanilla data never names it; 138-142 are
+# Bloodmoon's Summon Wolf / Bear / Bonewolf and two unused, named by sEffectSummonCreature01-05 as OpenMW's)
 
 
 def magic_effects(db):
@@ -891,8 +899,9 @@ def build(db, cells, actor_records, actor_cells):
         "start_items": player_items,
         "skip_chargen_items": extra_items,
         "ambient": {"water": water_sound or ""},
-        # The add-ons the data was converted with (the engine turns their rules on from this): "tribunal"
-        "addons": ["tribunal"] if tribunal() else [],
+        # The add-ons the data was converted with, in load order (the engine turns their rules on from this):
+        # "tribunal", "bloodmoon"
+        "addons": (["tribunal"] if tribunal() else []) + (["bloodmoon"] if bloodmoon() else []),
         # The start scripts (SSCR: Tribunal's TribunalMain, MarkTRStartScript, TribFabAttackCheck), run as a game
         # starts (OpenMW's GlobalScripts::addStartup)
         "start_scripts": sorted({r.id.lower() for r in read_game({"SSCR"}) if r.id.lower() in compiled}),

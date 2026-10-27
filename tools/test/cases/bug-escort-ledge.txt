@@ -7,6 +7,9 @@
 0.3 0 0 0 0 JOURNAL:IL_Damsel:10
 0.3 0 0 0 0 GOTO:Abernanit
 3 0 0 0
+# (the rat that comes at the player in the cave, killed first: one that bites the player is fought by whoever
+# follows the player, as in OpenMW, and Dandsa would chase it off before coming along)
+60 0 0 0 0 KILL:rat
 150 0 0 0 0 ACTIVATE:dandsa
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:travel_together
@@ -16,7 +19,11 @@
 0.1 0 0 0 0 EXPECT:journal:IL_Damsel:ge:50
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
-5 0 0 0 0 UNTIL:following:dandsa
+# (the two smugglers who turn on the player once she agrees, fought off first: Dandsa, following, takes on whoever
+# attacks the player, as in OpenMW)
+120 0 0 0 0 KILL:alonisea%varys
+120 0 0 0 0 KILL:balis%sari
+30 0 0 0 0 UNTIL:following:dandsa
 0.3 0 0 0 0 LEGIT
 0.3 0 0 0 0 ESCORT:dandsa
 150 0 0 0 0 DOORTO:outside

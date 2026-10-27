@@ -138,19 +138,51 @@ void World::recomputeStats()
 	for (int i = 0; i < 8; i++)
 	{
 		stats.attributes[i] = (stats.attributes[i] + stats.attrBonus[i] > 100 ? 100 : stats.attributes[i] + stats.attrBonus[i]) + attrMod[i];
-		// OpenMW cuts (base - damage) to a whole number, so part of a point of damage takes a whole point
-		stats.attributes[i] = std::max(0, stats.attributes[i] - (int)ceilf(stats.attrDamage[i] - 0.001f));
+		// OpenMW cuts (base - damage) to a whole number, so part of a point of damage takes a whole point. What a worn
+		// drain takes below 0 is owed (attrBelow), so a fortify on top pays it back first: OpenMW sums every modifier
+		// and shows max(0, the total)
+		int raw = stats.attributes[i] - (int)ceilf(stats.attrDamage[i] - 0.001f);
+		stats.attributes[i] = std::max(0, raw);
+		stats.attrBelow[i] = std::min(0, raw);
 	}
 	for (int k = 0; k < 27; k++)
 	{
 		stats.skills[k] = (stats.skills[k] + stats.skillBonus[k] > 100 ? 100 : stats.skills[k] + stats.skillBonus[k]) + skillMod[k];
-		stats.skills[k] = std::max(0, stats.skills[k] - (int)ceilf(stats.skillDamage[k] - 0.001f));
+		int raw = stats.skills[k] - (int)ceilf(stats.skillDamage[k] - 0.001f);
+		stats.skills[k] = std::max(0, raw);
+		stats.skillBelow[k] = std::min(0, raw);
+	}
+	// The werewolf form (OpenMW's Player::setWerewolfStats): each attribute and every skill but Acrobatics at its
+	// fWereWolf<name> setting whatever raised or lowered it; Acrobatics only once SetWerewolfAcrobatics asked
+	// (fWereWolfAcrobatics); health doubled below (fWereWolfHealth). Rebuilt here from the flag, so the human values
+	// come back on their own when it ends (OpenMW saves and restores them)
+	if (stats.werewolf)
+	{
+		static const char* const kAttr[8] = { "strength", "intellegence", "willpower", "agility", "speed", "endurance",
+			"personality", "luck" };
+		static const char* const kSkill[27] = { "block", "armorer", "mediumarmor", "heavyarmor", "bluntweapon",
+			"longblade", "axe", "spear", "athletics", "enchant", "destruction", "alteration", "illusion", "conjuration",
+			"mysticism", "restoration", "alchemy", "unarmored", "security", "sneak", "acrobatics", "lightarmor",
+			"shortblade", "marksman", "merchantile", "speechcraft", "handtohand" };
+		for (int i = 0; i < 8; i++)
+		{
+			stats.attributes[i] = (int)game.gmstf((std::string("fwerewolf") + kAttr[i]).c_str(), (float)stats.attributes[i]);
+			stats.attrBelow[i] = 0;
+		}
+		for (int k = 0; k < 27; k++)
+			if (k != 20 || stats.werewolfAcrobatics)
+			{
+				stats.skills[k] = (int)game.gmstf((std::string("fwerewolf") + kSkill[k]).c_str(), (float)stats.skills[k]);
+				stats.skillBelow[k] = 0;
+			}
 	}
 	const int* a = stats.attributes;
 	// OpenMW: base health is fixed at creation (floor of half Strength + Endurance) and grows only by the level-up
 	// gains; raised, fortified or drained attributes do not move it (spec/derived.md)
 	stats.healthMax = floorf(0.5f * (stats.attrCreation[ATTR_STRENGTH] + stats.attrCreation[ATTR_ENDURANCE])) + stats.healthBonus
 		+ healthMod;
+	if (stats.werewolf)
+		stats.healthMax *= game.gmstf("fwerewolfhealth", 2.0f);
 	stats.magickaMult = magickaMult;
 	stats.magickaFortify = 0.0f;
 	stats.magickaFlat = magickaMod;      // (reapplyEffects adds the active spells' back)
@@ -188,7 +220,8 @@ void Session::playerControls(PlayerInput& in, bool menu)
 				if (const Object* o = w.game.object(it))
 					packWeight += o->weight * it.count;
 		}
-		float weight = w.effectTotal(7) - w.effectTotal(8) + packWeight;
+		// (a werewolf carries nothing: its encumbrance is 0, OpenMW's Npc::getEncumbrance)
+		float weight = w.stats.werewolf ? 0.0f : w.effectTotal(7) - w.effectTotal(8) + packWeight;
 		float capacity = w.game.gmstf("fencumbrancestrmult", 5.0f) * w.stats.attributes[ATTR_STRENGTH];
 		float load = capacity > 0.0f ? fmaxf(0.0f, weight) / capacity : 0.0f;
 		bool over = load > 1.0f;
@@ -198,20 +231,20 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		// (OpenMW: over the limit nothing moves, levitating or not)
 		w.player.loadSpeed = over ? 0.0f : 1.0f - w.game.gmstf("fencumberedmoveeffect", 0.3f) * fminf(1.0f, load);
 		playerLoad = fminf(1.0f, load);
-		// Storms (ash, blight, blizzard) blow out from Red Mountain: walking into them is slower,
-		// by fStromWalkMult x the angle between the wind and the way the player goes (OpenMW)
+		// Storms (ash, blight, blizzard) blow (ash and blight out from Red Mountain, a blizzard north: World::stormDirection):
+		// walking into them is slower, by fStromWalkMult x the angle between the wind and the way the player goes (OpenMW)
 		int wx = w.weatherNow;
 		if ((wx == 6 || wx == 7 || wx == 9) && w.current >= 0 && w.cells[w.current].underSky()
 			&& (fabsf(in.moveX) + fabsf(in.moveY)) > 0.1f)
 		{
-			float sx = w.player.feet[0] - 20480.0f, sy = w.player.feet[1] - 69632.0f;     // from Red Mountain
-			float sl = sqrtf(sx * sx + sy * sy);
+			float sxy[2];
+			w.stormDirection(wx, w.player.feet, sxy);
 			float yaw = w.player.yaw, mx = sinf(yaw) * in.moveY + cosf(yaw) * in.moveX,
 				my = cosf(yaw) * in.moveY - sinf(yaw) * in.moveX;
 			float ml = sqrtf(mx * mx + my * my);
-			if (sl > 1.0f && ml > 0.01f)
+			if (ml > 0.01f)
 			{
-				float c = fmaxf(-1.0f, fminf(1.0f, (sx * mx + sy * my) / (sl * ml)));
+				float c = fmaxf(-1.0f, fminf(1.0f, (sxy[0] * mx + sxy[1] * my) / ml));
 				w.player.loadSpeed *= 1.0f - w.game.gmstf("fstromwalkmult", 0.25f) * (acosf(c) / 3.14159265f);
 			}
 		}
@@ -223,6 +256,9 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		float speedAttr = (float)st.attributes[ATTR_SPEED], athletics = (float)st.skills[8];
 		float walk = walkSpeedFor((int)speedAttr);
 		float run = runSpeedFor((int)speedAttr, (int)athletics);          // (mwmechanics/formulas.cpp)
+		// (a werewolf runs fWereWolfRunMult faster with its claws put away: OpenMW's Npc::getMoveSpeed)
+		if (st.werewolf && !weaponDrawn)
+			run *= w.game.gmstf("fwerewolfrunmult", 1.3f);
 		w.player.runSpeed = run;
 		// Levitating: fMinFlySpeed + 0.01 x (Speed + Levitate) x (fMaxFlySpeed - fMinFlySpeed) (OpenMW's getMaxSpeed)
 		w.player.flySpeed = w.game.gmstf("fminflyspeed", 5.0f) + 0.01f * (speedAttr + w.player.levitate)

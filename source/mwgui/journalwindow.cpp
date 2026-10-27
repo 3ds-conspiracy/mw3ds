@@ -17,7 +17,9 @@ static const struct { const char* name; const char* prefixes; } kQuestLines[] = 
 	{ "House Hlaalu", "hh_" }, { "House Redoran", "hr_" }, { "House Telvanni", "ht_" }, { "Daedric Quests", "da_" },
 	{ "Vampires", "va_" },
 	// (Tribunal's, with the add-on: its main quest TR_ / TR05_ ..., Mournhold's own MS_ and Calvus's Merc_)
-	{ "Tribunal", "tr_ tr0" }, { "Mournhold", "ms_ merc_" }, { "Other", "" },
+	{ "Tribunal", "tr_ tr0" }, { "Mournhold", "ms_ merc_" },
+	// (Bloodmoon's: its main quest and Solstheim's BM_, Raven Rock's CO_ and Colony_update)
+	{ "Bloodmoon", "bm_" }, { "Raven Rock", "co_ colony_" }, { "Other", "" },
 };
 static const int kQuestLineCount = (int)(sizeof(kQuestLines) / sizeof(kQuestLines[0]));
 static const int kJournalPageEntries = 10;

@@ -1,0 +1,604 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-creatures: written by tools/test/specgen_bloodmoon.py (edit the generator, not this file).
+# Every creature Bloodmoon adds: it is drawn, stands and animates, and dies.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0 0 0 0 0 SETUP-END
+# atronach_frost_bm (Dire Frost Atronach, r\Atronach_Frost.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Aesliip's_Lair,_Caverns
+0.3 0 0 0 0 EXPECT:refmeshes:atronach_frost_bm:gt:0
+0.3 0 0 0 0 EXPECT:alive:atronach_frost_bm
+0.3 0 0 0 0 EXPECT:refhealth:atronach_frost_bm:gt:0
+0.3 0 0 0 0 SLAY:atronach_frost_bm
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:atronach_frost_bm
+# bm skeleton champion gr (Greater Skeleton Champion, r\Skeleton.NIF)
+0.3 0 0 0 0 PLACE:bm%skeleton%champion%gr:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm%skeleton%champion%gr:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm%skeleton%champion%gr
+0.3 0 0 0 0 EXPECT:refhealth:bm%skeleton%champion%gr:gt:0
+0.3 0 0 0 0 SLAY:bm%skeleton%champion%gr
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm%skeleton%champion%gr
+# bm_bear_be_unique (The Good Beast, r\bear_blond_larger.NIF)
+4.0 0 0 0 0 TP:-158694:183300:796:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_be_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_be_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_be_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_be_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_be_unique
+# bm_bear_black (Grizzly Bear, r\bear_black_larger.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Legge
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_black:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_black
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_black:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_black
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_black
+# bm_bear_black_claw_uniq (Grizzly Bear, r\bear_black_larger.NIF)
+0.3 0 0 0 0 PLACE:bm_bear_black_claw_uniq:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_black_claw_uniq:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_black_claw_uniq
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_black_claw_uniq:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_black_claw_uniq
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_black_claw_uniq
+# bm_bear_black_fat (Grizzly Bear, r\bear_black_larger.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Legge
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_black_fat:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_black_fat
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_black_fat:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_black_fat
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_black_fat
+# bm_bear_black_summon (Grizzly Bear, r\bear_black_larger.NIF)
+0.3 0 0 0 0 PLACE:bm_bear_black_summon:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_black_summon:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_black_summon
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_black_summon:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_black_summon
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_black_summon
+# bm_bear_brown (Plague Bear, r\bear_brown_larger.NIF)
+0.3 0 0 0 0 PLACE:bm_bear_brown:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_brown:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_brown
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_brown:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_brown
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_brown
+# bm_bear_snow_unique (Snow Bear, r\bear_blond_larger.NIF)
+4.0 0 0 0 0 TP:-154488:153499:1114:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_snow_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_snow_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_snow_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_snow_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_snow_unique
+# bm_bear_spr_unique (Spirit Bear, r\bear_blond_larger.NIF)
+4.0 0 0 0 0 TP:-171736:188766:990:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_bear_spr_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_bear_spr_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_bear_spr_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_bear_spr_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_bear_spr_unique
+# bm_draugr01 (Draugr, r\cr_draugr.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Cave_of_Hidden_Music
+0.3 0 0 0 0 EXPECT:refmeshes:bm_draugr01:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_draugr01
+0.3 0 0 0 0 EXPECT:refhealth:bm_draugr01:gt:0
+0.3 0 0 0 0 SLAY:bm_draugr01
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_draugr01
+# bm_draugr_bloodskal (Draugr, r\cr_draugr.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Bloodskal_Barrow
+0.3 0 0 0 0 EXPECT:refmeshes:bm_draugr_bloodskal:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_draugr_bloodskal
+0.3 0 0 0 0 EXPECT:refhealth:bm_draugr_bloodskal:gt:0
+0.3 0 0 0 0 SLAY:bm_draugr_bloodskal
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_draugr_bloodskal
+# bm_frost_boar (Tusked Bristleback, r\Mount.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Frossel
+0.3 0 0 0 0 EXPECT:refmeshes:bm_frost_boar:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_frost_boar
+0.3 0 0 0 0 EXPECT:refhealth:bm_frost_boar:gt:0
+0.3 0 0 0 0 SLAY:bm_frost_boar
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_frost_boar
+# bm_frost_giant (Karstaag, r\FrostGiant.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:bm_frost_giant:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_frost_giant
+0.3 0 0 0 0 EXPECT:refhealth:bm_frost_giant:gt:0
+0.3 0 0 0 0 SLAY:bm_frost_giant
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_frost_giant
+# bm_hircine (Hircine, r\hircine.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Entry
+0.3 0 0 0 0 EXPECT:refmeshes:bm_hircine:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_hircine
+0.3 0 0 0 0 EXPECT:refhealth:bm_hircine:gt:0
+0.3 0 0 0 0 SLAY:bm_hircine
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_hircine
+# bm_hircine2 (Hircine, r\hircine.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:bm_hircine2:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_hircine2
+0.3 0 0 0 0 EXPECT:refhealth:bm_hircine2:gt:0
+0.3 0 0 0 0 SLAY:bm_hircine2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_hircine2
+# bm_hircine_huntaspect (Hircine's Aspect of Guile, r\hircine.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:bm_hircine_huntaspect:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_hircine_huntaspect
+0.3 0 0 0 0 EXPECT:refhealth:bm_hircine_huntaspect:gt:0
+0.3 0 0 0 0 SLAY:bm_hircine_huntaspect
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_hircine_huntaspect
+# bm_hircine_spdaspect (Hircine's Aspect of Speed, r\HircineWolf.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:bm_hircine_spdaspect:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_hircine_spdaspect
+0.3 0 0 0 0 EXPECT:refhealth:bm_hircine_spdaspect:gt:0
+0.3 0 0 0 0 SLAY:bm_hircine_spdaspect
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_hircine_spdaspect
+# bm_hircine_straspect (Hircine's Aspect of Strength, r\Hircine_Bear_larger.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:bm_hircine_straspect:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_hircine_straspect
+0.3 0 0 0 0 EXPECT:refhealth:bm_hircine_straspect:gt:0
+0.3 0 0 0 0 SLAY:bm_hircine_straspect
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_hircine_straspect
+# bm_horker (Horker, r\Horker.NIF)
+0.3 0 0 0 0 PLACE:bm_horker:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_horker:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_horker
+0.3 0 0 0 0 EXPECT:refhealth:bm_horker:gt:0
+0.3 0 0 0 0 SLAY:bm_horker
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_horker
+# bm_horker_dead (Horker, r\Horker.NIF)
+4.0 0 0 0 0 TP:-146979:216649:167:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_horker_dead:gt:0
+#   no health: it lies dead where it is placed
+0.3 0 0 0 0 EXPECT:dead:bm_horker_dead
+# bm_horker_large (Horker, r\Horker_larger.NIF)
+0.3 0 0 0 0 PLACE:bm_horker_large:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_horker_large:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_horker_large
+0.3 0 0 0 0 EXPECT:refhealth:bm_horker_large:gt:0
+0.3 0 0 0 0 SLAY:bm_horker_large
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_horker_large
+# bm_horker_swim_unique (The Swimmer, r\swimmer.NIF)
+4.0 0 0 0 0 TP:-216163:200450:234:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_horker_swim_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_horker_swim_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_horker_swim_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_horker_swim_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_horker_swim_unique
+# bm_ice_troll (Grahl, r\ice troll.NIF)
+#   nothing in the game data places it
+# bm_ice_troll_sun (Lightkeeper Grahl, r\ice troll.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Halls_of_Penumbra
+0.3 0 0 0 0 EXPECT:refmeshes:bm_ice_troll_sun:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_ice_troll_sun
+0.3 0 0 0 0 EXPECT:refhealth:bm_ice_troll_sun:gt:0
+0.3 0 0 0 0 SLAY:bm_ice_troll_sun
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_ice_troll_sun
+# bm_ice_troll_tough (Fearsome Grahl, r\ice troll.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Fjell
+0.3 0 0 0 0 EXPECT:refmeshes:bm_ice_troll_tough:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_ice_troll_tough
+0.3 0 0 0 0 EXPECT:refhealth:bm_ice_troll_tough:gt:0
+0.3 0 0 0 0 SLAY:bm_ice_troll_tough
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_ice_troll_tough
+# bm_icetroll_fg_uni (Deadly Grahl, r\ice troll.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Castle_Karstaag,_Caverns_of_Karstaag
+0.3 0 0 0 0 EXPECT:refmeshes:bm_icetroll_fg_uni:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_icetroll_fg_uni
+0.3 0 0 0 0 EXPECT:refhealth:bm_icetroll_fg_uni:gt:0
+0.3 0 0 0 0 SLAY:bm_icetroll_fg_uni
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_icetroll_fg_uni
+# bm_riekling (Riekling, r\IceMinion.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Castle_Karstaag,_Banquet_Hall
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling
+# bm_riekling_be_unique (Riekling, r\IceMinion.NIF)
+#   nothing in the game data places it
+# bm_riekling_be_unique1 (Riekling, r\IceMinion.NIF)
+4.0 0 0 0 0 TP:-158600:183319:831:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_be_unique1:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_be_unique1
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_be_unique1:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_be_unique1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_be_unique1
+# bm_riekling_be_unique2 (Riekling, r\IceMinion.NIF)
+4.0 0 0 0 0 TP:-158621:183195:838:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_be_unique2:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_be_unique2
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_be_unique2:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_be_unique2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_be_unique2
+# bm_riekling_be_unique3 (Riekling, r\IceMinion.NIF)
+4.0 0 0 0 0 TP:-158694:183142:820:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_be_unique3:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_be_unique3
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_be_unique3:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_be_unique3
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_be_unique3
+# bm_riekling_be_unique4 (Riekling, r\IceMinion.NIF)
+4.0 0 0 0 0 TP:-158786:183361:816:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_be_unique4:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_be_unique4
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_be_unique4:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_be_unique4
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_be_unique4
+# bm_riekling_be_unique5 (Riekling, r\IceMinion.NIF)
+4.0 0 0 0 0 TP:-158798:183195:816:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_be_unique5:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_be_unique5
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_be_unique5:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_be_unique5
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_be_unique5
+# bm_riekling_boarmaster (Riekling Boarmaster, r\IceMinion.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Frossel
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_boarmaster:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_boarmaster
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_boarmaster:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_boarmaster
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_boarmaster
+# bm_riekling_dulk_unique (Dulk, r\IceMinion.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Castle_Karstaag,_Throne_Room
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_dulk_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_dulk_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_dulk_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_dulk_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_dulk_unique
+# bm_riekling_krish_uniqu (Krish, r\IceMinion.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Castle_Karstaag,_Caverns_of_Karstaag
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_krish_uniqu:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_krish_uniqu
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_krish_uniqu:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_krish_uniqu
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_krish_uniqu
+# bm_riekling_mounted (Riekling Raider, r\IceMRaider.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Frossel
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_mounted:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_mounted
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_mounted:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_mounted
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_mounted
+# bm_riekling_st_unique (Riekling, r\IceMinion.NIF)
+4.0 0 0 0 0 TP:-171528:175238:836:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_riekling_st_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_riekling_st_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_riekling_st_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_riekling_st_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_riekling_st_unique
+# bm_sk_champ_bloodskal01 (Greater Skeleton Champion, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Bloodskal_Barrow
+0.3 0 0 0 0 EXPECT:refmeshes:bm_sk_champ_bloodskal01:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_sk_champ_bloodskal01
+0.3 0 0 0 0 EXPECT:refhealth:bm_sk_champ_bloodskal01:gt:0
+0.3 0 0 0 0 SLAY:bm_sk_champ_bloodskal01
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_sk_champ_bloodskal01
+# bm_sk_champ_bloodskal02 (Greater Skeleton Champion, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Bloodskal_Barrow
+0.3 0 0 0 0 EXPECT:refmeshes:bm_sk_champ_bloodskal02:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_sk_champ_bloodskal02
+0.3 0 0 0 0 EXPECT:refhealth:bm_sk_champ_bloodskal02:gt:0
+0.3 0 0 0 0 SLAY:bm_sk_champ_bloodskal02
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_sk_champ_bloodskal02
+# bm_skeleton_pirate  (Skeleton Pirate, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Himmelhost_Barrow
+0.3 0 0 0 0 EXPECT:refmeshes:bm_skeleton_pirate%:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_skeleton_pirate%
+0.3 0 0 0 0 EXPECT:refhealth:bm_skeleton_pirate%:gt:0
+0.3 0 0 0 0 SLAY:bm_skeleton_pirate%
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_skeleton_pirate%
+# bm_skeleton_pirate_capt (Skeleton Pirate Captain, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Himmelhost_Barrow
+0.3 0 0 0 0 EXPECT:refmeshes:bm_skeleton_pirate_capt:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_skeleton_pirate_capt
+0.3 0 0 0 0 EXPECT:refhealth:bm_skeleton_pirate_capt:gt:0
+0.3 0 0 0 0 SLAY:bm_skeleton_pirate_capt
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_skeleton_pirate_capt
+# bm_spriggan (Spriggan, r\Spriggan.NIF)
+0.3 0 0 0 0 PLACE:bm_spriggan:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_spriggan:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_spriggan
+0.3 0 0 0 0 EXPECT:refhealth:bm_spriggan:gt:0
+0.3 0 0 0 0 SLAY:bm_spriggan
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_spriggan
+# bm_spriggan_co1 (Spriggan, r\Spriggan.NIF)
+4.0 0 0 0 0 TP:-192059:160452:1163:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_spriggan_co1:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_spriggan_co1
+0.3 0 0 0 0 EXPECT:refhealth:bm_spriggan_co1:gt:0
+0.3 0 0 0 0 SLAY:bm_spriggan_co1
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co1
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_spriggan_co1
+# bm_spriggan_co2 (Spriggan, r\Spriggan.NIF)
+4.0 0 0 0 0 TP:-196018:158225:743:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_spriggan_co2:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_spriggan_co2
+0.3 0 0 0 0 EXPECT:refhealth:bm_spriggan_co2:gt:0
+0.3 0 0 0 0 SLAY:bm_spriggan_co2
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co2
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_spriggan_co2
+# bm_spriggan_co3 (Spriggan, r\Spriggan.NIF)
+4.0 0 0 0 0 TP:-195708:162754:1087:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_spriggan_co3:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_spriggan_co3
+0.3 0 0 0 0 EXPECT:refhealth:bm_spriggan_co3:gt:0
+0.3 0 0 0 0 SLAY:bm_spriggan_co3
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co3
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co3
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_spriggan_co3
+# bm_spriggan_co4 (Spriggan, r\Spriggan.NIF)
+4.0 0 0 0 0 TP:-195868:158284:761:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_spriggan_co4:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_spriggan_co4
+0.3 0 0 0 0 EXPECT:refhealth:bm_spriggan_co4:gt:0
+0.3 0 0 0 0 SLAY:bm_spriggan_co4
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co4
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_co4
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_spriggan_co4
+# bm_spriggan_st_unique (Spriggan, r\Spriggan.NIF)
+4.0 0 0 0 0 TP:-171280:175286:844:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_spriggan_st_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_spriggan_st_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_spriggan_st_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_spriggan_st_unique
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_st_unique
+3.5 0 0 0
+0.3 0 0 0 0 SLAY:bm_spriggan_st_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_spriggan_st_unique
+# bm_udyrfrykte (The Udyrfrykte, r\udyrfrykte.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Lair_of_the_Udyrfrykte
+0.3 0 0 0 0 EXPECT:refmeshes:bm_udyrfrykte:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_udyrfrykte
+0.3 0 0 0 0 EXPECT:refhealth:bm_udyrfrykte:gt:0
+0.3 0 0 0 0 SLAY:bm_udyrfrykte
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_udyrfrykte
+# bm_werewolf_default (Werewolf, wolf\skinNPC.NIF)
+0.3 0 0 0 0 PLACE:bm_werewolf_default:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_werewolf_default:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_werewolf_default
+0.3 0 0 0 0 EXPECT:refhealth:bm_werewolf_default:gt:0
+0.3 0 0 0 0 SLAY:bm_werewolf_default
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_werewolf_default
+# bm_werewolf_ritual (Werewolf Innocent, r\Wolf_Black.NIF)
+#   nothing in the game data places it
+# bm_wolf_bone_summon (Bonewolf, r\UnDeadWolf_2.nif)
+0.3 0 0 0 0 PLACE:bm_wolf_bone_summon:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_bone_summon:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_bone_summon
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_bone_summon:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_bone_summon
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_bone_summon
+# bm_wolf_caenlorn1 (Caenlorn Wolf, r\Wolf_Black.NIF)
+4.0 0 0 0 0 TP:-159444:209127:3039:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_caenlorn1:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_caenlorn1
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_caenlorn1:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_caenlorn1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_caenlorn1
+# bm_wolf_caenlorn2 (Caenlorn Wolf, r\Wolf_Black.NIF)
+4.0 0 0 0 0 TP:-159679:209014:3040:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_caenlorn2:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_caenlorn2
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_caenlorn2:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_caenlorn2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_caenlorn2
+# bm_wolf_caenlorn3 (Caenlorn Wolf, r\Wolf_Black.NIF)
+4.0 0 0 0 0 TP:-159744:209492:3036:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_caenlorn3:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_caenlorn3
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_caenlorn3:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_caenlorn3
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_caenlorn3
+# bm_wolf_grey (Wolf, r\Wolf_Black.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Legge
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_grey:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_grey
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_grey:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_grey
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_grey
+# bm_wolf_grey_lvl_1 (Wolf, r\Wolf_Black.NIF)
+0.3 0 0 0 0 PLACE:bm_wolf_grey_lvl_1:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_grey_lvl_1:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_grey_lvl_1
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_grey_lvl_1:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_grey_lvl_1
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_grey_lvl_1
+# bm_wolf_grey_summon (Wolf, r\Wolf_Black.NIF)
+0.3 0 0 0 0 PLACE:bm_wolf_grey_summon:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_grey_summon:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_grey_summon
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_grey_summon:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_grey_summon
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_grey_summon
+# bm_wolf_hroldar (Wolf, r\Wolf_Black.NIF)
+4.0 0 0 0 0 TP:-178190:146871:1016:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_hroldar:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_hroldar
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_hroldar:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_hroldar
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_hroldar
+# bm_wolf_red (Plague Wolf, r\Wolf_red.NIF)
+0.3 0 0 0 0 PLACE:bm_wolf_red:300
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_red:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_red
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_red:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_red
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_red
+# bm_wolf_skeleton (Bonewolf, r\UnDeadWolf_2.nif)
+3.0 0 0 0 0 GOTO:Solstheim,_Caves_of_Fjalding
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_skeleton:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_skeleton
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_skeleton:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_skeleton
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_skeleton
+# bm_wolf_snow_unique (Snow Wolf, r\Wolf_white.NIF)
+4.0 0 0 0 0 TP:-183743:205933:896:0
+0.3 0 0 0 0 EXPECT:refmeshes:bm_wolf_snow_unique:gt:0
+0.3 0 0 0 0 EXPECT:alive:bm_wolf_snow_unique
+0.3 0 0 0 0 EXPECT:refhealth:bm_wolf_snow_unique:gt:0
+0.3 0 0 0 0 SLAY:bm_wolf_snow_unique
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:bm_wolf_snow_unique
+# draugr (draugr, r\cr_draugr.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Kolbjorn_Barrow
+0.3 0 0 0 0 EXPECT:refmeshes:draugr:gt:0
+0.3 0 0 0 0 EXPECT:alive:draugr
+0.3 0 0 0 0 EXPECT:refhealth:draugr:gt:0
+0.3 0 0 0 0 SLAY:draugr
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:draugr
+# draugr_aesliip (Draugr Lord Aesliip, r\draugrLord.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Aesliip's_Lair
+0.3 0 0 0 0 EXPECT:refmeshes:draugr_aesliip:gt:0
+0.3 0 0 0 0 EXPECT:alive:draugr_aesliip
+0.3 0 0 0 0 EXPECT:refhealth:draugr_aesliip:gt:0
+0.3 0 0 0 0 SLAY:draugr_aesliip
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:draugr_aesliip
+# draugr_co_3 (Draugr, r\cr_draugr.NIF)
+4.0 0 0 0 0 TP:-215856:177360:324:0
+0.3 0 0 0 0 EXPECT:refmeshes:draugr_co_3:gt:0
+0.3 0 0 0 0 EXPECT:alive:draugr_co_3
+0.3 0 0 0 0 EXPECT:refhealth:draugr_co_3:gt:0
+0.3 0 0 0 0 SLAY:draugr_co_3
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:draugr_co_3
+# draugr_co_3_dead (Draugr, r\cr_draugr.NIF)
+4.0 0 0 0 0 TP:-216807:178328:273:0
+0.3 0 0 0 0 EXPECT:refmeshes:draugr_co_3_dead:gt:0
+#   no health: it lies dead where it is placed
+0.3 0 0 0 0 EXPECT:dead:draugr_co_3_dead
+# draugr_valbrandr (Valbrandr draugr, r\cr_draugr.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Valbrandr_Barrow
+0.3 0 0 0 0 EXPECT:refmeshes:draugr_valbrandr:gt:0
+0.3 0 0 0 0 EXPECT:alive:draugr_valbrandr
+0.3 0 0 0 0 EXPECT:refhealth:draugr_valbrandr:gt:0
+0.3 0 0 0 0 SLAY:draugr_valbrandr
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:draugr_valbrandr
+# glenmoril_raven (Ettiene of Glenmoril Wyrd, r\raven.NIF)
+4.0 0 0 0 0 TP:-183820:193514:2062:0
+0.3 0 0 0 0 EXPECT:refmeshes:glenmoril_raven:gt:0
+0.3 0 0 0 0 EXPECT:alive:glenmoril_raven
+0.3 0 0 0 0 EXPECT:refhealth:glenmoril_raven:gt:0
+0.3 0 0 0 0 SLAY:glenmoril_raven
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:glenmoril_raven
+# glenmoril_raven_cave (Ettiene of Glenmoril Wyrd, r\raven.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Gloomy_Cave
+0.3 0 0 0 0 EXPECT:refmeshes:glenmoril_raven_cave:gt:0
+0.3 0 0 0 0 EXPECT:alive:glenmoril_raven_cave
+0.3 0 0 0 0 EXPECT:refhealth:glenmoril_raven_cave:gt:0
+0.3 0 0 0 0 SLAY:glenmoril_raven_cave
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:glenmoril_raven_cave
+# skeleton nord  (Skeleton Berserker, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Frykte
+0.3 0 0 0 0 EXPECT:refmeshes:skeleton%nord%:gt:0
+0.3 0 0 0 0 EXPECT:alive:skeleton%nord%
+0.3 0 0 0 0 EXPECT:refhealth:skeleton%nord%:gt:0
+0.3 0 0 0 0 SLAY:skeleton%nord%
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:skeleton%nord%
+# skeleton nord_2 (Skeleton Berserker, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Frykte
+0.3 0 0 0 0 EXPECT:refmeshes:skeleton%nord_2:gt:0
+0.3 0 0 0 0 EXPECT:alive:skeleton%nord_2
+0.3 0 0 0 0 EXPECT:refhealth:skeleton%nord_2:gt:0
+0.3 0 0 0 0 SLAY:skeleton%nord_2
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:skeleton%nord_2
+# skeleton_stahl_uni (Skeleton Berserker, r\Skeleton.NIF)
+3.0 0 0 0 0 GOTO:Solstheim,_Stahlman's_Gorge
+0.3 0 0 0 0 EXPECT:refmeshes:skeleton_stahl_uni:gt:0
+0.3 0 0 0 0 EXPECT:alive:skeleton_stahl_uni
+0.3 0 0 0 0 EXPECT:refhealth:skeleton_stahl_uni:gt:0
+0.3 0 0 0 0 SLAY:skeleton_stahl_uni
+2.5 0 0 0
+0.3 0 0 0 0 EXPECT:dead:skeleton_stahl_uni

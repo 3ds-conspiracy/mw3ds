@@ -107,7 +107,7 @@ void Session::companionShareClose()
 	{
 		companionSharing = false;
 		containerRef = -1;
-		screen = SCR_DIALOGUE;
+		screen = dlg.open ? SCR_DIALOGUE : SCR_NONE;   // (a share opened without words: the bear)
 	}
 	playSound(-1, "Menu Click");
 }

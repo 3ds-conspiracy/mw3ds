@@ -64,6 +64,8 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 	p.spriteBudgetMax = p.slowCpu ? 400 : 600;
 	// (an Old 3DS has the streaks alone: it has the least to spare in a busy town, in 3D most of all)
 	p.rainExtras = !p.slowCpu;
+	// (snow as ash's flakes on a New 3DS, half on an Old one: spec/performance-tradeoffs.md)
+	p.snowFlakes = p.slowCpu ? 120 : 240;
 	// (an Old 3DS draws from Project Atlas's sheets: a sheet's smaller copies blend its pictures into each other, and the
 	// far walkways and walls showed dark patches of the trim packed under them, flickering in and out)
 	p.textureMips = !p.slowCpu;

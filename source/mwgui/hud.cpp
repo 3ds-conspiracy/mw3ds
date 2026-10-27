@@ -69,6 +69,14 @@ void Session::drawTop()
 {
 	const UiInput& in = uiIn();
 	(void)in;
+	// The werewolf's view: the fur at the screen's edges over the whole top screen, in first person (OpenMW's
+	// setWerewolfOverlay, shown with the first-person view), under every other mark
+	if (w.stats.werewolf && !thirdPerson)
+	{
+		auto fur = w.game.art.hud.find("werewolf_overlay");
+		if (fur != w.game.art.hud.end())
+			uiArt(fur->second.file, fur->second.w, fur->second.h, 0, 0, 400, 240);
+	}
 	// (aimShift: in 3D, the crosshair and the label sit at the depth of what's aimed at)
 	float ax = aimShift;
 	if (!indicators.empty())

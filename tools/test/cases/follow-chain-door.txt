@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: vanilla
+# Someone following a follower of the player comes along through a door too (OpenMW's getActorsFollowing takes the
+# followers of followers): Bloodmoon's first colony miners, two following Gidar Verothan who follows the player, were
+# left on Fort Frostmoth's docks when the player sailed to Raven Rock.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+4 0 0 0 0 SETUP-END
+0.3 0 0 0 0 TP:-11900:-70500:300:0
+2 0 0 0
+0.3 0 0 0 0 CON:"vodunius%nuccius"->aifollow%player%0%0%0%0
+0.3 0 0 0 0 CON:"fargoth"->aifollow%"vodunius%nuccius"%0%0%0%0
+15 0 0 0 0 WALKTO:fargoth
+0.1 0 0 0 0 EXPECT:refdist:vodunius%nuccius:lt:600+EXPECT:refdist:fargoth:lt:600
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Arrille's_Tradehouse
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refcell:vodunius%nuccius,Seyda%Neen,%Arrille:eq:1+EXPECT:refcell:fargoth,Seyda%Neen,%Arrille:eq:1

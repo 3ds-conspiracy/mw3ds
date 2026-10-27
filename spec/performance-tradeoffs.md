@@ -29,6 +29,18 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   instructions, no memory. Terrain and see-through or alpha-tested things (leaves, fences) keep the noon pattern all
   day, tinted by the hour; OpenMW lights every vertex by its normal. (`convert_cell.py side_facing`, `World::sunSide`,
   `shaders/cell.v.pica sideLight`)
+- **In the heaviest outdoor spots a tree takes one baked light for all its placements in a cell.** Where a 3 x 3 spot's
+  placed models pass 600 k vertices (Solstheim's pine forests and Raven Rock; never Vvardenfell, whose busiest is
+  554 k), a static or activator placed 3 or more times in a cell keeps its vertices once and is drawn once a placement
+  with its own transform (cell format 11, shared models). A rock or a wall keeps each placement's baked colours (4
+  bytes a vertex); a tree or plant (`flora_*`) shares one, the model lit unturned by the cell's ambient light and the
+  noon sun, so a turned tree's lit side and the low sun's side light don't follow its turn. Side by side the forest
+  looked the same (`bm-shared-pines` shots: about 5 % of the top screen's pixels moved by more than 16 of 255, the
+  trees' shading). Gain of the one light: the Hirstaang Forest's spot from 26.0 to 23.6 MB of linear memory (level.py's
+  report; 36.2 with the trees copied into the batches); natively the Old 3DS profile kept 4.7 MB free there with
+  every cell in, where each placement's own colours left 1.8. A placement a lamp lights stays baked. The cost is draw calls: the forest's view drew 210 things instead of 146, Raven Rock's 395 instead of 289.
+  OpenMW lights every vertex of every placement. (`convert_cell.py share_models`, `SHARE_ONE_LIGHT`, `level.py
+  heavy_spots`, `mwrender/renderingmanager.cpp`)
 - **NPCs are drawn from a library the converter dressed** (their race's body, head, hair and what they wear, merged:
   about 29 meshes each, against about 35 put together from parts). One whose clothes leave its pack (a stripped
   corpse) is put together from the shared third-person pieces at run time instead (`npcDress`): about 6 more draws
@@ -65,6 +77,16 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   built on the CPU in one pass a frame and drawn in a few draws (about 0.5 ms of an Old 3DS's CPU). The dust clouds
   fade out within 400 units of the eye: a 400-unit cloud near the eye is a see-through layer over most of the screen,
   and blending costs the GPU per pixel covered. (`Session::drawPrecipitation`)
+- **Bloodmoon's snow and blizzard: 240 flake sheets on a New 3DS, 120 on an Old one; the blizzard's view a quarter
+  of the whole.** (Agreed 2026-10-25: snow budgeted like ash.) Morrowind.ini asks for 750 flakes and OpenMW's snow.nif
+  / blizzard.nif emit 2000 particles of a 75 (150)-unit sheet of a few dozen specks each, plus 600 blizzard clouds. Ours
+  take the ash flakes' places in the box round the eye: each a 60-unit sheet of four dozen of the original's specks
+  (`artassets.py snow_sheet`: the original sheet is mostly empty texels the GPU would blend for nothing), turned to the
+  eye and gone within 40 units of it (a near sheet would fill the screen); about 10,000 specks in view on a New 3DS, the
+  CPU's work that of 240 ash flakes. An Old 3DS has half (`ConsoleProfile::snowFlakes`). The blizzard's clouds are the
+  ash storm's 24 dust clouds with its picture, at half their strength. The blizzard's Land Fog Depth 2.8 puts the view
+  at `World::weatherFogScale`'s floor, a quarter of the whole drawn, fogged from the eye: less to draw, as in blight.
+  (`Session::drawPrecipitation`, `bm-weather-snow`, `bm-weather-blizzard`, `bm-o3ds-snow`)
 - **On an Old 3DS, the streaks alone; a New 3DS adds two far-rain rings and ripples.** The rings are bands of falling
   drops round the horizon: one 450 out, about 0.4 of the screen blended, and a fainter, narrower one 900 out, about 0.2
   of it (rain behind rain: depth to a storm, in 3D most of all). A whole ring covered the screen, two of them about 2 ms

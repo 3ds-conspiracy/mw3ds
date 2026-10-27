@@ -268,11 +268,20 @@ void World::syncActor(int ri)
 	{
 		CellActor& ca = c->actors[r.cellActor];
 		memcpy(ca.pos, r.pos, sizeof(ca.pos));
-		ca.radius = r.dead ? 0.0f : 28.0f;
+		ca.radius = r.dead ? 0.0f : 28.0f * r.scaleFactor;     // (SetScale: the cylinder grows with them)
 	}
 	Actor* a = actorOf(ri);
 	if (!a)
 		return;
+	if (a->scaleFactor != r.scaleFactor)
+	{
+		// SetScale since its place was made (a cell read again starts from the level's size): its size, not its spot
+		float k = r.scaleFactor / a->scaleFactor;
+		for (int i = 0; i < 12; i++)
+			if (i % 4 != 3)
+				a->place[i] *= k;
+		a->scaleFactor = r.scaleFactor;
+	}
 	if (r.moved)
 		actorSetPlacement(*a, r.pos[0], r.pos[1], r.pos[2] + r.boxLift, r.rot[2]);
 	ActorSet& set = *actorsOf(ri);
@@ -368,6 +377,8 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 			a.ref += lc.refBase;
 	for (auto& d : l->cell.doors)
 		d.ref += lc.refBase;
+	for (auto& p : l->cell.places)
+		p.ref += lc.refBase;
 	// (one that stands in another cell now keeps its mesh and place there: its entries here go unused, and
 	// that cell's, when it is loaded too, are left alone)
 	for (size_t k = 0; k < l->actors.actors.size(); k++)
@@ -404,6 +415,9 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 			continue;
 		}
 		w.syncActor(i);
+		w.refs[i].humanAnim = -1;
+		if (w.refs[i].werewolf)
+			w.werewolfBody(i);             // still in wolf form from before
 		if (!w.refs[i].visible())
 			hideRanges(w, w.refs[i]);
 		else if (w.refs[i].colGone)
@@ -756,7 +770,8 @@ void World::streamExterior(bool all)
 	// isn't there (the console reads one in 1 to 5 s, and after a door only the player's own is loaded): it loads now,
 	// below. Kept as current, it stayed unloaded for those 512 units, there was no ground under the player, and the body
 	// fell and was under the land when the cell came. (Without a thread, the PC build of the tests, a neighbour is read
-	// on the spot a frame after it is asked for: the rule as it was, so the quest runs keep their timing)
+	// on the spot a frame after it is asked for: the rule as it was, so the quest runs keep their timing. Not for an Old 3DS's
+	// profile: it holds neighbours back for room, thread or none, and the console's own rule is the one that holds)
 	bool nearEdge = false;
 	if (under >= 0 && under != current)
 	{
@@ -764,7 +779,7 @@ void World::streamExterior(bool all)
 		float ox = fmaxf(fmaxf(cur.gx * 8192.0f - player.feet[0], player.feet[0] - (cur.gx + 1) * 8192.0f), 0.0f);
 		float oy = fmaxf(fmaxf(cur.gy * 8192.0f - player.feet[1], player.feet[1] - (cur.gy + 1) * 8192.0f), 0.0f);
 		nearEdge = abs(cells[under].gx - cur.gx) <= 1 && abs(cells[under].gy - cur.gy) <= 1 && ox < 512.0f && oy < 512.0f
-			&& cur.live && (cells[under].live || !streamThreaded);
+			&& cur.live && (cells[under].live || (!streamThreaded && !g_profile.streamWaitsForBlock));
 	}
 	if (under >= 0 && under != current && !nearEdge)
 	{
@@ -819,14 +834,18 @@ void World::streamExterior(bool all)
 		// runs the heap dry stops the game (the distant land covers the view until memory comes back)
 		static bool noRoomNoted = false;
 		// ... or with no free block of 1.5 MB (a heap with room in total but only in small holes: a cell's collision
-		// and object lists are single blocks of several hundred KB). Probed twice a second at most
+		// and object lists are single blocks of several hundred KB). Probed twice a second at most, and again once a cell
+		// or its objects came in since (useTick): cells that came in quicker than that (small ones, a fast card, the native
+		// build) each started on the last probe's word, and Solstheim's Skaal Village ran the heap to its last 600 KB
 		static u64 probedAt = 0;
+		static u32 probedTick = 0;
 		static bool probedRoom = true;
 		// (only between jobs: the probe holds the biggest free block for a moment, and the streaming
 		// thread allocating right then failed for nothing — no job starts while one runs anyway)
-		if (g_profile.streamWaitsForBlock && !streamJob && osGetTime() - probedAt > 500)
+		if (g_profile.streamWaitsForBlock && !streamJob && (osGetTime() - probedAt > 500 || probedTick != useTick))
 		{
 			probedAt = osGetTime();
+			probedTick = useTick;
 			probedRoom = (size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= 1536u * 1024u;
 		}
 		bool room = !g_profile.streamWaitsForBlock || probedRoom;
@@ -998,6 +1017,7 @@ void Session::evictFarCells(int budget, bool now)
 	// lines said and done are forgotten (their references' slots go to other cells' objects)
 	for (auto it = sayUntil.begin(); it != sayUntil.end();)
 		it = w.time >= it->second ? sayUntil.erase(it) : std::next(it);
+	dropDeadLoops();
 	int n = w.evictCells(budget, [this](int ri) { return refInUse(ri); }, now);
 	if (n)
 		logf("world: %d cells' objects out of memory, %d objects in memory, %d cells' changes kept",

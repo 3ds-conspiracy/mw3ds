@@ -1423,7 +1423,9 @@
 120 0 0 0 0 DOORTO:Mournhold,_Craftsmen's_Hall
 10 0 0 0 0 UNTIL:cell:Mournhold,_Craftsmen's_Hall
 0.5 0 0 0
-20 0 0 0 0 SLEEP:24
+# (seeded in the rest itself: the date's Random 100 is rolled at its day change, and with the seed further back
+# any change upstream moved the rolls before it)
+20 0 0 0 0 SEED:3+SLEEP:24
 20 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:Mournhold,_Godsreach
 10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
@@ -1865,6 +1867,9 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 0.3 0 0 0 0 ESCORT:thrud
+# (first to the middle of Godsreach: from where the talk ends the planner's way to the trapdoor can go by the north
+# steps, where Thrud, following, is held up for good)
+60 0 0 0 0 WALKTO:@0,283,80
 120 0 0 0 0 DOORTO:Old_Mournhold|_Residential_Sewers
 10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Residential_Sewers
 0.5 0 0 0

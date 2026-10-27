@@ -1,0 +1,38 @@
+# A looping sound (PlayLoopSound3D) on an object whose cell goes out of memory right after the player leaves it: the
+# loop is let go with its cell (the reference list shrinks under its slot; a stale number reads the freed end of the
+# list: one memory-checker crash in Session::updateLoopSounds in a long uber run). Written after the fix, and it passed
+# before it too: it keeps the path exercised, it did not reproduce the crash.
+# (the loops are mixed every third frame on the Old 3DS: three tries, the eviction one frame later each)
+# console: old
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+5 0 0 0
+0.3 0 0 0 0 LOOPSOUND:last:DefaultLand
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refloopvol:flora_corkbulb,defaultland:ge:0
+0.001 0 0 0 0 TP:-11000:-71000:600:0
+0.001 0 0 0 0 EVICT:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refloopvol:flora_corkbulb,defaultland:eq:-1
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+5 0 0 0
+0.3 0 0 0 0 LOOPSOUND:last:DefaultLand
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refloopvol:flora_corkbulb,defaultland:ge:0
+0.001 0 0 0 0 TP:-11000:-71000:600:0
+0.001 0 0 0
+0.001 0 0 0 0 EVICT:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refloopvol:flora_corkbulb,defaultland:eq:-1
+0.3 0 0 0 0 TP:30000:-80000:1400:0
+5 0 0 0
+0.3 0 0 0 0 LOOPSOUND:last:DefaultLand
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refloopvol:flora_corkbulb,defaultland:ge:0
+0.001 0 0 0 0 TP:-11000:-71000:600:0
+0.001 0 0 0
+0.001 0 0 0
+0.001 0 0 0 0 EVICT:0
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refloopvol:flora_corkbulb,defaultland:eq:-1

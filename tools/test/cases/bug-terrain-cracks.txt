@@ -1,3 +1,5 @@
+# console: new
+# (not run as an Old 3DS: it checks the New 3DS profile's view distance: a shorter Old 3DS view leaves a band at the horizon)
 # Hairline cracks in the ground at cell borders: the GPU's 24-bit floats rounded world-sized vertex positions
 # differently on each side of a border (seen on hardware). The native build rounds like the GPU and counts
 # pixels the ground missed in each shot. Standing beside the cell borders at x 24576 and y -49152, looking down.

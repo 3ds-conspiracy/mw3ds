@@ -92,6 +92,8 @@ void insert(Chunk* c, size_t size)
 	s_bins[bin] = c;
 }
 
+void watchStart();
+
 void init()
 {
 	if (s_ready)
@@ -120,6 +122,7 @@ void init()
 	insert((Chunk*)s_base, span);
 	s_free = span;
 	s_ready = true;
+	watchStart();
 }
 
 inline bool inArena(void* p) { return s_ready && (char*)p >= s_base && (char*)p < s_end; }
@@ -204,6 +207,129 @@ struct InstallHandler
 // which the console keeps in VRAM and linear memory, not the C++ heap)
 static thread_local int tl_outside = 0;
 
+// NATIVE_GUARD=1: each block from outside the arena (linear memory, the inflated files, the renderer's buffers) ends
+// against a page that faults when touched, so an overrun stops at the write that makes it (the crash handler names it)
+// instead of corrupting the C runtime's heap, which only fails later at some free (0xc0000374)
+namespace
+{
+const uint32_t kGuardMagic = 0x44524147;
+struct GuardHead { uint32_t magic; uint32_t size; };
+int s_guard = -1;
+
+bool guardOn()
+{
+	if (s_guard < 0)
+	{
+		const char* g = getenv("NATIVE_GUARD");
+		s_guard = g && g[0] == '1';
+	}
+	return s_guard == 1;
+}
+
+void* guardAlloc(size_t n)
+{
+	const size_t page = 4096, body = (n + kAlign - 1) & ~(kAlign - 1);
+	size_t pages = (body + sizeof(GuardHead) + page - 1) / page;
+	char* base = (char*)VirtualAlloc(nullptr, (pages + 1) * page, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	if (!base)
+		return nullptr;
+	DWORD old;
+	VirtualProtect(base + pages * page, page, PAGE_NOACCESS, &old);
+	GuardHead* h = (GuardHead*)base;
+	h->magic = kGuardMagic;
+	h->size = (uint32_t)n;
+	return base + pages * page - body;
+}
+
+// a guarded block's head, or null for a block of the C runtime's
+GuardHead* guardHead(void* p)
+{
+	if (s_guard != 1)
+		return nullptr;
+	MEMORY_BASIC_INFORMATION mi;
+	if (!VirtualQuery(p, &mi, sizeof(mi)) || mi.State != MEM_COMMIT || mi.Type != MEM_PRIVATE)
+		return nullptr;
+	GuardHead* h = (GuardHead*)mi.AllocationBase;
+	return h->magic == kGuardMagic ? h : nullptr;
+}
+
+// NATIVE_WATCH=<hex address>: a hardware watch (the CPU's debug registers, on the thread that first allocates: the main
+// one) on the 4 bytes there; each write logs the value written and the code that wrote it, to find a write through a
+// stale pointer (the heap's layout is the same from run to run, so an address seen once is the same the next time)
+uintptr_t s_watch = 0;
+
+LONG CALLBACK watchHandler(EXCEPTION_POINTERS* e)
+{
+	CONTEXT* c = e->ContextRecord;
+	char* image = (char*)GetModuleHandleA(nullptr);
+	if (e->ExceptionRecord->ExceptionCode == EXCEPTION_BREAKPOINT && s_watch && !(c->Dr7 & 1))
+	{
+		c->Dr0 = s_watch;
+		c->Dr7 = 1 | (1u << 16) | (3u << 18);      // local enable, on writes, 4 bytes
+		c->Eip += 1;                              // past the int3
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+	if (e->ExceptionRecord->ExceptionCode == EXCEPTION_SINGLE_STEP && (c->Dr6 & 1))
+	{
+		void* frames[6];
+		USHORT n = CaptureStackBackTrace(1, 6, frames, nullptr);
+		char line[200];
+		int k = snprintf(line, sizeof(line), "watch: %08x = %08x at +0x%x", (unsigned)s_watch, *(unsigned*)s_watch,
+			(unsigned)((char*)c->Eip - image));
+		for (USHORT i = 0; i < n && k < (int)sizeof(line) - 12; i++)
+			k += snprintf(line + k, sizeof(line) - k, " +0x%x", (unsigned)((char*)frames[i] - image));
+		logf("%s", line);
+		c->Dr6 = 0;
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
+void watchStart()
+{
+	const char* wv = getenv("NATIVE_WATCH");
+	if (!wv || !wv[0])
+		return;
+	s_watch = (uintptr_t)strtoul(wv, nullptr, 16);
+	AddVectoredExceptionHandler(1, watchHandler);
+	__asm__ volatile("int3");
+}
+
+void* outsideAlloc(size_t n) { return guardOn() ? guardAlloc(n) : s_crtMalloc(n); }
+
+void outsideFree(void* p)
+{
+	if (GuardHead* h = guardHead(p))
+	{
+		VirtualFree(h, 0, MEM_RELEASE);
+		return;
+	}
+	// (guarded: a pointer the C runtime's heap doesn't hold, freed twice or never its, faults here, at the free that
+	// does it, rather than corrupting that heap for a later free to find)
+	if (s_guard == 1)
+	{
+		typedef HANDLE (*HeapFn)();
+		static HANDLE crtHeap = nullptr;
+		if (!crtHeap)
+			if (HeapFn f = (HeapFn)GetProcAddress(GetModuleHandleA("msvcrt.dll"), "_get_heap_handle"))
+				crtHeap = f();
+		if (crtHeap && !HeapValidate(crtHeap, 0, p))
+		{
+			logf("crash: free of %p, not a block of the C runtime's heap", p);
+			void* frames[24];
+			USHORT n = CaptureStackBackTrace(0, 24, frames, nullptr);
+			char* image = (char*)GetModuleHandleA(nullptr);
+			for (USHORT i = 0; i < n; i++)
+				logf("crash:   +0x%x", (unsigned)((char*)frames[i] - image));
+			fflush(nullptr);
+			*(volatile int*)0 = 0;
+		}
+	}
+	if (s_crtFree)
+		s_crtFree(p);
+}
+}
+
 extern "C" {
 void nativeOutsideEnter() { tl_outside++; }
 void nativeOutsideLeave() { tl_outside--; }
@@ -212,7 +338,7 @@ void* malloc(size_t n)
 {
 	init();
 	if (tl_outside > 0)
-		return s_crtMalloc(n ? n : 1);
+		return outsideAlloc(n ? n : 1);
 	EnterCriticalSection(&s_lock);
 	void* p = take(n ? n : 1);
 	LeaveCriticalSection(&s_lock);
@@ -225,8 +351,7 @@ void free(void* p)
 		return;
 	if (!inArena(p))
 	{
-		if (s_crtFree)
-			s_crtFree(p);
+		outsideFree(p);
 		return;
 	}
 	EnterCriticalSection(&s_lock);
@@ -248,7 +373,19 @@ void* realloc(void* p, size_t n)
 	if (!p)
 		return malloc(n);
 	if (!inArena(p))
+	{
+		if (GuardHead* h = guardHead(p))
+		{
+			void* q = guardAlloc(n);
+			if (q)
+			{
+				memcpy(q, p, h->size < n ? h->size : n);
+				VirtualFree(h, 0, MEM_RELEASE);
+			}
+			return q;
+		}
 		return s_crtRealloc ? s_crtRealloc(p, n) : nullptr;
+	}
 	if (!n)
 	{
 		free(p);
@@ -271,7 +408,7 @@ void* realloc(void* p, size_t n)
 void* nativeOutsideAlloc(size_t n)
 {
 	init();
-	return s_crtMalloc(n ? n : 1);
+	return outsideAlloc(n ? n : 1);
 }
 
 // newlib's mallinfo, as the game asks it (native_compat.h maps mallinfo() here in this build)

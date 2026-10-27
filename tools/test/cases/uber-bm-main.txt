@@ -1,0 +1,1443 @@
+# start: Seyda Neen
+# data: bloodmoon
+# uber-bm-main: Bloodmoon's main questline played LEGIT on the v2 kit (ENHANCEV2) from Khuul: Fort Frostmoth's
+# smugglers and morale, the missionary, Carius gone, the rumours, the Skaal's attack, the Ritual of the Gifts, the
+# draugr, the stones, the trial, then the werewolf path to the Wild Hunt. Notes: internal/uber/bm-main.md
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ACTIVE:8:2000
+0.3 0 0 0 0 ENHANCEV2
+# (Tribunal's Dark Brotherhood attack at a rest is Tribunal's questline, not this one's: as if seen through)
+0.3 0 0 0 0 JOURNAL:tr_dbattack:50
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:50000
+0.3 0 0 0 0 GIVE:sc_divineintervention:20
+0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster
+0.3 0 0 0 0 GIVE:repair_grandmaster_01:5
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GOTO:Khuul
+4 0 0 0
+# (by S'virr's boat on Khuul's shore)
+0.3 0 0 0 0 TP:-68964:141900:300:0
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# Before sailing: Heal Companion (a Restore Health on touch) from the Gnisis temple, by Khuul's silt strider. The
+# Ritual of Beasts' bear heals by no other means: no one but the player heals on a rest, and the one seller on
+# Solstheim (Mirisa in Thirsk) is locked up until BM_Missionary
+120 0 0 0 0 ACTIVATE:seldus%nerendus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:seldus%nerendus:Gnisis
+6 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Temple
+10 0 0 0 0 UNTIL:cell:Gnisis,_Temple
+# (the dice seeded before his greeting: one of his two teaches the topic "latest rumors", the Rite of the Wolf Giver's start, and
+# which one comes is a roll the profiles' earlier rolls shift)
+0.3 0 0 0 0 SEED:16
+60 0 0 0 0 ACTIVATE:zanmulk%sammalamus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 BUYSPELL:zanmulk%sammalamus:heal_companion
+0.1 0 0 0 0 EXPECT:spell:heal_companion
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Gnisis
+120 0 0 0 0 ACTIVATE:punibi%yahaz
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:punibi%yahaz:Khuul
+6 0 0 0
+# To Solstheim: S'virr's boat from Khuul to Fort Frostmoth
+120 0 0 0 0 ACTIVATE:s'virr
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TRAVEL:s'virr:Fort
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Fort_Frostmoth
+# BM_Morale: Captain Carius finds his men edgy; the morale has been low
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Carius'_Chambers
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Carius'_Chambers
+60 0 0 0 0 ACTIVATE:falx%carius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Fort_Frostmoth
+0.3 0 0 0 0 TOPIC:edgy
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:10
+0.3 0 0 0 0 TOPIC:disturbing_trends
+0.3 0 0 0 0 TOPIC:morale_has_been_low
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# ... the priest Antonius Nuncius keeps a desk in the Armory, its liquor locked away (the desk's script marks it found)
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Armory
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Armory
+60 0 0 0 0 USELOCKPICK:de_p_desk_nuncius:pick_grandmaster
+60 0 0 0 0 LOOT:de_p_desk_nuncius:potion_local_brew_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:global:foundbooze:eq:1+EXPECT:item:potion_local_brew_01:ge:1
+# a drink loosens a guard's tongue: the fort has gone dry
+60 0 0 0 0 ACTIVATE:bm_imperial%guard
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:booze
+0.3 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 TOPIC:dry_fort
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# Carius never banned the drink: the shipments stopped; someone points at the priest
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Carius'_Chambers
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Carius'_Chambers
+60 0 0 0 0 ACTIVATE:falx%carius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:morale_has_been_low
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# Antonius Nuncius at the Imperial Cult Shrine (a guard says where): caught with the liquor, he asks the player to keep
+# his secret
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+60 0 0 0 0 ACTIVATE:bm_imperial%guard
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Antonius_Nuncius
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+60 0 0 0 0 ACTIVATE:antonius%nuncius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:dry_fort
+0.3 0 0 0 0 CHOICE:1
+0.3 0 0 0 0 TOPIC:shipments_stopped_arriving
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:90
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:eq:93+EXPECT:item:key_nuncius:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# ... and Carius hears it was all a misunderstanding
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Carius'_Chambers
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Carius'_Chambers
+60 0 0 0 0 ACTIVATE:falx%carius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:morale_has_been_low
+0.1 0 0 0 0 EXPECT:journal:BM_Morale:ge:110+EXPECT:item:p_cure_common_s:ge:3
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-morale
+# BM_Smugglers: weapons go missing from the armory; Carius gives the player a soldier to work with
+60 0 0 0 0 ACTIVATE:falx%carius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Fort_business
+0.3 0 0 0 0 TOPIC:weapons_being_smuggled
+0.1 0 0 0 0 EXPECT:journal:BM_Smugglers:ge:10
+0.3 0 0 0 0 TOPIC:bit_of_help
+0.1 0 0 0 0 EXPECT:journal:BM_Smugglers:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# ... Saenus Lusius (General Quarters) comes along: he can strike a deal with the smugglers later
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+60 0 0 0 0 ACTIVATE:saenus%lusius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:assist_you
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Smugglers:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (Lusius follows now: a moment for him to come close, or he stays behind when the player goes out)
+60 0 0 0 0 WALKTO:saenus%lusius
+4 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:saenus%lusius:lt:400
+# ... Zeno Faustus in the Armory knows where they go, for a friend of Lusius (disposition 60: a bribe)
+0.3 0 0 0 0 ESCORT:saenus%lusius
+120 0 0 0 0 DOORTO:outside
+0.3 0 0 0 0 ESCORT:-
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_Armory
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Armory
+60 0 0 0 0 ACTIVATE:zeno%faustus
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 PERSUADE:5
+0.3 0 0 0 0 PERSUADE:5
+0.3 0 0 0 0 TOPIC:weapons_being_smuggled
+0.1 0 0 0 0 EXPECT:journal:BM_Smugglers:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (out by the Armory's ground floor door: its other one comes out on the curtain wall's walk)
+60 0 0 0 0 WALKTO:@-560,0,0
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+# ... to the Gandrung Caverns, up the coast north-east of the fort, Lusius following
+# (out of the fort's courtyard by the arch in its north wall, then up the coast: Lusius must stand by the leader)
+0.3 0 0 0 0 ESCORT:saenus%lusius
+120 0 0 0 0 WALKTO:@-173425,142716,974
+120 0 0 0 0 WALKTO:@-173824,143104,888
+120 0 0 0 0 WALKTO:@-174336,143360,928
+120 0 0 0 0 WALKTO:@-174848,143616,972
+120 0 0 0 0 WALKTO:@-175104,144128,944
+120 0 0 0 0 WALKTO:@-175200,144650,921
+120 0 0 0 0 WALKTO:@-175504,145172,786
+120 0 0 0 0 WALKTO:@-175890,145412,770
+120 0 0 0 0 WALKTO:@-176269,145634,875
+120 0 0 0 0 WALKTO:@-176910,146054,974
+120 0 0 0 0 WALKTO:@-177283,146346,970
+120 0 0 0 0 WALKTO:@-177654,146627,965
+120 0 0 0 0 WALKTO:@-177664,147200,968
+120 0 0 0 0 WALKTO:@-177408,147712,896
+120 0 0 0 0 WALKTO:@-177152,147968,832
+120 0 0 0 0 WALKTO:@-176896,148480,720
+120 0 0 0 0 WALKTO:@-176384,148992,704
+120 0 0 0 0 WALKTO:@-176128,149248,704
+120 0 0 0 0 WALKTO:@-175616,149504,704
+120 0 0 0 0 WALKTO:@-175104,150016,720
+120 0 0 0 0 WALKTO:@-174592,150528,720
+120 0 0 0 0 WALKTO:@-174080,150784,704
+120 0 0 0 0 WALKTO:@-173568,150784,704
+120 0 0 0 0 WALKTO:@-173056,151040,704
+120 0 0 0 0 WALKTO:@-172544,151040,704
+120 0 0 0 0 WALKTO:@-172288,151040,704
+120 0 0 0 0 WALKTO:@-171776,150528,688
+120 0 0 0 0 WALKTO:@-171264,150528,680
+120 0 0 0 0 WALKTO:@-170752,150528,664
+120 0 0 0 0 WALKTO:@-170240,150528,664
+120 0 0 0 0 WALKTO:@-169728,150016,608
+120 0 0 0 0 WALKTO:@-169216,149760,360
+120 0 0 0 0 WALKTO:@-169184,149222,148
+0.3 0 0 0 0 ESCORT:-
+# (a moment for Lusius to catch up: a follower far behind stays outside; the Old 3DS profile's slower followers take longer
+# down the ledge to the cave)
+10 0 0 0
+90 0 0 0 0 UNTIL:refdist:saenus%lusius:lt:450
+0.1 0 0 0 0 EXPECT:refdist:saenus%lusius:lt:500
+120 0 0 0 0 DOORTO:Solstheim,_Gandrung_Caverns
+10 0 0 0 0 UNTIL:cell:Solstheim,_Gandrung_Caverns
+0.1 0 0 0 0 SAVE:uber-bm-main-gandrung
+# ... their leader Gualtierus Spurius strikes a deal (as Lusius advised): he leaves the island and the weapons, and
+# gives the player his axe of paralysis
+# (with Lusius at hand: the leader's script greets the player and calls off the fight once Lusius is within 512 of him)
+0.3 0 0 0 0 ESCORT:saenus%lusius
+120 0 0 0 0 WALKTO:gualtierus%spurius
+0.3 0 0 0 0 ESCORT:-
+# (his greeting comes once Lusius, held up by a fight on the way, is within 512 of him)
+60 0 0 0 0 UNTIL:screen:dialogue
+0.3 0 0 0 0 TOPIC:make_a_deal
+0.1 0 0 0 0 EXPECT:journal:BM_Smugglers:ge:90
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (his offer ends the talk: asked again, he waits for the answer)
+60 0 0 0 0 ACTIVATE:gualtierus%spurius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:make_a_deal
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Smugglers:ge:93+EXPECT:item:BM%nordic%silver%axe_spurius:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-smugglers-deal
+# ... back to the fort on foot (the fort's fall is found on the way back in: the journal's entry is the player's coming near
+# it, not Lusius's; he follows if he can climb the slope from the cave's door, and the player does not wait for him there:
+# up it only the player can fly)
+0.3 0 0 0 0 ESCORT:-
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Solstheim
+120 0 0 0 0 WALKTO:@-169184,149222,148
+120 0 0 0 0 WALKTO:@-168960,149760,256
+120 0 0 0 0 WALKTO:@-169472,149760,456
+120 0 0 0 0 WALKTO:@-169984,149760,528
+120 0 0 0 0 WALKTO:@-170496,150272,600
+120 0 0 0 0 WALKTO:@-171008,150272,616
+120 0 0 0 0 WALKTO:@-171520,150272,664
+120 0 0 0 0 WALKTO:@-172032,150784,704
+120 0 0 0 0 WALKTO:@-172288,151040,704
+120 0 0 0 0 WALKTO:@-172800,151040,704
+120 0 0 0 0 WALKTO:@-173312,150784,704
+120 0 0 0 0 WALKTO:@-173824,150784,704
+120 0 0 0 0 WALKTO:@-174336,150784,704
+120 0 0 0 0 WALKTO:@-174848,150272,736
+120 0 0 0 0 WALKTO:@-175360,149760,704
+120 0 0 0 0 WALKTO:@-175872,149248,704
+120 0 0 0 0 WALKTO:@-176128,149248,704
+120 0 0 0 0 WALKTO:@-176384,148736,704
+120 0 0 0 0 WALKTO:@-176896,148224,776
+120 0 0 0 0 WALKTO:@-177408,147712,896
+120 0 0 0 0 WALKTO:@-177664,147200,968
+120 0 0 0 0 WALKTO:@-177654,146627,965
+120 0 0 0 0 WALKTO:@-177283,146346,970
+120 0 0 0 0 WALKTO:@-176910,146054,974
+120 0 0 0 0 WALKTO:@-176559,145828,949
+120 0 0 0 0 WALKTO:@-175890,145412,770
+120 0 0 0 0 WALKTO:@-175504,145172,786
+120 0 0 0 0 WALKTO:@-175200,144900,900
+120 0 0 0 0 WALKTO:@-175192,144384,936
+120 0 0 0 0 WALKTO:@-175104,143872,959
+120 0 0 0 0 WALKTO:@-174592,143360,942
+120 0 0 0 0 WALKTO:@-174336,143360,928
+0.3 0 0 0 0 ESCORT:-
+# (the smugglers' end is written as the player comes back to the broken fort)
+0.1 0 0 0 0 EXPECT:journal:BM_Smugglers:ge:100
+0.3 0 0 0 0 SAVE:uber-bm-main-smugglers
+# BM_CariusGone: the fort was attacked by wolf-like creatures and Carius is missing (Lusius says so and turns away); Gaea
+# Artoria, the officer not taken along (General Quarters, upper level), sends the player to the Skaal with a Skaal
+# warrior's skull, their village marked on the map
+1 0 0 0
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters,_Upper_Level
+60 0 0 0 0 ACTIVATE:gaea%artoria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:find_the_Captain
+0.1 0 0 0 0 EXPECT:journal:BM_CariusGone:ge:10
+0.3 0 0 0 0 TOPIC:Nord_village
+0.1 0 0 0 0 EXPECT:journal:BM_CariusGone:ge:20+EXPECT:item:misc_skull_skaal:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (a Mark by Artoria for the way back)
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+# ... to Skaal Village on Solstheim's north-east tip (flown): the first Skaal met sends the player to Tharsten Heart-Fang
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+3 0 0 0
+120 0 0 0 0 FLYTO:@-159300,213300,3150
+60 0 0 0 0 ACTIVATE:skaal_guard_a1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_CariusGone:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# ... Tharsten in the Greathall: the Skaal had no part in the attack (and the Imperials' digging angers him)
+# (landed by the door, in the cell north of the village's middle: an Old 3DS leaves that neighbour unloaded for room until the player is in it)
+120 0 0 0 0 FLYTO:@-159300,213300,3150
+120 0 0 0 0 DOORTO:Skaal_Village,_The_Greathall
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_The_Greathall
+60 0 0 0 0 ACTIVATE:tharsten%heart-fang
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:attack_on_the_Imperial_fort
+0.1 0 0 0 0 EXPECT:journal:BM_CariusGone:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# ... and back to Artoria (Recall) with what the Skaal said
+0.3 0 0 0 0 CAST:recall
+3 0 0 0
+60 0 0 0 0 ACTIVATE:gaea%artoria
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:find_the_Captain
+0.1 0 0 0 0 EXPECT:journal:BM_CariusGone:ge:110
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-cariusgone
+# BM_Stones (The Skaal Test of Loyalty): Tharsten takes the Skaal warrior's skull back; the Imperials have much to atone
+# for; Korst Wind-Eye (the Shaman's Hut) sets the Ritual of the Gifts: six Standing Stones, a book and a map of them
+120 0 0 0 0 DOORTO:Fort_Frostmoth,_General_Quarters
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_General_Quarters
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
+3 0 0 0
+120 0 0 0 0 FLYTO:@-159300,213300,3150
+120 0 0 0 0 DOORTO:Skaal_Village,_The_Greathall
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_The_Greathall
+60 0 0 0 0 ACTIVATE:tharsten%heart-fang
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:your_business_here
+0.1 0 0 0 0 EXPECT:journal:BM_Stones:ge:10+EXPECT:item:misc_skull_skaal:eq:0
+0.3 0 0 0 0 TOPIC:much_to_atone_for
+0.1 0 0 0 0 EXPECT:journal:BM_Stones:ge:20
+0.3 0 0 0 0 TOPIC:defiled_these_lands
+0.3 0 0 0 0 TOPIC:restore_the_power_of_the_Skaal
+0.1 0 0 0 0 EXPECT:journal:BM_Stones:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+# (the Mark moves to the village: every stone's ritual comes back here)
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+120 0 0 0 0 DOORTO:Skaal_Village,_Shaman's_Hut
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Shaman's_Hut
+60 0 0 0 0 ACTIVATE:korst%wind-eye
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:restore_the_power_of_the_Skaal
+0.1 0 0 0 0 EXPECT:journal:BM_Stones:ge:40
+0.3 0 0 0 0 TOPIC:Ritual_of_the_Gifts
+0.1 0 0 0 0 EXPECT:journal:BM_Stones:ge:50+EXPECT:item:bk_BM_StoneMap:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-stones-start
+# The Ritual of Beasts: the Beast Stone (south of the village) sends the player south to the Good Beast, a snow bear
+# five rieklings are killing: kill them, pull the riekling's arrow from it (its inventory), let it heal past 800 (a
+# rest), and it follows the player back to the stone
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+3 0 0 0
+120 0 0 0 0 FLYTO:@-159404,201100,1500
+60 0 0 0 0 ACTIVATE:act_bm_stone_beast_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Beasts:ge:10
+0.5 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 FLYTO:@-158694,183900,900
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Beasts:ge:20
+120 0 0 0 0 KILL:bm_riekling_be_unique1
+120 0 0 0 0 KILL:bm_riekling_be_unique2
+120 0 0 0 0 KILL:bm_riekling_be_unique3
+120 0 0 0 0 KILL:bm_riekling_be_unique4
+120 0 0 0 0 KILL:bm_riekling_be_unique5
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Beasts:ge:30
+60 0 0 0 0 LOOT:bm_bear_be_unique:BM_arrow_riekling_uni
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Beasts:ge:40
+0.3 0 0 0 0 SAVE:uber-bm-main-beasts-arrow
+# (Heal Companion, bought in Gnisis, cast until it is past 800)
+60 0 0 0 0 WALKTO:bm_bear_be_unique
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+1.5 0 0 0 0 CASTAT:bm_bear_be_unique:heal_companion
+3 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Beasts:ge:50
+# (the bear follows now; the stone asks only that it be healed: flown back alone)
+120 0 0 0 0 FLYTO:@-159404,201100,1500
+60 0 0 0 0 ACTIVATE:act_bm_stone_beast_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Beasts:ge:100
+0.3 0 0 0 0 SAVE:uber-bm-main-beasts
+# The Ritual of Earth: the Earth Stone (north-west of Raven Rock) sends the player to the Cave of Hidden Music; in its
+# Chamber of Song three stalagmites play a four-note song twice: strike them in its order (pipes 2, 3, 1, 3, then
+# 1, 3, 2, 1: the stalreset script's order), then back to the stone
+120 0 0 0 0 FLYTO:@-207663,167150,1500
+60 0 0 0 0 ACTIVATE:act_bm_stone_earth_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Earth:ge:10
+0.5 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 FLYTO:@-197540,182198,1400
+120 0 0 0 0 DOORTO:Solstheim,_Cave_of_Hidden_Music
+10 0 0 0 0 UNTIL:cell:Solstheim,_Cave_of_Hidden_Music
+120 0 0 0 0 DOORTO:Solstheim,_Chamber_of_Song
+10 0 0 0 0 UNTIL:cell:Solstheim,_Chamber_of_Song
+60 0 0 0 0 WALKTO:act_bm_pipe_02
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Earth:ge:20
+20 0 0 0 0 ACTIVATE:act_bm_pipe_02
+1.5 0 0 0
+20 0 0 0 0 ACTIVATE:act_bm_pipe_03
+1.5 0 0 0
+20 0 0 0 0 ACTIVATE:act_bm_pipe_01
+1.5 0 0 0
+20 0 0 0 0 ACTIVATE:act_bm_pipe_03
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Earth:ge:40
+20 0 0 0 0 ACTIVATE:act_bm_pipe_01
+1.5 0 0 0
+20 0 0 0 0 ACTIVATE:act_bm_pipe_03
+1.5 0 0 0
+20 0 0 0 0 ACTIVATE:act_bm_pipe_02
+1.5 0 0 0
+20 0 0 0 0 ACTIVATE:act_bm_pipe_01
+20 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Earth:ge:50
+120 0 0 0 0 DOORTO:Solstheim,_Cave_of_Hidden_Music
+10 0 0 0 0 UNTIL:cell:Solstheim,_Cave_of_Hidden_Music
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-207663,167150,1500
+60 0 0 0 0 ACTIVATE:act_bm_stone_earth_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Earth:ge:100
+0.3 0 0 0 0 SAVE:uber-bm-main-earth
+# The Ritual of Water: the Water Stone (west coast, south of the Varstaad Caves) sends the player to the Swimmer, a
+# black horker on an island to the west; near it (256) it swims north to Stahlman's Gorge and waits for the player.
+# The gorge's door is on the sea floor; the Waters of Life lie at the tunnel's end; back to the stone
+120 0 0 0 0 FLYTO:@-208040,192800,2000
+60 0 0 0 0 ACTIVATE:act_bm_stone_water_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Water:ge:10
+0.5 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 FLYTO:@-216163,200480,400
+60 0 0 0 0 WALKTO:bm_horker_swim_unique
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Water:ge:50
+# (kept up with as it swims: it waits whenever the player falls behind)
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+240 0 0 0 0 UNTIL:journal:BM_Water:ge:60
+# (the door is in a cave mouth on the sea floor: swum into from the south, where the gorge lets the player out)
+60 0 0 0 0 WALKTO:@-219473,217242,-1894
+0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
+0.4 0 1 0
+0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
+0.5 0 0 0 0 A
+10 0 0 0 0 UNTIL:cell:Solstheim,_Stahlman's_Gorge
+120 0 0 0 0 PICKUP:bm_waterlife_unique1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Water:ge:70
+# (out by Recall to Skaal Village: the way back is the long flooded tunnel)
+0.3 0 0 0 0 CAST:recall
+4 0 0 0
+120 0 0 0 0 FLYTO:@-208040,192800,2000
+60 0 0 0 0 ACTIVATE:act_bm_stone_water_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Water:ge:100
+0.3 0 0 0 0 SAVE:uber-bm-main-water
+# The Ritual of the Trees: the Tree Stone (north-east of Brodir Grove) sends the player east after the riekling who
+# stole the Seeds, among spriggans (who rise again twice, and leave the one who carries the Seeds alone); the Seeds are
+# planted in the plot west of the stone (its box: Yes), then back to the stone
+120 0 0 0 0 FLYTO:@-178382,174150,1600
+60 0 0 0 0 ACTIVATE:act_bm_stone_tree_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Trees:ge:10
+0.5 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 FLYTO:@-171528,175000,1100
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Trees:ge:20
+120 0 0 0 0 KILL:bm_riekling_st_unique
+60 0 0 0 0 LOOT:bm_riekling_st_unique:BM_Seeds_UNIQUE
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Trees:ge:30
+120 0 0 0 0 FLYTO:@-179910,174500,1500
+2 0 0 0
+0.5 0 0 0 0 A
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Trees:ge:40
+120 0 0 0 0 FLYTO:@-178382,174150,1600
+60 0 0 0 0 ACTIVATE:act_bm_stone_tree_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Trees:ge:100
+0.3 0 0 0 0 SAVE:uber-bm-main-trees
+# The Ritual of the Sun: the Sun Stone (the south-east hilltop) sends the player west to the Halls of Penumbra; deep
+# inside, the Lightkeeper (an ice troll) holds the flaming eye: thrown at the ice wall (its box: Yes) it frees the Sun;
+# back to the stone
+120 0 0 0 0 FLYTO:@-161750,159760,1900
+60 0 0 0 0 ACTIVATE:act_bm_stone_sun_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Sun:ge:10
+0.5 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 FLYTO:@-177339,159659,900
+120 0 0 0 0 DOORTO:Solstheim,_Halls_of_Penumbra
+10 0 0 0 0 UNTIL:cell:Solstheim,_Halls_of_Penumbra
+60 0 0 0 0 WALKTO:active_bm_penumbra
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Sun:ge:20
+120 0 0 0 0 WALKTO:active_bm_penumbra2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Sun:ge:30
+120 0 0 0 0 KILL:bm_ice_troll_sun
+60 0 0 0 0 LOOT:bm_ice_troll_sun:ingred_eyeball_unique
+60 0 0 0 0 ACTIVATE:bm_ice_wall
+1 0 0 0
+0.5 0 0 0 0 A
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Sun:ge:40
+0.3 0 0 0 0 CAST:recall
+4 0 0 0
+120 0 0 0 0 FLYTO:@-161750,159760,1900
+60 0 0 0 0 ACTIVATE:act_bm_stone_sun_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Sun:ge:100
+0.3 0 0 0 0 SAVE:uber-bm-main-sun
+# The Ritual of the Winds: the Wind Stone (the Harstrad's west shore by the Isild) sends the player to Glenschul's Tomb,
+# south-east past the lake of ice; the Greedy Man's bag at its end lets the Winds out when opened; back to the stone
+120 0 0 0 0 FLYTO:@-178242,205780,400
+60 0 0 0 0 ACTIVATE:act_bm_stone_wind_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Wind:ge:10
+0.5 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 FLYTO:@-149334,184430,1700
+120 0 0 0 0 DOORTO:Solstheim,_Glenschul's_Tomb
+10 0 0 0 0 UNTIL:cell:Solstheim,_Glenschul's_Tomb
+180 0 0 0 0 ACTIVATE:bm_greedyman
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Wind:ge:50
+0.5 0 0 0 0 B
+0.3 0 0 0 0 CAST:recall
+4 0 0 0
+120 0 0 0 0 FLYTO:@-178242,205780,400
+60 0 0 0 0 ACTIVATE:act_bm_stone_wind_01
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Wind:ge:100
+0.3 0 0 0 0 SAVE:uber-bm-main-winds
+# The six stones done (BM_Stones 80): Tharsten in the Greathall, the power of the Skaal restored (100, the Mace of Aevar)
+0.1 0 0 0 0 EXPECT:journal:BM_Stones:ge:80
+0.3 0 0 0 0 CAST:recall
+4 0 0 0
+# (landed by the door, in the cell north of the village's middle: an Old 3DS leaves that neighbour unloaded for room until the player is in it)
+120 0 0 0 0 FLYTO:@-159300,213300,3150
+120 0 0 0 0 DOORTO:Skaal_Village,_The_Greathall
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_The_Greathall
+60 0 0 0 0 ACTIVATE:tharsten%heart-fang
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:restore_the_power_of_the_Skaal
+0.1 0 0 0 0 EXPECT:journal:BM_Stones:ge:100+EXPECT:item:BM_Mace_Aevar_UNI:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-stones
+60 0 0 0 0 ACTIVATE:tharsten%heart-fang
+2 0 0 0 0 UNTIL:talkready
+# The Skaal Test of Wisdom (BM_Trial): Rigmor Halfhand says Engar Ice-Mane stole his furs. The villagers and Korst
+# vouch for Engar; Risi Ice-Mane says Rigmor is jealous; Rigmor's letter to her lies under a pillow in the Ice-Mane hut;
+# with it Risi owns the affair and Rigmor the lie; Tharsten lets the player choose his sentence: exile
+0.3 0 0 0 0 TOPIC:prove_your_wisdom
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:10
+0.3 0 0 0 0 TOPIC:investigate_a_crime
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+120 0 0 0 0 DOORTO:Skaal_Village,_Shaman's_Hut
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Shaman's_Hut
+60 0 0 0 0 ACTIVATE:korst%wind-eye
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Engar_Ice-Mane
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+120 0 0 0 0 DOORTO:Skaal_Village,_Ice-Mane's_Hut
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Ice-Mane's_Hut
+60 0 0 0 0 ACTIVATE:risi%ice-mane
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:investigate_a_crime
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:45
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (the letter is under Risi's pillow: the pillow taken first, sneaking, then put back down)
+0.3 0 0 0 0 SNEAK:1
+60 0 0 0 0 PICKUP:misc_uni_pillow_01
+60 0 0 0 0 PICKUP:bk_bmtrial_unique
+0.3 0 0 0 0 DROP:misc_uni_pillow_01
+0.3 0 0 0 0 SNEAK:0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:bk_bmtrial_unique:ge:1
+60 0 0 0 0 ACTIVATE:risi%ice-mane
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Rigmor_Halfhand
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:55
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+120 0 0 0 0 DOORTO:Skaal_Village,_Rigmor's_Hut
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Rigmor's_Hut
+60 0 0 0 0 ACTIVATE:rigmor%halfhand
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:investigate_a_crime
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+# (landed by the door, in the cell north of the village's middle: an Old 3DS leaves that neighbour unloaded for room until the player is in it)
+120 0 0 0 0 FLYTO:@-159300,213300,3150
+120 0 0 0 0 DOORTO:Skaal_Village,_The_Greathall
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_The_Greathall
+60 0 0 0 0 ACTIVATE:tharsten%heart-fang
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:investigate_a_crime
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:70
+0.3 0 0 0 0 TOPIC:verdict_is_yours
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:80
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Trial:ge:100+EXPECT:item:BM%Wolf%Helmet_heartfang:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-wisdom
+# The Skaal Test of Strength (BM_Draugr): Tharsten sends the player to Korst at Lake Fjalding; under the lake's ice the
+# Caves of Fjalding lead to Aesliip, a Skaal mage turned draugr who holds back frost daedra behind a barrier. Sided with
+# (CHOICE 1) he lowers it and fights beside the player; the ten daedra dead, he asks for his death and gives his ring;
+# Korst ends it
+60 0 0 0 0 ACTIVATE:tharsten%heart-fang
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:10
+0.3 0 0 0 0 TOPIC:prove_your_strength
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+120 0 0 0 0 FLYTO:@-158513,195400,400
+60 0 0 0 0 ACTIVATE:korst%wind-eye
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:30
+0.3 0 0 0 0 TOPIC:prove_your_strength
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (the caves' door is deep under the hole in the ice, a gap among the ice sheets west of the fire on the lake: in
+# through the hole, then down toward the door in three strokes, aiming at it each time)
+60 0 0 0 0 WALKTO:@-163200,193060,0
+3 0 0 0
+# (each stroke aimed again and followed by a press: where the player goes into the water depends on the walk before, and past
+# the door more strokes only carry them away from it; the press opens it as soon as it is in reach)
+0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
+0.4 0 1 0
+0.1 0 0 0 0 A
+0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
+0.4 0 1 0
+0.1 0 0 0 0 A
+0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
+0.4 0 1 0
+0.1 0 0 0 0 A
+0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
+0.4 0 1 0
+0.1 0 0 0 0 A
+0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
+0.4 0 1 0
+0.1 0 0 0 0 A
+0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
+0.4 0 1 0
+0.1 0 0 0 0 A
+0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
+0.4 0 1 0
+0.1 0 0 0 0 A
+10 0 0 0 0 UNTIL:cell:Solstheim,_Caves_of_Fjalding
+120 0 0 0 0 DOORTO:Solstheim,_Aesliip's_Lair
+10 0 0 0 0 UNTIL:cell:Solstheim,_Aesliip's_Lair
+120 0 0 0 0 WALKTO:draugr_aesliip
+4 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:keep_me_from_my_task
+0.3 0 0 0 0 TOPIC:my_story
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:60
+0.3 0 0 0 0 TOPIC:was_cast_out
+0.3 0 0 0 0 TOPIC:destroy_my_people
+0.3 0 0 0 0 TOPIC:must_act
+0.3 0 0 0 0 TOPIC:grew_old
+0.3 0 0 0 0 TOPIC:greater_purpose
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:67
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (past the fallen barrier to the caverns' door, then a wait for Aesliip, who walks: a follower far behind stays)
+4 0 0 0
+120 0 0 0 0 WALKTO:@2350,2191,29
+20 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:draugr_aesliip:lt:600
+120 0 0 0 0 DOORTO:Solstheim,_Aesliip's_Lair,_Caverns
+10 0 0 0 0 UNTIL:cell:Solstheim,_Aesliip's_Lair,_Caverns
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+120 0 0 0 0 KILL:atronach_frost_bm
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:80
+30 0 0 0 0 UNTIL:screen:dialogue
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:85+EXPECT:item:BM_Ring_Aesliip:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0
+0.3 0 0 0 0 CAST:recall
+4 0 0 0
+120 0 0 0 0 FLYTO:@-158513,195400,400
+60 0 0 0 0 ACTIVATE:korst%wind-eye
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Aesliip
+0.1 0 0 0 0 EXPECT:journal:BM_Draugr:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-strength
+# The Siege of the Skaal Village (BM_SkaalAttack): back at the village Tharsten has matters to attend to (the attack
+# begins); a guard calls the player out (10); seven werewolves fall to the player and the Skaal (20); two more are in
+# the Greathall, Tharsten gone (25, 30: their bite gives the player Sanies Lupinus); Korst, outside now (40, 50)
+0.3 0 0 0 0 CAST:recall
+4 0 0 0
+# (landed by the door, in the cell north of the village's middle: an Old 3DS leaves that neighbour unloaded for room until the player is in it)
+120 0 0 0 0 FLYTO:@-159300,213300,3150
+120 0 0 0 0 DOORTO:Skaal_Village,_The_Greathall
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_The_Greathall
+60 0 0 0 0 ACTIVATE:tharsten%heart-fang
+2 0 0 0
+0.5 0 0 0 0 B
+30 0 0 0 0 UNTIL:screen:dialogue
+0.1 0 0 0 0 EXPECT:journal:BM_SkaalAttack:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+120 0 0 0 0 KILL:bm_werewolf_skaal1a3
+120 0 0 0 0 KILL:bm_werewolf_skaal1b3
+120 0 0 0 0 KILL:bm_werewolf_skaal1c3
+120 0 0 0 0 KILL:bm_werewolf_skaal1d3
+120 0 0 0 0 KILL:bm_werewolf_skaal1e3
+120 0 0 0 0 KILL:bm_werewolf_skaal1f3
+120 0 0 0 0 KILL:bm_werewolf_skaal1g3
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_SkaalAttack:ge:20
+# (landed by the door, in the cell north of the village's middle: an Old 3DS leaves that neighbour unloaded for room until the player is in it)
+120 0 0 0 0 FLYTO:@-159300,213300,3150
+120 0 0 0 0 DOORTO:Skaal_Village,_The_Greathall
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_The_Greathall
+120 0 0 0 0 KILL:bm_werewolf_skaal2a
+120 0 0 0 0 KILL:bm_werewolf_skaal2a
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_SkaalAttack:ge:30+EXPECT:spell:werewolf_blood
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+60 0 0 0 0 ACTIVATE:korst%wind-eye
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:protect_these_people
+0.3 0 0 0 0 TOPIC:been_infected
+0.1 0 0 0 0 EXPECT:journal:BM_SkaalAttack:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-siege
+# The werewolf path. The bite left untreated: three days of rest in Rigmor's empty hut (out of the Skaal's sight) make
+# the player a werewolf; the first night's change, human again at dawn, and the second night Hircine's dream: guard
+# the Totem of Claw and Fang from the Skaal (Dream of Hircine, BM_Ceremony2 10)
+120 0 0 0 0 DOORTO:Skaal_Village,_Rigmor's_Hut
+10 0 0 0 0 UNTIL:cell:Skaal_Village,_Rigmor's_Hut
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:pcwerewolf:eq:1+EXPECT:werewolf:eq:1
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+0.1 0 0 0 0 EXPECT:werewolf:eq:0
+40 0 0 0 0 SLEEPUNTIL:23
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Ceremony2:ge:10+EXPECT:werewolf:eq:1
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+0.1 0 0 0 0 EXPECT:werewolf:eq:0
+# (the change took off everything worn and held: the sword is drawn again)
+0.3 0 0 0 0 EQUIP:daedric_longsword
+# (the kit's Strength wears a blade fast: mended with the hammers, Armorer 100)
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+# The Tombs of Skaalara, south-east of the village: the Skaal hunters in it and those who come after them (twelve)
+# die before any carries the totem out (50); asleep into the night, Hircine sharpens the claws (100)
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Skaal_Village
+120 0 0 0 0 FLYTO:@-144828,200722,800
+120 0 0 0 0 DOORTO:Solstheim,_Tombs_of_Skaalara
+10 0 0 0 0 UNTIL:cell:Solstheim,_Tombs_of_Skaalara
+# (the hunters all make for the totem's chest: met there, each in turn, rather than chased round the tomb, where
+# one got the player wedged among rocks and another onto a ledge out of reach)
+120 0 0 0 0 WALKTO:@-16,-7000,-111
+10 0 0 0
+120 0 0 0 0 KILL:skaal_hunter2
+60 0 0 0 0 WALKTO:@-16,-7000,-111
+10 0 0 0
+120 0 0 0 0 KILL:skaal_hunter2
+60 0 0 0 0 WALKTO:@-16,-7000,-111
+10 0 0 0
+120 0 0 0 0 KILL:skaal_hunter2
+60 0 0 0 0 WALKTO:@-16,-7000,-111
+10 0 0 0
+120 0 0 0 0 KILL:skaal_hunter2
+60 0 0 0 0 WALKTO:@-16,-7000,-111
+10 0 0 0
+120 0 0 0 0 KILL:skaal_hunter2
+60 0 0 0 0 WALKTO:@-16,-7000,-111
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+20 0 0 0
+240 0 0 0 0 KILL:skaal_hunter
+30 0 0 0 0 UNTIL:journal:BM_Ceremony2:ge:50
+0.5 0 0 0 0 A
+0.1 0 0 0 0 EXPECT:journal:BM_Ceremony2:ge:50
+40 0 0 0 0 SLEEPUNTIL:23
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Ceremony2:ge:100+EXPECT:global:werewolfclawmult:eq:35
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+0.3 0 0 0 0 SAVE:uber-bm-main-ceremony
+# Disrupt the Skaal Hunt (BM_BearHunt2): by day to the Skaal's hunting camps on Lake Fjalding's west shore; asleep there
+# into the night, Hircine's dream (10) and the change. As a werewolf (the trackers come only to one): the three in the
+# camps and those who follow, ten (30), then the Spirit Bear (50); human by day, and the next night Hircine gives Summon
+# Bonewolf (100)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-172097,192226,900
+4 0 0 0
+# (the dice seeded for the rest: a riekling's interruption once kept the night from coming)
+0.3 0 0 0 0 SEED:7
+40 0 0 0 0 SLEEPUNTIL:23
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_BearHunt2:ge:10+EXPECT:werewolf:eq:1
+240 0 0 0 0 KILL:skaal_tracker
+240 0 0 0 0 KILL:skaal_tracker2
+240 0 0 0 0 KILL:skaal_tracker3
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+27 0 0 0
+240 0 0 0 0 KILL:skaal_tracker
+30 0 0 0 0 UNTIL:journal:BM_BearHunt2:ge:30
+0.5 0 0 0 0 A
+0.1 0 0 0 0 EXPECT:journal:BM_BearHunt2:ge:30
+240 0 0 0 0 KILL:bm_bear_spr_unique
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_BearHunt2:ge:50
+# (the nights spent just inside Gronn, south of the camps: the wilds' beasts keep a rest from starting out here)
+# (flown to its door first: the cell it stands in is one of the neighbours an Old 3DS leaves unloaded for room)
+120 0 0 0 0 FLYTO:@-173345,187100,1100
+120 0 0 0 0 DOORTO:Solstheim,_Gronn
+10 0 0 0 0 UNTIL:cell:Solstheim,_Gronn
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+40 0 0 0 0 SLEEPUNTIL:23
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_BearHunt2:ge:100+EXPECT:spell:bm_summonbonewolf
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+0.3 0 0 0 0 SAVE:uber-bm-main-bearhunt
+# Siege of Castle Karstaag (BM_FrostGiant2): by day to the ice castle on the north shore; asleep by its door into the
+# night, Hircine's dream (10) and the change: only a werewolf is let in. Dulk the riekling (50); below the Banquet Hall
+# Krish and his eight grahls die (70); the next night Hircine gives Hunter's Wind (100)
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-194333,217802,1600
+4 0 0 0
+40 0 0 0 0 SLEEPUNTIL:23
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_FrostGiant2:ge:10+EXPECT:werewolf:eq:1
+120 0 0 0 0 DOORTO:Solstheim,_Castle_Karstaag,_Throne_Room
+10 0 0 0 0 UNTIL:cell:Solstheim,_Castle_Karstaag,_Throne_Room
+60 0 0 0 0 WALKTO:bm_riekling_dulk_unique
+10 0 0 0 0 UNTIL:screen:dialogue
+0.1 0 0 0 0 EXPECT:journal:BM_FrostGiant2:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Solstheim,_Castle_Karstaag,_Banquet_Hall
+10 0 0 0 0 UNTIL:cell:Solstheim,_Castle_Karstaag,_Banquet_Hall
+120 0 0 0 0 DOORTO:Solstheim,_Castle_Karstaag,_Caverns_of_Karstaag
+10 0 0 0 0 UNTIL:cell:Solstheim,_Castle_Karstaag,_Caverns_of_Karstaag
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_icetroll_fg_uni
+240 0 0 0 0 KILL:bm_riekling_krish_uniqu
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_FrostGiant2:ge:70
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+40 0 0 0 0 SLEEPUNTIL:23
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_FrostGiant2:ge:100+EXPECT:spell:bm_hunterwind
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+0.3 0 0 0 0 SAVE:uber-bm-main-karstaag
+# (the next night's change: Hircine's last dream calls the player to his Hunt, BM_WildHunt 25, in Mortrag Glacier)
+40 0 0 0 0 SLEEPUNTIL:23
+20 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:25+EXPECT:cell:Solstheim,_Mortrag_Glacier:_Entry+EXPECT:werewolf:eq:1
+0.3 0 0 0 0 SAVE:uber-bm-main-wildhunt-start
+# Hircine's Hunt (BM_WildHunt): Hircine's dream brings the player to Mortrag Glacier, his speech (30); the night slept
+# off at the Entry (Carius fights a werewolf on sight: as a human he joins), then the Outer Ring: Carius (CHOICE 1:
+# together, 40), the glowing key in the chest (50), and the gate at the maze's centre, where Carius stays (55)
+60 0 0 0 0 UNTIL:journal:BM_WildHunt:ge:30
+40 0 0 0 0 SLEEPUNTIL:8
+15 0 0 0
+0.1 0 0 0 0 EXPECT:werewolf:eq:0
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+120 0 0 0 0 DOORTO:Solstheim,_Mortrag_Glacier:_Outer_Ring
+10 0 0 0 0 UNTIL:cell:Solstheim,_Mortrag_Glacier:_Outer_Ring
+60 0 0 0 0 WALKTO:falx%carius2
+10 0 0 0 0 UNTIL:screen:dialogue
+0.3 0 0 0 0 TOPIC:find_our_way
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:40
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (Carius led through the maze to the gate: following on his own he got stuck in it, 760 off, and never came)
+0.3 0 0 0 0 ESCORT:falx%carius2
+120 0 0 0 0 LOOT:com_chest_01_hircine:key_hircine1
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:50
+0.3 0 0 0 0 SAVE:uber-bm-main-wildhunt-key1
+# At the gate Carius stays behind (55). The Inner Ring: Heart-Fang (60), together (CHOICE 1: he follows, 62); then
+# he is fought at the empty chest; dead, his Ring of Hircine passes to the player
+# (69) and his key opens the next gate (70)
+300 0 0 0 0 WALKTO:@88,30,-121
+20 0 0 0 0 UNTIL:journal:BM_WildHunt:ge:55
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:55
+0.3 0 0 0 0 ESCORT:-
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:Solstheim,_Mortrag_Glacier:_Inner_Ring
+10 0 0 0 0 UNTIL:cell:Solstheim,_Mortrag_Glacier:_Inner_Ring
+60 0 0 0 0 WALKTO:tharsten%heart-fang2
+10 0 0 0 0 UNTIL:screen:dialogue
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:60
+0.3 0 0 0 0 TOPIC:fight_through
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:62
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+# (at the empty chest his script waits for him to be greeting the player, which a follower never is in OpenMW:
+# the player strikes first)
+60 0 0 0 0 WALKTO:com_chest_01_hircine2
+240 0 0 0 0 KILL:tharsten%heart-fang2
+2 0 0 0
+0.5 0 0 0 0 A
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:69+EXPECT:item:BM_ring_hircine:ge:1
+60 0 0 0 0 LOOT:tharsten%heart-fang2:key_hircine2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:70
+0.3 0 0 0 0 SAVE:uber-bm-main-wildhunt-key2
+# Huntsman's Hall: Karstaag sees the player (80) and dies (82); Hircine asks what makes a hunter great (85):
+# Strength (87), and his bear aspect is fought (92); its key opens the last gate: the glacier falls, the Hunt is
+# over (100)
+120 0 0 0 0 DOORTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+10 0 0 0 0 UNTIL:cell:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+300 0 0 0 0 KILL:bm_frost_giant
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:82
+# (Hircine appears once the player is within 512 of where he will stand)
+60 0 0 0 0 WALKTO:@300,5200,-990
+60 0 0 0 0 UNTIL:journal:BM_WildHunt:ge:85
+# (his question comes as a box once he has finished speaking)
+30 0 0 0
+0.5 0 0 0 0 A
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:eq:87
+30 0 0 0
+300 0 0 0 0 KILL:bm_hircine_straspect
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:92
+60 0 0 0 0 LOOT:bm_hircine_straspect:key_hircine3
+60 0 0 0 0 ACTIVATE:bm_mazegate_03
+15 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WildHunt:ge:100+EXPECT:cell:Solstheim,_Mortrag_Glacier
+0.3 0 0 0 0 SAVE:uber-bm-main-wildhunt
+# (the ending's movie plays out first)
+45 0 0 0
+# Rite of the Wolf Giver (BM_WolfGiver): the cure, after the Hunt. A rumour of a raven at the Altar of Thrond (10); the
+# raven, a Glenmoril witch, offers the cure (30) and sends the player to her sisters in the Gloomy Cave (40): wolfsbane
+# from Hvitkald Peak (50, 70) and ripened belladonna (60, a 10) for their brew (80); at the altar an innocent's heart,
+# soaked in it (90, 100), goes back into her body (105) and she rises a werewolf (110), killed: cured (120)
+# (the raven rumour is told in Thirsk's mead hall and by the Skaal only)
+120 0 0 0 0 FLYTO:@-155136,189440,1900
+60 0 0 0 0 WALKTO:@-155136,189440,1736
+120 0 0 0 0 DOORTO:Solstheim,_Thirsk
+10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
+60 0 0 0 0 ACTIVATE:svenja%snow-song
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:latest_rumors
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-183820,193550,2200
+60 0 0 0 0 ACTIVATE:glenmoril_raven
+2 0 0 0
+0.3 0 0 0 0 CHOICE:2
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:30
+0.5 0 0 0 0 B
+10 0 0 0 0 UNTIL:cell:Solstheim,_Gloomy_Cave
+60 0 0 0 0 ACTIVATE:glenmoril_witch_cave
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:40
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:glenmoril_witch_cave_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:50
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:glenmoril_witch_cave_3
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:60
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-204448,192450,5000
+60 0 0 0 0 LOOT:flora_bm_wolfsbane_01:ingred_wolfsbane_01
+0.1 0 0 0 0 EXPECT:item:ingred_wolfsbane_01:ge:1
+120 0 0 0 0 FLYTO:@-144980,200500,700
+60 0 0 0 0 LOOT:flora_bm_belladonna_03:ingred_belladonna_01
+0.1 0 0 0 0 EXPECT:item:ingred_belladonna_01:ge:1
+120 0 0 0 0 FLYTO:@-178519,184033,1300
+120 0 0 0 0 DOORTO:Solstheim,_Gloomy_Cave
+10 0 0 0 0 UNTIL:cell:Solstheim,_Gloomy_Cave
+60 0 0 0 0 ACTIVATE:glenmoril_witch_cave_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:70
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:glenmoril_witch_cave_3
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver_a:ge:10
+0.5 0 0 0 0 B
+60 0 0 0 0 ACTIVATE:glenmoril_witch_cave
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:80
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-183820,193550,2200
+60 0 0 0 0 ACTIVATE:glenmoril_witch_altar_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:90
+0.5 0 0 0 0 B
+120 0 0 0 0 KILL:wolfgiver_f_nord
+60 0 0 0 0 LOOT:wolfgiver_f_nord:ingred_innocent_heart
+60 0 0 0 0 ACTIVATE:glenmoril_witch_altar_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:100+EXPECT:item:ingred_wolf_heart:ge:1
+0.5 0 0 0 0 B
+60 0 0 0 0 PUT:wolfgiver_f_nord:ingred_wolf_heart
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:105
+60 0 0 0 0 ACTIVATE:glenmoril_witch_altar_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:110
+0.5 0 0 0 0 B
+6 0 0 0
+240 0 0 0 0 KILL:wolfgiver_f_nord
+4 0 0 0
+60 0 0 0 0 ACTIVATE:glenmoril_witch_altar_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_WolfGiver:ge:120+EXPECT:global:pcwerewolf:ne:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-wolfgiver
+0.3 0 0 0 0 SAVE:uber-bm-main-wolfgiver
+# The Mead Hall Massacre (BM_MeadHall): Thirsk's mead hall lies in ruins; Svenja Snow-Song tells of the Udyrfrykte
+# (10) and the player will stop it (30); the beast dies in its lair under Lake Fjalding (40) and its heart goes to
+# Svenja (50); one more task: the blessing of Hrothmund the Red, whose axe lies in his barrow beyond the wolf door
+# (Ondjage) (60, 70); Thirsk's new chieftain (100)
+120 0 0 0 0 FLYTO:@-155136,189440,1900
+60 0 0 0 0 WALKTO:@-155136,189440,1736
+120 0 0 0 0 DOORTO:Solstheim,_Thirsk
+10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
+60 0 0 0 0 ACTIVATE:svenja%snow-song
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:10
+0.3 0 0 0 0 TOPIC:the_Udyrfrykte
+0.3 0 0 0 0 TOPIC:beast_must_be_stopped
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:30
+0.5 0 0 0 0 B
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-159125,189449,500
+120 0 0 0 0 DOORTO:Solstheim,_Lair_of_the_Udyrfrykte
+10 0 0 0 0 UNTIL:cell:Solstheim,_Lair_of_the_Udyrfrykte
+300 0 0 0 0 KILL:bm_udyrfrykte
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:40
+60 0 0 0 0 LOOT:bm_udyrfrykte:ingred_udyrfrykte_heart
+0.1 0 0 0 0 EXPECT:item:ingred_udyrfrykte_heart:ge:1
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-155136,189440,1900
+60 0 0 0 0 WALKTO:@-155136,189440,1736
+60 0 0 0 0 ACTIVATE:svenja_outside
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:50
+0.3 0 0 0 0 TOPIC:one_more_task
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:60
+0.5 0 0 0 0 B
+120 0 0 0 0 FLYTO:@-194388,209594,3300
+60 0 0 0 0 ACTIVATE:bm_ic_door_pelt_wolf
+2 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.5 0 0 0 0 A
+2 0 0 0
+60 0 0 0 0 ACTIVATE:bm_ic_door_pelt_wolf
+10 0 0 0 0 UNTIL:cell:Solstheim,_Hrothmund's_Barrow
+180 0 0 0 0 ACTIVATE:act_bm_axe_hrothmund
+2 0 0 0
+0.5 0 0 0 0 A
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:70
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-155136,189440,1900
+60 0 0 0 0 WALKTO:@-155136,189440,1736
+120 0 0 0 0 DOORTO:Solstheim,_Thirsk
+10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
+60 0 0 0 0 ACTIVATE:svenja%snow-song
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-meadhall
+# Mead Hall Business (BM_MeadHall_a/b/c): the chieftain's business with Svenja: mead ordered from Skyrim (b 10) and
+# hunters sent out for pelts (c 10); Bereditte Jastal's revised history of Thirsk as a gift (a 10); a week on the mead
+# is in (b 20) and the hunters back (c 20)
+60 0 0 0 0 ACTIVATE:svenja%snow-song
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:mead_hall_business
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall_b:ge:10
+0.3 0 0 0 0 TOPIC:mead_hall_business
+0.3 0 0 0 0 CHOICE:3
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall_c:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+60 0 0 0 0 WALKTO:@490,-216,-254
+60 0 0 0 0 WALKTO:@577,-664,-41
+60 0 0 0 0 WALKTO:@507,-509,262
+60 0 0 0 0 ACTIVATE:bereditte%jastal
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall_a:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+40 0 0 0 0 SLEEP:24
+5 0 0 0
+60 0 0 0 0 WALKTO:@577,-664,-41
+60 0 0 0 0 WALKTO:@490,-216,-254
+60 0 0 0 0 ACTIVATE:svenja%snow-song
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:mead_hall_business
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall_b:ge:20
+0.3 0 0 0 0 TOPIC:mead_hall_business
+0.3 0 0 0 0 CHOICE:3
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall_c:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+0.3 0 0 0 0 SAVE:uber-bm-main-meadbusiness

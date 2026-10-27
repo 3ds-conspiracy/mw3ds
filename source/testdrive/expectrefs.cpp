@@ -300,10 +300,28 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 	if (what.compare(0, 3, "ref") == 0)
 	{
 		int ri = findRef(s, arg);
+		// (not in combat: someone in a cell that is not loaded is not simulated, as OpenMW's; an Old 3DS lets the
+		// last interior go once the player is in the next, the New 3DS keeps it)
+		if (ri < 0 && what == "refcombat" && std::any_of(w.game.actors.begin(), w.game.actors.end(), [&](const ActorDef& d) { return lower(d.id) == lower(spaced(arg)); }))
+		{
+			v = 0.0f;
+			return true;
+		}
 		if (ri < 0)
 			return false;
 		const Ref& r = w.refs[ri];
 		if (what == "refhealth") v = r.health;
+		else if (what == "refscale") v = r.scale;                          // GetScale's
+		else if (what == "refdrawscale")     // the size its drawing has (its place's scale over the level's: SetScale)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? a->scaleFactor : -1.0f;
+		}
+		else if (what == "refradius")        // its collision cylinder's radius (0: a corpse, -1: none)
+		{
+			const Cell* c = r.cellActor >= 0 ? w.cellOf(ri) : nullptr;
+			v = c ? c->actors[r.cellActor].radius : -1.0f;
+		}
 		else if (what == "refrank") v = r.actor >= 0 ? (float)w.game.actors[r.actor].rank : -1.0f;   // RaiseRank / LowerRank
 		else if (what == "reflevel") v = r.actor >= 0 ? (float)w.game.actors[r.actor].level : -1.0f;
 		else if (what == "reffatigue") v = r.fatigue;
@@ -496,6 +514,8 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 					v += what == "refmeshes" ? 1.0f : what == "refcpuskin" ? (m.kind == ACTOR_SKINNED && !m.gpuSkin ? (float)m.numVerts : 0.0f)
 						: (m.gpuSkin && (m.flags & BATCH_BLEND) ? 1.0f : 0.0f);
 		}
+		else if (what == "refwerewolf")     // in wolf form (BecomeWerewolf), and drawn as the werewolf body (2) or not (1)
+			v = !w.isWerewolf(ri) ? 0.0f : w.refs[ri].humanAnim >= 0 ? 2.0f : 1.0f;
 		else if (what == "refclimb")        // the steepest land it walks up now, degrees (npcClimbSlope)
 			v = npcClimbSlope(w, w.refs[ri]);
 		else if (what == "refz")            // the height of its feet

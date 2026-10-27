@@ -108,6 +108,8 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "makeeffects") v = (float)s.makeEffects.size(); // ... the effects put together so far
 	else if (what == "footrepeat") v = (float)s.stepRepeats;         // footsteps on the same foot twice in a row
 	else if (what == "enemiesnear") v = s.enemiesNear() ? 1.0f : 0.0f;   // rest refused: enemies about
+	else if (what == "werewolfkills") v = (float)w.stats.werewolfKills;   // people killed since the change (GetWerewolfKills)
+	else if (what == "werewolf") v = w.stats.werewolf ? 1.0f : 0.0f;     // the player is in wolf form
 	else if (what == "watervolume") v = s.waterVolume;                // the near-water sound's volume (0..1, OpenMW's rule)
 	else if (what == "footeven")    // the last two gaps between footsteps, the shorter as a percent of the longer (100: even)
 	{
@@ -205,6 +207,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "waterscroll") v = rendererWaterScroll();       // water's slide, texture repeats a second
 	else if (what == "controls") v = w.controlsEnabled ? 1.0f : 0.0f;   // DisablePlayerControls / EnablePlayerControls
 	else if (what == "jumping") v = w.jumpingEnabled ? 1.0f : 0.0f;     // DisablePlayerJumping / EnablePlayerJumping
+	else if (what == "menuopen") v = s.menuOpen() ? 1.0f : 0.0f;       // a screen, a message or a talk holds the world still
 	else if (what == "loadscreens") v = (float)s.loadScreens;          // trips through the loading screen so far
 	else if (what == "restsleep") v = s.restSleep ? 1.0f : 0.0f;       // the rest menu sleeps (else only waits: illegal here)
 	else if (what == "skillsum") { v = 0; for (int k = 0; k < 27; k++) v += st.skills[k]; }   // all 27 skills (jail time)

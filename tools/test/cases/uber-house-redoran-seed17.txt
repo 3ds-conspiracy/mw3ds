@@ -2854,7 +2854,11 @@
 0.1 0 0 0 0 EXPECT:journal:HR_ArobarKidnap:ge:50
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
-5 0 0 0 0 UNTIL:following:nartise_arobar
+# (Galmir's Telvanni friends in the hall, who turn on the player, fought off first: Nartise, following, takes on
+# whoever attacks the player, as in OpenMW)
+120 0 0 0 0 KILL:drodos%galen
+120 0 0 0 0 KILL:rerynea%salas
+30 0 0 0 0 UNTIL:following:nartise_arobar
 0.3 0 0 0 0 ESCORT:nartise_arobar
 120 0 0 0 0 DOORTO:outside
 3 0 0 0

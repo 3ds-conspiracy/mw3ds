@@ -7,7 +7,11 @@ game.json "art": {"splash": [{"file", "w", "h"}...], "levelup": {class: {...}}, 
 look: the open book (tx_menubook) and the scroll (scroll.dds), sized for the bottom screen, and their buttons
 (tx_menubook_<take|close|next|prev>_<idle|over|pressed>). "menu": the main menu's picture (textures menu_morrowind.dds,
 as OpenMW's main menu shows it) for the title screen, at a fixed name, art/menu_morrowind.t3x: the title screen runs
-before game.json is read. Rain and ash particles' pictures go to art/weather/<name>.t3x, found there by name.
+before game.json is read. Rain and ash particles' pictures go to art/weather/<name>.t3x, found there by name
+(weather_art; Bloodmoon's snow and blizzard too when its archive is there).
+
+Usage (the weather pictures alone, into data converted already):
+    MW3DS_OUT=out/tb python tools/convert/artassets.py --weather
 """
 import io
 import re
@@ -15,7 +19,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from mwfiles import game_path
+from mwfiles import bloodmoon, game_path
 from textures import OUT, encode_image
 
 SPLASH_SIZE = (400, 240)          # the top screen
@@ -75,6 +79,59 @@ def splash_ring(size=32):
     return img
 
 
+def snow_sheet(sheet, size=128, flakes=48, seed=5):
+    """Snow's picture (Session::drawPrecipitation): snow.nif's Tx_BM_Snowflakes_01 is a 256-texel sheet with a few dozen
+    specks on it, each particle 75 units across; drawn so on the console most of a sheet is see-through screen the GPU
+    blends for nothing. Here its specks are cut out (each brightest texel's 5 x 5) and four dozen of them scattered over a
+    smaller sheet, the alpha doubled (the top screen's 240 lines)"""
+    import random
+    w, h = sheet.size
+    alpha = sheet.split()[3].load()
+    specks = []
+    for y in range(2, h - 2):
+        for x in range(2, w - 2):
+            a = alpha[x, y]
+            if a > 60 and all(a >= alpha[x + i, y + j] for i in (-1, 0, 1) for j in (-1, 0, 1)):
+                specks.append([[alpha[x + i, y + j] for i in range(-2, 3)] for j in range(-2, 3)])
+    out = Image.new("RGBA", (size, size), (255, 255, 255, 0))
+    px = out.load()
+    rnd = random.Random(seed)
+    for k in range(min(flakes, len(specks)) if specks else 0):
+        s = specks[rnd.randrange(len(specks))]
+        x0, y0 = rnd.randrange(3, size - 3), rnd.randrange(3, size - 3)
+        for j in range(5):
+            for i in range(5):
+                a = min(255, round(s[j][i] * 2.0))
+                if a > px[x0 + i - 2, y0 + j - 2][3]:
+                    px[x0 + i - 2, y0 + j - 2] = (255, 255, 255, a)
+    return out
+
+
+def weather_art(arch):
+    """Rain, ash and snow in the world (Session::drawPrecipitation): raindrop.nif's drop, ashcloud.nif's flake and the
+    dust clouds of ashcloud.nif, blightcloud.nif and Bloodmoon's blizzard.nif, at art/weather/<name>.t3x. Their alpha
+    twice the original's: on the top screen's 240 lines OpenMW's faint drops and flakes were all but gone, and its
+    clouds lost in the fog. Snow's flakes from snow.nif's sheet (snow_sheet)"""
+    for key, path, gain in (("rain", r"textures\tx_raindrop_01.dds", 2.0), ("ash_flake", r"textures\tx_ash_flake.dds", 2.0),
+                            ("ash_cloud", r"textures\tx_ash_cloud.dds", 2.0), ("blight_cloud", r"textures\tx_blight_cloud.dds", 2.0),
+                            ("blizzard_cloud", r"textures\tx_bm_blizzard_01.dds", 2.0)):
+        # (Bloodmoon's only with the add-on: its archive is read for every conversion, and without the flag the output
+        # stays as it was)
+        if arch.exists(path) and (bloodmoon() or "_bm_" not in path):
+            img = Image.open(io.BytesIO(arch.read(path))).convert("RGBA")
+            if gain != 1.0:
+                r, g, b, a = img.split()
+                img = Image.merge("RGBA", (r, g, b, a.point(lambda x: min(255, round(x * gain)))))
+            encode(img, OUT / "art" / "weather" / f"{key}.t3x", True)
+    if bloodmoon() and arch.exists(r"textures\tx_bm_snowflakes_01.dds"):
+        sheet = Image.open(io.BytesIO(arch.read(r"textures\tx_bm_snowflakes_01.dds"))).convert("RGBA")
+        encode(snow_sheet(sheet), OUT / "art" / "weather" / "snow_flake.t3x", True)
+    if arch.exists(r"textures\tx_raindrop_01.dds"):
+        drop = Image.open(io.BytesIO(arch.read(r"textures\tx_raindrop_01.dds"))).convert("RGBA")
+        encode(rain_sheet(drop), OUT / "art" / "weather" / "rain_sheet.t3x", True)
+        encode(splash_ring(), OUT / "art" / "weather" / "splash.t3x", True)
+
+
 def build_art(arch, data_files, birthsigns=()):
     art = {"splash": [], "levelup": {}, "bookart": {}, "hud": {}, "birthsign": {}}
     # The birthsign menu's constellations (the sign record's texture), by sign id: shown on the top screen
@@ -94,9 +151,16 @@ def build_art(arch, data_files, birthsigns=()):
             art["birthsign"][sign["id"].lower()] = {"file": f"art/birthsign/{stem}.t3x", "w": w, "h": h}
             break
     # HUD pieces: the sneak eye (shown while sneaking unseen)
-    for key, path in (("sneak", r"icons\k\stealth_sneak.dds"),):
+    # ... and Bloodmoon's werewolf: the view's overlay (the fur at the edges, drawn over the whole top screen while the
+    # player is a werewolf, OpenMW's setWerewolfOverlay) and the claw that stands for hand to hand on the HUD
+    hud = [("sneak", r"icons\k\stealth_sneak.dds")]
+    if bloodmoon():
+        hud += [("werewolf_overlay", r"textures\werewolfoverlay.dds"), ("werewolf_hand", r"icons\k\tx_werewolf_hand.dds")]
+    for key, path in hud:
         if arch.exists(path):
             img = Image.open(io.BytesIO(arch.read(path))).convert("RGBA")
+            if max(img.size) > 256:
+                img = img.resize((min(256, img.size[0]), min(256, img.size[1])), Image.LANCZOS)
             w, h = encode(img, OUT / "art" / "hud" / f"{key}.t3x", True)
             art["hud"][key] = {"file": f"art/hud/{key}.t3x", "w": w, "h": h}
     # The reading screen: the open book, the scroll, their buttons
@@ -124,21 +188,7 @@ def build_art(arch, data_files, birthsigns=()):
         if arch.exists(path):
             img = Image.open(io.BytesIO(arch.read(path))).convert("RGB")
             encode(img, OUT / "art" / "magicitem" / f"caust{i:02d}.t3x", False)
-    # Rain and ash in the world (Session::drawPrecipitation): raindrop.nif's drop, ashcloud.nif's flake and the dust
-    # clouds of ashcloud.nif and blightcloud.nif, at art/weather/<name>.t3x. Their alpha twice the original's: on the
-    # top screen's 240 lines OpenMW's faint drops and flakes were all but gone, and its clouds lost in the fog
-    for key, path, gain in (("rain", r"textures\tx_raindrop_01.dds", 2.0), ("ash_flake", r"textures\tx_ash_flake.dds", 2.0),
-                            ("ash_cloud", r"textures\tx_ash_cloud.dds", 2.0), ("blight_cloud", r"textures\tx_blight_cloud.dds", 2.0)):
-        if arch.exists(path):
-            img = Image.open(io.BytesIO(arch.read(path))).convert("RGBA")
-            if gain != 1.0:
-                r, g, b, a = img.split()
-                img = Image.merge("RGBA", (r, g, b, a.point(lambda x: min(255, round(x * gain)))))
-            encode(img, OUT / "art" / "weather" / f"{key}.t3x", True)
-    if arch.exists(r"textures\tx_raindrop_01.dds"):
-        drop = Image.open(io.BytesIO(arch.read(r"textures\tx_raindrop_01.dds"))).convert("RGBA")
-        encode(rain_sheet(drop), OUT / "art" / "weather" / "rain_sheet.t3x", True)
-        encode(splash_ring(), OUT / "art" / "weather" / "splash.t3x", True)
+    weather_art(arch)
     # The water surface's frames, as Morrowind and OpenMW animate water (Morrowind.ini [Water]: SurfaceTexture, frames
     # SurfaceFrameCount at SurfaceFPS, SurfaceTextureSize texels): data/art/water/waterNN.t3x, ETC1. The ripples change
     # shape; one picture slid over the water looked still on the console
@@ -213,3 +263,18 @@ def build_art(arch, data_files, birthsigns=()):
         key = low.rsplit("\\", 1)[-1].rsplit(".", 1)[0] if kind == "levelup" else low
         art[kind][key] = {"file": f"art/{kind}/{stem}.t3x", "w": w, "h": h}
     return art
+
+
+if __name__ == "__main__":
+    import argparse
+    from mwfiles import Archives
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--weather", action="store_true", help="write the weather pictures (art/weather) into MW3DS_OUT")
+    ap.add_argument("--bloodmoon", action="store_true", help="with Bloodmoon's snow and blizzard (or MW3DS_BLOODMOON=1)")
+    args = ap.parse_args()
+    if args.bloodmoon:
+        import os
+        os.environ["MW3DS_BLOODMOON"] = "1"
+    if args.weather:
+        weather_art(Archives())
+        print(f"wrote {OUT / 'art' / 'weather'}")

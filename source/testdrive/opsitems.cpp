@@ -272,6 +272,24 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 		s.killNpc(ri, false);
 		return true;
 	}
+	if (verb == "SLAYALL" && a.size() >= 2)
+	{
+		// SLAYALL:<id>: every loaded actor with that id dies where it stands, none loaded is no failure (the water's
+		// creatures a walk through shallows meets on one profile and not another)
+		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
+		std::vector<int> found;
+		w.forLoadedRefs([&](int i) {
+			if (w.refs[i].actor >= 0 && !w.refs[i].dead && (w.refs[i].idLower == want || w.refs[i].idLower == want2))
+				found.push_back(i);
+		});
+		for (int i : found)
+		{
+			w.refs[i].health = 0.0f;
+			s.killNpc(i, false);
+		}
+		logf("test: %d %s slain", (int)found.size(), a[1].c_str());
+		return true;
+	}
 	if (verb == "SETHEALTH" && a.size() >= 2)
 	{
 		w.stats.health = w.stats.healthMax * (float)atof(a[1].c_str());

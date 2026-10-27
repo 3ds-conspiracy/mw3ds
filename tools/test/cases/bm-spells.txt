@@ -1,0 +1,385 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-spells: written by tools/test/specgen_bloodmoon.py (edit the generator, not this file).
+# Every spell, ability, disease and power Bloodmoon adds, checked by what it does.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:12
+0.3 0 0 0 0 HIDEACTORS:4000
+0.3 0 0 0 0 SETSKILL:destruction:600
+0.3 0 0 0 0 SETSKILL:alteration:600
+0.3 0 0 0 0 SETSKILL:illusion:600
+0.3 0 0 0 0 SETSKILL:conjuration:600
+0.3 0 0 0 0 SETSKILL:mysticism:600
+0.3 0 0 0 0 SETSKILL:restoration:600
+0.3 0 0 0 0 EFFECT:83:500:100000:10
+0.3 0 0 0 0 EFFECT:83:500:100000:11
+0.3 0 0 0 0 EFFECT:83:500:100000:12
+0.3 0 0 0 0 EFFECT:83:500:100000:13
+0.3 0 0 0 0 EFFECT:83:500:100000:14
+0.3 0 0 0 0 EFFECT:83:500:100000:15
+0.3 0 0 0 0 SETATTR:willpower:100+SETATTR:luck:100
+0.3 0 0 0 0 RESISTROLL:99
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 EFFECT:90:100:100000:0
+0.3 0 0 0 0 EFFECT:91:100:100000:0
+0.3 0 0 0 0 EFFECT:92:100:100000:0
+0.3 0 0 0 0 EFFECT:97:100:100000:0
+0 0 0 0 0 SETUP-END
+# bm_bearregen_unique (ability, Regeneration)
+#   on bm_bear_be_unique, who has it: checked at the end
+# bm_draugr_curse (spell, Eddard's Wrath)
+#   only bm_draugr01, bm_draugr_bloodskal know it; not a spell they cast in a fight (open)
+# bm_fireregen (ability, Icy Blood)
+0.3 0 0 0 0 SNAP:effect:75
+0.3 0 0 0 0 SPELL:bm_fireregen
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:75:ge:@5
+# bm_frstgnt (ability, Karstaag Resists1)
+#   on bm_frost_giant, who has it: checked at the end
+# bm_hunterwind (power, Hunter's Wind)
+0.3 0 0 0 0 SPELL:bm_hunterwind
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SETHEALTH:0.3
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_hunterwind
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:health:gt:@0
+0.5 0 0 0
+# bm_huntresist (ability, Hircine Resists1)
+#   on bm_hircine_huntaspect, who has it: checked at the end
+# bm_paralyze_hirc (spell, Hunter's Venom)
+#   only bm_hircine_huntaspect know it; not a spell they cast in a fight (open)
+# bm_resistpara_unique (ability, Resist Paralysis)
+#   on gaea artoria, who has it: checked at the end
+# bm_spdresist (ability, Hircine Resists1)
+#   on bm_hircine_spdaspect, who has it: checked at the end
+# bm_strresist (ability, Hircine Resists1)
+#   on bm_hircine_straspect, who has it: checked at the end
+# bm_summonbear (spell, Call Bear)
+0.3 0 0 0 0 SPELL:bm_summonbear
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_summonbear
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:139:ge:1
+0.5 0 0 0
+# bm_summonbonewolf (spell, Summon Bonewolf)
+0.3 0 0 0 0 SPELL:bm_summonbonewolf
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_summonbonewolf
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:140:ge:1
+0.5 0 0 0
+# bm_summonwolf (spell, Call Wolf)
+0.3 0 0 0 0 SPELL:bm_summonwolf
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_summonwolf
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:effect:138:ge:1
+0.5 0 0 0
+# brittlewind (spell, Brittlewind)
+0.3 0 0 0 0 SPELL:brittlewind
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:brittlewind
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,16:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,38:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,37:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# colony_rug (spell, Trespasser's Bane)
+0.3 0 0 0 0 SPELL:colony_rug
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:colony_rug
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,17:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,17:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,7:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# glenmoril_ring (spell, Glenmoril Witch Teleport)
+0.3 0 0 0 0 SPELL:glenmoril_ring
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:glenmoril_ring
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# hroldar_death (spell, Hroldar's Death Blast)
+0.3 0 0 0 0 SPELL:hroldar_death
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:hroldar_death
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# hrothmund blessing (spell, Hrothmund's Blessing)
+0.3 0 0 0 0 SPELL:hrothmund%blessing
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:hrothmund%blessing
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,6:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,42:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# immune to paralysis (ability, Immune to Paralysis)
+#   on bm_draugr01, who has it: checked at the end
+# snowshield (ability, Snow Shield)
+#   on bm_bear_snow_unique, who has it: checked at the end
+# stone_erlendr (spell, Erlendr's Speed)
+0.3 0 0 0 0 SPELL:stone_erlendr
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:stone_erlendr
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,79:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# stone_hunroor (spell, Hunroor's Agility)
+0.3 0 0 0 0 SPELL:stone_hunroor
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:stone_hunroor
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,79:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# stone_nikulas (spell, Nikulas's Personality)
+0.3 0 0 0 0 SPELL:stone_nikulas
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:stone_nikulas
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,79:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# stone_ulfgar (spell, Ulfgar's Strength)
+0.3 0 0 0 0 SPELL:stone_ulfgar
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:stone_ulfgar
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,79:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# touchdrain agility (spell, TouchDrain Agility)
+0.3 0 0 0 0 SPELL:touchdrain%agility
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:touchdrain%agility
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,17:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# ulfgar_ghost_ring (spell, Ulfgar's Death Blast)
+0.3 0 0 0 0 SPELL:ulfgar_ghost_ring
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:ulfgar_ghost_ring
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# ulfgar_ghost_sp (ability, Ulfgar Ghost)
+0.3 0 0 0 0 SNAP:effect:40
+0.3 0 0 0 0 SPELL:ulfgar_ghost_sp
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:40:ge:@70
+# werewolf blood (disease, Sanies Lupinus)
+0.3 0 0 0 0 SNAP:effect:20
+0.3 0 0 0 0 SPELL:werewolf%blood
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:20:ge:@1
+# werewolf hunger (disease, Weak From Bloodlust)
+0.3 0 0 0 0 SNAP:effect:23
+0.3 0 0 0 0 SNAP:effect:25
+0.3 0 0 0 0 SPELL:werewolf%hunger
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:23:ge:@1
+0.3 0 0 0 0 EXPECT:effect:25:ge:@2
+# werewolf regeneration (ability, Spirit of the Wolf)
+0.3 0 0 0 0 SNAP:effect:75
+0.3 0 0 0 0 SPELL:werewolf%regeneration
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:75:ge:@1
+# werewolf resists (ability, Werewolf Resistances)
+0.3 0 0 0 0 SNAP:effect:94
+0.3 0 0 0 0 SNAP:effect:95
+0.3 0 0 0 0 SPELL:werewolf%resists
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:94:ge:@100
+0.3 0 0 0 0 EXPECT:effect:95:ge:@100
+# werewolf vision (ability, Eye of the Wolf)
+0.3 0 0 0 0 SNAP:effect:43
+0.3 0 0 0 0 SNAP:effect:64
+0.3 0 0 0 0 SPELL:werewolf%vision
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:effect:43:ge:@25
+0.3 0 0 0 0 EXPECT:effect:64:ge:@4000
+# werewolf_ritual_ring (spell, Werewolf Transformation)
+0.3 0 0 0 0 SPELL:werewolf_ritual_ring
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SNAP:refhealth:todd
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:werewolf_ritual_ring
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refhealth:todd:lt:@0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
+# bm_bearregen_unique on bm_bear_be_unique
+4.0 0 0 0 0 TP:-158694:183300:796:0
+0.3 0 0 0 0 EXPECT:refeffect:bm_bear_be_unique,75:ge:5
+# bm_frstgnt on bm_frost_giant
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refeffect:bm_frost_giant,91:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_frost_giant,93:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_frost_giant,99:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_frost_giant,98:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_frost_giant,68:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_frost_giant,75:ge:4
+# bm_huntresist on bm_hircine_huntaspect
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_huntaspect,91:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_huntaspect,93:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_huntaspect,99:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_huntaspect,98:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_huntaspect,68:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_huntaspect,90:ge:75
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_huntaspect,75:ge:4
+# bm_resistpara_unique on gaea artoria
+3.0 0 0 0 0 GOTO:Fort_Frostmoth,_General_Quarters,_Upper_Level
+0.3 0 0 0 0 EXPECT:refeffect:gaea%artoria,99:ge:100
+# bm_spdresist on bm_hircine_spdaspect
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_spdaspect,91:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_spdaspect,93:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_spdaspect,99:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_spdaspect,98:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_spdaspect,68:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_spdaspect,75:ge:5
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_spdaspect,77:ge:5
+# bm_strresist on bm_hircine_straspect
+3.0 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_straspect,91:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_straspect,93:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_straspect,99:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_straspect,98:ge:100
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_straspect,68:ge:50
+0.3 0 0 0 0 EXPECT:refeffect:bm_hircine_straspect,117:ge:25
+# immune to paralysis on bm_draugr01
+3.0 0 0 0 0 GOTO:Solstheim,_Cave_of_Hidden_Music
+0.3 0 0 0 0 EXPECT:refeffect:bm_draugr01,99:ge:100
+# snowshield on bm_bear_snow_unique
+4.0 0 0 0 0 TP:-154488:153499:1114:0
+0.3 0 0 0 0 EXPECT:refeffect:bm_bear_snow_unique,91:ge:20

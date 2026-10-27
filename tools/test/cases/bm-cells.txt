@@ -1,0 +1,110 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: new
+# bm-cells: on a New 3DS Solstheim's busiest 3x3 exterior spots (by level.py's linear memory
+# report, build/memory-tb.txt: 29 to 36 MB against its 24 MB budget, from the pine forests) and its biggest
+# interiors load and leave linear memory and heap to spare. Each spot is entered from an interior (as a
+# door would), its middle, high enough to land on the ground.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Solstheim,_Thirsk
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Solstheim,_Thirsk
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Fort_Frostmoth,_General_Quarters
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Fort_Frostmoth,_General_Quarters
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Fort_Frostmoth,_Imperial_Cult_Shrine
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Fort_Frostmoth,_Imperial_Cult_Shrine
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Raven_Rock,_Mine
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Raven_Rock,_Mine
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Solstheim,_Gandrung_Caverns
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Solstheim,_Gandrung_Caverns
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Solstheim,_Tombs_of_Skaalara
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Solstheim,_Tombs_of_Skaalara
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Inner_Ring
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Solstheim,_Mortrag_Glacier:_Inner_Ring
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+0.3 0 0 0 0 GOTO:Solstheim,_Castle_Karstaag,_Caverns_of_Karstaag
+8 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Solstheim,_Castle_Karstaag,_Caverns_of_Karstaag
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+# Hirstaang Forest, the heaviest 3x3 spot (-24, 20)
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-192512:167936:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+# Raven Rock (-24, 19)
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-192512:159744:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+# Brodir Grove (-23, 20)
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-184320:167936:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+# Isinfier Plains (-23, 22)
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-184320:184320:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+# Lake Fjalding (-20, 23)
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-159744:192512:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+# Skaal Village (-20, 25)
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-159744:208896:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000
+# Fort Frostmoth (-22, 16)
+0.3 0 0 0 0 GOTO:Raven_Rock,_Bar
+4 0 0 0 0
+0.3 0 0 0 0 TP:-176128:135168:3000:0
+12 0 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Raven_Rock,_Bar
+0.1 0 0 0 0 EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1000

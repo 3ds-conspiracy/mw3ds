@@ -1,7 +1,7 @@
 """Side-by-side shots: the 3DS engine beside Morrowind's own look (OpenMW 0.51 on the user's Morrowind.esm), 400 x 240
 each, no HUD, the same camera, hour and actor pose on both sides. For comparing animations, models and lighting.
 
-    python tools/test/sidebyside.py <shots.txt> [--out build/sidebyside] [--pc-only] [--3ds-only] [--emu] [--data out/world] [--tribunal]
+    python tools/test/sidebyside.py <shots.txt> [--out build/sidebyside] [--pc-only] [--3ds-only] [--emu] [--data out/world] [--tribunal] [--bloodmoon]
 
 A shots file has one shot per line (# starts a comment), a name then key=value pairs (shell quoting):
 
@@ -59,6 +59,7 @@ Both sides put the player 300 units behind the camera (first person: at it). Wri
 <out>/<shot>.png (3DS left, OpenMW right).
 """
 import argparse
+import json
 import math
 import os
 import re
@@ -67,6 +68,7 @@ import shutil
 import subprocess
 import sys
 import time
+import zlib
 from pathlib import Path
 
 from PIL import Image, ImageDraw
@@ -78,6 +80,7 @@ SBS = Path(os.environ.get("MW3DS_SBS_DIR") or ROOT / "build" / "openmw-sbs")
 MOD = Path(__file__).resolve().parent / "sidebyside"
 W, H = 400, 240
 TRIBUNAL = False         # --tribunal: OpenMW loads Tribunal.esm too
+BLOODMOON = False        # --bloodmoon: OpenMW loads Bloodmoon.esm too (after Tribunal.esm)
 SPAWN_DIST = 250         # spawn=: this far ahead of the camera
 RES = (W, H)             # --res: OpenMW's window (a menu shot reads better bigger)
 UI_MODES = {"alchemy": "Alchemy", "enchanting": "Enchanting", "spellmaking": "SpellCreation"}
@@ -316,8 +319,10 @@ def write_openmw_setup(shots):
         f"data={q(OPENMW / 'resources' / 'vfs-mw')}",
         f"data={q(data_files)}",
         f"data={q(data)}",
-        "fallback-archive=Morrowind.bsa"] + (["fallback-archive=Tribunal.bsa"] if TRIBUNAL else []) + [
-        "content=Morrowind.esm"] + (["content=Tribunal.esm"] if TRIBUNAL else []) + [
+        "fallback-archive=Morrowind.bsa"] + (["fallback-archive=Tribunal.bsa"] if TRIBUNAL else []) + (
+        ["fallback-archive=Bloodmoon.bsa"] if BLOODMOON else []) + [
+        "content=Morrowind.esm"] + (["content=Tribunal.esm"] if TRIBUNAL else []) + (
+        ["content=Bloodmoon.esm"] if BLOODMOON else []) + [
         "content=mw3ds_sbs.omwscripts",
         f"user-data={q(user)}"] + fallbacks + [""]))
     ini = mw / "Morrowind.ini"
@@ -660,6 +665,17 @@ def compose(shots, out):
         print(f"sidebyside: {out / (s['name'] + '.png')}")
 
 
+def data_addons(data):
+    """The add-ons a converted data folder holds (its game.json "addons"); none when it has no game.json."""
+    path = Path(data) if Path(data).is_absolute() else ROOT / data
+    try:
+        raw = (path / "game.json").read_bytes()
+        # (zlib-packed behind an 8-byte "MWZ1" + length header, as level.py writes it)
+        return set(json.loads(zlib.decompress(raw[8:]) if raw[:4] == b"MWZ1" else raw).get("addons", []))
+    except (OSError, ValueError, zlib.error):
+        return set()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("shots")
@@ -670,17 +686,22 @@ def main():
     ap.add_argument("--data", default="")
     ap.add_argument("--tribunal", action="store_true",
                     help="the Tribunal add-on on both sides: OpenMW loads Tribunal.esm, the 3DS side out/tribunal")
+    ap.add_argument("--bloodmoon", action="store_true",
+                    help="the Bloodmoon add-on on both sides: OpenMW loads Bloodmoon.esm (and Tribunal.esm when the "
+                         "3DS data holds it), the 3DS side out/tb (Tribunal + Bloodmoon)")
     ap.add_argument("--exe", default="", help="another native build")
     ap.add_argument("--res", default="", help="OpenMW's window, WxH (default 400x240: the top screen's)")
     ap.add_argument("--timeout", type=float, default=0, help="seconds for the OpenMW run (default 60 + 15 a shot)")
     a = ap.parse_args()
     shots = read_shots(a.shots)
     out = Path(a.out)
-    global TRIBUNAL, RES
-    TRIBUNAL = a.tribunal
+    global TRIBUNAL, BLOODMOON, RES
     if a.res:
         RES = tuple(int(v) for v in a.res.lower().split("x"))
-    a.data = a.data or ("out/tribunal" if a.tribunal else "out/world")
+    a.data = a.data or ("out/tb" if a.bloodmoon else "out/tribunal" if a.tribunal else "out/world")
+    BLOODMOON = a.bloodmoon
+    # (Bloodmoon loads after Tribunal: with Bloodmoon, OpenMW gets Tribunal too when the 3DS data was converted with it)
+    TRIBUNAL = a.tribunal or (a.bloodmoon and "tribunal" in data_addons(a.data))
     if not a.pc_only:
         run_3ds(shots, out, "sbs-" + Path(a.shots).stem + "-" + out.name, a.emu, a.data, a.exe)
     if not a.ds_only:

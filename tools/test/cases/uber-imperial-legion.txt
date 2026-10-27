@@ -480,7 +480,8 @@
 0.1 0 0 0 0 EXPECT:journal:IL_RescueRagash:ge:50
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
-5 0 0 0 0 UNTIL:following:ragash_gra-shuzgub
+# (no wait for him to be following first: a skeleton or a rat of the tower can be on him, and while he fights it he
+# isn't; the escort waits for him and helps)
 0.3 0 0 0 0 ESCORT:ragash_gra-shuzgub
 120 0 0 0 0 WALKTO:@3640,6560,128
 3 0 0 0
@@ -1010,8 +1011,12 @@
 0.5 0 0 0 0 B
 # where she can see us: she starts to follow only on seeing the player (OpenMW's AiFollow), and from where the talk
 # ended something stood between her eyes and the player's (crosshair on her, no follow)
+# (the cave's smugglers, who turn on the player, fought off first: Dandsa, following, takes on whoever attacks the player,
+# as in OpenMW)
+120 0 0 0 0 KILL:alonisea%varys
+120 0 0 0 0 KILL:balis%sari
 30 0 0 0 0 WALKTO:@-1497,-4317,419
-5 0 0 0 0 UNTIL:following:dandsa
+30 0 0 0 0 UNTIL:following:dandsa
 0.3 0 0 0 0 ESCORT:dandsa
 150 0 0 0 0 DOORTO:outside
 3 0 0 0

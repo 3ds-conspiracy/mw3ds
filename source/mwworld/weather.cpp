@@ -293,6 +293,22 @@ bool World::weatherPrecip() const
 	return game.weatherTypes[std::min(w, (int)game.weatherTypes.size() - 1)].precip || w >= WEATHER_BLIGHT;
 }
 
+// Which way a storm blows (OpenMW's calculateStormDirection): an ash storm and blight out from Red Mountain at the
+// place given, every other weather (Bloodmoon's blizzard) along the default direction, north (+y). out: a unit vector
+void World::stormDirection(int weather, const float at[2], float out[2]) const
+{
+	out[0] = 0.0f;
+	out[1] = 1.0f;
+	if (weather != WEATHER_ASH && weather != WEATHER_BLIGHT)
+		return;
+	float sx = at[0] - 20480.0f, sy = at[1] - 69632.0f, sl = sqrtf(sx * sx + sy * sy);
+	if (sl > 1.0f)
+	{
+		out[0] = sx / sl;
+		out[1] = sy / sl;
+	}
+}
+
 bool World::weatherStorm() const
 {
 	return !game.weatherTypes.empty()

@@ -23,6 +23,10 @@ import dspadpcm
 from textures import OUT, tex3ds_path
 
 MOVIES = ["mw_intro", "mw_end", "mw_cavern", "bethesda logo", "mw_logo", "mw_credits"]
+# Bloodmoon's dreams, played by PlayBink from its werewolf scripts (the nightly one, each quest's, the ending): with the
+# add-on only
+BLOODMOON_MOVIES = ["bm_werewolf1", "bm_werewolf2", "bm_ceremony1", "bm_ceremony2", "bm_bearhunt1", "bm_bearhunt2",
+                    "bm_frostgiant1", "bm_frostgiant2", "bm_wereend", "bm_endgame"]
 FPS = 10
 SIZE = (256, 192)                  # 4:3, drawn at 320 x 240 on the top screen
 RATE = 22050
@@ -91,7 +95,8 @@ def build_movies(data_files):
     from mwfiles import game_path
     video = game_path(data_files, "Video")
     out = {}
-    for name in MOVIES:
+    from mwfiles import bloodmoon
+    for name in MOVIES + (BLOODMOON_MOVIES if bloodmoon() else []):
         src = game_path(video, f"{name}.bik")
         if not src.exists():
             continue

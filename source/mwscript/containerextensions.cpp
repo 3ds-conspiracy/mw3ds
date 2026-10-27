@@ -123,6 +123,30 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 				return 1.0f;
 		return 0.0f;
 	}
+	// GetWeaponType: what is in the right hand (OpenMW's OpGetWeaponType): a weapon's type (0 short blade .. 13 bolt),
+	// -2 a lockpick, -3 a probe, -1 nothing (or anything else). A person holds the weapon it fights with while it has
+	// it; a creature holds nothing
+	case F_GETWEAPONTYPE:
+	{
+		const Object* o = nullptr;
+		if (onPlayer || !r)
+		{
+			for (auto& it : w.inventory)
+				if (it.equipped)
+					if (const Object* x = w.game.object(it))
+						if ((x->recType == REC_WEAP && x->subtype < WEAP_ARROW) || x->recType == REC_LOCK || x->recType == REC_PROB)
+							o = x;
+		}
+		else if (r->actor >= 0 && !w.game.actors[r->actor].creature)
+		{
+			const std::string& wpn = w.game.actors[r->actor].weapon;
+			if (!wpn.empty() && w.refItemCount(*r, wpn) > 0)
+				o = w.game.object(wpn);
+		}
+		if (!o)
+			return -1.0f;
+		return o->recType == REC_LOCK ? -2.0f : o->recType == REC_PROB ? -3.0f : o->recType == REC_WEAP ? (float)o->subtype : -1.0f;
+	}
 	// Equip item: on the player it is used like from the inventory (added first when missing); an NPC wears
 	// what it carries, so it is given the item when it has none
 	case F_EQUIP:

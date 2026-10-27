@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# data: bloodmoon
+# The player's werewolf form takes Bloodmoon's werewolf values (OpenMW's Player::setWerewolfStats): every attribute and
+# every skill but Acrobatics set to its fWereWolf<name> setting over what the player has (Strength 150, Intelligence 0,
+# Luck 25, Hand-to-hand 100, Long Blade 0 ...), health doubled (fWereWolfHealth); Acrobatics only once a script asks
+# (SetWerewolfAcrobatics: fWereWolfAcrobatics 80); UndoWerewolf gives the human values back.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 SNAP:healthmax+SNAP:attr:strength+SNAP:skill:longblade+SNAP:skill:acrobatics+SNAP:attr:luck
+0.3 0 0 0 0 CON:player->becomewerewolf
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:eq:150+EXPECT:attr:intelligence:eq:0+EXPECT:attr:luck:eq:25+EXPECT:attr:speed:eq:90
+0.1 0 0 0 0 EXPECT:skill:handtohand:eq:100+EXPECT:skill:longblade:eq:0+EXPECT:skill:sneak:eq:95+EXPECT:skill:acrobatics:eq:@0
+0.1 0 0 0 0 EXPECT:healthmax:gt:@0
+0.3 0 0 0 0 CON:player->setwerewolfacrobatics
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:skill:acrobatics:eq:80
+0.3 0 0 0 0 CON:player->undowerewolf
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:attr:strength:eq:@0+EXPECT:skill:longblade:eq:@0+EXPECT:skill:acrobatics:eq:@0+EXPECT:attr:luck:eq:@0+EXPECT:healthmax:eq:@0

@@ -46,6 +46,8 @@ static float filterFunction(World& w, const Cond& c, const Ref& speaker, int ref
 	case 60: return w.effectTotal(133) > 0.0f ? 1.0f : 0.0f;        // PC vampire: the Vampirism effect, not a script variable
 	case 59: return (float)w.weatherNow;                             // weather (0 clear .. 9 blizzard)
 	case 66: return (float)std::min(speaker.friendlyHits, 4);        // friendly hit (OpenMW stops at 4)
+	case 72: return a && !a->creature && speaker.werewolf ? 1.0f : 0.0f;   // werewolf: the speaker (Bloodmoon)
+	case 73: return (float)w.stats.werewolfKills;                    // PC werewolf kills
 	case 65:                                                         // creature targeted: fighting a creature
 	{
 		if (!speaker.ally && !(speaker.aiPackage == AIPKG_FOLLOW && speaker.aiTarget == "player"))

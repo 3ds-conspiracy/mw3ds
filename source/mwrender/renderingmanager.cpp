@@ -12,6 +12,8 @@ float g_profWorldMs = 0.0f;
 float g_profDraw[DRAWP_COUNT];
 float g_detailScale = 1.0f, g_actorDetailScale = 1.0f;
 int g_drawnBatches = 0, g_culledBatches = 0;
+int g_sharedDrawn = 0;                       // shared models' placements the last view drew (tests)
+int g_worldDraws = 0;                        // draws the last view of the world made (the left eye's; tests)
 int g_skippedDraws = 0;               // draws dropped because the GPU command buffer was nearly full
 // Blended draws of the last frame made after a nearer blended one (OpenMW sorts them back to front: a blended surface
 // behind drawn after one in front paints over it, as neither writes depth)
@@ -358,7 +360,7 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 // Vertex layout and quantization uniforms: packed s16 (cell format 5) or float (actors, older cells)
 static void bindVertexFormat(const CellBatch& b)
 {
-	bool packed = b.stride == CELL_VERTEX_SIZE_PACKED;
+	bool packed = b.stride == CELL_VERTEX_SIZE_PACKED || b.stride == CELL_VERTEX_SIZE_SHARED;
 	if (!g_gpu.formatValid || packed != g_gpu.packedBound)
 	{
 		C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
@@ -427,7 +429,14 @@ void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 	bindVertexFormat(b);
 	C3D_BufInfo* bufInfo = C3D_GetBufInfo();
 	BufInfo_Init(bufInfo);
-	BufInfo_Add(bufInfo, b.verts, b.stride, 3, 0x210);
+	if (b.colors)
+	{
+		// A shared model's batch: position and texture coordinates from the model, the colour from the placement drawn
+		BufInfo_Add(bufInfo, b.verts, b.stride, 2, 0x10);
+		BufInfo_Add(bufInfo, b.colors, 4, 1, 0x2);
+	}
+	else
+		BufInfo_Add(bufInfo, b.verts, b.stride, 3, 0x210);
 	C3D_DrawElements(GPU_TRIANGLES, b.numIndices, C3D_UNSIGNED_SHORT, b.indices);
 	if (g_gpu.uvOverrideOn)
 		invalidateState();                          // (the next batch sets its own offset again)
@@ -563,7 +572,13 @@ static int drawBlendQueue(float time)
 		}
 		setModelView(bd.mv);
 		setTint(bd.tint);
-		if (bd.batch)
+		if (bd.batch && bd.colors)
+		{
+			CellBatch b = *bd.batch;
+			b.colors = bd.colors;
+			drawBatch(*bd.cell, b, DRAW_WORLD, time);
+		}
+		else if (bd.batch)
 			drawBatch(*bd.cell, *bd.batch, DRAW_WORLD, time);
 		else
 		{
@@ -612,6 +627,56 @@ int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std
 		drawBatch(cell, b, DRAW_WORLD, time);
 		draws++;
 	}
+	return draws;
+}
+
+// A shared model's placement in the view: view x its model -> world
+void sharedPlaceView(const C3D_Mtx& view, const SharedPlace& p, C3D_Mtx* out)
+{
+	C3D_Mtx model;
+	for (int r = 0; r < 3; r++)
+		model.r[r] = FVec4_New(p.m[r * 4], p.m[r * 4 + 1], p.m[r * 4 + 2], p.m[r * 4 + 3]);
+	model.r[3] = FVec4_New(0.0f, 0.0f, 0.0f, 1.0f);
+	Mtx_Multiply(out, &view, &model);
+}
+
+static const void* placeColors(const Cell& cell, const SharedPlace& p, const CellBatch& b)
+{
+	const SharedModel& sm = cell.models[p.model];
+	size_t set = sm.sets == 1 ? 0 : (size_t)(&p - &cell.places[sm.firstPlace]);
+	return sm.colors + (set * sm.numVerts + b.colorAt) * 4;
+}
+
+// Every placement of the cell's shared models, the batches of one pass (the local map: no culling; a disabled one left
+// out); leaves the view's transform bound
+int drawSharedPass(Cell& cell, int pass, const C3D_Mtx& view, float time, const std::deque<Ref>& refs)
+{
+	int draws = 0;
+	for (const SharedPlace& p : cell.places)
+	{
+		if (p.ref >= 0 && p.ref < (int)refs.size() && !refs[p.ref].visible())
+			continue;
+		const SharedModel& sm = cell.models[p.model];
+		bool any = false;
+		for (u32 j = sm.firstBatch; j < sm.firstBatch + sm.numBatches; j++)
+		{
+			const CellBatch& src = cell.shared[j];
+			if (batchPass(src) != pass || !sm.colors)
+				continue;
+			if (!any)
+			{
+				C3D_Mtx mv;
+				sharedPlaceView(view, p, &mv);
+				setModelView(mv);
+				any = true;
+			}
+			CellBatch b = src;
+			b.colors = placeColors(cell, p, src);
+			drawBatch(cell, b, DRAW_WORLD, time);
+			draws++;
+		}
+	}
+	setModelView(view);
 	return draws;
 }
 
@@ -933,7 +998,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	static size_t listSig = 0;
 	size_t sig = w.loaded.size();
 	for (LoadedCell* l : w.loaded)
-		sig = sig * 31 + (size_t)l->cell.batches.data() + l->cell.batches.size();
+		sig = sig * 31 + (size_t)l->cell.batches.data() + l->cell.batches.size() + l->cell.places.size();
 	float reach[4] = { fog ? fogEnd : 0.0f, fogScale, g_profile.detailScale, g_detailScale };
 	float dyaw = fabsf(remainderf(cam.yaw - listAt[3], 6.2831853f));
 	bool reuse = !secondEye && listAge < 6 && sig == listSig && memcmp(reach, listReach, sizeof(reach)) == 0
@@ -955,7 +1020,9 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 	for (size_t k = 0; k < w.loaded.size() && !secondEye && !reuse; k++)
 	{
 		Cell& cell = w.loaded[k]->cell;
-		visible[k].resize(cell.batches.size());
+		// (the batches, then the shared models' placements)
+		const size_t nb = cell.batches.size();
+		visible[k].resize(nb + cell.places.size());
 		// A whole cell out of the frustum (most of the nine are behind the camera or beside it): none of its batches tested
 		if (cell.batchBoundsOf != cell.batches.size())
 		{
@@ -964,12 +1031,15 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 			for (const CellBatch& b : cell.batches)
 				for (int j = 0; j < 3; j++)
 					cell.batchMin[j] = fminf(cell.batchMin[j], b.bmin[j]), cell.batchMax[j] = fmaxf(cell.batchMax[j], b.bmax[j]);
+			for (const SharedPlace& p : cell.places)
+				for (int j = 0; j < 3; j++)
+					cell.batchMin[j] = fminf(cell.batchMin[j], p.bmin[j]), cell.batchMax[j] = fmaxf(cell.batchMax[j], p.bmax[j]);
 			cell.batchBoundsOf = cell.batches.size();
 		}
 		if (!cell.batches.empty() && !boxVisible(fr, cell.batchMin, cell.batchMax))
 		{
 			std::fill(visible[k].begin(), visible[k].end(), 0);
-			total += cell.batches.size();
+			total += visible[k].size();
 			continue;
 		}
 		for (size_t i = 0; i < cell.batches.size(); i++)
@@ -983,7 +1053,14 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 			visible[k][i] = boxVisible(fr, b.bmin, b.bmax, maxDist);
 			shown += visible[k][i];
 		}
-		total += cell.batches.size();
+		for (size_t i = 0; i < cell.places.size(); i++)
+		{
+			const SharedPlace& p = cell.places[i];
+			float maxDist = p.maxDist * fogScale * g_profile.detailScale * g_detailScale;
+			visible[k][nb + i] = boxVisible(fr, p.bmin, p.bmax, maxDist);
+			shown += visible[k][nb + i];
+		}
+		total += visible[k].size();
 	}
 	if (!secondEye && !reuse)
 	{
@@ -994,26 +1071,75 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 
 	// Opaque batches of all loaded cells sorted by texture and state, so the state cache above
 	// skips most changes (order doesn't matter for them); terrain layers keep their order
-	struct OpaqueDraw { C3D_Tex* tex; u32 state; const CellBatch* b; size_t cell; };
+	// (a shared model's placement: its transform and colours, PlaceDraw; -1 for the cell's own batches)
+	struct OpaqueDraw { C3D_Tex* tex; u32 state; const CellBatch* b; size_t cell; int place; };
+	struct PlaceDraw { C3D_Mtx mv; const SharedPlace* p; size_t cell; };
 	static std::vector<OpaqueDraw> opaque;
+	static std::vector<PlaceDraw> placeDraws;       // the visible placements (the second eye's too, and the blended pass's)
 	if (!secondEye)
+	{
 		opaque.clear();
+		placeDraws.clear();
+	}
 	for (size_t k = 0; k < w.loaded.size() && !secondEye; k++)
 	{
 		Cell& cell = w.loaded[k]->cell;
 		for (size_t i = 0; i < cell.batches.size(); i++)
 			if (visible[k][i] && batchPass(cell.batches[i]) == 0)
 				opaque.push_back({ batchTexture(cell, cell.batches[i]),
-					(u32)cell.batches[i].flags | ((u32)cell.batches[i].alphaRef << 8), &cell.batches[i], k });
+					(u32)cell.batches[i].flags | ((u32)cell.batches[i].alphaRef << 8), &cell.batches[i], k, -1 });
+		const size_t nb = cell.batches.size();
+		for (size_t i = 0; i < cell.places.size(); i++)
+		{
+			// (a disabled reference's placement: not drawn, as a baked object's triangles go degenerate, hideRanges)
+			const int ref = cell.places[i].ref;
+			if (!visible[k][nb + i] || !cell.models[cell.places[i].model].colors
+				|| (ref >= 0 && ref < (int)w.refs.size() && !w.refs[ref].visible()))
+				continue;
+			PlaceDraw pd;
+			sharedPlaceView(view, cell.places[i], &pd.mv);
+			pd.p = &cell.places[i];
+			pd.cell = k;
+			placeDraws.push_back(pd);
+			const SharedModel& sm = cell.models[cell.places[i].model];
+			for (u32 j = sm.firstBatch; j < sm.firstBatch + sm.numBatches; j++)
+				if (batchPass(cell.shared[j]) == 0)
+					opaque.push_back({ batchTexture(cell, cell.shared[j]),
+						(u32)cell.shared[j].flags | ((u32)cell.shared[j].alphaRef << 8), &cell.shared[j], k, (int)placeDraws.size() - 1 });
+		}
 	}
-	// (then by cell: a cell's batches share one position grid, so the transform goes up once for a run of them)
+	// (then by cell: a cell's batches share one position grid, so the transform goes up once for a run of them; a shared
+	// model's batch then runs through its placements with the same layout)
 	if (!secondEye)
 		std::sort(opaque.begin(), opaque.end(), [](const OpaqueDraw& a, const OpaqueDraw& b) {
-			return a.tex != b.tex ? a.tex < b.tex : a.state != b.state ? a.state < b.state : a.cell < b.cell;
+			return a.tex != b.tex ? a.tex < b.tex : a.state != b.state ? a.state < b.state : a.cell != b.cell ? a.cell < b.cell
+				: a.b != b.b ? a.b < b.b : a.place < b.place;
 		});
+	if (!secondEye)
+		g_sharedDrawn = (int)placeDraws.size();
 	if (g_renderParts & RENDER_OPAQUE)
+	{
+		bool atView = true;
 		for (auto& d : opaque)
-			drawBatchTex(d.tex, *d.b, DRAW_WORLD, time);
+		{
+			if (d.place < 0)
+			{
+				if (!atView)
+					setModelView(view);
+				atView = true;
+				drawBatchTex(d.tex, *d.b, DRAW_WORLD, time);
+				continue;
+			}
+			const PlaceDraw& pd = placeDraws[d.place];
+			setModelView(pd.mv);
+			atView = false;
+			CellBatch b = *d.b;
+			b.colors = placeColors(w.loaded[pd.cell]->cell, *pd.p, *d.b);
+			drawBatchTex(d.tex, b, DRAW_WORLD, time);
+		}
+		if (!atView)
+			setModelView(view);
+	}
 	draws += opaque.size();
 	drawProfAdd(DRAWP_OPAQUE, drawSince);
 
@@ -1239,11 +1365,31 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				g_gpu.blendQueue.push_back(bd);
 			}
 	}
+	for (const PlaceDraw& pd : placeDraws)
+	{
+		if (!(g_renderParts & RENDER_BLENDED) || pd.cell >= w.loaded.size())
+			break;
+		Cell& cell = w.loaded[pd.cell]->cell;
+		const SharedModel& sm = cell.models[pd.p->model];
+		float c[3];
+		for (int j = 0; j < 3; j++)
+			c[j] = (pd.p->bmin[j] + pd.p->bmax[j]) * 0.5f - cam.pos[j];
+		for (u32 j = sm.firstBatch; j < sm.firstBatch + sm.numBatches; j++)
+			if (batchPass(cell.shared[j]) == 2)
+			{
+				BlendDraw bd = { c[0] * c[0] + c[1] * c[1] + c[2] * c[2], &cell, &cell.shared[j], nullptr, pd.mv, 0 };
+				memcpy(bd.tint, worldTint(), sizeof(bd.tint));
+				bd.colors = placeColors(cell, *pd.p, cell.shared[j]);
+				g_gpu.blendQueue.push_back(bd);
+			}
+	}
 	draws += drawBlendQueue(time);
 	drawProfAdd(DRAWP_BLEND, drawSince);
 	setModelView(view);
 	disableFog();
 	setUvOffset(0.0f, 0.0f);
+	if (!secondEye)
+		g_worldDraws = draws;
 	return draws;
 }
 

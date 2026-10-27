@@ -12,6 +12,67 @@
 #include <cstdio>
 #include <malloc.h>
 
+// Bloodmoon's werewolf (OpenMW's MechanicsManager::setWerewolf, NpcStats::setWerewolf): only people change; turning
+// into one counts kills from nothing again, and SetWerewolfAcrobatics is asked for anew after each change. The state
+// alone so far: the form's stats, refusals, combat and model are to read it (spec/bloodmoon.md)
+void World::setWerewolf(int ref, bool on)
+{
+	if (ref < 0)
+	{
+		if (stats.werewolf == on)
+			return;
+		stats.werewolf = on;
+		stats.werewolfAcrobatics = false;
+		if (on)
+		{
+			stats.werewolfKills = 0;
+			werewolfJustChanged = true;
+		}
+		// Everything worn and held comes off (OpenMW unequips all and puts on the unseen WerewolfRobe; the human
+		// puts nothing back on afterwards)
+		if (on)
+			for (auto& it : inventory)
+				it.equipped = false;
+		// The form's stats (recomputeStats): changing fills health to the doubled maximum (OpenMW sets it to the base
+		// times fWereWolfHealth); changing back keeps the share of it the wolf had left
+		float share = stats.healthMax > 0.0f ? stats.health / stats.healthMax : 1.0f;
+		refreshStats();
+		stats.health = on ? stats.healthMax : fmaxf(1.0f, share * stats.healthMax);
+		logf("werewolf: the player %s", on ? "becomes a werewolf" : "is human again");
+		return;
+	}
+	Ref& r = refs[ref];
+	if (r.actor < 0 || game.actors[r.actor].creature || r.werewolf == on)
+		return;
+	r.werewolf = on;
+	werewolfBody(ref);
+	logf("werewolf: %s %s", r.id.c_str(), on ? "becomes a werewolf" : "is human again");
+}
+
+float World::werewolfClaw(float handToHand) const
+{
+	auto g = globals.find("werewolfclawmult");
+	// (OpenMW gives the global a default of 25 when the data lacks it: generateDefaultGlobals)
+	float mult = g != globals.end() ? g->second : 25.0f;
+	return handToHand * mult * game.gmstf("fhandtohandhealthper", 0.1f);
+}
+
+float World::silverOnWerewolf(const Object* weapon, int target) const
+{
+	// (WEAP flags: 1 magical, 2 silver)
+	if (!weapon || weapon->recType != REC_WEAP || !(weapon->flags & 2) || !isWerewolf(target))
+		return 1.0f;
+	return game.gmstf("fwerewolfsilverweapondamagemult", 2.0f);
+}
+
+bool World::isWerewolf(int ref) const
+{
+	if (ref < 0)
+		return stats.werewolf;
+	const Ref& r = refs[ref];
+	return r.actor >= 0 && !game.actors[r.actor].creature && r.werewolf;
+}
+
 bool Session::npcAware(int ri)
 {
 	// OpenMW: in combat, or the awareness check passes (not sneaking, and not invisible, a check that always passes)
@@ -192,6 +253,39 @@ void Session::reportCrime(int victim, int amount)
 }
 
 // Seen by someone awake who noticed the player just now
+// Whoever sees the player change into a werewolf (OpenMW's setWerewolf): a person within fAlarmRadius with the
+// player in sight who notices them (awarenessCheck) makes the player a known werewolf (sWerewolfAlarmMessage,
+// PCKnownWerewolf 1), and if any of them has Alarm above 0 the bounty grows by iWereWolfBounty
+void Session::werewolfWitnesses()
+{
+	bool detected = false, reported = false;
+	float radius = w.game.gmstf("falarmradius", 2000.0f);
+	float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+	for (int i : w.loadedActors)
+	{
+		const Ref& r = w.refs[i];
+		if (r.recType != REC_NPC_ || r.dead || !w.active(i) || w.distanceToPlayer(i) >= radius)
+			continue;
+		float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f };
+		if (!w.lineOfSight(head, eye) || !awarenessCheck(i))
+			continue;
+		detected = true;
+		int alarm = r.alarm >= 0 ? r.alarm : w.game.actors[r.actor].alarm;
+		if (alarm > 0)
+		{
+			reported = true;
+			break;
+		}
+	}
+	logf("werewolf: the change %s", reported ? "seen and reported" : detected ? "seen" : "unseen");
+	if (!detected)
+		return;
+	notify(w.game.gmst("swerewolfalarmmessage", "You have been detected as a known werewolf."));
+	w.globals["pcknownwerewolf"] = 1.0f;
+	if (reported)
+		w.bounty = std::max(0, w.bounty + (int)w.game.gmstf("iwerewolfbounty", 1000.0f));
+}
+
 int Session::crimeWitness(int except)
 {
 	for (int i : w.loadedActors)
@@ -239,7 +333,8 @@ void Session::guardCheck(int ri, float dt)
 {
 	Ref& g = w.refs[ri];
 	float d = w.distanceToPlayer(ri);
-	if (d > 1500.0f)
+	// (nobody arrests a werewolf: OpenMW's updateCrimePursuit leaves it alone in wolf form)
+	if (d > 1500.0f || w.stats.werewolf)
 		return;
 	// The last guard to stop the player is fighting them (Resist Arrest's StartCombat): OpenMW's startCombat sends the
 	// other guards after the player too

@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# data: bloodmoon
+# Bloodmoon's summons (effects 138-140: Call Wolf, Call Bear, Summon Bonewolf, the creatures sMagicCreature01ID-03ID
+# name) come for the player and stay on their side. Their records have Fight 90, so the attack on sight would turn
+# them on the player standing beside them; OpenMW never has a follower of the player pick a fight with them.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HOUR:12+GOD:2
+0.3 0 0 0 0 SETSKILL:conjuration:100+SETSKILL:alteration:100
+0.3 0 0 0 0 SETATTR:willpower:100+SETATTR:luck:100
+0.3 0 0 0 0 SPELL:bm_summonbear
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_summonbear
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:effect:139:ge:1+SNAP:health
+8 0 0 0
+0.1 0 0 0 0 EXPECT:health:eq:@0+EXPECT:refcombat:bm_bear_black_summon:eq:0

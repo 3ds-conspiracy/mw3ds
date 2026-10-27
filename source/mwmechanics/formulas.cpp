@@ -412,6 +412,9 @@ float Session::fleeRatingOf(int ri, float distance)
 		return (float)flee;
 	float health = r.healthMax > 0.0f ? fmaxf(0.0f, r.health) / r.healthMax : 1.0f;
 	float rating = (1.0f - health) * w.game.gmstf("faifleehealthmult", 7.0f) + flee * w.game.gmstf("faifleefleemult", 0.3f);
+	// A person under iWereWolfLevelToAttack rates fleeing a werewolf player at iWereWolfFleeMod (OpenMW's vanillaRateFlee)
+	if (!def.creature && w.stats.werewolf && def.level < (int)w.game.gmstf("iwerewolfleveltoattack", 20.0f))
+		rating = w.game.gmstf("iwerewolffleemod", 100.0f);
 	if (rating != 0.0f)
 		rating += w.game.gmstf("ifightdistancebase", 20.0f) - w.game.gmstf("ffightdistancemultiplier", 0.005f) * distance;
 	return rating;
@@ -426,7 +429,16 @@ float Session::fightTermOf(int ri, float distance)
 	float bias = w.game.gmstf("ifightdistancebase", 20.0f) - w.game.gmstf("ffightdistancemultiplier", 0.005f) * distance;
 	if (!def.creature)
 		bias += (50.0f - w.disposition(ri)) * w.game.gmstf("ffightdispmult", 0.2f);
-	return (float)((r.fight >= 0 ? r.fight : def.fight) + (int)bias);
+	int fight = (r.fight >= 0 ? r.fight : def.fight) + (int)bias;
+	// People are iWerewolfFightMod readier to attack the player in wolf form, or once known as one (PCKnownWerewolf;
+	// OpenMW's isAggressive)
+	if (!def.creature)
+	{
+		auto known = w.globals.find("pcknownwerewolf");
+		if (w.stats.werewolf || (known != w.globals.end() && known->second >= 1.0f))
+			fight += (int)w.game.gmstf("iwerewolffightmod", 100.0f);
+	}
+	return (float)fight;
 }
 
 // ---- Trading (spec/trading-and-services.md; OpenMW tradewindow.cpp haggle)

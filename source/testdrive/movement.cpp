@@ -164,6 +164,12 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 		// the levitation cast the step before (the v2 kit's fly spell) lands at its animation's release: wait for it
 		if (!flyBegun && elapsed < 4.0f && (s.castPending || s.castBusy()))
 			return true;
+		// (a use that did not take, the first after Bloodmoon's ending: used again, as a player presses it again)
+		if (!flyBegun && elapsed < 4.0f && flyItem)
+		{
+			s.castItem("uber_fly");
+			return true;
+		}
 		fail("not levitating (or it ran out on the way)");
 		return false;
 	}
@@ -1037,6 +1043,18 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 					logf("drive: stuck diagnostics: fatigue %.0f of %.0f, effects:%s, screen %d, swimming %d, levitate %.0f", w.stats.fatigue, w.stats.fatigueMax,
 						fx.empty() ? " none" : fx.c_str(), (int)s.screen, (int)p.swimming, p.levitate);
 					logf("drive: stuck diagnostics: target at %.0f %.0f %.0f, last pushed back by %s", r.pos[0], r.pos[1], r.pos[2], g_playerBlock);
+					logf("drive: stuck diagnostics: controls %d (off %d), knocked %.1f, bounty %d, paused %d", (int)w.controlsEnabled, (int)w.controlsOff, w.player.knockTimer, w.bounty, (int)s.worldPaused());
+					{
+						// what the crosshair meets looking straight at the middle of the target
+						float eye[3] = { p.feet[0], p.feet[1], playerEyeZ(p) };
+						float cx = (r.boxMin[0] + r.boxMax[0]) * 0.5f, cy = (r.boxMin[1] + r.boxMax[1]) * 0.5f, cz = (r.boxMin[2] + r.boxMax[2]) * 0.5f;
+						float d[3] = { cx - eye[0], cy - eye[1], cz - eye[2] };
+						float len = sqrtf(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
+						for (float& v : d) v /= fmaxf(len, 1.0f);
+						int hit = worldPick(w, eye, d, 192.0f);
+						logf("drive: stuck diagnostics: the game's crosshair is on %s, yaw %.2f pitch %.2f, to the door %.2f, aims %d", s.target >= 0 ? w.refs[s.target].id.c_str() : "nothing", p.yaw, p.pitch, atan2f(cx - p.feet[0], cy - p.feet[1]), (int)aimsAt(s, ref));
+						logf("drive: stuck diagnostics: aimed at its middle (%.0f away, box %.0f..%.0f x %.0f..%.0f x %.0f..%.0f) the crosshair meets %s", len, r.boxMin[0], r.boxMax[0], r.boxMin[1], r.boxMax[1], r.boxMin[2], r.boxMax[2], hit >= 0 ? w.refs[hit].id.c_str() : "nothing");
+					}
 					// who stands close (a person in the way of a doorway shows here)
 					for (int i : w.loadedActors)
 					{

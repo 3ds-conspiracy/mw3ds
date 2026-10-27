@@ -59,6 +59,10 @@ struct ThirdPersonDef
 struct FirstPersonDef
 {
 	ThirdPersonDef third;
+	// Bloodmoon's werewolf seen from its eyes (tools/convert/firstperson.py werewolf): its skeleton in fp/skeletons.skl
+	// and its skin's piece (-1 / "" without the add-on)
+	int werewolfSkeleton = -1;
+	std::string werewolfPiece;
 	std::unordered_map<std::string, std::string> vfx;   // spell visual static id -> piece
 	std::unordered_map<int, std::string> ptex;          // magic effect -> its particle texture (a piece's fx shapes take it)
 	std::unordered_map<std::string, float> vfxLength;  // spell visual piece -> seconds it plays (its longest controller)
@@ -112,8 +116,9 @@ struct GameData
 	float weather[4][4][3] = {};
 	bool hasWeather = false;
 	std::vector<std::string> startScripts;        // the data's start scripts (SSCR, Tribunal's): run once a game has them
-	std::vector<std::string> addons;              // what the data was converted with besides Morrowind.esm ("tribunal")
+	std::vector<std::string> addons;              // what the data was converted with besides Morrowind.esm ("tribunal", "bloodmoon")
 	bool tribunal() const { return std::find(addons.begin(), addons.end(), "tribunal") != addons.end(); }
+	bool bloodmoon() const { return std::find(addons.begin(), addons.end(), "bloodmoon") != addons.end(); }
 	std::vector<WeatherType> weatherTypes;       // in the regions' chance order
 	float weatherHours = 20.0f;                   // game hours between weather rolls
 	WeatherClock weatherClock;

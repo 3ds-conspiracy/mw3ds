@@ -80,6 +80,12 @@ bool funcInfo(const std::string& name, char* type, std::string* sig)
 			*sig = "";
 			return true;
 		}
+		if (inList(kScEffects, stat))
+		{
+			*type = 'l';
+			*sig = "";
+			return true;
+		}
 	}
 	return false;
 }
@@ -98,6 +104,11 @@ bool instrSignature(const std::string& name, std::string* sig)
 			if (inList(kScAttrs, stat) || inList(kScSkills, stat) || inList(kScDynamics, stat))
 			{
 				*sig = "f";
+				return true;
+			}
+			if (inList(kScEffects, stat) && strcmp(prefix, "modcurrent") != 0)
+			{
+				*sig = "l";
 				return true;
 			}
 		}
@@ -235,6 +246,18 @@ std::vector<Tok> tokenize(const std::string& line)
 		}
 		else if (kind == 'o' && (text == "[" || text == "]"))
 			text = text == "[" ? "(" : ")";          // OpenMW reads brackets as parentheses
+		else if (kind == 'o' && strchr("=<>!", text[0]) && text != "->")
+		{
+			// A run of comparison characters is one operator, read by its first two (OpenMW's scanner, with a
+			// warning): = is ==, < or > then = is <= or >=, else < or >; ! is !=. Bloodmoon's plantScript has "<== 512"
+			size_t more = end;
+			while (more < n && s[more] && strchr("=<>", s[more]))
+				more++;
+			end = more;
+			text = s.substr(pos, end - pos);
+			if (text.size() > 2)
+				text = text[0] == '=' ? "==" : text[0] == '!' ? "!=" : std::string(1, text[0]) + (text[1] == '=' ? "=" : "");
+		}
 		out.push_back({ kind, text });
 		pos = end;
 	}

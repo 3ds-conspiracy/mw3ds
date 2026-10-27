@@ -64,6 +64,7 @@ struct ScriptedInput
 	int persuade = -1;                // PERSUADE:k: in a talk, admire 0 / intimidate 1 / taunt 2 / bribe 3..5
 	int weather = -1;                 // WEATHER:k: the current region's weather becomes k (at once)
 	int level = 0;                    // LEVEL:n: the player's level becomes n
+	int sleepTo = -1;                 // SLEEPTO:h: SLEEPUNTIL, but no rest when the clock already reads h (a second one after an interrupted rest)
 	int sleepUntil = -1;              // SLEEPUNTIL:h: rest until game hour h comes round (the rest menu's hour picker)
 	int sleep = 0, sleepForce = 0;    // SLEEP:h[:1|2]: sleep h hours here (1: a creature is sure to come, 2: none comes)
 	std::string moveTo;               // MOVETO:id: that reference moves 200 in front of the player (PositionCell)

@@ -47,6 +47,6 @@
 0.3 0 0 0 0 CON:set%timescale%30
 0.3 0 0 0 0 EXPECT:conerr:eq:1
 0.3 0 0 0 0 EXPECT:global:timescale:eq:15
-0.3 0 0 0 0 CON:player->becomewerewolf
+0.3 0 0 0 0 CON:player->getpcvisionbonus
 0.3 0 0 0 0 EXPECT:conerr:eq:1
 1 0 0 0
