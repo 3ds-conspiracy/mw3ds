@@ -97,8 +97,12 @@ void World::attachSpawned(int ri)
 		r.boxStart[3] = r.pos[0] + 30.0f; r.boxStart[4] = r.pos[1] + 30.0f; r.boxStart[5] = r.pos[2] + 128.0f;
 		r.fitBox();
 	}
-	float c = cosf(r.rot[2]), s = sinf(r.rot[2]);
-	float place[12] = { c, s, 0.0f, r.pos[0], -s, c, 0.0f, r.pos[1], 0.0f, 0.0f, 1.0f, r.pos[2] };
+	// (at its size, as a placement of it has: a Grizzly's record makes it 1.5, a person's race height; OpenMW's
+	// adjustScale. Unscaled, a spawned Grizzly stood two thirds of OpenMW's: case bug-spawned-scale)
+	const float across = sp != game.spawns.end() ? sp->second.size[0] : 1.0f;
+	const float up = sp != game.spawns.end() ? sp->second.size[1] : 1.0f;
+	float c = cosf(r.rot[2]) * across, s = sinf(r.rot[2]) * across;
+	float place[12] = { c, s, 0.0f, r.pos[0], -s, c, 0.0f, r.pos[1], 0.0f, 0.0f, up, r.pos[2] };
 	// (lit by the cell's light as a placement there is: the library's even light stood out dark)
 	r.anim = actorsAddFromLibrary(l->actors, l->cell, textures, dataDir, lib, ri, skel, place, l->actors.cellLight);
 	CellActor ca = {};

@@ -10,6 +10,8 @@
 #include <tuple>
 #include "testdrive/testdrive.hpp"
 #include "mwbase/session.hpp"
+#include "mwmechanics/magichelpers.hpp"
+#include "mwmechanics/magiceffects.hpp"
 #include "components/debug/debuglog.hpp"
 
 extern const char* g_playerBlock;
@@ -122,6 +124,34 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 		logf("test: ENHANCEV2: Strength %d, Speed %d, schools +%d, magicka %.0f; run %.0f, fly %.0f units a second",
 			(int)w.stats.attributes[ATTR_STRENGTH], (int)w.stats.attributes[ATTR_SPEED], schools, (float)w.stats.magickaMax,
 			s.runSpeedFor((int)w.stats.attributes[ATTR_SPEED], (int)w.stats.skills[8]), flySpeed);
+		return true;
+	}
+	// SPEEDBOOST:<points>: the kit's Fortify Speed set to that many points from now on (0: none), in place of ENHANCEV2's
+	// speed= (400 by default, which with the race weight carries the player past a ledge or a ramp's top: up the ramps of
+	// Sotha Sil he ran off and fell out of the world). Only that effect is changed: the rest of the kit keeps its own
+	if (verb == "SPEEDBOOST" && a.size() >= 2)
+	{
+		int points = std::max(0, atoi(a[1].c_str()));
+		for (size_t i = 0; i < w.effects.size();)
+		{
+			ActiveEffect& e = w.effects[i];
+			if (e.effect == EFF_FORTIFY_ATTRIBUTE && e.attribute == ATTR_SPEED && e.source == "uber ring")
+			{
+				ActiveEffect gone = e;
+				w.effects.erase(w.effects.begin() + i);
+				applyFortify(w, gone, -1.0f);
+			}
+			else
+				i++;
+		}
+		if (points > 0)
+		{
+			ActiveEffect boost = { EFF_FORTIFY_ATTRIBUTE, ATTR_SPEED, -1, (float)points, 1000000.0f, "uber ring" };
+			applyFortify(w, boost, 1.0f);
+			w.effects.push_back(boost);
+		}
+		logf("test: SPEEDBOOST %d: Speed %d, run %.0f units a second", points, (int)w.stats.attributes[ATTR_SPEED],
+			s.runSpeedFor((int)w.stats.attributes[ATTR_SPEED], (int)w.stats.skills[8]));
 		return true;
 	}
 	if (verb == "USEMADE" || verb == "EQUIPMADE" || verb == "RECHARGEMADE")

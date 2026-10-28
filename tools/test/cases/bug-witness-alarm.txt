@@ -5,7 +5,7 @@
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 SETSKILL:longblade:100
-0.3 0 0 0 0 SEED:5
+0.3 0 0 0 0 SEED:2
 0.3 0 0 0 0 JOURNAL:HH_TwinLamps3:10
 0.3 0 0 0 0 TP:18000:-56700:700:0
 6 0 0 0

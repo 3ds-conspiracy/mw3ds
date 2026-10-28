@@ -439,6 +439,11 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 			const Actor* a = w.actorOf(ri);
 			v = a ? (a->tint[0] + a->tint[1] + a->tint[2]) / (3.0f * 64.0f) : -1.0f;
 		}
+		else if (what == "refsize")         // the size it is drawn at (its draw matrix's scale: record x reference x SetScale)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a ? sqrtf(a->place[0] * a->place[0] + a->place[4] * a->place[4] + a->place[8] * a->place[8]) : -1.0f;
+		}
 		else if (what == "reflampnow")      // the lamps' and others' torches' light where it stands now (Actor::lampNow, 1: 0.5)
 		{
 			const Actor* a = w.actorOf(ri);

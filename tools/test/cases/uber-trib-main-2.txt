@@ -1899,6 +1899,9 @@
 60 0 0 0 0 WALKTO:@4200,-60,-64
 60 0 0 0 0 ACTIVATE:act_sotha_lever8a
 12 0 0 0
+# (no Fortify Speed through Sotha Sil: with it the player, at 1.25 times his stats' pace by his race's weight, ran off the
+# ramps and ledges, and no jump reached the Gearworks door's ledge)
+0.1 0 0 0 0 SPEEDBOOST:0
 120 0 0 0 0 DOORTO:Sotha_Sil,_Inner_Flooded_Halls
 10 0 0 0 0 UNTIL:cell:Sotha_Sil,_Inner_Flooded_Halls
 0.5 0 0 0
@@ -1928,10 +1931,13 @@
 120 0 0 0 0 DOORTO:Sotha_Sil,_Dome_of_Udok
 10 0 0 0 0 UNTIL:cell:Sotha_Sil,_Dome_of_Udok
 0.5 0 0 0
+# (the bridge it lowers is up for a time: the walk over it at the full pace)
+0.1 0 0 0 0 SPEEDBOOST:400
 60 0 0 0 0 ACTIVATE:act_sotha_lever_bridge
 12 0 0 0
 120 0 0 0 0 DOORTO:Sotha_Sil,_Hall_of_Mileitho
 10 0 0 0 0 UNTIL:cell:Sotha_Sil,_Hall_of_Mileitho
+0.1 0 0 0 0 SPEEDBOOST:0
 0.5 0 0 0
 60 0 0 0 0 ACTIVATE:act_sotha_lever11a
 12 0 0 0
@@ -1953,6 +1959,7 @@
 60 0 0 0 0 WALKTO:@4048,3560,12290
 120 0 0 0
 0.1 0 0 0 0 EXPECT:journal:TR_SothaSil:ge:70
+0.1 0 0 0 0 SPEEDBOOST:400
 # (immune to normal weapons: the reforged Blade of Nerevar, enchanted)
 0.3 0 0 0 0 EQUIP:nerevarblade_01_flame
 120 0 0 0 0 KILL:almalexia_warrior

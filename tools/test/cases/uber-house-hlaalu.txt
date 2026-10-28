@@ -869,10 +869,12 @@
 # gully, a drop the follower's dead-end ledge rule refuses)
 8 0 0 0
 30 0 0 0 0 WALKTO:@-300,-64000,380
-6 0 0 0
+15 0 0 0
 30 0 0 0 0 WALKTO:@-300,-63000,380
-8 0 0 0
-30 0 0 0 0 WALKTO:@-38,-62640,442
+15 0 0 0
+# (onto the rock, where he and Tarvyn go: the player runs 1.25 times his stats' pace, an Imperial man by his race's
+# weight, and went over the old spot at its foot, 442, and up; longer waits above let Tarvyn catch up)
+30 0 0 0 0 WALKTO:@-66,-62580,863
 5 0 0 0
 30 0 0 0 0 WALKTO:@223,-62280,938
 5 0 0 0

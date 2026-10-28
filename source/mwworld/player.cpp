@@ -255,7 +255,9 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		const PlayerStats& st = w.stats;
 		float speedAttr = (float)st.attributes[ATTR_SPEED], athletics = (float)st.skills[8];
 		float walk = walkSpeedFor((int)speedAttr);
-		float run = runSpeedFor((int)speedAttr, (int)athletics);          // (mwmechanics/formulas.cpp)
+		// (the race's weight scales every pace of a person: OpenMW's CharacterController::update)
+		float raceW = raceWeight(w.stats.race, w.stats.female);
+		float run = runSpeedFor((int)speedAttr, (int)athletics) * raceW;          // (mwmechanics/formulas.cpp)
 		// (a werewolf runs fWereWolfRunMult faster with its claws put away: OpenMW's Npc::getMoveSpeed)
 		if (st.werewolf && !weaponDrawn)
 			run *= w.game.gmstf("fwerewolfrunmult", 1.3f);

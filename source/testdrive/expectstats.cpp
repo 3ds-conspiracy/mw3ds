@@ -213,6 +213,13 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 	// the player's running speed over what the stats alone give (fWereWolfRunMult in wolf form, claws put away)
 	if (what == "playerrunmult")
 	{
+		float base = s.runSpeedFor(w.stats.attributes[ATTR_SPEED], w.stats.skills[8]) * s.raceWeight(w.stats.race, w.stats.female);
+		v = base > 0.0f ? w.player.runSpeed / base : 0.0f;
+		return true;
+	}
+	// playerracemult: the same over the stats alone, the race's weight in it (an Orc man 1.35)
+	if (what == "playerracemult")
+	{
 		float base = s.runSpeedFor(w.stats.attributes[ATTR_SPEED], w.stats.skills[8]);
 		v = base > 0.0f ? w.player.runSpeed / base : 0.0f;
 		return true;

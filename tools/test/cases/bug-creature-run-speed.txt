@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A running creature (one that doesn't fly) moves as fast as its run cycle carries it with the cycle sped up by its
+# Speed over its walk cycle's pace: OpenMW (and vanilla Morrowind) scale the run by the walk's velocity
+# (CharacterController::refreshMovementAnims, "MW uses the Walk animation to calculate the animation velocity even if
+# we are running"). Ours ran creatures at their walking formula: a grey wolf (Speed 40) closed 124 units a second,
+# OpenMW's about 400 (wolf side-by-side video, Isinfier Plains). A hostile wolf 1500 ahead: over 600 closer in 2 s
+3 0 0 0 0 MSG
+0.3 0 0 0 0 TP:-172000:184000:704:0+HOUR:12+GOD:2
+4 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.2 0 0 0 0 PLACE:BM_wolf_grey:1500
+0.1 0 0 0 0 ENABLE:BM_wolf_grey+HOSTILE:BM_wolf_grey
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refrun:BM_wolf_grey:eq:1+SNAP:refdist:BM_wolf_grey
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:BM_wolf_grey:lt:@-600

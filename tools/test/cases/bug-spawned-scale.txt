@@ -1,0 +1,12 @@
+# start: Seyda Neen
+# data: bloodmoon
+# A creature's record scales it (XSCL: Bloodmoon's Grizzly Bear and Plague Bear 1.5, the big horkers 1.5, the frost
+# giant 1.2): OpenMW draws every one at that size (Creature::adjustScale). Ours scaled only the ones the cells place
+# (the converter bakes it in); a Grizzly spawned (leveled lists, Call Bear's summon, PlaceAtPC) stood at 1, two thirds
+# of OpenMW's in the grizzly side-by-side
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2+HOUR:12
+2 0 0 0
+0.3 0 0 0 0 PLACE:BM_bear_black:400
+1 0 0 0 0 ENABLE:BM_bear_black
+0.1 0 0 0 0 EXPECT:refsize:BM_bear_black:ge:1.49+EXPECT:refsize:BM_bear_black:le:1.51

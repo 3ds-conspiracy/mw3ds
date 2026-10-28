@@ -709,6 +709,9 @@ bool gameLoad(GameData& g, const char* path)
 		for (int i = 0; i < 8; i++)
 			for (int s = 0; s < 2; s++)
 				r.attributes[i][s] = cJSON_GetArrayItem(cJSON_GetArrayItem(arr(it, "attributes"), i), s)->valueint;
+		if (const cJSON* wt = arr(it, "weight"))
+			for (int sx = 0; sx < 2 && sx < cJSON_GetArraySize(wt); sx++)
+				r.weight[sx] = (float)cJSON_GetArrayItem(wt, sx)->valuedouble;
 		r.playable = num(it, "playable") != 0;
 		r.beast = num(it, "beast") != 0;
 		cJSON_ArrayForEach(b, arr(it, "spells"))
@@ -991,7 +994,15 @@ bool gameLoad(GameData& g, const char* path)
 	}
 	const cJSON* sp;
 	cJSON_ArrayForEach(sp, cJSON_GetObjectItem(root, "spawn"))
-		g.spawns[sp->string] = { (int)num(sp, "actor"), str(sp, "lib"), str(sp, "type"), (int)num(sp, "skeleton") };
+	{
+		SpawnDef& d = g.spawns[sp->string];
+		d = { (int)num(sp, "actor"), str(sp, "lib"), str(sp, "type"), (int)num(sp, "skeleton") };
+		// (the size a placement of it has: the record's scale, a person's race weight and height)
+		const cJSON* size = cJSON_GetObjectItem(sp, "size");
+		if (cJSON_GetArraySize(size) == 2)
+			for (int k = 0; k < 2; k++)
+				d.size[k] = (float)cJSON_GetArrayItem(size, k)->valuedouble;
+	}
 	cJSON_ArrayForEach(ts, cJSON_GetObjectItem(root, "town_spawns"))
 	{
 		std::vector<float> v;

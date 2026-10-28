@@ -7,7 +7,7 @@
 # Ebonheart, Asciene Rane's transport to the Royal Palace; then the Brotherhood's hideout in Old Mournhold (TR_DBHunt),
 # which makes Tienius Delitian talk of official matters.
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 SEED:1
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100

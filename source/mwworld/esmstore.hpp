@@ -101,7 +101,7 @@ struct MapDef
 
 // A creature / NPC scripts place at run time (PlaceAtPC / PlaceAtMe): its actor entry, mesh library,
 // skeleton
-struct SpawnDef { int actor; std::string lib, type; int skeleton; };
+struct SpawnDef { int actor; std::string lib, type; int skeleton; float size[2] = { 1.0f, 1.0f }; };   // size: across, up
 
 struct GameData
 {

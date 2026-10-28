@@ -894,7 +894,8 @@ class Converter:
         return rel
 
     def spawn_library(self, rec):
-        """A creature / NPC placed at run time: its library (path) and skeleton index, or None."""
+        """A creature / NPC placed at run time: its library (path), skeleton index and size ([across, up]: the record's
+        scale, a person's race weight and height, which a placement carries), or None."""
         ref = {"id": rec.id, "pos": (0.0, 0.0, 0.0), "rot": (0.0, 0.0, 0.0), "scale": 1.0}
         shapes, info = (self.npcs if rec.tag == "NPC_" else self.creatures).build(rec, ref)
         if not info:
@@ -904,7 +905,9 @@ class Converter:
         for s in shapes:
             if s.get("tex") and "raw" in s:
                 self.textures.request_shape(s, s["flags"] & (FLAG_BLEND | FLAG_TEST))
-        return self.actor_library(rec.id.lower(), shapes, sk), self.skel_index[info["skeleton"]]
+        place = np.asarray(info["place"])
+        size = [round(float(np.linalg.norm(place[:3, 0])), 4), round(float(np.linalg.norm(place[:3, 2])), 4)]
+        return self.actor_library(rec.id.lower(), shapes, sk), self.skel_index[info["skeleton"]], size
 
     def skeleton(self, path):
         """Index of a shared skeleton (cells/skeletons.skl), added the first time."""

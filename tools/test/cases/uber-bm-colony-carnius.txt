@@ -763,6 +763,9 @@
 # (to her first, and he by the player before the talk: the boat takes only a follower close at hand, and a held-up
 # walk left him behind)
 120 0 0 0 0 WALKTO:veresa%alver
+# (back to him once: he stuck on the way, the player, an Imperial man, walking 1.25 times his stats' pace by his race's weight)
+60 0 0 0 0 WALKTO:tirvel%balen
+120 0 0 0 0 WALKTO:veresa%alver
 30 0 0 0 0 UNTIL:refdist:tirvel%balen:lt:400
 120 0 0 0 0 ACTIVATE:veresa%alver
 2 0 0 0 0 UNTIL:talkready
@@ -999,10 +1002,14 @@
 6 0 0 0
 # (up the tower: its top is open to the sky)
 120 0 0 0 0 FLYTO:@-201762,160794,1700
+# (floating, to rise to the bow on the tower top: the walk to it went round and round its route instead)
+0.1 0 0 0 0 FLOAT:60
 60 0 0 0 0 PICKUP:steel%longbow_carnius
 60 0 0 0 0 PICKUP:steel%arrow_carnius
 60 0 0 0 0 PICKUP:sc_hiddenkiller
 0.1 0 0 0 0 EXPECT:item:steel%longbow_carnius:ge:1+EXPECT:item:steel%arrow_carnius:ge:1
+0.1 0 0 0 0 FLOAT:off
+5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 WALKTO:@-201762,160794,1640
 0.3 0 0 0 0 EQUIP:steel%longbow_carnius
 0.3 0 0 0 0 EQUIP:steel%arrow_carnius

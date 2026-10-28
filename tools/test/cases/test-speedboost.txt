@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# SPEEDBOOST:<points> sets the v2 kit's Fortify Speed (ENHANCEV2's speed=, 400 by default) from then on, 0 for none,
+# so a case can slow the player where the kit's pace carries him off ledges and ramps (the Sotha Sil walkways)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 ENHANCEV2
+1 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:ge:400
+0.3 0 0 0 0 SPEEDBOOST:150
+1 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:le:210+EXPECT:attr:speed:ge:190
+0.3 0 0 0 0 SPEEDBOOST:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:le:70
+0.3 0 0 0 0 SPEEDBOOST:300
+1 0 0 0
+0.1 0 0 0 0 EXPECT:attr:speed:le:360+EXPECT:attr:speed:ge:340

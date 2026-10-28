@@ -40,7 +40,10 @@
 10 0 0 0 0 UNTIL:cell:Gnisis,_Temple
 # (the dice seeded before his greeting: one of his two teaches the topic "latest rumors", the Rite of the Wolf Giver's start, and
 # which one comes is a roll the profiles' earlier rolls shift)
-0.3 0 0 0 0 SEED:16
+# (up to him before the dice are seeded: the walk's own rolls vary with its pace, the player, an Imperial man, walking
+# 1.25 times his stats' pace by his race's weight; the seed then falls straight on his greeting's roll)
+60 0 0 0 0 WALKTO:zanmulk%sammalamus
+0.3 0 0 0 0 SEED:8
 60 0 0 0 0 ACTIVATE:zanmulk%sammalamus
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 BUYSPELL:zanmulk%sammalamus:heal_companion
@@ -262,7 +265,8 @@
 10 0 0 0 0 UNTIL:cell:Solstheim
 120 0 0 0 0 WALKTO:@-169184,149222,148
 120 0 0 0 0 WALKTO:@-168960,149760,256
-120 0 0 0 0 WALKTO:@-169472,149760,456
+# (flown: walking, the player slid back down the slope)
+120 0 0 0 0 FLYTO:@-169472,149760,456
 120 0 0 0 0 WALKTO:@-169984,149760,528
 120 0 0 0 0 WALKTO:@-170496,150272,600
 120 0 0 0 0 WALKTO:@-171008,150272,616
@@ -633,7 +637,8 @@
 # (the door is in a cave mouth on the sea floor: swum into from the south, where the gorge lets the player out)
 60 0 0 0 0 WALKTO:@-219473,217242,-1894
 0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
-0.4 0 1 0
+# (the timed pushes in this file are 0.8 of what they were, as the player covers 1.25 times the ground in them)
+0.32 0 1 0
 0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
 0.5 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Solstheim,_Stahlman's_Gorge
@@ -844,25 +849,25 @@
 # (each stroke aimed again and followed by a press: where the player goes into the water depends on the walk before, and past
 # the door more strokes only carry them away from it; the press opens it as soon as it is in reach)
 0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
-0.4 0 1 0
+0.32 0 1 0
 0.1 0 0 0 0 A
 0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
-0.4 0 1 0
+0.32 0 1 0
 0.1 0 0 0 0 A
 0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
-0.4 0 1 0
+0.32 0 1 0
 0.1 0 0 0 0 A
 0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
-0.4 0 1 0
+0.32 0 1 0
 0.1 0 0 0 0 A
 0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
-0.4 0 1 0
+0.32 0 1 0
 0.1 0 0 0 0 A
 0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
-0.4 0 1 0
+0.32 0 1 0
 0.1 0 0 0 0 A
 0.3 0 0 0 0 FACE:bm_ka_door_dark:mid
-0.4 0 1 0
+0.32 0 1 0
 0.1 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Solstheim,_Caves_of_Fjalding
 120 0 0 0 0 DOORTO:Solstheim,_Aesliip's_Lair
@@ -1117,6 +1122,8 @@
 3 0 0 0
 120 0 0 0 0 FLYTO:@-194333,217802,1600
 4 0 0 0
+# (dice seeded for the night's sleep: a riekling's coming broke it off before the dream)
+0.1 0 0 0 0 SEED:4
 40 0 0 0 0 SLEEPUNTIL:23
 15 0 0 0
 # (a creature of the wilds can break the rest off: the rest of the night, if so)

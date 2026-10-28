@@ -234,6 +234,8 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 5 0 0 0 0 UNTIL:following:madura_seran
+# (the pushes below were timed for the old pace: the player, an Imperial man, runs 1.25 times his stats' pace by his
+# race's weight, so each push is 0.8 of its old length to keep the same way, the one Madura Seran can follow)
 0.3 0 0 0 0 ESCORT:madura_seran
 # (she must be close when we go out: followers come through the door at the distance they had inside)
 30 0 0 0 0 WALKTO:@10,-102,-111
@@ -246,70 +248,70 @@
 0.3 0 0 0 0 SHOT
 # walked by hand in short legs (the walk driver heads for a far path grid point, and she can't keep up)
 0.3 0 0 0 0 FACE:@-88050,118400
-0.3 0 1 0
+0.24 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-87600,118150
-0.33 0 1 0
+0.264 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-87146,118193
-0.3 0 1 0
+0.24 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-86800,118050
-0.23 0 1 0
+0.184 0 1 0
 3.5 0 0 0
 0.3 0 0 0 0 FACE:@-86400,118250
-0.3 0 1 0
+0.24 0 1 0
 3.5 0 0 0
 0.3 0 0 0 0 FACE:@-86120,118497
-0.23 0 1 0
+0.184 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-85600,119000
-0.47 0 1 0
+0.376 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-85152,119520
-0.43 0 1 0
+0.344 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-85250,120000
-0.3 0 1 0
+0.24 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-85329,120402
-0.27 0 1 0
+0.216 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-85500,120950
-0.37 0 1 0
+0.296 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-85664,121472
-0.37 0 1 0
+0.296 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-86050,121750
-0.3 0 1 0
+0.24 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-86454,122006
-0.3 0 1 0
+0.24 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-86600,122400
-0.27 0 1 0
+0.216 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-86688,122784
-0.27 0 1 0
+0.216 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-86508,123004
-0.17 0 1 0
+0.136 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-86048,123464
-0.43 0 1 0
+0.344 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-85450,123480
-0.4 0 1 0
+0.32 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-84903,123497
-0.37 0 1 0
+0.296 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-84500,123750
-0.3 0 1 0
+0.24 0 1 0
 2.5 0 0 0
 0.3 0 0 0 0 FACE:@-84219,123987
-0.23 0 1 0
+0.184 0 1 0
 2.5 0 0 0
 0.1 0 0 0 0 EXPECT:refdist:madura_seran:lt:500
 120 0 0 0 0 DOORTO:Ald_Velothi,_Outpost
@@ -351,36 +353,37 @@
 3 0 0 0
 # (the walk driver would climb round over the door: step up to it by hand)
 0.3 0 0 0 0 FACE:@-87775,95560
-0.13 0 1 0
+# (the timed pushes from here on are 0.8 of what they were, as for Madura's way above)
+0.104 0 1 0
 1 0 0 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
 0.5 0 0 0
 # (the inner door: the driver opens it and then stands stuck in its swing; open it and walk through by hand)
 0.3 0 0 0 0 FACE:@3635,6320
-0.2 0 1 0
+0.16 0 1 0
 0.5 0 0 0
 0.3 0 0 0 0 A
 1.5 0 0 0
 0.3 0 0 0 0 FACE:@3640,6150
-0.1 0 1 0
+0.08 0 1 0
 1 0 0 0
 # Baladas lives on the top floor, behind the locked door of the summoning room: its key lies in a side room
 90 0 0 0 0 WALKTO:@3056,5381,256
 3 0 0 0
 0.3 0 0 0 0 FACE:@2940,5440
-0.1 0 1 0
+0.08 0 1 0
 0.3 0 0 0
 0.3 0 0 0 0 A
 2 0 0 0
 0.3 0 0 0 0 FACE:@2900,5450
-0.1 0 1 0
+0.08 0 1 0
 0.4 0 0 0
 0.3 0 0 0 0 FACE:@2850,5493
-0.1 0 1 0
+0.08 0 1 0
 0.4 0 0 0
 0.3 0 0 0 0 FACE:@2736,5594
-0.1 0 1 0
+0.08 0 1 0
 0.5 0 0 0
 # (the key lies on a table under a sheet of paper: take the paper first)
 60 0 0 0 0 PICKUP:sc_paper%plain
@@ -389,13 +392,13 @@
 2 0 0 0
 0.1 0 0 0 0 EXPECT:item:key_summoning_room:ge:1
 0.3 0 0 0 0 FACE:@2734,5593
-0.1 0 1 0
+0.08 0 1 0
 0.5 0 0 0
 0.3 0 0 0 0 FACE:@2900,5450
-0.13 0 1 0
+0.104 0 1 0
 0.5 0 0 0
 0.3 0 0 0 0 FACE:@3056,5381
-0.1 0 1 0
+0.08 0 1 0
 0.5 0 0 0
 60 0 0 0 0 WALKTO:@3056,5381,256
 3 0 0 0
@@ -459,13 +462,13 @@
 0.3 0 0 0 0 A
 1.5 0 0 0
 0.3 0 0 0 0 FACE:@2870,6450
-0.1 0 1 0
+0.08 0 1 0
 0.3 0 0 0
 0.3 0 0 0 0 FACE:@2700,6400
-0.1 0 1 0
+0.08 0 1 0
 0.3 0 0 0
 0.3 0 0 0 0 FACE:@2590,6320
-0.1 0 1 0
+0.08 0 1 0
 0.3 0 0 0
 0.3 0 0 0 0 FACE:@2563,6208
 0.3 0 0 0 0 A
@@ -558,9 +561,9 @@
 2 0 0 0
 40 0 0 0 0 WALKTO:@-338,-20,-128
 3 0 0 0
-# (the barracks door: the driver's DOORTO stops 100 short of it)
+# (the barracks door: the driver's DOORTO stops 100 short of it; in reach and in the crosshair from there, the push that
+# brought it closer took the player, at 1.25 times his stats' pace by his race's weight, past it)
 0.3 0 0 0 0 FACE:@-356,-129
-0.17 0 1 0
 # (faced again: Oritius and Arius are at the player's back here, and a blow shoves the aim off the door)
 0.3 0 0 0 0 FACE:@-356,-129
 0.3 0 0 0 0 A
@@ -598,7 +601,6 @@
 3 0 0 0
 # (the barracks door: the driver's DOORTO stops 100 short of it)
 0.3 0 0 0 0 FACE:@-356,-129
-0.17 0 1 0
 0.3 0 0 0 0 A
 3 0 0 0
 120 0 0 0 0 DOORTO:Gnisis,_Madach_Tradehouse

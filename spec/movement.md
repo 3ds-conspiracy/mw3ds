@@ -13,8 +13,19 @@ Mirrors the OpenMW wiki page *Research:Movement*. Rules read from OpenMW's `mwcl
 - **Swim:** (run or walk) x `(1 + 0.01 x Swift Swim)` x `(fSwimRunBase + 0.01 x Athletics x fSwimRunAthleticsMult)`.
 - **Fly (Levitate, or a flying creature):** `fMinFlySpeed + 0.01 x (Speed + Levitate) x (fMaxFlySpeed -
   fMinFlySpeed)`, times the encumbrance term.
-- **Creatures:** walk `fMinWalkSpeedCreature + 0.01 x Speed x (fMaxWalkSpeedCreature - fMinWalkSpeedCreature)`; they run
-  at their walking speed; swim as above from walk.
+- **Race weight (people):** every pace of an NPC or the player is scaled by the race's weight for their sex (Orc man
+  1.35, woman 1.1; Nord 1.25 / 1.0; Imperial 1.25 / 0.95; Redguard and Argonian 1.1 / 1.0; Dark Elf, Breton 1.0 / 0.9;
+  Wood Elf 0.95 / 0.9; Khajiit 1.0 / 0.95; High Elf 1.0), unless the "normalise race speed" setting is on (this game
+  has no such setting). `CharacterController::update` multiplies the movement by it, and by the reference's own scale
+  (`SetScale`) for everyone (2026-10-27, `bug-race-weight-speed`). The converter already wrote the weights; the engine
+  read none before.
+- **Creatures:** walk `fMinWalkSpeedCreature + 0.01 x Speed x (fMaxWalkSpeedCreature - fMinWalkSpeedCreature)`. A
+  creature that does not fly runs its RUN cycle sped up by its walking speed over its WALK cycle's pace (`refreshMovementAnims`:
+  "MW uses the Walk animation to calculate the animation velocity even if we are running"): a grey wolf (Speed 40) walks
+  123 and runs about 400 (`bug-creature-run-speed`); one whose walk cycle does not move runs its run cycle's own pace x
+  its size; fliers and creatures without a moving run cycle run at their walking speed. Swim as above from walk.
+- **Spawned creatures' size:** a creature record's scale (Grizzly 1.5, big horkers 1.5, frost giant 1.2) applies to ones
+  spawned (leveled lists, summons, PlaceAtMe) as it does to ones placed in a cell (`bug-spawned-scale`).
 - **Over the limit** (load > 1): speed 0, levitating or not, and no jump.
 - **Paralyzed, knocked down or dead:** 0.
 - Strafing only (sideways): x 0.75.

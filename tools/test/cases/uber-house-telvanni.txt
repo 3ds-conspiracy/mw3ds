@@ -413,6 +413,9 @@
 # south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
 120 0 0 0 0 FLYTO:@-87725,95456,1317
 0.1 0 0 0 0 FLOAT:60:doors
+# (to the front of the door first: the player runs 1.25 times his stats' pace, an Imperial man by his race's weight,
+# and the door's walk from the landing went past it up onto the hill)
+30 0 0 0 0 WALKTO:@-87800,95560,1340
 120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
 0.5 0 0 0
@@ -654,6 +657,7 @@
 # south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
 120 0 0 0 0 FLYTO:@-87725,95456,1317
 0.1 0 0 0 0 FLOAT:60:doors
+30 0 0 0 0 WALKTO:@-87800,95560,1340
 120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
 0.5 0 0 0
@@ -759,6 +763,7 @@
 # south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
 120 0 0 0 0 FLYTO:@-87725,95456,1317
 0.1 0 0 0 0 FLOAT:60:doors
+30 0 0 0 0 WALKTO:@-87800,95560,1340
 120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
 0.5 0 0 0
@@ -2079,6 +2084,7 @@
 # south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
 120 0 0 0 0 FLYTO:@-87725,95456,1317
 0.1 0 0 0 0 FLOAT:60:doors
+30 0 0 0 0 WALKTO:@-87800,95560,1340
 120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
 0.5 0 0 0
@@ -2142,6 +2148,7 @@
 # south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
 120 0 0 0 0 FLYTO:@-87725,95456,1317
 0.1 0 0 0 0 FLOAT:60:doors
+30 0 0 0 0 WALKTO:@-87800,95560,1340
 120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
 0.5 0 0 0

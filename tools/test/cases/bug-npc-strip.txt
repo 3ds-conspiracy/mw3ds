@@ -8,5 +8,7 @@
 3 0 0 0 0 EXPECT:refdressed:fargoth:eq:0+SNAP:refmeshes:fargoth
 60 0 0 0 0 LOOT:fargoth:common_shirt_04
 60 0 0 0 0 LOOT:fargoth:common_pants_04
+# (NPCs are looked at twice a second for what they still wear: a moment for the next look)
+1 0 0 0
 2 0 0 0 0 EXPECT:refdressed:fargoth:eq:1
 1 0 0 0

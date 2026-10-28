@@ -22,6 +22,7 @@
 0.3 0 0 0 0 TP:24817:-31814:1300:90
 3 0 0 0
 0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:400
-12 0 1 0
+# (most of full tilt: the player, an Imperial man, runs 1.25 times his stats' pace by his race's weight, faster than Edras Oril)
+12 0 0.7 0
 15 0 0 0
 0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500

@@ -57,7 +57,9 @@
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@-15263,-12790,541
 0.3 0 0 0 0 FACE:@-15259,-12649
-0.17 0 1 0
+# (the timed pushes in this file are 0.8 of what they were, as the player covers 1.25 times the ground in them, an Imperial
+# man at his race's weight)
+0.136 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Balmora,_Caius_Cosades'_House
 0.5 0 0 0
@@ -92,7 +94,7 @@
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@-22148,-13732,638
 0.3 0 0 0 0 FACE:@-21885,-13719
-0.1 0 1 0
+0.08 0 1 0
 0.3 0 0 0 0 A
 2 0 0 0
 
@@ -116,7 +118,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 2 0 0 0
 0.3 0 0 0 0 FACE:@3456,-15807
-0.5 0 1 0
+0.4 0 1 0
 0.3 0 0 0 0 A
 3 0 0 0
 10 0 0 0 0 UNTIL:cell:Arkngthand,_Hall_of_Centrifuge
@@ -135,7 +137,7 @@
 3 0 0 0
 120 0 0 0 0 WALKTO:@-22148,-13732,638
 0.3 0 0 0 0 FACE:@-21885,-13719
-0.1 0 1 0
+0.08 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Fighters
 0.5 0 0 0
@@ -544,7 +546,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-27202,149237
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Ashkhan's_Yurt
 0.5 0 0 0
@@ -584,11 +586,11 @@
 60 0 0 0 0 WALKTO:@500,200,-290
 60 0 0 0 0 WALKTO:@0,250,-300
 0.3 0 0 0 0 FACE:@-300,-100
-0.63 0 1 0
+0.504 0 1 0
 0.3 0 0 0 0 FACE:@-300,-700
-0.73 0 1 0
+0.584 0 1 0
 0.3 0 0 0 0 FACE:@-420,-891
-0.17 0 1 0
+0.136 0 1 0
 120 0 0 0 0 WALKTO:@-420,-891,-168
 120 0 0 0 0 DOORTO:Urshilaku,_Laterus_Burial
 3 0 0 0
@@ -643,7 +645,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-27202,149237
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Ashkhan's_Yurt
 0.5 0 0 0
@@ -662,7 +664,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-26992,151768
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 3 0 0 0
 60 0 0 0 0 ACTIVATE:nibani_maesa
@@ -1160,7 +1162,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-26992,151768
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Wise_Woman's_Yurt
 0.5 0 0 0
@@ -1183,7 +1185,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-26992,151768
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 5 0 0 0
 120 0 0 0 0 ACTIVATE:nibani_maesa
@@ -1205,7 +1207,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-27202,149237
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Ashkhan's_Yurt
 0.5 0 0 0
@@ -1294,14 +1296,14 @@
 40 0 0 0 0 WALKTO:@-3855,1544,121
 40 0 0 0 0 WALKTO:@-4467,1485,71
 0.3 0 0 0 0 FACE:@-6360,1498
-2 0 1 0
+1.6 0 1 0
 0.2 0 0 0 0 DOWN
-0.33 0 1 0
-0.33 0 1 0
-0.33 0 1 0
-0.33 0 1 0
-0.33 0 1 0
-0.33 0 1 0
+0.264 0 1 0
+0.264 0 1 0
+0.264 0 1 0
+0.264 0 1 0
+0.264 0 1 0
+0.264 0 1 0
 40 0 0 0 0 WALKTO:@-6551,965,160
 40 0 0 0 0 WALKTO:@-6659,390,160
 40 0 0 0 0 WALKTO:@-7176,185,160
@@ -1350,7 +1352,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-27202,149237
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Ashkhan's_Yurt
 0.5 0 0 0
@@ -1427,7 +1429,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-27202,149237
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Ashkhan's_Yurt
 0.5 0 0 0
@@ -1917,7 +1919,7 @@
 0.9 0 0 0 0 R
 0.2 0 0 0
 1 0 0 0 0 FACE:@246,703
-0.5 0 1 0
+0.4 0 1 0
 0.5 0 0 0
 120 0 0 0 0 ACTIVATE:neloth
 1.5 0 0 0
@@ -1992,7 +1994,8 @@
 0.5 0 0 0
 # (the hill between the strider and Arvs-Drelen is steeper than 46 degrees in places: fly over it, down to the ground
 # south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
-120 0 0 0 0 FLYTO:@-87725,95456,1317
+# (nearer the door, in front of it: from the old spot further south-east the faster walk up went past it onto the hill)
+120 0 0 0 0 FLYTO:@-87790,95520,1330
 0.1 0 0 0 0 FLOAT:60
 120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
@@ -2354,7 +2357,7 @@
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@-26992,151768
-0.33 0 1 0
+0.264 0 1 0
 0.3 0 0 0 0 A
 3 0 0 0
 60 0 0 0 0 ACTIVATE:nibani_maesa
@@ -2401,10 +2404,18 @@
 5 0 0 0
 # she can stall at the camp's rim: walk up to her first
 60 0 0 0 0 WALKTO:@94809,134585,1000
+# (a slower pace with Sinnammu Mirpal, the kit's Fortify Speed 100 instead of 400: the player, at 1.25 times his stats' pace by his
+# race's weight, left her on the camp's rim and again on the climb to Ald Daedroth)
+0.1 0 0 0 0 SPEEDBOOST:100
 0.3 0 0 0 0 ESCORT:sinnammu_mirpal
+# (time for her to set out, and pauses on the first steps: she stayed on the camp's rim when the player went straight on)
+10 0 0 0
 120 0 0 0 0 WALKTO:@95198,134070,921:dive
+8 0 0 0
 120 0 0 0 0 WALKTO:@94997,134526,869:dive
+8 0 0 0
 120 0 0 0 0 WALKTO:@94406,134974,877:dive
+8 0 0 0
 400 0 0 0 0 WALKTO:@94463,135393,902:dive
 400 0 0 0 0 WALKTO:@94759,136086,914:dive
 120 0 0 0 0 WALKTO:@94940,136624,821:dive
@@ -2491,6 +2502,7 @@
 0.3 0 0 0 0 ESCORT:-
 60 0 0 0 0 UNTIL:journal:B2_AhemmusaSafe:ge:40
 0.1 0 0 0 0 EXPECT:journal:B2_AhemmusaSafe:ge:40
+0.1 0 0 0 0 SPEEDBOOST:400
 120 0 0 0 0 ACTIVATE:sinnammu_mirpal
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:accompany_you
@@ -3079,9 +3091,9 @@
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@4019,5065,14149
 0.3 0 0 0 0 FACE:@4037,5302
-0.17 0 1 0
+0.136 0 1 0
 0.1 0 1 0 1
-0.33 0 1 0
+0.264 0 1 0
 10 0 0 0 0 UNTIL:journal:C3_DestroyDagoth:ge:50
 0.1 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:50
 # Azura's farewell holds the player for a while, as the Incarnate movie did: wait it out

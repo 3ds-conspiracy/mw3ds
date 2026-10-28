@@ -685,6 +685,9 @@ def main():
             actor_records.append(rec)
             actor_cells.append(set())
         spawns[sid] = {"actor": actor_index[k], "lib": made[0], "skeleton": made[1], "type": rec.tag}
+        # (its size, as a placement has it: a Grizzly's record 1.5, a person's race height; OpenMW's adjustScale)
+        if made[2] != [1.0, 1.0]:
+            spawns[sid]["size"] = made[2]
     print(f"placeable at run time: {len(spawns)} creatures / NPCs", flush=True)
     owned_refs, owner_mismatch = 0, []
     for c in cells:

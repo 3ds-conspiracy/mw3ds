@@ -1339,7 +1339,7 @@
 # MS_MatchMaker: Marena Gilnith (Great Bazaar) wants to meet a man; Goval Ralen (Temple Courtyard) is the one
 # (dice from here on seeded: the date's outcome is the script's own Random 100, and the rolls before it shift with
 # any change to what came before)
-0.1 0 0 0 0 SEED:8
+0.1 0 0 0 0 SEED:11
 120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
 10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
 0.5 0 0 0
@@ -1700,6 +1700,9 @@
 10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Gedna_Relvel's_Tomb
 0.5 0 0 0
 120 0 0 0 0 WALKTO:act_plague_rock3
+# (onto the floor stone from the east, as trib-standing-pc does: coming from the door the walk ended at its edge, the
+# feet past the stone's box, and it never sank)
+60 0 0 0 0 WALKTO:@-1990,1944,-560
 120 0 0 0 0 WALKTO:@-2158,1944,-585
 5 0 0 0
 0.1 0 0 0 0 EXPECT:journal:MS_CrimsonPlague:eq:140

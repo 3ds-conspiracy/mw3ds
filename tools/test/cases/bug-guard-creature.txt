@@ -7,7 +7,7 @@
 0.3 0 0 0 0 GOTO:Balmora
 3 0 0 0
 40 0 0 0 0 WALKTO:hlaalu%guard_outside
-1 0 0 0 0 PLACE:nix-hound:400
+1 0 0 0 0 PLACE:nix-hound:700
 0.5 0 0 0 0 EXPECT:refcombat:nix-hound:eq:1
 20 0 0 0
 0.1 0 0 0 0 EXPECT:dead:nix-hound

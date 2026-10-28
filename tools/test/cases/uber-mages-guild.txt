@@ -388,11 +388,18 @@
 120 0 0 0 0 WALKTO:@-4400,-22000,912
 120 0 0 0 0 WALKTO:@-4300,-22400,816
 120 0 0 0 0 WALKTO:@-4000,-22900,712
+# (a pause after each step of the climb for Itermerel: the player runs 1.25 times his stats' pace, an Imperial man by
+# his race's weight, and the escort fell behind on the hill and stuck)
 120 0 0 0 0 WALKTO:@-3800,-23400,680
+8 0 0 0
 120 0 0 0 0 WALKTO:@-3800,-23900,728
+8 0 0 0
 120 0 0 0 0 WALKTO:@-4000,-24400,968
+8 0 0 0
 120 0 0 0 0 WALKTO:@-4300,-24900,1072
+8 0 0 0
 120 0 0 0 0 WALKTO:@-4864,-25344,784
+8 0 0 0
 120 0 0 0 0 WALKTO:@-5376,-25856,568
 120 0 0 0 0 WALKTO:@-5700,-26200,600
 120 0 0 0 0 WALKTO:@-5120,-26112,648

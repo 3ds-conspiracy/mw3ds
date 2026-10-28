@@ -149,6 +149,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	float knockdownOdds(int agility);
 	float fallDamage(float height, int acrobatics, float jump);
 	float actorWalkSpeed(int ref);
+	float raceWeight(const std::string& race, bool female);   // the race's weight for a sex (1: no such race)
 	float normalWeaponResist(int ref);
 	float fleeRatingOf(int ref, float distance);
 	float actorHalfLength(int ref);                      // collision box half length (OpenMW's getHalfExtents().y())

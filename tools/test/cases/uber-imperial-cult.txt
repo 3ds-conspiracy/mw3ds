@@ -1428,6 +1428,10 @@
 30 0 0 0 0 WALKTO:@225,2162,-1182
 60 0 0 0 0 WALKTO:@390,1844,-1182
 30 0 0 0 0 WALKTO:@417,1833,-1281
+# (the two fought here, before the way down: they reach the player sooner now people run by their race's weight, and
+# their blows on the way down pushed the player west onto the pit's wall)
+120 0 0 0 0 KILL:meryaran
+120 0 0 0 0 KILL:carecalmo
 60 0 0 0 0 WALKTO:@305,1300,-1426
 120 0 0 0 0 WALKTO:@2350,749,-1168
 120 0 0 0 0 KILL:carecalmo

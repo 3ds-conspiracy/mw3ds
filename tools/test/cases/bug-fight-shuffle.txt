@@ -10,10 +10,10 @@
 30 0 0 0 0 WALKTO:fargoth
 0.3 0 0 0 0 FACE:fargoth
 0.3 0 0 0 0 HOSTILE:fargoth
-2 0 0 0
+2.5 0 0 0
 0.3 0 0 0 0 EXPECT:refcombat:fargoth:eq:1
 1.2 0 -1 0
 0.01 0 0 0 0 EXPECT:refgroup:fargoth:Run+SNAP:refanimtime:fargoth
-2 0 0 0
+2.5 0 0 0
 0.3 0 -1 0
 0.01 0 0 0 0 EXPECT:refgroup:fargoth:Run+EXPECT:refanimtime:fargoth:ge:@-0.2

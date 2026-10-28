@@ -32,6 +32,11 @@
 0.5 0 0 0 0 B
 1 0 0 0
 0.3 0 0 0 0 SHOT
+# (the two smugglers who turn on the player once Dandsa agrees, fought off first, as in bug-e3-npcwalk: Dandsa runs at
+# whoever attacks the player, and after Balis Sari on the ledge above she pressed against the rock)
+120 0 0 0 0 KILL:alonisea%varys
+120 0 0 0 0 KILL:balis%sari
+10 0 0 0
 # (45 s: Balis Sari, after the player, waits behind the cave's shut door now and meets them in the doorway)
 45 0 0 0 0 WALKTO:ex_cave_door_01
 40 0 0 0

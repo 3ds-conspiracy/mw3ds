@@ -1,10 +1,12 @@
 # A slow creature chasing the player kept its legs still: a steam centurion runs 43 units a second, and the chase took
 # under 60 a second for getting nowhere, so after 2 s it played its Idle (later its Walk) while it ran on, a glide
 # ("skating after a Greater Fireball": the blast landed about then). Stuck now means under a third of its own pace
+# (it starts 2800 away: a creature on its feet runs its run cycle sped up by its walk, so the centurion covers 300 a second
+# and was on the player before the checks when it started 550 away)
 1 0 0 0 0 GOD+SEED:1+SETATTR:intelligence:100+SETATTR:willpower:100+SETATTR:luck:100+SETSKILL:destruction:100+SPELL:fireball_large
 3 0 0 0 0 TP:74800:111100:1260:90
 1 0 0 0 0 HIDEACTORS:3000+WEATHER:0+HOUR:13
-0.6 0 0 0 0 PLACEAT:centurion_steam:75350:111100:1200
+0.6 0 0 0 0 PLACEAT:centurion_steam:77600:111100:1200
 0.3 0 0 0 0 HOSTILE:centurion_steam
 2.5 0 0 0 0
 0.1 0 0 0 0 CASTAT:centurion_steam:fireball_large+FILL

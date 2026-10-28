@@ -195,7 +195,10 @@
 0.1 0 0 0 0 FLOAT:off
 5 0 0 0 0 UNTIL:effect:10:eq:0
 0.1 0 0 0 0 EXPECT:effect:10:eq:0
-1 0 1 0 0 DOWN
+# (a shorter swim out, then straight down to the depth it reached before: the player, an Imperial man, swims 1.25 times
+# his stats' pace by his race's weight, and the old second's swim took him to the canal's edge, out of the water)
+0.6 0 1 0 0 DOWN
+1 0 0 0 0 DOWN
 45 0 0 0
 0.1 0 0 0 0 EXPECT:refenabled:puzzle_canal_bridge_a:eq:1
 0.1 0 0 0 0 FLOAT:60
