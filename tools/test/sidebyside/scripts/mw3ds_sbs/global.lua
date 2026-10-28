@@ -76,6 +76,14 @@ local function act(s, player)
 				o:teleport(player.cell, util.vector3(tonumber(a[3]), tonumber(a[4]), tonumber(a[5])), { onGround = true })
 				spawned[a[2]] = o
 			end
+		elseif a[1] == 'attack' then
+			-- attack:<id>: that spawned actor goes for the player (its Combat package)
+			local o = spawned[a[2]]
+			if o and o:isValid() then
+				o:sendEvent('MW3DS_SBS_Attack', { target = player })
+			else
+				print(string.format('MW3DS-SBS scene: no spawned %s to attack with', a[2]))
+			end
 		elseif a[1] == 'travel' then
 			-- travel:<id>:x:y:z: that actor walks there on OpenMW's own AI (its Travel package), from where it is now
 			local o = spawned[a[2]]

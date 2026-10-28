@@ -35,7 +35,8 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
                           plain shot of the world)
     spawn=id [dist=d]     a new actor (a creature) 250 (d) units ahead of the camera, facing it, is the shot's actor
     do=step;step... after=t   a scene step, OpenMW side only (--pc-only): goto:<cell>:x:y:z, journal:<quest>:<n>,
-                          give:<id>, kill:<id>, group:<id>:<group>, global:<name>:<n>; the shot `after` seconds later,
+                          give:<id>, kill:<id>, group:<id>:<group>, global:<name>:<n>, spawn:<id>:x:y:z,
+                          attack:<id> (a spawned one goes for the player); the shot `after` seconds later,
                           the world going on from there for the next shot (the final scene: tools/test/cases/
                           scratch/final-scene.txt is our side)
     vfx=static pos=x,y,z after=t,...   that spell visual (a STAT the magic effects name) played on its own at pos and
