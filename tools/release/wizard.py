@@ -358,15 +358,6 @@ class Wizard:
         ttk.Button(f, text="3DS saves to PC...", command=self.saves_to_pc).grid(row=row, column=1, sticky="w", **pad)
         row += 1
 
-        ttk.Label(f, text="Output").grid(row=row, column=0, sticky="nw", **pad)
-        self.output_kind = tk.StringVar(value=self.settings.get("output_kind", "cia"))
-        o = ttk.Frame(f)
-        o.grid(row=row, column=1, columnspan=2, sticky="w", **pad)
-        ttk.Radiobutton(o, text="One CIA with the game inside (about 1 GB; install with FBI)",
-                        variable=self.output_kind, value="cia").pack(anchor="w")
-        ttk.Radiobutton(o, text="Small CIA + a 3ds\\mw3ds\\data folder to copy to the SD card (faster to install)",
-                        variable=self.output_kind, value="sd").pack(anchor="w")
-        row += 1
         ttk.Label(f, text="Save to").grid(row=row, column=0, sticky="w", **pad)
         self.out_dir = tk.StringVar(value=self.settings.get("out_dir", str(RELEASE / "output")))
         ttk.Entry(f, textvariable=self.out_dir).grid(row=row, column=1, sticky="ew", **pad)
@@ -421,7 +412,7 @@ class Wizard:
 
     def save_settings(self):
         s = {"morrowind": self.morrowind.get(), "console": self.console.get(), "language": self.language.get(),
-             "plugins": self.chosen_plugins(), "mods": self.mods.get(), "output_kind": self.output_kind.get(),
+             "plugins": self.chosen_plugins(), "mods": self.mods.get(),
              "out_dir": self.out_dir.get(), "work": self.work.get(), "pc_saves": self.pc_saves.get(),
              "tribunal": self.tribunal.get(), "bloodmoon": self.bloodmoon.get()}
         try:
@@ -565,7 +556,7 @@ class Wizard:
         self.log.config(state="disabled")
         job = dict(morrowind=folder, work=work, out=out, old=self.console.get() == "old",
                    encoding=dict(LANGUAGES).get(self.language.get(), "win1252"), plugins=self.chosen_plugins(),
-                   mods=self.mods.get(), sd=self.output_kind.get() == "sd", tribunal=self.tribunal.get(),
+                   mods=self.mods.get(), tribunal=self.tribunal.get(),
                    bloodmoon=self.bloodmoon.get(),
                    saves=pc_save_files(folder) if self.pc_saves.get() else [])
         threading.Thread(target=self.run, args=(job,), daemon=True).start()
@@ -616,7 +607,6 @@ class Wizard:
         cmd += ["--old3ds"] if job["old"] else []
         cmd += ["--tribunal"] if job.get("tribunal") else []
         cmd += ["--bloodmoon"] if job.get("bloodmoon") else []
-        cmd += ["--no-data"] if job["sd"] else []
         cmd += ["--small"] if job.get("small") else []        # (only the Balmora area: for trying the converter out)
         say(f"language: {job['encoding']}, plugins: {', '.join(job['plugins']) or 'none'}")
         say("running: " + " ".join(cmd[1:]))
@@ -646,14 +636,6 @@ class Wizard:
         # (moved, not copied: a second gigabyte for nothing; the next run packs a new one)
         shutil.move(cia, out / "mw3ds.cia")
         say(f"CIA: {out / 'mw3ds.cia'}")
-        if job["sd"]:
-            data = work / "out" / (("o3ds" if job["old"] else "data") + trib)
-            dest = out / "3ds" / "mw3ds" / "data"
-            say(f"copying the data to {dest} ...")
-            if dest.exists():
-                shutil.rmtree(dest)
-            shutil.copytree(data, dest)
-            say("data copied: put the 3ds folder on the root of the SD card (it merges with the one there).")
         if job["saves"]:
             data = work / "out" / (("o3ds" if job["old"] else "data") + trib)
             say(f"converting {len(job['saves'])} PC saves ...")
@@ -744,8 +726,7 @@ class Wizard:
         mins = (time.time() - self.t0) / 60
         self.status.config(text=f"done in {mins:.0f} min" if ok else "stopped")
         if ok and not self.dry_run:
-            how = ("Copy the 3ds folder to the root of your SD card, then install mw3ds.cia with FBI."
-                   if job["sd"] else "Install mw3ds.cia with FBI (or another CIA installer).")
+            how = "Install mw3ds.cia with FBI (or another CIA installer)."
             if job.get("saves_out"):
                 how += (f"\n\nYour {len(job['saves_out'])} PC saves are in 3ds\\mw3ds\\saves in the output folder. "
                         "Copy that 3ds folder to the root of the SD card (it merges with the one there): they end up "
