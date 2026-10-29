@@ -172,14 +172,16 @@ bool Session::brewPotion()
 		return false;
 	}
 	potion.name = effectLabel(potion.effects[0].effect, potion.effects[0].skill, potion.effects[0].attribute) + " Potion";
-	// The look of a bought potion
+	// The look of a bought potion: the one first by id (the objects map's own order follows where its keys are in memory)
+	const Object* look = nullptr;
 	for (auto& kv : w.game.objects)
-		if (kv.second.recType == REC_ALCH && kv.second.iconIx >= 0)
-		{
-			potion.icon = kv.second.icon;
-			potion.iconIx = kv.second.iconIx;
-			break;
-		}
+		if (kv.second.recType == REC_ALCH && kv.second.iconIx >= 0 && (!look || kv.first < look->id))
+			look = &kv.second;
+	if (look)
+	{
+		potion.icon = look->icon;
+		potion.iconIx = look->iconIx;
+	}
 	// The same potion again stacks with the first
 	std::string key;
 	for (auto& e : potion.effects)

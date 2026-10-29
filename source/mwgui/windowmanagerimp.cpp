@@ -184,6 +184,21 @@ void Session::openScreen(Screen s)
 		return;
 	}
 	screen = s;
+	// The race menu starts on the first race of its list (drawRace): the player is that race from the moment it opens,
+	// not a frame later, so the face drawn is the one read ahead behind the boat door's loading screen (preloadRacePreview)
+	// and not first the old race's, read for one frame
+	if (s == SCR_RACE)
+		for (auto& r : w.game.races)
+			if (r.playable)
+			{
+				if (lower(w.stats.race) != lower(r.id))
+				{
+					w.stats.race = r.id;
+					w.stats.head.clear();
+					w.stats.hair.clear();
+				}
+				break;
+			}
 	list = UiList();
 	list2 = UiList();
 	grid = UiGrid();

@@ -203,6 +203,112 @@ struct InstallHandler
 } s_installHandler;
 }
 
+// The console's operator new and delete (components/debug/debuglog.cpp): a cell's read takes its blocks from the cells'
+// arena (platform/cellarena.hpp CellScope), and a block goes back to the arena it came from
+void* operator new(size_t n)
+{
+	if (n == 0)
+		n = 1;
+	if (void* p = cellScopeAlloc(n))
+		return p;
+	for (;;)
+	{
+		if (void* p = malloc(n))
+			return p;
+		if (void* p = arenaOverflowAlloc(n))
+			return p;
+		std::new_handler h = std::get_new_handler();
+		if (!h)
+			abort();
+		h();
+	}
+}
+
+void* operator new[](size_t n)
+{
+	return operator new(n);
+}
+
+void operator delete(void* p) noexcept
+{
+	if (p && !arenaRelease(p))
+		free(p);
+}
+
+void operator delete[](void* p) noexcept
+{
+	operator delete(p);
+}
+
+void operator delete(void* p, size_t) noexcept
+{
+	operator delete(p);
+}
+
+void operator delete[](void* p, size_t) noexcept
+{
+	operator delete(p);
+}
+
+static size_t s_holesKb[4];
+
+bool heapHoles(size_t kb[4])
+{
+	char line[256];
+	if (!heapMapLine(line, sizeof(line)))
+		return false;
+	memcpy(kb, s_holesKb, sizeof(s_holesKb));
+	return true;
+}
+
+// The heap's map in a line (platform/memstat.hpp): the free space by the size of its holes, and the blocks in use
+// pinned between two free ones of 16 KB or more (what keeps the free space from merging back into one piece)
+bool heapMapLine(char* out, size_t n)
+{
+	if (!s_ready)
+		return false;
+	EnterCriticalSection(&s_lock);
+	size_t freeBy[4] = {}, pinBy[4] = {}, pinBytes = 0;
+	int holes = 0;
+	Chunk* prevFree = nullptr;
+	Chunk* prevUsed = nullptr;
+	bool usedAfterBigFree = false;
+	for (Chunk* c = (Chunk*)s_base; (char*)c < s_top && (char*)c < s_end; c = after(c))
+	{
+		size_t sz = sizeOf(c);
+		if (!sz)
+			break;
+		if (c->head & kUsed)
+		{
+			// a run of blocks in use right after a big hole: pinned if another big hole follows it
+			if (prevFree && sizeOf(prevFree) >= 16 * 1024)
+				usedAfterBigFree = true, prevUsed = c, pinBytes = 0;
+			if (usedAfterBigFree)
+				pinBytes += sz;
+			prevFree = nullptr;
+		}
+		else
+		{
+			holes++;
+			freeBy[sz >= (1536u << 10) ? 3 : sz >= (256u << 10) ? 2 : sz >= (16u << 10) ? 1 : 0] += sz;
+			if (usedAfterBigFree && sz >= 16 * 1024 && prevUsed)
+				pinBy[pinBytes >= (256u << 10) ? 3 : pinBytes >= (16u << 10) ? 2 : pinBytes >= 1024 ? 1 : 0]++;
+			usedAfterBigFree = false;
+			prevFree = c;
+		}
+	}
+	LeaveCriticalSection(&s_lock);
+	s_holesKb[0] = freeBy[0] >> 10;
+	s_holesKb[1] = freeBy[1] >> 10;
+	s_holesKb[2] = freeBy[2] >> 10;
+	s_holesKb[3] = freeBy[3] >> 10;
+	snprintf(out, n, "%d holes; free in holes <16K %u KB, 16-256K %u KB, 256K-1.5M %u KB, >1.5M %u KB; pins between big holes "
+		"<1K %u, 1-16K %u, 16-256K %u, >256K %u", holes, (unsigned)(freeBy[0] >> 10), (unsigned)(freeBy[1] >> 10),
+		(unsigned)(freeBy[2] >> 10), (unsigned)(freeBy[3] >> 10), (unsigned)pinBy[0], (unsigned)pinBy[1], (unsigned)pinBy[2],
+		(unsigned)pinBy[3]);
+	return true;
+}
+
 // (inside a nativeOutsideEnter / Leave pair, this thread allocates outside the arena: the native renderer's own buffers,
 // which the console keeps in VRAM and linear memory, not the C++ heap)
 static thread_local int tl_outside = 0;

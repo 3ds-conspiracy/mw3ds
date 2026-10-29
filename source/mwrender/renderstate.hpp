@@ -8,6 +8,9 @@
 struct RenderState
 {
 	bool thirdPerson = false, previewFace = false;
+	// Character creation's face preview: read ahead behind the boat door's loading screen and not shown yet; the race
+	// menu was open this session (Session::preloadRacePreview)
+	bool racePreloaded = false, raceMenuSeen = false;
 	float thirdDistance = 0.0f;               // eased camera distance (walls pull it in)
 	// Weather outdoors: its ambient loop (rain, ash storm), thunder, and the rain / ash in the world round the eye
 	int weatherChannel = -1;

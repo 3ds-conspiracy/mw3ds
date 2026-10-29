@@ -366,7 +366,12 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 			moveCellWater(l->cell, wl->second);
 	}
 	lc.live = l;
+	lc.loadedAt = w.time;
 	w.loaded.push_back(l);
+	char map[256];
+	if (heapMapLine(map, sizeof(map)))
+		logf("heapmap: %s in, %d KB used, arena %u KB used (biggest free %u KB): %s", lc.file.c_str(), mallinfo().uordblks / 1024,
+			(unsigned)(cellArenaUsed() / 1024), (unsigned)(cellArenaLargest() / 1024), map);
 	// A cell that comes back within a few seconds of being freed: the border between two cells thrashes it
 	if (!lc.interior && w.time - lc.freedAt < 3.0f)
 		monitorOnce(("cellthrash:" + lc.file).c_str(), "%s was freed and loaded again within %.1f s", lc.file.c_str(),
@@ -438,11 +443,21 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 	w.rebuildLoadedLists();
 }
 
+// The single free block of heap a cell read wants: 1.5 MB for its collision's arrays, the biggest it takes; 512 KB while
+// the cells' arena has a megabyte for them (they come from there: platform/cellarena.hpp), the rest of a cell being
+// smaller blocks, its actors' through tryResize. (Kept at 1.5 MB, Skaal Village's neighbours never came with the arena
+// all but empty and the heap's biggest block 1.1 MB)
+static size_t cellHeapBlockNeeded()
+{
+	return g_cellArena.largest() >= (1u << 20) ? 512u * 1024u : 1536u * 1024u;
+}
+
 // Reads a cell's files (safe on the streaming thread: touches nothing shared but the locked
 // linear heap and texture cache)
 static bool readLevelCell(const char* dataDir, const std::string& file, TextureCache& cache, LoadedCell* l)
 {
 	g_heapProbeFailed = false;
+	CellScope scope;                  // (all it builds goes with the cell: the cells' arena, platform/cellarena.hpp)
 	if (!cellLoad(l->cell, dataDir, (file + ".cel").c_str(), cache) || (g_streamCancel && threadGetCurrent()))
 	{
 		cellFree(l->cell, cache);
@@ -800,76 +815,188 @@ void World::streamExterior(bool all)
 			freed = true;
 		}
 	}
+	// Where the player is heading: the feet's way since the last look, eased over about half a second (a door or a
+	// teleport, a jump of more than a cell's half, starts it over)
+	float dt = time - streamFeetAt;
+	if (streamFeetAt >= 0.0f && dt > 0.0f)
+	{
+		float mx = player.feet[0] - streamFeet[0], my = player.feet[1] - streamFeet[1];
+		if (mx * mx + my * my > 4096.0f * 4096.0f)
+			streamHeading[0] = streamHeading[1] = 0.0f;
+		else
+		{
+			float k = fminf(1.0f, dt * 2.0f);
+			streamHeading[0] += (mx / dt - streamHeading[0]) * k;
+			streamHeading[1] += (my / dt - streamHeading[1]) * k;
+		}
+	}
+	streamFeet[0] = player.feet[0];
+	streamFeet[1] = player.feet[1];
+	streamFeetAt = time;
 	// Load the missing neighbours, the player's own cell first: all now (behind a loading screen),
 	// or one at a time on the streaming thread
 	finishStreamJob(*this, all);
-	static const int order[9][2] = { {0, 0}, {0, 1}, {1, 0}, {0, -1}, {-1, 0}, {1, 1}, {-1, 1}, {1, -1}, {-1, -1} };
-	for (auto& o : order)
+	int own = gridCell(c.gx, c.gy);
+	if (own >= 0 && !cells[own].live)
 	{
-		int ci = gridCell(c.gx + o[0], c.gy + o[1]);
-		if (ci < 0 || cells[ci].live)
-			continue;
-		if (o[0] == 0 && o[1] == 0)
+		// Never walk around in a cell that isn't there: the player's own cell loads now,
+		// the neighbours follow on the streaming thread (they start past the fog anyway)
+		finishStreamJob(*this, true);
+		if (freed && !cells[own].live)
+			linearReclaim();              // (the cells freed above: their memory, before this one is read)
+		for (int tries = 0; !cells[own].live && !loadLevelCell(*this, own); tries++)
 		{
-			// Never walk around in a cell that isn't there: the player's own cell loads now,
-			// the neighbours follow on the streaming thread (they start past the fog anyway)
-			finishStreamJob(*this, true);
-			if (freed && !cells[ci].live)
-				linearReclaim();              // (the cells freed above: their memory, before this one is read)
-			for (int tries = 0; !cells[ci].live && !loadLevelCell(*this, ci); tries++)
+			// No free block of heap for it: memory given back (far cells, skeletons, a neighbour's geometry), then again
+			if (!g_heapProbeFailed || tries >= 3 || !memoryLowHook)
 			{
-				// No free block of heap for it: memory given back (far cells, skeletons, a neighbour's geometry), then again
-				if (!g_heapProbeFailed || tries >= 3 || !memoryLowHook)
-				{
-					logf("world: failed to load %s", cells[ci].file.c_str());
-					break;
-				}
-				logf("world: %s waits for heap: giving memory back (try %d)", cells[ci].file.c_str(), tries + 1);
-				memoryLowHook(true);
+				logf("world: failed to load %s", cells[own].file.c_str());
+				break;
 			}
-			continue;
+			logf("world: %s waits for heap: giving memory back (try %d)", cells[own].file.c_str(), tries + 1);
+			memoryLowHook(true);
 		}
-		// (not in the update that freed cells: their memory comes back after the next frame begins)
-		// An Old 3DS leaves a neighbour unloaded rather than start one with under 5 MB of heap left: a cell read that
-		// runs the heap dry stops the game (the distant land covers the view until memory comes back)
-		static bool noRoomNoted = false;
-		// ... or with no free block of 1.5 MB (a heap with room in total but only in small holes: a cell's collision
-		// and object lists are single blocks of several hundred KB). Probed twice a second at most, and again once a cell
-		// or its objects came in since (useTick): cells that came in quicker than that (small ones, a fast card, the native
-		// build) each started on the last probe's word, and Solstheim's Skaal Village ran the heap to its last 600 KB
-		static u64 probedAt = 0;
-		static u32 probedTick = 0;
-		static bool probedRoom = true;
-		// (only between jobs: the probe holds the biggest free block for a moment, and the streaming
-		// thread allocating right then failed for nothing — no job starts while one runs anyway)
-		if (g_profile.streamWaitsForBlock && !streamJob && (osGetTime() - probedAt > 500 || probedTick != useTick))
-		{
-			probedAt = osGetTime();
-			probedTick = useTick;
-			probedRoom = (size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= 1536u * 1024u;
-		}
-		bool room = !g_profile.streamWaitsForBlock || probedRoom;
-		if (!room && !noRoomNoted)
-		{
-			noRoomNoted = true;
-			logf("world: %d KB of heap used, biggest free block %u KB: the neighbouring cells wait for room", mallinfo().uordblks / 1024,
-				(unsigned)(heapLargestBlock() / 1024));
-		}
-		// ... nor with under 5 MB of linear memory left (a cell takes 1 to 3 MB of it, its actors and sounds more): the 22 MB of an Old 3DS ran dry
-		// with Seyda Neen's nine cells in, and the actors, the cells' last batches (white walls), the item icons and a
-		// book's pages had none. The neighbours past it wait (the distant land stands in), as for the heap
-		static bool noLinearNoted = false;
-		bool linearRoom = !g_profile.streamWaitsForBlock || linearSpaceFree() >= (5u << 20);
-		if (!linearRoom && !noLinearNoted)
-			logf("world: %lu KB of linear memory left: the neighbouring cells wait for room", (unsigned long)(linearSpaceFree() / 1024));
-		noLinearNoted = !linearRoom;
-		room = room && linearRoom;
-		if (room)
-			noRoomNoted = false;
-		if (!streamJob && !freed && room && !streamPaused && osGetTime() >= streamRetryAt)
-			startStreamJob(*this, ci);
-		break;
 	}
+	// The neighbours, the one that matters most first (an Old 3DS: room for two or three of them): the nearest edge, the
+	// one ahead counting up to 1500 nearer (at a run). A fixed order (north, east, south, west, then the corners) gave an Old 3DS's room for two or three
+	// neighbours to whichever came first in it, often behind the player, and the cell ahead came only once walked into
+	float speed = sqrtf(streamHeading[0] * streamHeading[0] + streamHeading[1] * streamHeading[1]);
+	auto score = [&](int ci, float* edge) {
+		float x0 = cells[ci].gx * 8192.0f, y0 = cells[ci].gy * 8192.0f;
+		float ox = fmaxf(fmaxf(x0 - player.feet[0], player.feet[0] - (x0 + 8192.0f)), 0.0f);
+		float oy = fmaxf(fmaxf(y0 - player.feet[1], player.feet[1] - (y0 + 8192.0f)), 0.0f);
+		*edge = sqrtf(ox * ox + oy * oy);
+		float s = *edge;
+		if (speed > 50.0f)
+		{
+			float dx = x0 + 4096.0f - player.feet[0], dy = y0 + 4096.0f - player.feet[1], d = sqrtf(dx * dx + dy * dy);
+			if (d > 1.0f)
+				s -= 1500.0f * fminf(1.0f, speed / 300.0f) * (dx * streamHeading[0] + dy * streamHeading[1]) / (d * speed);
+		}
+		return s;
+	};
+	int best = -1, nearest = -1;
+	float bestScore = 1e9f, nearestEdge = 1e9f;
+	for (int dy = -1; dy <= 1; dy++)
+		for (int dx = -1; dx <= 1; dx++)
+		{
+			int ci = gridCell(c.gx + dx, c.gy + dy);
+			if ((dx == 0 && dy == 0) || ci < 0 || cells[ci].live)
+				continue;
+			float e, s = score(ci, &e);
+			if (e < nearestEdge)
+			{
+				nearestEdge = e;
+				nearest = ci;
+			}
+			// (the fixed order the quest runs were tuned with, unless streamAhead: in the Hlaalu questline the other order
+			// moved the timing so that the player fell through the Council Manor's floor, to be looked into)
+			if (!streamAhead || !g_profile.streamWaitsForBlock)
+			{
+				static const int ord[3][3] = { { 7, 2, 6 }, { 3, 9, 1 }, { 5, 0, 4 } };   // [dy+1][dx+1]: N E S W, then NE NW SE SW
+				s = (float)ord[dy + 1][dx + 1];
+			}
+			if (s < bestScore)
+			{
+				bestScore = s;
+				best = ci;
+			}
+		}
+	if (best < 0)
+	{
+		streamWanted = -1;
+		return;
+	}
+	int ci = best;
+	// The cell room was made for (below) comes before the order, while it is still a missing neighbour
+	if (streamWanted >= 0)
+	{
+		const LevelCell& wc = cells[streamWanted];
+		if (wc.live || wc.interior || abs(wc.gx - c.gx) > 1 || abs(wc.gy - c.gy) > 1)
+			streamWanted = -1;
+		else
+			ci = streamWanted;
+	}
+	// (not in the update that freed cells: their memory comes back after the next frame begins)
+	// An Old 3DS leaves a neighbour unloaded rather than start one with under 5 MB of heap left: a cell read that
+	// runs the heap dry stops the game (the distant land covers the view until memory comes back)
+	static bool noRoomNoted = false;
+	// ... or with no free block of 1.5 MB (a heap with room in total but only in small holes: a cell's collision
+	// and object lists are single blocks of several hundred KB). Probed twice a second at most, and again once a cell
+	// or its objects came in since (useTick): cells that came in quicker than that (small ones, a fast card, the native
+	// build) each started on the last probe's word, and Solstheim's Skaal Village ran the heap to its last 600 KB.
+	// By the game's clock, not the wall's: the PC build runs many game seconds in a real one, and its probe went stale
+	static float probedAt = -1e9f;
+	static u32 probedTick = 0;
+	static bool probedRoom = true;
+	bool probedNow = false;
+	// (only between jobs: the probe holds the biggest free block for a moment, and the streaming
+	// thread allocating right then failed for nothing — no job starts while one runs anyway)
+	if (g_profile.streamWaitsForBlock && !streamJob && (time - probedAt > 0.5f || time < probedAt || probedTick != useTick))
+	{
+		probedAt = time;
+		probedNow = true;
+		probedTick = useTick;
+		probedRoom = heapInUse() + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= cellHeapBlockNeeded();
+	}
+	bool room = !g_profile.streamWaitsForBlock || probedRoom;
+	if (!room && !noRoomNoted)
+	{
+		noRoomNoted = true;
+		logf("world: %d KB of heap used, biggest free block %u KB: the neighbouring cells wait for room", mallinfo().uordblks / 1024,
+			(unsigned)(heapLargestBlock() / 1024));
+	}
+	// ... nor with under 5 MB of linear memory left (a cell takes 1 to 3 MB of it, its actors and sounds more): the 22 MB of an Old 3DS ran dry
+	// with Seyda Neen's nine cells in, and the actors, the cells' last batches (white walls), the item icons and a
+	// book's pages had none. The neighbours past it wait (the distant land stands in), as for the heap
+	static bool noLinearNoted = false;
+	bool linearRoom = !g_profile.streamWaitsForBlock || linearSpaceFree() >= (5u << 20);
+	if (!linearRoom && !noLinearNoted)
+		logf("world: %lu KB of linear memory left: the neighbouring cells wait for room", (unsigned long)(linearSpaceFree() / 1024));
+	noLinearNoted = !linearRoom;
+	room = room && linearRoom;
+	if (room)
+		noRoomNoted = false;
+	// No room (an Old 3DS), and the player within 2000 of a missing neighbour's edge: the loaded neighbour farthest off goes
+	// for it, if it is in the fog (past 3000) and 3000 farther than the one wanted, and has been in for 5 s (a player on a
+	// corner doesn't swap two cells back and forth); the one wanted streams in next, whatever the order says. Its walkers go
+	// on in the cells that stay, as when a cell is left behind. One at a time, each on a fresh probe's word (the last
+	// probe's word stood for half a second, and three went at once). In Skaal Village late in the game the heap had room
+	// for four of the eight, the order filled them with the cells to the north and east, and Rolf Long-Tooth's cell, at
+	// the player's feet, waited until the player stood in it
+	// (2 s after one goes before the next: a heap short of one big enough block stayed short however many went, their
+	// memory coming back as holes between what stays, and four went in a moment for one cell)
+	static float droppedAt = -1e9f;
+	if (!room && probedNow && !streamJob && !freed && !streamPaused && nearest >= 0 && nearestEdge < 2000.0f
+		&& (time - droppedAt > 2.0f || time < droppedAt))
+	{
+		int drop = -1;
+		float dropEdge = 0.0f;
+		for (LoadedCell* l : loaded)
+		{
+			const LevelCell& lc = cells[l->index];
+			if (l->index == current || lc.interior || time - lc.loadedAt < 5.0f)
+				continue;
+			float e;
+			score(l->index, &e);
+			if (e > kExteriorFogStart && e > nearestEdge + 3000.0f && e > dropEdge)
+			{
+				dropEdge = e;
+				drop = l->index;
+			}
+		}
+		if (drop >= 0)
+		{
+			logf("world: %s let go for %s (%.0f units to its edge)", cells[drop].file.c_str(), cells[nearest].file.c_str(), nearestEdge);
+			handOverWalkers(*this, drop, c);
+			unloadLevelCell(*this, drop);
+			streamWanted = nearest;
+			droppedAt = time;
+			probedAt = -1e9f;              // (probed again as soon as its memory is back)
+			return;
+		}
+	}
+	if (!streamJob && !freed && room && !streamPaused && osGetTime() >= streamRetryAt)
+		startStreamJob(*this, ci);
 }
 
 // The neighbouring exterior cells within `reach` of a point, loaded now rather than on the streaming thread; returns
@@ -896,7 +1023,7 @@ int World::loadCellsNear(const float pos[3], float reach)
 			// (an Old 3DS reads one only with room for it, as streamExterior: a cell read that runs the heap dry stops the
 			// game; it streams in once there is room)
 			if (g_profile.streamWaitsForBlock
-				&& !((size_t)mallinfo().uordblks + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= 1536u * 1024u))
+				&& !(heapInUse() + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= cellHeapBlockNeeded()))
 				continue;
 			finishStreamJob(*this, true);
 			if (!cells[ci].live && loadLevelCell(*this, ci))
@@ -943,8 +1070,11 @@ extern "C" u32 __ctru_heap_size;
 int Session::refBudget() const
 {
 	int budget = g_profile.refBudget;
-	// The heap filling up (past four fifths): fewer still, whatever the console
-	if ((size_t)mallinfo().uordblks > __ctru_heap_size / 5 * 4)
+	// The heap filling up (past four fifths): fewer still, whatever the console. The heap outside the arenas: objects live
+	// there, not in a cell's arena room (counted as free, it kept an Old 3DS 5000 objects where it had kept 2000, and the
+	// heap the rest of the game has was cut into small pieces)
+	size_t arenas = g_cellArena.size() + g_scriptArena.size(), used = mallinfo().uordblks;
+	if (used > arenas && used - arenas > (__ctru_heap_size - arenas) / 5 * 4)
 		budget = std::min(budget, w.refsInMemory() * 3 / 4);
 	return budget;
 }

@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bug-follower-ledge-indoors: Krish, the riekling who follows the player up out of the Caverns of Karstaag (Bloodmoon's
+# frost giant quest), walked up onto a rock on the way and stood at its edge for good, about 200 over the cave floor
+# his way on went down to, the player above him up the ramp (one seed in three, on both consoles); stepped off it, the
+# rocks round its foot held him the same way. A follower indoors went off a ledge only to the player below it; now to
+# its way on below as well (the next grid point it walks to), as OpenMW's actors walk off a ledge where their way leads
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Solstheim,_Castle_Karstaag,_Caverns_of_Karstaag
+4 0 0 0
+0.3 0 0 0 0 SLAYALL:bm_icetroll_fg_uni
+240 0 0 0 0 WALKTO:@-4166,-2147,-1214
+0.3 0 0 0 0 PLACEAT:bm_riekling_krish_uniqu:-4050:-2050:-1214
+0.3 0 0 0 0 FOLLOW:bm_riekling_krish_uniqu
+2 0 0 0
+0.3 0 0 0 0 SEED:6
+0.3 0 0 0 0 ESCORT:bm_riekling_krish_uniqu
+300 0 0 0 0 WALKTO:@400,-32,-43
+0.3 0 0 0 0 ESCORT:-
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:bm_riekling_krish_uniqu:lt:500

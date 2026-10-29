@@ -147,6 +147,8 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 		}
 		r.path.erase(r.path.begin());
 	}
+	r.wayZ = goal[2];                 // (how far down a follower indoors may step off an edge: movementsolver.cpp)
+	r.wayAt = w.time;
 	float dx = goal[0] - r.pos[0], dy = goal[1] - r.pos[1];
 	float dist = sqrtf(dx * dx + dy * dy);
 	if (dist < 1.0f)
@@ -190,6 +192,11 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 			r.evadeAt[1] = r.pos[1];
 			r.stuckTimer = -1.0f - 0.5f * r.evadeTries;
 			r.repathTimer = 0.0f;
+			// held up outdoors over where it is going, 40 or more below, again and again on one spot: it may step off the edge it stands on for a while, as
+			// OpenMW's actors walk off a ledge. Sinnammu Mirpal, following the player out of Ahemmusa Camp, walked up onto a
+			// yurt's side at the rim and stood there for good, the ground 150 below and every step down over a stair's height
+			if (r.evadeTries >= 2 && !w.cells[w.placeOf(ri)].interior && target[2] < r.pos[2] - 40.0f)
+				r.dropUntil = w.time + 3.0f;
 			// OpenMW goes round with its navigation mesh. Here, with no path grid to go round by (the wilds have
 			// none), the opening nearest the goal a body fits through, keeping to the side of the last one: a
 			// follower walked into the gap between two rock pillars near Ald'ruhn again and again

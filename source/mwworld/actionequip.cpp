@@ -122,6 +122,9 @@ bool Session::equipItem(int index, bool force)
 	playSound(-1, "Item Misc Up");
 	w.setItemScriptLocal(it.id, "onpcequip", 1.0f);
 	w.refreshStats();                  // worn constant effects
+	// a weapon or shield taken in hand: read now, in the menu, what its first draw would read (Session::warmWeapon)
+	if (hand(o) || shield(o))
+		warmWeapon();
 	return true;
 }
 

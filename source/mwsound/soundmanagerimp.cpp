@@ -311,6 +311,12 @@ static CachedSound* load(const std::string& file)
 	return &slot;
 }
 
+void audioPreload(const std::string& file)
+{
+	if (s_enabled && !file.empty())
+		load(file);
+}
+
 float audioDuration(const std::string& file)
 {
 	auto it = s_cache.find(file);
@@ -712,6 +718,13 @@ void Session::playSound(int ref, const std::string& soundId, float volume, float
 		if (script && ref >= 0 && ch >= 0 && scriptSounds.size() < 16)
 			scriptSounds.push_back({ ref, lower(soundId), w.time + audioDuration(it->second.file) / fmaxf(pitch, 0.1f) });
 	}
+}
+
+void Session::preloadSound(const std::string& soundId)
+{
+	auto it = w.game.sounds.find(lower(soundId));
+	if (it != w.game.sounds.end())
+		audioPreload(it->second.file);
 }
 
 void Session::playRandomSound(int ref, const std::string& prefix, float volume)

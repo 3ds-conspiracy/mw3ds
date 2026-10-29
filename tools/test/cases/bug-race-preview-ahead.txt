@@ -1,0 +1,19 @@
+# start: Imperial Prison Ship
+# bug-race-preview-ahead: the race menu, which the guard on the dock opens after the boat's door, froze a console for
+# seconds as it opened (a player's report): its face preview read the race's body, head and hair from the card. They
+# are read behind the boat door's loading screen (Session::preloadRacePreview): the menu opens reading nothing, and the
+# preview goes when it closes (in first person nothing else draws the body)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.1 0 0 0 0 EXPECT:global:chargenstate:ne:-1
+0.1 0 0 0 0 SNAP:piecereads
+# (opened as the guard's script opens it, not by the driver's SCREEN, which only sets the screen)
+0.2 0 0 0 0 CON:EnableRaceMenu
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:race
+0.1 0 0 0 0 EXPECT:bodymeshes:gt:0
+0.1 0 0 0 0 EXPECT:piecereads:eq:@
+0.2 0 0 0 0 SCREEN:none
+1 0 0 0
+0.1 0 0 0 0 EXPECT:bodymeshes:eq:0

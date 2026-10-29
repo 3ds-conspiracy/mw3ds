@@ -185,6 +185,9 @@ void* operator new(size_t n)
 {
 	if (n == 0)
 		n = 1;
+	// (a cell's read: from the cells' arena while it has room, platform/cellarena.hpp CellScope)
+	if (void* p = cellScopeAlloc(n))
+		return p;
 	for (;;)
 	{
 		if (void* p = malloc(n))
@@ -193,6 +196,9 @@ void* operator new(size_t n)
 				noteBigNew(n, __builtin_return_address(0));
 			return p;
 		}
+		// The heap full: the arenas' spare room before the reserve (set aside at start-up, it is heap all the same)
+		if (void* p = arenaOverflowAlloc(n))
+			return p;
 		s_failedSize = n;
 		s_failedSite = __builtin_return_address(0);
 		outOfMemory();
@@ -202,6 +208,28 @@ void* operator new(size_t n)
 void* operator new[](size_t n)
 {
 	return operator new(n);
+}
+
+// A block goes back to the arena it came from, else to the heap
+void operator delete(void* p) noexcept
+{
+	if (p && !arenaRelease(p))
+		free(p);
+}
+
+void operator delete[](void* p) noexcept
+{
+	operator delete(p);
+}
+
+void operator delete(void* p, size_t) noexcept
+{
+	operator delete(p);
+}
+
+void operator delete[](void* p, size_t) noexcept
+{
+	operator delete(p);
 }
 
 static void terminated()

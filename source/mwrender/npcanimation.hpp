@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "components/misc/atom.hpp"
+
 #include "mwrender/animation.hpp"
 #include "mwrender/viewmodel.hpp"
 
@@ -69,4 +71,4 @@ struct PlayerBody
 };
 
 // The heads / hairs a race and sex can choose from (body ids), for character creation
-const std::vector<std::pair<std::string, std::string>>* playerHeadChoices(const World& w, bool hair);
+const std::vector<std::pair<Atom, Atom>>* playerHeadChoices(const World& w, bool hair);

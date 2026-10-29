@@ -1,0 +1,10 @@
+# start: Seyda Neen
+# bug-script-heap: every script's tree (1,200 with Bloodmoon) stayed in the heap the whole game, about 2 MB of an Old 3DS's
+# 39 MB, though only the loaded cells' objects' and the started global ones run. In Seyda Neen only the ones that ran
+# are in the heap (what the scripts do is the rest of the suite's to check)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.1 0 0 0 0 EXPECT:scriptsinheap:lt:150
+0.1 0 0 0 0 EXPECT:scriptsinheap:gt:0

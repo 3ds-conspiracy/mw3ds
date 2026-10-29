@@ -114,6 +114,10 @@ void Session::finishTravel()
 		}
 		w.relocate(followers[k], c, pos, w.player.yaw);
 	}
+	// Still behind the loading screen: what would otherwise be read from the card in play (the weapon's draw, its sound
+	// after an Old 3DS's door emptied the sound cache; the race menu's face on the dock)
+	warmWeapon();
+	preloadRacePreview();
 	fade = 1.0f;
 	fadeRate = 1.0f;                     // (back over a second, as OpenMW's TravelWindow: fadeScreenIn(1))
 	if (!autotest)

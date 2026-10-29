@@ -180,6 +180,7 @@ void skeletonEnsure(int i)
 {
 	if (s_skelDir.empty() || i < 0 || i >= (int)s_skelLoaded.size())
 		return;
+	CellScopeOff heap;             // (shared by every cell: outlives the one reading it)
 	LightLock_Lock(&s_skelLock);
 	if (!s_skelLoaded[i])
 	{
@@ -488,6 +489,7 @@ static bool readLibrary(ActorSet& set, Actor& a, const std::string& path, const 
 int actorsAddFromLibrary(ActorSet& set, Cell& cell, TextureCache& cache, const char* dataDir, const std::string& lib,
 	int ref, int skeleton, const float place[12], const u8* tint)
 {
+	CellScope scope;               // (its meshes go with the cell: the cells' arena, platform/cellarena.hpp)
 	if (set.skeletons.empty())
 		skeletonEnsure(skeleton);
 	set.actors.emplace_back();

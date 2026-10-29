@@ -24,7 +24,7 @@ struct TravelDest
 
 struct ActorDef
 {
-	std::string id, name;
+	Atom id, name;                       // (interned: 4 bytes each where a std::string is 24)
 	Atom race, cls, faction, script;
 	int rank, female, level, disposition, reputation;
 	int attributes[8] = { 40, 40, 40, 40, 40, 40, 40, 40 };

@@ -1,0 +1,25 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: old
+# bug-old-heap-holes: on an Old 3DS, a long trip over Solstheim cut the heap into thousands of holes. Each cell's read
+# built about 600 KB of small blocks (its batch and placement lists, its people's meshes) between the blocks that stay
+# (objects, scripts, the texture cache); when the cell went, its blocks left holes the next cell's could not fill. Late
+# in the Skaal questline 11 MB was free in 3000 holes, none of 1.5 MB, and Rolf Long-Tooth's cell never loaded. A
+# cell's read now builds in the cells' arena (platform/cellarena.hpp CellScope). The player flies a loop over the island,
+# cells streaming in and out, and lands back at Fort Frostmoth: under 2 MB of the heap is free in holes of less than
+# 256 KB (4 MB before), and a free block of 1.5 MB is still there
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 TP:-174024:136824:2000:0
+8 0 0 0
+120 0 0 0 0 FLYTO:@-150000,160000,3000
+120 0 0 0 0 FLYTO:@-158977,205000,3500
+120 0 0 0 0 FLYTO:@-185000,196700,3000
+120 0 0 0 0 FLYTO:@-190000,165000,3000
+120 0 0 0 0 FLYTO:@-150000,180000,3000
+120 0 0 0 0 FLYTO:@-174024,140000,2500
+8 0 0 0
+0.1 0 0 0 0 EXPECT:heapscattered:le:2000
+0.1 0 0 0 0 EXPECT:heapblock:ge:1536

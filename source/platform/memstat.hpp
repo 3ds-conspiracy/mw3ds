@@ -1,5 +1,9 @@
 #pragma once
 
+#include <type_traits>
+
+#include "platform/cellarena.hpp"
+
 #include <cstddef>
 #include <cstdlib>
 
@@ -10,6 +14,13 @@
 //   stopping the game; the main loop then gives memory back (far cells, map tiles, view distance) and takes the
 //   reserve again once it can
 size_t heapLargestBlock();
+// The heap in use, the cells' arena counted by what is in it (the heap holds all of it, the spare part free for cells)
+size_t heapInUse();
+// The heap's map in a line (the PC memory checker's heap only: tools/test/native/native_heap.cpp); false where there is none
+bool heapMapLine(char* out, size_t n);
+// The heap's free space by the size of its holes, KB: under 16 KB, 16 to 256 KB, 256 KB to 1.5 MB, more (the PC memory
+// checker's heap only; false where there is none)
+bool heapHoles(size_t kb[4]);
 size_t heapHighWater();             // most bytes ever in use (sampled by heapNote)
 void heapNote(size_t used);         // the bytes in use now (each second's profile line)
 void memoryReserveTake();           // sets the reserve aside (again), if the heap can spare it now
@@ -32,6 +43,15 @@ template <class V> bool tryResize(V& v, size_t n)
 		v.resize(n);
 		return true;
 	}
+	// (a cell's block that the cells' arena has room for: no heap probe, it doesn't come from the heap)
+	bool cellBlock = cellScopeOpen();
+	if constexpr (std::is_same_v<typename V::allocator_type, CellAllocator<typename V::value_type>>)
+		cellBlock = true;
+	if (cellBlock && cellArenaFits(n * sizeof(typename V::value_type)))
+	{
+		v.resize(n);
+		return true;
+	}
 	void* probe = malloc(n * sizeof(typename V::value_type) + 64);
 	if (!probe)
 	{
@@ -48,6 +68,11 @@ template <class V> bool tryReserve(V& v, size_t n)
 {
 	if (n <= v.capacity())
 		return true;
+	if (cellScopeOpen() && cellArenaFits(n * sizeof(typename V::value_type)))
+	{
+		v.reserve(n);
+		return true;
+	}
 	void* probe = malloc(n * sizeof(typename V::value_type) + 64);
 	if (!probe)
 	{

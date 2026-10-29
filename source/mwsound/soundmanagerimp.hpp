@@ -20,6 +20,7 @@ bool audioPlaying(int channel);
 void audioStop(int channel);
 void audioSetMix(int channel, float volume, float pan);
 float audioDuration(const std::string& file);      // seconds (a loaded sound's own; else read from the header)
+void audioPreload(const std::string& file);        // read into the cache now (behind a loading screen), not on its first play
 float audioLoudness(int channel);                  // RMS 0..1 around the current play position
 
 // Loops the playlist, streaming from disk. Call audioUpdate() every frame.

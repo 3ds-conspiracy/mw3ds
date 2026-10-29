@@ -36,9 +36,9 @@ struct InventoryItem;
 // First-person view model parts (tools/convert/firstperson.py): data/fp/<piece>.fpm files
 struct FpItem
 {
-	std::unordered_map<int, std::pair<std::string, std::string>> slots;   // body part slot -> male, female piece
-	std::string model;                   // the item's own mesh (arrows in flight)
-	std::string ammo;                    // arrows and bolts: the piece that sits in the bow or crossbow
+	std::unordered_map<int, std::pair<Atom, Atom>> slots;   // body part slot -> male, female piece (Atoms: the pieces repeat)
+	Atom model;                          // the item's own mesh (arrows in flight)
+	Atom ammo;                           // arrows and bolts: the piece that sits in the bow or crossbow
 	std::vector<float> arrow;            // bows and crossbows: their ArrowBone (3x4 rows, kVfxFps a second of the weapon's time)
 };
 // Pictures (tools/convert/artassets.py): loading screens, the level-up art by class, book pictures by path
@@ -52,9 +52,10 @@ struct ArtDef
 };
 struct ThirdPersonDef
 {
-	std::unordered_map<std::string, std::unordered_map<int, std::string>> races[2];
-	std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> heads[2], hairs[2];
-	std::unordered_map<std::string, std::unordered_map<int, std::pair<std::string, std::string>>> items;
+	// (the pieces as Atoms: the same few hundred names over thousands of slots)
+	std::unordered_map<std::string, std::unordered_map<int, Atom>> races[2];
+	std::unordered_map<std::string, std::vector<std::pair<Atom, Atom>>> heads[2], hairs[2];
+	std::unordered_map<std::string, std::unordered_map<int, std::pair<Atom, Atom>>> items;
 };
 struct FirstPersonDef
 {
@@ -80,7 +81,7 @@ struct FirstPersonDef
 		std::unordered_map<std::string, float> away, back;
 	};
 	std::unordered_map<std::string, WorldFxDef> worldFx;
-	std::unordered_map<std::string, std::unordered_map<int, std::string>> races[2];   // [female] race -> slot -> piece
+	std::unordered_map<std::string, std::unordered_map<int, Atom>> races[2];   // [female] race -> slot -> piece
 	std::unordered_map<std::string, FpItem> items;                                   // lowercase item id
 };
 struct QuizQuestion { std::string question, answers[3], sound; };
@@ -140,7 +141,7 @@ struct GameData
 	int schoolIcons[6] = { -1, -1, -1, -1, -1, -1 };   // the magic schools' skill icons (item icon pages), alteration .. restoration
 	std::unordered_map<std::string, std::string> levelUpText;   // Morrowind.ini [Level Up]: "level2".., "default"
 	std::vector<ActorDef> actors;
-	std::unordered_map<std::string, Object> objects;       // lowercase id
+	std::unordered_map<Atom, Object, AtomKeyHash, AtomKeyEq> objects;   // lowercase id (interned: object() looks one up by text)
 	std::unordered_map<std::string, Script> scripts;       // lowercase name
 	std::vector<Topic> topics;
 	std::unordered_set<std::string> speakers;   // lowercase ids some response names as its speaker

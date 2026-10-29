@@ -204,7 +204,7 @@ static void respond(Dialogue& d, World& w, ScriptHost& host, const Info& info, c
 	if (!logTopic.empty() && !text.empty())
 	{
 		const Ref& sp = w.refs[d.ref];
-		std::string who = sp.actor >= 0 ? w.game.actors[sp.actor].name : sp.id.str();
+		std::string who = sp.actor >= 0 ? w.game.actors[sp.actor].name.str() : sp.id.str();
 		auto& log = w.topicLog[logTopic];
 		std::string line = who + ": " + text;
 		bool have = false;
@@ -307,7 +307,7 @@ int dialogueTopicFlags(World& w, const Dialogue& d, const Topic& topic)
 	if (inTopic(topic, info))
 	{
 		const Ref& sp = w.refs[d.ref];
-		std::string line = (sp.actor >= 0 ? w.game.actors[sp.actor].name : sp.id.str()) + ": " + dialogueSubstitute(w, info->text, d.ref);
+		std::string line = (sp.actor >= 0 ? w.game.actors[sp.actor].name.str() : sp.id.str()) + ": " + dialogueSubstitute(w, info->text, d.ref);
 		auto log = w.topicLog.find(topic.name);
 		if (log != w.topicLog.end())
 			for (auto& l : log->second)

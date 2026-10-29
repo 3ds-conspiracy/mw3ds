@@ -183,6 +183,14 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 		float leaderZ = w.player.feet[2];
 		if (fz >= leaderZ - 16.0f)
 			maxDrop = fmaxf(maxDrop, fminf(250.0f, r.pos[2] - leaderZ + 16.0f));
+		// ... and to its way on below (the next grid point it walks to, this frame: npcMoveTo), the player above or not.
+		// Krish, following the player up out of the Caverns of Karstaag, walked up onto a rock beside the ramp and stood at
+		// its edge for good, the cave floor his way went down to 200 below and the player above him up the ramp; stepped
+		// off it, the rocks round its foot held him the same way, one after another. Down to a stair under the point (a grid
+		// point's height is rough: the floor under that rock's edge is 18 below the point beside it). Not in a cell under the
+		// sky (Mournhold's streets: Thrud, following the player, went down onto the walk by the canal and stayed there)
+		if (r.wayAt == w.time && fz >= r.wayZ - 48.0f && !w.cells[w.placeOf(ri)].sky)
+			maxDrop = fmaxf(maxDrop, fminf(250.0f, r.pos[2] - r.wayZ + 48.0f));
 	}
 	if (fz < r.pos[2] - maxDrop && fz > swimZ + 0.5f)
 	{

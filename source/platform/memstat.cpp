@@ -1,6 +1,7 @@
 #include "platform/memstat.hpp"
 
 #include <cstdlib>
+#include <malloc.h>
 
 volatile bool g_memoryLow = false;
 volatile bool g_heapProbeFailed = false;
@@ -31,6 +32,23 @@ size_t heapLargestBlock()
 			hi = mid;
 	}
 	return lo;
+}
+
+// (the console and the plain PC build: no map. The memory checker's heap has its own)
+__attribute__((weak)) bool heapMapLine(char*, size_t)
+{
+	return false;
+}
+
+__attribute__((weak)) bool heapHoles(size_t*)
+{
+	return false;
+}
+
+size_t heapInUse()
+{
+	size_t used = mallinfo().uordblks, spare = cellArenaSpare();
+	return used > spare ? used - spare : 0;
 }
 
 void heapNote(size_t used)

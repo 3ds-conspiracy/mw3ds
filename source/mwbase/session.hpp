@@ -196,6 +196,13 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void drawConsole();               // Options > Console: one MWScript line at a time (mwgui/console.cpp)
 	void saveSettings();
 	void viewModelUpdate(const PlayerInput& in, float dt);
+	// What the first press of X reads from the card, read now instead (behind a loading screen, on equipping): the
+	// weapon's and shield's first-person pieces and the weapon's "up" sound (mwmechanics/combat.cpp)
+	void warmWeapon();
+	// Character creation's face preview, read behind the loading screen of the boat's door (the race menu comes on the
+	// dock), let go of with the menu (mwmechanics/character.cpp)
+	void preloadRacePreview();
+	void preloadSound(const std::string& soundId);   // a sound read into the cache, not played
 	// repair (mwgui/windowmanagerimp.cpp)
 	void drawRepair();
 	void openRepair(int smith, int tool);        // smith: the NPC (-1: the player's own tool, an inventory index)

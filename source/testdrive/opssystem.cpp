@@ -13,6 +13,7 @@
 #include "components/debug/debuglog.hpp"
 
 extern const char* g_playerBlock;
+extern "C" u32 __ctru_heap_size;
 #include "platform/linear.hpp"
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
@@ -29,6 +30,14 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		// as it is entered): a walk into a cell that isn't there yet, as on the console with a slow card
 		w.streamPaused = a[1] == "off";
 		logf("test: cell streaming %s", w.streamPaused ? "off" : "on");
+		return true;
+	}
+	// STREAMAHEAD:on / off: an Old 3DS's neighbours stream nearest and ahead first, one behind let go for the one ahead
+	// (World::streamAhead, off in the game for now)
+	if (verb == "STREAMAHEAD" && a.size() >= 2)
+	{
+		w.streamAhead = a[1] == "on";
+		logf("test: streaming ahead %s", w.streamAhead ? "on" : "off");
 		return true;
 	}
 	// RESTMENU: the rest menu opened as the player opens it (T): its refusals, and sleep or only waiting (EXPECT:restsleep)
@@ -53,6 +62,69 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 			if (void* p = lockedLinearAlloc(256 * 1024))
 				held.push_back(p);
 		logf("test: holding %d KB of linear memory, %lu KB free", (int)held.size() * 256, linearSpaceFree() / 1024);
+		return true;
+	}
+	// MEMREPORT: the heap each part of the game data takes, measured: a copy of it made and let go, the heap it took
+	// logged ("memreport:" lines; a copy is a little smaller than the original, its vectors not having grown)
+	if (verb == "MEMREPORT")
+	{
+		const GameData& g = w.game;
+		auto measure = [](const char* name, auto& part) {
+			int before = mallinfo().uordblks;
+			{
+				auto copy = part;
+				logf("memreport: %-14s %6d KB", name, (mallinfo().uordblks - before) / 1024);
+			}
+		};
+		measure("actors", g.actors);
+		measure("objects", g.objects);
+		measure("scripts", g.scripts);
+		measure("topics", g.topics);
+		measure("journals", g.journals);
+		measure("spells", g.spells);
+		measure("leveled", g.leveled);
+		measure("spawns", g.spawns);
+		measure("voices", g.voices);
+		measure("voicefiles", g.voiceFiles);
+		measure("refcells", g.refCells);
+		measure("sounds", g.sounds);
+		measure("factions", g.factions);
+		measure("regions", g.regions);
+		measure("globals", g.globals);
+		measure("gmst", g.gmstText);
+		measure("speakers", g.speakers);
+		measure("cells", g.cells);
+		measure("cellnames", g.cellNames);
+		measure("phraseforms", g.phraseForms);
+		measure("topickeywords", g.topicKeywords);
+		measure("townspawns", g.townSpawns);
+		measure("firstperson", g.firstPerson);
+		measure("art", g.art);
+		measure("ui", g.ui);
+		measure("map", g.map);
+		measure("classes", g.classes);
+		measure("races", g.races);
+		measure("magiceffects", g.magicEffects);
+		logf("memreport: atom pool %u KB, card texts in the heap %u KB, world refs %d, heap used %d KB",
+			(unsigned)(Atom::poolBytes() / 1024), (unsigned)(CardText::heapBytes() / 1024), (int)w.refs.size(),
+			mallinfo().uordblks / 1024);
+		return true;
+	}
+	if ((verb == "HEAPHOLD" || verb == "HEAPLEAVE") && a.size() >= 2)
+	{
+		// HEAPHOLD:<KB>: hold that much of the heap (in 256 KB pieces), as hours of play fill an Old 3DS's; HEAPHOLD:0 lets it
+		// go. HEAPLEAVE:<KB>: hold all but that much of what is free (the same squeeze natively and on the device)
+		static std::vector<void*> held;
+		for (void* p : held)
+			free(p);
+		held.clear();
+		int want = atoi(a[1].c_str());
+		if (verb == "HEAPLEAVE")
+			want = std::max(0, (int)(((size_t)__ctru_heap_size - (size_t)mallinfo().uordblks) / 1024) - want);
+		for (int kb = want; kb > 0; kb -= 256)
+			if (void* p = malloc(256 * 1024))
+				held.push_back(p);
+		logf("test: holding %d KB of the heap, %d KB used", (int)held.size() * 256, mallinfo().uordblks / 1024);
 		return true;
 	}
 	if (verb == "MOVIE" && a.size() >= 2)
@@ -113,10 +185,17 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 			logf("trace: begin %s", s.traceActor.c_str());
 		return true;
 	}
-	// SEED:<n>: the random rolls (magnitudes, resistance, reflect, dispel) follow that seed from here
+	// SEED:<n>: the random rolls (magnitudes, resistance, reflect, dispel) follow that seed from here. SEED:<n>/<o>: n on a New
+	// 3DS's profile, o on an Old one's: the two run a long questline differently (an Old 3DS's memory keeps fewer objects,
+	// its slow CPU's cadences), and a quest's own roll (where Carnius goes, Random 3) came from another place in the same
+	// sequence on each
 	if (verb == "SEED" && a.size() >= 2)
 	{
-		srand((unsigned)atoi(a[1].c_str()));
+		size_t slash = a[1].find('/');
+		std::string pick = slash == std::string::npos ? a[1] : g_profile.slowCpu ? a[1].substr(slash + 1) : a[1].substr(0, slash);
+		srand((unsigned)atoi(pick.c_str()));
+		if (slash != std::string::npos)
+			logf("test: seed %s (%s 3DS)", pick.c_str(), g_profile.slowCpu ? "Old" : "New");
 		return true;
 	}
 	// GIVEPOTION:<id>[:<n>]: the player carries n more   USE:<id>: drinks / eats one (each drink is its own application)

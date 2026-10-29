@@ -99,7 +99,7 @@ std::string Session::targetLabel(int ref)
 	std::string name = r.obj ? r.obj->name.str() : r.id.str();
 	// (a person in wolf form goes by sWerewolfPopup, not their name: OpenMW's Npc::getName)
 	if (r.actor >= 0)
-		name = (r.recType == REC_NPC_ && r.werewolf ? w.game.gmst("swerewolfpopup", "Werewolf") : w.game.actors[r.actor].name)
+		name = (r.recType == REC_NPC_ && r.werewolf ? w.game.gmst("swerewolfpopup", "Werewolf") : w.game.actors[r.actor].name.str())
 			+ (r.dead ? " (dead)" : "");
 	if (r.recType == REC_DOOR && r.hasDest && lower(r.destCell) != lower(w.cellName()))
 		name += " - " + w.game.cellLabel(r.destCell);

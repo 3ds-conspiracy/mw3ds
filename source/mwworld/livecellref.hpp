@@ -163,6 +163,7 @@ struct Ref
 	bool straightWay = false;       // npcMoveTo's last way was the straight one (else the grid's)
 	float straightZ = 0.0f;         // its height when it last changed between the two
 	float dropUntil = 0.0f;         // World::time until which a step outdoors may go down a ledge (npcMoveTo: the grid's way climbed back)
+	float wayZ = 0.0f, wayAt = -1.0f;   // npcMoveTo's goal height this frame (its next grid point, else its target) and when
 	float lastPos[2] = {};
 	bool talkedToPC = false;
 	int disposition = 50;

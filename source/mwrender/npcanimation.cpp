@@ -27,7 +27,7 @@ const int kRobeHides[] = { 3, 4, 5, 11, 12, 13, 14, 19, 20, 21, 22 };
 const int kSkirtHides[] = { 4, 21, 22 };
 }
 
-const std::vector<std::pair<std::string, std::string>>* playerHeadChoices(const World& w, bool hair)
+const std::vector<std::pair<Atom, Atom>>* playerHeadChoices(const World& w, bool hair)
 {
 	const ThirdPersonDef& t = w.game.firstPerson.third;
 	int female = w.stats.female ? 1 : 0;
@@ -127,8 +127,8 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 		const std::string& want = hair ? w.stats.hair : w.stats.head;
 		for (auto& e : *list)
 			if (e.first == want)
-				return e.second;
-		return list->front().second;
+				return e.second.str();
+		return list->front().second.str();
 	};
 	part[SLOT_HEAD] = chosen(false);
 	part[SLOT_HAIR] = chosen(true);
@@ -231,7 +231,8 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 		}
 	}
 	a.deformed = false;
-	logf("playerbody: %d meshes on skeleton %d, %d pieces kept", (int)a.meshes.size(), skel, (int)pieces.size());
+	logf("playerbody: %s %s, %d meshes on skeleton %d, %d pieces kept", race.c_str(), female ? "female" : "male", (int)a.meshes.size(), skel,
+		(int)pieces.size());
 }
 
 // Where a blow's wind-up holds, as a share of the way from the group's start to its hit: the min and max attack marks
@@ -465,7 +466,7 @@ bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::v
 		if (it != map.end())
 			for (auto& e : it->second)
 				if (e.first == want)
-					return e.second;
+					return e.second.str();
 		return std::string();
 	};
 	part[SLOT_HEAD] = own(false);

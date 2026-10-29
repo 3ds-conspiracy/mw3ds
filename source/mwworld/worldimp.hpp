@@ -51,6 +51,13 @@ struct World
 	struct StreamJob* streamJob = nullptr;   // an exterior cell loading on the streaming thread
 	bool streamPaused = false;               // tests (STREAM:off): no neighbour streams in; the player's own cell still loads
 	bool streamThreaded = false;             // a cell has streamed in on a thread (the console, the emulator; never the PC build)
+	// Where the player is heading outdoors (units a second, eased) and where the feet were when streaming last looked:
+	// the neighbouring cell ahead streams in first
+	float streamHeading[2] = { 0.0f, 0.0f }, streamFeet[2] = { 0.0f, 0.0f }, streamFeetAt = -1.0f;
+	// The cell ahead first, one behind let go for it (an Old 3DS only): off until the fall through the Hlaalu Council
+	// Manor's floor it led to is understood; tests turn it on (STREAMAHEAD:on, bug-stream-ahead)
+	int streamWanted = -1;      // the neighbour a cell was let go for (an Old 3DS out of room): it streams in next
+	bool streamAhead = false;
 	std::unordered_map<long long, int> gridIndex;   // exterior grid -> index into cells
 	// every cell's references. A deque: it grows without moving them (a vector's doubling needed one
 	// block twice the size, tens of MB, and ran the heap out after many cells were visited)

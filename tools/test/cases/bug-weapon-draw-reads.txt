@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# bug-weapon-draw-reads: the first press of X after taking up a weapon froze a console for a second or more (a player's
+# report): drawing it read its first-person piece and textures from the card. They are read as it is equipped, in the
+# menu, and behind each loading screen (Session::warmWeapon): the draw reads nothing
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GIVE:iron%longsword
+0.3 0 0 0 0 EQUIP:iron%longsword
+1 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0
+0.1 0 0 0 0 SNAP:piecereads
+0.3 0 0 0 0 X
+2 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.1 0 0 0 0 EXPECT:vmpiece:longsword:eq:1
+0.1 0 0 0 0 EXPECT:piecereads:eq:@

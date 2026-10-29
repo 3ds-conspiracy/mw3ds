@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
 #include <string>
 #include <string_view>
@@ -50,6 +51,17 @@ public:
 	bool operator!=(const char* s) const { return strcmp(p_, s) != 0; }
 	bool operator<(const Atom& o) const { return strcmp(p_, o.p_) < 0; }
 
+	// The interned Atom of a text, without adding it: false when no Atom holds it (a map keyed by Atoms has no such key)
+	static bool lookup(const std::string& s, Atom& out)
+	{
+		const char* p = existing(s.data(), s.size());
+		if (p)
+			out = Atom(p, 0);
+		return p != nullptr;
+	}
+	// An Atom again from its c_str(), within the same run (the pool is never freed): a script's tree kept on the card
+	// (mwscript/scriptstore.cpp) writes its texts as these
+	static Atom pooled(const char* p) { return Atom(p, 0); }
 	static size_t poolBytes();      // what the blocks hold (the log at load)
 	// Takes the next block early, at a quiet moment, so it isn't born mid-parse between transient
 	// allocations (each block is pinned for the run). Session's eviction timer calls it
@@ -60,6 +72,11 @@ private:
 	static const char* intern(const char* s, size_t n);
 	const char* p_;
 };
+
+// A map keyed by interned Atoms (Atom(text), never Atom::stored): one pointer per text, so the pointer is the key. 4 bytes
+// where a std::string key is 24, and its own block for an id past 15 letters (most object ids)
+struct AtomKeyHash { size_t operator()(const Atom& a) const noexcept { return (size_t)(uintptr_t)a.c_str() >> 2; } };
+struct AtomKeyEq { bool operator()(const Atom& x, const Atom& y) const noexcept { return x.c_str() == y.c_str(); } };
 
 inline bool operator==(const std::string& s, const Atom& a) { return a == s; }
 inline bool operator!=(const std::string& s, const Atom& a) { return a != s; }

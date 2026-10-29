@@ -13,6 +13,8 @@
 #include "mwworld/containerstore.hpp"
 #include <strings.h>
 #include "mwworld/esmhelpers.hpp"
+#include "mwdialogue/dialoguemanagerimp.hpp"
+#include "mwscript/scriptstore.hpp"
 
 std::string lower(const std::string& s)
 {
@@ -38,10 +40,12 @@ const Object* GameData::object(const std::string& id) const
 	for (char c : id)
 		if (c >= 'A' && c <= 'Z')
 		{
-			auto it = objects.find(lower(id));
+			Atom k;
+			auto it = Atom::lookup(lower(id), k) ? objects.find(k) : objects.end();
 			return it == objects.end() ? nullptr : &it->second;
 		}
-	auto it = objects.find(id);
+	Atom k;
+	auto it = Atom::lookup(id, k) ? objects.find(k) : objects.end();
 	return it == objects.end() ? nullptr : &it->second;
 }
 
@@ -597,9 +601,11 @@ bool gameLoad(GameData& g, const char* path)
 		const cJSON* item;
 		cJSON_ArrayForEach(item, arr(it, "items"))
 			o.items.emplace_back((int)cJSON_GetArrayItem(item, 0)->valuedouble, cJSON_GetArrayItem(item, 1)->valuestring);
-		g.objects[it->string] = o;
+		g.objects[Atom(it->string)] = o;
 	});
 
+	// (each tree to the card as soon as it is built: mwscript/scriptstore.cpp)
+	scriptsSpillBegin();
 	forSection(root, "scripts", [&](const cJSON* it) {
 		Script& s = g.scripts[it->string];
 		s.name = str(it, "name");
@@ -612,8 +618,12 @@ bool gameLoad(GameData& g, const char* path)
 		convertBlock(arr(it, "body"), s.body, &s);
 		s.usesOnActivate = treeCalls(s.body, "onactivate");
 		s.scriptedHits = treeCalls(s.body, "hitonme") || treeCalls(s.body, "sethealth");
+		scriptSpillOne(s);
 	});
+	scriptsSpillEnd();
 
+	// (each topic's answers to the card as soon as they are read, but Voice's: mwdialogue/topicstore.cpp)
+	topicsSpillBegin();
 	forSection(root, "dialogue", [&](const cJSON* it) {
 		Topic t;
 		t.name = str(it, "name");
@@ -658,8 +668,10 @@ bool gameLoad(GameData& g, const char* path)
 			}
 			t.infos.push_back(std::move(info));
 		}
+		topicSpillOne(g, t);
 		g.topics.push_back(std::move(t));
 	});
+	topicsSpillEnd();
 
 	forSection(root, "journal", [&](const cJSON* it) {
 		Journal& jn = g.journals[it->string];
@@ -1219,11 +1231,11 @@ bool gameLoad(GameData& g, const char* path)
 	// The objects with a world visual or creature sprays carry a mark (Object::fx): the per-frame sweeps over the loaded
 	// refs test the mark instead of looking every id up
 	for (auto& wf : g.firstPerson.worldFx)
-		if (auto o = g.objects.find(lower(wf.first)); o != g.objects.end())
-			o->second.fx |= 1;
+		if (Object* o = const_cast<Object*>(g.object(lower(wf.first))))
+			o->fx |= 1;
 	for (auto& cf : g.firstPerson.cpfx)
-		if (auto o = g.objects.find(lower(cf.first)); o != g.objects.end())
-			o->second.fx |= 2;
+		if (Object* o = const_cast<Object*>(g.object(lower(cf.first))))
+			o->fx |= 2;
 	logf("game: %d objects, %d scripts, %d topics, %d journals, %d sounds, %d voices, heap used %d KB (%u KB of texts, %u KB of long texts)",
 		(int)g.objects.size(), (int)g.scripts.size(), (int)g.topics.size(), (int)g.journals.size(),
 		(int)g.sounds.size(), (int)g.voices.size(), mallinfo().uordblks / 1024, (unsigned)(Atom::poolBytes() / 1024),

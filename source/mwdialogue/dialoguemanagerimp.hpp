@@ -56,6 +56,17 @@ HyperText dialogueHyperText(const GameData& g, const std::string& raw, const std
 // Who last named a topic without having an answer for it ("" when nobody did): for the tests
 std::string dialogueNamedBy(const std::string& topicLower);
 
+// The responses kept on the card outside a talk (topicstore.cpp). topicsSpillBegin / topicSpillOne / topicsSpillEnd, as
+// the load reads the topics: each one but Voice to the card and out of the heap as soon as it is read (they stay when
+// the card can't be written). topicInfos: a topic's responses, read back from the card if they aren't in.
+// topicsRelease: the ones read back go again (no talk open)
+void topicsSpillBegin();
+void topicSpillOne(GameData& g, Topic& t);
+void topicsSpillEnd();
+const std::vector<Info>& topicInfos(World& w, const Topic& t);
+void topicsRelease();
+size_t topicsLoadedBytes();
+
 // First response of `topic` the speaker may give now (also used for Hello voice lines); refusal: fall back to
 // "Info Refusal" when only the speaker's disposition stands in the way (topics clicked, listed and learned)
 const Info* dialogueFindInfo(World& w, const Topic& topic, int ref, int choice, bool invert = false, bool refusal = false);

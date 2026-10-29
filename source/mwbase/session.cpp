@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <tex3ds.h>
 #include <citro2d.h>
+#include "mwscript/scriptstore.hpp"
 #include "mwbase/session.hpp"
 #include "components/debug/profile.hpp"
 
@@ -155,6 +156,10 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	profAdd(PROF_OTHER, t);
 	w.streamExterior(false);
 	w.retryMissingTextures(dt);
+	// (the responses a talk read back from the card go again once it is over)
+	if (!dlg.open)
+		topicsRelease();
+	scriptsTick();
 	profAdd(PROF_STREAM, t);
 
 	aimAndActivate(in, menu);

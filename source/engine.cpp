@@ -160,6 +160,11 @@ bool Engine::prepare()
 	struct stat st;
 	logf("memory: %s, heap %lu KB, linear %lu KB (%lu KB free)", isNew3ds ? "New 3DS" : "Old 3DS",
 		__ctru_heap_size / 1024, __ctru_linear_heap_size / 1024, linearSpaceFree() / 1024);
+	// The cells' collision and all a cell's read builds in an arena of their own, set aside while the heap is still whole
+	// (platform/cellarena.hpp): about 1.1 MB a cell, nine on an Old 3DS (at 8 MB Solstheim's seven filled it, and the
+	// rest went to the heap), nine and to spare on a New one
+	cellArenaInit(g_profile.smallHeap ? (10u << 20) : (14u << 20));
+	g_scriptArena.init(g_profile.smallHeap ? (1u << 20) : (2u << 20), "the script trees read back");
 
 	logf("display: top screen %s", g_profile.rgb565 ? "16-bit, copied RGB565 to RGB565" : "24-bit, copied RGBA8 to RGB8");
 	createTopTargets();
@@ -274,6 +279,7 @@ bool Engine::prepare()
 		{
 			logf("heap: session %d KB", mallinfo().uordblks / 1024);
 			session->vm.load(session->w);
+			session->warmWeapon();          // (the first draw reads nothing: behind this loading screen)
 			logf("heap: + view model %d KB", mallinfo().uordblks / 1024);
 			uiLoadTheme(dataDir, session->w.game.ui);
 			logf("heap: + ui theme %d KB", mallinfo().uordblks / 1024);
@@ -332,6 +338,7 @@ bool Engine::retryFromTitle(bool& loadedOut)
 		if (loadedOut)
 		{
 			session->vm.load(session->w);
+			session->warmWeapon();          // (the first draw reads nothing: behind this loading screen)
 			uiLoadTheme(dataDir, session->w.game.ui);
 			g_splashes = session->w.game.art.splash;
 		}
@@ -512,6 +519,7 @@ bool Engine::frame()
 			if (loaded)
 			{
 				session->vm.load(session->w);
+				session->warmWeapon();          // (the first draw reads nothing: behind this loading screen)
 				uiLoadTheme(dataDir, session->w.game.ui);
 		g_splashes = session->w.game.art.splash;
 			}
@@ -918,7 +926,7 @@ bool Engine::frame()
 		// Never probed while a cell loads in the background: the probe briefly holds the biggest free
 		// block (real allocations), and the streaming thread's own allocation then fails for nothing —
 		// a spurious out-of-memory that purged far cells and churned the heap it was watching
-		heapNote(mallinfo().uordblks);
+		heapNote(heapInUse());          // (the arenas' spare room counted free, as the room checks count it)
 		static int heapSecs = 0;
 		if (++heapSecs >= 5 && !session->w.streamJob)
 		{

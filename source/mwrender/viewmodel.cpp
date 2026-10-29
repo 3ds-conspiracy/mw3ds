@@ -163,8 +163,11 @@ bool fpTrackMatrix(const ActorMesh& m, const C3D_Mtx& base, float t, C3D_Mtx& ou
 	return true;
 }
 
+u32 g_fpPieceReads = 0;
+
 FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool* missing)
 {
+	g_fpPieceReads++;
 	char path[256];
 	snprintf(path, sizeof(path), "%s/fp/%s.fpm", w.dataDir, name.c_str());
 	FILE* f = zopen(path);
@@ -452,7 +455,7 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 	u32 glow[32] = {};                // enchanted items glow
 	const FirstPersonDef& fp = w.game.firstPerson;
 	std::string race = lower(w.stats.race);
-	const std::unordered_map<int, std::string>* skin = nullptr;
+	const std::unordered_map<int, Atom>* skin = nullptr;
 	for (int sex : { female, 0 })
 		if (!skin && fp.races[sex].count(race))
 			skin = &fp.races[sex].at(race);
@@ -565,6 +568,22 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 		}
 	a.deformed = false;
 	logf("viewmodel: %d meshes (%s)", (int)a.meshes.size(), key.c_str());
+}
+
+void ViewModel::warm(World& w, const std::string& weaponId, const std::string& shieldId)
+{
+	if (!ready)
+		return;
+	const FirstPersonDef& fp = w.game.firstPerson;
+	// (the slots rebuild takes them from: 25 the weapon bone, 10 the shield)
+	for (auto [id, slot] : { std::pair<const std::string*, int>{ &weaponId, 25 }, { &shieldId, 10 } })
+	{
+		if (id->empty())
+			continue;
+		auto fit = fp.items.find(lower(*id));
+		if (fit != fp.items.end() && fit->second.slots.count(slot))
+			piece(w, fit->second.slots.at(slot).first);
+	}
 }
 
 float ViewModel::groupLength(const char* groupName) const

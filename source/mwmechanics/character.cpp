@@ -259,6 +259,42 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 
 // ---- First-person view model
 
+// The race menu opens on the dock, after the boat's door, and building its face preview there (the race's skeleton,
+// body, head and hair read from the card) froze the screen for seconds on a console. Through that door, behind its
+// loading screen, the body is put together for what the menu opens on: the first race in its list, its first face and
+// hair. A preview read ahead and never shown (a save loaded past it) goes at the next door
+void Session::preloadRacePreview()
+{
+	if (racePreloaded && !thirdPerson)
+	{
+		body.free(w);
+		racePreloaded = false;
+	}
+	const auto cg = w.globals.find("chargenstate");
+	if (raceMenuSeen || !w.game.chargen || cg == w.globals.end() || cg->second == -1.0f || w.cells[w.current].interior)
+		return;
+	const RaceDef* first = nullptr;
+	for (auto& r : w.game.races)
+		if (r.playable)
+		{
+			first = &r;
+			break;
+		}
+	if (!first)
+		return;
+	std::string race = w.stats.race, head = w.stats.head, hair = w.stats.hair;
+	w.stats.race = first->id;
+	w.stats.head.clear();
+	w.stats.hair.clear();
+	u64 t0 = osGetTime();
+	body.rebuild(w, false);
+	logf("chargen: face preview for %s read ahead in %llu ms", first->id.c_str(), osGetTime() - t0);
+	w.stats.race = race;
+	w.stats.head = head;
+	w.stats.hair = hair;
+	racePreloaded = true;
+}
+
 // Which arms / weapon / shield the view model shows and how it reacts (hits, blocks, knockdown)
 void Session::viewModelUpdate(const PlayerInput& in, float dt)
 {
@@ -294,8 +330,10 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		if (in)
 			ammoIn = ammo->id;
 	}
-	vm.rebuild(w, show && !casting ? (wpn ? wpn->id.str() : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "",
-		ammoIn);
+	// (not under the race menu: the arms are out of sight, and each race tried on would read its arms; once, as it closes)
+	if (screen != SCR_RACE)
+		vm.rebuild(w, show && !casting ? (wpn ? wpn->id.str() : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "",
+			ammoIn);
 	if (weaponDrawn && w.player.knockTimer > 0.0f && vm.action != VM_KNOCKDOWN)
 		vm.play(VM_KNOCKDOWN, "KnockDown");
 	if (blockUntil > w.time && vm.action == VM_IDLE && !shield.empty())
@@ -325,9 +363,16 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		thirdDistance = 0.0f;
 		body.acting = BODY_NONE;              // a blow or cast under way when the view changes starts afresh
 	}
+	bool wasPreview = previewFace;
 	previewFace = screen == SCR_RACE;          // character creation: the face being chosen
+	if (previewFace)
+		raceMenuSeen = true, racePreloaded = false;
 	if (!previewFace)
 		previewSpin = 0.0f;
+	// The face preview goes with its menu: in first person nothing else draws the body (the third-person view builds it
+	// again when it is wanted)
+	if (wasPreview && !previewFace && !thirdPerson)
+		body.free(w);
 	if (thirdPerson || previewFace)
 	{
 		body.rebuild(w, weaponDrawn);

@@ -189,8 +189,14 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	// The heap (Old 3DS soak runs): KB in use now, the most used so far, the biggest block still to be had; zlib streams
 	// left open; whether the out-of-memory reserve is spent (1) or held (0)
 	else if (what == "heapused") v = (float)(mallinfo().uordblks / 1024);
-	else if (what == "heappeak") { heapNote(mallinfo().uordblks); v = (float)(heapHighWater() / 1024); }
+	else if (what == "heappeak") { heapNote(heapInUse()); v = (float)(heapHighWater() / 1024); }
 	else if (what == "heapblock") v = (float)(heapLargestBlock() / 1024);
+	// ... KB free in holes under 256 KB (the PC memory checker's heap; 0 elsewhere): the heap cut up
+	else if (what == "heapscattered")
+	{
+		size_t kb[4] = {};
+		v = heapHoles(kb) ? (float)(kb[0] + kb[1]) : 0.0f;
+	}
 	else if (what == "zopen") v = (float)zOpenCount();
 	else if (what == "memorylow") v = memoryReserveHeld() ? 0.0f : 1.0f;
 	else if (what == "uiintact") v = uiThemeIntact() ? 1.0f : 0.0f;  // the UI's font and frames still as loaded

@@ -1,3 +1,4 @@
+#include "mwscript/scriptstore.hpp"
 #include "components/interpreter/interpreter.hpp"
 
 #include <optional>
@@ -500,7 +501,7 @@ void scriptsRun(World& w, ScriptHost& host, float dt, bool globalOnly)
 				w.scripts[i].targetCell.clear();
 			}
 			Ctx c{ w, host, (int)i, ref >= 0 || !w.scripts[i].item.empty() ? ref : w.scripts[i].target, dt };
-			exec(c, w.scripts[i].script->body);
+			exec(c, scriptBody(*w.scripts[i].script));       // (read back from the card if it isn't in)
 			// OnActivate lasts one frame; OnPCAdd / OnPCEquip stay set until the script clears them
 			w.scripts[i].activated = false;
 		}

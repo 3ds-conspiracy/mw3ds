@@ -338,6 +338,28 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 						v++;
 				}
 	}
+	else if (what == "scriptsinheap")  // scripts with their tree in the heap now (mwscript/scriptstore.cpp)
+	{
+		v = 0;
+		for (const auto& kv : w.game.scripts)
+			if (!kv.second.spilled || kv.second.loaded)
+				v++;
+	}
+	else if (what == "topicsinheap")   // topics other than Voice with their responses in the heap now (topicstore.cpp)
+	{
+		v = 0;
+		for (const Topic& t : w.game.topics)
+			if (t.type != TOPIC_VOICE && !t.infos.empty())
+				v++;
+	}
+	else if (what == "gridloaded")  // <gx>,<gy>: 1 when that exterior cell's geometry is loaded (-1: no such cell)
+	{
+		int gx = 0, gy = 0;
+		if (sscanf(arg.c_str(), "%d,%d", &gx, &gy) != 2)
+			return false;
+		int ci = w.gridCell(gx, gy);
+		v = ci < 0 ? -1.0f : w.cells[ci].live ? 1.0f : 0.0f;
+	}
 	else if (what == "savevalid")   // <name>: 1 when test_<name>.sav reads whole (a damaged one is refused)
 		v = World::savedCell(("sdmc:/3ds/mw3ds/test_" + arg + ".sav").c_str()).empty() ? 0.0f : 1.0f;
 	else if (what == "saveneeds")   // <name>: 1 when test_<name>.sav was made with an add-on the data lacks (refused)

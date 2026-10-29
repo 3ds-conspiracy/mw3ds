@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: old
+# bug-stream-ahead: on an Old 3DS, Solstheim's cells loaded only when the player was on them. Late in a game the heap
+# has room for two or three of the eight neighbours, and they streamed in a fixed order (north, east, south, west, the
+# corners): a player going west had the cells behind and beside loaded and the one ahead not. At Fort Frostmoth with
+# its neighbours not in yet (STREAM:off) and the heap held to room for about two (HEAPLEAVE), the player flies west in
+# the fort's cell: at 1500 units from its west border the cell past it is loaded. (The game has it off for now,
+# STREAMAHEAD turns it on: World::streamAhead)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 STREAMAHEAD:on
+0.3 0 0 0 0 STREAM:off
+0.3 0 0 0 0 TP:-174024:136824:2000:0
+8 0 0 0
+0.1 0 0 0 0 EXPECT:gridloaded:-22,16:eq:1
+0.3 0 0 0 0 HEAPLEAVE:8500
+0.3 0 0 0 0 STREAM:on
+120 0 0 0 0 FLYTO:@-178724,136824,2000
+3 0 0 0
+0.1 0 0 0 0 EXPECT:gridloaded:-23,16:eq:1

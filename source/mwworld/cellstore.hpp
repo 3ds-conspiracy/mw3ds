@@ -32,6 +32,7 @@ struct LevelCell
 	u32 lastUsed = 0;                 // World::useTick when last read or loaded
 	float askedAt = -1000.0f;         // World::time when its objects were last read or asked for (ensureRefs)
 	float freedAt = -1e9f;            // World::time when its geometry was last freed
+	float loadedAt = -1e9f;           // World::time when its geometry last came in
 	float sea = 0.0f;                 // exterior: share of its ground under open water (converter)
 	bool noSleep = false;             // resting is illegal here (waiting only, or a bed)
 	bool sky = false;                 // an interior that behaves as an exterior (Tribunal's Mournhold, OpenMW's QuasiEx)

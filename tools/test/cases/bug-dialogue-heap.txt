@@ -1,0 +1,22 @@
+# start: Seyda Neen
+# bug-dialogue-heap: every topic's responses (27,000 with Bloodmoon) stayed in the heap the whole game, 2.5 MB of an
+# Old 3DS's 39 MB, though only the Voice topics' are needed outside a talk. Out of a talk no other topic's are in the
+# heap; talking to Fargoth reads back the ones the talk looks at (his greeting, the topic list), the list shows, he
+# answers about the ring, and once the talk is over they go again
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.1 0 0 0 0 EXPECT:topicsinheap:eq:0
+60 0 0 0 0 ACTIVATE:fargoth
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:talking:eq:1
+0.1 0 0 0 0 EXPECT:topicsinheap:gt:0
+0.3 0 0 0 0 EXPECT:topiclisted:ring
+0.3 0 0 0 0 TOPIC:ring
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:said:ring
+0.3 0 0 0 0 SCREEN:none
+2 0 0 0 0 UNTIL:screen:none
+1 0 0 0
+0.1 0 0 0 0 EXPECT:topicsinheap:eq:0

@@ -22,6 +22,9 @@ public:
 	operator std::string() const { return str(); }
 	bool operator==(const CardText& o) const { return off_ == o.off_; }
 	bool operator!=(const CardText& o) const { return off_ != o.off_; }
+	// where it starts, as a number (a copy of a dialogue line kept on the card: mwdialogue/topicstore.cpp), and back
+	uint32_t raw() const { return off_; }
+	static CardText fromRaw(uint32_t off) { CardText t; t.off_ = off; return t; }
 
 	// gameLoad's bracket: false from loadEnd means the card file is stale (or couldn't be written) and the texts
 	// must be handed to store() again, in the same order, between rewriteBegin and rewriteEnd; false from that

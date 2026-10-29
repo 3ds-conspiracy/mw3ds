@@ -275,7 +275,7 @@ static int passes(World& w, const Info& info, int ref, int choice, bool invert =
 const Info* dialogueFindInfo(World& w, const Topic& topic, int ref, int choice, bool invert, bool refusal)
 {
 	bool refused = false;
-	for (const Info& info : topic.infos)
+	for (const Info& info : topicInfos(w, topic))
 	{
 		int r = passes(w, info, ref, choice, invert);
 		if (r == 1)

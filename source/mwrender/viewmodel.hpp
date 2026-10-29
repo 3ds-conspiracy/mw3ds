@@ -29,6 +29,7 @@ struct World;
 struct Skeleton;
 // (*missing: set when the file isn't there at all, as against a load that ran out of memory)
 FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool* missing = nullptr);
+extern u32 g_fpPieceReads;                // pieces read from the card so far (tests: EXPECT:piecereads)
 // Gives back a piece's geometry and the textures it holds (a texture that failed to load held a count too)
 void fpFreePiece(World& w, FpPiece* p);
 // Tries again the textures that failed to load, and says so once if one still has none (it draws white)
@@ -68,6 +69,8 @@ struct ViewModel
 	// Puts the arms together for the race and equipment (cheap when nothing changed)
 	// ammoId: the arrow or bolt sitting in the bow or crossbow ("" none)
 	void rebuild(World& w, const std::string& weaponId, const std::string& shieldId, const std::string& ammoId = "");
+	// The weapon's and shield's pieces read into the cache now, so that drawing them reads nothing (Session::warmWeapon)
+	void warm(World& w, const std::string& weaponId, const std::string& shieldId);
 	void play(VmAction a, const char* groupName, bool hold = false);
 	// A melee blow's follow-through ("1hChopF"): small / medium / large by its strength, 0..1 (OpenMW)
 	void playFollow(const char* groupName, float strength);

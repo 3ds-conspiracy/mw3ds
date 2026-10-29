@@ -51,6 +51,27 @@ bool waterCreatureCanFight(World& w, int ri)
 	return w.lineOfSight(eyeA, eyeB);
 }
 
+// The weapon's own "up" sound, drawing it, by its type (OpenMW's weapon type table)
+static std::string weaponUpSound(const Object* wpn)
+{
+	static const char* up[] = { "Shortblade", "Longblade", "Longblade", "Blunt", "Blunt", "Blunt", "Spear", "Blunt", "Blunt",
+		"Bow", "Crossbow", "Blunt" };
+	int t = wpn->subtype;
+	return std::string("Item Weapon ") + up[t >= 0 && t <= 11 ? t : 3] + " Up";
+}
+
+void Session::warmWeapon()
+{
+	const Object* wpn = playerWeapon();
+	std::string shield;
+	for (auto& it : w.inventory)
+		if (it.equipped && w.game.object(it) && w.game.object(it)->recType == REC_ARMO && w.game.object(it)->subtype == ARMO_SHIELD)
+			shield = it.id;
+	vm.warm(w, wpn ? wpn->id.str() : "", shield);
+	if (wpn)
+		preloadSound(weaponUpSound(wpn));
+}
+
 int weaponSkill(const Object* w)
 {
 	if (!w)
@@ -676,12 +697,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		drawTimer = fmaxf(0.3f, vm.groupLength((g + "Eq").c_str()));
 		// The weapon's own "up" sound by its type (OpenMW's weapon type table); raised fists make none
 		if (wpn)
-		{
-			static const char* up[] = { "Shortblade", "Longblade", "Longblade", "Blunt", "Blunt", "Blunt", "Spear", "Blunt", "Blunt",
-				"Bow", "Crossbow", "Blunt" };
-			int t = wpn->subtype;
-			playSound(-1, std::string("Item Weapon ") + up[t >= 0 && t <= 11 ? t : 3] + " Up");
-		}
+			playSound(-1, weaponUpSound(wpn));
 	};
 	// Ready Weapon (Xbox layout: X): out if it's away; away if it's out (below)
 	// (a cast is one upper-body state for its whole animation: no drawing, sheathing or blow until it ends)

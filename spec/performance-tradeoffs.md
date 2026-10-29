@@ -131,6 +131,20 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   walls), the item icons and a book's pages had none. Seyda Neen now holds six or seven of its nine cells.
   (`World::streamExterior`, `bug-o3ds-seyda-linear`)
 
+- **Dialogue answers and script trees wait on the card.** Outside a talk only the Voice topics' answers are in the
+  heap; a talk reads back the topics it looks at from `dialogue.bin` and lets them go when it ends. A script's tree is
+  read back from `scripts.bin` when it runs and goes again ten seconds after it last ran. OpenMW keeps all of both in
+  memory. Together they were about 4 MB of an Old 3DS's 39 MB heap (on Bloodmoon's data): room for two more cells. The
+  cost is a card read as a talk opens and when a script first runs. (`mwdialogue/topicstore.cpp`,
+  `mwscript/scriptstore.cpp`, `bug-dialogue-heap`, `bug-script-heap`)
+- **On an Old 3DS the cell ahead can stream in first, and one behind go to make room for it (off for now).** Neighbours load nearest
+  edge first, the one in the direction of travel counting up to 1500 nearer; with no room and the player within 2000
+  of the wanted cell's edge, the loaded neighbour farthest off (past the fog's start, 3000 farther, in for 5 s) is let
+  go. Turning back reloads it (the distant land stands in meanwhile). OpenMW keeps its whole grid loaded. Off in the
+  game (`World::streamAhead`) until the fall through the Hlaalu Council Manor's floor that the changed order led to is
+  understood; tests turn it on with `STREAMAHEAD:on`.
+  (`World::streamExterior`, `bug-stream-ahead`)
+
 ## Movement
 
 - **No navigation mesh.** Actors walk on the path grids and climb up to 60 degree slopes; the player 46. A navmesh

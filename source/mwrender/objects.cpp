@@ -306,6 +306,7 @@ static void tryLoad(TextureCache& c, TextureCache::Entry* e, const char* dataDir
 C3D_Tex* TextureCache::acquire(const char* dataDir, const std::string& name)
 {
 	CacheGuard guard(&lock);      // not the linear heap's lock: every allocation in the game waited on it
+	CellScopeOff heap;            // (the cache outlives the cell reading it)
 	Entry*& slot = entries[name];
 	if (!slot)
 		slot = new Entry();       // (zeroed: not loaded, no references, no failures)
@@ -427,7 +428,10 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 		cell.textures[i] = cache.acquire(dataDir, name);
 		missing += cell.textures[i] == nullptr;
 		if (!cell.textures[i] && !(g_streamCancel && threadGetCurrent()))     // (a cancelled read skips them: not missing)
+		{
+			CellScopeOff heap;        // (the warnings' list outlives the cell)
 			monitorOnce((std::string("tex:") + name).c_str(), "missing texture %s (first seen in %s)", name, cellFile);
+		}
 	}
 	// newly loaded; the rest was shared (textures freed meanwhile by the main thread can make it negative)
 	cell.textureBytes = cache.bytes > before ? cache.bytes - before : 0;

@@ -13,8 +13,8 @@
 static bool readIndices(FILE* f, IndexList& out, u32 n, u32 width, bool planar)
 {
 	out.isWide = width == 4;
-	std::vector<u32>().swap(out.wide);
-	std::vector<u16>().swap(out.narrow);
+	CellVec<u32>().swap(out.wide);
+	CellVec<u16>().swap(out.narrow);
 	if (width == 4)
 	{
 		if (!tryResize(out.wide, n))
