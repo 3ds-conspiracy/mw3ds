@@ -22,9 +22,12 @@
 0.3 0 0 0 0 EXPECT:refhealth:scamp_creeper:eq:@0
 0.3 0 0 0 0 ADDEFFECT:14:20:20:1:2
 0.3 0 0 0 0 MAKESPELL:zapcreeper
+# (up to it first, then the cast, till it lands: on the Old 3DS profile the strikes left the player further off, the scamp
+# out of the crosshair, and the cast goes off later)
+30 0 0 0 0 WALKTO:scamp_creeper
 0.5 0 0 0 0 FACE:scamp_creeper
 0.3 0 0 0 0 CAST:mw3ds_test_zapcreeper
-1 0 0 0
+5 0 0 0 0 UNTIL:refhealth:scamp_creeper:lt:@0
 0.3 0 0 0 0 EXPECT:refhealth:scamp_creeper:lt:@0
 0.3 0 0 0 0 EXPECT:refflee:scamp_creeper:eq:1
 60 0 0 0 0 ACTIVATE:scamp_creeper

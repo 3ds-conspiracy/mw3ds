@@ -19,6 +19,8 @@
 0.3 0 0 0 0 USE:p_levitation_e
 0.3 0 0 0 0 USE:p_levitation_e
 60 0 0 0 0 FLYTO:@21774,35026,1958
+# (one more potion: the flight takes longer on the Old 3DS profile, and the player landed on a roof beside him)
+0.3 0 0 0 0 USE:p_levitation_e
 120 0 0 0 0 ACTIVATE:assantushansar
 1.5 0 0 0
 0.1 0 0 0 0 EXPECT:talking:eq:1

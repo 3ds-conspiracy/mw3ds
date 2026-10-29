@@ -1339,7 +1339,7 @@
 # MS_MatchMaker: Marena Gilnith (Great Bazaar) wants to meet a man; Goval Ralen (Temple Courtyard) is the one
 # (dice from here on seeded: the date's outcome is the script's own Random 100, and the rolls before it shift with
 # any change to what came before)
-0.1 0 0 0 0 SEED:8
+0.1 0 0 0 0 SEED:4
 120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
 10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
 0.5 0 0 0

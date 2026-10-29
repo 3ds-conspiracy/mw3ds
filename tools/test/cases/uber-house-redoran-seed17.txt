@@ -1394,6 +1394,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:duties
@@ -1474,6 +1478,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:slander
@@ -1562,6 +1570,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:Redas_Tomb
@@ -1677,6 +1689,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:duel
@@ -1754,6 +1770,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:Dagoth_Tanis
@@ -2503,6 +2523,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:duties
@@ -2577,6 +2601,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:Reynel_Uvirith
@@ -2657,6 +2685,10 @@
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Treasury
 10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Treasury
 0.5 0 0 0
+# (up to Faral first, then a moment: the treasury's wandering ordinator stops to greet the player as they come in, and
+# stood in front of Faral, between him and every spot round, until his line was said)
+30 0 0 0 0 WALKTO:@-139,35,-288
+6 0 0 0
 60 0 0 0 0 ACTIVATE:faral_retheran
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:Raynasa_Rethan

@@ -1995,9 +1995,12 @@
 # (the hill between the strider and Arvs-Drelen is steeper than 46 degrees in places: fly over it, down to the ground
 # south-east of the door, under open sky: not onto the hilltop above it, nor under the overhang west of it)
 # (nearer the door, in front of it: from the old spot further south-east the faster walk up went past it onto the hill)
-120 0 0 0 0 FLYTO:@-87790,95520,1330
-0.1 0 0 0 0 FLOAT:60
-120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+120 0 0 0 0 FLYTO:@-87805,95545,1330
+# (then the door from where the flight lands, as a player standing at it opens it: walked to, it took a grid route on
+# past it, and when the crosshair didn't catch it on the way it went on up the rock over the door, out of reach)
+2 0 0 0
+0.3 0 0 0 0 FACE:@-87843,95614
+0.3 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@3072,4096,512
@@ -2483,7 +2486,9 @@
 120 0 0 0 0 WALKTO:@94062,167445,1122:dive
 120 0 0 0 0 WALKTO:@94329,167852,1277:dive
 0.3 0 0 0 0 ESCORT:-
-150 0 0 0
+# (she can't climb onto the shrine's terrace, a step too high for her: held up at its foot she goes back down the
+# player's footsteps and up again; through the door once she is near, within 800 she comes in too)
+60 0 0 0 0 UNTIL:refdist:sinnammu_mirpal:le:650
 0.3 0 0 0 0 CAST:telekinesis
 1 0 0 0
 0.3 0 0 0 0 FACE:@94553,167771

@@ -28,6 +28,9 @@
 # (by S'virr's boat on Khuul's shore)
 0.3 0 0 0 0 TP:-68964:141900:300:0
 4 0 0 0
+# (Mephala's Skill known from the start: its Chameleon hides the theft at Fort Frostmoth below, which a guard in the room saw
+# on the Old 3DS profile)
+0.3 0 0 0 0 SPELL:skillmephala_sp
 0.3 0 0 0 0 LEGIT
 # Before sailing: Louis Beauchamp outside the Ald'ruhn Mages Guild lost an airship sent to Solstheim for an amulet
 # (The Patchwork Airship, BM_Airship 40); by Khuul's silt strider there and back
@@ -88,6 +91,8 @@
 10 0 0 0 0 UNTIL:cell:Fort_Frostmoth
 120 0 0 0 0 DOORTO:Fort_Frostmoth,_Armory
 10 0 0 0 0 UNTIL:cell:Fort_Frostmoth,_Armory
+# (unseen: Chameleon 50 for the theft)
+0.3 0 0 0 0 CAST:skillmephala_sp
 60 0 0 0 0 USELOCKPICK:de_p_desk_nuncius:pick_grandmaster
 60 0 0 0 0 LOOT:de_p_desk_nuncius:potion_local_brew_01
 1 0 0 0
@@ -179,7 +184,9 @@
 0.1 0 0 0 0 EXPECT:journal:BM_Missionary:ge:30
 0.5 0 0 0 0 B
 0.5 0 0 0 0 B
-60 0 0 0 0 WALKTO:@-155136,189440,1736
+# (a spot between where the walk ends on the New 3DS profile and the step on the Old one stops it, within the driver's
+# 80 of both: the walk to the old spot, 1736, stuck 90 off it on the Old)
+60 0 0 0 0 WALKTO:@-155095,189447,1754
 120 0 0 0 0 DOORTO:Solstheim,_Thirsk
 10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
 # (upstairs by the stairs in the south-east corner; Erich's chamber door at the top, lock 50)
@@ -436,7 +443,7 @@
 0.5 0 0 0 0 B
 0.5 0 0 0 0 B
 120 0 0 0 0 FLYTO:@-153022,191000,2100
-60 0 0 0 0 WALKTO:@-155136,189440,1736
+60 0 0 0 0 WALKTO:@-155095,189447,1754
 120 0 0 0 0 DOORTO:Solstheim,_Thirsk
 10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
 60 0 0 0 0 WALKTO:@490,-216,-254
@@ -597,7 +604,7 @@
 120 0 0 0 0 DOORTO:outside
 3 0 0 0
 120 0 0 0 0 FLYTO:@-153022,191000,2100
-60 0 0 0 0 WALKTO:@-155136,189440,1736
+60 0 0 0 0 WALKTO:@-155095,189447,1754
 120 0 0 0 0 DOORTO:Solstheim,_Thirsk
 10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
 60 0 0 0 0 WALKTO:@490,-216,-254

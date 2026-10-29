@@ -1,4 +1,6 @@
 # start: Seyda Neen
+# console: new
+# (the clear-weather fog range checked is the New 3DS's view; the Old 3DS draws less far by design)
 # data: tribunal
 # Mournhold is an interior that behaves as an exterior: OpenMW gives it the sky and the weather's fog, not the cell's
 # own (WeatherManager::update and the sky run for exteriors and quasi-exteriors alike). On a clear noon the fog starts at

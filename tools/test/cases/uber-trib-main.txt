@@ -12,6 +12,7 @@
 0.3 0 0 0 0 ACTIVE:8:2000
 0.3 0 0 0 0 ENHANCEV2
 0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 GIVE:repair_grandmaster_01:5
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:50000
 0.3 0 0 0 0 GIVE:sc_divineintervention:20
@@ -1457,6 +1458,10 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 3 0 0 0
+# (the sword mended twice first: on the Old 3DS profile more blows went before it, and worn down it hit Karrod for a third,
+# under his Restore Health; mended to full a blow killed him instead of his yielding)
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
+0.5 0 0 0 0 REPAIRWITH:repair_grandmaster_01:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 120 0 0 0 0 STRIKE:karrod:6
 120 0 0 0 0 STRIKE:karrod:6

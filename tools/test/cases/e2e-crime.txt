@@ -17,7 +17,11 @@
 0.1 0 0 0 0 EXPECT:bounty:eq:0
 # 1. The boots taken: reported, the guard greets; the fine paid
 0.3 0 0 0 0 SNAP:gold
-60 0 0 0 0 PICKUP:iron%boots
+# (walked up to and taken by hand, not by the driver's PICKUP: on the Old 3DS profile the guard's crime greeting opened
+# while that step was still running, and the driver paid the fine before the checks below)
+60 0 0 0 0 WALKTO:iron%boots
+0.3 0 0 0 0 FACE:iron%boots:mid
+0.3 0 0 0 0 A
 1 0 0 0
 0.1 0 0 0 0 EXPECT:bounty:eq:20
 3 0 0 0

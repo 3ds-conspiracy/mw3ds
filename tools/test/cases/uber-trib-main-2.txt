@@ -1916,6 +1916,9 @@
 10 0 0 0 0 UNTIL:cell:Sotha_Sil,_Central_Gearworks
 0.5 0 0 0
 120 0 0 0 0 HOPTO:@680,1150,12740
+# (the jump lands within 200 of the spot, on the level below the door's ledge: walk up to under the door, or the
+# crosshair finds the broken door beside it and the real one is out of reach, 96 up where Levitation doesn't work)
+30 0 0 0 0 WALKTO:@630,1090,12645
 120 0 0 0 0 DOORTO:Sotha_Sil,_Hall_of_Theuda
 10 0 0 0 0 UNTIL:cell:Sotha_Sil,_Hall_of_Theuda
 0.5 0 0 0

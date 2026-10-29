@@ -1549,6 +1549,9 @@
 0.3 0 0 0 0 FACE:ancestor_mg_wisewoman
 0.3 0 0 0 0 CASTMADESPELL
 3 0 0 0
+# (a bolt can miss her as she drifts, the open door's slab beside the player: on an Old 3DS two of six did; what the
+# bolts leave, the daedric blade finishes, and with her dead already the KILL is done at once)
+120 0 0 0 0 KILL:ancestor_mg_wisewoman
 0.1 0 0 0 0 EXPECT:dead:ancestor_mg_wisewoman
 60 0 0 0 0 ACTIVATE:minabibi_assardarainat
 1.5 0 0 0

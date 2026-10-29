@@ -740,6 +740,9 @@
 0.3 0 0 0 0 SNAP:gold
 # (v2: walked to where v1's moves by hand, timed for its speed, got to under the dock, and opened from there as v1 did)
 30 0 0 0 0 WALKTO:@-47636,-39665,81
+# (in two halves along the straight line: the whole walk, 780, went by the town's path grid on an Old 3DS, which never
+# gets under the dock; each half, under 500 and in sight, is walked straight)
+30 0 0 0 0 WALKTO:@-47240,-39566,0:dive
 30 0 0 0 0 WALKTO:@-46858,-39482,-7
 2 0 0 0 0 FACE:com_chest_02_hhbt:mid
 0.3 0 0 0 0 A
@@ -3307,13 +3310,14 @@
 1 0 0 0
 120 0 0 0 0 KILL:aranwen
 1 0 0 0
-120 0 0 0 0 KILL:snadir
-1 0 0 0
 120 0 0 0 0 KILL:agrob_gra-bogharz
 1 0 0 0
-120 0 0 0 0 KILL:nistacey
+120 0 0 0 0 KILL:snadir
 1 0 0 0
+# (his key at once, the fighters round him down first: Agrob gra-Bogharz, falling over him, hid his body from the crosshair)
 60 0 0 0 0 LOOT:snadir:key_zainsipiluslaves_01
+1 0 0 0
+120 0 0 0 0 KILL:nistacey
 1 0 0 0
 0.1 0 0 0 0 EXPECT:item:key_zainsipiluslaves_01:ge:1
 60 0 0 0 0 ACTIVATE:haran
