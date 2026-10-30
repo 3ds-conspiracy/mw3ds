@@ -54,6 +54,7 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	// were, nor kept further off than their half-widths (their boxes: a bear wider than a wolf), so two put down in one
 	// spot come apart as either steps away. Refused outright instead, people meeting in a doorway or a fight stood there
 	// for good. First, so the walls still have the last word
+	bool slid = false;
 	if (!r.dead)
 	{
 		auto halfWidth = [](const Ref& a) {
@@ -91,6 +92,7 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 			float gx = ux * keep + tx * along * step, gy = uy * keep + ty * along * step, gl = sqrtf(gx * gx + gy * gy);
 			body[0] = o.pos[0] + gx / gl * keep;
 			body[1] = o.pos[1] + gy / gl * keep;
+			slid = true;
 		}
 		// (round one into another, in a pack: no step then)
 		for (int j : w.loadedActors)
@@ -113,6 +115,16 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	for (LoadedCell* l : w.loaded)
 		if (&l->cell != &cell && aroundCount < 12 && collisionReaches(l->cell.collision, body[0], body[1], 40.0f))
 			around[aroundCount++] = &l->cell;
+	// (slid round someone, never through a wall: pushed clean through a thin one, a Skaal hunter in the Tombs of
+	// Skaalara stood outside the rock with no floor under him, out of everyone's reach)
+	if (slid)
+	{
+		float from[3] = { r.pos[0], r.pos[1], body[2] };
+		float t;
+		for (int k = 0; k < aroundCount; k++)
+			if (collisionRaycast(around[k]->collision, from, body, &t))
+				return false;
+	}
 	for (int k = 0; k < aroundCount; k++)
 		collisionPushSphere(around[k]->collision, body, 22.0f, true);   // about a person's half width (Morrowind's boxes: 20..29)
 	// Closed doors (and gates a script swings shut) block as boxes, as they block the player (OpenMW's actors collide
