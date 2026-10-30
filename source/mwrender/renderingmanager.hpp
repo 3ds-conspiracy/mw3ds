@@ -55,6 +55,8 @@ int rendererReplayWorld(float eyeShift);
 extern int g_replayCount, g_replayMissed;      // right eyes drawn from the record / drawn again (no room), per second
 // After rendererDrawWorld, in the same frame: one mesh with a model matrix (nullptr = world space)
 void rendererDrawMesh(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* tex);
+// Whether a batch with these flags (BATCH_*) writes depth: all but a blended one that isn't alpha tested too
+bool batchWritesDepth(u8 flags);
 // Sky bodies for the next frames' sky pass: a textured square in direction dir (unit, world axes), size its half
 // width at the sky's radius, facing the eye (turned by roll) or laid along its own two axes (fixed: the moons, as
 // OpenMW turns their quads); additive for a moon's picture; afterClouds: drawn over the clouds (the sun's glare, a

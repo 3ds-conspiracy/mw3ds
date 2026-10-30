@@ -1,0 +1,11 @@
+# start: Seyda Neen
+# bug-bear-face-depth: Bloodmoon's bears had their faces torn open, teeth where the nose is, the snow bear's worst. Their
+# heads are blended and alpha tested (xbear_*_larger.nif's NiAlphaProperty, the fur at their edges), and a blended batch
+# wrote no depth: the inside of the mouth, drawn after the snout, showed through it. OpenMW keeps a blended model's depth
+# writes on unless its NiZBufferProperty turns them off. A batch blended and tested (3) writes depth now; one only
+# blended (1: smoke, glass, an invisible person) still doesn't, drawn back to front; an opaque one (0) does
+3 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:batchdepthwrite:3:eq:1
+0.1 0 0 0 0 EXPECT:batchdepthwrite:1:eq:0
+0.1 0 0 0 0 EXPECT:batchdepthwrite:0:eq:1
+0.1 0 0 0 0 EXPECT:batchdepthwrite:2:eq:1

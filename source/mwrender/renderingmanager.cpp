@@ -287,6 +287,16 @@ static void glowStage(u32 glow)
 	C3D_TexEnvColor(env, 0xFF000000 | (b << 16) | (g << 8) | r);
 }
 
+// Depth is written by every batch but a blended one (drawn back to front after the rest). One blended and alpha tested
+// too writes it, as OpenMW keeps a blended model's depth writes on (unless its NiZBufferProperty turns them off): what
+// the test throws away writes nothing, and the rest hides what is behind it in the same model. Bloodmoon's bears' heads
+// are blended and tested (the fur at their edges); without depth, the inside of the mouth, drawn after the snout, showed
+// through it (teeth where the nose is) and the head looked torn open
+bool batchWritesDepth(u8 flags)
+{
+	return !(flags & BATCH_BLEND) || (flags & BATCH_TEST);
+}
+
 static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 {
 	if (g_gpu.last.valid && g_gpu.last.tex == tex && g_gpu.last.flags == b.flags && g_gpu.last.alphaRef == b.alphaRef
@@ -305,7 +315,7 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 	else if (b.flags & BATCH_DECAL)
 		C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_COLOR);
 	else
-		C3D_DepthTest(true, GPU_GREATER, (b.flags & BATCH_BLEND) ? GPU_WRITE_COLOR : GPU_WRITE_ALL);
+		C3D_DepthTest(true, GPU_GREATER, batchWritesDepth(b.flags) ? GPU_WRITE_ALL : GPU_WRITE_COLOR);
 	C3D_AlphaTest((b.flags & BATCH_TEST) != 0, GPU_GREATER, b.alphaRef);
 	C3D_CullFace((b.flags & BATCH_TWO_SIDED) ? GPU_CULL_NONE : GPU_CULL_BACK_CCW);
 
