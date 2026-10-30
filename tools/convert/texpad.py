@@ -7,6 +7,7 @@ and how the gaps are filled changes no cell. Run on its own, it pads again the p
     python tools/convert/texpad.py --data out/world
     python tools/convert/texpad.py --data out/data-tribunal-bloodmoon --tribunal --bloodmoon   (the mods' folders in
                                                                          MW3DS_OVERLAY_DIRS, as build_cia_mods.py sets)
+    python tools/convert/texpad.py --data out/o3ds --max-tex 128         (an Old 3DS's: its creatures go to CREATURE_CAP)
 """
 import argparse
 import io
@@ -32,6 +33,10 @@ PAD_VERSION = 2
 # alpha tests start at 100). Shrinking takes them in all the same: their colour came into the edge of a fringe, the fur
 # along a bear's back drawn dark there, a dashed line
 SEE_THROUGH = 64
+# The Old 3DS's 128-texel cap left a creature's sheet a blur (a bear's 512: fur, face, mouth and claws on one picture).
+# Creatures' pictures get 256 there: one sheet a kind of creature, a few kinds in view, about 65 KB more each; people,
+# their clothes and the world stay at the console's cap (spec/performance-tradeoffs.md)
+CREATURE_CAP = 256
 
 
 def _unpacked(path):
@@ -127,6 +132,24 @@ def actor_texture_islands(out_dir):
     return {k: v for k, v in islands.items() if k not in other and k}
 
 
+def creature_textures(out_dir):
+    """Names of the pictures only creatures' libraries draw (game_actors_*.json marks a creature and names its library):
+    not one a person draws too (armour a skeleton and a guard share), which would raise people's"""
+    import json
+    names, people = set(), set()
+    for f in sorted(out_dir.glob("game_actors_*.json")):
+        for a in json.loads(_unpacked(f)).get("actors", []):
+            lib = out_dir / a["lib"] if a.get("lib") else None
+            if not lib or not lib.exists():
+                continue
+            try:
+                drawn = {name.lower() for name, _, _, _ in _library_meshes(_unpacked(lib))}
+            except (struct.error, ValueError):
+                continue
+            (names if a.get("creature") else people).update(drawn)
+    return names - people
+
+
 def pad_islands(img, meshes, grow):
     """The picture with each texel no triangle of `meshes` covers, or too see-through to be drawn, taken from the nearest
     one that is drawn, `grow` texels out (colour only: the alpha stays as it is)"""
@@ -169,28 +192,39 @@ def pad_islands(img, meshes, grow):
     return Image.fromarray(rgba.clip(0, 255).astype(np.uint8), "RGBA")
 
 
-def repad(out_dir):
-    """Encodes again each padded picture of a converted data folder whose padding is older than PAD_VERSION"""
+def repad(out_dir, max_tex):
+    """Encodes again each padded picture of a converted data folder whose padding is older than PAD_VERSION, and each
+    creature's picture the console's cap (max_tex) held under CREATURE_CAP"""
     import textures
     from mwfiles import OVERLAYS, Archives, content_key
     cache = json.loads(textures.CACHE.read_text()) if textures.CACHE.exists() else {}
     overlay = ";".join(str(d) for d in OVERLAYS) + content_key()
     islands = actor_texture_islands(out_dir)
+    creatures = creature_textures(out_dir)
     arch, tex3ds = Archives(), textures.tex3ds_path()
     done = other = 0
-    for name in sorted(islands):
+    for name in sorted(set(islands) | creatures):
         entry = cache.get(name)
-        if not entry or entry.get("padded", 0) == PAD_VERSION:
+        if not entry:
+            continue
+        # (held at the cap, it needed at least as much: what encode gives it now)
+        limit = entry["limit"]
+        if name in creatures and limit == max_tex < CREATURE_CAP:
+            limit = min(CREATURE_CAP, max(entry.get("source_pot", [limit])))
+        padded = PAD_VERSION if name in islands else entry.get("padded", 0)
+        if entry.get("padded", 0) == padded and entry["limit"] == limit:
             continue
         if entry.get("overlay", "") != overlay:
             other += 1                 # (converted with other mods or add-ons than these settings: not this folder's)
             continue
         img = Image.open(io.BytesIO(arch.read(entry["src"]))).convert("RGBA")
-        img = pad_islands(img, islands[name], 4 * max(1, img.size[0] // max(1, entry["limit"])) + 8)
-        new = textures.encode_one(tex3ds, img, textures.tex_path(name), entry["limit"], entry["want_alpha"],
-                                  entry.get("sheet", False), entry.get("mips", True), True)
+        if name in islands:
+            img = pad_islands(img, islands[name], 4 * max(1, img.size[0] // max(1, limit)) + 8)
+        new = textures.encode_one(tex3ds, img, textures.tex_path(name), limit, entry["want_alpha"],
+                                  entry.get("sheet", False), entry.get("mips", True), name in islands)
         entry.update(new)
-        entry["padded"] = PAD_VERSION
+        entry["limit"] = limit
+        entry["padded"] = padded
         done += 1
     textures.CACHE.write_text(json.dumps(cache, indent=0, sort_keys=True))
     return done, other
@@ -201,6 +235,7 @@ def main():
     ap.add_argument("--data", required=True, help="the converted data folder (out/world, out/o3ds, ...)")
     ap.add_argument("--tribunal", action="store_true", help="it was converted with the Tribunal add-on")
     ap.add_argument("--bloodmoon", action="store_true", help="it was converted with the Bloodmoon add-on")
+    ap.add_argument("--max-tex", type=int, default=256, help="the cap it was converted with (level.py --max-tex)")
     a = ap.parse_args()
     # (textures.py reads where the data and its cache are when it is imported; mwfiles reads the add-ons each time)
     os.environ["MW3DS_OUT"] = a.data
@@ -208,8 +243,8 @@ def main():
         os.environ["MW3DS_TRIBUNAL"] = "1"
     if a.bloodmoon:
         os.environ["MW3DS_BLOODMOON"] = "1"
-    done, other = repad(Path(a.data))
-    print(f"texpad: {done} pictures padded again in {a.data}")
+    done, other = repad(Path(a.data), a.max_tex)
+    print(f"texpad: {done} pictures encoded again in {a.data}")
     if other:
         sys.exit(f"texpad: {other} were converted with other mods or add-ons: run it with the settings of that "
                  f"conversion (MW3DS_OVERLAY_DIRS, --tribunal, --bloodmoon)")

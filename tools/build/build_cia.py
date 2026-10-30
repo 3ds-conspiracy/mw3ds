@@ -71,26 +71,26 @@ def fetch_mod_zips():
             raise SystemExit(f"could not download {url} ({e}): check the network (a firewall or antivirus may block "
                              f"Python), or build without the mods")
         shutil.rmtree(dest, ignore_errors=True)
-        tmp = dest.with_name(dest.name + ".part")
-        shutil.rmtree(tmp, ignore_errors=True)
         # GitHub's zip holds one folder, <repository>-<commit>: it is left out here rather than extracted and moved,
         # since its 40-letter commit would take the mod's deepest files past Windows' 260-letter path limit in a
-        # work folder only a little deep (Downloads, OneDrive's Desktop)
+        # work folder only a little deep (Downloads, OneDrive's Desktop). It is extracted in place, not into a
+        # folder renamed afterwards: a virus scanner holding a file makes that rename fail with "Access is denied".
+        # The stamp is written last, so a run stopped halfway is redone.
         try:
             with zipfile.ZipFile(archive) as z:
                 for info in z.infolist():
                     rel = Path(*Path(info.filename).parts[1:])
                     if info.is_dir() or not rel.parts or ".." in rel.parts:
                         continue
-                    out = tmp / rel
+                    out = dest / rel
                     out.parent.mkdir(parents=True, exist_ok=True)
                     with z.open(info) as src, open(out, "wb") as f:
                         shutil.copyfileobj(src, f, 1 << 20)
         except (OSError, zipfile.BadZipFile) as e:
-            shutil.rmtree(tmp, ignore_errors=True)
+            shutil.rmtree(dest, ignore_errors=True)
             raise SystemExit(f"could not unpack {archive.name} into {dest.parent} ({e}): a shorter work folder "
-                             f"(such as C:\\MW3DS) helps if the path was too long")
-        tmp.replace(dest)
+                             f"(such as C:\\MW3DS) helps if the path was too long, and a virus scanner may be "
+                             f"holding the files (exclude the work folder from it)")
         archive.unlink()
         stamp.write_text(pin["commit"] + "\n")
 
