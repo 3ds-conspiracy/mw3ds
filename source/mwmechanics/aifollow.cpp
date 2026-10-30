@@ -82,6 +82,18 @@ const float* followGoal(World& w, Ref& r, const float* who, float dt)
 	if (r.trailTimer > 0.0f)
 		return on ? r.trailGoal : who;
 	r.trailTimer = 0.3f;
+	// Held up under a footstep it can't climb to (the player went up over a rock too steep or too high for it): off the
+	// footsteps for a few seconds, straight for the player, going round what is in the way as anyone held up does
+	// (npcMoveTo), as OpenMW's navigation mesh routes round the rock. Edras Oril, following the player east of Pelagiad,
+	// ran at the face of a rock the player had walked over, every next footstep on top of it
+	if (on && r.chaseStill >= 2.0f && r.trailGoal[2] > r.pos[2] + 60.0f)
+	{
+		r.trailUntil = 0.0f;
+		r.trailSeq = 0;
+		r.trailBlind = 0.0f;
+		r.trailTimer = 4.0f;
+		return who;
+	}
 	float a[3] = { r.pos[0], r.pos[1], r.pos[2] + 50.0f }, b[3] = { who[0], who[1], who[2] + 50.0f };
 	if (!on)
 	{

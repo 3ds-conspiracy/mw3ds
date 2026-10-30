@@ -1,0 +1,27 @@
+# start: Seyda Neen
+# bug-follow-under-rock: a follower held up walks the player's footsteps, and east of Pelagiad the player walked up over
+# a rock the follower couldn't climb: every next footstep on top of it, Edras Oril ran at the rock's face, then stood,
+# and only got round it when a random sidestep happened to lead that way (seconds to half a minute, often more). Now one
+# held up under a footstep it can't climb to leaves the footsteps for a while and goes for the player, round the rock:
+# he keeps up past it
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Pelagiad
+8 0 0 0
+0.3 0 0 0 0 TP:23600:-31814:1300:270
+3 0 0 0
+0.3 0 0 0 0 MOVETO:edras_oril
+0.3 0 0 0 0 FOLLOW:edras_oril
+0.3 0 0 0 0 TP:23600:-31814:1300:90
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:400
+12 0 1 0
+15 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500
+12 0 1 0
+8 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500
+12 0 1 0
+15 0 0 0
+0.3 0 0 0 0 EXPECT:refdist:edras_oril:lt:500
