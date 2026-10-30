@@ -59,8 +59,8 @@ public:
 			out = Atom(p, 0);
 		return p != nullptr;
 	}
-	// An Atom again from its c_str(), within the same run (the pool is never freed): a script's tree kept on the card
-	// (mwscript/scriptstore.cpp) writes its texts as these
+	// An Atom again from its c_str(), within the same run (the pool is never freed): a script's tree read back from the
+	// card (mwscript/scriptstore.cpp) takes the copies existing() finds
 	static Atom pooled(const char* p) { return Atom(p, 0); }
 	static size_t poolBytes();      // what the blocks hold (the log at load)
 	// Takes the next block early, at a quiet moment, so it isn't born mid-parse between transient

@@ -17,7 +17,7 @@ struct Topic
 	// (spilled) and read back while someone talks (mwdialogue/topicstore.cpp: topicInfos)
 	mutable std::vector<Info> infos;
 	bool spilled = false;
-	u32 spillOff = 0, spillLen = 0, spillCount = 0;
+	u32 spillOff = 0, spillLen = 0, spillCount = 0, spillCheck = 0;
 };
 
 struct JournalEntry { int index; CardText text; bool finished; bool restart = false; };   // (text: read from the card when shown)

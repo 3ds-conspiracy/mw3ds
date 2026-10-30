@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# bug-card-files-once: dialogue.bin and scripts.bin were written whole at every start (the trees' texts as addresses
+# that changed from run to run), seconds of card writes in an Old 3DS's load. Now a start whose slices match the file's
+# writes nothing, a changed slice and the ones after it are written, a cut-off write leaves a file the next start
+# writes whole, and a damaged slice read back is caught (cardslices: those steps on a scratch file). The game's own
+# files still read back: Fargoth's talk and the scripts that run in Seyda Neen
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.1 0 0 0 0 EXPECT:cardslices:eq:0
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.1 0 0 0 0 EXPECT:scriptsinheap:gt:0
+60 0 0 0 0 ACTIVATE:fargoth
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:talking:eq:1
+0.1 0 0 0 0 EXPECT:topicsinheap:gt:0
+0.3 0 0 0 0 EXPECT:topiclisted:ring
+0.3 0 0 0 0 TOPIC:ring
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:said:ring
+0.3 0 0 0 0 SCREEN:none
+2 0 0 0 0 UNTIL:screen:none
+1 0 0 0
+0.1 0 0 0 0 EXPECT:topicsinheap:eq:0

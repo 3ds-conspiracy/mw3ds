@@ -3,9 +3,9 @@
 // 3DS's 39 MB. At the load each tree goes to the card (sdmc:/3ds/mw3ds/scripts.bin); scriptBody reads one back when the
 // script runs, and one that hasn't run for ten seconds goes again (scriptsTick).
 //
-// The file is written again at each start: a tree's texts are written as where they are in the Atom pool (never freed
-// within a run), so they come back without being looked up, the message texts too (copies, not interned). The script's
-// name, locals and flags stay in the heap. Without a card (the file can't be written) the trees stay in the heap, as
+// The file is kept from one start to the next (components/misc/cardslices.hpp): a start with the same data writes
+// nothing. A tree's texts are written out as letters and found again in the Atom pool when read (the parse interned
+// every one of them, the message texts too). The script's name, locals and flags stay in the heap. Without a card (the file can't be written) the trees stay in the heap, as
 // before. The main thread only.
 #include <3ds.h>
 #include <cstdio>
@@ -16,11 +16,13 @@
 #include "mwscript/scriptstore.hpp"
 #include "mwworld/esmstore.hpp"
 #include "components/debug/debuglog.hpp"
+#include "components/misc/cardslices.hpp"
 #include "platform/cellarena.hpp"
 
 namespace
 {
 const char* const kPath = "sdmc:/3ds/mw3ds/scripts.bin";
+CardSlices s_file(kPath, 2);         // (2: texts as letters; 1 wrote them as pool addresses)
 const unsigned kIdle = 300;           // frames a tree stays after its script last ran (ten seconds at 30)
 
 std::vector<const Script*> s_loaded;
@@ -37,16 +39,21 @@ void put(std::vector<u8>& b, const void* p, size_t n)
 	b.insert(b.end(), (const u8*)p, (const u8*)p + n);
 }
 
+void putText(std::vector<u8>& b, const Atom& t)
+{
+	u32 n = (u32)t.size();
+	put(b, &n, sizeof(n));
+	put(b, t.c_str(), n);
+}
+
 void putNode(std::vector<u8>& b, const Node& n)
 {
 	b.push_back((u8)n.kind);
 	b.push_back(n.op);
 	put(b, &n.func, sizeof(n.func));
 	put(b, &n.num, sizeof(n.num));
-	const char* a = n.a.c_str();
-	const char* c = n.b.c_str();
-	put(b, &a, sizeof(a));
-	put(b, &c, sizeof(c));
+	putText(b, n.a);
+	putText(b, n.b);
 	u32 kids = (u32)n.kids.size();
 	put(b, &kids, sizeof(kids));
 	for (const Node& k : n.kids)
@@ -66,14 +73,28 @@ struct Reader
 		p += n;
 		return true;
 	}
+	// A text written as its length and letters: the pool's copy (the parse interned it), or false past the end
+	bool text(Atom* out)
+	{
+		u32 n = 0;
+		if (!get(&n, sizeof(n)) || (size_t)(end - p) < n)
+			return ok = false;
+		if (out)
+		{
+			const char* s = Atom::existing((const char*)p, n);
+			*out = s ? Atom::pooled(s) : Atom(std::string((const char*)p, n));
+		}
+		p += n;
+		return true;
+	}
 };
 
 // How many nodes a slice holds (each one's child list comes out of the tree's block)
 bool countNodes(Reader& r, size_t& count)
 {
-	u8 head[2 + sizeof(int) + sizeof(float) + 2 * sizeof(const char*)];
+	u8 head[2 + sizeof(int) + sizeof(float)];
 	u32 kids = 0;
-	if (!r.get(head, sizeof(head)) || !r.get(&kids, sizeof(kids)))
+	if (!r.get(head, sizeof(head)) || !r.text(nullptr) || !r.text(nullptr) || !r.get(&kids, sizeof(kids)))
 		return false;
 	count++;
 	for (u32 k = 0; k < kids; k++)
@@ -85,15 +106,11 @@ bool countNodes(Reader& r, size_t& count)
 bool getNode(Reader& r, Node& n)
 {
 	u8 kind = 0;
-	const char* a = nullptr;
-	const char* c = nullptr;
 	u32 kids = 0;
 	if (!r.get(&kind, 1) || !r.get(&n.op, 1) || !r.get(&n.func, sizeof(n.func)) || !r.get(&n.num, sizeof(n.num))
-		|| !r.get(&a, sizeof(a)) || !r.get(&c, sizeof(c)) || !r.get(&kids, sizeof(kids)))
+		|| !r.text(&n.a) || !r.text(&n.b) || !r.get(&kids, sizeof(kids)))
 		return false;
 	n.kind = (NodeKind)kind;
-	n.a = Atom::pooled(a);
-	n.b = Atom::pooled(c);
 	n.kids.resize(kids);                  // (sized exactly, as the parse sizes them)
 	for (Node& k : n.kids)
 		if (!getNode(r, k))
@@ -122,12 +139,10 @@ void freeTree(const Script& s)
 }
 }
 
-// The parse writes the file afresh at each start, script by script as each is read (scriptSpillOne), letting each tree
-// go at once: built all and let go at the end, the trees' small blocks left holes all through the game's data
-static FILE* s_write = nullptr;
-static u32 s_writeAt = 0;
+// The parse puts the trees on the card one by one as each is read (scriptSpillOne), letting each tree go at once: built
+// all and let go at the end, the trees' small blocks left holes all through the game's data
+static bool s_spilling = false;
 static int s_spilled = 0;
-static bool s_writeFailed = false;
 static std::vector<u8> s_blob;
 
 void scriptsSpillBegin()
@@ -140,34 +155,26 @@ void scriptsSpillBegin()
 		fclose(s_read);
 		s_read = nullptr;
 	}
-	s_write = fopen(kPath, "wb");
-	s_writeAt = 0;
 	s_spilled = 0;
-	s_writeFailed = s_write == nullptr;
-	if (s_write)
-	{
-		static char writeBuf[16 * 1024];
-		setvbuf(s_write, writeBuf, _IOFBF, sizeof(writeBuf));
+	s_spilling = s_file.begin();
+	if (s_spilling)
 		s_blob.reserve(64 * 1024);
-	}
 	else
 		logf("scripts: %s couldn't be written: the scripts' trees stay in the heap", kPath);
 }
 
 void scriptSpillOne(Script& s)
 {
-	if (!s_write || s_writeFailed)
+	if (!s_spilling)
 		return;
 	s_blob.clear();
 	putNode(s_blob, s.body);
-	if (fwrite(s_blob.data(), 1, s_blob.size(), s_write) != s_blob.size())
-	{
-		s_writeFailed = true;            // (this one and the rest stay in the heap)
-		return;
-	}
-	s.spillOff = s_writeAt;
+	u32 off = 0, check = 0;
+	if (!s_file.put(s_blob.data(), (u32)s_blob.size(), off, check))
+		return;                          // (this one and the rest stay in the heap)
+	s.spillOff = off;
+	s.spillCheck = check;
 	s.spillLen = (u32)s_blob.size();
-	s_writeAt += (u32)s_blob.size();
 	freeTree(s);
 	s.spilled = true;
 	s_spilled++;
@@ -176,12 +183,13 @@ void scriptSpillOne(Script& s)
 void scriptsSpillEnd()
 {
 	std::vector<u8>().swap(s_blob);
-	if (!s_write)
+	if (!s_spilling)
 		return;
-	if (fclose(s_write) != 0 || s_writeFailed)
+	s_spilling = false;
+	if (!s_file.end())
 		monitorOnce("scriptwrite", "scripts: %s wasn't written whole", kPath);
-	s_write = nullptr;
-	logf("scripts: %d trees on the card (%u KB)", s_spilled, (unsigned)(s_writeAt / 1024));
+	logf("scripts: %d trees on the card (%u KB, %u KB written)", s_spilled, (unsigned)(s_file.size() / 1024),
+		(unsigned)(s_file.written() / 1024));
 }
 
 const Node& scriptBody(const Script& s)
@@ -199,6 +207,15 @@ const Node& scriptBody(const Script& s)
 	if (!s_read || fseek(s_read, s.spillOff, SEEK_SET) != 0 || fread(slice.data(), 1, slice.size(), s_read) != slice.size())
 	{
 		monitorOnce("scriptread", "scripts: %s's tree couldn't be read from the card", s.name.c_str());
+		return s.body;
+	}
+	// (not what was put there: the next start writes the file again)
+	if (CardSlices::check(slice.data(), (u32)slice.size()) != s.spillCheck)
+	{
+		monitorOnce("scriptdamaged", "scripts: %s's tree on the card is damaged", s.name.c_str());
+		fclose(s_read);
+		s_read = nullptr;
+		s_file.damaged();
 		return s.body;
 	}
 	// one block for the whole tree: every node but the root sits in its parent's child list, each list 8-aligned

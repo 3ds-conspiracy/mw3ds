@@ -17,6 +17,79 @@ extern const char* g_playerBlock;
 #include "components/files/zfile.hpp"
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
+#include "components/misc/cardslices.hpp"
+
+// The card files' write-once rule (components/misc/cardslices.hpp) on a scratch file: 0 when every step does what it
+// should, else the first step that didn't
+static int cardSlicesSteps()
+{
+	const char* path = "sdmc:/3ds/mw3ds/slices-test.bin";
+	remove(path);
+	u8 a[100], b[50], b2[50], c[70];
+	for (int i = 0; i < 100; i++)
+		a[i] = (u8)i;
+	for (int i = 0; i < 50; i++)
+		b[i] = b2[i] = (u8)(200 - i);
+	b2[25] ^= 1;
+	memset(c, 7, sizeof(c));
+	u32 off[3], check[3];
+	// (the slices given, a start's worth: how many bytes it wrote, -1 if the card refused one)
+	auto start = [&](CardSlices& f, std::initializer_list<std::pair<const u8*, u32>> slices) -> int {
+		if (!f.begin())
+			return -1;
+		int k = 0;
+		for (auto& sl : slices)
+		{
+			if (!f.put(sl.first, sl.second, off[k], check[k]))
+				return -1;
+			k++;
+		}
+		return f.end() ? (int)f.written() : -1;
+	};
+	CardSlices f(path, 1);
+	if (start(f, { { a, 100 }, { b, 50 }, { c, 70 } }) != 220) return 1;          // no file: all of it
+	u32 cAt = off[2];
+	if (start(f, { { a, 100 }, { b, 50 }, { c, 70 } }) != 0 || off[2] != cAt) return 2;   // the same: nothing
+	if (start(f, { { a, 100 }, { b2, 50 }, { c, 70 } }) != 120) return 3;         // the second differs: it and on
+	if (start(f, { { a, 100 }, { b2, 50 }, { c, 70 } }) != 0) return 4;
+	if (start(f, { { a, 100 }, { b2, 50 } }) != 0) return 5;                       // one fewer: only the table
+	if (start(f, { { a, 100 }, { b2, 50 } }) != 0) return 6;
+	if (start(f, { { a, 100 }, { b2, 50 }, { c, 70 } }) != 70) return 7;          // one more: that one
+	CardSlices other(path, 2);
+	if (start(other, { { a, 100 }, { b2, 50 }, { c, 70 } }) != 220) return 8;     // another format: all of it
+	// read back as the stores do: the slice checks out, and once a letter of it changes on the card it doesn't
+	u8 back[70];
+	FILE* r = fopen(path, "rb");
+	bool same = r && fseek(r, off[2], SEEK_SET) == 0 && fread(back, 1, 70, r) == 70 && CardSlices::check(back, 70) == check[2];
+	if (r)
+		fclose(r);
+	if (!same) return 9;
+	FILE* w = fopen(path, "r+b");
+	u8 bad = 8;
+	bool hurt = w && fseek(w, off[2] + 10, SEEK_SET) == 0 && fwrite(&bad, 1, 1, w) == 1;
+	if (w)
+		fclose(w);
+	r = fopen(path, "rb");
+	same = r && fseek(r, off[2], SEEK_SET) == 0 && fread(back, 1, 70, r) == 70 && CardSlices::check(back, 70) == check[2];
+	if (r)
+		fclose(r);
+	if (!hurt || same) return 10;
+	other.damaged();                                                               // the next start writes it all
+	if (start(other, { { a, 100 }, { b2, 50 }, { c, 70 } }) != 220) return 11;
+	// a write under way: the header is cleared before the first slice goes, so a cut there leaves no whole file
+	if (!other.begin()) return 12;
+	other.put(a, 100, off[0], check[0]);
+	other.put(b, 50, off[1], check[1]);
+	char head[4] = { 1, 1, 1, 1 };
+	r = fopen(path, "rb");
+	bool cleared = r && fread(head, 1, 4, r) == 4 && memcmp(head, "\0\0\0\0", 4) == 0;
+	if (r)
+		fclose(r);
+	other.end();
+	if (!cleared) return 12;
+	remove(path);
+	return 0;
+}
 
 std::optional<bool> numberOfState(Session& s, const std::string& what, const std::string& arg, float& v)
 {
@@ -198,6 +271,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 		v = heapHoles(kb) ? (float)(kb[0] + kb[1]) : 0.0f;
 	}
 	else if (what == "zopen") v = (float)zOpenCount();
+	else if (what == "cardslices") v = (float)cardSlicesSteps();   // the card files' write-once rule: 0 when it holds
 	else if (what == "memorylow") v = memoryReserveHeld() ? 0.0f : 1.0f;
 	else if (what == "uiintact") v = uiThemeIntact() ? 1.0f : 0.0f;  // the UI's font and frames still as loaded
 	else if (what == "groundgaps") { extern int g_groundGaps; v = (float)g_groundGaps; }   // cracks in the last SHOT (native only, -1 on the 3DS)

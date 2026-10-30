@@ -71,7 +71,7 @@ struct Script
 	mutable bool loaded = false;
 	mutable unsigned lastRun = 0;
 	mutable void* pool = nullptr;        // the block its read-back tree lives in
-	unsigned spillOff = 0, spillLen = 0;
+	unsigned spillOff = 0, spillLen = 0, spillCheck = 0;
 	bool usesOnActivate = false;         // activation is handed to the script instead of the default action
 	bool scriptedHits = false;           // HitOnMe / SetHealth: the script runs the fight (the Heart of Lorkhan)
 	int localIndex(const std::string& lowerName) const;
