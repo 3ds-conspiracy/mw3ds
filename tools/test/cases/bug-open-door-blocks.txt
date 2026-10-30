@@ -10,5 +10,7 @@
 60 0 0 0 0 WALKTO:in_c_door_arched
 0.3 0 0 0 0 EXPECT:doorleafblocks:in_c_door_arched
 60 0 0 0 0 ACTIVATE:in_c_door_arched
-3 0 0 0
+# (a step back out of where the leaf comes to rest: it blocks round no one standing there, and an Old 3DS's walk to the
+# door stopped a little further over, in its way)
+1 0 -1 0
 0.3 0 0 0 0 EXPECT:doorleafblocks:in_c_door_arched

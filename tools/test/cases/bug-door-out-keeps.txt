@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# console: old
+# bug-door-out-keeps: a door out of a building to the street before it was taken for a far trip (bug-far-trip-frees)
+# on an Old 3DS: the building went at once, objects and all, with whoever was in it. A Dark Brotherhood assassin going
+# for the player in Arrille's tradehouse went with it, and the game crashed on what still held him. A building's own
+# doors are no far trip: out on the street before Arrille's tradehouse, its objects are still in memory
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+12 0 0 0
+0.1 0 0 0 0 EXPECT:cellinmemory:Seyda_Neen,_Arrille's_Tradehouse:eq:1
+60 0 0 0 0 DOORTO:Seyda_Neen
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.1 0 0 0 0 EXPECT:cellinmemory:Seyda_Neen,_Arrille's_Tradehouse:eq:1

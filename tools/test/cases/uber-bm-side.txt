@@ -4,7 +4,7 @@
 # Sugar Mystery, ...
 # Notes: internal/uber/bm-side.md
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 SEED:1/4
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100

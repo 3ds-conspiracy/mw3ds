@@ -1,0 +1,67 @@
+# start: save:sdmc:/3ds/mw3ds/test_n3ds_balmora.sav
+# needs: build/player-saves/test_n3ds_balmora.sav
+# data: bloodmoon
+# console: new
+# save-coc-new-tour: the player's own New 3DS save (level 10, in Balmora's Hlaalu Council Manor), and far trips over
+# and over: a New 3DS frees nothing at doors or on trips, so what it keeps must level off at its budget. Balmora, Fort
+# Frostmoth, Vivec, Mournhold, Sadrith Mora, Ald-ruhn, round three times; every arrival whole, the objects in memory
+# under the budget, the out-of-memory reserve untouched, a big block of heap still free
+# (The save is the player's: skipped where it isn't in build/player-saves)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+20 0 0 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"balmora"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"vivec,%foreign%quarter%plaza"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"mournhold,%great%bazaar"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"sadrith%mora"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"ald-ruhn"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"balmora"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"vivec,%foreign%quarter%plaza"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"mournhold,%great%bazaar"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"sadrith%mora"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"ald-ruhn"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"balmora"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"vivec,%foreign%quarter%plaza"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"mournhold,%great%bazaar"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"sadrith%mora"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100
+0.3 0 0 0 0 CON:coc%"ald-ruhn"
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:20000+EXPECT:objsloaded:ge:100

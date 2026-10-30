@@ -290,6 +290,7 @@ struct World
 	mutable bool refIndexStale = true;
 	void refsChanged() { refIndexStale = true; }
 	u32 useTick = 0;
+	bool heapShort = false;              // the cells near the player wait for room in the heap (scene.cpp)
 	// References placed while playing (PlaceAtPC / PlaceAtMe): outside any cell's range, drawn while
 	// their cell is loaded; they go when their cell's objects leave memory (and aren't saved)
 	std::vector<int> spawned;

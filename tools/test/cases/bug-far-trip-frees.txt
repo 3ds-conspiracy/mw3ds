@@ -1,0 +1,20 @@
+# start: Seyda Neen
+# console: old
+# bug-far-trip-frees: a far trip (Recall, an Intervention, a boat, a coc) kept the place left behind through the load of
+# the new one: Balmora's objects stayed through a coc to Fort Frostmoth (the cell the player stood in whole, the rest
+# until the budget came round), the fort's cells were read in round them, and an Old 3DS's heap went to holes no next
+# cell fitted. Now the place left goes first, its cells and all their objects, before the new one is read, on an Old
+# 3DS (a New 3DS's heap has room: it keeps them). Back in Seyda Neen by a coc from Balmora, no more objects are in
+# memory than the same coc left at the start
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CON:coc%"seyda%neen"
+6 0 0 0
+0.1 0 0 0 0 SNAP:objsloaded
+0.3 0 0 0 0 GOTO:Balmora
+10 0 0 0
+0.3 0 0 0 0 CON:coc%"seyda%neen"
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.1 0 0 0 0 EXPECT:objsloaded:le:@0

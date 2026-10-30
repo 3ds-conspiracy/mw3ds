@@ -759,7 +759,7 @@
 0.3 0 0 0 0 CHOICE:1
 0.1 0 0 0 0 EXPECT:journal:CO_9a:ge:40
 0.5 0 0 0 0 B
-0.3 0 0 0 0 ESCORT:tirvel%balen
+0.3 0 0 0 0 ESCORT:tirvel%balen+SEED:1
 # (to her first, and he by the player before the talk: the boat takes only a follower close at hand, and a held-up
 # walk left him behind)
 120 0 0 0 0 WALKTO:veresa%alver

@@ -4,7 +4,7 @@
 # (lock 60, key_Odirniran) and lands no blow through it; with its key she unlocks it, opens the shut door after it and
 # reaches the player (OpenMW's AiPackage::openDoors). She ran straight through both and punched through them
 3 0 0 0 0 MSG
-0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOD+SEED:3
 0.3 0 0 0 0 GOTO:Odirniran,_Tower
 3 0 0 0
 1 0 0 0

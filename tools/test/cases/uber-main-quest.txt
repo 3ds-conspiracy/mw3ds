@@ -2374,7 +2374,7 @@
 0.3 0 0 0 0 SAVE:uber-main-quest-b8hort
 # (dice seeded from here: Sinnammu Mirpal's way out of her yurt shifts with the data; on an Old 3DS she stuck at the
 # camp's rim)
-0.1 0 0 0 0 SEED:1
+0.1 0 0 0 0 SEED:1/2
 # the rest of the Ahemmusa and Zainab quests, played last so the earlier route stays as it was (every random roll shifts later followers)
 # B2 rest: fly from the Urshilaku camp as before to the Ahemmusa camp, Wise Woman's yurt
 120 0 0 0 0 DOORTO:outside

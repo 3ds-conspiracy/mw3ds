@@ -31,6 +31,9 @@ struct LevelCell
 	bool refsLoaded = false;          // its objects are in memory (read when needed; evictCells drops far ones)
 	u32 lastUsed = 0;                 // World::useTick when last read or loaded
 	float askedAt = -1000.0f;         // World::time when its objects were last read or asked for (ensureRefs)
+	float droppedAt = -1e9f;          // World::time when its objects last went out of memory (evictCell)
+	bool askedBack = false;           // read back soon after they went: a script keeps asking (evictCells keeps it longer)
+	int reads = 0;                    // times its objects were read (the tests)
 	float freedAt = -1e9f;            // World::time when its geometry was last freed
 	float loadedAt = -1e9f;           // World::time when its geometry last came in
 	float sea = 0.0f;                 // exterior: share of its ground under open water (converter)

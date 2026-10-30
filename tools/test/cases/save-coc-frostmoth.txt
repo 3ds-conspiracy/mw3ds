@@ -1,0 +1,30 @@
+# start: save:sdmc:/3ds/mw3ds/test_o3ds_frostmoth.sav
+# needs: build/player-saves/test_o3ds_frostmoth.sav
+# data: bloodmoon
+# console: old
+# save-coc-frostmoth: the player's own Old 3DS save (level 10, standing in Fort Frostmoth), and the trip that broke the
+# heap on the console: a coc to Balmora and back to the fort, three times over. Every arrival whole: the neighbours all
+# in, the out-of-memory reserve untouched, a big block of heap still free, the objects in memory under the budget.
+# (The save is the player's: skipped where it isn't in build/player-saves)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+30 0 0 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:5000
+0.3 0 0 0 0 CON:coc%"balmora"
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:5000
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:5000
+0.3 0 0 0 0 CON:coc%"balmora"
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:5000
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:5000
+0.3 0 0 0 0 CON:coc%"balmora"
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:5000
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000+EXPECT:objsloaded:le:5000

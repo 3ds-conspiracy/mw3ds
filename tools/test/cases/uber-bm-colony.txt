@@ -664,7 +664,7 @@
 0.3 0 0 0 0 TOPIC:assignment
 # (2 on a New 3DS, 8 on an Old one: the people's rolls before the colony's differ by profile, and an Old 3DS keeping
 # another number of objects in memory put Carnius elsewhere with 2)
-0.3 0 0 0 0 SEED:2/8+TOPIC:report
+0.3 0 0 0 0 SEED:3/2+TOPIC:report
 0.1 0 0 0 0 EXPECT:global:carniusloc:eq:0
 0.1 0 0 0 0 EXPECT:journal:CO_9:ge:10+EXPECT:item:bk_colonyreport:ge:1
 0.5 0 0 0 0 B

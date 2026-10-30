@@ -1,0 +1,44 @@
+# start: Seyda Neen
+# console: old
+# bug-far-trip-keeps-changes: an Old 3DS frees the place it leaves on a far trip (Recall, an Intervention, a boat, a
+# coc) before the new one is read. What changed there stays as a packed note, in memory and in saves, and is put back
+# when the place is read again: a sword dropped in Arrille's tradehouse and Arrille killed, a coc to Balmora frees the
+# tradehouse; back by coc, and back from a save made in Balmora, the sword lies where it fell and Arrille is dead
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CON:coc%"seyda%neen,%arrille's%tradehouse"
+5 0 0 0
+0.3 0 0 0 0 GIVE:iron%longsword
+0.3 0 0 0 0 DROP:iron%longsword
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:iron%longsword:lt:200
+0.3 0 0 0 0 SLAY:arrille
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:arrille
+0.3 0 0 0 0 CON:coc%"balmora"
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cellinmemory:Seyda_Neen,_Arrille's_Tradehouse:eq:0
+0.1 0 0 0 0 EXPECT:keptcells:ge:1
+1 0 0 0 0 SAVE:farkept
+0.5 0 0 0
+# back by coc: the note put back on the freshly read tradehouse
+0.3 0 0 0 0 CON:coc%"seyda%neen,%arrille's%tradehouse"
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cellinmemory:Seyda_Neen,_Arrille's_Tradehouse:eq:1
+0.1 0 0 0 0 EXPECT:dead:arrille
+# (coc from afar lands elsewhere in the tradehouse: back to where the sword was dropped)
+0.3 0 0 0 0 TPIN:-356:-5662:-400:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:iron%longsword:lt:200
+# back from the save made in Balmora, with the tradehouse out of memory
+0.5 0 0 0 0 LOAD:farkept
+5 0 0 0
+0.1 0 0 0 0 EXPECT:cellinmemory:Seyda_Neen,_Arrille's_Tradehouse:eq:0
+0.3 0 0 0 0 CON:coc%"seyda%neen,%arrille's%tradehouse"
+5 0 0 0
+0.1 0 0 0 0 EXPECT:dead:arrille
+# (coc from afar lands elsewhere in the tradehouse: back to where the sword was dropped)
+0.3 0 0 0 0 TPIN:-356:-5662:-400:0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:iron%longsword:lt:200

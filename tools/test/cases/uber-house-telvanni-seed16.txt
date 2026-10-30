@@ -252,7 +252,7 @@
 2 0 0 0 0 UNTIL:screen:none
 # (dice seeded here: with people at their races' pace the guards by the council house wandered elsewhere, and the one nearest
 # the door out was 1045 below it)
-0.1 0 0 0 0 SEED:2
+0.1 0 0 0 0 SEED:2/4
 60 0 0 0 0 WALKTO:@0,-300,360
 60 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
 3 0 0 0

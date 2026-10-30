@@ -8,7 +8,7 @@
 # character's Enchant is 10; for the recharge roll ((Enchant + Intelligence / 5 + Luck / 10) x fatigue) the player casts
 # a Fortify Enchant spell first, made in the setup.
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:4
+0.3 0 0 0 0 SEED:4/5
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100

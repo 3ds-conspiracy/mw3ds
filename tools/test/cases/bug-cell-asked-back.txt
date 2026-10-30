@@ -1,0 +1,33 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bug-cell-asked-back: a cell a script asks after was read back over and over. Global scripts ask after someone far
+# away every 15 to 20 seconds (Carius in Fort Frostmoth, the Cavern of the Incarnate, Mournhold's temple courtyard);
+# with the heap near full an Old 3DS let the cell's objects go 10 seconds after each ask and read them straight back
+# at the next, 75 to 400 ms each time, until the heap was all holes and the next cells waited for room. One read
+# back soon after it went now stays two minutes after each ask. Asked after every 15 seconds for two minutes, with
+# the heap held nearly full, Fort Frostmoth's chambers are read twice at most
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0
+0.3 0 0 0 0 HEAPHOLD:7000
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.3 0 0 0 0 CON:"falx%carius"->GetHealth
+15 0 0 0
+0.1 0 0 0 0 EXPECT:cellreads:fort_frostmoth__carius__chambers:ge:1
+0.1 0 0 0 0 EXPECT:cellreads:fort_frostmoth__carius__chambers:le:2
+0.3 0 0 0 0 HEAPHOLD:0

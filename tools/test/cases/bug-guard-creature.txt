@@ -2,7 +2,7 @@
 # turns aggressive on a creature in combat whose Fight towards the player is 100 or more). A nix-hound set on the
 # player in Balmora: the player stands still (GOD) and the street guard kills it.
 0.3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 SEED:7/5
 0.3 0 0 0 0 GOD
 0.3 0 0 0 0 GOTO:Balmora
 3 0 0 0

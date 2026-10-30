@@ -26,7 +26,43 @@ void Session::finishTravel()
 	// (an Old 3DS's dynamic view starts short again in the new place and opens out while there is room)
 	if (g_profile.viewStartsShort)
 		viewScale = viewDrawn = g_profile.viewScaleMin;
-	if (g_profile.cleanAtDoors)
+	// Somewhere else, not a door off the streets around (Recall, an Intervention, a boat, a coc), on an Old 3DS: the
+	// place left goes first, with the objects of its cells, before the new one is read. Cleaned with its cells still
+	// loaded, Balmora's 2,300 objects stayed through a coc to Fort Frostmoth, the fort's cells were read in round them,
+	// and the heap went to holes no next cell fitted. A shop off the street keeps the street's objects for the way back
+	// out. (Not a New 3DS's: its heap has room, and the way back reads nothing from the card)
+	bool elsewhere = true;
+	if (w.current >= 0 && !w.cells[w.current].interior)
+	{
+		if (!w.cells[dest].interior)
+		{
+			float dx = travelPos[0] - w.player.feet[0], dy = travelPos[1] - w.player.feet[1];
+			elsewhere = dx * dx + dy * dy > 16384.0f * 16384.0f;
+		}
+		else
+		{
+			std::vector<World::DoorExit> exits;
+			for (LoadedCell* l : w.loaded)
+				if (w.cellExits(l->index, exits))
+					for (const World::DoorExit& e : exits)
+						elsewhere &= e.cell != dest;
+		}
+	}
+	else if (w.current >= 0)
+	{
+		// Inside: one of its own doors, out to the streets round it or into the next room, is no far trip. (Taken for
+		// one, Arrille's tradehouse went with a Dark Brotherhood assassin in it going for the player, and the game
+		// crashed on what still held him)
+		std::vector<World::DoorExit> exits;
+		if (w.cellExits(w.current, exits))
+			for (const World::DoorExit& e : exits)
+			{
+				float dx = e.pos[0] - travelPos[0], dy = e.pos[1] - travelPos[1];
+				if (e.cell == dest || (e.outdoors && !w.cells[dest].interior && dx * dx + dy * dy < 16384.0f * 16384.0f))
+					elsewhere = false;
+			}
+	}
+	if (g_profile.cleanAtDoors && !elsewhere)
 		cleanForLoad();
 	w.player.inertia[0] = w.player.inertia[1] = 0.0f;     // (a jump's take-off doesn't come along: doors, travel)
 	// Voices of the cell we leave stop with it
@@ -63,6 +99,14 @@ void Session::finishTravel()
 			}
 			followers.push_back(i);
 		}
+	// (after the followers are counted: their cell's objects stay, as anyone following the player's; the cell left is
+	// no one's current cell now, so its objects go with the rest)
+	if (g_profile.cleanAtDoors && elsewhere)
+	{
+		w.freeAll();
+		w.current = -1;
+		cleanForLoad();
+	}
 	// Outdoors the cells to load follow the player's position
 	w.player.feet[0] = travelPos[0];
 	w.player.feet[1] = travelPos[1];

@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: old
+# bug-coc-balmora-frostmoth: a coc from Balmora, the island's busiest town, to Fort Frostmoth, Solstheim's busiest
+# outdoor cells, on an Old 3DS. Balmora's 2,300 objects stayed through the trip, the fort's cells were read in round
+# them, the heap went to holes and the fort's neighbours waited for room. The tests went to each alone (Balmora from
+# Seyda Neen; the fort's rooms and forests from Seyda Neen), never from one to the other. Now the fort arrives whole:
+# its neighbours all in, the out-of-memory reserve untouched, a big block of heap still free, and the same trip back
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 CON:coc%"balmora"
+10 0 1 0.1
+0.1 0 0 0 0 EXPECT:cell:Balmora
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+30 0 0 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000
+0.1 0 0 0 0 EXPECT:objsloaded:ge:500+EXPECT:objsloaded:le:5000
+0.3 0 0 0 0 CON:coc%"balmora"
+30 0 0 0.1
+0.1 0 0 0 0 EXPECT:cell:Balmora
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+30 0 0 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:1024+EXPECT:linearfree:ge:2000

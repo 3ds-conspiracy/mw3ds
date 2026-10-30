@@ -1,5 +1,5 @@
 3 0 0 0 0 MSG
-0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOD+SEED:2
 0.3 0 0 0 0 LEVEL:20
 0.3 0 0 0 0 JOURNAL:A2_6_Incarnate:50
 0.3 0 0 0 0 JOURNAL:B1_UnifyUrshilaku:50

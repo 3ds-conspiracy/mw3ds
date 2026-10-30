@@ -5,7 +5,7 @@
 # ActorAnimation::attach). Its left hand comes up to about shoulder height (base_anim's Torch: ~100 units over the feet;
 # the guard's own idles keep it at 93 or under). By day the torch is away and the arm goes back to the rest of its animation.
 3 0 0 0 0 MSG
-0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GOD+SEED:3/3
 0.3 0 0 0 0 GOTO:Ald-ruhn
 3 0 0 0
 # (beside a guard: the Old 3DS poses people only as far as it draws them, 4000 units, and the town's gate is farther)

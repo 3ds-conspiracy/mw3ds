@@ -139,6 +139,7 @@ void World::evictCell(int c)
 		state.empty() ? "unchanged" : "changes kept");
 	lc.refsLoaded = false;
 	lc.refBase = lc.refCount = lc.pathBase = lc.pathCount = 0;
+	lc.droppedAt = time;
 	rebuildScriptIndex();
 }
 
@@ -157,7 +158,12 @@ int World::evictCells(int budget, const std::function<bool(int)>& inUse, bool no
 			// out of heap, a quest script's remote ref read Caius Cosades's house back every few frames as fast
 			// as it went (heap churn on the edge of running out). Game seconds, not the machine's: a busy PC ran fewer frames
 			// in 10 of its own, kept other cells, and a test's later fights went another way (uber-main-quest in a full suite)
-			if (time - lc.askedAt < 10.0f && !now_)
+			// One read back within a minute of going (a global script asking after someone far away every 15 to 20
+			// seconds: Carius in Fort Frostmoth, the Cavern of the Incarnate, Therana's chamber) stays two minutes after
+			// each ask: dropped at 10, an Old 3DS read four such cells back every 17 seconds, 75 to 400 ms each, and
+			// the heap went to holes no cell fitted. Not while the cells near the player wait for room in the heap:
+			// they come first
+			if (time - lc.askedAt < (lc.askedBack && !heapShort ? 120.0f : 10.0f) && !now_)
 				continue;
 			bool busy = false;
 			for (int i = lc.refBase; i < lc.refBase + lc.refCount && !busy; i++)
@@ -247,8 +253,11 @@ bool World::ensureRefs(int cellIndex)
 	if (!parseRefs(*this, cellIndex, p))
 		return false;
 	appendRefs(*this, cellIndex, p);
-	logf("world: read %s objects (%d) in %llu ms", cells[cellIndex].file.c_str(), cells[cellIndex].refCount,
-		osGetTime() - start);
+	LevelCell& lc = cells[cellIndex];
+	lc.reads++;
+	lc.askedBack |= time - lc.droppedAt < 60.0f;
+	logf("world: read %s objects (%d) in %llu ms%s", lc.file.c_str(), lc.refCount, osGetTime() - start,
+		lc.askedBack ? ", kept longer now (asked back soon after it went)" : "");
 	return true;
 }
 
@@ -450,6 +459,15 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 static size_t cellHeapBlockNeeded()
 {
 	return g_cellArena.largest() >= (1u << 20) ? 512u * 1024u : 1536u * 1024u;
+}
+
+// Room for a cell's load: a block of what it asks of the heap, in the heap; or in the cells' arena when it has one
+// for the cell and the ask both (what the heap can't give comes from the arena's room: arenaOverflowAlloc). Asked of
+// the heap alone, an Old 3DS's forest cells waited with the heap in holes of 300 KB and the arena mostly empty
+static bool cellLoadHasRoom()
+{
+	return heapInUse() + (5u << 20) < __ctru_heap_size
+		&& (heapLargestBlock() >= cellHeapBlockNeeded() || g_cellArena.largest() >= (3u << 20));
 }
 
 // Reads a cell's files (safe on the streaming thread: touches nothing shared but the locked
@@ -936,14 +954,16 @@ void World::streamExterior(bool all)
 		probedAt = time;
 		probedNow = true;
 		probedTick = useTick;
-		probedRoom = heapInUse() + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= cellHeapBlockNeeded();
+		probedRoom = cellLoadHasRoom();
 	}
 	bool room = !g_profile.streamWaitsForBlock || probedRoom;
+	heapShort = !room;
 	if (!room && !noRoomNoted)
 	{
 		noRoomNoted = true;
-		logf("world: %d KB of heap used, biggest free block %u KB: the neighbouring cells wait for room", mallinfo().uordblks / 1024,
-			(unsigned)(heapLargestBlock() / 1024));
+		logf("world: %d KB of heap used, biggest free block %u KB, the cells' arena %u KB used with %u KB in its biggest: the neighbouring cells wait for room",
+			mallinfo().uordblks / 1024, (unsigned)(heapLargestBlock() / 1024), (unsigned)(cellArenaUsed() / 1024),
+			(unsigned)(cellArenaLargest() / 1024));
 	}
 	// ... nor with under 5 MB of linear memory left (a cell takes 1 to 3 MB of it, its actors and sounds more): the 22 MB of an Old 3DS ran dry
 	// with Seyda Neen's nine cells in, and the actors, the cells' last batches (white walls), the item icons and a
@@ -1023,7 +1043,7 @@ int World::loadCellsNear(const float pos[3], float reach)
 			// (an Old 3DS reads one only with room for it, as streamExterior: a cell read that runs the heap dry stops the
 			// game; it streams in once there is room)
 			if (g_profile.streamWaitsForBlock
-				&& !(heapInUse() + (5u << 20) < __ctru_heap_size && heapLargestBlock() >= cellHeapBlockNeeded()))
+				&& !cellLoadHasRoom())
 				continue;
 			finishStreamJob(*this, true);
 			if (!cells[ci].live && loadLevelCell(*this, ci))
@@ -1053,6 +1073,10 @@ bool Session::refInUse(int ri) const
 {
 	if (ri == target || ri == enemyRef || ri == repairRef || ri == barterRef || ri == bookRef || ri == containerRef
 		|| ri == arrestingGuard || ri == dlg.ref || w.followsPlayer(ri))
+		return true;
+	// one fighting the player: their cell's objects stay (Recall out of a fight, an assassin going for the player)
+	const Ref& r = w.refs[ri];
+	if (r.ai == AI_COMBAT && r.duelFoe < 0 && !r.dead && r.actor >= 0)
 		return true;
 	// speaking now (an entry stayed for everyone who ever said a line: a cell where someone once greeted the player was
 	// never let go of, so memory filled with them and saves carried them whole)
@@ -1100,7 +1124,10 @@ void Session::cleanForLoad()
 {
 	int before = mallinfo().uordblks / 1024;
 	w.waitForStream();                 // (no cell streaming: its actors may be reading a skeleton)
-	evictFarCells(0);
+	// (behind the loading screen anything far goes, a cell a script asked for a moment ago or keeps asking for too: it
+	// is read back if asked again. Kept, an Old 3DS on a Recall held 7,500 objects of a 5,000 budget, the heap down to a
+	// 32 KB block, and Curio Manor couldn't be unpacked: the player stood in an empty cell)
+	evictFarCells(0, true);
 	freeMapTiles();
 	audioCacheClear();
 	trimSkeletons();

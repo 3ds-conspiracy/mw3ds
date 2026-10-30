@@ -4,7 +4,7 @@
 # smugglers and morale, the missionary, Carius gone, the rumours, the Skaal's attack, the Ritual of the Gifts, the
 # draugr, the stones, the trial, then the werewolf path to the Wild Hunt. Notes: internal/uber/bm-main.md
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 SEED:3/1
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100
@@ -47,7 +47,7 @@
 # 1.25 times his stats' pace by his race's weight; the seed then falls straight on his greeting's roll, and 6 teaches the
 # topic on the New and the Old 3DS profile both)
 60 0 0 0 0 WALKTO:zanmulk%sammalamus
-0.3 0 0 0 0 SEED:6
+0.3 0 0 0 0 SEED:6/3
 60 0 0 0 0 ACTIVATE:zanmulk%sammalamus
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 BUYSPELL:zanmulk%sammalamus:heal_companion
@@ -1129,7 +1129,7 @@
 120 0 0 0 0 FLYTO:@-194333,217802,1600
 4 0 0 0
 # (dice seeded for the night's sleep: a riekling's coming broke it off before the dream)
-0.1 0 0 0 0 SEED:4
+0.1 0 0 0 0 SEED:4/2
 40 0 0 0 0 SLEEPUNTIL:23
 15 0 0 0
 0.1 0 0 0 0 EXPECT:journal:BM_FrostGiant2:ge:10+EXPECT:werewolf:eq:1

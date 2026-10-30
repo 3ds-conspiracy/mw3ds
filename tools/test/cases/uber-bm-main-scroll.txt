@@ -47,7 +47,7 @@
 # 1.25 times his stats' pace by his race's weight; the seed then falls straight on his greeting's roll, and 6 teaches the
 # topic on the New and the Old 3DS profile both)
 60 0 0 0 0 WALKTO:zanmulk%sammalamus
-0.3 0 0 0 0 SEED:6
+0.3 0 0 0 0 SEED:6/3
 60 0 0 0 0 ACTIVATE:zanmulk%sammalamus
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 BUYSPELL:zanmulk%sammalamus:heal_companion

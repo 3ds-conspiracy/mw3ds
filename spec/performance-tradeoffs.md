@@ -113,6 +113,12 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   same share. (`platform/console.cpp spriteBudget`, `Session` frame pacing, `mwrender/renderingmanager.cpp`)
 - **Far cells' objects are dropped from memory** past a reference budget, and read again when needed.
   (`platform/console.cpp refBudget`, `World::evictCells`)
+- **An Old 3DS frees the place it leaves on a far trip** (Recall, an Intervention, a boat, a coc; not a building's own
+  door), and the rest it left at a door, before the new place is read. OpenMW keeps a cell's objects until its cache
+  is full. What changed there is kept as it is when any far cell's objects go (people where they walked to, the dead,
+  dropped items, opened locks) and put back when the place is read from the card again on the way back: the cost is
+  that read. A New 3DS keeps them: its heap has room. (`platform/console.cpp cleanAtDoors`,
+  `mwgui/travelwindow.cpp Session::finishTravel`)
 - **The sound cache holds 1 MB on an Old 3DS, 3 MB on a New 3DS** (sounds heard lately; the rest read from the card
   again). OpenMW keeps far more. The sounds are DSP-ADPCM, a little over a quarter of PCM16, so this still holds nearly
   twice the sounds the old 2 / 6 MB of decoded ones did. (`platform/console.cpp soundCacheBytes`,
@@ -121,6 +127,9 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   picture in it, its short side, the long side up to 1024: a 256 x 2048 sheet of eight pictures is 128 x 1024, the
   memory of the eight at 128 apiece (taken on the long side it was 16 x 128, each wall 16 texels across). Seyda Neen:
   about 480 KB more texture memory. (`textures.py is_sheet`, `build_cia.py ATLAS_OVERLAYS`)
+  Creatures' pictures are the exception: 256 (a bear's one 512 sheet of fur, face, mouth and claws was a blur at
+  128). One picture a kind of creature, a few kinds in view: about 65 KB more each. People, their clothes and the
+  world stay at 128. (`texpad.py CREATURE_CAP`, `textures.py encode`)
 - **An Old 3DS draws every world texture at full size, never its smaller copies (mipmaps).** A sheet's smaller copies
   blend its pictures into each other (Hlaalu's wall bleeds into the dark trim packed under it), and far walls and
   walkways showed dark patches flickering in and out. Far ground shimmers a little more and reads more texture memory
