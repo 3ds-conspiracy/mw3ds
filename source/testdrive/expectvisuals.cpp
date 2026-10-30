@@ -10,6 +10,7 @@
 #include <tuple>
 #include "testdrive/testdrive.hpp"
 #include "platform/gamma.hpp"
+#include "mwdialogue/dialoguemanagerimp.hpp"
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
 #include "mwsound/soundmanagerimp.hpp"
@@ -346,6 +347,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 			if (!kv.second.spilled || kv.second.loaded)
 				v++;
 	}
+	else if (what == "talkreads") v = (float)topicsTalkReads();         // the talk so far: reads of the card ...
+	else if (what == "talkdecoded") v = (float)topicsTalkDecoded();     // ... and responses decoded (topicstore.cpp)
 	else if (what == "topicsinheap")   // topics other than Voice with their responses in the heap now (topicstore.cpp)
 	{
 		v = 0;

@@ -18,6 +18,7 @@ extern const char* g_playerBlock;
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
 #include "components/misc/cardslices.hpp"
+#include "mwdialogue/dialoguemanagerimp.hpp"
 
 // The card files' write-once rule (components/misc/cardslices.hpp) on a scratch file: 0 when every step does what it
 // should, else the first step that didn't
@@ -264,6 +265,9 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "heapused") v = (float)(mallinfo().uordblks / 1024);
 	else if (what == "heappeak") { heapNote(heapInUse()); v = (float)(heapHighWater() / 1024); }
 	else if (what == "heapblock") v = (float)(heapLargestBlock() / 1024);
+	else if (what == "probemismatch") v = (float)dialogueProbeMismatches(w);   // topicstore.cpp's probe against the filter
+	else if (what == "objslots") v = (float)w.refs.size();          // object slots held (World::refs), in use or free
+	else if (what == "objsloaded") v = (float)w.refsInMemory();     // objects of cells in memory
 	// ... KB free in holes under 256 KB (the PC memory checker's heap; 0 elsewhere): the heap cut up
 	else if (what == "heapscattered")
 	{

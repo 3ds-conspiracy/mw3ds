@@ -18,6 +18,10 @@ struct Topic
 	mutable std::vector<Info> infos;
 	bool spilled = false;
 	u32 spillOff = 0, spillLen = 0, spillCount = 0, spillCheck = 0;
+	// Who may answer it, kept in the heap when it goes to the card: gateCount entries from gateAt in topicstore.cpp's
+	// list (none: someone of any kind may, it is read back to ask)
+	u32 gateAt = 0;
+	u16 gateCount = 0;
 };
 
 struct JournalEntry { int index; CardText text; bool finished; bool restart = false; };   // (text: read from the card when shown)

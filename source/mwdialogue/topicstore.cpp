@@ -13,6 +13,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <deque>
+#include <functional>
 #include <malloc.h>
 #include <vector>
 
@@ -20,6 +22,7 @@
 #include "mwworld/worldimp.hpp"
 #include "components/misc/cardslices.hpp"
 #include "components/debug/debuglog.hpp"
+#include "platform/console.hpp"
 #include "platform/memstat.hpp"
 
 extern "C" u32 __ctru_heap_size;
@@ -32,7 +35,59 @@ CardSlices s_file(kPath, 1);         // (1: putInfo's layout)
 std::vector<Topic*> s_loaded;        // spilled topics read back for a talk
 size_t s_loadedBytes = 0;
 FILE* s_read = nullptr;
-char s_readBuf[8 * 1024];            // (static: a FILE's own buffer would come out of the heap)
+// The file read a window at a time: a talk reads back the topics it asks in their order in the file (by name), so the
+// next is mostly in the window already. Read one by one, each a seek and a read of the card, an Old 3DS stood still a
+// second a talk for 141 topics. (static: out of the heap)
+u8 s_win[32 * 1024];
+u32 s_winOff = 0, s_winLen = 0;
+// A New 3DS keeps the whole file in memory from the load on (2.1 MB with Bloodmoon's data, of a heap with room to
+// spare): a talk reads nothing from the card. An Old 3DS reads the card, a window at a time: those 2 MB are a cell's
+std::vector<u8> s_all;
+
+// What the talk read (the log as it ends): topics decoded whole, their bytes, reads of the card, ms; topics probed,
+// responses walked and the few decoded for them
+u32 s_talkTopics = 0, s_talkBytes = 0, s_talkReads = 0, s_talkProbed = 0, s_talkWalked = 0, s_talkDecoded = 0;
+u64 s_talkMs = 0;
+
+bool openRead()
+{
+	if (!s_all.empty())
+		return true;
+	if (!s_read)
+	{
+		s_read = fopen(kPath, "rb");
+		if (s_read)
+			setvbuf(s_read, nullptr, _IONBF, 0);     // (the window is the buffer)
+		s_winLen = 0;
+	}
+	return s_read != nullptr;
+}
+
+bool sameText(const char* s, u32 n, const std::string& t)
+{
+	return n == t.size() && memcmp(s, t.data(), n) == 0;
+}
+
+// The slice's bytes: in the window (read anew from its start when it isn't), else into `big`; nullptr when unread
+const u8* readSlice(u32 off, u32 len, std::vector<u8>& big)
+{
+	if (!s_all.empty())
+		return (size_t)off + len <= s_all.size() ? s_all.data() + off : nullptr;
+	if (off >= s_winOff && off + len <= s_winOff + s_winLen)
+		return s_win + (off - s_winOff);
+	s_talkReads++;
+	if (len > sizeof(s_win))
+	{
+		big.resize(len);
+		return fseek(s_read, off, SEEK_SET) == 0 && fread(big.data(), 1, len, s_read) == len ? big.data() : nullptr;
+	}
+	s_winLen = 0;
+	if (fseek(s_read, off, SEEK_SET) != 0)
+		return nullptr;
+	s_winOff = off;
+	s_winLen = (u32)fread(s_win, 1, sizeof(s_win), s_read);
+	return s_winLen >= len ? s_win : nullptr;
+}
 
 
 void putU32(std::vector<u8>& b, u32 v)
@@ -114,9 +169,21 @@ struct Reader
 			ok = false;
 			return Atom();
 		}
-		Atom a(std::string((const char*)p, n));
+		// (the parse interned every one: found, not made again; a std::string and an insert for each of 30,000 a talk)
+		const char* s = Atom::existing((const char*)p, n);
+		Atom a = s ? Atom::pooled(s) : Atom(std::string((const char*)p, n));
 		p += n;
 		return a;
+	}
+	// A text as it lies in the slice (its length and letters), not interned
+	bool view(const char*& s, u32& n)
+	{
+		n = u();
+		if (!ok || (u32)(end - p) < n)
+			return ok = false;
+		s = (const char*)p;
+		p += n;
+		return true;
 	}
 };
 
@@ -169,6 +236,74 @@ static bool s_spilling = false;
 static int s_spilled = 0;
 static std::vector<u8> s_blob;
 
+// Who may answer each topic on the card. A talk asks every topic the player knows whether the speaker has an answer
+// (the topic list): read back each to ask, an Old 3DS stood still 2 to 4 seconds a talk late in a game (478 topics).
+// Most topics (1,772 of 2,119) answer only someone named by each response: by id, else faction, class or race (a
+// filter the response can't pass without). One whose every response names someone keeps those names here; a
+// speaker none of them fits gets no answer without the read. A topic with a response anyone may give has none
+enum GateKind : u8 { GATE_ID, GATE_FACTION, GATE_CLASS, GATE_RACE };
+struct TopicGate
+{
+	Atom who;
+	GateKind kind;
+};
+static std::vector<TopicGate> s_gates;
+
+static void keepGates(Topic& t)
+{
+	t.gateAt = (u32)s_gates.size();
+	t.gateCount = 0;
+	size_t start = s_gates.size();
+	for (const Info& info : t.infos)
+	{
+		TopicGate g = { Atom(), GATE_ID };
+		if (!info.whoId.empty())
+			g = { info.whoId, GATE_ID };
+		else if (!info.whoFaction.empty() && info.whoFaction != "ffff")
+			g = { info.whoFaction, GATE_FACTION };
+		else if (!info.whoClass.empty())
+			g = { info.whoClass, GATE_CLASS };
+		else if (!info.whoRace.empty())
+			g = { info.whoRace, GATE_RACE };
+		if (info.whoId.empty() && (!info.actors.empty() || g.who.empty()))
+		{
+			s_gates.resize(start);           // (a response anyone may give, or a list of actors: no gates, read back to ask)
+			return;
+		}
+		bool have = false;
+		for (size_t k = start; k < s_gates.size() && !have; k++)
+			have = s_gates[k].kind == g.kind && s_gates[k].who == g.who;
+		if (!have)
+			s_gates.push_back(g);
+	}
+	if (s_gates.size() - start > 0xffff || t.infos.empty())
+	{
+		s_gates.resize(start);
+		return;
+	}
+	t.gateCount = (u16)(s_gates.size() - start);
+}
+
+bool topicMayAnswer(World& w, const Topic& t, int ref)
+{
+	if (!t.spilled || t.gateCount == 0 || ref < 0)
+		return true;
+	const Ref& speaker = w.refs[ref];
+	const ActorDef* sa = speaker.actor >= 0 ? &w.game.actors[speaker.actor] : nullptr;
+	if (!sa)
+		return false;
+	// (as filter.cpp's passes: a creature says only what names it, with no race, class or faction asked)
+	std::string id = lower(sa->id), faction = lower(sa->faction), cls = lower(sa->cls), race = lower(sa->race);
+	for (u32 k = t.gateAt; k < t.gateAt + t.gateCount; k++)
+	{
+		const TopicGate& g = s_gates[k];
+		if (g.kind == GATE_ID ? g.who == id
+			: !sa->creature && (g.kind == GATE_FACTION ? g.who == faction : g.kind == GATE_CLASS ? g.who == cls : g.who == race))
+			return true;
+	}
+	return false;
+}
+
 void topicsSpillBegin()
 {
 	topicsRelease();                 // (the data loaded again: nothing read back points into the old topics)
@@ -177,7 +312,10 @@ void topicsSpillBegin()
 		fclose(s_read);
 		s_read = nullptr;
 	}
+	std::vector<u8>().swap(s_all);
 	s_spilled = 0;
+	std::vector<TopicGate>().swap(s_gates);
+	s_gates.reserve(6144);           // (Bloodmoon's data: 4,202; reserved once, not grown in steps through the load)
 	s_spilling = s_file.begin();
 	if (s_spilling)
 		s_blob.reserve(256 * 1024);
@@ -197,6 +335,7 @@ void topicSpillOne(GameData& g, Topic& t)
 		return;                          // (this one and the rest stay in the heap)
 	t.spillLen = (u32)s_blob.size();
 	t.spillCount = (u32)t.infos.size();
+	keepGates(t);
 	// (who some answer names as its speaker: GameData::speakers, read from the answers while they are here)
 	for (const Info& info : t.infos)
 		if (!info.whoId.empty())
@@ -214,40 +353,49 @@ void topicsSpillEnd()
 	s_spilling = false;
 	if (!s_file.end())
 		monitorOnce("topicwrite", "dialogue: %s wasn't written whole", kPath);
-	logf("dialogue: %d topics' responses on the card (%u KB, %u KB written)", s_spilled, (unsigned)(s_file.size() / 1024),
-		(unsigned)(s_file.written() / 1024));
+	// (a New 3DS: the file back whole, as written; a read that falls short leaves the card to the talks)
+	if (!g_profile.smallHeap && s_spilled)
+	{
+		FILE* f = fopen(kPath, "rb");
+		if (f)
+		{
+			s_all.resize(s_file.size());
+			if (fread(s_all.data(), 1, s_all.size(), f) != s_all.size())
+				std::vector<u8>().swap(s_all);
+			fclose(f);
+		}
+	}
+	logf("dialogue: %d topics' responses on the card (%u KB, %u KB written)%s", s_spilled, (unsigned)(s_file.size() / 1024),
+		(unsigned)(s_file.written() / 1024), s_all.empty() ? "" : ", held in memory too");
 }
 
 const std::vector<Info>& topicInfos(World& w, const Topic& t)
 {
 	if (!t.spilled || !t.infos.empty() || t.spillCount == 0)
 		return t.infos;
-	if (!s_read)
-	{
-		s_read = fopen(kPath, "rb");
-		if (s_read)
-			setvbuf(s_read, s_readBuf, _IOFBF, sizeof(s_readBuf));
-	}
-	std::vector<u8> slice(t.spillLen);
-	if (!s_read || fseek(s_read, t.spillOff, SEEK_SET) != 0 || fread(slice.data(), 1, slice.size(), s_read) != slice.size())
+	u64 start = osGetTime();
+	std::vector<u8> big;
+	const u8* slice = openRead() ? readSlice(t.spillOff, t.spillLen, big) : nullptr;
+	if (!slice)
 	{
 		monitorOnce("topicread", "dialogue: %s's responses couldn't be read from the card", t.name.c_str());
 		return t.infos;
 	}
 	// (not what was put there: the next start writes the file again)
-	if (CardSlices::check(slice.data(), (u32)slice.size()) != t.spillCheck)
+	if (CardSlices::check(slice, t.spillLen) != t.spillCheck)
 	{
 		monitorOnce("topicdamaged", "dialogue: %s's responses on the card are damaged", t.name.c_str());
 		fclose(s_read);
 		s_read = nullptr;
+		s_winLen = 0;
 		s_file.damaged();
 		return t.infos;
 	}
 	// (heap kept: a long talk late in a game on an Old 3DS, its cells' memory first, as a cell read waits for)
-	size_t need = (size_t)t.spillCount * (sizeof(Info) + 2 * sizeof(Cond)) + slice.size();
+	size_t need = (size_t)t.spillCount * (sizeof(Info) + 2 * sizeof(Cond)) + t.spillLen;
 	if (heapInUse() + need + (512u << 10) > __ctru_heap_size && w.memoryLowHook)
 		w.memoryLowHook(true);
-	Reader r{ slice.data(), slice.data() + slice.size() };
+	Reader r{ slice, slice + t.spillLen };
 	u32 n = r.u();
 	t.infos.reserve(n);
 	for (u32 k = 0; k < n && r.ok; k++)
@@ -260,11 +408,159 @@ const std::vector<Info>& topicInfos(World& w, const Topic& t)
 		monitorOnce("topicdamaged", "dialogue: %s's responses on the card are damaged", t.name.c_str());
 	s_loaded.push_back(const_cast<Topic*>(&t));
 	s_loadedBytes += infoBytes(t.infos);
+	s_talkTopics++;
+	s_talkBytes += t.spillLen;
+	s_talkMs += osGetTime() - start;
 	return t.infos;
+}
+
+// Which of the topic's responses on the card could be the speaker's, decoding none that can't: the who-may-say-it
+// fields of each are compared as they lie in the slice (the speaker's id, race, class and faction, the actors named),
+// and only a response they don't rule out is decoded, into one Info kept for it, and judged by the dialogue's filter
+// (judge: 1 it answers, 2 only the speaker's disposition refuses it, 0 no). The first that answers ends it. A talk's
+// topic list asked every known topic and decoded all of each to find out (5,000 responses, 670 KB, from a level 10
+// save, 30,000 texts interned again): an Old 3DS stood still a second and more each talk. -1: not on the card (in the
+// heap: Voice topics, a card that couldn't be written), the caller asks the Infos themselves
+// (the responses found for the talk, copied out of the probe: a greeting's, a topic's answer. Their pointers hold until
+// the talk's end, topicsRelease)
+static std::deque<std::pair<const Topic*, Info>> s_found;
+
+int topicProbe(World& w, const Topic& t, int ref, const std::function<int(const Info&)>& judge, const Info** found)
+{
+	if (found)
+		*found = nullptr;
+	if (!t.spilled || t.spillCount == 0 || !t.infos.empty() || ref < 0)
+		return -1;
+	const Ref& speaker = w.refs[ref];
+	const ActorDef* sa = speaker.actor >= 0 ? &w.game.actors[speaker.actor] : nullptr;
+	if (!sa)
+		return 0;
+	// (the speaker's, lowercased once a speaker, not once a topic)
+	static int s_forRef = -1, s_forActor = -1;
+	static std::string s_id, s_race, s_cls, s_fac;
+	if (ref != s_forRef || speaker.actor != s_forActor)
+	{
+		s_forRef = ref;
+		s_forActor = speaker.actor;
+		s_id = lower(sa->id);
+		s_race = lower(sa->race);
+		s_cls = lower(sa->cls);
+		s_fac = lower(sa->faction);
+	}
+	u64 start = osGetTime();
+	std::vector<u8> big;
+	const u8* slice = openRead() ? readSlice(t.spillOff, t.spillLen, big) : nullptr;
+	if (!slice)
+	{
+		monitorOnce("topicread", "dialogue: %s's responses couldn't be read from the card", t.name.c_str());
+		return 0;
+	}
+	if (CardSlices::check(slice, t.spillLen) != t.spillCheck)
+	{
+		monitorOnce("topicdamaged", "dialogue: %s's responses on the card are damaged", t.name.c_str());
+		fclose(s_read);
+		s_read = nullptr;
+		s_winLen = 0;
+		s_file.damaged();
+		return 0;
+	}
+	static Info s_probe;
+	Reader r{ slice, slice + t.spillLen };
+	u32 n = r.u();
+	int result = 0;
+	s_talkProbed++;
+	for (u32 k = 0; k < n && r.ok; k++)
+	{
+		const u8* at = r.p;
+		for (int f = 0; f < 6; f++)
+			r.u();                           // uid, sex, rank, disposition, text, script
+		const char* v[6] = {};
+		u32 vn[6] = {};
+		for (int f = 0; f < 6 && r.ok; f++)
+			r.view(v[f], vn[f]);             // whoId, whoRace, whoClass, whoFaction, whoCell, sound
+		u32 na = r.u();
+		bool actorOk = na == 0;
+		for (u32 a = 0; a < na && r.ok; a++)
+			actorOk |= (int)r.u() == speaker.actor;
+		u32 nc = r.u();
+		for (u32 c = 0; c < nc && r.ok; c++)
+		{
+			r.byte();
+			r.byte();
+			r.u();
+			r.u();
+			const char* nm;
+			u32 nn;
+			r.view(nm, nn);
+		}
+		if (!r.ok)
+			break;
+		s_talkWalked++;
+		// (as filter.cpp's passes rules them out: a creature says only what names it, and asks no race, class or
+		// faction; "ffff" is no faction: ruled out for a speaker who has one)
+		bool out = !actorOk || (sa->creature && vn[0] == 0 && na == 0) || (vn[0] && !sameText(v[0], vn[0], s_id));
+		if (!out && !sa->creature)
+			out = (vn[1] && !sameText(v[1], vn[1], s_race)) || (vn[2] && !sameText(v[2], vn[2], s_cls))
+				|| (vn[3] && (sameText(v[3], vn[3], "ffff") ? !s_fac.empty() : !sameText(v[3], vn[3], s_fac)));
+		if (out)
+			continue;
+		Reader one{ at, r.end };
+		s_probe.actors.clear();
+		s_probe.conds.clear();
+		if (!getInfo(one, s_probe))
+			break;
+		s_talkDecoded++;
+		int j = judge(s_probe);
+		if (j == 1)
+		{
+			result = 1;
+			if (found)
+			{
+				s_found.emplace_back(&t, s_probe);
+				*found = &s_found.back().second;
+			}
+			break;
+		}
+		if (j == 2)
+			result = 2;
+	}
+	if (!r.ok)
+		monitorOnce("topicdamaged", "dialogue: %s's responses on the card are damaged", t.name.c_str());
+	s_talkMs += osGetTime() - start;
+	return result;
+}
+
+// Whether the response is one of the topic's own, in its list or a copy the probe made of one (not one of Info
+// Refusal's, found for another topic): what the journal's Topics index and a topic's "heard already" go by
+bool topicOwns(const Topic& t, const Info* info)
+{
+	if (!t.infos.empty() && info >= &t.infos.front() && info <= &t.infos.back())
+		return true;
+	for (const auto& f : s_found)
+		if (&f.second == info)
+			return f.first == &t;
+	return false;
+}
+
+unsigned topicsTalkReads()
+{
+	return s_talkReads;
+}
+
+unsigned topicsTalkDecoded()
+{
+	return s_talkDecoded;
 }
 
 void topicsRelease()
 {
+	if (s_talkTopics || s_talkProbed)
+		logf("dialogue: the talk read %u topics back whole (%u KB) and probed %u (%u responses walked, %u decoded), %u reads of the card, %llu ms",
+			(unsigned)s_talkTopics, (unsigned)(s_talkBytes / 1024), (unsigned)s_talkProbed, (unsigned)s_talkWalked,
+			(unsigned)s_talkDecoded, (unsigned)s_talkReads, (unsigned long long)s_talkMs);
+	s_talkTopics = s_talkBytes = s_talkReads = s_talkProbed = s_talkWalked = s_talkDecoded = 0;
+	s_talkMs = 0;
+	s_found.clear();
 	if (s_loaded.empty())
 		return;
 	for (Topic* t : s_loaded)

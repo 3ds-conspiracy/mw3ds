@@ -1,0 +1,22 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bug-talk-probe-matches: a talk finds a response without decoding its topic whole: the who-may-say-it fields of each
+# response on the card are compared in place, and only one the speaker isn't ruled out of is decoded (topicstore.cpp
+# topicProbe). It has to answer as the filter does on the whole topic, for every topic and everyone: a "no faction"
+# response ruled out the wrong way lost Arrille his "little advice" and the journal's topics with it. Every topic against
+# every actor in each of four places (Seyda Neen, Arrille's tradehouse, Balmora, Vivec, and the cells round them): no answer differs from the whole-topic filter's
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.1 0 0 0 0 EXPECT:probemismatch:eq:0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 EXPECT:probemismatch:eq:0
+0.3 0 0 0 0 GOTO:Balmora
+8 0 0 0
+0.1 0 0 0 0 EXPECT:probemismatch:eq:0
+0.3 0 0 0 0 GOTO:Vivec,_Hlaalu_Plaza
+8 0 0 0
+0.1 0 0 0 0 EXPECT:probemismatch:eq:0

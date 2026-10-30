@@ -1,0 +1,28 @@
+# start: Seyda Neen
+# bug-talk-reads-few: a talk read back from the card every topic the player knows, one read each, and decoded every
+# response of each (5,000 of them, 670 KB, 30,000 texts interned again) to ask whether the speaker has an answer (the
+# topic list): late in a game (a level 10 save, 478 topics) an Old 3DS stood still 2 to 4 seconds each time someone
+# was spoken to. Now a topic none of whose responses name someone like the speaker isn't read at all (its names stay
+# in the heap), the file is read in 32 KB windows, and a topic read is walked as it lies: only a response the speaker
+# isn't ruled out of is decoded, the greeting's too. A player knowing every topic (1,700) talks to Fargoth: under
+# 200 reads of the card, under 4,000 responses decoded, no topic held whole, and he still answers about his ring and
+# the latest rumours
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.3 0 0 0 0 KNOW:*
+60 0 0 0 0 ACTIVATE:fargoth
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:talking:eq:1
+0.1 0 0 0 0 EXPECT:topicsinheap:lt:10+EXPECT:talkreads:lt:200+EXPECT:talkdecoded:lt:4000
+0.3 0 0 0 0 EXPECT:topiclisted:ring
+0.3 0 0 0 0 EXPECT:topiclisted:latest%rumors
+0.3 0 0 0 0 TOPIC:ring
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:said:ring
+0.3 0 0 0 0 SCREEN:none
+2 0 0 0 0 UNTIL:screen:none
+1 0 0 0
+0.1 0 0 0 0 EXPECT:topicsinheap:eq:0

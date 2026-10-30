@@ -1,4 +1,5 @@
 // Which dialogue response fits: the INFO conditions and filter functions, as OpenMW's Filter has them
+#include "components/debug/debuglog.hpp"
 #include "mwdialogue/dialoguemanagerimp.hpp"
 
 #include <algorithm>
@@ -141,42 +142,51 @@ static float filterFunction(World& w, const Cond& c, const Ref& speaker, int ref
 
 // invert: Service Refusal's disposition is a ceiling (they refuse below it; 0 = always), as OpenMW has it
 // 0: no; 1: yes; 2: it fits but for the speaker's disposition (OpenMW's infoRefusal)
+// Whether the speaker (an actor's record) may say the response by who they are: named, id, race, class, faction, rank, sex.
+// What topicstore.cpp's probe rules out in place is a part of this: it must never rule out one this lets through
+bool dialogueWhoMay(const Info& info, const ActorDef* sa, int actorIndex)
+{
+	// creatures (Dagoth Endus, the Puzzle Canal dremora, Creeper) say only what names them as speaker
+	if (sa->creature && info.whoId.empty() && info.actors.empty())
+		return false;
+	if (!info.actors.empty())
+	{
+		bool actorOk = false;
+		for (int a : info.actors)
+			if (a == actorIndex)
+				actorOk = true;
+		if (!actorOk)
+			return false;
+	}
+	// Who may say it
+	if (!info.whoId.empty() && lower(sa->id) != info.whoId)
+		return false;
+	// A creature named as the speaker skips the race, class, faction, rank and sex filters (OpenMW's testActor)
+	if (!sa->creature)
+	{
+		if (!info.whoRace.empty() && lower(sa->race) != info.whoRace)
+			return false;
+		if (!info.whoClass.empty() && lower(sa->cls) != info.whoClass)
+			return false;
+		if (!info.whoFaction.empty() && (info.whoFaction == "ffff" ? !sa->faction.empty() : lower(sa->faction) != info.whoFaction))
+			return false;
+		// Rank: the speaker's own in their faction (-1 without one); not asked of "no faction" lines
+		if (info.whoRank >= 0 && info.whoFaction != "ffff" && (sa->faction.empty() ? -1 : sa->rank) < info.whoRank)
+			return false;
+		if (info.whoSex >= 0 && (sa->female ? 1 : 0) != info.whoSex)
+			return false;
+	}
+	return true;
+}
+
 static int passes(World& w, const Info& info, int ref, int choice, bool invert = false)
 {
 	const Ref& speaker = w.refs[ref];
 	const ActorDef* sa = speaker.actor >= 0 ? &w.game.actors[speaker.actor] : nullptr;
 	if (!sa)
 		return 0;
-	// creatures (Dagoth Endus, the Puzzle Canal dremora, Creeper) say only what names them as speaker
-	if (sa->creature && info.whoId.empty() && info.actors.empty())
+	if (!dialogueWhoMay(info, sa, speaker.actor))
 		return 0;
-	if (!info.actors.empty())
-	{
-		bool actorOk = false;
-		for (int a : info.actors)
-			if (a == speaker.actor)
-				actorOk = true;
-		if (!actorOk)
-			return 0;
-	}
-	// Who may say it
-	if (!info.whoId.empty() && lower(sa->id) != info.whoId)
-		return 0;
-	// A creature named as the speaker skips the race, class, faction, rank and sex filters (OpenMW's testActor)
-	if (!sa->creature)
-	{
-		if (!info.whoRace.empty() && lower(sa->race) != info.whoRace)
-			return 0;
-		if (!info.whoClass.empty() && lower(sa->cls) != info.whoClass)
-			return 0;
-		if (!info.whoFaction.empty() && (info.whoFaction == "ffff" ? !sa->faction.empty() : lower(sa->faction) != info.whoFaction))
-			return 0;
-		// Rank: the speaker's own in their faction (-1 without one); not asked of "no faction" lines
-		if (info.whoRank >= 0 && info.whoFaction != "ffff" && (sa->faction.empty() ? -1 : sa->rank) < info.whoRank)
-			return 0;
-		if (info.whoSex >= 0 && (sa->female ? 1 : 0) != info.whoSex)
-			return 0;
-	}
 	// The cell is the player's (a prefix of its name)
 	if (!info.whoCell.empty() && (w.current < 0 || lower(w.cells[w.current].name).compare(0, info.whoCell.size(), info.whoCell) != 0))
 		return 0;
@@ -270,18 +280,147 @@ static int passes(World& w, const Info& info, int ref, int choice, bool invert =
 	return 1;
 }
 
+// The probe against decoding each topic whole and asking passes() of its responses in order, for every topic and every
+// loaded speaker: how many answers differ (the response found, none, or a refusal). 0 when the probe is the filter
+int dialogueProbeMismatches(World& w)
+{
+	int bad = 0, pairs = 0, answered = 0, onCard = 0;
+	std::vector<int> fast;
+	// The probe never rules out a speaker the filter lets through by who they are, whatever the world's state: every
+	// topic against every actor of the game (not only the loaded): a probe that accepts any response it didn't rule out
+	// finds one exactly when the topic has a response the speaker isn't ruled out of; the filter's who-part finds one
+	// whenever it lets one through. The probe finding none where the filter finds one is a lost answer
+	std::vector<int> some;
+	for (size_t ai = 0; ai < w.game.actors.size() && ai < 64000; ai++)
+	{
+		int ref = -1;
+		for (int r : w.loadedActors)
+			if (w.refs[r].actor == (int)ai)
+			{
+				ref = r;
+				break;
+			}
+		some.push_back(ref);
+	}
+	int soundness = 0;
+	for (const Topic& t : w.game.topics)
+	{
+		if (t.type == TOPIC_VOICE)
+			continue;
+		// (all the probes first: a topic read whole is no longer probed). Each response the probe lets through to the
+		// judge is noted (the judge says no to all, so it goes through every response of the topic)
+		std::vector<std::vector<int>> seen(some.size());
+		for (size_t ai = 0; ai < some.size(); ai++)
+			if (some[ai] >= 0)           // (the probe takes a speaker in the world; those not in a loaded cell can't be asked)
+				topicProbe(w, t, some[ai], [&](const Info& info) { seen[ai].push_back(info.uid); return 0; });
+		topicsRelease();
+		const std::vector<Info>& whole = topicInfos(w, t);
+		for (size_t ai = 0; ai < some.size(); ai++)
+		{
+			if (some[ai] < 0)
+				continue;
+			for (const Info& info : whole)
+				if (dialogueWhoMay(info, &w.game.actors[ai], (int)ai))
+					soundness += std::find(seen[ai].begin(), seen[ai].end(), info.uid) == seen[ai].end();
+		}
+		topicsRelease();
+	}
+	bad += soundness;
+	for (const Topic& t : w.game.topics)
+	{
+		if (t.type == TOPIC_VOICE)
+			continue;
+		onCard += t.spilled;
+		fast.clear();
+		for (int ref : w.loadedActors)
+		{
+			const Info* f = w.refs[ref].actor >= 0 ? dialogueFindInfo(w, t, ref, -1, false, true) : nullptr;
+			fast.push_back(f ? f->uid : -1);
+			// (a response found belongs to its topic or to Info Refusal's: the journal's Topics index logs by it)
+			if (f)
+			{
+				const Topic* ir = w.game.topic("Info Refusal");
+				bad += !(topicOwns(t, f) || (ir && topicOwns(*ir, f)));
+			}
+			pairs++;
+			answered += f != nullptr;
+		}
+		topicsRelease();                  // (the probe's copies go: the topic is read whole below)
+		size_t k = 0;
+		for (int ref : w.loadedActors)
+		{
+			int want = -1;
+			if (w.refs[ref].actor >= 0)
+			{
+				bool refused = false;
+				for (const Info& info : topicInfos(w, t))
+				{
+					int r = passes(w, info, ref, -1, false);
+					if (r == 1)
+					{
+						want = info.uid;
+						break;
+					}
+					refused |= r == 2;
+				}
+				if (want < 0 && refused)
+					if (const Topic* ir = w.game.topic("Info Refusal"))
+						for (const Info& info : topicInfos(w, *ir))
+							if (passes(w, info, ref, -1, false) == 1)
+							{
+								want = info.uid;
+								break;
+							}
+			}
+			bad += fast[k++] != want;
+		}
+		topicsRelease();
+	}
+	logf("dialogue: probe check: %d topics (%d on the card) x %d speakers = %d pairs, %d answered, %d differ", (int)w.game.topics.size(), onCard,
+		(int)w.loadedActors.size(), pairs, answered, bad);
+	return bad;
+}
+
+bool dialogueTopicAnswers(World& w, const Topic& topic, int ref)
+{
+	if (!topicMayAnswer(w, topic, ref))
+		return false;
+	int r = topicProbe(w, topic, ref, [&](const Info& info) { return passes(w, info, ref, -1, false); });
+	if (r < 0)
+		return dialogueFindInfo(w, topic, ref, -1, false, true) != nullptr;
+	if (r == 1)
+		return true;
+	if (r == 2)
+		if (const Topic* t = w.game.topic("Info Refusal"))
+			return dialogueFindInfo(w, *t, ref, -1, false, false) != nullptr;
+	return false;
+}
+
 // The first response that fits; with refusal, a topic whose responses fit but for the speaker's disposition
 // answers with the "Info Refusal" topic's instead (OpenMW's search(topic, true): topic lists and learning too)
 const Info* dialogueFindInfo(World& w, const Topic& topic, int ref, int choice, bool invert, bool refusal)
 {
 	bool refused = false;
-	for (const Info& info : topicInfos(w, topic))
+	if (!topicMayAnswer(w, topic, ref))
+		return nullptr;
+	// (on the card: the probe walks the responses and copies out the one that answers; a greeting topic has
+	// hundreds, decoded whole for the one said)
+	const Info* found = nullptr;
+	int probed = topicProbe(w, topic, ref, [&](const Info& info) { return passes(w, info, ref, choice, invert); }, &found);
+	if (probed >= 0)
 	{
-		int r = passes(w, info, ref, choice, invert);
-		if (r == 1)
-			return &info;
-		refused |= r == 2;
+		if (found)
+			return found;
+		refused = probed == 2;
 	}
+	else
+		for (const Info& info : topicInfos(w, topic))
+		{
+			int r = passes(w, info, ref, choice, invert);
+			if (r == 1)
+				return &info;
+			refused |= r == 2;
+		}
 	if (refused && refusal)
 		if (const Topic* t = w.game.topic("Info Refusal"))
 			return dialogueFindInfo(w, *t, ref, choice, invert, false);

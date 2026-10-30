@@ -118,7 +118,7 @@ void dialogueUpdateGlobals(World& w)
 // Whether info is one of the topic's own (not one of Info Refusal's)
 static bool inTopic(const Topic& t, const Info* info)
 {
-	return !t.infos.empty() && info >= &t.infos.front() && info <= &t.infos.back();
+	return topicOwns(t, info);
 }
 
 // The topics a raw text names (OpenMW's parseHyperText): "@name#" links are always a hit, the text between them
@@ -175,7 +175,7 @@ static void learnTopics(World& w, const std::string& text, int speaker)
 		const Topic& t = *named;
 		if (t.type != TOPIC_TOPIC || w.knownTopics.count(t.lower))
 			continue;
-		if (dialogueFindInfo(w, t, speaker, -1, false, true))
+		if (dialogueTopicAnswers(w, t, speaker))
 		{
 			w.knownTopics.insert(t.lower);
 			logf("dialogue: learned %s", t.name.c_str());
@@ -248,7 +248,7 @@ void dialogueRefreshTopics(Dialogue& d, World& w)
 	{
 		if (t.type != TOPIC_TOPIC || !w.knownTopics.count(t.lower))
 			continue;
-		if (dialogueFindInfo(w, t, d.ref, -1, false, true))
+		if (dialogueTopicAnswers(w, t, d.ref))
 			d.topics.push_back(t.name);
 	}
 	// Alphabetical, ignoring case (OpenMW's list)
@@ -317,7 +317,7 @@ int dialogueTopicFlags(World& w, const Dialogue& d, const Topic& topic)
 		return !info->whoId.empty() || !info->actors.empty() ? 2 : 0;       // specific: it names this speaker
 	// A response that leads to a topic the player doesn't know yet (and the speaker can answer) is not exhausted
 	for (const Topic* n : topicsNamedIn(w, info->text))
-		if (n->type == TOPIC_TOPIC && !w.knownTopics.count(n->lower) && dialogueFindInfo(w, *n, d.ref, -1, false, true))
+		if (n->type == TOPIC_TOPIC && !w.knownTopics.count(n->lower) && dialogueTopicAnswers(w, *n, d.ref))
 			return 0;
 	return 1;
 }

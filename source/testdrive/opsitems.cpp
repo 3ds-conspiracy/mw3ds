@@ -329,11 +329,19 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 	{
 		// KNOW:<topic>: the player knows the topic, as dialogue the test skipped would have taught it (TOPIC
 		// asks only what the list offers: this says where a test leans on history it didn't play)
+		// KNOW:*: every topic, as a player far into the game knows hundreds
 		std::string t = lower(spaced(a[1]));
-		w.knownTopics.insert(t);
+		if (t == "*")
+		{
+			for (const Topic& tp : w.game.topics)
+				if (tp.type == TOPIC_TOPIC)
+					w.knownTopics.insert(tp.lower);
+		}
+		else
+			w.knownTopics.insert(t);
 		if (s.dlg.open)
 			dialogueRefreshTopics(s.dlg, w);      // a conversation already open lists it now
-		logf("test: knows topic %s", t.c_str());
+		logf("test: knows topic %s (%d known)", t.c_str(), (int)w.knownTopics.size());
 		return true;
 	}
 	if (verb == "SETBOUNTY" && a.size() >= 2)

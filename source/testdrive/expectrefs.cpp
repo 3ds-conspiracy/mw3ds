@@ -159,6 +159,25 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 			}
 		return true;
 	}
+	if (what == "cellreads")
+	{
+		// cellreads:<cell>: times its objects were read into memory (-1: no such cell): one a script asks after, not read
+		// back over and over
+		int ci = w.cellIndex(arg);
+		if (ci < 0)
+			ci = w.cellIndex(spaced(arg));
+		v = ci < 0 ? -1.0f : (float)w.cells[ci].reads;
+		return true;
+	}
+	if (what == "cellinmemory")
+	{
+		// cellinmemory:<cell>: 1 when its objects are in memory (read, not let go), 0 when not, -1: no such cell
+		int ci = w.cellIndex(arg);
+		if (ci < 0)
+			ci = w.cellIndex(spaced(arg));
+		v = ci < 0 ? -1.0f : w.cells[ci].refsLoaded ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "soundvolume")
 	{
 		// soundvolume:<sound id>: the volume that sound last started at (its record's, the caller's and the 3D mix's)

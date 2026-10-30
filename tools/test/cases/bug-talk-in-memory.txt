@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# console: new
+# bug-talk-in-memory: a New 3DS read the dialogue responses from the card at every talk, as an Old 3DS must (its 39 MB
+# heap has no room for the 2.1 MB they take), though its own heap has room to spare: 40 to 80 reads of the card a talk.
+# Now a New 3DS keeps the whole file in memory from the load on and a talk reads nothing from the card. A player
+# knowing every topic talks to Fargoth: no reads of the card, the responses probed in memory, and he still answers
+# about his ring
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.3 0 0 0 0 KNOW:*
+60 0 0 0 0 ACTIVATE:fargoth
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:talking:eq:1
+0.1 0 0 0 0 EXPECT:talkreads:eq:0+EXPECT:talkdecoded:gt:100
+0.3 0 0 0 0 EXPECT:topiclisted:ring
+0.3 0 0 0 0 TOPIC:ring
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:said:ring
+0.3 0 0 0 0 SCREEN:none
+2 0 0 0 0 UNTIL:screen:none
