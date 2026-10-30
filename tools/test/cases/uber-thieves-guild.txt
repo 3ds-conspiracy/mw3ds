@@ -647,7 +647,9 @@
 3 0 0 0
 120 0 0 0 0 DOORTO:outside
 3 0 0 0
-60 0 0 0 0 FLYTO:@152284,29872,655
+# (in front of Dirty Muriel's door, out from under the house's overhang: the flight down to the spot under it found
+# no clear way down beside it on an Old 3DS, and the walk from where it stopped got up onto the window ledge over the door)
+60 0 0 0 0 FLYTO:@152200,29750,655
 0.3 0 0 0
 0.1 0 0 0 0 FLOAT:60
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Dirty_Muriel's

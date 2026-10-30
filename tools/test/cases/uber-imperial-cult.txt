@@ -221,6 +221,11 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
+# (the guild's stairs up out of the lower floor: their foot holds a walk back at the lip, a fast one at an angle;
+# walked to their foot and jumped onto them, as a player would)
+60 0 0 0 0 WALKTO:@1598,-2,-640
+0.3 0 0 0 0 FACE:@1243,-7
+1.5 0 1 0 1
 120 0 0 0 0 DOORTO:outside
 3 0 0 0
 120 0 0 0 0 DOORTO:Ald-ruhn,_The_Rat_In_The_Pot
