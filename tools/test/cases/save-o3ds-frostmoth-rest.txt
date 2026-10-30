@@ -1,0 +1,24 @@
+# start: save:sdmc:/3ds/mw3ds/test_o3ds_balmora79.sav
+# needs: build/player-saves/test_o3ds_balmora79.sav
+# data: bloodmoon
+# console: old
+# save-o3ds-frostmoth-rest: the player's own Old 3DS save (level 10, 650 places changed, in Balmora's Hlaalu Council
+# Manor) and what crashed the console: a far trip to Fort Frostmoth, a walk west into the Hirstaang Forest, a rest of 19
+# hours there. The heap ran down to a 16 KB block: the streaming thread could not be made, every next cell's read failed
+# every frame, and writing a far cell's changes out failed and crashed. Every arrival whole, the heap with room, the
+# out-of-memory reserve untouched, before and after the rest. (The save is the player's: skipped where it isn't in
+# build/player-saves)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+20 0 0 0.1
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512
+0.3 0 0 0 0 TP:-184000:135700:2500:270
+40 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512
+0.3 0 0 0 0 SLEEP:19
+40 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512
+20 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512

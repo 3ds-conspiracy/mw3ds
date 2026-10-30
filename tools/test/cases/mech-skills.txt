@@ -1,4 +1,7 @@
 3 0 0 0 0 MSG
+# (seeded: eating an ingredient rolls for its effect, and only one that works teaches Alchemy; unseeded, the case
+# flipped whenever a change elsewhere moved the dice)
+0.3 0 0 0 0 SEED:1
 0.3 0 0 0 0 GOD
 0.3 0 0 0 0 HOUR:10
 0.3 0 0 0 0 CLASS:battlemage

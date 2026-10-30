@@ -13,6 +13,7 @@
 #include "components/debug/debuglog.hpp"
 
 extern const char* g_playerBlock;
+extern const char* g_playerPushed;
 #include "testdrive/testhelpers.hpp"
 
 bool g_testFailed = false;          // a drive or expect FAIL happened (MW3DS_FAILFAST: the run stops at the first)
@@ -643,6 +644,12 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	float dx = tx - p.feet[0], dy = ty - p.feet[1];
 	float dist = sqrtf(dx * dx + dy * dy);
 	float want = kind == WALK ? (pointGoal ? 30.0f : 120.0f) : kind == KILL ? 90.0f : 100.0f;
+	// a creature's own box keeps us off it further than a person's (a mudcrab's 89 to 129 from its middle, by the side
+	// met): pressed against it (it is what pushed us back this frame), there; as far off as its half length is over a
+	// person's at most. (Counted there at that distance from any side, the Ritual of Water's horker was never walked up to:
+	// its script wants the player within 256, and the walk stopped 238 off on the shore above it)
+	if (!pointGoal && r.recType == REC_CREA && strcasecmp(g_playerPushed, r.idLower.c_str()) == 0)
+		want += fmaxf(0.0f, s.actorHalfLength(ref) - 28.5f);
 	// a big door (a Daedric ruin's oval one): its own mesh stops us at the face, a long way from the origin; at the box is there
 	if (kind == ACTIVATE && !pointGoal && r.recType == REC_DOOR && r.hasBox && dist > want && dist < 300.0f)
 	{

@@ -1,0 +1,16 @@
+# start: save:sdmc:/3ds/mw3ds/test_o3ds_frostmoth_rest.sav
+# needs: build/player-saves/test_o3ds_frostmoth_rest.sav
+# data: bloodmoon
+# console: old
+# save-o3ds-load-frees-far: the player's own Old 3DS save at Fort Frostmoth (level 10, 650 places changed) that crashed
+# the console 21 s after it loaded, swimming off the fort. Putting the save's changes in read thirteen far places (people
+# moved elsewhere, objects global scripts run on: the Library of Vivec, the Black Shalk, Venim Manor, Mournhold's
+# bazaar...), 2,800 objects, and kept them: the heap went from 27 MB to 37 MB and the next cells had no room. They go
+# again before play, as at a far trip, and the fort's cells all come in with room to spare. (The save is the player's:
+# skipped where it isn't in build/player-saves)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.1 0 0 0 0 EXPECT:cellinmemory:Vivec,_Library_of_Vivec:eq:0+EXPECT:cellinmemory:Vivec,_Black_Shalk_Cornerclub:eq:0
+0.1 0 0 0 0 EXPECT:cellinmemory:Ald-ruhn,_Venim_Manor_Private_Quarters:eq:0+EXPECT:objsloaded:le:2500
+30 0 1 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512

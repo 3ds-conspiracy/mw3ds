@@ -30,6 +30,8 @@ return {
 			I.AI.startPackage({ type = 'Travel', destPosition = d.pos })
 		end,
 		MW3DS_SBS_Pose = function(d)
+			-- (calm too: a hostile creature started a fight with the player again, turned to it and walked off its spot)
+			types.Actor.stats.ai.fight(self).base = 0
 			I.AI.removePackages()
 			h = d
 			-- (one with no animation at all, a disabled actor such as Glenmoril's raven before its quest, stands as it is:

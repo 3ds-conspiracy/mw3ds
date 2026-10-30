@@ -137,6 +137,8 @@ struct TestDriver
 	std::string escort;              // ESCORT:<npc>: walks wait for them when they fall behind (ESCORT:- ends it)    // TALKWAIT: presses that opened no talk (they walked off the crosshair)
 	bool retrying = false;              // HOPTO: in the air since the last jump (its landing is checked once)
 	bool updateFly(Session& s, PlayerInput& in, float dt);
+	bool fightInWay(Session& s, PlayerInput& in, float dt);     // the fight with fightRef, a walk's or a flight's
+	std::string flyPushedBy;           // who pushed us back in the air since the flight's last check of its headway
 	bool updateHop(Session& s, PlayerInput& in, float dt);
 	std::optional<bool> updateWaits(Session& s, PlayerInput& in, u32& down, float dt);
 	bool walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref& r, Player& p, float& tx, float& ty, float& dx, float& dy, float& dist, float& want, float& dz);

@@ -154,3 +154,7 @@ There is no copy to keep in step: `source/main.cpp` and `main_native.cpp` are a 
 compiled from `source/` into both builds. What must differ goes through `source/platform/platform.hpp`. `build.py` checks both
 entry files before it compiles (only the hooks and `main`, a few dozen lines at most) and stops with a message when one
 grows.
+
+`NATIVE_HEAP_KB=<n>` sets the heap the memory checker runs with, in KB (after the console's own split: an Old 3DS
+had 3.3 MB more of its heap in use than the checker at the same point of a save's load, so a replay of a console's
+crash wants about `NATIVE_HEAP_KB=36000`).

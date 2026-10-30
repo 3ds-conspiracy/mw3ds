@@ -715,6 +715,10 @@
 3 0 0 0
 0.3 0 0 0 0 SAVE:uber-trib-mournhold-trip-plate
 # Bthuand: Dwemer cogs and the Dwemer tableware (Arkngthand's door would not open: see the notes)
+# (round by the sea east of the island, not straight north over Red Mountain's flank: there the climb over the
+# mountain met a rock overhang or the cliff racers' bodies as luck had it, and stopped under it)
+200 0 0 0 0 FLYTO:@90000,60000,1500
+200 0 0 0 0 FLYTO:@60000,115000,1500
 200 0 0 0 0 FLYTO:@35968,129104,1008:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Bthuand
@@ -1339,7 +1343,7 @@
 # MS_MatchMaker: Marena Gilnith (Great Bazaar) wants to meet a man; Goval Ralen (Temple Courtyard) is the one
 # (dice from here on seeded: the date's outcome is the script's own Random 100, and the rolls before it shift with
 # any change to what came before)
-0.1 0 0 0 0 SEED:3
+0.1 0 0 0 0 SEED:1/3
 120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
 10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
 0.5 0 0 0

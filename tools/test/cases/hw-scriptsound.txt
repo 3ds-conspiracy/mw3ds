@@ -3,6 +3,8 @@
 0.3 0 0 0 0 GOTO:Sadrith_Mora
 8 0 0 0
 0.3 0 0 0 0 EXPECT:cell:Sadrith_Mora
-0.3 0 0 0 0 EXPECT:refloopvol:sound_boat_hull00,boat_hull:ge:27
-0.3 0 0 0 0 EXPECT:refloopvol:sound_boat_hull00,boat_hull:le:29
+# (Boat Hull's record volume 178 of 255 is 0.31 on the records' decibel scale, OpenMW's: 12 to 13 with the script's
+# share; it was 27 to 29 on the plain share, four times too loud)
+0.3 0 0 0 0 EXPECT:refloopvol:sound_boat_hull00,boat_hull:ge:12
+0.3 0 0 0 0 EXPECT:refloopvol:sound_boat_hull00,boat_hull:le:13
 1 0 0 0

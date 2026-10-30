@@ -564,6 +564,7 @@ static bool sampleLand(Scene& scene, const float feet[3], float zTop, float zBot
 }
 
 const char* g_playerBlock = "";    // debug: what last pushed the player back
+const char* g_playerPushed = "";   // the person or creature that pushed the player back this frame ("" none)
 
 // Whether the body has headroom here: nothing crosses its axis between step height and the top of
 // the head (a floor above poking through the head would put the eye outside the room)
@@ -575,6 +576,41 @@ static bool bodyFits(Scene& scene, const float feet[3])
 		if (collisionRaycast(cell->collision, a, b, &t))
 			return false;
 	return true;
+}
+
+// A wall or a shut door between two points: the world's mesh, or a closed swinging door's box (Scene's blockers)
+static bool wallBetween(Scene& scene, const float a[3], const float b[3])
+{
+	float t;
+	for (Cell* cell : scene.cells)
+	{
+		if (collisionRaycast(cell->collision, a, b, &t))
+			return true;
+		for (auto& bl : cell->blockers)
+		{
+			// the segment against the box, slab by slab
+			float t0 = 0.0f, t1 = 1.0f;
+			bool miss = false;
+			for (int k = 0; k < 3 && !miss; k++)
+			{
+				float d = b[k] - a[k];
+				if (fabsf(d) < 1e-6f)
+				{
+					miss = a[k] < bl.min[k] || a[k] > bl.max[k];
+					continue;
+				}
+				float u0 = (bl.min[k] - a[k]) / d, u1 = (bl.max[k] - a[k]) / d;
+				if (u0 > u1)
+					std::swap(u0, u1);
+				t0 = fmaxf(t0, u0);
+				t1 = fminf(t1, u1);
+				miss = t0 > t1;
+			}
+			if (!miss)
+				return true;
+		}
+	}
+	return false;
 }
 
 static void resolveBody(Player& p, Scene& scene)
@@ -626,11 +662,42 @@ static void resolveBody(Player& p, Scene& scene)
 			if (p.feet[2] > a.pos[2] + a.height || p.feet[2] + kHeight < a.pos[2])
 				continue;
 			float dx = p.feet[0] - a.pos[0], dy = p.feet[1] - a.pos[1];
+			if (a.box)
+			{
+				// a creature's box, turned with it: the body pushed out of it by the shortest way (the model's y is its front)
+				float c = cosf(a.yaw), s = sinf(a.yaw);
+				float bx = dx - (a.off[0] * c + a.off[1] * s), by = dy - (-a.off[0] * s + a.off[1] * c);
+				float lx = bx * c - by * s, ly = bx * s + by * c;
+				float qx = fmaxf(-a.half[0], fminf(lx, a.half[0])), qy = fmaxf(-a.half[1], fminf(ly, a.half[1]));
+				float ex = lx - qx, ey = ly - qy, e2 = ex * ex + ey * ey, px = 0.0f, py = 0.0f;
+				if (e2 >= kRadius * kRadius)
+					continue;
+				if (e2 > 1e-4f)
+				{
+					float e = sqrtf(e2), k = (kRadius - e) / e;
+					px = ex * k;
+					py = ey * k;
+				}
+				else if (a.half[0] + kRadius - fabsf(lx) < a.half[1] + kRadius - fabsf(ly))
+					px = (lx < 0.0f ? -1.0f : 1.0f) * (a.half[0] + kRadius - fabsf(lx));
+				else
+					py = (ly < 0.0f ? -1.0f : 1.0f) * (a.half[1] + kRadius - fabsf(ly));
+				// (not through a wall or a shut door: we move creatures as cylinders, and a long box pokes out through what
+				// they stand against. OpenMW's whole box meets the world. A Nix-Hound pressed to the inside of its cage door
+				// at Rotheran pushed the player outside it, and the Open spell aimed at the door went to the hound)
+				float from[3] = { a.pos[0], a.pos[1], a.pos[2] + 50.0f }, to[3] = { p.feet[0], p.feet[1], p.feet[2] + 50.0f };
+				if (wallBetween(scene, from, to))
+					continue;
+				g_playerBlock = g_playerPushed = a.id;
+				p.feet[0] += px * c + py * s;
+				p.feet[1] += -px * s + py * c;
+				continue;
+			}
 			float minDist = kRadius + a.radius, d2 = dx * dx + dy * dy;
 			if (d2 >= minDist * minDist || d2 < 1e-4f)
 				continue;
 			float d = sqrtf(d2), push = (minDist - d) / d;
-			g_playerBlock = a.id;
+			g_playerBlock = g_playerPushed = a.id;
 			p.feet[0] += dx * push;
 			p.feet[1] += dy * push;
 		}
@@ -691,6 +758,7 @@ static void slideOffSteepFace(Player& p, Scene& scene, float minMove = 2.0f)
 void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 {
 	PlayerInput in = inRaw;
+	g_playerPushed = "";
 	if (p.knockTimer > 0.0f)
 	{
 		p.knockTimer -= dt;

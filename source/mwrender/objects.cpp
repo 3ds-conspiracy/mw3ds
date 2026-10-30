@@ -455,8 +455,19 @@ bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCach
 		if (ok)
 		{
 			fread(&numActors, 4, 1, f);
+			std::vector<CellActorFile> file(numActors);
+			fread(file.data(), sizeof(CellActorFile), numActors, f);
 			cell.actors.resize(numActors);
-			fread(cell.actors.data(), sizeof(CellActor), numActors, f);
+			for (u32 k = 0; k < numActors; k++)
+			{
+				CellActor& a = cell.actors[k];
+				memcpy(a.id, file[k].id, sizeof(a.id));
+				memcpy(a.name, file[k].name, sizeof(a.name));
+				memcpy(a.pos, file[k].pos, sizeof(a.pos));
+				a.yaw = file[k].yaw;
+				a.radius = file[k].radius;
+				a.height = file[k].height;
+			}
 		}
 	}
 	if (ok && h.version >= 3)

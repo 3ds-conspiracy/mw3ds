@@ -639,6 +639,20 @@
 30 0 0 0 0 WALKTO:bm_horker_swim_unique
 6 0 0 0
 30 0 0 0 0 WALKTO:bm_horker_swim_unique
+# (followed on to where it leads, by the gorge's door: held off by its body, at the edge of its box, the player fell
+# further behind it each leg, and it waited 600 short of the spot it swims to, too far from the door for the script)
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
+6 0 0 0
+30 0 0 0 0 WALKTO:bm_horker_swim_unique
 240 0 0 0 0 UNTIL:journal:BM_Water:ge:60
 # (the door is in a cave mouth on the sea floor: swum into from the south, where the gorge lets the player out)
 60 0 0 0 0 WALKTO:@-219473,217242,-1894

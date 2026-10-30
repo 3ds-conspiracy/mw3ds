@@ -53,6 +53,10 @@ static struct NativeOld3dsHeaps
 			__ctru_linear_heap_size = 22U << 20;
 			__ctru_heap_size = 39U << 20;
 		}
+		// NATIVE_HEAP_KB=n: the heap that much smaller or larger, as the console's own use leaves it (the Old 3DS had
+		// 3.3 MB more of its heap in use than this checker at the same point of a save's load)
+		if (const char* k = getenv("NATIVE_HEAP_KB"))
+			__ctru_heap_size = (u32)atoi(k) * 1024U;
 	}
 } s_nativeOld3dsHeaps;
 

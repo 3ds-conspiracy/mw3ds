@@ -2,7 +2,7 @@
 # HH_EscortMerchant): Tarvyn Faren stayed at the platform's foot (-8410,-69484,582) for good
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
-0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 SEED:3/7
 0.3 0 0 0 0 TP:-8398:-69510:700:90
 5 0 0 0
 0.3 0 0 0 0 PLACE:guar:150

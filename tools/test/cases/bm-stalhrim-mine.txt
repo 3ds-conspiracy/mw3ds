@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-stalhrim-mine: mining Stalhrim. A deposit (Contain_BM_stalhrim_01, ColonyStalhrim) does nothing without a Nordic
+# pick carried ("You don't have the tools to do anything with this."); with one it opens as the container it is and its
+# raw Stalhrim is taken. The deposit at the far end of Himmelhost Barrow
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2+SEED:1
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GOTO:Solstheim,_Himmelhost_Barrow
+6 0 0 0
+60 0 0 0 0 ACTIVATE:contain_bm_stalhrim_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:message:You_don't_have_the_tools_to_do_anything_with_this.
+0.1 0 0 0 0 EXPECT:item:ingred_raw_stalhrim_01:eq:0
+2 0 0 0 0 MSG
+0.3 0 0 0 0 GIVE:BM%Nordic%Pick
+60 0 0 0 0 LOOT:contain_bm_stalhrim_01:ingred_raw_stalhrim_01
+0.1 0 0 0 0 EXPECT:item:ingred_raw_stalhrim_01:ge:1

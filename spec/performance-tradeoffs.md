@@ -117,8 +117,15 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   door), and the rest it left at a door, before the new place is read. OpenMW keeps a cell's objects until its cache
   is full. What changed there is kept as it is when any far cell's objects go (people where they walked to, the dead,
   dropped items, opened locks) and put back when the place is read from the card again on the way back: the cost is
-  that read. A New 3DS keeps them: its heap has room. (`platform/console.cpp cleanAtDoors`,
-  `mwgui/travelwindow.cpp Session::finishTravel`)
+  that read. A New 3DS keeps them: its heap has room. A save loads the same way on an Old 3DS: the far places read to put
+  its changes in go again before play. On both consoles a place whose people a quest moved elsewhere (Mehra Milo to
+  Holamayan) is read back only when the place they stand in loads, and goes again with the rest; OpenMW keeps every
+  cell with a moved reference loaded. (`platform/console.cpp cleanAtDoors`, `mwgui/travelwindow.cpp
+  Session::finishTravel`, `mwworld/cellstore.cpp World::readMovedIn`)
+- **A sound too faint to hear isn't started.** OpenMW plays every sound in earshot however faint (past its maximum range
+  the gain holds at minimum / maximum, often a few percent). We don't start one whose gain would be under 1 % of full,
+  and a loop that faint stays unstarted: the 3DS's mixer has 24 channels for everything. (`mwsound/soundmanagerimp.cpp
+  playSound`, `updateLoopSounds`)
 - **The sound cache holds 1 MB on an Old 3DS, 3 MB on a New 3DS** (sounds heard lately; the rest read from the card
   again). OpenMW keeps far more. The sounds are DSP-ADPCM, a little over a quarter of PCM16, so this still holds nearly
   twice the sounds the old 2 / 6 MB of decoded ones did. (`platform/console.cpp soundCacheBytes`,

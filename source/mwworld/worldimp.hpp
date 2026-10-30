@@ -278,9 +278,13 @@ struct World
 		std::vector<u8> z;          // {"refs": [...], "scripts": [...]}, zlib
 		u32 raw = 0;                // its length unpacked
 		bool movedRefs = false;     // holds references moved to another cell ("at"): read on loading
+		std::vector<std::string> movedTo;   // the cells they stand in: the cell is read back as one of those loads
+		bool movedScanned = false;          // movedTo filled (a save's kept block is looked through once, when asked)
 	};
 	std::unordered_map<std::string, StoredCell> cellStates;   // cell file -> its changes
 	void storeCellState(const std::string& file, const std::string& json);
+	void readMovedIn(int cell);        // the cells whose people stand in this one (PositionCell) read back, them with it
+	std::string holdReason(int cell, const std::function<bool(int)>& inUse) const;   // why evictCells keeps it ("": it wouldn't)
 	std::string cellStateJson(const StoredCell& s) const;     // "" when it won't unpack
 	std::unordered_map<std::string, int> deadCounts;           // lowercase id -> killed (GetDeadCount)
 	std::vector<std::pair<int, int>> freeRefs, freePaths;      // slot ranges evicted cells left (first, count)
@@ -337,14 +341,14 @@ struct World
 	bool dropFarthestLiveNeighbour();
 	// Waits for the cell streaming in the background and takes it in (before anything that can't have it running: a clean-up)
 	void waitForStream();
-	void evictCell(int cell);
+	bool evictCell(int cell);          // false: it stays (no heap to keep its changes)
 	// mwstate/statemanagerimp.cpp: one object's save item, its hash (baseHash when unchanged), applying an item; a script
 	// instance's item; a cell's changed objects and scripts as text, and applying stored text
 	cJSON* refState(int i) const;
 	u32 refHash(int i) const;
 	void applyRefState(Ref& r, const cJSON* item);
 	cJSON* scriptState(const ScriptInstance& s) const;
-	std::string cellStateText(int cell) const;
+	std::string cellStateText(int cell, bool* failed = nullptr) const;   // failed: out of heap putting it together
 	void applyCellState(int cell);
 	void rebuildScriptIndex();
 	bool sameSpace(int a, int b) const;                 // both in one interior, or both outdoors

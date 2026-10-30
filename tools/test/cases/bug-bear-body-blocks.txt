@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bug-bear-body-blocks: the player walked into a bear's head and back (a player's report). Every person and creature
+# blocked the player as one cylinder 28 across at its middle; OpenMW gives a creature its model's "Bounding Box" node
+# as its shape, turned with it and at its size: a black bear's is 99 across and 160 long, drawn at 1.5. A bear standing
+# still (AI off) facing north on the Isinfier Plains: walked at head on, the player stops at its head, 142 from its
+# middle; walked at from the side, at its flank, 96 off. Before, both stopped 50 from its middle, inside it
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+HOUR:12
+0.3 0 0 0 0 TP:-172500:184400:1200:180
+6 0 0 0
+0.3 0 0 0 0 CON:ToggleAI
+0.3 0 0 0 0 PLACEAT:BM_bear_black:-172500:184100:1200
+2 0 0 0
+0.3 0 0 0 0 CON:"BM_bear_black"->SetAngle%z%0
+1 0 0 0
+0.3 0 0 0 0 FACE:BM_bear_black
+3 0 1 0
+0.1 0 0 0 0 EXPECT:refdist:BM_bear_black:gt:130+EXPECT:refdist:BM_bear_black:lt:155
+0.3 0 0 0 0 TP:-172200:184100:1200:270
+3 0 0 0
+0.3 0 0 0 0 FACE:BM_bear_black
+3 0 1 0
+0.1 0 0 0 0 EXPECT:refdist:BM_bear_black:gt:85+EXPECT:refdist:BM_bear_black:lt:110

@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-bear-slope-rest: a creature on a slope stays upright and stands at the height of the ground under its middle, as
+# OpenMW's does: a black bear (box 99 by 160, drawn at 1.5) calmed on a 30-degree hillside in the Hirstaang Forest
+# stands 1.4 above it in OpenMW facing down the hill, its uphill hind legs in the slope. Lifted onto the uphill ground
+# instead (box resting on the highest ground under it), it hung 70 above it, legs in the air, unlike OpenMW. AI off,
+# facing up the hill and then down it, shot from the south
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+HOUR:12+SETWEATHER:0
+0.3 0 0 0 0 TP:-174379:147900:1400:0
+6 0 0 0
+0.3 0 0 0 0 CON:ToggleAI
+0.3 0 0 0 0 HIDEACTORS:4000
+0.3 0 0 0 0 PLACEAT:BM_bear_black_summon:-174379:148300:1300
+2 0 0 0
+0.3 0 0 0 0 CON:"BM_bear_black_summon"->SetAngle%z%0
+1 0 0 0
+0.3 0 0 0 0 CON:"BM_bear_black_summon"->SetAngle%z%90
+2 0 0 0
+0.1 0 0 0 0 CAM:-174379:148060:1215:0:-4+POV:first+HUD:off+VMPOSE:off
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:refabove:BM_bear_black_summon:lt:20
+0.3 0 0 0 0 CON:"BM_bear_black_summon"->SetAngle%z%270
+2 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:refabove:BM_bear_black_summon:lt:20

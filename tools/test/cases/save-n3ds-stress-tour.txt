@@ -1,0 +1,130 @@
+# start: save:sdmc:/3ds/mw3ds/test_n3ds_balmora.sav
+# needs: build/player-saves/test_n3ds_balmora.sav
+# data: bloodmoon
+# console: new
+# save-n3ds-stress-tour: the player's own New 3DS save (level 10, in Balmora's Hlaalu Council Manor) put through the
+# same far trips over and over as save-o3ds-stress-tour: a New 3DS frees nothing at doors, so what it keeps must level
+# off under its budget. (The save is the player's: skipped where it isn't in build/player-saves)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+10 0 0 0.1
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"holamayan%monastery"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"vivec,%library%of%vivec"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"balmora"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+# (in the water off the fort, as when the console crashed)
+0.3 0 0 0 0 TP:-176191:135718:-95:0
+10 0 1 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512
+0.3 0 0 0 0 TP:-184000:135700:2500:270
+20 0 0 0
+0.3 0 0 0 0 SLEEP:19
+20 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512
+1 0 0 0 0 SAVE:stress
+0.5 0 0 0
+0.3 0 0 0 0 CON:coc%"mournhold,%great%bazaar"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"vivec,%foreign%quarter%plaza"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"sadrith%mora"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"ald-ruhn"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"ald-ruhn,%venim%manor%private%quarters"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"vivec,%black%shalk%cornerclub"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"gnisis"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"ghostgate,%tower%of%dusk"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"dagon%fel,%the%end%of%the%world"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"seyda%neen"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"raven%rock,%bar"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"skaal%village,%the%greathall"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+# back from the save made in the forest: the same places again
+0.5 0 0 0 0 LOAD:stress
+10 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"balmora"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"holamayan%monastery"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"mournhold,%great%bazaar"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"fort%frostmoth"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"tel%branora,%upper%tower"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"vivec,%library%of%vivec"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"sadrith%mora"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"balmora"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000
+0.3 0 0 0 0 CON:coc%"holamayan%monastery"
+25 0 1 0.1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nearunloaded:eq:0+EXPECT:memorylow:eq:0+EXPECT:heapblock:ge:512+EXPECT:objsloaded:le:20000

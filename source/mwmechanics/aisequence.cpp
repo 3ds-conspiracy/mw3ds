@@ -34,6 +34,20 @@ void aiSettle(Ref& r)
 	r.wandering = false;
 }
 
+// How far the escorted one may be before an escort waits (OpenMW's AiEscort: its largest half extent + 450 to stop,
+// + 250 to go on): a person's taken as 50, the 500 and 300 these always were; a creature with a box, its own at its size
+static float escortReach(World& w, const Ref& r, float add)
+{
+	float half = 50.0f;
+	if (r.actor >= 0 && w.game.actors[r.actor].hasBox)
+	{
+		const ActorDef& def = w.game.actors[r.actor];
+		float s = r.scale > 0.0f ? r.scale : 1.0f;
+		half = fmaxf(half, fmaxf(def.box[2], def.box[3]) * s);
+	}
+	return half + add;
+}
+
 // Travel to a spot, follow someone, escort the player to a spot (waiting when they fall behind), or
 // walk up to something and use it. Duration counts game hours; then GetAIPackageDone reports 1.
 void Session::npcPackage(int ri, float dt)
@@ -140,8 +154,10 @@ void Session::npcPackage(int ri, float dt)
 		if (hasDest && arrived(r.aiDest, 128.0f))
 			aiFinish(w, r);
 		// Lead the way, but wait when the escorted one falls behind (OpenMW: stop past half extent + 450, go on again
-		// within half extent + 250)
-		else if (hasDest && (!who || within(who, r.escortWaiting ? 300.0f : 500.0f)))
+		// within half extent + 250). A person's 500 and 300; a creature's by its own box at its size, its largest half
+		// extent (the Ritual of Water's horker, 147 long by half: 597 and 397. At 300 the player, held off by its body
+		// 240 from its middle, had it stop and start every few seconds and never reach Stahlman's Gorge)
+		else if (hasDest && (!who || within(who, escortReach(w, r, r.escortWaiting ? 250.0f : 450.0f))))
 		{
 			r.escortWaiting = false;
 			goal = r.aiDest;

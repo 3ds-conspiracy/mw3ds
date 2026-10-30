@@ -41,10 +41,19 @@ void World::rebuildScriptIndex()
 			refs[scripts[k].ref].script = k;
 }
 
-void World::evictCell(int c)
+bool World::evictCell(int c)
 {
 	LevelCell& lc = cells[c];
-	std::string state = cellStateText(c);
+	// (out of heap putting its changes together: the cell stays, changes and all, and memory is given back first. A
+	// null text taken for a string crashed an Old 3DS at Fort Frostmoth)
+	bool failed = false;
+	std::string state = cellStateText(c, &failed);
+	if (failed)
+	{
+		logf("world: %s objects stay: no heap to keep their changes", lc.file.c_str());
+		g_memoryLow = true;
+		return false;
+	}
 	if (!state.empty())
 		storeCellState(lc.file, state);
 	// References placed while playing in this cell go (they aren't kept)
@@ -87,6 +96,10 @@ void World::evictCell(int c)
 		freeRefSlots(*this, i, 1);
 		spawned.erase(spawned.begin() + k);
 	}
+	// Its own people moved elsewhere (PositionCell) go with it: where they stand is in its changes ("at"), and the cell
+	// is read back, them with it, when that place loads (readMovedIn)
+	spawned.erase(std::remove_if(spawned.begin(), spawned.end(),
+		[&](int i) { return refs[i].cell == c && !refs[i].spawnedRef; }), spawned.end());
 	int first = lc.refBase, last = lc.refBase + lc.refCount;
 	// Their scripts stop (the locals went into the state); carried items' scripts carry on alone.
 	// Compacted in place: a fresh full-size vector per eviction moved the whole block across the heap
@@ -141,6 +154,7 @@ void World::evictCell(int c)
 	lc.refBase = lc.refCount = lc.pathBase = lc.pathCount = 0;
 	lc.droppedAt = time;
 	rebuildScriptIndex();
+	return true;
 }
 
 int World::evictCells(int budget, const std::function<bool(int)>& inUse, bool now_)
@@ -166,11 +180,14 @@ int World::evictCells(int budget, const std::function<bool(int)>& inUse, bool no
 			if (time - lc.askedAt < (lc.askedBack && !heapShort ? 120.0f : 10.0f) && !now_)
 				continue;
 			bool busy = false;
+			// (or one of its own people a quest moved into a loaded place, PositionCell: freed, they went from beside the player)
 			for (int i = lc.refBase; i < lc.refBase + lc.refCount && !busy; i++)
-				busy = inUse(i);
-			// ... or one of its references stands in another cell now (PositionCell)
+				busy = inUse(i) || (refs[i].at >= 0 && cells[refs[i].at].live);
+			// ... or one of its references stands in a loaded cell now (PositionCell). One standing somewhere far is kept
+			// in the cell's changes ("at") and read back with the cell when that place loads: Mehra Milo moved to
+			// Holamayan kept the Library of Vivec's 467 objects in memory for the rest of the game
 			for (int s : spawned)
-				busy |= refs[s].cell == (int)c && refs[s].at >= 0;
+				busy |= refs[s].cell == (int)c && refs[s].at >= 0 && cells[refs[s].at].live;
 			// ... or a path someone in a loaded cell is walking
 			for (size_t i = 0; i < refs.size() && !busy; i++)
 				if (refs[i].cell >= 0 && active(i))
@@ -182,10 +199,39 @@ int World::evictCells(int budget, const std::function<bool(int)>& inUse, bool no
 		if (best < 0)
 			break;
 		total -= cells[best].refCount;
-		evictCell(best);
+		if (!evictCell(best))
+			break;
 		evicted++;
 	}
 	return evicted;
+}
+
+// Why evictCells would keep a cell's objects now, in a few words ("" when it wouldn't): the log's answer to "what is
+// filling the heap" on a console, where a test's checks can't look
+std::string World::holdReason(int c, const std::function<bool(int)>& inUse) const
+{
+	const LevelCell& lc = cells[c];
+	if (!lc.refsLoaded)
+		return "";
+	if (lc.live)
+		return "loaded";
+	if ((int)c == current)
+		return "the player's cell";
+	if (time - lc.askedAt < (lc.askedBack && !heapShort ? 120.0f : 10.0f))
+		return "a script asked for it";
+	for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
+	{
+		if (inUse(i))
+			return "in use: " + refs[i].idLower;
+		if (refs[i].at >= 0 && cells[refs[i].at].live)
+			return refs[i].idLower + " of it stands in " + cells[refs[i].at].file;
+	}
+	for (size_t i = 0; i < refs.size(); i++)
+		if (refs[i].cell >= 0 && active(i))
+			for (int pt : refs[i].path)
+				if (pt >= lc.pathBase && pt < lc.pathBase + lc.pathCount)
+					return refs[i].idLower + " walks its path";
+	return "";
 }
 
 // What character creation's scripts leave behind that later play needs: the Census and Excise Office's inner door, which the
@@ -277,7 +323,22 @@ void World::syncActor(int ri)
 	{
 		CellActor& ca = c->actors[r.cellActor];
 		memcpy(ca.pos, r.pos, sizeof(ca.pos));
+		ca.yaw = r.rot[2];
 		ca.radius = r.dead ? 0.0f : 28.0f * r.scaleFactor;     // (SetScale: the cylinder grows with them)
+		// a creature's own box, at its size (a Grizzly's record makes it 1.5): a bear blocked only as a cylinder 28 across
+		// at its middle, and the player walked into its head and its back
+		const ActorDef& def = game.actors[r.actor];
+		ca.box = def.hasBox && !r.werewolf;
+		if (ca.box)
+		{
+			float s = r.scale > 0.0f ? r.scale : 1.0f;
+			if (const Actor* m = actorOf(ri))
+				s = sqrtf(m->place[0] * m->place[0] + m->place[4] * m->place[4] + m->place[8] * m->place[8]);
+			ca.half[0] = def.box[2] * s;
+			ca.half[1] = def.box[3] * s;
+			ca.off[0] = def.box[0] * s;
+			ca.off[1] = def.box[1] * s;
+		}
 	}
 	Actor* a = actorOf(ri);
 	if (!a)
@@ -446,6 +507,7 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 			l->lightRefs.push_back(i);
 	}
 	lc.lastUsed = ++w.useTick;
+	w.readMovedIn(index);
 	for (int i : w.spawned)
 		if (w.placeOf(i) == index)
 			w.attachSpawned(i);
@@ -466,8 +528,10 @@ static size_t cellHeapBlockNeeded()
 // the heap alone, an Old 3DS's forest cells waited with the heap in holes of 300 KB and the arena mostly empty
 static bool cellLoadHasRoom()
 {
+	// (the arena's room counts only with some heap besides: a read's thread, its inflate and its object lists come from
+	// the heap. Down to a 16 KB block with the arena 3 MB free, an Old 3DS took every read for one there was room for)
 	return heapInUse() + (5u << 20) < __ctru_heap_size
-		&& (heapLargestBlock() >= cellHeapBlockNeeded() || g_cellArena.largest() >= (3u << 20));
+		&& (heapLargestBlock() >= cellHeapBlockNeeded() || (g_cellArena.largest() >= (3u << 20) && heapLargestBlock() >= 512u * 1024u));
 }
 
 // Reads a cell's files (safe on the streaming thread: touches nothing shared but the locked
@@ -618,6 +682,17 @@ static void startStreamJob(World& w, int index)
 		j->thread = threadCreate(streamWorker, j, 64 * 1024, prio + 1, -2, false);
 	if (j->thread)
 		w.streamThreaded = true;
+	if (!j->thread && heapLargestBlock() < 256u * 1024u)
+	{
+		// No thread, for want of heap for its stack: memory back first, the cell asked for again later (read here at
+		// once, out of heap as it was, each read failed and was asked for again the next frame, an Old 3DS stuck at it)
+		logf("world: no streaming thread for %s (heap's biggest block %u KB): memory back first", j->file.c_str(),
+			(unsigned)(heapLargestBlock() / 1024));
+		g_memoryLow = true;
+		delete j->cell;
+		delete j;
+		return;
+	}
 	if (!j->thread)
 	{
 		// No thread could be made: load it right here instead
@@ -1074,9 +1149,12 @@ bool Session::refInUse(int ri) const
 	if (ri == target || ri == enemyRef || ri == repairRef || ri == barterRef || ri == bookRef || ri == containerRef
 		|| ri == arrestingGuard || ri == dlg.ref || w.followsPlayer(ri))
 		return true;
-	// one fighting the player: their cell's objects stay (Recall out of a fight, an assassin going for the player)
+	// one fighting the player near enough to go on: their cell's objects stay (an assassin going for the player as the
+	// player goes out of Arrille's door). Left behind by a far trip the fight is over, as npcCombat ends it at
+	// kHostileGiveUp when they are loaded: kept, a cell with anyone fighting when the player Recalled away stayed in
+	// memory for the rest of the game
 	const Ref& r = w.refs[ri];
-	if (r.ai == AI_COMBAT && r.duelFoe < 0 && !r.dead && r.actor >= 0)
+	if (r.ai == AI_COMBAT && r.duelFoe < 0 && !r.dead && r.actor >= 0 && w.distanceToPlayer(ri) < 5000.0f)   // (npcCombat's kHostileGiveUp)
 		return true;
 	// speaking now (an entry stayed for everyone who ever said a line: a cell where someone once greeted the player was
 	// never let go of, so memory filled with them and saves carried them whole)
@@ -1175,8 +1253,29 @@ void Session::evictFarCells(int budget, bool now)
 	for (auto it = sayUntil.begin(); it != sayUntil.end();)
 		it = w.time >= it->second ? sayUntil.erase(it) : std::next(it);
 	dropDeadLoops();
-	int n = w.evictCells(budget, [this](int ri) { return refInUse(ri); }, now);
+	auto inUse = [this](int ri) { return refInUse(ri); };
+	int n = w.evictCells(budget, inUse, now);
 	if (n)
 		logf("world: %d cells' objects out of memory, %d objects in memory, %d cells' changes kept",
 			n, w.refsInMemory(), (int)w.cellStates.size());
+	// Over the budget with nothing more to let go, on an Old 3DS: once a minute, what holds each cell (a console's log
+	// is all there is to go on: an Old 3DS crashed with thirteen far cells kept, and the log didn't say why)
+	static float lastHeld = -1e9f;
+	if (g_profile.cleanAtDoors && w.refsInMemory() > budget && w.time - lastHeld > 60.0f)
+	{
+		lastHeld = w.time;
+		int listed = 0;
+		for (size_t c = 0; c < w.cells.size() && listed < 12; c++)
+		{
+			if (!w.cells[c].refsLoaded || w.cells[c].live)
+				continue;
+			std::string why = w.holdReason((int)c, inUse);
+			if (!why.empty())
+			{
+				logf("world: %s (%d objects) stays: %s", w.cells[c].file.c_str(), w.cells[c].refCount, why.c_str());
+				listed++;
+			}
+		}
+		logf("world: %d objects in memory over the budget of %d", w.refsInMemory(), budget);
+	}
 }

@@ -1,0 +1,19 @@
+# start: Seyda Neen
+# console: old
+# bug-fight-cell-let-go: a cell with anyone fighting the player in it was kept in memory for good once the player went
+# far away: the fight only ends (kHostileGiveUp) while they are loaded, so one left mid-fight by a Recall or a coc held
+# their cell and all its objects for the rest of the game. a rat put down in the tradehouse and set on the player, a coc to Balmora: the tradehouse
+# goes out of memory with the rest of Seyda Neen, as a far trip frees the place left behind on an Old 3DS
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 CON:coc%"seyda%neen,%arrille's%tradehouse"
+5 0 0 0
+0.3 0 0 0 0 PLACEAT:rat:-356:-5500:-408
+1 0 0 0
+0.3 0 0 0 0 HOSTILE:rat
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:rat:eq:1
+0.3 0 0 0 0 CON:coc%"balmora"
+8 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora
+0.1 0 0 0 0 EXPECT:cellinmemory:Seyda_Neen,_Arrille's_Tradehouse:eq:0

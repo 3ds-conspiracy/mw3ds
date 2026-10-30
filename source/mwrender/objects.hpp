@@ -110,10 +110,21 @@ struct SharedPlace
 	int ref;                              // its reference (the cell's index; World's once the cell is in): not drawn while disabled
 };
 
-struct __attribute__((packed)) CellActor
+// A person's or creature's collision as the cell file has it: an upright cylinder
+struct __attribute__((packed)) CellActorFile
 {
 	char id[32], name[32];
 	float pos[3], yaw, radius, height;
+};
+
+// ... and as the game keeps it: a creature with a "Bounding Box" node in its model blocks as that box, turned with it
+// (OpenMW's actor shape: its half extents and centre, rotated with the actor unless it is square and centred)
+struct CellActor
+{
+	char id[32], name[32];
+	float pos[3], yaw, radius, height;
+	bool box = false;
+	float half[2] = {}, off[2] = {};      // the box's half width and half length, its centre from the origin (scaled)
 };
 
 // Axis-aligned blocker updated every frame (closed swinging doors)

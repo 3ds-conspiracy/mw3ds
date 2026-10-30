@@ -674,9 +674,12 @@ void Session::mix3d(const float* pos, float& volume, float& pan, float minDist, 
 {
 	float dx = pos[0] - listener[0], dy = pos[1] - listener[1], dz = pos[2] - listener[2];
 	float dist = sqrtf(dx * dx + dy * dy + dz * dz);
-	// inverse: OpenAL's inverse distance clamped, as OpenMW plays its sounds (full within minDist, then minDist / dist);
-	// past maxDist not played, as the line below has it
-	float att = inverse ? (dist <= minDist ? 1.0f : dist > maxDist ? 0.0f : minDist / dist)
+	// inverse: OpenAL's inverse distance clamped, as OpenMW plays its sounds: full within minDist, then minDist / dist,
+	// and past maxDist the distance counts as maxDist, so the gain stays at minDist / maxDist and is never cut off.
+	// (Cut off past maxDist, Mournhold's day and night ambience, looped by emitters whose record has min 60 and max 1
+	// (both 1200 after the GMST multipliers: the gain 1 everywhere), was never heard from 1,300 away in the Great
+	// Bazaar.) A sound too faint to matter isn't started, below: the 3DS's channels are few
+	float att = inverse ? (dist <= minDist ? 1.0f : minDist / fminf(dist, maxDist))
 		: dist <= minDist ? 1.0f : fmaxf(0.0f, 1.0f - (dist - minDist) / fmaxf(1.0f, maxDist - minDist));
 	volume *= att;
 	float rel = atan2f(dx, dy) - listener[3];

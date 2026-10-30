@@ -10,6 +10,7 @@
 #include <zlib.h>
 
 #include "components/debug/debuglog.hpp"
+#include "platform/memstat.hpp"
 
 char* zreadAll(const char* path, size_t* sizeOut)
 {
@@ -43,6 +44,9 @@ char* zreadAll(const char* path, size_t* sizeOut)
 	if (rc != Z_OK || outLen != size)
 	{
 		logf("zfile: %s: inflate failed (%d)", path, rc);
+		// (out of heap: the main loop gives memory back, as when `new` runs out; zlib's malloc never told it)
+		if (rc == Z_MEM_ERROR)
+			g_memoryLow = true;
 		free(out);
 		return nullptr;
 	}
@@ -106,6 +110,8 @@ ssize_t zstreamRead(void* cookie, char* buf, size_t n)
 		if (rc != Z_OK)
 		{
 			logf("zfile: inflate failed (%d) at %lu", rc, (unsigned long)s->pos);
+			if (rc == Z_MEM_ERROR)
+				g_memoryLow = true;
 			s->end = true;
 			break;
 		}

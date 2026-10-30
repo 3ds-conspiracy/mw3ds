@@ -788,8 +788,15 @@ bool gameLoad(GameData& g, const char* path)
 		g.skills.push_back(sd);
 	}
 
+	// A sound record's volume byte is on a decibel scale, 33.48 dB from 0 to 255 (OpenMW's SoundBufferPool::insertSound:
+	// 10 ^ ((byte / 255 x 3348 - 3348) / 2000)): Water Layer's 102 is 0.099, Boat Hull's 178 0.31. Taken as the plain
+	// share (0.4, 0.7; game.json keeps it so) every quiet record played four times too loud: the sea in Mournhold's
+	// Great Bazaar, the regions' wind
 	cJSON_ArrayForEach(it, arr(root, "sounds"))
-		g.sounds[it->string] = { str(it, "file"), (float)num(it, "volume", 1.0), (int)num(it, "min"), (int)num(it, "max") };
+	{
+		float share = (float)num(it, "volume", 1.0);
+		g.sounds[it->string] = { str(it, "file"), powf(10.0f, (share * 3348.0f - 3348.0f) / 2000.0f), (int)num(it, "min"), (int)num(it, "max") };
+	}
 	forSection(root, "voices", [&](const cJSON* it) {
 		if (voiceName(it->string) == it->valuestring)
 			g.voices.insert(it->string);

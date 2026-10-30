@@ -103,7 +103,9 @@ it on twice).
 - **Follow:** keeps within `64 + the leader's and its own size` (more with other followers); must first be in range
   and in sight to start.
 - **Escort:** leads to the point while the escorted one is within `half extent + 450`; past that it stops and waits
-  until they are within `half extent + 250`.
+  until they are within `half extent + 250`. The half extent is the escort's largest: a creature's from its model's
+  box at its size (the Ritual of Water's horker: 147, so 597 and 397), a person's taken as 50 (500 and 300; OpenMW's is
+  their box's half height, about 64: kept at 50, the escort runs tuned on it).
 - **Activate:** walks to the object and activates it.
 - Walking speed for packages is the walk speed; chasing, fleeing and catching up run (`movement.md`).
 - **Getting unstuck** (`obstacle.cpp`): an actor that has stood in the same spot for a while (1.5 s) evades for a

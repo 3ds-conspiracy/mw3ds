@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# bug-sound-volume-curve: a sound record's volume byte is on a decibel scale (OpenMW's SoundBufferPool::insertSound:
+# 10 ^ ((byte / 255 x 3348 - 3348) / 2000)), not a plain share. Water Layer's 102 plays at 0.099, where the plain share
+# gave 0.4: four times too loud, the sea heard in Mournhold's Great Bazaar (its water level is 0, below its floors)
+# and the regions' wind far louder than OpenMW's. A record at 255 (FootWaterLeft) plays at 1 either way
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+# (indoors, away from the sea: Seyda Neen's shore starts Water Layer itself, at the shore's share, over the console's)
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 CON:PlaySound%"Water%Layer"
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:soundvolume:Water_Layer:gt:0.08+EXPECT:soundvolume:Water_Layer:lt:0.12
+0.3 0 0 0 0 CON:PlaySound%"FootWaterLeft"
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:soundvolume:FootWaterLeft:gt:0.95

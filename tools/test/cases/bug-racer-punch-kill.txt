@@ -1,0 +1,25 @@
+# start: Seyda Neen
+# bug-racer-punch-kill: a cliff racer's body is its model's box, turned with it, and the player's blows still reach it
+# from the ground: one set on the player outside Seyda Neen is punched to death with bare fists (hand-to-hand hurts a
+# creature's health, OpenMW's), and a second is cut down with an iron dagger, a short blade. The player kept alive,
+# blows as they are (GOD:2), skills and attributes at 100. Each racer is enabled once placed: PLACE moves the racer the
+# shore's leveled spot near by keeps disabled (its list rolls nothing at level 1) rather than making a new one
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2+SEED:1+HOUR:12
+0.3 0 0 0 0 BOOST:100
+3 0 0 0
+0.3 0 0 0 0 PLACE:cliff%racer:250
+1 0 0 0
+0.3 0 0 0 0 ENABLE:cliff%racer+HOSTILE:cliff%racer
+0.3 0 0 0 0 SNAP:refhealth:cliff%racer
+2 0 0 0
+120 0 0 0 0 KILL:cliff%racer
+0.1 0 0 0 0 EXPECT:dead:cliff%racer
+0.3 0 0 0 0 GIVE:iron%dagger
+0.3 0 0 0 0 EQUIP:iron%dagger
+0.3 0 0 0 0 PLACE:cliff%racer:250
+1 0 0 0
+0.3 0 0 0 0 ENABLE:cliff%racer+HOSTILE:cliff%racer
+2 0 0 0
+120 0 0 0 0 KILL:cliff%racer
+0.1 0 0 0 0 EXPECT:dead:cliff%racer

@@ -87,6 +87,7 @@ MOD = Path(__file__).resolve().parent / "sidebyside"
 W, H = 400, 240
 TRIBUNAL = False         # --tribunal: OpenMW loads Tribunal.esm too
 BLOODMOON = False        # --bloodmoon: OpenMW loads Bloodmoon.esm too (after Tribunal.esm)
+SOUND = False            # --sound: OpenMW plays its sound (to record what a place sounds like); else --no-sound
 SPAWN_DIST = 250         # spawn=: this far ahead of the camera
 RES = (W, H)             # --res: OpenMW's window (a menu shot reads better bigger)
 UI_MODES = {"alchemy": "Alchemy", "enchanting": "Enchanting", "spellmaking": "SpellCreation"}
@@ -343,6 +344,14 @@ def write_openmw_setup(shots):
                            capture_output=True, text=True)
         if r.returncode != 0:
             print("sidebyside: Morrowind.ini not imported:", (r.stderr or r.stdout).strip()[-300:])
+        # (the importer drops the install's fallbacks it knows nothing of: Water_NearWater*, the water sound's reach and
+        # id, went with it, and OpenMW played no water in Mournhold's Great Bazaar. Those it left out are put back)
+        cfg = SBS / "openmw.cfg"
+        kept = cfg.read_text(errors="replace").splitlines()
+        have = {ln.split("=", 1)[1].split(",", 1)[0] for ln in kept if ln.startswith("fallback=")}
+        back = [ln for ln in fallbacks if ln.split("=", 1)[1].split(",", 1)[0] not in have]
+        if back:
+            cfg.write_text(chr(10).join(kept + back + [""]))
     # The 3DS's top screen: 400 x 240, a 60 degree vertical field of view (mwrender/renderingmanager.cpp kFovY)
     (SBS / "settings.cfg").write_text("\n".join([
         "# Written by tools/test/sidebyside.py",
@@ -350,7 +359,9 @@ def write_openmw_setup(shots):
         "vsync mode = 0", "framerate limit = 60", "",
         "[Camera]", "field of view = 60", "",
         "[General]", "screenshot format = png", "",
-        "[Game]", "", ""]))
+        "[Game]", "",
+        # (--sound: a recording of what a place sounds like, its music left out)
+        *(["[Sound]", "music volume = 0", ""] if SOUND else []), ""]))
     return user
 
 
@@ -386,8 +397,9 @@ def run_openmw(shots, out, timeout):
         if f.exists():
             f.unlink()
     out.mkdir(parents=True, exist_ok=True)
-    cmd = [str(exe), "--replace=config", f"--config={SBS}", "--skip-menu", "--start=Seyda Neen", "--no-grab",
-           "--no-sound"]
+    cmd = [str(exe), "--replace=config", f"--config={SBS}", "--skip-menu", "--start=Seyda Neen", "--no-grab"]
+    if not SOUND:
+        cmd.append("--no-sound")
     proc = subprocess.Popen(cmd, cwd=OPENMW)
     print(f"openmw: pid {proc.pid}")
     try:
@@ -707,13 +719,15 @@ def main():
                          "3DS data holds it), the 3DS side out/tb (Tribunal + Bloodmoon)")
     ap.add_argument("--exe", default="", help="another native build")
     ap.add_argument("--res", default="", help="OpenMW's window, WxH (default 400x240: the top screen's)")
+    ap.add_argument("--sound", action="store_true", help="OpenMW with its sound on (a recording of a place)")
     ap.add_argument("--timeout", type=float, default=0, help="seconds for the OpenMW run (default 60 + 15 a shot)")
     a = ap.parse_args()
-    global TRIBUNAL, BLOODMOON, RES
+    global TRIBUNAL, BLOODMOON, RES, SOUND
     if a.res:
         RES = tuple(int(v) for v in a.res.lower().split("x"))
     a.data = a.data or ("out/tb" if a.bloodmoon else "out/tribunal" if a.tribunal else "out/world")
     BLOODMOON = a.bloodmoon
+    SOUND = a.sound
     # (Bloodmoon loads after Tribunal: with Bloodmoon, OpenMW gets Tribunal too when the 3DS data was converted with it)
     TRIBUNAL = a.tribunal or (a.bloodmoon and "tribunal" in data_addons(a.data))
     # (the add-ons' records too where a shot looks one up: vfx= Bloodmoon's sprigganup)

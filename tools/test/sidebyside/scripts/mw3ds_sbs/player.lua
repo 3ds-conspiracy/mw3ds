@@ -6,6 +6,7 @@
 -- readied, Use pressed, and the world stopped (global.lua) `after` seconds of game time later; after the shot the world
 -- goes on for kClearSecs, the bolt and its visuals gone before the next cast.
 -- Angles as in the 3DS engine: yaw 0 looks along +Y, 90 along +X; pitch up is positive (OpenMW's is down).
+local ambient = require('openmw.ambient')
 local camera = require('openmw.camera')
 local core = require('openmw.core')
 local input = require('openmw.input')
@@ -205,6 +206,9 @@ end
 
 return {
 	eventHandlers = {
+		MW3DS_SBS_Sound = function(d)
+			ambient.playSound(d.id)
+		end,
 		MW3DS_SBS_Posed = function(d)
 			if d.index ~= index then
 				return
