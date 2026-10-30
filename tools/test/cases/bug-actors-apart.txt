@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bug-actors-apart: people and creatures went through each other's bodies. A pack of wolves under a levitating player
+# (a player's report on an Old 3DS) stood in one spot, five in one body, and bit as one. OpenMW's actors collide with
+# each other (an actor's collision mask holds CollisionType_Actor). Five grey wolves put down in one spot (PlaceAtPC) on
+# the Isinfier Plains come for the player hovering over them: they gather below side by side, not in one body
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOD:2+HOUR:12
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 TP:-172500:184100:1200:0
+6 0 0 0
+120 0 0 0 0 FLYTO:@-172500,184100,1000
+0.1 0 0 0 0 FLOAT:60
+0.3 0 0 0 0 CON:PlaceAtPC%bm_wolf_grey%5%300%0
+20 0 0 0
+0.1 0 0 0 0 EXPECT:closestpair:bm_wolf_grey:gt:40
+0.1 0 0 0 0 FLOAT:off

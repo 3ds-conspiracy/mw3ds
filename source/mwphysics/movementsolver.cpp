@@ -48,6 +48,63 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 	g_profCalls[PCALL_STEPS]++;
 	Ref& r = w.refs[ri];
 	float body[3] = { r.pos[0] + dirX * step, r.pos[1] + dirY * step, r.pos[2] + 70.0f };
+	// Another person's or creature's body is in the way (OpenMW's actors collide with each other: an actor's collision
+	// mask holds CollisionType_Actor while its collision is on). Without it a pack of wolves under a levitating player
+	// stood in one spot, five in one body, and bit as one. A step into one slides round it: never closer than the two
+	// were, nor kept further off than their half-widths (their boxes: a bear wider than a wolf), so two put down in one
+	// spot come apart as either steps away. Refused outright instead, people meeting in a doorway or a fight stood there
+	// for good. First, so the walls still have the last word
+	if (!r.dead)
+	{
+		auto halfWidth = [](const Ref& a) {
+			if (!a.hasBox)
+				return 28.0f * a.scaleFactor;
+			return fminf(64.0f, fmaxf(12.0f, 0.25f * ((a.boxMax[0] - a.boxMin[0]) + (a.boxMax[1] - a.boxMin[1]))));
+		};
+		float mine = halfWidth(r);
+		for (int j : w.loadedActors)
+		{
+			const Ref& o = w.refs[j];
+			if (j == ri || o.dead || fabsf(o.pos[2] - r.pos[2]) > 128.0f)
+				continue;
+			float reach = mine + halfWidth(o);
+			float nx = body[0] - o.pos[0], ny = body[1] - o.pos[1];
+			if (fabsf(nx) >= reach || fabsf(ny) >= reach || !w.active(j))
+				continue;
+			float ox = r.pos[0] - o.pos[0], oy = r.pos[1] - o.pos[1];
+			float keep = fminf(reach, sqrtf(ox * ox + oy * oy)), nd = sqrtf(nx * nx + ny * ny);
+			if (nd >= keep)
+				continue;
+			if (nd < 1e-3f)
+			{
+				// (the step ends on its middle: out the way it came)
+				nx = ox;
+				ny = oy;
+				nd = keep;
+			}
+			// What of the step goes round it is kept; head on, round it to the right, as two people pass (pushed
+			// straight back, two rats meeting in a back room walked into each other for good)
+			float ux = nx / nd, uy = ny / nd, tx = -uy, ty = ux;
+			float along = tx * dirX + ty * dirY;
+			if (fabsf(along) < 0.3f)
+				along = tx * dirY - ty * dirX >= 0.0f ? 0.3f : -0.3f;
+			float gx = ux * keep + tx * along * step, gy = uy * keep + ty * along * step, gl = sqrtf(gx * gx + gy * gy);
+			body[0] = o.pos[0] + gx / gl * keep;
+			body[1] = o.pos[1] + gy / gl * keep;
+		}
+		// (round one into another, in a pack: no step then)
+		for (int j : w.loadedActors)
+		{
+			const Ref& o = w.refs[j];
+			if (j == ri || o.dead || fabsf(o.pos[2] - r.pos[2]) > 128.0f)
+				continue;
+			float reach = mine + halfWidth(o) - 0.5f;
+			float nx = body[0] - o.pos[0], ny = body[1] - o.pos[1], ox = r.pos[0] - o.pos[0], oy = r.pos[1] - o.pos[1];
+			float nd = nx * nx + ny * ny;
+			if (nd < reach * reach && nd < ox * ox + oy * oy - 0.5f && w.active(j))
+				return false;
+		}
+	}
 	// Outdoors the ground and walls past the cell's edge are the next cell's: every loaded cell whose collision
 	// reaches the spot counts, as for the player and gravity (OpenMW moves actors in one physics world, whatever
 	// cell they belong to). A follower stopped dead at the border before, with no floor ahead

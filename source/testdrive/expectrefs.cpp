@@ -139,6 +139,26 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 			: w.game.voiceFile(lower(arg), &voice) ? audioStartedCount(voice) : -1;
 		return true;
 	}
+	if (what == "closestpair")
+	{
+		// closestpair:<id>: the least distance across the ground between two living actors of that id that are loaded (-1:
+		// fewer than two): a pack kept apart by each other's bodies, not stood in one spot
+		std::string id = lower(spaced(arg)), id2 = lower(arg);
+		std::vector<int> pack;
+		for (int i : w.loadedActors)
+			if (!w.refs[i].dead && (w.refs[i].idLower == id || w.refs[i].idLower == id2))
+				pack.push_back(i);
+		v = -1.0f;
+		for (size_t a = 0; a < pack.size(); a++)
+			for (size_t b = a + 1; b < pack.size(); b++)
+			{
+				float dx = w.refs[pack[a]].pos[0] - w.refs[pack[b]].pos[0], dy = w.refs[pack[a]].pos[1] - w.refs[pack[b]].pos[1];
+				float d = sqrtf(dx * dx + dy * dy);
+				if (v < 0.0f || d < v)
+					v = d;
+			}
+		return true;
+	}
 	if (what == "soundvolume")
 	{
 		// soundvolume:<sound id>: the volume that sound last started at (its record's, the caller's and the 3D mix's)
