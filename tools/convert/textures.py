@@ -29,6 +29,7 @@ from PIL import Image
 
 import envfile  # noqa: F401  (loads .env)
 from mwfiles import OVERLAYS, content_key
+from texpad import PAD_VERSION, actor_texture_islands, pad_islands
 
 # Converted data goes here (MW3DS_OUT overrides it, e.g. out/world for a whole-island trial run)
 OUT = Path(os.environ.get("MW3DS_OUT") or Path(__file__).resolve().parents[2] / "out" / "data")
@@ -169,6 +170,7 @@ class TextureSet:
         # (and the plugins: they come with their own loose textures, which may replace others)
         overlay = ";".join(str(d) for d in OVERLAYS) + content_key()
         wanted = set()
+        islands = actor_texture_islands(OUT)
         items = sorted(self.req.items())
         print(f"textures: checking {len(items)} (new or resized ones are encoded with tex3ds; the first run takes a while)",
               flush=True)
@@ -187,14 +189,19 @@ class TextureSet:
                 if not (entry and entry.get("src") == path and entry.get("limit") == limit
                         and entry.get("want_alpha") == r["alpha"] and entry.get("overlay", "") == overlay
                         and entry.get("sheet", False) == sheet and entry.get("mips", True) == self.mips
+                        and entry.get("padded", 0) == (PAD_VERSION if name in islands else 0)
                         and (not entry.get("alpha") or entry.get("clear_kept")) and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(path)))
                     img.load()
+                    img = img.convert("RGBA")
+                    if name in islands:
+                        # (grown far enough for the shrink and its first smaller copies: 4 texels of the console's a side)
+                        img = pad_islands(img, islands[name], 4 * max(1, img.size[0] // max(1, limit)) + 8)
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
-                    entry = encode_one(tex3ds, img.convert("RGBA"), tex_path(name), limit, r["alpha"], sheet, self.mips)
+                    entry = encode_one(tex3ds, img, tex_path(name), limit, r["alpha"], sheet, self.mips, name in islands)
                     entry.update({"src": path, "limit": limit, "want_alpha": r["alpha"], "overlay": overlay,
-                                  "sheet": sheet})
+                                  "sheet": sheet, "padded": PAD_VERSION if name in islands else 0})
                     cache[name] = entry
                     stats["encoded"] += 1
             except Exception as e:           # missing or unreadable: the cell draws it untextured
@@ -279,7 +286,7 @@ def whiten_image(img, amount):
     return Image.fromarray(a.clip(0, 255).astype(np.uint8), "RGBA")
 
 
-def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True):
+def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True, padded=False):
     """A sheet (is_sheet) is capped on its short side, the long side up to MAX_SIDE: taken on the long side, an Old
     3DS's 128 left each of the eight pictures of a 256 x 2048 sheet 16 texels across."""
     w, h = img.size
@@ -290,7 +297,12 @@ def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True):
         tw, th = max(8, tw // 2), max(8, th // 2)
     if (tw, th) != (w, h):
         small = img.resize((tw, th), Image.LANCZOS)
-        if img.mode == "RGBA" and img.getextrema()[3][0] == 0:
+        if padded and img.mode == "RGBA":
+            # (a padded picture's colour runs on under its see-through texels (texpad.py): shrunk apart from the alpha,
+            # without the weighing by it, which darkened the edge of a fringe of fur)
+            small = Image.merge("RGBA", (*img.convert("RGB").resize((tw, th), Image.LANCZOS).split(),
+                                         img.getchannel("A").resize((tw, th), Image.LANCZOS)))
+        elif img.mode == "RGBA" and img.getextrema()[3][0] == 0:
             # (Pillow weighs colour by alpha: a fully see-through texel comes out black; it keeps its own colour, from a
             # plain resize, as a model drawing the picture solid shows it: a riekling's skin is see-through almost all
             # over for its blended fur, its body drawn solid with it, OpenMW showing the colours)
