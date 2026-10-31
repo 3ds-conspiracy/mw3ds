@@ -169,7 +169,7 @@ void Session::updateLocalMap()
 	if (!interiorMapArea(w.here(), &minX, &minY, &size))
 		return;
 	float topZ = w.player.feet[2] + 220.0f;
-	if (rendererDrawLocalMap(w, minX, minY, size, topZ, 4000.0f))
+	if (rendererDrawLocalMap(w, minX, minY, size, topZ, 4000.0f, false, false, true))
 	{
 		localMapCell = w.current;
 		localMin[0] = minX;

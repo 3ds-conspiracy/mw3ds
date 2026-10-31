@@ -1568,7 +1568,7 @@ void rendererDrawMeshGlow_sw(const ActorMesh& m, const C3D_Mtx* model, C3D_Tex* 
 void rendererDrawActor_sw(Actor& a, const std::vector<C3D_Tex*>& textures, bool viewModel);
 void rendererDrawGlow_sw(const float pos[3], float size, u32 rgba);
 bool rendererDrawLocalMap_sw(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater,
-	bool whole);
+	bool whole, bool mapLight);
 C3D_Tex* rendererLocalMap_sw();
 
 // (GPUMODEL:on: every frame's world and actors go through the renderer, without a pixel drawn, so their draws and
@@ -1599,8 +1599,9 @@ void rendererDrawGlow(const float pos[3], float size, u32 rgba)
 	if (drawFrame())
 		rendererDrawGlow_sw(pos, size, rgba);
 }
-bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater, bool whole)
+bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater, bool whole,
+	bool mapLight)
 {
-	return drawFrame() && rendererDrawLocalMap_sw(w, minX, minY, size, topZ, depth, opaqueWater, whole);
+	return drawFrame() && rendererDrawLocalMap_sw(w, minX, minY, size, topZ, depth, opaqueWater, whole, mapLight);
 }
 C3D_Tex* rendererLocalMap() { return drawFrame() ? rendererLocalMap_sw() : nullptr; }

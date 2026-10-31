@@ -22,9 +22,13 @@ C3D_Tex* rendererLocalMap()
 // picture's square are drawn, kChunk batches between looks at the list
 static const float kLocalMapShare = 0.3f;
 static const int kChunk = 32;
+// The light OpenMW's local map camera puts in place of the sun (LocalMapRenderToTexture: ambient 0.3, diffuse 0.7 from
+// (-0.3, -0.3, 0.7)) on a floor seen from above: 0.3 + 0.7 x 0.7 / |(-0.3, -0.3, 0.7)|. The cells' light is baked into
+// their colours with no normals left, so it is added evenly; a dark mine's floor plan shows as in OpenMW
+static const float kMapLight = 0.9f;
 static struct LocalMapJob
 {
-	bool on = false, opaqueWater = false, cellOver = false;
+	bool on = false, opaqueWater = false, cellOver = false, mapLight = false;
 	float minX = 0, minY = 0, size = 0, topZ = 0, depth = 0;
 	int pass = 0, cell = 0, batch = 0;       // where it goes on: the pass, the loaded cell, its next batch
 } s_job;
@@ -42,6 +46,9 @@ static bool drawLocalMapPart(World& w, bool whole)
 	C3D_FrameDrawOn(g_gpu.localTarget);
 	bindPipeline();
 	C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uTint, 1.0f, 1.0f, 1.0f, 1.0f);    // interiors: no time of day
+	// (set again on each frame a picture goes on: the world's draws in between set their own)
+	if (s_job.mapLight && g_gpu.uAmbient >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uAmbient, kMapLight, kMapLight, kMapLight, g_gpu.invGamma);
 	disableFog();
 	// Looking down -Z from topZ: everything above it (upper floors) is behind the camera, and
 	// ceilings face away (culled), which leaves the floor plan
@@ -103,6 +110,8 @@ static bool drawLocalMapPart(World& w, bool whole)
 	if (!stopped)
 		s_job.on = false;
 	g_gpu.opaqueWater = false;
+	if (s_job.mapLight && g_gpu.uAmbient >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uAmbient, 0.0f, 0.0f, 0.0f, g_gpu.invGamma);   // (as setLight(nullptr) left it)
 	setUvOffset(0.0f, 0.0f);
 	invalidateState();
 	g_gpu.mvValid = false;
@@ -115,7 +124,7 @@ bool rendererLocalMapMore(World& w)
 }
 
 bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater,
-	bool whole)
+	bool whole, bool mapLight)
 {
 	if (!g_gpu.localTarget)
 	{
@@ -134,6 +143,7 @@ bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float to
 	s_job = LocalMapJob();
 	s_job.on = true;
 	s_job.opaqueWater = opaqueWater;
+	s_job.mapLight = mapLight;
 	s_job.minX = minX;
 	s_job.minY = minY;
 	s_job.size = size;

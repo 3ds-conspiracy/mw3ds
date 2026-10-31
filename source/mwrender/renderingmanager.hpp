@@ -118,9 +118,10 @@ void rendererViewAxes(float right[3], float up[3], float back[3]);
 // looking down from topZ through depth units) into a 256 x 256 texture. Inside a frame, before the
 // screens are drawn. The texture: rendererLocalMap() (nullptr until the first render). It starts a picture and draws
 // a share of the frame's GPU commands of it; rendererLocalMapMore goes on with it on the next frames (true once it is
-// whole). whole: all of it in this frame (MAPCELL's file). False: no texture for it
+// whole). whole: all of it in this frame (MAPCELL's file). mapLight: lit from above as OpenMW's map camera lights it (an
+// interior's; the outdoor ones keep the day's light). False: no texture for it
 bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater = false,
-	bool whole = false);
+	bool whole = false, bool mapLight = false);
 bool rendererLocalMapMore(World& w);
 C3D_Tex* rendererLocalMap();
 
