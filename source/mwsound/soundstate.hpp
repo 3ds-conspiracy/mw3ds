@@ -12,7 +12,7 @@ struct SoundState
 	float listener[4] = {};           // x, y, z, yaw of the camera for 3D sound
 	int uiVoiceChannel = -1;          // voice lines not tied to an actor (class questions)
 	// Sounds that loop on an object (PlayLoopSound3D), mixed by distance each frame, until stopped or left
-	struct LoopSound { int ref; std::string id; int channel; float volume, pitch; };
+	struct LoopSound { int ref; std::string id; int channel; float volume, pitch; bool heard = false; };   // (heard: loud and near enough for a channel)
 	std::vector<LoopSound> loopSounds;
 	struct ScriptSound { int ref; std::string id; float until; };   // a sound a script played (GetSoundPlaying)
 	std::vector<ScriptSound> scriptSounds;

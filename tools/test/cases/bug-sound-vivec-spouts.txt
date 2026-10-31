@@ -1,0 +1,20 @@
+# start: Seyda Neen
+# bug-sound-vivec-spouts: Vivec's waterfall spouts (ex_vivec_waterfall_*, script Sound_Water_Spout) each loop
+# Cave_Waterfall with PlayLoopSound3DVP, heard out to 2000 units and no farther (OpenMW's LoopRemoveAtDistance). Heard
+# from every spout in the loaded cells, eight of them held sound channels beside a canton, six from past 2000, and in
+# a crowd the player's own landing and a door's sound found no channel left. Beside a spout of the canton at
+# 107138,-59874: the near spouts are heard, none from 2000 or more, and two jumps' landings start with no sound
+# refused (sounddenied counts only with a sound device: in the emulator)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+HOUR:12
+0.3 0 0 0 0 GOTO:Vivec
+4 0 0 0
+0.3 0 0 0 0 TP:107300:-59600:600:0
+8 0 0 0
+0.1 0 0 0 0 EXPECT:loopsheard:Cave_Waterfall:ge:1+EXPECT:loopsheard:Cave_Waterfall,2000:eq:0
+0.1 0 0 0 0 SNAP:soundstarted:DefaultLand
+0.6 0 0 0 1
+2 0 0 0
+0.6 0 0 0 1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:soundstarted:DefaultLand:ge:@2+EXPECT:sounddenied:eq:0

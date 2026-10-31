@@ -122,8 +122,8 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   Holamayan) is read back only when the place they stand in loads, and goes again with the rest; OpenMW keeps every
   cell with a moved reference loaded. (`platform/console.cpp cleanAtDoors`, `mwgui/travelwindow.cpp
   Session::finishTravel`, `mwworld/cellstore.cpp World::readMovedIn`)
-- **A sound too faint to hear isn't started.** OpenMW plays every sound in earshot however faint (past its maximum range
-  the gain holds at minimum / maximum, often a few percent). We don't start one whose gain would be under 1 % of full,
+- **A sound too faint to hear isn't started.** OpenMW plays every sound in earshot however faint (a script's loop past its
+  maximum range holds at minimum / maximum, often a few percent, out to 2000 units). We don't start one whose gain would be under 1 % of full,
   and a loop that faint stays unstarted: the 3DS's mixer has 24 channels for everything. (`mwsound/soundmanagerimp.cpp
   playSound`, `updateLoopSounds`)
 - **The sound cache holds 1 MB on an Old 3DS, 3 MB on a New 3DS** (sounds heard lately; the rest read from the card

@@ -670,21 +670,28 @@ void Session::updateAmbience()
 
 // ---- Sound
 
-void Session::mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist, bool inverse)
+void Session::mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist, bool inverse,
+	float cullDist)
 {
 	float dx = pos[0] - listener[0], dy = pos[1] - listener[1], dz = pos[2] - listener[2];
 	float dist = sqrtf(dx * dx + dy * dy + dz * dz);
 	// inverse: OpenAL's inverse distance clamped, as OpenMW plays its sounds: full within minDist, then minDist / dist,
-	// and past maxDist the distance counts as maxDist, so the gain stays at minDist / maxDist and is never cut off.
-	// (Cut off past maxDist, Mournhold's day and night ambience, looped by emitters whose record has min 60 and max 1
-	// (both 1200 after the GMST multipliers: the gain 1 everywhere), was never heard from 1,300 away in the Great
-	// Bazaar.) A sound too faint to matter isn't started, below: the 3DS's channels are few
+	// and past maxDist the distance counts as maxDist (the gain minDist / maxDist). Past cullDist the sound is not heard
+	// at all (OpenMW's SoundManager::cull3DSound fades it out): its maxDist for most, 2000 for a script's loop
+	// (kLoopCullDistance). A sound too faint to matter isn't started either, below: the 3DS's channels are few
 	float att = inverse ? (dist <= minDist ? 1.0f : minDist / fminf(dist, maxDist))
 		: dist <= minDist ? 1.0f : fmaxf(0.0f, 1.0f - (dist - minDist) / fmaxf(1.0f, maxDist - minDist));
+	if (cullDist > 0.0f && dist > cullDist)
+		att = 0.0f;
 	volume *= att;
 	float rel = atan2f(dx, dy) - listener[3];
 	pan = dist > 1.0f ? sinf(rel) * 0.8f : 0.0f;
 }
+
+// A script's loop (PlayLoopSound3D[VP]) is heard out to 2000 units whatever its record's range, and no farther (OpenMW's
+// PlayMode::LoopRemoveAtDistance and sSoundCullDistance, "from an original engine"): Mournhold's insect emitters, whose
+// range is 1200, carry across the Great Bazaar, while the many in the cells around it stay silent
+const float kLoopCullDistance = 2000.0f;
 
 // A sound record's range in units (OpenMW's SoundBufferPool::insertSound): its own, or fAudioDefaultMinDistance /
 // fAudioDefaultMaxDistance when both are 0, times fAudioMinDistanceMult and fAudioMaxDistanceMult (20 and 50)
@@ -712,7 +719,7 @@ void Session::playSound(int ref, const std::string& soundId, float volume, float
 		float pos[3] = { w.refs[ref].pos[0], w.refs[ref].pos[1], w.refs[ref].pos[2] + 50.0f };
 		float lo, hi;
 		soundRange(w.game, it->second, lo, hi);
-		mix3d(pos, volume, pan, lo, hi, true);
+		mix3d(pos, volume, pan, lo, hi, true, hi);
 	}
 	if (volume > 0.01f)
 	{
@@ -815,7 +822,7 @@ void Session::updateLoopSounds()
 		{
 			float lo, hi;
 			soundRange(w.game, it->second, lo, hi);
-			mix3d(pos, volume, pans[k], lo, hi, true);
+			mix3d(pos, volume, pans[k], lo, hi, true, kLoopCullDistance);
 		}
 		vols[k] = volume;
 	}
@@ -830,6 +837,7 @@ void Session::updateLoopSounds()
 	{
 		LoopSound& l = loopSounds[k];
 		bool want = vols[k] >= floorVol && vols[k] > 0.01f;
+		l.heard = want;
 		if (l.channel >= 0 && !audioPlaying(l.channel))
 			l.channel = -1;
 		if (!want)

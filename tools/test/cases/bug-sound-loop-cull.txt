@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bug-sound-loop-cull: a script's loop (PlayLoopSound3D) is heard out to 2000 units and no farther, whatever its
+# record's range (OpenMW's LoopRemoveAtDistance: sSoundCullDistance). Mournhold's day ambience (MournDayAmb, range
+# 1200 to 1200 after the GMST multipliers, so its gain is 1 at any distance) is looped by Sound_MournEnv1 emitters all
+# over the Great Bazaar; heard past 2000 too, a dozen of them played at full volume together, far too loud. At the coc
+# spot by day: the near ones are heard at full volume, none from 2000 or more away
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+HOUR:12
+0.3 0 0 0 0 GOTO:Mournhold,_Great_Bazaar
+6 0 0 0
+0.3 0 0 0 0 TPIN:-504:2496:296:0
+6 0 0 0
+0.1 0 0 0 0 EXPECT:loopsheard:MournDayAmb:gt:0+EXPECT:soundvolume:MournDayAmb:gt:0.9
+0.1 0 0 0 0 EXPECT:loopsheard:MournDayAmb,2000:eq:0

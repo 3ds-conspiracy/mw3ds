@@ -347,7 +347,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	bool testSneak = false;                       // SNEAK:1: the player sneaks (tests)
 	void openScreen(Screen s);
 	void closeScreen();
-	void mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist, bool inverse = false);
+	void mix3d(const float* pos, float& volume, float& pan, float minDist, float maxDist, bool inverse = false,
+		float cullDist = 0.0f);
 	void greetings(float dt);
 	void werewolfWitnesses();                     // the player just changed into a werewolf: who saw it
 	std::string targetLabel(int ref);

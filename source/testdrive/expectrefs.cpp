@@ -289,6 +289,27 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 				v = l.volume * (rec != w.game.sounds.end() ? rec->second.volume : 1.0f) * 100.0f;
 		return true;
 	}
+	if (what == "loopsheard")
+	{
+		// loopsheard:<sound id>[,<units>]: how many loops of that sound (PlayLoopSound3D[VP]) are heard now (the mixer gives
+		// them a channel), counting only those at least <units> from the player
+		// (the id as written, or with _ as spaces: Cave_Waterfall has a real underscore, Water_Layer a space)
+		size_t comma = arg.find(',');
+		std::string raw = lower(arg.substr(0, comma)), snd = lower(spaced(raw));
+		float far = comma == std::string::npos ? 0.0f : (float)atof(arg.c_str() + comma + 1);
+		int n = 0;
+		for (auto& l : s.loopSounds)
+		{
+			if ((l.id != snd && l.id != raw) || !l.heard)
+				continue;
+			float dx = w.refs[l.ref].pos[0] - w.player.feet[0], dy = w.refs[l.ref].pos[1] - w.player.feet[1],
+				dz = w.refs[l.ref].pos[2] - w.player.feet[2];
+			if (sqrtf(dx * dx + dy * dy + dz * dz) >= far)
+				n++;
+		}
+		v = (float)n;
+		return true;
+	}
 	if (what == "refgap")
 	{
 		// refgap:<a>,<b>: how far apart two actors stand, middle to middle, across
