@@ -38,6 +38,35 @@ static volatile int s_camLuma = -1;              // the loading screen's camera 
 static Thread s_camThread = nullptr;
 static bool s_camRunning = false;
 static int s_camFailures = 0;
+static bool s_qtmOpen = false;                   // QTM's session is open (only while Auto gamma reads from it)
+static bool s_qtmReal = false;                   // ... as a real qtmInit (a test's LUX: opens none)
+
+// QTM drives the head tracking and its IR LED beside the inner camera: a session is held only while Auto gamma polls it
+static bool qtmSessionOpen()
+{
+	if (s_qtmOpen)
+		return true;
+	s_qtmReal = false;
+#ifdef __3DS__
+	if (s_testLux < 0.0f)
+		s_qtmReal = R_SUCCEEDED(qtmInit(QTM_SERVICE_SYSTEM));
+	s_qtmOpen = s_qtmReal || s_testLux >= 0.0f;
+#else
+	s_qtmOpen = true;
+#endif
+	return s_qtmOpen;
+}
+
+static void qtmSessionClose()
+{
+	if (!s_qtmOpen)
+		return;
+#ifdef __3DS__
+	if (s_qtmReal)
+		qtmExit();
+#endif
+	s_qtmOpen = s_qtmReal = false;
+}
 
 static float clampf(float v, float lo, float hi)
 {
@@ -158,8 +187,8 @@ void gammaInit()
 		QtmStatus status = QTM_STATUS_UNAVAILABLE;
 		if (R_SUCCEEDED(QTMS_GetQtmStatus(&status)) && status != QTM_STATUS_UNAVAILABLE)
 			s_sensor = SENSOR_QTM;
-		else
-			qtmExit();
+		// (closed again: gammaUpdate opens it only while Auto gamma is on)
+		qtmExit();
 	}
 	// Every model has the inner camera
 	if (s_sensor == SENSOR_NONE)
@@ -172,10 +201,12 @@ void gammaInit()
 void gammaExit()
 {
 	gammaLoadEnd();
-#ifdef __3DS__
-	if (qtmIsInitialized())
-		qtmExit();
-#endif
+	qtmSessionClose();
+}
+
+bool gammaQtmOpen()
+{
+	return s_qtmOpen;
 }
 
 GammaSensor gammaSensor()
@@ -205,14 +236,22 @@ static float gammaTarget()
 
 float gammaUpdate(float dt)
 {
-	if (s_sensor == SENSOR_QTM && gammaAutoOn() && (s_pollIn -= dt) <= 0.0f)
+	bool readQtm = s_sensor == SENSOR_QTM && gammaAutoOn();
+	if (!readQtm && s_qtmOpen)
+	{
+		qtmSessionClose();
+		s_pollIn = 0.0f;                 // (on again: read at once)
+	}
+	if (readQtm && (s_pollIn -= dt) <= 0.0f)
 	{
 		s_pollIn = kPollSecs;
 		float lux = s_testLux;
+		bool open = qtmSessionOpen();
 #ifdef __3DS__
-		if (s_testLux < 0.0f && R_FAILED(QTMS_GetCameraLuminance(&lux)))
+		if (s_testLux < 0.0f && (!open || R_FAILED(QTMS_GetCameraLuminance(&lux))))
 			lux = -1.0f;
 #endif
+		(void)open;
 		useLux(lux);
 	}
 	float target = gammaTarget();

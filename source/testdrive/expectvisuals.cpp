@@ -306,6 +306,7 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		else if (arg == "auto") v = gammaAutoOn() ? 1.0f : 0.0f;
 		else if (arg == "lift") v = gammaLift();
 		else if (arg == "sensor") v = (float)gammaSensor();
+			else if (arg == "qtmopen") v = gammaQtmOpen() ? 1.0f : 0.0f;
 		else if (arg == "saved")
 		{
 			v = -1.0f;

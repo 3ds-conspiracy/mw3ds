@@ -22,6 +22,7 @@ enum GammaSensor
 void gammaInit();                    // after logInit: which light reading this console has
 void gammaExit();
 GammaSensor gammaSensor();
+bool gammaQtmOpen();                 // QTM's session (the face tracking and its IR LED) is open: only while Auto gamma reads it
 bool gammaAutoOn();                  // Auto gamma chosen (or by default) and a reading to go on
 float gammaUpdate(float dt);         // once a frame: polls QTM, eases; the value the renderer uses
 float gammaValue();                  // the value used now
