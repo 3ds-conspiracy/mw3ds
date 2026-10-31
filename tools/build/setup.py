@@ -20,6 +20,9 @@ import mwtools
 
 ROOT = mwtools.ROOT
 problems = 0
+# The devkitPro packages the engine builds with: the 3ds-dev group, and zlib (the Makefile links -lz), which is a
+# portlib outside that group
+DKP_PACKAGES = "3ds-dev 3ds-zlib"
 
 
 def ok(msg):
@@ -75,24 +78,24 @@ def check_devkitpro(check):
             fix("devkitPro is not set up in this MSYS2: follow https://devkitpro.org/wiki/devkitPro_pacman "
                 "(add the repositories and keyring)")
         elif check:
-            if mwtools.devkitpro_bash("pacman -Qg 3ds-dev >/dev/null 2>&1").returncode == 0:
-                ok("3ds-dev packages")
+            if mwtools.devkitpro_bash("pacman -Qg 3ds-dev >/dev/null 2>&1 && pacman -Q 3ds-zlib >/dev/null 2>&1").returncode == 0:
+                ok("3ds-dev and 3ds-zlib packages")
             else:
-                fix("3ds-dev packages: run python tools/build/setup.py")
+                fix("3ds-dev and 3ds-zlib packages: run python tools/build/setup.py")
         else:
-            if mwtools.devkitpro_bash("pacman -S --needed --noconfirm 3ds-dev").returncode != 0:
-                fix("pacman -S 3ds-dev failed")
+            if mwtools.devkitpro_bash(f"pacman -S --needed --noconfirm {DKP_PACKAGES}").returncode != 0:
+                fix(f"pacman -S {DKP_PACKAGES} failed")
             else:
-                ok("3ds-dev packages installed")
+                ok("3ds-dev and 3ds-zlib packages installed")
         return
     print("== devkitPro")
     home = os.environ.get("DEVKITPRO") or "/opt/devkitpro"
     if not Path(home).is_dir():
         fix("devkitPro (https://devkitpro.org/wiki/Getting_Started): install it, then set DEVKITPRO")
-    elif not (Path(home) / "libctru").is_dir():
-        fix("3ds-dev packages: sudo dkp-pacman -S 3ds-dev")
+    elif not (Path(home) / "libctru").is_dir() or not (Path(home) / "portlibs" / "3ds" / "include" / "zlib.h").is_file():
+        fix(f"3ds-dev and 3ds-zlib packages: sudo dkp-pacman -S {DKP_PACKAGES}")
     else:
-        ok(f"devkitPro with libctru in {home}")
+        ok(f"devkitPro with libctru and zlib in {home}")
 
 
 def makerom_name():

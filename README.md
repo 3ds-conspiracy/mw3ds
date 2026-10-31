@@ -68,7 +68,8 @@ git clone --recurse-submodules https://github.com/3ds-conspiracy/mw3ds.git
 ### 2. Install the prerequisites
 
 You need a Windows PC (Linux and macOS can build too: the scripts call `make` directly there, with devkitPro
-installed and `DEVKITPRO` set. That path has not been tried yet) with:
+installed, `DEVKITPRO` set and `sudo dkp-pacman -S 3ds-dev 3ds-zlib`. A Linux build has been played on a New 3DS)
+with:
 
 - **Morrowind**, installed anywhere. Only the base game is used; Tribunal and Bloodmoon are not needed.
 - **[Python](https://www.python.org/downloads/) 3.10 or newer.** Tick "Add Python to PATH" in the installer.
