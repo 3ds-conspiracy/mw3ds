@@ -552,6 +552,26 @@ bool World::ownedByOther(int ri) const
 	return false;
 }
 
+// The crosshair's name shows red when using the thing would be a crime (OpenMW's isAllowedToUse, which its "show
+// owned" tooltips ask): an unlocked door without a trap is never one, nor an activator but a bed, nor a person
+bool World::shownOwned(int ri) const
+{
+	if (ri < 0 || ri >= (int)refs.size())
+		return false;
+	const Ref& r = refs[ri];
+	if (r.recType == REC_DOOR && r.lockLevel <= 0 && (r.trap.empty() || r.disarmed))
+		return false;
+	if (r.recType == REC_ACTI)
+	{
+		const char* name = r.script >= 0 && scripts[r.script].script ? scripts[r.script].script->name.c_str() : "";
+		if (strncasecmp(name, "bed", 3) != 0)
+			return false;
+	}
+	if (r.recType == REC_NPC_)
+		return false;
+	return ownedByOther(ri);
+}
+
 // GetWeaponDrawn: the player's weapon (or fists) out; a person or creature fighting has its weapon out (their draw state
 // follows the fight here)
 bool Session::isWeaponDrawn(int ref)

@@ -165,6 +165,7 @@ struct World
 	bool applyLevPick(int ref, const std::string& pick);   // a leveled spot becomes that creature
 	// Owned by someone else: taking it (or what it holds) is theft, sleeping in it isn't allowed
 	bool ownedByOther(int ref) const;
+	bool shownOwned(int ref) const;           // ... and using it would be a crime: its name shows red
 	// What an NPC's disposition to the player is now: their own (with persuasion's changes) plus race,
 	// Personality, faction reactions, disease (Morrowind's derived disposition, as OpenMW has it)
 	int disposition(int ref, bool clamp = true) const;

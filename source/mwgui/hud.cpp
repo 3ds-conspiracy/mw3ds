@@ -124,7 +124,7 @@ void Session::drawTop()
 		uiRect(200 + ax - tw / 2 - 6, 132, tw + 12, h + 2, col::border);
 		uiRect(200 + ax - tw / 2 - 5, 133, tw + 10, h, col::panel);
 		for (size_t i = 0; i < lines.size(); i++)
-			uiTextCentered(200 + ax, 134 + i * lh, 0.55f, w.ownedByOther(target) ? col::health : col::text, lines[i]);
+			uiTextCentered(200 + ax, 134 + i * lh, 0.55f, w.shownOwned(target) ? col::health : col::text, lines[i]);
 	}
 	// Notices, each wrapped to the screen's width ("Release Identification has been removed from your inventory."
 	// ran off it)

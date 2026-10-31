@@ -75,6 +75,23 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		v = (float)w.refs[most].lockLevel;
 		return true;
 	}
+	if (what == "refowned")
+	{
+		// refowned:<cell or id>: 2 if its name shows red under the crosshair, 1 if owned by someone else but not shown so
+		// (an unlocked door), 0 if not owned; a cell names the door leading there
+		int ri = -1;
+		std::string dest = lower(spaced(arg));
+		w.forLoadedRefs([&](int i) {
+			if (ri < 0 && w.refs[i].recType == REC_DOOR && w.refs[i].hasDest && lower(w.refs[i].destCell) == dest)
+				ri = i;
+		});
+		if (ri < 0)
+			ri = findRef(s, arg);
+		if (ri < 0)
+			return false;
+		v = w.shownOwned(ri) ? 2.0f : w.ownedByOther(ri) ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "scripttarget")
 	{
 		// scripttarget:<global script>,<reference id>: 1 when that script is running on that reference (StartScript from it)

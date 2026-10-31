@@ -1,0 +1,22 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bug-owned-door-label: the crosshair's name shows red only when using the thing would be a crime (OpenMW's
+# isAllowedToUse, which its "show owned" tooltips ask). The doors in Fort Frostmoth's General Quarters belong to the
+# Imperial Legion: unlocked and untrapped, they are no crime to open, so their names show as usual (they showed red).
+# A locked one is a crime to pick, and shows red. refowned is 2 for a name shown red, 1 for owned by someone else but
+# not shown so, 0 for not owned.
+0.5 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Fort_Frostmoth,_General_Quarters
+6 0 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Fort_Frostmoth,_General_Quarters
+0.1 0 0 0 0 EXPECT:refowned:Fort_Frostmoth,_Prison:eq:1
+0.1 0 0 0 0 EXPECT:refowned:Fort_Frostmoth,_Curtain_Wall:eq:1
+0.1 0 0 0 0 EXPECT:refowned:Fort_Frostmoth:eq:1
+0.1 0 0 0 0 EXPECT:refowned:in_impsmall_loaddoor_01:eq:1
+# Locked: picking it would be trespassing, so the name shows red
+0.3 0 0 0 0 CONSEL:in_impsmall_loaddoor_01
+0.3 0 0 0 0 CON:Lock%50
+0.3 0 0 0 0 CONSEL
+0.1 0 0 0 0 EXPECT:reflock:in_impsmall_loaddoor_01:eq:50
+0.1 0 0 0 0 EXPECT:refowned:in_impsmall_loaddoor_01:eq:2
