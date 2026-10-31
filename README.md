@@ -37,12 +37,13 @@ If it stops, the whole log is in `work\converter-log.txt`: attach it to a
 ## The converter on Linux and the Steam Deck (podman)
 
 The same converter comes as a container image, with everything it needs inside: no Python, devkitPro or git. SteamOS
-ships podman, so on a Steam Deck switch to Desktop Mode, open Konsole and run:
+ships podman, so on a Steam Deck switch to Desktop Mode, open Konsole and run (step by step, with the options and how
+to get the CIA onto the 3DS: [STEAM-DECK.md](STEAM-DECK.md)):
 
 ```sh
 mkdir -p ~/mw3ds
 podman run --rm -v ~/.local/share/Steam/steamapps/common/Morrowind:/morrowind:ro -v ~/mw3ds:/out \
-    ghcr.io/3ds-conspiracy/mw3ds-converter --tribunal --bloodmoon
+    ghcr.io/3ds-conspiracy/mw3ds-converter:0.2.1 --tribunal --bloodmoon
 ```
 
 The CIA lands in `~/mw3ds`. Leave out `--tribunal` / `--bloodmoon` for a game without those add-ons, and add
