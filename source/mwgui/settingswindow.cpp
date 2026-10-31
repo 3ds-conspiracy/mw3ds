@@ -250,8 +250,17 @@ void Session::drawOptions()
 		// a little off centre kept walking or turning the view), Invert and Gyro aim
 		snprintf(text, sizeof(text), "%.2fx", g_lookSpeed / 100.0f);
 		bar(50, "Look speed (sticks, D-pad, aiming)", text, g_lookSpeed, kLookMinPct, kLookMaxPct, kLookStepPct);
-		snprintf(text, sizeof(text), "%.2fx", g_geTurnSpeed / 100.0f);
-		bar(84, "GoldenEye turn (walking)", text, g_geTurnSpeed, kGeTurnMinPct, kGeTurnMaxPct, kLookStepPct);
+		// (the second bar is the layout's own: GoldenEye's turn, or in the stylus layouts how far a slide turns)
+		if (stylusLayout())
+		{
+			snprintf(text, sizeof(text), "%.2fx", g_stylusSpeed / 100.0f);
+			bar(84, "Stylus speed (sliding to look)", text, g_stylusSpeed, kStylusMinPct, kStylusMaxPct, kLookStepPct);
+		}
+		else
+		{
+			snprintf(text, sizeof(text), "%.2fx", g_geTurnSpeed / 100.0f);
+			bar(84, "GoldenEye turn (walking)", text, g_geTurnSpeed, kGeTurnMinPct, kGeTurnMaxPct, kLookStepPct);
+		}
 		snprintf(text, sizeof(text), "%d%%", g_stickZonePct);
 		bar(118, "Stick dead zone", text, g_stickZonePct, kStickZoneMinPct, kStickZoneMaxPct, kStickZoneStepPct);
 		if (choice(154, "Invert look", onOff(g_invertY)))
@@ -274,13 +283,14 @@ void Session::drawOptions()
 			g_gyroCalibrate = g_gyroAim > 0;
 			notify(g_gyroAim > 0 ? "Gyro aim on: lay the 3DS down for 2 seconds to calibrate, then turn it to aim." : "Gyro aim off.");
 		}
-		// Layout: the button list, what each button does in the layout in use (Y there switches Xbox, classic, GoldenEye)
+		// Layout: the button list, what each button does in the layout in use (Y there switches Xbox, classic, GoldenEye,
+		// stylus right hand, stylus left hand)
 		b = buttons(208, 28, { "Default", "Layout", w.game.gmstLabel("sclose", "Close") });
 		closing = b == 2;
 		if (b == 0)
 		{
 			g_lookSpeed = kLookDefaultPct;
-			g_geTurnSpeed = 100;
+			g_geTurnSpeed = g_stylusSpeed = 100;
 			g_stickZonePct = kStickZoneDefaultPct;
 			g_invertY = false;
 			g_gyroAim = 0;
@@ -321,7 +331,9 @@ void Session::drawOptions()
 void Session::drawControls()
 {
 	bool xbox = g_controlLayout == CONTROLS_XBOX, goldenEye = g_controlLayout == CONTROLS_GOLDENEYE;
-	header(xbox ? "Controls (Xbox layout)" : goldenEye ? "Controls (GoldenEye layout)" : "Controls (classic layout)");
+	bool right = g_controlLayout == CONTROLS_STYLUS_RIGHT, left = g_controlLayout == CONTROLS_STYLUS_LEFT;
+	header(xbox ? "Controls (Xbox layout)" : goldenEye ? "Controls (GoldenEye layout)" : right ? "Controls (stylus, right hand)"
+		: left ? "Controls (stylus, left hand)" : "Controls (classic layout)");
 	static const char* kXbox[][2] = {
 		{ "Circle Pad / C-Stick", "Move (pushed far: run) / look" }, { "A", "Activate: talk, open, take" },
 		{ "R (hold, release)", "Wind up, strike" }, { "X", "Ready / put away the weapon" }, { "L", "Cast the selected spell" },
@@ -343,20 +355,43 @@ void Session::drawControls()
 		{ "Y", "Jump (swim up in water)" }, { "B", "Sneak on / off" }, { "SELECT", "First / third person" },
 		{ "D-Pad", "Left / right: strafe; up / down: look" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Menus, quick keys" } };
+	// The stylus in one hand looks; the other hand's side of the console moves and fights (stylusInput)
+	static const char* kStylusRight[][2] = {
+		{ "Circle Pad", "Move (pushed far: run)" }, { "Stylus (slide)", "Look" },
+		{ "L (hold, release)", "Wind up, strike" }, { "ZL (hold)", "Sneak" },
+		{ "D-Pad Up", "Activate: talk, open, take" }, { "D-Pad Right", "Cast the selected spell" },
+		{ "D-Pad Left", "Ready / put away the weapon" }, { "D-Pad Down", "Jump (held: swim up)" },
+		{ "SELECT", "First / third person" }, { "START", "Menu: save, rest, options" },
+		{ "Touch buttons", "As the D-Pad; Sneak on / off" }, { "Touch screen", "Menus, quick keys" } };
+	static const char* kStylusLeft[][2] = {
+		{ "X / B", "Walk forward / back (run)" }, { "Y / A", "Step left / right" },
+		{ "C-Stick", "Move (pushed far: run)" }, { "Stylus (slide)", "Look" },
+		{ "R (hold, release)", "Wind up, strike" }, { "ZR (hold)", "Sneak" },
+		{ "Touch: Use", "Activate: talk, open, take" }, { "Touch: Cast", "Cast the selected spell" },
+		{ "Touch: Ready", "Ready / put away the weapon" }, { "Touch: Jump", "Jump (held: swim up)" },
+		{ "Touch: Sneak", "Sneak on / off" }, { "SELECT / START", "First / third person; menu" },
+		{ "Touch screen", "Menus, quick keys" } };
 	float y = 30;
 	int n = xbox ? sizeof(kXbox) / sizeof(kXbox[0]) : goldenEye ? sizeof(kGoldenEye) / sizeof(kGoldenEye[0])
+		: right ? sizeof(kStylusRight) / sizeof(kStylusRight[0]) : left ? sizeof(kStylusLeft) / sizeof(kStylusLeft[0])
 		: sizeof(kClassic) / sizeof(kClassic[0]);
 	for (int i = 0; i < n; i++)
 	{
-		const char* const* l = xbox ? kXbox[i] : goldenEye ? kGoldenEye[i] : kClassic[i];
+		const char* const* l = xbox ? kXbox[i] : goldenEye ? kGoldenEye[i] : right ? kStylusRight[i] : left ? kStylusLeft[i]
+			: kClassic[i];
 		uiText(14, y, 0.42f, col::header, l[0]);
 		uiText(140, y, 0.42f, col::text, l[1]);
 		y += 13.5f;
 	}
-	// Y: the next layout (Xbox, classic, GoldenEye); A / B: back to the Controls tab, on its Layout button
-	if (uiButton(4, 208, 154, 28, xbox ? "Y: Use classic" : goldenEye ? "Y: Use Xbox" : "Y: Use GoldenEye") || (uiIn().down & KEY_Y))
+	// Y: the next layout (Xbox, classic, GoldenEye, stylus right hand, stylus left hand); A / B: back to the Controls
+	// tab, on its Layout button
+	static const int kNext[5] = { CONTROLS_CLASSIC, CONTROLS_GOLDENEYE, CONTROLS_STYLUS_RIGHT, CONTROLS_STYLUS_LEFT, CONTROLS_XBOX };
+	static const char* kUse[5] = { "Y: Use classic", "Y: Use GoldenEye", "Y: Use stylus (right)", "Y: Use stylus (left)",
+		"Y: Use Xbox" };
+	int k = g_controlLayout >= 0 && g_controlLayout < 5 ? g_controlLayout : 0;
+	if (uiButton(4, 208, 154, 28, kUse[k]) || (uiIn().down & KEY_Y))
 	{
-		g_controlLayout = xbox ? CONTROLS_CLASSIC : goldenEye ? CONTROLS_XBOX : CONTROLS_GOLDENEYE;
+		g_controlLayout = kNext[k];
 		saveSettings();
 	}
 	else if (uiButton(162, 208, 154, 28, w.game.gmst("sclose", "Close"), true) || (uiIn().down & (KEY_A | KEY_B)))

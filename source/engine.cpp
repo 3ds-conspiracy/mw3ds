@@ -412,6 +412,9 @@ bool Engine::frame()
 	ui.stickY = inputIndex < autoinput.size() && loaded ? autoinput[inputIndex].stickY : readStickScroll();
 	ui.stickX = inputIndex < autoinput.size() && loaded ? autoinput[inputIndex].stickX : readStickTurn();
 	ui.dt = dt;
+	// Stylus layouts: a slide on the bottom screen in play turns the view (the HUD is the bottom screen then)
+	stylusLook(ui, in, loaded && !session->menuOpen() && !session->wantName && !session->wantText
+		&& !session->moviePlaying() && !session->playerDead);
 	uiBeginFrame(ui);
 
 	if (session->wantName)

@@ -23,6 +23,9 @@ struct PlayerInput
 	// Gyro aim: how fast the console turns, degrees a second (sensitivity applied), around its up axis (+ right)
 	// and across (+ up). Turned into view angles one to one, not through the stick's look speed
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;
+	// Stylus layouts: how far the stylus turned the view this frame, radians (+ right, + up). A distance, not a speed:
+	// the frame's length plays no part
+	float stylusYaw = 0.0f, stylusPitch = 0.0f;
 };
 
 struct Player

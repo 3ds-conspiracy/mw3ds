@@ -774,6 +774,12 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 	const float kDegrees = 3.14159265f / 180.0f;
 	p.yaw += in.gyroYaw * kDegrees * dt;
 	p.pitch += in.gyroPitch * kDegrees * dt;
+	// The stylus: as far as it slid (none while the world stands still)
+	if (dt > 0.0f)
+	{
+		p.yaw += in.stylusYaw;
+		p.pitch += in.stylusPitch;
+	}
 	p.pitch = fmaxf(-1.5f, fminf(1.5f, p.pitch));
 
 	float sy = sinf(p.yaw), cy = cosf(p.yaw);

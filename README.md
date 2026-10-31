@@ -173,7 +173,23 @@ that walks and turns, on the Xbox layout's buttons, and a button that stops you 
 sessions. Choosing a speed calibrates it: lay the 3DS down for 2 seconds (it also tries once as the game starts). The
 same tab sets one look speed for the sticks, the D-pad and GoldenEye aiming, the GoldenEye turn while walking, and the
 sticks' dead zone (raise it if a stick keeps walking or turning after you let go). Layout shows the buttons and switches
-between GoldenEye, Xbox and classic (Y).
+between Xbox, classic, GoldenEye and the two stylus layouts (Y).
+
+**Stylus layouts** (Options > Controls > Layout): hold the stylus in one hand and slide it on the bottom screen to look;
+the view turns as far as the stylus moves (Stylus speed on the same tab: at 1.00x a slide across the screen turns half
+way round). A slide can start anywhere on the bottom screen, on a button too; a tap still taps. The HUD gets Use, Cast,
+Ready, Jump and Sneak buttons above the menu buttons.
+
+| Button | Stylus, right hand | Stylus, left hand |
+|---|---|---|
+| Move | Circle Pad | X / B forward / back, Y / A sidestep, or the C-stick |
+| Wind up, strike | L (hold, release) | R (hold, release) |
+| Sneak | ZL (hold), or Sneak on / off | ZR (hold), or Sneak on / off |
+| Activate | D-Pad up, or Use | Use |
+| Cast | D-Pad right, or Cast | Cast |
+| Ready / put away the weapon | D-Pad left, or Ready | Ready |
+| Jump (held: swim up) | D-Pad down, or Jump | Jump |
+| First / third person, menu | SELECT, START | SELECT, START |
 
 ## Testing and reporting
 

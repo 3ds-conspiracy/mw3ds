@@ -122,7 +122,10 @@ std::vector<std::string> Session::targetPromptLines(int ref, float* scale)
 	// (a creature alive: "Talk to" one with words of its own, else only its name, as OpenMW shows it)
 	bool talks = t.recType == REC_CREA && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));
 	std::string verb = t.dead ? "Search " : t.recType == REC_NPC_ || talks ? "Talk to " : t.recType == REC_CREA ? "" : t.recType == REC_DOOR ? "Open " : "Use ";
-	std::string use = "A: " + verb + targetLabel(ref);
+	// (the button that activates: A, or in the stylus layouts D-pad up and the HUD's Use, or Use alone)
+	const char* key = g_controlLayout == CONTROLS_STYLUS_RIGHT ? "Up / Use: " : g_controlLayout == CONTROLS_STYLUS_LEFT
+		? "Use: " : "A: ";
+	std::string use = key + verb + targetLabel(ref);
 	// one line at the usual size; else two, a little smaller, and smaller still before anything is cut
 	float s = 0.45f;
 	std::vector<std::string> lines = uiWrap(use, 180.0f, s);

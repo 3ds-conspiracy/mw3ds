@@ -310,6 +310,34 @@ void Session::drawQuickStrip()
 	}
 }
 
+// Stylus layouts: Use, Cast, Ready, Jump and Sneak in the attack hint's row, under the stylus (the left hand's
+// layout has no buttons for the first four); a tap acts on the next frame (stylusButtons), Jump held swims up, Sneak
+// stays on until tapped again and shows lit. Each greys out while it can do nothing (no target, no spell, fighting
+// or jumping turned off by a script)
+void Session::drawStylusButtons()
+{
+	// (each as wide as its word, from the screen's edge to the quick key strip at x 190)
+	const float kY = 181, kH = 24, kGap = 2;
+	bool can = w.controlsEnabled && !playerDead;
+	struct { const char* label; float w; int bit; bool enabled; } b[4] = {
+		{ "Use", 30, STYLUS_USE, can && target >= 0 },
+		{ "Cast", 33, STYLUS_CAST, can && w.fightingEnabled && !w.stats.selectedSpell.empty() },
+		{ "Ready", 38, STYLUS_READY, can && w.fightingEnabled },
+		{ "Jump", 34, STYLUS_JUMP, can && w.jumpingEnabled } };
+	float x = 4;
+	for (int i = 0; i < 4; x += b[i].w + kGap, i++)
+	{
+		if (uiButton(x, kY, b[i].w, kH, b[i].label, false, b[i].enabled))
+			stylusTaps |= b[i].bit;
+		const UiInput& in = uiIn();
+		if (b[i].bit == STYLUS_JUMP && b[i].enabled && in.touching && in.touchX >= x && in.touchX < x + b[i].w
+			&& in.touchY >= kY && in.touchY < kY + kH)
+			stylusJumpHeld = true;
+	}
+	if (uiButton(x, kY, 186 - x, kH, "Sneak", stylusSneakOn, can))
+		stylusSneakOn = !stylusSneakOn;
+}
+
 // The active effects the HUD shows an icon for: spells, potions, blessings, and abilities and worn constant effects
 // (the fortifies folded into the stats too: OpenMW lists every active effect), the same effect once
 std::vector<ActiveEffect> Session::hudEffects()
@@ -410,13 +438,14 @@ void Session::drawHud()
 		}
 	}
 
-	// Messages
-	float y = 133;
+	// Messages (a line fewer under a two-line prompt in the stylus layouts: it sits higher, above their buttons)
+	bool stylus = stylusLayout();
+	float y = 133, last = stylus && promptRows > 1 ? 152 : 164;
 	for (auto& n : notes)
 	{
 		for (auto& line : uiWrap(n.text, 174, 0.42f))
 		{
-			if (y > 164)
+			if (y > last)
 				break;
 			uiText(6, y, 0.42f, col::text, line);
 			y += uiLineHeight(0.42f);
@@ -439,12 +468,15 @@ void Session::drawHud()
 		std::vector<std::string> use = targetPromptLines(target, &s);
 		promptRows = (int)use.size();
 		float lh = uiLineHeight(s);
+		float top = stylus ? 180 - use.size() * lh : use.size() > 1 ? 166 : 172;
 		for (size_t i = 0; i < use.size(); i++)
-			uiText(6, (use.size() > 1 ? 166 : 172) + i * lh, s, col::link, use[i]);
+			uiText(6, top + i * lh, s, col::link, use[i]);
 	}
 	else
 		promptRows = 1;
-	if (w.fightingEnabled)
+	if (stylus)
+		drawStylusButtons();
+	else if (w.fightingEnabled)
 	{
 		bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE;   // (GoldenEye: the Xbox buttons)
 		std::string hint = w.stats.selectedSpell.empty() ? (xbox ? "R: attack (hold to wind up)" : "X: attack (hold to wind up)")

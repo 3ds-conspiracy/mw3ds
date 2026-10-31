@@ -7,10 +7,10 @@
 
 // Known spells and powers; the selected one is cast with Y
 static const char* kQuickDir[4] = { "Up", "Right", "Down", "Left" };
-// (GoldenEye's D-pad moves: its quick keys are the touch strip's slots)
+// (GoldenEye's D-pad moves, the right-hand stylus layout's acts: their quick keys are the touch strip's slots)
 static std::string quickKeyName(int k)
 {
-	if (g_controlLayout == CONTROLS_GOLDENEYE)
+	if (g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout())
 		return std::string(kQuickDir[k]) + " (tap its slot)";
 	return std::string(g_controlLayout != CONTROLS_CLASSIC ? "D-Pad " : "ZL + ") + kQuickDir[k];
 }

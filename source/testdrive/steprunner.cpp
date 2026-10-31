@@ -56,7 +56,8 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	if (first && s.layout >= 0)
 	{
 		g_testLayout = g_controlLayout = s.layout;
-		logf("test: controls %s", s.layout == CONTROLS_GOLDENEYE ? "goldeneye" : s.layout == CONTROLS_XBOX ? "xbox" : "classic");
+		static const char* kNames[5] = { "xbox", "classic", "goldeneye", "stylusright", "stylusleft" };
+		logf("test: controls %s", kNames[s.layout]);
 	}
 	if (first && s.frameCap >= 0)
 		g_testFrameCap = s.frameCap == 1;
@@ -82,6 +83,17 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 		goldenEyeInput(state, ge, s.moveX, s.moveY, held, down, released, dt);
 		ge.jump |= s.jump && first;
 		in = ge;
+	}
+	else if (stylusLayout())
+	{
+		// (the step's stick is the Circle Pad, or the left hand's C-stick; its keys the buttons, through that layout)
+		PlayerInput st = {};
+		st.quick = -1;
+		st.moveX = s.moveX;
+		st.moveY = s.moveY;
+		stylusInput(st, held, down, s.moveX, s.moveY);
+		st.jump |= s.jump && first;
+		in = st;
 	}
 	in = invertLook(in);
 	if (g_gyroAim > 0)

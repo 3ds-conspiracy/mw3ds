@@ -218,6 +218,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void updateCorprus();
 	void openPendingMenu();
 	void playerControls(PlayerInput& in, bool menu);
+	void stylusButtons(PlayerInput& in, bool menu);   // stylus layouts: the HUD's Use, Cast, Ready, Jump and Sneak as input
 	void playerMove(const PlayerInput& in, float dt, u64& t);
 	void aimAndActivate(const PlayerInput& in, bool menu);
 	void updateMouths(float dt);
@@ -359,6 +360,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void drawHud();
 	std::vector<ActiveEffect> hudEffects();
 	void drawQuickStrip();
+	void drawStylusButtons();         // stylus layouts: the HUD's Use, Cast, Ready, Jump and Sneak
 	void drawMessage();
 	void drawDialogue();
 	void layoutDialogue(float width);

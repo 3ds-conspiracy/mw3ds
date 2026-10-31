@@ -185,7 +185,97 @@ PlayerInput invertLook(PlayerInput in)
 	return in;
 }
 
-// Three button layouts (Options > Controls; START and SELECT the same in all):
+// The stylus layouts' buttons: the hand without the stylus moves and fights on its side of the console. Right (the
+// stylus in the right hand): Circle Pad moves, L winds up and strikes, ZL sneaks, D-pad up activates, right casts, left
+// readies or puts away the weapon, down jumps (held: swims up, rises). Left: X / B walk forward / back and Y / A
+// sidestep (the C-stick moves too, by how far it is pushed), R winds up and strikes, ZR sneaks; activating, casting,
+// readying and jumping are the HUD's buttons, under the stylus. The view is the stylus's (stylusLook), the C-stick's
+// look is off in both. cx, cy: the C-stick past its dead zone
+void stylusInput(PlayerInput& in, u32 held, u32 down, float cx, float cy)
+{
+	in.lookX = in.lookY = 0.0f;
+	if (g_controlLayout == CONTROLS_STYLUS_LEFT)
+	{
+		float bx = (held & KEY_A ? 1.0f : 0.0f) - (held & KEY_Y ? 1.0f : 0.0f);
+		float by = (held & KEY_X ? 1.0f : 0.0f) - (held & KEY_B ? 1.0f : 0.0f);
+		if (bx && by)
+		{
+			bx *= 0.70710678f;           // (a diagonal no faster than straight on)
+			by *= 0.70710678f;
+		}
+		in.moveX = bx ? bx : cx;
+		in.moveY = by ? by : cy;
+		in.attack = held & KEY_R;
+		in.sneak = in.down = held & KEY_ZR;
+	}
+	else
+	{
+		in.attack = held & KEY_L;
+		in.sneak = in.down = held & KEY_ZL;
+		in.activate = down & KEY_DUP;
+		in.cast = down & KEY_DRIGHT;
+		in.readyToggle = down & KEY_DLEFT;
+		in.jump = down & KEY_DDOWN;
+		in.up = held & KEY_DDOWN;
+	}
+	in.togglePov = down & KEY_SELECT;
+}
+
+// Stylus layouts: a slide on the bottom screen during play turns the view, as far as the stylus moves (Controls'
+// stylus speed). A touch becomes a slide once it has gone farther than a tap may (kTapSlop) from where it came down,
+// and turns from there by the whole way it came, so none of the start is lost; from then on until the stylus lifts
+// it is the view's alone: no button under it lights or acts, wherever it goes. A touch that comes down while a menu is
+// open stays the menu's (a slide in the inventory never turns the view when it closes). The stylus's way across is a
+// turn about the world's up, up the screen a look up (Invert look turns that round)
+void stylusLook(UiInput& ui, PlayerInput& in, bool inPlay)
+{
+	static bool down = false, looking = false, menuTouch = false;
+	static int startX = 0, startY = 0, lastX = 0, lastY = 0;
+	if (!ui.touching)
+	{
+		if (looking)
+			ui.tapped = false;
+		down = looking = menuTouch = false;
+		return;
+	}
+	if (!down)
+	{
+		down = true;
+		menuTouch = !inPlay || !stylusLayout();
+		startX = lastX = ui.touchX;
+		startY = lastY = ui.touchY;
+	}
+	if (menuTouch)
+		return;
+	if (!inPlay)
+	{
+		if (looking)                     // (a menu opened under the slide: it stays the view's till the stylus lifts)
+		{
+			ui.touching = false;
+			ui.dragDX = ui.dragDY = 0;
+		}
+		return;
+	}
+	int dx = ui.touchX - lastX, dy = ui.touchY - lastY;
+	if (!looking && abs(ui.touchX - startX) + abs(ui.touchY - startY) > kTapSlop)
+	{
+		looking = true;
+		dx = ui.touchX - startX;
+		dy = ui.touchY - startY;
+	}
+	lastX = ui.touchX;
+	lastY = ui.touchY;
+	if (!looking)
+		return;
+	// (1.00x: the bottom screen's 320 pixels across turn half way round)
+	const float perPixel = 3.14159265f / 320.0f * g_stylusSpeed / 100.0f;
+	in.stylusYaw += dx * perPixel;
+	in.stylusPitch += (g_invertY ? dy : -dy) * perPixel;
+	ui.touching = false;
+	ui.dragDX = ui.dragDY = 0;
+}
+
+// Five button layouts (Options > Controls; START and SELECT the same in all), the stylus layouts in stylusInput:
 //   Xbox (Morrowind on the Xbox): R attack, L cast, X ready / put away the weapon, Y jump, B free (walk or run by the pad),
 //     ZL sneak (down when levitating), ZR up when levitating, D-pad quick keys
 //   Classic: X attack, Y cast, B jump, L sneak, ZL + D-pad quick keys, D-pad look, ZL + X put away
@@ -208,6 +298,11 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	{
 		static GoldenEyeState state;
 		goldenEyeInput(state, in, in.moveX, in.moveY, held, down, up, dt);
+		return invertLook(in);
+	}
+	if (stylusLayout())
+	{
+		stylusInput(in, held, down, cx, cy);
 		return invertLook(in);
 	}
 	if (g_controlLayout == CONTROLS_XBOX)

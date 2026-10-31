@@ -121,11 +121,13 @@ void Session::aimAndActivate(const PlayerInput& in, bool menu)
 	// Telekinesis reaches farther (magnitude in feet, 22 units each)
 	target = menu ? -1 : worldPick(w, eye, dir, kReach + w.effectTotal(59) * 22.0f);
 	// (GoldenEye: on a tap of A, let go before it aimed; the press itself is kept from the screens either way)
-	bool goldenEye = g_controlLayout == CONTROLS_GOLDENEYE;
-	if (!menu && ((uiIn().down & KEY_A) || (goldenEye && in.activate)))
+	// (the stylus layouts: D-pad up, or the HUD's Use, through in.activate; A is the stylus hand's, or a move)
+	bool byInput = g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout();
+	if (!menu && ((!stylusLayout() && (uiIn().down & KEY_A)) || (byInput && in.activate)))
 	{
-		uiConsume(KEY_A);
-		if ((goldenEye ? in.activate : true) && target >= 0 && w.controlsEnabled)
+		if (!stylusLayout())
+			uiConsume(KEY_A);
+		if ((byInput ? in.activate : true) && target >= 0 && w.controlsEnabled)
 			playerActivate(target);
 	}
 }

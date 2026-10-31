@@ -33,8 +33,15 @@ extern float g_profParts[PROF_COUNT];
 #include "platform/console.hpp"
 #include "mwgui/console.hpp"
 
-enum { CONTROLS_XBOX = 0, CONTROLS_CLASSIC = 1, CONTROLS_GOLDENEYE = 2 };
-extern int g_controlLayout;   // button layout (settings.txt controls=xbox|classic|goldeneye)
+enum { CONTROLS_XBOX = 0, CONTROLS_CLASSIC = 1, CONTROLS_GOLDENEYE = 2, CONTROLS_STYLUS_RIGHT = 3, CONTROLS_STYLUS_LEFT = 4 };
+extern int g_controlLayout;   // button layout (settings.txt controls=xbox|classic|goldeneye|stylusright|stylusleft)
+// Stylus layouts: the stylus in one hand slides on the bottom screen to look, the other hand moves and fights on its
+// side's buttons (right: the stylus in the right hand, so the Circle Pad, D-pad and L; left: ABXY and R)
+inline bool stylusLayout() { return g_controlLayout == CONTROLS_STYLUS_RIGHT || g_controlLayout == CONTROLS_STYLUS_LEFT; }
+// Stylus speed (Controls; settings.txt stylusspeed=): how far a slide turns the view, percent; at 100 a slide across the
+// bottom screen's width turns half way round
+extern int g_stylusSpeed;
+static const int kStylusMinPct = 50, kStylusMaxPct = 200;
 // Gyro aim (settings.txt gyroaim=on|off, gyrosens=50|100|200): turning the console turns the view, as far as it
 // turned. The percent of that turn (100: one to one), 0 when off
 extern int g_gyroAim;

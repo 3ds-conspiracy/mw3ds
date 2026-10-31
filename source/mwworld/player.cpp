@@ -195,8 +195,33 @@ void World::recomputeStats()
 }
 
 // Paralyzed: no moving, no fighting
+// Stylus layouts: the HUD's buttons tapped last frame (the bottom screen is drawn after the world's update) join the
+// buttons' input; Sneak stays on until tapped again, as GoldenEye's B, and is let go when the layout changes
+void Session::stylusButtons(PlayerInput& in, bool menu)
+{
+	if (!stylusLayout())
+	{
+		stylusTaps = 0;
+		stylusSneakOn = stylusJumpHeld = false;
+		return;
+	}
+	if (!menu)
+	{
+		in.activate |= (stylusTaps & STYLUS_USE) != 0;
+		in.cast |= (stylusTaps & STYLUS_CAST) != 0;
+		in.readyToggle |= (stylusTaps & STYLUS_READY) != 0;
+		in.jump |= (stylusTaps & STYLUS_JUMP) != 0;
+		in.up |= stylusJumpHeld;
+		in.sneak |= stylusSneakOn;
+		in.down |= stylusSneakOn;
+	}
+	stylusTaps = 0;
+	stylusJumpHeld = false;
+}
+
 void Session::playerControls(PlayerInput& in, bool menu)
 {
+	stylusButtons(in, menu);
 	if (w.effectTotal(45) > 0.0f)
 	{
 		in.moveX = in.moveY = 0.0f;
@@ -287,12 +312,12 @@ void Session::playerControls(PlayerInput& in, bool menu)
 		in.moveX = in.moveY = 0.0f;
 		in.jump = false;
 		if (menu)
-			in.lookX = in.lookY = in.gyroYaw = in.gyroPitch = 0.0f;
+			in.lookX = in.lookY = in.gyroYaw = in.gyroPitch = in.stylusYaw = in.stylusPitch = 0.0f;
 	}
 	if (!w.jumpingEnabled)
 		in.jump = false;
 	if (w.controlsOff & 1u)
-		in.lookX = in.lookY = in.gyroYaw = in.gyroPitch = 0.0f;        // DisablePlayerLooking
+		in.lookX = in.lookY = in.gyroYaw = in.gyroPitch = in.stylusYaw = in.stylusPitch = 0.0f;   // DisablePlayerLooking
 }
 
 void Session::playerMove(const PlayerInput& in, float dt, u64& t)

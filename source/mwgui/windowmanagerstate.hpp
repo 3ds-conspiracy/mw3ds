@@ -150,6 +150,11 @@ struct WindowManagerState
 	std::vector<std::string> effectTip;           // the HUD's tapped active-effect icon: its tooltip lines (OpenMW's hover)
 	float effectTipUntil = 0.0f;                  // ... shown on the top screen until then (world time)
 	int hudEffectIcons = 0;                       // tests: the active-effect icons the HUD drew
+	// Stylus layouts: the HUD's action buttons tapped (STYLUS_* bits), taken by the next frame's input; Sneak's toggle;
+	// Jump held down (swim up, rise levitating)
+	enum { STYLUS_USE = 1, STYLUS_CAST = 2, STYLUS_READY = 4, STYLUS_JUMP = 8 };
+	int stylusTaps = 0;
+	bool stylusSneakOn = false, stylusJumpHeld = false;
 	// A bordered box in the middle of the top screen (character creation: the class picture, the birthsign's
 	// constellation, health / magicka / fatigue): the screens fill it each frame, drawTop shows and clears it as it does the tip
 	struct TopModal

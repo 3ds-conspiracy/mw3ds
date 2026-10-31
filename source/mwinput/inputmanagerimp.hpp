@@ -40,3 +40,8 @@ float lookScale();
 PlayerInput invertLook(PlayerInput in);
 // The buttons, the pads and the gyroscope as the player's input this frame, in the layout chosen in Options
 PlayerInput readInput(u32 held, u32 down, u32 up, float dt);
+// The stylus layouts' buttons (device and scripted runs alike); cx, cy: the C-stick past its dead zone
+void stylusInput(PlayerInput& in, u32 held, u32 down, float cx, float cy);
+// Stylus layouts: a slide on the bottom screen in play (inPlay) turns the view and is taken from the screen's input
+struct UiInput;
+void stylusLook(UiInput& ui, PlayerInput& in, bool inPlay);
