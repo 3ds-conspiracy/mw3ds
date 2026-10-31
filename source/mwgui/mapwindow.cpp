@@ -83,6 +83,9 @@ void Session::updateLocalMap()
 {
 	if (w.current < 0 || !w.cells[w.current].live)
 		return;
+	// A picture still being drawn goes on first (a share of the frame's GPU commands at a time: rendererDrawLocalMap)
+	if (!rendererLocalMapMore(w))
+		return;
 	if (mapCellJob.on && --mapCellJob.frames <= 0)
 	{
 		// One outdoor cell straight down, as the local map draws (the world map's picture is baked from these):
@@ -99,7 +102,7 @@ void Session::updateLocalMap()
 				}
 		bool ok = lo <= hi;
 		screenshotDrawThisFrame();
-		bool drawn = ok && rendererDrawLocalMap(w, x0, y0, 8192.0f, hi + 10.0f, hi - lo + 100.0f, true);
+		bool drawn = ok && rendererDrawLocalMap(w, x0, y0, 8192.0f, hi + 10.0f, hi - lo + 100.0f, true, true);
 		bool saved = drawn && screenshotSaveTexture(rendererLocalMap(), mapCellJob.path.c_str());
 		ok = saved;
 		localMapCell = -1;                       // (the map screen's own local map renders again when it shows)
@@ -108,32 +111,54 @@ void Session::updateLocalMap()
 	}
 	if (!w.cells[w.current].interior)
 	{
-		// Outdoors, only while the map screen shows it (a render costs a frame): a cell and a half round the
-		// player from above everything loaded, again once they walk a quarter cell from its middle
+		// Outdoors, only while the map screen shows it (a render costs a frame): a cell and a half from above
+		// everything loaded, round the player as the screen opens, then round where the view has panned to, again
+		// once that is a sixth of a cell from the picture's middle (so panning goes on past the picture's edge, as far
+		// as the loaded cells reach: the picture is kept inside them, nothing past them is drawn). The view stays on
+		// the same spot of the world across a new picture
 		if (screen != SCR_MAP || !mapLocal)
 			return;
 		const float size = 12288.0f;
-		const float* p = w.player.feet;
-		if (localMapCell == -2 && fabsf(p[0] - (localMin[0] + localSize / 2)) < 2048.0f
-			&& fabsf(p[1] - (localMin[1] + localSize / 2)) < 2048.0f)
-			return;
-		float lo = 1e9f, hi = -1e9f;
+		bool panned = mapViewSet && localMapCell == -2;
+		float view[2] = { w.player.feet[0], w.player.feet[1] };
+		if (panned)
+		{
+			view[0] = localMin[0] + mapCX / 256.0f * localSize;
+			view[1] = localMin[1] + localSize - mapCY / 256.0f * localSize;
+		}
+		float lo = 1e9f, hi = -1e9f, area[4] = { 1e9f, 1e9f, -1e9f, -1e9f };
 		for (LoadedCell* l : w.loaded)
 			for (auto& b : l->cell.batches)
 			{
 				lo = fminf(lo, b.bmin[2]);
 				hi = fmaxf(hi, b.bmax[2]);
+				area[0] = fminf(area[0], b.bmin[0]);
+				area[1] = fminf(area[1], b.bmin[1]);
+				area[2] = fmaxf(area[2], b.bmax[0]);
+				area[3] = fmaxf(area[3], b.bmax[1]);
 			}
 		if (lo > hi)
 			return;
-		if (rendererDrawLocalMap(w, p[0] - size / 2, p[1] - size / 2, size, hi + 10.0f, hi - lo + 100.0f))
+		float c[2];
+		for (int k = 0; k < 2; k++)
+			c[k] = area[k + 2] - area[k] <= size ? (area[k] + area[k + 2]) / 2
+				: fmaxf(area[k] + size / 2, fminf(area[k + 2] - size / 2, view[k]));
+		if (localMapCell == -2 && fabsf(c[0] - (localMin[0] + localSize / 2)) < 1365.0f
+			&& fabsf(c[1] - (localMin[1] + localSize / 2)) < 1365.0f)
+			return;
+		if (rendererDrawLocalMap(w, c[0] - size / 2, c[1] - size / 2, size, hi + 10.0f, hi - lo + 100.0f))
 		{
 			localMapCell = -2;
-			localMin[0] = p[0] - size / 2;
-			localMin[1] = p[1] - size / 2;
+			localMin[0] = c[0] - size / 2;
+			localMin[1] = c[1] - size / 2;
 			localSize = size;
 			localTopZ = hi + 10.0f;
-			logf("map: local map outdoors at %.0f %.0f", p[0], p[1]);
+			if (panned)
+			{
+				mapCX = (view[0] - localMin[0]) / localSize * 256.0f;
+				mapCY = (localMin[1] + localSize - view[1]) / localSize * 256.0f;
+			}
+			logf("map: local map outdoors at %.0f %.0f", c[0], c[1]);
 		}
 		return;
 	}
@@ -496,26 +521,41 @@ void Session::drawMapView(float x, float y, float vw, float vh, float zoom, bool
 		float px = (w.player.feet[0] - localMin[0]) / localSize * texSize;
 		float py = (localMin[1] + localSize - w.player.feet[1]) / localSize * texSize;
 		float cx = px, cy = py;
+		bool opening = false;
 		if (full)
 		{
-			if (!mapViewSet)
+			// (the view starts on the player once the picture round them is there: outdoors a new one may still be
+			// coming when the screen opens)
+			if (!mapViewSet && px >= 0.0f && px <= texSize && py >= 0.0f && py <= texSize)
 			{
 				mapCX = px;
 				mapCY = py;
 				mapViewSet = true;
+				opening = true;
 			}
 			cx = mapCX;
 			cy = mapCY;
 		}
-		float ox = picture <= vw ? x + (vw - picture) / 2.0f : fminf(x, fmaxf(x + vw - picture, x + vw / 2 - cx * s));
-		float oy = picture <= vh ? y + (vh - picture) / 2.0f : fminf(y, fmaxf(y + vh - picture, y + vh / 2 - cy * s));
+		// (the map screen: the view opens as it always did, the picture centred if it fits, else on the player kept over
+		// the picture; from then on it goes anywhere over the picture, whatever the zoom, the dark beyond it, and outdoors
+		// the picture is drawn again round the view as it nears an edge (updateLocalMap). The HUD's stays on the picture)
+		bool roam = full && mapViewSet && !opening;
+		if (roam)
+		{
+			cx = fmaxf(0.0f, fminf(texSize, cx));
+			cy = fmaxf(0.0f, fminf(texSize, cy));
+		}
+		float ox = roam ? x + vw / 2 - cx * s : picture <= vw ? x + (vw - picture) / 2.0f
+			: fminf(x, fmaxf(x + vw - picture, x + vw / 2 - cx * s));
+		float oy = roam ? y + vh / 2 - cy * s : picture <= vh ? y + (vh - picture) / 2.0f
+			: fminf(y, fmaxf(y + vh - picture, y + vh / 2 - cy * s));
 		ox = roundf(ox);
 		oy = roundf(oy);
 		if (full)
 		{
 			// (the view's centre as it ended up, kept on the picture)
-			mapCX = picture <= vw ? texSize / 2 : (x + vw / 2 - ox) / s;
-			mapCY = picture <= vh ? texSize / 2 : (y + vh / 2 - oy) / s;
+			mapCX = roam ? cx : picture <= vw ? texSize / 2 : (x + vw / 2 - ox) / s;
+			mapCY = roam ? cy : picture <= vh ? texSize / 2 : (y + vh / 2 - oy) / s;
 		}
 		// (the markers below don't need the picture)
 		if (C3D_Tex* tex = rendererLocalMap())

@@ -303,6 +303,9 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "mapzoom") v = s.mapZoomIdx;         // its zoom step
 	else if (what == "mapcx") v = s.mapCX;                // the map view's centre (world map: map pixels, local: picture pixels)
 	else if (what == "mapcy") v = s.mapCY;
+	else if (what == "mapviewdist")       // the local map's view centre outdoors: how far from the player, world units
+		v = hypotf(s.localMin[0] + s.mapCX / 256.0f * s.localSize - w.player.feet[0],
+			s.localMin[1] + s.localSize - s.mapCY / 256.0f * s.localSize - w.player.feet[1]);
 	else if (what == "mapfogseen")                         // the squares of this interior's local map out of the fog
 	{
 		v = 0;

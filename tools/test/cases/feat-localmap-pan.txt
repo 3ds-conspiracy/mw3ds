@@ -1,0 +1,46 @@
+# start: Seyda Neen
+# feat-localmap-pan: the local map outdoors pans past its first picture (a cell and a half round the player): panned
+# near the picture's edge it is drawn again round the view, kept inside the loaded cells. Zoomed all the way in and
+# panned right for 4 seconds, the view goes farther than the first picture's half width (6144 units; it stopped at
+# about 3500). At the zoom it opens at (the picture fitting the screen) it pans too, the dark beyond the picture's edge,
+# and goes on past it (the view stayed on the picture's middle). Natively a picture is drawn only on a frame a SHOT
+# saves: the shots between the pans let it be drawn again (the console draws every frame). Shots: zoomed in at the
+# player, twice panned, then at the first zoom panned up twice
+0.5 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen
+4 0 0 0 0
+0.3 0 0 0 0 SCREEN:map
+0.5 0 0 0 0
+0.3 0 0 0 0 TAP:78:222
+0.5 0 0 0 0
+0.3 0 0 0 0 EXPECT:maplocal:eq:1
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 EXPECT:mapzoom:eq:4
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:mapviewdist:lt:100
+2 0 0 0 0 RIGHT
+0.3 0 0 0 0 SHOT
+2 0 0 0 0 RIGHT
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:mapviewdist:gt:6144
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0 0
+0.3 0 0 0 0 SCREEN:map
+0.5 0 0 0 0
+0.3 0 0 0 0 L
+0.3 0 0 0 0 L
+0.3 0 0 0 0 L
+0.3 0 0 0 0 L
+0.3 0 0 0 0 EXPECT:maplocal:eq:1+EXPECT:mapzoom:eq:0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:mapviewdist:lt:100
+0.4 0 0 0 0 UP
+0.3 0 0 0 0 SHOT
+0.4 0 0 0 0 UP
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:mapviewdist:gt:6144
+0.3 0 0 0 0 SCREEN:none
