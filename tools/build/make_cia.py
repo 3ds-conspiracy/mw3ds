@@ -59,6 +59,22 @@ def app_version():
     return f"{major}.{minor}.{micro}", (min(major, 63) << 10) | (min(minor, 63) << 4) | min(micro, 15)
 
 
+def set_title_version(cia, number):
+    """Writes the title version into the CIA's TMD and ticket. makerom keeps only the micro part of -ver (and ignores
+    -minor): 0.2.2 went in as 0.0.2. The CIA is fake-signed (as homebrew installs), so nothing checks these fields."""
+    sig_size = {0x10003: 0x200 + 0x3C, 0x10004: 0x100 + 0x3C, 0x10005: 0x3C + 0x40}
+    align = lambda n: (n + 63) // 64 * 64
+    with open(cia, "r+b") as f:
+        header, _, _, cert, ticket, tmd = struct.unpack("<IHHIII", f.read(20))
+        # (each part's signature type, then its signature; the version sits that far into the body that follows)
+        for start, field in ((align(header) + align(cert), 0xA6),
+                             (align(header) + align(cert) + align(ticket), 0x9C)):
+            f.seek(start)
+            body = start + 4 + sig_size[struct.unpack(">I", f.read(4))[0]]
+            f.seek(body + field)
+            f.write(struct.pack(">H", number))
+
+
 def banner_tune():
     """The banner's sound as (left, right) 16-bit samples at TUNE_RATE: the first TUNE_SECS of Morrowind's title music
     (from the player's own Data Files: it can't ship with the code), faded out and brought up to just under full scale;
@@ -184,6 +200,7 @@ def pack(data="out/data", out="build/mw3ds.cia", no_data=False):
         print("makerom failed")
         return 1
     cia = ROOT / out
+    set_title_version(cia, number)
     print(f"built {cia} ({cia.stat().st_size / 1048576:.1f} MB)")
     return 0
 
