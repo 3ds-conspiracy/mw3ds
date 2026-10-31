@@ -607,7 +607,6 @@ class Wizard:
         cmd += ["--old3ds"] if job["old"] else []
         cmd += ["--tribunal"] if job.get("tribunal") else []
         cmd += ["--bloodmoon"] if job.get("bloodmoon") else []
-        cmd += ["--small"] if job.get("small") else []        # (only the Balmora area: for trying the converter out)
         say(f"language: {job['encoding']}, plugins: {', '.join(job['plugins']) or 'none'}")
         say("running: " + " ".join(cmd[1:]))
         if self.dry_run:
