@@ -304,13 +304,13 @@ bool Session::drawLocalFog(float ox, float oy, float picture)
 		C3D_TexSetWrap(&fogTex, GPU_CLAMP_TO_EDGE, GPU_CLAMP_TO_EDGE);
 		fogTexReady = true;
 	}
-	// The PICA's layout: 8 x 8 tiles in rows from the bottom of the picture, Morton order inside a tile; a texel is
-	// ABGR (alpha in the low byte)
+	// The PICA's layout: 8 x 8 tiles in rows, the first row in memory the picture's top (v = 1, as the fog ramp's), Morton
+	// order inside a tile; a texel is ABGR (alpha in the low byte). The fog's rows run from the north edge too
 	u32* data = (u32*)fogTex.data;
 	for (int row = 0; row < n; row++)
 		for (int tx = 0; tx < n; tx++)
 		{
-			int ty = n - 1 - row;
+			int ty = row;
 			int m = (tx & 1) | ((ty & 1) << 1) | ((tx & 2) << 1) | ((ty & 2) << 2) | ((tx & 4) << 2) | ((ty & 4) << 3);
 			int at = ((ty >> 3) * (n >> 3) + (tx >> 3)) * 64 + m;
 			u8 a = (u8)(it->second[row * n + tx] * 17);
