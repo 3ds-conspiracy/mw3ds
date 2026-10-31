@@ -18,6 +18,7 @@ static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";
 int g_controlLayout = CONTROLS_XBOX;
 int g_gyroAim = 0;                // gyro aim starts off (until it is tried on the device): Options turns it on
 int g_lookSpeed = kLookDefaultPct, g_geTurnSpeed = 100, g_stylusSpeed = 100;
+bool g_stylusButtons = true;
 int g_stickZonePct = kStickZoneDefaultPct;
 bool g_invertY = false;
 bool g_subtitles = true;
@@ -37,6 +38,7 @@ void Session::loadSettings()
 		g_gammaPct = 100;
 		g_autoGamma = 0;
 		g_lookSpeed = g_geTurnSpeed = g_stylusSpeed = 100;
+		g_stylusButtons = true;
 		g_stickZonePct = kStickZoneDefaultPct;
 		g_invertY = false;
 		g_subtitles = true;
@@ -60,8 +62,7 @@ void Session::loadSettings()
 		else if (strncmp(line, "combat=vanilla", 14) == 0) combatMode = COMBAT_VANILLA;
 		else if (strncmp(line, "controls=xbox", 13) == 0) g_controlLayout = CONTROLS_XBOX;
 		else if (strncmp(line, "controls=goldeneye", 18) == 0) g_controlLayout = CONTROLS_GOLDENEYE;
-		else if (strncmp(line, "controls=stylusright", 20) == 0) g_controlLayout = CONTROLS_STYLUS_RIGHT;
-		else if (strncmp(line, "controls=stylusleft", 19) == 0) g_controlLayout = CONTROLS_STYLUS_LEFT;
+		else if (strncmp(line, "controls=stylus", 15) == 0) g_controlLayout = CONTROLS_STYLUS;
 		else if (strncmp(line, "gyroaim=off", 11) == 0) gyroOff = true;
 		else if (strncmp(line, "gyroaim=on", 10) == 0) gyroOn = true;
 		else if (strncmp(line, "gyrosens=", 9) == 0 && atoi(line + 9) > 0) s_gyroSens = atoi(line + 9);
@@ -74,6 +75,7 @@ void Session::loadSettings()
 			g_stickZonePct = std::max(kStickZoneMinPct, std::min(kStickZoneMaxPct, atoi(line + 10)));
 		else if (strncmp(line, "lookspeed=", 10) == 0) g_lookSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 10)));
 		else if (strncmp(line, "geturn=", 7) == 0) g_geTurnSpeed = std::max(kGeTurnMinPct, std::min(kGeTurnMaxPct, atoi(line + 7)));
+		else if (strncmp(line, "stylusbuttons=", 14) == 0) g_stylusButtons = strncmp(line + 14, "off", 3) != 0;
 		else if (strncmp(line, "stylusspeed=", 12) == 0)
 			g_stylusSpeed = std::max(kStylusMinPct, std::min(kStylusMaxPct, atoi(line + 12)));
 		// (an older file's geaim= is left unread: the GoldenEye aim looks at the look speed)
@@ -103,8 +105,8 @@ void Session::saveSettings()
 	if (!f)
 		return;
 	fprintf(f, "difficulty=%d\neffects=%d\nmusic=%d\n", difficulty, effectsVolume, musicVolume);
-	static const char* kLayouts[5] = { "xbox", "classic", "goldeneye", "stylusright", "stylusleft" };
-	fprintf(f, "controls=%s\n", kLayouts[g_controlLayout >= 0 && g_controlLayout < 5 ? g_controlLayout : 0]);
+	static const char* kLayouts[4] = { "xbox", "classic", "goldeneye", "stylus" };
+	fprintf(f, "controls=%s\n", kLayouts[g_controlLayout >= 0 && g_controlLayout < 4 ? g_controlLayout : 0]);
 	if (g_gyroAim > 0)
 		s_gyroSens = g_gyroAim;
 	fprintf(f, "gyroaim=%s\ngyrosens=%d\n", g_gyroAim > 0 ? "on" : "off", s_gyroSens);
@@ -114,7 +116,7 @@ void Session::saveSettings()
 	if (g_autoGamma >= 0)                // (not chosen: the console's default, on with QTM)
 		fprintf(f, "autogamma=%s\n", g_autoGamma ? "on" : "off");
 	fprintf(f, "lookspeed=%d\ngeturn=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_invertY ? "on" : "off");
-	fprintf(f, "stylusspeed=%d\n", g_stylusSpeed);
+	fprintf(f, "stylusspeed=%d\nstylusbuttons=%s\n", g_stylusSpeed, g_stylusButtons ? "on" : "off");
 	fprintf(f, "stickzone=%d\n", g_stickZonePct);
 	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
 	fprintf(f, "depth=%s\n", g_depthMode == DEPTH_24 ? "24" : g_depthMode == DEPTH_16_IN_3D ? "16in3d" : "16");

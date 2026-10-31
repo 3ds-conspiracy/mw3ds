@@ -195,14 +195,15 @@ void World::recomputeStats()
 }
 
 // Paralyzed: no moving, no fighting
-// Stylus layouts: the HUD's buttons tapped last frame (the bottom screen is drawn after the world's update) join the
-// buttons' input; Sneak stays on until tapped again, as GoldenEye's B, and is let go when the layout changes
+// The stylus layout: the HUD's glass buttons tapped or held last frame (the bottom screen is drawn after the world's
+// update) join the buttons' input; the glass B's sneak stays on until tapped again (as GoldenEye's B), and is let go
+// when the layout changes or the glass buttons are hidden
 void Session::stylusButtons(PlayerInput& in, bool menu)
 {
-	if (!stylusLayout())
+	if (!stylusLayout() || !g_stylusButtons)
 	{
 		stylusTaps = 0;
-		stylusSneakOn = stylusJumpHeld = false;
+		stylusSneakOn = stylusJumpHeld = stylusAttackHeld = false;
 		return;
 	}
 	if (!menu)
@@ -212,11 +213,12 @@ void Session::stylusButtons(PlayerInput& in, bool menu)
 		in.readyToggle |= (stylusTaps & STYLUS_READY) != 0;
 		in.jump |= (stylusTaps & STYLUS_JUMP) != 0;
 		in.up |= stylusJumpHeld;
+		in.attack |= stylusAttackHeld;
 		in.sneak |= stylusSneakOn;
 		in.down |= stylusSneakOn;
 	}
 	stylusTaps = 0;
-	stylusJumpHeld = false;
+	stylusJumpHeld = stylusAttackHeld = false;
 }
 
 void Session::playerControls(PlayerInput& in, bool menu)

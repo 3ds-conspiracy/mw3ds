@@ -480,6 +480,53 @@ void uiRect(float x, float y, float w, float h, u32 color)
 	C2D_DrawRectSolid(x, y, 0.5f, w, h, color);
 }
 
+// A filled circle, and a ring between two radii (the stylus layouts' round buttons): fans and strips of triangles,
+// which see-through colours draw without overlapping themselves
+static const int kRoundSides = 20;
+void uiDisc(float cx, float cy, float r, u32 color)
+{
+	g_uiDraws++;
+	for (int i = 0; i < kRoundSides; i++)
+	{
+		float a0 = i * 6.2831853f / kRoundSides, a1 = (i + 1) * 6.2831853f / kRoundSides;
+		C2D_DrawTriangle(cx, cy, color, cx + r * cosf(a0), cy + r * sinf(a0), color, cx + r * cosf(a1), cy + r * sinf(a1),
+			color, 0.5f);
+	}
+}
+
+// Glass: see-through pale fill with a brighter sheen over its top, no edge (the stylus layout's buttons over the
+// minimap). look: 0 at rest, 1 pressed or on (the same glass, lit brighter), -1 can't be used (faint)
+static u32 glass(int r, int g, int b, int a, int look)
+{
+	return C2D_Color32(r, g, b, look < 0 ? a / 2 : look > 0 ? a * 2 : a);
+}
+
+void uiGlassDisc(float cx, float cy, float r, int look)
+{
+	uiDisc(cx, cy, r, glass(215, 225, 240, 40, look));
+	uiDisc(cx, cy - r * 0.35f, r * 0.55f, glass(255, 255, 255, 30, look));
+}
+
+void uiGlassBox(float x, float y, float w, float h, int look)
+{
+	uiRect(x, y, w, h, glass(215, 225, 240, 40, look));
+	uiRect(x + 1, y + 1, w - 2, h * 0.45f, glass(255, 255, 255, 30, look));
+}
+
+void uiRing(float cx, float cy, float r0, float r1, u32 color)
+{
+	g_uiDraws++;
+	for (int i = 0; i < kRoundSides; i++)
+	{
+		float a0 = i * 6.2831853f / kRoundSides, a1 = (i + 1) * 6.2831853f / kRoundSides;
+		float c0 = cosf(a0), s0 = sinf(a0), c1 = cosf(a1), s1 = sinf(a1);
+		C2D_DrawTriangle(cx + r0 * c0, cy + r0 * s0, color, cx + r1 * c0, cy + r1 * s0, color, cx + r1 * c1, cy + r1 * s1,
+			color, 0.5f);
+		C2D_DrawTriangle(cx + r0 * c0, cy + r0 * s0, color, cx + r1 * c1, cy + r1 * s1, color, cx + r0 * c1, cy + r0 * s1,
+			color, 0.5f);
+	}
+}
+
 static const UiPiece* findPiece(const std::string& name)
 {
 	if (!s_atlasOn)

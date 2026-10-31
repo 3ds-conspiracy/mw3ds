@@ -88,7 +88,7 @@ struct ScriptedInput
 	bool saveLegacy = false;          // SAVEV1:name: the save in version 1 (every cell inside the JSON: old saves still load)
 	std::string saveAs, loadFrom;     // SAVE:name / LOAD:name: sdmc:/3ds/mw3ds/test_<name>.sav (the sweeps
 	                                  // start every quest from the same state)
-	int layout = -1;                  // CONTROLS:classic|xbox|goldeneye|stylusright|stylusleft: the layout from this step on
+	int layout = -1;                  // CONTROLS:classic|xbox|goldeneye|stylus: the button layout from this step on
 	int gyroAim = -1;                 // GYROAIM:<percent>|off: gyro aim's sensitivity from this step on (0 off)
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
 	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned

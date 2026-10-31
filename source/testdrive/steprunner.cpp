@@ -56,7 +56,7 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	if (first && s.layout >= 0)
 	{
 		g_testLayout = g_controlLayout = s.layout;
-		static const char* kNames[5] = { "xbox", "classic", "goldeneye", "stylusright", "stylusleft" };
+		static const char* kNames[4] = { "xbox", "classic", "goldeneye", "stylus" };
 		logf("test: controls %s", kNames[s.layout]);
 	}
 	if (first && s.frameCap >= 0)
@@ -86,12 +86,12 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	}
 	else if (stylusLayout())
 	{
-		// (the step's stick is the Circle Pad, or the left hand's C-stick; its keys the buttons, through that layout)
+		// (the step's stick is the Circle Pad, its keys the buttons, through that layout)
 		PlayerInput st = {};
 		st.quick = -1;
 		st.moveX = s.moveX;
 		st.moveY = s.moveY;
-		stylusInput(st, held, down, s.moveX, s.moveY);
+		stylusInput(st, held, down);
 		st.jump |= s.jump && first;
 		in = st;
 	}

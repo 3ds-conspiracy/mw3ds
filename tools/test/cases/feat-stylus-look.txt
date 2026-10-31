@@ -1,35 +1,43 @@
 # start: Seyda Neen
-# feat-stylus-look: the stylus layouts (Controls: stylus, right hand / left hand). A slide on the bottom screen in play
-# turns the view as far as the stylus went (1.00x: 320 pixels across, half way round), from where it came down once
-# it has gone past a tap's slop, whatever button it started on, and no button under it acts; a touch that stays within
-# the slop turns nothing; a slide in a menu never turns the view; taps still work (the minimap opens the map). The HUD
-# shows Use, Cast, Ready, Jump and Sneak in the attack hint's row; the right hand's D-pad does the same as the first
-# four, the left hand walks on X / B / Y / A. The stylus speed scales the turn. Shots: both HUDs, Controls' bar, both
-# button lists (a still touch on the HUD's shots: the HUD is drawn every third frame, or while touched)
+# feat-stylus-look: the stylus layout (Controls: stylus). A slide on the bottom screen in play turns the view as far as
+# the stylus went (1.00x: 0.01 radians a pixel), from where it came down once it has gone past a tap's
+# slop, whatever button it started on, and no button under it acts; a touch that stays within the slop turns nothing;
+# a slide in a menu never turns the view. Above the HUD's button rows a touch taps nothing (the minimap) but for the
+# glass A (use), B (sneak on / off), X (ready), Y (jump), L (cast) and R (attack) buttons over the minimap; the console's
+# buttons do the same, GoldenEye's way (B held sneaks), R held winds up a blow, L casts. The stylus speed scales the turn; the button list's On-screen off hides
+# them. Shots: the HUD, Controls' tab, the button list, the HUD without buttons (a still touch beside
+# the quick slots on the HUD's shots: the HUD is drawn every third frame, or while touched)
 0.5 0 0 0 0 MSG
 0.3 0 0 0 0 GOD
-0.3 0 0 0 0 CONTROLS:stylusright
+0.3 0 0 0 0 CONTROLS:stylus
 0.5 0 0 0 0 EXPECT:setting:layout:eq:3
-# A slide right and up from the middle of the screen: 40 pixels each way, 22.5 degrees each
+# A slide right and up from the middle of the screen: 40 pixels each way, 0.4 radians (22.9 degrees) each
 0.1 0 0 0 0 SNAP:yaw+SNAP:pitch
 0.1 0 0 0 0 TOUCH:120:120
 0.1 0 0 0 0 TOUCH:160:80
 0.3 0 0 0 0
-0.1 0 0 0 0 EXPECT:yaw:ge:@22+EXPECT:yaw:le:@23+EXPECT:pitch:ge:@22+EXPECT:pitch:le:@23
+0.1 0 0 0 0 EXPECT:yaw:ge:@22.5+EXPECT:yaw:le:@23.5+EXPECT:pitch:ge:@22.5+EXPECT:pitch:le:@23.5
 # Started on Items: the view turns, Items doesn't open
 0.1 0 0 0 0 SNAP:yaw
 0.1 0 0 0 0 TOUCH:20:220
 0.1 0 0 0 0 TOUCH:60:220
 0.3 0 0 0 0
-0.1 0 0 0 0 EXPECT:yaw:ge:@22+EXPECT:yaw:le:@23+EXPECT:screen:none
+0.1 0 0 0 0 EXPECT:yaw:ge:@22.5+EXPECT:yaw:le:@23.5+EXPECT:screen:none
 # Within a tap's slop: nothing turns
 0.1 0 0 0 0 SNAP:yaw
 0.1 0 0 0 0 TOUCH:200:100
 0.1 0 0 0 0 TOUCH:206:100
 0.3 0 0 0 0
 0.1 0 0 0 0 EXPECT:yaw:ge:@-0.1+EXPECT:yaw:le:@0.1
-# A tap on the minimap still opens the map
+# Above the button rows the screen only looks: a tap on the minimap, or the stylus set down there and lifted, opens
+# nothing; the Map button below still does
 0.3 0 0 0 0 TAP:250:90
+0.3 0 0 0 0 EXPECT:screen:none
+0.1 0 0 0 0 TOUCH:250:90
+0.1 0 0 0 0 TOUCH:250:90
+0.3 0 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 TAP:186:222
 0.3 0 0 0 0 EXPECT:screen:map
 0.3 0 0 0 0 SCREEN:none
 # A slide in the inventory turns nothing
@@ -40,69 +48,78 @@
 0.3 0 0 0 0
 0.1 0 0 0 0 EXPECT:yaw:ge:@-0.1+EXPECT:yaw:le:@0.1
 0.3 0 0 0 0 SCREEN:none
-# Use and D-pad up talk to the person in front
+# L casts the selected spell (CAST: chooses it, then the tap casts it again)
+0.3 0 0 0 0 SPELL:fire_bite+SETSKILL:destruction:100+SEED:7
+0.3 0 0 0 0 CAST:fire_bite
+2 0 0 0 0
+0.1 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 TAP:207:36
+2 0 0 0 0
+0.1 0 0 0 0 EXPECT:casts:gt:@0
+# The glass A and the A button talk to the person in front
 0.3 0 0 0 0 PLACE:todd:100
 0.3 0 0 0 0 POSE:todd:idle:0:180
 0.3 0 0 0 0 FACE:todd
 0.3 0 0 0 0 EXPECT:target:eq:1
-0.3 0 0 0 0 SHOT+TOUCH:100:150
-0.3 0 0 0 0 TAP:23:193
+0.3 0 0 0 0 SHOT+TOUCH:188:195
+0.3 0 0 0 0 TAP:299:90
 0.5 0 0 0 0 EXPECT:screen:dialogue
 0.3 0 0 0 0 SCREEN:none
 0.3 0 0 0 0 FACE:todd
-0.3 0 0 0 0 UP
+0.3 0 0 0 0 A
 0.5 0 0 0 0 EXPECT:screen:dialogue
 0.3 0 0 0 0 SCREEN:none
 0.3 0 0 0 0 DISABLE:todd
-# Ready draws the weapon, D-pad left puts it away
+# The glass X draws the weapon, the X button puts it away; the glass R held winds up a blow (drawing it too)
 0.3 0 0 0 0 EXPECT:weapondrawn:eq:0
-0.3 0 0 0 0 TAP:95:193
+0.3 0 0 0 0 TAP:282:73
 0.8 0 0 0 0 EXPECT:weapondrawn:eq:1
-0.3 0 0 0 0 LEFT
+0.3 0 0 0 0 X
 0.8 0 0 0 0 EXPECT:weapondrawn:eq:0
-# Sneak stays on until tapped again
-0.3 0 0 0 0 TAP:167:193
+0.3 0 0 0 0 TOUCH:293:36
+1 0 0 0 0 TOUCH:293:36
+0.3 0 0 0 0
+0.8 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 0 0 0 X
+0.8 0 0 0 0 EXPECT:weapondrawn:eq:0
+# The glass B sneaks until tapped again; the B button sneaks while held
+0.3 0 0 0 0 TAP:282:107
 0.5 0 0 0 0 EXPECT:sneaking:eq:1
 0.5 0 0 0 0 EXPECT:sneaking:eq:1
-0.3 0 0 0 0 SHOT+TOUCH:100:150
-0.3 0 0 0 0 TAP:167:193
+0.3 0 0 0 0 SHOT+TOUCH:188:195
+0.3 0 0 0 0 TAP:282:107
 0.5 0 0 0 0 EXPECT:sneaking:eq:0
-# Jump, and D-pad down
+0.5 0 0 0 0 B
+0.1 0 0 0 0 B+EXPECT:sneaking:eq:1
+0.5 0 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:0
+# The glass Y jumps, and the Y button
 0.1 0 0 0 0 SNAP:playerz
-0.2 0 0 0 0 TAP:131:193
+0.2 0 0 0 0 TAP:265:90
 0.1 0 0 0 0 EXPECT:playerz:gt:@10
 1 0 0 0 0
 0.1 0 0 0 0 SNAP:playerz
-0.2 0 0 0 0 DOWN
+0.2 0 0 0 0 Y
 0.1 0 0 0 0 EXPECT:playerz:gt:@10
 1 0 0 0 0
-# The left hand: X walks forward, Y sidesteps (on open ground)
-0.3 0 0 0 0 TP:-10900:-71000:600:90
-2 0 0 0 0
-0.3 0 0 0 0 CONTROLS:stylusleft
-0.3 0 0 0 0 EXPECT:setting:layout:eq:4
-0.1 0 0 0 0 SNAP:moved
-1 0 0 0 0 X
-0.1 0 0 0 0 EXPECT:moved:ge:60
-0.1 0 0 0 0 SNAP:moved
-1 0 0 0 0 Y
-0.1 0 0 0 0 EXPECT:moved:ge:60
-0.3 0 0 0 0 SHOT+TOUCH:100:150
 # Twice the speed turns twice as far
 0.3 0 0 0 0 SCREEN:look
 0.3 0 0 0 0 SHOT
-0.3 0 0 0 0 TOUCH:304:105
+0.3 0 0 0 0 TOUCH:304:70
 0.3 0 0 0 0 EXPECT:setting:stylusspeed:eq:200+EXPECT:savedsetting:stylusspeed:eq:200
 0.3 0 0 0 0 SCREEN:none
 0.1 0 0 0 0 SNAP:yaw
 0.1 0 0 0 0 TOUCH:120:120
 0.1 0 0 0 0 TOUCH:160:120
 0.3 0 0 0 0
-0.1 0 0 0 0 EXPECT:yaw:ge:@44+EXPECT:yaw:le:@46
-# The button lists, left hand and right (a scripted run keeps the layout its CONTROLS: step chose: Y's next layout
-# isn't seen here)
+0.1 0 0 0 0 EXPECT:yaw:ge:@45+EXPECT:yaw:le:@47
+# The button list, and its X: On-screen off. Then no glass buttons, and a tap where X was readies nothing (a scripted
+# run keeps the layout its CONTROLS: step chose: Y's next layout isn't seen here)
 0.3 0 0 0 0 SCREEN:controls
 0.3 0 0 0 0 SHOT
-0.3 0 0 0 0 CONTROLS:stylusright
-0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 TAP:161:222
+0.3 0 0 0 0 EXPECT:setting:stylusbuttons:eq:0+EXPECT:savedsetting:stylusbuttons:eq:0
 0.3 0 0 0 0 SCREEN:none
+0.3 0 0 0 0 TAP:282:73
+0.8 0 0 0 0 EXPECT:weapondrawn:eq:0
+0.3 0 0 0 0 SHOT+TOUCH:188:195

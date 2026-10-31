@@ -40,8 +40,16 @@ float lookScale();
 PlayerInput invertLook(PlayerInput in);
 // The buttons, the pads and the gyroscope as the player's input this frame, in the layout chosen in Options
 PlayerInput readInput(u32 held, u32 down, u32 up, float dt);
-// The stylus layouts' buttons (device and scripted runs alike); cx, cy: the C-stick past its dead zone
-void stylusInput(PlayerInput& in, u32 held, u32 down, float cx, float cy);
+// The stylus layout's buttons (device and scripted runs alike)
+void stylusInput(PlayerInput& in, u32 held, u32 down);
+// The stylus layout: the HUD's glass buttons over the minimap, as the console's lie: round A B X Y at its right, half
+// way down (A right, B below, X above, Y left), the shoulder buttons L and R as boxes in its top corners. The discs' centres and
+// radius, the boxes' x, y, width, height, and which button a point is on (-1: none)
+enum { STYLUS_PAD_A, STYLUS_PAD_B, STYLUS_PAD_X, STYLUS_PAD_Y, STYLUS_PAD_L, STYLUS_PAD_R, STYLUS_PAD_COUNT };
+static const float kStylusPad[4][2] = { { 299, 90 }, { 282, 107 }, { 282, 73 }, { 265, 90 } };   // (centred on the map's height)
+static const float kStylusPadRadius = 11.0f;
+static const float kStylusShoulder[2][4] = { { 189, 29, 38, 15 }, { 273, 29, 38, 15 } };   // (3 pixels in from the map's corners)
+int stylusPadAt(int x, int y);
 // Stylus layouts: a slide on the bottom screen in play (inPlay) turns the view and is taken from the screen's input
 struct UiInput;
 void stylusLook(UiInput& ui, PlayerInput& in, bool inPlay);

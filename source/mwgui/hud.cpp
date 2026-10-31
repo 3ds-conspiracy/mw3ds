@@ -7,6 +7,7 @@
 #include "mwbase/session.hpp"
 #include <cstdio>
 #include "mwgui/windowmanagerimp.hpp"
+#include "mwinput/inputmanagerimp.hpp"
 #include <array>
 #include <functional>
 #include <sys/stat.h>
@@ -310,32 +311,54 @@ void Session::drawQuickStrip()
 	}
 }
 
-// Stylus layouts: Use, Cast, Ready, Jump and Sneak in the attack hint's row, under the stylus (the left hand's
-// layout has no buttons for the first four); a tap acts on the next frame (stylusButtons), Jump held swims up, Sneak
-// stays on until tapped again and shows lit. Each greys out while it can do nothing (no target, no spell, fighting
-// or jumping turned off by a script)
+// The stylus layout: glass buttons over the minimap, as the console's lie, doing what its buttons do (GoldenEye's:
+// stylusInput): round A activates, X readies the weapon, Y jumps (held: swims up), B sneaks on / off (lit while on: the
+// console's B is held); the boxes L casts, R winds up while held and strikes when let go. A tap acts on the next frame (stylusButtons). Each
+// fades while it can do nothing (no target, no spell, fighting or jumping turned off by a script); the rest of the
+// screen above the button rows only looks (stylusLook)
 void Session::drawStylusButtons()
 {
-	// (each as wide as its word, from the screen's edge to the quick key strip at x 190)
-	const float kY = 181, kH = 24, kGap = 2;
-	bool can = w.controlsEnabled && !playerDead;
-	struct { const char* label; float w; int bit; bool enabled; } b[4] = {
-		{ "Use", 30, STYLUS_USE, can && target >= 0 },
-		{ "Cast", 33, STYLUS_CAST, can && w.fightingEnabled && !w.stats.selectedSpell.empty() },
-		{ "Ready", 38, STYLUS_READY, can && w.fightingEnabled },
-		{ "Jump", 34, STYLUS_JUMP, can && w.jumpingEnabled } };
-	float x = 4;
-	for (int i = 0; i < 4; x += b[i].w + kGap, i++)
+	bool can = w.controlsEnabled && !playerDead, fight = can && w.fightingEnabled;
+	static const char* kLabels[STYLUS_PAD_COUNT] = { "A", "B", "X", "Y", "L", "R" };
+	bool enabled[STYLUS_PAD_COUNT] = { can && target >= 0, can, fight, can && w.jumpingEnabled,
+		fight && !w.stats.selectedSpell.empty(), fight };
+	static const int kBits[STYLUS_PAD_COUNT] = { STYLUS_USE, 0, STYLUS_READY, STYLUS_JUMP, STYLUS_CAST, 0 };
+	const UiInput& in = uiIn();
+	int pressed = in.touching ? stylusPadAt(in.touchX, in.touchY) : -1;
+	for (int i = 0; i < STYLUS_PAD_COUNT; i++)
 	{
-		if (uiButton(x, kY, b[i].w, kH, b[i].label, false, b[i].enabled))
-			stylusTaps |= b[i].bit;
-		const UiInput& in = uiIn();
-		if (b[i].bit == STYLUS_JUMP && b[i].enabled && in.touching && in.touchX >= x && in.touchX < x + b[i].w
-			&& in.touchY >= kY && in.touchY < kY + kH)
-			stylusJumpHeld = true;
+		int look = !enabled[i] ? -1 : (i == pressed || (i == STYLUS_PAD_B && stylusSneakOn)) ? 1 : 0;
+		float x, y;
+		if (i < STYLUS_PAD_L)
+		{
+			x = kStylusPad[i][0];
+			y = kStylusPad[i][1];
+			uiGlassDisc(x, y, kStylusPadRadius, look);
+		}
+		else
+		{
+			const float* b = kStylusShoulder[i - STYLUS_PAD_L];
+			uiGlassBox(b[0], b[1], b[2], b[3], look);
+			x = b[0] + b[2] / 2;
+			y = b[1] + b[3] / 2;
+		}
+		// (engraved: the letter a see-through shade cut into the glass, a faint light edge under it)
+		// (centred on the capital itself: the line's height has room under it for descenders, a letter's width room after
+		// it for the next)
+		float s = i < STYLUS_PAD_L ? 0.5f : 0.45f, ty = y - uiLineHeight(s) / 2 - 1, tx = x - 0.5f;
+		uiTextCentered(tx, ty + 1, s, C2D_Color32(255, 255, 255, look < 0 ? 40 : 110), kLabels[i]);
+		uiTextCentered(tx, ty, s, C2D_Color32(16, 20, 28, look < 0 ? 80 : look > 0 ? 240 : 205), kLabels[i]);
+		if (!enabled[i] || !in.tapped || stylusPadAt(in.tapX, in.tapY) != i)
+			continue;
+		if (i == STYLUS_PAD_B)
+			stylusSneakOn = !stylusSneakOn;
+		else
+			stylusTaps |= kBits[i];
 	}
-	if (uiButton(x, kY, 186 - x, kH, "Sneak", stylusSneakOn, can))
-		stylusSneakOn = !stylusSneakOn;
+	if (pressed == STYLUS_PAD_Y && enabled[STYLUS_PAD_Y])
+		stylusJumpHeld = true;
+	if (pressed == STYLUS_PAD_R && enabled[STYLUS_PAD_R])
+		stylusAttackHeld = true;
 }
 
 // The active effects the HUD shows an icon for: spells, potions, blessings, and abilities and worn constant effects
@@ -438,7 +461,7 @@ void Session::drawHud()
 		}
 	}
 
-	// Messages (a line fewer under a two-line prompt in the stylus layouts: it sits higher, above their buttons)
+	// Messages (the stylus layout: a line fewer under a two-line prompt, which ends above its zone's rule)
 	bool stylus = stylusLayout();
 	float y = 133, last = stylus && promptRows > 1 ? 152 : 164;
 	for (auto& n : notes)
@@ -452,14 +475,21 @@ void Session::drawHud()
 		}
 	}
 
-	// Minimap: tap it for the map
+	// Minimap: tap it for the map (not in the stylus layout: the stylus looks there, and taps its round buttons)
 	bool mapOk = !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen);
 	drawMapView(186, 26, 128, 128, 1.0f, false, w.current >= 0 && w.cells[w.current].interior);
-	if (mapOk && uiHit(186, 26, 128, 128))
+	if (mapOk && !stylusLayout() && uiHit(186, 26, 128, 128))
 		openScreen(SCR_MAP);
 	std::string here = w.game.cellLabel(w.cellName());
 	hudCaption = here.size() > 26 ? here.substr(0, 25) + "..." : here;
 	uiTextCentered(250, 155, 0.38f, col::textDim, hudCaption);
+	if (stylus)
+	{
+		// The rule between the stylus's zone (above: it looks, but for the round buttons) and the buttons that tap
+		uiRect(4, kStylusTapTop - 1, 312, 1, col::border);
+		if (g_stylusButtons)
+			drawStylusButtons();
+	}
 
 	if (target >= 0)
 	{
@@ -468,17 +498,16 @@ void Session::drawHud()
 		std::vector<std::string> use = targetPromptLines(target, &s);
 		promptRows = (int)use.size();
 		float lh = uiLineHeight(s);
-		float top = stylus ? 180 - use.size() * lh : use.size() > 1 ? 166 : 172;
+		float top = stylus ? kStylusTapTop - 1 - use.size() * lh : use.size() > 1 ? 166 : 172;
 		for (size_t i = 0; i < use.size(); i++)
 			uiText(6, top + i * lh, s, col::link, use[i]);
 	}
 	else
 		promptRows = 1;
-	if (stylus)
-		drawStylusButtons();
-	else if (w.fightingEnabled)
+	if (w.fightingEnabled)
 	{
-		bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE;   // (GoldenEye: the Xbox buttons)
+		// (GoldenEye and the stylus layout: the Xbox buttons)
+		bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout();
 		std::string hint = w.stats.selectedSpell.empty() ? (xbox ? "R: attack (hold to wind up)" : "X: attack (hold to wind up)")
 			: std::string(xbox ? "R: attack   L: cast " : "X: attack   Y: cast ") + w.game.spells[w.stats.selectedSpell].name;
 		// Leave the quick key strip (from x 190) clear, and GoldenEye's 1st / 3rd button (from x 132)
@@ -498,7 +527,7 @@ void Session::drawHud()
 	}
 	char perf[64];
 	snprintf(perf, sizeof(perf), "%.0f fps", fps);
-	uiTextRight(312, 27, 0.34f, col::textDim, perf);
+	uiTextRight(stylusLayout() && g_stylusButtons ? 270 : 312, 27, 0.34f, col::textDim, perf);   // (beside the stylus's R)
 	bool inv = w.menusEnabled & MENU_INVENTORY, stats = w.menusEnabled & MENU_STATS;
 	if (uiButton(2, 208, 51, 28, "Items", false, inv))
 		openScreen(SCR_INVENTORY);

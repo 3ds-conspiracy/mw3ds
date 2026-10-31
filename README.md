@@ -173,23 +173,30 @@ that walks and turns, on the Xbox layout's buttons, and a button that stops you 
 sessions. Choosing a speed calibrates it: lay the 3DS down for 2 seconds (it also tries once as the game starts). The
 same tab sets one look speed for the sticks, the D-pad and GoldenEye aiming, the GoldenEye turn while walking, and the
 sticks' dead zone (raise it if a stick keeps walking or turning after you let go). Layout shows the buttons and switches
-between Xbox, classic, GoldenEye and the two stylus layouts (Y).
+between Xbox, classic, GoldenEye and stylus (Y).
 
-**Stylus layouts** (Options > Controls > Layout): hold the stylus in one hand and slide it on the bottom screen to look;
-the view turns as far as the stylus moves (Stylus speed on the same tab: at 1.00x a slide across the screen turns half
-way round). A slide can start anywhere on the bottom screen, on a button too; a tap still taps. The HUD gets Use, Cast,
-Ready, Jump and Sneak buttons above the menu buttons.
+**Stylus** (Options > Controls > Layout): GoldenEye's buttons, but you hold the stylus in your right hand and slide it on
+the bottom screen to look;
+the view turns as far as the stylus moves (Stylus speed on the same tab: at 1.00x a slide across the screen turns a
+little over half way round). A slide can start anywhere on the bottom screen, on a button too. Above the HUD's buttons the screen only
+looks: setting the stylus down there taps nothing (use the Map button for the map); a line marks where that area ends.
+Over the minimap sit glass buttons laid out as on the console: round A, B, X and Y at its right, L and R in its top
+corners, doing what the console's do (but the glass B sneaks on / off). They, the quick slots and the menu buttons take
+taps. **Buttons** on the
+Layout screen (X there) hides them. Nothing needs ZL or ZR.
 
-| Button | Stylus, right hand | Stylus, left hand |
-|---|---|---|
-| Move | Circle Pad | X / B forward / back, Y / A sidestep, or the C-stick |
-| Wind up, strike | L (hold, release) | R (hold, release) |
-| Sneak | ZL (hold), or Sneak on / off | ZR (hold), or Sneak on / off |
-| Activate | D-Pad up, or Use | Use |
-| Cast | D-Pad right, or Cast | Cast |
-| Ready / put away the weapon | D-Pad left, or Ready | Ready |
-| Jump (held: swim up) | D-Pad down, or Jump | Jump |
-| First / third person, menu | SELECT, START | SELECT, START |
+| Button (or the glass one on the map) | Stylus |
+|---|---|
+| Circle Pad | Move (pushed far: run) |
+| Stylus (slide) | Look |
+| A | Activate: talk, open, take |
+| R (hold, release) | Wind up, strike |
+| L | Cast the selected spell |
+| X | Ready / put away the weapon |
+| Y | Jump (held: swim up) |
+| B (hold) | Sneak |
+| D-Pad | Left / right: strafe; up / down: look |
+| SELECT, START | First / third person, menu |
 
 ## Testing and reporting
 

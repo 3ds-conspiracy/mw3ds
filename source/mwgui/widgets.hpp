@@ -72,6 +72,10 @@ bool uiPieceRotated(const char* name, float cx, float cy, float w, float h, floa
 void uiCaption(const std::string& title, const std::string& note = "");   // window title bar across the top
 // Item icon (GameData object iconIx) at size x size; false when there is none
 bool uiIcon(int icon, float x, float y, float size = 32.0f);
+void uiDisc(float cx, float cy, float r, u32 color);
+void uiRing(float cx, float cy, float r0, float r1, u32 color);
+void uiGlassDisc(float cx, float cy, float r, int look);              // look: 0 at rest, 1 pressed / on, -1 can't be used
+void uiGlassBox(float x, float y, float w, float h, int look);
 void uiBar(float x, float y, float w, float h, float frac, u32 color);
 
 // Widgets: return true when activated (tap, or A while `focused`)

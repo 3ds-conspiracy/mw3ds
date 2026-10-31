@@ -17,13 +17,12 @@
 // The tutorial's console wording (Xbox returns 1), said with the 3DS's controls
 static std::string for3ds(std::string t)
 {
-	// (GoldenEye keeps the Xbox layout's buttons)
-	bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE;
-	bool right = g_controlLayout == CONTROLS_STYLUS_RIGHT, left = g_controlLayout == CONTROLS_STYLUS_LEFT;
+	// (GoldenEye keeps the Xbox layout's buttons, and the stylus layout GoldenEye's)
+	bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout();
+	bool stylus = stylusLayout();
 	const char* swap[][2] = {
 		{ "The LEFT THUMBSTICK moves you, and the RIGHT THUMBSTICK looks around.",
-		  right ? "The Circle Pad moves you; slide the stylus on the bottom screen to look around."
-			: left ? "X, B, Y and A move you; slide the stylus on the bottom screen to look around."
+		  stylus ? "The Circle Pad moves you; slide the stylus on the bottom screen to look around."
 			: g_controlLayout == CONTROLS_GOLDENEYE
 			? "The Circle Pad walks and turns; hold X (or R, winding up a blow) and it aims instead, up and down too."
 			: "The Circle Pad moves you, and the C-Stick looks around (the D-Pad looks up and down)." },
@@ -31,9 +30,7 @@ static std::string for3ds(std::string t)
 		  "Tap the buttons on the bottom screen to use your menus (START for saves). Press B to close them." },
 		{ "Press the WHITE button to use your journal", "Tap Journal on the bottom screen to use your journal" },
 		{ "Press the X button to pull out your weapon. Once your weapon is readied, hold and release the RIGHT TRIGGER to swing it.",
-		  right ? "Equip your weapon, then press Left on the D-Pad to ready it, and hold and release L to swing it."
-			: left ? "Equip your weapon, then tap Ready to ready it, and hold and release R to swing it."
-			: g_controlLayout == CONTROLS_GOLDENEYE ? "Equip your weapon, then tap X to ready it, and hold and release R to swing it."
+		  stylus || g_controlLayout == CONTROLS_GOLDENEYE ? "Equip your weapon, then tap X to ready it, and hold and release R to swing it."
 			: xbox ? "Equip your weapon, then press X to ready it, and hold and release R to swing it."
 			: "Equip your weapon, then hold and release X to swing it." },
 		{ "Equip the dagger by dropping it on your picture in your inventory menu.",
@@ -41,9 +38,7 @@ static std::string for3ds(std::string t)
 		{ "Like all menus, press B to use your new menu. The triggers cycle between menus. Press B again to exit your menus.",
 		  "Like all menus, tap it on the bottom screen; B closes it." },
 		{ "Press Y to ready your Active Magic, then the RIGHT TRIGGER to cast.",
-		  right ? "Choose your Active Magic in the Magic menu, then press Right on the D-Pad to cast it."
-			: left ? "Choose your Active Magic in the Magic menu, then tap Cast to cast it."
-			: xbox ? "Choose your Active Magic in the Magic menu, then press L to cast it."
+		  xbox ? "Choose your Active Magic in the Magic menu, then press L to cast it."
 			: "Choose your Active Magic in the Magic menu, then press Y to cast it." },
 		{ "Press BLACK to rest", "Press START and choose Rest / Wait to rest" },
 		{ "Then select 'Take' to pick them up.", "Then tap Take to pick them up." },

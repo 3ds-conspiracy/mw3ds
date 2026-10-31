@@ -281,7 +281,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		else if (arg == "subtitles") v = g_subtitles ? 1.0f : 0.0f;
 		else if (arg == "stickzone") v = (float)g_stickZonePct;
 		else if (arg == "stylusspeed") v = (float)g_stylusSpeed;
-		else if (arg == "layout") v = (float)g_controlLayout;      // 0 Xbox, 1 classic, 2 GoldenEye, 3 / 4 stylus right / left
+		else if (arg == "stylusbuttons") v = g_stylusButtons ? 1.0f : 0.0f;
+		else if (arg == "layout") v = (float)g_controlLayout;      // 0 Xbox, 1 classic, 2 GoldenEye, 3 stylus
 		else
 			return false;
 	}
