@@ -98,3 +98,46 @@ jobs:
           gh release view "$TAG" > /dev/null 2>&1 || gh release create "$TAG" --draft --title "$TAG" \
             --notes "Unzip MW3DS-Converter, run MW3DS Converter.exe and pick your own Morrowind install: it makes the CIA. Nothing from Morrowind is in this download."
           gh release upload "$TAG" --clobber build/release/MW3DS-Converter-*.zip "engine/mw3ds-${TAG}-debug.elf"
+
+  # The same converter as an image for Linux and the Steam Deck (podman), with the engine built above
+  # (tools/release/build_image.py, Dockerfile). It is pushed with the version's tag only; image-latest.yml moves
+  # "latest" to it once the release is published.
+  image:
+    needs: engine
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE: ghcr.io/3ds-conspiracy/mw3ds-converter
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: engine
+          path: engine
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - name: Stage the image's files
+        run: python tools/release/build_image.py --elf engine --version "$TAG" --stage
+      - name: The tag is the version everywhere (VERSION.txt, the CIA's title version, the HOME menu text)
+        run: python tools/release/check_version.py "$TAG" build/image
+      - name: Build the image
+        run: docker build -t "$IMAGE:$TAG" build/image
+      - name: The image runs the packages, tex3ds and the converter, and holds no ffmpeg
+        run: |
+          docker run --rm --entrypoint python "$IMAGE:$TAG" -c "import numpy, PIL, miniaudio, imageio_ffmpeg"
+          docker run --rm --entrypoint /opt/mw3ds/bin/tex3ds "$IMAGE:$TAG" --version
+          docker run --rm "$IMAGE:$TAG" --help > /dev/null
+          if docker run --rm --entrypoint sh "$IMAGE:$TAG" -c "ls /usr/local/lib/python3.13/site-packages/imageio_ffmpeg/binaries/ffmpeg-*"; then
+            echo "ffmpeg is in the image"; exit 1
+          fi
+      - name: Push it
+        run: |
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker push "$IMAGE:$TAG"

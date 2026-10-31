@@ -34,6 +34,26 @@ disc) and an internet connection.
 If it stops, the whole log is in `work\converter-log.txt`: attach it to a
 [bug report](#testing-and-reporting). To build from source instead, follow the Quick start below.
 
+## The converter on Linux and the Steam Deck (podman)
+
+The same converter comes as a container image, with everything it needs inside: no Python, devkitPro or git. SteamOS
+ships podman, so on a Steam Deck switch to Desktop Mode, open Konsole and run:
+
+```sh
+mkdir -p ~/mw3ds
+podman run --rm -v ~/.local/share/Steam/steamapps/common/Morrowind:/morrowind:ro -v ~/mw3ds:/out \
+    ghcr.io/3ds-conspiracy/mw3ds-converter --tribunal --bloodmoon
+```
+
+The CIA lands in `~/mw3ds`. Leave out `--tribunal` / `--bloodmoon` for a game without those add-ons, and add
+`--old3ds` for an Old 3DS or 2DS. The first run downloads the image (about 80 MB, 330 MB unpacked), ffmpeg (about 30 MB) and the
+optimization mods (about 550 MB; `--no-mods` skips them) and takes an hour or more; later runs reuse what was
+converted in `~/mw3ds/work`, about 5 GB. `--help` lists the rest (the game's language, plugins).
+
+Elsewhere on Linux, point the first `-v` at your own Morrowind folder (the one holding `Data Files`). Docker works the
+same way: add `--user "$(id -u):$(id -g)"` so the files it writes are yours, and on Fedora and other SELinux systems add
+`:z` to the `/out` mount.
+
 ## Quick start
 
 ### 1. Get the code

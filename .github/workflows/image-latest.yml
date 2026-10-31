@@ -1,0 +1,24 @@
+name: Image latest
+
+# When a release is published, the converter image release.yml pushed for its tag becomes
+# ghcr.io/3ds-conspiracy/mw3ds-converter:latest, the one the README's podman line runs. A draft never moves it.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  latest:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/3ds-conspiracy/mw3ds-converter
+      TAG: ${{ github.event.release.tag_name }}
+    steps:
+      - name: Point latest at the release's image
+        run: |
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker buildx imagetools create -t "$IMAGE:latest" "$IMAGE:$TAG"
