@@ -116,8 +116,10 @@ void rendererUvOverride(bool on, float u = 0.0f, float v = 0.0f);
 void rendererViewAxes(float right[3], float up[3], float back[3]);
 // Local map: renders the loaded cells seen from above (x/y square from minX, minY, size units wide;
 // looking down from topZ through depth units) into a 256 x 256 texture. Inside a frame, before the
-// screens are drawn. The texture: rendererLocalMap() (nullptr until the first render).
-bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater = false);
+// screens are drawn. The texture: rendererLocalMap() (nullptr until the first render). mapLight: lit from above as
+// OpenMW's map camera lights it (an interior's; the outdoor ones keep the day's light).
+bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater = false,
+	bool mapLight = false);
 C3D_Tex* rendererLocalMap();
 
 // Day and night outdoors: tint on the baked light, the sky's tint and the fog / clear colour (0..1)

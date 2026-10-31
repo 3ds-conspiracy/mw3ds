@@ -16,7 +16,13 @@ C3D_Tex* rendererLocalMap()
 	return g_gpu.localTarget ? &g_gpu.localTex : nullptr;
 }
 
-bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater)
+// The light OpenMW's local map camera puts in place of the sun (LocalMapRenderToTexture: ambient 0.3, diffuse 0.7 from
+// (-0.3, -0.3, 0.7)) on a floor seen from above: 0.3 + 0.7 x 0.7 / |(-0.3, -0.3, 0.7)|. The cells' light is baked into
+// their colours with no normals left, so it is added evenly; a dark mine's floor plan shows as in OpenMW
+static const float kMapLight = 0.9f;
+
+bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float topZ, float depth, bool opaqueWater,
+	bool mapLight)
 {
 	setLight(nullptr);
 	if (!g_gpu.localTarget)
@@ -36,6 +42,8 @@ bool rendererDrawLocalMap(World& w, float minX, float minY, float size, float to
 	C3D_FrameDrawOn(g_gpu.localTarget);
 	bindPipeline();
 	C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uTint, 1.0f, 1.0f, 1.0f, 1.0f);    // interiors: no time of day
+	if (mapLight && g_gpu.uAmbient >= 0)
+		C3D_FVUnifSet(GPU_VERTEX_SHADER, g_gpu.uAmbient, kMapLight, kMapLight, kMapLight, g_gpu.invGamma);
 	disableFog();
 	// Looking down -Z from topZ: everything above it (upper floors) is behind the camera, and
 	// ceilings face away (culled), which leaves the floor plan
