@@ -930,7 +930,12 @@ class Converter:
                                       default=str, sort_keys=True).encode()).hexdigest()
         meta_path = self.cache_dir / (file + ".json")
         if meta_path.exists() and base.with_suffix(".cel").exists() and base.with_suffix(".act").exists():
-            meta = json.loads(meta_path.read_text())
+            try:
+                meta = json.loads(meta_path.read_text())
+            except ValueError:
+                # (cut short: written by a cell process that failed while writing it, out of memory with five others.
+                # Read as finished, the cell was left out of the data: converted again instead)
+                meta = {}
             if meta.get("key") == key:
                 for path, px, alpha in meta["tex_requests"]:
                     self.textures.request(path, px, alpha)
@@ -954,7 +959,10 @@ class Converter:
                 "generated": sorted(self.cell_generated),
                 "actor_skeletons": self.cell_actors}
         self.textures.log = None
-        meta_path.write_text(json.dumps(meta, default=float))
+        # (whole or not at all: written beside it, then put in its place)
+        part = meta_path.with_suffix(".part")
+        part.write_text(json.dumps(meta, default=float))
+        part.replace(meta_path)
         return out
 
     def load_nif(self, model):
