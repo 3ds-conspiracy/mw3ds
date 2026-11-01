@@ -69,6 +69,13 @@ extern bool g_subtitles;
 // (Engine::useTopDepth)
 enum { DEPTH_24 = 0, DEPTH_16_IN_3D = 1, DEPTH_16 = 2 };
 extern int g_depthMode;
+// Texture detail (Options > Display; settings.txt mipbias=-40..0, tenths of a mipmap level): levels taken off the
+// smaller copy the GPU picks for the world's textures. 0 is its own pick, which showed a copy's ETC1 blocks as little
+// squares on near walls (the New 3DS, 2026-10-31); -1.5 the player's pick, a compromise with the shimmer far off and the
+// GPU time the full pictures cost; -4.0 is Off, the full picture at every distance. Which textures carry smaller copies
+// at all is the data's (tools/convert/texencode.py: an Old 3DS's only the ground's and Project Atlas's sheets)
+static const int kMipBiasMin = -40, kMipBiasMax = 0, kMipBiasStep = 5, kMipBiasDefault = -15;
+extern int g_mipBiasTenths;
 
 enum Screen
 {

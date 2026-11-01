@@ -148,7 +148,7 @@ def run(small=False, skip_convert=False, old3ds=False, mods=False, fetch_only=Fa
         os.environ["MW3DS_OUT"] = data
     convert_args = [] if small else ["--world"]
     if old3ds:
-        convert_args += ["--max-tex", "128", "--no-mips"]
+        convert_args += ["--max-tex", "128", "--mips", "few"]
 
     # A CIA left by an earlier failed build must not be mistaken for this one
     (ROOT / cia).unlink(missing_ok=True)

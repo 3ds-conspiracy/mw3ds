@@ -1,4 +1,5 @@
 #include "mwrender/objects.hpp"
+#include "mwbase/sessiontypes.hpp"
 #include <sys/stat.h>
 #include "components/misc/planes.hpp"
 #include "components/files/datapath.hpp"
@@ -50,14 +51,32 @@ bool texImportFile(C3D_Tex* tex, const char* path)
 	return true;
 }
 
+float mipBiasLevels()
+{
+	// (Off: the full-size picture at every distance, the lowest bias there is. A texture with no smaller copies, as most
+	// of an Old 3DS's, draws the same at any bias)
+	if (g_mipBiasTenths <= kMipBiasMin)
+		return -16.0f;
+	return g_mipBiasTenths / 10.0f;
+}
+
+void texturesSetMipBias(TextureCache& cache)
+{
+	float bias = mipBiasLevels();
+	LightLock_Lock(&cache.lock);
+	for (auto& e : cache.entries)
+		if (e.second && e.second->ok)
+			C3D_TexSetLodBias(&e.second->tex, bias);
+	LightLock_Unlock(&cache.lock);
+}
+
 static bool loadTexture(C3D_Tex* tex, const char* path)
 {
 	if (!texImportFile(tex, path))
 		return false;
 	C3D_TexSetFilter(tex, GPU_LINEAR, GPU_LINEAR);
 	C3D_TexSetFilterMipmap(tex, GPU_LINEAR);
-	if (!g_profile.textureMips)
-		C3D_TexSetLodBias(tex, -16.0f);      // the full-size picture at every distance (the lowest bias there is)
+	C3D_TexSetLodBias(tex, mipBiasLevels());
 	return true;
 }
 

@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# console: old
+# An Old 3DS's data carries smaller copies (mipmaps) for the ground and Project Atlas's sheets only (level.py --mips few,
+# tools/convert/texencode.py): far off they cover most of the screen, and drawn at full size every pixel read texels
+# far apart, which cost its GPU frames; together they are under 100 KB of a town's textures. Everything else stays one
+# level (a third less memory). The sheets' copies are box-filtered, each 2 x 2 inside one of its stacked pictures, so
+# Hlaalu's wall no longer takes in the trim packed under it (bug-o3ds-atlas-mips). Needs Old 3DS data converted after
+# the change (out/o3ds)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-10300:-71300:200:0
+2 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:texlevels:tx_bc_mud:eq:5+EXPECT:texlevels:atl_:ge:4
+0.1 0 0 0 0 EXPECT:texlevels:tx_bc_bark_01:eq:1+EXPECT:texlevels:tx_bc_scum:eq:1
+0.1 0 0 0 0 EXPECT:texlod:atl_:ge:-1.51+EXPECT:texlod:atl_:le:-1.49
+1 0 0 0

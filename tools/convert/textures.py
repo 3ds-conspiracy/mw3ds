@@ -5,9 +5,10 @@ viewing distance of CLOSE_DISTANCE units one screen pixel covers PIXEL_WORLD uni
 Each use of a texture tells us how many world units one texture repeat spans
 (texel density); a texture never needs more texels than the pixels it can fill
 at that distance. Sizes are the next power of two above that, between MIN_SIZE and
-the level's maximum, and never above the source. Mipmaps cover farther views.
+the level's maximum, and never above the source. Mipmaps cover farther views (which textures carry them, and how they
+are made: texencode.py).
 
-Output: out/data/textures/<name>.t3x (ETC1, or ETC1A4 when alpha matters), mipmapped.
+Output: out/data/textures/<name>.t3x (ETC1, or ETC1A4 when alpha matters).
 Sizes chosen per run are cached in out/texture_cache.json so unchanged textures
 are not re-encoded, and .t3x files no level cell uses any more are removed.
 """
@@ -30,6 +31,7 @@ from PIL import Image
 import envfile  # noqa: F401  (loads .env)
 from mwfiles import OVERLAYS, content_key
 from texpad import CREATURE_CAP, PAD_VERSION, actor_texture_islands, creature_textures, pad_islands
+import texencode
 
 # Converted data goes here (MW3DS_OUT overrides it, e.g. out/world for a whole-island trial run)
 OUT = Path(os.environ.get("MW3DS_OUT") or Path(__file__).resolve().parents[2] / "out" / "data")
@@ -128,7 +130,8 @@ class TextureSet:
     """Collects every texture the level's cells use, then encodes each once at the
     largest size any use needs."""
 
-    def __init__(self, arch, max_size=256, force=False, mips=True):
+    def __init__(self, arch, max_size=256, force=False, mips="all"):
+        # (mips: texencode's mode, all / few / none)
         self.arch, self.max_size, self.force, self.mips = arch, max_size, force, mips
         self.req = {}                  # source path -> {"px": texels, "alpha": bool}
         self.whitened = {}             # output name -> {"src", "px", "alpha", "amount"}: a picture drawn whiter
@@ -187,9 +190,10 @@ class TextureSet:
                 img = None
                 entry = cache.get(name)
                 sheet = is_sheet(path)
+                want = texencode.wants_mips(self.mips, path, sheet)
                 if not (entry and entry.get("src") == path and entry.get("limit") == limit
                         and entry.get("want_alpha") == r["alpha"] and entry.get("overlay", "") == overlay
-                        and entry.get("sheet", False) == sheet and entry.get("mips", True) == self.mips
+                        and entry.get("sheet", False) == sheet and entry.get("enc") == texencode.cache_key(want)
                         and entry.get("padded", 0) == (PAD_VERSION if name in islands else 0)
                         and (not entry.get("alpha") or entry.get("clear_kept")) and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(path)))
@@ -200,9 +204,10 @@ class TextureSet:
                         img = pad_islands(img, islands[name], 4 * max(1, img.size[0] // max(1, limit)) + 8)
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
-                    entry = encode_one(tex3ds, img, tex_path(name), limit, r["alpha"], sheet, self.mips, name in islands)
+                    entry = encode_one(tex3ds, img, tex_path(name), limit, r["alpha"], sheet, want, name in islands)
                     entry.update({"src": path, "limit": limit, "want_alpha": r["alpha"], "overlay": overlay,
-                                  "sheet": sheet, "padded": PAD_VERSION if name in islands else 0})
+                                  "sheet": sheet, "padded": PAD_VERSION if name in islands else 0,
+                                  "enc": texencode.cache_key(want)})
                     cache[name] = entry
                     stats["encoded"] += 1
             except Exception as e:           # missing or unreadable: the cell draws it untextured
@@ -218,9 +223,10 @@ class TextureSet:
             wanted.add(name)
             limit = self.limit(r["px"])
             entry = cache.get(name)
+            want = texencode.wants_mips(self.mips, r["src"], False)
             try:
                 if not (entry and entry.get("src") == r["src"] and entry.get("limit") == limit
-                        and entry.get("whiten") == r["amount"] and entry.get("mips", True) == self.mips
+                        and entry.get("whiten") == r["amount"] and entry.get("enc") == texencode.cache_key(want)
                         and entry.get("overlay", "") == overlay and (not entry.get("alpha") or entry.get("clear_kept"))
                         and tex_path(name).exists()):
                     img = Image.open(io.BytesIO(self.arch.read(r["src"])))
@@ -228,9 +234,9 @@ class TextureSet:
                     tex3ds = tex3ds or tex3ds_path()
                     tex_path(name).parent.mkdir(parents=True, exist_ok=True)
                     entry = encode_one(tex3ds, whiten_image(img.convert("RGBA"), r["amount"]), tex_path(name), limit,
-                                       r["alpha"], mips=self.mips)
+                                       r["alpha"], mips=want)
                     entry.update({"src": r["src"], "limit": limit, "want_alpha": r["alpha"], "whiten": r["amount"],
-                                  "overlay": overlay})
+                                  "overlay": overlay, "enc": texencode.cache_key(want)})
                     cache[name] = entry
                     stats["encoded"] += 1
             except Exception as e:
@@ -246,12 +252,13 @@ class TextureSet:
             wanted.add(name)
             digest = hashlib.sha1(img.tobytes()).hexdigest()
             entry = cache.get(name)
-            if not (entry and entry.get("digest") == digest and entry.get("mips", True) == self.mips
+            want = texencode.wants_mips(self.mips, name, False)
+            if not (entry and entry.get("digest") == digest and entry.get("enc") == texencode.cache_key(want)
                     and (not entry.get("alpha") or entry.get("clear_kept")) and tex_path(name).exists()):
                 tex3ds = tex3ds or tex3ds_path()
                 tex_path(name).parent.mkdir(parents=True, exist_ok=True)
-                entry = encode_one(tex3ds, img, tex_path(name), max(img.size), True, mips=self.mips)
-                entry.update({"src": "generated", "digest": digest})
+                entry = encode_one(tex3ds, img, tex_path(name), max(img.size), True, mips=want)
+                entry.update({"src": "generated", "digest": digest, "enc": texencode.cache_key(want)})
                 cache[name] = entry
                 stats["encoded"] += 1
             stats["count"] += 1
@@ -289,7 +296,8 @@ def whiten_image(img, amount):
 
 def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True, padded=False):
     """A sheet (is_sheet) is capped on its short side, the long side up to MAX_SIDE: taken on the long side, an Old
-    3DS's 128 left each of the eight pictures of a 256 x 2048 sheet 16 texels across."""
+    3DS's 128 left each of the eight pictures of a 256 x 2048 sheet 16 texels across. mips: smaller copies wanted
+    (texencode.wants_mips); a texture under texencode.MIN_MIP_SIDE on a side gets none all the same."""
     w, h = img.size
     pot = lambda v: 1 << max(3, round(math.log2(max(v, 1))))
     sw, sh = pot(w), pot(h)
@@ -321,8 +329,9 @@ def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True, padd
     with tempfile.TemporaryDirectory() as tmp:
         png = Path(tmp) / "in.png"
         img.save(png)
-        # (an Old 3DS draws every world texture at full size, never its smaller copies: its data carries none, a third less)
-        cmd = [tex3ds, "-f", "etc1a4" if has_alpha else "etc1", *(["-m", "triangle"] if mips else []), "-o", str(out), str(png)]
+        mips = mips and texencode.mip_side_ok(img.size[0], img.size[1])
+        cmd = [tex3ds, "-f", "etc1a4" if has_alpha else "etc1", *(["-m", texencode.mip_filter(sheet)] if mips else []),
+               "-o", str(out), str(png)]
         # tex3ds can fail under memory pressure and leave a cut-short file behind, which the game then fails to read
         # (it shipped in a build as a 4 KB stub): once more, and never a partial file on disk
         for attempt in (1, 2):
@@ -333,4 +342,4 @@ def encode_one(tex3ds, img, out, limit, want_alpha, sheet=False, mips=True, padd
                 Path(out).unlink(missing_ok=True)
                 if attempt == 2:
                     raise
-    return {"size": [tw, th], "source_pot": [sw, sh], "alpha": has_alpha, "mips": mips, "clear_kept": has_alpha}
+    return {"size": [tw, th], "source_pot": [sw, sh], "alpha": has_alpha, "mips": bool(mips), "clear_kept": has_alpha}

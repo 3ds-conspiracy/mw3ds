@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# console: new
+# A texture under 64 texels on a side keeps one level (tools/convert/texencode.py MIN_MIP_SIDE). The Redoran steps'
+# edge and trim are 128 x 32 strips: their three levels were each unlike the next, and the New 3DS showed a step's face
+# split between two of them, its ETC1 blocks shifted along the triangle's edge (Ald-ruhn; Fort Frostmoth's mouldings and
+# columns the same). At 2 KB they sit in the GPU's texture cache whole. A 256 x 256 wall keeps its six levels
+# Needs data converted after the change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-12488:55100:2560:0
+3 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:texlevels:tx_border_redoran_step_01:eq:1+EXPECT:texlevels:tx_redoran_barracks_trim:eq:1
+0.1 0 0 0 0 EXPECT:texlevels:tx_redoran_hut_00:eq:6
+1 0 0 0

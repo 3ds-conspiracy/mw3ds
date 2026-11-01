@@ -1,9 +1,10 @@
 # console: new
 # (not run as an Old 3DS: it checks the New 3DS keeps its mipmaps (the Old 3DS draws at full size))
 # The New 3DS keeps its textures' smaller copies (mipmaps) far off: only an Old 3DS, drawing from Project Atlas's
-# sheets, draws its world textures at full size (bug-o3ds-atlas-mips). Without them far ground shimmers
+# sheets, draws its world textures at full size (bug-o3ds-atlas-mips). Without them far ground shimmers. A level and a half
+# finer than the GPU's own pick (Options > Display, g_mipBiasTenths): the console showed a copy's ETC1 blocks on near walls
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-10300:-71300:200:0
 2 0 0 0 0 SHOT
-1 0 0 0 0 EXPECT:texlod:tx_:ge:0+EXPECT:texlod:tx_:le:0
+1 0 0 0 0 EXPECT:texlod:tx_:ge:-1.51+EXPECT:texlod:tx_:le:-1.49
 1 0 0 0

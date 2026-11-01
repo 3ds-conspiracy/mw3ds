@@ -192,23 +192,26 @@ void Session::drawOptions()
 			uiRect(14 + i * 29.2f, 88, 29.2f, 12, C2D_Color32(c, c, c, 255));
 		}
 		uiFrame(14, 88, 292, 12);
-		// Auto gamma: what this console reads the light with
+		// Auto gamma: what this console reads the light with (on: the light read now)
 		GammaSensor sensor = gammaSensor();
-		if (choice(106, "Auto gamma", sensor == SENSOR_NONE ? "No light sensor" : onOff(gammaAutoOn()), sensor != SENSOR_NONE))
+		std::string autoShown = sensor == SENSOR_NONE ? "No light sensor" : onOff(gammaAutoOn());
+		if (gammaAutoOn() && sensor != SENSOR_NONE)
+		{
+			snprintf(text, sizeof(text), "On (light x%.2f)", gammaLift());
+			autoShown = text;
+		}
+		if (choice(104, "Auto gamma", autoShown, sensor != SENSOR_NONE))
 		{
 			g_autoGamma = gammaAutoOn() ? 0 : 1;
 			notify(!gammaAutoOn() ? "Auto gamma off." : sensor == SENSOR_QTM
 				? "Auto gamma on: the picture lifts in bright light."
 				: "Auto gamma on: the inner camera checks the light at each loading screen.");
 		}
-		const char* how = sensor == SENSOR_QTM ? "Auto gamma checks the light every few seconds."
-			: sensor == SENSOR_CAMERA ? "Auto gamma uses the inner camera at loads."
-			: "No light sensor: Auto gamma stays off.";
 		// View distance (outdoors; OpenMW's 7168 at the most): Max, the console's longest whatever the speed; Min, its
 		// shortest; Mid halfway; Auto between them with the frame rate (a New 3DS from the longest, closing in when slow;
 		// an Old 3DS from the shortest, opening out while there is room). A tap goes Auto, Max, Mid, Min
 		static const char* kViewNames[4] = { "Min", "Auto", "Max", "Mid" };
-		if (choice(130, "View distance", kViewNames[viewMode]))
+		if (choice(126, "View distance", kViewNames[viewMode]))
 		{
 			viewMode = viewMode == VIEW_AUTO ? VIEW_MAX : viewMode == VIEW_MAX ? VIEW_MID : viewMode == VIEW_MID ? VIEW_MIN : VIEW_AUTO;
 			changed = true;
@@ -219,20 +222,25 @@ void Session::drawOptions()
 		}
 		// Depth buffer: 24-bit, 16-bit while 3D is on (half the depth traffic of two eyes), or 16-bit always. A tap cycles
 		static const char* kDepthNames[3] = { "24-bit", "16-bit in 3D", "16-bit" };
-		if (choice(154, "Depth buffer", kDepthNames[g_depthMode]))
+		if (choice(148, "Depth buffer", kDepthNames[g_depthMode]))
 		{
 			g_depthMode = (g_depthMode + 1) % 3;
 			changed = true;
 			notify(g_depthMode == DEPTH_24 ? "Depth buffer 24-bit." : g_depthMode == DEPTH_16_IN_3D
 				? "Depth buffer 16-bit while 3D is on: lighter frames in 3D." : "Depth buffer 16-bit: far surfaces may flicker.");
 		}
-		// (the rows close up so the two hint lines clear the buttons)
-		uiText(10, 180, 0.4f, col::textDim, how);
-		if (gammaAutoOn())
-			snprintf(text, sizeof(text), "Light now: x%.2f, gamma in use %.2f", gammaLift(), g);
+		// Texture detail: how far off the world's textures go over to their smaller copies (g_mipBiasTenths), 0.0 the
+		// GPU's own pick, -4.0 Off (the full picture at every distance; on an Old 3DS only the ground and the building
+		// sheets have copies to pick from). The bar moves every texture loaded, so the change shows on the top screen as
+		// it is made
+		int biasWas = g_mipBiasTenths;
+		if (g_mipBiasTenths <= kMipBiasMin)
+			snprintf(text, sizeof(text), "Off");
 		else
-			snprintf(text, sizeof(text), "Gamma 1.00 is Morrowind's own; higher helps in sun.");
-		uiText(10, 192, 0.4f, col::textDim, text);
+			snprintf(text, sizeof(text), "%.1f", g_mipBiasTenths / 10.0f);
+		bar(172, "Texture detail (mipmap bias)", text, g_mipBiasTenths, kMipBiasMin, kMipBiasMax, kMipBiasStep);
+		if (g_mipBiasTenths != biasWas)
+			texturesSetMipBias(w.textures);
 		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
 		closing = b == 1;
 		if (b == 0)
@@ -241,6 +249,8 @@ void Session::drawOptions()
 			g_autoGamma = -1;
 			viewMode = VIEW_AUTO;
 			g_depthMode = DEPTH_16_IN_3D;
+			g_mipBiasTenths = kMipBiasDefault;
+			texturesSetMipBias(w.textures);
 			changed = true;
 		}
 	}

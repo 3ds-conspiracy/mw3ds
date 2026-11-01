@@ -279,6 +279,7 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		else if (arg == "geaim") v = (float)g_lookSpeed;      // (the look speed: one bar since)
 		else if (arg == "inverty") v = g_invertY ? 1.0f : 0.0f;
 		else if (arg == "subtitles") v = g_subtitles ? 1.0f : 0.0f;
+		else if (arg == "mipbias") v = (float)g_mipBiasTenths;   // (Display's Texture detail, tenths of a level)
 		else if (arg == "stickzone") v = (float)g_stickZonePct;
 		else if (arg == "stylusspeed") v = (float)g_stylusSpeed;
 		else if (arg == "stylusbuttons") v = g_stylusButtons ? 1.0f : 0.0f;
@@ -598,6 +599,21 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 				int b = c.textures[i]->lodBias & 0x1FFF;
 				float bias = (b & 0x1000 ? b - 0x2000 : b) / 256.0f;
 				v = any ? fmaxf(v, bias) : bias;
+				any = true;
+			}
+		if (!any)
+			return false;
+	}
+	else if (what == "texlevels")   // <text>: the most levels (1: no smaller copies) of this cell's textures whose names have it
+	{
+		const Cell& c = w.here();
+		std::string want = lower(arg);
+		bool any = false;
+		for (size_t i = 0; i < c.textureNames.size(); i++)
+			if (i < c.textures.size() && c.textures[i] && lower(c.textureNames[i]).find(want) != std::string::npos)
+			{
+				float n = (float)(c.textures[i]->maxLevel + 1);
+				v = any ? fmaxf(v, n) : n;
 				any = true;
 			}
 		if (!any)

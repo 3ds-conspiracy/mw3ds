@@ -23,6 +23,7 @@ int g_stickZonePct = kStickZoneDefaultPct;
 bool g_invertY = false;
 bool g_subtitles = true;
 int g_depthMode = DEPTH_16_IN_3D;
+int g_mipBiasTenths = kMipBiasDefault;
 static int s_gyroSens = 100;      // gyro aim's sensitivity, kept while it is off
 
 void Session::loadSettings()
@@ -37,6 +38,7 @@ void Session::loadSettings()
 	{
 		g_gammaPct = 100;
 		g_autoGamma = 0;
+		g_mipBiasTenths = kMipBiasDefault;
 		g_lookSpeed = g_geTurnSpeed = g_stylusSpeed = 100;
 		g_stylusButtons = true;
 		g_stickZonePct = kStickZoneDefaultPct;
@@ -71,6 +73,8 @@ void Session::loadSettings()
 			g_gammaPct = std::max(kGammaMinPct, std::min(kGammaMaxPct, atoi(line + 6)));
 		else if (strncmp(line, "autogamma=on", 12) == 0) g_autoGamma = 1;
 		else if (strncmp(line, "autogamma=off", 13) == 0) g_autoGamma = 0;
+		else if (strncmp(line, "mipbias=", 8) == 0)
+			g_mipBiasTenths = std::max(kMipBiasMin, std::min(kMipBiasMax, atoi(line + 8)));
 		else if (strncmp(line, "stickzone=", 10) == 0)
 			g_stickZonePct = std::max(kStickZoneMinPct, std::min(kStickZoneMaxPct, atoi(line + 10)));
 		else if (strncmp(line, "lookspeed=", 10) == 0) g_lookSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 10)));
@@ -120,6 +124,7 @@ void Session::saveSettings()
 	fprintf(f, "stickzone=%d\n", g_stickZonePct);
 	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
 	fprintf(f, "depth=%s\n", g_depthMode == DEPTH_24 ? "24" : g_depthMode == DEPTH_16_IN_3D ? "16in3d" : "16");
+	fprintf(f, "mipbias=%d\n", g_mipBiasTenths);
 	fprintf(f, "view=%s\n", viewMode == VIEW_MIN ? "min" : viewMode == VIEW_MAX ? "max" : viewMode == VIEW_MID ? "mid" : "auto");
 	fprintf(f, "dynview=%s\n", viewMode == VIEW_AUTO ? "on" : "off");     // (for an older build reading the file)
 	fclose(f);

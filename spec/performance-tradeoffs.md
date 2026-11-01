@@ -137,11 +137,20 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   Creatures' pictures are the exception: 256 (a bear's one 512 sheet of fur, face, mouth and claws was a blur at
   128). One picture a kind of creature, a few kinds in view: about 65 KB more each. People, their clothes and the
   world stay at 128. (`texpad.py CREATURE_CAP`, `textures.py encode`)
-- **An Old 3DS draws every world texture at full size, never its smaller copies (mipmaps).** A sheet's smaller copies
-  blend its pictures into each other (Hlaalu's wall bleeds into the dark trim packed under it), and far walls and
-  walkways showed dark patches flickering in and out. Far ground shimmers a little more and reads more texture memory
-  a frame; the Old 3DS's GPU has the room (about 15 ms of its 50). The New 3DS keeps them: no sheets there.
-  (`ConsoleProfile::textureMips`, `mwrender/objects.cpp loadTexture`)
+- **An Old 3DS's data carries smaller copies (mipmaps) only for the ground and Project Atlas's sheets.** Far off
+  those cover most of the screen; drawn at full size every pixel read texels far apart, which cost frames. Everything
+  else stays one level: a third less memory, at a little more shimmer far off. The ground's and the sheets' copies
+  are under 100 KB of a town's textures. A sheet's copies are box-filtered inside each of its stacked pictures: made
+  from the whole sheet with the wider filter, Hlaalu's wall bled into the dark trim packed under it, far walls showing
+  dark patches. (`tools/convert/texencode.py`, `level.py --mips few`)
+- **No texture under 64 texels on a side has smaller copies** (both consoles). A strip's three levels (a step's edge,
+  a moulding, a column) were each unlike the next, and a face split between two of them showed its ETC1 blocks
+  shifted along the triangle's edge; at 2 to 4 KB a strip sits in the GPU's texture cache whole anyway.
+  (`texencode.py MIN_MIP_SIDE`)
+- **Textures draw a level and a half finer than the GPU's own pick** (Options > Display, Texture detail; -4 is Off,
+  the full picture at every distance). At its own pick the New 3DS showed the copies' ETC1 blocks as little squares on
+  near walls; finer costs GPU time (the player's measure: about 3 fps from the GPU's pick to Off) and shimmers a
+  little more far off. (`g_mipBiasTenths`, `mwrender/objects.cpp mipBiasLevels`)
 - **An Old 3DS leaves a neighbouring cell unloaded while under 5 MB of linear memory is left** (the distant land stands
   in until it comes). Its 22 MB ran dry with Seyda Neen's nine cells in: the actors, the cells' last batches (white
   walls), the item icons and a book's pages had none. Seyda Neen now holds six or seven of its nine cells.

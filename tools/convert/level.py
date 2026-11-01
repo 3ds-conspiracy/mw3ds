@@ -512,8 +512,10 @@ def main():
     faulthandler.enable()        # a native crash prints where it happened
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-tex", type=int, default=256, help="largest texture edge (texels)")
-    ap.add_argument("--no-mips", action="store_true",
-                    help="world textures without their smaller copies (an Old 3DS never draws them: a third less memory)")
+    ap.add_argument("--mips", choices=["all", "few", "none"], default="all",
+                    help="which textures carry smaller copies (texencode.py): all (a New 3DS), few (an Old 3DS: the "
+                         "ground and Project Atlas's sheets), none")
+    ap.add_argument("--no-mips", action="store_true", help="the same as --mips none")
     ap.add_argument("--towns", default=",".join(TOWNS),
                     help="comma-separated towns; the walkable land is the rectangle around them all")
     ap.add_argument("--interiors", choices=["all", "office", "none"], default="all",
@@ -543,7 +545,7 @@ def main():
     global START_CELL, OFFICE_CELL, TOWN
     START_CELL, OFFICE_CELL, TOWN = chargen_cells(db)
 
-    textures = TextureSet(arch, args.max_tex, args.force, mips=not args.no_mips)
+    textures = TextureSet(arch, args.max_tex, args.force, mips="none" if args.no_mips else args.mips)
     unshard_cells()              # the converter (and its cache) works on cells/<file>.*
     conv = Converter(db, arch, textures)
     towns = [t.strip() for t in args.towns.split(",") if t.strip()]

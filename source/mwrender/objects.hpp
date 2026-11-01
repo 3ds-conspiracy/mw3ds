@@ -169,5 +169,9 @@ struct Cell
 };
 
 // Loads <dataDir>/cells/<cellFile> and the textures it references.
+// The mipmap bias the world's textures draw with: g_mipBiasTenths in levels; -16 (the full picture at every distance)
+// at Off. texturesSetMipBias puts it on every texture loaded (Options > Display, as the bar moves)
+float mipBiasLevels();
+void texturesSetMipBias(TextureCache& cache);
 bool cellLoad(Cell& cell, const char* dataDir, const char* cellFile, TextureCache& cache);
 void cellFree(Cell& cell, TextureCache& cache);
