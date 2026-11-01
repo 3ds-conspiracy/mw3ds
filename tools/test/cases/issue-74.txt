@@ -1,0 +1,27 @@
+# start: Seyda Neen
+# issue-74: a dark interior's local map was almost black, and its fog of war cleared at the spot mirrored across the
+# map's middle. Arriving in Matus-Akin Egg Mine, the player's arrow is at the bottom of the map by the door: the floor
+# round it must show, lit from above as OpenMW's map camera lights it (0.9 added to the baked light), and out of the fog
+# (the fog texture's first row in memory is its top). Before, the box round the arrow was near black on the HUD's map
+# and the map screen, the revealed patch at the top of the map instead
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GOTO:Matus-Akin_Egg_Mine
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Matus-Akin_Egg_Mine
+0.5 0 0 0 0 SHOT+TOUCH:100:140
+0.5 0 0 0 0 SHOT+TOUCH:100:140
+0.3 0 0 0 0 EXPECT:shotlumabox:1,261,100,32,32:ge:14
+0.3 0 0 0 0 SCREEN:map
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:shotlumabox:2,183,135,32,32:ge:14
+0.3 0 0 0 0 B
+# A lit interior's map (the Cornerclub's lanterns) worked before: it still draws, and the added light doesn't wash it out
+0.3 0 0 0 0 GOTO:Balmora,_South_Wall_Cornerclub
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_South_Wall_Cornerclub
+0.3 0 0 0 0 SCREEN:map
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:shotlumabox:3,0,22,320,184:ge:15
+0.3 0 0 0 0 EXPECT:shotlumabox:3,0,22,320,184:le:60

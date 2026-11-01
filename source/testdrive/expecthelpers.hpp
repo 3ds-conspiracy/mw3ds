@@ -62,3 +62,36 @@ static inline float shotLuma(int n, int kind = 0)
 	}
 	return v;
 }
+
+// How bright a box (x, y, w x h, bottom-screen pixels 0..319 x 0..239) of step shot n's bottom screen is, 0..255 (its
+// pixels' mean); -1: no such shot or the box off the screen
+static inline float shotLumaBox(int n, int x, int y, int bw, int bh)
+{
+	if (x < 0 || y < 0 || bw <= 0 || bh <= 0 || x + bw > 320 || y + bh > 240)
+		return -1.0f;
+	char path[64];
+	snprintf(path, sizeof(path), "sdmc:/3ds/mw3ds/shot_step_%02d.bmp", n);
+	float v = -1.0f;
+	if (FILE* f = fopen(path, "rb"))
+	{
+		// 400 x 480, 24-bit, rows bottom first: the bottom screen is the first 240 rows, 40 pixels in from each side
+		const size_t row = 400 * 3;
+		u8* line = (u8*)malloc(row);
+		double sum = 0.0;
+		bool ok = line != nullptr;
+		for (int yy = y; ok && yy < y + bh; yy++)
+		{
+			ok = fseek(f, 54 + (long)((239 - yy) * row), SEEK_SET) == 0 && fread(line, row, 1, f) == 1;
+			for (int xx = x; ok && xx < x + bw; xx++)
+			{
+				const u8* p = line + (40 + xx) * 3;
+				sum += (p[0] + p[1] + p[2]) / 3.0;
+			}
+		}
+		if (ok)
+			v = (float)(sum / (bw * bh));
+		free(line);
+		fclose(f);
+	}
+	return v;
+}

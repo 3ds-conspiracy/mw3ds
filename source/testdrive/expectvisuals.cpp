@@ -376,6 +376,11 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		v = batchWritesDepth((u8)atoi(arg.c_str())) ? 1.0f : 0.0f;
 	else if (what == "shotluma")    // <n>: how bright step shot n's top screen is, 0..255 (its pixels' mean; -1: no such shot)
 		v = shotLuma(atoi(arg.c_str()));
+	else if (what == "shotlumabox") // <n>,<x>,<y>,<w>,<h>: how bright that box of step shot n's bottom screen is, 0..255
+	{
+		int n = -1, x = 0, y = 0, bw = 0, bh = 0;
+		v = sscanf(arg.c_str(), "%d,%d,%d,%d,%d", &n, &x, &y, &bw, &bh) == 5 ? shotLumaBox(n, x, y, bw, bh) : -1.0f;
+	}
 	else if (what == "shotspread")  // <n>: how far step shot n's top screen's pixels stray from its mean brightness (-1: none)
 		v = shotLuma(atoi(arg.c_str()), 1);
 	else if (what == "shotdark")    // <n>: the percentage of step shot n's top screen darker than 0.6 x its mean (-1: none)
