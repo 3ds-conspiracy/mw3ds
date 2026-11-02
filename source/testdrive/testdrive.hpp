@@ -147,6 +147,39 @@ struct TestDriver
 
 	// Starts an action token (true: it blocks the step until done); EXPECT / GOD / EQUIP happen at once
 	bool start(Session& s, const std::string& token);
+	// FIGHT:<id>[:unseen]: KILL, played as a player fights: when the way in stalls, a blow that would land from where we
+	// stand is struck there, not first walked in to KILL's 90 (Severa Magia in Ald Sotha, running in place against a pillar
+	// 102 away, was never reached and never struck). Until then the same as KILL, so the fight and where the body falls
+	// are KILL's. fightToken: the KILL it started; the rule holds while that one runs
+	std::string fightToken;
+	bool startFight(Session& s, const std::string& token);
+	bool blowLandsFromHere(Session& s, int ref);
+	// SKYTO:<FLYTO's arguments>: FLYTO, set off as a player would: from under an overhang outdoors (over us or within 150,
+	// where a landing still drifts), walked out to the nearest open sky first (a walk goes round the rock between, where
+	// FLYTO's sideways stretches stopped against it: a ledge high on Red Mountain, the open sky found 120 off and never
+	// reached), then the flight
+	bool startSky(Session& s, const std::string& token);
+	// OPEN:<door>: ACTIVATE on a door, meaning open it: nothing when it is open already, and the walk there leaves it for
+	// the press at it. ACTIVATE opened it on the way (with its key) and the press then shut it again, and the next step
+	// took the shut door for one swinging open into us and backed off from it (Falura Llervu's slave pod at Tel Aruhn).
+	// openToken: the ACTIVATE it started; the rule holds while that one runs
+	std::string openToken;
+	bool startOpen(Session& s, const std::string& token);
+	// BRING:<npc>: one being escorted brought up to where we stand, as a player goes back for a follower who stopped short:
+	// nothing when they are within 250; else walked over to them and back here with them as the escort (the walk waits for
+	// them and goes back for them). Sinnammu Mirpal stopped 405 short of the spot in Ald Daedroth's Inner Shrine, her script
+	// waiting for her within 400 of Sheogorath's shrine
+	bool startBring(Session& s, const std::string& token);
+	// WAYTO:<WALKTO's arguments>: WALKTO, with the fly item's float up from below reaching 1200 off, not 400, as a player
+	// levitates out of a drop the way on runs above (the kit's speed carried us off Kogoruhn's waterway walk into the
+	// channel 255 below, 572 out from the next spot, and the walk gave up). Not with someone escorted: they can't follow a
+	// float (Sinnammu Mirpal was left behind on the Ashlands' ridges), unless we are in the water: out onto the bank, as a
+	// player levitates from it while they walk round (off Tel Aruhn's shore path into the sea with Falura Llervu, the bank
+	// 127 up and no walk out). A rise under 150 is stepped or jumped first, floated
+	// only when that fails (the fly item lifted us 87 up and on over the Ashkhan's yurt, onto its roof, its door below);
+	// arrived floating, the float ends there. wayOn: that walk is the one running
+	bool wayOn = false;
+	bool startWay(Session& s, const std::string& token);
 	// While busy: steers the player (the step's input is replaced); false once done
 	bool update(Session& s, PlayerInput& in, u32& down, float dt);
 	bool busy() const { return kind != NONE; }

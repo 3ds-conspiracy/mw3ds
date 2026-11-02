@@ -1429,7 +1429,7 @@
 0.5 0 0 0
 # (seeded in the rest itself: the date's Random 100 is rolled at its day change, and with the seed further back
 # any change upstream moved the rolls before it)
-20 0 0 0 0 SEED:3+SLEEP:24
+20 0 0 0 0 SEED:3/4+SLEEP:24
 20 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:Mournhold,_Godsreach
 10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach

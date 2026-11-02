@@ -35,6 +35,24 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		s.testPlaceAt(a[1], at, atan2f(w.player.feet[0] - at[0], w.player.feet[1] - at[1]));
 		return true;
 	}
+	// SETPOS:<id>:x:y:z: that actor, in its own cell, stood exactly there, held at that height by whatever its feet are on,
+	// as a save puts it back (not set down on the floor under its middle, as PLACEAT and Position do): a spot only a fight
+	// or a fall leaves one in, on an edge
+	if (verb == "SETPOS" && a.size() >= 5)
+	{
+		int ri = findRef(s, a[1]);
+		if (ri < 0 || w.refs[ri].actor < 0 || !w.active(ri))
+			return fail(a[1] + " not loaded");
+		Ref& r = w.refs[ri];
+		for (int k = 0; k < 3; k++)
+			r.pos[k] = (float)atof(a[2 + k].c_str());
+		r.fitBox();
+		r.moved = true;
+		r.path.clear();
+		r.repathTimer = 0.0f;           // (its way from there planned at once, as after a load)
+		w.syncActor(ri);
+		return true;
+	}
 	// VFX:<static>:x:y:z: that spell visual played there on its own (side-by-side shots against OpenMW's world.vfx)
 	if (verb == "VFX" && a.size() >= 5)
 	{

@@ -158,9 +158,9 @@ bool TestDriver::playerToken(const std::string& tok)
 		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "ZR", "FRAMECAP", "GYRO", "CONTROLS", "GYROAIM", "TAP", "DRAG", "TOUCH", "STICKDOWN",
 		// (SEED: the dice made repeatable from there, nothing given or set: a long run seeds a section whose outcome is a
 		// script's roll, so a change before it doesn't flip it)
-		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT", "SEED",
+		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT", "SEED", "RANDSEED",
 		"EXPECT", "SNAP", "CHECK", "PROBE",
-		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "STRIKE", "FACE", "SNEAK",
+		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "FIGHT", "SKYTO", "OPEN", "BRING", "WAYTO", "STRIKE", "FACE", "SNEAK",
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "INVSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE", "MAKEPICK", "MAKETARGET",
 		"SHARE", "SHAREPUT", "SHARETAKE", "SHAREDONE", "MAPNOTE",
 		"ENCHANTAT", "ENCHANT", "ENCHITEM", "ENCHGEM", "ENCHTYPE", "ADDEFFECT", "CONFIRM", "TYPE", "LEVELUP",
@@ -194,8 +194,125 @@ void TestDriver::fail(const char* why)
 	kind = NONE;
 }
 
+bool TestDriver::startFight(Session& s, const std::string& token)
+{
+	std::string kill = "KILL" + token.substr(5);
+	bool started = start(s, kill);
+	fightToken = started ? retryToken : "";
+	if (started)
+		logf("drive: FIGHT %s: struck from wherever a blow lands", id.c_str());
+	return started;
+}
+
+// The swing from here would strike it (the game's own pick: the nearest living actor in the arc, within the weapon's
+// reach from both bodies' edges), and it is still alive
+bool TestDriver::blowLandsFromHere(Session& s, int ref)
+{
+	return ref >= 0 && !s.w.refs[ref].dead && s.swingTarget() == ref;
+}
+
+bool TestDriver::startSky(Session& s, const std::string& token)
+{
+	std::string fly = "FLYTO" + token.substr(5);
+	World& w = s.w;
+	Player& p = w.player;
+	// a ceiling over us, or over the ground round about: still coming down from the last flight, the landing drifts a
+	// hundred units on, under the overhang where the sky straight up was open when the step began
+	bool ceiling = false;
+	for (int k = 0; k <= 8 && !ceiling; k++)
+	{
+		float ox = k == 0 ? 0.0f : 150.0f * sinf(k * 0.7854f), oy = k == 0 ? 0.0f : 150.0f * cosf(k * 0.7854f);
+		float a[3] = { p.feet[0] + ox, p.feet[1] + oy, playerEyeZ(p) }, b[3] = { a[0], a[1], p.feet[2] + 3000.0f };
+		ceiling = !w.lineOfSight(a, b, false);
+	}
+	float spot[2];
+	if (w.current >= 0 && !w.cells[w.current].interior && ceiling && spotBeside(s, p.feet, p.feet[2] + 3000.0f, spot))
+	{
+		char walk[96];
+		snprintf(walk, sizeof(walk), "WALKTO:@%.0f,%.0f,%.0f", spot[0], spot[1], p.feet[2]);
+		logf("drive: SKYTO: a ceiling over us at %.0f %.0f %.0f: walking out to the open sky at %.0f %.0f first", p.feet[0],
+			p.feet[1], p.feet[2], spot[0], spot[1]);
+		if (start(s, walk))
+		{
+			thenDo = fly;
+			return true;
+		}
+	}
+	return start(s, fly);
+}
+
+bool TestDriver::startOpen(Session& s, const std::string& token)
+{
+	std::vector<std::string> a = split(token);
+	int d = a.size() >= 2 ? findTarget(s, "ACTIVATE", a[1]) : -1;
+	if (d >= 0)
+	{
+		const Ref& r = s.w.refs[d];
+		if (r.recType == REC_DOOR && !r.hasDest && (r.doorTarget != 0.0f || r.doorAngle != 0.0f))
+		{
+			logf("drive: OPEN %s: open already", a[1].c_str());
+			openToken.clear();
+			return false;
+		}
+	}
+	bool started = start(s, "ACTIVATE" + token.substr(4));
+	openToken = started ? retryToken : "";
+	return started;
+}
+
+bool TestDriver::startBring(Session& s, const std::string& token)
+{
+	std::vector<std::string> a = split(token);
+	if (a.size() < 2)
+		return false;
+	World& w = s.w;
+	int n = findTarget(s, "ACTIVATE", a[1]);
+	if (n < 0 || w.refs[n].dead)
+	{
+		logf("drive: BRING %s: not here", a[1].c_str());
+		return false;
+	}
+	float d = w.distanceToPlayer(n);
+	if (d <= 250.0f)
+	{
+		logf("drive: BRING %s: with us already (%.0f away)", a[1].c_str(), d);
+		return false;
+	}
+	const Player& p = w.player;
+	const Ref& r = w.refs[n];
+	// (up to them as a walk to a person goes, within 120: where they stand is often against a counter or a wall, and a walk
+	// to a spot wants us within 30 of it; Huleeya at Jobasha's, held 50 off hers)
+	std::string there = "WALKTO:" + a[1];
+	char back[96];
+	snprintf(back, sizeof(back), "WALKTO:@%.0f,%.0f,%.0f", p.feet[0], p.feet[1], p.feet[2]);
+	logf("drive: BRING %s: %.0f away, going back for them", a[1].c_str(), d);
+	escort = a[1];
+	if (!start(s, there))
+		return false;
+	thenDo = back;
+	return true;
+}
+
+bool TestDriver::startWay(Session& s, const std::string& token)
+{
+	bool started = start(s, "WALKTO" + token.substr(5));
+	wayOn = started && kind == WALK;
+	return started;
+}
+
 bool TestDriver::start(Session& s, const std::string& token)
 {
+	wayOn = false;
+	if (token.compare(0, 6, "WAYTO:") == 0)
+		return startWay(s, token);
+	if (token.compare(0, 6, "BRING:") == 0)
+		return startBring(s, token);
+	if (token.compare(0, 5, "OPEN:") == 0)
+		return startOpen(s, token);
+	if (token.compare(0, 6, "FIGHT:") == 0)
+		return startFight(s, token);
+	if (token.compare(0, 6, "SKYTO:") == 0)
+		return startSky(s, token);
 	if (!retrying)
 	{
 		viewTries = talkTries = takeTries = 0;
@@ -644,6 +761,10 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	float dx = tx - p.feet[0], dy = ty - p.feet[1];
 	float dist = sqrtf(dx * dx + dy * dy);
 	float want = kind == WALK ? (pointGoal ? 30.0f : 120.0f) : kind == KILL ? 90.0f : 100.0f;
+	// (FIGHT: once the way in has stalled, a blow that lands from here is struck from here)
+	if (kind == KILL && !fightToken.empty() && fightToken == retryToken && dist > want && (stuckTries > 0 || progressTimer >= 1.5f)
+		&& blowLandsFromHere(s, ref))
+		dist = want;
 	// a creature's own box keeps us off it further than a person's (a mudcrab's 89 to 129 from its middle, by the side
 	// met): pressed against it (it is what pushed us back this frame), there; as far off as its half length is over a
 	// person's at most. (Counted there at that distance from any side, the Ritual of Water's horker was never walked up to:
@@ -777,6 +898,13 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	{
 		logf("drive: reached %s in %.1f s", id.c_str(), elapsed);
 		kind = NONE;
+		// (WAYTO: there floating up a rise, the float ends there, as a player lands before what comes next; the 8 s float
+		// went on over the yurt's door at Urshilaku, and the press from the air missed it)
+		if (wayOn && floatWalk && floatUntil >= 0.0f)
+		{
+			logf("drive: WAYTO: there, floating: float off");
+			floatUntil = -1.0f;
+		}
 		if (!thenDo.empty())
 		{
 			std::string t = thenDo;

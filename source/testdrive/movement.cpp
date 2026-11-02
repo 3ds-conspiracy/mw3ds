@@ -150,7 +150,20 @@ bool TestDriver::fightInWay(Session& s, PlayerInput& in, float dt)
 		if (!s.kitV2())
 			return false;
 		int t = s.swingTarget();
-		return t >= 0 && t != fightRef && w.refs[t].ai != AI_COMBAT;
+		if (t >= 0 && t != fightRef && w.refs[t].ai != AI_COMBAT)
+			return true;
+		// (and one following us close in front of us, a step from the arc: the blow lands at the end of the swing, and
+		// Sinnammu Mirpal, fighting the slaughterfish beside the player in the water, swam into it after it was let go)
+		for (int i : w.loadedActors)
+		{
+			const Ref& o = w.refs[i];
+			if (i == fightRef || o.dead || !w.followsPlayer(i))
+				continue;
+			float ox = o.pos[0] - p.feet[0], oy = o.pos[1] - p.feet[1], oz = o.pos[2] - p.feet[2];
+			if (ox * ox + oy * oy + oz * oz < 220.0f * 220.0f && fabsf(remainderf(atan2f(ox, oy) - p.yaw, 6.2831853f)) < 0.9f)
+				return true;
+		}
+		return false;
 	};
 	bool fightOver = f.dead || !f.visible() || (!fightHelp && (f.ai != AI_COMBAT || f.duelFoe >= 0)) || fd > 600.0f || fightTimer > 20.0f;
 	if (fightOver && fightHold && friendInReach())
@@ -877,6 +890,9 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 				// (v2 kit: not one open already, or opening: a press shut it again, the East Empire Company's back room)
 				if (s.kitV2() && (d.doorTarget != 0.0f || d.doorAngle != 0.0f))
 					continue;
+				// (OPEN: the door asked for is opened by the press at it, not on the way as well: the two shut it again)
+				if (!openToken.empty() && openToken == retryToken && i == ref)
+					continue;
 				float ex = d.pos[0] - p.feet[0], ey = d.pos[1] - p.feet[1];
 				if (ex * ex + ey * ey < bd && fabsf(d.pos[2] - p.feet[2]) < 200.0f)
 				{
@@ -950,7 +966,8 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 			}
 			// v2 kit: held up right below it (a door a floor up, a ledge, within 400): float up on the fly item a while, as a player with it
 			// would; the walk rises to a target above while levitating
-			if (s.kitV2() && dz > 60.0f && dist < 400.0f && floatUntil < 0.0f && s.w.itemCount("uber_fly") > 0 && p.levitate <= 0.0f)
+			if (s.kitV2() && dz > 60.0f && dist < (wayOn && (escort.empty() || p.swimming) ? 1200.0f : 400.0f) && floatUntil < 0.0f && s.w.itemCount("uber_fly") > 0 && p.levitate <= 0.0f
+				&& !(wayOn && dz < 150.0f && stuckTries == 0))
 			{
 				logf("drive: stuck below %s (%.0f up): floating up", id.c_str(), dz);
 				floatUntil = s.w.time + 8.0f;

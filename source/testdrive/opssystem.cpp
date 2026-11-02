@@ -198,6 +198,15 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 			logf("test: seed %s (%s 3DS)", pick.c_str(), g_profile.slowCpu ? "Old" : "New");
 		return true;
 	}
+	// RANDSEED: the random rolls follow a seed taken from the clock, another each run, so a case is played against dice it
+	// wasn't written for; the seed is logged ("test: random seed <n>"), and SEED:<n> plays that run again
+	if (verb == "RANDSEED")
+	{
+		unsigned seed = (unsigned)(svcGetSystemTick() ^ (svcGetSystemTick() >> 32)) % 1000000u;
+		srand(seed);
+		logf("test: random seed %u", seed);
+		return true;
+	}
 	// GIVEPOTION:<id>[:<n>]: the player carries n more   USE:<id>: drinks / eats one (each drink is its own application)
 	if ((verb == "GIVEPOTION" || verb == "USE") && a.size() >= 2)
 	{
