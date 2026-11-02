@@ -657,8 +657,9 @@
 # (the door is in a cave mouth on the sea floor: swum into from the south, where the gorge lets the player out)
 60 0 0 0 0 WALKTO:@-219473,217242,-1894
 0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
-# (the timed pushes in this file are 0.8 of what they were, as the player covers 1.25 times the ground in them)
-0.32 0 1 0
+# (the timed pushes in this file are 0.8 of what they were, as the player covers 1.25 times the ground in them; this one
+# 0.23, the middle of the 0.18 to 0.28 that reach the door since people swim by their race's weight: 0.32 went over it)
+0.23 0 1 0
 0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
 0.5 0 0 0 0 A
 10 0 0 0 0 UNTIL:cell:Solstheim,_Stahlman's_Gorge
@@ -1165,12 +1166,18 @@
 0.5 0 0 0 0 B
 0.5 0 0 0 0 B
 # (the dice seeded: how Krish, following, fares up the caverns' ramps is chaotic, and one seed in three of those tried left him
-# held up on one for good; 4 got him up on both profiles before people ran by their race's weight; 1 does now, checked on
-# the New profile)
-0.3 0 0 0 0 SEED:1
-# (the door up opens only with Krish at hand: near it, a wait for him, who walks)
+# held up on one for good; 4 got him up on both profiles before people ran by their race's weight; 1 does now on the New
+# profile, 2 on the Old: 2 and 5 of 2 to 5 tried)
+0.3 0 0 0 0 SEED:1/2
+# (the door up opens only with Krish at hand: near it, a wait for him, who walks; first a wait for him to start, as he
+# does only on seeing the player within 640: walked on at once, the player was 780 off by then, and the going back for
+# him stopped short of it)
+5 0 0 0 0 UNTIL:following:bm_riekling_krish_uniqu
 0.3 0 0 0 0 ESCORT:bm_riekling_krish_uniqu
 300 0 0 0 0 WALKTO:@400,-32,-43
+# (and brought up if he stopped short on a ramp, as a player goes back for him: on the Old profile how he fares up them
+# shifts with every build, the seed alone holding for none)
+300 0 0 0 0 BRING:bm_riekling_krish_uniqu
 0.3 0 0 0 0 ESCORT:-
 10 0 0 0
 0.1 0 0 0 0 EXPECT:reflocal:bm_riekling_krish_uniqu,opendoor:eq:1+EXPECT:refdist:bm_riekling_krish_uniqu:lt:500

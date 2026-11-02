@@ -712,7 +712,7 @@
 10 0 0 0 0 UNTIL:cell:Nchurdamz,_Interior
 0.5 0 0 0
 # (the chest is trapped: the first touch springs the trap, the second opens it)
-60 0 0 0 0 ACTIVATE:dwrv_chest10
+120 0 0 0 0 ACTIVATE:dwrv_chest10
 1 0 0 0
 120 0 0 0 0 LOOT:dwrv_chest10:key_fg_nchur
 0.1 0 0 0 0 EXPECT:item:key_fg_nchur:ge:1
