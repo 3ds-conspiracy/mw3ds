@@ -37,6 +37,31 @@ static bool bodyWayClear(World& w, const float pos[3], float dx, float dy, float
 	return true;
 }
 
+// ... and indoors, stuck again on the one spot, a floor along it to walk on: six steps of 10, none down more than a stair
+// (npcStep refuses a drop over 48 indoors). Varvur Sarethi, on the edge beside the foot of Venim Manor's stairs, took the open side of the stairs
+// for an opening, the floor 85 below, every step there refused, and never tried the stairs up beside him. (Not in the
+// water, nor where no floor is found: npcStep has the last word there)
+static bool wayHasFloor(World& w, const float pos[3], float dx, float dy, float swimZ)
+{
+	float z = pos[2];
+	for (int k = 1; k <= 6; k++)
+	{
+		float x = pos[0] + dx * 10.0f * k, y = pos[1] + dy * 10.0f * k, fz = -1e9f;
+		for (LoadedCell* l : w.loaded)
+		{
+			float f;
+			if (collisionFootFloor(l->cell.collision, x, y, kActorFootReach, z + 40.0f, z - 300.0f, &f) && f > fz)
+				fz = f;
+		}
+		if (fz < -1e8f || fz <= swimZ + 0.5f)
+			return true;
+		if (fz < z - 48.0f)
+			return false;
+		z = fz;
+	}
+	return true;
+}
+
 // A shut door an actor walked into (npcStep), as OpenMW's AiPackage::openDoors: one going somewhere opens it (a wanderer
 // opens none), not a load door, when it is neither locked nor trapped; a locked or trapped one only with its key carried
 // (Door::activate by an actor with the key unlocks it, and the key disarms the trap, as the player's does: lockGate).
@@ -201,12 +226,14 @@ bool Session::npcMoveTo(int ri, const float target[3], float speed, float dt, bo
 			// none), the opening nearest the goal a body fits through, keeping to the side of the last one: a
 			// follower walked into the gap between two rock pillars near Ald'ruhn again and again
 			bool found = false;
+			bool indoors = w.cells[w.placeOf(ri)].interior;
+			float swimZ = cell->hasWater() && r.recType == REC_NPC_ ? cell->waterZ - 95.0f : -1e9f;     // (npcStep's swimming depth)
 			for (int k = 1 + r.evadeTries; k <= 6 && !found; k++)
 				for (int s = 0; s < 2 && !found; s++)
 				{
 					float side = s == 0 ? r.evadeSide : -r.evadeSide, c = cosf(k * 0.45f), sn = side * sinf(k * 0.45f);
 					float wx = dx * c + dy * sn, wy = dy * c - dx * sn;     // turned toward that side
-					if (bodyWayClear(w, r.pos, wx, wy, 200.0f))
+					if (bodyWayClear(w, r.pos, wx, wy, 200.0f) && (!indoors || r.evadeTries == 0 || wayHasFloor(w, r.pos, wx, wy, swimZ)))
 					{
 						r.evadeWay[0] = wx;
 						r.evadeWay[1] = wy;

@@ -1,0 +1,21 @@
+# A follower stood on a stair's edge, the floor a drop over a stair's height below on every side, gets off it. Our actors
+# step down no more than a stair (48) indoors (the prison ship's guard walked into a stairwell opening), and a follower
+# may go down further only to the player's floor or its way's: up on Venim Manor's landing they are both above. Varvur
+# Sarethi, knocked about in the fight with Malsa Ules on the landing (uber main quest, played on other dice), came down the
+# stairs onto the edge beside their foot, 85 over the floor, and ran in place there for good. OpenMW's actors walk off a
+# ledge: held up again and again on the one spot, ours do too
+3 0 0 0 0 MSG
+# (the way to Varvur is through the door locked 50: its key opens it)
+0.3 0 0 0 0 GOD+GIVE:key_venimmanor+GOTO:Ald-ruhn,_Venim_Manor_Right_Wing
+2 0 0 0
+60 0 0 0 0 WALKTO:varvur%sarethi
+1 0 0 0 0 CON:"varvur%sarethi"->aifollow%player%0%0%0%0
+1 0 0 0
+120 0 0 0 0 WALKTO:@-199,562,3
+# (where the fight left him: on the stairs' edge, the room's floor 85 below)
+0.5 0 0 0 0 SETPOS:varvur%sarethi:871.28:319.34:-298.78
+0.5 0 0 0 0 EXPECT:refz:varvur%sarethi:gt:-310
+1 0 0 0 0 SHOT
+40 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:refdist:varvur%sarethi:le:300
