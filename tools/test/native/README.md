@@ -129,7 +129,8 @@ Known differences:
   Azahar draws it white.
 - The 3DS system font is not on the PC: before the Morrowind font is loaded (title, first loading screen) text shows
   as grey blocks. The Morrowind font is drawn exactly.
-- No mipmaps (distant textures shimmer more); stereo shows the left eye only.
+- Mipmaps only with `MW3DS_NATIVE_MIPS=1`: one level a triangle by its longest texel step (mipLevel), a guess at the
+  console's rule not yet matched to its shots. Stereo shows the left eye only.
 
 ## What to trust
 

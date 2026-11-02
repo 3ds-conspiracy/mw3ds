@@ -229,18 +229,10 @@ void Session::drawOptions()
 			notify(g_depthMode == DEPTH_24 ? "Depth buffer 24-bit." : g_depthMode == DEPTH_16_IN_3D
 				? "Depth buffer 16-bit while 3D is on: lighter frames in 3D." : "Depth buffer 16-bit: far surfaces may flicker.");
 		}
-		// Texture detail: how far off the world's textures go over to their smaller copies (g_mipBiasTenths), 0.0 the
-		// GPU's own pick, -4.0 Off (the full picture at every distance; on an Old 3DS only the ground and the building
-		// sheets have copies to pick from). The bar moves every texture loaded, so the change shows on the top screen as
-		// it is made
-		int biasWas = g_mipBiasTenths;
-		if (g_mipBiasTenths <= kMipBiasMin)
-			snprintf(text, sizeof(text), "Off");
-		else
-			snprintf(text, sizeof(text), "%.1f", g_mipBiasTenths / 10.0f);
-		bar(172, "Texture detail (mipmap bias)", text, g_mipBiasTenths, kMipBiasMin, kMipBiasMax, kMipBiasStep);
-		if (g_mipBiasTenths != biasWas)
-			texturesSetMipBias(w.textures);
+		// (the two hint lines under the rows: what Auto gamma reads the light with, and what gamma 1.00 is)
+		uiText(10, 180, 0.4f, col::textDim, sensor == SENSOR_QTM ? "Auto gamma checks the light every few seconds."
+			: sensor == SENSOR_CAMERA ? "Auto gamma uses the inner camera at loads." : "No light sensor: Auto gamma stays off.");
+		uiText(10, 192, 0.4f, col::textDim, "Gamma 1.00 is Morrowind's own; higher helps in sun.");
 		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
 		closing = b == 1;
 		if (b == 0)
@@ -249,8 +241,6 @@ void Session::drawOptions()
 			g_autoGamma = -1;
 			viewMode = VIEW_AUTO;
 			g_depthMode = DEPTH_16_IN_3D;
-			g_mipBiasTenths = kMipBiasDefault;
-			texturesSetMipBias(w.textures);
 			changed = true;
 		}
 	}

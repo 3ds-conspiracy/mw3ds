@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: bloodmoon
+# console: new
+# Textures named in tools/convert/texencode.py NO_MIPS keep one level whatever their size. Their smaller copies showed
+# on the New 3DS as triangles, one triangle of a face drawn from another level than the next: Fort Frostmoth's square
+# pillars (tx_imp_colwide_01, 64 x 256, on the edge of the 64 texel rule) and the Imperial guards' boots (up the
+# shin and the foot), both in the fort's courtyard, its guards in their armour; their greaves, a 256 x 256 wall of the
+# fort keep their levels
+# Needs data converted after the change
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-174500:141600:960:0
+3 0 0 0
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:texlevels:tx_imp_colwide_01:eq:1+EXPECT:texlevels:tx_a_imperial_a_boot:eq:1+EXPECT:texlevels:tx_a_imperial_shoe:eq:1
+0.1 0 0 0 0 EXPECT:texlevels:tx_imp_wall_01:eq:6+EXPECT:texlevels:tx_a_imperial_g_greave:eq:5
+1 0 0 0

@@ -5,7 +5,7 @@ mipmaps changes no cell. A change here re-encodes the textures (ENCODE_VERSION i
 
 The modes (level.py --mips):
     all    every texture of 64 texels or more on both sides (a New 3DS)
-    few    only the ground's and Project Atlas's sheets (an Old 3DS: the most screen drawn from the fewest KB)
+    few    only the ground's (an Old 3DS: the most screen drawn from the fewest KB)
     none   no texture
 """
 import struct
@@ -19,6 +19,14 @@ ENCODE_VERSION = 1
 # ETC1 blocks shifted along the triangle's edge (the Redoran steps, Fort Frostmoth's gate). At 2 to 4 KB it sits in the
 # GPU's texture cache whole: it never needed smaller copies for speed
 MIN_MIP_SIDE = 64
+# Textures that keep one level whatever their size: their smaller copies showed on the console as triangles, one
+# triangle of a face drawn from another level than the next. Fort Frostmoth's square pillars (64 x 256, on the edge of
+# the rule above) and the Imperial guards' boots, up the shin and the foot
+NO_MIPS = {
+    "tx_imp_colwide_01",
+    "tx_a_imperial_a_boot",
+    "tx_a_imperial_shoe",
+}
 
 _land = None
 
@@ -38,11 +46,16 @@ def land_textures():
 
 def wants_mips(mode, path, sheet):
     """Whether this texture should carry smaller copies in this mode (before its size is known: see mip_side_ok)."""
+    stem = path.lower().replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]
+    if stem in NO_MIPS:
+        return False
     if mode == "all":
         return True
     if mode == "few":
-        stem = path.lower().replace("\\", "/").rsplit("/", 1)[-1].rsplit(".", 1)[0]
-        return sheet or stem in land_textures()
+        # (not Project Atlas's sheets: in Balmora their copies were 143 KB of the 220 the Old 3DS's mipmaps cost, with
+        # its linear memory at the 5 MB where it holds cells back, and a trim packed in a sheet ran into the canal walk
+        # beside it far off)
+        return stem in land_textures()
     return False
 
 

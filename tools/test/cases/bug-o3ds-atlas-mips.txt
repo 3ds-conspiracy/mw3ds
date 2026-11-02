@@ -2,12 +2,10 @@
 # An Old 3DS draws from Project Atlas's sheets, several pictures packed into one texture (Hlaalu's: a wall above dark
 # trim strips). The sheet's smaller copies (mipmaps, made from the whole sheet) blend the pictures into each other, so
 # on the console far walkways and walls in Balmora showed dark patches of the trim, flickering in and out even with the
-# game paused. An Old 3DS then drew its world textures at full size only (the lowest mipmap bias). Since 2026-11-01 the
-# sheets' copies are box-filtered inside each picture (tools/convert/texencode.py mip_filter), so they carry mipmaps
-# again and draw with the same bias as everything else (Options > Display, -1.5: bug-o3ds-few-mips). Needs Old 3DS data
-# (out/o3ds)
+# game paused. The sheets carry no smaller copies now (bug-o3ds-few-mips: an Old 3DS's are the ground's only), and
+# everything draws at the GPU's own pick (bias 0). Needs Old 3DS data (out/o3ds)
 3 0 0 0 0 MSG
 0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:0+TP:-10300:-71300:200:0
 2 0 0 0 0 SHOT
-1 0 0 0 0 EXPECT:texlod:atl_:ge:-1.51+EXPECT:texlod:atl_:le:-1.49+EXPECT:texlod:tx_:ge:-1.51+EXPECT:texlod:tx_:le:-1.49
+1 0 0 0 0 EXPECT:texlod:atl_:ge:0+EXPECT:texlod:atl_:le:0+EXPECT:texlod:tx_:ge:0+EXPECT:texlod:tx_:le:0
 1 0 0 0

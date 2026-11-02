@@ -279,7 +279,6 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		else if (arg == "geaim") v = (float)g_lookSpeed;      // (the look speed: one bar since)
 		else if (arg == "inverty") v = g_invertY ? 1.0f : 0.0f;
 		else if (arg == "subtitles") v = g_subtitles ? 1.0f : 0.0f;
-		else if (arg == "mipbias") v = (float)g_mipBiasTenths;   // (Display's Texture detail, tenths of a level)
 		else if (arg == "stickzone") v = (float)g_stickZonePct;
 		else if (arg == "stylusspeed") v = (float)g_stylusSpeed;
 		else if (arg == "stylusbuttons") v = g_stylusButtons ? 1.0f : 0.0f;
