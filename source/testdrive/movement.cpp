@@ -1085,6 +1085,15 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 					sidestepTimer = (1.0f + round * 0.8f) * (s.kitV2() ? 550.0f / fmaxf(100.0f, p.runSpeed * p.loadSpeed) : 1.0f);
 				}
 			}
+			else if (s.testLegit && kind == WALK && !w.controlsEnabled)
+			{
+				// a script took the controls on the way (a scene: Hircine's, once the player is within 512 of him): a
+				// player stands there too, so the walk ends where it got to rather than failing
+				logf("drive: walk to %s ends at %.0f %.0f %.0f (%.0f away): the controls taken by a script", id.c_str(), p.feet[0],
+					p.feet[1], p.feet[2], dist);
+				kind = NONE;
+				return false;
+			}
 			else if (s.testLegit)
 			{
 				// LEGIT: no warp past it (a player can't); the run stops being one a player could have played

@@ -1180,6 +1180,9 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		const float* f = aimK < 14 ? kAim[aimK] : kFace[aimK - 14];
 		float ax = r.boxMin[0] + (r.boxMax[0] - r.boxMin[0]) * f[0], ay = r.boxMin[1] + (r.boxMax[1] - r.boxMin[1]) * f[1];
 		float az = r.boxMin[2] + (r.boxMax[2] - r.boxMin[2]) * f[2];
+		// (a body: within the lowest kCorpsePickHeight of its box, where worldPick finds it)
+		if (r.actor >= 0 && r.dead)
+			az = r.boxMin[2] + kCorpsePickHeight * (0.25f + 0.5f * f[2]);
 		float hx = ax - p.feet[0], hy = ay - p.feet[1];
 		p.yaw = atan2f(hx, hy);
 		p.pitch = atan2f(az - eyeZ, fmaxf(sqrtf(hx * hx + hy * hy), 1.0f));
@@ -1278,8 +1281,11 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			float eye[3] = { cx, cy, fz + PLAYER_EYE_HEIGHT - p.eyeDrop };
 			for (const float* f : kLook)
 			{
+				// (a body lies in its standing box, picked only by its lowest kCorpsePickHeight (worldPick): looked at there.
+				// Looked at higher, Khash's body at the foot of his dais in the Citadel of Myn Dhrur was never found)
+				float az = r.actor >= 0 && r.dead ? r.boxMin[2] + kCorpsePickHeight * 0.5f : r.boxMin[2] + (r.boxMax[2] - r.boxMin[2]) * f[2];
 				float d[3] = { r.boxMin[0] + (r.boxMax[0] - r.boxMin[0]) * f[0] - eye[0], r.boxMin[1] + (r.boxMax[1] - r.boxMin[1]) * f[1] - eye[1],
-					r.boxMin[2] + (r.boxMax[2] - r.boxMin[2]) * f[2] - eye[2] };
+					az - eye[2] };
 				float len = sqrtf(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
 				if (len < 1.0f)
 					continue;
@@ -1306,7 +1312,10 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 		found = found || seen;
 		if (!found)
 		{
-			fail("hidden from here, and no spot round it where the crosshair finds it");
+			char why[160];
+			snprintf(why, sizeof(why), "hidden from here (%.0f %.0f %.0f, it at %.0f %.0f %.0f), and no spot round it where the crosshair finds it",
+				p.feet[0], p.feet[1], p.feet[2], r.pos[0], r.pos[1], r.pos[2]);
+			fail(why);
 			return false;
 		}
 		char walk[96];
