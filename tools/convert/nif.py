@@ -541,9 +541,25 @@ def rd_obj_net_only(r, b):
     obj_net(r, b)
 
 
+def rd_sort_adjust(r, b):
+    """OpenMW's NiSortAdjustNode: a node plus a uint32 sorting mode (Inherit/Off/Subsort, a draw-order hint the
+    3DS renderer ignores) and, for versions up to 20.0.0.3, a ref to its sorter (unused here)."""
+    node(r, b)
+    b["sort_mode"] = r.u32()
+    b["sorter"] = r.ref()
+
+
+def rd_accumulator(r, b):
+    """OpenMW's NiAccumulator (and NiClusterAccumulator / NiAlphaAccumulator): an empty record, the sorter a
+    NiSortAdjustNode's last ref points at."""
+
+
 READERS = {
     "NiNode": rd_node, "RootCollisionNode": rd_node, "NiBSAnimationNode": rd_node,
     "NiBSParticleNode": rd_node, "NiBillboardNode": rd_node, "AvoidNode": rd_node,
+    "NiSortAdjustNode": rd_sort_adjust,
+    "NiAccumulator": rd_accumulator, "NiClusterAccumulator": rd_accumulator,
+    "NiAlphaAccumulator": rd_accumulator,
     "NiCollisionSwitch": rd_node, "NiSwitchNode": rd_switch_node, "NiLODNode": rd_lod_node,
     "NiTriShape": rd_geometry, "NiTriStrips": rd_geometry, "NiParticles": rd_geometry,
     "NiAutoNormalParticles": rd_geometry, "NiRotatingParticles": rd_geometry,

@@ -17,6 +17,7 @@ import json
 import math
 import re
 import struct
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -857,6 +858,13 @@ class Converter:
         self.nif_cache = {}
         self.skeletons, self.skel_index = [], {}     # shared by every cell (cells/skeletons.skl)
         self.dynamic = moving_objects(db)
+        # Two record ids differing only in punctuation (TR's TR_m1_S_Ka'Minhir and TR_m1_S_Ka_Minhir) would
+        # share one safe_name, hence one library file: those ids get a hash suffix so neither overwrites the other
+        libs = {}
+        for k, r in db["objects"].items():
+            if r.tag in ("NPC_", "CREA"):
+                libs.setdefault(safe_name(k), set()).add(k)
+        self.ambiguous_libs = {k for v in libs.values() if len(v) > 1 for k in v}
         from particles import animated_collision_objects, world_fx_kinds
         self.world_fx = world_fx_kinds(db, arch)
         self.toggled = toggled_objects(db)
@@ -885,9 +893,11 @@ class Converter:
         self.library_meshes = {}                      # record id -> its library meshes
         self.actor_skeleton = {}                      # record id -> skeleton path (its library is named after it)
 
-    @staticmethod
-    def library_path(rec_id):
-        name = safe_name(rec_id) + ".aml"
+    def library_path(self, rec_id):
+        name = safe_name(rec_id)
+        if rec_id in self.ambiguous_libs:
+            name += "_%08x" % zlib.crc32(rec_id.encode())
+        name += ".aml"
         return f"cells/actors/{shard_dir(name)}/{name}"
 
     def actor_library(self, rec_id, shapes, skeleton):

@@ -62,8 +62,9 @@ def walk_nif(nif, visit, vis_hidden=False):
     rest whose NiVisController shows them at times (an animated actor plays them: a Flame Atronach's burning fists)."""
     def walk(idx, parent, props):
         b = nif.get(idx)
-        if b is None or b["type"] == "RootCollisionNode":
-            return
+        if b is None or b["type"] == "RootCollisionNode" or "flags" not in b:
+            return        # not an NiAVObject: a NiStringExtraData hung on a node as a child (OpenMW's applyNode
+                          # ignores those; only the "extra" chain holds extras for us, meshes.has_no_collision)
         if b.get("flags", 0) & 1 and not (vis_hidden and has_vis_controller(nif, b)):
             return
         m = parent @ nif_local(b)
