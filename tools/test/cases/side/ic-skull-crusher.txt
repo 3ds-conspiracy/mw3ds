@@ -1,0 +1,103 @@
+# Skull-Crusher (IC29_Crusher), played LEGIT on the v2 test kit (ENHANCEV2).
+# Imperial Cult, Ebonheart: the Oracle Lalatia Varian's warhammer, past where uber-imperial-cult stops (15): the forge
+# of Hilbongard under the Omaren Ancestral Tomb east of Sadrith Mora (its door over the pit: flown across), the hammer
+# from its chest, and the Oracle's blessing (50).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster:2
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (Primate of the Imperial Cult, as at the end of uber-imperial-cult (no promotion due, whose greeting would come first),
+# who has asked the Oracle about Skull-Crusher and learned what 'Halls of the Dead' means)
+0.3 0 0 0 0 CON:pcjoinfaction%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%cult"
+# (the Cult's four tokens, given along the way up the ranks)
+0.3 0 0 0 0 JOURNAL:IC0_Maran_token:5
+0.3 0 0 0 0 JOURNAL:IC0_Stendarr_token:5
+0.3 0 0 0 0 JOURNAL:IC0_Septim_token:5
+0.3 0 0 0 0 JOURNAL:IC0_Akatosh_token:5
+0.3 0 0 0 0 JOURNAL:IC29_Crusher:15
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:lalatia_varian
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+# (the Omaren Ancestral Tomb, east of Sadrith Mora)
+180 0 0 0 0 SKYTO:@166683,38021,292:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Omaren_Ancestral_Tomb
+10 0 0 0 0 UNTIL:cell:Omaren_Ancestral_Tomb
+0.5 0 0 0
+# (down the tomb's path grid to its last point; the forge door is past a pit, on the far ledge)
+180 0 0 0 0 WALKTO:@8331,-3984,-52
+0.1 0 0 0 0 FLOAT:60
+0.1 0 0 0 0 GRID:off
+60 0 0 0 0 WALKTO:@9850,-4400,-100
+60 0 0 0 0 WALKTO:@10584,-4568,-171
+0.1 0 0 0 0 GRID:on
+0.1 0 0 0 0 FLOAT:off
+120 0 0 0 0 DOORTO:Forgotten_Vaults_of_Anudnabia,_Forge_of_Hilbongard
+10 0 0 0 0 UNTIL:cell:Forgotten_Vaults_of_Anudnabia,_Forge_of_Hilbongard
+0.5 0 0 0
+# (down the forge's path grid into the hall, then along it to the Skull-Crusher's dais, floating)
+120 0 0 0 0 WALKTO:@3040,3578,-1500
+# (its frost atronach, and the locked door north of it)
+120 0 0 0 0 FIGHT:atronach_frost
+2 0 0 0
+60 0 0 0 0 WALKTO:@3040,3500,-1500
+0.3 0 0 0 0 FACE:@3152,3618
+1 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+30 0 0 0 0 OPEN:in_dae_door_01
+2 0 0 0
+0.1 0 0 0 0 GRID:off
+60 0 0 0 0 WAYTO:@3040,4200,-1500
+60 0 0 0 0 WAYTO:@3031,4900,-1640
+# (the chest stands on top of the forge over its lava pool, as the levitation potions left about the cell say: through the
+# opening low, then floated up)
+0.1 0 0 0 0 FLOAT:120
+60 0 0 0 0 WALKTO:@3040,5450,-1560
+60 0 0 0 0 WALKTO:@3040,5750,-850
+0.1 0 0 0 0 GRID:on
+0.3 0 0 0 0 FACE:@3034,6119
+1 0 0 0 0 USEPROBE:com_chest_daed_crusher:probe_grandmaster
+1 0 0 0 0 USELOCKPICK:com_chest_daed_crusher:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:com_chest_daed_crusher:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:com_chest_daed_crusher:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+60 0 0 0 0 LOOT:com_chest_daed_crusher:warhammer_crusher_unique
+0.1 0 0 0 0 FLOAT:off
+2 0 0 0
+0.1 0 0 0 0 EXPECT:item:warhammer_crusher_unique:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Imperial_Chapels
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:lalatia_varian
+1.5 0 0 0
+10 0 0 0 0 UNTIL:journal:IC29_Crusher:ge:50
+0.1 0 0 0 0 EXPECT:journal:IC29_Crusher:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

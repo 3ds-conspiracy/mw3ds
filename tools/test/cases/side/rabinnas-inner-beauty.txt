@@ -1,7 +1,8 @@
 # Rabinna's Inner Beauty (MV_SlaveMule), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Hla Oad to Balmora. The smuggler Relam Arinith has us take his slave Rabinna (who carries moon sugar inside her) to Vorar Helas in Balmora as a debt payment (10-30). She carries moon sugar inside her and Helas would kill her for it (65, 75): we take her to Im-Kilaya at the Argonian Mission in Ebonheart instead, by the Hla Oad boat (95, 114, 115).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,14 +12,14 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-46668,-37781,307:beside
+120 0 0 0 0 SKYTO:@-46668,-37781,307:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Hla_Oad,_Fatleg's_Drop_Off
 10 0 0 0 0 UNTIL:cell:Hla_Oad,_Fatleg's_Drop_Off
 # (the smugglers' cave is down the trapdoor in the shack)
-60 0 0 0 0 ACTIVATE:In_De_Shack_Trapdoor
+60 0 0 0 0 OPEN:In_De_Shack_Trapdoor
 3 0 0 0
-120 0 0 0 0 WALKTO:@10650,4300,13940
+120 0 0 0 0 WAYTO:@10650,4300,13940
 60 0 0 0 0 ACTIVATE:relam%arinith
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:doing_some_business
@@ -50,28 +51,31 @@
 5 0 0 0 0 UNTIL:following:rabinna
 0.3 0 0 0 0 ESCORT:rabinna
 # (out with her, and by the Hla Oad boat to Ebonheart: a follower near the player travels too)
-120 0 0 0 0 WALKTO:@11594,5400,14310
+120 0 0 0 0 WAYTO:@11594,5400,14310
 30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
-60 0 0 0 0 ACTIVATE:In_De_Shack_Trapdoor_01
+60 0 0 0 0 OPEN:In_De_Shack_Trapdoor_01
 3 0 0 0
 10 0 0 0 0 UNTIL:refdist:rabinna:lt:400
-120 0 0 0 0 WALKTO:@4100,4600,14480
+120 0 0 0 0 WAYTO:@4100,4600,14480
 30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
+120 0 0 0 0 BRING:rabinna
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:refdist:rabinna:lt:400
-120 0 0 0 0 WALKTO:@-48500,-39500,120
+120 0 0 0 0 WAYTO:@-48500,-39500,120
 30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
 60 0 0 0 0 ACTIVATE:baleni%salavel
 1.5 0 0 0
 0.3 0 0 0 0 TRAVEL:baleni%salavel:Ebonheart
 10 0 0 0 0 UNTIL:cell:Ebonheart
 5 0 0 0 0 UNTIL:refdist:rabinna:lt:600
-120 0 0 0 0 WALKTO:@13126,-103215,900
+120 0 0 0 0 WAYTO:@13126,-103215,900
 30 0 0 0 0 UNTIL:refdist:rabinna:lt:260
+120 0 0 0 0 BRING:rabinna
 120 0 0 0 0 DOORTO:Ebonheart,_Argonian_Mission
 10 0 0 0 0 UNTIL:cell:Ebonheart,_Argonian_Mission
 10 0 0 0 0 UNTIL:journal:MV_SlaveMule:ge:114
 0.1 0 0 0 0 EXPECT:journal:MV_SlaveMule:eq:114
+120 0 0 0 0 BRING:rabinna
 0.3 0 0 0 0 ESCORT:-
 60 0 0 0 0 ACTIVATE:im_kilaya
 1.5 0 0 0

@@ -1,7 +1,8 @@
 # Ahnassi, a Special Friend (Romance_Ahnassi), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Pelagiad. The Khajiit thief Ahnassi at the Halfway Tavern befriends us ('Honor Among Thieves', 1; the gift of friendship, 30), shares gifts and cares: Daren Adryn, the Camonna Tong thug who threatens her, killed in Gnaar Mok (40, 45); her clothes and book (50, 60); her mate J'Dhannar, a skooma addict in St. Olms, given 'Confessions of a Dunmer Skooma-Eater' (65-75); her house's key (80); her friend Senyndie (81); a coda flower and a gold kanet (82, 83); Mavon Drenim's Flamemirror Robe, given her (85, 87); and her last secret (90).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -13,7 +14,7 @@
 0.3 0 0 0 0 GIVE:pick_grandmaster:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@2507,-56048,1570:beside
+120 0 0 0 0 SKYTO:@2507,-56048,1570:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
 10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
@@ -50,15 +51,15 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (Daren Adryn, in Nadene Rotheran's shack at Gnaar Mok)
-120 0 0 0 0 FLYTO:@-61276,26515,327:beside
+120 0 0 0 0 SKYTO:@-61276,26515,327:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Gnaar_Mok,_Nadene_Rotheran's_Shack
 10 0 0 0 0 UNTIL:cell:Gnaar_Mok,_Nadene_Rotheran's_Shack
-120 0 0 0 0 KILL:daren%adryn
+120 0 0 0 0 FIGHT:daren%adryn
 0.1 0 0 0 0 EXPECT:dead:daren_adryn
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@2507,-56048,1570:beside
+120 0 0 0 0 SKYTO:@2507,-56048,1570:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
 10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
@@ -85,7 +86,7 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (a gold kanet from Peragon at Moonmoth, for later)
-120 0 0 0 0 FLYTO:@-5062,-18284,1129:beside
+120 0 0 0 0 SKYTO:@-5062,-18284,1129:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
 10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior
@@ -100,7 +101,7 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the book from Jobasha in Vivec, for J'Dhannar in St. Olms)
-120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+120 0 0 0 0 SKYTO:@27299,-80199,1893:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
@@ -116,7 +117,7 @@
 2 0 0 0 0 UNTIL:screen:none
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
-120 0 0 0 0 FLYTO:@32958,-95380,-251:beside
+120 0 0 0 0 SKYTO:@32958,-95380,-251:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_St._Olms_Underworks
 10 0 0 0 0 UNTIL:cell:Vivec,_St._Olms_Underworks
@@ -134,11 +135,11 @@
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
 # (a coda flower from the temple's planters in Vivec, and the robe from Mavon Drenim's closet, unseen)
-120 0 0 0 0 FLYTO:@31800,-98200,1300:beside
+120 0 0 0 0 SKYTO:@31800,-98200,1300:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 PICKUP:ingred_bc_coda_flower
 2 0 0 0 0 UNTIL:item:ingred_bc_coda_flower:ge:1
-120 0 0 0 0 FLYTO:@43450,-86263,2129:beside
+120 0 0 0 0 SKYTO:@43450,-86263,2129:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Plaza
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Plaza
@@ -153,7 +154,7 @@
 0.1 0 0 0 0 EXPECT:bounty:eq:0
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
-120 0 0 0 0 FLYTO:@2507,-56048,1570:beside
+120 0 0 0 0 SKYTO:@2507,-56048,1570:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Pelagiad,_Halfway_Tavern
 10 0 0 0 0 UNTIL:cell:Pelagiad,_Halfway_Tavern
@@ -171,7 +172,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@3329,-57660,1646:beside
+120 0 0 0 0 SKYTO:@3329,-57660,1646:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Pelagiad,_Ahnassi's_House
 10 0 0 0 0 UNTIL:cell:Pelagiad,_Ahnassi's_House

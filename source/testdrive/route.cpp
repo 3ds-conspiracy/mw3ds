@@ -219,9 +219,16 @@ static bool ownPiecePath(Session& s, const float from[3], const float to[3], std
 	return true;
 }
 
+bool g_driveNoGrid = false;
+
 bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path, bool ownPiece)
 {
 	World& w = s.w;
+	if (g_driveNoGrid)
+	{
+		path.clear();
+		return false;
+	}
 	// close and in plain sight (a shrine on a plateau with no grid near it, the nearest point at the foot of the hill): straight
 	// at it. The grid's route went down to that point, then back up straight, then down again, until the time ran out
 	float gd = hypotf(to[0] - from[0], to[1] - from[1]);

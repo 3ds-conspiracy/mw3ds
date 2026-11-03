@@ -1,0 +1,107 @@
+# Armor Repair Debts (HR_BillCollect), played LEGIT on the v2 test kit (ENHANCEV2).
+# House Redoran, Ald'ruhn: after the escort to Koal Cave (HR_KoalCave 100) the smith Tuveso Beleth wants Giras Indaram in
+# Molag Mar's Armigers Stronghold to pay his armor repair debts (10). Giras refuses (20); his brothers might move him, says
+# anyone else asked (30); Tidros tells the player to call it the honorable thing (50); Giras challenges the player to a duel,
+# accepted (70); beaten, or dead, Giras pays (90: his script); the money to Tuveso (100)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GIVE:sc_divineintervention
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (a Hireling of House Redoran, the escort to Koal Cave done as uber-house-redoran plays it)
+0.3 0 0 0 0 CON:pcjoinfaction%"redoran"
+0.3 0 0 0 0 CON:pcraiserank%"redoran"
+0.3 0 0 0 0 CON:pcraiserank%"redoran"
+0.3 0 0 0 0 JOURNAL:HR_KoalCave:100
+0.3 0 0 0 0 CON:addtopic%"armor%repair%debts"
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Redoran_Council_Hall
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Ald-ruhn,_Tuveso
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Tuveso_Beleth
+0.5 0 0 0
+60 0 0 0 0 WALKTO:tuveso%beleth
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:tuveso%beleth
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:armor_repair_debts
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_BillCollect:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# out of the Skar by Divine Intervention, then flown to Molag Mar's west door into its Waistworks
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+4 0 0 0
+180 0 0 0 0 SKYTO:@108169,-62522,1886:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Molag_Mar,_Waistworks
+10 0 0 0 0 UNTIL:cell:Molag_Mar,_Waistworks
+120 0 0 0 0 DOORTO:Molag_Mar,_Armigers_Stronghold
+10 0 0 0 0 UNTIL:cell:Molag_Mar,_Armigers_Stronghold
+60 0 0 0 0 ACTIVATE:giras%indaram
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:armor_repair_debts
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_BillCollect:ge:20
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (anyone else in the stronghold knows of his brothers)
+60 0 0 0 0 ACTIVATE:odron%omoran
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:armor_repair_debts
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_BillCollect:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:tidros%indaram
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:armor_repair_debts
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_BillCollect:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# the duel, accepted
+60 0 0 0 0 ACTIVATE:giras%indaram
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:armor_repair_debts
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_BillCollect:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+180 0 0 0 0 FIGHT:giras%indaram
+5 0 0 0 0 UNTIL:journal:HR_BillCollect:ge:90
+0.1 0 0 0 0 EXPECT:journal:HR_BillCollect:ge:90
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Tuveso_Beleth
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:tuveso%beleth
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:armor_repair_debts
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_BillCollect:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

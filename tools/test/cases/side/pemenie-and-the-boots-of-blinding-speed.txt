@@ -1,7 +1,8 @@
 # Pemenie and the Boots of Blinding Speed (MV_TraderAbandoned), partial, played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, West Gash. Pemenie offers her Boots of Blinding Speed for an escort to Gnaar Mok: played as far as the deal (stage 20).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,7 +12,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-32489,31812,1380:beside
+120 0 0 0 0 SKYTO:@-32489,31812,1380:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:pemenie
 1.5 0 0 0

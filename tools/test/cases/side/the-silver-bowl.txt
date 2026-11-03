@@ -1,8 +1,9 @@
 # The Silver Bowl (MS_Piernette), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Pelagiad.
 # The bowl lies in Ulummusa, a smugglers' cave west of Pelagiad; Ygfa, the healer at Fort Pelagiad, knows whose it is;
 # Piernette Beluelle, on her farm across Lake Hairan, takes it back (and raises our Mercantile).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-11286,-48391,877:beside
+120 0 0 0 0 SKYTO:@-11286,-48391,877:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ulummusa
 10 0 0 0 0 UNTIL:cell:Ulummusa
@@ -21,7 +22,7 @@
 0.1 0 0 0 0 EXPECT:journal:MS_Piernette:ge:1
 120 0 0 0 0 DOORTO:outside
 10 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@6201,-56063,1859:beside
+120 0 0 0 0 SKYTO:@6201,-56063,1859:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Pelagiad,_Fort_Pelagiad
 10 0 0 0 0 UNTIL:cell:Pelagiad,_Fort_Pelagiad
@@ -34,8 +35,13 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@37222,-60304,948:beside
+120 0 0 0 0 SKYTO:@37222,-60304,948:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
+# (the flight can come down on the farmhouse's roof, 250 over the door: off it toward the door and landed first. Pressed
+# on the way down off the roof, the press found nothing under the crosshair)
+0.3 0 0 0 0 FACE:hlaal_loaddoor_01:mid
+5 0 1 0 0 UNTIL:playerz:lt:1050
+10 0 0 0 0 UNTIL:onground:eq:1
 120 0 0 0 0 DOORTO:Piernette's_Farmhouse
 10 0 0 0 0 UNTIL:cell:Piernette's_Farmhouse
 60 0 0 0 0 ACTIVATE:piernette%beluelle

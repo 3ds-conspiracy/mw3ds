@@ -1,7 +1,8 @@
 # Umbra (MS_Umbra), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Suran and the eastern hills. A rumour at the Suran Tradehouse names a crazed warrior wandering east of Suran: Umbra, bearer of the cursed Umbra sword, who begs for a warrior's death and is given it.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 4 0 0 0
 0.3 0 0 0 0 LEGIT
 # ("latest rumors" first: Daynes Redothril, the Ald-ruhn pawnbroker, names "my trade" and a publican's answer on that names the rumors)
-120 0 0 0 0 FLYTO:@-13053,56965,2682:beside
+120 0 0 0 0 SKYTO:@-13053,56965,2682:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
@@ -24,7 +25,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+120 0 0 0 0 SKYTO:@-14372,55861,2446:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
@@ -38,7 +39,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@56984,-53417,1591:beside
+120 0 0 0 0 SKYTO:@56984,-53417,1591:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Suran,_Suran_Tradehouse
 10 0 0 0 0 UNTIL:cell:Suran,_Suran_Tradehouse
@@ -52,7 +53,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@61359,-51980,2715:beside
+120 0 0 0 0 SKYTO:@61359,-51980,2715:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:umbra
 1.5 0 0 0
@@ -68,5 +69,5 @@
 0.3 0 0 0 0 CHOICE:1
 2 0 0 0 0 UNTIL:journal:MS_Umbra:ge:40
 0.1 0 0 0 0 EXPECT:journal:MS_Umbra:ge:40
-120 0 0 0 0 KILL:umbra
+120 0 0 0 0 FIGHT:umbra
 0.1 0 0 0 0 EXPECT:dead:umbra

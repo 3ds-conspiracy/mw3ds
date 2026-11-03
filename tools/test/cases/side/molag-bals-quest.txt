@@ -1,7 +1,8 @@
 # Molag Bal's Quest (DA_MolagBal), played LEGIT on the v2 test kit (ENHANCEV2).
 # Daedric shrine quest: Molag Bal in the Yansirramus shrine speaks three times and gives Menta Na's key (stage 10). The daedroth Menta Na is killed at the far end of the Kora-Dur cave (20), and Molag Bal rewards us (30).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -9,9 +10,13 @@
 0.3 0 0 0 0 GIVE:daedric_longsword
 0.3 0 0 0 0 EQUIP:daedric_longsword
 0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_divineintervention:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@104373,38146,679:beside
+# (down in front of the shrine's door, which faces west-southwest: landed beside the door's own spot, the flight can
+# set us on the ruin over it, and from the open ground east of it the walk climbed onto the ruin's back; rocks close
+# its south side)
+120 0 0 0 0 SKYTO:@103700,38030,515:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Yansirramus,_Shrine
 10 0 0 0 0 UNTIL:cell:Yansirramus,_Shrine
@@ -23,74 +28,82 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@20967,118094,3006:beside
+120 0 0 0 0 SKYTO:@20967,118094,3006:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Kora-Dur
 10 0 0 0 0 UNTIL:cell:Kora-Dur
 # (by the cave's path grid, which has a gap of 1000 between its two halves: walked across)
-120 0 0 0 0 WALKTO:@2672,-6448,289
-120 0 0 0 0 WALKTO:@2691,-6664,304
-120 0 0 0 0 WALKTO:@3017,-6829,432
-120 0 0 0 0 WALKTO:@3259,-6928,498
-120 0 0 0 0 WALKTO:@3269,-7133,518
-120 0 0 0 0 WALKTO:@3132,-7343,528
-120 0 0 0 0 WALKTO:@3027,-7453,598
-120 0 0 0 0 WALKTO:@2880,-7378,563
-120 0 0 0 0 WALKTO:@2828,-7058,503
-120 0 0 0 0 WALKTO:@2796,-6895,496
-120 0 0 0 0 WALKTO:@2493,-6888,430
-120 0 0 0 0 WALKTO:@2231,-7010,316
-120 0 0 0 0 WALKTO:@1927,-6961,320
-120 0 0 0 0 WALKTO:@1620,-6931,286
-120 0 0 0 0 WALKTO:@1375,-7068,208
-120 0 0 0 0 WALKTO:@868,-6910,188
-120 0 0 0 0 WALKTO:@278,-6890,268
-120 0 0 0 0 WALKTO:@-99,-6864,298
-120 0 0 0 0 WALKTO:@-496,-6732,293
-120 0 0 0 0 WALKTO:@-619,-6246,293
-120 0 0 0 0 WALKTO:@-985,-5880,290
-120 0 0 0 0 WALKTO:@-1320,-5928,292
-120 0 0 0 0 WALKTO:@-1649,-6105,291
-120 0 0 0 0 WALKTO:@-1689,-6539,290
-120 0 0 0 0 WALKTO:@-1656,-6996,285
-120 0 0 0 0 WALKTO:@-1613,-7450,288
-120 0 0 0 0 WALKTO:@-1399,-7605,288
-120 0 0 0 0 WALKTO:@-994,-7673,293
-120 0 0 0 0 WALKTO:@-540,-7690,243
-120 0 0 0 0 WALKTO:@-144,-7709,42
-120 0 0 0 0 WALKTO:@292,-7839,18
-120 0 0 0 0 WALKTO:@580,-7760,142
-120 0 0 0 0 WALKTO:@822,-7753,207
-120 0 0 0 0 WALKTO:@940,-7888,230
-120 0 0 0 0 WALKTO:@920,-8266,253
-120 0 0 0 0 WALKTO:@851,-8696,286
-120 0 0 0 0 WALKTO:@440,-8945,288
-120 0 0 0 0 WALKTO:@-83,-8935,172
-120 0 0 0 0 WALKTO:@-1105,-8943,158
-120 0 0 0 0 WALKTO:@-1559,-8921,198
-120 0 0 0 0 WALKTO:@-1962,-8938,310
-120 0 0 0 0 WALKTO:@-2470,-8940,419
-120 0 0 0 0 WALKTO:@-2695,-9381,421
-120 0 0 0 0 WALKTO:@-2695,-10013,288
-120 0 0 0 0 WALKTO:@-2756,-10569,261
-120 0 0 0 0 WALKTO:@-2679,-10965,238
-120 0 0 0 0 WALKTO:@-2801,-11349,168
-120 0 0 0 0 WALKTO:@-2790,-11597,199
-120 0 0 0 0 WALKTO:@-3051,-11909,200
-120 0 0 0 0 WALKTO:@-3207,-11730,98
-120 0 0 0 0 WALKTO:@-3590,-11746,98
-120 0 0 0 0 WALKTO:@-3650,-11423,98
-120 0 0 0 0 WALKTO:@-3902,-11378,168
-120 0 0 0 0 WALKTO:@-4204,-11240,304
-120 0 0 0 0 WALKTO:@-4612,-11157,219
-120 0 0 0 0 WALKTO:@-4776,-11252,219
-120 0 0 0 0 WALKTO:@-4891,-11257,243
-120 0 0 0 0 KILL:daedroth_menta_unique
+120 0 0 0 0 WAYTO:@2672,-6448,289
+120 0 0 0 0 WAYTO:@2691,-6664,304
+120 0 0 0 0 WAYTO:@3017,-6829,432
+120 0 0 0 0 WAYTO:@3259,-6928,498
+120 0 0 0 0 WAYTO:@3269,-7133,518
+120 0 0 0 0 WAYTO:@3132,-7343,528
+120 0 0 0 0 WAYTO:@3027,-7453,598
+120 0 0 0 0 WAYTO:@2880,-7378,563
+120 0 0 0 0 WAYTO:@2828,-7058,503
+120 0 0 0 0 WAYTO:@2796,-6895,496
+120 0 0 0 0 WAYTO:@2493,-6888,430
+120 0 0 0 0 WAYTO:@2231,-7010,316
+120 0 0 0 0 WAYTO:@1927,-6961,320
+120 0 0 0 0 WAYTO:@1620,-6931,286
+120 0 0 0 0 WAYTO:@1375,-7068,208
+120 0 0 0 0 WAYTO:@868,-6910,188
+120 0 0 0 0 WAYTO:@278,-6890,268
+120 0 0 0 0 WAYTO:@-99,-6864,298
+120 0 0 0 0 WAYTO:@-496,-6732,293
+120 0 0 0 0 WAYTO:@-619,-6246,293
+120 0 0 0 0 WAYTO:@-985,-5880,290
+120 0 0 0 0 WAYTO:@-1320,-5928,292
+120 0 0 0 0 WAYTO:@-1649,-6105,291
+120 0 0 0 0 WAYTO:@-1689,-6539,290
+120 0 0 0 0 WAYTO:@-1656,-6996,285
+120 0 0 0 0 WAYTO:@-1613,-7450,288
+120 0 0 0 0 WAYTO:@-1399,-7605,288
+120 0 0 0 0 WAYTO:@-994,-7673,293
+120 0 0 0 0 WAYTO:@-540,-7690,243
+120 0 0 0 0 WAYTO:@-144,-7709,42
+120 0 0 0 0 WAYTO:@292,-7839,18
+120 0 0 0 0 WAYTO:@580,-7760,142
+120 0 0 0 0 WAYTO:@822,-7753,207
+120 0 0 0 0 WAYTO:@940,-7888,230
+120 0 0 0 0 WAYTO:@920,-8266,253
+120 0 0 0 0 WAYTO:@851,-8696,286
+120 0 0 0 0 WAYTO:@440,-8945,288
+120 0 0 0 0 WAYTO:@-83,-8935,172
+120 0 0 0 0 WAYTO:@-1105,-8943,158
+120 0 0 0 0 WAYTO:@-1559,-8921,198
+120 0 0 0 0 WAYTO:@-1962,-8938,310
+120 0 0 0 0 WAYTO:@-2470,-8940,419
+120 0 0 0 0 WAYTO:@-2695,-9381,421
+120 0 0 0 0 WAYTO:@-2695,-10013,288
+120 0 0 0 0 WAYTO:@-2756,-10569,261
+120 0 0 0 0 WAYTO:@-2679,-10965,238
+120 0 0 0 0 WAYTO:@-2801,-11349,168
+120 0 0 0 0 WAYTO:@-2790,-11597,199
+120 0 0 0 0 WAYTO:@-3051,-11909,200
+120 0 0 0 0 WAYTO:@-3207,-11730,98
+120 0 0 0 0 WAYTO:@-3590,-11746,98
+120 0 0 0 0 WAYTO:@-3650,-11423,98
+120 0 0 0 0 WAYTO:@-3902,-11378,168
+120 0 0 0 0 WAYTO:@-4204,-11240,304
+120 0 0 0 0 WAYTO:@-4612,-11157,219
+120 0 0 0 0 WAYTO:@-4776,-11252,219
+120 0 0 0 0 WAYTO:@-4891,-11257,243
+120 0 0 0 0 FIGHT:daedroth_menta_unique
 10 0 0 0 0 UNTIL:journal:DA_MolagBal:ge:20
 0.1 0 0 0 0 EXPECT:journal:DA_MolagBal:eq:20
-120 0 0 0 0 DOORTO:outside
-5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@104373,38146,679:beside
+# (out by Divine Intervention, as a player done at the far end does: the way to the nearest exit door is split from here,
+# and the one DOORTO picked, into the Ashlands, was out of reach across it)
+0.3 0 0 0 0 CAST:item:sc_divineintervention
+3 0 0 0
+# (by the north of Red Mountain: the straight line from Ald'ruhn's side crosses the Ghostfence, where the flight
+# stuck under something at 7,000 up)
+120 0 0 0 0 SKYTO:@20000,70000,2000
+# (down in front of the shrine's door, which faces west-southwest: landed beside the door's own spot, the flight can
+# set us on the ruin over it, and from the open ground east of it the walk climbed onto the ruin's back; rocks close
+# its south side)
+120 0 0 0 0 SKYTO:@103700,38030,515:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Yansirramus,_Shrine
 10 0 0 0 0 UNTIL:cell:Yansirramus,_Shrine

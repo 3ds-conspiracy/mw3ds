@@ -1,7 +1,8 @@
 # Ald-ruhn's merchants and Ienas Sarandas (Town_Aldruhn and its five merchants' journals), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Ald-ruhn. Five merchants (the pawnbroker Daynes Redothril, Tiras Sadus, Bevene Releth, Llether Vari the enchanter and Bivale Teneran the clothier) each want an overdue payment or the goods back from the gambler Ienas Sarandas; with a sympathetic ear (Speechcraft 70) he gives all the goods back, gives up his house, and each merchant pays.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -13,7 +14,7 @@
 4 0 0 0
 0.3 0 0 0 0 LEGIT
 # (each merchant's errand)
-120 0 0 0 0 FLYTO:@-13053,56965,2682:beside
+120 0 0 0 0 SKYTO:@-13053,56965,2682:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
@@ -27,7 +28,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-11672,56386,2700:beside
+120 0 0 0 0 SKYTO:@-11672,56386,2700:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
@@ -41,7 +42,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-10937,56505,2684:beside
+120 0 0 0 0 SKYTO:@-10937,56505,2684:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Bevene_Releth|_Clothier
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Bevene_Releth|_Clothier
@@ -55,9 +56,9 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-13190,57048,2660
+120 0 0 0 0 SKYTO:@-13190,57048,2660
 5 0 0 0 0 UNTIL:effect:10:eq:0
-60 0 0 0 0 WALKTO:@-12353,57603,2680
+120 0 0 0 0 WAYTO:@-12353,57603,2680
 120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
 120 0 0 0 0 DOORTO:Ald-ruhn,_Llether_Vari|_Enchanter
@@ -86,7 +87,7 @@
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-60 0 0 0 0 WALKTO:@-13698,55511,2452
+120 0 0 0 0 WAYTO:@-13698,55511,2452
 120 0 0 0 0 DOORTO:Ald-ruhn,_Ienas_Sarandas's_House
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ienas_Sarandas's_House
 60 0 0 0 0 ACTIVATE:ienas%sarandas
@@ -112,7 +113,7 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the goods go back, each merchant pays)
-120 0 0 0 0 WALKTO:@-13053,56965,2682
+120 0 0 0 0 WAYTO:@-13053,56965,2682
 120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
 60 0 0 0 0 ACTIVATE:daynes%redothril
@@ -125,7 +126,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 WALKTO:@-11672,56386,2700
+120 0 0 0 0 WAYTO:@-11672,56386,2700
 120 0 0 0 0 DOORTO:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Tiras_Sadus|_General_Merchandise
 60 0 0 0 0 ACTIVATE:tiras%sadus
@@ -138,7 +139,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 WALKTO:@-10937,56505,2684
+120 0 0 0 0 WAYTO:@-10937,56505,2684
 120 0 0 0 0 DOORTO:Ald-ruhn,_Bevene_Releth|_Clothier
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Bevene_Releth|_Clothier
 60 0 0 0 0 ACTIVATE:bevene%releth
@@ -151,7 +152,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-60 0 0 0 0 WALKTO:@-12353,57603,2680
+120 0 0 0 0 WAYTO:@-12353,57603,2680
 120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
 120 0 0 0 0 DOORTO:Ald-ruhn,_Llether_Vari|_Enchanter

@@ -1,0 +1,71 @@
+# Pemenie and the Boots of Blinding Speed (MV_TraderAbandoned), the bounty, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash. After the deal (20), word in Caldera of the price on Pemenie's head (40); asked about it again
+# and again she denies it, grows angry (50, 60) and will not come with us (70), and at last turns on us.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 SKYTO:@-32489,31812,1380:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:making_a_deal
+2 0 0 0 0 UNTIL:talkready
+# ("I can take you to Gnaar Mok.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (word of her in Caldera, from Emelia Duronia at the Guild of Mages: "She's got a bounty on her head")
+120 0 0 0 0 SKYTO:@-13284,19564,1674:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Caldera,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Caldera,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:emelia%duronia
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Pemenie_the_trader
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:bounty
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:40
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+# (back to Pemenie, waiting where we left her)
+120 0 0 0 0 SKYTO:@-32489,31812,1380:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bounty
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:50
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:50
+0.3 0 0 0 0 TOPIC:bounty
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:60
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:60
+0.3 0 0 0 0 TOPIC:bounty
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:70
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:70
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refcommanded:pemenie:eq:0
+# (asked once more, she attacks)
+60 0 0 0 0 ACTIVATE:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:bounty
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:pemenie:eq:1

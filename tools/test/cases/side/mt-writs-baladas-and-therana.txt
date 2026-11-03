@@ -1,0 +1,206 @@
+# Writs for Baladas Demnevanni and Mistress Therana (MT_WritBaladas, MT_WritTherana), played LEGIT on the v2 test kit (ENHANCEV2).
+# Morag Tong, Vivec: the Grandmaster's writs once Dagoth Ur is gone. Baladas Demnevanni in Arvs-Drelen, Gnisis: the writ
+# (10), the honourable execution (80 / 90), reported (100). Mistress Therana's writ is never given (it asks the main quest
+# past 50, its last stage), but Eno Hlaalu names her with the other writs: killed in Tel Branora all the same, her death
+# is reported and paid as a writ (100)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster:2
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (Grandmaster of the Morag Tong, rank 9: the last writs go to the Grandmaster; Dagoth Ur gone and the earlier writs
+# done, as if played)
+0.3 0 0 0 0 CON:pcjoinfaction%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:addtopic%"writ"
+# (the four names known, as a player hears them about the island: for a Grandmaster Eno Hlaalu's Writ always answers
+# first that there are none, before the line that names them, so they are asked about by name)
+0.3 0 0 0 0 CON:addtopic%"baladas"
+0.3 0 0 0 0 CON:addtopic%"dram%bero"
+0.3 0 0 0 0 CON:addtopic%"larrius%varro"
+0.3 0 0 0 0 CON:addtopic%"mistress%therana"
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 JOURNAL:MT_WritBemis:100
+0.3 0 0 0 0 JOURNAL:MT_WritBrilnosu:100
+0.3 0 0 0 0 JOURNAL:MT_WritNavil:100
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+4 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:eq:9
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:eno_hlaalu
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Baladas
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MT_WritBaladas:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Baladas Demnevanni in Arvs-Drelen, up behind its trapped door (as mg-mystery-of-the-dwarves goes)
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+# (the storage room's door out is locked: picked, where uber-morag-tong casts Ondusi's Open Door)
+60 0 0 0 0 WALKTO:@1080,-660,-128
+0.3 0 0 0 0 FACE:@960,-644
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@33922,-87194,1792
+120 0 0 0 0 WALKTO:@33936,-87948,1792
+120 0 0 0 0 WALKTO:@33344,-87943,1997
+120 0 0 0 0 WALKTO:@32768,-87942,2045
+120 0 0 0 0 WALKTO:@32041,-87930,1928
+120 0 0 0 0 WALKTO:@31794,-87231,1792
+120 0 0 0 0 WALKTO:@31525,-86916,1822
+120 0 0 0 0 WALKTO:@31011,-86925,2048
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Plaza
+0.5 0 0 0
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Ald
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 SKYTO:@-87725,95456,1317:beside
+0.1 0 0 0 0 FLOAT:300:doors
+30 0 0 0 0 WALKTO:@-87800,95560,1340
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
+0.5 0 0 0
+120 0 0 0 0 WALKTO:@3072,4096,512
+2 0 0 0 0 FACE:@3206,4032
+1 0 0 0 0 USEPROBE:in_velothismall_ndoor_01:probe_grandmaster
+1 0 0 0 0 USEPROBE:in_velothismall_ndoor_01:probe_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+180 0 0 0 0 FIGHT:baladas%demnevanni
+2 0 0 0
+0.1 0 0 0 0 FLOAT:off
+0.1 0 0 0 0 EXPECT:dead:baladas_demnevanni
+5 0 0 0 0 UNTIL:journal:MT_WritBaladas:ge:80
+0.1 0 0 0 0 EXPECT:journal:MT_WritBaladas:ge:80
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Hidden_Area
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Baladas
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MT_WritBaladas:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Mistress Therana in Tel Branora (the way up as uber-house-telvanni takes it)
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+# (the storage room's door out is locked: picked, where uber-morag-tong casts Ondusi's Open Door)
+60 0 0 0 0 WALKTO:@1080,-660,-128
+0.3 0 0 0 0 FACE:@960,-644
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@33922,-87194,1792
+120 0 0 0 0 WALKTO:@33936,-87948,1792
+120 0 0 0 0 WALKTO:@33344,-87943,1997
+120 0 0 0 0 WALKTO:@32768,-87942,2045
+120 0 0 0 0 WALKTO:@32041,-87930,1928
+120 0 0 0 0 WALKTO:@31794,-87231,1792
+120 0 0 0 0 WALKTO:@31525,-86916,1822
+120 0 0 0 0 WALKTO:@31011,-86925,2048
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Plaza
+0.5 0 0 0
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 FLYTO:@126852,-101680,2366
+0.1 0 0 0 0 FLOAT:60:doors
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+10 0 0 0 0 UNTIL:cell:Tel_Branora,_Upper_Tower
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+60 0 0 0 0 WALKTO:@-173,1066,-1216
+0.1 0 0 0 0 FLOAT:60:doors
+0.3 0 0 0 0 R
+0.2 0 0 0
+60 0 0 0 0 WALKTO:@-181,1185,-719
+60 0 0 0 0 WALKTO:@-182,1529,-719
+60 0 0 0 0 WALKTO:@120,1435,-694
+180 0 0 0 0 FIGHT:therana
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:therana
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Hidden_Area
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Mistress_Therana
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MT_WritTherana:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

@@ -1,0 +1,179 @@
+# Kill the Telvanni Councilors (MG_KillTelvanni), played LEGIT on the v2 test kit (ENHANCEV2).
+# Mages Guild, Vivec: once Dagoth Ur is gone (C3_DestroyDagoth 50) and the Dwarves' mystery solved (MG_Dwarves 100), Arch-Mage
+# Trebonius would have the Telvanni Councilors dead (10): Gothren in Tel Aruhn, Neloth in Tel Naga, Dratha in Tel Mora, Aryon
+# in Tel Vos, Therana in Tel Branora; all five dead, he thanks the player (100). The ways up the towers as
+# uber-house-telvanni takes them
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:20000
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (a member of the Mages Guild; the main quest ended and the Dwarves found out, as if done)
+0.3 0 0 0 0 CON:pcjoinfaction%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:addtopic%"house%telvanni"
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 JOURNAL:MG_Dwarves:100
+0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:trebonius%artorius
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:trebonius%artorius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:House_Telvanni
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_KillTelvanni:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Gothren, Tel Aruhn
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 FLYTO:@126225,45887,3715
+0.1 0 0 0 0 FLOAT:60:doors
+120 0 0 0 0 DOORTO:Tel_Aruhn,_Upper_Tower
+10 0 0 0 0 UNTIL:cell:Tel_Aruhn,_Upper_Tower
+0.5 0 0 0
+180 0 0 0 0 FIGHT:gothren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:gothren
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+# Neloth, Tel Naga
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 FLYTO:@148572,36092,1526
+0.1 0 0 0 0 FLOAT:60:doors
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Great_Hall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Tel_Naga_Great_Hall
+0.5 0 0 0
+0.1 0 0 0 0 FLOAT:60:doors
+30 0 0 0 0 WALKTO:@2,965,128
+0.33 0 0 0 0 R
+0.2 0 0 0
+30 0 0 0 0 WALKTO:@-5,1143,385
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Tel_Naga_Upper_Tower
+0.5 0 0 0
+0.1 0 0 0 0 FLOAT:60:doors
+30 0 0 0 0 WALKTO:@245,479,-873
+0.9 0 0 0 0 R
+0.2 0 0 0
+1 0 0 0 0 FACE:@246,703
+0.5 0 1 0
+0.5 0 0 0
+180 0 0 0 0 FIGHT:neloth
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:neloth
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+# Dratha, Tel Mora
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 FLYTO:@107333,119095,1863
+0.1 0 0 0 0 FLOAT:60:doors
+120 0 0 0 0 DOORTO:Tel_Mora,_Upper_Tower
+10 0 0 0 0 UNTIL:cell:Tel_Mora,_Upper_Tower
+0.5 0 0 0
+180 0 0 0 0 FIGHT:dratha
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dratha
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+# Aryon, Tel Vos
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 FLYTO:@85731,117960,5081:beside
+0.1 0 0 0 0 FLOAT:60:doors
+120 0 0 0 0 DOORTO:Tel_Vos,_Aryon
+10 0 0 0 0 UNTIL:cell:Tel_Vos,_Aryon's_Chambers
+0.5 0 0 0
+180 0 0 0 0 FIGHT:aryon
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:aryon
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+# Therana, Tel Branora
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 FLYTO:@126852,-101680,2366
+0.1 0 0 0 0 FLOAT:60:doors
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+10 0 0 0 0 UNTIL:cell:Tel_Branora,_Upper_Tower
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Tel_Branora,_Upper_Tower
+3 0 0 0
+60 0 0 0 0 WALKTO:@-173,1066,-1216
+0.1 0 0 0 0 FLOAT:60:doors
+0.3 0 0 0 0 R
+0.2 0 0 0
+60 0 0 0 0 WALKTO:@-181,1185,-719
+60 0 0 0 0 WALKTO:@-182,1529,-719
+60 0 0 0 0 WALKTO:@120,1435,-694
+180 0 0 0 0 FIGHT:therana
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:therana
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:trebonius%artorius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:House_Telvanni
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_KillTelvanni:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

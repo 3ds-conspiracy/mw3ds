@@ -1,0 +1,18 @@
+# A body lying under a hammock is what the crosshair finds when pointed at it (OpenMW picks by the meshes). The hammock
+# is a bed to sleep in (an activator), and its box, posts and ropes and all, reaches down over the floor under it, where
+# a body is picked: Foryn Gilnith, killed by his hammock in Death of a Taxman, could not be looted from any side
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Foryn_Gilnith's_Shack
+4 0 0 0
+0.3 0 0 0 0 TPIN:-6:-36:15:-1.57
+3 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 SETPOS:foryn%gilnith:-57:-44:15
+1 0 0 0
+0.3 0 0 0 0 SLAY:foryn%gilnith
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+30 0 0 0 0 ACTIVATE:foryn%gilnith
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container

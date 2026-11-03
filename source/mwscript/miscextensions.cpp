@@ -174,7 +174,11 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 	// The player standing on this object (OpenMW's getPlayerStandingOn; World::feetOnObject)
 	case F_GETSTANDINGPC:
 		return r && w.player.onGround && w.feetOnObject(ref, w.player.feet) ? 1.0f : 0.0f;
-	case F_RANDOM: return (float)(rand() % (int)fmaxf(1.0f, argNum(c, n, 0, 100.0f)));
+	case F_RANDOM:
+	{
+		int range = (int)fmaxf(1.0f, argNum(c, n, 0, 100.0f));
+		return (float)(w.testScriptRoll >= 0 ? std::min(w.testScriptRoll, range - 1) : rand() % range);
+	}
 	case F_GETCURRENTTIME: return fmodf(w.gameHour, 24.0f);
 	case F_FALL: return 0.0f;       // (OpenMW runs nothing for Fall)
 	case F_FADEOUT: c.host.fadeTo(1.0f, argNum(c, n, 0, 1)); return 0.0f;

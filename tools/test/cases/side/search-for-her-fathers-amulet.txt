@@ -1,8 +1,9 @@
 # Search for Her Father's Amulet (MS_ArenimTomb), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, east coast.
 # Satyana, in the Arenim Ancestral Tomb, follows us while we find the key on her father's partner's body and the amulet
 # behind his locked door; near her with it, her script greets us and asks for it.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,8 +13,11 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@150792,-13329,339:beside
+# (down on the open ground north of the tomb's door, which faces it: landed beside the door itself, the flight can set us
+# on the tomb's entrance over it)
+120 0 0 0 0 SKYTO:@150812,-12928,232:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WAYTO:@150800,-13180,232
 120 0 0 0 0 DOORTO:Arenim_Ancestral_Tomb
 10 0 0 0 0 UNTIL:cell:Arenim_Ancestral_Tomb
 120 0 0 0 0 ACTIVATE:satyana
@@ -38,6 +42,7 @@
 20 0 0 0 0 UNTIL:screen:dialogue
 0.3 0 0 0 0 CHOICE:1
 2 0 0 0 0 UNTIL:journal:MS_ArenimTomb:ge:100
+120 0 0 0 0 BRING:satyana
 0.3 0 0 0 0 ESCORT:-
 0.1 0 0 0 0 EXPECT:journal:MS_ArenimTomb:eq:100
 0.1 0 0 0 0 EXPECT:item:amulet_agustas_unique:eq:0

@@ -1,0 +1,175 @@
+# Escort to Koal Cave (HR_KoalCave), played LEGIT on the v2 test kit (ENHANCEV2).
+# House Redoran, Ald-ruhn. Tuveso Beleth's son Deval is taken out of Ald-ruhn's Council Hall, by silt strider to Gnisis
+# and south to Koal Cave on the coast (10, 50, 70), and his mother thanks us (100). (The walk from Gnisis as in
+# lead-the-pilgrim-to-koal-cave.)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (a Redoran retainer some ranks up, as in uber-house-redoran)
+0.3 0 0 0 0 CON:pcjoinfaction%"redoran"
+0.3 0 0 0 0 CON:pcraiserank%"redoran"
+0.3 0 0 0 0 CON:pcraiserank%"redoran"
+0.3 0 0 0 0 CON:pcraiserank%"redoran"
+0.3 0 0 0 0 CON:addtopic%"duties"
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Tuveso_Beleth:_Smith
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:tuveso_beleth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:duties
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Koal_Cave
+2 0 0 0 0 UNTIL:journal:HR_KoalCave:ge:10
+0.1 0 0 0 0 EXPECT:journal:HR_KoalCave:eq:10
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 ACTIVATE:deval_beleth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:HR_KoalCave:ge:50
+0.1 0 0 0 0 EXPECT:journal:HR_KoalCave:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:deval_beleth
+# (out of the Council Hall to Ald-ruhn's silt strider)
+0.3 0 0 0 0 ESCORT:deval_beleth
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Hall
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Redoran_Council_Hall
+30 0 0 0 0 UNTIL:refdist:deval_beleth:lt:400
+120 0 0 0 0 DOORTO:Ald-ruhn,_Redoran_Council_Entrance
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Redoran_Council_Entrance
+30 0 0 0 0 UNTIL:refdist:deval_beleth:lt:400
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+30 0 0 0 0 UNTIL:refdist:deval_beleth:lt:400
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+30 0 0 0 0 UNTIL:refdist:deval_beleth:lt:400
+180 0 0 0 0 WALKTO:navam%veran
+120 0 0 0 0 BRING:deval_beleth
+0.3 0 0 0 0 ESCORT:-
+30 0 0 0 0 UNTIL:refdist:deval_beleth:lt:300
+60 0 0 0 0 ACTIVATE:navam%veran
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:navam_veran:Gnisis
+10 0 0 0 0 UNTIL:cell:Gnisis
+5 0 0 0 0 UNTIL:refdist:deval_beleth:lt:600
+0.3 0 0 0 0 ESCORT:deval_beleth
+120 0 0 0 0 WAYTO:@-86716,89976,1012
+6 0 0 0
+120 0 0 0 0 WAYTO:@-86279,90066,1029
+6 0 0 0
+120 0 0 0 0 WAYTO:@-86050,90169,1074
+6 0 0 0
+120 0 0 0 0 WAYTO:@-85927,90626,980
+6 0 0 0
+120 0 0 0 0 WAYTO:@-85507,90726,1075
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84700,90506,993
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84570,90389,976
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83860,90112,888
+6 0 0 0
+120 0 0 0 0 WAYTO:@-82927,90179,936
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83326,89991,818
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83781,89325,500
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84137,88887,256
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84897,88404,26
+6 0 0 0
+120 0 0 0 0 BRING:deval_beleth
+0.3 0 0 0 0 ESCORT:-
+# (on south over the channel and the hills by the land's heights: the planner snaps to Gnisis' path grid here)
+0.3 0 0 0 0 ESCORT:deval_beleth
+# (the way round the ridge's east side, planned for a walker who must not climb: tools/test/uberroute.py --terrain --climb 4, Gnisis' bridge to Koal Cave; the line over the 1500-high ridge needed the float over its rocks, where Deval Beleth could not follow)
+120 0 0 0 0 WAYTO:@-84400,88400,48
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83968,87808,0
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83712,87296,168
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83712,86784,384
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83712,86272,552
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83712,85760,800
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83968,85504,872
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84224,84992,856
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83712,84480,808
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83200,83968,784
+6 0 0 0
+120 0 0 0 0 WAYTO:@-82944,83456,800
+6 0 0 0
+120 0 0 0 0 WAYTO:@-82944,82944,816
+6 0 0 0
+120 0 0 0 0 WAYTO:@-82944,82688,840
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83200,82432,928
+6 0 0 0
+120 0 0 0 0 WAYTO:@-83712,81920,1016
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84224,81408,1048
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84480,80896,1048
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84480,80384,1096
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84736,79872,1128
+6 0 0 0
+120 0 0 0 0 WAYTO:@-84992,79360,1048
+6 0 0 0
+120 0 0 0 0 WAYTO:@-85504,78848,840
+6 0 0 0
+120 0 0 0 0 WAYTO:@-86016,78336,560
+6 0 0 0
+120 0 0 0 0 WAYTO:@-86528,78592,296
+6 0 0 0
+120 0 0 0 0 WAYTO:@-87040,79104,192
+6 0 0 0
+120 0 0 0 0 WAYTO:@-87600,79420,40
+6 0 0 0
+120 0 0 0 0 BRING:deval_beleth
+# (back down on the beach in front of the door: bringing him can leave us up on the rock over it, where a walk to the
+# door's spot counts as there)
+60 0 0 0 0 WAYTO:@-87560,79050,-30
+60 0 0 0 0 WAYTO:@-87620,79380,-30
+120 0 0 0 0 DOORTO:Koal_Cave
+10 0 0 0 0 UNTIL:cell:Koal_Cave
+30 0 0 0 0 UNTIL:journal:HR_KoalCave:ge:70
+0.3 0 0 0 0 ESCORT:-
+0.1 0 0 0 0 EXPECT:journal:HR_KoalCave:eq:70
+# (back to his mother)
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Tuveso_Beleth:_Smith
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:tuveso_beleth
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Koal_Cave
+2 0 0 0 0 UNTIL:journal:HR_KoalCave:ge:100
+0.1 0 0 0 0 EXPECT:journal:HR_KoalCave:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

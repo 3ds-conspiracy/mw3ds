@@ -1,0 +1,152 @@
+# Skink-in-Tree's-Shade's tasks (MG_KillNecro1, MG_SoulGem2, MG_VampireCure), played LEGIT on the v2 test kit (ENHANCEV2).
+# Mages Guild, Wolverine Hall in Sadrith Mora, after the Wise Woman (MG_WiseWoman 100): the necromancer Telura Ulver in
+# Shal killed (10, 100); for a Wizard, the soul of an ash ghoul, trapped in Yakin with the scrolls and gem Skink gives (10,
+# 100); Galur Rithari's papers, from Kagrenac's Library in Tureynulal (10, 100)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (a Wizard of the Mages Guild, rank 7: the ash ghoul's soul is asked of one; the Wise Woman done as uber-mages-guild plays it)
+0.3 0 0 0 0 CON:pcjoinfaction%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 JOURNAL:MG_WiseWoman:100
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+4 0 0 0
+0.1 0 0 0 0 EXPECT:rank:mages_guild:eq:7
+0.3 0 0 0 0 LEGIT
+# to Skink by the guild's guide, as uber-mages-guild goes (Wolverine Hall's guild is a cell name with a colon); Mark there
+60 0 0 0 0 ACTIVATE:erranil
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:erranil:Sadrith
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 WALKTO:skinkintreesshade
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:duties
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:necromancy
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_KillNecro1:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Telura Ulver in Shal, north of Hla Oad (out by Iniel's guide service to Balmora)
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 SKYTO:@-55749,-24342,112:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Shal
+10 0 0 0 0 UNTIL:cell:Shal
+180 0 0 0 0 FIGHT:telura%ulver
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:telura_ulver
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:necromancy
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_KillNecro1:ge:100
+0.3 0 0 0 0 TOPIC:duties
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:ash_ghoul
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_SoulGem2:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# an ash ghoul in Yakin: Skink's soul trap scroll on it, then the kill
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 SKYTO:@107518,62695,546:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Yakin
+10 0 0 0 0 UNTIL:cell:Yakin
+120 0 0 0 0 WALKTO:ash_ghoul
+1 0 0 0 0 CASTAT:ash_ghoul:item:sc_fphyggisgemfeeder
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:refsoultrap:ash_ghoul:eq:1
+120 0 0 0 0 FIGHT:ash_ghoul
+2 0 0 0
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:ash_ghoul
+2 0 0 0 0 UNTIL:talkready
+# ("Yes, here it is.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_SoulGem2:ge:100
+0.3 0 0 0 0 TOPIC:duties
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Galur_Rithari's_papers
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_VampireCure:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Galur Rithari's papers in Kagrenac's Library, Tureynulal (the flight there as uber-main-quest-backpath takes it)
+60 0 0 0 0 ACTIVATE:iniel
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:iniel:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 SKYTO:@14158,61236,12858:beside
+5 0 0 0
+120 0 0 0 0 SKYTO:@33527,74814,14975:beside
+5 0 0 0
+120 0 0 0 0 DOORTO:Tureynulal,_Kagrenac's_Library
+10 0 0 0 0 UNTIL:cell:Tureynulal,_Kagrenac's_Library
+120 0 0 0 0 PICKUP:bk_galur_rithari's_papers
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:item:bk_galur_rithari's_papers:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:skinkintreesshade
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Galur_Rithari's_papers
+2 0 0 0 0 UNTIL:talkready
+# ("Yes, here they are.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_VampireCure:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

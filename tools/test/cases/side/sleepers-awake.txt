@@ -1,0 +1,87 @@
+# Sleepers Awake (A1_SleepersAwake, A1_Dreams, A1_Sleepers_Dralas), played LEGIT on the v2 test kit (ENHANCEV2).
+# The main quest's sleepers and dreams, from the Antabolis informant on (A1_2_AntabolisInformant 10). At night a sleeper
+# greets the player with Dagoth Ur's word (A1_SleepersAwake 1); asleep in Balmora the player dreams of the golden mask
+# (A1_Dreams 1); once the Sixth House is found (A2_2_6thHouse 50) a second sleep there brings an ash zombie on the
+# sleeper (3), which Caius hears of (5); Dagoth Fovon, master of Balmora's sleepers, killed in Hassour's shrine, his sleeper
+# Dralas Gilu wakes from it and thanks the player (A1_Sleepers_Dralas 1)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:sc_almsiviintervention
+# (the main quest as far as the Sixth House's base: as if done; its Sleepers script, which sends the dreams and the
+# night's attackers, started as the main quest starts it)
+0.3 0 0 0 0 JOURNAL:A1_2_AntabolisInformant:10
+0.3 0 0 0 0 JOURNAL:A2_2_6thHouse:50
+0.3 0 0 0 0 STARTSCRIPT:sleepers
+# (the sleepers speak at night)
+0.3 0 0 0 0 HOUR:22
+0.3 0 0 0 0 GOTO:Balmora
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# asleep in Balmora's street: the first dream
+0.3 0 0 0 0 SLEEP:24
+20 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:journal:A1_Dreams:ge:1
+# asleep again: an ash zombie on the sleeper
+0.3 0 0 0 0 SLEEP:24
+20 0 0 0 0 MSG
+0.1 0 0 0 0 EXPECT:journal:A1_SleepersAwake:ge:3
+120 0 0 0 0 FIGHT:ash_zombie
+2 0 0 0
+# Caius Cosades hears of it (to his door as uber-main-quest goes in: a walk to it climbs onto the roof above it)
+120 0 0 0 0 WAYTO:@-15263,-12790,541
+0.3 0 0 0 0 FACE:@-15259,-12649
+0.136 0 1 0
+0.3 0 0 0 0 A
+10 0 0 0 0 UNTIL:cell:Balmora,_Caius_Cosades'_House
+60 0 0 0 0 ACTIVATE:caius%cosades
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:attacked_while_sleeping
+0.1 0 0 0 0 EXPECT:journal:A1_SleepersAwake:ge:5
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+# Dralas Gilu, a sleeper on the road north of Seyda Neen, at night
+0.1 0 0 0 0 EXPECT:hour:ge:18
+120 0 0 0 0 SKYTO:@1145,-56978,1400:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:dralas%gilu
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:A1_SleepersAwake:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Dagoth Fovon in the shrine at Hassour
+120 0 0 0 0 SKYTO:@-19246,-38402,370:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Hassour
+10 0 0 0 0 UNTIL:cell:Hassour
+120 0 0 0 0 DOORTO:Hassour,_Shrine
+10 0 0 0 0 UNTIL:cell:Hassour,_Shrine
+240 0 0 0 0 FIGHT:dagoth%fovon
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:dagoth_fovon
+# (out by Almsivi Intervention, as a player leaves a shrine once its master is dead: the walk back up through Hassour's
+# caves stuck)
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+4 0 0 0
+5 0 0 0
+# Dralas Gilu awake
+120 0 0 0 0 SKYTO:@1145,-56978,1400:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:dralas%gilu
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Sixth_House
+0.1 0 0 0 0 EXPECT:journal:A1_Sleepers_Dralas:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

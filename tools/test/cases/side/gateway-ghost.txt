@@ -1,7 +1,8 @@
 # Gateway Ghost (town_Sadrith), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Sadrith Mora. The Gateway Inn's prefect Angaredhel wants the haunting of the South Turret bed chamber ended; the Telvanni's Arara Uvulas points to a Conjuration expert, the Mages Guild's Uleni Heleran, who is the prankster and hands over her papers, and Angaredhel pays a ring.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,7 +12,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@144071,35904,876:beside
+120 0 0 0 0 SKYTO:@144071,35904,876:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn
@@ -26,12 +27,12 @@
 # (the haunting in the South Turret is killed: it comes back, but Angaredhel is told)
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn|_South_Wing
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn|_South_Wing
-120 0 0 0 0 KILL:gateway_haunt
+120 0 0 0 0 FIGHT:gateway_haunt
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@144859,42228,944:beside
+120 0 0 0 0 SKYTO:@144859,42228,944:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Telvanni_Council_House,_Entry
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Telvanni_Council_House,_Entry
@@ -50,7 +51,7 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (Wolverine Hall's guild rooms lie up its towers: by the Mages Guild guide from Balmora)
-120 0 0 0 0 FLYTO:@-21590,-14510,934:beside
+120 0 0 0 0 SKYTO:@-21590,-14510,934:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Balmora,_Guild_of_Mages
 10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
@@ -79,7 +80,7 @@
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@144071,35904,876:beside
+120 0 0 0 0 SKYTO:@144071,35904,876:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Gateway_Inn
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Gateway_Inn

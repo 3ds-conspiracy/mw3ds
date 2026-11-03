@@ -150,6 +150,13 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 		ok = s.dlg.open;
 		snprintf(got, sizeof(got), "%s", ok ? "talking" : "not talking");
 	}
+	else if (what == "talkingto" && a.size() >= 2)
+	{
+		// EXPECT:talkingto:<id>: the talk open is with that one
+		std::string who = s.dlg.open && s.dlg.ref >= 0 ? lower(w.refs[s.dlg.ref].id) : "";
+		ok = who == lower(spaced(a[1]));
+		snprintf(got, sizeof(got), "%s", s.dlg.open ? who.c_str() : "not talking");
+	}
 	else if (what == "soul" && a.size() >= 3)
 	{
 		// EXPECT:soul:<gem>:<creature>: carries that gem holding that creature's soul ("none": an empty one)

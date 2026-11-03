@@ -1,0 +1,52 @@
+# data: bloodmoon
+# Thormoor's Doom (BM_CursedCaptain_a), played LEGIT on the v2 test kit (ENHANCEV2).
+# Bloodmoon, the Cursed Captain's other ending. Thormoor Gray-Wave, who drowned Geilir the Mumbling's family asleep at
+# the rudder, is cursed never to sleep (BM_CursedCaptain 10, 30). Only Geilir can lift it: killed instead, and Thormoor
+# told, the curse can never be lifted (10)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+# (Tribunal's Dark Brotherhood attack at a rest is Tribunal's questline, not this one's)
+0.3 0 0 0 0 JOURNAL:tr_dbattack:50
+0.3 0 0 0 0 GOTO:Fort_Frostmoth
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# Thormoor Gray-Wave, watching the sea on Solstheim's north-west shore
+120 0 0 0 0 SKYTO:@-217829,187000,1300:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:thormoor%gray-wave
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:that_night_at_sea
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:ge:10
+0.3 0 0 0 0 TOPIC:eternal_wakefulness
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:eq:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Geilir the Mumbling in his dwelling, killed before he can lift the curse
+120 0 0 0 0 SKYTO:@-211094,175351,700:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Solstheim,_Geilir_the_Mumbling's_Dwelling
+10 0 0 0 0 UNTIL:cell:Solstheim,_Geilir_the_Mumbling's_Dwelling
+120 0 0 0 0 FIGHT:geilir%the%mumbling
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:geilir_the_mumbling
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+# back to Thormoor: told, he greets the player with his doom
+120 0 0 0 0 SKYTO:@-217829,187000,1300:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:thormoor%gray-wave
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain_a:ge:10
+0.1 0 0 0 0 EXPECT:journal:BM_CursedCaptain:eq:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

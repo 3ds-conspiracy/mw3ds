@@ -1,0 +1,96 @@
+# data: bloodmoon
+# Hrothmund's Barrow is Sealed (BM_Airship_c), played LEGIT on the v2 test kit (ENHANCEV2).
+# Bloodmoon, the barrow's failed ending. The Mead Hall Massacre (BM_MeadHall) as uber-bm-main plays it, up to Svenja
+# Snow-Song's last task: Hrothmund the Red's blessing, his axe in his barrow (60). The wolf on the barrow's door asks its
+# name, and a wrong one seals it for good (BM_Airship_a 10). Louis Beauchamp in Ald'ruhn then wants nothing more to do
+# with the player (10), and Svenja, outside the ruined hall, doubts Thirsk will ever reopen (20). (Svenja stands outside
+# only once the Udyrfrykte is dead, BM_MeadHall 40, until the axe is found, 70: her script)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+# (Tribunal's Dark Brotherhood attack at a rest is Tribunal's questline, not this one's)
+0.3 0 0 0 0 JOURNAL:tr_dbattack:50
+# (the massacre at Thirsk's mead hall comes after the Skaal's trials of the main quest, BM_Trial 100: as if passed)
+0.3 0 0 0 0 JOURNAL:BM_Trial:100
+0.3 0 0 0 0 GOTO:Fort_Frostmoth
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+# Svenja Snow-Song in the ruined mead hall: the Udyrfrykte (10), stopped by the player (30)
+120 0 0 0 0 SKYTO:@-153022,191000,2100:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 WAYTO:@-155054,189454,1772
+120 0 0 0 0 DOORTO:Solstheim,_Thirsk
+10 0 0 0 0 UNTIL:cell:Solstheim,_Thirsk
+60 0 0 0 0 ACTIVATE:svenja%snow-song
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:10
+0.3 0 0 0 0 TOPIC:the_Udyrfrykte
+0.3 0 0 0 0 TOPIC:beast_must_be_stopped
+0.3 0 0 0 0 CHOICE:1
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:30
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+# the beast in its lair under Lake Fjalding (40), its heart to Svenja, outside now (50), and her last task (60)
+120 0 0 0 0 SKYTO:@-159125,189449,500:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Solstheim,_Lair_of_the_Udyrfrykte
+10 0 0 0 0 UNTIL:cell:Solstheim,_Lair_of_the_Udyrfrykte
+300 0 0 0 0 FIGHT:bm_udyrfrykte
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:40
+60 0 0 0 0 LOOT:bm_udyrfrykte:ingred_udyrfrykte_heart
+0.1 0 0 0 0 EXPECT:item:ingred_udyrfrykte_heart:ge:1
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+120 0 0 0 0 SKYTO:@-153022,191000,2100:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 WAYTO:@-155054,189454,1772
+60 0 0 0 0 ACTIVATE:svenja_outside
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:50
+0.3 0 0 0 0 TOPIC:one_more_task
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:ge:60
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# the wolf's door, high on the mountain north-west of Thirsk
+120 0 0 0 0 SKYTO:@-194388,209594,3300:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:bm_ic_door_pelt_wolf
+2 0 0 0
+# ("Dyrisblod": the first name offered, a wrong one)
+0.5 0 0 0 0 A
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Airship_a:eq:10
+0.5 0 0 0 0 A
+2 0 0 0 0 UNTIL:screen:none
+# Louis Beauchamp, outside the Ald'ruhn Mages Guild
+180 0 0 0 0 SKYTO:@-14917,53136,2211:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:louis%beauchamp
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Airship_c:eq:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# back to Svenja outside the hall
+180 0 0 0 0 SKYTO:@-153022,191000,2100:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 WAYTO:@-155054,189454,1772
+60 0 0 0 0 ACTIVATE:svenja_outside
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:BM_Airship_c:eq:20
+0.1 0 0 0 0 EXPECT:journal:BM_MeadHall:lt:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

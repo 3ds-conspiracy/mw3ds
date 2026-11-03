@@ -241,6 +241,13 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		s.persuadeRoll = atoi(a[1].c_str());       // the die roll persuasion and enchanting use until ROLL:-1
 		return true;
 	}
+	// SCRIPTROLL:<n>: what a script's Random returns (at most its range less one) until SCRIPTROLL:-1: a quest whose
+	// outcome is the script's own die (The MatchMaker's date) played to the end it is after, whatever came before
+	if (verb == "SCRIPTROLL" && a.size() >= 2)
+	{
+		w.testScriptRoll = atoi(a[1].c_str());
+		return true;
+	}
 	// RESISTROLL:<0..99>: the die the player, a creature or an NPC resists the spell effects they are hit by with, until
 	// RESISTROLL:-1
 	if (verb == "RESISTROLL" && a.size() >= 2)

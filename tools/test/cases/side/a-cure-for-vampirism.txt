@@ -1,7 +1,8 @@
-# A Cure for Vampirism (MS_VampireCure), partial, played LEGIT on the v2 test kit (ENHANCEV2).
+# A Cure for Vampirism (MS_VampireCure), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Bal Ur. A vampire (a Berne's blood taken, three days passed) asks the Bal Ur priest Derar Hlervu for a cure and is sent to Molag Bal's statue below (20; he is gone once the statue has spoken: asked first). The statue's errand (30) is played; the Dubdilla kills (40) and the cure (50) are not.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -23,18 +24,21 @@
 1 0 0 0
 0.3 0 0 0 0 A
 1 0 0 0
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 GIVE:pick_grandmaster
 0.3 0 0 0 0 LEGIT
-60 0 0 0 0 WALKTO:@-11900,-74500,273
-120 0 0 0 0 FLYTO:@30000,40000,3000
+120 0 0 0 0 WAYTO:@-11900,-74500,273
+120 0 0 0 0 SKYTO:@30000,40000,3000
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@56125,-37766,800:beside
+120 0 0 0 0 SKYTO:@56125,-37766,800:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Bal_Ur,_Shrine
 10 0 0 0 0 UNTIL:cell:Bal_Ur,_Shrine
 120 0 0 0 0 DOORTO:Bal_Ur,_Underground
 10 0 0 0 0 UNTIL:cell:Bal_Ur,_Underground
 # (he is in front of the statue: the crosshair finds him from the north side)
-60 0 0 0 0 WALKTO:@3512,-3742,-250
+120 0 0 0 0 WAYTO:@3512,-3742,-250
 60 0 0 0 0 ACTIVATE:derar%hlervu
 1.5 0 0 0
 0.3 0 0 0 0 TOPIC:lifeless_one
@@ -46,4 +50,90 @@
 60 0 0 0 0 ACTIVATE:active_dae_molagbal2
 60 0 0 0 0 UNTIL:journal:MS_VampireCure:ge:30
 0.1 0 0 0 0 EXPECT:journal:MS_VampireCure:eq:30
-# BLOCKED: Molag Grunda and Nomeg Gwai (40) are at the north end of Dubdilla, Uncharted Caverns, Lower (3680,7584,-576), past flooded passages: the driver's walks and swims stick at rocks under water (from the Caverns' east door at 4865,1559, or the Lower's south door, at 2492,1302); then the statue cures us (50)
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+# Molag Grunda and Nomeg Gwai in Dubdilla's lower caverns, under Mt. Assarnibibi: the caves' path grids are in pieces, with
+# drops, a locked door, a water channel and flooded passages between: walked along the pieces, floated over the gaps
+120 0 0 0 0 DOORTO:Bal_Ur,_Shrine
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 SKYTO:@94308,97300,1500:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Dubdilla
+10 0 0 0 0 UNTIL:cell:Dubdilla
+60 0 0 0 0 WALKTO:@3611,1520,5828
+60 0 0 0 0 WALKTO:@3078,1535,5659
+60 0 0 0 0 WALKTO:@2858,1644,5673
+60 0 0 0 0 WALKTO:@2768,1754,5675
+60 0 0 0 0 WALKTO:@2762,1956,5674
+60 0 0 0 0 WALKTO:@2751,2260,5662
+60 0 0 0 0 WALKTO:@2717,2505,5545
+60 0 0 0 0 WALKTO:@2753,2827,5418
+60 0 0 0 0 WALKTO:@2812,3083,5413
+60 0 0 0 0 WALKTO:@3049,3255,5417
+60 0 0 0 0 WALKTO:@3315,3304,5429
+60 0 0 0 0 WALKTO:@3627,3373,5420
+60 0 0 0 0 WALKTO:@3748,3555,5415
+60 0 0 0 0 WALKTO:@3754,4239,5403
+60 0 0 0 0 WALKTO:@3821,4535,5409
+60 0 0 0 0 WALKTO:@3787,4891,5418
+60 0 0 0 0 WALKTO:@3763,5282,4852
+0.3 0 0 0 0 GRID:off
+60 0 0 0 0 WALKTO:@3295,6116,4912
+0.3 0 0 0 0 FACE:@3201,6273
+1 0 0 0 0 USELOCKPICK:door_cavern_doors20:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:door_cavern_doors20:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:door_cavern_doors20:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 DOORTO:Dubdilla,_Uncharted_Caverns
+10 0 0 0 0 UNTIL:cell:Dubdilla,_Uncharted_Caverns
+0.3 0 0 0 0 GRID:on
+60 0 0 0 0 WALKTO:@2721,-3659,-269
+60 0 0 0 0 WALKTO:@2715,-2951,-284
+120 0 0 0 0 WAYTO:@2700,-2400,-191
+60 0 0 0 0 WALKTO:@2644,-2249,-277
+60 0 0 0 0 WALKTO:@2780,-1784,-375
+60 0 0 0 0 WALKTO:@2715,-1432,-383
+60 0 0 0 0 WALKTO:@3078,-1402,-378
+60 0 0 0 0 WALKTO:@3511,-1443,-376
+120 0 0 0 0 DOORTO:Dubdilla,_Uncharted_Caverns,_Lower
+10 0 0 0 0 UNTIL:cell:Dubdilla,_Uncharted_Caverns,_Lower
+120 0 0 0 0 WAYTO:@2700,100,-216
+120 0 0 0 0 WAYTO:@2700,400,-215
+120 0 0 0 0 WAYTO:@2450,700,-142
+120 0 0 0 0 WAYTO:@2200,1000,-25
+120 0 0 0 0 WAYTO:@2200,1300,-3
+60 0 0 0 0 WALKTO:@2194,1410,-249
+60 0 0 0 0 WALKTO:@2153,1643,-270
+60 0 0 0 0 WALKTO:@2165,1888,-271
+60 0 0 0 0 WALKTO:@2153,2164,-277
+60 0 0 0 0 WALKTO:@2163,2431,-249
+60 0 0 0 0 WALKTO:@2117,2702,-253
+60 0 0 0 0 WALKTO:@2421,3025,-256
+60 0 0 0 0 WALKTO:@2891,3095,-150
+120 0 0 0 0 WAYTO:@3631,3863,-36
+60 0 0 0 0 WALKTO:@3592,4181,0
+60 0 0 0 0 WALKTO:@3576,4671,0
+60 0 0 0 0 WALKTO:@3324,4996,0
+60 0 0 0 0 WALKTO:@3580,5351,-67
+60 0 0 0 0 WALKTO:@3569,5828,-198
+60 0 0 0 0 WALKTO:@3634,6345,-590
+60 0 0 0 0 WALKTO:@3633,6644,-608
+60 0 0 0 0 WALKTO:@3834,7002,-602
+60 0 0 0 0 WALKTO:@3665,7337,-576
+60 0 0 0 0 WALKTO:@3487,7461,-576
+60 0 0 0 0 WALKTO:@3840,7698,-576
+180 0 0 0 0 FIGHT:winged%twilight_grunda_
+2 0 0 0
+180 0 0 0 0 FIGHT:atronach_frost_gwai_uni
+2 0 0 0
+5 0 0 0 0 UNTIL:journal:MS_VampireCure:ge:40
+0.1 0 0 0 0 EXPECT:journal:MS_VampireCure:ge:40
+# back to the statue: the cure (50)
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Bal_Ur,_Underground
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:active_dae_molagbal2
+60 0 0 0 0 UNTIL:journal:MS_VampireCure:ge:50
+0.1 0 0 0 0 EXPECT:journal:MS_VampireCure:ge:50

@@ -1001,6 +1001,7 @@
 120 0 0 0 0 ACTIVATE:falco%galenus
 2 0 0 0 0 UNTIL:talkready
 0.1 0 0 0 0 EXPECT:global:colonystate:eq:23
+0.1 0 0 0 0 EXPECT:journal:CO_13:eq:70
 0.5 0 0 0 0 B
 0.5 0 0 0 0 B
 0.3 0 0 0 0 CAST:item:sc_divineintervention

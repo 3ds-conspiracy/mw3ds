@@ -1,7 +1,8 @@
 # Dust of the Vampire (VA_VampDust), played LEGIT on the v2 test kit (ENHANCEV2).
 # Vampire quest. After Shashev's Key (played first), Sirilonwe wants three portions of vampire dust (bought from the alchemists Anis Seloth in Sadrith Mora and the Ald-ruhn Mages Guild's Anarenen) and pays an amulet of feeding.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -25,8 +26,8 @@
 0.3 0 0 0 0 A
 1 0 0 0
 0.3 0 0 0 0 LEGIT
-60 0 0 0 0 WALKTO:@-11900,-74500,273
-120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+120 0 0 0 0 WAYTO:@-11900,-74500,273
+120 0 0 0 0 SKYTO:@31477,-79741,3348:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
@@ -46,26 +47,21 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
-120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+120 0 0 0 0 SKYTO:@-14372,55861,2446:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
-120 0 0 0 0 KILL:shashev
+# (a murder is heard by anyone within fAlarmRadius, as OpenMW counts it: the inn's Redoran guard reports it, 1000 on the
+# bounty, and a guard takes no fine from a vampire ("Were you not an abomination, I might let you live"): the bounty
+# stays, the guards fight)
+120 0 0 0 0 FIGHT:shashev
 120 0 0 0 0 LOOT:shashev:key_shashev
 0.1 0 0 0 0 EXPECT:dead:shashev
 0.1 0 0 0 0 EXPECT:item:key_shashev:ge:1
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-# (a guard saw it: the fine is paid, the stolen key stays ours)
-60 0 0 0 0 ACTIVATE:redoran%guard%male
-1.5 0 0 0
-0.3 0 0 0 0 CHOICE:1
-2 0 0 0 0 UNTIL:talkready
-0.3 0 0 0 0 B
-0.5 0 0 0 0 B
-2 0 0 0 0 UNTIL:screen:none
-0.1 0 0 0 0 EXPECT:bounty:eq:0
-120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+0.1 0 0 0 0 EXPECT:bounty:ge:1000
+120 0 0 0 0 SKYTO:@31477,-79741,3348:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
@@ -93,7 +89,7 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
-120 0 0 0 0 FLYTO:@148481,40098,1385:beside
+120 0 0 0 0 SKYTO:@148481,40098,1385:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Anis_Seloth|_Alchemist
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Anis_Seloth|_Alchemist
@@ -108,7 +104,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-14802,53102,2304:beside
+180 0 0 0 0 SKYTO:@-14802,53102,2304:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Guild_of_Mages
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Guild_of_Mages
@@ -124,7 +120,7 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
-120 0 0 0 0 FLYTO:@31477,-79741,3348:beside
+120 0 0 0 0 SKYTO:@31477,-79741,3348:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza

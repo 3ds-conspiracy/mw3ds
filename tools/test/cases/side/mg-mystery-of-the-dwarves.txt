@@ -1,0 +1,202 @@
+# Mystery of the Dwarves (MG_Dwarves), played LEGIT on the v2 test kit (ENHANCEV2).
+# Mages Guild, Vivec: Arch-Mage Trebonius wants to know what became of the Dwarves (10). Three Dwemer books: Divine
+# Metaphysics in Bethamez under the Gnisis eggmine, the Egg of Time in Mzuleft, Hanging Gardens in Nchuleftingth's lower
+# levels; Baladas Demnevanni in Gnisis reads them all (70), and Trebonius takes them as the answer (100). The ways into the
+# ruins as uber-mages-guild takes them
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster:4
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (a member of the Mages Guild, who knows to ask for duties, as joining teaches)
+0.3 0 0 0 0 CON:pcjoinfaction%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:addtopic%"duties"
+0.3 0 0 0 0 GOTO:Vivec,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:trebonius%artorius
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:trebonius%artorius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:duties
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_Dwarves:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Divine Metaphysics, in Bethamez under the Gnisis eggmine
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-80987,93307,2307
+5 0 0 0 0 UNTIL:effect:10:eq:0
+3 0 0 0
+2 0 0 0
+0.3 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
+2 0 0 0
+120 0 0 0 0 DOORTO:Gnisis,_Eggmine
+3 0 0 0
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 DOORTO:Gnisis,_Lower_Eggmine
+3 0 0 0
+0.67 0 1 0
+60 0 0 0 0 WALKTO:@1778,-5183,385
+60 0 0 0 0 WALKTO:@1878,-4891,381
+60 0 0 0 0 WALKTO:@1811,-4601,386
+60 0 0 0 0 WALKTO:@1826,-4393,380
+60 0 0 0 0 WALKTO:@2040,-4320,397
+60 0 0 0 0 WALKTO:@2233,-4419,383
+60 0 0 0 0 WALKTO:@2496,-4388,327
+60 0 0 0 0 WALKTO:@2688,-4245,223
+60 0 0 0 0 WALKTO:@2887,-4222,138
+60 0 0 0 0 WALKTO:@3143,-4247,132
+60 0 0 0 0 WALKTO:@3234,-4437,125
+60 0 0 0 0 WALKTO:@3342,-4630,129
+60 0 0 0 0 WALKTO:@3535,-4773,128
+60 0 0 0 0 WALKTO:@3647,-4932,126
+60 0 0 0 0 WALKTO:@3653,-5176,136
+120 0 0 0 0 DOORTO:Gnisis,_Bethamez
+10 0 0 0 0 UNTIL:cell:Gnisis,_Bethamez
+120 0 0 0 0 PICKUP:bk_DivineMetaphysics
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:item:bk_DivineMetaphysics:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+# the Egg of Time, in Mzuleft
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 SKYTO:@54280,176007,1223:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Mzuleft
+10 0 0 0 0 UNTIL:cell:Mzuleft
+# (along the ruin's path grid to the book's room, opening its Dwemer doors on the way (one shut stops the walk): a walk
+# straight at it stuck in the hall on the way)
+60 0 0 0 0 WALKTO:@-714,1490,-971
+60 0 0 0 0 WALKTO:@-727,1960,-992
+60 0 0 0 0 WALKTO:@-283,1965,-992
+60 0 0 0 0 WALKTO:@368,1972,-992
+# (its doors east are locked and trapped: disarmed, picked and opened, the pair of them)
+0.3 0 0 0 0 FACE:@448,1840
+1 0 0 0 0 USEPROBE:door_dwrv_inner00:probe_grandmaster
+1 0 0 0 0 USELOCKPICK:door_dwrv_inner00:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:door_dwrv_inner00:pick_grandmaster
+0.3 0 0 0 0 FACE:@448,2064
+1 0 0 0 0 USEPROBE:door_dwrv_inner00:probe_grandmaster
+1 0 0 0 0 USELOCKPICK:door_dwrv_inner00:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:door_dwrv_inner00:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+30 0 0 0 0 OPEN:door_dwrv_inner00
+60 0 0 0 0 WALKTO:@734,1968,-992
+30 0 0 0 0 OPEN:door_dwrv_inner00
+60 0 0 0 0 WALKTO:@966,1603,-992
+60 0 0 0 0 WALKTO:@998,1257,-992
+120 0 0 0 0 PICKUP:bk_EggOfTime
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:item:bk_EggOfTime:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+# Hanging Gardens, in Nchuleftingth's lower levels (the Test of Pattern's third crank opens the way down)
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@86280,-17740,940
+60 0 0 0 0 WALKTO:@86280,-17740,940
+# (the door activated by the driver: the flight leaves us levitating, and a plain press of A from there did not open it)
+60 0 0 0 0 ACTIVATE:door_dwrv_load00
+3 0 0 0
+10 0 0 0 0 UNTIL:cell:Nchuleftingth,_Upper_Levels
+120 0 0 0 0 DOORTO:Nchuleftingth,_Test_of_Pattern
+3 0 0 0
+60 0 0 0 0 ACTIVATE:in_dwrv_crank_nchuleft_03
+8 0 0 0
+120 0 0 0 0 DOORTO:Nchuleftingth,_Lower_Levels
+10 0 0 0 0 UNTIL:cell:Nchuleftingth,_Lower_Levels
+0.5 0 0 0
+120 0 0 0 0 PICKUP:bk_hanginggardenswasten
+2 0 0 0
+0.5 0 0 0 0 B
+0.1 0 0 0 0 EXPECT:item:bk_hanginggardenswasten:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+# Baladas Demnevanni in Arvs-Drelen, Gnisis, up the tower's shaft levitating (the way as uber-house-telvanni takes it)
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 FLYTO:@-87725,95456,1317
+0.1 0 0 0 0 FLOAT:300:doors
+30 0 0 0 0 WALKTO:@-87800,95560,1340
+120 0 0 0 0 DOORTO:Gnisis,_Arvs-Drelen
+10 0 0 0 0 UNTIL:cell:Gnisis,_Arvs-Drelen
+0.5 0 0 0
+120 0 0 0 0 WALKTO:@3072,4096,512
+# (the door up to his rooms is trapped, each press setting it off: disarmed with a probe, and picked in case it is locked)
+2 0 0 0 0 FACE:@3206,4032
+1 0 0 0 0 USEPROBE:in_velothismall_ndoor_01:probe_grandmaster
+1 0 0 0 0 USEPROBE:in_velothismall_ndoor_01:probe_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+120 0 0 0 0 ACTIVATE:baladas_demnevanni
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Divine_Metaphysics
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_Dwarves:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 FLOAT:off
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:trebonius%artorius
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:disappearance_of_the_Dwarves
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_Dwarves:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

@@ -1,7 +1,8 @@
 # A Rash of Insults (MS_Apologies), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Vivec. Tarer Braryn called Trebonius Artorius a flat-head and has a rash; he sends his book of apology to the Mages Guild and is cured of it, with a little gold.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,7 +12,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@31731,-97517,664:beside
+120 0 0 0 0 SKYTO:@31731,-97517,664:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Hall_of_Justice
 10 0 0 0 0 UNTIL:cell:Vivec,_Hall_of_Justice

@@ -167,8 +167,10 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "conerr") v = s.console.lastError ? 1.0f : 0.0f;                    // the last console line did not run
 	else if (what == "armor") v = s.playerArmor();              // the player's armor rating
 	else if (what == "target") v = s.target >= 0 ? 1.0f : 0.0f;       // something under the crosshair
+	else if (what == "hudenemy") v = s.enemyRef >= 0 && w.time < s.enemyUntil ? 1.0f : 0.0f;   // the HUD shows a health bar for the last one hit
 	else if (what == "forcesneak") v = w.forceSneak ? 1.0f : 0.0f;    // the player forced to sneak
 	else if (what == "sneaking") v = w.player.sneaking ? 1.0f : 0.0f;  // the player sneaks now
+	else if (what == "onground") v = w.player.onGround ? 1.0f : 0.0f;   // the player stands on something (not in the air)
 	else if (what == "hudeffecticons")      // the HUD's active-effect icons (those of its effects with an icon)
 	{
 		v = 0;

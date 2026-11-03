@@ -1,0 +1,219 @@
+# Protecting Saprius Entius (IL_ProtectEntius), played LEGIT on the v2 test kit (ENHANCEV2).
+# Imperial Legion, Vivec to Ebonheart: past where uber-imperial-legion stops (10). The knight Saprius Entius, hiding in the
+# Arena Storage, is found (40), the Ordinators hunting him are fought off, and he is taken back to Frald the White: by
+# gondola to the Foreign Quarter, the Mages Guild's guide to Sadrith Mora and the boat to Ebonheart (50, 70, 100).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:2000
+# (a Knight of the Imperial Legion in uniform, who has cleared Saprius' name of the false Ordinator's crimes and been sent
+# by Frald the White to find him, as in uber-imperial-legion)
+0.3 0 0 0 0 CON:pcjoinfaction%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:addtopic%"saprius%entius"
+0.3 0 0 0 0 GIVE:imperial_chain_cuirass
+0.3 0 0 0 0 EQUIP:imperial_chain_cuirass
+0.3 0 0 0 0 JOURNAL:IL_FalseOrdinator:100
+0.3 0 0 0 0 JOURNAL:IL_ProtectEntius:10
+# (Frald's word also brings Saprius out of hiding)
+0.3 0 0 0 0 CON:"saprius%entius"->enable
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Canalworks
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Storage
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:saprius%entius
+1.5 0 0 0
+10 0 0 0 0 UNTIL:journal:IL_ProtectEntius:ge:40
+0.1 0 0 0 0 EXPECT:journal:IL_ProtectEntius:eq:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (the two Ordinators come for him; once fighting him they are no one's victims: OpenMW's canCommitCrimeAgainst)
+120 0 0 0 0 FIGHT:ordinator%wander_ilpe_1
+20 0 0 0 0 UNTIL:refengaged:ordinator%wander_ilpe_2:eq:1
+120 0 0 0 0 FIGHT:ordinator%wander_ilpe_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:ordinator%wander_ilpe_1
+0.1 0 0 0 0 EXPECT:dead:ordinator%wander_ilpe_2
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:saprius%entius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:IL_ProtectEntius:ge:50
+0.1 0 0 0 0 EXPECT:journal:IL_ProtectEntius:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:following:saprius%entius
+# (out through the Arena's canalworks and waistworks to its gondola, with him)
+0.3 0 0 0 0 ESCORT:saprius%entius
+120 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Canalworks
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+120 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Waistworks
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+180 0 0 0 0 WALKTO:dalse%adren
+120 0 0 0 0 BRING:saprius%entius
+0.3 0 0 0 0 ESCORT:-
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:300
+60 0 0 0 0 ACTIVATE:dalse%adren
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:dalse_adren:Vivec,_Foreign_Quarter
+10 0 0 0 0 UNTIL:effect:10:eq:0
+2 0 0 0
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:600
+# (into the Foreign Quarter to the Guild of Mages, whose guide sends us on to Sadrith Mora)
+0.3 0 0 0 0 ESCORT:saprius%entius
+# (up the Foreign Quarter's walkways by every point of its path grid, waiting for him at the top of the ramp: the
+# upper walkway passes over the lower one, and from under it he makes straight for us; and at the corners of the
+# lower one, where he cuts across to the Waistworks door and stays)
+120 0 0 0 0 WAYTO:@28764,-76721,26
+120 0 0 0 0 WAYTO:@28515,-76738,47
+120 0 0 0 0 WAYTO:@28096,-76738,243
+120 0 0 0 0 WAYTO:@27795,-76735,420
+120 0 0 0 0 WAYTO:@27401,-76747,663
+120 0 0 0 0 WAYTO:@27400,-77085,640
+120 0 0 0 0 WAYTO:@27408,-77318,576
+120 0 0 0 0 WAYTO:@27139,-77367,576
+120 0 0 0 0 WAYTO:@26887,-77490,576
+120 0 0 0 0 WAYTO:@26894,-77787,576
+120 0 0 0 0 WAYTO:@26931,-78200,576
+120 0 0 0 0 WAYTO:@27330,-78191,577
+120 0 0 0 0 WAYTO:@28053,-78182,1006
+120 0 0 0 0 WAYTO:@28721,-78169,1403
+120 0 0 0 0 WAYTO:@29070,-78155,1610
+120 0 0 0 0 WAYTO:@29429,-78146,1792
+120 0 0 0 0 WAYTO:@29633,-78114,1793
+120 0 0 0 0 WAYTO:@29861,-78094,1793
+120 0 0 0 0 BRING:saprius%entius
+120 0 0 0 0 WAYTO:@29887,-77833,1792
+120 0 0 0 0 WAYTO:@29883,-77616,1792
+120 0 0 0 0 BRING:saprius%entius
+120 0 0 0 0 WAYTO:@30302,-77609,1792
+120 0 0 0 0 WAYTO:@30655,-77686,1792
+120 0 0 0 0 WAYTO:@31181,-77681,1792
+120 0 0 0 0 WAYTO:@31657,-77680,1792
+120 0 0 0 0 WAYTO:@32113,-77669,1792
+120 0 0 0 0 WAYTO:@32417,-77851,1792
+120 0 0 0 0 WAYTO:@32494,-78225,1792
+120 0 0 0 0 WAYTO:@32490,-78529,1792
+120 0 0 0 0 WAYTO:@32125,-78533,1794
+120 0 0 0 0 WAYTO:@31913,-78547,1943
+120 0 0 0 0 WAYTO:@31663,-78527,2119
+120 0 0 0 0 WAYTO:@31389,-78527,2312
+120 0 0 0 0 WAYTO:@30977,-78529,2602
+120 0 0 0 0 WAYTO:@30650,-78535,2831
+120 0 0 0 0 WAYTO:@30336,-78562,3008
+120 0 0 0 0 BRING:saprius%entius
+120 0 0 0 0 WAYTO:@30165,-78479,3008
+120 0 0 0 0 WAYTO:@29919,-78406,3009
+120 0 0 0 0 WAYTO:@29897,-78198,3008
+120 0 0 0 0 WAYTO:@29877,-77979,3008
+120 0 0 0 0 WAYTO:@29606,-77947,3008
+120 0 0 0 0 WAYTO:@29276,-77935,3008
+120 0 0 0 0 WAYTO:@28995,-77962,3008
+120 0 0 0 0 WAYTO:@28420,-77963,3008
+120 0 0 0 0 WAYTO:@28016,-77985,3008
+120 0 0 0 0 WAYTO:@27731,-78010,3008
+120 0 0 0 0 WAYTO:@27626,-78124,3008
+120 0 0 0 0 WAYTO:@27591,-78359,3008
+120 0 0 0 0 WAYTO:@27612,-78673,3008
+120 0 0 0 0 WAYTO:@27572,-78967,3008
+120 0 0 0 0 WAYTO:@27582,-79453,3008
+120 0 0 0 0 WAYTO:@27581,-79746,3008
+120 0 0 0 0 WAYTO:@27869,-79738,3071
+120 0 0 0 0 WAYTO:@28077,-79745,3173
+120 0 0 0 0 BRING:saprius%entius
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+120 0 0 0 0 WALKTO:flacassia%fauseius
+120 0 0 0 0 BRING:saprius%entius
+0.3 0 0 0 0 ESCORT:-
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:300
+60 0 0 0 0 ACTIVATE:flacassia%fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Sadrith%Mora
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall:_Mage's_Guild
+2 0 0 0
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:600
+# (out of Wolverine Hall to the docks and the boat to Ebonheart)
+0.3 0 0 0 0 ESCORT:saprius%entius
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+# (down to the Hall's door to the street: its others open onto the fort's walls, where he stays)
+120 0 0 0 0 WALKTO:@2548,3968,13888
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+# (down the steps below Wolverine Hall's door, round its hill by the shore, across the channel west of it swimming and
+# north along the main island's shore to the docks: the path grid's way runs through the Hall's own door and over
+# raised walkways)
+120 0 0 0 0 WAYTO:@149332,27306,233
+120 0 0 0 0 WAYTO:@148959,27281,73
+120 0 0 0 0 WAYTO:@148600,27000,40
+120 0 0 0 0 WAYTO:@148136,26950,100
+120 0 0 0 0 WAYTO:@147624,27000,60
+120 0 0 0 0 WAYTO:@147150,28500,-80
+120 0 0 0 0 WAYTO:@147150,30000,-90
+120 0 0 0 0 WAYTO:@146000,31800,-90
+120 0 0 0 0 WAYTO:@144500,33000,-90
+120 0 0 0 0 WAYTO:@143300,33900,100
+120 0 0 0 0 WAYTO:@142400,34600,60
+120 0 0 0 0 WAYTO:@142036,35904,352
+120 0 0 0 0 WAYTO:@142036,37440,184
+120 0 0 0 0 WAYTO:@142208,37443,189
+120 0 0 0 0 WAYTO:@141786,38212,184
+120 0 0 0 0 WAYTO:@141786,38880,144
+120 0 0 0 0 WAYTO:@141618,39517,227
+120 0 0 0 0 WALKTO:gals%arethi
+120 0 0 0 0 BRING:saprius%entius
+0.3 0 0 0 0 ESCORT:-
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:300
+60 0 0 0 0 ACTIVATE:gals%arethi
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:gals%arethi:Ebonheart
+10 0 0 0 0 UNTIL:cell:Ebonheart
+2 0 0 0
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:600
+# (through Ebonheart to the Hawkmoth Legion Garrison)
+0.3 0 0 0 0 ESCORT:saprius%entius
+240 0 0 0 0 WALKTO:@14104,-100582,728
+120 0 0 0 0 BRING:saprius%entius
+120 0 0 0 0 DOORTO:Ebonheart,_Hawkmoth_Legion_Garrison
+10 0 0 0 0 UNTIL:cell:Ebonheart,_Hawkmoth_Legion_Garrison
+30 0 0 0 0 UNTIL:journal:IL_ProtectEntius:ge:70
+0.3 0 0 0 0 ESCORT:-
+0.1 0 0 0 0 EXPECT:journal:IL_ProtectEntius:eq:70
+60 0 0 0 0 ACTIVATE:frald_the_white
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Saprius_Entius
+2 0 0 0 0 UNTIL:journal:IL_ProtectEntius:ge:100
+0.1 0 0 0 0 EXPECT:journal:IL_ProtectEntius:eq:100
+0.1 0 0 0 0 EXPECT:item:imperial_helm_frald_uniq:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

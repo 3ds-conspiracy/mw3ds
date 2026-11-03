@@ -1,7 +1,8 @@
 # A little secret: the propylon tip (MS_propylon), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Vivec. Ennbjof's greeting names "little secret"; Arantamo, the bookseller's guest in the back room, then tells us about the propylon chambers (the back room door is locked: picked).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 0.3 0 0 0 0 GIVE:pick_grandmaster:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@44092,-87008,1872:beside
+120 0 0 0 0 SKYTO:@44092,-87008,1872:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
@@ -27,7 +28,7 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+120 0 0 0 0 SKYTO:@27299,-80199,1893:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
@@ -35,7 +36,7 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Canalworks
 120 0 0 0 0 DOORTO:Vivec,_Simine_Fralinie|_Bookseller
 10 0 0 0 0 UNTIL:cell:Vivec,_Simine_Fralinie|_Bookseller
-60 0 0 0 0 WALKTO:@700,-64,-256
+120 0 0 0 0 WAYTO:@700,-64,-256
 0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
 1 0 0 0
 120 0 0 0 0 DOORTO:Vivec,_Simine_Fralinie|_Bookseller

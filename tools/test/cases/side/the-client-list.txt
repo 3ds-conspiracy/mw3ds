@@ -2,8 +2,9 @@
 # Bolrin, at the East Empire Company, offers it only to someone who has done the Company's errands: Dredil's Delivery
 # and The Enchanter's Rats first (as in those cases). Then Audenian Valius's client list is taken unseen from his
 # back room, and Bolrin pays 700.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -15,7 +16,7 @@
 0.3 0 0 0 0 LEGIT
 # (Dredil's Delivery)
 # (to Ebonheart's street, and the castle by its ways: flown to its doors, the flight came down on its roof)
-120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+120 0 0 0 0 SKYTO:@18190,-101360,430:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ebonheart,_Grand_Council_Chambers
 10 0 0 0 0 UNTIL:cell:Ebonheart,_Grand_Council_Chambers
@@ -32,7 +33,7 @@
 120 0 0 0 0 DOORTO:outside
 10 0 0 0 0 UNTIL:cell:Ebonheart
 # (out on the castle's upper floor: down to the Company Hall flying)
-120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+120 0 0 0 0 SKYTO:@18190,-101360,430:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ebonheart,_East_Empire_Company_Hall
 10 0 0 0 0 UNTIL:cell:Ebonheart,_East_Empire_Company_Hall
@@ -62,7 +63,7 @@
 # ("latest rumors" first: a topic people's greetings mention now and then, by chance. Learned for sure the way a player
 # could: Daynes Redothril, the Ald-ruhn pawnbroker, names "my trade" meeting us, and a publican's answer on that
 # names "latest rumors": Boderi Farano at the Ald Skar Inn)
-120 0 0 0 0 FLYTO:@-13190,57048,2660:beside
+120 0 0 0 0 SKYTO:@-13190,57048,2660:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril
@@ -84,7 +85,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 10 0 0 0 0 UNTIL:cell:Ald-ruhn
-120 0 0 0 0 FLYTO:@44098,-86841,1887:beside
+120 0 0 0 0 SKYTO:@44098,-86841,1887:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
@@ -106,8 +107,8 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 KILL:rat_telvanni_unique_2
-120 0 0 0 0 KILL:rat_telvanni_unique_2
+120 0 0 0 0 FIGHT:rat_telvanni_unique_2
+120 0 0 0 0 FIGHT:rat_telvanni_unique_2
 60 0 0 0 0 ACTIVATE:audenian%valius
 0.3 0 0 0 0 TOPIC:rat_infestation
 2 0 0 0 0 UNTIL:journal:EB_Pest:ge:30
@@ -121,16 +122,19 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Canalworks
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Underworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Underworks
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
-120 0 0 0 0 KILL:rat_telvanni_unique
+# (floated: the rats stand on the ledges over the Underworks' water, 110 above a swimmer, who can't climb out there)
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+120 0 0 0 0 FIGHT:rat_telvanni_unique
+0.1 0 0 0 0 FLOAT:off
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Canalworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Canalworks
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
@@ -150,7 +154,7 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+120 0 0 0 0 SKYTO:@18190,-101360,430:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ebonheart,_East_Empire_Company_Hall
 10 0 0 0 0 UNTIL:cell:Ebonheart,_East_Empire_Company_Hall
@@ -168,7 +172,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@44098,-86841,1887:beside
+120 0 0 0 0 SKYTO:@44098,-86841,1887:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
@@ -176,6 +180,8 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Enchanter
 1 0 0 0 0 HIDE:60
 0.3 0 0 0 0 SNEAK:1
+# (the Cantatas of Vivec first: it stands against the list on the shelf, and the press for the list took it instead)
+120 0 0 0 0 PICKUP:bk_CantatasOfVivec
 120 0 0 0 0 PICKUP:bk_clientlist
 0.3 0 0 0 0 SNEAK:0
 0.1 0 0 0 0 EXPECT:item:bk_clientlist:ge:1
@@ -184,7 +190,7 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@18190,-101360,430:beside
+120 0 0 0 0 SKYTO:@18190,-101360,430:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ebonheart,_East_Empire_Company_Hall
 10 0 0 0 0 UNTIL:cell:Ebonheart,_East_Empire_Company_Hall

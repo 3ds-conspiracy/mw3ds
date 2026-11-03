@@ -1,7 +1,8 @@
 # Fjol the Outlaw (MV_Bastard), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Moonmoth and Hla Oad. Larrius Varro of Moonmoth Fort (his rumours, learned through Elone's "my trade" "my trade") sends us after a Nord robber, Fjol; Fjol demands 100 septims, we refuse and kill him, and Larrius pays.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 4 0 0 0
 0.3 0 0 0 0 LEGIT
 # ("latest rumors" first: Daynes Redothril, the Ald-ruhn pawnbroker, names "my trade" and a publican's answer on that names the rumors)
-120 0 0 0 0 FLYTO:@-13053,56965,2682:beside
+120 0 0 0 0 SKYTO:@-13053,56965,2682:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Daynes_Redothril|_Pawnbroker
@@ -24,7 +25,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-14372,55861,2446:beside
+120 0 0 0 0 SKYTO:@-14372,55861,2446:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald-ruhn,_Ald_Skar_Inn
 10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Ald_Skar_Inn
@@ -38,7 +39,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-5062,-18284,1129:beside
+120 0 0 0 0 SKYTO:@-5062,-18284,1129:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
 10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior
@@ -54,7 +55,7 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-48791,-30574,483:beside
+120 0 0 0 0 SKYTO:@-48791,-30574,483:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:fjol
 1.5 0 0 0
@@ -66,10 +67,10 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 KILL:fjol
+120 0 0 0 0 FIGHT:fjol
 0.1 0 0 0 0 EXPECT:dead:fjol
 0.1 0 0 0 0 EXPECT:journal:MV_Bastard:ge:100
-120 0 0 0 0 FLYTO:@-5062,-18284,1129:beside
+120 0 0 0 0 SKYTO:@-5062,-18284,1129:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
 10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior

@@ -1436,7 +1436,7 @@
 # (the two fought here, before the way down: they reach the player sooner now people run by their race's weight, and
 # their blows on the way down pushed the player west onto the pit's wall)
 120 0 0 0 0 KILL:meryaran
-120 0 0 0 0 KILL:carecalmo
+# (Carecalmo may stay below: one who comes up is fought on the way down, the rest at the bottom)
 60 0 0 0 0 WALKTO:@305,1300,-1426
 120 0 0 0 0 WALKTO:@2350,749,-1168
 120 0 0 0 0 KILL:carecalmo

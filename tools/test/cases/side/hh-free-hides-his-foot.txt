@@ -1,0 +1,205 @@
+# Free Hides-His-Foot (HH_TwinLamps3), played LEGIT on the v2 test kit (ENHANCEV2).
+# House Hlaalu / Twin Lamps, past where uber-house-hlaalu stops (10): the slave Hides-His-Foot is led off the Dren
+# Plantation (50) and north-east along the road to Sterdecan's Farm (70), and Ilmeni Dren thanks us (100). His owners set
+# on him when they see him leave, four of them at once: they are taunted into drawing on us first, and fought then.
+# (Route from tools/test/uberroute.py --climb 4.)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+# (Ilmeni Dren has sent us for him, after J'Saddha's rescue, as in uber-house-hlaalu)
+0.3 0 0 0 0 JOURNAL:HH_TwinLamps1:100
+0.3 0 0 0 0 JOURNAL:HH_TwinLamps3:10
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 SKYTO:@18181,-56793,639:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+# (his owners first: taunted until they draw on us, then fought in our own defence, so none is left to cut him down)
+# (the taunts' die picked to tell: on a run of bad rolls they never draw at all)
+0.1 0 0 0 0 ROLL:0
+60 0 0 0 0 ACTIVATE:frinnius%posuceius
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:refcombat:frinnius%posuceius:eq:1
+120 0 0 0 0 FIGHT:frinnius%posuceius
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:hrargal%the%crow
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:refcombat:hrargal%the%crow:eq:1
+120 0 0 0 0 FIGHT:hrargal%the%crow
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:manos%othreleth
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:refcombat:manos%othreleth:eq:1
+120 0 0 0 0 FIGHT:manos%othreleth
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:aebondeius%jucanis
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:refcombat:aebondeius%jucanis:eq:1
+120 0 0 0 0 FIGHT:aebondeius%jucanis
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:mavus%ules
+1.5 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 PERSUADE:2
+1 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:refcombat:mavus%ules:eq:1
+120 0 0 0 0 FIGHT:mavus%ules
+2 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.1 0 0 0 0 ROLL:-1
+60 0 0 0 0 ACTIVATE:hides_his_foot
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:HH_TwinLamps3:ge:50
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps3:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:following:hides_his_foot
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 ESCORT:hides_his_foot
+# (north-east along the road to the farm)
+120 0 0 0 0 WAYTO:@18943,-57022,625
+120 0 0 0 0 WAYTO:@19456,-56320,648
+120 0 0 0 0 WAYTO:@19968,-55296,680
+120 0 0 0 0 WAYTO:@20406,-55204,676
+120 0 0 0 0 WAYTO:@20733,-55197,666
+120 0 0 0 0 WAYTO:@21075,-55196,645
+120 0 0 0 0 WAYTO:@21504,-54784,632
+120 0 0 0 0 WAYTO:@21171,-53992,662
+120 0 0 0 0 WAYTO:@21917,-53165,740
+120 0 0 0 0 WAYTO:@22475,-52726,716
+120 0 0 0 0 WAYTO:@22565,-52127,666
+120 0 0 0 0 WAYTO:@23040,-51712,672
+120 0 0 0 0 WAYTO:@23808,-51456,736
+120 0 0 0 0 WAYTO:@24576,-50944,800
+120 0 0 0 0 WAYTO:@25088,-50432,792
+120 0 0 0 0 WAYTO:@25856,-49920,784
+120 0 0 0 0 WAYTO:@26368,-49408,760
+120 0 0 0 0 WAYTO:@26880,-48896,776
+120 0 0 0 0 WAYTO:@27136,-48128,768
+120 0 0 0 0 WAYTO:@27392,-47360,736
+120 0 0 0 0 WAYTO:@27392,-46592,736
+120 0 0 0 0 WAYTO:@27392,-45824,696
+120 0 0 0 0 WAYTO:@26880,-45312,664
+120 0 0 0 0 WAYTO:@26368,-44544,720
+120 0 0 0 0 WAYTO:@25856,-44032,672
+120 0 0 0 0 WAYTO:@25344,-43520,648
+120 0 0 0 0 WAYTO:@25088,-42752,672
+120 0 0 0 0 WAYTO:@25088,-41984,648
+120 0 0 0 0 WAYTO:@25600,-41472,656
+120 0 0 0 0 WAYTO:@26112,-40960,680
+120 0 0 0 0 WAYTO:@26880,-40448,672
+120 0 0 0 0 WAYTO:@27648,-40448,680
+120 0 0 0 0 WAYTO:@28416,-40448,664
+120 0 0 0 0 WAYTO:@29184,-40448,672
+120 0 0 0 0 WAYTO:@29952,-40448,680
+120 0 0 0 0 WAYTO:@30720,-40704,680
+120 0 0 0 0 WAYTO:@31488,-40448,680
+120 0 0 0 0 WAYTO:@32256,-40448,688
+120 0 0 0 0 WAYTO:@32768,-40448,712
+120 0 0 0 0 WAYTO:@33024,-40192,720
+120 0 0 0 0 WAYTO:@33792,-39680,616
+120 0 0 0 0 WAYTO:@34304,-39168,608
+120 0 0 0 0 WAYTO:@34560,-38400,640
+120 0 0 0 0 WAYTO:@34770,-38050,680
+120 0 0 0 0 BRING:hides_his_foot
+# (into the farmhouse with him: there, or where his follow ends at its door, he is safe)
+120 0 0 0 0 DOORTO:Sterdecan's_Farmhouse
+10 0 0 0 0 UNTIL:cell:Sterdecan's_Farmhouse
+30 0 0 0 0 UNTIL:journal:HH_TwinLamps3:ge:70
+0.3 0 0 0 0 ESCORT:-
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps3:eq:70
+0.1 0 0 0 0 EXPECT:alive:hides_his_foot
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+# (back to Ilmeni Dren in Vivec)
+3 0 0 0
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 SKYTO:@29088,-95765,676:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Canal_South-One
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Canal_South-One
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ilmeni_dren
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:slavery
+2 0 0 0 0 UNTIL:journal:HH_TwinLamps3:ge:100
+0.1 0 0 0 0 EXPECT:journal:HH_TwinLamps3:eq:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

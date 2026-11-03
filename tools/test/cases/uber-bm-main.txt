@@ -656,6 +656,10 @@
 240 0 0 0 0 UNTIL:journal:BM_Water:ge:60
 # (the door is in a cave mouth on the sea floor: swum into from the south, where the gorge lets the player out)
 60 0 0 0 0 WALKTO:@-219473,217242,-1894
+# (a walk there counts as there over the spot at any depth, and an Old 3DS's swim down is slower: on at the door's
+# middle until as deep as a New 3DS's walk leaves us, then the push)
+0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
+8 0 1 0 0 UNTIL:playerz:lt:-1580
 0.3 0 0 0 0 FACE:bm_ka_door_dark_sg:mid
 # (the timed pushes in this file are 0.8 of what they were, as the player covers 1.25 times the ground in them; this one
 # 0.23, the middle of the 0.18 to 0.28 that reach the door since people swim by their race's weight: 0.32 went over it)

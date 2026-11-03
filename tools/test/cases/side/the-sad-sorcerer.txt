@@ -1,7 +1,8 @@
 # The Sad Sorcerer (MS_HatandSkirt), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Palansour cave. Ingwold, stripped by scamps, begs for a potion of levitation: one found in the cave is taken up to his ledge (1), given, and the skirt and hat taken (50).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 0.3 0 0 0 0 GIVE:pick_grandmaster:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-77565,111226,1113:beside
+120 0 0 0 0 SKYTO:@-77565,111226,1113:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Palansour
 10 0 0 0 0 UNTIL:cell:Palansour
@@ -20,14 +21,14 @@
 60 0 0 0 0 PICKUP:p_levitation_c
 2 0 0 0 0 UNTIL:item:p_levitation_c:ge:1
 # (his ledge is 400 over the floor behind a locked door: floated up to the door, picked, in)
-120 0 0 0 0 WALKTO:@1251,-1207,-112
+120 0 0 0 0 WAYTO:@1251,-1207,-112
 0.1 0 0 0 0 FLOAT:60
-120 0 0 0 0 WALKTO:@1020,-1610,290
+120 0 0 0 0 WAYTO:@1020,-1610,290
 0.3 0 0 0 0 USELOCKPICK:door_cavern_doors00:pick_grandmaster
 1 0 0 0
-30 0 0 0 0 ACTIVATE:door_cavern_doors00
+30 0 0 0 0 OPEN:door_cavern_doors00
 1 0 0 0
-120 0 0 0 0 WALKTO:@1030,-1760,300
+120 0 0 0 0 WAYTO:@1030,-1760,300
 60 0 0 0 0 ACTIVATE:ingwold
 1.5 0 0 0
 2 0 0 0 0 UNTIL:journal:MS_HatandSkirt:ge:1

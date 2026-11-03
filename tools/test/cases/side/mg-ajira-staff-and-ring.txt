@@ -1,0 +1,152 @@
+# Ajira's treasures (MG_StaffMagnus, MG_WarlocksRing), played LEGIT on the v2 test kit (ENHANCEV2).
+# Mages Guild, Balmora: after her stolen reports (MG_StolenReport 100), Ajira tells of the Staff of Magnus in Assu, a
+# sorcerer's cave on Mount Kand (10); brought back from Dreveni Hlaren (100); then of the Warlock's Ring held by Vindamea
+# Drethan in Ashirbadon (10); brought back (100)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (a Warlock of the Mages Guild, rank 6: Ajira tells her secrets only from then; her stolen reports done as uber-mages-guild plays them)
+0.3 0 0 0 0 CON:pcjoinfaction%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 CON:pcraiserank%"mages%guild"
+0.3 0 0 0 0 JOURNAL:MG_StolenReport:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:ajira
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:ajira
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:duties
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Staff_of_Magnus
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_StaffMagnus:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# the staff, carried by Dreveni Hlaren in Assu
+120 0 0 0 0 SKYTO:@95749,-35816,6685:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Assu
+10 0 0 0 0 UNTIL:cell:Assu
+# (the cave's path grid to its end, then floated over the chasm before Dreveni's hall into the low ground under and beside
+# his floor, and up the rise at its north end: a walk at him went down into the chasm, and from under his floor no float
+# rose to it)
+60 0 0 0 0 WALKTO:@155,-1744,307
+60 0 0 0 0 WALKTO:@-199,-1744,227
+60 0 0 0 0 WALKTO:@-522,-1312,222
+60 0 0 0 0 WALKTO:@-528,-979,216
+60 0 0 0 0 WALKTO:@-528,-293,-37
+60 0 0 0 0 WALKTO:@-107,-4,-35
+60 0 0 0 0 WALKTO:@340,187,-32
+60 0 0 0 0 WALKTO:@517,463,-28
+60 0 0 0 0 WALKTO:@422,853,-57
+60 0 0 0 0 WALKTO:@509,1336,-29
+120 0 0 0 0 WAYTO:@700,2200,160
+120 0 0 0 0 WAYTO:@400,3300,260
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 WALKTO:@100,3600,6
+60 0 0 0 0 WALKTO:@200,3800,6
+60 0 0 0 0 WALKTO:@400,3800,224
+180 0 0 0 0 FIGHT:dreveni%hlaren
+2 0 0 0
+# (to his body without the path grid: he comes out to fight on the low ground or up on his floor, and a walk from the other
+# went back round by the grid's nearest piece, down into the chasm)
+0.3 0 0 0 0 GRID:off
+180 0 0 0 0 LOOT:dreveni%hlaren:staff_magnus_unique
+0.3 0 0 0 0 GRID:on
+0.1 0 0 0 0 EXPECT:item:staff_magnus_unique:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ajira
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Staff_of_Magnus
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_StaffMagnus:ge:100
+0.3 0 0 0 0 TOPIC:duties
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Warlock's_Ring
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_WarlocksRing:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# the ring, worn by Vindamea Drethan in Ashirbadon
+120 0 0 0 0 SKYTO:@85788,-94808,340:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ashirbadon
+10 0 0 0 0 UNTIL:cell:Ashirbadon
+# (round and down the cave's upper ways to the pool at their foot, over it to the lower ways, and round them to her: the
+# path grid is in pieces with the pool between, and her floor is 870 under the way in)
+60 0 0 0 0 WALKTO:@-595,-1798,520
+60 0 0 0 0 WALKTO:@-933,-1831,344
+60 0 0 0 0 WALKTO:@-1319,-1761,257
+60 0 0 0 0 WALKTO:@-1534,-1543,261
+60 0 0 0 0 WALKTO:@-1600,-1046,251
+60 0 0 0 0 WALKTO:@-1562,-639,41
+60 0 0 0 0 WALKTO:@-1552,-356,0
+60 0 0 0 0 WALKTO:@-1444,-191,14
+60 0 0 0 0 WALKTO:@-1229,-6,-3
+60 0 0 0 0 WALKTO:@-984,-18,-32
+120 0 0 0 0 WAYTO:@-308,-699,-380
+60 0 0 0 0 WALKTO:@-142,-1122,-381
+60 0 0 0 0 WALKTO:@416,-1177,-380
+60 0 0 0 0 WALKTO:@638,-1486,-379
+60 0 0 0 0 WALKTO:@657,-1874,-382
+60 0 0 0 0 WALKTO:@433,-2210,-384
+# (a locked cavern door across the way: picked)
+0.3 0 0 0 0 FACE:@256,-2144
+1 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+60 0 0 0 0 WALKTO:@-40,-2211,-387
+60 0 0 0 0 WALKTO:@-180,-2390,-528
+60 0 0 0 0 WALKTO:@-267,-2575,-711
+60 0 0 0 0 WALKTO:@-564,-2811,-686
+60 0 0 0 0 WALKTO:@-664,-2969,-743
+60 0 0 0 0 WALKTO:@-852,-2789,-664
+60 0 0 0 0 WALKTO:@-972,-2738,-612
+60 0 0 0 0 WALKTO:@-1063,-2669,-574
+60 0 0 0 0 WALKTO:@-1160,-2582,-548
+60 0 0 0 0 WALKTO:@-1198,-2448,-528
+60 0 0 0 0 WALKTO:@-1066,-2326,-524
+60 0 0 0 0 WALKTO:@-1050,-2214,-513
+60 0 0 0 0 WALKTO:@-1154,-2098,-526
+60 0 0 0 0 WALKTO:@-891,-1839,-526
+180 0 0 0 0 FIGHT:vindamea%drethan
+2 0 0 0
+180 0 0 0 0 LOOT:vindamea%drethan:ring_warlock_unique
+0.1 0 0 0 0 EXPECT:item:ring_warlock_unique:ge:1
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ajira
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Warlock's_Ring
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MG_WarlocksRing:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

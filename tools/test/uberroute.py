@@ -5,12 +5,12 @@ First A* over every exterior path grid point in Morrowind.esm, cells joined at t
 them (points within 350 across a border, less than 120 apart in height: World::loadCell). Path grids only cover
 towns and some roads, so where they don't join: one graph of the path grids in the town cells (streets, bridges,
 stairs) and the land's height map (LAND, a 256-unit grid) in the cells without one, joined where they meet; no slope
-steeper than --slope, water dearer (swimming). The big rocks and emperor parasols placed on the land (OBSTACLES) are kept clear of:
+steeper than --slope, water dearer (swimming). The big rocks (as far as their collision mesh reaches) and emperor parasols placed on the land (OBSTACLES) are kept clear of:
 the land points under them are left out and the legs are only joined where the straight line between them misses
 them (an escort walks straight at the player and stops at a rock the player stepped over). Trees and walls are not
 in it: the walker's stuck recovery goes round small ones.
 
-  python tools/test/uberroute.py [--step 600] [--secs 60] [--slope 0.9] [--climb 1] [--no-rocks] [--via x,y,z]... -- <x,y,z> <x,y,z>
+  python tools/test/uberroute.py [--step 600] [--secs 60] [--slope 0.9] [--fall 1.0] [--climb 1] [--no-rocks] [--via x,y,z]... -- <x,y,z> <x,y,z>
 """
 import argparse
 import heapq
@@ -20,7 +20,9 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "convert"))
-from mwfiles import load_db, cell_refs  # noqa: E402
+from mwfiles import Archives, load_db, cell_refs  # noqa: E402
+from meshes import collision_triangles  # noqa: E402
+from nif import Nif, NifError  # noqa: E402
 from terrain import land_heights  # noqa: E402
 
 CELL = 8192.0
@@ -83,6 +85,29 @@ def route(pts, links, a, b):
 # what an escort cannot walk round, by id prefix: radius at scale 1 (a terrain_rock_* is about 400 across; an emperor
 # parasol's stem about 250, its origin high up it; a tree's trunk, with room to pass)
 OBSTACLES = (("terrain_rock", 220.0), ("flora_emp_parasol", 160.0), ("flora_tree", 90.0))
+# the rocks whose collision mesh is measured instead: they run from a pebble to 2500 across the land (the West Gash's
+# terrain_rock_wg_13), and one whose foot reaches past its radius above stops an escort beside it
+MEASURED = ("terrain_rock",)
+_reach = {}
+_archives = []
+
+
+def rock_reach(db, rid, radius):
+    """How far a rock's collision mesh reaches across the land from its origin at scale 1, never less than radius."""
+    if rid not in _reach:
+        _reach[rid] = radius
+        rec = db["objects"].get(rid)
+        model = rec.zstr("MODL") if rec is not None and rec.tag == "STAT" else None
+        if model:
+            if not _archives:
+                _archives.append(Archives())
+            try:
+                tri = collision_triangles(Nif(_archives[0].read("meshes\\" + model)))
+            except (FileNotFoundError, NifError):
+                tri = None
+            if tri is not None and len(tri[0]):
+                _reach[rid] = max(radius, float(max(math.hypot(p[0], p[1]) for p in tri[0])))
+    return _reach[rid]
 
 
 def rocks_near(db, a, b):
@@ -96,6 +121,8 @@ def rocks_near(db, a, b):
                 i = (r["id"] or "").lower()
                 for prefix, radius in OBSTACLES:
                     if i.startswith(prefix):
+                        if i.startswith(MEASURED):
+                            radius = rock_reach(db, i, radius)
                         out.append((*r["pos"], radius * r["scale"]))
     return out
 
@@ -116,9 +143,11 @@ def blocked(rocks, p, q=None):
     return False
 
 
-def combined_route(db, a, b, slope, spacing=256.0, climb=1.0, rocks=()):
+def combined_route(db, a, b, slope, spacing=256.0, climb=1.0, rocks=(), fall=1.0):
     """A* over one graph: the path grids where a cell has one (towns: streets, bridges, stairs) and the height map's
-    256-unit grid in the cells without (the wilds), joined where they meet. [(x, y, z)], length, or None."""
+    256-unit grid in the cells without (the wilds), joined where they meet. [(x, y, z)], length, or None.
+    slope bounds the rise along a leg, fall the land's own steepness at each land point (across a leg too: a leg
+    that keeps level along a hillside steeper than the walker stands on slides it down)."""
     gx0, gx1 = int(math.floor(min(a[0], b[0]) / CELL)) - 2, int(math.floor(max(a[0], b[0]) / CELL)) + 2
     gy0, gy1 = int(math.floor(min(a[1], b[1]) / CELL)) - 2, int(math.floor(max(a[1], b[1]) / CELL)) + 2
     heights = {}
@@ -151,6 +180,12 @@ def combined_route(db, a, b, slope, spacing=256.0, climb=1.0, rocks=()):
     def where(n):
         return gpos[n] if n[0] == "g" else tnode(n[1], n[2])
 
+    def sliding(ix, iy):
+        x, y, z = tnode(ix, iy)
+        gx = (h(x + 128.0, y) - h(x - 128.0, y)) / 256.0
+        gy = (h(x, y + 128.0) - h(x, y - 128.0)) / 256.0
+        return z > 0 and math.hypot(gx, gy) > fall
+
     # path grid points near the wilds: each joins the land points round it (a town's edge, its gates)
     edge = defaultdict(list)
     for n, (x, y, z) in gpos.items():
@@ -171,7 +206,8 @@ def combined_route(db, a, b, slope, spacing=256.0, climb=1.0, rocks=()):
             for dx in (-1, 0, 1):
                 for dy in (-1, 0, 1):
                     ix, iy = n[1] + dx, n[2] + dy
-                    if (dx, dy) != (0, 0) and 0 <= ix < nx and 0 <= iy < ny and (("t", ix, iy) in ends or not blocked(rocks, tnode(ix, iy))):
+                    if (dx, dy) != (0, 0) and 0 <= ix < nx and 0 <= iy < ny and (("t", ix, iy) in ends or
+                                                                                 not (blocked(rocks, tnode(ix, iy)) or sliding(ix, iy))):
                         yield ("t", ix, iy)
         yield from edge.get(n, ())
 
@@ -231,6 +267,8 @@ def main():
     ap.add_argument("--secs", type=int, default=60, help="the seconds each WALKTO step may take")
     ap.add_argument("--terrain", action="store_true", help="skip the path-grid-only try: the combined graph at once")
     ap.add_argument("--slope", type=float, default=0.9, help="steepest walkable rise per unit (0.9: 42 degrees)")
+    ap.add_argument("--fall", type=float, default=1.0,
+                    help="steepest land to stand on, any way it is crossed (1.0: 45 degrees; the player slides past 46)")
     ap.add_argument("--climb", type=float, default=1.0, help="cost of a unit up or down against one along (escorts: 4)")
     ap.add_argument("--no-rocks", action="store_true", help="walk over the big rocks as v1 routes did")
     ap.add_argument("--via", action="append", default=[], help="x,y,z to pass through (more than one: in order)")
@@ -244,7 +282,7 @@ def main():
         rocks += legrocks
         r = None if a.terrain else route(pts, links, p0, p1)
         if not r:
-            r = combined_route(db, p0, p1, a.slope, climb=a.climb, rocks=legrocks)
+            r = combined_route(db, p0, p1, a.slope, climb=a.climb, rocks=legrocks, fall=a.fall)
         if not r:
             sys.exit(f"no route between {p0} and {p1} (path grids or land)")
         path += r[0] if not path else r[0][1:]

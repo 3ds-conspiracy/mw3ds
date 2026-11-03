@@ -1526,6 +1526,10 @@
 1 0 0 0 0 HIDE:60
 0.3 0 0 0 0 SNEAK:1
 1 0 0 0
+# (the basement door is a floor down: round by the west end of the hall and down the stairs, as the path grid goes.
+# Straight for the door, the walk went east along the upper hall to the swing door there and stuck short of it)
+60 0 0 0 0 WAYTO:@-552,-432,-256
+60 0 0 0 0 WAYTO:@-139,-464,-410
 60 0 0 0 0 DOORTO:Vivec,_St._Olms_Yngling_Manor_Basement
 3 0 0 0
 0.3 0 0 0 0 EQUIP:pick_grandmaster

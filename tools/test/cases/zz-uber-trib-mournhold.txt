@@ -4,7 +4,7 @@
 # is Tribunal's own: at level 30 the Dark Brotherhood comes while the player sleeps (TR_DBAttack), the dart on the
 # assassin, a guard's word, Apelles Matius in Ebonheart, then Asciene Rane's transport to the Royal Palace.
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:8
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100
@@ -229,15 +229,6 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 KILL:soscean
-2 0 0 0
-0.1 0 0 0 0 EXPECT:dead:soscean
-60 0 0 0 0 LOOT:soscean:ebony%shortsword_soscean
-1 0 0 0
-0.1 0 0 0 0 EXPECT:item:ebony%shortsword_soscean:eq:1
-60 0 0 0 0 LOOT:soscean:ebony_cuirass_soscean
-1 0 0 0
-0.1 0 0 0 0 EXPECT:item:ebony_cuirass_soscean:eq:1
 60 0 0 0 0 ACTIVATE:galms%seles
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 TOPIC:game_of_shells
@@ -258,6 +249,17 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
+# (the bouncer's work done before Soscean is killed: her murder in the tavern sets Ra'tesh on us, and killing him too
+# is a murder Hession will not pay for)
+120 0 0 0 0 KILL:soscean
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:soscean
+60 0 0 0 0 LOOT:soscean:ebony%shortsword_soscean
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony%shortsword_soscean:eq:1
+60 0 0 0 0 LOOT:soscean:ebony_cuirass_soscean
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:ebony_cuirass_soscean:eq:1
 0.3 0 0 0 0 SAVE:uber-trib-mournhold-winged-guar
 # MS_Warlords: Dovor Oren's 'cause' in the Vacant Manor, his four errands (+ MS_Warlords_a after)
 120 0 0 0 0 DOORTO:Mournhold,_Godsreach
@@ -723,6 +725,10 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Bthuand
 10 0 0 0 0 UNTIL:cell:Bthuand
+# (its centurion sphere first: left to it, its blows knock us off the hall's upper floor while we gather, under the
+# tableware we came for)
+120 0 0 0 0 FIGHT:centurion_sphere
+2 0 0 0
 0.5 0 0 0
 60 0 0 0 0 PICKUP:misc_dwrv_gear00
 1 0 0 0
@@ -742,6 +748,7 @@
 60 0 0 0 0 PICKUP:misc_dwrv_pitcher00
 1 0 0 0
 0.1 0 0 0 0 EXPECT:item:misc_dwrv_pitcher00:ge:1
+60 0 0 0 0 WALKTO:@1926,-426,-416
 60 0 0 0 0 PICKUP:misc_dwrv_mug00
 1 0 0 0
 0.1 0 0 0 0 EXPECT:item:misc_dwrv_mug00:ge:1
@@ -1341,9 +1348,9 @@
 2 0 0 0 0 UNTIL:screen:none
 0.3 0 0 0 0 SAVE:uber-trib-mournhold-performers
 # MS_MatchMaker: Marena Gilnith (Great Bazaar) wants to meet a man; Goval Ralen (Temple Courtyard) is the one
-# (dice from here on seeded: the date's outcome is the script's own Random 100, and the rolls before it shift with
-# any change to what came before)
-0.1 0 0 0 0 SEED:1/3
+# (the date's outcome is the script's own Random 100, picked for the date that goes well: SCRIPTROLL round it. On a low
+# roll the script's 'else set MatchMakeGoval to 8' is skipped, as Morrowind's compiler and OpenMW skip what follows an
+# else on its line, and the quest stays at 118 for good)
 120 0 0 0 0 DOORTO:Mournhold,_Temple_Courtyard
 10 0 0 0 0 UNTIL:cell:Mournhold,_Temple_Courtyard
 0.5 0 0 0
@@ -1409,6 +1416,7 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 # three days pass away from Godsreach (the Craftsmen's Hall), then the meeting
+0.1 0 0 0 0 SCRIPTROLL:99
 120 0 0 0 0 DOORTO:Mournhold,_Godsreach
 10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
 0.5 0 0 0
@@ -1443,6 +1451,7 @@
 0.3 0 0 0 0 TOPIC:Goval_Ralen
 2 0 0 0 0 UNTIL:talkready
 0.1 0 0 0 0 EXPECT:journal:MS_MatchMaker:eq:120
+0.1 0 0 0 0 SCRIPTROLL:-1
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
@@ -1871,7 +1880,29 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
+# (in his sight until he sets off: a follower starts once it sees whom it follows)
+60 0 0 0 0 WALKTO:thrud
+20 0 0 0 0 UNTIL:following:thrud
 0.3 0 0 0 0 ESCORT:thrud
+# (to the sewer trapdoor by Godsreach's path grid, every point, waiting for him at the top and the foot of the ramp
+# down to the canal walk: walked straight at us he drops off the walk above it and is lost there)
+120 0 0 0 0 WAYTO:@512,1024,192
+120 0 0 0 0 WAYTO:@574,1464,192
+120 0 0 0 0 WAYTO:@826,1858,192
+120 0 0 0 0 WAYTO:@909,2245,192
+120 0 0 0 0 WAYTO:@903,2559,192
+120 0 0 0 0 WAYTO:@653,3072,192
+120 0 0 0 0 WAYTO:@387,2916,192
+120 0 0 0 0 WAYTO:@5,2932,198
+120 0 0 0 0 BRING:thrud
+120 0 0 0 0 WAYTO:@1,3114,83
+120 0 0 0 0 WAYTO:@0,3584,80
+120 0 0 0 0 BRING:thrud
+120 0 0 0 0 WAYTO:@512,3584,80
+120 0 0 0 0 WAYTO:@1056,3541,80
+120 0 0 0 0 WAYTO:@1542,3479,80
+120 0 0 0 0 WAYTO:@2576,3241,80
+120 0 0 0 0 WAYTO:@3072,3072,80
 120 0 0 0 0 DOORTO:Old_Mournhold|_Residential_Sewers
 10 0 0 0 0 UNTIL:cell:Old_Mournhold:_Residential_Sewers
 0.5 0 0 0

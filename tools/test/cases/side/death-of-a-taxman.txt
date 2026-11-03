@@ -2,8 +2,9 @@
 # Processus Vitellius lies dead west of town with the tax money and the tax record. The honest way: the gold to
 # Socucius Ergalla, ask around town, Thavere Vedrano in the lighthouse, then Foryn Gilnith, who did it: not believed, he
 # fights and dies, and his ring for Processus goes back to Thavere before Socucius pays the 500.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -13,13 +14,13 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-60 0 0 0 0 FLYTO:@-19517,-67530,182:beside
+120 0 0 0 0 SKYTO:@-19517,-67530,182:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 LOOT:processus%vitellius:bk_seydaneentaxrecord
 2 0 0 0 0 UNTIL:screen:none
 0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:ge:10
 0.1 0 0 0 0 EXPECT:item:bk_seydaneentaxrecord:ge:1
-60 0 0 0 0 FLYTO:@-10600,-71900,200:beside
+120 0 0 0 0 SKYTO:@-10600,-71900,200:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Seyda_Neen,_Census_and_Excise_Office
 10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Census_and_Excise_Office
@@ -34,9 +35,12 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 # (out the way we came in: DOORTO picks the front hall's door, whose way from Socucius's room the grid splits)
-120 0 0 0 0 ACTIVATE:chargen%door%exit
+120 0 0 0 0 OPEN:chargen%door%exit
 10 0 0 0 0 UNTIL:cell:Seyda_Neen
-# (anyone in town: Fargoth sends us on to Thavere)
+# (anyone in town: Fargoth sends us on to Thavere. Out of the yard by the Census Office's back door round the west end of
+# its stone wall: straight at Fargoth, beyond the house, the walk stuck in the corner between the wall and the house)
+120 0 0 0 0 WAYTO:@-11200,-71850,200
+120 0 0 0 0 WAYTO:@-11150,-71300,200
 60 0 0 0 0 ACTIVATE:fargoth
 0.3 0 0 0 0 TOPIC:murder_of_Processus_Vitellius
 2 0 0 0 0 UNTIL:journal:MV_DeadTaxman:ge:50
@@ -68,7 +72,7 @@
 0.1 0 0 0 0 EXPECT:journal:MV_DeadTaxman:eq:85
 0.3 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-60 0 0 0 0 KILL:foryn%gilnith
+60 0 0 0 0 FIGHT:foryn%gilnith
 0.1 0 0 0 0 EXPECT:dead:foryn_gilnith
 0.1 0 0 0 0 EXPECT:bounty:eq:0
 60 0 0 0 0 LOOT:foryn%gilnith:exquisite_ring_processus

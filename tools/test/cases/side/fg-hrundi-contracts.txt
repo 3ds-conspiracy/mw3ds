@@ -1,0 +1,372 @@
+# Hrundi's contracts (FG_TenimBounty, FG_DuniraiSupply, FG_Telasero, FG_EngaerBounty, FG_FindPudai), played LEGIT on the v2 test kit (ENHANCEV2).
+# Fighters Guild, Wolverine Hall in Sadrith Mora: the contracts Hrundi gives after the ones uber-fighters-guild plays
+# (Nchurdamz, the Dissapla Mine, the Corprus Stalker). Rels Tenim's bounty in Shallit (10, 100); a load of sujamma to
+# Nelacar in the Dunirai Caverns (10, 50, 100); from Protector on, Sondaale of Shimmerene escorted out of Telasero (10,
+# 30, 50, 70, 75, 100); the bounty on Engaer in Tel Naga (10, 100); the Seven Eggs of Gold from the Pudai Egg Mine (10, 100)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (a Protector of the Fighters Guild, Hrundi's earlier contracts done as uber-fighters-guild plays them)
+0.3 0 0 0 0 CON:pcjoinfaction%"fighters%guild"
+0.3 0 0 0 0 CON:pcraiserank%"fighters%guild"
+0.3 0 0 0 0 CON:pcraiserank%"fighters%guild"
+0.3 0 0 0 0 CON:pcraiserank%"fighters%guild"
+0.3 0 0 0 0 CON:pcraiserank%"fighters%guild"
+0.3 0 0 0 0 JOURNAL:FG_Nchurdamz:100
+0.3 0 0 0 0 JOURNAL:FG_DissaplaMine:100
+0.3 0 0 0 0 JOURNAL:FG_CorprusStalker:100
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Wolverine_Hall
+4 0 0 0
+0.1 0 0 0 0 EXPECT:rank:fighters_guild:eq:4
+0.3 0 0 0 0 LEGIT
+# into the guild by the hall's nearest door (a cell name with a colon can't be a token), Mark by Hrundi
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+# Rels Tenim, in the Shallit cave
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Rels_Tenim
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_TenimBounty:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 SKYTO:@68012,157847,74:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Shallit
+10 0 0 0 0 UNTIL:cell:Shallit
+# (the cave's path grid in three pieces: the entrance's, a ledge 600 up its east wall, and Rels Tenim's; a walk straight
+# at him went down under the ledge, where there is no floor. Along the entrance's piece, up onto the ledge's south end
+# floating, and along it to Rels Tenim's)
+60 0 0 0 0 WALKTO:@-914,1579,-375
+60 0 0 0 0 WALKTO:@-688,1577,-265
+60 0 0 0 0 WALKTO:@-508,1608,-157
+60 0 0 0 0 WALKTO:@-55,1626,-127
+60 0 0 0 0 WALKTO:@20,1867,-116
+60 0 0 0 0 WALKTO:@54,2262,-124
+60 0 0 0 0 WALKTO:@238,2566,-125
+60 0 0 0 0 WALKTO:@511,2654,-130
+60 0 0 0 0 WALKTO:@721,2671,-125
+60 0 0 0 0 WALKTO:@973,2553,-126
+60 0 0 0 0 WALKTO:@1138,2287,-118
+60 0 0 0 0 WALKTO:@1073,2024,-135
+60 0 0 0 0 WALKTO:@930,1807,-178
+60 0 0 0 0 WALKTO:@977,1235,-189
+# (floated up onto the ledge from the floor south of its north end: under it the rise met it)
+120 0 0 0 0 WAYTO:@753,307,531
+120 0 0 0 0 WAYTO:@512,256,512
+120 0 0 0 0 WAYTO:@256,256,468
+120 0 0 0 0 WAYTO:@0,256,391
+60 0 0 0 0 WALKTO:@-256,256,369
+60 0 0 0 0 WALKTO:@-528,430,333
+60 0 0 0 0 WALKTO:@-768,512,285
+60 0 0 0 0 WALKTO:@-985,472,261
+60 0 0 0 0 WALKTO:@-1042,248,188
+60 0 0 0 0 WALKTO:@-1024,0,151
+60 0 0 0 0 WALKTO:@-916,-148,152
+60 0 0 0 0 WALKTO:@-915,-302,155
+60 0 0 0 0 WALKTO:@-921,-513,155
+60 0 0 0 0 WALKTO:@-1024,-768,108
+60 0 0 0 0 WALKTO:@-1228,-1054,74
+60 0 0 0 0 WALKTO:@-1070,-1312,-44
+60 0 0 0 0 WALKTO:@-775,-1391,-90
+60 0 0 0 0 WALKTO:@-512,-1280,-105
+60 0 0 0 0 WALKTO:@-340,-1233,-99
+60 0 0 0 0 WALKTO:@-167,-1204,-99
+60 0 0 0 0 WALKTO:@64,-1175,-146
+60 0 0 0 0 WALKTO:@253,-1100,-160
+120 0 0 0 0 FIGHT:rels%tenim
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:rels_tenim
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Rels_Tenim
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_TenimBounty:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# sujamma for Nelacar in the Dunirai Caverns
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Dunirai_Caverns
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_DuniraiSupply:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 SKYTO:@35630,27869,866:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Dunirai_Caverns
+10 0 0 0 0 UNTIL:cell:Dunirai_Caverns
+60 0 0 0 0 ACTIVATE:nelacar
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:sujamma
+2 0 0 0 0 UNTIL:talkready
+# ("Yes": the twenty bottles handed over)
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_DuniraiSupply:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Dunirai_Caverns
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_DuniraiSupply:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Sondaale of Shimmerene, to be led out of Telasero
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Sondaale_of_Shimmerene
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_Telasero:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 SKYTO:@76222,-52880,1436:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Telasero,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Telasero,_Upper_Level
+120 0 0 0 0 DOORTO:Telasero,_Lower_Level
+10 0 0 0 0 UNTIL:cell:Telasero,_Lower_Level
+60 0 0 0 0 ACTIVATE:sondaale%of%shimmerene
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_Telasero:ge:30
+0.3 0 0 0 0 TOPIC:travel_together
+2 0 0 0 0 UNTIL:talkready
+# ("Follow me")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_Telasero:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 ESCORT:sondaale_of_shimmerene
+120 0 0 0 0 DOORTO:Telasero,_Upper_Level
+10 0 0 0 0 UNTIL:cell:Telasero,_Upper_Level
+120 0 0 0 0 BRING:sondaale_of_shimmerene
+# (out of the door with her: her script sees the player outside Telasero with her following. Back to where the way in
+# arrives first: a walk from the stair's foot to the door timed out)
+120 0 0 0 0 WALKTO:@-1154,3518,-300
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+0.3 0 0 0 0 ESCORT:-
+30 0 0 0 0 UNTIL:journal:FG_Telasero:ge:70
+0.1 0 0 0 0 EXPECT:journal:FG_Telasero:ge:70
+60 0 0 0 0 ACTIVATE:sondaale%of%shimmerene
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:FG_Telasero:ge:75
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Sondaale_of_Shimmerene
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_Telasero:eq:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Engaer, Master Neloth's mercenary, in Tel Naga's upper tower
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Engaer
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_EngaerBounty:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 SKYTO:@149209,36076,3468:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Tel_Naga_Upper_Tower
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Tel_Naga_Upper_Tower
+# (his room's golden door is locked: picked first, from in front of it, as the walk at him through it only backed off it)
+60 0 0 0 0 WALKTO:@200,-40,897
+0.3 0 0 0 0 FACE:@128,64
+1 0 0 0 0 USELOCKPICK:in_t_door_small:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_t_door_small:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_t_door_small:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 A
+2 0 0 0
+120 0 0 0 0 FIGHT:engaer
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:engaer
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Engaer
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_EngaerBounty:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# the Seven Eggs of Gold in the Pudai Egg Mine's queen's lair, on Sheogorad
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Pudai_Egg_Mine
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_FindPudai:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:Sadrith_Mora,_Wolverine_Hall
+3 0 0 0
+120 0 0 0 0 WALKTO:@2546,3870,13888
+120 0 0 0 0 WALKTO:@2347,3842,13928
+120 0 0 0 0 WALKTO:@2283,3750,13974
+120 0 0 0 0 WALKTO:@2303,3628,14011
+120 0 0 0 0 WALKTO:@2392,3570,14059
+120 0 0 0 0 WALKTO:@2510,3574,14095
+120 0 0 0 0 WALKTO:@2538,3872,14144
+120 0 0 0 0 WALKTO:@2349,3842,14195
+120 0 0 0 0 WALKTO:@2289,3743,14228
+120 0 0 0 0 WALKTO:@2300,3629,14267
+120 0 0 0 0 WALKTO:@2396,3573,14306
+120 0 0 0 0 WALKTO:@2494,3570,14349
+120 0 0 0 0 WALKTO:@2584,3703,14400
+120 0 0 0 0 WALKTO:@2552,3880,14656
+0.5 0 0 0 0 FACE:@2560,3968
+0.3 0 0 0 0 A
+3 0 0 0
+120 0 0 0 0 SKYTO:@27828,176942,1303:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Pudai_Egg_Mine
+10 0 0 0 0 UNTIL:cell:Pudai_Egg_Mine
+120 0 0 0 0 DOORTO:Pudai_Egg_Mine,_Queen's_Lair
+10 0 0 0 0 UNTIL:cell:Pudai_Egg_Mine,_Queen's_Lair
+120 0 0 0 0 PICKUP:misc_uniq_egg_of_gold
+120 0 0 0 0 PICKUP:misc_uniq_egg_of_gold
+120 0 0 0 0 PICKUP:misc_uniq_egg_of_gold
+120 0 0 0 0 PICKUP:misc_uniq_egg_of_gold
+120 0 0 0 0 PICKUP:misc_uniq_egg_of_gold
+120 0 0 0 0 PICKUP:misc_uniq_egg_of_gold
+120 0 0 0 0 PICKUP:misc_uniq_egg_of_gold
+0.1 0 0 0 0 EXPECT:item:misc_uniq_egg_of_gold:ge:7
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Wolverine_Hall
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:hrundi
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Pudai_Egg_Mine
+2 0 0 0 0 UNTIL:talkready
+# ("Yes, here they are")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:FG_FindPudai:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

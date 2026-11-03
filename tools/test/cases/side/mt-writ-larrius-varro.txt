@@ -1,0 +1,121 @@
+# Writ for Larrius Varro (MT_WritVarro), played LEGIT on the v2 test kit (ENHANCEV2).
+# Morag Tong, Vivec: the Grandmaster's writ for Larrius Varro, after Dram Bero's (MT_WritBero 100) and Navil's: Varro in
+# Fort Moonmoth by Balmora (10, 80 / 90, 100)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 GIVE:probe_grandmaster:2
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+# (Grandmaster of the Morag Tong, rank 9: the last writs go to the Grandmaster; Dagoth Ur gone and the earlier writs
+# done, as if played)
+0.3 0 0 0 0 CON:pcjoinfaction%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:addtopic%"writ"
+# (the four names known, as a player hears them about the island: for a Grandmaster Eno Hlaalu's Writ always answers
+# first that there are none, before the line that names them, so they are asked about by name)
+0.3 0 0 0 0 CON:addtopic%"baladas"
+0.3 0 0 0 0 CON:addtopic%"dram%bero"
+0.3 0 0 0 0 CON:addtopic%"larrius%varro"
+0.3 0 0 0 0 CON:addtopic%"mistress%therana"
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 JOURNAL:MT_WritBemis:100
+0.3 0 0 0 0 JOURNAL:MT_WritBero:100
+0.3 0 0 0 0 JOURNAL:MT_WritNavil:100
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+4 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:eq:9
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:eno_hlaalu
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Larrius_Varro
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MT_WritVarro:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# Larrius Varro in Fort Moonmoth
+60 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+3 0 0 0
+# (the storage room's door out is locked: picked, where uber-morag-tong casts Ondusi's Open Door)
+60 0 0 0 0 WALKTO:@1080,-660,-128
+0.3 0 0 0 0 FACE:@960,-644
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+60 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+3 0 0 0
+60 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+3 0 0 0
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+120 0 0 0 0 WALKTO:@33922,-87194,1792
+120 0 0 0 0 WALKTO:@33936,-87948,1792
+120 0 0 0 0 WALKTO:@33344,-87943,1997
+120 0 0 0 0 WALKTO:@32768,-87942,2045
+120 0 0 0 0 WALKTO:@32041,-87930,1928
+120 0 0 0 0 WALKTO:@31794,-87231,1792
+120 0 0 0 0 WALKTO:@31525,-86916,1822
+120 0 0 0 0 WALKTO:@31011,-86925,2048
+120 0 0 0 0 DOORTO:Vivec,_Redoran_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran_Plaza
+0.5 0 0 0
+120 0 0 0 0 DOORTO:outside
+10 0 0 0 0 UNTIL:cell:Vivec,_Redoran
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Plaza
+10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Plaza
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Vivec,_Guild_of_Mages
+10 0 0 0 0 UNTIL:cell:Vivec,_Guild_of_Mages
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:flacassia_fauseius
+1.5 0 0 0
+0.3 0 0 0 0 TRAVEL:flacassia_fauseius:Balmora
+10 0 0 0 0 UNTIL:cell:Balmora,_Guild_of_Mages
+0.5 0 0 0
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+180 0 0 0 0 SKYTO:@-5062,-18284,1129:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Moonmoth_Legion_Fort,_Interior
+10 0 0 0 0 UNTIL:cell:Moonmoth_Legion_Fort,_Interior
+180 0 0 0 0 FIGHT:larrius%varro
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:larrius_varro
+5 0 0 0 0 UNTIL:journal:MT_WritVarro:ge:80
+0.1 0 0 0 0 EXPECT:journal:MT_WritVarro:ge:80
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Hidden_Area
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Larrius_Varro
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:MT_WritVarro:ge:100
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

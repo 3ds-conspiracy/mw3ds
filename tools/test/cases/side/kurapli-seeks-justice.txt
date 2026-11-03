@@ -1,0 +1,54 @@
+# Kurapli Seeks Justice (A2_1_Kurapli_Zallay), played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, the Urshilaku camp. Kurapli's husband was killed by the outcast Zallay Subaddamael (1), who is in the
+# Aharasaplit camp on Sheogorad (10); Zallay killed, Kurapli gives her husband's spear (50)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+# (Kurapli asks only a Clanfriend of the Urshilaku: the main quest's Sul-Matuul, A2_1_MeetSulMatuul 45, as if done)
+0.3 0 0 0 0 JOURNAL:A2_1_MeetSulMatuul:45
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 SKYTO:@-27225,149924,791:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Urshilaku_Camp,_Kurapli's_Yurt
+10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Kurapli's_Yurt
+60 0 0 0 0 ACTIVATE:kurapli
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:discuss
+0.3 0 0 0 0 TOPIC:personal_vengeance
+0.1 0 0 0 0 EXPECT:journal:A2_1_Kurapli_Zallay:ge:1
+0.3 0 0 0 0 TOPIC:Zallay_Subaddamael
+0.1 0 0 0 0 EXPECT:journal:A2_1_Kurapli_Zallay:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+# Zallay in his yurt at Aharasaplit
+120 0 0 0 0 SKYTO:@35422,161008,251:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Aharasaplit_Camp,_Zallay's_Yurt
+10 0 0 0 0 UNTIL:cell:Aharasaplit_Camp,_Zallay's_Yurt
+120 0 0 0 0 FIGHT:zallay%subaddamael
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:zallay_subaddamael
+120 0 0 0 0 DOORTO:outside
+5 0 0 0
+120 0 0 0 0 SKYTO:@-27225,149924,791:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Urshilaku_Camp,_Kurapli's_Yurt
+10 0 0 0 0 UNTIL:cell:Urshilaku_Camp,_Kurapli's_Yurt
+60 0 0 0 0 ACTIVATE:kurapli
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:personal_vengeance
+0.1 0 0 0 0 EXPECT:journal:A2_1_Kurapli_Zallay:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

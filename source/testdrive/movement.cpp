@@ -20,6 +20,31 @@ extern const char* g_playerPushed;
 // The reference an action is about: an id, or for DOORTO the nearest door going there (-1: not loaded)
 int TestDriver::findTarget(Session& s, const std::string& verb, const std::string& arg)
 {
+	if (verb == "LOOT" && lootHolding)
+	{
+		int r = findRef(s, arg);
+		if (r < 0)
+			return -1;
+		const std::string want = s.w.refs[r].idLower, item = lower(lootItem), itemSpaced = lower(spaced(lootItem));
+		const float* pf = s.w.player.feet;
+		float best = 1e30f;
+		int pick = -1;
+		s.w.forLoadedRefs([&](int i) {
+			const Ref& c = s.w.refs[i];
+			if (c.idLower != want || !s.w.active(i))
+				return;
+			bool holds = false;
+			for (const auto& e : c.contents)
+				holds = holds || lower(e.second) == item || lower(e.second) == itemSpaced;
+			float dx = c.pos[0] - pf[0], dy = c.pos[1] - pf[1], dz = c.pos[2] - pf[2], d = dx * dx + dy * dy + dz * dz;
+			if (holds && d < best)
+			{
+				best = d;
+				pick = i;
+			}
+		});
+		return pick;
+	}
 	if (verb != "DOORTO")
 	{
 		int r = findRef(s, arg);
@@ -210,24 +235,30 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 	Player& p = s.w.player;
 	float dx = goal[0] - p.feet[0], dy = goal[1] - p.feet[1];
 	float dist = sqrtf(dx * dx + dy * dy);
-	if (fightRef >= 0)
-		return fightInWay(s, in, dt);
-	if (*g_playerPushed)
-		flyPushedBy = g_playerPushed;
 	// v2 kit: the fly item, used again whenever less than half a second of its levitation is left (a use starts it afresh)
 	bool flyItem = s.kitV2() && s.w.itemCount("uber_fly") > 0;
-	if (flyItem && !(phase == 2 && p.onGround))
-	{
+	auto flyLeft = [&]() {
 		float left = 0.0f;
 		for (const ActiveEffect& e : s.w.effects)
 			if (e.effect == 10)
 				left = fmaxf(left, e.remaining);
-		if (left < 0.5f)
-		{
+		return left;
+	};
+	if (fightRef >= 0)
+	{
+		// (and through a fight in the air: the levitation ran out a second into one with a cliff racer over Red Mountain's
+		// rim, and the player fell into the rock there)
+		if (flyItem && p.levitate > 0.0f && flyLeft() < 0.5f)
 			s.castItem("uber_fly");
-			if (p.levitate <= 0.0f)
-				return true;           // (the effect is on from the next frame)
-		}
+		return fightInWay(s, in, dt);
+	}
+	if (*g_playerPushed)
+		flyPushedBy = g_playerPushed;
+	if (flyItem && !(phase == 2 && p.onGround) && flyLeft() < 0.5f)
+	{
+		s.castItem("uber_fly");
+		if (p.levitate <= 0.0f)
+			return true;           // (the effect is on from the next frame)
 	}
 	if (p.levitate <= 0.0f)
 	{
@@ -297,7 +328,7 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 			// (a stretch after one that moved the body under 40 units: the head held against a ceiling's edge, pushed back by
 			// it, no way round moved the body, Red Mountain's rim on the way to Bthuand. Let go of the rise and sink for the
 			// first half second, as a player does before going round a roof's edge)
-			if (outSink && outTimer > (s.kitV2() ? 4.0f : 2.5f) - 0.5f)
+			if (outSink && outTimer > (outDeep ? 6.0f - 2.0f : (s.kitV2() ? 4.0f : 2.5f) - 0.5f))
 			{
 				in.up = false;
 				in.down = true;
@@ -327,6 +358,8 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 		{
 			logf("drive: FLYTO %s: at %.0f up after %.1f s, %.0f to go", id.c_str(), p.feet[2], elapsed, dist);
 			phase = 1;
+			outTriesHere = 0;
+			outDeep = false;
 			progressTimer = 0.0f;
 			memcpy(progressAt, p.feet, sizeof(progressAt));
 		}
@@ -338,9 +371,27 @@ bool TestDriver::updateFly(Session& s, PlayerInput& in, float dt)
 		else if (progressTimer >= 1.5f && outTimer <= 0.0f)
 		{
 			// no rise at all in 1.5 s (a flight climbs 200 a second): a ceiling over us. Step out from under it (toward the goal, then the other ways round);
-			// four ways tried without a rise is a roof the flight can't get out from under
-			if (++outTries > (s.kitV2() ? 5 : 4))
+			// four ways tried without a rise is a roof the flight can't get out from under (four for this roof: a long flight
+			// over Red Mountain's spires used them up on the ones before, each got over, and gave up at the next)
+			++outTries;
+			if (++outTriesHere > (s.kitV2() ? 5 : 4))
 			{
+				// v2 kit, before giving up: the flight may have risen into a shape open only below (the crown of a Ghostfence
+				// pylon, walls on three sides and a roof): every way round met a wall. Sink 2 s (1000 units) and go back the
+				// way it came 2000 units, then climb again
+				if (s.kitV2() && !outDeep)
+				{
+					outDeep = outSink = outAimed = true;
+					float back = fmaxf(1.0f, dist);
+					outGoal[0] = p.feet[0] - dx / back * 2000.0f;
+					outGoal[1] = p.feet[1] - dy / back * 2000.0f;
+					logf("drive: FLYTO %s: no way round at %.0f %.0f %.0f: sinking and going back the way it came", id.c_str(), p.feet[0],
+						p.feet[1], p.feet[2]);
+					outTimer = 6.0f;
+					progressTimer = 0.0f;
+					memcpy(progressAt, p.feet, sizeof(progressAt));
+					return true;
+				}
 				fail("can't climb (a ceiling): fly out of the building first");
 				return false;
 			}
@@ -1017,7 +1068,8 @@ bool TestDriver::walkStep(Session& s, PlayerInput& in, u32& down, float dt, Ref&
 			}
 			else if (door >= 0 && door != doorLast)
 			{
-				logf("drive: opening %s on the way to %s", w.refs[door].id.c_str(), id.c_str());
+				logf("drive: opening %s at %.0f %.0f %.0f on the way to %s", w.refs[door].id.c_str(), w.refs[door].pos[0], w.refs[door].pos[1],
+					w.refs[door].pos[2], id.c_str());
 				bool trapped = !w.refs[door].trap.empty() && !w.refs[door].disarmed;
 				s.playerActivate(door);
 				if (trapped && w.refs[door].doorTarget == 0.0f)

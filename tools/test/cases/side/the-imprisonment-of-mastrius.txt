@@ -1,7 +1,8 @@
 # The Imprisonment of Mastrius (VA_VampCurse), played LEGIT on the v2 test kit (ENHANCEV2).
 # Vampire quest. The imprisoned vampire Mastrius in the Salvel Ancestral Tomb, locked away by Azura, asks a fellow vampire (a Berne's blood taken, three days passed) to help break the barrier (10-40): Spell Breaker from the Dwemer ruin Bthuand (55) and a daedra's heart bought in Sadrith Mora; he drains us to be whole (60, 70), turns on us (90) and is killed.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -25,18 +26,18 @@
 0.3 0 0 0 0 A
 1 0 0 0
 0.3 0 0 0 0 LEGIT
-60 0 0 0 0 WALKTO:@-11900,-74500,273
-120 0 0 0 0 FLYTO:@30000,60000,3000
+120 0 0 0 0 WAYTO:@-11900,-74500,273
+120 0 0 0 0 SKYTO:@30000,60000,3000
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@70000,90000,3000
+120 0 0 0 0 SKYTO:@70000,90000,3000
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@42602,93774,10198:beside
+120 0 0 0 0 SKYTO:@42602,93774,10198:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Salvel_Ancestral_Tomb
 10 0 0 0 0 UNTIL:cell:Salvel_Ancestral_Tomb
 0.1 0 0 0 0 EXPECT:cell:Salvel_Ancestral_Tomb
 # (the door to his hall is locked: picked)
-120 0 0 0 0 WALKTO:@1691,-2700,544
+120 0 0 0 0 WAYTO:@1691,-2700,544
 0.3 0 0 0 0 USELOCKPICK:in_velothismall_ndoor_01:pick_grandmaster
 1 0 0 0
 60 0 0 0 0 ACTIVATE:mastrius
@@ -58,36 +59,36 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the tomb is inside the Ghostfence: straight up first, then over the fence high, as the flight in came)
-60 0 0 0 0 WALKTO:@42400,93250,10050
-120 0 0 0 0 FLYTO:@42400,93250,15000
+120 0 0 0 0 WAYTO:@42400,93250,10050
+120 0 0 0 0 SKYTO:@42400,93250,15000
 # (Spell Breaker, the shield, in the Dwemer ruin Bthuand to the north)
-120 0 0 0 0 FLYTO:@35968,129104,1008:beside
+120 0 0 0 0 SKYTO:@35968,129104,1008:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Bthuand
 10 0 0 0 0 UNTIL:cell:Bthuand
-120 0 0 0 0 WALKTO:@-347,2303,160
-120 0 0 0 0 WALKTO:@-354,2044,-32
-120 0 0 0 0 WALKTO:@-351,1783,-224
-120 0 0 0 0 WALKTO:@-350,1465,-224
-120 0 0 0 0 WALKTO:@49,1465,-224
-120 0 0 0 0 WALKTO:@52,1105,-224
-120 0 0 0 0 WALKTO:@398,1067,-224
-120 0 0 0 0 WALKTO:@444,708,-224
-120 0 0 0 0 WALKTO:@458,318,-224
-120 0 0 0 0 WALKTO:@918,321,-416
-120 0 0 0 0 WALKTO:@1291,291,-416
-120 0 0 0 0 WALKTO:@1391,-4,-416
-120 0 0 0 0 WALKTO:@1312,-320,-416
-120 0 0 0 0 WALKTO:@1348,-703,-416
-120 0 0 0 0 WALKTO:@1313,-1132,-416
-120 0 0 0 0 WALKTO:@1308,-1456,-416
+120 0 0 0 0 WAYTO:@-347,2303,160
+120 0 0 0 0 WAYTO:@-354,2044,-32
+120 0 0 0 0 WAYTO:@-351,1783,-224
+120 0 0 0 0 WAYTO:@-350,1465,-224
+120 0 0 0 0 WAYTO:@49,1465,-224
+120 0 0 0 0 WAYTO:@52,1105,-224
+120 0 0 0 0 WAYTO:@398,1067,-224
+120 0 0 0 0 WAYTO:@444,708,-224
+120 0 0 0 0 WAYTO:@458,318,-224
+120 0 0 0 0 WAYTO:@918,321,-416
+120 0 0 0 0 WAYTO:@1291,291,-416
+120 0 0 0 0 WAYTO:@1391,-4,-416
+120 0 0 0 0 WAYTO:@1312,-320,-416
+120 0 0 0 0 WAYTO:@1348,-703,-416
+120 0 0 0 0 WAYTO:@1313,-1132,-416
+120 0 0 0 0 WAYTO:@1308,-1456,-416
 120 0 0 0 0 PICKUP:spell_breaker_unique
 2 0 0 0 0 UNTIL:item:spell_breaker_unique:ge:1
 0.1 0 0 0 0 EXPECT:item:spell_breaker_unique:eq:1
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (a daedra's heart, bought from Anis Seloth in Sadrith Mora)
-120 0 0 0 0 FLYTO:@148481,40098,1385:beside
+120 0 0 0 0 SKYTO:@148481,40098,1385:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Sadrith_Mora,_Anis_Seloth|_Alchemist
 10 0 0 0 0 UNTIL:cell:Sadrith_Mora,_Anis_Seloth|_Alchemist
@@ -102,9 +103,9 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@70000,90000,3000
+120 0 0 0 0 SKYTO:@70000,90000,3000
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@42602,93774,10198:beside
+120 0 0 0 0 SKYTO:@42602,93774,10198:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Salvel_Ancestral_Tomb
 10 0 0 0 0 UNTIL:cell:Salvel_Ancestral_Tomb
@@ -128,5 +129,5 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 0.1 0 0 0 0 EXPECT:journal:VA_VampCurse:eq:90
-120 0 0 0 0 KILL:mastrius
+120 0 0 0 0 FIGHT:mastrius
 0.1 0 0 0 0 EXPECT:dead:mastrius

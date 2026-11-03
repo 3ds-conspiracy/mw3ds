@@ -1,0 +1,150 @@
+# Imsin the Dreamer's orders (IL_RescueKnight, IL_MaidenToken), played LEGIT on the v2 test kit (ENHANCEV2).
+# Imperial Legion, Buckmoth: after the Dwemer smugglers (IL_Smuggler 100), Joncis Dalomax, a Knight of the Order of Ebonheart,
+# held by two orcs in Ashurnibibi (10); freed (50) and Imsin told (100). Then the maiden's token: Varona Nelas in Assumanu
+# blackmails a Buoyant Armiger with a glove (10); she hands it over (50), and it goes back to Ilmeni Dren in Vivec, who gave it
+# (70); Imsin hears so (110)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:2000
+0.3 0 0 0 0 GIVE:pick_grandmaster
+0.3 0 0 0 0 SPELL:mark
+0.3 0 0 0 0 SPELL:recall
+0.3 0 0 0 0 CON:pcjoinfaction%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:addtopic%"orders"
+# (in the Legion's uniform, as joining gives it: out of it, Legion people send a soldier away)
+0.3 0 0 0 0 GIVE:imperial_chain_cuirass
+0.3 0 0 0 0 EQUIP:imperial_chain_cuirass
+# (a Legion soldier, the smugglers seen to as uber-imperial-legion plays it)
+0.3 0 0 0 0 JOURNAL:IL_Smuggler:100
+0.3 0 0 0 0 GOTO:Buckmoth_Legion_Fort,_Interior
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 WALKTO:imsin%the%dreamer
+0.3 0 0 0 0 CAST:mark
+2 0 0 0
+60 0 0 0 0 ACTIVATE:imsin%the%dreamer
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Joncis_Dalomax
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:IL_RescueKnight:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# Joncis in Ashurnibibi's shrine, north-west of Hla Oad: his two orc guards killed, he thanks the player
+120 0 0 0 0 SKYTO:@-56395,-29756,255:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Ashurnibibi,_Shrine
+10 0 0 0 0 UNTIL:cell:Ashurnibibi,_Shrine
+# (down the shrine's first hall by its path grid, east along the low ways under the ledges by y -1700, down into the
+# middle room and up its steps at its east end, then on along the far hall's grid: the grid is in two pieces)
+60 0 0 0 0 WALKTO:@16,1077,-608
+60 0 0 0 0 WALKTO:@-55,531,-623
+60 0 0 0 0 WALKTO:@-43,251,-721
+60 0 0 0 0 WALKTO:@-195,-120,-686
+60 0 0 0 0 WALKTO:@-300,-354,-696
+60 0 0 0 0 WALKTO:@-273,-573,-751
+60 0 0 0 0 WALKTO:@-84,-806,-763
+60 0 0 0 0 WALKTO:@-54,-1099,-762
+120 0 0 0 0 WALKTO:@1000,-1700,-971
+120 0 0 0 0 WALKTO:@1200,-1700,-897
+120 0 0 0 0 WALKTO:@1600,-1700,-879
+120 0 0 0 0 WALKTO:@1800,-1700,-844
+120 0 0 0 0 WALKTO:@2000,-1700,-744
+120 0 0 0 0 WALKTO:@2200,-1700,-644
+120 0 0 0 0 WALKTO:@2400,-1650,-624
+60 0 0 0 0 WALKTO:@2291,-1492,-624
+60 0 0 0 0 WALKTO:@2472,-1323,-624
+60 0 0 0 0 WALKTO:@2983,-1315,-624
+60 0 0 0 0 WALKTO:@2967,-985,-624
+60 0 0 0 0 WALKTO:@3248,-957,-624
+180 0 0 0 0 FIGHT:rolfish%gra-dugul
+2 0 0 0
+180 0 0 0 0 FIGHT:durgash%gro-rushub
+2 0 0 0
+# (Joncis is kept behind the locked door at the hall's end: picked first)
+60 0 0 0 0 WALKTO:@4560,-1504,-624
+0.3 0 0 0 0 FACE:@4660,-1392
+1 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
+1 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
+0.3 0 0 0 0 EQUIP:daedric_longsword
+60 0 0 0 0 ACTIVATE:joncis%dalomax
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:IL_RescueKnight:ge:50
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Buckmoth_Legion_Fort,_Interior
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:imsin%the%dreamer
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:Joncis_Dalomax
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:IL_RescueKnight:ge:100
+0.3 0 0 0 0 TOPIC:orders
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:maiden's_token
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:IL_MaidenToken:ge:10
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+60 0 0 0 0 DOORTO:outside
+3 0 0 0
+# Varona Nelas in Assumanu, on the coast west of Dagon Fel
+120 0 0 0 0 SKYTO:@-18519,168871,543:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 DOORTO:Assumanu
+10 0 0 0 0 UNTIL:cell:Assumanu
+60 0 0 0 0 ACTIVATE:varona%nelas
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:maiden's_token
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:IL_MaidenToken:ge:50
+0.1 0 0 0 0 EXPECT:item:expensive_glove_left_ilmeni:ge:1
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+120 0 0 0 0 DOORTO:outside
+3 0 0 0
+# Ilmeni Dren in Vivec, St. Delyn (the way in as uber-house-hlaalu takes it)
+180 0 0 0 0 FLYTO:@29088,-95765,676
+0.1 0 0 0 0 FLOAT:60
+120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Canal_South-One
+10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Canal_South-One
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:ilmeni_dren
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:my_glove
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:IL_MaidenToken:ge:70
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.3 0 0 0 0 CAST:recall
+10 0 0 0 0 UNTIL:cell:Buckmoth_Legion_Fort,_Interior
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:imsin%the%dreamer
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:maiden's_token
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:IL_MaidenToken:eq:110
+0.5 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

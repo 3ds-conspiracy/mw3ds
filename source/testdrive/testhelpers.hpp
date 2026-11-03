@@ -28,6 +28,7 @@ bool mechanicsOp(Session& s, const std::vector<std::string>& a);
 bool splitDeadEnd(Session& s, const float from[3], const float to[3], float entry[3], int* entryIndex);
 void walkTarget(const Ref& r, bool activate, float out[3]);
 bool planPath(Session& s, const float from[3], const float to[3], bool spot, std::vector<int>& path, bool ownPiece = false);
+extern bool g_driveNoGrid;      // GRID:off: walks go straight at what they are for, the path grid left out (planPath)
 bool standsOnFloor(Session& s);
 std::string handItem(Session& s, bool takeWeapon);
 bool spotBeside(Session& s, const float aim[3], float fromZ, float out[2]);

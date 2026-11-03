@@ -1,8 +1,9 @@
 # The Scholars and the Mating Kagouti (MV_StrayedPilgrim), played LEGIT on the v2 test kit (ENHANCEV2). Side quest,
 # north of Vivec. Thoronor lost his friend Edras Oril, who hides from a pair of mating kagouti; both killed, Edras
 # follows us back and Thoronor gives an Amulet of Slowfalling.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@17079,-31064,806:beside
+120 0 0 0 0 SKYTO:@17079,-31064,806:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:thoronor
 0.3 0 0 0 0 TOPIC:my_friend
@@ -24,7 +25,7 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 FLYTO:@24818,-32015,999:beside
+120 0 0 0 0 SKYTO:@24818,-32015,999:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:edras%oril
 0.3 0 0 0 0 TOPIC:my_friend
@@ -37,8 +38,11 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 KILL:kagouti_mating
-120 0 0 0 0 KILL:kagouti_mating
+120 0 0 0 0 FIGHT:kagouti_mating
+120 0 0 0 0 FIGHT:kagouti_mating
+# (back to him by air: the fights chase off a long way, and the walk back over the rocks can stick)
+120 0 0 0 0 SKYTO:@24818,-32015,999:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:edras%oril
 0.3 0 0 0 0 TOPIC:my_friend
 2 0 0 0 0 UNTIL:talkready
@@ -48,19 +52,23 @@
 5 0 0 0 0 UNTIL:following:edras%oril
 0.3 0 0 0 0 ESCORT:edras%oril
 # (back to Thoronor, from tools/test/uberroute.py)
-120 0 0 0 0 WALKTO:@24320,-32768,888
-120 0 0 0 0 WALKTO:@23808,-33280,792
-120 0 0 0 0 WALKTO:@23040,-33280,728
-120 0 0 0 0 WALKTO:@22272,-33024,696
-120 0 0 0 0 WALKTO:@21504,-32512,720
-120 0 0 0 0 WALKTO:@20736,-32512,640
-120 0 0 0 0 WALKTO:@19968,-32512,688
-120 0 0 0 0 WALKTO:@19200,-32256,712
-120 0 0 0 0 WALKTO:@18432,-32000,696
-120 0 0 0 0 WALKTO:@17920,-31488,704
-120 0 0 0 0 WALKTO:@17408,-31232,768
-120 0 0 0 0 WALKTO:@17279,-31064,806
+120 0 0 0 0 WAYTO:@24320,-32768,888
+120 0 0 0 0 WAYTO:@23808,-33280,792
+120 0 0 0 0 WAYTO:@23040,-33280,728
+120 0 0 0 0 WAYTO:@22272,-33024,696
+120 0 0 0 0 WAYTO:@21504,-32512,720
+120 0 0 0 0 WAYTO:@20736,-32512,640
+120 0 0 0 0 WAYTO:@19968,-32512,688
+120 0 0 0 0 WAYTO:@19200,-32256,712
+120 0 0 0 0 WAYTO:@18432,-32000,696
+120 0 0 0 0 WAYTO:@17920,-31488,704
+120 0 0 0 0 WAYTO:@17408,-31232,768
+120 0 0 0 0 WAYTO:@17279,-31064,806
+# (on to Thoronor where he is now, Edras Oril following: Edras' script moves the quest on within 512 of him, and
+# Thoronor wanders off the spot he starts on)
+60 0 0 0 0 WALKTO:thoronor
 20 0 0 0 0 UNTIL:journal:MV_StrayedPilgrim:ge:90
+120 0 0 0 0 BRING:edras%oril
 0.3 0 0 0 0 ESCORT:-
 60 0 0 0 0 ACTIVATE:thoronor
 0.3 0 0 0 0 TOPIC:my_friend

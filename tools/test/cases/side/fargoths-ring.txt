@@ -1,7 +1,8 @@
 # Fargoth's Ring (MS_FargothRing), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Seyda Neen.
 # The ring is in the barrel by Fargoth's house that the Census Office's guards keep; Fargoth asks for it on "ring".
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -14,6 +15,10 @@
 60 0 0 0 0 LOOT:chargen%barrel%fatigue:ring_keley
 2 0 0 0 0 UNTIL:screen:none
 0.1 0 0 0 0 EXPECT:item:ring_keley:ge:1
+# (out of the barrel's yard round the west end of its stone wall: straight at Fargoth, beyond the house, the walk stuck
+# in the corner between the wall and the house)
+120 0 0 0 0 WAYTO:@-11200,-71850,200
+120 0 0 0 0 WAYTO:@-11150,-71300,200
 60 0 0 0 0 ACTIVATE:fargoth
 0.3 0 0 0 0 TOPIC:ring
 2 0 0 0 0 UNTIL:journal:MS_FargothRing:ge:10

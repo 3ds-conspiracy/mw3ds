@@ -1,0 +1,31 @@
+# Pemenie and the Boots of Blinding Speed (MV_TraderAbandoned), killed on the way, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash. Pemenie, following us to Gnaar Mok, is cut down on the road (20, 110); a murder.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 SKYTO:@-32489,31812,1380:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:making_a_deal
+2 0 0 0 0 UNTIL:talkready
+# ("I can take you to Gnaar Mok.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+20 0 0 0 0 UNTIL:following:pemenie
+120 0 0 0 0 KILL:pemenie
+5 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:110
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:110

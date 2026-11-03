@@ -1,7 +1,8 @@
 # Liberate the Limeware (EB_Shipment), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Vivec and Ebonheart. The glassworker Alarvyne Indalas sends us to take the East Empire Company's held-back dwarven limeware (five bowls, five cups) from the Chun-Ook's hold; taken unseen, it earns her 1500 septims.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -13,7 +14,7 @@
 0.3 0 0 0 0 GIVE:pick_grandmaster:3
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@27206,-93312,2129:beside
+120 0 0 0 0 SKYTO:@27206,-93312,2129:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
 10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza
@@ -40,14 +41,14 @@
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
 # (aboard the Chun-Ook, unseen: stolen goods would be taken back)
-120 0 0 0 0 FLYTO:@19980,-103260,243:beside
+120 0 0 0 0 SKYTO:@19980,-103260,243:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the trapdoor and the hold door are locked: picked)
 0.3 0 0 0 0 USELOCKPICK:ex_de_ship_trapdoor:pick_grandmaster
 1 0 0 0
 120 0 0 0 0 DOORTO:Chun-Ook,_Upper_Level
 10 0 0 0 0 UNTIL:cell:Chun-Ook,_Upper_Level
-60 0 0 0 0 WALKTO:@-2,700,-105
+120 0 0 0 0 WAYTO:@-2,700,-105
 0.3 0 0 0 0 USELOCKPICK:in_de_shipdoor_toplevel:pick_grandmaster
 1 0 0 0
 120 0 0 0 0 DOORTO:Chun-Ook,_Lower_Level
@@ -61,7 +62,7 @@
 10 0 0 0 0 UNTIL:cell:Chun-Ook,_Upper_Level
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@27206,-93312,2129:beside
+120 0 0 0 0 SKYTO:@27206,-93312,2129:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Plaza
 10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Plaza

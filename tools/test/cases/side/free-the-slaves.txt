@@ -1,7 +1,8 @@
 # Free the Slaves (MS_JobashaAbolitionist), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Vivec. The Khajiit bookseller Jobasha rewards those who have freed more than thirty slaves (FreedSlavesCounter, kept by the slaves' "go free" answers). Freed here: Eleedal-Lei in the Abebaal egg mine (she frees the rest: ten), and the slaves of Yakanalit, Minabi, Assarnud and Sha-Adnius (six each), each cave's key found lying or taken from its slaver; then Jobasha's gift (100).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -14,7 +15,7 @@
 4 0 0 0
 0.3 0 0 0 0 LEGIT
 # (Yakanalit: the key lies on a table under a sheet of paper: the paper taken first)
-120 0 0 0 0 FLYTO:@86281,-87252,673:beside
+120 0 0 0 0 SKYTO:@86281,-87252,673:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Yakanalit
 10 0 0 0 0 UNTIL:cell:Yakanalit
@@ -86,7 +87,7 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the Abebaal egg mine: the key in a crate there; Eleedal-Lei frees the others)
-120 0 0 0 0 FLYTO:@118112,-89071,719:beside
+120 0 0 0 0 SKYTO:@118112,-89071,719:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Abebaal_Egg_Mine
 10 0 0 0 0 UNTIL:cell:Abebaal_Egg_Mine
@@ -105,18 +106,18 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (Minabi's bandit lair, behind a trapped and locked door: the key on Chrelm)
-120 0 0 0 0 FLYTO:@73216,-66785,388:beside
+120 0 0 0 0 SKYTO:@73216,-66785,388:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Minabi
 10 0 0 0 0 UNTIL:cell:Minabi
-120 0 0 0 0 WALKTO:@860,1342,610
+120 0 0 0 0 WAYTO:@860,1342,610
 0.3 0 0 0 0 USEPROBE:door_cavern_doors10:probe_grandmaster
 1 0 0 0
 0.3 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
 1 0 0 0
 120 0 0 0 0 DOORTO:Minabi,_Bandit_Lair
 10 0 0 0 0 UNTIL:cell:Minabi,_Bandit_Lair
-120 0 0 0 0 KILL:chrelm
+120 0 0 0 0 FIGHT:chrelm
 120 0 0 0 0 LOOT:chrelm:key_minabislaves_01
 2 0 0 0 0 UNTIL:screen:none
 60 0 0 0 0 ACTIVATE:shaba
@@ -185,17 +186,37 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (Assarnud, far to the north-west: the key on Bazgulub gro-Ulfish)
-120 0 0 0 0 FLYTO:@0,40000,3000
+120 0 0 0 0 SKYTO:@0,40000,3000
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-71027,95528,174:beside
+120 0 0 0 0 SKYTO:@-71027,95528,174:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Assarnud
 10 0 0 0 0 UNTIL:cell:Assarnud
 # (the pen's door is locked: picked)
-120 0 0 0 0 WALKTO:@-2560,2060,30
+# (by the walkway's points, a few hundred apart: knocked off it into the pit by -200,3550 in a fight, the walk to the
+# slaves' pen far off found no way up; a point near at hand is floated up to)
+60 0 0 0 0 WAYTO:@-294,16,79
+60 0 0 0 0 WAYTO:@-419,343,120
+60 0 0 0 0 WAYTO:@-373,712,126
+60 0 0 0 0 WAYTO:@-352,1086,136
+60 0 0 0 0 WAYTO:@-424,1456,126
+60 0 0 0 0 WAYTO:@-430,1842,141
+60 0 0 0 0 WAYTO:@-394,2209,97
+60 0 0 0 0 WAYTO:@-341,2542,-143
+60 0 0 0 0 WAYTO:@-97,2812,-203
+60 0 0 0 0 WAYTO:@3,3206,-157
+60 0 0 0 0 WAYTO:@-200,3532,-157
+60 0 0 0 0 WAYTO:@-559,3613,-133
+60 0 0 0 0 WAYTO:@-811,3349,-122
+60 0 0 0 0 WAYTO:@-1134,3113,-121
+60 0 0 0 0 WAYTO:@-1451,2871,-152
+60 0 0 0 0 WAYTO:@-1547,2521,-122
+60 0 0 0 0 WAYTO:@-1733,2170,-120
+60 0 0 0 0 WAYTO:@-2087,2038,-105
+120 0 0 0 0 WAYTO:@-2560,2060,30
 0.3 0 0 0 0 USELOCKPICK:door_cavern_doors10:pick_grandmaster
 1 0 0 0
-120 0 0 0 0 KILL:bazgulub%gro-ulfish
+120 0 0 0 0 FIGHT:bazgulub%gro-ulfish
 120 0 0 0 0 LOOT:bazgulub%gro-ulfish:key_assarnudslaves_01
 2 0 0 0 0 UNTIL:screen:none
 60 0 0 0 0 ACTIVATE:huzei
@@ -262,7 +283,7 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (Sha-Adnius: the key lies in the cave)
-120 0 0 0 0 FLYTO:@-44066,134513,1405:beside
+120 0 0 0 0 SKYTO:@-44066,134513,1405:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Sha-Adnius
 10 0 0 0 0 UNTIL:cell:Sha-Adnius
@@ -340,9 +361,9 @@
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@0,40000,3000
+120 0 0 0 0 SKYTO:@0,40000,3000
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+120 0 0 0 0 SKYTO:@27299,-80199,1893:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks

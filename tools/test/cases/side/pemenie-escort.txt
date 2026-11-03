@@ -1,0 +1,83 @@
+# Pemenie and the Boots of Blinding Speed (MV_TraderAbandoned), the escort, played LEGIT on the v2 test kit (ENHANCEV2).
+# Side quest, West Gash to Gnaar Mok. The trader Pemenie, abandoned by her escort, is walked west to Gnaar Mok on the
+# Bitter Coast (20, 90) and gives us her Boots of Blinding Speed (100). (Route from tools/test/uberroute.py --climb 4.)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+4 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 SKYTO:@-32489,31812,1380:beside
+5 0 0 0 0 UNTIL:effect:10:eq:0
+60 0 0 0 0 ACTIVATE:pemenie
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:making_a_deal
+2 0 0 0 0 UNTIL:talkready
+# ("I can take you to Gnaar Mok.")
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:20
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:20
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:pemenie
+0.3 0 0 0 0 ESCORT:pemenie
+# (west over the hills and down to the Bitter Coast)
+120 0 0 0 0 WAYTO:@-33280,31744,1464
+120 0 0 0 0 WAYTO:@-33792,32256,1544
+120 0 0 0 0 WAYTO:@-34304,32768,1552
+120 0 0 0 0 WAYTO:@-34816,33280,1576
+120 0 0 0 0 WAYTO:@-35584,33280,1568
+# (the valley south of the ridge's steep face (the pass over its top wedges us among the rocks), and south of the big
+# rock at -40134,30922, whose foot reaches out to x -40870 near y 30400: wider than the planner's rock size)
+120 0 0 0 0 WAYTO:@-36096,32768,1648
+120 0 0 0 0 WAYTO:@-36352,32000,1896
+120 0 0 0 0 WAYTO:@-36864,31488,2200
+120 0 0 0 0 WAYTO:@-37376,30976,2464
+120 0 0 0 0 WAYTO:@-38144,30976,2848
+120 0 0 0 0 WAYTO:@-38912,30976,2784
+120 0 0 0 0 WAYTO:@-39680,30464,2456
+120 0 0 0 0 WAYTO:@-40192,29952,1968
+120 0 0 0 0 WAYTO:@-40704,29696,1584
+120 0 0 0 0 WAYTO:@-41216,29696,1224
+120 0 0 0 0 WAYTO:@-41984,30208,1248
+120 0 0 0 0 WAYTO:@-42752,30720,1432
+120 0 0 0 0 WAYTO:@-43520,30720,1144
+120 0 0 0 0 WAYTO:@-44288,30464,888
+120 0 0 0 0 WAYTO:@-45056,30208,688
+120 0 0 0 0 WAYTO:@-45824,30208,576
+120 0 0 0 0 WAYTO:@-46592,29952,464
+120 0 0 0 0 WAYTO:@-47104,29440,424
+120 0 0 0 0 WAYTO:@-47872,29440,320
+120 0 0 0 0 WAYTO:@-48640,28928,240
+120 0 0 0 0 WAYTO:@-49408,28672,256
+120 0 0 0 0 WAYTO:@-50176,28672,408
+120 0 0 0 0 WAYTO:@-50944,28928,400
+120 0 0 0 0 WAYTO:@-51712,28928,304
+120 0 0 0 0 WAYTO:@-52480,28928,296
+120 0 0 0 0 WAYTO:@-53248,29184,232
+120 0 0 0 0 WAYTO:@-54016,29184,232
+120 0 0 0 0 WAYTO:@-54784,29440,184
+120 0 0 0 0 WAYTO:@-55552,29440,160
+120 0 0 0 0 WAYTO:@-56320,28928,160
+120 0 0 0 0 WAYTO:@-56832,28160,16
+120 0 0 0 0 WAYTO:@-57344,27392,0
+120 0 0 0 0 WAYTO:@-57856,26880,0
+120 0 0 0 0 WAYTO:@-58163,26617,19
+30 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:90
+120 0 0 0 0 BRING:pemenie
+0.3 0 0 0 0 ESCORT:-
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:ge:90
+# (her greeting as she arrives gives the boots)
+10 0 0 0 0 UNTIL:journal:MV_TraderAbandoned:ge:100
+0.1 0 0 0 0 EXPECT:journal:MV_TraderAbandoned:eq:100
+0.1 0 0 0 0 EXPECT:item:boots_of_blinding_speed[unique]:ge:1
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

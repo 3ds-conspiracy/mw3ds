@@ -1,7 +1,8 @@
 # Boethiah's Quest (DA_Boethiah), played LEGIT on the v2 test kit (ENHANCEV2).
 # Daedric shrine quest, Sheogorad. M'aiq the Liar points us to the lost shrine of Boethiah (10): its head under the sea off the west coast asks for a new one (20, 30); the orc sculptor Duma gro-Lag in Caldera will carve it (40, 50) for 2000 gold and the book Boethiah's Glory (taken from Jobasha's shelf in Vivec) (60); twenty days later it stands at Khartag Point (61) and gives Goldbrand (70).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,7 +12,9 @@
 0.3 0 0 0 0 GIVE:Gold_001:3000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@76086,177874,335:beside
+# (round Red Mountain's east side: the straight flight from Seyda Neen crosses its peak and met the flight's ceiling)
+120 0 0 0 0 SKYTO:@60000,10000,1500
+120 0 0 0 0 SKYTO:@76086,177874,335:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:m'aiq
 1.5 0 0 0
@@ -22,17 +25,17 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 # (the old shrine's head lies under the sea off the west coast: dived to, and spoken to there (20, 30))
-120 0 0 0 0 FLYTO:@-20000,80000,3000
+120 0 0 0 0 SKYTO:@-20000,80000,3000
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-65653,-26750,200
+120 0 0 0 0 SKYTO:@-65653,-26750,200
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 WALKTO:@-65653,-26800,-1990:dive
+120 0 0 0 0 WAYTO:@-65653,-26800,-1990:dive
 60 0 0 0 0 ACTIVATE:active_DAE_B_Bo_Head
 60 0 0 0 0 UNTIL:journal:DA_Boethiah:ge:30
 0.1 0 0 0 0 EXPECT:journal:DA_Boethiah:eq:30
 0.1 0 0 0 0 EXPECT:learned:sculptor
 # (the orc sculptor Duma gro-Lag, in Caldera's Ghorak Manor (40, 50))
-120 0 0 0 0 FLYTO:@-9888,18600,1472:beside
+120 0 0 0 0 SKYTO:@-9888,18600,1472:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Caldera,_Ghorak_Manor
 10 0 0 0 0 UNTIL:cell:Caldera,_Ghorak_Manor
@@ -49,7 +52,7 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the book Boethiah's Glory lies on Jobasha's shelf in Vivec: taken unseen)
-120 0 0 0 0 FLYTO:@27299,-80199,1893:beside
+120 0 0 0 0 SKYTO:@27299,-80199,1893:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Foreign_Quarter_Lower_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
@@ -66,7 +69,7 @@
 10 0 0 0 0 UNTIL:cell:Vivec,_Foreign_Quarter_Lower_Waistworks
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-9888,18600,1472:beside
+120 0 0 0 0 SKYTO:@-9888,18600,1472:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Caldera,_Ghorak_Manor
 10 0 0 0 0 UNTIL:cell:Caldera,_Ghorak_Manor
@@ -81,8 +84,8 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the shrine takes twenty days to build: slept through just north of Khartag Point, outside its cell (the builders' script
-# waits while we are in it))
-120 0 0 0 0 FLYTO:@-70302,41500,600:beside
+# waits while we are in it); forty nights, as creatures break into a third of the rests out here and twenty-two gave only 14 days)
+120 0 0 0 0 SKYTO:@-70302,41500,600:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 0.3 0 0 0 0 SLEEP:24
 4 0 0 0
@@ -128,7 +131,43 @@
 4 0 0 0
 0.3 0 0 0 0 SLEEP:24
 4 0 0 0
-120 0 0 0 0 FLYTO:@-70302,41150,600:beside
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+0.3 0 0 0 0 SLEEP:24
+4 0 0 0
+120 0 0 0 0 SKYTO:@-70302,41150,600:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:duma%gro-lag2
 1.5 0 0 0

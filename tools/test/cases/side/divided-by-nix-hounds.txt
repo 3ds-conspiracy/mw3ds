@@ -1,7 +1,8 @@
 # Divided by Nix Hounds (MV_MissingCompanion), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Ashlands near Ald-ruhn. Falanu Indaren lost her husband Drerel to a pack of nix hounds; we find him west of her (he is hurt), and walk him back to her (route planned with uberroute.py): he gives a book of blocking.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,7 +12,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-20253,57431,1609:beside
+120 0 0 0 0 SKYTO:@-20253,57431,1609:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:falanu%indaren
 1.5 0 0 0
@@ -25,7 +26,7 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 FLYTO:@-28461,59706,2331:beside
+120 0 0 0 0 SKYTO:@-28461,59706,2331:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:drerel%indaren
 1.5 0 0 0
@@ -34,8 +35,9 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 0.3 0 0 0 0 ESCORT:drerel_indaren
+120 0 0 0 0 BRING:drerel_indaren
 0.3 0 0 0 0 ESCORT:-
 60 0 0 0 0 UNTIL:refdist:drerel_indaren:lt:300
-60 0 0 0 0 WALKTO:@-20253,57431,1609
+120 0 0 0 0 WAYTO:@-20253,57431,1609
 60 0 0 0 0 UNTIL:journal:MV_MissingCompanion:ge:60
 0.1 0 0 0 0 EXPECT:journal:MV_MissingCompanion:ge:60

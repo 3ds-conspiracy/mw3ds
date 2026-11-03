@@ -1,7 +1,8 @@
 # Ra'Gruzgob's secret (MS_RaGruzgob), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Ald Daedroth. The Khajiit Ra'Gruzgob, who sits in the Daedric ruin's antechamber, tells a "little secret" for moon sugar (a lump lies there in the antechamber; the topic is named by Ennbjof's greeting in Vivec).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 0.3 0 0 0 0 GIVE:sc_divineintervention:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@44092,-87008,1872:beside
+120 0 0 0 0 SKYTO:@44092,-87008,1872:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_Telvanni_Waistworks
 10 0 0 0 0 UNTIL:cell:Vivec,_Telvanni_Waistworks
@@ -29,7 +30,7 @@
 5 0 0 0 0 UNTIL:effect:10:eq:0
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 3 0 0 0
-120 0 0 0 0 FLYTO:@94329,167852,1277:beside
+120 0 0 0 0 SKYTO:@94329,167852,1277:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ald_Daedroth,_Outer_Shrine
 10 0 0 0 0 UNTIL:cell:Ald_Daedroth,_Outer_Shrine

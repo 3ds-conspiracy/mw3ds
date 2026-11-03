@@ -1,7 +1,8 @@
 # Sheogorath's Quest (DA_Sheogorath), played LEGIT on the v2 test kit (ENHANCEV2).
 # Daedric shrine quest: Sheogorath in the shrine below Vivec's St. Delyn canton sends us to the mad hermit Big Head for the Fork of Horripilation (stage 10). Big Head gives it up (30, 50); the giant bull netch east of his island is killed with the Fork in hand (60), and Sheogorath trades it for the Spear of Bitter Mercy (70).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,7 +12,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@32724,-95010,-250:beside
+120 0 0 0 0 SKYTO:@32724,-95010,-250:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Underworks
 10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Underworks
@@ -29,9 +30,9 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (Big Head's door faces east under the awning: land east of it, not on the roof)
-120 0 0 0 0 FLYTO:@-13600,202175,1790:beside
+120 0 0 0 0 SKYTO:@-13600,202175,1790:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-60 0 0 0 0 WALKTO:@-13760,202175,1790
+120 0 0 0 0 WAYTO:@-13760,202175,1790
 120 0 0 0 0 DOORTO:Big_Head's_Shack
 10 0 0 0 0 UNTIL:cell:Big_Head's_Shack
 60 0 0 0 0 ACTIVATE:big%head
@@ -50,12 +51,12 @@
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (the giant bull netch floats east of the island, enabled by Sheogorath's errand; the deathblow with the Fork in hand)
-120 0 0 0 0 FLYTO:@10200,200664,500:beside
+120 0 0 0 0 SKYTO:@10200,200664,500:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 KILL:netch_giant_unique
+120 0 0 0 0 FIGHT:netch_giant_unique
 10 0 0 0 0 UNTIL:journal:DA_Sheogorath:ge:60
 0.1 0 0 0 0 EXPECT:journal:DA_Sheogorath:eq:60
-120 0 0 0 0 FLYTO:@32724,-95010,-250:beside
+120 0 0 0 0 SKYTO:@32724,-95010,-250:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Vivec,_St._Delyn_Underworks
 10 0 0 0 0 UNTIL:cell:Vivec,_St._Delyn_Underworks

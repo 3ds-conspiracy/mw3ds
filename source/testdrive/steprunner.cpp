@@ -636,6 +636,49 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	driver.keepFloating(*session);
 	if (driver.busy())
 		driver.update(*session, in, down, dt);
+	// v2 kit: a blow wound up is not let go onto a bystander (a person in the swing's arc who is not fighting the player),
+	// whatever let it go: a kill step ending as the target fell to someone else, the next step, a step aside. Held, and
+	// after half a second turned away until the arc is clear, as a player with the blow raised turns from a friend before
+	// letting it go (6 s at most). A High Ordinator fighting the fabricants beside the player in Helseth's courtyard took
+	// two such blows and turned on the player
+	// (not while the drive fights a foe of its own that still lives: a kill step's own blows, and its step aside from one
+	// in the line, are its to judge; held near any friend, a fight beside a companion or an escort never landed a blow)
+	static float heldForBystander = 0.0f;
+	const auto livingFoe = [&](int r) { return r >= 0 && !session->w.refs[r].dead; };
+	bool ownFight = (driver.kind == TestDriver::KILL && livingFoe(driver.ref)) || livingFoe(driver.fightRef);
+	if (!in.attack && !ownFight && session->attackCharge >= 0.0f && session->kitV2() && heldForBystander < 6.0f)
+	{
+		// (in the arc or at its edge: one fighting beside the player steps into it within the frame the blow goes. Within
+		// 260 units and 60 degrees of where the player faces; the swing itself reaches about 150 and 41 degrees)
+		const World& w = session->w;
+		const Ref* o = nullptr;
+		float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
+		for (int i : w.loadedActors)
+		{
+			const Ref& c = w.refs[i];
+			if (c.recType != REC_NPC_ || c.dead || !w.active(i) || (c.ai == AI_COMBAT && c.duelFoe < 0 && !c.ally))
+				continue;
+			float dx = c.pos[0] - w.player.feet[0], dy = c.pos[1] - w.player.feet[1], d = sqrtf(dx * dx + dy * dy);
+			if (d < 260.0f && fabsf(c.pos[2] - w.player.feet[2]) < 150.0f && (d < 1.0f || (dx * fx + dy * fy) / d > 0.5f))
+			{
+				o = &c;
+				break;
+			}
+		}
+		if (o)
+		{
+			if (heldForBystander == 0.0f)
+				logf("drive: the blow held: %s is in its arc", o->id.c_str());
+			in.attack = true;
+			heldForBystander += dt;
+			if (heldForBystander > 0.5f)
+				session->w.player.yaw += 3.0f * dt;
+		}
+		else
+			heldForBystander = 0.0f;
+	}
+	else if (session->attackCharge < 0.0f)
+		heldForBystander = 0.0f;
 	touching = false;
 	if (first && s.tapX >= 0)
 	{

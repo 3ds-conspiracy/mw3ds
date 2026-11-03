@@ -1,7 +1,8 @@
 # Vodunius Nuccius (MS_Nuccius), played LEGIT on the v2 test kit (ENHANCEV2). Side quest, Seyda Neen.
 # Darvame Hleran, the caravaner, mentions him; he sells his cursed ring for the 100 drakes of his passage home, and leaves.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100

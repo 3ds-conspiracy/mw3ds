@@ -96,7 +96,7 @@ bool hasArg(const std::string& what)
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
 		|| what == "effectarg" || what == "locklevel" || what == "summoned" || what == "itemhealth" || what == "spellmagicka"
-		|| what == "refcell" || what == "refforcesneak" || what == "reflegframes" || what == "refsidemax" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refduel" || what == "refrun" || what == "refdying" || what == "reflying" || what == "refknock" || what == "refsidesteps" || what == "refskate" || what == "refyaw" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refsight" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "refdressed" || what == "refz" || what == "refclimb" || what == "refwerewolf" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "refsize" || what == "reflampnow" || what == "refheldlight" || what == "reftalk" || what == "refposes" || what == "refmorpht" || what == "refgroupstarts" || what == "refposehz" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "refowned" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "itemscriptrunning" || what == "refloopvol" || what == "loopsheard" || what == "soundstarted" || what == "soundvolume" || what == "closestpair" || what == "cellreads" || what == "cellinmemory" || what == "voicesecs" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
+		|| what == "refcell" || what == "refforcesneak" || what == "reflegframes" || what == "refsidemax" || what == "refpkg" || what == "refpkgdone" || what == "refvfx" || what == "refvfxhands" || what == "refvfxhandz" || what == "reflhandz" || what == "refcombat" || what == "refduel" || what == "refengaged" || what == "refrun" || what == "refdying" || what == "reflying" || what == "refknock" || what == "refsidesteps" || what == "refskate" || what == "refyaw" || what == "refidlevoice" || what == "refheadyaw" || what == "refheadpitch" || what == "refsoultrap" || what == "refally" || what == "refdist" || what == "refsight" || what == "refaimed" || what == "refabove" || what == "refhiddenparts" || what == "refweaponrating" || what == "reftorch" || what == "reftorchfire" || what == "refcpuskin" || what == "refblendskin" || what == "refmeshes" || what == "refdressed" || what == "refz" || what == "refclimb" || what == "refwerewolf" || what == "reftorcharm" || what == "refshield" || what == "refglow" || what == "refalpha" || what == "reftint" || what == "refsize" || what == "reflampnow" || what == "refheldlight" || what == "reftalk" || what == "refposes" || what == "refmorpht" || what == "refgroupstarts" || what == "refposehz" || what == "refanimtime" || what == "refabovefeet" || what == "refadditive" || what == "refwater" || what == "refaimable" || what == "refbox" || what == "refitem" || what == "refgap" || what == "reflock" || what == "refowned" || what == "reftrap" || what == "scripttarget" || what == "reflocal" || what == "reflocalfrac" || what == "scriptlocal" || what == "itemscriptrunning" || what == "refloopvol" || what == "loopsheard" || what == "soundstarted" || what == "soundvolume" || what == "closestpair" || what == "cellreads" || what == "cellinmemory" || what == "voicesecs" || what == "spellcost" || what == "castchance" || what == "brewedmag" || what == "brewedduration" || what == "charge"
 		|| what == "count" || what == "repairamount" || what == "rechargegain" || what == "lockchance" || what == "trapchance"
 		|| what == "persuadechance" || what == "persuadepart" || what == "enchantcastcost" || what == "resistbase"
 		|| what == "crimebounty" || what == "skillneed" || what == "attackterm" || what == "knockodds" || what == "falldamage" || what == "poseevery" || what == "skinevery"
@@ -157,15 +157,16 @@ bool TestDriver::playerToken(const std::string& tok)
 	static const char* const kPlayer[] = {
 		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "ZR", "FRAMECAP", "GYRO", "CONTROLS", "GYROAIM", "TAP", "DRAG", "TOUCH", "STICKDOWN",
 		// (SEED: the dice made repeatable from there, nothing given or set: a long run seeds a section whose outcome is a
-		// script's roll, so a change before it doesn't flip it)
-		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT", "SEED", "RANDSEED",
+		// script's roll, so a change before it doesn't flip it. SCRIPTROLL: a script's own die picked, nothing else; ROLL: a
+		// persuasion's, so a taunt meant to provoke does, on any dice)
+		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT", "SEED", "RANDSEED", "SCRIPTROLL", "ROLL",
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "FIGHT", "SKYTO", "OPEN", "BRING", "WAYTO", "STRIKE", "FACE", "SNEAK",
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "INVSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE", "MAKEPICK", "MAKETARGET",
 		"SHARE", "SHAREPUT", "SHARETAKE", "SHAREDONE", "MAPNOTE",
 		"ENCHANTAT", "ENCHANT", "ENCHITEM", "ENCHGEM", "ENCHTYPE", "ADDEFFECT", "CONFIRM", "TYPE", "LEVELUP",
 		"EQUIP", "UNEQUIP", "USE", "READ", "DROP", "QUICKSET", "CAST", "CASTAT", "CASTMADESPELL", "USEMADE", "EQUIPMADE",
-		"RECHARGEMADE", "RECHARGE", "REPAIR", "REPAIRAT", "REPAIRWITH", "BUYSPELL", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "SLEEPTO", "UNSEEN", "UNTIL", "FLOAT", "HIDE", "SPEEDBOOST",
+		"RECHARGEMADE", "RECHARGE", "REPAIR", "REPAIRAT", "REPAIRWITH", "BUYSPELL", "BREW", "DRINKBREWED", "USELOCKPICK", "USEPROBE", "SLEEP", "SLEEPUNTIL", "SLEEPTO", "UNSEEN", "UNTIL", "FLOAT", "GRID", "HIDE", "SPEEDBOOST",
 	};
 	size_t colon = tok.find(':');
 	std::string name = tok.substr(0, colon);
@@ -349,6 +350,15 @@ bool TestDriver::start(Session& s, const std::string& token)
 		logf("drive: hide %s", off ? "off" : a[1].c_str());
 		return false;
 	}
+	if (verb == "GRID" && a.size() >= 2)
+	{
+		// GRID:off / GRID:on: walks (WALKTO, LOOT, KILL, ...) go straight at what they are for, floating where they must,
+		// without the path grid, till on again. A cave whose grid is in pieces joined by drops and levitation sent a walk to a
+		// body up on a ledge round by the grid's nearest piece, down into the chasm below it (Assu, Dreveni Hlaren)
+		g_driveNoGrid = lower(a[1]) == "off";
+		logf("drive: path grid %s", g_driveNoGrid ? "off" : "on");
+		return false;
+	}
 	if (verb == "FLOAT" && a.size() >= 2)
 	{
 		// FLOAT:<seconds> / FLOAT:off (v2 kit): levitate on the fly item through a flight by hand (jumps, R / L, a walk over
@@ -467,7 +477,8 @@ bool TestDriver::start(Session& s, const std::string& token)
 		underWaited = false;
 		underWait = -1.0f;
 		outTimer = 0.0f;
-		outTries = 0;
+		outTries = outTriesHere = 0;
+		outDeep = false;
 		outSink = false;
 		inAir = false;
 		phaseTimer = elapsed = progressTimer = 0.0f;
@@ -514,6 +525,9 @@ bool TestDriver::start(Session& s, const std::string& token)
 		}
 		lootItem = (verb == "LOOT" || verb == "PUT") && a.size() >= 3 ? lower(a[2]) : "";
 		lootPut = verb == "PUT";
+		// (LOOT:<id>:<item>:holding: of several bodies or containers sharing the id, the nearest that still holds the item,
+		// not the nearest: a fight's dead fall where the dice put them, and the nearest may be one already emptied)
+		lootHolding = verb == "LOOT" && a.size() >= 4 && lower(a[3]) == "holding";
 		id = a[1];
 		kind = verb == "WALKTO" ? WALK : (verb == "KILL" || verb == "STRIKE") ? KILL : ACTIVATE;
 		diveOk = verb == "WALKTO" && a.size() >= 3 && a[2] == "dive";
@@ -975,6 +989,11 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 				in.moveX = fmodf(lineTimer, 1.6f) < 0.8f ? -1.0f : 1.0f;
 			else
 				in.moveX = fmodf(lineTimer - 3.0f, 12.0f) < 6.0f ? -1.0f : 1.0f;
+			// (a blow already wound up stays held, not let go: let go, it lands on whoever steps into the arc, as Galms
+			// Seles took the blow meant for Soscean in the Winged Guar, and a High Ordinator fighting the fabricants beside
+			// the player in Helseth's courtyard took two and turned on the player. Held while the charge runs, whatever
+			// point of the swing's rhythm the step aside came at)
+			in.attack = s.attackCharge >= 0.0f;
 			return true;
 		}
 		lineTimer = 0.0f;

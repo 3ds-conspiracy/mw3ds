@@ -1,0 +1,43 @@
+# The Grandmaster retires (MT_Grandmaster), played LEGIT on the v2 test kit (ENHANCEV2).
+# Morag Tong, Vivec: the other end of the Grandmaster's quest (uber-morag-tong slays him): Eno Hlaalu is let retire, and
+# we are the new Grandmaster (20, 110). (Slaying him gives the rank but no journal line: nothing sets 100.)
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 RANDSEED
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:1000
+# (Exalted Master of the Morag Tong, rank 8, with the Dark Brotherhood's Ald Sotha base cleared, as in uber-morag-tong)
+0.3 0 0 0 0 CON:pcjoinfaction%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:pcraiserank%"morag%tong"
+0.3 0 0 0 0 CON:addtopic%"grandmaster"
+0.3 0 0 0 0 JOURNAL:MT_DB_AldSotha:100
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Hidden_Area
+4 0 0 0
+0.1 0 0 0 0 EXPECT:rank:morag_tong:eq:8
+0.3 0 0 0 0 LEGIT
+60 0 0 0 0 ACTIVATE:eno_hlaalu
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Grandmaster
+10 0 0 0 0 UNTIL:journal:MT_Grandmaster:ge:20
+0.1 0 0 0 0 EXPECT:journal:MT_Grandmaster:eq:20
+# ("Allow him to retire.")
+0.3 0 0 0 0 CHOICE:1
+10 0 0 0 0 UNTIL:journal:MT_Grandmaster:ge:110
+0.1 0 0 0 0 EXPECT:journal:MT_Grandmaster:eq:110
+0.1 0 0 0 0 EXPECT:rank:morag_tong:eq:9
+0.1 0 0 0 0 EXPECT:alive:eno_hlaalu
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none

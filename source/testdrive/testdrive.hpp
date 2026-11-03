@@ -117,6 +117,7 @@ struct TestDriver
 	float unseenLimit = 0.0f, unseenTimer = 0.0f;   // UNSEEN:<secs>: waiting for nobody to be watching
 	std::string lootItem;            // LOOT: what to take once its container screen is open
 	bool lootPut = false;            // PUT: lootItem goes from the inventory into the container instead
+	bool lootHolding = false;        // LOOT:<id>:<item>:holding: the nearest of that id still holding the item
 	std::string searchVerb, searchArg;          // SEARCH: what to start once the target is in the loaded cells
 	bool pointGoal = false;          // WALKTO:@x,y,z: a spot in the current cell, not a reference
 	float goal[3] = { 0, 0, 0 };
@@ -125,6 +126,8 @@ struct TestDriver
 	float cruise = 0.0f, phaseTimer = 0.0f;
 	float outTimer = 0.0f;           // FLYTO: seconds left of a stretch sideways out from under an overhang
 	int outTries = 0;
+	int outTriesHere = 0;              // ... of them since the last climb that got up: the ways for this roof (the count to give up on)
+	bool outDeep = false;             // ... the last one, after those: sunk a long way and back along the flight (v2 kit)
 	float outStart[2] = { 0.0f, 0.0f };   // FLYTO: where the last stretch sideways began (it moved the body, or it was held)
 	float outDuty = 0.0f;             // ... the share of frames down is pressed while it sinks (its own: vertDuty paces the climb)
 	bool outSink = false;             // ... the last one moved it under 40: the next one lets go of the rise and sinks first

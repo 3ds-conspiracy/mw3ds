@@ -1,7 +1,8 @@
 # Kidnapped by Cultists (MV_CultistVictim), partial, played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Ald Velothi coast. Sason, a Redoran traveller, begs us to find his wife Malexa, taken by cultists to the Ashalmawia shrine; we free her (her cell door is picked) and lead her out of the shrine (50); the walk east to him is not played.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 0.3 0 0 0 0 GIVE:pick_grandmaster:3
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-57527,125066,1129:beside
+120 0 0 0 0 SKYTO:@-57527,125066,1129:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 ACTIVATE:sason
 1.5 0 0 0
@@ -20,15 +21,26 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 FLYTO:@-76190,124509,1572:beside
+120 0 0 0 0 SKYTO:@-76190,124509,1572:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Ashalmawia,_Shrine
 10 0 0 0 0 UNTIL:cell:Ashalmawia,_Shrine
 # (the prison cell door is locked: picked)
-60 0 0 0 0 WALKTO:@-727,2028,-512
+120 0 0 0 0 WAYTO:@-727,2028,-512
+# (the shrine's three cultists, Trelam Falvani by her cell, Felisi Serano and Erns Maren, come at us: fought first. Left
+# to her, she takes on whichever comes with her fists and never gets free of the fight to follow)
+120 0 0 0 0 FIGHT:trelam%falvani
+120 0 0 0 0 FIGHT:felisi%serano
+120 0 0 0 0 FIGHT:erns%maren
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:trelam%falvani
+0.1 0 0 0 0 EXPECT:dead:felisi%serano
+0.1 0 0 0 0 EXPECT:dead:erns%maren
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+120 0 0 0 0 WAYTO:@-727,2028,-512
 0.3 0 0 0 0 USELOCKPICK:in_dae_door_01:pick_grandmaster
 1 0 0 0
-30 0 0 0 0 ACTIVATE:in_dae_door_01
+30 0 0 0 0 OPEN:in_dae_door_01
 1 0 0 0
 60 0 0 0 0 ACTIVATE:malexa
 1.5 0 0 0
@@ -42,33 +54,45 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 # (her cell's path grid does not join the shrine's: a follower finds no way and walks into the wall. Led out in short
-# legs, the way the walk in came, waiting for her at each)
+# legs, the way the walk in came, waiting for her at each: first down her cell's own ramp, by its path grid's points, to
+# the hall's floor; from the top, straight at us across the bend, she sticks on it)
+# (back up to her, in her sight: a follower starts once it sees us)
+60 0 0 0 0 WALKTO:malexa
+20 0 0 0 0 UNTIL:following:malexa
 0.3 0 0 0 0 ESCORT:malexa
-60 0 0 0 0 WALKTO:@-2633,1351,-756
+120 0 0 0 0 WAYTO:@-1896,1400,-476
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-2497,1805,-769
+120 0 0 0 0 WAYTO:@-1991,1223,-465
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-2071,2025,-766
+120 0 0 0 0 WAYTO:@-2262,937,-798
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-1645,1946,-623
+120 0 0 0 0 WAYTO:@-2633,1351,-756
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-1350,1815,-539
+120 0 0 0 0 WAYTO:@-2497,1805,-769
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-966,2028,-512
+120 0 0 0 0 WAYTO:@-2071,2025,-766
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-512,2048,-512
+120 0 0 0 0 WAYTO:@-1645,1946,-623
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-515,2603,-512
+120 0 0 0 0 WAYTO:@-1350,1815,-539
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@-30,3082,-509
+120 0 0 0 0 WAYTO:@-966,2028,-512
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@65,3553,-384
+120 0 0 0 0 WAYTO:@-512,2048,-512
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
-60 0 0 0 0 WALKTO:@256,4096,-256
+120 0 0 0 0 WAYTO:@-515,2603,-512
 30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+120 0 0 0 0 WAYTO:@-30,3082,-509
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+120 0 0 0 0 WAYTO:@65,3553,-384
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+120 0 0 0 0 WAYTO:@256,4096,-256
+30 0 0 0 0 UNTIL:refdist:malexa:lt:300
+120 0 0 0 0 BRING:malexa
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 10 0 0 0 0 UNTIL:refdist:malexa:lt:400
 0.1 0 0 0 0 EXPECT:refdist:malexa:lt:400
+120 0 0 0 0 BRING:malexa
 0.3 0 0 0 0 ESCORT:-
 # BLOCKED: Malexa does not follow down off the shrine's raised platform outside (the walkway south ends in a 430-unit drop the player takes; she sticks on the walkway, her step blocked where the player walks: NPC step collision), so the walk east to Sason (-57527,125066) for stage 100 is not played

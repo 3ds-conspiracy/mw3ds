@@ -1409,6 +1409,10 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 # three days pass away from Godsreach (the Craftsmen's Hall), then the meeting
+# (the date's outcome is the script's own Random 100, picked for the date that goes well: on a low roll the script's
+# 'else set MatchMakeGoval to 8' is skipped, as Morrowind's compiler and OpenMW skip what follows an else on its line,
+# and the quest stays at 118 for good)
+0.1 0 0 0 0 SCRIPTROLL:99
 120 0 0 0 0 DOORTO:Mournhold,_Godsreach
 10 0 0 0 0 UNTIL:cell:Mournhold,_Godsreach
 0.5 0 0 0
@@ -1445,6 +1449,7 @@
 0.3 0 0 0 0 TOPIC:Goval_Ralen
 2 0 0 0 0 UNTIL:talkready
 0.1 0 0 0 0 EXPECT:journal:MS_MatchMaker:eq:120
+0.1 0 0 0 0 SCRIPTROLL:-1
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none

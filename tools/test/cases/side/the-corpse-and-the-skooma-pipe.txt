@@ -1,7 +1,8 @@
 # The Corpse and the Skooma Pipe (MV_SkoomaCorpse), played LEGIT on the v2 test kit (ENHANCEV2).
 # Side quest, Balmora. Ernil Omoran, a skooma courier, lies dead west of Balmora with a note and a skooma pipe meant for Tsiya, who thanks whoever brings them (her door is locked: picked).
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -12,7 +13,7 @@
 0.3 0 0 0 0 GIVE:pick_grandmaster:2
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-8543,-2344,1135:beside
+120 0 0 0 0 SKYTO:@-8543,-2344,1135:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 60 0 0 0 0 LOOT:ernil_omoran:bk_notefromernil
 60 0 0 0 0 LOOT:ernil_omoran:apparatus_a_spipe_tsiya
@@ -21,10 +22,10 @@
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
-120 0 0 0 0 FLYTO:@-21153,-15875,603
+120 0 0 0 0 SKYTO:@-21153,-15875,603
 5 0 0 0 0 UNTIL:effect:10:eq:0
 # (a publican's greeting names "someone in particular": the Lucky Lockup, a short walk from Tsiya's house)
-60 0 0 0 0 WALKTO:@-22174,-16897,611
+120 0 0 0 0 WAYTO:@-22174,-16897,611
 120 0 0 0 0 DOORTO:Balmora,_Lucky_Lockup
 10 0 0 0 0 UNTIL:cell:Balmora,_Lucky_Lockup
 60 0 0 0 0 ACTIVATE:benunius%agrudilius
@@ -33,8 +34,9 @@
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none
 120 0 0 0 0 DOORTO:outside
-5 0 0 0 0 UNTIL:effect:10:eq:0
-60 0 0 0 0 WALKTO:@-21153,-15875,523
+# (up to 8 s more: a door above the floor is floated up to, and the float lasts past it)
+12 0 0 0 0 UNTIL:effect:10:eq:0
+120 0 0 0 0 WAYTO:@-21153,-15875,523
 0.3 0 0 0 0 USELOCKPICK:hlaalu_loaddoor_%02:pick_grandmaster
 1 0 0 0
 120 0 0 0 0 DOORTO:Balmora,_Tsiya's_House

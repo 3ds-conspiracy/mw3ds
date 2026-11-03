@@ -1,7 +1,8 @@
 # Mehrunes Dagon's Quest (DA_Mehrunes), played LEGIT on the v2 test kit (ENHANCEV2).
 # Daedric shrine quest. Mehrunes Dagon in the Yasammidan shrine offers a trial: his rusty dagger, lost in the Alas Ancestral Tomb, brought back for Mehrunes' Razor.
+# (played on any dice: RANDSEED seeds the rolls from the clock, another seed each run ("test: random seed <n>" in the log; SEED:<n> plays a failing run again); kills are FIGHTs, flights SKYTOs, door presses OPENs, walks to a spot WAYTOs, an escort ends with a BRING)
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:21
+0.3 0 0 0 0 RANDSEED
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 BOOST:100
 0.3 0 0 0 0 ACTIVE:117:100
@@ -11,7 +12,7 @@
 0.3 0 0 0 0 GIVE:Gold_001:1000
 4 0 0 0
 0.3 0 0 0 0 LEGIT
-120 0 0 0 0 FLYTO:@-118220,115894,445:beside
+120 0 0 0 0 SKYTO:@-118220,115894,445:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Yasammidan,_Shrine
 10 0 0 0 0 UNTIL:cell:Yasammidan,_Shrine
@@ -23,7 +24,7 @@
 0.1 0 0 0 0 EXPECT:journal:DA_Mehrunes:ge:20
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@108930,-24950,871:beside
+120 0 0 0 0 SKYTO:@108930,-24950,871:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Alas_Ancestral_Tomb
 10 0 0 0 0 UNTIL:cell:Alas_Ancestral_Tomb
@@ -31,7 +32,7 @@
 0.1 0 0 0 0 EXPECT:item:rusty_dagger_unique:ge:1
 120 0 0 0 0 DOORTO:outside
 5 0 0 0 0 UNTIL:effect:10:eq:0
-120 0 0 0 0 FLYTO:@-118220,115894,445:beside
+120 0 0 0 0 SKYTO:@-118220,115894,445:beside
 5 0 0 0 0 UNTIL:effect:10:eq:0
 120 0 0 0 0 DOORTO:Yasammidan,_Shrine
 10 0 0 0 0 UNTIL:cell:Yasammidan,_Shrine
