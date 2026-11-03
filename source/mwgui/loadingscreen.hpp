@@ -46,3 +46,5 @@ std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const c
 int dataMaxTex(const char* dataDir);
 // Data converted for the other console: what to do
 void wrongConsoleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, int maxTex);
+// No DSP firmware: how to dump it, then on without sound
+void noSoundScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom);

@@ -488,6 +488,55 @@ void wrongConsoleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, int max
 	}
 }
 
+// A console with no DSP firmware (sdmc:/3ds/dspfirm.cdc): ndsp won't start and the game would be silent with no word
+// why. Says how to get it on the console itself (Luma3DS's Rosalina menu dumps it) and goes on without sound on A
+// (scripted runs save a picture and go on)
+void noSoundScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom)
+{
+	static const char* kLines[] = {
+		"The 3DS's DSP firmware is missing, so the",
+		"game can't play any sound.",
+		"",
+		"To add it: open the Rosalina menu",
+		"(L + Down + Select), choose",
+		"Miscellaneous options, then",
+		"Dump DSP firmware.",
+		"",
+		"Then restart MW3DS.",
+	};
+	struct stat st;
+	bool scripted = stat("sdmc:/3ds/mw3ds/autoinput.txt", &st) == 0 || stat("sdmc:/3ds/mw3ds/autocam.txt", &st) == 0
+		|| stat("sdmc:/3ds/mw3ds/autoshot", &st) == 0;
+	for (int frame = 1; aptMainLoop(); frame++)
+	{
+		hidScanInput();
+		if (hidKeysDown() & (KEY_A | KEY_START))
+			return;
+		UiInput none = {};
+		uiBeginFrame(none);
+		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+		linearRetire();
+		bool shot = scripted && frame == 60;
+		if (shot)
+			logf("no sound shot: %s", screenshotSave("sdmc:/3ds/mw3ds/shot_nosound.bmp") ? "saved" : "FAILED");
+		C2D_Prepare();
+		C3D_DepthTest(false, GPU_ALWAYS, GPU_WRITE_COLOR);
+		clearTop(top, 0x000000FF);
+		C2D_SceneBegin(top);
+		uiTextCentered(200, 24, 0.7f, col::header, "No sound");
+		for (size_t i = 0; i < sizeof(kLines) / sizeof(kLines[0]); i++)
+			uiTextCentered(200, 64 + 15 * i, 0.5f, i >= 3 && i <= 6 ? col::header : col::text, kLines[i]);
+		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
+		C2D_SceneBegin(bottom);
+		uiTextCentered(160, 40, 0.5f, col::textDim, "MW3DS");
+		uiTextCentered(160, 110, 0.5f, col::text, "Press A to play without sound");
+		uiTextCentered(160, 200, 0.4f, col::textDim, "(sdmc:/3ds/dspfirm.cdc not found)");
+		C3D_FrameEnd(0);
+		if (shot)
+			return;
+	}
+}
+
 LoadingProgress::LoadingProgress(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const std::string& title)
 {
 	s_progress.top = top;

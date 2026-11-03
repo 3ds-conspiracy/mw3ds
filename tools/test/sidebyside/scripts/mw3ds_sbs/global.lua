@@ -161,6 +161,12 @@ local function setup(data)
 		end
 	end
 	local cam = util.vector3(s.x, s.y, s.z)
+	if s.apply then
+		-- a lasting self effect put on the player directly, every effect of the spell (Night-Eye): a scripted Use didn't cast one
+		types.Actor.spells(player):add(s.apply)
+		types.Actor.activeSpells(player):add({ id = s.apply, effects = { 0 } })
+		print(string.format('MW3DS-SBS applied %s', s.apply))
+	end
 	if s.cast then
 		player:teleport(s.cell or '', util.vector3(s.fromX, s.fromY, s.fromZ),
 			{ rotation = util.transform.rotateZ(s.fromYaw), onGround = true })

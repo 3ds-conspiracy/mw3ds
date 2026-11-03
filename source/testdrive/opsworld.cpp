@@ -35,6 +35,49 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		s.testPlaceAt(a[1], at, atan2f(w.player.feet[0] - at[0], w.player.feet[1] - at[1]));
 		return true;
 	}
+	// AGE:<percent>: what a long game leaves behind, in that share of the cells the player isn't in (100: a game that has been
+	// everywhere, a 400-hour save): each one's objects read, a third of its loose items taken, its creatures and a quarter
+	// of its people (not the essential ones) killed, its containers emptied, then let go with its changes kept, as when
+	// the player leaves it. Which cells is fixed by their number, so a run is the same each time (EXPECT:keptcells)
+	if (verb == "AGE" && a.size() >= 2)
+	{
+		int pct = atoi(a[1].c_str()), aged = 0;
+		u64 start = osGetTime();
+		for (size_t c = 0; c < w.cells.size(); c++)
+		{
+			if ((int)c == w.current || w.cells[c].live || (int)(((unsigned)c * 2654435761u >> 8) % 100) >= pct)
+				continue;
+			bool had = w.cells[c].refsLoaded;
+			if (!w.ensureRefs((int)c))
+				continue;
+			const LevelCell& lc = w.cells[c];
+			for (int i = lc.refBase; i < lc.refBase + lc.refCount; i++)
+			{
+				Ref& r = w.refs[i];
+				if (r.actor >= 0)
+				{
+					const ActorDef& def = w.game.actors[r.actor];
+					if (!r.dead && !def.essential && (def.creature || i % 4 == 0))
+					{
+						r.dead = true;
+						r.health = 0.0f;
+						r.diedAt = w.gameHour;
+					}
+				}
+				else if (r.recType == REC_CONT)
+					r.contents.clear();
+				else if (i % 3 == 0 && (r.recType == REC_ALCH || r.recType == REC_APPA || r.recType == REC_ARMO || r.recType == REC_BOOK
+					|| r.recType == REC_CLOT || r.recType == REC_INGR || r.recType == REC_LOCK || r.recType == REC_MISC
+					|| r.recType == REC_PROB || r.recType == REC_REPA || r.recType == REC_WEAP))
+					r.pickedUp = true;
+			}
+			if (!had)
+				w.evictCell((int)c);
+			aged++;
+		}
+		logf("test: aged %d cells in %llu ms, %d cells' changes kept", aged, osGetTime() - start, (int)w.cellStates.size());
+		return true;
+	}
 	// SETPOS:<id>:x:y:z: that actor, in its own cell, stood exactly there, held at that height by whatever its feet are on,
 	// as a save puts it back (not set down on the floor under its middle, as PLACEAT and Position do): a spot only a fight
 	// or a fall leaves one in, on an edge

@@ -48,6 +48,8 @@ A shots file has one shot per line (# starts a comment), a name then key=value p
                           spellmaking service (npc=id, the one nearest the camera); give=id[:n],... carried first (the
                           apparatus, soul gems, ingredients). The 3DS side shoots both its screens (the menus are on the
                           bottom one), OpenMW its whole window (--res: its size); the sheet shows them side by side
+    apply=id              that spell's effects put on the player directly (OpenMW: activeSpells:add; the 3DS: CAST), for a
+                          lasting self effect such as Night-Eye: OpenMW's scripted Use didn't cast one
     cast=id after=t,...   the player casts that spell (level, ahead) and the world stands still t seconds after the
                           cast began: one shot per t (bolts in flight, cast and hit visuals). The player stands at
     from=x,y,z,yaw        from= (their feet, degrees), or at cam with view=fp; skills, Willpower and Luck at 100 and
@@ -290,6 +292,8 @@ def write_openmw_setup(shots):
             f.append("werewolf = true")
         if "spell" in s:
             f.append(f"spell = {lua_str(s['spell'].lower())}")
+        if "apply" in s:
+            f.append(f"apply = {lua_str(s['apply'].lower())}")
         if "face" in s:
             f.append(f"face = {math.radians(float(s['face']))!r}")
         if "spawn" in s:

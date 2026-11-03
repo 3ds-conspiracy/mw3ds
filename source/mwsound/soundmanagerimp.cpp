@@ -152,6 +152,18 @@ bool audioInit(const char* dataDir)
 {
 	s_dataDir = dataDir;
 	Result rc = ndspInit();
+	// No dspfirm.cdc on an emulator (Azahar, Citra): it does the DSP's work itself and never runs the firmware, but ndsp
+	// won't start without one, and a player with no 3DS has none to dump. Handed a blank one there, the game has sound.
+	// Never on a console, where the DSP would run it: only where the Citra family's own system info query answers
+	// (type 0x20000, which a real 3DS rejects)
+	s64 emulator = 0;
+	if (R_FAILED(rc) && R_SUCCEEDED(svcGetSystemInfo(&emulator, 0x20000, 0)) && emulator == 1)
+	{
+		static u8 blankFirmware[4096];
+		ndspUseComponent(blankFirmware, sizeof(blankFirmware), 0xFF, 0xFF);
+		rc = ndspInit();
+		logf("audio: an emulator with no dspfirm.cdc: a blank firmware handed to it, %s", R_SUCCEEDED(rc) ? "started" : "still no sound");
+	}
 	if (R_FAILED(rc))
 	{
 		logf("audio: ndspInit failed (%08lX) - no DSP firmware? Dump it with DSP1 to /3ds/dspfirm.cdc", rc);

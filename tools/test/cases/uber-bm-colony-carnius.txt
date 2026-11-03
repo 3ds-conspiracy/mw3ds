@@ -174,10 +174,17 @@
 0.1 0 0 0 0 EXPECT:journal:CO_2:eq:50
 0.5 0 0 0 0 B
 0.3 0 0 0 0 EQUIP:daedric_longsword
-# (away to the fort and back by boat: out of sight, the colonists' anger passes; the fine is paid to the fort's guard
-# when he next calls the player over)
+# (away to the fort and back by boat: out of sight, the colonists' anger passes; the fine is paid to the fort's guard,
+# spoken to: one who didn't see the punches doesn't come for a bounty under iCrimeThreshold, OpenMW's rule; paying
+# calms the witnesses, Falco among them)
 0.3 0 0 0 0 CAST:item:sc_divineintervention
 4 0 0 0
+120 0 0 0 0 ACTIVATE:bm_imperial%guard
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0
 120 0 0 0 0 ACTIVATE:basks_in_the_sun
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 TRAVEL:basks_in_the_sun:Raven

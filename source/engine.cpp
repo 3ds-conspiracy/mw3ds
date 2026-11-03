@@ -204,7 +204,8 @@ bool Engine::prepare()
 		gfxExit();
 		return false;
 	}
-	audioInit(dataDir);
+	if (!audioInit(dataDir))
+		noSoundScreen(top, bottom);
 	drawLoading(top, bottom, "Loading...");
 
 	session = new Session();

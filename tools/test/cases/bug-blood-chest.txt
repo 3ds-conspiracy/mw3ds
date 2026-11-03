@@ -11,6 +11,9 @@
 4 0 0 0
 0.3 0 0 0 0 PLACE:fargoth:110
 0.3 0 0 0 0 SETALARM:fargoth:0
+# (fighting the player already: the blows are no assault, so no guard told of one runs over to arrest the player,
+# OpenMW's AiPursue, before the six are struck)
+0.3 0 0 0 0 HOSTILE:fargoth
 0.5 0 0 0 0 FACE:fargoth
 0.5 0 0 0 0 R
 0.6 0 0 0 0 X

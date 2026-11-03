@@ -34,6 +34,7 @@ local armsHold = nil
 local readyAt = 0
 local castFrames = -1        -- a cast shot: frames since the world was set, -1 before
 local castStart = nil        -- game time Use was pressed
+local castPressed = 0        -- castFrames when Use was pressed
 local resumedAt = nil        -- real time the world went on again after a cast shot
 
 local function placeCamera()
@@ -192,12 +193,22 @@ local function updateCast()
 	if not castStart then
 		self.controls.use = 1
 		castStart = core.getSimulationTime()
+		castPressed = castFrames
 		print(string.format('MW3DS-SBS cast %s', s.cast))
 		return false
 	end
-	self.controls.use = 0
+	-- (Use held ten frames, as a press: let go the next frame, a self spell (Night-Eye) was never cast)
+	self.controls.use = castFrames - castPressed < 10 and 1 or 0
 	if core.getSimulationTime() - castStart >= s.after then
 		core.sendGlobalEvent('MW3DS_SBS_Halt', { on = true })
+		-- (whether the cast landed: its spell among the player's active ones, Night Eye's magnitude, the magicka left)
+		local landed = false
+		for _, sp in pairs(types.Actor.activeSpells(self)) do
+			if sp.id == s.cast then landed = true end
+		end
+		local eye = types.Actor.activeEffects(self):getEffect(core.magic.EFFECT_TYPE.NightEye)
+		print(string.format('MW3DS-SBS cast %s %s, night eye %s, magicka %.0f', s.cast, landed and 'active' or 'NOT active',
+			eye and tostring(eye.magnitude) or 'none', types.Actor.stats.dynamic.magicka(self).current))
 		castFrames = -1
 		return true
 	end

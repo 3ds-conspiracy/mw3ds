@@ -109,7 +109,11 @@ struct mallinfo_s { int uordblks, arena, fordblks; };
 enum { NDSP_OUTPUT_STEREO, NDSP_INTERP_LINEAR, NDSP_FORMAT_MONO_PCM16, NDSP_FORMAT_ADPCM, NDSP_WBUF_FREE = 0, NDSP_WBUF_QUEUED, NDSP_WBUF_PLAYING, NDSP_WBUF_DONE };
 struct ndspAdpcmData { u16 index; s16 history0; s16 history1; };
 struct ndspWaveBuf { const void* data_vaddr; u32 nsamples; ndspAdpcmData* adpcm_data; u32 offset; bool looping; u16 sequence_id; u8 status; };
-inline Result ndspInit() { return 0; }
+// (NATIVE_NO_DSP=1: as a console without dspfirm.cdc, to see the no-sound screen)
+inline Result ndspInit() { return getenv("NATIVE_NO_DSP") ? -1 : 0; }
+inline void ndspUseComponent(const void*, u32, u16, u16) {}
+// (not an emulator: the Citra family's system info query fails on a PC as on a console)
+inline Result svcGetSystemInfo(s64* out, u32, s32) { *out = 0; return -1; }
 inline void ndspExit() {}
 inline void ndspSetOutputMode(int) {}
 // NATIVE_AUDIO=<wav>: channels really play (native_stubs.cpp mixes 1/30 s per frame into the WAV); otherwise

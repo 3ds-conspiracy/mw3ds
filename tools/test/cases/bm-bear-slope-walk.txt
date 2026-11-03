@@ -1,0 +1,20 @@
+# start: Seyda Neen
+# data: bloodmoon
+# bm-bear-slope-walk: a creature told to walk down a 30-degree hillside gets down it. A black bear (the summoned one,
+# calmed) at the top of the Hirstaang Forest hillside below Terrain_rocks_BM_01, sent to the bottom: 8 s later it is
+# well down it, as OpenMW's is (a video beside OpenMW: build/shots-bear). With the Morrowind Optimization Patch's
+# rocks it stood 114 above the ground on the rocks' simplified collision shape, which fills the hollow between them,
+# and never got down; the converter takes a mod mesh's collision from the game's own mesh now
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+HOUR:12+SETWEATHER:0
+0.3 0 0 0 0 TP:-174600:147400:1500:0
+6 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.3 0 0 0 0 PLACEAT:BM_bear_black_summon:-174250:148200:1300
+0.3 0 0 0 0 ENABLE:BM_bear_black_summon
+0.3 0 0 0 0 CON:"BM_bear_black_summon"->SetFight%0
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refz:BM_bear_black_summon:lt:1150
+0.3 0 0 0 0 CON:"BM_bear_black_summon"->AiTravel%-175100%148200%900
+8 0 0 0
+0.1 0 0 0 0 EXPECT:refz:BM_bear_black_summon:lt:1000
