@@ -1,0 +1,25 @@
+# Turn Undead takes undead creatures only (OpenMW spelleffects.cpp: "type != Undead -> Flag_Invalid"; the converter's
+# ctype, NPDT's first field). A skeleton keeps it, a scamp (daedra) drops it. Written with the fix: the build before had
+# no creature type and kept it on both.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETSKILL:illusion:600+SETATTR:intelligence:100
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+1 0 0 0 0 PLACE:skeleton:250
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:101:20:20:10:2:-:0
+0.1 0 0 0 0 ADDEFFECT:42:10:10:10:2:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CASTAT:skeleton:mw3ds_test_e1
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:skeleton,42:gt:0+EXPECT:refeffect:skeleton,101:gt:0
+0.3 0 0 0 0 SLAY:skeleton
+1 0 0 0
+1 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e1
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:scamp,42:gt:0+EXPECT:refeffect:scamp,101:eq:0

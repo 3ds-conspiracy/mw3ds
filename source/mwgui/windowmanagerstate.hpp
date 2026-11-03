@@ -176,6 +176,9 @@ struct WindowManagerState
 	bool deathAnySave = false;                    // any save to choose from (the game's starting points too)
 	int barterCount = 0;                          // barter: how many of the picked stack go in the deal (while counting)
 	bool barterCounting = false;                  // barter: the count picker is open for the picked stack
+	bool statsBonusShown = false;                 // stats: the next level's attribute bonuses, shown by tapping the level
+	int dropCount = 0;                            // inventory: how many of the picked stack the Drop puts down
+	bool dropCounting = false;                    // inventory: the count picker is open for the picked stack
 	// barter: the deal being put together (OpenMW's trade window), what goes each way until the offer settles it: sold from
 	// the inventory (from -1, index into it) or bought from a merchant's holder (from: the reference, index into its
 	// contents; -1: the reference is the item itself)

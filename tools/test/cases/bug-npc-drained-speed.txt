@@ -1,0 +1,20 @@
+# A Drain on a person lowers the attribute their rules read (OpenMW keeps one modified value per attribute). Drain
+# Speed 50 slows Ajira's walk. Ours kept the drain beside her (refattr reads it) but walked her at her record's Speed:
+# drains, fortifies and damage to an NPC's attributes and skills changed nothing in how they fight or move.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETSKILL:illusion:600+SETSKILL:destruction:600+SETSKILL:mysticism:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 FILL
+12 0 0 0 0 WALKTO:ajira
+0.1 0 0 0 0 SNAP:npcwalk:ajira+SNAP:refattr:ajira,speed
+0.1 0 0 0 0 ADDEFFECT:17:50:50:10:2:speed:0
+0.1 0 0 0 0 ADDEFFECT:42:10:10:10:2:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CASTAT:ajira:mw3ds_test_e1
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:ajira,42:gt:0
+0.1 0 0 0 0 EXPECT:refattr:ajira,speed:lt:@
+0.1 0 0 0 0 EXPECT:npcwalk:ajira:lt:@

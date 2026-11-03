@@ -1,0 +1,28 @@
+# A torch the player carries is seen in the left hand, held out with the Torch group (OpenMW's NpcAnimation: a
+# carried light takes the shield's part; the left arm plays "torch"), unless a two-handed weapon is out. Ours drew it
+# in neither view: only NPCs' torches had a hand piece. In first person the arm keeps its weapon pose and the torch
+# shows low, left of the middle, as in OpenMW; with the weapon away only the torch is drawn.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:22
+0.3 0 0 0 0 GIVE:light_com_torch_01
+0.3 0 0 0 0 GIVE:steel_claymore
+0.3 0 0 0 0 POV:third
+1.5 0 0 0
+0.3 0 0 0 0 EQUIP:light_com_torch_01
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:equipped:light_com_torch_01:eq:1
+0.3 0 0 0 0 EXPECT:bodytorch:eq:1+SHOT
+# first person, the weapon away: the torch alone
+0.3 0 0 0 0 POV:first
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:vmtorch:eq:1+SHOT
+0.3 0 0 0 0 POV:third
+1.5 0 0 0
+# a two-handed sword out takes both hands: the torch goes down
+0.3 0 0 0 0 EQUIP:steel_claymore
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1+EXPECT:bodytorch:eq:0
+0.3 0 0 0 0 POV:first
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:vmtorch:eq:0

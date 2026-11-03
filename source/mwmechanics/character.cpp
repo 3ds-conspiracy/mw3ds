@@ -311,6 +311,13 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	bool oneHanded = vm.group == "1h" || vm.group == "HH";
 	bool casting = vm.action == VM_CAST;
 	bool show = weaponDrawn || vm.action == VM_UNEQUIP;
+	// A torch (a carried light) in the left hand while that hand is free: not with a two-handed weapon, a bow or a spell
+	// out (OpenMW's updateCarriedLeftVisible). The left arm holds it up with the Torch group in first person too (OpenMW
+	// plays "torch" on the left arm whatever the view); with the weapon away only the torch is drawn
+	std::string light = playerTorchItem();
+	bool torchOut = !light.empty() && shield.empty() && !casting && (!weaponDrawn || oneHanded);
+	vm.torch = torchOut;
+	vm.set.actors[0].torchOut = torchOut;
 	// The arrow or bolt in the bow or crossbow (OpenMW's attachArrow / releaseArrow): an arrow goes on the string at
 	// "shoot attach" and leaves it at "shoot release"; a crossbow holds a bolt from the moment it is drawn, lets it go
 	// at "shoot release", takes the next at "shoot follow attach" and gives it up as it is put away
@@ -332,8 +339,8 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	}
 	// (not under the race menu: the arms are out of sight, and each race tried on would read its arms; once, as it closes)
 	if (screen != SCR_RACE)
-		vm.rebuild(w, show && !casting ? (wpn ? wpn->id.str() : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded ? shield : "",
-			ammoIn);
+		vm.rebuild(w, show && !casting ? (wpn ? wpn->id.str() : toolItem ? toolItem->id : "") : "", show && !casting && oneHanded && !shield.empty() ? shield
+			: torchOut ? light : "", ammoIn);
 	if (weaponDrawn && w.player.knockTimer > 0.0f && vm.action != VM_KNOCKDOWN)
 		vm.play(VM_KNOCKDOWN, "KnockDown");
 	if (blockUntil > w.time && vm.action == VM_IDLE && !shield.empty())

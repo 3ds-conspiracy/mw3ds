@@ -1,0 +1,17 @@
+# Charm works on people only: on a creature it is invalid and dropped (OpenMW spelleffects.cpp, "!isNpc() ->
+# Flag_Invalid"). Ours kept it on any target.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:illusion:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+1 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:44:20:20:10:2:-:0
+0.1 0 0 0 0 ADDEFFECT:42:10:10:10:2:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CASTAT:scamp:mw3ds_test_e1
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:scamp,42:gt:0
+0.1 0 0 0 0 EXPECT:refeffect:scamp,44:eq:0

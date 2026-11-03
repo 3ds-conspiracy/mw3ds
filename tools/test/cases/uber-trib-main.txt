@@ -932,6 +932,8 @@
 10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@0,-126,405
+# (the walk may end on the ladder's top in the air: landed first)
+2 0 0 0
 0.3 0 0 0 0 FACE:@28,-62
 0.5 0 0 0 0 DOWN
 0.3 0 0 0
@@ -1056,6 +1058,8 @@
 10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@0,-126,405
+# (the walk may end on the ladder's top in the air: landed first)
+2 0 0 0
 0.3 0 0 0 0 FACE:@28,-62
 0.5 0 0 0 0 DOWN
 0.3 0 0 0
@@ -1118,6 +1122,8 @@
 10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@0,-126,405
+# (the walk may end on the ladder's top in the air: landed first)
+2 0 0 0
 0.3 0 0 0 0 FACE:@28,-62
 0.5 0 0 0 0 DOWN
 0.3 0 0 0
@@ -1755,6 +1761,8 @@
 10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@0,-126,405
+# (the walk may end on the ladder's top in the air: landed first)
+2 0 0 0
 0.3 0 0 0 0 FACE:@28,-62
 0.5 0 0 0 0 DOWN
 0.3 0 0 0
@@ -1822,6 +1830,8 @@
 10 0 0 0 0 UNTIL:cell:Mournhold,_Plaza_Brindisi_Dorom
 0.5 0 0 0
 120 0 0 0 0 WALKTO:@0,-126,405
+# (the walk may end on the ladder's top in the air: landed first)
+2 0 0 0
 0.3 0 0 0 0 FACE:@28,-62
 0.5 0 0 0 0 DOWN
 0.3 0 0 0

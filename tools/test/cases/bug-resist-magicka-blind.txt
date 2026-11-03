@@ -1,0 +1,17 @@
+# Resist Magicka 100 resists Blind entirely (spellresistance: Blind is resisted by Resist / Weakness to Magicka; at 100
+# the multiplier is 0 and the effect is dropped, "sMagicPCResisted"). A player with Resist Magicka 100 is struck by
+# Alad's Caliginy (Blind 10-30 on touch), cast by Ajira: no Blind lands. Reported as Blind still lowering the player's
+# aim with Resist Magicka at 100.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 EFFECT:93:100:600:0
+0.3 0 0 0 0 EXPECT:effect:93:eq:100+EXPECT:effect:47:eq:0
+0.3 0 0 0 0 CON:"ajira"->Cast%"alad's%caliginy"%player
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:eq:0
+0.3 0 0 0 0 SNAP:attackterm:50
+0.3 0 0 0 0 CON:"ajira"->Cast%"crying%eye"%player
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:eq:0+EXPECT:attackterm:50:eq:@

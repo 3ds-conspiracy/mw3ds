@@ -183,7 +183,7 @@ void Session::drawEnchanting()
 		askEffectTarget();
 		playSound(-1, "Menu Click");
 	}
-	effectEditor(makeEffects, makeSel, ranges, 92, 3);
+	effectEditor(makeEffects, makeSel, ranges, 92, 3, ENCH_ONCE + enchantType == ENCH_CONSTANT);
 	// The numbers OpenMW's window shows: points against what the soul holds, the cast cost, the charge, the price or chance
 	EnchantCalc c = enchantCalc();
 	char line[64];

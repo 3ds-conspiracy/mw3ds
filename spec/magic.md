@@ -76,7 +76,9 @@ target rolls 0..99 below its magnitude, per effect of the spell:
 - **Reflect** sends the effect back to the caster (not reflected again; the caster's resistance applies). Not for
   effects flagged unreflectable.
 - **Spell Absorption** drops the effect and gives the target magicka worth the spell's cost (the enchantment's cast
-  cost for an item).
+  cost for an item), past the maximum too (`absorbSpell` adds it uncapped; ours capped it, `bug-spell-absorption-over-max`).
+  Each Reflect, then each Absorption, rolls for itself: two 50s take 75 % (`bug-reflect-per-source`,
+  `bug-spell-absorption-per-source`; ours rolled once against the sum until 2026-11-03).
 
 ## How effects apply (OpenMW: `spelleffects.cpp applyMagicEffect`)
 

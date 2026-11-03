@@ -205,6 +205,8 @@ def _npc_info(rec, db):
                      "script": (rec.zstr("SCRI") or "").lower(),
                      # soul size (NPDT: type, level, 8 attributes, health, magicka, fatigue, soul)
                      "soul": struct.unpack_from("<i", rec.get("NPDT"), 52)[0] if len(rec.get("NPDT") or b"") >= 56 else 0,
+                     # 0 creature, 1 daedra, 2 undead, 3 humanoid (NPDT's first field: Turn Undead takes undead only)
+                     "ctype": struct.unpack_from("<i", rec.get("NPDT"), 0)[0] if len(rec.get("NPDT") or b"") >= 4 else 0,
                      "resist_normal": normal_weapon_resistance(rec, db)},
                     **creature_stats(rec, db["SPEL"], db),
                     # its AI package, as a person's (npcstats.ai_package): Gothren's dremora follow him, Yagrum Bagarn

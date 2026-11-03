@@ -543,6 +543,19 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 		if (rim > 0.0f)
 			v = 100.0f * at / rim;
 	}
+	else if (what == "headchoices")  // the faces the race screen offers the player's race and sex
+	{
+		const auto* list = playerHeadChoices(w, false);
+		v = list ? (float)list->size() : 0.0f;
+	}
+	else if (what == "bodytorch")   // the player's third-person body shows a torch held out now, 1; else 0
+	{
+		v = 0.0f;
+		if (!s.body.set.actors.empty() && s.body.set.actors[0].torchOut)
+			for (const ActorMesh& m : s.body.set.actors[0].meshes)
+				if (m.hand == 1 && actorMeshShown(s.body.set.actors[0], m))
+					v = 1.0f;
+	}
 	else if (what == "bodyshield")  // the player's third-person body shows its shield now, 1; else 0
 	{
 		v = 0.0f;

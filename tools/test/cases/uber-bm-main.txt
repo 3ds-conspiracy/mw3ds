@@ -408,7 +408,8 @@
 0.5 0 0 0 0 A
 3 0 0 0
 120 0 0 0 0 FLYTO:@-158694,183900,900
-3 0 0 0
+# (the bear's script marks it found once the player is near: waited for, the flight's length varies)
+10 0 0 0 0 UNTIL:journal:BM_Beasts:ge:20
 0.1 0 0 0 0 EXPECT:journal:BM_Beasts:ge:20
 120 0 0 0 0 KILL:bm_riekling_be_unique1
 120 0 0 0 0 KILL:bm_riekling_be_unique2
@@ -1148,7 +1149,7 @@
 120 0 0 0 0 FLYTO:@-194333,217802,1600
 4 0 0 0
 # (dice seeded for the night's sleep: a riekling's coming broke it off before the dream)
-0.1 0 0 0 0 SEED:4/2
+0.1 0 0 0 0 SEED:8/2
 40 0 0 0 0 SLEEPUNTIL:23
 15 0 0 0
 0.1 0 0 0 0 EXPECT:journal:BM_FrostGiant2:ge:10+EXPECT:werewolf:eq:1

@@ -105,7 +105,7 @@ static inline float angleDiff(float a, float b)
 // The skill a blow is rolled with: a person's for the weapon (hand-to-hand without one); a creature's Combat, whatever
 // it strikes with (OpenMW's Creature::hit: mData.mCombat). Creatures carry Combat, Magic and Stealth over the nine skills
 // of each specialization (creature.py), so hand-to-hand and a bow read its Stealth: a scamp struck at 20, not its 50
-static inline int attackSkill(const ActorDef& def, const Object* wpn)
+static inline int attackSkill(const World& w, int ri, const Object* wpn)
 {
-	return def.creature ? def.skills[0] : def.skills[weaponSkill(wpn)];
+	return w.game.actors[w.refs[ri].actor].creature ? w.actorSkill(ri, 0) : w.actorSkill(ri, weaponSkill(wpn));
 }

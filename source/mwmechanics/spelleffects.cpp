@@ -111,23 +111,33 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 	float magnitude = e.min + (e.max - e.min) * frand();
 	float duration = (float)(e.duration > 0 ? e.duration : 1);
 	{
-		// Reflect and Spell Absorption, each its own roll: the magnitude is the percent chance the effect doesn't land
-		// (only for an effect another actor cast at the player, harmful or not). Reflected: it lands on the caster instead.
-		// Absorbed: the player gets the spell's cost as magicka.
+		// Reflect, then Spell Absorption: each such effect on the player rolls for itself, the magnitude the percent chance,
+		// the first success taking the spell (OpenMW's applyProtections; two Reflect 50s send back 75 %, UESP's Spell
+		// Absorption). Only for an effect someone else cast, harmful or not. Reflected: it lands on the caster instead.
+		// Absorbed: the player gets the spell's cost as magicka, past the maximum too (OpenMW's absorbSpell).
 		// (kCasterObject: an object's script cast it, a shrine's blessing: from someone else all the same, as in OpenMW)
 		bool fromOther = casterRef >= 0 || casterRef == kCasterObject;
-		if (fromOther && w.effectTotal(EFF_REFLECT) > 0.0f && rand() % 100 < (int)w.effectTotal(EFF_REFLECT))
+		auto anyRoll = [&](int effect) {
+			for (const auto* list : { &w.effects, &w.abilities })
+				for (const ActiveEffect& a : *list)
+					if (a.effect == effect && rand() % 100 < (int)a.magnitude)
+						return true;
+			for (auto& s : w.stats.scriptEffects)
+				if (s.first == effect && rand() % 100 < s.second)
+					return true;
+			return false;
+		};
+		if (fromOther && anyRoll(EFF_REFLECT))
 		{
 			notify("The spell was reflected.");
 			if (casterRef >= 0 && w.active(casterRef))
 				applyEffectToActor(casterRef, e, false);         // (a reflected spell isn't reflected again)
 			return;
 		}
-		if (fromOther && w.effectTotal(EFF_SPELL_ABSORPTION) > 0.0f
-			&& rand() % 100 < (int)w.effectTotal(EFF_SPELL_ABSORPTION))
+		if (fromOther && anyRoll(EFF_SPELL_ABSORPTION))
 		{
 			notify("The spell was absorbed.");
-			w.stats.magicka = fminf(w.stats.magickaMax, w.stats.magicka + spellCost);   // (OpenMW: no higher than the maximum)
+			w.stats.magicka += spellCost;
 			return;
 		}
 	}
@@ -178,6 +188,13 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 			b.item = k ? "bound_gauntlet_right" : item;
 			const Object* o = w.game.object(b.item);
 			if (!o)
+				continue;
+			// what the player can't wear (a beast race's boots or full helm) ends the effect at once (OpenMW: a bound item
+			// that can't be equipped is removed with its effect)
+			bool beast = false;
+			for (auto& rc : w.game.races)
+				beast |= rc.beast && strcasecmp(rc.id.c_str(), w.stats.race.c_str()) == 0;
+			if (beast && (o->recType == REC_ARMO || o->recType == REC_CLOT) && (o->flags & 3))
 				continue;
 			for (auto& it : w.inventory)
 			{
@@ -263,9 +280,11 @@ bool Session::instantEffect(int effect, float magnitude)
 	case EFF_CURE_COMMON_DISEASE: removeSpells(3, false); notify("You are cured of common disease."); return true;
 	case EFF_CURE_BLIGHT_DISEASE: removeSpells(2, false); notify("You are cured of blight disease."); return true;
 	case EFF_CURE_CORPRUS:
-		// OpenMW ends the Corprus effect only: the disease stays on the list and its other effects go on
+		// OpenMW ends the Corprus effect only: the disease stays on the list, what its fortifies gave stays, its drains go
 		if (w.pcHasCorprus())
 		{
+			for (auto& id : s.spells)
+				w.endCorprus(id);
 			w.corprusSince = -2.0f;
 			float hp = s.health, mp = s.magicka, fp = s.fatigue;
 			w.recomputeStats();
@@ -394,14 +413,26 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 	int flags = me != w.game.magicEffects.end() ? me->second.flags : 0;
 	if (byPlayer)
 	{
-		float reflect = w.actorEffect(ri, EFF_REFLECT), absorb = w.actorEffect(ri, EFF_SPELL_ABSORPTION);
-		if (reflect > 0.0f && rand() % 100 < (int)reflect)
+		// (each Reflect or Spell Absorption on them rolls for itself, as on the player)
+		auto anyRoll = [&](int effect) {
+			for (auto& c : def.constEffects)
+				if (c.first == effect && rand() % 100 < (int)c.second)
+					return true;
+			for (auto& t : r.effects)
+				if (t.effect == effect && rand() % 100 < (int)t.magnitude)
+					return true;
+			for (auto& s : r.scriptEffects)
+				if (s.first == effect && rand() % 100 < s.second)
+					return true;
+			return false;
+		};
+		if (anyRoll(EFF_REFLECT))
 		{
 			logf("magic: %s reflects %d", r.id.c_str(), e.effect);
 			applyEffectToPlayer(e, source.empty() ? "Reflected spell" : source);    // (not reflected a second time)
 			return;
 		}
-		if (absorb > 0.0f && rand() % 100 < (int)absorb)
+		if (anyRoll(EFF_SPELL_ABSORPTION))
 		{
 			logf("magic: %s absorbs %d (+%.0f magicka)", r.id.c_str(), e.effect, spellCost);
 			r.magicka += spellCost;
@@ -416,7 +447,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 	{
 		bool resistable = false;
 		float res = resistRoll(w, e.effect, (flags & 0x8) != 0, [&](int k) { return w.actorEffect(ri, k); },
-			(float)def.attributes[ATTR_WILLPOWER], (float)def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax, castChance, resistable, resistDie);
+			(float)w.actorAttribute(ri, ATTR_WILLPOWER), (float)w.actorAttribute(ri, ATTR_LUCK), r.fatigue, r.fatigueMax, castChance, resistable, resistDie);
 		if (resistable)
 		{
 			mag *= fmaxf(0.0f, 1.0f - res / 100.0f);
@@ -540,25 +571,33 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 		r.calmUntil = 0.0f;
 		makeHostile(ri);
 		return;
+	// Demoralize, Rally and Turn Undead raise or lower the Flee rating by the magnitude while they last; the fight's
+	// flee rule reads it (fleeRatingOf), so a weak one does nothing to a healthy foe (OpenMW's modifyAiSetting). Turn
+	// Undead takes undead creatures only: on a person or another creature it is dropped
 	case EFF_DEMORALIZE_HUMANOID: case EFF_DEMORALIZE_CREATURE: case EFF_TURN_UNDEAD:
-		if (e.effect != EFF_TURN_UNDEAD && (e.effect & 1) == (def.creature ? 1 : 0))
+		if (e.effect == EFF_TURN_UNDEAD ? !def.creature || (def.ctype >= 0 && def.ctype != 2)
+			: (e.effect & 1) == (def.creature ? 1 : 0))
 			return;
-		r.fleeing = true;
-		r.fleeTimer = fmaxf(r.fleeTimer, dur > 0.0f ? dur : 10.0f);
-		return;
+		timed(fmaxf(1.0f, dur));
+		break;
 	case EFF_RALLY_HUMANOID: case EFF_RALLY_CREATURE:
 		if ((e.effect & 1) == (def.creature ? 1 : 0))
 			return;
-		r.fleeing = false;
+		timed(fmaxf(1.0f, dur));
 		return;
 	case EFF_CHARM:
+		if (def.creature)
+			return;                           // people only (OpenMW: invalid on anything else)
 		timed(fmaxf(1.0f, dur));              // (their disposition reads it while it lasts: OpenMW's Charm)
 		return;
 	case EFF_COMMAND_HUMANOID: case EFF_COMMAND_CREATURE:
-		// Follows the player for the spell's duration (game hours from its seconds); the Humanoid one (odd id) commands
-		// people, the Creature one creatures: on the other kind it lasts and does nothing (OpenMW)
-		timed(fmaxf(1.0f, dur));
+		// Follows the player for the spell's duration (game hours from its seconds) when the magnitude is at least the
+		// target's level; the Humanoid one (odd id) commands people, the Creature one creatures: on the other kind it is
+		// dropped (OpenMW's Command)
 		if ((e.effect & 1) == (def.creature ? 1 : 0))
+			return;
+		timed(fmaxf(1.0f, dur));
+		if (mag < def.level)
 			return;
 		r.ai = AI_IDLE;
 		r.aiPackage = AIPKG_FOLLOW;

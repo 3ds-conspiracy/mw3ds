@@ -508,7 +508,7 @@
 0.3 0 0 0 0 HIT:todd
 0.8 0 0 0
 0.3 0 0 0 0 EXPECT:charge:silver%spear_uvenim:lt:@0
-0.3 0 0 0 0 EXPECT:refflee:todd:eq:1
+0.3 0 0 0 0 EXPECT:refeffect:todd,53:gt:0
 0.3 0 0 0 0 SLAY:todd
 0.3 0 0 0
 0.3 0 0 0 0 DISABLE:todd

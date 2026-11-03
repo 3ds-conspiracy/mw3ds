@@ -1,0 +1,32 @@
+# Each Reflect on the target rolls for itself (OpenMW applyProtections; magic.md "Reflect and Spell Absorption"): two
+# Reflect 50 effects send back 75 % of spells. Ajira casts Fire Bite (15 to 30) 16 times at the player: about four
+# land; none landing has a chance of 1 in 100. Ours rolled once against the sum, 100, and sent back every one.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 HEALTHMAX:2000
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 EFFECT:68:50:600:0
+0.3 0 0 0 0 EFFECT:68:50:600:0
+0.3 0 0 0 0 EXPECT:effect:68:eq:100
+0.3 0 0 0 0 REFHEALTH:ajira:5000
+0.3 0 0 0 0 SNAP:health
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+2 0 0 0
+0.3 0 0 0 0 EXPECT:health:lt:@-10

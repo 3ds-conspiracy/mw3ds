@@ -1,0 +1,21 @@
+# Damage Attribute takes no more each moment than the attribute has left (OpenMW spelleffects.cpp: each tick capped
+# at the current modified value), so overkill is not stored. Damage Strength 30 a second for 3 s on Strength 50 leaves it
+# at 0 with 50 to restore; Restore Strength 10 a second for 3 s then brings back about 30. Ours kept all 90 points of
+# damage, and the restore left Strength at 0.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETSKILL:destruction:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 RESISTROLL:99
+0.3 0 0 0 0 SETATTR:strength:50
+0.1 0 0 0 0 ADDEFFECT:22:30:30:3:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CAST:mw3ds_test_e1
+4 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:0
+0.1 0 0 0 0 ADDEFFECT:74:10:10:3:0:strength:0
+0.1 0 0 0 0 MAKESPELL:e2
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CAST:mw3ds_test_e2
+4 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:ge:20

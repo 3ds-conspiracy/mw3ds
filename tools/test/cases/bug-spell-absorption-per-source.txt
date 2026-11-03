@@ -1,0 +1,58 @@
+# Each Spell Absorption on the target rolls for itself, the first success taking the spell (OpenMW applyProtections;
+# UESP's Spell Absorption: two 50-point sources absorb 75 % of spells, not 100 %). Ajira casts Fire Bite (cost 6) 40
+# times at a player with two Spell Absorption 50 effects and an empty bar: about 30 are absorbed (180 magicka); 38 or
+# more is all but impossible. Ours rolled once against the sum, 100, and took every one (240).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETATTR:intelligence:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 EFFECT:67:50:600:0
+0.3 0 0 0 0 EFFECT:67:50:600:0
+0.3 0 0 0 0 EXPECT:effect:67:eq:100
+0.3 0 0 0 0 EFFECT:84:30:600:0
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:magickamax:ge:300
+0.3 0 0 0 0 SETMAGICKA:0
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+0.2 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+1 0 0 0
+0.3 0 0 0 0 EXPECT:magicka:gt:120+EXPECT:magicka:lt:228

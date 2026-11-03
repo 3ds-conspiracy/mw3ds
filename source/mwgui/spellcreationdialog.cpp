@@ -51,7 +51,7 @@ float Session::madeSpellCost(const std::vector<SpellEffect>& effects)
 
 // The list of effects (tap one to change it) and the selected one's range / magnitude / duration.
 // Returns true when the effects changed. ranges: which ranges are allowed (bit 0 self, 1 touch, 2 target)
-bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, float y0, int maxRows)
+bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, float y0, int maxRows, bool constant)
 {
 	float cy = y0 + maxRows * 13 + 4;          // the selected one's controls below the rows
 	bool changed = false;
@@ -97,7 +97,7 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 		std::string row = effectLabel(e.effect, e.skill, e.attribute);
 		if (!(flags & MEF_NO_MAGNITUDE))
 			row += " " + std::to_string(e.min) + (e.max != e.min ? "-" + std::to_string(e.max) : "");
-		if (!(flags & MEF_NO_DURATION))
+		if (!(flags & MEF_NO_DURATION) && !constant)
 			row += " " + std::to_string(e.duration) + "s";
 		row += std::string(" ") + kRangeNames[e.range];
 		float ry = y0 + k * 13;
@@ -136,7 +136,7 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 		changed = true;
 	}
 	// (one that works on a skill or an attribute: which, tap to choose again)
-	if ((flags & 0x3) && uiButton(222, cy + 42, 94, 16, (flags & 0x1) ? skillName(w, std::max(0, e.skill)) : attrName(w, std::max(0, e.attribute))))
+	if ((flags & 0x3) && uiButton(222, cy + 42, 94, 18, (flags & 0x1) ? skillName(w, std::max(0, e.skill)) : attrName(w, std::max(0, e.attribute))))
 	{
 		makePick = (flags & 0x1) ? 1 : 2;
 		makePickList = UiList();
@@ -178,7 +178,8 @@ bool Session::effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, f
 		if (e.max < e.min)
 			e.max = e.min;
 	}
-	if (!(flags & MEF_NO_DURATION))
+	// (a constant effect has no duration: OpenMW's EditEffectDialog hides the box, it lasts while the item is worn)
+	if (!(flags & MEF_NO_DURATION) && !constant)
 		spin(138, cy + 42, "Dur", e.duration, 1, 300);
 	return changed;
 }

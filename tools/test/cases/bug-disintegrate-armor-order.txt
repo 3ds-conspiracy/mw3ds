@@ -1,0 +1,20 @@
+# Disintegrate Armor wears the first worn piece in the order shield, cuirass, left and right pauldron, left and right
+# gauntlet, helmet, greaves, boots (OpenMW spelleffects.cpp; magic.md). Cuirass got first, then the shield: the
+# shield takes it. Ours wore the first armor in the inventory, the cuirass.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETSKILL:destruction:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 RESISTROLL:99
+0.3 0 0 0 0 GIVE:iron_cuirass
+0.3 0 0 0 0 GIVE:iron_shield
+0.3 0 0 0 0 EQUIP:iron_cuirass
+0.3 0 0 0 0 EQUIP:iron_shield
+0.3 0 0 0 0 EXPECT:equipped:iron_cuirass:eq:1+EXPECT:equipped:iron_shield:eq:1
+0.3 0 0 0 0 SNAP:itemhealth:iron_cuirass
+0.1 0 0 0 0 ADDEFFECT:38:20:20:3:0:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CAST:mw3ds_test_e1
+4 0 0 0
+0.3 0 0 0 0 EXPECT:itemhealth:iron_shield:lt:200
+0.3 0 0 0 0 EXPECT:itemhealth:iron_cuirass:eq:@

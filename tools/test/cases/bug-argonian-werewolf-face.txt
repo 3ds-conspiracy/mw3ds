@@ -1,0 +1,20 @@
+# data: bloodmoon
+# The race screen offers a race's playable heads only: Bloodmoon's WerewolfHead and WerewolfHair name the Argonian race
+# but carry the "not playable" flag (BYDT flags 2), which OpenMW's RaceDialog skips. Ours listed the werewolf's head as a
+# fourth male Argonian face.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 PCRACE:argonian+PCSEX:0
+0.2 0 0 0 0 SCREEN:race
+1 0 0 0
+0.2 0 0 0 0 TAP:60:194
+1.5 0 0 0
+0.2 0 0 0 0 EXPECT:headchoices:eq:3+SHOT
+0.2 0 0 0 0 TAP:301:133
+1 0 0 0
+0.2 0 0 0 0 SHOT
+0.2 0 0 0 0 TAP:301:133
+1 0 0 0
+0.2 0 0 0 0 SHOT
+0.2 0 0 0 0 TAP:301:133
+1 0 0 0
+0.2 0 0 0 0 SHOT

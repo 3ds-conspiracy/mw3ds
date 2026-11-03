@@ -481,7 +481,7 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 					part[s].clear();
 					glow[s] = 0;
 				}
-			auto fit = fp.items.find(lower(it.id));
+			auto fit = fp.items.find(w.game.modelId(it.id));
 			if (fit == fp.items.end())
 				continue;
 			for (auto& s : fit->second.slots)
@@ -496,7 +496,7 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 		}
 	if (!weaponId.empty())
 	{
-		auto fit = fp.items.find(lower(weaponId));
+		auto fit = fp.items.find(w.game.modelId(weaponId));
 		if (fit != fp.items.end() && fit->second.slots.count(25))
 		{
 			part[25] = fit->second.slots.at(25).first;
@@ -505,7 +505,7 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 	}
 	if (!shieldId.empty())
 	{
-		auto fit = fp.items.find(lower(shieldId));
+		auto fit = fp.items.find(w.game.modelId(shieldId));
 		if (fit != fp.items.end() && fit->second.slots.count(10))
 		{
 			part[10] = fit->second.slots.at(10).first;
@@ -517,7 +517,7 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 	std::string ammoPiece;
 	if (!ammoId.empty() && !part[25].empty())
 	{
-		auto wit = fp.items.find(lower(weaponId)), ait = fp.items.find(lower(ammoId));
+		auto wit = fp.items.find(w.game.modelId(weaponId)), ait = fp.items.find(w.game.modelId(ammoId));
 		if (wit != fp.items.end() && ait != fp.items.end() && !wit->second.arrow.empty() && !ait->second.ammo.empty())
 		{
 			arrowTrack = &wit->second.arrow;
@@ -552,6 +552,8 @@ void ViewModel::rebuild(World& w, const std::string& weaponId, const std::string
 			ActorMesh copy = m;
 			copy.tex = textures.size();
 			copy.glow = glow[s];
+			if (s == 10 && torch && m.tex >= 0 && (size_t)m.tex < p->texNames.size())
+				copy.rise = sprayRises(p->texNames[m.tex]);        // a torch's fire and smoke
 			textures.push_back(p->textures[m.tex]);
 			a.meshes.push_back(copy);
 		}
@@ -580,7 +582,7 @@ void ViewModel::warm(World& w, const std::string& weaponId, const std::string& s
 	{
 		if (id->empty())
 			continue;
-		auto fit = fp.items.find(lower(*id));
+		auto fit = fp.items.find(w.game.modelId(*id));
 		if (fit != fp.items.end() && fit->second.slots.count(slot))
 			piece(w, fit->second.slots.at(slot).first);
 	}
@@ -671,8 +673,14 @@ void ViewModel::update(float dt, bool moving, bool running)
 	switch (action)
 	{
 	case VM_NONE:
-		visible = false;
-		return;
+		// weapon away: nothing, or only a torch held (in the one-handed idle, the hands out of sight)
+		if (!torch)
+		{
+			visible = false;
+			return;
+		}
+		actorPlay(set, a, "Idle1h", ANIM_LOOP);
+		break;
 	case VM_WINDUP:
 	{
 		// Up to the min attack mark at normal speed, then held by how far the blow is drawn back
@@ -781,5 +789,18 @@ void ViewModel::draw(const float eye[3], float yaw, float pitch, bool deform)
 	memcpy(a.place, place, sizeof(place));
 	if (deform)
 		actorDeform(set, a);
+	if (action == VM_NONE && torch)
+	{
+		// only the torch: the meshes on the shield bone
+		int shield = boneIndex(sk, "shield bone");
+		std::vector<ActorMesh> all;
+		all.swap(a.meshes);
+		for (const ActorMesh& m : all)
+			if (m.bone == shield)
+				a.meshes.push_back(m);
+		rendererDrawActor(a, textures, true);
+		a.meshes.swap(all);
+		return;
+	}
 	rendererDrawActor(a, textures, true);
 }

@@ -171,6 +171,8 @@ def self_check(c, e, before):
     if eid == 74:      # restore attribute: damaged first
         attr = ATTRS[max(0, e["attr"])]
         if before:
+            # (room for the damage: a worn drain may hold it at 0, and OpenMW's Damage takes no more than is left)
+            c.step(f"SETATTR:{attr}:60")
             c.step(f"EFFECT:22:10:1:{max(0, e['attr'])}")
             c.wait(1.5)
             c.step(f"EXPECT:attrdamage:{attr}:gt:0")
@@ -200,8 +202,10 @@ def self_check(c, e, before):
 
 
 # Effects on someone's mind: read off their AI, not as an effect on them; humanoid ones (odd) or creature ones (even)
+# (Demoralize and Rally move the Flee rating by their magnitude: a weak one on a healthy foe doesn't make it run, so
+# they are read as effects on the target; Command takes its own kind only, OpenMW's Flag_Invalid on the other)
 MIND = {49: ("calm", 0), 50: ("calm", 1), 51: ("frenzy", 0), 52: ("frenzy", 1), 53: ("flee", 0), 54: ("flee", 1),
-        55: ("rally", 0), 56: ("rally", 1)}
+        55: ("rally", 0), 56: ("rally", 1), 118: ("command", 1), 119: ("command", 0)}
 
 
 def target_check(c, e, before):
@@ -216,8 +220,8 @@ def target_check(c, e, before):
             c.step(f"EXPECT:refcombat:{TARGET}:eq:0")
         elif what == "frenzy" and not before:
             c.step(f"EXPECT:refcombat:{TARGET}:eq:1")
-        elif what == "flee" and not before:
-            c.step(f"EXPECT:refflee:{TARGET}:eq:1")
+        elif what in ("flee", "command") and not before:
+            c.step(f"EXPECT:refeffect:{TARGET},{eid}:gt:0")
         return what != "rally"
     if eid in HARM and e["dur"] <= 1:      # (a lasting one: by its magnitude, a posed actor's effects don't tick)
         if before:

@@ -184,10 +184,9 @@ void Session::projectileHits(Projectile& p, int victim)
 	else if (p.owner >= 0 && victim < 0)
 	{
 		Ref& r = w.refs[p.owner];
-		const ActorDef& def = w.game.actors[r.actor];
 		const int* pa = w.stats.attributes;
 		bool helpless = w.player.knockTimer > 0.0f || w.effectTotal(45) > 0.0f;
-		float chance = roundf(attackTermOf(def.skills[SKILL_MARKSMAN], def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
+		float chance = roundf(attackTermOf(w.actorSkill(p.owner, SKILL_MARKSMAN), w.actorAttribute(p.owner, ATTR_AGILITY), w.actorAttribute(p.owner, ATTR_LUCK),
 			r.fatigue, r.fatigueMax, w.actorEffect(p.owner, 117), w.actorEffect(p.owner, 47)) - playerDefense(helpless));
 		(void)pa;
 		BlowRoll roll = rollBlow(chance, true, false);
@@ -201,7 +200,7 @@ void Session::projectileHits(Projectile& p, int victim)
 		if (!playerShieldsBurn(p.owner))
 			return;
 		npcHitsPlayer(p.owner, dmg * (w.game.gmstf("fdamagestrengthbase", 0.5f) + 0.1f * w.game.gmstf("fdamagestrengthmult", 0.1f)
-			* def.attributes[ATTR_STRENGTH]) * roll.damage, false, SKILL_MARKSMAN, false, true);
+			* w.actorAttribute(p.owner, ATTR_STRENGTH)) * roll.damage, false, SKILL_MARKSMAN, false, true);
 	}
 }
 

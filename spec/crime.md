@@ -66,17 +66,34 @@ with no greeting that fits. `issue-4` (theft during character creation), `crime-
 1. **Theft bounty** ignored `fCrimeStealing`; it is the value as it stood (the same while the GMST is 1). Now
    `crimeBounty(CRIME_THEFT, value)`. Trespass and the other kinds read their GMSTs the same way.
 
-## Open (no test yet: needs a world with witnesses)
+## Open
 
-- `Session::crimeSeen` uses one fight / disposition term per kind for every witness. OpenMW's differ for the victim and
-  the others, theft scales with the value, murder and trespass change no disposition, and disposition changes are
-  permanent only for victims (pickpocket, assault). Ours applies `idispkilling` / `idisptresspass` to witnesses.
-- Witnessing here is "seen by the player's camera within the last second"; OpenMW: line of sight plus an awareness
-  (sneak) roll, or hearing for murder.
-- Guards here come for any bounty within 1500 units; OpenMW's come only if they saw the crime, or on sight once the
-  bounty reaches `iCrimeThreshold`.
-- Confiscated goods are removed; OpenMW moves them to the nearest prison's `stolen_goods` chest.
-- Jail time uses a fixed 100 gold a day rather than `iDaysInPrisonMod`.
+- Confiscated goods are removed; OpenMW moves them to the nearest prison's `stolen_goods` chest (UESP: the Evidence
+  chest of the nearest Imperial Legion fort, lock 50).
+- Jail time uses a fixed 100 gold a day rather than `iDaysInPrisonMod` (the same while it is 100).
+- A theft's fight term is `fFightStealing` x Alarm / 100, not x the value as OpenMW has it.
+- The reaction goes to the witnesses who noticed the player (`lastSeen`: line of sight and the awareness check);
+  OpenMW gives it to everyone within `fAlarmRadius` once anyone saw it.
+
+## Findings (2026-11-03)
+
+4. **Guards came for any bounty** (fixed, `bug-guard-unseen-bounty`): every guard within 1500 units walked over and
+   greeted the player whenever the bounty was above 0, seen or not. Now a reported crime alarms the guards within
+   `fAlarmRadius` with Alarm 100 (OpenMW's reportCrime: setAlarmed, AiPursue); another guard comes on sight only from
+   `iCrimeThreshold` (1000), and attacks from `iCrimeThreshold` x `iCrimeThresholdMultiplier` (OpenMW's
+   updateCrimePursuit; UESP's Crime: "more than 1000, guards will confront you on sight"). Below that the player
+   answers for the bounty when talking to a guard. `Session::guardCheck`, `reportCrime`. A pursuing guard runs (OpenMW's
+   AiPursue sets the run flag; ours walked), and no longer stops at 1500 units: seeing the player (`lastSeen`, line of
+   sight and the awareness check out to 2000) is what counts. Ubers changed for it: `uber-morag-tong` walks towards the
+   ordinator, `uber-trib-main` pays Ivulen Irano's "turned yourself in" greeting (its Pay Gold is choice 5: the driver
+   finds it by its label), `uber-bm-colony` and `uber-bm-colony-carnius` talk to the fort's guard to pay for the
+   punches (paying calms Falco Galenus, whom they stirred).
+5. **Disposition** (fixed, `bug-murder-witness-disposition`): every witness lost the kind's term (`iDispKilling` -50 for
+   a murder, `iDispAttackMod` -50 for the blow before it). OpenMW's reportCrime: a theft costs its term x Alarm / 100;
+   a pickpocketing the victim only, for good; an assault the victim `fDispAttacking` for good, a witness with Alarm 100
+   `iDispAttackMod`, anyone else that x Alarm / 100 only when it turns them hostile; murder and trespass nothing.
+6. **Jail** (fixed, `bug-jail-term`): Security and Sneak gained their point only half the time and lost one the other
+   half; UESP's Crime: "For Security or Sneak, however, you actually gain one skill point instead".
 
 ## Findings (2026-10-07)
 

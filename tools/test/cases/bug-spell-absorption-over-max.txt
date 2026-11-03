@@ -1,0 +1,13 @@
+# Spell Absorption gives the target the spell's cost as magicka, and OpenMW's absorbSpell adds it with no cap: a full
+# bar goes over its maximum. Ajira casts Fire Bite (cost 6) at a player with Spell Absorption 100 and a full bar. Ours
+# stopped at the maximum, its comment saying OpenMW did.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 EFFECT:67:100:600:0
+0.3 0 0 0 0 FILL
+0.3 0 0 0 0 SNAP:magicka
+0.3 0 0 0 0 CON:"ajira"->Cast%"fire%bite"%player
+1 0 0 0
+0.3 0 0 0 0 EXPECT:magicka:ge:@5

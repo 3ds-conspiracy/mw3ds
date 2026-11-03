@@ -1,0 +1,15 @@
+# Bound Boots on an Argonian: boots can't be worn by the beast races, so the effect ends at once and no boots appear
+# (OpenMW spelleffects.cpp: a bound item that can't be equipped ends the effect; activation.md Equipping). Ours put the
+# Bound Boots on the Argonian's feet.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETSKILL:destruction:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 RESISTROLL:99
+0.3 0 0 0 0 PCRACE:argonian
+0.1 0 0 0 0 ADDEFFECT:129:1:1:30:0:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CAST:mw3ds_test_e1
+2 0 0 0
+0.3 0 0 0 0 EXPECT:equipped:bound_boots:eq:0
+0.3 0 0 0 0 EXPECT:item:bound_boots:eq:0

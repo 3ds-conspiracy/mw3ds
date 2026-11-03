@@ -1,0 +1,21 @@
+# Demoralize adds its magnitude to the Flee rating; a fighter flees only when the rating reaches 100 (OpenMW
+# modifyAiSetting, spec/npc-ai-behaviour.md Fleeing). A 1-point Demoralize on a healthy foe does nothing. Ours set
+# every target fleeing whatever the magnitude.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETSKILL:illusion:600+SETSKILL:destruction:600+SETSKILL:mysticism:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 FILL
+12 0 0 0 0 WALKTO:ajira
+0.3 0 0 0 0 HOSTILE:ajira
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:ajira:eq:1
+0.1 0 0 0 0 ADDEFFECT:53:1:1:30:2:-:0
+0.1 0 0 0 0 ADDEFFECT:42:10:10:30:2:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CASTAT:ajira:mw3ds_test_e1
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refeffect:ajira,42:gt:0
+0.1 0 0 0 0 EXPECT:refflee:ajira:eq:0

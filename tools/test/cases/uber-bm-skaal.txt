@@ -1154,6 +1154,8 @@
 0.1 0 0 0 0 EXPECT:journal:BM_FrostGiant1:ge:75
 0.5 0 0 0 0 B
 0.5 0 0 0 0 B
+# (a seed for the trolls' fight: with the dice as they fall from the start, they can kill Krish first)
+0.3 0 0 0 0 SEED:2
 240 0 0 0 0 KILL:bm_icetroll_fg_uni
 240 0 0 0 0 KILL:bm_icetroll_fg_uni
 240 0 0 0 0 KILL:bm_icetroll_fg_uni

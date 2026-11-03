@@ -184,19 +184,36 @@ void Session::crimeSeen(int kind, int value, int victim)
 			alarmTerm = i == victim ? (alarmTerm == 0.0f ? 1.0f : alarmTerm) : 0.0f;
 		float kindFight = kind == CRIME_ASSAULT && i != victim ? w.game.gmstf("ifightattacking", 50.0f) : fightTerm;
 		float term = fmaxf(0.0f, fminf(kindFight * alarmTerm, 100.0f - base));
-		if (i == victim || base + term >= 100.0f)
+		bool hostile = base + term >= 100.0f;
+		if (hostile)
 		{
-			if (base + term >= 100.0f)
-			{
-				logf("crime: %s attacks (fight %d + %.0f)", r.id.c_str(), base, term);
-				makeHostile(i);
-			}
+			logf("crime: %s attacks (fight %d + %.0f)", r.id.c_str(), base, term);
+			makeHostile(i);
 		}
 		r.fight = base + (int)term;
-		r.disposition += (int)dispTerm;
 		r.crimeId = id;
-		if (i != victim)
-			r.crimeDisp += (int)dispTerm;       // (a witness's is given back then; the victim's stays, as OpenMW's permanent one)
+		// What it costs their disposition (OpenMW's reportCrime): a theft, its term x Alarm / 100 from everyone; a
+		// pickpocketing, the victim's only, for good; an assault, the victim fDispAttacking for good, one with Alarm 100
+		// iDispAttackMod, anyone else that x Alarm / 100 only when it turns them hostile; murder and trespass, nothing.
+		// A witness's is given back once the crime is paid for (crimeDisp), the victim's stays
+		float alarmShare = 0.01f * (float)(r.alarm >= 0 ? r.alarm : def.alarm);
+		bool permanent = false;
+		float change = 0.0f;
+		if (kind == CRIME_THEFT)
+			change = dispTerm * alarmShare;
+		else if (kind == CRIME_PICKPOCKET && i == victim)
+			change = dispTerm, permanent = true;
+		else if (kind == CRIME_ASSAULT && i == victim)
+			change = w.game.gmstf("fdispattacking", -10.0f), permanent = true;
+		else if (kind == CRIME_ASSAULT && alarmShare >= 1.0f)
+			change = dispTerm;
+		else if (kind == CRIME_ASSAULT && hostile)
+			change = dispTerm * alarmShare;
+		int now = w.disposition(i);
+		int mod = std::max(-now, std::min(100 - now, (int)change));
+		r.disposition += mod;
+		if (!permanent)
+			r.crimeDisp += mod;
 	}
 }
 
@@ -248,6 +265,19 @@ void Session::reportCrime(int victim, int amount)
 	}
 	w.bounty += amount;
 	w.globals["pccrimelevel"] = (float)w.bounty;
+	// The guards within the alarm radius with Alarm 100 are alarmed and come after the player (OpenMW's reportCrime:
+	// setAlarmed, AiPursue); other guards wait until spoken to, or until the bounty reaches iCrimeThreshold
+	for (int i : w.loadedActors)
+	{
+		Ref& r = w.refs[i];
+		if (r.recType == REC_NPC_ && !r.dead && r.actor >= 0 && w.active(i) && w.distanceToPlayer(i) <= radius
+			&& strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0
+			&& (r.alarm >= 0 ? r.alarm : w.game.actors[r.actor].alarm) >= 100)
+		{
+			r.alarmed = true;
+			r.crimeId = w.crimeIdNow;
+		}
+	}
 	notify("Crime reported. Your bounty is " + std::to_string(w.bounty) + " gold.");
 	logf("crime: +%d, bounty %d", amount, w.bounty);
 }
@@ -334,7 +364,7 @@ void Session::guardCheck(int ri, float dt)
 	Ref& g = w.refs[ri];
 	float d = w.distanceToPlayer(ri);
 	// (nobody arrests a werewolf: OpenMW's updateCrimePursuit leaves it alone in wolf form)
-	if (d > 1500.0f || w.stats.werewolf)
+	if (w.stats.werewolf)
 		return;
 	// The last guard to stop the player is fighting them (Resist Arrest's StartCombat): OpenMW's startCombat sends the
 	// other guards after the player too
@@ -342,16 +372,35 @@ void Session::guardCheck(int ri, float dt)
 		w.arrestDeclined = w.bounty;
 	if (w.arrestDeclined == w.bounty)
 	{
-		makeHostile(ri);
+		if (d <= 1500.0f)
+			makeHostile(ri);
 		return;
+	}
+	// Only a guard alarmed by a crime it was told of comes for the player (reportCrime). Others do on sight once the
+	// bounty reaches iCrimeThreshold, and attack from iCrimeThreshold x iCrimeThresholdMultiplier (OpenMW's
+	// updateCrimePursuit: line of sight and the awareness check, which updateDetection keeps in lastSeen). Below that the
+	// player answers for the bounty only when talking to one (UESP's Crime)
+	if (!g.alarmed)
+	{
+		int cutoff = (int)w.game.gmstf("icrimethreshold", 1000.0f);
+		if (w.bounty < cutoff || w.time - g.lastSeen > 0.5f)
+			return;
+		if (w.bounty >= cutoff * (int)w.game.gmstf("icrimethresholdmultiplier", 10.0f))
+		{
+			makeHostile(ri);
+			return;
+		}
+		g.alarmed = true;
+		g.crimeId = ++w.crimeIdNow;
 	}
 	float dx = w.player.feet[0] - g.pos[0], dy = w.player.feet[1] - g.pos[1];
 	if (d > 170.0f)
 	{
+		// (running: OpenMW's AiPursue sets the run flag)
 		g.rot[2] = atan2f(dx, dy);
-		npcMoveTo(ri, w.player.feet, actorWalkSpeed(ri), dt, false);
+		npcMoveTo(ri, w.player.feet, actorRunSpeed(ri), dt, false);
 		if (Actor* a = w.actorOf(ri))
-			actorPlay(*w.actorsOf(ri), *a, "WalkForward", ANIM_LOOP);
+			actorPlay(*w.actorsOf(ri), *a, "RunForward", ANIM_LOOP);
 		w.syncActor(ri);
 	}
 	else if (screen == SCR_NONE && messages.empty())
@@ -437,8 +486,8 @@ int Session::barterPrice(int ri, int value, bool buying)
 	float disp = (float)w.disposition(ri);
 	float pc = (disp - 50.0f + fminf(100.0f, s.skills[SKILL_MERCANTILE]) + fminf(10.0f, 0.1f * s.attributes[ATTR_LUCK])
 		+ fminf(10.0f, 0.2f * s.attributes[ATTR_PERSONALITY])) * fatigueTerm(s.fatigue, s.fatigueMax);
-	float npc = (fminf(100.0f, def.skills[SKILL_MERCANTILE]) + fminf(10.0f, 0.1f * def.attributes[ATTR_LUCK])
-		+ fminf(10.0f, 0.2f * def.attributes[ATTR_PERSONALITY])) * fatigueTerm(r.fatigue, r.fatigueMax);
+	float npc = (fminf(100.0f, w.actorSkill(ri, SKILL_MERCANTILE)) + fminf(10.0f, 0.1f * w.actorAttribute(ri, ATTR_LUCK))
+		+ fminf(10.0f, 0.2f * w.actorAttribute(ri, ATTR_PERSONALITY))) * fatigueTerm(r.fatigue, r.fatigueMax);
 	float term = buying ? 0.01f * (100.0f - 0.5f * (pc - npc)) : 0.01f * (50.0f - 0.5f * (npc - pc));
 	int price = (int)(value * term);
 	return price < 1 ? 1 : price;

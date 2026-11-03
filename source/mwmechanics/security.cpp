@@ -18,6 +18,16 @@ InventoryItem* Session::playerToolItem()
 	return nullptr;
 }
 
+std::string Session::playerTorchItem()
+{
+	for (auto& it : w.inventory)
+		if (it.equipped)
+			if (const Object* o = w.game.object(it.id))
+				if (o->recType == REC_LIGH)
+					return it.id;
+	return "";
+}
+
 // Security: a lockpick on a locked door / container, a probe on a trapped one (Morrowind's formula:
 // (Security + Agility / 5 + Luck / 10) x quality x fatigue, less the lock level for picks). Each try
 // uses the tool up a little; picking someone else's lock where an NPC sees it is trespassing

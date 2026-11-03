@@ -434,6 +434,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	bool npcShieldsBurn(int victim);        // an NPC's elemental shields on the player (false: the player died)
 	void castSpell();
 	void consume(const std::string& itemId);
+	void dropFromInventory(int sel, int count);   // the inventory's Drop: that many of the stack into the world
 	// crime (mwmechanics/mechanicsmanagerimp.cpp)
 	void reportCrime(int victim, int bounty);
 	// What the people who saw it think of it (OpenMW's reading): disposition and fight change, and at
@@ -451,6 +452,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void updateMusic(float dt);
 	int crimeWitness(int except = -1);            // an NPC that saw the player just now (not except), or -1
 	InventoryItem* playerToolItem();              // equipped lockpick or probe
+	std::string playerTorchItem();               // the carried light in the left hand (a torch), "" for none
 	void useTool(InventoryItem& tool);            // pick the target's lock / disarm its trap
 	bool springTrap(int ref);                     // opening a trapped door / container: its spell hits the player
 	bool equipItem(int inventoryIndex, bool force = false);           // false: refused (a message says why)
@@ -501,7 +503,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	int effectFlags(int effect);
 	float effectCost(const SpellEffect& e);
 	float madeSpellCost(const std::vector<SpellEffect>& effects);
-	bool effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, float y0 = 24.0f, int rows = 8);
+	// constant: a constant-effect enchantment's, with no duration to set (it lasts while worn)
+	bool effectEditor(std::vector<SpellEffect>& fx, int& sel, int ranges, float y0 = 24.0f, int rows = 8, bool constant = false);
 	void askEffectTarget();                      // the effect just added: its skill or attribute to be chosen
 	std::vector<SpellEffect> knownEffects();
 	SpellEffect newEffect(const SpellEffect& from, int ranges);

@@ -57,6 +57,7 @@ struct ActorDef
 	bool respawn = false, essential = false;   // come back after dying / their death severs the prophecy
 	bool autocalc = false;               // their spells are the engine's pick (GameData::autoCalcSpells)
 	int soul = 0;                        // creatures: soul size (Soultrap fills a gem that holds it)
+	int ctype = -1;                      // creatures: 0 creature, 1 daedra, 2 undead, 3 humanoid (-1: data from before it)
 	int resistNormal = 0;                // percent: blows from ordinary weapons do that much less (ghosts)
 	int hello = 30;                      // AI Hello: greets within hello x iGreetDistanceMultiplier (0: never)
 	Atom ammo, shield;                   // lowercase ids: arrows / bolts for their bow, the shield they carry

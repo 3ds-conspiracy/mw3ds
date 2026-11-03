@@ -1,0 +1,31 @@
+# An item the player enchanted is worn and held as the item it was made from (OpenMW keeps the base record's models on
+# the enchanted copy). An enchanted iron cuirass shows on the body as the plain one does, and an enchanted iron
+# longsword in the hand. Ours looked the pieces up by the new item's id, found none and drew nothing.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 GIVE:iron_cuirass
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EQUIP:iron_cuirass
+0.3 0 0 0 0 POV:third
+1.5 0 0 0
+0.3 0 0 0 0 SNAP:bodymeshes
+0.3 0 0 0 0 UNEQUIP:iron_cuirass
+0.1 0 0 0 0 ADDEFFECT:79:5:5:1:0:strength:0
+0.3 0 0 0 0 MAKEITEM:iron_cuirass:test_cuirass:constant
+0.3 0 0 0 0 EQUIP:test_cuirass
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:equipped:test_cuirass:eq:1
+0.3 0 0 0 0 EXPECT:bodymeshes:eq:@
+# the sword: drawn, the plain one's piece in the hand
+0.3 0 0 0 0 EQUIP:iron_longsword
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1+EXPECT:bodyweapon:w_iron_longsword_25
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 ADDEFFECT:14:5:5:1:1:-:0
+0.3 0 0 0 0 MAKEITEM:iron_longsword:test_sword:strike
+0.3 0 0 0 0 EQUIP:test_sword
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1+EXPECT:bodyweapon:w_iron_longsword_25

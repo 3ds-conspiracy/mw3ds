@@ -429,6 +429,16 @@ bool actorMeshShown(const Actor& a, const ActorMesh& m)
 }
 
 // 'MWL1' library file: an NPC / creature record's meshes, textures by name (looked up in the cell's list)
+// A torch's spray quad, known by its picture: fire and flames flicker, smoke, steam and sparks climb (BATCH_RISE)
+bool sprayRises(const std::string& texName)
+{
+	std::string low = texName;
+	for (char& c : low)
+		c = (char)tolower((unsigned char)c);
+	bool fire = (low.find("fire") != std::string::npos || low.find("flame") != std::string::npos) && low.find("ash") == std::string::npos;
+	return fire || low.find("smoke") != std::string::npos || low.find("steam") != std::string::npos || low.find("spark") != std::string::npos;
+}
+
 static bool readLibrary(ActorSet& set, Actor& a, const std::string& path, const std::vector<std::string>& texNames,
 	const u8* tint, Cell* addTo = nullptr, TextureCache* cache = nullptr, const char* dataDir = nullptr)
 {
@@ -474,13 +484,7 @@ static bool readLibrary(ActorSet& set, Actor& a, const std::string& path, const 
 		// A carried torch's fire flickers and its smoke climbs as the world's do (BATCH_RISE, shaders/cell.v.pica's offset): the
 		// quads meshes.py makes of its sprays, known by their picture as it knows them (the flag's bit is the weapon's here)
 		if (m.hand == 1 && !name.empty())
-		{
-			std::string low = name;
-			for (char& c : low)
-				c = (char)tolower((unsigned char)c);
-			bool fire = (low.find("fire") != std::string::npos || low.find("flame") != std::string::npos) && low.find("ash") == std::string::npos;
-			m.rise = fire || low.find("smoke") != std::string::npos || low.find("steam") != std::string::npos || low.find("spark") != std::string::npos;
-		}
+			m.rise = sprayRises(name);
 	}
 	zclose(f);
 	return true;

@@ -8,6 +8,8 @@ void MWClass::Actor::search(Session& s, int ref)
 {
 	s.containerRef = ref;
 	s.openScreen(SCR_CONTAINER);
+	// Opening a body (or pockets) can pass its diseases on, as a blow does (OpenMW's ActionOpen: diseaseContact)
+	s.catchDiseases(ref);
 }
 
 void MWClass::Actor::talk(Session& s, int ref)

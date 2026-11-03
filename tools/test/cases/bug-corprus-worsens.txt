@@ -1,0 +1,27 @@
+# Corprus keeps worsening and the cure keeps what it gave. Dagoth Gares' curse is Player->AddSpell Corprus: Fortify
+# Strength and Endurance 1, Drain Intelligence, Willpower, Personality and Speed 1, plus the Corprus effect. OpenMW
+# re-applies those effects every 24 hours (CorprusStats::sWorseningPeriod) with no cap ("Your case of Corprus has
+# worsened"); Divayth Fyr's cure (Player->RemoveSpell Corprus) keeps the fortifies and undoes the drains (UESP's
+# Corprus Cure: "the positive effects are retained"). Ours grew a point a day up to 20, then the cure dropped the
+# fortifies back to 1 and kept the drains (the GitHub report from the Dagoth Gares curse).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 SNAP:attr:strength+SNAP:attr:endurance+SNAP:attr:intelligence+SNAP:attr:willpower
+0.3 0 0 0 0 CON:player->AddSpell%corprus
+1 0 0 0
+0.3 0 0 0 0 EXPECT:corprus:eq:1
+# a month of worsenings: past the old cap of 20 either way
+0.3 0 0 0 0 ADVANCE:240
+1 0 0 0
+0.3 0 0 0 0 ADVANCE:240
+1 0 0 0
+0.3 0 0 0 0 ADVANCE:240
+6 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:ge:@25+EXPECT:attr:endurance:ge:@25
+0.3 0 0 0 0 EXPECT:attr:intelligence:le:@-25+EXPECT:attr:willpower:le:@-25
+# the cure: what the disease gave stays, what it took comes back
+0.3 0 0 0 0 CON:player->RemoveSpell%corprus
+1 0 0 0
+0.3 0 0 0 0 EXPECT:corprus:eq:0
+0.3 0 0 0 0 EXPECT:attr:strength:ge:@25+EXPECT:attr:endurance:ge:@25
+0.3 0 0 0 0 EXPECT:attr:intelligence:eq:@+EXPECT:attr:willpower:eq:@

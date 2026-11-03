@@ -1,0 +1,19 @@
+# Murder and an assault cost a bystander with Alarm 0 no disposition (OpenMW reportCrime: "Murdering and trespassing
+# seem to do not affect disposition"; an assault's witness only with Alarm 100, or when hostile, x Alarm / 100).
+# Ulabael (Alarm 0) watches the player kill Addammus in his yurt. Ours took iDispAttackMod (-50) for the blow and
+# iDispKilling (-50) for the death from every witness. (The drawn weapon's own -5 is allowed for.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 SETSKILL:longblade:100
+0.3 0 0 0 0 GOTO:Ahemmusa_Camp,_Addammus's_Yurt
+3 0 0 0
+0.3 0 0 0 0 SETALARM:ulabael:0+SETALARM:addammus:0
+0.3 0 0 0 0 SNAP:refdisp:ulabael
+60 0 0 0 0 KILL:addammus
+3 0 0 0
+0.3 0 0 0 0 EXPECT:dead:addammus
+0.3 0 0 0 0 EXPECT:refcombat:ulabael:eq:0
+0.3 0 0 0 0 EXPECT:refdisp:ulabael:ge:@-5

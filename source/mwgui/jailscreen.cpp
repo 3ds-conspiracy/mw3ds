@@ -61,12 +61,14 @@ void Session::drawArrest()
 // ---- maps: the world map outdoors, the local map (a top-down render) indoors
 
 // Jail: a day per hundred gold of bounty passes, stolen goods are taken, a skill a day changes (Security
-// and Sneak may rise, the others fall), and the player is let out at the nearest prison's release spot
+// and Sneak rise, the others fall), and the player is let out at the nearest prison's release spot
 void Session::goToJail()
 {
 	int days = w.bounty / 100 > 1 ? w.bounty / 100 : 1;
 	w.pcInJail = 2;                      // (GetPCInJail: the scripts running now and the next ones see the term)
 	w.gameHour += 24.0f * days;
+	if (w.corprusSince >= 0.0f)
+		w.corprusSince += 24.0f * days;  // Corprus doesn't worsen in prison (OpenMW's skipWorsenings)
 	rechargeItems(24.0f * days * 3600.0f / w.timescale());
 	w.bounty = 0;
 	w.crimePaid();
@@ -75,7 +77,7 @@ void Session::goToJail()
 	for (int d = 0; d < days; d++)
 	{
 		int k = rand() % 27;
-		bool rises = (k == 18 || k == 19) && rand() % 2;       // Security, Sneak: learned inside
+		bool rises = k == 18 || k == 19;       // Security, Sneak: learned inside (UESP's Crime: a point gained, not lost)
 		if (rises)
 			w.stats.skillBonus[k]++;
 		else if (w.stats.skills[k] > 0)

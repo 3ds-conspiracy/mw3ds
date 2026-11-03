@@ -28,7 +28,23 @@
 # bm_bearregen_unique (ability, Regeneration)
 #   on bm_bear_be_unique, who has it: checked at the end
 # bm_draugr_curse (spell, Eddard's Wrath)
-#   only bm_draugr01, bm_draugr_bloodskal know it; not a spell they cast in a fight (open)
+0.3 0 0 0 0 SPELL:bm_draugr_curse
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:bm_draugr_curse
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,38:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,37:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
 # bm_fireregen (ability, Icy Blood)
 0.3 0 0 0 0 SNAP:effect:75
 0.3 0 0 0 0 SPELL:bm_fireregen
@@ -50,7 +66,23 @@
 # bm_huntresist (ability, Hircine Resists1)
 #   on bm_hircine_huntaspect, who has it: checked at the end
 # bm_paralyze_hirc (spell, Hunter's Venom)
-#   only bm_hircine_huntaspect know it; not a spell they cast in a fight (open)
+0.3 0 0 0 0 SPELL:bm_paralyze_hirc
+0.1 0 0 0 0 PLACE:todd:180
+0.3 0 0 0 0 POSE:todd:idle:0:180
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CASTAT:todd:bm_paralyze_hirc
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:casts:gt:@0
+0.3 0 0 0 0 EXPECT:refeffect:todd,45:gt:0
+0.3 0 0 0 0 EXPECT:refeffect:todd,7:gt:0
+0.3 0 0 0 0 SLAY:todd
+0.3 0 0 0
+0.3 0 0 0 0 DISABLE:todd
+0.3 0 0 0 0 SETBOUNTY:0
+0.3 0 0 0 0 HIDEACTORS:4000
+0.5 0 0 0
 # bm_resistpara_unique (ability, Resist Paralysis)
 #   on gaea artoria, who has it: checked at the end
 # bm_spdresist (ability, Hircine Resists1)

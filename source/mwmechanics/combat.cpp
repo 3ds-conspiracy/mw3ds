@@ -279,7 +279,7 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 	if (shield && !ranged && w.player.knockTimer <= 0.0f && w.effectTotal(45) <= 0.0f
 		&& blockAngle >= w.game.gmstf("fcombatblockleftangle", -90.0f) && blockAngle <= w.game.gmstf("fcombatblockrightangle", 20.0f)
 		&& shieldBlocks(s.skills[SKILL_BLOCK], s.attributes[ATTR_AGILITY], s.attributes[ATTR_LUCK], s.fatigue, s.fatigueMax,
-			playerMoveForward <= 0.0f, def.skills[skill], def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK], r.fatigue,
+			playerMoveForward <= 0.0f, w.actorSkill(ri, skill), w.actorAttribute(ri, ATTR_AGILITY), w.actorAttribute(ri, ATTR_LUCK), r.fatigue,
 			r.fatigueMax, 0.5f))
 	{
 		wearItem(shield, dmg);
@@ -382,14 +382,13 @@ void Session::blowSound(int ref, const BlowRoll& b)
 bool Session::playerShieldsBurn(int attacker)
 {
 	Ref& r = w.refs[attacker];
-	const ActorDef& def = w.game.actors[r.actor];
 	for (int e = 4; e <= 6; e++)
 	{
 		float mag = w.effectTotal(e);
 		if (mag <= 0.0f)
 			continue;
 		int element = e == 4 ? 14 : e == 5 ? 15 : 16;
-		float dmg = elementalShieldDamage(mag, def.skills[10], def.attributes[ATTR_WILLPOWER], def.attributes[ATTR_LUCK],
+		float dmg = elementalShieldDamage(mag, w.actorSkill(attacker, 10), w.actorAttribute(attacker, ATTR_WILLPOWER), w.actorAttribute(attacker, ATTR_LUCK),
 			r.fatigue, r.fatigueMax, actorResistBase(attacker, element), rand() % 100);
 		damageNpc(attacker, dmg * difficultyScale(false), false);
 		logf("combat: %s burned by the player's shield for %.1f", r.id.c_str(), dmg);
@@ -431,7 +430,7 @@ void Session::npcStrike(int ri)
 	r.fatigue -= w.game.gmstf("ffatigueattackbase", 2.0f) + (wpn ? wpn->weight : 0.0f) * charge * w.game.gmstf("fweaponfatiguemult", 0.25f);
 	// OpenMW's getHitChance: the attack term less the player's evasion (none while down or paralyzed), rounded
 	bool helpless = w.player.knockTimer > 0.0f || w.effectTotal(45) > 0.0f;
-	float chance = roundf(attackTermOf(attackSkill(def, wpn), def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
+	float chance = roundf(attackTermOf(attackSkill(w, ri, wpn), w.actorAttribute(ri, ATTR_AGILITY), w.actorAttribute(ri, ATTR_LUCK),
 		r.fatigue, r.fatigueMax, w.actorEffect(ri, 117), w.actorEffect(ri, 47)) - playerDefense(helpless));
 	BlowRoll roll = rollBlow(chance, false, false);
 	// (a missed blow follows through as the weakest)
@@ -450,14 +449,14 @@ void Session::npcStrike(int ri)
 	if (def.creature && (wpn || !def.attack.empty()))
 		npcHitsPlayer(ri, creatureDamage(def, wpn, charge, r.attackKind) * roll.damage, false, weaponSkill(wpn), !wpn);
 	else if (wpn)
-		npcHitsPlayer(ri, weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage
+		npcHitsPlayer(ri, weaponDamage(wpn, r.attackKind, charge, w.actorAttribute(ri, ATTR_STRENGTH)) * roll.damage
 			* w.silverOnWerewolf(wpn, -1), false, weaponSkill(wpn));
 	else    // fists: GBAC leaves them alone while the player still has fatigue (they only tire)
 	{
 		// Hand to hand: Hand-to-hand x (fMinHandToHandMult + (fMax - fMin) x swing); on a player who is down or
 		// paralyzed it is health damage x fHandtoHandHealthPer (OpenMW's getHandToHandDamage)
 		float lo = w.game.gmstf("fminhandtohandmult", 0.1f), hi = w.game.gmstf("fmaxhandtohandmult", 0.5f);
-		float dmg = def.skills[SKILL_HAND_TO_HAND] * (lo + (hi - lo) * charge);
+		float dmg = w.actorSkill(ri, SKILL_HAND_TO_HAND) * (lo + (hi - lo) * charge);
 		if (w.isWerewolf(ri))      // a werewolf's claws wound (World::werewolfClaw)
 		{
 			npcHitsPlayer(ri, w.werewolfClaw(dmg) * roll.damage, false, SKILL_HAND_TO_HAND, true);
@@ -556,7 +555,7 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	// (OpenMW's blockMeleeAttack: not down or paralyzed, the shield out; being unaware or mid-swing doesn't stop it)
 	if (shield && !ranged && t.knockTimer <= 0.0f
 		&& npcBlockAngle >= w.game.gmstf("fcombatblockleftangle", -90.0f) && npcBlockAngle <= w.game.gmstf("fcombatblockrightangle", 20.0f)
-		&& shieldBlocks(def.skills[SKILL_BLOCK], def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK], t.fatigue,
+		&& shieldBlocks(w.actorSkill(target, SKILL_BLOCK), w.actorAttribute(target, ATTR_AGILITY), w.actorAttribute(target, ATTR_LUCK), t.fatigue,
 			t.fatigueMax, true, s.skills[skill], s.attributes[ATTR_AGILITY], s.attributes[ATTR_LUCK], s.fatigue,
 			s.fatigueMax, fmaxf(0.0f, attackCharge)))
 	{
@@ -617,7 +616,7 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	damageNpc(target, damage, fatigueOnly);
 	if (t.dead)
 		return;
-	int agi = def.attributes[ATTR_AGILITY];
+	int agi = w.actorAttribute(target, ATTR_AGILITY);
 	if (rawDamage > 0.0f && rawDamage >= agi * w.game.gmstf("fknockdownmult", 0.6f) && rand() % 100 >= knockdownOdds(agi))
 		knockDown(target, false);
 	(void)ranged;
@@ -874,7 +873,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		// (the player's rule: fFatigueReturnBase + fFatigueReturnMult x their Endurance a second)
 		if (r.fatigue < r.fatigueMax && !menu)
 			r.fatigue = fminf(r.fatigueMax, r.fatigue + (w.game.gmstf("ffatiguereturnbase", 2.5f)
-				+ w.game.gmstf("ffatiguereturnmult", 0.02f) * w.game.actors[r.actor].attributes[ATTR_ENDURANCE]) * dt);
+				+ w.game.gmstf("ffatiguereturnmult", 0.02f) * w.actorAttribute(i, ATTR_ENDURANCE)) * dt);
 		// Out cold under 0 fatigue, whatever brought it there (OpenMW: a hit, a Damage Fatigue spell ...), and the time on
 		// the floor for everyone down, in a fight or not (it was counted only in a fight: anyone else stayed down)
 		if (!menu)

@@ -1,0 +1,18 @@
+# A guard who saw nothing leaves a small bounty alone until the player speaks to them. OpenMW (crime.md, AiPursue):
+# guards pursue a crime they saw, and on sight only once the bounty passes iCrimeThreshold (1000); UESP's Crime: "If
+# your Bounty is more than 1000, guards will confront you on sight", below that "you will have to answer for your
+# crimes any time you speak to a guard". Ours sent every guard within 1500 units over for any bounty above 0, seen or
+# not (combat.cpp guardCheck).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+8 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Census
+# a bounty from elsewhere, below the threshold: the captain stays where he is
+0.3 0 0 0 0 SETBOUNTY:50
+15 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none+EXPECT:bounty:eq:50
+# past the threshold: he confronts the player on sight
+0.3 0 0 0 0 SETBOUNTY:1500
+15 0 0 0
+0.3 0 0 0 0 EXPECT:screen:dialogue

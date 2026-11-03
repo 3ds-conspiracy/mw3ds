@@ -85,13 +85,28 @@ void World::recomputeStats()
 	float magickaMult = game.gmstf("fpcbasemagickamult", 1.0f);
 	std::vector<std::string> abilities;
 	if (r) abilities.insert(abilities.end(), r->spells.begin(), r->spells.end());
-	// Worn constant-effect enchantments count as abilities while worn
+	// Worn constant-effect enchantments count as abilities while worn. Their magnitudes are rolled between min and max
+	// when put on and kept while worn (OpenMW rolls an item's constant effects as it adds them to the active spells):
+	// one die per item, taken only when an effect has a range; taken off, the item rolls again next time
+	std::vector<u32> rolls(abilities.size(), 0u);
 	for (auto& it : inventory)
-		if (it.equipped)
-			if (const SpellDef* en = enchantmentOf(it))
-				if (en->type == ENCH_CONSTANT)
-					abilities.push_back(en->id);
+	{
+		const SpellDef* en = it.equipped ? enchantmentOf(it) : nullptr;
+		if (!en || en->type != ENCH_CONSTANT)
+		{
+			it.roll = 0;
+			continue;
+		}
+		bool ranged = false;
+		for (auto& e : en->effects)
+			ranged |= e.max > e.min;
+		if (ranged && it.roll == 0)
+			it.roll = ((u32)rand() << 1) | 1u;
+		abilities.push_back(en->id);
+		rolls.push_back(ranged ? it.roll : 0u);
+	}
 	if (b) abilities.insert(abilities.end(), b->spells.begin(), b->spells.end());
+	rolls.resize(abilities.size(), 0u);
 	// The player's own abilities and diseases (AddSpell, caught from creatures) work the same way
 	for (auto& id : stats.spells)
 	{
@@ -99,27 +114,34 @@ void World::recomputeStats()
 		if (sp != game.spells.end() && sp->second.type >= 1 && sp->second.type <= 3)
 			abilities.push_back(id);
 	}
+	rolls.resize(abilities.size(), 0u);
 	this->abilities.clear();
 	abilitiesShown.clear();
 	// Abilities' and worn constant enchantments' fortifies and drains are modifiers on top (OpenMW's modified value):
 	// only the base is held to 100, so the Boots of Blinding Speed take Speed past it
 	int attrMod[8] = {}, skillMod[27] = {};
 	float healthMod = 0.0f, magickaMod = 0.0f, fatigueMod = 0.0f;      // Fortify Health / Magicka / Fatigue
-	for (auto& id : abilities)
+	for (size_t ab = 0; ab < abilities.size(); ab++)
 	{
+		const std::string& id = abilities[ab];
 		auto it = game.spells.find(lower(id));
 		if (it == game.spells.end() || ((it->second.type < 1 || it->second.type > 3) && it->second.type != ENCH_CONSTANT))
 			continue;                                  // abilities, diseases, worn constant enchantments
-		// Corprus: its drains and fortifies grow a point a day since it was caught
+		// Corprus: its drains and fortifies are applied once more every worsening since it was caught; once cured the
+		// whole spell is spent (corprusKept holds what its fortifies left)
 		int scale = 1;
+		bool corprus = false;
 		for (auto& e : it->second.effects)
-			if (e.effect == 132)
-				scale = corprusLevel();
-		for (const SpellEffect& e0 : it->second.effects)
+			corprus |= e.effect == 132;
+		if (corprus && corprusSince < -1.5f)
+			continue;
+		if (corprus)
+			scale = corprusLevel();
+		for (size_t k = 0; k < it->second.effects.size(); k++)
 		{
-			SpellEffect e = e0;
-			if (e.effect == 132 && corprusSince < -1.5f)
-				continue;                                  // cured: the Corprus effect is gone
+			SpellEffect e = it->second.effects[k];
+			if (rolls[ab] && e.max > e.min)          // (each effect its own number from the item's die)
+				e.min += (int)(((rolls[ab] + (u32)k * 0x9E3779B9u) * 2654435761u) >> 8) % (e.max - e.min + 1);
 			if (e.effect == 17 || e.effect == 79)
 				e.min *= scale;
 			abilitiesShown.push_back({ e.effect, e.attribute, e.skill, (float)e.min, 1e9f, it->second.name });
@@ -135,6 +157,8 @@ void World::recomputeStats()
 				this->abilities.push_back({ e.effect, e.attribute, e.skill, (float)e.min, 1e9f, it->second.name });
 		}
 	}
+	for (int i = 0; i < 8; i++)
+		attrMod[i] += corprusKept[i];
 	for (int i = 0; i < 8; i++)
 	{
 		stats.attributes[i] = (stats.attributes[i] + stats.attrBonus[i] > 100 ? 100 : stats.attributes[i] + stats.attrBonus[i]) + attrMod[i];

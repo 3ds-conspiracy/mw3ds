@@ -324,7 +324,7 @@ void Session::npcDuel(int ri, float dt)
 		{
 			float charge = frand();
 			r.fatigue -= w.game.gmstf("ffatigueattackbase", 2.0f) + (wpn ? wpn->weight : 0.0f) * charge * w.game.gmstf("fweaponfatiguemult", 0.25f);
-			float chance = roundf(attackTermOf(attackSkill(def, wpn), def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK],
+			float chance = roundf(attackTermOf(attackSkill(w, ri, wpn), w.actorAttribute(ri, ATTR_AGILITY), w.actorAttribute(ri, ATTR_LUCK),
 				r.fatigue, r.fatigueMax, w.actorEffect(ri, 117), w.actorEffect(ri, 47))
 				- npcDefense(fi, f.knockTimer > 0.0f || w.actorEffect(fi, 45) > 0.0f));
 			BlowRoll roll = rollBlow(chance, false, false);
@@ -343,12 +343,12 @@ void Session::npcDuel(int ri, float dt)
 				if (def.creature && (wpn || !def.attack.empty()))
 					dmg = creatureDamage(def, wpn, charge, r.attackKind) * roll.damage;
 				else if (wpn)
-					dmg = weaponDamage(wpn, r.attackKind, charge, def.attributes[ATTR_STRENGTH]) * roll.damage
+					dmg = weaponDamage(wpn, r.attackKind, charge, w.actorAttribute(ri, ATTR_STRENGTH)) * roll.damage
 						* w.silverOnWerewolf(wpn, fi);
 				else    // fists tire (health only on someone down; a werewolf's claws always wound)
 				{
 					float lo = w.game.gmstf("fminhandtohandmult", 0.1f), hi = w.game.gmstf("fmaxhandtohandmult", 0.5f);
-					dmg = def.skills[SKILL_HAND_TO_HAND] * (lo + (hi - lo) * charge);
+					dmg = w.actorSkill(ri, SKILL_HAND_TO_HAND) * (lo + (hi - lo) * charge);
 					if (w.isWerewolf(ri))
 						dmg = w.werewolfClaw(dmg) * roll.damage;
 					else if (f.knockTimer > 0.0f)

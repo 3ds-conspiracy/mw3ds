@@ -122,6 +122,13 @@ bool Session::equipItem(int index, bool force)
 	playSound(-1, "Item Misc Up");
 	w.setItemScriptLocal(it.id, "onpcequip", 1.0f);
 	w.refreshStats();                  // worn constant effects
+	// A constant effect that acts once (Recall, Mark, the Interventions, the Cures, Dispel, Remove Curse) acts as the item
+	// is put on, then is spent until it comes off and on again (OpenMW: the item's permanent active spell applies each
+	// effect on its first frame; these remove themselves there)
+	if (const SpellDef* en = w.enchantmentOf(it))
+		if (en->type == ENCH_CONSTANT)
+			for (const SpellEffect& e : std::vector<SpellEffect>(en->effects))
+				instantEffect(e.effect, (float)(e.max > e.min ? e.min + rand() % (e.max - e.min + 1) : e.min));
 	// a weapon or shield taken in hand: read now, in the menu, what its first draw would read (Session::warmWeapon)
 	if (hand(o) || shield(o))
 		warmWeapon();

@@ -277,3 +277,30 @@ Disease: 132, 133.
 Tolerances: a resistable magnitude may be up to 1 percent lower (section 3), plus half a point of rounding; per-second
 effects a point and a half either way. The random part of the resist roll needs the player's Willpower and Luck low
 (5 here) so the part is as small as it can be.
+
+## 7. Findings (2026-11-03)
+
+Found by comparing this page with the code (the code had not been read when it was written), each with a test that
+failed before the fix:
+
+1. **Corprus** (`bug-corprus-worsens`; GitHub report from the Dagoth Gares curse): it grew a point a day up to 20, and
+   the cure dropped the fortifies to 1 and kept the drains. Now every 24 hours applies the disease's effects once more,
+   with no cap; Cure Corprus or RemoveSpell keeps what the fortifies gave (`World::corprusKept`, saved) and undoes the
+   drains (UESP's Corprus Cure: "The positive effects are retained"). Jail days don't worsen it (OpenMW's
+   skipWorsenings).
+2. **Spells on people's attributes and skills** (`bug-npc-drained-speed`): Drain, Fortify and Absorb were kept on the
+   actor but every rule read the record's numbers. Now combat, blocking, evasion, awareness, movement, casting,
+   persuasion, barter, pickpocketing and falls read `World::actorAttribute` / `actorSkill` (the modified value).
+3. **Demoralize, Rally, Turn Undead** (`bug-demoralize-magnitude`, `bug-turn-undead-living`): they set a flee flag
+   whatever the magnitude; now they move the Flee rating the flee rule reads. Turn Undead takes undead creatures only
+   (the converter's `ctype`). **Command** (`bug-command-level`) needs magnitude >= the target's level. **Charm**
+   (`bug-charm-creature`) takes people only. Calm was right: any active Calm keeps an actor from starting a fight
+   (`isAggressionCapable`), whatever its magnitude.
+4. **Reflect and Spell Absorption** roll per effect, and absorbed magicka passes the maximum (magic.md).
+5. **Disintegrate Armor** (`bug-disintegrate-armor-order`) took the first armor in the inventory; now the order above.
+6. **Bound items** (`bug-bound-boots-beast`): a beast race's Bound Boots or Helm now ends at once.
+7. **Damage Attribute / Skill** (`bug-damage-attribute-cap`) kept damage past 0; each moment is now capped at what is
+   left.
+
+Left as they are: Sun Damage's curve (ours a sine from 6 to 20 h, halved under cloud), Damage / Restore Attribute and
+Disintegrate on people (not kept), spells between two NPCs never reflected or absorbed.

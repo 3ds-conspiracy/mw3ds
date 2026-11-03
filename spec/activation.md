@@ -65,8 +65,9 @@ Containers, in order:
    screen; a trap fires first (below) and the container does *not* open that activation.
 5. Locked, no key: the `LockedChest` sound only; no message.
 
-Opening a container also runs the mechanics' open hook (contents respawn bookkeeping) and `diseaseContact` (a diseased
-container may give the player a disease). Taking from it is checked by `itemTaken` (Ownership below).
+Opening a container also runs the mechanics' open hook (contents respawn bookkeeping) and `diseaseContact`: opening a
+diseased body (or a person's pockets) may give the player its disease, `fDiseaseXferChance` percent a disease less
+resistance (`MWClass::Actor::search`, `bug-diseased-body`; ours passed diseases only with a blow until 2026-11-03). Taking from it is checked by `itemTaken` (Ownership below).
 
 Dead actors (`Npc::activate`, `Creature::activate`): a dead NPC or creature opens as a container once its death
 animation has finished; OpenMW's setting `can loot during death animation` (on by default) opens it the moment it is

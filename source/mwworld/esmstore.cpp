@@ -516,7 +516,7 @@ bool gameLoad(GameData& g, const char* path)
 			a.aiDuration = (float)cJSON_GetArrayItem(ai, 5)->valuedouble;
 		}
 		a.creature = cJSON_IsTrue(cJSON_GetObjectItem(it, "creature"));
-		a.magicka = num(it, "magicka"); a.flee = num(it, "flee"); a.soul = num(it, "soul"); a.resistNormal = num(it, "resist_normal"); a.hello = (int)num(it, "hello", 30); a.alarm = (int)num(it, "alarm", 100);
+		a.magicka = num(it, "magicka"); a.flee = num(it, "flee"); a.soul = num(it, "soul"); a.ctype = (int)num(it, "ctype", -1); a.resistNormal = num(it, "resist_normal"); a.hello = (int)num(it, "hello", 30); a.alarm = (int)num(it, "alarm", 100);
 		a.respawn = num(it, "respawn") != 0; a.essential = num(it, "essential") != 0; a.blood = (int)num(it, "blood"); a.afloat = (u8)num(it, "afloat");
 		a.autocalc = num(it, "autocalc") != 0;
 		if (const cJSON* bx = cJSON_GetObjectItem(it, "box"))
@@ -1248,6 +1248,12 @@ bool gameLoad(GameData& g, const char* path)
 		(int)g.sounds.size(), (int)g.voices.size(), mallinfo().uordblks / 1024, (unsigned)(Atom::poolBytes() / 1024),
 		(unsigned)(CardText::heapBytes() / 1024));
 	return true;
+}
+
+std::string GameData::modelId(const std::string& itemId) const
+{
+	const Object* o = object(itemId);
+	return o && !o->iconBase.empty() ? lower(o->iconBase.str()) : lower(itemId);
 }
 
 u32 GameData::enchantGlow(const std::string& itemId) const

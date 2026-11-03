@@ -78,7 +78,38 @@ void Session::drawStats()
 	uiBar(76, 30, 190, 10, total > 0 ? fminf(1.0f, (float)s.levelProgress / total) : 0.0f, col::header);
 	uiTextRight(312, 27, 0.42f, s.levelProgress >= total ? col::header : col::text,
 		std::to_string(s.levelProgress) + "/" + std::to_string(total));
-	uiTextBox(scroll, 6, 44, 308, 158, statsText(*this, true));
+	// Tapping the level shows what the next level-up gives each attribute (OpenMW's level tooltip in the stats window:
+	// every multiplier above 1, cut so the attribute can't pass 100)
+	if (uiHit(4, 24, 312, 18))
+	{
+		statsBonusShown = !statsBonusShown;
+		playSound(-1, "Menu Click");
+	}
+	if (statsBonusShown)
+	{
+		static const char* kAttrKeys[8] = { "sattributestrength", "sattributeintelligence", "sattributewillpower",
+			"sattributeagility", "sattributespeed", "sattributeendurance", "sattributepersonality", "sattributeluck" };
+		static const char* kAttr[8] = { "Strength", "Intelligence", "Willpower", "Agility", "Speed", "Endurance",
+			"Personality", "Luck" };
+		std::string t = "At the next level:\n";
+		bool any = false;
+		for (int a = 0; a < 8; a++)
+		{
+			int base = std::min(100, s.attrCreation[a] + s.attrBonus[a]);
+			int mult = std::min(attrMultiplier(a), 100 - base);
+			if (mult > 1)
+			{
+				t += w.game.gmstLabel(kAttrKeys[a], kAttr[a]) + " x" + std::to_string(mult) + "\n";
+				any = true;
+			}
+		}
+		if (!any)
+			t += "no attribute above x1 yet\n";
+		t += "\n(tap the level to close)";
+		uiTextBox(scroll, 6, 44, 308, 158, t);
+	}
+	else
+		uiTextBox(scroll, 6, 44, 308, 158, "(tap the level for the next level's attribute bonuses)\n" + statsText(*this, true));
 	int b = buttonRow({ w.game.gmst("sclose", "Close") }, focus);
 	if (b == 0 || (uiIn().down & KEY_B))
 		closeScreen();

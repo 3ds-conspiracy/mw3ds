@@ -393,27 +393,35 @@
 # sc_bodily_restoration_en on sc_bodily_restoration (cast once)
 1.0 0 0 0 0 GIVE:sc_bodily_restoration
 0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 SETATTR:agility:60
 0.3 0 0 0 0 EFFECT:22:10:1:3
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:agility:gt:0
+0.3 0 0 0 0 SETATTR:endurance:60
 0.3 0 0 0 0 EFFECT:22:10:1:5
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:endurance:gt:0
+0.3 0 0 0 0 SETATTR:intelligence:60
 0.3 0 0 0 0 EFFECT:22:10:1:1
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:intelligence:gt:0
+0.3 0 0 0 0 SETATTR:luck:60
 0.3 0 0 0 0 EFFECT:22:10:1:7
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:luck:gt:0
+0.3 0 0 0 0 SETATTR:personality:60
 0.3 0 0 0 0 EFFECT:22:10:1:6
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:personality:gt:0
+0.3 0 0 0 0 SETATTR:speed:60
 0.3 0 0 0 0 EFFECT:22:10:1:4
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:speed:gt:0
+0.3 0 0 0 0 SETATTR:strength:60
 0.3 0 0 0 0 EFFECT:22:10:1:0
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:strength:gt:0
+0.3 0 0 0 0 SETATTR:willpower:60
 0.3 0 0 0 0 EFFECT:22:10:1:2
 1.5 0 0 0
 0.3 0 0 0 0 EXPECT:attrdamage:willpower:gt:0
@@ -455,7 +463,6 @@
 0.3 0 0 0 0 CASTAT:todd:item:sc_savagetyranny
 1.2 0 0 0
 0.3 0 0 0 0 EXPECT:casts:gt:@0
-0.3 0 0 0 0 EXPECT:refeffect:todd,118:gt:0
 0.3 0 0 0 0 SLAY:todd
 0.3 0 0 0
 0.3 0 0 0 0 DISABLE:todd

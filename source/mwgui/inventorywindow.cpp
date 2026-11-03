@@ -4,6 +4,7 @@
 #include <cstring>
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
+#include "mwphysics/physicssystem.hpp"
 
 // How a quick key is set from Inventory / Magic: the D-pad moves the selection there, so both layouts hold ZL
 const char* kQuickHint = "ZL + D-pad: set quick key";
@@ -15,8 +16,9 @@ void Session::drawInventory()
 	// Filter tabs (L / R), and the load against what the player can carry
 	const UiInput& in = uiIn();
 	int tab = invTab;
-	if (in.down & KEY_L) tab = (tab + 4) % 5;
-	if (in.down & KEY_R) tab = (tab + 1) % 5;
+	bool counting = dropCounting;
+	if ((in.down & KEY_L) && !counting) tab = (tab + 4) % 5;
+	if ((in.down & KEY_R) && !counting) tab = (tab + 1) % 5;
 	for (int t = 0; t < 5; t++)
 		if (uiButton(4 + t * 50, 24, 48, 18, w.game.gmstLabel(kTabKeys[t], kTabs[t]), t == tab))
 			tab = t;
@@ -59,6 +61,11 @@ void Session::drawInventory()
 		assignQuickKey("inv:" + qi.id, qo ? qo->name.str() : qi.id);
 	}
 	int pick = uiItemGrid(grid, 4, 45, 312, 132, cells);
+	if (counting)
+	{
+		grid.selected = before;           // the D-pad picks the count now, not the item
+		pick = -1;
+	}
 	uiText(6, 178, 0.36f, col::textDim, kQuickHint);
 	int sel = grid.selected >= 0 && grid.selected < (int)index.size() ? index[grid.selected] : -1;
 	const Object* o = sel >= 0 ? w.game.object(w.inventory[sel].id) : nullptr;
@@ -74,6 +81,43 @@ void Session::drawInventory()
 	if (sel >= 0)
 		itemTip(o, &w.inventory[sel]);
 
+	// How many of a stack to drop (OpenMW's count dialog, starting at the whole stack): [-] Drop 5 [+] Cancel, left and
+	// right one at a time, up and down ten; A drops them, B goes back to the item's buttons
+	if (counting)
+	{
+		if (sel < 0)
+		{
+			dropCounting = false;
+			return;
+		}
+		int have = w.inventory[sel].count;
+		if (in.down & KEY_LEFT) dropCount -= 1;
+		if (in.down & KEY_RIGHT) dropCount += 1;
+		if (in.down & KEY_DOWN) dropCount -= 10;
+		if (in.down & KEY_UP) dropCount += 10;
+		bool set = false;
+		if (uiButton(4, 208, 40, 28, "-", false))
+			dropCount--;
+		if (uiButton(212, 208, 40, 28, "+", false))
+			dropCount++;
+		dropCount = std::max(1, std::min(have, dropCount));
+		if (uiButton(48, 208, 160, 28, w.game.gmst("sdrop", "Drop") + " " + std::to_string(dropCount), true))
+			set = true;
+		bool cancel = uiButton(256, 208, 60, 28, w.game.gmst("scancel", "Cancel"), false) || (in.down & KEY_B);
+		uiConsume(KEY_A | KEY_B | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
+		if (cancel)
+		{
+			dropCounting = false;
+			playSound(-1, "Menu Click");
+		}
+		else if (set || aKey)
+		{
+			dropFromInventory(sel, dropCount);
+			dropCounting = false;
+			grid.selected = -1;
+		}
+		return;
+	}
 	std::vector<std::string> labels;
 	const std::string useLabel = w.game.gmstLabel("suse", "Use");
 	if (o)
@@ -93,8 +137,6 @@ void Session::drawInventory()
 	if (o)
 	{
 		labels.push_back(w.game.gmst("sdrop", "Drop"));
-		if (w.inventory[sel].count > 1)
-			labels.push_back("Drop all");
 	}
 	labels.push_back(w.game.gmst("sclose", "Close"));
 	uiConsume(KEY_A | KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
@@ -105,24 +147,20 @@ void Session::drawInventory()
 		b = 0;
 	if (b >= 0 && b < (int)labels.size() - 1 && o)
 	{
-		if (labels[b] == w.game.gmst("sdrop", "Drop") || labels[b] == "Drop all")
+		if (labels[b] == w.game.gmst("sdrop", "Drop"))
 		{
-			// Onto the floor in front of the player (it can be picked up again)
-			InventoryItem it = w.inventory[sel];
-			int n = labels[b] == "Drop all" ? it.count : 1;
-			it.count = n;
-			it.equipped = false;
-			if (w.inventory[sel].equipped)
+			// one goes at once; a stack asks how many first
+			if (w.inventory[sel].count > 1)
 			{
-				w.inventory[sel].equipped = false;
-				w.refreshStats();
+				dropCounting = true;
+				dropCount = w.inventory[sel].count;
+				playSound(-1, "Menu Click");
 			}
-			if ((w.inventory[sel].count -= n) <= 0)
-				w.inventory.erase(w.inventory.begin() + sel);
-			w.itemLeft(it.id);
-			w.dropItemAt(it, w.player.feet, w.player.yaw, 50.0f);
-			playSound(-1, "Item Misc Down");
-			grid.selected = -1;
+			else
+			{
+				dropFromInventory(sel, 1);
+				grid.selected = -1;
+			}
 		}
 		else if (labels[b] == "Drink" || labels[b] == "Eat")
 			consume(w.inventory[sel].id);
@@ -182,4 +220,59 @@ void Session::drawInventory()
 	}
 	else if (b == (int)labels.size() - 1 || (in.down & KEY_B))
 		closeScreen();
+}
+
+// The inventory's Drop: that many of the stack go into the world (they can be picked up again)
+void Session::dropFromInventory(int sel, int count)
+{
+	if (sel < 0 || sel >= (int)w.inventory.size() || count <= 0)
+		return;
+	InventoryItem it = w.inventory[sel];
+	int n = std::min(count, it.count);
+	it.count = n;
+	it.equipped = false;
+	if (w.inventory[sel].equipped)
+	{
+		w.inventory[sel].equipped = false;
+		w.refreshStats();
+	}
+	if ((w.inventory[sel].count -= n) <= 0)
+		w.inventory.erase(w.inventory.begin() + sel);
+	w.itemLeft(it.id);
+	// Where the crosshair points, when that is a surface within 200 units flat enough to stand it on (OpenMW's
+	// placeObject / canPlaceObject: a ray from the camera, a face no steeper than 30 degrees): a table, a shelf, the
+	// floor. Else at the player's feet (OpenMW's dropObjectOnGround)
+	float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+	float cp = cosf(w.player.pitch);
+	float end[3] = { eye[0] + sinf(w.player.yaw) * cp * 200.0f, eye[1] + cosf(w.player.yaw) * cp * 200.0f,
+		eye[2] + sinf(w.player.pitch) * 200.0f };
+	float best = 2.0f;
+	for (LoadedCell* l : w.loaded)
+	{
+		float t;
+		if (collisionRaycast(l->cell.collision, eye, end, &t) && t < best)
+			best = t;
+	}
+	if (best <= 1.0f)
+	{
+		float hit[3] = { eye[0] + (end[0] - eye[0]) * best, eye[1] + (end[1] - eye[1]) * best, eye[2] + (end[2] - eye[2]) * best };
+		// a flat face there: its top within a few units of the hit, found looking down (30 degrees at most); a wall
+		// struck from the side has none so near
+		float top = -1e9f;
+		for (LoadedCell* l : w.loaded)
+		{
+			float z;
+			if (collisionFloor(l->cell.collision, hit[0], hit[1], hit[2] + 4.0f, hit[2] - 8.0f, &z, 30.0f, 30.0f) && z > top)
+				top = z;
+		}
+		if (top > -1e9f)
+		{
+			hit[2] = top;
+			w.dropItem(it, hit, w.player.yaw);
+			playSound(-1, "Item Misc Down");
+			return;
+		}
+	}
+	w.dropItemAt(it, w.player.feet, w.player.yaw, 50.0f);
+	playSound(-1, "Item Misc Down");
 }

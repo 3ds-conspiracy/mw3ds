@@ -28,7 +28,7 @@ void Session::npcFire(int ri)
 	float d[3] = { to[0] - from[0], to[1] - from[1], to[2] - from[2] };
 	float len = sqrtf(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
 	// Aim wobbles less the better their Marksman
-	float err = (100 - def.skills[SKILL_MARKSMAN]) * 0.0015f;
+	float err = (100 - w.actorSkill(ri, SKILL_MARKSMAN)) * 0.0015f;
 	for (int k = 0; k < 3; k++)
 		d[k] = d[k] / len + (frand() - 0.5f) * err;
 	const std::string& ammo = wpn->subtype == WEAP_THROWN ? def.weapon : def.ammo;
@@ -399,8 +399,8 @@ void Session::npcCombat(int ri, float dt)
 			{
 				const SpellDef& sp = sit->second;
 				static const int kSchoolSkill[6] = { 11, 13, 10, 12, 14, 15 };
-				float chance = sp.type == 5 ? 100.0f : (def.skills[kSchoolSkill[spellSchool(sp)]] * 2.0f + def.attributes[ATTR_WILLPOWER] / 5.0f
-					+ def.attributes[ATTR_LUCK] / 10.0f - sp.cost - w.actorEffect(ri, 48)) * fatigueTerm(r.fatigue, r.fatigueMax);
+				float chance = sp.type == 5 ? 100.0f : (w.actorSkill(ri, kSchoolSkill[spellSchool(sp)]) * 2.0f + w.actorAttribute(ri, ATTR_WILLPOWER) / 5.0f
+					+ w.actorAttribute(ri, ATTR_LUCK) / 10.0f - sp.cost - w.actorEffect(ri, 48)) * fatigueTerm(r.fatigue, r.fatigueMax);
 				if (w.actorEffect(ri, 46) > 0.0f || rand() % 100 >= (int)chance)
 				{
 					playSound(ri, "Spell Failure Conjuration");
@@ -426,8 +426,8 @@ void Session::npcCombat(int ri, float dt)
 			static const int schoolSkill[6] = { 11, 13, 10, 12, 14, 15 };
 			int school = spellSchool(sp);
 			// (the player's rule, their Sound taken off before the fatigue term; Silence: no spell at all)
-			float chance = sp.type == 5 ? 100.0f : (def.skills[schoolSkill[school]] * 2.0f + def.attributes[ATTR_WILLPOWER] / 5.0f
-				+ def.attributes[ATTR_LUCK] / 10.0f - sp.cost - w.actorEffect(ri, 48)) * fatigueTerm(r.fatigue, r.fatigueMax);
+			float chance = sp.type == 5 ? 100.0f : (w.actorSkill(ri, schoolSkill[school]) * 2.0f + w.actorAttribute(ri, ATTR_WILLPOWER) / 5.0f
+				+ w.actorAttribute(ri, ATTR_LUCK) / 10.0f - sp.cost - w.actorEffect(ri, 48)) * fatigueTerm(r.fatigue, r.fatigueMax);
 			if (w.actorEffect(ri, 46) > 0.0f)
 				chance = 0.0f;
 			if (rand() % 100 >= (int)chance)

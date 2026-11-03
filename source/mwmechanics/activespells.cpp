@@ -24,6 +24,41 @@ float World::actorEffect(int ri, int effect) const
 	return total;
 }
 
+// An actor's attribute or skill as its rules read it (OpenMW's modified value): its record's, with the Drain, Fortify
+// and Absorb on it (applyEffectToActor keeps them keyed by the attribute or skill), not below 0
+static int modifiedStat(const Ref& r, int base, int key, bool skill)
+{
+	float v = (float)base;
+	for (auto& t : r.effects)
+	{
+		if (t.key != key)
+			continue;
+		bool sk = t.effect == EFF_DRAIN_SKILL || t.effect == EFF_FORTIFY_SKILL || t.effect == EFF_ABSORB_SKILL;
+		if (sk != skill)
+			continue;
+		if (t.effect == EFF_FORTIFY_ATTRIBUTE || t.effect == EFF_FORTIFY_SKILL)
+			v += t.magnitude;
+		else if (t.effect == EFF_DRAIN_ATTRIBUTE || t.effect == EFF_DRAIN_SKILL || t.effect == EFF_ABSORB_ATTRIBUTE
+			|| t.effect == EFF_ABSORB_SKILL)
+			v -= t.magnitude;
+	}
+	return std::max(0, (int)v);
+}
+
+int World::actorAttribute(int ri, int a) const
+{
+	const Ref& r = refs[ri];
+	int base = game.actors[r.actor].attributes[a];
+	return r.effects.empty() ? base : modifiedStat(r, base, a, false);
+}
+
+int World::actorSkill(int ri, int k) const
+{
+	const Ref& r = refs[ri];
+	int base = game.actors[r.actor].skills[k];
+	return r.effects.empty() ? base : modifiedStat(r, base, k, true);
+}
+
 float World::effectTotal(int effect) const
 {
 	float total = 0.0f;
@@ -178,7 +213,10 @@ void Session::updateEffects(float dt)
 			{
 				float& d = s.attrDamage[a.attribute];
 				int before = (int)ceilf(d - 0.001f);
-				d = a.effect == EFF_DAMAGE_ATTRIBUTE ? d + a.magnitude * step : fmaxf(0.0f, d - a.magnitude * step);
+				// (a moment's damage is at most what is left of it: OpenMW caps each tick at the current value, so
+				// damage past 0 isn't kept for a Restore to work through)
+				float left = fmaxf(0.0f, (float)(s.attributes[a.attribute] + s.attrBelow[a.attribute] + before) - d);
+				d = a.effect == EFF_DAMAGE_ATTRIBUTE ? d + fminf(left, a.magnitude * step) : fmaxf(0.0f, d - a.magnitude * step);
 				statsChanged |= (int)ceilf(d - 0.001f) != before;
 			}
 			break;
@@ -187,19 +225,31 @@ void Session::updateEffects(float dt)
 			{
 				float& d = s.skillDamage[a.skill];
 				int before = (int)ceilf(d - 0.001f);
-				d = a.effect == EFF_DAMAGE_SKILL ? d + a.magnitude * step : fmaxf(0.0f, d - a.magnitude * step);
+				float left = fmaxf(0.0f, (float)(s.skills[a.skill] + s.skillBelow[a.skill] + before) - d);
+				d = a.effect == EFF_DAMAGE_SKILL ? d + fminf(left, a.magnitude * step) : fmaxf(0.0f, d - a.magnitude * step);
 				statsChanged |= (int)ceilf(d - 0.001f) != before;
 			}
 			break;
 		case EFF_DISINTEGRATE_WEAPON: case EFF_DISINTEGRATE_ARMOR:
-			for (auto& it : w.inventory)
-				if (const Object* o = it.equipped ? w.game.object(it) : nullptr)
-					if (o->type == (a.effect == EFF_DISINTEGRATE_WEAPON ? "WEAP" : "ARMO"))
-					{
-						wearItem(&it, a.magnitude * step);
-						break;
-					}
+		{
+			// Armor: the first worn piece with condition left, in the order shield, cuirass, left and right pauldron, left
+			// and right gauntlet (or bracer), helmet, greaves, boots (OpenMW's disintegrateSlot order); a weapon: the one in hand
+			static const int kOrder[] = { 8, 1, 2, 3, 6, 9, 7, 10, 0, 4, 5 };
+			bool weapon = a.effect == EFF_DISINTEGRATE_WEAPON;
+			InventoryItem* hit = nullptr;
+			for (int k = 0; !hit && k < (weapon ? 1 : (int)(sizeof(kOrder) / sizeof(kOrder[0]))); k++)
+				for (auto& it : w.inventory)
+					if (const Object* o = it.equipped ? w.game.object(it) : nullptr)
+						if (o->recType == (weapon ? REC_WEAP : REC_ARMO) && (weapon || o->subtype == kOrder[k])
+							&& itemCondition(it) > 0)
+						{
+							hit = &it;
+							break;
+						}
+			if (hit)
+				wearItem(hit, a.magnitude * step);
 			break;
+		}
 		case EFF_DAMAGE_FATIGUE: s.fatigue = fmaxf(0.0f, s.fatigue - a.magnitude * step); break;
 		case EFF_FIRE_DAMAGE: case EFF_SHOCK_DAMAGE: case EFF_FROST_DAMAGE:
 		case EFF_DAMAGE_HEALTH: case EFF_POISON:

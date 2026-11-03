@@ -77,8 +77,13 @@ struct World
 	std::vector<ActiveEffect> effects;
 	std::vector<ActiveEffect> abilities;   // race / birthsign abilities' other effects (resistances ...), for good
 	std::vector<ActiveEffect> abilitiesShown;   // every effect of the abilities and worn constant effects (the HUD's icons)
-	float corprusSince = -1.0f;   // gameHour the player caught Corprus (-1: hasn't); it worsens by the day
-	int corprusLevel() const { return corprusSince < 0.0f ? 1 : std::min(20, 1 + (int)((gameHour - corprusSince) / 24.0f)); }
+	// Corprus (OpenMW's CorprusStats): gameHour the player caught it (-1: hasn't, -2: Cure Corprus ended it). Every
+	// sWorseningPeriod (24 hours) its other effects are applied once more, with no cap. When it ends (Cure Corprus,
+	// RemoveSpell) what its fortifies gave stays for good and its drains go (corprusKept, saved)
+	float corprusSince = -1.0f;
+	int corprusLevel() const { return corprusSince < 0.0f ? 1 : 1 + (int)((gameHour - corprusSince) / 24.0f); }
+	int corprusKept[8] = {};
+	void endCorprus(const std::string& spell);
 	int markCell = -1;            // Mark: where Recall goes
 	float markPos[3] = {}, markYaw = 0.0f;
 	float lastOutside[3] = {};    // the player's last spot outdoors (Intervention from inside)
@@ -444,6 +449,8 @@ struct World
 	float chargeOf(const InventoryItem& it) const;   // what's left (full when never used)
 	float effectTotal(int effect) const;                // sum of an active effect's magnitudes
 	float actorEffect(int ref, int effect) const;       // an actor's: its abilities' constant effects + the spells on it
+	int actorAttribute(int ref, int attribute) const;  // an actor's modified attribute: its record's, with the spells on it
+	int actorSkill(int ref, int skill) const;          // the same for a skill
 	void reapplyEffects();
 	const RaceDef* race() const;
 	const ClassDef* playerClass() const;

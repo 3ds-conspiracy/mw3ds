@@ -1,0 +1,21 @@
+# Drop on a stack asks how many (OpenMW's count dialog, starting at the whole stack): - and + (and the D-pad: left
+# and right one, up and down ten) set it, Drop N puts that many down. 20 iron arrows: down ten, minus two, plus one,
+# Drop 9 leaves 11. Ours had Drop (one) and Drop all only.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GIVE:iron%arrow:20
+0.3 0 0 0 0 SCREEN:inventory
+0.5 0 0 0
+0.3 0 0 0 0 INVSEL:iron%arrow
+0.3 0 0 0
+0.3 0 0 0 0 TAP:160:222
+0.3 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 TAP:24:222
+0.3 0 0 0 0 TAP:24:222
+0.3 0 0 0 0 TAP:232:222
+0.3 0 0 0
+0.3 0 0 0 0 EXPECT:item:iron%arrow:eq:20+SHOT
+0.3 0 0 0 0 TAP:128:222
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:item:iron%arrow:eq:11

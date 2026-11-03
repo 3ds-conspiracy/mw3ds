@@ -53,7 +53,7 @@ float Session::npcWeaponRatingOf(int ri, const Object* wpn, float dist)
 		rating = sum > 0.0f ? (slash * slash + thrust * thrust + chop * chop) / sum : 0.0f;
 	}
 	rating *= w.game.gmstf("fdamagestrengthbase", 0.5f)
-		+ def.attributes[ATTR_STRENGTH] * w.game.gmstf("fdamagestrengthmult", 0.1f) * 0.1f;
+		+ w.actorAttribute(ri, ATTR_STRENGTH) * w.game.gmstf("fdamagestrengthmult", 0.1f) * 0.1f;
 	if (isRanged(wpn) && wpn->subtype != WEAP_THROWN)
 	{
 		const Object* am = w.game.object(def.ammo);
@@ -72,9 +72,9 @@ float Session::npcWeaponRatingOf(int ri, const Object* wpn, float dist)
 	}
 	// (whether to take it up at all by the weapon's own skill, a creature's Combat, Magic or Stealth for it; the hit chance by
 	// the skill its blows roll with: OpenMW's rateWeapon)
-	if (def.skills[weaponSkill(wpn)] <= 0)
+	if (w.actorSkill(ri, weaponSkill(wpn)) <= 0)
 		return 0.0f;
-	float chance = attackTermOf(attackSkill(def, wpn), def.attributes[ATTR_AGILITY], def.attributes[ATTR_LUCK], r.fatigue, r.fatigueMax,
+	float chance = attackTermOf(attackSkill(w, ri, wpn), w.actorAttribute(ri, ATTR_AGILITY), w.actorAttribute(ri, ATTR_LUCK), r.fatigue, r.fatigueMax,
 		w.actorEffect(ri, 117), w.actorEffect(ri, 47)) - playerDefense(false);
 	rating *= fmaxf(0.01f, fminf(1.0f, chance / 100.0f));
 	return ammo ? rating * mult : rating * wpn->speed * mult;

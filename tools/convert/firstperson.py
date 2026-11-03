@@ -85,6 +85,9 @@ def fp_groups(nif):
         le = marks.get((g, loop_stop), e) if loop_stop else e
         out.append({"name": name, "start": s, "loop_start": ls, "loop_stop": le, "stop": e})
 
+    # nothing in hand (the arms idle out of sight) and the left arm holding a torch out (OpenMW plays "torch" on it)
+    add("Idle", "idle", "start", "loop start", "loop stop")
+    add("Torch", "torch", "start", "loop start", "loop stop")
     for name, g in [("Idle1h", "idle1h"), ("Idle2c", "idle2c"), ("Idle2w", "idle2w"), ("IdleHH", "idlehh"),
                     ("IdleXbow", "idlecrossbow"), ("IdleSpell", "idlespell")]:
         add(name, g, "start", "loop start", "loop stop")
@@ -189,6 +192,10 @@ class FirstPerson:
                     if not model:
                         continue
                     if part in (0, 1):
+                        # A head or hair marked not playable (BYDT flags 2) is never offered: Bloodmoon's WerewolfHead
+                        # and WerewolfHair name the Argonian race (OpenMW's race menu skips BPF_NotPlayable too)
+                        if flags & 2:
+                            continue
                         p = self.piece(model, part, beast)
                         if p:
                             (hl if part == 0 else hr).append([body.id.lower(), p])
@@ -299,6 +306,36 @@ class FirstPerson:
                 s["pos"] = s["pos"] @ m[:3, :3].T + m[:3, 3]
                 s["nrm"] = s["nrm"] @ m[:3, :3].T
             meshes.append(self.mesh_record(s, bone_name.lower(), mirror))
+        self.pieces[name] = meshes or None
+        return name if meshes else None
+
+    def torch_piece(self, model):
+        """A carried light in the left hand: on the shield bone turned -90 degrees about X (its upright model stands up in
+        the Torch pose), moved by its "BoneOffset" node's translation (OpenMW's ActorAnimation::attach; npc.py does the
+        same for people's torches), its fire and smoke with it."""
+        name = piece_name(model, SLOT_SHIELD)
+        if name in self.pieces:
+            return name if self.pieces[name] else None
+        nif = self.nif("meshes\\" + model)
+        bone = self.skeleton_pose().get("shield bone")
+        if nif is None or bone is None:
+            self.pieces[name] = None
+            return None
+        held = np.identity(4)
+        held[:3, :3] = [[1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, -1.0, 0.0]]
+        off = next((b for b in nif.blocks if (b.get("name") or "").lower() == "boneoffset" and "translation" in b), None)
+        if off is not None:
+            held[:3, 3] = off["translation"]
+        place = bone @ held
+        meshes = []
+        for s in extract_shapes(self.arch, nif, vis_hidden=True):
+            if s["skinned"]:
+                continue
+            raw = s.get("raw") or {"pos": np.asarray(s["pos"]), "node": np.identity(4)}
+            s["raw"] = dict(raw, node=held @ raw["node"])
+            s["pos"] = s["pos"] @ place[:3, :3].T + place[:3, 3]
+            s["nrm"] = s["nrm"] @ place[:3, :3].T
+            meshes.append(self.mesh_record(s, "shield bone", False))
         self.pieces[name] = meshes or None
         return name if meshes else None
 
@@ -510,6 +547,12 @@ class FirstPerson:
                 m = self.item_model(model)
                 if m:
                     e["model"] = m
+            # A light that can be carried (LHDT flag 2) is held in the left hand, on the shield's bone (OpenMW's
+            # NpcAnimation: a carried light takes PRT_Shield's place)
+            if rec.tag == "LIGH" and model and len(rec.get("LHDT") or b"") >= 24 and struct.unpack_from("<I", rec.get("LHDT"), 20)[0] & 2:
+                p = self.torch_piece(model)
+                if p:
+                    e["slots"] = {str(SLOT_SHIELD): [p, p]}
             if rec.tag not in ("WEAP", "LOCK", "PROB", "ARMO", "CLOT"):
                 if e:
                     items[oid] = e

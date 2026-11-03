@@ -689,7 +689,7 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 			}
 			continue;
 		}
-		auto it = w.game.firstPerson.items.find(p.item);
+		auto it = w.game.firstPerson.items.find(w.game.modelId(p.item));
 		FpPiece* piece = it != w.game.firstPerson.items.end() ? vm.piece(w, it->second.model) : nullptr;
 		if (!piece)
 			continue;
@@ -827,7 +827,7 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 		float dx = r.pos[0] - eye[0], dy = r.pos[1] - eye[1];
 		if (dx * dx + dy * dy > 3000.0f * 3000.0f)
 			continue;
-		auto it = w.game.firstPerson.items.find(r.idLower);
+		auto it = w.game.firstPerson.items.find(w.game.modelId(r.idLower));
 		FpPiece* piece = it != w.game.firstPerson.items.end() ? vm.piece(w, it->second.model) : nullptr;
 		if (!piece)
 			continue;

@@ -93,15 +93,18 @@ static float filterFunction(World& w, const Cond& c, const Ref& speaker, int ref
 		int next = w.pcRankIn(f) + 1;
 		if (next >= 10 || next >= (int)fd.ranks.size())
 			return 0.0f;
+		// (base values, not fortified ones: OpenMW's hasFactionRankSkillRequirements; the best favoured skill at the first
+		// number, the next two at the second: UESP's "one skill at 30 and two at 5", NpcStats::hasSkillsForRank)
 		const int* rq = fd.reqs[next];
 		const PlayerStats& s = w.stats;
-		bool attrs = (fd.attrs[0] < 0 || s.attributes[fd.attrs[0]] >= rq[0]) && (fd.attrs[1] < 0 || s.attributes[fd.attrs[1]] >= rq[1]);
+		auto baseAttr = [&](int a) { return std::min(100, s.attrCreation[a] + s.attrBonus[a]); };
+		bool attrs = (fd.attrs[0] < 0 || baseAttr(fd.attrs[0]) >= rq[0]) && (fd.attrs[1] < 0 || baseAttr(fd.attrs[1]) >= rq[1]);
 		std::vector<int> sk;
 		for (int k : fd.skills)
 			if (k >= 0 && k < 27)
-				sk.push_back(s.skills[k]);
+				sk.push_back(std::min(100, s.skillCreation[k] + s.skillBonus[k]));
 		std::sort(sk.rbegin(), sk.rend());
-		bool skills = sk.empty() || (sk[0] >= rq[2] && (sk.size() < 2 || sk[1] >= rq[3]));
+		bool skills = sk.empty() || (sk[0] >= rq[2] && (sk.size() < 2 || sk[1] >= rq[3]) && (sk.size() < 3 || sk[2] >= rq[3]));
 		auto rep = w.pcFacRep.find(f);
 		bool reputation = (rep != w.pcFacRep.end() ? rep->second : 0) >= rq[4];
 		return (attrs && skills ? 1.0f : 0.0f) + (reputation ? 2.0f : 0.0f);

@@ -155,7 +155,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 			if (o->recType == REC_CLOT && o->subtype == CLOT_SKIRT)
 				for (int s : kSkirtHides)
 					part[s].clear();
-			auto fit = t.items.find(lower(it.id));
+			auto fit = t.items.find(w.game.modelId(it.id));
 			if (fit == t.items.end())
 				continue;
 			for (auto& s : fit->second)
@@ -174,7 +174,7 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 				if (const Object* o = w.game.object(it))
 					if (o->recType == REC_WEAP && o->subtype < WEAP_ARROW)
 					{
-						auto fit = w.game.firstPerson.items.find(lower(it.id));
+						auto fit = w.game.firstPerson.items.find(w.game.modelId(it.id));
 						if (fit != w.game.firstPerson.items.end() && fit->second.slots.count(SLOT_WEAPON))
 						{
 							part[SLOT_WEAPON] = fit->second.slots.at(SLOT_WEAPON).first;
@@ -182,6 +182,32 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 						}
 						break;
 					}
+	// A torch (a carried light) in the left hand when no shield is there, held out (the Torch group on the left arm)
+	// unless a two-handed weapon or a bow is out (OpenMW's NpcAnimation: a carried light takes the shield's part;
+	// updateCarriedLeftVisible)
+	bool torchOut = false;
+	if (part[SLOT_SHIELD].empty())
+	{
+		bool twoHanded = false;
+		std::string light;
+		for (auto& it : w.inventory)
+			if (it.equipped)
+				if (const Object* o = w.game.object(it))
+				{
+					if (o->recType == REC_LIGH)
+						light = it.id;
+					else if (o->recType == REC_WEAP && o->subtype < WEAP_ARROW && o->subtype != WEAP_THROWN)
+						twoHanded |= o->subtype == 2 || o->subtype == 4 || o->subtype == 5 || o->subtype == 6
+							|| o->subtype == 8 || o->subtype == WEAP_BOW || o->subtype == WEAP_CROSSBOW;
+				}
+		auto fit = light.empty() ? w.game.firstPerson.items.end() : w.game.firstPerson.items.find(w.game.modelId(light));
+		if (fit != w.game.firstPerson.items.end() && fit->second.slots.count(SLOT_SHIELD) && !(weaponOut && twoHanded))
+		{
+			part[SLOT_SHIELD] = fit->second.slots.at(SLOT_SHIELD).first;
+			torchOut = true;
+		}
+	}
+	set.actors[0].torchOut = torchOut;
 	weapon = part[SLOT_WEAPON];
 	std::string key;
 	for (int s = 0; s < kSlotCount; s++)
@@ -225,7 +251,9 @@ void PlayerBody::rebuild(World& w, bool weaponOut)
 			copy.tex = textures.size();
 			copy.glow = glow[s];
 			if (s == SLOT_SHIELD)
-				copy.hand = 2;            // put away while both hands are busy (Actor::bothHands)
+				copy.hand = torchOut ? 1 : 2;   // a torch shows while held out; a shield is put away while both hands are busy
+			if (s == SLOT_SHIELD && torchOut && m.tex >= 0 && (size_t)m.tex < p->texNames.size())
+				copy.rise = sprayRises(p->texNames[m.tex]);
 			textures.push_back(p->textures[m.tex]);
 			a.meshes.push_back(copy);
 		}

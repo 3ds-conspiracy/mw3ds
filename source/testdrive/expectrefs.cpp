@@ -207,6 +207,33 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		v = s.moviePlaying() ? 1.0f : 0.0f;
 		return true;
 	}
+	if (what == "dropmodel")          // the item dropped last has a model to be drawn with where it lies (1), or none (0)
+	{
+		v = 0.0f;
+		for (int i : w.spawned)
+			if (w.refs[i].dropped)
+				v = w.game.firstPerson.items.count(w.game.modelId(w.refs[i].idLower)) ? 1.0f : 0.0f;
+		return true;
+	}
+	if (what == "dropz")              // the height the item dropped last lies at
+	{
+		v = -1e9f;
+		for (int i : w.spawned)
+			if (w.refs[i].dropped)
+				v = w.refs[i].pos[2];
+		return true;
+	}
+	if (what == "vmtorch")            // the first-person view draws a torch in the left hand now (1), or not (0)
+	{
+		v = 0.0f;
+		if (s.vm.ready && s.vm.visible && s.vm.torch && !s.vm.set.actors.empty())
+		{
+			for (const ActorMesh& m : s.vm.set.actors[0].meshes)
+				if (lower(m.boneName) == "shield bone")
+					v = 1.0f;
+		}
+		return true;
+	}
 	if (what == "vmmeshes")           // meshes the first-person view model draws now (arms, then what they hold)
 	{
 		v = s.vm.ready && !s.vm.set.actors.empty() ? (float)s.vm.set.actors[0].meshes.size() : 0.0f;

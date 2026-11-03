@@ -228,6 +228,7 @@ void Session::closeScreen()
 	}
 	pickpocketing = false;
 	companionSharing = companionWarning = false;
+	dropCounting = false;
 	screen = SCR_NONE;
 	bookRef = containerRef = -1;
 	bookItem.clear();

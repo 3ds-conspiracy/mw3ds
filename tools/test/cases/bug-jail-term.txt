@@ -1,0 +1,17 @@
+# A jail term: each day one skill at random loses a point, but Security and Sneak gain one (UESP's Crime: "For
+# Security or Sneak, however, you actually gain one skill point instead"). The days are rested (OpenMW's JailScreen
+# calls rest for the whole term), so a hurt player comes out healed (that part passed before too). Ours gave Security
+# and Sneak their point only half the time and took one the other half. 99 days pick Security or Sneak about seven
+# times: a fall in either shows the old rule.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 SETSKILL:security:50+SETSKILL:sneak:50
+0.3 0 0 0 0 SNAP:skill:security+SNAP:skill:sneak
+0.3 0 0 0 0 SETHEALTH:0.3
+0.3 0 0 0 0 SNAP:health
+0.3 0 0 0 0 SETBOUNTY:9900
+0.3 0 0 0 0 JAIL
+4 0 0 0
+0.3 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 EXPECT:skill:security:ge:@+EXPECT:skill:sneak:ge:@
+0.3 0 0 0 0 EXPECT:health:gt:@20

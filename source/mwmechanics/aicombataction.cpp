@@ -87,8 +87,8 @@ void Session::npcCastSpell(int ri)
 			continue;
 		static const int kSchoolSkill[6] = { 11, 13, 10, 12, 14, 15 };
 		// (a spell flagged "always succeeds", SPDT flags 4: 100, as the player's castChance)
-		float chance = (sp.flags & 4) ? 100.0f : fmaxf(0.0f, fminf(100.0f, (def.skills[kSchoolSkill[spellSchool(sp)]] * 2.0f
-			+ def.attributes[ATTR_WILLPOWER] / 5.0f + def.attributes[ATTR_LUCK] / 10.0f - sp.cost - w.actorEffect(ri, 48))
+		float chance = (sp.flags & 4) ? 100.0f : fmaxf(0.0f, fminf(100.0f, (w.actorSkill(ri, kSchoolSkill[spellSchool(sp)]) * 2.0f
+			+ w.actorAttribute(ri, ATTR_WILLPOWER) / 5.0f + w.actorAttribute(ri, ATTR_LUCK) / 10.0f - sp.cost - w.actorEffect(ri, 48))
 			* fatigueTerm(r.fatigue, r.fatigueMax)));
 		float rating = npcEffectsRating(ri, sp.effects, true) * chance / 100.0f;
 		if (rating > best)

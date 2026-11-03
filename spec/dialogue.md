@@ -83,7 +83,9 @@ the greeting-range number: a Hello of 0 or 30 is just compared).
   and High is never below 0; 0 when the NPC has no faction.
 - 2 (Rank Requirement) = a bit mask for the player's NEXT rank in the NPC's faction: +1 if the player's skills and
   the faction's two attributes (base values) reach that rank, +2 if the player's faction reputation does; 0 when the
-  NPC has no faction or the player is already rank 9.
+  NPC has no faction or the player is already rank 9. The skills: the best favoured skill at the rank's first number,
+  the next two at its second (`NpcStats::hasSkillsForRank`; UESP's "one skill at 30 and two at 5"). Ours checked two
+  skills on fortified values until 2026-11-03 (`bug-promotion-three-skills`).
 - 39 (PC Expelled) = the player is expelled from the NPC's faction (false with none).
 
 **R11. State flags and counters.**

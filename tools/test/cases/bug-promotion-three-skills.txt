@@ -1,0 +1,17 @@
+# A faction's next rank asks for one favoured skill at its first number and two more at its second (UESP's Fighters
+# Guild: Swordsman "one skill at 30 and two at 5"; OpenMW NpcStats::hasSkillsForRank checks the best three, on base
+# values). Ours checked the best two, so Long Blade 30 and Axe 5 with no third skill passed for Swordsman. The
+# Fighters Guild's "advancement" lines follow the rank requirement function (2): 2 = reputation only.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 JOIN:fighters_guild:2
+0.3 0 0 0 0 CON:ModPCFacRep%40%"Fighters%Guild"
+0.3 0 0 0 0 SETATTR:strength:50+SETATTR:endurance:50
+0.3 0 0 0 0 SETSKILL:longblade:30+SETSKILL:axe:5+SETSKILL:bluntweapon:0+SETSKILL:block:0+SETSKILL:armorer:0+SETSKILL:heavyarmor:0
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Fighters
+6 0 0 0
+0.3 0 0 0 0 EXPECT:skill:longblade:eq:30+EXPECT:skill:bluntweapon:eq:0
+0.3 0 0 0 0 EXPECT:answer:advancement:eydis%fire-eye:eq:require%more%experience
+# a third skill at 5: now ready
+0.3 0 0 0 0 SETSKILL:bluntweapon:5
+0.3 0 0 0 0 EXPECT:answer:advancement:eydis%fire-eye:eq:recognizes%you

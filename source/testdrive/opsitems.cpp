@@ -36,6 +36,22 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 	// MAKEITEM:<base item>:<id>[:use|constant|once][:charge]: the effects ADDEFFECT put together become an enchantment on a
 	// copy of the base item, carried (CAST:item:<id> casts it). Enchantment effects are never dispelled; "use" ones are
 	// active effects (a Fortify goes past 100), "constant" ones count as abilities while worn (capped at 100)
+	// DROPAIM:<item>[:<count>|all]: the inventory's Drop, as the player does it (Session::dropFromInventory); "brewed" is
+	// the potion the last brew made
+	if (verb == "DROPAIM" && a.size() >= 2)
+	{
+		std::string id = lower(a[1]) == "brewed" ? s.lastBrewed : lower(a[1]);
+		int sel = -1;
+		for (size_t i = 0; i < w.inventory.size() && sel < 0; i++)
+			if (lower(w.inventory[i].id) == id || lower(w.inventory[i].id) == lower(spaced(id)))
+				sel = (int)i;
+		if (sel < 0)
+			return fail("no " + a[1] + " to drop");
+		int n = a.size() < 3 ? 1 : lower(a[2]) == "all" ? w.inventory[sel].count : atoi(a[2].c_str());
+		s.dropFromInventory(sel, n);
+		logf("test: dropped %d of %s", n, w.inventory.size() > (size_t)sel ? id.c_str() : id.c_str());
+		return true;
+	}
 	if (verb == "MAKEITEM" && a.size() >= 3)
 	{
 		if (s.makeEffects.empty())

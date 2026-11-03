@@ -1,0 +1,21 @@
+# A constant effect that acts once acts as the item is put on (OpenMW: the item's permanent active spell applies each
+# effect on its first frame; Recall teleports and removes itself). A ring of constant Recall, put on in Arrille's
+# Tradehouse, takes the player back to the Mark cast outside. Ours did nothing: one-shot effects only ran when cast.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:mysticism:600
+0.1 0 0 0 0 ADDEFFECT:60:1:1:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CAST:mw3ds_test_e1
+2 0 0 0
+0.3 0 0 0 0 EXPECT:marked:eq:1
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille's_Tradehouse
+0.1 0 0 0 0 ADDEFFECT:61:1:1:1:0:-:0
+0.3 0 0 0 0 MAKEITEM:common_ring_01:test_recall_ring:constant
+0.3 0 0 0 0 EQUIP:test_recall_ring
+4 0 0 0
+0.3 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Arrille's+EXPECT:cell:Seyda_Neen
+0.3 0 0 0 0 EXPECT:equipped:test_recall_ring:eq:1

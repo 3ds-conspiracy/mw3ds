@@ -71,20 +71,7 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 		int k = skill ? skillIndex(w, arg.substr(c + 1)) : attrIndex(w, arg.substr(c + 1));
 		if (k < 0 || k >= (skill ? 27 : 8))
 			return false;
-		const ActorDef& def = w.game.actors[w.refs[ri].actor];
-		v = (float)(skill ? def.skills[k] : def.attributes[k]);
-		for (auto& t : w.refs[ri].effects)
-		{
-			if (t.key != k)
-				continue;
-			bool sk = t.effect == 21 || t.effect == 83 || t.effect == 89;
-			if (sk != skill)
-				continue;
-			bool fort = t.effect == 79 || t.effect == 83;
-			bool drain = t.effect == 17 || t.effect == 21 || t.effect == 85 || t.effect == 89;
-			v += fort ? t.magnitude : drain ? -t.magnitude : 0.0f;
-		}
-		v = fmaxf(0.0f, v);
+		v = (float)(skill ? w.actorSkill(ri, k) : w.actorAttribute(ri, k));
 		return true;
 	}
 	if (what == "spellmagicka") { v = s.testCastTaken; return true; }
@@ -494,6 +481,23 @@ std::optional<bool> numberOfRules(Session& s, const std::string& what, const std
 		if (ri < 0)
 			return false;
 		v = w.refs[ri].enabled ? 1.0f : 0.0f;
+		return true;
+	}
+	if (what == "scriptenabled" || what == "scriptdisabled")
+	{
+		// scriptenabled:<script>: the references in loaded cells whose object runs that script and are enabled now
+		// (a stronghold's or the colony's stage pieces); scriptdisabled:<script>: those disabled now
+		std::string want = lower(arg);
+		int n = 0;
+		for (auto& r : w.refs)
+		{
+			if (r.cell < 0 || !w.cells[r.cell].live || r.pickedUp)
+				continue;
+			const Object* o = w.game.object(r.idLower.str());
+			if (o && lower(o->script.str()) == want && r.enabled == (what == "scriptenabled"))
+				n++;
+		}
+		v = (float)n;
 		return true;
 	}
 	if (what == "refstock" || what == "merchantgold")

@@ -21,6 +21,7 @@ struct Object;
 struct InventoryItem
 {
 	std::string id; int count; bool equipped; int condition = -1; std::string soul; float charge = -1.0f;
+	unsigned roll = 0; // a worn constant enchantment's die, its magnitudes rolled from it when put on (0: not yet; saved)
 	// its record, once found (GameData::object(const InventoryItem&)), and the game data's generation it was found in
 	mutable const Object* obj = nullptr;
 	mutable unsigned objGeneration = 0;

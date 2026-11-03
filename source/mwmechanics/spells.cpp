@@ -79,6 +79,20 @@ bool World::pcHasCorprus() const
 	return false;
 }
 
+// Corprus ends (Cure Corprus, or the spell taken away): the fortifies it gave over its worsenings stay as they are,
+// the drains are undone (OpenMW's removeMagicEffect for Corprus undoes only the harmful ones; UESP's Corprus Cure:
+// "the positive effects are retained")
+void World::endCorprus(const std::string& spell)
+{
+	auto it = game.spells.find(lower(spell));
+	if (corprusSince < 0.0f || it == game.spells.end())
+		return;
+	int level = corprusLevel();
+	for (auto& e : it->second.effects)
+		if (e.effect == 79 && e.attribute >= 0 && e.attribute < 8)
+			corprusKept[e.attribute] += e.min * level;
+}
+
 // ---- Spells
 
 std::vector<std::string> Session::knownSpells()

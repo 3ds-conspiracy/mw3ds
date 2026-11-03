@@ -213,6 +213,7 @@ inline const Skeleton& actorSkeleton(const ActorSet& set, int i)
 }
 void actorsFree(ActorSet& set);
 // Advances the idle animation and blinking, and poses the skeleton.
+bool sprayRises(const std::string& texName);   // a torch's fire or smoke quad, by its picture
 void actorAnimate(ActorSet& set, Actor& a, float dt);
 // Rewrites animated vertex positions (skinned meshes, morphing heads). Call after C3D_FrameBegin.
 void actorDeform(ActorSet& set, Actor& a);

@@ -409,9 +409,17 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 		if (onPlayer)
 		{
 			std::string id = lower(argStr(c, n, 0));
+			// (Divayth Fyr's cure is Player->RemoveSpell Corprus: what it gave stays, World::endCorprus)
+			bool hadCorprus = w.pcHasCorprus();
 			for (size_t i = 0; i < w.stats.spells.size(); i++)
 				if (w.stats.spells[i] == id)
+				{
+					if (hadCorprus)
+						w.endCorprus(id);
 					w.stats.spells.erase(w.stats.spells.begin() + i--);
+				}
+			if (hadCorprus && !w.pcHasCorprus())
+				w.corprusSince = -1.0f;
 			float hp = w.stats.health, mp = w.stats.magicka, fp = w.stats.fatigue;
 			w.recomputeStats();
 			w.keepBars(hp, mp, fp);

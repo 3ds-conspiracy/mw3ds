@@ -1,0 +1,15 @@
+# A potion the player made, dropped, lies where it fell and is drawn there. Made potions are new records (OpenMW's
+# Alchemy::addPotion gives each one of the six potion models, misc_potion_<standard|bargain|cheap|fresh|exclusive|
+# quality>_01, with its icon); ours had no model, so the potion left the inventory and nothing showed on the floor.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:apparatus_a_mortar_01
+0.3 0 0 0 0 GIVE:ingred_marshmerrow_01
+0.3 0 0 0 0 GIVE:ingred_coprinus_01
+0.3 0 0 0 0 BREW:ingred_marshmerrow_01:ingred_coprinus_01
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:brewed:ge:1
+0.3 0 0 0 0 DROPAIM:brewed
+1 0 0 0
+0.3 0 0 0 0 EXPECT:dropmodel:eq:1

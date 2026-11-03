@@ -488,7 +488,7 @@ void Session::actorGravity(float dt)
 		// OpenMW's step down (sStepSizeDown, 62) keeps an actor on the ground there, so makes none
 		if (!creature && h > 62.0f)
 			playSound(i, "DefaultLand");
-		int acro = w.game.actors[r.actor].skills[20];
+		int acro = w.actorSkill(i, 20);
 		float x = fallDamage(h, acro, 0.0f);
 		if (x > 0.0f)
 		{

@@ -6,6 +6,7 @@
 
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
+#include "mwmechanics/magiceffects.hpp"
 
 // fFatigueBase - fFatigueMult x (1 - fatigue / max)
 float Session::playerFatigueTerm()
@@ -106,12 +107,12 @@ float Session::persuadeChance(int npcRef, int kind, float* parts)
 	float p1 = (repP + luckP + persP + s.skills[25]) * fatigueP;                     // Speechcraft
 	float p2 = p1 + levelP;
 	float p3 = (s.skills[24] + luckP + persP) * fatigueP;                             // Mercantile
-	float persN = def.attributes[ATTR_PERSONALITY] / g("fpersonalitymod", 5.0f), luckN = def.attributes[ATTR_LUCK] / g("fluckmod", 10.0f);
+	float persN = w.actorAttribute(npcRef, ATTR_PERSONALITY) / g("fpersonalitymod", 5.0f), luckN = w.actorAttribute(npcRef, ATTR_LUCK) / g("fluckmod", 10.0f);
 	float repN = def.reputation * g("freputationmod", 1.0f), levelN = def.level * g("flevelmod", 5.0f);
 	float fatigueN = g("ffatiguebase", 1.25f) - g("ffatiguemult", 0.5f) * (1.0f - npc.fatigue / fmaxf(1.0f, npc.fatigueMax));
-	float n1 = (repN + luckN + persN + def.skills[25]) * fatigueN;             // the NPC's ratings tire too
-	float n2 = (levelN + repN + luckN + persN + def.skills[25]) * fatigueN;
-	float n3 = (def.skills[24] + repN + luckN + persN) * fatigueN;
+	float n1 = (repN + luckN + persN + w.actorSkill(npcRef, 25)) * fatigueN;             // the NPC's ratings tire too
+	float n2 = (levelN + repN + luckN + persN + w.actorSkill(npcRef, 25)) * fatigueN;
+	float n3 = (w.actorSkill(npcRef, 24) + repN + luckN + persN) * fatigueN;
 	int disp = w.disposition(npcRef);
 	float d = 1.0f - 0.02f * abs(disp - 50);
 	static const char* bribeMod[3] = { "fbribe10mod", "fbribe100mod", "fbribe1000mod" };
@@ -182,10 +183,9 @@ float Session::npcDefense(int ri, bool defenseless)
 	const Ref& r = w.refs[ri];
 	if (r.fatigue < 0.0f || r.actor < 0)
 		return 0.0f;
-	const ActorDef& def = w.game.actors[r.actor];
 	float d = 0.0f;
 	if (!defenseless && w.actorEffect(ri, 45) <= 0.0f)                 // (not paralyzed)
-		d = (def.attributes[ATTR_AGILITY] / 5.0f + def.attributes[ATTR_LUCK] / 10.0f) * fatigueTermOf(r.fatigue, r.fatigueMax)
+		d = (w.actorAttribute(ri, ATTR_AGILITY) / 5.0f + w.actorAttribute(ri, ATTR_LUCK) / 10.0f) * fatigueTermOf(r.fatigue, r.fatigueMax)
 			+ fminf(100.0f, w.actorEffect(ri, 42));                    // Sanctuary
 	float inviso = w.game.gmstf("fcombatinvisomult", 0.2f);
 	return d + fminf(100.0f, inviso * w.actorEffect(ri, 40)) + fminf(100.0f, inviso * w.actorEffect(ri, 39));
@@ -256,8 +256,7 @@ bool Session::awarenessCheck(int ri, float* target, bool roll)
 	float x = sneakTerm * distTerm * fatigueTermOf(s.fatigue, s.fatigueMax) + w.effectTotal(40);
 	if (w.effectTotal(39) > 0.0f)
 		x += 100.0f;
-	const ActorDef& def = w.game.actors[r.actor];
-	float obsTerm = def.skills[19] + 0.2f * def.attributes[ATTR_AGILITY] + 0.1f * def.attributes[ATTR_LUCK] - w.actorEffect(ri, 47);   // (minus Blind on them)
+	float obsTerm = w.actorSkill(ri, 19) + 0.2f * w.actorAttribute(ri, ATTR_AGILITY) + 0.1f * w.actorAttribute(ri, ATTR_LUCK) - w.actorEffect(ri, 47);   // (minus Blind on them)
 	// facing: the angle between where they look and the player
 	float fx = sinf(r.rot[2]), fy = cosf(r.rot[2]);
 	float flat = sqrtf(dx * dx + dy * dy);
@@ -353,7 +352,7 @@ float Session::actorWalkSpeed(int ri)
 	float scale = r.scale > 0.0f ? r.scale : 1.0f;
 	if (!def.creature)
 		scale *= raceWeight(def.race.str(), def.female != 0);
-	return (lo + 0.01f * def.attributes[ATTR_SPEED] * (hi - lo)) * scale;
+	return (lo + 0.01f * w.actorAttribute(ri, ATTR_SPEED) * (hi - lo)) * scale;
 }
 
 // NPCs: walk x (0.01 x Athletics x fAthleticsRunBonus + fBaseRunMultiplier). A creature on its feet runs as fast as
@@ -382,8 +381,7 @@ float Session::actorRunSpeed(int ri)
 			return runV * sqrtf(a->place[0] * a->place[0] + a->place[4] * a->place[4] + a->place[8] * a->place[8]);
 		return actorWalkSpeed(ri) * runV / walkV;
 	}
-	const ActorDef& def = w.game.actors[r.actor];
-	return actorWalkSpeed(ri) * (0.01f * def.skills[8] * w.game.gmstf("fathleticsrunbonus", 1.0f) + w.game.gmstf("fbaserunmultiplier", 1.75f));
+	return actorWalkSpeed(ri) * (0.01f * w.actorSkill(ri, 8) * w.game.gmstf("fathleticsrunbonus", 1.0f) + w.game.gmstf("fbaserunmultiplier", 1.75f));
 }
 
 // The player: walk fMinWalkSpeed + 0.01 x Speed x (fMaxWalkSpeed - fMinWalkSpeed); run walk x (0.01 x Athletics x
@@ -440,7 +438,10 @@ float Session::fleeRatingOf(int ri, float distance)
 {
 	const Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
-	int flee = r.flee >= 0 ? r.flee : def.flee;
+	// the modified Flee: Demoralize and Turn Undead on them add, Rally takes away
+	int flee = (r.flee >= 0 ? r.flee : def.flee) + (int)(w.actorEffect(ri, EFF_DEMORALIZE_HUMANOID)
+		+ w.actorEffect(ri, EFF_DEMORALIZE_CREATURE) + w.actorEffect(ri, EFF_TURN_UNDEAD)
+		- w.actorEffect(ri, EFF_RALLY_HUMANOID) - w.actorEffect(ri, EFF_RALLY_CREATURE));
 	if (flee >= 100)
 		return (float)flee;
 	float health = r.healthMax > 0.0f ? fmaxf(0.0f, r.health) / r.healthMax : 1.0f;
@@ -483,7 +484,6 @@ float Session::fightTermOf(int ri, float distance)
 float Session::haggleChance(int merchantRef, int price, int offer, bool selling, int* dOut)
 {
 	const Ref& m = w.refs[merchantRef];
-	const ActorDef& def = w.game.actors[m.actor];
 	const PlayerStats& s = w.stats;
 	int d = selling ? (offer != 0 ? 100 * (offer - price) / offer : 0) : (price != 0 ? 100 * (price - offer) / price : 0);
 	if (dOut)
@@ -491,7 +491,7 @@ float Session::haggleChance(int merchantRef, int price, int offer, bool selling,
 	float disp = (float)std::max(0, std::min(100, w.disposition(merchantRef)));
 	float pcTerm = (w.game.gmstf("fdispositionmod", 1.0f) * (disp - 50.0f) + s.skills[24] + 0.1f * s.attributes[ATTR_LUCK]
 		+ 0.2f * s.attributes[ATTR_PERSONALITY]) * fatigueTermOf(s.fatigue, s.fatigueMax);
-	float npcTerm = (def.skills[24] + 0.1f * def.attributes[ATTR_LUCK] + 0.2f * def.attributes[ATTR_PERSONALITY])
+	float npcTerm = (w.actorSkill(merchantRef, 24) + 0.1f * w.actorAttribute(merchantRef, ATTR_LUCK) + 0.2f * w.actorAttribute(merchantRef, ATTR_PERSONALITY))
 		* fatigueTermOf(m.fatigue, m.fatigueMax);
 	return w.game.gmstf("fbargainoffermulti", -4.0f) * d + w.game.gmstf("fbargainofferbase", 50.0f) + (int)(pcTerm - npcTerm);
 }

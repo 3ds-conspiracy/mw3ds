@@ -37,7 +37,7 @@ struct Object
 	float quality = 0.0f;
 	int bookSkill = -1;                                // skill books: the skill the first read raises
 	Atom ench;                                         // enchanted: its enchantment (a SpellDef id)
-	Atom iconBase;                                     // enchanted by the player: the item it was made from
+	Atom iconBase;                                     // made by the player: the item it was made from (enchanted) or looks like (brewed)
 	int enchant = 0;                                   // enchantment capacity
 	struct IngredientEffect { int effect, skill, attribute; };
 	std::vector<IngredientEffect> ingredient;          // ingredients: their (up to) four effects, for alchemy

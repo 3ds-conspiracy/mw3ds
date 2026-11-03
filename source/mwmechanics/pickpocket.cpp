@@ -12,11 +12,10 @@
 int Session::pickpocketBar(int victim, float valueTerm)
 {
 	const Ref& v = w.refs[victim];
-	const ActorDef& def = w.game.actors[v.actor];
 	const PlayerStats& s = w.stats;
 	float x = (0.2f * s.attributes[ATTR_AGILITY] + 0.1f * s.attributes[ATTR_LUCK] + s.skills[SKILL_SNEAK])
 		* fatigueTerm(s.fatigue, s.fatigueMax);
-	float y = (valueTerm + 0.2f * def.attributes[ATTR_AGILITY] + 0.1f * def.attributes[ATTR_LUCK] + def.skills[SKILL_SNEAK])
+	float y = (valueTerm + 0.2f * w.actorAttribute(victim, ATTR_AGILITY) + 0.1f * w.actorAttribute(victim, ATTR_LUCK) + w.actorSkill(victim, SKILL_SNEAK))
 		* fatigueTerm(v.fatigue, v.fatigueMax);
 	float t = 2.0f * x - y;
 	float pcSneak = (float)s.skills[SKILL_SNEAK];

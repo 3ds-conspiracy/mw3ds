@@ -309,7 +309,10 @@
 0.1 0 0 0 0 EXPECT:journal:MT_WritGuril:ge:80
 120 0 0 0 0 DOORTO:Vivec,_Redoran_Waistworks
 3 0 0 0
-5 0 0 0
+# (the bounty is past iCrimeThreshold: an ordinator who sees the player comes over, OpenMW's updateCrimePursuit; the
+# one here stands out of sight down the hall, so the player goes towards it)
+60 0 0 0 0 WALKTO:ordinator%wander
+20 0 0 0 0 UNTIL:screen:dialogue
 0.1 0 0 0 0 EXPECT:screen:dialogue
 0.3 0 0 0 0 CHOICE:4
 2 0 0 0 0 UNTIL:talkready

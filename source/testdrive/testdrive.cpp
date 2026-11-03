@@ -91,7 +91,7 @@ float doorWalkRank(Session& s, const Ref& r, float d3)
 bool hasArg(const std::string& what)
 {
 	return what == "mapnotehas" || what == "vmbone" || what == "combatspell" || what == "silveron" || what == "labelis" || what == "refmeleereach" || what == "playerdist" || what == "levcandidates" || what == "levpick" || what == "levrolls" || what == "soulcapacity" || what == "stackcount"
-		|| what == "refexists" || what == "refenabled" || what == "refstock" || what == "merchantgold" || what == "followset"
+		|| what == "refexists" || what == "refenabled" || what == "scriptenabled" || what == "scriptdisabled" || what == "refstock" || what == "merchantgold" || what == "followset"
 		|| what == "journalentries" || what == "questfinished" || what == "skill" || what == "skillprog" || what == "attr" || what == "attrups" || what == "attrdamage" || what == "effect"
 		|| what == "refhealth" || what == "refrank" || what == "reflevel" || what == "refspell" || what == "reffatigue" || what == "refmagicka" || what == "refdisp" || what == "refflee"
 		|| what == "refattr" || what == "refskill" || what == "refhealthmax" || what == "refmagickamax" || what == "refcommanded"
@@ -654,14 +654,18 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	if (kind == HOP)
 		return updateHop(s, in, dt);
 	// A guard's crime greeting (pay the fine / go to jail / resist) that opens on its own during a step that is not
-	// a talk with that guard: in a LEGIT run pay it if there is gold for it, close the dialogue and carry on
-	if (s.testLegit && s.dlg.open && s.screen == SCR_DIALOGUE && s.dlg.ref >= 0 && s.dlg.ref != ref && s.dlg.ref < (int)w.refs.size()
+	// a talk with that guard, or one waited out (UNTIL keeps the last step's target: activating a guard with a bounty
+	// opens on the crime greeting): in a LEGIT run pay it if there is gold for it, close the dialogue and carry on
+	if (s.testLegit && s.dlg.open && s.screen == SCR_DIALOGUE && s.dlg.ref >= 0 && (s.dlg.ref != ref || kind == UNTIL)
+		&& s.dlg.ref < (int)w.refs.size()
 		&& w.refs[s.dlg.ref].actor >= 0 && lower(w.game.actors[w.refs[s.dlg.ref].actor].cls) == "guard")
 	{
 		const std::string who = w.refs[s.dlg.ref].idLower;
 		int pay = -1;
+		// (the Pay Gold button: choice 1 in the plain arrest greetings, 5 in the "turned yourself in" one a guard gives a
+		// player who talks to it with a bounty)
 		for (size_t i = 0; i < s.dlg.choices.size() && pay < 0; i++)
-			if (s.dlg.choices[i].second == 1)
+			if (s.dlg.choices[i].second == 1 || lower(s.dlg.choices[i].first).compare(0, 3, "pay") == 0)
 				pay = (int)i;
 		if (w.bounty > 0 && pay >= 0 && w.itemCount("gold_001") >= w.bounty)
 		{
@@ -669,7 +673,7 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			dialogueChoose(s.dlg, w, s, s.dlg.choices[pay].second);
 			return true;
 		}
-		if (s.dlg.choices.empty() && w.bounty <= 0)
+		if (s.dlg.choices.empty() && w.bounty <= 0 && s.dlg.ref != ref)
 		{
 			logf("drive: closing %s's talk, back to %s", who.c_str(), id.c_str());
 			s.closeScreen();

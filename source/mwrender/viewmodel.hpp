@@ -62,6 +62,7 @@ struct ViewModel
 	float speed = 1.0f;                       // the weapon's speed: the swing's animation plays at this rate
 	std::string followTo;                     // a blow's medium / small follow-through, cut over to at its hit mark
 	bool visible = false;
+	bool torch = false;                       // a torch in the left hand: drawn even with the weapon away (only it then)
 
 	bool load(World& w);
 	void free(World& w);

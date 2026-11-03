@@ -1,0 +1,15 @@
+# A constant-effect item's magnitude is rolled between its min and max as it is put on and kept while worn (OpenMW
+# rolls an item's constant effects as it adds them to the active spells), rolled again the next time it goes on. Ours
+# always gave the minimum. A ring of Fortify Strength 5-50: worn, Strength rises by more than 5 (this seed) and stays.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 SETATTR:strength:40
+0.3 0 0 0 0 SNAP:attr:strength
+0.1 0 0 0 0 ADDEFFECT:79:5:50:1:0:strength:0
+0.3 0 0 0 0 MAKEITEM:common_ring_01:test_strength_ring:constant
+0.3 0 0 0 0 EQUIP:test_strength_ring
+1 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:ge:@6+EXPECT:attr:strength:le:@50
+0.3 0 0 0 0 SNAP:attr:strength
+2 0 0 0
+0.3 0 0 0 0 EXPECT:attr:strength:eq:@
