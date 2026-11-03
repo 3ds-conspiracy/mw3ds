@@ -1,0 +1,15 @@
+# bug-enemy-bar-far-trip: the HUD's health bar for the last one hit goes with the place left. A scamp hit in Seyda
+# Neen, then an Almsivi Intervention to Vivec within the bar's six seconds: on an Old 3DS the trip frees Seyda Neen's
+# objects, and the bar kept pointing at the scamp's freed slot (the memory checker crashed in the HUD reading it)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GIVE:silver_flameblade
+0.3 0 0 0 0 PLACE:scamp_summon:120
+1 0 0 0
+0.3 0 0 0 0 HIT:scamp_summon
+0.3 0 0 0 0 EXPECT:hudenemy:eq:1
+0.3 0 0 0 0 GIVE:sc_almsiviintervention
+0.3 0 0 0 0 CAST:item:sc_almsiviintervention
+3 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Vivec+EXPECT:hudenemy:eq:0
+3 0 0 0

@@ -188,6 +188,12 @@ void World::recomputeStats()
 	stats.magickaFlat = magickaMod;      // (reapplyEffects adds the active spells' back)
 	stats.magickaMax = a[ATTR_INTELLIGENCE] * magickaMult + magickaMod;
 	stats.fatigueMax = a[ATTR_STRENGTH] + a[ATTR_WILLPOWER] + a[ATTR_AGILITY] + a[ATTR_ENDURANCE] + fatigueMod;
+	const float mods[3] = { healthMod, magickaMod, fatigueMod };
+	for (int k = 0; k < 3; k++)
+	{
+		fortifyMoved[k] = mods[k] - fortifyMods[k];
+		fortifyMods[k] = mods[k];
+	}
 	stats.health = stats.healthMax;
 	stats.magicka = stats.magickaMax;
 	stats.fatigue = stats.fatigueMax;

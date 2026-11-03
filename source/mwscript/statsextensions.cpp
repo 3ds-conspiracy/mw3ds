@@ -216,9 +216,7 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 		(attr >= 0 ? s.attrBonus[attr] : s.skillBonus[skill]) += delta;
 		float health = s.health, magicka = s.magicka, fatigue = s.fatigue;
 		w.recomputeStats();
-		s.health = fminf(s.healthMax, health);
-		s.magicka = fminf(s.magickaMax, magicka);
-		s.fatigue = fminf(s.fatigueMax, fatigue);
+		w.keepBars(health, magicka, fatigue);
 		value = attr >= 0 ? s.attributes[attr] : s.skills[skill];
 	}
 	*out = (float)value;
@@ -395,9 +393,7 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 				w.stats.spells.push_back(id);
 				float hp = w.stats.health, mp = w.stats.magicka, fp = w.stats.fatigue;
 				w.recomputeStats();
-				w.stats.health = fminf(w.stats.healthMax, hp);
-				w.stats.magicka = fminf(w.stats.magickaMax, mp);
-				w.stats.fatigue = fminf(w.stats.fatigueMax, fp);
+				w.keepBars(hp, mp, fp);
 			}
 		}
 		return 0.0f;
@@ -418,9 +414,7 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 					w.stats.spells.erase(w.stats.spells.begin() + i--);
 			float hp = w.stats.health, mp = w.stats.magicka, fp = w.stats.fatigue;
 			w.recomputeStats();
-			w.stats.health = fminf(w.stats.healthMax, hp);
-			w.stats.magicka = fminf(w.stats.magickaMax, mp);
-			w.stats.fatigue = fminf(w.stats.fatigueMax, fp);
+			w.keepBars(hp, mp, fp);
 		}
 		return 0.0f;
 	case F_GETSPELL:

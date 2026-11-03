@@ -58,7 +58,7 @@ stops itself. Code: `Session::startGameScripts`, `GameData::startScripts`.
 | Effect 137, Summon Fabricant: calls Fabricant_summon (sMagicFabricantID) | same | `mwmechanics/spelleffects.cpp` `summonCreature` |
 | DisableLevitation ends every Levitate at once (the player told sLevitateDisabled); a new one too | same | [scripting.md](scripting.md) |
 | An ability's or a worn constant enchantment's Restore Health / Magicka / Fatigue works every second, as a spell's (OpenMW keeps an ability as a spell that never ends): the Imperfect's Rebuild, Gedna Relvel's Refill, a constant Restore Health ring (vanilla too) | same | `mwmechanics/activespells.cpp` (the player), `mwmechanics/combat.cpp` (actors: their `const_effects`) |
-| An ability's or a worn constant enchantment's Fortify Health / Magicka / Fatigue raises the maximum while it lasts: Her Reflected Glory, Maras's Skirt, the Hortator's Belt (vanilla too) | same | `mwworld/player.cpp` `recomputeStats` |
+| An ability's or a worn constant enchantment's Fortify Health / Magicka / Fatigue raises the maximum while it lasts: Her Reflected Glory, Maras's Skirt, the Hortator's Belt (vanilla too). The current value moves with it, up when it comes and down when it goes (OpenMW: modDynamicStat for an ability, adjustDynamicStat for an item's): a ring of Fortify Health 300 put on gives 300 health at once | same | `mwworld/player.cpp` `recomputeStats`, `mwworld/worldimp.cpp` `keepBars` |
 
 Every spell, ability, disease and power Tribunal adds, every enchantment on an item, every creature and every armour
 and weapon has a check in `trib-spells`, `trib-enchantments`, `trib-creatures` and `trib-gear`, written by

@@ -111,6 +111,20 @@ const float* followGoal(World& w, Ref& r, const float* who, float dt)
 	unsigned want = 0;
 	if (r.trailSeq == 0)
 	{
+		// the newest footstep it can see near it, at its own height, first: the trail from the nearest went the whole way
+		// the player had walked about a place before. High Pockets, taken on in Godsreach after the player had crossed it
+		// and back, went off round the plaza the player had walked, and never came to the stairs up to the Winged Guar
+		// (uber-trib-mournhold-2 on an Old 3DS)
+		for (int k = 0; k < sTrailCount && !want; k++)
+		{
+			const float* p = sTrail[trailSlot(k)];
+			float dx = p[0] - r.pos[0], dy = p[1] - r.pos[1], c[3] = { p[0], p[1], p[2] + 50.0f };
+			if (dx * dx + dy * dy < 600.0f * 600.0f && fabsf(p[2] - r.pos[2]) < 60.0f && w.lineOfSight(a, c, false))
+				want = sTrailNum[trailSlot(k)] + (dx * dx + dy * dy > 70.0f * 70.0f ? 0 : 1);
+		}
+	}
+	if (r.trailSeq == 0 && !want)
+	{
 		float best = 600.0f * 600.0f;
 		for (int k = 0; k < sTrailCount; k++)
 		{

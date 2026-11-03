@@ -99,11 +99,9 @@ void Session::useDoor(int ref)
 			w.player.inertia[0] = w.player.inertia[1] = 0.0f;
 			for (size_t k = 0; k < followers.size(); k++)
 			{
-				// just ahead of the player, side by side, as a door to another cell sets them down
-				float back = -72.0f, side = ((int)k - (int)followers.size() / 2) * 64.0f + (k % 2 ? 40.0f : -40.0f);
-				float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
-				float pos[3] = { w.player.feet[0] - fx * back + fy * side, w.player.feet[1] - fy * back - fx * side,
-					w.player.feet[2] };
+				// (set down as a door to another cell sets them down)
+				float pos[3];
+				w.followerSpot(k, followers.size(), pos);
 				w.relocate(followers[k], w.placeOf(followers[k]), pos, w.player.yaw);
 			}
 			fade = 1.0f;

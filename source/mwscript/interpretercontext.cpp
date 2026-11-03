@@ -78,10 +78,13 @@ void Session::openMenu(ScriptMenu menu)
 }
 
 // ForceGreeting: the speaker opens the conversation, hostile or not (Dagoth Gares greets Nerevar before the
-// fight) and without their OnActivate (that's the player's activation)
+// fight) and without their OnActivate (that's the player's activation). A talk already open turns to the one greeting:
+// OpenMW pushes the dialogue mode again and the window takes the new speaker (DialogueWindow::setPtr), and with no
+// greeting of theirs it closes. Din, reaching Mehra Drora while the player talked with her, had his greeting dropped
+// and The Man Who Spoke to Slaughterfish stayed at 50. (The talk left ends as at Goodbye: its persuasion's lasting part kept)
 void Session::forceGreeting(int ref)
 {
-	if (ref < 0 || dlg.open || !w.active(ref))
+	if (ref < 0 || !w.active(ref))
 		return;
 	Ref& r = w.refs[ref];
 	if (r.dead || !r.visible() || r.actor < 0)
@@ -91,11 +94,16 @@ void Session::forceGreeting(int ref)
 	w.player.yaw = atan2f(dx, dy);
 	w.player.pitch = atan2f(dz, fmaxf(1.0f, sqrtf(dx * dx + dy * dy)));
 	logf("dialogue: %s greets the player (ForceGreeting)", r.id.c_str());
+	bool talking = dlg.open;
+	if (talking)
+		dialogueClose(dlg, w);
 	if (dialogueStart(dlg, w, *this, ref))
 	{
 		wordsRevision = -1;
 		openScreen(SCR_DIALOGUE);
 	}
+	else if (talking)
+		closeScreen();
 }
 
 void Session::dialogueChoice(const std::vector<std::pair<std::string, int>>& choices)

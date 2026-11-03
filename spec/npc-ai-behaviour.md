@@ -21,6 +21,16 @@ term reaches 100, it isn't calmed (Calm Humanoid / Creature active), and it sees
 creatures are never aggressive. Guards also attack creatures that are fighting, within `fAlarmRadius`, when the
 creature's own fight term against the player is 100.
 
+## Allies join a fight
+
+An actor sides with the one its Follow or Escort package is on, with anyone following or escorting it, and on round
+(OpenMW's `getActorsSidingWith` through its `SidingCache`): a leader and everyone following them are one side. When one it sides with is fighting the player, it joins in: at once if the player struck that one
+(the ally's hit attempt actor is the player; `actorAttacked` also sets the victim's followers on the attacker), otherwise
+once it sees and notices the player (the awareness check). Not when calmed, and never the player's own followers, who
+side with the player. One that joins counts as the aggressor, as one attacking on sight does (no crime against it).
+Creatures carry their record's package as people do (Gothren's two dremora follow him). Tests: `bug-gothren-guards-join`,
+`bug-follower-leader-joins`.
+
 ## Fleeing
 
     Flee >= 100: always

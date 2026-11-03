@@ -1,0 +1,15 @@
+# bug-follower-leader-joins: siding goes both ways (OpenMW's getActorsSidingWith: the one a follower follows sides with
+# it too). The player strikes one of Gothren's dremora in the Upper Tower of Tel Aruhn: Gothren, whom it follows, turns
+# on the player, and so does the other dremora, who follows him
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2+SEED:1
+0.3 0 0 0 0 GOTO:Tel_Aruhn,_Upper_Tower
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refengaged:gothren:eq:0
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EQUIP:iron_longsword
+0.3 0 0 0 0 HIT:dremora_gothren_guard1
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refengaged:dremora_gothren_guard1:eq:1+EXPECT:refengaged:gothren:eq:1
+0.3 0 0 0 0 EXPECT:refengaged:dremora_gothren_guard2:eq:1
+1 0 0 0

@@ -1,0 +1,20 @@
+# A worn constant-effect Fortify Health raises current health with the maximum, and taking it off lowers both again
+# (OpenMW: an item's constant effect moves the current value with it, adjustDynamicStat; an ability's too, modDynamicStat).
+# The ring gave 300 more maximum and left current health where it was, so a player told to fortify their health before
+# the jury-rigged Wraithguard's shock (Yagrum Bagarn, CX_BackPath) gained nothing from a worn ring
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 ADDEFFECT:80:300:300:0:0
+0.3 0 0 0 0 MAKEITEM:common_ring_01:mw3ds_test_lifering:constant
+0.3 0 0 0 0 ADDEFFECT:82:200:200:0:0
+0.3 0 0 0 0 MAKEITEM:common_amulet_01:mw3ds_test_runamulet:constant
+0.3 0 0 0 0 SNAP:health+SNAP:healthmax+SNAP:fatigue
+0.3 0 0 0 0 EQUIP:mw3ds_test_lifering
+2 0 0 0
+0.1 0 0 0 0 EXPECT:health:eq:@300+EXPECT:healthmax:eq:@300
+0.3 0 0 0 0 UNEQUIP:mw3ds_test_lifering
+2 0 0 0
+0.1 0 0 0 0 EXPECT:health:eq:@0+EXPECT:healthmax:eq:@0
+0.3 0 0 0 0 EQUIP:mw3ds_test_runamulet
+2 0 0 0
+0.1 0 0 0 0 EXPECT:fatigue:ge:@190

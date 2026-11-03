@@ -15,7 +15,7 @@ import struct
 from mwfiles import DATA_FILES, bloodmoon, game_path, read_game, read_records, text, tribunal
 from mwscript import ScriptError, compile_script, compile_snippet
 from creature import creature_stats
-from npcstats import HARMFUL_EFFECTS, bind, npc_items, npc_stats, weapon_damage
+from npcstats import HARMFUL_EFFECTS, ai_package, bind, npc_items, npc_stats, weapon_damage
 
 ITEM_TYPES = {"MISC", "BOOK", "ALCH", "INGR", "WEAP", "ARMO", "CLOT", "LIGH", "APPA", "LOCK", "PROB", "REPA"}
 # Engine sounds used by the runtime (item pickup, doors, UI, journal, footsteps)
@@ -206,7 +206,10 @@ def _npc_info(rec, db):
                      # soul size (NPDT: type, level, 8 attributes, health, magicka, fatigue, soul)
                      "soul": struct.unpack_from("<i", rec.get("NPDT"), 52)[0] if len(rec.get("NPDT") or b"") >= 56 else 0,
                      "resist_normal": normal_weapon_resistance(rec, db)},
-                    **creature_stats(rec, db["SPEL"], db))
+                    **creature_stats(rec, db["SPEL"], db),
+                    # its AI package, as a person's (npcstats.ai_package): Gothren's dremora follow him, Yagrum Bagarn
+                    # Uupse Fyr. (Taken here, not in creature.py, which the cells' cache key reads: a cell is the same)
+                    **({"ai": ai_package(rec)} if ai_package(rec) else {}))
     npdt = rec.get("NPDT")
     if len(npdt) == 12:           # autocalculated stats
         level, disp, rep, rank = struct.unpack_from("<hbbb", npdt)

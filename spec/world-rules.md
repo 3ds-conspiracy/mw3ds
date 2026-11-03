@@ -160,6 +160,12 @@ GMSTs: `fSoulgemMult`.
 - Every teleport door counts, also one to elsewhere in the same cell (the trapdoor between the shack and the cave of
   Fatleg's Drop Off, Hla Oad): ours took followers only on a change of cell, and left Rabinna behind
   (`bug-follower-trapdoor`; fixed 2026-10-10, `Session::useDoor`).
+- Where they land: OpenMW moves every follower onto the destination itself, the player's spot, and lets the bodies
+  part. Ours (doors and travel services) sets them down 72 ahead of the player, side by side, where that spot is clear
+  of walls by a body's width and has a floor within a step, else on the player's spot as OpenMW does
+  (`World::followerSpot`). Before, the spot ahead was taken as it was: out of the Arena Canalworks into Vivec's Arena
+  Waistworks it lay against a hall's end wall, and Saprius Entius, pushed into the wall, stayed there
+  (`bug-follower-door-wall`; fixed 2026-11-02).
 
 GMSTs: none.
 

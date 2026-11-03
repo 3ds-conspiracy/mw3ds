@@ -226,6 +226,7 @@ struct World
 	// the player's hit attempt foe (OpenMW's CreatureStats::getHitAttemptActor on the player): the first in a fight with
 	// the player to swing at them, or the first the player swings at; the player's followers take it on (-1: none)
 	int playerHitAttempt = -1;
+	int testScriptRoll = -1;                      // tests: what a script's Random returns (SCRIPTROLL; -1: random)
 	bool werewolfJustChanged = false;              // the player became one this frame: the session looks for witnesses
 	// A werewolf's claws: hand to hand as health damage times the WerewolfClawMult global (25, 35 after the first
 	// dream; OpenMW's getHandToHandDamage) times fHandtoHandHealthPer; a silver weapon on a werewolf does
@@ -268,6 +269,8 @@ struct World
 	std::vector<std::string> brewed;              // potions the player made (ids of objects added to game.objects; saved)
 	// Moves a reference to a spot in another (or the same) cell: PositionCell / Position
 	void relocate(int ri, int cell, const float pos[3], float yaw);
+	// Where the k-th of n followers brought through a door or by a travel service is set down (the player there already)
+	void followerSpot(size_t k, size_t n, float pos[3]) const;
 	void detachActor(int ri);         // its mesh and collision cylinder leave the cell drawing them
 
 	// Objects of cells that aren't in memory: what changed in each (save-file items), applied when the
@@ -432,6 +435,10 @@ struct World
 	int getJournal(const std::string& quest) const;
 	void recomputeStats();
 	void refreshStats();                          // recomputeStats keeping current health / magicka / fatigue
+	// The abilities' and worn constant enchantments' Fortify Health / Magicka / Fatigue as recomputeStats last summed
+	// them, and how much that sum moved then: the current bars move with it (refreshStats)
+	float fortifyMods[3] = {}, fortifyMoved[3] = {};
+	void keepBars(float health, float magicka, float fatigue);   // the bars as they were, moved by fortifyMoved, within the maxima
 	const SpellDef* enchantmentOf(const InventoryItem& it) const;
 	float chargeOf(const InventoryItem& it) const;   // what's left (full when never used)
 	float effectTotal(int effect) const;                // sum of an active effect's magnitudes

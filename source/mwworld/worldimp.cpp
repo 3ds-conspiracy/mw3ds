@@ -356,9 +356,18 @@ void World::refreshStats()
 {
 	float h = stats.health, m = stats.magicka, f = stats.fatigue;
 	recomputeStats();
-	stats.health = fminf(h, stats.healthMax);
-	stats.magicka = fminf(m, stats.magickaMax);
-	stats.fatigue = fminf(f, stats.fatigueMax);
+	keepBars(h, m, f);
+}
+
+// An ability's or a worn constant enchantment's Fortify Health / Magicka / Fatigue coming or going moves the current
+// value with the maximum, as OpenMW applies one (modDynamicStat for an ability, adjustDynamicStat for an item's): a
+// ring of Fortify Health 300 put on gives 300 health at once, taken off takes them away again
+void World::keepBars(float health, float magicka, float fatigue)
+{
+	stats.health = std::max(0.0f, fminf(health + fortifyMoved[0], stats.healthMax));
+	stats.magicka = std::max(0.0f, fminf(magicka + fortifyMoved[1], stats.magickaMax));
+	stats.fatigue = fminf(fatigue + fortifyMoved[2], stats.fatigueMax);
+	fortifyMoved[0] = fortifyMoved[1] = fortifyMoved[2] = 0.0f;
 }
 
 const SpellDef* World::enchantmentOf(const InventoryItem& it) const
@@ -374,6 +383,33 @@ float World::chargeOf(const InventoryItem& it) const
 {
 	const SpellDef* en = enchantmentOf(it);
 	return !en ? 0.0f : it.charge < 0.0f ? (float)en->charge : it.charge;
+}
+
+// Just ahead of the player, side by side (behind is the door, often a wall), where that spot is clear of walls by a
+// body's width and has a floor within a step; else on the player's own spot, the door's, where OpenMW's ActionTeleport
+// sets every follower down. Ahead of the Arena Canalworks' door into the Waistworks a hall's end wall stands 110 away:
+// Saprius Entius set down against it was pushed into it and stayed there
+void World::followerSpot(size_t k, size_t n, float pos[3]) const
+{
+	float back = -72.0f, side = ((int)k - (int)n / 2) * 64.0f + (k % 2 ? 40.0f : -40.0f);
+	float fx = sinf(player.yaw), fy = cosf(player.yaw);
+	pos[0] = player.feet[0] - fx * back + fy * side;
+	pos[1] = player.feet[1] - fy * back - fx * side;
+	pos[2] = player.feet[2];
+	float dx = pos[0] - player.feet[0], dy = pos[1] - player.feet[1], len = sqrtf(dx * dx + dy * dy);
+	float from[3] = { player.feet[0], player.feet[1], player.feet[2] + 60.0f };
+	float past[3] = { pos[0] + dx / len * 40.0f, pos[1] + dy / len * 40.0f, pos[2] + 60.0f };
+	bool clear = true, floor = false;
+	for (LoadedCell* l : loaded)
+	{
+		float t, z;
+		if (collisionRaycast(l->cell.collision, from, past, &t))
+			clear = false;
+		if (collisionFloor(l->cell.collision, pos[0], pos[1], pos[2] + 48.0f, pos[2] - 160.0f, &z))
+			floor = true;
+	}
+	if (!clear || !floor)
+		memcpy(pos, player.feet, sizeof(player.feet));
 }
 
 void World::relocate(int ri, int cell, const float pos[3], float yaw)
@@ -1419,8 +1455,9 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 	}
 	// A body lying among a plant's leaves (Ralyn Othravel fallen in the Tower of Dawn's scathecraw bed): the plant's box
 	// is far bigger than its leaves and took the ray from every side. OpenMW's pick meets the meshes: a body the ray
-	// reaches inside the container's box is what the crosshair means
-	if (best >= 0 && w.refs[best].recType == REC_CONT)
+	// reaches inside the container's box is what the crosshair means. So too inside a bed's (an activator): Foryn Gilnith,
+	// fallen under his hammock, whose box with its posts and ropes reaches down over the floor
+	if (best >= 0 && (w.refs[best].recType == REC_CONT || w.refs[best].recType == REC_ACTI))
 	{
 		const Ref& plant = w.refs[best];
 		float bodyT = reach;

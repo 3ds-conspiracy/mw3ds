@@ -116,6 +116,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	// In reach in a fight: OpenMW's combat moves (a side step, an archer backing away). True when it moved this frame
 	bool combatMove(int ref, Cell& cell, float dist, float facing, bool ranged, const Object* foeWeapon, float dt);
 	void makeHostile(int ref);
+	bool sidesInPlayersFight(int ref);   // one siding with someone fighting the player joins in (engageCombat)
 	// spell: a damage effect (health only, no hit recoil, hurt sound, blood or voice: OpenMW's applyMagicEffect)
 	void damageNpc(int ref, float dmg, bool fatigueOnly, bool spell = false);
 	bool friendlyHit(int ref);     // the player's blow or harmful spell on one siding with them is forgiven

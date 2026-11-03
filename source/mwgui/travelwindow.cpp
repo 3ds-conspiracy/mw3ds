@@ -76,6 +76,10 @@ void Session::finishTravel()
 	subtitle.clear();
 	stopLoopSounds();
 	target = -1;
+	// The health bar of the last one hit goes with the place left, as it goes once that actor isn't loaded (OpenMW's
+	// stops following an actor it can't find and fades out): kept, it pointed at a slot an Old 3DS's far trip had freed,
+	// and the next frame read freed memory
+	enemyRef = -1;
 	u64 start = osGetTime();
 	// Followers (a follow package, summons; not escorts) within 800 units come along (OpenMW's getFollowers): not
 	// one whose script says stayoutside when it is outdoors and the way leads in; one fighting the player stops
@@ -144,11 +148,8 @@ void Session::finishTravel()
 	}
 	for (size_t k = 0; k < followers.size(); k++)
 	{
-		// Just ahead of the player, side by side (behind is the door, often a wall)
-		float back = -72.0f, side = ((int)k - (int)followers.size() / 2) * 64.0f + (k % 2 ? 40.0f : -40.0f);
-		float fx = sinf(w.player.yaw), fy = cosf(w.player.yaw);
-		float pos[3] = { w.player.feet[0] - fx * back + fy * side, w.player.feet[1] - fy * back - fx * side,
-			w.player.feet[2] };
+		float pos[3];
+		w.followerSpot(k, followers.size(), pos);
 		int c = w.current;
 		if (!w.cells[c].interior)
 		{

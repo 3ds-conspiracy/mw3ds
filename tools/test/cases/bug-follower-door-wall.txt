@@ -1,0 +1,72 @@
+# A follower brought through a door is set down where a body has room: ahead of the player as a rule, else on the
+# door's own spot (OpenMW's ActionTeleport sets followers down on it). Saprius Entius, following out of Vivec's Arena
+# Canalworks by its west door, was set down against the end wall of the Waistworks' hall ahead, pushed into it, and
+# stayed there: the escort to Ebonheart could not go on. (Played as il-protect-saprius-entius as far as the Waistworks.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 ACTIVE:117:100
+0.3 0 0 0 0 ENHANCEV2
+0.3 0 0 0 0 GIVE:daedric_longsword
+0.3 0 0 0 0 EQUIP:daedric_longsword
+0.3 0 0 0 0 GIVE:Gold_001:2000
+# (a Knight of the Imperial Legion in uniform, who has cleared Saprius' name of the false Ordinator's crimes and been sent
+# by Frald the White to find him, as in uber-imperial-legion)
+0.3 0 0 0 0 CON:pcjoinfaction%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:pcraiserank%"imperial%legion"
+0.3 0 0 0 0 CON:addtopic%"saprius%entius"
+0.3 0 0 0 0 GIVE:imperial_chain_cuirass
+0.3 0 0 0 0 EQUIP:imperial_chain_cuirass
+0.3 0 0 0 0 JOURNAL:IL_FalseOrdinator:100
+0.3 0 0 0 0 JOURNAL:IL_ProtectEntius:10
+# (Frald's word also brings Saprius out of hiding)
+0.3 0 0 0 0 CON:"saprius%entius"->enable
+0.3 0 0 0 0 GOTO:Vivec,_Arena_Canalworks
+6 0 0 0
+0.3 0 0 0 0 LEGIT
+120 0 0 0 0 DOORTO:Vivec,_Arena_Storage
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Storage
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:saprius%entius
+1.5 0 0 0
+10 0 0 0 0 UNTIL:journal:IL_ProtectEntius:ge:40
+0.1 0 0 0 0 EXPECT:journal:IL_ProtectEntius:eq:40
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+# (the two Ordinators come for him; once fighting him they are no one's victims: OpenMW's canCommitCrimeAgainst)
+120 0 0 0 0 FIGHT:ordinator%wander_ilpe_1
+20 0 0 0 0 UNTIL:refengaged:ordinator%wander_ilpe_2:eq:1
+120 0 0 0 0 FIGHT:ordinator%wander_ilpe_2
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:ordinator%wander_ilpe_1
+0.1 0 0 0 0 EXPECT:dead:ordinator%wander_ilpe_2
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+60 0 0 0 0 ACTIVATE:saprius%entius
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:journal:IL_ProtectEntius:ge:50
+0.1 0 0 0 0 EXPECT:journal:IL_ProtectEntius:eq:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+5 0 0 0 0 UNTIL:following:saprius%entius
+0.3 0 0 0 0 ESCORT:saprius%entius
+120 0 0 0 0 DOORTO:Vivec,_Arena_Canalworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Canalworks
+30 0 0 0 0 UNTIL:refdist:saprius%entius:lt:400
+120 0 0 0 0 DOORTO:Vivec,_Arena_Waistworks
+10 0 0 0 0 UNTIL:cell:Vivec,_Arena_Waistworks
+0.3 0 0 0 0 ESCORT:-
+2 0 0 0
+# (on a floor, and come along across the Waistworks behind us)
+60 0 0 0 0 WALKTO:@3840,3328,18048
+10 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:saprius%entius:lt:500

@@ -214,7 +214,7 @@ container's own state; the player is just one case.
 | J6 | Goodbye | pending choices not cleared | low | unverified |
 | J7 | ClearInfoActor | ours bars the response forever; OpenMW only removes the Topics journal line | high | unverified |
 | J8 | Get/Set/ModReputation on an NPC | a delta from 0, not the record value | medium | unverified |
-| J9 | ForceGreeting | refuses more cases; turns the player | low | unverified |
+| J9 | ForceGreeting | refuses more cases; turns the player. With a talk open it was dropped; it now turns the talk to the one greeting, as OpenMW's dialogue window takes the new speaker (closed when they have no greeting) | low | partly fixed 2026-11-02 (`bug-forcegreeting-in-talk`); the turn of the player unverified |
 | J10 | AddTopic | no existence check | low | unverified |
 | J11 | ShowMap | exact name only (OpenMW prefix over cells) | medium | unverified |
 | J12 | ShowRestMenu in an owned bed | always refused (OpenMW: only if witnessed; bounty) | low | unverified |
@@ -394,6 +394,7 @@ D21 = F18, D23 = F19, J5 = F25, J7 = F20.
 | F1 | A teleport door to elsewhere in the same cell left followers behind (Rabinna, Fatleg's Drop Off trapdoor) | OpenMW's ActionTeleport takes followers within 800 on every teleport; ours only on a change of cell (`Session::useDoor`) | med | fixed (`bug-follower-trapdoor`; spec world-rules 6) |
 | F2 | Rest refused with anyone fighting within 3000 (a rat fighting a guard in Caldera) | OpenMW's getEnemiesNearby counts actors in combat with the player, or aggressive toward him, within the actors processing range, followers excepted; ours counts any actor in combat within 3000 (`Session::enemiesNear`, `mwgui/waitdialog.cpp`) | low | unverified (not changed: other cases sleep) |
 | F3 | A follower stops within 256 units in 2D (Malexa on a walkway 430 above the player stood still) | OpenMW's AiFollow measures in 3D; ours in 2D (`mwmechanics/combat.cpp`, AIPKG_FOLLOW) | low | unverified (a change was tried and reverted with others: no passing case) |
+| F4 | A follower set down ahead of the player against a wall after a door (Saprius Entius, Arena Canalworks into the Arena Waistworks) | OpenMW sets followers down on the door's destination itself; ours 72 ahead, wherever that was | med | fixed (`bug-follower-door-wall`; spec world-rules 6) |
 | S1 | A new game never ran CharGen's `ChangeWeather "Bitter Coast Region" 1` | the engine set CharGen's other results by hand (CharGenState 10, the control switches) instead of running the scripts as OpenMW's startNewGame does (CharGenState 1, the global scripts five times); now it runs them (`Session` new game, spec scripting.md) | low | fixed (`chargen-start-script`) |
 | S2 | `X.var / 2` divides as floats where X's script declares a short | both compilers type a remote variable as a float; OpenMW's asks the remote script's declared type (`mwscript.py`, `components/compiler/compiler.cpp`) | low | unverified (no vanilla script found depending on it) |
 | S3 | `Equip` on an NPC only gives the item | OpenMW adds the item and equips it (OpEquip); NPC clothes and armour are baked into meshes at conversion and the weapon is a record field here; no vanilla script calls Equip | low | open |

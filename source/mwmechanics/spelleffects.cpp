@@ -249,9 +249,7 @@ bool Session::instantEffect(int effect, float magnitude)
 		// The disease's drains go with it (current bars kept)
 		float hp = s.health, mp = s.magicka, fp = s.fatigue;
 		w.recomputeStats();
-		s.health = fminf(s.healthMax, hp);
-		s.magicka = fminf(s.magickaMax, mp);
-		s.fatigue = fminf(s.fatigueMax, fp);
+		w.keepBars(hp, mp, fp);
 	};
 	auto endEffects = [&](auto pred) {
 		for (size_t i = 0; i < w.effects.size();)
@@ -271,9 +269,7 @@ bool Session::instantEffect(int effect, float magnitude)
 			w.corprusSince = -2.0f;
 			float hp = s.health, mp = s.magicka, fp = s.fatigue;
 			w.recomputeStats();
-			s.health = fminf(s.healthMax, hp);
-			s.magicka = fminf(s.magickaMax, mp);
-			s.fatigue = fminf(s.fatigueMax, fp);
+			w.keepBars(hp, mp, fp);
 		}
 		return true;
 	case EFF_CURE_POISON: endEffects([](const ActiveEffect& a) { return a.effect == EFF_POISON; }); return true;

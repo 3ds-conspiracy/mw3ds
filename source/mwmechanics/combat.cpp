@@ -964,6 +964,14 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				r.aggressor = true;
 				makeHostile(i);
 			}
+			// (four times a second, as the rating: it walks the loaded actors for who follows them)
+			// (one fighting the player as they do is no victim of a crime: as one who attacks on sight)
+			else if (!menu && !calm && ((w.frame + i) % 4 == 0 || !cadenceOn(CAD_FIGHT)) && sidesInPlayersFight(i))
+			{
+				logf("combat: %s joins the fight on the side of those it sides with", r.id.c_str());
+				r.aggressor = true;
+				makeHostile(i);
+			}
 			else if (!menu && r.recType == REC_NPC_ && (r.duelFoe = guardFoe(i)) >= 0)
 				npcDuel(i, dt);
 			// one following the player takes on the player's hit attempt foe (OpenMW's engageCombat: an ally's hit attempt

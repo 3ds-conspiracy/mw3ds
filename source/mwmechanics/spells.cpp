@@ -121,8 +121,6 @@ void Session::updateCorprus()
 		PlayerStats& s = w.stats;
 		float hp = s.health, mp = s.magicka, fp = s.fatigue;
 		w.recomputeStats();
-		s.health = fminf(s.healthMax, hp);
-		s.magicka = fminf(s.magickaMax, mp);
-		s.fatigue = fminf(s.fatigueMax, fp);
+		w.keepBars(hp, mp, fp);
 	}
 }

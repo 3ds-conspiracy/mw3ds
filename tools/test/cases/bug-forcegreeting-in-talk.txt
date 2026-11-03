@@ -1,0 +1,21 @@
+# A script's ForceGreeting while the player talks with someone else turns the talk to the one greeting (OpenMW's
+# ForceGreeting pushes the dialogue mode again, and the dialogue window takes the new speaker: DialogueWindow::setPtr).
+# Ours dropped it: Din (The Man Who Spoke to Slaughterfish), reaching Mehra Drora while the player talked with her, had
+# his script set the quest on and force his greeting, which moves it on again; the greeting was lost and the quest
+# stayed at 50
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Gnisis,_Temple
+4 0 0 0
+0 0 0 0 0 SETUP-END
+60 0 0 0 0 ACTIVATE:mehra%drora
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:talkingto:mehra%drora
+0.3 0 0 0 0 CON:"zanmulk%sammalamus"->forcegreeting
+1 0 0 0
+0.1 0 0 0 0 EXPECT:talkingto:zanmulk%sammalamus
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:screen:none

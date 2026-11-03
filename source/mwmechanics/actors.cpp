@@ -162,6 +162,56 @@ float Session::actorHalfLength(int ri)
 	return (def.hasBox ? def.box[3] : kPlayerHalfLength) * s;
 }
 
+// Someone siding with one who fights the player takes up the fight (OpenMW's Actors::engageCombat). Siding is
+// following or escorting someone, being followed or escorted, and so on round (getActorsSidingWith through its
+// SidingCache: allies of allies): a leader and all who follow them are one side. Gothren's two dremora follow him about
+// his tower: the player strikes one, and Gothren and the other dremora join it. At once when the player struck one of
+// the side (their hit attempt actor; OpenMW's actorAttacked sets the victim's side on the attacker the same way), else
+// once they notice the player (the awareness check, with line of sight). Not the player's own followers: they side with
+// the player
+static int sideLeader(const World& w, int i)
+{
+	int at = i;
+	for (int link = 0; link < 4; link++)
+	{
+		const Ref& r = w.refs[at];
+		if ((r.aiPackage != AIPKG_FOLLOW && r.aiPackage != AIPKG_ESCORT) || r.aiTarget.empty() || r.aiTarget == "player")
+			break;
+		int next = w.findRef(r.aiTarget);
+		if (next < 0 || next == i || w.refs[next].dead || w.refs[next].actor < 0)
+			break;
+		at = next;
+	}
+	return at;
+}
+
+bool Session::sidesInPlayersFight(int i)
+{
+	const Ref& r = w.refs[i];
+	if (r.dead || r.ally || w.followsPlayer(i))
+		return false;
+	int leader = sideLeader(w, i), side = -1;
+	bool alone = leader == i;
+	for (int a : w.loadedActors)
+	{
+		const Ref& o = w.refs[a];
+		if (a == i || o.dead || o.ai != AI_COMBAT || o.duelFoe >= 0 || !w.active(a))
+			continue;
+		// (one with no leader is a side only with those who follow it)
+		int theirs = sideLeader(w, a);
+		if (theirs == leader && !(alone && theirs == a))
+		{
+			side = a;
+			if (o.attacked)
+				return true;
+		}
+	}
+	if (side < 0)
+		return false;
+	float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f }, eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+	return npcAware(i) && w.lineOfSight(head, eye);
+}
+
 // ---- Summoned allies
 
 // The nearest actor fighting the player within 1500: fought as any fight between two actors is (npcDuel: its reach

@@ -956,6 +956,21 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 				// ever.) Land below held feet is left to gravity, as ever: what the feet were on may be a platform or a
 				// bridge whose collision is in a cell still to come, and the land far under it. Done here: the never-
 				// through-a-surface check below would undo the move up through the hill
+				// (onto it only with headroom there: a rock standing on the land holds the body in it. The giant bull netch's box
+				// pushed the player 140 units into Sheogorad's hillside in a frame, and put back on the land the body was inside
+				// the rock over it, for good. The move is refused instead, as a wall refuses it)
+				float onLand[3] = { p.feet[0], p.feet[1], landZ };
+				if (p.fits && !bodyFits(scene, onLand))
+				{
+					p.feet[0] = start[0];
+					p.feet[1] = start[1];
+					p.feet[2] = start[2];
+					p.vz = 0.0f;
+					p.onGround = startOnGround;
+					p.inertia[0] = p.inertia[1] = 0.0f;
+					p.fits = bodyFits(scene, p.feet);
+					return;
+				}
 				if (!p.heldUp)
 					monitorOnce("underland", "player under the land at %.0f %.0f %.0f (the land %.0f above the feet): put back on it",
 						p.feet[0], p.feet[1], p.feet[2], landZ - p.feet[2]);
