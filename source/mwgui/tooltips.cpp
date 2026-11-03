@@ -75,7 +75,8 @@ void Session::itemTip(const Object* o, const InventoryItem* it)
 	// its type's lines: kind, damage or armor rating, condition, quality (mwclass/)
 	MWClass::toolTipStats(*this, *o, it);
 	char buf[96];
-	snprintf(buf, sizeof(buf), "Weight: %.1f   Value: %d", o->weight, o->value);
+	// (a filled soul gem's value is the soul's: World::itemValue)
+	snprintf(buf, sizeof(buf), "Weight: %.1f   Value: %d", o->weight, it ? w.itemValue(it->id, it->soul) : o->value);
 	tip.emplace_back(buf, col::text);
 	if (it && !it->soul.empty())
 	{

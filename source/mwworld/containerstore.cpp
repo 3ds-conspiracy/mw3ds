@@ -254,6 +254,21 @@ int World::soulValue(const InventoryItem& it) const
 	return 0;
 }
 
+// What an item is worth: its record's value, and a filled soul gem's that times the soul in it (OpenMW's
+// Miscellaneous::getValue with its soul gem rebalance off, the default: Morrowind's own rule, a common gem with a scamp
+// 4,000, a grand one with a golden saint 80,000)
+int World::itemValue(const std::string& id, const std::string& soul) const
+{
+	const Object* o = game.object(id);
+	if (!o)
+		return 0;
+	if (!soul.empty())
+		for (auto& a : game.actors)
+			if (a.soul > 0 && lower(a.id) == soul)
+				return o->value * a.soul;
+	return o->value;
+}
+
 float* World::itemScriptLocal(const std::string& itemId, const char* name)
 {
 	for (auto& s : scripts)

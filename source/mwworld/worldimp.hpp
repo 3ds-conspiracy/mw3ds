@@ -427,6 +427,7 @@ struct World
 	int refRemoveItem(Ref& r, const std::string& id, int count);
 	bool trapSoul(const std::string& creature, int soul);   // fills the smallest gem that holds it
 	int soulValue(const InventoryItem& it) const;
+	int itemValue(const std::string& id, const std::string& soul) const;   // its worth, a filled soul gem's by its soul
 	void setJournal(const std::string& quest, int index);        // the test harness: the stage, written, exactly
 	// Journal quest index: writes the stage's entry (once), raises the index, finished / restart. True when the
 	// player is told the journal changed

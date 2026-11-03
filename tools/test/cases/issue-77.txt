@@ -1,0 +1,28 @@
+# issue-77: a filled soul gem is worth its empty value times the soul in it (OpenMW's Miscellaneous::getValue with the
+# soul gem rebalance off, its default: Morrowind's own rule). A common gem (40) holding a scamp's soul (100) is worth
+# 4,000; offered to Arrille it brought what an empty one does. An empty gem keeps its own value
+1 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:misc_soulgem_common
+0.3 0 0 0 0 PLACE:scamp_summon:200
+1 0 0 0
+0.3 0 0 0 0 SOULKILL:scamp_summon
+1 0 0 0
+0.1 0 0 0 0 EXPECT:soul:misc_soulgem_common:scamp_summon
+0.3 0 0 0 0 GIVE:misc_soulgem_petty
+0.3 0 0 0 0 BARTER:arrille
+0.3 0 0 0 0 EXPECT:screen:barter
+# (L: the player's goods, to sell)
+0.3 0 0 0 0 L
+0.3 0 0 0 0 BARTERSEL:misc_soulgem_petty
+0.3 0 0 0 0 A
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:barterbalance:gt:0+EXPECT:barterbalance:lt:20
+0.3 0 0 0 0 BARTERSEL:misc_soulgem_common
+0.3 0 0 0 0 A
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:barterbalance:gt:1000

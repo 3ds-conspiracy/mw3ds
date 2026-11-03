@@ -12,6 +12,11 @@ disposition is the derived one, clamped 0 to 100).
 Buying: `int(base x 0.01 x (100 - 0.5 (pc - npc)))`; selling: `int(base x 0.01 x (50 - 0.5 (npc - pc)))`; never below 1,
 but a base price of 0 stays 0 and creature merchants charge the base price. Test: `openmw-spec-barter` (also the haggle target, `hagglechance`).
 
+The value a price starts from is the item's own (OpenMW's `Class::getValue`). A filled soul gem's is its empty value
+times the soul in it (the creature's soul value), as Morrowind has it: a common gem (40) with a scamp (100) is worth
+4,000, a grand gem (200) with a golden saint (400) 80,000. OpenMW's optional soul gem rebalance (the Morrowind Code
+Patch's formula, off by default) is not followed. The tooltip's Value shows the same. Test: `issue-77`.
+
 ## Haggling
 
 An offer at least as good for the merchant as their price is accepted at once. Creatures never haggle. Otherwise:

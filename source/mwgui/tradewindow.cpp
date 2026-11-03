@@ -52,7 +52,7 @@ void Session::drawBarter()
 			if (!merchantTrades(barterRef, o))
 				continue;
 			where.push_back(g);
-			prices.push_back(barterPrice(barterRef, o->value, true));
+			prices.push_back(barterPrice(barterRef, w.itemValue(good.second, good.soul), true));
 			int left = stockCount(good.first) - inDeal(false, g.first, g.second);
 			UiGridItem c = gridItem(o, good.second, left, false);
 			if (left <= 0)
@@ -66,7 +66,7 @@ void Session::drawBarter()
 			if (!merchantTrades(barterRef, o))
 				continue;
 			where.emplace_back(-1, (int)i);
-			prices.push_back(barterPrice(barterRef, o->value, false));
+			prices.push_back(barterPrice(barterRef, w.itemValue(w.inventory[i].id, w.inventory[i].soul), false));
 			int left = w.inventory[i].count - inDeal(true, -1, (int)i);
 			UiGridItem c = gridItem(o, w.inventory[i].id, left, w.inventory[i].equipped);
 			if (left <= 0)
@@ -239,17 +239,19 @@ int Session::barterBalance()
 	{
 		const BarterLine& l = barterDeal[k];
 		const Object* o = nullptr;
-		int have = 0;
+		int have = 0, value = 0;
 		if (l.sell && l.index >= 0 && l.index < (int)w.inventory.size())
 		{
 			o = w.game.object(w.inventory[l.index].id);
 			have = w.inventory[l.index].count;
+			value = w.itemValue(w.inventory[l.index].id, w.inventory[l.index].soul);
 		}
 		else if (!l.sell && l.from >= 0 && l.from < (int)w.refs.size() && l.index < (int)w.refs[l.from].contents.size())
 		{
 			ContentItem it = merchantGood({ l.from, l.index });
 			o = w.game.object(it.second);
 			have = stockCount(it.first);
+			value = w.itemValue(it.second, it.soul);
 		}
 		if (!o || have <= 0)
 		{
@@ -257,7 +259,7 @@ int Session::barterBalance()
 			continue;
 		}
 		barterDeal[k].count = std::min(barterDeal[k].count, have);
-		balance += (barterDeal[k].sell ? 1 : -1) * barterPrice(barterRef, o->value, !barterDeal[k].sell) * barterDeal[k].count;
+		balance += (barterDeal[k].sell ? 1 : -1) * barterPrice(barterRef, value, !barterDeal[k].sell) * barterDeal[k].count;
 		k++;
 	}
 	return balance;
