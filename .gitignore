@@ -33,3 +33,8 @@ native_prof.txt
 # Scratch repros and probes (run by name: scratch\<case>)
 tools/test/cases/scratch/
 .claude
+
+# Tamriel Rebuilt: loose assets from its 7z releases (the ESMs sit in Data Files), and the
+# downloads they came out of; too big for git and not on a git remote the way the other mods are
+mods/tamriel-rebuilt/
+downloads/

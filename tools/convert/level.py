@@ -431,7 +431,7 @@ _W = {}
 
 
 def _free_mb():
-    """Free physical memory in MB (Windows; None elsewhere)."""
+    """Free physical memory in MB (Windows and Linux; None elsewhere)."""
     try:
         import ctypes
 
@@ -444,18 +444,27 @@ def _free_mb():
         ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m))
         return m.avail // (1024 * 1024)
     except Exception:
-        return None
+        pass                                # not Windows: try Linux
+    try:
+        with open("/proc/meminfo") as f:
+            for line in f:
+                if line.startswith("MemAvailable:"):
+                    return int(line.split()[1]) // 1024
+    except Exception:
+        pass
+    return None
 
 
 def default_jobs():
-    """As many workers as the threads allow (two left over), and the free memory: about 1.5 GB each."""
+    """As many workers as the threads allow (two left over), and the free memory: about 2 GB each (the merged
+    database is big once the expansions and plugins load, and every worker forks a copy of it)."""
     env = os.environ.get("MW3DS_CONVERT_JOBS")
     if env:
         return max(1, int(env))
     n = max(1, (os.cpu_count() or 2) - 2)
     free = _free_mb()
     if free is not None:
-        n = min(n, max(1, (free - 1500) // 1500))
+        n = min(n, max(1, (free - 4000) // 2000))
     return n
 
 
