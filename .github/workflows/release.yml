@@ -48,6 +48,10 @@ jobs:
   converter:
     needs: engine
     runs-on: windows-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -90,6 +94,12 @@ jobs:
       - name: The tag is the version everywhere (VERSION.txt, the CIA's title version, the HOME menu text)
         shell: bash
         run: python tools/release/check_version.py "$TAG" build/release/MW3DS-Converter
+      # A signed statement from GitHub that this zip was built by this workflow from this tag, so a player can check
+      # the download with: gh attestation verify <the zip> --repo 3ds-conspiracy/mw3ds
+      - name: Attest where the zip was built
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: build/release/MW3DS-Converter-*.zip
       - name: Draft release
         shell: bash
         env:

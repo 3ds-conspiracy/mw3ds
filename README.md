@@ -34,6 +34,15 @@ disc) and an internet connection.
 If it stops, the whole log is in `work\converter-log.txt`: attach it to a
 [bug report](#testing-and-reporting). To build from source instead, follow the Quick start below.
 
+Antivirus programs sometimes flag `MW3DS Converter.exe`: it is a small unsigned launcher (its source is
+`tools/release/launcher.cs`) that only starts the bundled Python on the wizard. Each release zip is built by GitHub
+Actions from the tagged source, and GitHub signs a statement saying so. To check your download with the
+[GitHub CLI](https://cli.github.com/):
+
+```sh
+gh attestation verify MW3DS-Converter-<version>.zip --repo 3ds-conspiracy/mw3ds
+```
+
 ## The converter on Linux and the Steam Deck (podman)
 
 The same converter comes as a container image, with everything it needs inside: no Python, devkitPro or git. SteamOS

@@ -1,0 +1,40 @@
+name: CodeQL
+
+# GitHub's code scanning for the parts that need no build: the Python tools, the converter's launcher (C#) and the
+# workflow files themselves. Findings are in the repository's Security tab. The engine (C++, built with devkitARM) is not
+# scanned: CodeQL cannot build it by itself. A clean scan is a check for common mistakes, not a proof that the code is
+# safe.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 4 * * 3"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [python, csharp, actions]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+      - uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:${{ matrix.language }}
