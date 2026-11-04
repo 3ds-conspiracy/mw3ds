@@ -1,0 +1,58 @@
+# data: bloodmoon
+# The big towns and the add-ons' places load on the newest build: Balmora, Vivec, Ald-ruhn, Sadrith Mora and Ebonheart,
+# Mournhold's districts, palace, temple and Old Mournhold, Fort Frostmoth, Raven Rock and Skaal Village, each arrived at
+# and looked at (a shot each). For the emulator first: a cell that fails to load, a missing texture or a memory fault
+# shows there, not natively
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora+SHOT
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages+SHOT
+0.3 0 0 0 0 GOTO:Vivec,_High_Fane
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Vivec,_High_Fane+SHOT
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Temple
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ald-ruhn,_Temple+SHOT
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Telvanni_Council_House
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Telvanni_Council_House+SHOT
+0.3 0 0 0 0 GOTO:Ebonheart,_Imperial_Chapels
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ebonheart,_Imperial_Chapels+SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Great_Bazaar
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Great_Bazaar+SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Godsreach
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Godsreach+SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Plaza_Brindisi_Dorom+SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace_Throne_Room
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Royal_Palace_Throne_Room+SHOT
+0.3 0 0 0 0 GOTO:Mournhold_Temple:_High_Chapel
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold_Temple:_High_Chapel+SHOT
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Abandoned_Passageway
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Old_Mournhold:_Abandoned_Passageway+SHOT
+0.3 0 0 0 0 GOTO:Fort_Frostmoth
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Fort_Frostmoth+SHOT
+0.3 0 0 0 0 GOTO:Fort_Frostmoth,_General_Quarters
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Fort_Frostmoth,_General_Quarters+SHOT
+0.3 0 0 0 0 GOTO:Raven_Rock
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Raven_Rock+SHOT
+0.3 0 0 0 0 TP:-159679:209014:3040:0
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Skaal_Village+SHOT
+0.3 0 0 0 0 GOTO:Seyda_Neen
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen+SHOT
