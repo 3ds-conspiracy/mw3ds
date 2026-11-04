@@ -42,7 +42,7 @@ from distant import build_distant
 from creature import resolve_leveled
 from firstperson import FirstPerson
 from particles import build_pieces
-from mwfiles import CODEC, DATA_FILES, MASTER, Archives, bloodmoon, cell_refs, game_path, load_db, read_game, safe_name, text
+from mwfiles import CODEC, DATA_FILES, Archives, bloodmoon, cell_refs, game_path, load_db, load_order, read_game, safe_name, text
 from npcstats import npc_stats, worn_items
 from terrain import CELL_SIZE
 from terrain import Terrain
@@ -236,21 +236,24 @@ def json_text(value):
 
 
 def translation_files():
-    """A translated release's own files beside Morrowind.esm, as OpenMW reads them (Translation::Storage): lines
-    "key<TAB>value" in the release's code page. Morrowind.cel: cell ID -> name shown; .top: a topic's phrase forms
-    -> the topic ("@form#" links in text); .mrk: topic -> the word that names it in text."""
+    """A translated release's own files beside each content file it loads, as OpenMW reads them (Translation::Storage:
+    every content file's, in load order, the first entry for a key kept): lines "key<TAB>value" in the release's code
+    page. <file>.cel: cell ID -> name shown; .top: a topic's phrase forms -> the topic ("@form#" links in text); .mrk:
+    topic -> the word that names it in text. Tribunal's and Bloodmoon's add their own topics (a Russian release's
+    Tribunal.top / .mrk hold the mainland and the Mournhold transport ones)."""
     out = {}
-    for ext in ("cel", "top", "mrk"):
-        path = game_path(DATA_FILES, f"{Path(MASTER).stem}.{ext}")
-        if not path.is_file():
-            continue
-        table = {}
-        for line in path.read_bytes().decode(CODEC, errors="replace").split("\n"):
-            key, tab, value = line.rstrip("\r").partition("\t")
-            if tab and key and value:
-                table.setdefault(key, value)
-        out[ext] = table
-        print(f"translation: {path.name}, {len(table)} entries")
+    for esm in load_order():
+        for ext in ("cel", "top", "mrk"):
+            path = game_path(DATA_FILES, f"{esm.stem}.{ext}")
+            if not path.is_file():
+                continue
+            table, added = out.setdefault(ext, {}), 0
+            for line in path.read_bytes().decode(CODEC, errors="replace").split("\n"):
+                key, tab, value = line.rstrip("\r").partition("\t")
+                if tab and key and value and key not in table:
+                    table[key] = value
+                    added += 1
+            print(f"translation: {path.name}, {added} entries")
     return out
 
 
