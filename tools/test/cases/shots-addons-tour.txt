@@ -1,0 +1,77 @@
+# start: Seyda Neen
+# data: bloodmoon
+# Screenshots only: Mournhold's districts, palace, temple and Old Mournhold, then Solstheim, ending with a werewolf at
+# night in front of the player and the player as one in third person. No checks beyond arriving in each cell
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+HOUR:10
+0.3 0 0 0 0 GOTO:Mournhold,_Great_Bazaar
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Great_Bazaar+SHOT
+1 0 0 0.5
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Godsreach
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Godsreach+SHOT
+1 0 0 0.5
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Plaza_Brindisi_Dorom
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Plaza_Brindisi_Dorom+SHOT
+1 0 0 0.5
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Temple_Courtyard
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Temple_Courtyard+SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace:_Courtyard
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Royal_Palace:_Courtyard+SHOT
+0.3 0 0 0 0 GOTO:Mournhold,_Royal_Palace_Throne_Room
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold,_Royal_Palace_Throne_Room+SHOT
+0.3 0 0 0 0 GOTO:Mournhold_Temple:_High_Chapel
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Mournhold_Temple:_High_Chapel+SHOT
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Battlefield
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Old_Mournhold:_Battlefield+SHOT
+0.3 0 0 0 0 GOTO:Old_Mournhold:_Tears_of_Amun-Shae
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Old_Mournhold:_Tears_of_Amun-Shae+SHOT
+0.3 0 0 0 0 GOTO:Raven_Rock
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Raven_Rock+SHOT
+0.3 0 0 0 0 GOTO:Fort_Frostmoth
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Fort_Frostmoth+SHOT
+0.3 0 0 0 0 GOTO:Skaal_Village
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Skaal_Village+SETWEATHER:0
+3 0 0 0
+0.3 0 0 0 0 SHOT
+1 0 0 0.5
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOTO:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall
+5 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Solstheim,_Mortrag_Glacier:_Huntsman's_Hall+SHOT
+# a werewolf at dusk outside Fort Frostmoth, then the player as one, seen from behind
+0.3 0 0 0 0 HOUR:19.5
+0.3 0 0 0 0 GOTO:Fort_Frostmoth
+6 0 0 0
+0.3 0 0 0 0 SETWEATHER:0
+3 0 0 0
+0.3 0 0 0 0 PLACE:bm_werewolf_default:250
+1.5 0 0 0
+0.3 0 0 0 0 SHOT
+1.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SLAY:bm_werewolf_default
+0.3 0 0 0 0 CON:player->becomewerewolf
+2 0 0 0
+0.3 0 0 0 0 POV:third
+2 0 0 0
+0.3 0 0 0 0 SHOT
+1 0 0 1
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 X
+2 0 0 0
+0.3 0 0 0 0 SHOT

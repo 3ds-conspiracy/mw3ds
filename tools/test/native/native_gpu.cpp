@@ -43,6 +43,10 @@ static int drawMode()
 static bool drawOn() { return drawMode() != 0; }
 static bool s_drawThisFrame = false;
 static std::vector<std::string> s_pendingShots;
+// The HUD on the bottom screen is drawn one frame in three (engine.cpp): a shot whose frame skipped it waits for the
+// next frame that draws it (at most two), or its bottom half is the cleared target, black
+static bool s_bottomDrawn = false;
+static int s_shotWaits = 0;
 static std::vector<std::pair<C3D_Tex*, std::string>> s_pendingTexShots;
 static bool writeTexShot(C3D_Tex* tex, const char* path);
 static bool drawFrame() { return drawMode() == 2 || (drawMode() == 1 && s_drawThisFrame); }
@@ -663,13 +667,14 @@ void nativeVideoClose()
 
 bool C3D_FrameBegin(u8)
 {
-	s_drawThisFrame = false;
+	s_drawThisFrame = !s_pendingShots.empty();      // a shot carried over from the last frame
+	s_bottomDrawn = false;
 	s_videoThis = false;
 	if (videoOn())
 	{
 		s_frameNo++;
 		s_videoThis = s_frameNo % s_videoEvery == 0 && s_frameNo >= s_videoFrom && s_frameNo <= s_videoTo;
-		s_drawThisFrame = s_videoThis;
+		s_drawThisFrame = s_drawThisFrame || s_videoThis;
 	}
 	return true;
 }
@@ -678,6 +683,13 @@ void C3D_FrameEnd(u8)
 	if (s_videoThis)
 		videoFrame();
 	nativeAudioFrame();
+	if (!s_pendingShots.empty() && !s_bottomDrawn && s_shotWaits < 2)
+	{
+		s_shotWaits++;
+		s_drawThisFrame = false;
+		return;
+	}
+	s_shotWaits = 0;
 	for (auto& path : s_pendingShots)
 		if (!writeShot(path.c_str()))
 			logf("native gpu: could not write %s", path.c_str());
@@ -753,7 +765,12 @@ void C3D_RenderTargetClear(C3D_RenderTarget* t, int bits, u32 c, u32 depth)
 }
 
 void C2D_TargetClear(C3D_RenderTarget* t, u32 color) { clearTarget(t, true, true, color, 0.0f); }
-void C2D_SceneBegin(C3D_RenderTarget* t) { s_target = t; }
+void C2D_SceneBegin(C3D_RenderTarget* t)
+{
+	s_target = t;
+	if (t->screen == GFX_BOTTOM)
+		s_bottomDrawn = true;
+}
 void C2D_Prepare() {}
 void C2D_ViewReset() { s_view2d[0] = s_view2d[1] = 0.0f; }
 void C2D_ViewTranslate(float x, float y) { s_view2d[0] += x; s_view2d[1] += y; }
