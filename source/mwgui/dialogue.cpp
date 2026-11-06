@@ -121,7 +121,8 @@ void Session::drawDialogue()
 	// Services sit between the topics and Goodbye
 	bool merchant = isMerchant(dlg.ref);
 	bool travels = speaker.actor >= 0 && !w.game.actors[speaker.actor].travel.empty();
-	bool sells = speaker.actor >= 0 && !w.game.actors[speaker.actor].spells.empty();
+	// (the Spells service flag, as OpenMW's: every NPC knows its spells, only a spell merchant sells them)
+	bool sells = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x800);
 	bool trains = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x4000);
 	bool persuades = speaker.recType == REC_NPC_;
 	bool makesSpells = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x8000);

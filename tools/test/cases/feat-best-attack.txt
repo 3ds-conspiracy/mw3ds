@@ -1,0 +1,55 @@
+# start: Seyda Neen
+# Use best attack (Prefs, off as it starts, kept in settings.txt). Off: the way the player moves picks the attack. On
+# (Morrowind's Always Use Best Attack): a swing is the weapon's strongest whichever way the player moves, by
+# minimum + maximum damage, thrust over slash over chop on a tie, slash if all three match (OpenMW's getBestAttack). A steel
+# spear (chop 7, slash 7, thrust 23), a daedric longsword (34, 45, 44) and an iron claymore (25, 22, 15).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GIVE:steel%spear
+0.3 0 0 0 0 GIVE:daedric%longsword
+0.3 0 0 0 0 GIVE:iron%claymore
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Census_and_Excise_Office
+4 0 0 0
+0.3 0 0 0 0 EXPECT:savedsetting:bestattack:eq:-1
+0.3 0 0 0 0 EQUIP:steel%spear
+0.1 0 0 0 0 X
+1 0 0 0
+# Off: standing still it chops
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 0 0 0 X
+0.05 0 0 0 0 X+EXPECT:attackkind:eq:0
+1.5 0 0 0
+# On, from the Prefs tab with the D-pad
+0.5 0 0 0 0 SCREEN:gamemenu
+0.3 0 0 0 0 TAP:160:169
+0.5 0 0 0 0 EXPECT:screen:options
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:savedsetting:bestattack:eq:1
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0
+# standing still the spear thrusts (the menu put it away: drawn again)
+0.1 0 0 0 0 X
+1 0 0 0
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 0 0 0 X
+0.05 0 0 0 0 X+EXPECT:attackkind:eq:2
+1.5 0 0 0
+# walking forward (a thrust when off) the claymore still chops
+0.3 0 0 0 0 EQUIP:iron%claymore
+2 0 0 0
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 1 0 0 X
+0.05 0 1 0 0 X+EXPECT:attackkind:eq:0
+1.5 0 0 0
+# and the longsword slashes
+0.3 0 0 0 0 EQUIP:daedric%longsword
+2 0 0 0
+0.3 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.3 0 1 0 0 X
+0.05 0 1 0 0 X+EXPECT:attackkind:eq:1
+1.5 0 0 0

@@ -1,0 +1,11 @@
+# start: Seyda Neen
+# bug-npc-weapon-pick: the weapon an NPC holds is OpenMW's auto-equip pick (spec/findings/golden-actors.md G10): from
+# their best weapon skill down, that skill's carried weapon of the highest maximum damage. Edwinna Elbert (Short Blade
+# over Blunt Weapon) holds her silver dagger; ours took the ebony wizard's staff, the most damaging of anything.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 EXPECT:refweapon:edwinna_elbert:silver%dagger
+1 0 0 0

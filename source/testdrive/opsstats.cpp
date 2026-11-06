@@ -5,6 +5,8 @@
 #include <cmath>
 #include <cstring>
 #include <deque>
+#include <functional>
+#include <set>
 #include <map>
 #include <queue>
 #include <tuple>
@@ -44,6 +46,201 @@ std::optional<bool> opsStats(Session& s, const std::vector<std::string>& a)
 			return fail("no class " + a[1]);
 		w.recomputeStats();
 		logf("test: class %s", w.stats.cls.c_str());
+		return true;
+	}
+	// DUMPSPELLS: every NPC's spells as the engine has them (the record's, plus its autocalc picks), a log line per
+	// NPC and one per spell (a whole list could pass the log line's length), for tools/test/golden/golden_compare.py;
+	// a creature's: the spells it knows, those it casts in a fight, the diseases it carries
+	if (verb == "DUMPSPELLS")
+	{
+		int n = 0;
+		for (auto& d : w.game.actors)
+		{
+			std::string id = lower(d.id);
+			if (d.creature)
+			{
+				logf("golden: creature\t%s", id.c_str());
+				for (auto& sp : d.spells)
+					logf("golden: cspell\t%s\t%s", id.c_str(), lower(sp).c_str());
+				for (auto& sp : d.combatSpells)
+					logf("golden: ccast\t%s\t%s", id.c_str(), lower(sp).c_str());
+				for (auto& sp : d.diseases)
+					logf("golden: cdisease\t%s\t%s", id.c_str(), lower(sp).c_str());
+				continue;
+			}
+			logf("golden: npc\t%s", id.c_str());
+			for (auto& sp : d.spells)
+				logf("golden: spell\t%s\t%s", id.c_str(), sp.c_str());
+			if (const RaceDef* race = w.game.raceOf(d.race.c_str()))       // (known too: World::actorHasSpell)
+				for (auto& sp : race->spells)
+					logf("golden: spell\t%s\t%s", id.c_str(), lower(sp).c_str());
+			n++;
+		}
+		logf("test: dumped the spells of %d NPCs", n);
+		return true;
+	}
+	// DUMPCELLS: every cell's objects read, then per cell how many of each object stand in it and every door with where it
+	// leads (cell, position), for golden_compare.py cells. Cells are named as OpenMW's: an interior by its name, an
+	// exterior by its grid ("ext x,y")
+	if (verb == "DUMPCELLS")
+	{
+		for (int i = 0; i < (int)w.cells.size(); i++)
+			w.ensureRefs(i);
+		auto cellKey = [&](int i) {
+			char buf[64];
+			if (!w.cells[i].interior)
+			{
+				snprintf(buf, sizeof(buf), "ext %d,%d", w.cells[i].gx, w.cells[i].gy);
+				return std::string(buf);
+			}
+			return lower(w.cells[i].name);
+		};
+		std::map<std::pair<int, std::string>, int> counts;
+		int doors = 0;
+		for (size_t ri = 0; ri < w.refs.size(); ri++)
+		{
+			const Ref& r = w.refs[ri];
+			if (r.cell < 0 || r.spawnedRef || r.dropped)
+				continue;
+			// (a leveled spot by its list, as OpenMW lists it, not by the creature rolled for it)
+			counts[{ r.cell, r.levList.empty() ? std::string(r.idLower.c_str()) : lower(r.levList) }] += 1;
+			if (r.hasDest)
+			{
+				logf("golden: door\t%s\t%s\t%.0f,%.0f,%.0f\t%s\t%.0f,%.0f,%.0f", cellKey(r.cell).c_str(), r.idLower.c_str(),
+					r.pos[0], r.pos[1], r.pos[2], lower(r.destCell).c_str(), r.destPos[0], r.destPos[1], r.destPos[2]);
+				doors++;
+			}
+		}
+		for (auto& kv : counts)
+			logf("golden: cellobj\t%s\t%s\t%d", cellKey(kv.first.first).c_str(), kv.first.second.c_str(), kv.second);
+		logf("test: dumped %d cells, %d refs, %d doors", (int)w.cells.size(), (int)w.refs.size(), doors);
+		return true;
+	}
+	// TOURSTART: the golden tour's clock stops and the player is OpenMW's when started past the menu (golden_behave.py): the
+	// "player" record's Dark Elf Acrobat, every attribute 30
+	if (verb == "TOURSTART")
+	{
+		w.globals["timescale"] = 0.0f;
+		w.stats.race = "Dark Elf";
+		w.stats.cls = "acrobat";
+		w.recomputeStats();
+		for (int k = 0; k < 8; k++)
+			w.stats.attrBonus[k] += 30 - w.stats.attributes[k];
+		w.recomputeStats();
+		logf("golden: tplayer	%s	%s	%d", w.stats.race.c_str(), w.stats.cls.c_str(), w.stats.attributes[6]);
+		return true;
+	}
+	if (verb == "COE" && a.size() >= 3)
+	{
+		s.centerOnExterior(atoi(a[1].c_str()), atoi(a[2].c_str()));
+		return true;
+	}
+	// DUMPTOUR:<cell key>: what golden_tour_compare.py sets beside OpenMW's tour_*.lua, one line per object, script and
+	// actor of the cell; with no key, the global variables
+	if (verb == "DUMPTOUR")
+	{
+		if (a.size() < 2)
+		{
+			for (auto& kv : w.globals)
+				logf("golden: tglobal	%s	%g", kv.first.c_str(), kv.second);
+			return true;
+		}
+		std::string key = a[1];
+		for (size_t k = 2; k < a.size(); k++)      // (a cell's name can hold a colon: "Vivec, Miun-Gei: Enchanter")
+			key += ":" + a[k];
+		for (auto& ch : key)
+			ch = ch == '%' ? ' ' : ch;
+		int gx, gy, cell = sscanf(key.c_str(), "ext %d,%d", &gx, &gy) == 2 ? w.gridCell(gx, gy) : w.cellIndex(key);
+		if (cell < 0)
+			return fail("no cell " + key);
+		logf("golden: tcell	%s", key.c_str());
+		for (size_t ri = 0; ri < w.refs.size(); ri++)
+		{
+			Ref& r = w.refs[ri];
+			if (r.cell < 0 || (r.at >= 0 ? r.at : r.cell) != cell || r.spawnedRef || r.dropped || r.pickedUp)
+				continue;
+			bool lockable = r.recType == REC_DOOR || r.recType == REC_CONT;
+			logf("golden: tobj	%s	%s	%d	%d	%.0f,%.0f,%.0f	%.3f	%d	%s	%s	%s	%s	%s	%s", key.c_str(),
+				r.levList.empty() ? r.idLower.c_str() : lower(r.levList).c_str(), r.enabled ? 1 : 0,
+				!r.levList.empty() ? 2 : r.actor >= 0 ? 1 : 0,      // (2: a leveled spot, by where the level placed it)
+				r.levList.empty() ? r.pos[0] : r.start[0], r.levList.empty() ? r.pos[1] : r.start[1],
+				r.levList.empty() ? r.pos[2] : r.start[2], r.scale, r.count,
+				lockable ? std::to_string(abs(r.lockLevel)).c_str() : "", lockable ? (r.lockLevel > 0 ? "1" : "0") : "",
+				r.disarmed ? "" : r.trap.c_str(), r.owner.c_str(), r.ownerFaction.c_str(),
+				r.ownerFaction.empty() ? "" : std::to_string(r.ownerRank).c_str());
+			if (r.script >= 0 && r.script < (int)w.scripts.size() && w.scripts[r.script].script)
+			{
+				const ScriptInstance& si = w.scripts[r.script];
+				std::vector<std::string> vars;
+				for (size_t k = 0; k < si.locals.size() && k < si.script->localNames.size(); k++)
+				{
+					char buf[96];
+					snprintf(buf, sizeof(buf), "%s=%g", si.script->localNames[k].c_str(), si.locals[k]);
+					vars.push_back(buf);
+				}
+				std::sort(vars.begin(), vars.end());
+				std::string all;
+				for (auto& v : vars)
+					all += (all.empty() ? "" : ";") + v;
+				logf("golden: tsv	%s	%s	%s	%d	%s", key.c_str(), r.idLower.c_str(), lower(si.script->name).c_str(),
+					si.running ? 1 : 0, all.c_str());
+			}
+			if (r.actor < 0 || !r.enabled)
+				continue;
+			const ActorDef& d = w.game.actors[r.actor];
+			static const char* kPackage[] = { "Wander", "Travel", "Escort", "Follow", "Activate", "" };
+			std::string pkg = r.aiPackage >= 0 && r.aiPackage <= 5 ? kPackage[r.aiPackage] : (d.wander > 0 ? "Wander" : "");
+			std::string foes;
+			if (r.ai == AI_COMBAT)
+				foes = "player";
+			if (!r.duelWith.empty())
+				foes += (foes.empty() ? "" : ",") + r.duelWith.str();
+			for (auto& ch : foes)
+				ch = ch == '|' ? ',' : ch;
+			if (!foes.empty())
+				pkg = "Combat";
+			// (OpenMW's getWalkSpeed leaves out scale and race weight, which it applies to the movement)
+			float pace = (r.scale > 0.0f ? r.scale : 1.0f) * (d.creature ? 1.0f : s.raceWeight(d.race.str(), d.female != 0));
+			logf("golden: tactor	%s	%s	%s	%s	%s	%d,%d,%d,%d	%.0f,%.0f,%.0f	%.2f,%.2f	%d	%d", key.c_str(),
+				r.idLower.c_str(), pkg.c_str(), foes.c_str(), d.creature ? "" : std::to_string(w.disposition(ri)).c_str(),
+				r.fight >= 0 ? r.fight : d.fight, r.flee >= 0 ? r.flee : d.flee, r.alarm >= 0 ? r.alarm : d.alarm,
+				r.hello >= 0 ? r.hello : d.hello, r.healthMax, r.magickaMax, r.fatigueMax, s.actorRunSpeed(ri) / pace,
+				s.actorWalkSpeed(ri) / pace, r.gold, r.dead ? 1 : 0);
+		}
+		return true;
+	}
+	// DUMPLEVELED: for every leveled list, at each of golden_compare.py's player levels, every id a pick can give (nested
+	// lists followed; "" when nothing can come): one line per list and level
+	if (verb == "DUMPLEVELED")
+	{
+		static const int kLevels[] = { 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 21, 25, 30 };
+		std::vector<int> cand;
+		std::function<void(const std::string&, int, int, std::set<std::string>&)> reach =
+			[&](const std::string& list, int level, int depth, std::set<std::string>& out) {
+				auto it = w.game.leveled.find(list);
+				if (it == w.game.leveled.end() || depth > 8)
+				{
+					out.insert(lower(list));
+					return;
+				}
+				if (it->second.none > 0)
+					out.insert("");
+				std::vector<int> ok;
+				GameData::levCandidates(it->second, level, ok);
+				if (ok.empty())
+					out.insert("");
+				for (int i : ok)
+					reach(it->second.entries[i].second, level, depth + 1, out);
+			};
+		for (auto& kv : w.game.leveled)
+			for (int level : kLevels)
+			{
+				std::set<std::string> out;
+				reach(kv.first, level, 0, out);
+				for (auto& s : out)
+					logf("golden: levpick\t%s\t%d\t%s", lower(kv.first).c_str(), level, s.empty() ? "-" : s.c_str());
+			}
+		logf("test: dumped %d leveled lists", (int)w.game.leveled.size());
 		return true;
 	}
 	if ((verb == "SETSKILL" || verb == "SETATTR") && a.size() >= 3)

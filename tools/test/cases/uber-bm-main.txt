@@ -1037,6 +1037,7 @@
 10 0 0 0 0 UNTIL:cell:Solstheim,_Tombs_of_Skaalara
 # (the hunters all make for the totem's chest: met there, each in turn, rather than chased round the tomb, where
 # one got the player wedged among rocks and another onto a ledge out of reach)
+0.1 0 0 0 0 SEED:21
 120 0 0 0 0 WALKTO:@-16,-7000,-111
 10 0 0 0
 120 0 0 0 0 KILL:skaal_hunter2

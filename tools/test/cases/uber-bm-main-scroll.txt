@@ -4,7 +4,7 @@
 # uber-bm-main, then the other cure: the Scroll of the Wolf Ender from the Gloomy Cave instead of the Rite of the Wolf
 # Giver. Notes: internal/uber/bm-main.md
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 SEED:2
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100

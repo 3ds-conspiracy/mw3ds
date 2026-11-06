@@ -172,6 +172,35 @@ def constant_effects(rec, db):
     return [[k, v] for k, v in sorted(total.items()) if v]
 
 
+def ai_list(rec):
+    """{"ai_list": [[type, target, x, y, z, hours, wander range, repeats], ...]} for a record whose AI packages run in turn
+    (OpenMW's AiSequence::fill): each gives way to the next when it ends, and one that repeats comes round again. Type
+    as ai_package's, 0 wander. A wander with no hours never ends, so nothing after it counts and a list that starts with
+    one needs nothing. Here, not in npcstats.py, which the cells' cache key reads: a cell is the same."""
+    steps = []
+    for tag, d in rec.subs:
+        if tag == "AI_W":
+            dist, hours = struct.unpack_from("<HH", d)
+            steps.append([0, "", 0, 0, 0, hours, dist, d[13] if len(d) > 13 else 0])
+            if not hours:
+                break
+        elif tag == "AI_T":
+            x, y, z_ = struct.unpack_from("<3f", d)
+            steps.append([1, "", x, y, z_, 0, 0, d[12] if len(d) > 12 else 0])
+        elif tag in ("AI_F", "AI_E"):
+            x, y, z_ = struct.unpack_from("<3f", d)
+            hours = struct.unpack_from("<H", d, 12)[0]
+            if abs(x) > 1e30:         # (no spot: only whom to follow)
+                x = y = z_ = 0
+            steps.append([3 if tag == "AI_F" else 2, text(d[14:46]).lower(), x, y, z_, hours, 0,
+                          d[46] if len(d) > 46 else 0])
+        elif tag == "AI_A":
+            steps.append([4, text(d[:32]).lower(), 0, 0, 0, 0, 0, d[32] if len(d) > 32 else 0])
+    if len(steps) < 2 or (steps[0][0] == 0 and not steps[0][5]):
+        return {}
+    return {"ai_list": steps[:32]}
+
+
 def npc_info(rec, db):
     """An actor's game.json entry (with its AI Hello: how near it greets, AIDT byte 0)."""
     info = _npc_info(rec, db)
@@ -179,7 +208,7 @@ def npc_info(rec, db):
     if effects:
         info["const_effects"] = effects
     aidt = rec.get("AIDT")
-    info["hello"] = aidt[0] if aidt else 30
+    info["hello"] = struct.unpack_from("<H", aidt)[0] if aidt else 30    # (two bytes: Galtis Serethi has 300)
     info["alarm"] = aidt[4] if aidt and len(aidt) > 4 else 0
     flag = rec.get("FLAG")
     flags = struct.unpack("<I", flag[:4])[0] if flag and len(flag) >= 4 else 0
@@ -211,13 +240,17 @@ def _npc_info(rec, db):
                     **creature_stats(rec, db["SPEL"], db),
                     # its AI package, as a person's (npcstats.ai_package): Gothren's dremora follow him, Yagrum Bagarn
                     # Uupse Fyr. (Taken here, not in creature.py, which the cells' cache key reads: a cell is the same)
-                    **({"ai": ai_package(rec)} if ai_package(rec) else {}))
+                    **({"ai": ai_package(rec)} if ai_package(rec) else {}), **ai_list(rec))
     npdt = rec.get("NPDT")
     if len(npdt) == 12:           # autocalculated stats
         level, disp, rep, rank = struct.unpack_from("<hbbb", npdt)
     else:
         level = struct.unpack_from("<h", npdt)[0]
         disp, rep, rank = npdt[44], npdt[45], npdt[46]
+    # A faction member's reputation is worked out, whatever the record stores: iAutoRepFacMod x (rank + 1) +
+    # iAutoRepLevMod x (level - 1) (OpenMW's Npc::ensureCustomData)
+    if rec.zstr("ANAM"):
+        rep = int(db["GMST"].get("iautorepfacmod", 2)) * (rank + 1) + int(db["GMST"].get("iautoreplevmod", 0)) * (level - 1)
     return {
         "id": rec.id, "name": txt(rec.zstr("FNAM")) or rec.id, "race": rec.zstr("RNAM") or "",
         "class": rec.zstr("CNAM") or "", "faction": rec.zstr("ANAM") or "", "rank": rank,
@@ -225,6 +258,7 @@ def _npc_info(rec, db):
         "autocalc": 1 if i32(rec.get("FLAG")) & 0x10 else 0,      # spells chosen by the engine (autocalc)
         "script": (rec.zstr("SCRI") or "").lower(),
         **npc_stats(rec, db),
+        **ai_list(rec),
     }
 
 
@@ -271,11 +305,13 @@ CONTINUOUS_VFX = {3, 4, 5, 6, 10, 14, 15, 16, 18, 23, 27, 58}
 def hardcoded_flags(k):
     """What the engine knows about an effect that its record doesn't: 0x4 no duration, 0x8 no magnitude,
     0x10 harmful, 0x20 its hit visual repeats while it lasts, 0x40 / 0x80 / 0x100 castable on self / touch / target."""
-    no_magnitude = {0, 2, 39, 45, 46, 58, 60, 61, 62, 63, 69, 70, 71, 72, 73, 132, 133, 134} | set(range(102, 117))         | set(range(120, 132))
-    no_duration = {12, 13, 57, 60, 61, 62, 63, 69, 70, 71, 72, 73}
+    # (checked against a running OpenMW: tools/test/golden, golden_compare.py effects; Night Eye on any range, Extra
+    # Spell on touch / target, Vampirism with no duration, Sun Damage on self only, Stunted Magicka with no magnitude)
+    no_magnitude = {0, 2, 39, 45, 46, 58, 60, 61, 62, 63, 69, 70, 71, 72, 73, 132, 133, 134, 136} | set(range(102, 117))         | set(range(120, 132))
+    no_duration = {12, 13, 57, 60, 61, 62, 63, 69, 70, 71, 72, 73, 133}
     harmful = HARMFUL_EFFECTS
-    self_only = {43, 59, 60, 61, 62, 63, 64, 65, 66, 126, 132, 133, 134} | set(range(102, 117)) | set(range(120, 132))
-    others_only = {12, 13, 44, 58, 101, 118, 119} | set(range(49, 57)) | set(range(85, 90))
+    self_only = {59, 60, 61, 62, 63, 64, 65, 66, 132, 133, 134, 135} | set(range(102, 117)) | (set(range(120, 132)) - {126})
+    others_only = {12, 13, 44, 58, 101, 118, 119, 126} | set(range(49, 57)) | set(range(85, 90))
     f = 0
     f |= 0x1000 if k in APPLIED_ONCE else 0
     f |= 0x20 if k in CONTINUOUS_VFX else 0
@@ -603,13 +639,14 @@ def enchantments(objects):
 
 
 def faction_reactions(rec):
-    """How a faction feels about others: ANAM (the other faction) then INTV (reaction) pairs."""
+    """How a faction feels about others: ANAM (the other faction) then INTV (reaction) pairs. A faction listed more than
+    once keeps its lowest reaction, as OpenMW reads it (Census and Excise: Ashlanders -3 and -1; itself 0 and -1)."""
     out, other = {}, None
     for t, d in rec.subs:
         if t == "ANAM":
             other = z(d).lower()
         elif t == "INTV" and other is not None:
-            out[other] = i32(d)
+            out[other] = min(out.get(other, i32(d)), i32(d))
             other = None
     return out
 
@@ -815,12 +852,12 @@ def build(db, cells, actor_records, actor_cells):
     races = [race_entry(r) for r in db["RACE"].values()]
     for r in races:
         spells_needed.update(s.lower() for s in r["spells"])
-    # Spells the level's spell merchants sell (their NPCS list)
+    # The spells every actor knows (its NPCS list: what a spell merchant sells, what GetSpell asks about), as OpenMW gives
+    # each its record's list; its race's are the race's (races above), not copied here
     for a in actors:
-        if a.get("services", 0) & 0x800:
-            rec = db["objects"].get(a["id"].lower())
-            a["spells"] = [z(d) for t, d in rec.subs if t == "NPCS"] if rec is not None else []
-            spells_needed.update(s.lower() for s in a["spells"])
+        rec = db["objects"].get(a["id"].lower())
+        a["spells"] = [z(d) for t, d in rec.subs if t == "NPCS"] if rec is not None else []
+        spells_needed.update(s.lower() for s in a["spells"])
     # Spells the level's actors cast in combat; diseases they carry (caught from their blows)
     for a in actors:
         spells_needed.update(s.lower() for s in a.get("combat_spells", []))
@@ -838,7 +875,9 @@ def build(db, cells, actor_records, actor_cells):
         for tag, d in cell.subs:
             if tag == "TNAM":
                 spells_needed.add(text(d).lower())
-    spells = {s: spell_entry(db["SPEL"][s]) for s in spells_needed if s in db["SPEL"]}
+    # (order: the record's place in the data files, which autocalc walks in that order: autocalcspell.cpp)
+    order = {s: i for i, s in enumerate(db["SPEL"])}
+    spells = {s: dict(spell_entry(db["SPEL"][s]), order=order[s]) for s in spells_needed if s in db["SPEL"]}
 
     # Every faction: the player can join them (PCJoinFaction), dialogue names their ranks
     factions = {}

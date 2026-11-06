@@ -20,11 +20,57 @@ void aiFinish(World& w, Ref& r)
 		r.aiStart = w.gameHour;
 }
 
-// The tick after a package finished: it is gone, nothing runs in its place
-void aiSettle(Ref& r)
+static void aiLoadStep(Ref& r, const ActorDef& a, int step)
 {
+	const AiStep& st = a.aiList[step];
+	r.aiStep = (s8)step;
+	r.aiPackage = st.package;
+	r.aiTarget = st.target.str();
+	memcpy(r.aiDest, st.dest, sizeof(r.aiDest));
+	r.aiDuration = st.hours;
+	r.aiRange = st.package == AIPKG_WANDER ? st.range : -1;
+	r.aiDone = false;
+	r.aiRepeat = false;
+	r.aiActive = true;
+	r.aiCell.clear();
+	r.path.clear();
+	r.wandering = false;
+}
+
+// A record with a list of packages starts on its first (its hours count from the first tick: aiSettle)
+void aiStartList(Ref& r, const ActorDef& a)
+{
+	r.aiGone = 0;
+	r.aiStart = -1.0f;
+	aiLoadStep(r, a, 0);
+}
+
+// The tick after a package finished: it is gone, nothing runs in its place. On a record's list the next one takes over,
+// and one that repeats goes round again (OpenMW's AiSequence::execute puts it at the back of the queue)
+void aiSettle(World& w, Ref& r)
+{
+	if (r.aiStep >= 0 && r.aiStart < 0.0f)
+		r.aiStart = w.gameHour;
 	if (!r.aiDone || r.aiRepeat || r.aiPackage <= AIPKG_NONE || r.aiPackage == AIPKG_IDLE)
 		return;
+	if (r.aiStep >= 0 && r.actor >= 0)
+	{
+		const ActorDef& a = w.game.actors[r.actor];
+		int n = (int)a.aiList.size(), now = r.aiStep;
+		if (now < n && !a.aiList[now].repeat)
+			r.aiGone |= 1u << now;
+		for (int k = 1; k <= n; k++)
+		{
+			int next = (now + k) % n;
+			if (!(r.aiGone >> next & 1u))
+			{
+				aiLoadStep(r, a, next);
+				r.aiStart = w.gameHour;
+				return;
+			}
+		}
+		r.aiStep = -1;
+	}
 	r.aiPackage = AIPKG_IDLE;
 	r.aiTarget.clear();
 	r.aiCell.clear();
@@ -55,7 +101,7 @@ void Session::npcPackage(int ri, float dt)
 	Ref& r = w.refs[ri];
 	Actor* a = w.actorOf(ri);
 	ActorSet* set = w.actorsOf(ri);
-	aiSettle(r);
+	aiSettle(w, r);
 	trailRecord(w);
 	if (r.aiDuration > 0.0f && r.aiActive && w.gameHour - r.aiStart >= r.aiDuration)
 		aiFinish(w, r);

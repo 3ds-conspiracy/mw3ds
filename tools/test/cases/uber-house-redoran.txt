@@ -21,11 +21,11 @@
 0.3 0 0 0 0 GIVE:sc_almsiviintervention:20
 0.3 0 0 0 0 SPELL:mark
 0.3 0 0 0 0 SPELL:recall
-# a made spell for the duel with Ondres Nerano: Shock Damage 190 on touch takes his 212 Health under 50 in one go
+# a made spell for the duel with Ondres Nerano: Shock Damage 120 on touch takes his 159 Health under 50 in one go
 # (his script yields below 50; blows land a few at a time and a last one could kill him: murder). On touch: a touch
 # lands on whoever is in front within reach when it is let go (OpenMW's getHitContact), where a bolt aimed at where he
 # stood flies past once he steps aside (he dodges within reach of our blade, as OpenMW's fighters do)
-0.3 0 0 0 0 ADDEFFECT:15:190:190:1:1
+0.3 0 0 0 0 ADDEFFECT:15:120:120:1:1
 0.3 0 0 0 0 MAKESPELL:hrduel
 0.3 0 0 0 0 ADDEFFECT:15:100:100:1:2
 0.3 0 0 0 0 MAKESPELL:hrbolt
@@ -788,7 +788,7 @@
 0.3 0 0 0 0 CHOICE:1
 2 0 0 0 0 UNTIL:talkready
 0.1 0 0 0 0 EXPECT:journal:HR_HonorChallenge:ge:50
-0.1 0 0 0 0 EXPECT:refhealth:ondres_nerano:ge:200
+0.1 0 0 0 0 EXPECT:refhealth:ondres_nerano:ge:150
 5 0 0 0
 # (up to him first: the touch reaches fCombatDistance from his edge)
 60 0 0 0 0 WALKTO:ondres_nerano

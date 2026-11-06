@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# bug-npc-autocalc-stats: NPCs' health and magicka as OpenMW works them out (spec/findings/golden-actors.md G1, G2).
+# Eldafire (level 6 High Elf, Autocalc flag, no script): attributes and health from race, class and level by OpenMW's
+# rule (mwclass/npc.cpp autoCalculateAttributes: health 58), magicka from intelligence x (fNPCbaseMagickaMult + a tenth of
+# the High Elf's Fortify Maximum Magicka: 189). The converter's old estimate gave 62 and 116.
+# Hrisskar Flat-Foot (stored stats): his record's own magicka, 18; the converter used intelligence x 2, 72.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Eldafire's_House
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Eldafire
+0.3 0 0 0 0 EXPECT:refhealthmax:eldafire:eq:58
+0.3 0 0 0 0 EXPECT:refmagickamax:eldafire:eq:189
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille
+0.3 0 0 0 0 EXPECT:refmagickamax:hrisskar%flat-foot:eq:18
+1 0 0 0

@@ -1,0 +1,87 @@
+# start: Seyda Neen
+# bug-enchant-list-input: the enchanting screen's two lists. The known effects' list on the left took the D-pad and A
+# even while the right column asked "Which attribute?", so a press moved both columns and A also added another effect:
+# only the list being answered takes them now. And a drag on the left list didn't scroll it: a list with keys pulled
+# itself back to its selected row every frame, so it could not move further than kept that row in view. It is brought
+# back only when the selection changes.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.1 0 0 0 0 SPELL:argonian_breathing
+0.1 0 0 0 0 SPELL:buoyancy
+0.1 0 0 0 0 SPELL:water_walking
+0.1 0 0 0 0 SPELL:first_barrier
+0.1 0 0 0 0 SPELL:fire_barrier
+0.1 0 0 0 0 SPELL:lightning_shield
+0.1 0 0 0 0 SPELL:strong_frost_shield
+0.1 0 0 0 0 SPELL:weary
+0.1 0 0 0 0 SPELL:feather
+0.1 0 0 0 0 SPELL:strong_levitate
+0.1 0 0 0 0 SPELL:slowfall
+0.1 0 0 0 0 SPELL:lock
+0.1 0 0 0 0 SPELL:shockball
+0.1 0 0 0 0 SPELL:wild_torpor
+0.1 0 0 0 0 SPELL:iron_will
+0.3 0 0 0 0 ENCHANT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:enchant
+0.2 0 0 0 0 DOWN
+0.2 0 0 0
+0.2 0 0 0 0 DOWN
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makelistsel:eq:2
+0.1 0 0 0 0 EXPECT:makelistscroll:eq:0
+# a drag up on the left list: it scrolls, and stays (the selected row may leave the view), and adds nothing
+0.1 0 0 0 0 TOUCH:60:190
+0.1 0 0 0 0 TOUCH:60:150
+0.1 0 0 0 0 TOUCH:60:110
+0.1 0 0 0
+0.1 0 0 0 0 EXPECT:makelistscroll:gt:40
+0.1 0 0 0 0 EXPECT:makeeffects:eq:0
+0.1 0 0 0 0 EXPECT:makelistsel:eq:2
+# the D-pad brings the selection back into view
+0.2 0 0 0 0 UP
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makelistsel:eq:1
+0.1 0 0 0 0 EXPECT:makelistscroll:le:20
+# Fortify Attribute asks which attribute: the picker alone takes the D-pad and A
+0.1 0 0 0 0 MAKEPICK:79
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makepicking:eq:2
+0.1 0 0 0 0 EXPECT:makeeffects:eq:1
+0.2 0 0 0 0 DOWN
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makepicksel:eq:1
+0.1 0 0 0 0 EXPECT:makelistsel:eq:1
+0.2 0 0 0 0 A
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makepicking:eq:0
+0.1 0 0 0 0 EXPECT:makeeffects:eq:1
+# the spellmaking screen shares both: its list and the same picker
+0.3 0 0 0 0 B
+0.3 0 0 0
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+0.3 0 0 0 0 SPELLMAKE:estirdalin
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:spellmake
+0.2 0 0 0 0 DOWN
+0.2 0 0 0
+0.1 0 0 0 0 TOUCH:60:180
+0.1 0 0 0 0 TOUCH:60:130
+0.1 0 0 0 0 TOUCH:60:80
+0.1 0 0 0
+0.1 0 0 0 0 EXPECT:makelistscroll:gt:40
+0.1 0 0 0 0 SNAP:makeeffects+SNAP:makelistsel
+0.1 0 0 0 0 MAKEPICK:79
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makepicking:eq:2
+0.2 0 0 0 0 DOWN
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makepicksel:eq:1
+0.1 0 0 0 0 EXPECT:makelistsel:eq:@0
+0.2 0 0 0 0 A
+0.2 0 0 0
+0.1 0 0 0 0 EXPECT:makepicking:eq:0
+0.1 0 0 0 0 EXPECT:makeeffects:eq:@1
+1 0 0 0

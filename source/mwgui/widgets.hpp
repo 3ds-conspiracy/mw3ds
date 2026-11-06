@@ -88,6 +88,7 @@ struct UiList
 {
 	float scroll = 0.0f;
 	int selected = 0;
+	int shownSel = -1;       // the selection last brought into view: only a new one scrolls there, so a drag can leave it
 	int marqueeRow = -1;     // the row whose text slides (too long for its space) and for how long it has
 	float marqueeTime = 0.0f;
 };

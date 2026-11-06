@@ -771,10 +771,15 @@ int uiList(UiList& list, float x, float y, float w, float h, const std::vector<s
 		if (s_in.down & KEY_DOWN) list.selected = (list.selected + 1) % rows.size();
 		if (s_in.down & KEY_UP) list.selected = (list.selected + rows.size() - 1) % rows.size();
 		if (list.selected >= (int)rows.size()) list.selected = rows.size() - 1;
-		// keep the selection visible
-		float sy = list.selected * rowH;
-		if (sy < list.scroll) list.scroll = sy;
-		if (sy + rowH > list.scroll + h) list.scroll = sy + rowH - h;
+		// a new selection comes into view (every frame, it pulled a drag back: the list couldn't be scrolled by hand
+		// further than kept the selected row showing)
+		if (list.selected != list.shownSel)
+		{
+			float sy = list.selected * rowH;
+			if (sy < list.scroll) list.scroll = sy;
+			if (sy + rowH > list.scroll + h) list.scroll = sy + rowH - h;
+			list.shownSel = list.selected;
+		}
 		if (s_in.down & KEY_A) result = list.selected;
 	}
 	if (s_in.touching && s_in.touchX >= x && s_in.touchX < x + w && s_in.touchY >= y && s_in.touchY < y + h)
@@ -863,11 +868,12 @@ int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vect
 		if (s_in.down & KEY_DOWN) list.selected = (list.selected + 1) % rows.size();
 		if (s_in.down & KEY_UP) list.selected = (list.selected + rows.size() - 1) % rows.size();
 		if (list.selected >= (int)rows.size()) list.selected = rows.size() - 1;
-		if (list.selected >= 0)
+		if (list.selected >= 0 && list.selected != list.shownSel)      // (a new one only: see uiList)
 		{
 			float sy = top[list.selected], sh = top[list.selected + 1] - sy;
 			if (sy < list.scroll) list.scroll = sy;
 			if (sy + sh > list.scroll + h) list.scroll = sy + sh - h;
+			list.shownSel = list.selected;
 		}
 		if (s_in.down & KEY_A) result = list.selected;
 	}

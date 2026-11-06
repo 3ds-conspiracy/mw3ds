@@ -1,0 +1,15 @@
+# start: Seyda Neen
+# bug-npc-reputation: a faction member's reputation is iAutoRepFacMod x (rank + 1) + iAutoRepLevMod x (level - 1),
+# whatever the record stores, as OpenMW's Npc::ensureCustomData sets it (spec/findings/golden-actors.md G9). Hrisskar
+# Flat-Foot (Fighters Guild, rank 2): 6, ours kept the record's 0; Anarenen (Mages Guild, rank 0): 2, ours 0.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille
+0.3 0 0 0 0 EXPECT:refrep:hrisskar%flat-foot:eq:6
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Ald-ruhn,_Guild_of_Mages
+0.3 0 0 0 0 EXPECT:refrep:anarenen:eq:2
+1 0 0 0

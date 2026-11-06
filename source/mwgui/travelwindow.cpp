@@ -166,7 +166,7 @@ void Session::finishTravel()
 	fade = 1.0f;
 	fadeRate = 1.0f;                     // (back over a second, as OpenMW's TravelWindow: fadeScreenIn(1))
 	if (!autotest)
-		save();
+		autosave();
 	logf("travel: %s in %llu ms, feet %.0f %.0f %.0f", w.cellName().c_str(), osGetTime() - start,
 		w.player.feet[0], w.player.feet[1], w.player.feet[2]);
 }

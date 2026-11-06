@@ -15,6 +15,7 @@ extern "C" u32 __ctru_heap_size;
 #include "components/debug/debuglog.hpp"
 #include "components/files/zfile.hpp"
 #include "mwworld/worldhelpers.hpp"
+#include "mwmechanics/combathelpers.hpp"
 #include <vector>
 #include <zlib.h>
 #include <array>
@@ -150,6 +151,9 @@ void initActorState(const GameData& g, Ref& ref)
 	ref.aiTarget = a.aiTarget;
 	memcpy(ref.aiDest, a.aiDest, sizeof(ref.aiDest));
 	ref.aiDuration = a.aiDuration;
+	if (!a.aiList.empty())
+		aiStartList(ref, a);
+	actorSpellStats(g, ref, POOLS_FULL);
 	// Ammunition they carry for their bow (or thrown weapons, their own ammunition)
 	const std::string& ammo = !a.ammo.empty() ? a.ammo : a.weapon;
 	for (auto& c : ref.contents)
@@ -186,6 +190,8 @@ bool parseRefs(const World& w, int cellIndex, ParsedRefs& out)
 		if ((v = cJSON_GetObjectItem(r, "count"))) ref.count = v->valueint;
 		if ((v = cJSON_GetObjectItem(r, "lock"))) ref.lockLevel = v->valueint;
 		if ((v = cJSON_GetObjectItem(r, "key"))) ref.key = v->valuestring;
+		if (ref.lockLevel == 0 && !ref.key.empty())
+			ref.lockLevel = kKeyOnlyLock;
 		if ((v = cJSON_GetObjectItem(r, "owner"))) ref.owner = v->valuestring;
 		if ((v = cJSON_GetObjectItem(r, "ofac"))) ref.ownerFaction = v->valuestring;
 		if ((v = cJSON_GetObjectItem(r, "orank"))) ref.ownerRank = v->valueint;

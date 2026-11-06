@@ -138,6 +138,7 @@ struct WindowManagerState
 	// Hit & Miss Indicators (MorleyDev, Nexus 55396; Options): floating text by the crosshair for the player's
 	// blows: "Miss (NN%)" white, health damage red, fist (fatigue) damage green; rises and fades in 1 s
 	bool hitIndicators = false;
+	bool bestAttack = false;      // Use best attack: a swing is the weapon's strongest, not the way the player moves
 	struct Indicator { std::string text; u32 rgb; float x, y, timer; };
 	std::vector<Indicator> indicators;
 	// Options (settings.txt): difficulty -100..100 (Morrowind's slider), effects / music volume 0..100

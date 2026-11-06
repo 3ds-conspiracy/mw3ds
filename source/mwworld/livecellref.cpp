@@ -7,6 +7,8 @@
 #include <vector>
 #include <zlib.h>
 #include "mwworld/worldimp.hpp"
+#include "mwmechanics/combathelpers.hpp"
+#include "mwworld/worldhelpers.hpp"
 #include <algorithm>
 #include <array>
 #include <functional>
@@ -106,6 +108,10 @@ cJSON* World::refState(int i) const
 			for (auto& id : ids)
 				cJSON_AddItemToArray(list, cJSON_CreateString(id.c_str()));
 		}
+		if (!r.duelWith.empty())
+			cJSON_AddStringToObject(o, "duel", r.duelWith.c_str());
+		if (!r.wornGiven.empty())
+			cJSON_AddStringToObject(o, "worn_given", r.wornGiven.c_str());
 		if (r.moved)
 		{
 			cJSON_AddItemToObject(o, "pos", floats(r.pos, 3));
@@ -123,6 +129,11 @@ cJSON* World::refState(int i) const
 			cJSON_AddNumberToObject(ai, "done", r.aiDone);
 			if (r.aiRepeat)
 				cJSON_AddNumberToObject(ai, "repeat", 1);
+			if (r.aiStep >= 0)
+			{
+				cJSON_AddNumberToObject(ai, "step", r.aiStep);
+				cJSON_AddNumberToObject(ai, "gone", r.aiGone);
+			}
 			if (!r.aiCell.empty())
 				cJSON_AddStringToObject(ai, "cell", r.aiCell.c_str());
 		}
@@ -194,6 +205,10 @@ u32 World::refHash(int i) const
 			mix(id.data(), id.size());
 		for (auto& id : r.noSpells)
 			mix(id.data(), id.size());
+		if (!r.duelWith.empty())
+			mix(r.duelWith.c_str(), strlen(r.duelWith.c_str()));
+		if (!r.wornGiven.empty())
+			mix(r.wornGiven.c_str(), strlen(r.wornGiven.c_str()));
 		mixi(r.friendlyHits);
 		mixf(r.diedAt);
 		mixi(r.hello);
@@ -204,6 +219,7 @@ u32 World::refHash(int i) const
 			mixf(r.rot[2]);
 		}
 		mixi(r.aiPackage);
+		mixi(r.aiStep);
 		mix(r.aiTarget.data(), r.aiTarget.size());
 		mix(r.aiDest, sizeof(r.aiDest));
 		mixf(r.aiDuration);
@@ -294,6 +310,14 @@ void World::applyRefState(Ref& r, const cJSON* it)
 				if (cJSON_IsString(e))
 					list.push_back(e->valuestring);
 		}
+		actorSpellStats(game, r, POOLS_AS_SAVED);
+		// (saves from before have none)
+		if (const cJSON* dw = cJSON_GetObjectItem(it, "duel"))
+			if (cJSON_IsString(dw))
+				r.duelWith = dw->valuestring;
+		if (const cJSON* wg = cJSON_GetObjectItem(it, "worn_given"))
+			if (cJSON_IsString(wg))
+				r.wornGiven = wg->valuestring;
 		if (const cJSON* p = cJSON_GetObjectItem(it, "pos"))
 		{
 			readFloats(p, r.pos, 3);
@@ -311,6 +335,18 @@ void World::applyRefState(Ref& r, const cJSON* it)
 			r.aiDone = num(ai, "done") != 0;
 			r.aiRepeat = num(ai, "repeat") != 0;
 			r.aiCell = str(ai, "cell");
+			// (a save from before lists: one left standing, its first package done, starts its list; anything else was given
+			// by a script and stays)
+			bool stood = r.aiPackage == AIPKG_IDLE || r.aiDone;
+			if (cJSON_GetObjectItem(ai, "step"))
+			{
+				r.aiStep = (s8)num(ai, "step", -1);
+				r.aiGone = (u32)num(ai, "gone");
+			}
+			else if (r.aiStep < 0 || !stood)
+				r.aiStep = -1;
+			else
+				aiStartList(r, game.actors[r.actor]);
 		}
 	}
 	r.fitBox();                    // moved: its box goes with it

@@ -243,6 +243,57 @@ void Session::allyFight(int ri, float dt)
 	npcDuel(ri, dt);
 }
 
+// OpenMW's InventoryStore: clothing or armour added to an NPC is weighed for wearing at once (Falura Llervu's bride
+// clothes, B3_ZainabBride, by AddItem). The looks are baked, so only what a script gives is kept to weigh: updateDress
+void World::scriptGaveWear(Ref& r, const std::string& id)
+{
+	const Object* o = game.object(id);
+	if (r.actor < 0 || game.actors[r.actor].creature || !o || (o->recType != REC_CLOT && o->recType != REC_ARMO))
+		return;
+	std::string all = r.wornGiven.str(), low = lower(id);
+	if (("|" + all + "|").find("|" + low + "|") == std::string::npos)
+		r.wornGiven = all.empty() ? low : all + "|" + low;
+}
+
+// One more to fight, kept by id so it lasts through a save and the cell leaving memory (OpenMW's AiCombat packages)
+void World::duelAdd(Ref& r, const std::string& id)
+{
+	std::string all = r.duelWith.str();
+	if (("|" + all + "|").find("|" + id + "|") == std::string::npos)
+		r.duelWith = all.empty() ? id : all + "|" + id;
+}
+
+// The nearest of those it was set on who is here to fight (OpenMW's AiSequence goes for the nearest target); the dead
+// and the disabled come off the list (AiCombat ends on them), those elsewhere stay. -1: none now
+int Session::duelNext(int ri)
+{
+	Ref& r = w.refs[ri];
+	std::string left, all = r.duelWith.str();
+	int best = -1;
+	float bestD = 1e30f;
+	for (size_t at = 0; at <= all.size();)
+	{
+		size_t end = std::min(all.find('|', at), all.size());
+		std::string id = all.substr(at, end - at);
+		at = end + 1;
+		int f = w.findRef(id);
+		if (f >= 0 && (w.refs[f].dead || !w.refs[f].visible()))
+			continue;
+		left += (left.empty() ? "" : "|") + id;
+		if (f < 0 || f == ri || !w.sameSpace(f, ri))
+			continue;
+		float dx = w.refs[f].pos[0] - r.pos[0], dy = w.refs[f].pos[1] - r.pos[1], d = dx * dx + dy * dy;
+		if (d < bestD)
+		{
+			bestD = d;
+			best = f;
+		}
+	}
+	if (left != all)
+		r.duelWith = left;
+	return best;
+}
+
 // StartCombat on another actor (not the player): OpenMW gives it a combat package with that actor as the target. It
 // walks up to its foe and swings (hit chance, damage and armor as for a blow on the player, no block or crit), the
 // foe takes up the fight against it, and a death ends it, or the foe being disabled (AiCombat ends on a target not
@@ -268,7 +319,10 @@ void Session::npcDuel(int ri, float dt)
 	Actor* a = w.actorOf(ri);
 	ActorSet* set = w.actorsOf(ri);
 	if (f.duelFoe < 0 && f.ai != AI_COMBAT)
+	{
 		f.duelFoe = ri;                                  // whoever is struck back at takes up the fight
+		w.duelAdd(f, r.idLower.str());
+	}
 	if (r.knockTimer > 0.0f)
 		return;                                          // (npcKnockUpdate)
 	float dx = f.pos[0] - r.pos[0], dy = f.pos[1] - r.pos[1], dist = sqrtf(dx * dx + dy * dy);

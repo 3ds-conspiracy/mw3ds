@@ -501,7 +501,7 @@
 0.3 0 0 0 0 SNEAK:1
 # (behind him, south: the spot north of him stood in his way, and he waited there for good on an Old 3DS)
 120 0 0 0 0 WALKTO:@2440,1060,12873
-120 0 0 0 0 UNTIL:reflocal:uryn%maren,urynmove:ge:13
+240 0 0 0 0 UNTIL:reflocal:uryn%maren,urynmove:ge:13
 120 0 0 0 0 WALKTO:@5600,3417,12791
 2 0 0 0
 0.3 0 0 0 0 SNEAK:0

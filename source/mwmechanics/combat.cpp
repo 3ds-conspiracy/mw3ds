@@ -101,6 +101,18 @@ float creatureDamage(const ActorDef& def, const Object* wpn, float charge, int k
 	return at.first + (at.second - at.first) * charge;
 }
 
+// Always Use Best Attack (OpenMW's getBestAttack): 0 chop, 1 slash, 2 thrust, by minimum + maximum damage; thrust wins a
+// tie, then slash, and slash when all three match. Hand-to-hand has no best attack: any of the three
+static int bestAttackKind(const Object* wpn)
+{
+	if (!wpn)
+		return rand() % 3;
+	int chop = wpn->chop[0] + wpn->chop[1], slash = wpn->slash[0] + wpn->slash[1], thrust = wpn->thrust[0] + wpn->thrust[1];
+	if (slash == chop && slash == thrust)
+		return 1;
+	return thrust >= chop && thrust >= slash ? 2 : slash >= chop ? 1 : 0;
+}
+
 // ---- Shared rules
 
 bool Session::shieldBlocks(float blockSkill, float agility, float luck, float fatigue, float fatigueMax, bool still,
@@ -242,7 +254,8 @@ void Session::damagePlayer(float dmg, bool fatigueOnly)
 		playSound(-1, "Health Damage");
 	}
 	hurtFlash = 1.0f;
-	bodyHit = true;
+	// (the flinch of a body seen from outside: one taken in first person mustn't wait for the next change of view)
+	bodyHit = thirdPerson;
 	sheatheTimer = 0.0f;
 	if (weaponDrawn && vm.action == VM_IDLE)
 		vm.play(VM_HIT, "Hit1");
@@ -745,7 +758,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			if (attackCharge < 0.0f)
 			{
 				attackCharge = 0.0f;
-				attackKind = isRanged(wpn) ? 0 : in.moveY > 0.3f ? 2 : fabsf(in.moveX) > 0.3f ? 1 : 0;
+				attackKind = isRanged(wpn) ? 0 : bestAttack ? bestAttackKind(wpn) : in.moveY > 0.3f ? 2 : fabsf(in.moveX) > 0.3f ? 1 : 0;
 				if (isRanged(wpn))
 					playSound(-1, wpn->subtype == WEAP_CROSSBOW ? "crossbowPull" : wpn->subtype == WEAP_BOW ? "bowPull" : "SwishS");
 				vm.speed = fmaxf(0.5f, wpn ? wpn->speed : 1.0f);
@@ -940,7 +953,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		if (r.ai == AI_IDLE)
 		{
 			// A timed wander runs out (the other packages count theirs in npcPackage)
-			aiSettle(r);
+			aiSettle(w, r);
 			if (r.aiPackage == AIPKG_WANDER && r.aiDuration > 0.0f && w.gameHour - r.aiStart >= r.aiDuration)
 				aiFinish(w, r);
 			// The aggressive attack on sight (when they notice the player)
@@ -954,6 +967,9 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			float rating = (w.frame + i) % 4 == 0 || !cadenceOn(CAD_FIGHT) ? fightTermOf(i, w.distanceToPlayer(i)) : 0.0f;    // (mwmechanics/formulas.cpp)
 			bool calm = r.calmUntil > w.time || w.actorEffect(i, w.game.actors[r.actor].creature ? 50 : 49) > 0.0f;
 			float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f }, eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+			// (no foe at hand and others it was set on: the nearest, a few times a second)
+			if (r.duelFoe < 0 && !r.duelWith.empty() && !menu && !calm && (w.frame + i) % 8 == 0)
+				r.duelFoe = duelNext(i);
 			if (r.duelFoe >= 0 && !menu)
 				npcDuel(i, dt);
 			// (never one on the player's side: a summon or a companion with a high Fight follows instead; OpenMW keeps the

@@ -152,6 +152,14 @@ std::string GameData::gmstLabel(const char* name, const char* fallback) const
 // hash lookup each, real time on an Old 3DS. The answer is kept by the name's address (the callers pass string
 // literals; the text is compared too, for any that don't) until the game data changes (g_gameGeneration). Main
 // thread only: the streaming thread looks them up as before
+const RaceDef* GameData::raceOf(const char* idOrName) const
+{
+	for (auto& r : races)
+		if (strcasecmp(r.id.c_str(), idOrName) == 0 || strcasecmp(r.name.c_str(), idOrName) == 0)
+			return &r;
+	return nullptr;
+}
+
 float GameData::gmstf(const char* name, float fallback) const
 {
 	struct Slot { const char* ptr; const GameData* data; u32 gen; bool found; float value; char text[40]; };
@@ -515,6 +523,19 @@ bool gameLoad(GameData& g, const char* path)
 				a.aiDest[k] = (float)cJSON_GetArrayItem(ai, 2 + k)->valuedouble;
 			a.aiDuration = (float)cJSON_GetArrayItem(ai, 5)->valuedouble;
 		}
+		const cJSON* step;
+		cJSON_ArrayForEach(step, cJSON_GetObjectItem(it, "ai_list"))
+		{
+			AiStep st;
+			st.package = cJSON_GetArrayItem(step, 0)->valueint;
+			st.target = cJSON_GetArrayItem(step, 1)->valuestring;
+			for (int k = 0; k < 3; k++)
+				st.dest[k] = (float)cJSON_GetArrayItem(step, 2 + k)->valuedouble;
+			st.hours = (float)cJSON_GetArrayItem(step, 5)->valuedouble;
+			st.range = cJSON_GetArrayItem(step, 6)->valueint;
+			st.repeat = cJSON_GetArrayItem(step, 7)->valueint != 0;
+			a.aiList.push_back(st);
+		}
 		a.creature = cJSON_IsTrue(cJSON_GetObjectItem(it, "creature"));
 		a.magicka = num(it, "magicka"); a.flee = num(it, "flee"); a.soul = num(it, "soul"); a.ctype = (int)num(it, "ctype", -1); a.resistNormal = num(it, "resist_normal"); a.hello = (int)num(it, "hello", 30); a.alarm = (int)num(it, "alarm", 100);
 		a.respawn = num(it, "respawn") != 0; a.essential = num(it, "essential") != 0; a.blood = (int)num(it, "blood"); a.afloat = (u8)num(it, "afloat");
@@ -743,7 +764,7 @@ bool gameLoad(GameData& g, const char* path)
 	forSection(root, "spells", [&](const cJSON* it) {
 		SpellDef s;
 		s.id = str(it, "id"); s.name = str(it, "name"); s.type = num(it, "type");
-		s.cost = num(it, "cost"); s.flags = num(it, "flags");
+		s.cost = num(it, "cost"); s.flags = num(it, "flags"); s.order = num(it, "order");
 		s.effects = readEffects(arr(it, "effects"));
 		g.spells[it->string] = s;
 	});
@@ -961,7 +982,7 @@ bool gameLoad(GameData& g, const char* path)
 	{
 		if (!a.autocalc || a.creature)
 			continue;
-		for (auto& id : g.autoCalcSpells(a.attributes, a.skills, false))
+		for (auto& id : g.autoCalcSpells(a.attributes, a.skills, false, g.raceOf(a.race.c_str())))
 		{
 			std::string l = lower(id);
 			if (std::find(a.spells.begin(), a.spells.end(), l) == a.spells.end())

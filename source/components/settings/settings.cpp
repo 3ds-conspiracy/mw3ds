@@ -59,6 +59,7 @@ void Session::loadSettings()
 		else if (strncmp(line, "combat=gbac", 11) == 0) combatMode = COMBAT_GBAC;
 		else if (strncmp(line, "numbers=on", 10) == 0) hitIndicators = true;
 		else if (strncmp(line, "numbers=off", 11) == 0) hitIndicators = false;
+		else if (strncmp(line, "bestattack=", 11) == 0) bestAttack = strncmp(line + 11, "on", 2) == 0;
 		else if (strncmp(line, "combat=vanilla", 14) == 0) combatMode = COMBAT_VANILLA;
 		else if (strncmp(line, "controls=xbox", 13) == 0) g_controlLayout = CONTROLS_XBOX;
 		else if (strncmp(line, "controls=goldeneye", 18) == 0) g_controlLayout = CONTROLS_GOLDENEYE;
@@ -112,6 +113,7 @@ void Session::saveSettings()
 	fprintf(f, "gyroaim=%s\ngyrosens=%d\n", g_gyroAim > 0 ? "on" : "off", s_gyroSens);
 	fprintf(f, "combat=%s\n", combatMode == COMBAT_GBAC ? "gbac" : "vanilla");
 	fprintf(f, "numbers=%s\n", hitIndicators ? "on" : "off");
+	fprintf(f, "bestattack=%s\n", bestAttack ? "on" : "off");
 	fprintf(f, "gamma=%d\n", g_gammaPct);
 	if (g_autoGamma >= 0)                // (not chosen: the console's default, on with QTM)
 		fprintf(f, "autogamma=%s\n", g_autoGamma ? "on" : "off");

@@ -20,6 +20,7 @@
 0.3 0 0 0 0 EFFECT:97:100:100000:0
 0 0 0 0 0 SETUP-END
 # almalexia's blessing_en on ebony spear_blessed_unique (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:3
 0.3 0 0 0 0 SNAP:skill:spear
 1.0 0 0 0 0 GIVE:ebony%spear_blessed_unique
@@ -27,6 +28,7 @@
 0.3 0 0 0 0 EXPECT:effect:3:ge:@30
 0.3 0 0 0 0 EXPECT:skill:spear:ge:@10
 0.3 0 0 0 0 EXPECT:equipped:ebony%spear_blessed_unique:eq:1
+0.3 0 0 0 0 UNEQUIP:ebony%spear_blessed_unique
 # almalexia_blade on sword of almalexia (on strike)
 1.0 0 0 0 0 GIVE:sword%of%almalexia
 1.0 0 0 0 0 EQUIP:sword%of%almalexia
@@ -55,11 +57,13 @@
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:charge:amulet%of%verbosity:lt:@0
 # amulet_gaenor_en on amulet_gaenor (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:luck
 1.0 0 0 0 0 GIVE:amulet_gaenor
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:attr:luck:ge:@15
 0.3 0 0 0 0 EXPECT:equipped:amulet_gaenor:eq:1
+0.3 0 0 0 0 UNEQUIP:amulet_gaenor
 # amulet_salandas_en on amulet_salandas (when used)
 1.0 0 0 0 0 GIVE:amulet_salandas
 0.3 0 0 0 0 SNAP:charge:amulet_salandas
@@ -89,6 +93,7 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # belt_goval_en on belt_goval (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:personality
 0.3 0 0 0 0 SNAP:skill:speechcraft
 1.0 0 0 0 0 GIVE:belt_goval
@@ -96,6 +101,7 @@
 0.3 0 0 0 0 EXPECT:attr:personality:ge:@5
 0.3 0 0 0 0 EXPECT:skill:speechcraft:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:belt_goval:eq:1
+0.3 0 0 0 0 UNEQUIP:belt_goval
 # bipolar blade_en on bipolar blade (on strike)
 1.0 0 0 0 0 GIVE:bipolar%blade
 1.0 0 0 0 0 EQUIP:bipolar%blade
@@ -162,12 +168,15 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # cuirass_soscean_en on ebony_cuirass_soscean (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:healthmax
 1.0 0 0 0 0 GIVE:ebony_cuirass_soscean
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:healthmax:ge:@50
 0.3 0 0 0 0 EXPECT:equipped:ebony_cuirass_soscean:eq:1
+0.3 0 0 0 0 UNEQUIP:ebony_cuirass_soscean
 # dagger_symmachus_en on glass dagger_symmachus_unique (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:shortblade
 0.3 0 0 0 0 SNAP:attr:endurance
 0.3 0 0 0 0 SNAP:effect:68
@@ -177,6 +186,7 @@
 0.3 0 0 0 0 EXPECT:attr:endurance:ge:@10
 0.3 0 0 0 0 EXPECT:effect:68:ge:@10
 0.3 0 0 0 0 EXPECT:equipped:glass%dagger_symmachus_unique:eq:1
+0.3 0 0 0 0 UNEQUIP:glass%dagger_symmachus_unique
 # db_poison on adamantium_shortsword_db (on strike)
 1.0 0 0 0 0 GIVE:adamantium_shortsword_db
 1.0 0 0 0 0 EQUIP:adamantium_shortsword_db
@@ -195,6 +205,7 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # durgok's shield on goblin_shield_durgok_uni (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SETATTR:personality:60
 0.3 0 0 0 0 SETATTR:speed:60
 0.3 0 0 0 0 SNAP:attr:personality
@@ -206,6 +217,7 @@
 0.3 0 0 0 0 EXPECT:effect:75:ge:@1
 0.3 0 0 0 0 EXPECT:attr:speed:le:@-10
 0.3 0 0 0 0 EXPECT:equipped:goblin_shield_durgok_uni:eq:1
+0.3 0 0 0 0 UNEQUIP:goblin_shield_durgok_uni
 # dwrv_dart_area_shock on centurion_projectile_dart_shock (on strike)
 1.0 0 0 0 0 GIVE:centurion_projectile_dart_shock:5
 1.0 0 0 0 0 EQUIP:centurion_projectile_dart_shock
@@ -270,6 +282,7 @@
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:charge:silver_helm_uvenim:lt:@0
 # helseth's collar_en on helseth's collar (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:sneak
 0.3 0 0 0 0 SNAP:skill:security
 0.3 0 0 0 0 SNAP:attr:speed
@@ -279,7 +292,9 @@
 0.3 0 0 0 0 EXPECT:skill:security:ge:@10
 0.3 0 0 0 0 EXPECT:attr:speed:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:helseth's%collar:eq:1
+0.3 0 0 0 0 UNEQUIP:helseth's%collar
 # helseth_ring_en on helseth's ring (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:68
 0.3 0 0 0 0 SNAP:effect:93
 0.3 0 0 0 0 SNAP:effect:99
@@ -293,18 +308,23 @@
 0.3 0 0 0 0 EXPECT:effect:75:ge:@10
 0.3 0 0 0 0 EXPECT:effect:77:ge:@10
 0.3 0 0 0 0 EXPECT:equipped:helseth's%ring:eq:1
+0.3 0 0 0 0 UNEQUIP:helseth's%ring
 # her boot_en on indoril_almalexia_boots (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:agility
 1.0 0 0 0 0 GIVE:indoril_almalexia_boots
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:attr:agility:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_boots:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_boots
 # her curiass_en on indoril_almalexia_cuirass (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:heavyarmor
 1.0 0 0 0 0 GIVE:indoril_almalexia_cuirass
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:skill:heavyarmor:ge:@10
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_cuirass:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_cuirass
 # her dart_en on her dart (on strike)
 1.0 0 0 0 0 GIVE:her%dart:5
 1.0 0 0 0 0 EQUIP:her%dart
@@ -326,41 +346,53 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # her greaves_en on indoril_almalexia_greaves (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:mediumarmor
 1.0 0 0 0 0 GIVE:indoril_almalexia_greaves
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:skill:mediumarmor:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_greaves:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_greaves
 # her helm_en on indoril_almalexia_helmet (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:68
 1.0 0 0 0 0 GIVE:indoril_almalexia_helmet
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:effect:68:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_helmet:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_helmet
 # her left gauntlet_en on indoril_almalexia_gauntlet_l (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:strength
 1.0 0 0 0 0 GIVE:indoril_almalexia_gauntlet_l
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:attr:strength:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_gauntlet_l:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_gauntlet_l
 # her left pauldron_en on indoril_almalexia_pauldron_l (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:97
 1.0 0 0 0 0 GIVE:indoril_almalexia_pauldron_l
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:effect:97:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_pauldron_l:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_pauldron_l
 # her right gauntlet_en on indoril_almalexia_gauntlet_r (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:117
 1.0 0 0 0 0 GIVE:indoril_almalexia_gauntlet_r
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:effect:117:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_gauntlet_r:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_gauntlet_r
 # her right pauldron_en on indoril_almalexia_pauldron_r (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:99
 1.0 0 0 0 0 GIVE:indoril_almalexia_pauldron_r
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:effect:99:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_pauldron_r:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_pauldron_r
 # her scimitar_en on ebony scimitar_her (on strike)
 1.0 0 0 0 0 GIVE:ebony%scimitar_her
 1.0 0 0 0 0 EQUIP:ebony%scimitar_her
@@ -378,11 +410,13 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # her shield_en on indoril_almalexia_shield (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:block
 1.0 0 0 0 0 GIVE:indoril_almalexia_shield
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:skill:block:ge:@10
 0.3 0 0 0 0 EXPECT:equipped:indoril_almalexia_shield:eq:1
+0.3 0 0 0 0 UNEQUIP:indoril_almalexia_shield
 # king's_oath_en on king's_oath (on strike)
 #   nothing in the game data gives or carries the item
 # king's_oath_pc_en on king's_oath_pc (on strike)

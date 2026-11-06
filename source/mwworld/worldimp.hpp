@@ -26,6 +26,7 @@
 
 // Menus the chargen scripts switch on one at a time
 enum { MENU_STATS = 1, MENU_INVENTORY = 2, MENU_MAGIC = 4, MENU_MAP = 8, MENU_REST = 16 };
+enum SaveOutcome { SAVE_FAILED = 0, SAVE_WRITTEN, SAVE_QUEUED };
 
 float angleDelta(float a, float b);    // a - b wrapped into -pi..pi
 void fillContents(const GameData& g, Ref& ref, int level, unsigned seed);   // record items, leveled lists picked
@@ -84,6 +85,7 @@ struct World
 	int corprusLevel() const { return corprusSince < 0.0f ? 1 : 1 + (int)((gameHour - corprusSince) / 24.0f); }
 	int corprusKept[8] = {};
 	void endCorprus(const std::string& spell);
+	float constantEffectKept(int effect);   // a worn item's constant effect as it goes on: the share the player's resistances let through
 	int markCell = -1;            // Mark: where Recall goes
 	float markPos[3] = {}, markYaw = 0.0f;
 	float lastOutside[3] = {};    // the player's last spot outdoors (Intervention from inside)
@@ -355,6 +357,8 @@ struct World
 	// instance's item; a cell's changed objects and scripts as text, and applying stored text
 	cJSON* refState(int i) const;
 	u32 refHash(int i) const;
+	void scriptGaveWear(Ref& r, const std::string& id); // AddItem / Equip of clothes or armour on an NPC: it may put them on
+	void duelAdd(Ref& r, const std::string& id);        // StartCombat: one more for it to fight (Ref::duelWith)
 	void applyRefState(Ref& r, const cJSON* item);
 	cJSON* scriptState(const ScriptInstance& s) const;
 	std::string cellStateText(int cell, bool* failed = nullptr) const;   // failed: out of heap putting it together
@@ -401,7 +405,9 @@ struct World
 	// Save games (mwstate/statemanagerimp.cpp): everything that changes while playing, as JSON; the cells out of memory follow it as
 	// the compressed blocks they are kept in (version 2). legacy: version 1, every cell inside the JSON (tests: the
 	// old saves still load)
-	bool saveGame(const char* path, bool legacy = false) const;
+	// background: the file is built now and handed to the save writer thread (SAVE_QUEUED), which puts it on the
+	// card while play goes on: the door's autosave. Synchronous saves return SAVE_WRITTEN / SAVE_FAILED
+	SaveOutcome saveGame(const char* path, bool legacy = false, bool background = false) const;
 	static std::string savedCell(const char* path);     // "" when there is no usable save
 	bool applySave(const char* path);                   // after load(dataDir, savedCell(path))
 	std::string saveMissingAddon(const char* path) const;   // the add-on the save needs that the data lacks, or ""

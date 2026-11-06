@@ -501,6 +501,7 @@ bool Engine::frame()
 		// `new` ran out and spent the reserve: memory back before the next allocation finds none
 		if (g_memoryLow)
 			session->relieveMemory();
+		session->pollSaveWriter();     // a door's autosave the writer thread finished: its meta line and notice
 	}
 
 	// Death screen asked to load the last save: start the session over from it
@@ -966,6 +967,10 @@ void Engine::shutdown()
 	};
 	exitStep("exit: sensors");
 	gyroStop();
+	// A background autosave still writing stops between blocks (the last good save stays); Save and quit wrote
+	// synchronously before this, so the quit path never waits out a long card write here
+	exitStep("exit: save writer");
+	saveWriterStop();
 	exitStep("exit: session shutdown");
 	session->shutdown();
 	exitStep("exit: session delete");

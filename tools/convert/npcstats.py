@@ -1,9 +1,8 @@
 """NPC numbers the 3DS needs for trading and combat: attributes, skills, health, gold,
 merchant services, carried items, the weapon they fight with and their armor rating.
 
-NPCs with full stats (52-byte NPDT) store them; autocalculated ones (12-byte NPDT) are
-estimated from race and class the way character creation works, plus growth per level:
-major skills +2, minor +1, other skills +0.5 and attributes +2 per level above 1.
+NPCs with full stats (52-byte NPDT) store them; autocalculated ones (12-byte NPDT) get them from
+race, class and level by OpenMW's rule (autocalc below).
 """
 import struct
 import zlib
@@ -22,10 +21,11 @@ SKILL_MARKSMAN = 23
 ARMOR_SHIELD = 8
 # Magic effects an actor's combat AI knows how to use: harm (fire, frost, shock, poison, damage
 # health / magicka / fatigue, drain health) cast at the player, restore health on itself
-# The harmful effects (OpenMW's Harmful flag: Burden, the damages, drains, weaknesses, Paralyze, Silence, Blind, Sound,
-# Calm / Frenzy / Demoralize / Rally of others, Soul Trap, the absorbs, Corprus): a fighter casts a spell with one at a
-# target or by touch, the engine weighing which (spellpriority.cpp). build_game.py flags them harmful (0x10)
-HARMFUL_EFFECTS = {7, 45, 46, 47, 48, 51, 52, 53, 54, 58, 135, 136} | set(range(14, 39)) | set(range(85, 90))
+# The harmful effects (OpenMW's Harmful flag, its HardcodedFlags table in components/esm3/loadmgef.cpp: Burden, the
+# damages, drains, weaknesses, disintegrates, Paralyze, Silence, Blind, Sound, Soul Trap, Turn Undead, the absorbs; not
+# Calm, Frenzy, Demoralize or Rally, nor Sun Damage or Stunted Magicka): a fighter casts a spell with one at a target or
+# by touch, the engine weighing which (spellpriority.cpp). build_game.py flags them harmful (0x10)
+HARMFUL_EFFECTS = {7, 45, 46, 47, 48, 58, 101} | set(range(14, 39)) | set(range(85, 90))
 HEAL_EFFECTS = {75}
 # Armor rating weight per ARMO slot (helm, cuirass, pauldrons, greaves, boots, gauntlets, shield, bracers)
 ARMOR_SLOT_WEIGHT = [0.1, 0.3, 0.1, 0.1, 0.1, 0.1, 0.05, 0.05, 0.1, 0.05, 0.05]
@@ -42,8 +42,15 @@ PICK_LEVEL = 1
 
 
 def bind(db):
-    global _LEVI
+    global _LEVI, _SKILLS, _MAGICKA_MULT
     _LEVI = db.get("LEVI", {})
+    # Each skill's governing attribute and specialization (SKIL SKDT), for autocalc
+    _SKILLS = {i: struct.unpack_from("<ii", r.get("SKDT")) for i, r in db.get("SKIL", {}).items()}
+    _MAGICKA_MULT = float(db.get("GMST", {}).get("fnpcbasemagickamult", 2.0))
+
+
+_SKILLS = {}
+_MAGICKA_MULT = 2.0
 
 
 def resolve_item(lid, level, seed, depth=0):
@@ -85,40 +92,8 @@ def weapon_damage(rec):
     return {"chop": [d[22], d[23]], "slash": [d[24], d[25]], "thrust": [d[26], d[27]]}
 
 
-def best_weapon(rec, objects):
-    """Id of the carried melee weapon with the highest maximum damage, or None (hand-to-hand)."""
-    best, best_dmg = None, -1
-    for _, item in npc_items(rec):
-        w = objects.get(item.lower())
-        if w is None or w.tag != "WEAP":
-            continue
-        d = w.get("WPDT")
-        if struct.unpack_from("<h", d, 8)[0] not in MELEE_TYPES:
-            continue
-        dmg = max(d[23], d[25], d[27])
-        if dmg > best_dmg:
-            best, best_dmg = w.id, dmg
-    return best
-
-
 def weapon_type(w):
     return struct.unpack_from("<h", w.get("WPDT"), 8)[0]
-
-
-def ranged_weapon(rec, objects):
-    """(weapon id, ammunition id or None) of the ranged weapon an NPC can fight with, or (None, None):
-    a bow / crossbow with matching ammunition, or thrown weapons (their own ammunition)."""
-    items = [objects.get(i.lower()) for _, i in npc_items(rec)]
-    weapons = [w for w in items if w is not None and w.tag == "WEAP"]
-    for w in sorted(weapons, key=lambda w: -max(w.get("WPDT")[22:28])):
-        t = weapon_type(w)
-        if t == THROWN:
-            return w.id, None
-        if t in (BOW, CROSSBOW):
-            ammo = next((a for a in weapons if weapon_type(a) == (ARROW if t == BOW else BOLT)), None)
-            if ammo is not None:
-                return w.id, ammo.id
-    return None, None
 
 
 def best_shield(rec, objects):
@@ -208,21 +183,70 @@ MELEE_SKILL = {0: SKILL_SHORT_BLADE, 1: SKILL_LONG_BLADE, 2: SKILL_LONG_BLADE, 3
                5: SKILL_BLUNT, 6: SKILL_SPEAR, 7: SKILL_AXE, 8: SKILL_AXE}
 
 
+# The weapon skills in the order OpenMW's auto-equip breaks ties in (inventorystore.cpp autoEquipWeapon), and each
+# WEAP type's skill
+AUTO_EQUIP_SKILLS = [SKILL_LONG_BLADE, SKILL_AXE, SKILL_SPEAR, SKILL_SHORT_BLADE, SKILL_MARKSMAN, SKILL_BLUNT]
+WEAPON_SKILL = {**MELEE_SKILL, BOW: SKILL_MARKSMAN, CROSSBOW: SKILL_MARKSMAN, THROWN: SKILL_MARKSMAN}
+
+
 def combat_weapon(rec, objects, skills):
-    """(weapon, ammunition) an NPC fights with: their ranged weapon when their Marksman skill is at
-    least that of their best melee weapon, else the best melee weapon (None = hand-to-hand)."""
-    melee = best_weapon(rec, objects)
-    ranged, ammo = ranged_weapon(rec, objects)
-    if ranged is not None:
-        melee_skill = skills[MELEE_SKILL[weapon_type(objects[melee.lower()])]] if melee else skills[SKILL_HAND_TO_HAND]
-        if skills[SKILL_MARKSMAN] >= melee_skill:
-            return ranged, ammo
-    return melee, None
+    """(weapon, ammunition) an actor holds, as OpenMW's auto-equip picks (inventorystore.cpp autoEquipWeapon): the
+    weapon skills from the highest (ties in AUTO_EQUIP_SKILLS' order; a skill at 0 never), and for each the carried
+    weapon of that skill with the highest maximum damage of chop, slash and thrust (the later of equals). A bow or
+    crossbow only with arrows / bolts, the one of the highest chop maximum (the later of equals); without, the next
+    skill. Thrown weapons are their own ammunition. (None, None): hand-to-hand."""
+    weapons = []
+    for _, item in npc_items(rec):
+        w = objects.get(item.lower())
+        if w is not None and w.tag == "WEAP":
+            weapons.append(w)
+
+    def best_of(kind):
+        best, top = None, 0
+        for w in weapons:
+            if weapon_type(w) == kind and w.get("WPDT")[23] >= top:
+                best, top = w, w.get("WPDT")[23]
+        return best
+
+    arrow, bolt = best_of(ARROW), best_of(BOLT)
+    visited = set()
+    for _ in AUTO_EQUIP_SKILLS:
+        pick, top = None, 0
+        for sk in AUTO_EQUIP_SKILLS:
+            if sk not in visited and skills[sk] > top:
+                pick, top = sk, skills[sk]
+        if pick is None:
+            break
+        visited.add(pick)
+        weapon, top = None, 0
+        for w in weapons:
+            t = weapon_type(w)
+            if t in (ARROW, BOLT) or WEAPON_SKILL.get(t) != pick:
+                continue
+            d = w.get("WPDT")
+            for hi in (d[23], d[25], d[27]):          # chop, slash, thrust maximum
+                if hi >= top:
+                    weapon, top = w, hi
+        if weapon is None:
+            continue
+        t = weapon_type(weapon)
+        if t == BOW:
+            if arrow is None:
+                continue
+            return weapon.id, arrow.id
+        if t == CROSSBOW:
+            if bolt is None:
+                continue
+            return weapon.id, bolt.id
+        return weapon.id, None
+    return None, None
 
 
 # Summonings (102-116, 134) and the wards an actor casts on itself in a fight (OpenMW's spellpriority): the shields,
 # Sanctuary, Spell Absorption, Reflect, Fortify Attribute / Health / Fatigue / Attack
 SUMMON_EFFECTS = set(range(102, 117)) | {134}
+EFFECT_DISPEL = 57
+CURE_EFFECTS = {72, 73}             # Cure Poison, Cure Paralyzation
 WARD_EFFECTS = {3, 4, 5, 6, 42, 67, 68, 79, 80, 82, 117}
 
 
@@ -241,7 +265,10 @@ def combat_spells(rec, spel):
         harm = any(e[0] in HARMFUL_EFFECTS and e[3] in (1, 2) for e in effects)
         heal = any(e[0] in HEAL_EFFECTS and e[3] == 0 for e in effects)
         self_cast = any(e[0] in SUMMON_EFFECTS or (e[0] in WARD_EFFECTS and e[3] == 0) for e in effects)
-        if harm or heal or self_cast:
+        # Dispel (on itself, or the foe's wards) and Cure Poison / Paralysis on itself: OpenMW's rateEffect weighs them
+        # by what they would take off (spellpriority.cpp: the engine rates them the same)
+        cure = any(e[0] == EFFECT_DISPEL or (e[0] in CURE_EFFECTS and e[3] == 0) for e in effects)
+        if harm or heal or self_cast or cure:
             out.append(sid)
     return out
 
@@ -280,41 +307,76 @@ def armor_rating(rec, objects, skills):
 
 
 def autocalc(level, race, cls, female):
-    """(attributes[8], skills[27]) estimated from race and class."""
-    attrs, skills = [40] * 8, [5] * 27
+    """(attributes[8], skills[27], health) of an NPC with the Autocalc flag, as OpenMW works them out
+    (mwclass/npc.cpp autoCalculateAttributes / autoCalculateSkills):
+    - attributes: the race's, +10 for each of the class's two favored ones, then (level - 1) times the sum, over the
+      skills that attribute governs, of 1.0 a major skill, 0.5 a minor one and 0.2 any other; at most 100
+    - skills: +25 major, +10 minor, then 5 + the race's bonus + 5 in the class's specialization + (level - 1) times
+      (1.0 major or minor, else 0.1; +0.5 in the specialization); at most 100
+    - health: (strength + endurance) / 2, rounded down, + (level - 1) times 3, +2 for a combat class, +1 for a
+      stealth one, +1 when endurance is favored
+    OpenMW rounds half to even (round_ieee_754), as Python's round() does."""
+    attrs, skills = [40] * 8, [0] * 27
     majors, minors, favored, spec = set(), set(), set(), -1
     if cls is not None:
         d = struct.unpack("<15i", cls.get("CLDT"))
         favored, spec = set(d[0:2]), d[2]
         minors = {d[3 + 2 * i] for i in range(5)}
         majors = {d[4 + 2 * i] for i in range(5)}
+    bonus = {}
     if race is not None:
         rd = race.get("RADT")
         for i in range(8):
             attrs[i] = struct.unpack_from("<ii", rd, 56 + 8 * i)[1 if female else 0]
         for i in range(7):
-            skill, bonus = struct.unpack_from("<ii", rd, 8 * i)
+            skill, b = struct.unpack_from("<ii", rd, 8 * i)
             if 0 <= skill < 27:
-                skills[skill] += bonus
-    growth = max(level - 1, 0)
+                bonus[skill] = b
+    # (each skill's governing attribute and specialization, from the SKIL records; the vanilla table when unbound)
+    table = _SKILLS or {sk: (SKILL_ATTRIBUTE[sk], next(sp for sp, ss in SPEC_SKILLS.items() if sk in ss))
+                        for sk in range(27)}
+    growth = level - 1
     for i in range(8):
-        attrs[i] = min(100, attrs[i] + (10 if i in favored else 0) + 2 * growth)
+        attrs[i] += 10 if i in favored else 0
+        per_level = sum(1.0 if sk in majors else 0.5 if sk in minors else 0.2
+                        for sk, (attr, _) in table.items() if attr == i)
+        attrs[i] = min(round(attrs[i] + growth * per_level), 100)
     for s in range(27):
-        if s in majors:
-            skills[s] += 25 + 2 * growth
-        elif s in minors:
-            skills[s] += 10 + growth
-        else:
-            skills[s] += growth // 2
-        if spec >= 0 and s in SPEC_SKILLS.get(spec, ()):
-            skills[s] += 5
-        skills[s] = min(100, skills[s])
-    return attrs, skills
+        skills[s] += 25 if s in majors else 10 if s in minors else 0
+        same_spec = table[s][1] == spec
+        per_level = (1.0 if s in majors or s in minors else 0.1) + (0.5 if same_spec else 0.0)
+        skills[s] = min(round(skills[s] + 5 + bonus.get(s, 0) + (5 if same_spec else 0) + growth * per_level), 100)
+    mult = 3 + (2 if spec == 0 else 1 if spec == 2 else 0) + (1 if ATTR_ENDURANCE in favored else 0)
+    health = (attrs[ATTR_STRENGTH] + attrs[ATTR_ENDURANCE]) // 2 + mult * growth
+    return attrs, skills, health
 
 
-# Skills of each specialization (combat, magic, stealth)
+# Skills of each specialization (combat, magic, stealth), and each skill's governing attribute (vanilla SKIL records)
 SPEC_SKILLS = {0: (0, 1, 2, 3, 4, 5, 6, 7, 8), 1: (9, 10, 11, 12, 13, 14, 15, 16, 17),
                2: (18, 19, 20, 21, 22, 23, 24, 25, 26)}
+SKILL_ATTRIBUTE = [3, 0, 5, 5, 0, 0, 0, 5, 4, 1, 2, 2, 6, 1, 2, 2, 1, 4, 1, 3, 0, 3, 4, 3, 6, 6, 4]
+
+
+EFFECT_FORTIFY_MAX_MAGICKA = 84
+# SPDT types whose effects are always on the actor: ability, blight, disease, curse
+LASTING_SPELL_TYPES = (1, 2, 3, 4)
+
+
+def fortify_max_magicka(rec, db):
+    """The Fortify Maximum Magicka (magnitude, ENAM's minimum) of an NPC's own lasting spells and its race's."""
+    ids = [text(d).lower() for t, d in rec.subs if t == "NPCS"]
+    race = db["RACE"].get((rec.zstr("RNAM") or "").lower())
+    if race is not None:
+        ids += [text(d).lower() for t, d in race.subs if t == "NPCS"]
+    total = 0
+    for sid in ids:
+        sp = db["SPEL"].get(sid)
+        if sp is None or struct.unpack_from("<i", sp.get("SPDT"))[0] not in LASTING_SPELL_TYPES:
+            continue
+        for t, d in sp.subs:
+            if t == "ENAM" and struct.unpack_from("<h", d)[0] == EFFECT_FORTIFY_MAX_MAGICKA:
+                total += struct.unpack_from("<i", d, 16)[0]
+    return total
 
 
 def travel_destinations(rec):
@@ -344,20 +406,28 @@ def npc_stats(rec, db):
     if len(npdt) == 12:
         level = struct.unpack_from("<h", npdt)[0]
         gold = struct.unpack_from("<i", npdt, 8)[0]
-        attrs, skills = autocalc(level, db["RACE"].get((rec.zstr("RNAM") or "").lower()),
-                                 db["CLAS"].get((rec.zstr("CNAM") or "").lower()), female)
-        health = int(0.5 * (attrs[ATTR_STRENGTH] + attrs[ATTR_ENDURANCE]) + 0.1 * attrs[ATTR_ENDURANCE] * max(level - 1, 0))
-        fatigue = attrs[ATTR_STRENGTH] + attrs[ATTR_WILLPOWER] + attrs[ATTR_AGILITY] + attrs[ATTR_ENDURANCE]
+        attrs, skills, health = autocalc(level, db["RACE"].get((rec.zstr("RNAM") or "").lower()),
+                                         db["CLAS"].get((rec.zstr("CNAM") or "").lower()), female)
+        magicka = None
     else:
         attrs, skills = list(npdt[2:10]), list(npdt[10:37])
-        health, _, fatigue = struct.unpack_from("<3H", npdt, 38)
+        health, magicka, _ = struct.unpack_from("<3H", npdt, 38)
         gold = struct.unpack_from("<i", npdt, 48)[0]
+    # magicka: intelligence x (fNPCbaseMagickaMult + a tenth of the Fortify Maximum Magicka on it), as OpenMW's
+    # CreatureStats::recalculateMagicka. It runs for every autocalc NPC, and for one with stored stats only when such a
+    # fortify is on it (a Breton's or High Elf's birthright): else the stored magicka stays. The engine doesn't apply
+    # Fortify Maximum Magicka to NPCs (build_game.py CONSTANT_TARGET_EFFECTS), so it is counted here
+    fortify = fortify_max_magicka(rec, db)
+    if magicka is None or fortify:
+        magicka = int(attrs[1] * (_MAGICKA_MULT + 0.1 * fortify))
+    # fatigue: strength + willpower + agility + endurance, stored or not (OpenMW's CreatureStats::setAttribute sets it
+    # whenever one of those four is set, so the record's own fatigue never shows)
+    fatigue = attrs[ATTR_STRENGTH] + attrs[ATTR_WILLPOWER] + attrs[ATTR_AGILITY] + attrs[ATTR_ENDURANCE]
     aidt = rec.get("AIDT")
     fight = aidt[2] if aidt else 30
     flee = aidt[3] if aidt else 30
     services = struct.unpack_from("<I", aidt, 8)[0] if aidt and len(aidt) >= 12 else 0
     weapon, ammo = combat_weapon(rec, db["objects"], skills)
-    magicka = int(attrs[1] * 2.0)                       # intelligence x fNPCbaseMagickaMult
     return {"attributes": attrs, "skills": skills, "health": max(int(health), 0), "fatigue": max(int(fatigue), 1),
             "magicka": magicka, "gold": max(gold, 0), "fight": fight, "flee": flee, "services": services,
             "weapon": weapon or "", "ammo": ammo or "", "shield": preferred_shield(rec, db, skills),

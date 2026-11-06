@@ -4,7 +4,7 @@
 # the hunt in Old Mournhold, then Almalexia's line (goblins, the Shrine of the Dead, the Mazed Band, the attack on
 # Mournhold, Bamz-Amschend, a show of power, the Missing Hand, Trueflame, Sotha Sil). Notes: internal/uber/trib-main.md
 3 0 0 0 0 MSG
-0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 SEED:8
 0.3 0 0 0 0 GOD:2
 0.3 0 0 0 0 LEVEL:30
 0.3 0 0 0 0 BOOST:100

@@ -101,6 +101,8 @@ std::optional<float> aiExtensions(Ctx& c, const Node& n, World& w, bool onPlayer
 				if (t >= 0 && t != ref && w.refs[t].actor >= 0 && !w.refs[t].dead)
 				{
 					r->duelFoe = t;
+					w.duelAdd(*r, w.refs[t].idLower.str());
+					w.duelAdd(w.refs[t], r->idLower.str());
 					if (w.refs[t].duelFoe < 0)
 						w.refs[t].duelFoe = ref;
 				}
@@ -111,6 +113,7 @@ std::optional<float> aiExtensions(Ctx& c, const Node& n, World& w, bool onPlayer
 		if (r && r->actor >= 0)
 		{
 			r->duelFoe = -1;
+			r->duelWith = Atom();
 			c.host.stopCombat(ref);
 		}
 		return 0.0f;
@@ -150,6 +153,7 @@ std::optional<float> aiExtensions(Ctx& c, const Node& n, World& w, bool onPlayer
 		r->aiRepeat = false;
 		r->aiActive = true;
 		r->aiStart = w.gameHour;
+		r->aiStep = -1;               // (OpenMW's stack: a script's package cancels the others, the record's too)
 		r->aiDuration = 0.0f;
 		r->aiTarget.clear();
 		r->aiCell.clear();

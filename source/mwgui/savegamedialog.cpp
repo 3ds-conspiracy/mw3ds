@@ -145,6 +145,7 @@ void addSaveToList(std::vector<SaveInfo>& list)
 // listed: the file came from the folder's own listing (no check that it is there: one card access less a save)
 static bool readInfo(const std::string& path, SaveInfo& out, bool listed)
 {
+	saveWriterDrain();                 // an autosave still on its way to the card: whole before its header is read
 	struct stat st;
 	if (!listed && stat(path.c_str(), &st) != 0)
 		return false;

@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# Golden tour: abilities, diseases and curses on an actor change its attributes and skills while it has them (OpenMW's
+# active spells), and with them its pace and its fatigue and magicka. Ours kept them as a list of what it could pass on or
+# cast. A dreamer's Wither drains Strength and Endurance by 10: OpenMW's fatigue 140, ours 160. A vampire's script gives
+# Vampire Attributes, Speed + 20: OpenMW's walk 169.58, ours 146.58. A diseased kagouti's Yellow Tick drains Speed by
+# 10: OpenMW's walk 108.25, ours 137.75.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Abinabi
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reffatigue:dreamer:eq:140
+0.3 0 0 0 0 GOTO:Hleran_Ancestral_Tomb
+2 0 0 0
+0.1 0 0 0 0 EXPECT:npcwalk:quarra_vampire_1:ge:168.5+EXPECT:npcwalk:quarra_vampire_1:le:170.5
+0.3 0 0 0 0 COE:7:9
+2 0 0 0
+0.1 0 0 0 0 EXPECT:npcwalk:kagouti_diseased:ge:107.5+EXPECT:npcwalk:kagouti_diseased:le:109
+1 0 0 0

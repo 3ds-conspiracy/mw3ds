@@ -97,7 +97,10 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 				if (onPlayer)
 					w.addItem(what, leveled ? 1 : count);
 				else
+				{
 					w.refAddItem(*r, what, leveled ? 1 : count);
+					w.scriptGaveWear(*r, what);
+				}
 			}
 			if (onPlayer && o && c.host.talking())
 				c.host.notify(gmstFormat(w.game.gmst(count == 1 ? "sNotifyMessage60" : "sNotifyMessage61"), count, o->name));
@@ -157,6 +160,7 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 			std::string id = lower(argStr(c, n, 0));
 			if (w.game.object(id) && w.refItemCount(*r, id) == 0)
 				w.refAddItem(*r, id, 1);
+			w.scriptGaveWear(*r, id);
 		}
 		return 0.0f;
 	default:

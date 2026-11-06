@@ -1,0 +1,11 @@
+# start: Seyda Neen
+# bug-npc-race-spells: an NPC knows its race's spells and its record's whole spell list, as OpenMW gives every NPC
+# (spec/findings/golden-actors.md G6): Ajira, a Khajiit who sells no spells, knows Eye of Night (the race's) and her
+# record's spells; ours kept a spell list only for spell merchants and none of the race's.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Balmora,_Guild_of_Mages
+0.3 0 0 0 0 EXPECT:refspell:ajira,eye%of%night:eq:1+EXPECT:refspell:ajira,strong%feather:eq:1
+1 0 0 0

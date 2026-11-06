@@ -54,6 +54,17 @@ bool resistedBy(int e, int& res, int& weak)
 	return true;
 }
 
+// A worn item's constant effect is resisted once, as the item is put on, by the player's resistances of that moment
+// (OpenMW resists an equipment spell's effects as it adds them to the active spells), and the share let through is kept
+// while it is worn: drunk to 100% Resist Magicka first, the Boots of Blinding Speed go on without their Blind
+float World::constantEffectKept(int effect)
+{
+	auto me = game.magicEffects.find(effect);
+	bool resistable = false;
+	float r = resistance(*this, effect, me != game.magicEffects.end() && (me->second.flags & 0x8), 100.0f, resistable);
+	return resistable ? fmaxf(0.0f, 1.0f - r / 100.0f) : 1.0f;
+}
+
 float Session::resistBase(int effect)
 {
 	int res, weak;

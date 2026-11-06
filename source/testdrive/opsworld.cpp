@@ -314,6 +314,14 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		logf("test: depth16 %s", g_testDepth16 ? "on" : "off");
 		return true;
 	}
+	// AUTOSAVE: the door's autosave, as travel makes it (built now, written by the save writer thread where one runs;
+	// the native build writes it on the spot). A test drives the background path and the drains around it
+	if (verb == "AUTOSAVE")
+	{
+		s.autosave();
+		logf("test: autosave asked");
+		return true;
+	}
 	// SAVESRELOAD: the save list kept in memory dropped, so the next listing reads the card as at a start (the saves'
 	// index, then the .meta of saves it lacks)
 	if (verb == "SAVESRELOAD")

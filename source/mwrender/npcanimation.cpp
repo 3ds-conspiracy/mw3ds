@@ -604,6 +604,86 @@ bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::v
 // an item of that leaves its pack (a stripped corpse, RemoveItem) it is dressed again from the third-person pieces with
 // what is left (npcDress), as OpenMW's NpcAnimation rebuilds its parts when the inventory changes; a cell read again
 // with the item still gone comes back dressed the same way
+// The equipment slot a piece of clothing or armour takes (OpenMW's Clothing / Armor getEquipmentSlots), -1: none that
+// shows. Armour and clothing share boots and hands; a bracer takes its hand
+static int wearSlot(const Object* o)
+{
+	enum { HELM, CUIRASS, LPAULD, RPAULD, GREAVES, BOOTS, LHAND, RHAND, SHIELD, PANTS, SHIRT, BELT, ROBE, SKIRT };
+	static const int kArmor[11] = { HELM, CUIRASS, LPAULD, RPAULD, GREAVES, BOOTS, LHAND, RHAND, SHIELD, LHAND, RHAND };
+	static const int kCloth[8] = { PANTS, BOOTS, SHIRT, BELT, ROBE, RHAND, LHAND, SKIRT };
+	if (o && o->recType == REC_ARMO && o->subtype >= 0 && o->subtype < 11)
+		return kArmor[o->subtype];
+	if (o && o->recType == REC_CLOT && o->subtype >= 0 && o->subtype < 8)
+		return kCloth[o->subtype];
+	return -1;
+}
+
+// new over old in a slot, as OpenMW's autoEquip: armour by its rating and over clothing always, clothing never over
+// armour, clothing by its value
+static bool wearBetter(const Object* add, const Object* old)
+{
+	if (add->recType != old->recType)
+		return add->recType == REC_ARMO;
+	return add->recType == REC_ARMO ? add->armor > old->armor : add->value > old->value;
+}
+
+std::vector<std::string> npcWornItems(const World& w, const Ref& r, const ActorDef& d, u32* maskOut)
+{
+	u32 mask = 0;
+	std::vector<std::string> left;
+	for (size_t k = 0; k < d.worn.size() && k < 32; k++)
+	{
+		// (rings and amulets show nothing: one gone changes no part)
+		if (!w.game.firstPerson.third.items.count(d.worn[k].str()))
+		{
+			mask |= 1u << k;
+			continue;
+		}
+		for (const ContentItem& c : r.contents)
+			if (c.first != 0 && c.second == d.worn[k].view())
+			{
+				mask |= 1u << k;
+				left.push_back(c.second);
+				break;
+			}
+	}
+	if (maskOut)
+		*maskOut = mask;
+	std::string given = r.wornGiven.str();
+	for (size_t at = 0; at < given.size();)
+	{
+		size_t end = std::min(given.find('|', at), given.size());
+		std::string id = given.substr(at, end - at);
+		at = end + 1;
+		const Object* add = w.game.object(id);
+		int slot = wearSlot(add);
+		bool carried = false;
+		for (const ContentItem& c : r.contents)
+			carried |= c.first != 0 && lower(c.second) == id;
+		if (slot < 0 || !carried || !w.game.firstPerson.third.items.count(id))
+			continue;
+		bool put = true;
+		for (size_t k = 0; k < left.size();)
+		{
+			const Object* old = w.game.object(left[k]);
+			if (wearSlot(old) == slot)
+			{
+				if (!wearBetter(add, old))
+				{
+					put = false;
+					break;
+				}
+				left.erase(left.begin() + k);
+				continue;
+			}
+			k++;
+		}
+		if (put)
+			left.push_back(id);
+	}
+	return left;
+}
+
 void Session::updateDress(float dt)
 {
 	if ((dressTimer -= dt) > 0.0f)
@@ -616,32 +696,19 @@ void Session::updateDress(float dt)
 				continue;
 			const Ref& r = w.refs[a.ref];
 			const ActorDef& d = w.game.actors[r.actor];
-			if (d.creature || d.worn.empty() || d.worn.size() > 32)
+			if (d.creature || (d.worn.empty() && r.wornGiven.empty()) || d.worn.size() > 32)
 				continue;
 			u32 mask = 0;
-			std::vector<std::string> left;
-			for (size_t k = 0; k < d.worn.size(); k++)
-			{
-				// (rings and amulets show nothing: one gone changes no part)
-				if (!w.game.firstPerson.third.items.count(d.worn[k].str()))
-				{
-					mask |= 1u << k;
-					continue;
-				}
-				for (const ContentItem& c : r.contents)
-					if (c.first != 0 && c.second == d.worn[k].view())
-					{
-						mask |= 1u << k;
-						left.push_back(c.second);
-						break;
-					}
-			}
+			std::vector<std::string> left = npcWornItems(w, r, d, &mask);
 			u32 all = d.worn.size() == 32 ? ~0u : (1u << d.worn.size()) - 1;
-			if (a.wornMask == ~0u && mask == all && !a.dressed)
+			// (what a script gave it: told apart by its interned text, one copy per text)
+			const char* given = r.wornGiven.empty() ? nullptr : r.wornGiven.c_str();
+			if (a.wornMask == ~0u && mask == all && !a.dressed && !given)
 				a.wornMask = mask;               // (as its library has it)
-			if (mask == a.wornMask)
+			if (mask == a.wornMask && given == a.wornGivenSeen)
 				continue;
 			a.wornMask = mask;
+			a.wornGivenSeen = given;
 			if (!npcDress(w, *l, a, d, left))
 				logf("npcdress: %s kept as it was (a piece wouldn't load)", d.id.c_str());
 		}

@@ -252,8 +252,11 @@ void Session::drawSpellmaking()
 		auto me = w.game.magicEffects.find(e.effect);
 		icons.push_back(me != w.game.magicEffects.end() ? me->second.iconIx : -1);
 	}
-	int pick = uiList(list2, 4, 24, 130, 176, rows, 0.4f, true, nullptr, &icons);
-	if (pick >= 0 && pick < (int)known.size() && makeEffects.size() < 8)
+	// (a row shorter than the space down to the buttons: the cost and chance go under it)
+	// (while the right column asks which skill or attribute, that list alone takes the D-pad, A and a tap)
+	bool asking = makePick != 0;
+	int pick = uiList(list2, 4, 24, 130, 162, rows, 0.4f, !asking, nullptr, &icons);
+	if (!asking && pick >= 0 && pick < (int)known.size() && makeEffects.size() < 8)
 	{
 		makeEffects.push_back(newEffect(known[pick], 7));
 		makeSel = makeEffects.size() - 1;
@@ -264,13 +267,14 @@ void Session::drawSpellmaking()
 	float cost = 0.0f;
 	int price = spellmakePrice(&cost);
 	// The spell's magicka cost and the player's chance to cast it, as OpenMW's window shows them (its chance of the
-	// spell as made: calcSpellBaseSuccessChance)
+	// spell as made: calcSpellBaseSuccessChance). Under the effect list: on the right the skill or attribute button and
+	// the list to choose one cover where they were
 	SpellDef made;
 	made.type = 0;
 	made.cost = (int)roundf(cost);
 	made.effects = makeEffects;
-	uiText(232, 170, 0.38f, col::textDim, "Cost " + std::to_string((int)roundf(cost)));
-	uiText(232, 183, 0.38f, col::textDim, "Chance " + std::to_string(makeEffects.empty() ? 0 : std::max(0, castChance(made))) + "%");
+	uiText(6, 191, 0.38f, col::textDim, "Cost " + std::to_string((int)roundf(cost)));
+	uiTextRight(132, 191, 0.38f, col::textDim, "Chance " + std::to_string(makeEffects.empty() ? 0 : std::max(0, castChance(made))) + "%");
 	int b = makeButtons("Buy (" + std::to_string(price) + ")");
 	if (b == 0)
 	{

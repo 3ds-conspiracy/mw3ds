@@ -226,6 +226,14 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 		w.stats.attrSkillUps[k] = atoi(a[2].c_str());
 		return true;
 	}
+	// CLEAREFFECTS: the effects active on the player end at once (what an earlier cast left running: a worn item's harmful
+	// effects are resisted as it goes on, so a Resist Frost left from before would take its Frost Damage whole)
+	if (verb == "CLEAREFFECTS")
+	{
+		w.effects.clear();
+		w.recomputeStats();
+		return true;
+	}
 	if (verb == "ACTIVE" && a.size() >= 3)
 	{
 		// an active effect on the player at once, with no resistance roll: ACTIVE:<effect>:<magnitude>[:<seconds>]

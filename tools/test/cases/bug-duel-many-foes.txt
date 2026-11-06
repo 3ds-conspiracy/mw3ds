@@ -1,0 +1,35 @@
+# start: Seyda Neen
+# bug-duel-many-foes: Ald Daedroth's Ordinators and worshippers (B2_AhemmusaSafe) are set on each other by scripts that
+# run StartCombat once, on two foes each. OpenMW stacks a combat package per StartCombat, kept and saved, and an actor
+# goes for the nearest of them. Ours held one foe, not saved: the second call replaced the first, one whose foe died
+# stood around with the other still there, and leaving the room or reloading ended every fight for good, the scripts'
+# flags saying they had started it.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Left_Wing
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refduel:salvas_areleth:eq:1
+0.1 0 0 0 0 REFHEALTH:salvas_areleth:5000
+0.1 0 0 0 0 REFHEALTH:daral_thireloth:5000
+0.1 0 0 0 0 REFHEALTH:clendil:5000
+# through a save and back
+0.3 0 0 0 0 SAVE:duel
+0.5 0 0 0 0 LOAD:duel
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refduel:salvas_areleth:eq:1
+0.1 0 0 0 0 EXPECT:refduel:clendil:eq:1
+# out of the room and back
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Outer_Shrine
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Inner_Shrine
+3 0 0 0
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Left_Wing
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refduel:salvas_areleth:eq:1
+# one foe dead: on to the other
+0.1 0 0 0 0 SLAY:bovkinna
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:bovkinna
+0.1 0 0 0 0 EXPECT:refduel:salvas_areleth:eq:1
+0.1 0 0 0 0 EXPECT:refduel:daral_thireloth:eq:1
+1 0 0 0

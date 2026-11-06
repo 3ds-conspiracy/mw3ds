@@ -3,22 +3,24 @@
 # the movement by it unless "normalise race speed" is on; vanilla Morrowind does the same): an Orc man walks 1.35 times,
 # an Orc woman 1.1, a Wood Elf man 0.95 and a woman 0.9 as fast as their Speed alone gives. Ours left the weight out, so
 # every race walked and ran at the same pace. Walk = 100 + Speed x (200 - 100) / 100, times the weight (Orc woman,
-# Speed 83: 201.3; Wood Elf woman, Speed 83: 164.7; Orc man, Speed 62: 218.7; Wood Elf man, Speed 52: 144.4); the
-# player's run likewise over the stats' alone (Orc man 1.35, Wood Elf woman 0.9, High Elf 1)
+# Speed 83: 201.3; Wood Elf woman, Speed 83: 164.7; Orc man, Speed 62: 218.7; Wood Elf man, Speed 54: 146.3); the
+# player's run likewise over the stats' alone (Orc man 1.35, Wood Elf woman 0.9, High Elf 1).
+# Since NPCs' loads count (bug-npc-load-speed) each is a little under that: OpenMW's walk x the weight, from the golden
+# tour: 177.07 x 1.1 = 194.78, 149.47 x 1.35 = 201.78, 181.17 x 0.9 = 163.05, 150.39 x 0.95 = 142.87.
 3 0 0 0 0 MSG
 0.3 0 0 0 0 SEED:1+GOD:2+HOUR:12
 0.3 0 0 0 0 GOTO:Ald_Daedroth,_Outer_Shrine
 4 0 0 0
-0.1 0 0 0 0 EXPECT:npcwalk:sloomalah:ge:201.2+EXPECT:npcwalk:sloomalah:le:201.4
+0.1 0 0 0 0 EXPECT:npcwalk:sloomalah:ge:194.6+EXPECT:npcwalk:sloomalah:le:195
 0.3 0 0 0 0 GOTO:Ald_Daedroth,_Antechamber
 4 0 0 0
-0.1 0 0 0 0 EXPECT:npcwalk:ra'gruzgob:ge:218.6+EXPECT:npcwalk:ra'gruzgob:le:218.8
+0.1 0 0 0 0 EXPECT:npcwalk:ra'gruzgob:ge:201.6+EXPECT:npcwalk:ra'gruzgob:le:202
 0.3 0 0 0 0 GOTO:Ald-ruhn,_Gildan's_House
 4 0 0 0
-0.1 0 0 0 0 EXPECT:npcwalk:gildan:ge:164.6+EXPECT:npcwalk:gildan:le:164.8
+0.1 0 0 0 0 EXPECT:npcwalk:gildan:ge:162.9+EXPECT:npcwalk:gildan:le:163.2
 0.3 0 0 0 0 GOTO:Seyda_Neen
 4 0 0 0
-0.1 0 0 0 0 EXPECT:npcwalk:fargoth:ge:144.3+EXPECT:npcwalk:fargoth:le:144.5
+0.1 0 0 0 0 EXPECT:npcwalk:fargoth:ge:142.7+EXPECT:npcwalk:fargoth:le:143.1
 0.1 0 0 0 0 PCRACE:Orc+PCSEX:0
 0.5 0 0 0
 0.1 0 0 0 0 EXPECT:playerracemult:ge:1.349+EXPECT:playerracemult:le:1.351

@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# Golden tour: every AI package of a record runs, in turn, and one that repeats comes round again (OpenMW's AiSequence).
+# Dan_Ru, a slave in Abebaal Egg Mine, has three Travel points that repeat, and paces them for good. Ours kept only the
+# first of a record's packages: he reached it in a moment and stood there (79 records: slaves, miners, guards on patrol).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Abebaal_Egg_Mine
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refpackage:dan_ru:eq:1
+20 0 0 0
+0.1 0 0 0 0 EXPECT:refpackage:dan_ru:eq:1
+# through a save and back it goes on
+0.3 0 0 0 0 SAVE:paces
+0.5 0 0 0 0 LOAD:paces
+20 0 0 0
+0.1 0 0 0 0 EXPECT:refpackage:dan_ru:eq:1
+1 0 0 0

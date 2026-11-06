@@ -5,40 +5,16 @@
 1 0 0 0 0 SAVE:spectravel
 0.5 0 0 0 0 LOAD:spectravel
 3 0 0 0
-0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
-8 0 0 0
-0.1 0 0 0 0 SETATTR:personality:61
-0.1 0 0 0 0 SETATTR:luck:32
-0.1 0 0 0 0 SETSKILL:mercantile:34
-0.1 0 0 0 0 SETFATIGUE:0.5
-0.1 0 0 0 0 SETDISP:aryon:40
-0.1 0 0 0 0 EXPECT:travelprice:aryon,150000.0,3,1:eq:38
-0.1 0 0 0 0 EXPECT:travelprice:aryon,20000.0,0,1:eq:9
-0.1 0 0 0 0 EXPECT:travelprice:aryon,9000.0,1,0:eq:3
-0.5 0 0 0 0 LOAD:spectravel
-3 0 0 0
 0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
 8 0 0 0
-0.1 0 0 0 0 SETATTR:personality:94
-0.1 0 0 0 0 SETATTR:luck:78
-0.1 0 0 0 0 SETSKILL:mercantile:5
-0.1 0 0 0 0 SETFATIGUE:0.25
-0.1 0 0 0 0 SETDISP:dratha:65
-0.1 0 0 0 0 EXPECT:travelprice:dratha,61234.0,0,1:eq:9
-0.1 0 0 0 0 EXPECT:travelprice:dratha,61234.0,0,1:eq:9
-0.1 0 0 0 0 EXPECT:travelprice:dratha,150000.0,1,0:eq:71
-0.5 0 0 0 0 LOAD:spectravel
-3 0 0 0
-0.3 0 0 0 0 GOTO:Tel_Mora,_Upper_Tower
-8 0 0 0
-0.1 0 0 0 0 SETATTR:personality:39
-0.1 0 0 0 0 SETATTR:luck:81
-0.1 0 0 0 0 SETSKILL:mercantile:90
+0.1 0 0 0 0 SETATTR:personality:53
+0.1 0 0 0 0 SETATTR:luck:50
+0.1 0 0 0 0 SETSKILL:mercantile:39
 0.1 0 0 0 0 SETFATIGUE:1.0
 0.1 0 0 0 0 SETDISP:dratha:25
 0.1 0 0 0 0 EXPECT:travelprice:dratha,3000.0,0,0:eq:1
-0.1 0 0 0 0 EXPECT:travelprice:dratha,20000.0,0,0:eq:3
-0.1 0 0 0 0 EXPECT:travelprice:dratha,20000.0,1,0:eq:6
+0.1 0 0 0 0 EXPECT:travelprice:dratha,20000.0,0,0:eq:4
+0.1 0 0 0 0 EXPECT:travelprice:dratha,20000.0,1,0:eq:9
 0.5 0 0 0 0 LOAD:spectravel
 3 0 0 0
 0.3 0 0 0 0 GOTO:Tel_Vos,_Aryon's_Chambers
@@ -108,8 +84,8 @@
 0.1 0 0 0 0 SETSKILL:mercantile:27
 0.1 0 0 0 0 SETFATIGUE:1.0
 0.1 0 0 0 0 SETDISP:neloth:65
-0.1 0 0 0 0 EXPECT:travelprice:neloth,61234.0,1,1:eq:17
-0.1 0 0 0 0 EXPECT:travelprice:neloth,61234.0,1,0:eq:26
+0.1 0 0 0 0 EXPECT:travelprice:neloth,61234.0,1,1:eq:15
+0.1 0 0 0 0 EXPECT:travelprice:neloth,61234.0,1,0:eq:23
 0.1 0 0 0 0 EXPECT:travelprice:neloth,500.0,0,0:eq:1
 0.5 0 0 0 0 LOAD:spectravel
 3 0 0 0
@@ -147,3 +123,28 @@
 0.1 0 0 0 0 EXPECT:travelprice:aryon,500.0,0,1:eq:7
 0.1 0 0 0 0 EXPECT:travelprice:aryon,9000.0,3,0:eq:6
 0.1 0 0 0 0 EXPECT:travelprice:aryon,150000.0,0,0:eq:28
+0.5 0 0 0 0 LOAD:spectravel
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:20
+0.1 0 0 0 0 SETATTR:luck:40
+0.1 0 0 0 0 SETSKILL:mercantile:38
+0.1 0 0 0 0 SETFATIGUE:0.5
+0.1 0 0 0 0 SETDISP:arrille:40
+0.1 0 0 0 0 EXPECT:travelprice:arrille,3000.0,0,0:eq:1
+0.1 0 0 0 0 EXPECT:travelprice:arrille,3000.0,0,0:eq:1
+0.1 0 0 0 0 EXPECT:travelprice:arrille,500.0,1,0:eq:1
+0.5 0 0 0 0 LOAD:spectravel
+3 0 0 0
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.1 0 0 0 0 SETATTR:personality:60
+0.1 0 0 0 0 SETATTR:luck:67
+0.1 0 0 0 0 SETSKILL:mercantile:70
+0.1 0 0 0 0 SETFATIGUE:0.75
+0.1 0 0 0 0 SETDISP:arrille:50
+0.1 0 0 0 0 EXPECT:travelprice:arrille,500.0,3,1:ge:28
+0.1 0 0 0 0 EXPECT:travelprice:arrille,500.0,3,1:le:29
+0.1 0 0 0 0 EXPECT:travelprice:arrille,500.0,0,1:eq:7
+0.1 0 0 0 0 EXPECT:travelprice:arrille,20000.0,0,0:eq:3

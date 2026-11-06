@@ -1157,6 +1157,9 @@
 2 0 0 0
 0.1 0 0 0 0 EXPECT:dead:ahnia
 0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:40
+# (Ahnia falls between the first spot and her note since NPCs' loads slow them: walk round to where it can be aimed at)
+20 0 0 0 0 WALKTO:@1460,-2200,-256
+0.3 0 0 0
 60 0 0 0 0 ACTIVATE:bk_ahnia
 2 0 0 0
 0.1 0 0 0 0 EXPECT:journal:MS_ScrollSales:eq:50

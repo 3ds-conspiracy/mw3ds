@@ -1,0 +1,10 @@
+# start: Seyda Neen
+# Golden tour: the shipwreck's floating crates run Float, which sets startAngle from GetStartingAngle x and turns back to
+# it. OpenMW gives the angle the level placed it at (this crate: 11 degrees); ours gave 0 for x and y, kept only the
+# turn about z, so each swing ended level instead of at its tilt.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Abandoned_Shipwreck,_Lower_Level
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:crate_02_pillows_float,startangle:ge:10.9+EXPECT:reflocal:crate_02_pillows_float,startangle:le:11.1
+1 0 0 0

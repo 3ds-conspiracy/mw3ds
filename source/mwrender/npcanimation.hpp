@@ -35,6 +35,10 @@ struct BodyAct
 struct ActorDef;
 struct LoadedCell;
 bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::vector<std::string>& items);
+struct Ref;
+// What an NPC has on: what it was dressed in that it still carries, then what scripts gave it (Ref::wornGiven) where
+// that beats what is in the slot. mask (if asked): which of d.worn are still carried
+std::vector<std::string> npcWornItems(const World& w, const Ref& r, const ActorDef& d, u32* mask = nullptr);
 
 // The player seen from outside (third-person view, character creation's face preview): the NPC skeleton
 // of their race and sex, dressed from the "third" pieces (tools/convert/firstperson.py third_person): the bare

@@ -1,4 +1,5 @@
 // EXPECT values: references (lights, locks, traps, scripts, sounds), the view model
+#include "mwrender/npcanimation.hpp"
 #include <optional>
 #include <3ds.h>
 #include <algorithm>
@@ -278,6 +279,11 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		v = s.w.player.swimming ? 1.0f : 0.0f;
 		return true;
 	}
+	if (what == "attackkind")        // the player's swing: 0 chop, 1 slash, 2 thrust
+	{
+		v = (float)s.attackKind;
+		return true;
+	}
 	if (what == "weapondrawn")
 	{
 		v = s.weaponDrawn ? 1.0f : 0.0f;
@@ -402,6 +408,18 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		v = here.compare(0, want.size(), want) == 0 ? 1.0f : 0.0f;
 		return true;
 	}
+	if (what == "refwears")
+	{
+		// refwears:<npc>,<item>: 1 when the NPC has that on as updateDress works it out (a script gave it clothes)
+		size_t comma = arg.find(',');
+		int ri = comma == std::string::npos ? -1 : findRef(s, arg.substr(0, comma));
+		if (ri < 0 || w.refs[ri].actor < 0)
+			return false;
+		v = 0.0f;
+		for (auto& id : npcWornItems(w, w.refs[ri], w.game.actors[w.refs[ri].actor]))
+			v += lower(id) == lower(arg.substr(comma + 1)) ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "refspell")
 	{
 		// refspell:<actor>,<spell>: 1 when that NPC or creature has the spell (AddSpell / RemoveSpell on it)
@@ -439,12 +457,15 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		}
 		else if (what == "refrank") v = r.actor >= 0 ? (float)w.game.actors[r.actor].rank : -1.0f;   // RaiseRank / LowerRank
 		else if (what == "reflevel") v = r.actor >= 0 ? (float)w.game.actors[r.actor].level : -1.0f;
+		else if (what == "refrep") v = r.actor >= 0 ? (float)w.game.actors[r.actor].reputation : -1.0f;   // its own reputation
 		else if (what == "reffatigue") v = r.fatigue;
 		else if (what == "refmagicka") v = r.magicka;
 		else if (what == "refhealthmax") v = r.healthMax;
 		else if (what == "refmagickamax") v = r.magickaMax;
 		else if (what == "refcommanded") v = r.aiPackage == AIPKG_FOLLOW && r.aiTarget == "player" && !r.aiDone ? 1.0f : 0.0f;
 		else if (what == "refdisp") v = (float)w.disposition(ri);
+		else if (what == "refpackage") v = (float)r.aiPackage;       // its AI package (AIPKG_*: 1 travel, 5 none left)
+		else if (what == "refhello") v = (float)(r.hello >= 0 ? r.hello : r.actor >= 0 ? w.game.actors[r.actor].hello : 0);
 		else if (what == "refflee") v = r.fleeing ? 1.0f : 0.0f;
 		else if (what == "refcombat") v = r.ai == AI_COMBAT ? 1.0f : 0.0f;
 		else if (what == "refduel") v = r.duelFoe >= 0 ? 1.0f : 0.0f;      // fighting another actor (StartCombat on it)

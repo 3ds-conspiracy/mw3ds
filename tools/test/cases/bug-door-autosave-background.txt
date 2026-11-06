@@ -1,0 +1,22 @@
+# start: Seyda Neen
+# bug-door-autosave-background: a door's autosave is handed to the save writer thread: built behind the door's loading
+# screen, written to the card while play goes on (the write took seconds on a full card, tens at its worst, with the
+# player held at the door; it grew with the campaign: spec/performance-tradeoffs.md). The bytes are the synchronous
+# save's: two autosaves in a row (the second replaces one still waiting on the device), reloaded, and the state is
+# there. On the PC no thread runs and each is written on the spot: this case proves the file and the round trip; the
+# thread itself runs in Azahar and on the device (the quit step's drain is an emulator matter).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GIVE:Gold_001:123
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+4 0 0 0
+0.3 0 0 0 0 AUTOSAVE
+0.3 0 0 0 0 GIVE:iron%club:2
+0.3 0 0 0 0 AUTOSAVE
+1 0 0 0
+0.5 0 0 0 0 LOAD:@autosave
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille
+0.1 0 0 0 0 EXPECT:count:iron%club:eq:2
+0.1 0 0 0 0 EXPECT:gold:ge:123
+1 0 0 0

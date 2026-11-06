@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# bug-pov-stale-hit: a blow taken in first person left its flinch waiting (the body's Hit group is played from the
+# third-person block alone, which also cleared the flag), so the next change to third person played a Hit at once, long
+# after the blow: "like he is getting pushed". A blow in first person flinches nobody; one in third person still does
+# (bug-hit-flinch).
+1 0 0 0 0 TP:-22459:-14494:900:0+HEALTHMAX:2000+SEED:1
+5 0 0 0
+0.3 0 0 0 0 HIDEACTORS:4000
+1 0 0 0 0 PLACE:hlaalu%guard_outside:150
+0.1 0 0 0 0 ENABLE:hlaalu%guard_outside
+0.1 0 0 0 0 HOSTILE:hlaalu%guard_outside
+8 0 0 0
+0.1 0 0 0 0 EXPECT:health:lt:1990+EXPECT:bodyhits:eq:0
+0.1 0 0 0 0 DISABLE:hlaalu%guard_outside
+1 0 0 0
+0.3 0 0 0 0 POV:third
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:bodyhits:eq:0

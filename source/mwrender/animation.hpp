@@ -163,6 +163,7 @@ struct Actor
 	// whether it has been dressed again from the third-person pieces for what is left (npcDress), lit brighter than a
 	// library is (mwrender/renderingmanager.cpp actorTint scales it back)
 	u32 wornMask = ~0u;
+	const char* wornGivenSeen = nullptr;      // the Ref::wornGiven it was last dressed for
 	bool dressed = false;
 	float scaleFactor = 1.0f;          // SetScale's factor its place already holds (World::syncActor brings it to the Ref's)
 };

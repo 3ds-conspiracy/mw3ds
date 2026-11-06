@@ -77,6 +77,8 @@ goes the way a player goes (no direct calls past the crosshair or the topic list
 | `mwmechanics/combat.cpp` | combat numbers | `mwmechanics/combat.cpp` ... | checked (`combat.md`); AI choices around them partial |
 | `mwmechanics/spellcasting.cpp, mwmechanics/spelleffects.cpp` | cast chance, cost, resist, reflect, absorb | `spellcasting.cpp`, `spelleffects.cpp` | checked (`magic.md`); the 134 effects one by one unchecked |
 | `mwmechanics/npcstats.cpp` | skill gain, level-up | `npcstats.cpp` | checked (`stats-and-levelling.md`) |
+| `mwmechanics/autocalcspell.cpp` | the spells autocalc NPCs and a new player pick | `mwmechanics/autocalcspell.cpp` | checked 2026-11-04 against a running OpenMW (`findings/golden-actors.md` G5, `bug-npc-autocalc-spells`) |
+| `tools/convert/npcstats.py` | NPC attributes, skills, health, magicka, fatigue (autocalc and stored) | `mwclass/npc.cpp` (autoCalculateAttributes / Skills), `mwmechanics/creaturestats.cpp` (setAttribute, recalculateMagicka) | checked 2026-11-04 against a running OpenMW (`tools/test/golden/`, `findings/golden-actors.md`, `bug-npc-autocalc-stats`) |
 | `mwgui/waitdialog.cpp` | skill books | `mwworld/actionread.cpp` | unchecked |
 | `mwgui/waitdialog.cpp` | resting: who may rest, interruptions, regeneration per hour | `mwgui/waitdialog.cpp`, `mechanicsmanagerimp.cpp rest`, `mwmechanics/actors.cpp` | partial (regeneration numbers in `stats-and-levelling.md`) |
 | `tools/convert/level.py` `mwgui/waitdialog.cpp` | where sleeping is illegal | `mwworld/worldimp.cpp canRest` (`noSleep` on any cell) | checked 2026-10-20: CELL DATA flag 4 on exteriors too (61 town cells), only waiting there (`bug-sleep-in-town`) |

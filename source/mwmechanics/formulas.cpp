@@ -340,7 +340,27 @@ float Session::raceWeight(const std::string& race, bool female)
 
 // NPCs: fMinWalkSpeed + 0.01 x Speed x (fMaxWalkSpeed - fMinWalkSpeed); creatures the same with the ...Creature GMSTs;
 // then x the reference's own scale (everyone) x their race's weight (people). NPCs carry nothing that slows them here
-// (their encumbrance is not tracked)
+// An NPC's load slows it as the player's does: 1 - fEncumberedMoveEffect x carried / capacity (OpenMW's Npc::getWalkSpeed).
+// Weighed every 2 seconds: a lookup by id per item, and what it carries hardly changes
+float Session::actorLoadSpeed(int ri)
+{
+	Ref& r = w.refs[ri];
+	if (r.loadAt >= 0.0f && w.time >= r.loadAt && w.time - r.loadAt < 2.0f)
+		return r.loadSpeed;
+	r.loadAt = w.time;
+	float weight = 0.0f;
+	for (const ContentItem& c : r.contents)
+		if (const Object* o = w.game.object(c.second))
+			weight += o->weight * abs(c.first);
+	for (auto& e : r.effects)
+		weight += e.effect == 7 ? e.magnitude : e.effect == 8 ? -e.magnitude : 0.0f;   // Burden, Feather
+	float capacity = w.game.gmstf("fencumbrancestrmult", 5.0f) * w.actorAttribute(ri, ATTR_STRENGTH);
+	float load = weight <= 0.0f ? 0.0f : capacity > 0.0f ? weight / capacity : 1.0f;
+	r.loadSpeed = fmaxf(0.0f, 1.0f - w.game.gmstf("fencumberedmoveeffect", 0.3f) * load);
+	return r.loadSpeed;
+}
+
+// (a creature's load does not slow it on land, OpenMW's Creature::getWalkSpeed)
 float Session::actorWalkSpeed(int ri)
 {
 	const Ref& r = w.refs[ri];
@@ -351,7 +371,7 @@ float Session::actorWalkSpeed(int ri)
 	float hi = w.game.gmstf(def.creature ? "fmaxwalkspeedcreature" : "fmaxwalkspeed", def.creature ? 300.0f : 200.0f);
 	float scale = r.scale > 0.0f ? r.scale : 1.0f;
 	if (!def.creature)
-		scale *= raceWeight(def.race.str(), def.female != 0);
+		scale *= raceWeight(def.race.str(), def.female != 0) * actorLoadSpeed(ri);
 	return (lo + 0.01f * w.actorAttribute(ri, ATTR_SPEED) * (hi - lo)) * scale;
 }
 

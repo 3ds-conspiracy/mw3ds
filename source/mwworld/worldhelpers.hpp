@@ -29,6 +29,8 @@ struct ParsedRefs
 static const int kMonthDays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 void initActorState(const GameData& g, Ref& ref);
+enum ActorPools { POOLS_FULL, POOLS_KEEP_SHARE, POOLS_AS_SAVED };
+void actorSpellStats(const GameData& g, Ref& r, ActorPools pools);
 bool parseRefs(const World& w, int cellIndex, ParsedRefs& out);
 int takeSlots(std::vector<std::pair<int, int>>& free, int n);
 void freeSlots(std::vector<std::pair<int, int>>& free, int first, int n);

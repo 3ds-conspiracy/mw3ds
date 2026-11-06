@@ -1,0 +1,8 @@
+# start: Seyda Neen
+# Golden tour: an actor's AI Hello takes two bytes. Galtis Serethi has 300; the converter read one, giving him 44.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Shurinbaal
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refhello:galtis_serethi:eq:300
+1 0 0 0

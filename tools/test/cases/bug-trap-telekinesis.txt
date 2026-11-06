@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# bug-trap-telekinesis: a trapped door opened from beyond iMaxActivateDist (by Telekinesis' reach) springs its trap on
+# itself, out of the player's way (OpenMW's ActionTrap: the player's distance to the focused object over the activation
+# distance). Nerano Ancestral Tomb's inner door holds trap_poison00 (Poison 1-5 for 60 s on touch): with Telekinesis,
+# opened from about 450 away, the player stays well. Ours cast the trap on the player at any distance.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Nerano_Ancestral_Tomb
+4 0 0 0
+60 0 0 0 0 WALKTO:@-2200,1580,-832
+0.3 0 0 0 0 EFFECT:59:50:120
+0.3 0 0 0 0 FACE:@-2204,1120
+0.5 0 0 0
+0.3 0 0 0 0 A
+2 0 0 0
+0.1 0 0 0 0 EXPECT:effect:27:eq:0
+1 0 0 0

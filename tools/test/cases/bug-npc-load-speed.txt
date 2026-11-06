@@ -1,0 +1,10 @@
+# start: Seyda Neen
+# Golden tour: an NPC's walk and run are slowed by what it carries, as the player's are: Speed's walk x (1 -
+# fEncumberedMoveEffect x carried / capacity), OpenMW's Npc::getWalkSpeed. Ours left that out, so a guard in heavy armour
+# walked 212 where OpenMW has 156. Athyn Sarethi carries 29.4 of 355: OpenMW's walk 177.48 (his Speed alone: 182).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Ald-ruhn,_Sarethi_Manor
+2 0 0 0
+0.1 0 0 0 0 EXPECT:npcwalk:athyn_sarethi:ge:177.2+EXPECT:npcwalk:athyn_sarethi:le:177.8
+1 0 0 0

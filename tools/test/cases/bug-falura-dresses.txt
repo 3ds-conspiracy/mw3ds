@@ -1,0 +1,40 @@
+# start: Seyda Neen
+# bug-falura-dresses: Falura Llervu, the bride for Ashkhan Kaushad (B3_ZainabBride), changes into the clothes the player
+# brings: her "some presents" answer gives them by AddItem, and OpenMW's InventoryStore weighs clothing or armour added
+# to an NPC for wearing at once (better by value, in its slot). Ours baked her in her slave's skirt and shirt for good.
+# The look comes from the third-person pieces (npcDress), kept through a save.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Tel_Aruhn
+4 0 0 0
+0.1 0 0 0 0 JOURNAL:B3_ZainabBride:40
+0.1 0 0 0 0 ENABLE:falura_llervu
+0.1 0 0 0 0 GIVE:exquisite_shirt_01
+0.1 0 0 0 0 GIVE:exquisite_skirt_01
+0.1 0 0 0 0 GIVE:exquisite_shoes_01
+0.1 0 0 0 0 GIVE:Potion_T_Bug_musk_01
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refdressed:falura_llervu:eq:0
+60 0 0 0 0 ACTIVATE:falura_llervu
+1.5 0 0 0
+0.3 0 0 0 0 KNOW:some%presents
+0.3 0 0 0
+0.3 0 0 0 0 TOPIC:some%presents
+2 0 0 0
+0.1 0 0 0 0 EXPECT:journal:B3_ZainabBride:ge:45
+0.1 0 0 0 0 EXPECT:refitem:falura_llervu,exquisite_shirt_01:eq:1
+0.3 0 0 0 0 B
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:refdressed:falura_llervu:eq:1
+0.1 0 0 0 0 EXPECT:refwears:falura_llervu,exquisite_shirt_01:eq:1
+0.1 0 0 0 0 EXPECT:refwears:falura_llervu,exquisite_skirt_01:eq:1
+0.1 0 0 0 0 EXPECT:refwears:falura_llervu,exquisite_shoes_01:eq:1
+0.1 0 0 0 0 EXPECT:refwears:falura_llervu,common_skirt_02:eq:0
+0.3 0 0 0 0 FACE:falura_llervu:mid
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SAVE:falura
+0.5 0 0 0 0 LOAD:falura
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refdressed:falura_llervu:eq:1
+0.1 0 0 0 0 EXPECT:refwears:falura_llervu,exquisite_skirt_01:eq:1
+1 0 0 0

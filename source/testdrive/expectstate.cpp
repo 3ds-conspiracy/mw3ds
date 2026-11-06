@@ -184,6 +184,9 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "abilitiesshown") v = (float)w.abilitiesShown.size();   // effects of abilities and worn constant effects
 	else if (what == "makepicking") v = s.makePick;                  // spellmaking / enchanting: choosing a skill (1) or attribute (2)
 	else if (what == "makeeffects") v = (float)s.makeEffects.size(); // ... the effects put together so far
+	else if (what == "makelistsel") v = (float)s.list2.selected;     // ... the known effects' list: the row selected
+	else if (what == "makelistscroll") v = s.list2.scroll;           // ... and how far it is scrolled
+	else if (what == "makepicksel") v = (float)s.makePickList.selected;   // ... the skill / attribute list: the row selected
 	else if (what == "footrepeat") v = (float)s.stepRepeats;         // footsteps on the same foot twice in a row
 	else if (what == "enemiesnear") v = s.enemiesNear() ? 1.0f : 0.0f;   // rest refused: enemies about
 	else if (what == "werewolfkills") v = (float)w.stats.werewolfKills;   // people killed since the change (GetWerewolfKills)

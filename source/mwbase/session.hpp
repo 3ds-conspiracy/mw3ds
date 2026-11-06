@@ -12,6 +12,11 @@ const char* summonCreatureId(int effect);    // the creature a summoning effect 
 void summonSpot(World& w, const float caster[3], float yaw, float out[3]);   // where it comes (mwmechanics/summoning.cpp)
 float npcClimbSlope(const World& w, const Ref& r);   // the steepest land an actor walks up now, degrees (mwphysics/movementsolver.cpp)
 
+// The save writer thread (mwstate/statemanagerimp.cpp): drain waits out a background autosave still on its way to
+// the card (before anything opens the file); stop also drops one between blocks (quitting)
+void saveWriterDrain();
+void saveWriterStop();
+
 struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, SoundState, TestState
 {
 	Session()
@@ -65,6 +70,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	// savePath: continue from that save when it exists (and no startCell is given)
 	bool start(const char* dataDir, const std::string& startCell = "", const char* savePath = nullptr);
 	bool save();
+	void autosave();                  // the door's: handed to the save writer thread, play goes on
+	void pollSaveWriter();            // finished background saves: their meta line and notice (each frame)
 	void shutdown();                  // frees the cell and stops its sounds (before deleting the session)
 	const char* savePath = nullptr;
 	void skipChargen();
@@ -110,6 +117,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void npcPackage(int ref, float dt);          // travel / follow / escort / activate packages
 	void npcFace(int ref, float dt);             // Face: turn to the point, then done
 	void npcDuel(int ref, float dt);              // StartCombat on another actor: it walks up to its foe and fights it
+	int duelNext(int ref);                        // the nearest of those it was set on who is here (-1: none)
 	void allyFight(int ref, float dt);            // summoned creatures go for whoever fights the player
 	int guardFoe(int ref);                        // a guard's hostile creature in a fight nearby (-1: none)
 	bool npcStep(int ref, Cell& cell, float dirX, float dirY, float step);
@@ -150,6 +158,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	float knockdownOdds(int agility);
 	float fallDamage(float height, int acrobatics, float jump);
 	float actorWalkSpeed(int ref);
+	float actorLoadSpeed(int ref);
 	float raceWeight(const std::string& race, bool female);   // the race's weight for a sex (1: no such race)
 	float normalWeaponResist(int ref);
 	float fleeRatingOf(int ref, float distance);

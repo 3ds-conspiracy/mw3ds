@@ -6,14 +6,21 @@
 #include <cstdlib>
 #include <cstring>
 #include <malloc.h>
+#include <strings.h>
 
 
 // School of each magic skill: alteration, conjuration, destruction, illusion, mysticism, restoration
 static const int kSchoolSkillIdx[6] = { 11, 13, 10, 12, 14, 15 };
 
 // What autocalc needs of each candidate spell, worked out once (the lookups and costs don't depend
-// on who casts): per effect its school's skill and its cost term (calcWeakestSchool's x)
+// on who casts): per effect its school's skill and its cost term (calcWeakestSchool's x); skill / attribute: the one
+// it works on, -1 unless the effect is one on a skill / an attribute (OpenMW's TargetSkill / TargetAttribute flags)
 struct CalcEffect { int school, skill, attribute; float x; };
+
+// The effects on a skill and on an attribute (Drain, Damage, Restore, Fortify, Absorb): OpenMW's hard-coded
+// TargetSkill and TargetAttribute flags (components/esm3/loadmgef.cpp HardcodedFlags)
+static bool targetsSkill(int effect) { return effect == 21 || effect == 26 || effect == 78 || effect == 83 || effect == 89; }
+static bool targetsAttribute(int effect) { return effect == 17 || effect == 22 || effect == 74 || effect == 79 || effect == 85; }
 struct CalcSpell { const SpellDef* sp; std::vector<CalcEffect> effects; };
 
 u32 g_gameGeneration = 1;
@@ -52,18 +59,28 @@ static const std::vector<CalcSpell>& calcSpells(const GameData& g, bool player)
 			const MagicEffectDef& d = me->second;
 			int mn = 1, mx = 1;
 			if (!(d.flags & 0x8)) { mn = e.min; mx = e.max; }
+			// (no duration: 0; at least 1 unless the effect is applied once, 0x1000; area at least 1)
 			int dur = (d.flags & 0x4) ? 0 : e.duration;
-			dur = dur < 1 ? 1 : dur;
-			float x = 0.5f * ((mn > 1 ? mn : 1) + (mx > 1 ? mx : 1)) * 0.1f * d.cost * (1 + dur) + 0.05f * d.cost;
+			if (!(d.flags & 0x1000))
+				dur = dur < 1 ? 1 : dur;
+			float x = 0.5f * ((mn > 1 ? mn : 1) + (mx > 1 ? mx : 1)) * 0.1f * d.cost * (1 + dur)
+				+ 0.05f * (e.area > 1 ? e.area : 1) * d.cost;
 			x *= costMult;
 			if (e.range == 2)
 				x *= 1.5f;
 			int school = d.school >= 0 && d.school < 6 ? d.school : 0;
-			cs.effects.push_back({ school, e.skill, e.attribute, x });
+			cs.effects.push_back({ school, targetsSkill(e.effect) ? e.skill : -1,
+				targetsAttribute(e.effect) ? e.attribute : -1, x });
 		}
-		out.push_back(cs);
+		// (a spell with no effect has no school: never picked)
+		if (!cs.effects.empty())
+			out.push_back(cs);
 	}
-	std::sort(out.begin(), out.end(), [](const CalcSpell& a, const CalcSpell& b) { return a.sp->id < b.sp->id; });
+	// The order of the spell records in the data files: who is picked when a school is full depends on it
+	// (OpenMW's note: "the algorithm heavily depends on the traversal order of the spells")
+	std::sort(out.begin(), out.end(), [](const CalcSpell& a, const CalcSpell& b) {
+		return a.sp->order != b.sp->order ? a.sp->order < b.sp->order : a.sp->id < b.sp->id;
+	});
 	return out;
 }
 
@@ -86,7 +103,8 @@ static int weakestSchool(const CalcSpell& cs, const int* skills, float* skillTer
 	return school;
 }
 
-std::vector<std::string> GameData::autoCalcSpells(const int* attributes, const int* skills, bool player) const
+std::vector<std::string> GameData::autoCalcSpells(const int* attributes, const int* skills, bool player,
+	const RaceDef* race) const
 {
 	static float magickaMult[2], chanceNeeded[2];
 	static int timesCanCast, attSkillMin, capLimit[6], pcLimit;
@@ -110,8 +128,19 @@ std::vector<std::string> GameData::autoCalcSpells(const int* attributes, const i
 	float magicka = magickaMult[pi] * attributes[1];
 	struct Cap { int count = 0, limit = 0, minCost = 1 << 30; const CalcSpell* weakest = nullptr; bool full = false; } caps[6], pc;
 	for (int k = 0; k < 6; k++)
+	{
 		caps[k].limit = capLimit[k];
+		caps[k].full = capLimit[k] <= 0;
+	}
 	pc.limit = pcLimit;
+	auto racesOwn = [&](const std::string& id) {
+		if (!race)
+			return false;
+		for (auto& r : race->spells)
+			if (strcasecmp(r.c_str(), id.c_str()) == 0)
+				return true;
+		return false;
+	};
 	std::vector<const CalcSpell*> picked;
 	for (const CalcSpell& cs : calcSpells(*this, player))
 	{
@@ -122,6 +151,8 @@ std::vector<std::string> GameData::autoCalcSpells(const int* attributes, const i
 		if (cap.full && sp->cost <= cap.minCost)
 			continue;
 		if (magicka < (player ? 1 : timesCanCast) * sp->cost)
+			continue;
+		if (racesOwn(sp->id))
 			continue;
 		bool ok = true;
 		for (auto& e : cs.effects)
@@ -136,21 +167,19 @@ std::vector<std::string> GameData::autoCalcSpells(const int* attributes, const i
 		picked.push_back(&cs);
 		if (cap.full)
 		{
-			// the cheapest of that school goes, and the next cheapest is the one to beat
+			// the school's cheapest goes, and the next cheapest is the one to beat. Morrowind's bug, kept as OpenMW
+			// keeps it: that next cheapest is looked for among all the picks, of any school, so two schools can name the
+			// same spell and one of them then removes nothing (an NPC ends with more than the schools' limits)
 			auto gone = std::find(picked.begin(), picked.end(), cap.weakest);
 			if (gone != picked.end())
 				picked.erase(gone);
 			cap.minCost = 1 << 30;
-			cap.weakest = nullptr;
 			for (const CalcSpell* p : picked)
-			{
-				float st;
-				if ((player || weakestSchool(*p, skills, &st) == school) && p->sp->cost < cap.minCost)
+				if (p->sp->cost < cap.minCost)
 				{
 					cap.minCost = p->sp->cost;
 					cap.weakest = p;
 				}
-			}
 		}
 		else
 		{

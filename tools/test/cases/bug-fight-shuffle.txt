@@ -7,7 +7,7 @@
 3 0 0 0 0 MSG
 # (seeded so he makes no side step between the two runs, on the New and the Old 3DS profile both: a RunLeft or RunRight
 # in between starts the run cycle over, as OpenMW's refreshMovementAnims does for a different movement)
-0.3 0 0 0 0 SEED:18
+0.3 0 0 0 0 SEED:19
 0.3 0 0 0 0 GOD
 30 0 0 0 0 WALKTO:fargoth
 0.3 0 0 0 0 FACE:fargoth

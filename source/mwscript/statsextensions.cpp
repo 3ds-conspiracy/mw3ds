@@ -13,6 +13,7 @@
 #include "components/debug/debuglog.hpp"
 #include "mwmechanics/magiceffects.hpp"
 #include "mwworld/worldimp.hpp"
+#include "mwworld/worldhelpers.hpp"
 #include "components/interpreter/interpreterhelpers.hpp"
 
 // Get / Set / Mod + a magic effect stat (OpenMW's Get / Set / ModMagicEffect): Get reads the effect's magnitude on the
@@ -381,6 +382,7 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 			r->noSpells.erase(std::remove(r->noSpells.begin(), r->noSpells.end(), id), r->noSpells.end());
 			if (!w.actorHasSpell(*r, id))
 				r->spells.push_back(id);
+			actorSpellStats(w.game, *r, POOLS_KEEP_SHARE);
 		}
 		if (onPlayer)
 		{
@@ -405,6 +407,7 @@ std::optional<float> statsExtensions(Ctx& c, const Node& n, World& w, bool onPla
 			r->spells.erase(std::remove(r->spells.begin(), r->spells.end(), id), r->spells.end());
 			if (had && w.actorHasSpell(*r, id))
 				r->noSpells.push_back(id);          // theirs from the record: marked as taken away
+			actorSpellStats(w.game, *r, POOLS_KEEP_SHARE);
 		}
 		if (onPlayer)
 		{

@@ -37,6 +37,29 @@ Mirrors the OpenMW wiki page *Research:Stats and Levelling*. Rules read from Ope
 - **Fatigue term:** `fFatigueBase - fFatigueMult x (1 - current / max)` (1.25 to 0.75; 1 when the max is 0). It
   scales nearly every skill roll.
 
+## NPC stats
+
+OpenMW `mwclass/npc.cpp` (ensureCustomData, autoCalculateAttributes, autoCalculateSkills),
+`mwmechanics/creaturestats.cpp` (setAttribute, recalculateMagicka). Worked out at conversion
+(`tools/convert/npcstats.py`), checked against a running OpenMW by `tools/test/golden/` (`spec/findings/golden-actors.md`).
+
+- **Stored stats** (52-byte NPDT): attributes, skills, health and magicka as the record has them.
+- **Autocalc** (the flag, 12-byte NPDT), from race, class and level L. Rounding is half to even.
+  - Attributes: the race's (by sex), +10 for each of the class's two favored ones, then + (L - 1) x the sum, over
+    the skills the attribute governs (SKIL records), of 1.0 for a major skill, 0.5 for a minor one and 0.2 for any
+    other. At most 100.
+  - Skills: +25 major, +10 minor, then + 5 + the race's bonus + 5 in the class's specialization + (L - 1) x (1.0
+    for a major or minor skill, else 0.1; +0.5 in the specialization). At most 100.
+  - Health: `floor((Strength + Endurance) / 2) + (L - 1) x m`, m = 3, +2 for a combat class, +1 for a stealth one,
+    +1 when Endurance is favored.
+- **Magicka:** Intelligence x (fNPCbaseMagickaMult + 0.1 x Fortify Maximum Magicka of the NPC's and its race's
+  lasting spells). Every autocalc NPC gets it. An NPC with stored stats keeps the record's magicka unless such a
+  Fortify is on it (a Breton or High Elf). The engine applies no Fortify Maximum Magicka to NPCs, so it is counted
+  at conversion.
+- **Fatigue:** Strength + Willpower + Agility + Endurance for every NPC: setting those attributes sets it, so a
+  record's stored fatigue never shows.
+- Tests: `bug-npc-autocalc-stats`, and `golden_compare.py actors` against OpenMW's own numbers.
+
 ## Level-up
 
 - Level progress: `iLevelUpMajorMult` / `iLevelUpMinorMult` per major / minor increase; `iLevelUpTotal` (10) of it

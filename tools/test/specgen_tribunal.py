@@ -375,8 +375,12 @@ def main():
             c.note("  nothing in the game data gives or carries the item")
             continue
         if etype == 3:
+            c.step("CLEAREFFECTS")
             lasting_check(c, effs, lambda: c.step(f"GIVE:{it}", 1.0))
             c.step(f"EXPECT:equipped:{it}:eq:1")
+            # (taken off again: a worn item's harmful effects are resisted as it goes on, so a Resist Frost left on by an
+            # earlier item would take the next one's Frost Damage whole)
+            c.step(f"UNEQUIP:{it}")
         elif etype == 1:
             wtype = sub_int(rec, "WPDT", 8, "<h") if tag == "WEAP" else None
             ammo = wtype in AMMO

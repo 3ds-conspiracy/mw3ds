@@ -297,7 +297,7 @@ void Session::releaseSpell(const SpellDef& sp, int school)
 					if (witness >= 0)
 						crimeSeen(CRIME_TRESPASS, 0, -1), reportCrime(witness, crimeBounty(CRIME_TRESPASS, 0));
 				}
-				if (o.lockLevel > 0 && m >= o.lockLevel)
+				if (o.lockLevel > 0 && (m >= o.lockLevel || o.lockLevel == kKeyOnlyLock))   // (OpenMW: that one is level 0)
 				{
 					o.lockLevel = 0;
 					playSound(this->target, "Open Lock");

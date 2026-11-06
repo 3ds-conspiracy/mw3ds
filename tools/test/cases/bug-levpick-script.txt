@@ -1,0 +1,10 @@
+# start: Seyda Neen
+# Golden tour: a creature or NPC picked by a leveled spot runs its own script. Ashmelech's vampire cattle are picks of a
+# leveled list; their cattleScript sets their fight and flee at once. Ours started scripts before the picks, so a pick
+# ran the script of what the converter had placed there, or none, and the cattle kept their record's AI.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Ashmelech
+2 0 0 0
+0.1 0 0 0 0 EXPECT:reflocal:cattle_red_m01,aiset:eq:-1
+1 0 0 0

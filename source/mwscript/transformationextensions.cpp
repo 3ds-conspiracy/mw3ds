@@ -68,8 +68,7 @@ std::optional<float> transformationExtensions(Ctx& c, const Node& n, World& w, b
 		float* pos = onPlayer || !r ? w.player.feet : r->pos;
 		switch (n.func)
 		{
-		// the start angles kept are the turn about Z only
-		case F_GETSTARTINGANGLE: return r && k == 2 ? r->start[3] * 57.29578f : 0.0f;
+		case F_GETSTARTINGANGLE: return r ? (k == 2 ? r->start[3] : r->startRot[k]) * 57.29578f : 0.0f;
 		case F_GETSTARTINGPOS: return r ? r->start[k] : 0.0f;
 		case F_SETPOS: pos[k] = v; break;
 		case F_MOVE: case F_MOVEWORLD:

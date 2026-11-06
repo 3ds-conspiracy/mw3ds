@@ -1,0 +1,9 @@
+# start: Seyda Neen
+# Golden tour: what a script does to an actor's attributes counts in the rules. Mastrius's script (the vampire curse)
+# takes ModSpeed -70 and more from him: OpenMW's walk 96.28. Ours kept the change for GetSpeed alone, and he walked 168.79.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Salvel_Ancestral_Tomb
+3 0 0 0
+0.1 0 0 0 0 EXPECT:npcwalk:mastrius:ge:95.5+EXPECT:npcwalk:mastrius:le:97
+1 0 0 0

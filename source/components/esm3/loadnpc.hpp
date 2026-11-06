@@ -22,6 +22,15 @@ struct TravelDest
 	float pos[3], rot[3];
 };
 
+// One AI package of a record's list (OpenMW's AiSequence::fill)
+struct AiStep
+{
+	int package = -1, range = 0;
+	Atom target;
+	float dest[3] = {}, hours = 0.0f;
+	bool repeat = false;
+};
+
 struct ActorDef
 {
 	Atom id, name;                       // (interned: 4 bytes each where a std::string is 24)
@@ -43,6 +52,7 @@ struct ActorDef
 	int skel = -1;                       // shared skeleton index
 	Atom aiTarget;
 	float aiDest[3] = {}, aiDuration = 0.0f;
+	std::vector<AiStep> aiList;          // more than one package that can end: run in turn (empty for nearly everyone)
 	bool creature = false;
 	std::vector<Atom> spells;            // spell merchants: what they sell (lowercase ids)
 	std::vector<std::pair<int, int>> attack;   // creatures: damage min, max of each attack

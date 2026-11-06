@@ -1366,6 +1366,10 @@
 0.1 0 0 0 0 EXPECT:item:claymore_iceblade_unique:ge:1
 120 0 0 0 0 KILL:ereven%velas
 120 0 0 0 0 KILL:daynil%farandas
+# (the arena's scamp and dremora lord come at us while we chase the nix-hound, and the chase ran out of time among
+# them: fought first)
+120 0 0 0 0 KILL:scamp
+120 0 0 0 0 KILL:dremora_lord
 120 0 0 0 0 KILL:nix-hound%blighted
 60 0 0 0 0 WALKTO:@547,766,-704
 60 0 0 0 0 WALKTO:@1052,220,-704

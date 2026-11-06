@@ -174,6 +174,7 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 		Ref& r = w.refs[a.ref];
 		r.ally = true;
 		r.aiPackage = AIPKG_FOLLOW;
+		r.aiStep = -1;
 		r.aiTarget = "player";
 		w.effects.push_back(a);
 		spawnVfx("vfx_summon_start", r.pos, 1.2f, a.ref, r.rot[2]);     // it arrives in a flash (OpenMW's summoning)
@@ -601,6 +602,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 			return;
 		r.ai = AI_IDLE;
 		r.aiPackage = AIPKG_FOLLOW;
+		r.aiStep = -1;
 		r.aiTarget = "player";
 		r.aiStart = w.gameHour;
 		r.aiDuration = (dur > 0.0f ? dur : 10.0f) / 3600.0f * w.timescale();

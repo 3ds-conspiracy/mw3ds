@@ -1370,6 +1370,10 @@
 0.1 0 0 0 0 EXPECT:item:claymore_iceblade_unique:ge:1
 120 0 0 0 0 KILL:ereven%velas
 120 0 0 0 0 KILL:daynil%farandas
+# (the arena's scamp and dremora lord come at us while we chase the nix-hound, and the chase ran out of time among
+# them: fought first)
+120 0 0 0 0 KILL:scamp
+120 0 0 0 0 KILL:dremora_lord
 120 0 0 0 0 KILL:nix-hound%blighted
 60 0 0 0 0 WALKTO:@547,766,-704
 60 0 0 0 0 WALKTO:@1052,220,-704
@@ -1435,6 +1439,12 @@
 # first to the flooded pit (305,1300) met its wall (at 240,1620) when a fight on the way left the player further east
 60 0 0 0 0 WALKTO:@149,2418,-1192
 30 0 0 0 0 WALKTO:@225,2162,-1182
+60 0 0 0 0 WALKTO:@390,1844,-1182
+30 0 0 0 0 WALKTO:@417,1833,-1281
+# (Meryaran and a dremora come at us on the way down: fought here first, then back to the last waypoint, so the walk
+# down starts where it was planned from and doesn't meet the wall a fight on the way pushed the player toward)
+120 0 0 0 0 KILL:meryaran
+120 0 0 0 0 KILL:dremora
 60 0 0 0 0 WALKTO:@390,1844,-1182
 30 0 0 0 0 WALKTO:@417,1833,-1281
 60 0 0 0 0 WALKTO:@305,1300,-1426

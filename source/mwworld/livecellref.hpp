@@ -6,6 +6,10 @@
 #include "mwworld/containerstore.hpp"
 #include "mwmechanics/aipackage.hpp"
 
+// The lock level of a door or chest placed with a key and no level: locked, only the key opens it (OpenMW's CellRef: locked
+// when it has a key or a level, no lock level to pick)
+constexpr int kKeyOnlyLock = 1000;
+
 struct RefRange { int batch; u32 first, count; };
 struct cJSON;
 
@@ -103,7 +107,9 @@ struct Ref
 	bool murdered = false;        // OnMurder pending: the player killed them and it was murder
 	float soulTrapUntil = -1.0f;  // Soultrap on them until this World::time: dying, their soul fills a gem
 	bool aggressor = false;       // started the fight (killing them isn't murder)
-	int duelFoe = -1;             // StartCombat on another actor: the ref it fights (not saved; -1: none)
+	int duelFoe = -1;             // StartCombat on another actor: the ref it fights now (not saved; -1: none)
+	Atom wornGiven;               // clothes and armour a script gave it, ids joined by '|' (saved): put on if better
+	Atom duelWith;                // all it was set on, ids joined by '|' (saved): OpenMW's stacked AiCombat packages
 	bool alarmed = false;         // a guard come to arrest the player (OpenMW's Alarmed, for the dialogue filter)
 	// The player's crime they saw or suffered (OpenMW's NpcStats crime id; -1 none) and the disposition it took from them:
 	// once that crime is paid for (World::crimeIdPaid) they calm down (Session::calmWitness). Saved
@@ -135,6 +141,7 @@ struct Ref
 	float fleeDest[3] = {};       // the path grid point it runs to
 	float calmUntil = 0.0f;         // Calm: no attack on sight until this time
 	float knockTimer = 0.0f;      // > 0: knocked down (or out) and helpless
+	float loadSpeed = 1.0f, loadAt = -1.0f;   // what its load leaves of an NPC's pace, and when it was weighed
 	float boxLift = 0.0f;         // drawn this much above pos: its collision box resting on the slope (World::actorBoxLift)
 	bool outCold = false;         // the knockdown under way is a knockout (a death then is DeathKnockOut)
 	float castTimer = 0.0f;       // until the next spell they may cast
@@ -172,6 +179,7 @@ struct Ref
 	// What scripts changed on an NPC or creature (saved): Set / Mod stats add to the record's, SetLevel and
 	// Raise / LowerRank replace it (-1: the record's), AddSpell / RemoveSpell give and take spells (lowercase)
 	std::vector<float> statDelta;   // 8 attributes then 27 skills; empty until a script changes one (memory)
+	std::vector<float> spellDelta;  // the same, from its abilities, diseases and curses (actorSpellStats); empty for most
 	int level = -1, rank = -1;
 	std::vector<std::string> spells, noSpells;
 	// AI package (AIWander / AITravel / AIFollow / AIEscort / AIActivate, or the record's own)
@@ -184,6 +192,8 @@ struct Ref
 	float aiNearTime = 0.0f;      // travelling: seconds spent flat-close to the destination without getting there (AiTravel)
 	int aiRange = -1;             // wander distance (-1: the record's)
 	bool aiDone = false;          // GetAIPackageDone
+	s8 aiStep = -1;               // running the record's list (ActorDef::aiList): which package; -1 a script's, or none
+	u32 aiGone = 0;               // those of the list that have ended and do not repeat
 	bool aiRepeat = false;        // the script's reset argument: the package starts over when it finishes
 	bool aiActive = true;         // AIFollow from a script waits to see its target first (OpenMW's activation)
 

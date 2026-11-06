@@ -44,6 +44,12 @@ bool World::actorHasSpell(const Ref& r, const std::string& id) const
 		for (auto& s : *list)
 			if (lower(s) == id)
 				return true;
+	// an NPC knows its race's spells too (OpenMW gives them every one: Eye of Night, Argonian Breathing)
+	if (!a.creature)
+		if (const RaceDef* race = game.raceOf(a.race.c_str()))
+			for (auto& s : race->spells)
+				if (lower(s) == id)
+					return true;
 	return false;
 }
 

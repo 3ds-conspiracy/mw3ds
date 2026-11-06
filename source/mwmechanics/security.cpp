@@ -105,6 +105,16 @@ bool Session::springTrap(int ref)
 	if (sp == w.game.spells.end())
 		return false;
 	playSound(ref, "Disarm Trap Fail");          // (OpenMW's sound for the trap going off)
+	// Opened from beyond iMaxActivateDist (Telekinesis' reach): the trap goes off on the object itself, out of the
+	// player's way (OpenMW's ActionTrap: the player's distance to the focused object over the activation distance)
+	float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+	float cp = cosf(w.player.pitch);
+	float dir[3] = { sinf(w.player.yaw) * cp, cosf(w.player.yaw) * cp, sinf(w.player.pitch) };
+	if (w.effectTotal(59) > 0.0f && worldPick(w, eye, dir, w.game.gmstf("imaxactivatedist", 192.0f)) != ref)
+	{
+		logf("trap: %s went off on itself (opened from beyond reach)", r.id.c_str());
+		return true;
+	}
 	for (auto& e : sp->second.effects)
 		applyEffectToPlayer(e, sp->second.name);
 	return true;

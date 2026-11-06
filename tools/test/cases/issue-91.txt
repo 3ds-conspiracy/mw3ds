@@ -1,0 +1,60 @@
+# start: Seyda Neen
+# Spellmaking with an effect that works on an attribute or a skill: the button naming which (Strength, Long Blade)
+# sat where the spell's Cost and Chance are written, and covered them. Made at Estirdalin with Fortify Attribute
+# (Strength) and then Fortify Skill (Long Blade); the shots show Cost and Chance clear of the buttons, also while the
+# attribute is being chosen, and with a long effect list scrolled to its end.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 SPELL:orc's_strength
+0.3 0 0 0 0 SPELL:fortify_acrobatics_skill
+# (many effects known: the list on the left is longer than its box and scrolls)
+0.3 0 0 0 0 SPELL:surpassing_stolid_armor
+0.3 0 0 0 0 SPELL:drain_unarmored
+0.3 0 0 0 0 SPELL:weakness
+0.3 0 0 0 0 SPELL:enrichment
+0.3 0 0 0 0 SPELL:daedric_personality
+0.3 0 0 0 0 SPELL:fire_storm
+0.3 0 0 0 0 SPELL:viper
+0.3 0 0 0 0 SPELL:absorb_personality
+0.3 0 0 0 0 SPELL:restore_willpower
+0.3 0 0 0 0 SPELL:fifth_barrier
+0.3 0 0 0 0 SPELL:crushing_burden
+0.3 0 0 0 0 SPELL:command_creature
+0.3 0 0 0 0 SPELL:variable_resist_poison
+0.3 0 0 0 0 SPELL:wild_open
+0.3 0 0 0 0 SPELL:water_breathing
+0.3 0 0 0 0 SPELL:blindself
+0.3 0 0 0 0 SPELL:daedric_bite
+0.3 0 0 0 0 SPELL:wild_flay_spirit
+0.3 0 0 0 0 SETSKILL:restoration:100
+0.3 0 0 0 0 SETATTR:willpower:100+SETATTR:luck:100
+0.3 0 0 0 0 GIVE:Gold_001:5000
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+4 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 SPELLMAKE:estirdalin
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:spellmake
+0.3 0 0 0 0 MAKEPICK:79
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:makepicking:eq:2
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 MAKETARGET:strength
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:makepicking:eq:0+EXPECT:makeeffects:eq:1
+0.1 0 0 0 0 EXPECT:button:Strength
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 MAKEPICK:83
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:makepicking:eq:1
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 MAKETARGET:long_blade
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:makeeffects:eq:2
+0.1 0 0 0 0 EXPECT:button:Long%Blade
+0.3 0 0 0 0 SHOT
+# (up from the first row: the last, the list scrolled to its end)
+0.3 0 0 0 0 UP
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:makeeffects:eq:2
+0.3 0 0 0 0 SHOT

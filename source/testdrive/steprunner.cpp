@@ -155,7 +155,9 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	}
 	if (first && !s.loadFrom.empty())
 	{
-		session->reloadPath = "sdmc:/3ds/mw3ds/test_" + s.loadFrom + ".sav";
+		// @autosave: the door autosave itself (the file travel and the AUTOSAVE token write)
+		session->reloadPath = s.loadFrom == "@autosave" && session->savePath ? session->savePath
+			: "sdmc:/3ds/mw3ds/test_" + s.loadFrom + ".sav";
 		session->wantReload = true;
 		logf("test: loading %s", session->reloadPath.c_str());
 	}

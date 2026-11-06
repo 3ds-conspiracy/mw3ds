@@ -5,6 +5,8 @@
 #include <unordered_set>
 
 #include "mwbase/session.hpp"
+#include "mwworld/worldhelpers.hpp"
+#include "mwmechanics/magiceffects.hpp"
 #include "mwmechanics/magichelpers.hpp"
 
 float World::actorEffect(int ri, int effect) const
@@ -45,17 +47,85 @@ static int modifiedStat(const Ref& r, int base, int key, bool skill)
 	return std::max(0, (int)v);
 }
 
+// What scripts did (Mod / Set) and what its standing spells do to one of its 8 attributes then 27 skills
+static float standingStat(const Ref& r, int slot)
+{
+	return (r.statDelta.empty() ? 0.0f : r.statDelta[slot]) + (r.spellDelta.empty() ? 0.0f : r.spellDelta[slot]);
+}
+
+// Abilities, diseases and curses count while it has them (OpenMW's active spells), the rolled magnitude taken at its
+// middle so that an actor is the same each time. As CreatureStats::setAttribute has it, a change to Strength, Willpower,
+// Agility or Endurance makes its fatigue their sum, and a change to Intelligence works out its magicka; else they stay
+void actorSpellStats(const GameData& g, Ref& r, ActorPools pools)
+{
+	if (r.actor < 0 || r.actor >= (int)g.actors.size())
+		return;
+	const ActorDef& a = g.actors[r.actor];
+	std::vector<float> delta;
+	std::vector<std::string> seen;       // (a disease is on both its spells and its diseases: it counts once)
+	auto add = [&](const std::string& id) {
+		auto sp = g.spells.find(id);
+		if (sp == g.spells.end() || sp->second.type < 1 || sp->second.type > 4
+			|| std::find(r.noSpells.begin(), r.noSpells.end(), id) != r.noSpells.end()
+			|| std::find(seen.begin(), seen.end(), id) != seen.end())
+			return;
+		seen.push_back(id);
+		for (const SpellEffect& e : sp->second.effects)
+		{
+			bool up = e.effect == EFF_FORTIFY_ATTRIBUTE || e.effect == EFF_FORTIFY_SKILL;
+			bool attr = e.effect == EFF_FORTIFY_ATTRIBUTE || e.effect == EFF_DRAIN_ATTRIBUTE;
+			bool skill = e.effect == EFF_FORTIFY_SKILL || e.effect == EFF_DRAIN_SKILL;
+			int slot = attr ? e.attribute : skill ? 8 + e.skill : -1;
+			if (slot < 0 || slot >= 35 || (attr && e.attribute >= 8))
+				continue;
+			if (delta.empty())
+				delta.assign(35, 0.0f);
+			delta[slot] += (up ? 0.5f : -0.5f) * (e.min + e.max);
+		}
+	};
+	for (auto& id : a.spells)
+		add(lower(id));
+	for (auto& id : a.diseases)
+		add(lower(id));
+	if (!a.creature)
+		if (const RaceDef* race = g.raceOf(a.race.c_str()))
+			for (auto& id : race->spells)
+				add(lower(id));
+	for (auto& id : r.spells)
+		add(id);
+	bool had = !r.spellDelta.empty();
+	r.spellDelta = std::move(delta);
+	bool now = !r.spellDelta.empty();
+	if (!had && !now)
+		return;
+	auto attr = [&](int k) { return std::max(0.0f, (float)a.attributes[k] + standingStat(r, k)); };
+	bool body = now && (r.spellDelta[0] != 0.0f || r.spellDelta[2] != 0.0f || r.spellDelta[3] != 0.0f || r.spellDelta[5] != 0.0f);
+	float fatigue = body ? attr(0) + attr(2) + attr(3) + attr(5) : (float)a.fatigue;
+	float magicka = (float)a.magicka;
+	if (now && r.spellDelta[1] != 0.0f)
+		magicka = attr(1) * (a.creature || a.attributes[1] <= 0 ? g.gmstf("fnpcbasemagickamult", 2.0f)
+			: (float)a.magicka / a.attributes[1]);
+	float fatigueShare = r.fatigueMax > 0.0f ? r.fatigue / r.fatigueMax : 1.0f;
+	float magickaShare = r.magickaMax > 0.0f ? r.magicka / r.magickaMax : 1.0f;
+	r.fatigueMax = fatigue;
+	r.magickaMax = magicka;
+	if (pools == POOLS_AS_SAVED)
+		return;
+	r.fatigue = pools == POOLS_FULL ? fatigue : fatigue * fatigueShare;
+	r.magicka = pools == POOLS_FULL ? magicka : magicka * magickaShare;
+}
+
 int World::actorAttribute(int ri, int a) const
 {
 	const Ref& r = refs[ri];
-	int base = game.actors[r.actor].attributes[a];
+	int base = std::max(0, game.actors[r.actor].attributes[a] + (int)standingStat(r, a));
 	return r.effects.empty() ? base : modifiedStat(r, base, a, false);
 }
 
 int World::actorSkill(int ri, int k) const
 {
 	const Ref& r = refs[ri];
-	int base = game.actors[r.actor].skills[k];
+	int base = std::max(0, game.actors[r.actor].skills[k] + (int)standingStat(r, 8 + k));
 	return r.effects.empty() ? base : modifiedStat(r, base, k, true);
 }
 

@@ -109,8 +109,10 @@ struct GameData
 	// Morrowind's automatic spell choice (OpenMW's autocalcspell.cpp): for NPCs flagged autocalc, the
 	// Autocalc spells their Intelligence can cast three times, their attributes / skills allow and they
 	// cast at fAutoSpellChance, at most iAutoSpell<School>Max a school (the dearest kept); for a new
-	// player the PC Start spells at fAutoPCSpellChance
-	std::vector<std::string> autoCalcSpells(const int* attributes, const int* skills, bool player) const;
+	// player the PC Start spells at fAutoPCSpellChance. race: its own spells (powers, abilities) are never picked
+	std::vector<std::string> autoCalcSpells(const int* attributes, const int* skills, bool player,
+		const RaceDef* race = nullptr) const;
+	const RaceDef* raceOf(const char* idOrName) const;      // a race by its id or name, nullptr if none
 	std::unordered_map<std::string, SpawnDef> spawns;       // lowercase id
 	std::vector<std::vector<float>> divineMarkers, templeMarkers;   // x, y, z, yaw: Intervention destinations
 	// Jail: prison markers in towns; a released player is sent to the marker's destination

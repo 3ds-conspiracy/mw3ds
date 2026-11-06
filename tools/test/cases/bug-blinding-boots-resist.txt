@@ -1,0 +1,31 @@
+# Issue 78: a worn item's constant effects are resisted once, as it is put on (OpenMW resists an equipment spell's
+# effects as it adds them to the active spells). At 100% Resist Magicka the Boots of Blinding Speed go on without their
+# Blind, and it stays off while they are worn (after the resistance has run out, and through a save); taken off and put on
+# again with no resistance, the Blind is back (98-100: Willpower's own small share of the roll, as in OpenMW). Ours
+# applied a worn item's effects with no resistance at all
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 GIVE:boots%of%blinding%speed[unique]
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:ge:98+EXPECT:attr:speed:ge:200
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:eq:0
+0.3 0 0 0 0 ACTIVE:93:100:10
+0.5 0 0 0
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:100+EXPECT:effect:47:eq:0+EXPECT:attr:speed:ge:200
+12 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:0+EXPECT:effect:47:eq:0
+1 0 0 0 0 SAVE:boots
+1 0 0 0
+0.5 0 0 0 0 LOAD:boots
+4 0 0 0
+0.3 0 0 0 0 EXPECT:equipped:boots%of%blinding%speed[unique]:eq:1+EXPECT:effect:47:eq:0
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:ge:98

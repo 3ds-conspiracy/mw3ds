@@ -42,6 +42,10 @@ void Session::drawSpells()
 		auto it = w.game.spells.find(id);
 		if (it == w.game.spells.end() || it->second.type != 0)
 			continue;
+		// (never their race's own spells, as OpenMW's SpellBuyingWindow)
+		const RaceDef* race = w.game.raceOf(def.race.c_str());
+		if (race && std::any_of(race->spells.begin(), race->spells.end(), [&](const std::string& s) { return lower(s) == lower(id); }))
+			continue;
 		bool have = false;
 		for (auto& k : known)
 			have |= k == id;

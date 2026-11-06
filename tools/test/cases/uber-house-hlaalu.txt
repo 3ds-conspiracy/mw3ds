@@ -2757,6 +2757,8 @@
 10 0 0 0 0 UNTIL:cell:Shurdan-Raplay_Egg_Mine
 0.5 0 0 0
 120 0 0 0 0 WALKTO:kwama%queen_shurdan
+# (then where the cure scrolls reach her: from where the walk stops after the kwama fight, a bolt can miss her)
+60 0 0 0 0 WALKTO:@-570,5340,-1422
 2 0 0 0 0 FACE:kwama%queen_shurdan:mid
 0.3 0 0 0 0 CAST:item:sc_cureblight_ranged
 2 0 0 0

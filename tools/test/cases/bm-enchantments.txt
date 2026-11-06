@@ -60,6 +60,7 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # bm_aesliip on bm_ring_aesliip (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:willpower
 0.3 0 0 0 0 SNAP:magickamax
 1.0 0 0 0 0 GIVE:bm_ring_aesliip
@@ -67,7 +68,9 @@
 0.3 0 0 0 0 EXPECT:attr:willpower:ge:@10
 0.3 0 0 0 0 EXPECT:magickamax:ge:@75
 0.3 0 0 0 0 EXPECT:equipped:bm_ring_aesliip:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_ring_aesliip
 # bm_amulspd on bm_amulspd1 (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:speed
 0.3 0 0 0 0 SNAP:skill:acrobatics
 0.3 0 0 0 0 SNAP:skill:athletics
@@ -77,7 +80,9 @@
 0.3 0 0 0 0 EXPECT:skill:acrobatics:ge:@15
 0.3 0 0 0 0 EXPECT:skill:athletics:ge:@15
 0.3 0 0 0 0 EXPECT:equipped:bm_amulspd1:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_amulspd1
 # bm_amulstr on bm_amulstr1 (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:strength
 0.3 0 0 0 0 SNAP:effect:117
 1.0 0 0 0 0 GIVE:bm_amulstr1
@@ -85,6 +90,7 @@
 0.3 0 0 0 0 EXPECT:attr:strength:ge:@10
 0.3 0 0 0 0 EXPECT:effect:117:ge:@15
 0.3 0 0 0 0 EXPECT:equipped:bm_amulstr1:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_amulstr1
 # bm_arrowslay_en on bm_ebonyarrow_s (on strike)
 1.0 0 0 0 0 GIVE:long%bow
 1.0 0 0 0 0 EQUIP:long%bow
@@ -171,6 +177,7 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # bm_wolfspirit on bm wolf helmet_heartfang (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:attr:agility
 0.3 0 0 0 0 SNAP:skill:sneak
 1.0 0 0 0 0 GIVE:bm%wolf%helmet_heartfang
@@ -178,6 +185,7 @@
 0.3 0 0 0 0 EXPECT:attr:agility:ge:@5
 0.3 0 0 0 0 EXPECT:skill:sneak:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:bm%wolf%helmet_heartfang:eq:1
+0.3 0 0 0 0 UNEQUIP:bm%wolf%helmet_heartfang
 # chieftainblade_en on bm nordic silver longsword_cft (when used)
 1.0 0 0 0 0 GIVE:bm%nordic%silver%longsword_cft
 0.3 0 0 0 0 SNAP:charge:bm%nordic%silver%longsword_cft
@@ -200,6 +208,7 @@
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:charge:bm%nordic%silver%longsword_cft:lt:@0
 # deadlyslay_en on bm_ring_marksman (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:marksman
 0.3 0 0 0 0 SNAP:effect:43
 1.0 0 0 0 0 GIVE:bm_ring_marksman
@@ -207,12 +216,15 @@
 0.3 0 0 0 0 EXPECT:skill:marksman:ge:@20
 0.3 0 0 0 0 EXPECT:effect:43:ge:@20
 0.3 0 0 0 0 EXPECT:equipped:bm_ring_marksman:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_ring_marksman
 # deceit_en on bm_black_glove_l_s (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:sneak
 1.0 0 0 0 0 GIVE:bm_black_glove_l_s
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:skill:sneak:ge:@20
 0.3 0 0 0 0 EXPECT:equipped:bm_black_glove_l_s:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_black_glove_l_s
 # deepfreeze_en on warhammer_rammekald_unique (on strike)
 1.0 0 0 0 0 GIVE:warhammer_rammekald_unique
 1.0 0 0 0 0 EQUIP:warhammer_rammekald_unique
@@ -230,11 +242,13 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # detect animal eddard on bm bear helmet eddard (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:64
 1.0 0 0 0 0 GIVE:bm%bear%helmet%eddard
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:effect:64:ge:@150
 0.3 0 0 0 0 EXPECT:equipped:bm%bear%helmet%eddard:eq:1
+0.3 0 0 0 0 UNEQUIP:bm%bear%helmet%eddard
 # frost bolt_eddard on bm_nordic_silver_lgswd_bloodska (on strike)
 1.0 0 0 0 0 GIVE:bm_nordic_silver_lgswd_bloodska
 1.0 0 0 0 0 EQUIP:bm_nordic_silver_lgswd_bloodska
@@ -328,6 +342,7 @@
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:charge:lucky_break:lt:@0
 # mantle_woe_en on mantle of woe (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SETATTR:personality:60
 0.3 0 0 0 0 SNAP:attr:personality
 0.3 0 0 0 0 SNAP:effect:36
@@ -342,6 +357,7 @@
 0.3 0 0 0 0 EXPECT:effect:135:ge:@20
 0.3 0 0 0 0 EXPECT:skill:conjuration:ge:@50
 0.3 0 0 0 0 EXPECT:equipped:mantle%of%woe:eq:1
+0.3 0 0 0 0 UNEQUIP:mantle%of%woe
 # paralysis weapon on bm nordic silver axe_spurius (on strike)
 1.0 0 0 0 0 GIVE:bm%nordic%silver%axe_spurius
 1.0 0 0 0 0 EQUIP:bm%nordic%silver%axe_spurius
@@ -504,11 +520,13 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # snow shield on bm_bear_boots_snow (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:91
 1.0 0 0 0 0 GIVE:bm_bear_boots_snow
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:effect:91:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:bm_bear_boots_snow:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_bear_boots_snow
 # snowprince_en on steel spear snow prince (on strike)
 1.0 0 0 0 0 GIVE:steel%spear%snow%prince
 1.0 0 0 0 0 EQUIP:steel%spear%snow%prince
@@ -539,12 +557,15 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # treachery_en on bm_black_glove_r_s (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:security
 1.0 0 0 0 0 GIVE:bm_black_glove_r_s
 0.5 0 0 0
 0.3 0 0 0 0 EXPECT:skill:security:ge:@20
 0.3 0 0 0 0 EXPECT:equipped:bm_black_glove_r_s:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_black_glove_r_s
 # whitewalker_en on bm_nordic01_robe_whitewalk (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:effect:40
 0.3 0 0 0 0 SNAP:effect:16
 0.3 0 0 0 0 SNAP:effect:29
@@ -556,6 +577,7 @@
 0.3 0 0 0 0 EXPECT:effect:29:ge:@5
 0.3 0 0 0 0 EXPECT:effect:18:ge:@5
 0.3 0 0 0 0 EXPECT:equipped:bm_nordic01_robe_whitewalk:eq:1
+0.3 0 0 0 0 UNEQUIP:bm_nordic01_robe_whitewalk
 # winterwound_en on bm winterwound dagger (on strike)
 1.0 0 0 0 0 GIVE:bm%winterwound%dagger
 1.0 0 0 0 0 EQUIP:bm%winterwound%dagger
@@ -574,6 +596,7 @@
 0.3 0 0 0 0 SETBOUNTY:0
 0.3 0 0 0 0 HIDEACTORS:4000
 # wolfwalking_en on wolfwalkers (constant)
+0.3 0 0 0 0 CLEAREFFECTS
 0.3 0 0 0 0 SNAP:skill:athletics
 0.3 0 0 0 0 SNAP:attr:speed
 1.0 0 0 0 0 GIVE:wolfwalkers
@@ -581,3 +604,4 @@
 0.3 0 0 0 0 EXPECT:skill:athletics:ge:@10
 0.3 0 0 0 0 EXPECT:attr:speed:ge:@10
 0.3 0 0 0 0 EXPECT:equipped:wolfwalkers:eq:1
+0.3 0 0 0 0 UNEQUIP:wolfwalkers

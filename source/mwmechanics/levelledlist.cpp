@@ -33,6 +33,15 @@ bool World::applyLevPick(int ri, const std::string& pick)
 	fillContents(game, r, stats.level, (unsigned)ri * 2654435761u);
 	initActorState(game, r);
 	r.relib = true;
+	// (it runs its own script: what the cell was read with was what the converter placed here)
+	const Script* own = r.obj && !r.obj->script.empty() ? game.script(r.obj->script) : nullptr;
+	if (r.script >= 0 && scripts[r.script].script != own)
+	{
+		scripts[r.script].running = false;
+		scripts[r.script].ref = -1;
+		r.script = -1;
+	}
+	startScriptFor(ri);
 	if (live)
 		attachSpawned(ri);
 	return true;

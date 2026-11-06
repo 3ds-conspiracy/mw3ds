@@ -200,4 +200,7 @@ elemental shield damage.
 
 - Enchanted weapons count as magical (OpenMW's default setting); vanilla may differ.
 - NPC armor ratings come from the converter (`tools/convert/npcstats.py`), fixed at their worn condition.
+- The player's attack type follows the way they move, or with Use best attack on (Prefs, off by default: Morrowind's Always Use Best Attack,
+  OpenMW's `best attack`) the weapon's strongest by minimum + maximum damage: thrust wins a tie, then slash, and
+  slash when all three match; hand-to-hand is any of the three (`feat-best-attack`).
 - The attack type an NPC picks (chop / slash / thrust) is random here; OpenMW picks by the weapon's best attack in AI.

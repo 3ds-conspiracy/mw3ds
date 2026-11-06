@@ -175,8 +175,10 @@ void Session::drawEnchanting()
 		auto me = w.game.magicEffects.find(e.effect);
 		icons.push_back(me != w.game.magicEffects.end() ? me->second.iconIx : -1);
 	}
-	int pick = uiList(list2, 4, 98, 130, 106, rows, 0.4f, true, nullptr, &icons);
-	if (pick >= 0 && pick < (int)usable.size() && makeEffects.size() < 4)
+	// (while the right column asks which skill or attribute, that list alone takes the D-pad, A and a tap)
+	bool asking = makePick != 0;
+	int pick = uiList(list2, 4, 98, 130, 106, rows, 0.4f, !asking, nullptr, &icons);
+	if (!asking && pick >= 0 && pick < (int)usable.size() && makeEffects.size() < 4)
 	{
 		makeEffects.push_back(usable[pick]);
 		makeSel = makeEffects.size() - 1;

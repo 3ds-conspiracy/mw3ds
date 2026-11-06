@@ -1,0 +1,40 @@
+# start: Seyda Neen
+# bug-npc-autocalc-spells: the spells an autocalculated NPC picks are the ones OpenMW picks (spec/findings/golden-actors.md
+# G5). Angaredhel (Sadrith Mora, Gateway Inn; level 16, Autocalc flag, no script) knows these 28 in OpenMW. Ours walked
+# the spells sorted by id instead of in the data files' order, replaced a full school's cheapest from that school only
+# (Morrowind's and OpenMW's look among all picks), left out the area term of the cost and checked skill / attribute
+# minimums on every effect: she knew a different set.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Sadrith_Mora,_Gateway_Inn
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Sadrith_Mora,_Gateway
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,absorb%intelligence:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,absorb%speed:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,absorb%willpower:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,blood%despair:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,blood%gift:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,burden%of%sin:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,cruel%weary:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,deadly%poison:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,dire%noise:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,dire%weakness%to%fire:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,dire%weakness%to%frost:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,dire%weakness%to%magicka:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,dire%weakness%to%poison:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,dire%weakness%to%shock:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,feet%of%notorgo:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,fire%shield:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,great%feather:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,great%levitate:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,levitate:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,medusa's%gaze:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,poet's%whim:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,powerwell:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,rapid%regenerate:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,reflect:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,sleep:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,vivec's%mercy:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,weak%spelldrinker:eq:1
+0.1 0 0 0 0 EXPECT:refspell:angaredhel,wizard%rend:eq:1
+1 0 0 0

@@ -1,0 +1,13 @@
+# start: Seyda Neen
+# Golden tour: a door or chest placed with a key and no lock level is locked in OpenMW (cellref.cpp: locked when it has a
+# key or a level), and only the key opens it. Four in the game: two doors of Assemanu's shrine and the chests of the
+# Ravel and Dralas tombs. Ours took level 0 as unlocked, so they opened for anyone.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Ravel_Ancestral_Tomb
+2 0 0 0
+0.1 0 0 0 0 EXPECT:locklevel:chest_tomb_large00:gt:0
+0.3 0 0 0 0 GOTO:Assemanu,_Shrine
+2 0 0 0
+0.1 0 0 0 0 EXPECT:locklevel:door_cavern_doors10:gt:0
+1 0 0 0

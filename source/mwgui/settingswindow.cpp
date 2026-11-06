@@ -114,26 +114,32 @@ void Session::drawOptions()
 		snprintf(text, sizeof(text), "%d", difficulty);
 		bar(50, w.game.gmstLabel("sdifficulty", "Difficulty"), text, difficulty, -100, 100, 10);
 		// Combat: vanilla, or Glancing Blows and Crits (misses glance, crits; the same average damage)
-		if (choice(86, "Combat hits", combatMode == COMBAT_GBAC ? "Glancing blows + crits" : "Vanilla"))
+		if (choice(84, "Combat hits", combatMode == COMBAT_GBAC ? "Glancing blows + crits" : "Vanilla"))
 		{
 			combatMode = combatMode == COMBAT_GBAC ? COMBAT_VANILLA : COMBAT_GBAC;
 			notify(combatMode == COMBAT_GBAC ? "Glancing blows and crits: misses glance for half damage, strong hits can crit."
 				: "Vanilla combat.");
 		}
 		// Hit & Miss Indicators: damage numbers and misses by the crosshair
-		if (choice(112, "Hit numbers", onOff(hitIndicators)))
+		if (choice(106, "Hit numbers", onOff(hitIndicators)))
 		{
 			hitIndicators = !hitIndicators;
 			notify(hitIndicators ? "Hit and miss numbers on." : "Hit and miss numbers off.");
 		}
 		// Subtitles: spoken lines written on the top screen
-		if (choice(138, w.game.gmstLabel("ssubtitles", "Subtitles"), onOff(g_subtitles)))
+		if (choice(128, w.game.gmstLabel("ssubtitles", "Subtitles"), onOff(g_subtitles)))
 		{
 			g_subtitles = !g_subtitles;
 			notify(g_subtitles ? "Subtitles on." : "Subtitles off: spoken lines are only heard.");
 		}
+		// Morrowind's Always Use Best Attack, on this tab (its full name does not fit beside the button)
+		if (choice(150, "Use best attack", bestAttack ? "Enabled" : "Disabled"))
+		{
+			bestAttack = !bestAttack;
+			notify(bestAttack ? "Always using the best attack." : "The way you move picks the attack.");
+		}
 		// Console: OpenMW's, one script line at a time, on the object the crosshair was on; Credits: Morrowind's movie
-		int extra = buttons(170, 26, { "Console", "Credits" });
+		int extra = buttons(174, 26, { "Console", "Credits" });
 		b = buttons(208, 28, { "Default", w.game.gmstLabel("sclose", "Close") });
 		closing = b == 1;
 		if (extra == 0)
@@ -161,6 +167,7 @@ void Session::drawOptions()
 			difficulty = 0;
 			combatMode = COMBAT_VANILLA;
 			hitIndicators = false;
+			bestAttack = false;
 			g_subtitles = true;
 			changed = true;
 		}

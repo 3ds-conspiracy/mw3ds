@@ -89,12 +89,14 @@ void World::recomputeStats()
 	// when put on and kept while worn (OpenMW rolls an item's constant effects as it adds them to the active spells):
 	// one die per item, taken only when an effect has a range; taken off, the item rolls again next time
 	std::vector<u32> rolls(abilities.size(), 0u);
+	std::vector<const short*> kept(abilities.size(), nullptr);   // (an item's resisted share of each effect)
 	for (auto& it : inventory)
 	{
 		const SpellDef* en = it.equipped ? enchantmentOf(it) : nullptr;
 		if (!en || en->type != ENCH_CONSTANT)
 		{
 			it.roll = 0;
+			std::fill(it.kept, it.kept + 8, (short)-1);
 			continue;
 		}
 		bool ranged = false;
@@ -102,8 +104,12 @@ void World::recomputeStats()
 			ranged |= e.max > e.min;
 		if (ranged && it.roll == 0)
 			it.roll = ((u32)rand() << 1) | 1u;
+		if (it.kept[0] < 0)
+			for (size_t k = 0; k < 8; k++)
+				it.kept[k] = k < en->effects.size() ? (short)lroundf(1000.0f * constantEffectKept(en->effects[k].effect)) : 1000;
 		abilities.push_back(en->id);
 		rolls.push_back(ranged ? it.roll : 0u);
+		kept.push_back(it.kept);
 	}
 	if (b) abilities.insert(abilities.end(), b->spells.begin(), b->spells.end());
 	rolls.resize(abilities.size(), 0u);
@@ -115,6 +121,7 @@ void World::recomputeStats()
 			abilities.push_back(id);
 	}
 	rolls.resize(abilities.size(), 0u);
+	kept.resize(abilities.size(), nullptr);
 	this->abilities.clear();
 	abilitiesShown.clear();
 	// Abilities' and worn constant enchantments' fortifies and drains are modifiers on top (OpenMW's modified value):
@@ -144,6 +151,12 @@ void World::recomputeStats()
 				e.min += (int)(((rolls[ab] + (u32)k * 0x9E3779B9u) * 2654435761u) >> 8) % (e.max - e.min + 1);
 			if (e.effect == 17 || e.effect == 79)
 				e.min *= scale;
+			if (kept[ab] && k < 8 && kept[ab][k] < 1000)
+			{
+				e.min = (int)lroundf(e.min * kept[ab][k] / 1000.0f);
+				if (e.min <= 0)
+					continue;                              // resisted whole: it never took hold
+			}
 			abilitiesShown.push_back({ e.effect, e.attribute, e.skill, (float)e.min, 1e9f, it->second.name });
 			if (e.effect == 79 && e.attribute >= 0 && e.attribute < 8) attrMod[e.attribute] += e.min;
 			else if (e.effect == 83 && e.skill >= 0 && e.skill < 27) skillMod[e.skill] += e.min;
