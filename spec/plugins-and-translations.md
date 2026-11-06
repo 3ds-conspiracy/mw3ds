@@ -8,8 +8,10 @@ shows a cell name (`#{sCell=...}`). In our words. Our side is `tools/convert/mwf
 the engine's `GameData::gmstLabel / cellLabel / topicStandardForm / topicKeyword`, `dialogueHyperText`. The check
 is `tools/test/plugincheck.py`, against the official plugins in the player's own Data Files.
 
-Scope: plugins whose masters are `Morrowind.esm` (and plugins before them). A plugin needing `Tribunal.esm` or
-`Bloodmoon.esm` is refused at convert time. MWSE, MGE XE and OpenMW Lua mods are out.
+Scope: plugins whose masters are `Morrowind.esm`, the add-ons built in (`Tribunal.esm`, `Bloodmoon.esm`) and plugins before
+them. A plugin needing an add-on that is off is refused at convert time; the converter's window greys it and says which box
+to tick (`tools/release/wizard.py` `plugin_rows`, the same rule as `mwfiles.load_order`). MWSE, MGE XE and OpenMW Lua mods
+are out.
 
 ## 1. Load order
 

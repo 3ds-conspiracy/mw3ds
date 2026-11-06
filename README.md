@@ -240,8 +240,8 @@ converting again.
 
 **Plugins.** Put the `.esp` files in `Data Files` as usual (with their meshes and textures) and list them in `.env`,
 in load order: `MW3DS_PLUGINS=Siege at Firemoth.esp;master_index.esp`. The converter merges them with
-`Morrowind.esm` the way OpenMW does. Plugins that need Tribunal or Bloodmoon, MWSE, MGE XE or OpenMW Lua are not
-supported. At the end of a conversion each plugin gets a line listing any script functions the engine does not run
+`Morrowind.esm` the way OpenMW does. A plugin that needs Tribunal or Bloodmoon needs that add-on in the build
+(`--tribunal`, `--bloodmoon`); MWSE, MGE XE and OpenMW Lua are not supported. At the end of a conversion each plugin gets a line listing any script functions the engine does not run
 yet, so you can see why a mod only half works.
 
 **Translated Morrowind.** A German, French, Polish, Russian ... `Morrowind.esm` converts like the English one: set

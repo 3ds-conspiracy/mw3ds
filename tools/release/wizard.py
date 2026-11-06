@@ -41,9 +41,9 @@ LANGUAGES = [
     ("Russian", "win1251"), ("Ukrainian", "win1251"),
 ]
 CODECS = {"win1252": "cp1252", "win1250": "cp1250", "win1251": "cp1251"}
-# Masters a plugin may not need (mwfiles.out_of_scope(): Tribunal itself is the add-on box, not a plugin's master): a
-# plugin needing one is refused by the converter
-OUT_OF_SCOPE = {"tribunal.esm", "bloodmoon.esm"}
+# The add-ons a plugin may need: its name in the list, as the converter's mwfiles.out_of_scope() takes them (on only when
+# ticked)
+ADDONS = {"tribunal.esm": "Tribunal", "bloodmoon.esm": "Bloodmoon"}
 NEED_GB = 5                                            # whole island: mods 0.6 + data 1.1 + caches 0.2 + CIA 1.1, and room
 NEED_RAM_GB = 4
 
@@ -179,8 +179,63 @@ def sample_lines(strings, encoding, n=3):
     return [s.decode(CODECS[encoding], errors="replace") for s in pick]
 
 
-def plugin_files(folder):
-    """(name, refusal or None) of each plugin in Data Files, in Morrowind.ini's load order first."""
+def plugin_rows(names, needs, tribunal=False, bloodmoon=False):
+    """What the plugin list shows: [(name, refusal or None, what it needs)], in the order of names. needs: {lowercase
+    name: its masters, None when it cannot be read}. A plugin the converter would refuse has a refusal saying what to do:
+    an add-on to tick, a master that is not there; and so has one that needs a refused plugin. The same rule as
+    mwfiles.load_order()."""
+    ticked = {"tribunal.esm": tribunal, "bloodmoon.esm": bloodmoon}
+    have = {n.lower() for n in names} | {"morrowind.esm"}
+    refused = {}
+    for n in names:
+        need = needs.get(n.lower())
+        if need is None:
+            refused[n.lower()] = "cannot be read"
+            continue
+        off = [ADDONS[m] for m in need if m in ADDONS and not ticked[m]]
+        missing = [m for m in need if m not in have and m not in ADDONS]
+        if off:
+            refused[n.lower()] = f"needs {' and '.join(off)}: tick {' and '.join('Add ' + a for a in off)} below"
+        elif missing:
+            refused[n.lower()] = f"needs {missing[0]}, which is not in Data Files"
+    spelled = {n.lower(): n for n in names}
+    while True:                        # (one that needs a refused plugin is refused too)
+        more = {n.lower(): f"needs {spelled[m]}, which {refused[m]}" for n in names if n.lower() not in refused
+                for m in needs.get(n.lower()) or [] if m in refused}
+        if not more:
+            break
+        refused.update(more)
+    rows = []
+    for n in names:
+        shown = [ADDONS.get(m, spelled.get(m, m)) for m in needs.get(n.lower()) or [] if m != "morrowind.esm"]
+        rows.append((n, refused.get(n.lower()), shown))
+    return rows
+
+
+def plugins_in_order(picked, names, needs):
+    """The picked plugins with the plugins they need added, each after what it needs (the converter refuses one whose
+    master is not loaded before it), otherwise in the order of names."""
+    by_lower = {n.lower(): n for n in names}
+    out, seen = [], set()
+
+    def add(n):
+        if n.lower() in seen:
+            return
+        seen.add(n.lower())
+        for m in needs.get(n.lower()) or []:
+            if m in by_lower:
+                add(by_lower[m])
+        out.append(n)
+
+    wanted = {p.lower() for p in picked}
+    for n in names:
+        if n.lower() in wanted:
+            add(n)
+    return out
+
+
+def plugin_files(folder, tribunal=False, bloodmoon=False):
+    """plugin_rows() of each plugin in Data Files, in Morrowind.ini's load order first, and what each needs."""
     data = Path(folder) / "Data Files"
     names = [p.name for p in data.iterdir() if p.suffix.lower() in (".esp", ".esm")
              and p.name.lower() not in ("morrowind.esm", "tribunal.esm", "bloodmoon.esm")]
@@ -191,18 +246,13 @@ def plugin_files(folder):
     except OSError:
         pass
     names.sort(key=lambda n: (order.index(n.lower()) if n.lower() in order else len(order), n.lower()))
-    have = {n.lower() for n in names} | {"morrowind.esm"}
-    out = []
+    needs = {}
     for n in names:
         try:
-            need = [m.lower() for m in masters(data / n)]
+            needs[n.lower()] = [m.lower() for m in masters(data / n)]
         except OSError:
-            out.append((n, "cannot be read"))
-            continue
-        bad = [m for m in need if m in OUT_OF_SCOPE]
-        missing = [m for m in need if m not in have and m not in OUT_OF_SCOPE]
-        out.append((n, f"needs {bad[0]} (not supported)" if bad else f"needs {missing[0]} (missing)" if missing else None))
-    return out, order
+            needs[n.lower()] = None
+    return plugin_rows(names, needs, tribunal, bloodmoon), needs
 
 
 # ---- The machine
@@ -306,13 +356,14 @@ class Wizard:
         ttk.Label(f, text="Plugins (.esp)").grid(row=row, column=0, sticky="nw", **pad)
         pf = ttk.Frame(f)
         pf.grid(row=row, column=1, columnspan=2, sticky="nsew", **pad)
-        self.plugins = tk.Listbox(pf, selectmode="multiple", height=5, exportselection=False, activestyle="none")
+        self.plugins = tk.Listbox(pf, selectmode="multiple", height=8, exportselection=False, activestyle="none")
         self.plugins.bind("<<ListboxSelect>>", lambda e: self.show_plugin_count())
         self.plugins.pack(side="left", fill="both", expand=True)
         sb = ttk.Scrollbar(pf, command=self.plugins.yview)
         sb.pack(side="right", fill="y")
         self.plugins.config(yscrollcommand=sb.set)
         self.plugin_names = []
+        self.plugin_needs = {}
         row += 1
         self.plugin_note = ttk.Label(f, text="", foreground="#555", wraplength=640)
         self.plugin_note.grid(row=row, column=1, columnspan=2, sticky="w", padx=8)
@@ -330,7 +381,7 @@ class Wizard:
         # Tribunal: the add-on, when Tribunal.esm and Tribunal.bsa are in Data Files (build_cia.py --tribunal)
         self.tribunal = tk.BooleanVar(value=self.settings.get("tribunal", False))
         self.tribunal_check = ttk.Checkbutton(f, text="Add Tribunal (Mournhold, its quests and items)",
-                                              variable=self.tribunal)
+                                              variable=self.tribunal, command=self.show_plugins)
         self.tribunal_check.grid(row=row, column=1, columnspan=2, sticky="w", **pad)
         row += 1
         self.tribunal_note = ttk.Label(f, text="", foreground="#555", wraplength=640, justify="left")
@@ -340,7 +391,7 @@ class Wizard:
         # Bloodmoon: the add-on, when Bloodmoon.esm and Bloodmoon.bsa are in Data Files (build_cia.py --bloodmoon)
         self.bloodmoon = tk.BooleanVar(value=self.settings.get("bloodmoon", False))
         self.bloodmoon_check = ttk.Checkbutton(f, text="Add Bloodmoon (Solstheim, its quests and items)",
-                                               variable=self.bloodmoon)
+                                               variable=self.bloodmoon, command=self.show_plugins)
         self.bloodmoon_check.grid(row=row, column=1, columnspan=2, sticky="w", **pad)
         row += 1
         self.bloodmoon_note = ttk.Label(f, text="", foreground="#555", wraplength=640, justify="left")
@@ -456,26 +507,35 @@ class Wizard:
             if dict(LANGUAGES).get(self.language.get()) != guess:
                 self.language.set(next(n for n, e in LANGUAGES if e == guess))
         self.show_sample()
-        chosen = {p.lower() for p in self.settings.get("plugins", [])} if first else set()
-        try:
-            listed, _ = plugin_files(folder)
-        except OSError:
-            listed = []
-        for i, (name, refusal) in enumerate(listed):
-            self.plugins.insert("end", name + (f"   ({refusal})" if refusal else ""))
-            self.plugin_names.append((name, refusal))
-            if refusal:
-                self.plugins.itemconfig(i, foreground="#999", selectforeground="#999")
-            elif name.lower() in chosen:
-                self.plugins.selection_set(i)
-        self.show_plugin_count()
+        # (the add-ons first: which plugins can be picked depends on them)
         self.show_tribunal(folder)
         self.show_bloodmoon(folder)
+        self.show_plugins(self.settings.get("plugins", []) if first else [])
         n = len(pc_save_files(folder))
         self.saves_note.config(text=(f"{n} found. " if n else "None found in Saves. ") +
                                "They go to 3ds\\mw3ds\\saves for the SD card: your character, inventory, journal, "
                                "quests and what changed in the world. A save first sent from the 3DS comes back whole "
                                "(its .mw3ds file beside it). Not: anything from Tribunal, Bloodmoon or other plugins.")
+
+    def show_plugins(self, chosen=None):
+        """Fills the list for the add-ons ticked now, keeping what is picked (chosen: what to pick instead)."""
+        keep = {p.lower() for p in (self.chosen_plugins() if chosen is None else chosen)}
+        folder = self.morrowind.get().strip()
+        self.plugins.delete(0, "end")
+        self.plugin_names, self.plugin_needs = [], {}
+        try:
+            listed, self.plugin_needs = plugin_files(folder, self.tribunal.get(), self.bloodmoon.get())
+        except OSError:
+            listed = []
+        for i, (name, refusal, needs) in enumerate(listed):
+            note = refusal or ("needs " + ", ".join(needs) if needs else "")
+            self.plugins.insert("end", name + (f"   ({note})" if note else ""))
+            self.plugin_names.append((name, refusal))
+            if refusal:
+                self.plugins.itemconfig(i, foreground="#999", selectforeground="#999")
+            elif name.lower() in keep:
+                self.plugins.selection_set(i)
+        self.show_plugin_count()
 
     def show_tribunal(self, folder):
         data = Path(folder) / "Data Files"
@@ -498,14 +558,18 @@ class Wizard:
                                         "Data Files (the Game of the Year edition has them).")
 
     def show_plugin_count(self):
-        # (the converter refuses a plugin it cannot load: a refused one cannot be picked)
+        # (the converter refuses a plugin it cannot load: a refused one cannot be picked, and one that needs another
+        # plugin brings it along)
         for i in self.plugins.curselection():
             if i < len(self.plugin_names) and self.plugin_names[i][1]:
                 self.plugins.selection_clear(i)
+        for name in self.chosen_plugins():
+            self.plugins.selection_set(self.row_of(name))
         n = len(self.chosen_plugins())
         picked = f"{n} picked: " + ", ".join(self.chosen_plugins()) if n else "None picked: the game as it shipped."
         self.plugin_note.config(text=f"{picked}  Click a plugin to pick it or drop it; load order is Morrowind.ini's. "
-                                     "Greyed ones need Tribunal or Bloodmoon, or a missing master.")
+                                     "Greyed ones say what they need: ticking Add Tribunal or Add Bloodmoon below "
+                                     "opens up those that need them.")
 
     def show_sample(self):
         enc = dict(LANGUAGES).get(self.language.get(), "win1252")
@@ -513,9 +577,14 @@ class Wizard:
         self.sample.config(text=("Your game's text reads as: " + "  |  ".join(lines) +
                                  "\nIf this looks garbled, pick your game's language.") if lines else "")
 
+    def row_of(self, name):
+        return next(i for i, (n, _) in enumerate(self.plugin_names) if n == name)
+
     def chosen_plugins(self):
-        return [self.plugin_names[i][0] for i in self.plugins.curselection()
-                if i < len(self.plugin_names) and not self.plugin_names[i][1]]
+        usable = [n for n, refusal in self.plugin_names if not refusal]
+        picked = [self.plugin_names[i][0] for i in self.plugins.curselection()
+                  if i < len(self.plugin_names) and not self.plugin_names[i][1]]
+        return plugins_in_order(picked, usable, self.plugin_needs)
 
     # -- running
 
