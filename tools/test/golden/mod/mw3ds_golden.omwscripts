@@ -1,0 +1,3 @@
+GLOBAL: scripts/mw3ds_golden/global.lua
+NPC: scripts/mw3ds_golden/npc.lua
+CREATURE: scripts/mw3ds_golden/creature.lua

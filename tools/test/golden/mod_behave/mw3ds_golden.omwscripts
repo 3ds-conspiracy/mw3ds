@@ -1,0 +1,3 @@
+GLOBAL: scripts/mw3ds_golden/tour_global.lua
+NPC, CREATURE: scripts/mw3ds_golden/tour_actor.lua
+PLAYER: scripts/mw3ds_golden/tour_player.lua
