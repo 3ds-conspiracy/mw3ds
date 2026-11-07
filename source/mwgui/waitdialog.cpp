@@ -85,6 +85,10 @@ void Session::restHour()
 // The hours start passing (the rest screen's Rest / Wait / Until Healed)
 void Session::startRest(int hours)
 {
+	// An autosave before the hours pass, for rest and wait alike (OpenMW's WaitDialog::startWaiting): loading it goes back to
+	// before a rest something interrupted. As the door's, it is built here and written by the save writer thread
+	if (!autotest || restAutosave)
+		autosave();
 	restTotal = hours;
 	restDone = 0;
 	restFrames = 0;

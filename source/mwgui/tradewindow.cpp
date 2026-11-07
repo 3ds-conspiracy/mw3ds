@@ -101,6 +101,7 @@ void Session::drawBarter()
 		if (keys & KEY_L) barterCount -= 10;
 		if (keys & KEY_R) barterCount += 10;
 		barterCount = std::max(dealt > 0 ? 0 : 1, std::min(barterCount, have));   // (0 takes one already in the deal out)
+		barterCountMax = have;
 	}
 	int balance = barterBalance();
 	if (sel >= 0)
@@ -150,16 +151,25 @@ void Session::drawBarter()
 	};
 	if (counting)
 	{
-		// [-]  Buy 5  [+]  Cancel: A sets how many go in the deal (0 takes them out), B (or Cancel) goes back to the grid
+		// [-] [5] [+]  Buy 5  Cancel: A sets how many go in the deal (0 takes them out), B (or Cancel) goes back to the grid; a
+		// tap on the number types it on the number pad, for a large stack
 		std::string label = barterCount == 0 ? std::string("None")
 			: (barterSell ? w.game.gmstLabel("ssell", "Sell") : w.game.gmstLabel("sbuy", "Buy")) + " " + std::to_string(barterCount);
 		bool set = false;
-		if (uiButton(4, 208, 40, 28, "-", false))
+		if (uiButton(4, 208, 28, 28, "-", false))
 			barterCount = std::max(dealt > 0 ? 0 : 1, barterCount - 1);
-		if (uiButton(48, 208, 160, 28, label, true))
-			set = true;
-		if (uiButton(212, 208, 40, 28, "+", false))
+		if (uiButton(34, 208, 64, 28, "", false))
+		{
+			wantText = TEXT_BARTERCOUNT;
+			playSound(-1, "Menu Click");
+		}
+		float labelH = uiLineHeight(0.28f) * 0.8f, numH = uiLineHeight(0.55f), top = 208 + (28 - labelH - numH) / 2;
+		uiTextCentered(66, top, 0.28f, col::textDim, "HOW MANY");
+		uiTextCentered(66, top + labelH, 0.55f, col::text, std::to_string(barterCount));
+		if (uiButton(100, 208, 28, 28, "+", false))
 			barterCount = std::min(have, barterCount + 1);
+		if (uiButton(132, 208, 120, 28, label, true))
+			set = true;
 		if (uiButton(256, 208, 60, 28, w.game.gmst("scancel", "Cancel"), false) || (hin.down & KEY_B))
 		{
 			barterCounting = false;

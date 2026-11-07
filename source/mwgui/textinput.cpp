@@ -71,6 +71,14 @@ void Session::setText(bool confirmed, const std::string& text)
 		haggleOffer = std::max(0, atoi(text.c_str()));
 		logf("barter: offer typed %d", haggleOffer);
 	}
+	// how many of the picked stack go in the deal: at most what there is, whatever the pad brought back (drawBarter holds it
+	// to at least 1, or 0 for a line already in the deal, each frame, as it does for the - and + buttons)
+	else if (kind == TEXT_BARTERCOUNT && !blank && screen == SCR_BARTER && barterCounting)
+	{
+		long typed = strtol(text.c_str(), nullptr, 10);
+		barterCount = (int)std::max(0L, std::min(typed, (long)barterCountMax));
+		logf("barter: count typed %s: %d of %d", text.c_str(), barterCount, barterCountMax);
+	}
 }
 
 std::string Session::textNow()
@@ -81,5 +89,7 @@ std::string Session::textNow()
 		return mapNoteEdit >= 0 && mapNoteEdit < (int)w.mapNotes.size() ? w.mapNotes[mapNoteEdit].text : "";
 	if (wantText == TEXT_OFFER)
 		return std::to_string(barterHaggled(abs(barterBalance())));
+	if (wantText == TEXT_BARTERCOUNT)
+		return std::to_string(barterCount);
 	return wantText == TEXT_SEARCH ? journalSearch : wantText == TEXT_CONSOLE ? consoleDraft : makeName;
 }

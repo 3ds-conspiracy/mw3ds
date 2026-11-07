@@ -1,0 +1,56 @@
+# start: Seyda Neen
+# issue-97: resting or waiting makes an autosave, as OpenMW's WaitDialog::startWaiting does, before the hours pass. Loading it
+# gives back the moment before the rest: what was picked up after it is gone, the hour is the one the rest started from. In a
+# town's streets only waiting is offered, in the wilds sleep; leaving the menu with Cancel saves nothing. A test run leaves
+# this save out unless it asks for it (RESTAUTOSAVE, again after a load: that starts the session afresh).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+RESTAUTOSAVE
+0.3 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:iron%club:2
+0.3 0 0 0 0 RESTMENU
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:screen:rest
+0.3 0 0 0 0 EXPECT:restsleep:eq:0
+0.3 0 0 0 0 A
+2 0 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:hour:ge:10.9
+0.3 0 0 0 0 GIVE:iron%club:3
+0.5 0 0 0 0 LOAD:@autosave
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Seyda_Neen
+0.1 0 0 0 0 EXPECT:count:iron%club:eq:2
+0.1 0 0 0 0 EXPECT:hour:lt:10.9
+0.3 0 0 0 0 RESTAUTOSAVE
+0.3 0 0 0 0 TP:31313:-33004:1800:0
+4 0 0 0 0
+0.3 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 HOUR:14
+0.3 0 0 0 0 GIVE:iron%arrow:2
+0.3 0 0 0 0 RESTMENU
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:screen:rest
+0.3 0 0 0 0 EXPECT:restsleep:eq:1
+0.3 0 0 0 0 A
+2 0 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 EXPECT:hour:ge:14.9
+0.3 0 0 0 0 GIVE:iron%arrow:3
+0.5 0 0 0 0 LOAD:@autosave
+6 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Ascadian_Isles
+0.1 0 0 0 0 EXPECT:count:iron%arrow:eq:2
+0.1 0 0 0 0 EXPECT:hour:lt:14.9
+0.3 0 0 0 0 HIDEACTORS:3000
+0.3 0 0 0 0 GIVE:iron%club:1
+0.3 0 0 0 0 RESTMENU
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:screen:rest
+0.3 0 0 0 0 B
+1 0 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+0.5 0 0 0 0 LOAD:@autosave
+6 0 0 0
+0.1 0 0 0 0 EXPECT:count:iron%club:eq:2
+1 0 0 0

@@ -7,6 +7,7 @@
 struct TestState
 {
 	int testKit = 0;              // ENHANCEV2: the v2 test kit (2); the driver's v2 behaviours read kitV2()
+	bool restAutosave = false;    // RESTAUTOSAVE: rest and wait make their autosave in this run too (a test run leaves it out)
 	float landClip = -1.0f;       // LANDWATCH: the furthest the feet have been under the land since (-1: not watching)
 	struct Watch
 	{

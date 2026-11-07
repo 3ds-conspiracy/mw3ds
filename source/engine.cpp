@@ -448,11 +448,15 @@ bool Engine::frame()
 			bool console = session->wantText == Session::TEXT_CONSOLE;      // a script line (Options > Console)
 			bool classDesc = session->wantText == Session::TEXT_CLASSDESC;  // the made class's description (may be empty)
 			bool offer = session->wantText == Session::TEXT_OFFER;          // the gold offered in a barter: the number pad
+			bool count = session->wantText == Session::TEXT_BARTERCOUNT;  // how many of a stack: the number pad, no more digits than the stack has
+			std::string countHint = "How many? At most " + std::to_string(session->barterCountMax);
 			if (offer)
 				swkbdInit(&kb, SWKBD_TYPE_NUMPAD, 2, 6);
+			else if (count)
+				swkbdInit(&kb, SWKBD_TYPE_NUMPAD, 2, (int)std::to_string(session->barterCountMax).size());
 			else
 				swkbdInit(&kb, SWKBD_TYPE_NORMAL, 2, console || classDesc ? 200 : 31);
-			swkbdSetHintText(&kb, offer ? "Your offer (gold)" : console ? "Script line, e.g. Player->AddItem gold_001 100" : search ? "Search"
+			swkbdSetHintText(&kb, offer ? "Your offer (gold)" : count ? countHint.c_str() : console ? "Script line, e.g. Player->AddItem gold_001 100" : search ? "Search"
 				: classDesc ? "Describe your class" : session->wantText == Session::TEXT_CLASSNAME ? "Name your class"
 				: session->screen == SCR_ENCHANT ? "Name the item" : "Name the spell");
 			swkbdSetInitialText(&kb, session->textNow().c_str());

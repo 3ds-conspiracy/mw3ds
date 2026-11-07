@@ -322,6 +322,13 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		logf("test: autosave asked");
 		return true;
 	}
+	// RESTAUTOSAVE: from now on rest and wait make the autosave they make in play (a test run leaves it out: most of them
+	// rest, and the save is of no use to them)
+	if (verb == "RESTAUTOSAVE")
+	{
+		s.restAutosave = true;
+		return true;
+	}
 	// SAVESRELOAD: the save list kept in memory dropped, so the next listing reads the card as at a start (the saves'
 	// index, then the .meta of saves it lacks)
 	if (verb == "SAVESRELOAD")

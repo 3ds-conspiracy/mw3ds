@@ -1,0 +1,65 @@
+# start: Seyda Neen
+# Buying or selling a large stack: tapping the number in the count row opens the number pad. What comes back is held to what
+# can be asked for: at most the stack, at least 1, or 0 for a line already in the deal (which takes it out). The count stays
+# on screen to be read and then set, as with the - and + buttons. The test run's keyboard returns what TYPE: says.
+1 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 CLASS:battlemage
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+8 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille
+0.3 0 0 0 0 HOUR:10
+0.3 0 0 0 0 GIVE:gold_001:500
+0.3 0 0 0 0 GIVE:iron%arrow:250
+0.3 0 0 0 0 SNAP:gold
+0.3 0 0 0 0 SNAP:count:iron%arrow
+0.3 0 0 0 0 BARTER:arrille
+0.3 0 0 0 0 EXPECT:screen:barter
+0.3 0 0 0 0 L
+0.3 0 0 0 0 BARTERSEL:iron%arrow
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:bartercount:eq:1
+0.3 0 0 0 0 TYPE:120
+0.3 0 0 0 0 TAP:66:222
+0.5 0 0 0 0 EXPECT:bartercount:eq:120
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 TYPE:99999
+0.3 0 0 0 0 TAP:66:222
+0.5 0 0 0 0 EXPECT:bartercount:eq:250
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 TYPE:0
+0.3 0 0 0 0 TAP:66:222
+0.5 0 0 0 0 EXPECT:bartercount:eq:1
+0.3 0 0 0 0 TYPE:120
+0.3 0 0 0 0 TAP:66:222
+0.3 0 0 0 0 LEFT
+0.5 0 0 0 0 EXPECT:bartercount:eq:119
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:count:iron%arrow:eq:@0
+0.3 0 0 0 0 A
+0.5 0 0 0 0 EXPECT:bartercount:eq:120
+0.3 0 0 0 0 TYPE:0
+0.3 0 0 0 0 TAP:66:222
+0.5 0 0 0 0 EXPECT:bartercount:eq:0
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.5 0 0 0 0 EXPECT:bartercount:eq:1
+0.3 0 0 0 0 TYPE:120
+0.3 0 0 0 0 TAP:66:222
+0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
+0.5 0 0 0 0 EXPECT:screen:barter
+0.3 0 0 0 0 EXPECT:count:iron%arrow:eq:@-120
+0.3 0 0 0 0 EXPECT:gold:gt:@0
+0.3 0 0 0 0 SNAP:count:iron%arrow
+0.3 0 0 0 0 L
+0.3 0 0 0 0 BARTERSEL:iron%arrow
+0.3 0 0 0 0 A
+0.3 0 0 0 0 TYPE:2
+0.3 0 0 0 0 TAP:66:222
+0.3 0 0 0 0 A
+0.3 0 0 0 0 SELECT
+0.5 0 0 0 0 EXPECT:count:iron%arrow:eq:@2
+0.3 0 0 0 0 SCREEN:none
+1 0 0 0
