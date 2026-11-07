@@ -1,0 +1,108 @@
+# Issue 105: a direction held in a menu keeps moving the selection (a console's key repeat), not one step a press.
+# The inventory full of ingredients (8 to a row): held right walks along the row and on, held down runs to the last row
+# and stops there, a tap shorter than the repeat's wait is still one step. The race list: held keys stop at either end,
+# a fresh press past the end goes round. Without KEYREPEAT:on a scripted step's held key still presses once.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.1 0 0 0 0 GIVE:ingred_coprinus_01
+0.1 0 0 0 0 GIVE:ingred_bc_ampoule_pod
+0.1 0 0 0 0 GIVE:ingred_marshmerrow_01
+0.1 0 0 0 0 GIVE:ingred_dreugh_wax_01
+0.1 0 0 0 0 GIVE:ingred_fire_salts_01
+0.1 0 0 0 0 GIVE:ingred_diamond_01
+0.1 0 0 0 0 GIVE:ingred_muck_01
+0.1 0 0 0 0 GIVE:ingred_russula_01
+0.1 0 0 0 0 GIVE:ingred_bc_bungler
+0.1 0 0 0 0 GIVE:ingred_bc_hypha_facia
+0.1 0 0 0 0 GIVE:ingred_saltrice_01
+0.1 0 0 0 0 GIVE:ingred_ash_yam_01
+0.1 0 0 0 0 GIVE:ingred_corprus_weepings_01
+0.1 0 0 0 0 GIVE:ingred_sload_soap_01
+0.1 0 0 0 0 GIVE:ingred_scrib_jerky_01
+0.1 0 0 0 0 GIVE:ingred_kwama_cuttle_01
+0.1 0 0 0 0 GIVE:ingred_ghoul_heart_01
+0.1 0 0 0 0 GIVE:ingred_scathecraw_01
+0.1 0 0 0 0 GIVE:ingred_fire_petal_01
+0.1 0 0 0 0 GIVE:ingred_bc_coda_flower
+0.1 0 0 0 0 GIVE:ingred_daedras_heart_01
+0.1 0 0 0 0 GIVE:ingred_wickwheat_01
+0.1 0 0 0 0 GIVE:ingred_guar_hide_girith
+0.1 0 0 0 0 GIVE:ingred_raw_glass_tinos
+0.1 0 0 0 0 GIVE:ingred_shalk_resin_01
+0.1 0 0 0 0 GIVE:ingred_scrib_jelly_02
+0.1 0 0 0 0 GIVE:ingred_gold_kanet_01
+0.1 0 0 0 0 GIVE:ingred_bonemeal_01
+0.1 0 0 0 0 GIVE:ingred_black_anther_01
+0.1 0 0 0 0 GIVE:ingred_void_salts_01
+0.1 0 0 0 0 GIVE:ingred_dae_cursed_emerald_01
+0.1 0 0 0 0 GIVE:ingred_green_lichen_01
+0.1 0 0 0 0 GIVE:ingred_dae_cursed_pearl_01
+0.1 0 0 0 0 GIVE:ingred_bittergreen_petals_01
+0.1 0 0 0 0 GIVE:ingred_emerald_01
+0.1 0 0 0 0 GIVE:ingred_6th_corprusmeat_05
+0.1 0 0 0 0 GIVE:ingred_ruby_01
+0.1 0 0 0 0 GIVE:ingred_heather_01
+0.1 0 0 0 0 GIVE:ingred_hound_meat_01
+0.1 0 0 0 0 GIVE:ingred_crab_meat_01
+0.1 0 0 0 0 GIVE:ingred_scrap_metal_01
+0.1 0 0 0 0 GIVE:ingred_6th_corprusmeat_02
+0.1 0 0 0 0 GIVE:ingred_6th_corprusmeat_06
+0.1 0 0 0 0 GIVE:ingred_scales_01
+0.1 0 0 0 0 GIVE:ingred_6th_corprusmeat_04
+0.1 0 0 0 0 GIVE:ingred_vampire_dust_01
+0.1 0 0 0 0 GIVE:ingred_netch_leather_01
+0.1 0 0 0 0 GIVE:ingred_rat_meat_01
+0.1 0 0 0 0 GIVE:ingred_corkbulb_root_01
+0.1 0 0 0 0 GIVE:ingred_scrib_jelly_01
+0.1 0 0 0 0 GIVE:ingred_willow_anther_01
+0.1 0 0 0 0 GIVE:ingred_guar_hide_marsus
+0.5 0 0 0 0 SCREEN:inventory
+0.3 0 0 0 0 EXPECT:screen:inventory+EXPECT:gridsel:eq:0
+# (the scripted driver as before: a key held a whole step presses once)
+1.5 0 0 0 0 DOWN
+0.2 0 0 0 0 EXPECT:gridsel:eq:8
+0.2 0 0 0 0 UP
+0.2 0 0 0 0 EXPECT:gridsel:eq:0+KEYREPEAT:on
+# Held right for a second: the press, then a repeat every 0.07 s after 0.35 s (about 11 in all)
+0.1 0 0 0 0 SNAP:gridsel
+1 0 0 0 0 RIGHT
+0.2 0 0 0 0 SHOT+EXPECT:gridsel:ge:@8+EXPECT:gridsel:le:@14
+# A tap shorter than the wait: one step
+0.1 0 0 0 0 SNAP:gridsel
+0.25 0 0 0 0 LEFT
+0.2 0 0 0 0 EXPECT:gridsel:eq:@-1
+# Held down: row after row to the last (52 ingredients and the clothes worn: 7 rows or more), and it stays there
+3 0 0 0 0 DOWN
+0.3 0 0 0 0 SHOT+EXPECT:gridsel:ge:48
+0.1 0 0 0 0 SNAP:gridsel
+1 0 0 0 0 DOWN
+0.2 0 0 0 0 EXPECT:gridsel:eq:@0
+# ... and held up, back to the top row
+3 0 0 0 0 UP
+0.3 0 0 0 0 EXPECT:gridsel:lt:8
+# ZL + a direction held sets that quick key once (one notice), and the selection stays where it is
+0.1 0 0 0 0 SNAP:gridsel+EXPECT:quickkeysset:eq:0+EXPECT:notices:eq:0
+1.5 0 0 0 0 ZL+DOWN
+0.2 0 0 0 0 EXPECT:gridsel:eq:@0+EXPECT:quickkeysset:eq:1+EXPECT:notices:eq:1
+0.3 0 0 0 0 SCREEN:none
+# A list: the race menu's ten races. Held up stops on the first, held down on the last (no going round while held)
+0.5 0 0 0 0 SCREEN:race
+0.3 0 0 0 0 EXPECT:screen:race
+2 0 0 0 0 UP
+0.3 0 0 0 0 EXPECT:listsel:eq:0
+2 0 0 0 0 DOWN
+0.3 0 0 0 0 SHOT+EXPECT:listsel:eq:9
+# A fresh press on the last goes round to the first, as it always has
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 EXPECT:listsel:eq:0
+0.3 0 0 0 0 SCREEN:none
+# The options screen's lines: held down runs to the last line and stays, a fresh press goes round to the first
+0.5 0 0 0 0 SCREEN:options
+0.3 0 0 0 0 EXPECT:screen:options
+3 0 0 0 0 DOWN
+0.2 0 0 0 0 SHOT+SNAP:focus+EXPECT:focus:gt:0
+1 0 0 0 0 DOWN
+0.2 0 0 0 0 EXPECT:focus:eq:@0
+0.2 0 0 0 0 DOWN
+0.3 0 0 0 0 EXPECT:focus:eq:0
+0.3 0 0 0 0 SCREEN:none

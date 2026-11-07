@@ -187,6 +187,16 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "makelistsel") v = (float)s.list2.selected;     // ... the known effects' list: the row selected
 	else if (what == "makelistscroll") v = s.list2.scroll;           // ... and how far it is scrolled
 	else if (what == "makepicksel") v = (float)s.makePickList.selected;   // ... the skill / attribute list: the row selected
+	else if (what == "gridsel") v = (float)s.grid.selected;           // an item grid's selected cell (inventory, container, barter)
+	else if (what == "listsel") v = (float)s.list.selected;           // a menu list's selected row (the magic menu's spells ...)
+	else if (what == "focus") v = (float)s.focus;                     // the button the D-pad has lit (the options screens ...)
+	else if (what == "notices") v = (float)s.notes.size();            // notices on the top screen now (four at most)
+	else if (what == "quickkeysset")       // quick keys with something on them
+	{
+		v = 0;
+		for (auto& q : w.stats.quickKeys)
+			v += !q.empty();
+	}
 	else if (what == "footrepeat") v = (float)s.stepRepeats;         // footsteps on the same foot twice in a row
 	else if (what == "enemiesnear") v = s.enemiesNear() ? 1.0f : 0.0f;   // rest refused: enemies about
 	else if (what == "werewolfkills") v = (float)w.stats.werewolfKills;   // people killed since the change (GetWerewolfKills)

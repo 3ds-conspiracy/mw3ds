@@ -24,6 +24,7 @@ struct UiInput
 	float stickY;         // the C-stick up / down, -1 (up) to 1 (down): scrolls a text pane
 	float stickX = 0.0f;  // the C-stick left / right, -1 to 1: turns the face in the race menu
 	float dt;             // the frame's step (seconds): what moves on its own (a long row sliding)
+	bool repeat = false;  // a direction held down presses again and again (in the menus: uiBeginFrame)
 };
 
 // How far the C-stick (-1..1) scrolls a text pane this frame
@@ -39,6 +40,7 @@ void uiExit();
 void uiBeginFrame(const UiInput& in);     // clears the per-frame text buffer
 const std::vector<std::string>& uiLastButtons();    // the labels of the buttons the last whole frame drew
 const UiInput& uiIn();
+u32 uiRepeated();                         // the directions in uiIn().down this frame that are a held key's repeat
 void uiConsume(u32 keys);                 // keys handled by gameplay are hidden from widgets this frame
 
 // Text (system font). scale 0.5 ~ 15 px lines.

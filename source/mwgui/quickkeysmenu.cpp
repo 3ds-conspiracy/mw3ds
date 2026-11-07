@@ -21,6 +21,8 @@ bool Session::assignQuickKey(const std::string& entry, const std::string& name)
 	if (!(in.held & KEY_ZL))
 		return false;
 	static const u32 keys[4] = { KEY_DUP, KEY_DRIGHT, KEY_DDOWN, KEY_DLEFT };
+	// (a direction held with ZL sets the key once: its repeat neither sets it again nor moves the selection)
+	uiConsume(uiRepeated());
 	for (int k = 0; k < 4; k++)
 		if (in.down & keys[k])
 		{

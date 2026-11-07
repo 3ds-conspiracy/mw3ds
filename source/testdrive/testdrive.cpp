@@ -155,7 +155,7 @@ bool TestDriver::canCast(Session& s, const std::string& selected)
 bool TestDriver::playerToken(const std::string& tok)
 {
 	static const char* const kPlayer[] = {
-		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "ZR", "FRAMECAP", "GYRO", "CONTROLS", "GYROAIM", "TAP", "DRAG", "TOUCH", "STICKDOWN",
+		"A", "B", "X", "Y", "L", "R", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "ZL", "ZR", "FRAMECAP", "KEYREPEAT", "GYRO", "CONTROLS", "GYROAIM", "TAP", "DRAG", "TOUCH", "STICKDOWN",
 		// (SEED: the dice made repeatable from there, nothing given or set: a long run seeds a section whose outcome is a
 		// script's roll, so a change before it doesn't flip it. SCRIPTROLL: a script's own die picked, nothing else; ROLL: a
 		// persuasion's, so a taunt meant to provoke does, on any dice)

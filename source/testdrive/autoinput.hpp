@@ -93,6 +93,7 @@ struct ScriptedInput
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
 	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned
 	int frameCap = -1;                // FRAMECAP:on|off: the Old 3DS's 30 / 20 fps cap in a scripted run (on unless a case says off)
+	int keyRepeat = -1;               // KEYREPEAT:on|off: from this step a direction held in a menu repeats, as a player's does
 	int camSet = -1;                  // CAM:x:y:z:yaw:pitch (1) / CAMREL: the same from the player's feet (2) / CAM:off (0): the view held at that spot (degrees, pitch up positive)
 	float cam[5] = {};
 	int hud = -1;                     // HUD:off (0) / HUD:on (1): the top screen's HUD
@@ -141,6 +142,7 @@ std::vector<CamPose> loadAutocam(const RenderCamera& spawn);
 // What a scripted run's steps set for the frame loop: the frame cap, the controls' layout, the view held at a spot,
 // the HUD hidden, the world standing still (parseKeys)
 extern bool g_testFrameCap;
+extern bool g_testKeyRepeat;        // KEYREPEAT:on: held directions repeat in the menus (off: one press a step, as before)
 extern bool g_testDepth16;          // DEPTH16:on: the top screen's 16-bit depth buffer in 2D (Engine::createTopTargets)
 extern int g_testThrottleFps;       // THROTTLE:<fps>: each frame waits out the rest of 1/fps (engine.cpp)
 extern bool g_testGpuModel;         // GPUMODEL:on|off: the PC build prices each frame's drawing as the console's GPU would

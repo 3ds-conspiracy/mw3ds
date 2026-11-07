@@ -18,6 +18,10 @@
 // and not the pacing can say FRAMECAP:off: it steps on a fixed clock, so the cap only slows it to real time
 bool g_testFrameCap = true;
 
+// A scripted step's keys are held the whole step but press once: the cases were written that way. KEYREPEAT:on gives
+// a held direction in a menu the player's repeat from that step (widgets.cpp's keyRepeat)
+bool g_testKeyRepeat = false;
+
 // The layout the scripted run plays with (classic unless a CONTROLS: step chose another)
 int g_testLayout = CONTROLS_CLASSIC;
 
@@ -108,6 +112,11 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		if (strncmp(tok, "FRAMECAP:", 9) == 0)
 		{
 			step->frameCap = strcmp(tok + 9, "on") == 0 ? 1 : 0;
+			continue;
+		}
+		if (strncmp(tok, "KEYREPEAT:", 10) == 0)
+		{
+			step->keyRepeat = strcmp(tok + 10, "on") == 0 ? 1 : 0;
 			continue;
 		}
 		if (strncmp(tok, "SKIN:", 5) == 0)

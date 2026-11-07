@@ -327,14 +327,20 @@ void Session::drawOptions()
 	int li = 0;
 	while (li + 1 < (int)lines.size() && focus >= lines[li + 1].first)
 		li++;
+	// (past the end a press goes round to the other end, a held key's repeat stops there)
 	int column = focus - lines[li].first, n = lines.size();
+	u32 rep = uiRepeated();
 	if (in.down & (KEY_DOWN | KEY_UP))
 	{
-		li = (li + ((in.down & KEY_DOWN) ? 1 : n - 1)) % n;
+		int to = li + ((in.down & KEY_DOWN) ? 1 : -1);
+		li = (rep & (KEY_DOWN | KEY_UP)) && (to < 0 || to >= n) ? li : (to + n) % n;
 		focus = lines[li].first + std::min(column, lines[li].count - 1);
 	}
 	else if (lines[li].count > 1 && (in.down & (KEY_LEFT | KEY_RIGHT)))
-		focus = lines[li].first + (column + ((in.down & KEY_RIGHT) ? 1 : lines[li].count - 1)) % lines[li].count;
+	{
+		int to = column + ((in.down & KEY_RIGHT) ? 1 : -1), m = lines[li].count;
+		focus = lines[li].first + ((rep & (KEY_LEFT | KEY_RIGHT)) && (to < 0 || to >= m) ? column : (to + m) % m);
+	}
 }
 
 // What each button does

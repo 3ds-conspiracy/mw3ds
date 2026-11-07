@@ -72,9 +72,45 @@ const std::vector<std::string>& uiLastButtons()
 	return s_lastButtons;
 }
 
+// A direction held in a menu presses again by itself (a console's key repeat): first after kRepeatDelay, then every
+// kRepeatEvery, every kRepeatEveryFast once held kRepeatFastAfter (a hundred rows in about four and a half seconds).
+// The Circle Pad's directions count as the D-pad's (KEY_UP is both). A new press starts the wait again
+static const float kRepeatDelay = 0.35f, kRepeatEvery = 0.07f, kRepeatEveryFast = 0.035f, kRepeatFastAfter = 1.5f;
+static const u32 kRepeatKeys[4] = { KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT };
+static float s_heldFor[4], s_repeatAt[4];
+static u32 s_repeated = 0;
+
+static void keyRepeat()
+{
+	s_repeated = 0;
+	for (int k = 0; k < 4; k++)
+	{
+		u32 key = kRepeatKeys[k];
+		if (!s_in.repeat || !(s_in.held & key) || (s_in.down & key))
+		{
+			s_heldFor[k] = 0.0f;
+			s_repeatAt[k] = kRepeatDelay;
+			continue;
+		}
+		s_heldFor[k] += s_in.dt;
+		if (s_heldFor[k] < s_repeatAt[k])
+			continue;
+		s_repeated |= key;
+		// (one press a frame at most: a slow frame doesn't save up presses to jump with)
+		s_repeatAt[k] = fmaxf(s_repeatAt[k] + (s_heldFor[k] < kRepeatFastAfter ? kRepeatEvery : kRepeatEveryFast), s_heldFor[k]);
+	}
+	s_in.down |= s_repeated;
+}
+
+u32 uiRepeated()
+{
+	return s_repeated & s_in.down;
+}
+
 void uiBeginFrame(const UiInput& in)
 {
 	s_in = in;
+	keyRepeat();
 	s_frame++;
 	C2D_TextBufClear(s_buf);
 	s_lastButtons.swap(s_buttons);
@@ -760,6 +796,17 @@ bool uiButton(float x, float y, float w, float h, const std::string& label, bool
 	return uiHit(x, y, w, h) || (focused && (s_in.down & KEY_A));
 }
 
+// Up / down move a list's selection: a press past either end goes round to the other, a held key's repeat stops there
+static void listKeys(UiList& list, int n)
+{
+	u32 rep = uiRepeated();
+	if (s_in.down & KEY_DOWN)
+		list.selected = (rep & KEY_DOWN) && list.selected + 1 >= n ? n - 1 : (list.selected + 1) % n;
+	if (s_in.down & KEY_UP)
+		list.selected = (rep & KEY_UP) && list.selected <= 0 ? 0 : (list.selected + n - 1) % n;
+	if (list.selected >= n) list.selected = n - 1;
+}
+
 int uiList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows, float scale, bool keys,
 	const std::vector<std::string>* right, const std::vector<int>* icons)
 {
@@ -768,9 +815,7 @@ int uiList(UiList& list, float x, float y, float w, float h, const std::vector<s
 	int result = -1;
 	if (keys && !rows.empty())
 	{
-		if (s_in.down & KEY_DOWN) list.selected = (list.selected + 1) % rows.size();
-		if (s_in.down & KEY_UP) list.selected = (list.selected + rows.size() - 1) % rows.size();
-		if (list.selected >= (int)rows.size()) list.selected = rows.size() - 1;
+		listKeys(list, rows.size());
 		// a new selection comes into view (every frame, it pulled a drag back: the list couldn't be scrolled by hand
 		// further than kept the selected row showing)
 		if (list.selected != list.shownSel)
@@ -865,9 +910,7 @@ int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vect
 	int result = -1;
 	if (keys && !rows.empty())
 	{
-		if (s_in.down & KEY_DOWN) list.selected = (list.selected + 1) % rows.size();
-		if (s_in.down & KEY_UP) list.selected = (list.selected + rows.size() - 1) % rows.size();
-		if (list.selected >= (int)rows.size()) list.selected = rows.size() - 1;
+		listKeys(list, rows.size());
 		if (list.selected >= 0 && list.selected != list.shownSel)      // (a new one only: see uiList)
 		{
 			float sy = top[list.selected], sh = top[list.selected + 1] - sy;

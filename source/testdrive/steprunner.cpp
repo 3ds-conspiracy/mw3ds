@@ -71,6 +71,8 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	}
 	if (first && s.frameCap >= 0)
 		g_testFrameCap = s.frameCap == 1;
+	if (first && s.keyRepeat >= 0)
+		g_testKeyRepeat = s.keyRepeat == 1;
 	if (first && s.skin >= 0)
 	{
 		g_gpuSkinning = s.skin == 1;

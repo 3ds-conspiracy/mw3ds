@@ -413,6 +413,9 @@ bool Engine::frame()
 	ui.stickY = inputIndex < autoinput.size() && loaded ? autoinput[inputIndex].stickY : readStickScroll();
 	ui.stickX = inputIndex < autoinput.size() && loaded ? autoinput[inputIndex].stickX : readStickTurn();
 	ui.dt = dt;
+	// Directions held in a menu repeat (in play the D-pad's presses stay one each: quick keys, the view); a scripted
+	// run's held keys press once a step unless a case asks for the player's repeat (KEYREPEAT:on)
+	ui.repeat = loaded && g_menuForInput && (!session->autotest || g_testKeyRepeat);
 	// Stylus layouts: a slide on the bottom screen in play turns the view (the HUD is the bottom screen then)
 	stylusLook(ui, in, loaded && !session->menuOpen() && !session->wantName && !session->wantText
 		&& !session->moviePlaying() && !session->playerDead);
