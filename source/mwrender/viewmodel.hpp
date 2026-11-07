@@ -17,7 +17,11 @@ struct FpPiece
 	std::vector<C3D_Tex*> textures;
 	u32 bytes = 0;
 	float length = 0.0f;                     // seconds its meshes' tracks run (a spell visual's animation)
+	float lo[3] = { 0.0f, 0.0f, 0.0f }, hi[3] = { 0.0f, 0.0f, 0.0f };   // its meshes' bounds, in the piece's own space
 };
+
+// Where a dropped item's model goes against the spot it lies on (x, y in the model's own space, before its turn)
+void dropDrawOffset(const FpPiece& piece, float off[3]);
 
 // A mesh's place at time t of its track: base x the track's matrix, samples blended; a billboard faces the eye with the
 // track's place and size. A mesh with no track: base. False: shrunk to a speck there (most of a spell visual's pieces

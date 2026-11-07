@@ -427,7 +427,8 @@ void appendRefs(World& w, int cellIndex, ParsedRefs& p)
 			continue;
 		}
 		w.pendingSpawns.erase(w.pendingSpawns.begin() + k);
-		int ri = w.placeObject(p.id, cellIndex, p.pos, p.yaw);      // (a person or creature, or an object a script placed)
+		// (a person or creature, or an object a script placed)
+		int ri = w.placeObject(p.id, cellIndex, p.pos, p.yaw, p.hasContents ? &p.contents : nullptr);
 		if (ri >= 0 && w.refs[ri].actor >= 0)
 		{
 			w.refs[ri].health = p.health;

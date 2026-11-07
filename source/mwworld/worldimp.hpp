@@ -310,7 +310,14 @@ struct World
 	// their cell is loaded; they go when their cell's objects leave memory (and aren't saved)
 	std::vector<int> spawned;
 	// Placed creatures of cells whose objects left memory (and from a save): placed again when the cell is read
-	struct PendingSpawn { std::string id, cell; float pos[3], yaw, health; bool dead; };
+	struct PendingSpawn
+	{
+		std::string id, cell;
+		float pos[3], yaw, health;
+		bool dead;
+		bool hasContents;                  // false: from a save before these were kept: its lists are rolled again
+		std::vector<ContentItem> contents;
+	};
 	std::vector<PendingSpawn> pendingSpawns;
 	// Dropped items: references drawn with the item's own mesh (fp pieces) while their cell is in memory;
 	// kept here (and in saves) while it isn't
@@ -319,7 +326,7 @@ struct World
 	int dropItem(const InventoryItem& it, const float pos[3], float yaw, int cell = -1);
 	// In front of a spot on the floor there (dist units along yaw)
 	int dropItemAt(const InventoryItem& it, const float base[3], float yaw, float dist);
-	int spawnActor(const std::string& id, const float pos[3], float yaw, int cell = -1);
+	int spawnActor(const std::string& id, const float pos[3], float yaw, int cell = -1, const std::vector<ContentItem>* kept = nullptr);
 	void despawn(int ri);             // a placed reference goes (a summons ends)
 	// Day and night outdoors: the tint on baked lighting, the sky's and the fog colour for this hour
 	void daylight(float land[3], float sky[3], float fog[3]) const;
@@ -330,7 +337,7 @@ struct World
 	void placeAt(const std::string& id, int count, float dist, int dir, const float base[3], float yaw);
 	// PlaceItem / PlaceItemCell: a new object of that id at that spot (cell -1: where the spot is); a person or
 	// creature, an item lying there, or any other object with its script running. Its ref, or -1
-	int placeObject(const std::string& id, int cell, const float pos[3], float yaw);
+	int placeObject(const std::string& id, int cell, const float pos[3], float yaw, const std::vector<ContentItem>* kept = nullptr);
 	void loseCollision(int ref);                    // its collision gone for good, the object still drawn (saved: colGone)
 	void regainCollision(int ref);                  // back again (a Clockwork City door shut after it was opened)
 	void snapToFloor(float pos[3]);     // down onto the floor below (from a little above), never up

@@ -1,0 +1,22 @@
+# start: Seyda Neen
+# Dropped up against a plain wall (Arrille's, upstairs side): the crosshair is on the wall, no surface to stand it on, so
+# it goes down just ahead. It stays on the player's side, as far ahead as there is room, in sight. Ours put it 50 ahead
+# whatever stood there: behind the wall, its name showing through it and nothing else. (OpenMW's dropObjectOnGround has
+# only the feet.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GIVE:p_levitation_s:3
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+5 0 0 0
+0.3 0 0 0 0 TPIN:0:-130:140:0
+1.5 0 0 0
+0.1 0 0 0 0 FACE:@-2271,-2271
+3 0 1 0
+0.5 0 0 0
+0.1 0 0 0 0 PITCH:0
+0.3 0 0 0 0 DROPAIM:p_levitation_s
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:dropseen:eq:1
+0.1 0 0 0 0 EXPECT:dropz:le:130
+0.1 0 0 0 0 PITCH:-55
+0.5 0 0 0 0 SHOT

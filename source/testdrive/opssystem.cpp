@@ -531,7 +531,9 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 	{
 		s.invTab = 0;
 		int at = 0;
-		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
+		// ("brewed": the potion the last brew made, or the last one a save brought)
+		std::string brewed = !s.lastBrewed.empty() ? s.lastBrewed : w.brewed.empty() ? "" : w.brewed.back();
+		std::string want = lower(a[1]) == "brewed" ? brewed : lower(spaced(a[1])), want2 = lower(a[1]) == "brewed" ? brewed : lower(a[1]);
 		for (auto& it : w.inventory)
 		{
 			if (it.id == "gold_001")

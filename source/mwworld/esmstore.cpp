@@ -1277,6 +1277,27 @@ std::string GameData::modelId(const std::string& itemId) const
 	return o && !o->iconBase.empty() ? lower(o->iconBase.str()) : lower(itemId);
 }
 
+// One of the six potion models with its icon (OpenMW's addPotion: misc_potion_<kind>_01, a die of six; here by the
+// potion's id, so the same one always looks the same), taken from a potion of the game's that has it, which its model and
+// icon are then read from (iconBase: modelId)
+void GameData::madePotionLook(Object& potion) const
+{
+	static const char* kLooks[6] = { "p_levitation_s", "p_frost_resistance_b", "p_fortify_personality_c",
+		"p_water_breathing_s", "p_fortify_magicka_e", "p_restore_agility_q" };   // standard, bargain, cheap, fresh, exclusive, quality
+	const std::string id = potion.id.str();
+	const size_t digits = id.find_last_not_of("0123456789") + 1;
+	unsigned h = digits < id.size() ? (unsigned)strtoul(id.c_str() + digits, nullptr, 10) : (unsigned)std::hash<std::string>()(id);
+	if (const Object* look = object(kLooks[h % 6]))
+	{
+		potion.iconBase = Atom(look->id);
+		if (potion.icon.empty())
+		{
+			potion.icon = look->icon;
+			potion.iconIx = look->iconIx;
+		}
+	}
+}
+
 u32 GameData::enchantGlow(const std::string& itemId) const
 {
 	const Object* o = object(itemId);

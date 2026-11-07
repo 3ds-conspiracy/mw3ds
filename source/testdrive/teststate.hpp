@@ -7,6 +7,7 @@
 struct TestState
 {
 	int testKit = 0;              // ENHANCEV2: the v2 test kit (2); the driver's v2 behaviours read kitV2()
+	float landClip = -1.0f;       // LANDWATCH: the furthest the feet have been under the land since (-1: not watching)
 	struct Watch
 	{
 		float x = 0, y = 0, still = 0; bool told = false;

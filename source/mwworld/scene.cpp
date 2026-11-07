@@ -81,7 +81,7 @@ bool World::evictCell(int c)
 		else if (!refs[i].ally)
 		{
 			PendingSpawn p = { refs[i].idLower, lc.file, { refs[i].pos[0], refs[i].pos[1], refs[i].pos[2] },
-				refs[i].rot[2], refs[i].health, refs[i].dead };
+				refs[i].rot[2], refs[i].health, refs[i].dead, true, refs[i].contents };
 			pendingSpawns.push_back(p);
 			logf("world: placed %s waits for %s", p.id.c_str(), p.cell.c_str());
 		}

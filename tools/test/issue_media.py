@@ -1,5 +1,5 @@
-"""Puts screenshots for a GitHub issue on the repo's `issue-media` branch and prints the URLs to embed in a comment
-(the GitHub CLI cannot attach images to issue comments). The branch holds only these pictures, one folder per
+"""Puts screenshots and videos for a GitHub issue on the repo's `issue-media` branch and prints the URLs to use in a
+comment (the GitHub CLI cannot attach them to issue comments). The branch holds only these files, one folder per
 issue, and is never merged; files are written with git plumbing, so the working tree and the checked-out branch
 are not touched.
 
@@ -52,8 +52,8 @@ def main():
         names = []
         for f in a.files:
             p = Path(f)
-            if p.suffix.lower() not in (".png", ".jpg", ".jpeg", ".gif"):
-                raise SystemExit(f"not a picture: {f}")
+            if p.suffix.lower() not in (".png", ".jpg", ".jpeg", ".gif", ".mp4"):
+                raise SystemExit(f"not a picture or a video: {f}")
             blob = git("hash-object", "-w", str(p.resolve()))
             name = f"issue-{a.issue}/{p.name}"
             git("update-index", "--add", "--cacheinfo", f"100644,{blob},{name}", env=env)

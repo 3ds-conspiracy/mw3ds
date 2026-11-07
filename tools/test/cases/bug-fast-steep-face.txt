@@ -1,0 +1,96 @@
+# start: Seyda Neen
+# Running at high Speed up a hill into land too steep to stand on, with uneven frames as on the console. The body leaves
+# the ground with its feet about 30 units in the slope and hangs there. A long frame takes them past a step's height (34):
+# nothing looks that far up, the rescue for a body under the land was for a standing one only, and it fell on down inside
+# the hill, 600 units under the land in a second, in sight of the underside of everything.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SETSKILL:athletics:100+GOD
+0.3 0 0 0 0 SETATTR:speed:100
+0.1 0 0 0 0 EFFECT:79:200:9000:4
+# West Gash
+0.1 0 0 0 0 DT:0.0333+TP:-108032:118400:384:108
+1 0 0 0
+0.001 0 0 0 0 LANDWATCH
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 0 0 0 DT:0.0333+EXPECT:landclip:lt:60+EXPECT:playerz:ge:300
+# Vemynal, on Red Mountain
+0.1 0 0 0 0 DT:0.0333+TP:1792:86784:7976:140
+1 0 0 0
+0.001 0 0 0 0 LANDWATCH
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 0 0 0 DT:0.0333+EXPECT:landclip:lt:60+EXPECT:playerz:ge:7880
+# Azura's Coast
+0.1 0 0 0 0 DT:0.0333+TP:156416:-56448:2432:272
+1 0 0 0
+0.001 0 0 0 0 LANDWATCH
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.058
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.1
+0.001 0 1 0 0 DT:0.04
+0.001 0 1 0 0 DT:0.0333
+0.001 0 1 0 0 DT:0.05
+0.001 0 1 0 0 DT:0.0333
+0.001 0 0 0 0 DT:0.0333+EXPECT:landclip:lt:60+EXPECT:playerz:ge:2340

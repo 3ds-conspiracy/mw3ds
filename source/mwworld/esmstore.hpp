@@ -189,6 +189,7 @@ struct GameData
 	// the id an item's models (first-person, worn, lying about) are kept under: an item the player made has the one it
 	// was made from (an enchanted copy: its base; a brewed potion: a potion of the look it was given), else its own
 	std::string modelId(const std::string& itemId) const;
+	void madePotionLook(Object& potion) const;   // a potion the player made gets its model (iconBase), and an icon if it has none
 	u32 enchantGlow(const std::string& itemId) const;   // an enchanted item's glow (0xRRGGBB: its first effect's colour), 0 none
 	const Script* script(const std::string& name) const;
 	std::string gmst(const char* name, const char* fallback = "") const;

@@ -165,6 +165,15 @@ bool fpTrackMatrix(const ActorMesh& m, const C3D_Mtx& base, float t, C3D_Mtx& ou
 
 u32 g_fpPieceReads = 0;
 
+// The model's lowest point on the spot, the middle of its bounds over it (OpenMW's copyObjectToCell, adjustPos): a
+// potion's mesh has its origin in the middle, which left half of it in the table
+void dropDrawOffset(const FpPiece& piece, float off[3])
+{
+	off[0] = -(piece.lo[0] + piece.hi[0]) * 0.5f;
+	off[1] = -(piece.lo[1] + piece.hi[1]) * 0.5f;
+	off[2] = -piece.lo[2];
+}
+
 FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool* missing)
 {
 	g_fpPieceReads++;
@@ -191,7 +200,7 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 		texFiles[i] = n;
 	}
 	rd(f, nmesh);
-	bool ok = memcmp(magic, "MWP1", 4) == 0;
+	bool ok = memcmp(magic, "MWP1", 4) == 0, bounded = false;
 	for (u32 k = 0; k < nmesh && ok; k++)
 	{
 		ActorMesh m = {};
@@ -226,6 +235,13 @@ FpPiece* fpLoadPiece(World& w, const Skeleton& sk, const std::string& name, bool
 		m.src.resize(m.numVerts * 3);
 		for (u32 i = 0; i < m.numVerts; i++)
 			memcpy(&m.src[i * 3], (u8*)m.verts + i * 24, 12);
+		for (u32 i = 0; i < m.numVerts; i++, bounded = true)
+			for (int c = 0; c < 3; c++)
+			{
+				float v = m.src[i * 3 + c];
+				p->lo[c] = !bounded || v < p->lo[c] ? v : p->lo[c];
+				p->hi[c] = !bounded || v > p->hi[c] ? v : p->hi[c];
+			}
 		if (m.kind == ACTOR_SKINNED)
 		{
 			u32 pal = 0;

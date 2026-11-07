@@ -40,7 +40,7 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 	// the potion the last brew made
 	if (verb == "DROPAIM" && a.size() >= 2)
 	{
-		std::string id = lower(a[1]) == "brewed" ? s.lastBrewed : lower(a[1]);
+		std::string id = lower(a[1]) != "brewed" ? lower(a[1]) : !s.lastBrewed.empty() ? s.lastBrewed : w.brewed.empty() ? "" : w.brewed.back();
 		int sel = -1;
 		for (size_t i = 0; i < w.inventory.size() && sel < 0; i++)
 			if (lower(w.inventory[i].id) == id || lower(w.inventory[i].id) == lower(spaced(id)))
@@ -50,6 +50,14 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 		int n = a.size() < 3 ? 1 : lower(a[2]) == "all" ? w.inventory[sel].count : atoi(a[2].c_str());
 		s.dropFromInventory(sel, n);
 		logf("test: dropped %d of %s", n, w.inventory.size() > (size_t)sel ? id.c_str() : id.c_str());
+		return true;
+	}
+	// OLDPOTIONS: the potions made so far lose their look, as ones brewed by a build that gave them none (a save from then)
+	if (verb == "OLDPOTIONS")
+	{
+		for (auto& id : w.brewed)
+			if (const Object* o = w.game.object(id))
+				const_cast<Object*>(o)->iconBase = Atom();
 		return true;
 	}
 	if (verb == "MAKEITEM" && a.size() >= 3)

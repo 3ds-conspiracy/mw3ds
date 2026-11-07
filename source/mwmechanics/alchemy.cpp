@@ -179,17 +179,7 @@ bool Session::brewPotion()
 			+ std::to_string(e.min) + "_" + std::to_string(e.duration) + "_";
 	unsigned h = std::hash<std::string>()(key) % 1000000;
 	potion.id = "mw3ds_potion_" + std::to_string(h);
-	// Its look: one of the six potion models with its icon (OpenMW's addPotion: misc_potion_<kind>_01, a die of six;
-	// here by the potion, so the same one always looks the same), taken from a potion of the game's that has it, which
-	// its model and icon are then read from (iconBase: GameData::modelId)
-	static const char* kLooks[6] = { "p_levitation_s", "p_frost_resistance_b", "p_fortify_personality_c",
-		"p_water_breathing_s", "p_fortify_magicka_e", "p_restore_agility_q" };   // standard, bargain, cheap, fresh, exclusive, quality
-	if (const Object* look = w.game.object(kLooks[h % 6]))
-	{
-		potion.iconBase = Atom(look->id);
-		potion.icon = look->icon;
-		potion.iconIx = look->iconIx;
-	}
+	w.game.madePotionLook(potion);
 	if (!w.game.object(potion.id))
 	{
 		w.game.objects[potion.id] = potion;

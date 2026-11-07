@@ -831,10 +831,13 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 		FpPiece* piece = it != w.game.firstPerson.items.end() ? vm.piece(w, it->second.model) : nullptr;
 		if (!piece)
 			continue;
+		float off[3];
+		dropDrawOffset(*piece, off);
 		C3D_Mtx model;
 		Mtx_Identity(&model);
-		Mtx_Translate(&model, r.pos[0], r.pos[1], r.pos[2], true);
+		Mtx_Translate(&model, r.pos[0], r.pos[1], r.pos[2] + off[2], true);
 		Mtx_RotateZ(&model, -r.rot[2], true);
+		Mtx_Translate(&model, off[0], off[1], 0.0f, true);
 		u32 glow = w.game.enchantGlow(r.idLower);   // an enchanted one shimmers where it lies
 		for (auto& m : piece->meshes)
 			rendererDrawMeshGlow(m, &model, piece->textures[m.tex], glow);

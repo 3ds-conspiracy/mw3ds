@@ -12,6 +12,8 @@ constexpr int kKeyOnlyLock = 1000;
 
 struct RefRange { int batch; u32 first, count; };
 struct cJSON;
+cJSON* contentsState(const std::vector<ContentItem>& contents);
+void readContentsState(const cJSON* list, std::vector<ContentItem>& contents);
 
 // A placed reference in the cell: static data from cells/<cell>.json plus live state
 struct Ref

@@ -19,6 +19,43 @@
 #include <malloc.h>
 #include "mwstate/statehelpers.hpp"
 
+// What a container or actor holds, in a save: [count, id], or [count, id, condition, soul, charge] for a worn, filled or
+// part-charged stack
+cJSON* contentsState(const std::vector<ContentItem>& contents)
+{
+	cJSON* c = cJSON_CreateArray();
+	for (auto& it : contents)
+	{
+		cJSON* e = cJSON_CreateArray();
+		cJSON_AddItemToArray(e, cJSON_CreateNumber(it.first));
+		cJSON_AddItemToArray(e, cJSON_CreateString(it.second.c_str()));
+		if (!it.plain())
+		{
+			cJSON_AddItemToArray(e, cJSON_CreateNumber(it.condition));
+			cJSON_AddItemToArray(e, cJSON_CreateString(it.soul.c_str()));
+			cJSON_AddItemToArray(e, cJSON_CreateNumber(it.charge));
+		}
+		cJSON_AddItemToArray(c, e);
+	}
+	return c;
+}
+
+void readContentsState(const cJSON* list, std::vector<ContentItem>& contents)
+{
+	contents.clear();
+	const cJSON* e;
+	cJSON_ArrayForEach(e, list)
+	{
+		contents.emplace_back(cJSON_GetArrayItem(e, 0)->valueint, cJSON_GetArrayItem(e, 1)->valuestring);
+		if (cJSON_GetArraySize(e) >= 5)
+		{
+			contents.back().condition = cJSON_GetArrayItem(e, 2)->valueint;
+			contents.back().soul = cJSON_GetArrayItem(e, 3)->valuestring;
+			contents.back().charge = (float)cJSON_GetArrayItem(e, 4)->valuedouble;
+		}
+	}
+}
+
 cJSON* World::refState(int i) const
 {
 	const Ref& r = refs[i];
@@ -139,22 +176,7 @@ cJSON* World::refState(int i) const
 		}
 	}
 	if (r.recType == REC_CONT || r.recType == REC_NPC_ || r.recType == REC_CREA)
-	{
-		cJSON* c = cJSON_AddArrayToObject(o, "contents");
-		for (auto& it : r.contents)
-		{
-			cJSON* e = cJSON_CreateArray();
-			cJSON_AddItemToArray(e, cJSON_CreateNumber(it.first));
-			cJSON_AddItemToArray(e, cJSON_CreateString(it.second.c_str()));
-			if (!it.plain())          // [count, id, condition, soul, charge]: a worn, filled or part-charged one
-			{
-				cJSON_AddItemToArray(e, cJSON_CreateNumber(it.condition));
-				cJSON_AddItemToArray(e, cJSON_CreateString(it.soul.c_str()));
-				cJSON_AddItemToArray(e, cJSON_CreateNumber(it.charge));
-			}
-			cJSON_AddItemToArray(c, e);
-		}
-	}
+		cJSON_AddItemToObject(o, "contents", contentsState(r.contents));
 	return o;
 }
 
@@ -351,20 +373,7 @@ void World::applyRefState(Ref& r, const cJSON* it)
 	}
 	r.fitBox();                    // moved: its box goes with it
 	if (const cJSON* c = cJSON_GetObjectItem(it, "contents"))
-	{
-		r.contents.clear();
-		const cJSON* e;
-		cJSON_ArrayForEach(e, c)
-		{
-			r.contents.emplace_back(cJSON_GetArrayItem(e, 0)->valueint, cJSON_GetArrayItem(e, 1)->valuestring);
-			if (cJSON_GetArraySize(e) >= 5)
-			{
-				r.contents.back().condition = cJSON_GetArrayItem(e, 2)->valueint;
-				r.contents.back().soul = cJSON_GetArrayItem(e, 3)->valuestring;
-				r.contents.back().charge = (float)cJSON_GetArrayItem(e, 4)->valuedouble;
-			}
-		}
-	}
+		readContentsState(c, r.contents);
 }
 
 cJSON* World::scriptState(const ScriptInstance& s) const

@@ -224,6 +224,34 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 				v = w.refs[i].pos[2];
 		return true;
 	}
+	if (what == "dropseen")           // from the player's eye, nothing solid hides the item dropped last (1), or something does (0)
+	{
+		v = 0.0f;
+		for (int i : w.spawned)
+			if (w.refs[i].dropped)
+			{
+				float eye[3] = { w.player.feet[0], w.player.feet[1], playerEyeZ(w.player) };
+				float at[3] = { w.refs[i].pos[0], w.refs[i].pos[1], w.refs[i].pos[2] + 6.0f };
+				v = w.lineOfSight(eye, at, false) ? 1.0f : 0.0f;
+			}
+		return true;
+	}
+	if (what == "dropbottom")         // how far the lowest part of the item dropped last is drawn above where it lies (0: stands on it)
+	{
+		v = -1e9f;
+		for (int i : w.spawned)
+			if (w.refs[i].dropped)
+			{
+				auto it = w.game.firstPerson.items.find(w.game.modelId(w.refs[i].idLower));
+				if (FpPiece* piece = it != w.game.firstPerson.items.end() ? s.vm.piece(w, it->second.model) : nullptr)
+				{
+					float off[3];
+					dropDrawOffset(*piece, off);
+					v = piece->lo[2] + off[2];
+				}
+			}
+		return true;
+	}
 	if (what == "vmtorch")            // the first-person view draws a torch in the left hand now (1), or not (0)
 	{
 		v = 0.0f;
@@ -390,6 +418,17 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		for (auto& it : w.refs[ri].contents)
 			if (lower(it.second) == item || lower(it.second) == item2)
 				v += stockCount(it.first);
+		return true;
+	}
+	if (what == "refstacks")
+	{
+		// refstacks:<container or actor>: how many stacks it holds
+		int ri = s.testFindRef(arg);
+		if (ri < 0)
+			ri = w.findRefAnywhere(spaced(arg));
+		if (ri < 0)
+			return false;
+		v = (float)w.refs[ri].contents.size();
 		return true;
 	}
 	if (what == "refcell")

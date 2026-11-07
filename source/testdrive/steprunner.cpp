@@ -20,6 +20,16 @@ extern "C" u32 __ctru_heap_size, __ctru_linear_heap_size;
 void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIndex, float& inputTime, float& dt, PlayerInput& in, u32& down, u32& held, UiInput& ui, bool& touching, bool& autoShotNow, TestDriver& driver, bool& chainMode, bool& stepBlocking, bool& stepShot)
 {
 	ScriptedInput& s = autoinput[inputIndex];
+	if (session->landClip >= 0.0f)
+	{
+		const float* f = session->w.player.feet;
+		for (LoadedCell* l : session->w.loaded)
+		{
+			float z;
+			if (collisionLandFloor(l->cell.collision, f[0], f[1], f[2] + 1500.0f, f[2], &z))
+				session->landClip = fmaxf(session->landClip, z - f[2]);
+		}
+	}
 	static float testDt = 1.0f / 30.0f;      // fixed steps so scripted runs are repeatable (DT: sets them)
 	if (s.dt > 0.0f)
 		testDt = s.dt;

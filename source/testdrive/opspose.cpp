@@ -232,6 +232,18 @@ std::optional<bool> opsPose(Session& s, const std::vector<std::string>& a)
 		logf("test: body holds %.16s at %.2f (%.3f s)", sk.groups[g].name, at, body.time - sk.groups[g].start);
 		return true;
 	}
+	// LANDWATCH: from now on, how far the feet go under the land is kept, every frame (EXPECT:landclip)
+	if (verb == "LANDWATCH")
+	{
+		s.landClip = 0.0f;
+		return true;
+	}
+	// PITCH:<degrees>: the view tilts up (+) or down (-), as the stick would; the facing stays
+	if (verb == "PITCH" && a.size() >= 2)
+	{
+		w.player.pitch = (float)atof(a[1].c_str()) * 0.017453293f;
+		return true;
+	}
 	// FACE:@x,y: turn to look at that spot (level), as the stick would
 	if (verb == "FACE" && a.size() >= 2 && a[1][0] == '@')
 	{

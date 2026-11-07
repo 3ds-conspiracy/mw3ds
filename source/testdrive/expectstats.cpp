@@ -85,6 +85,7 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 	if (what == "levitating") { v = w.effectTotal(10) > 0.0f ? 1.0f : 0.0f; return true; }
 	// where the player's feet are (SNAP one, then EXPECT it moved at most / at least so much with "@")
 	if (what == "playerx" || what == "playery" || what == "playerz") { v = w.player.feet[what[6] - 'x']; return true; }
+	if (what == "landclip") { v = s.landClip; return true; }   // the furthest the feet went under the land since LANDWATCH
 	// which way the player looks, in degrees (yaw: + toward east, not wrapped; pitch: + up): SNAP one, EXPECT how far it turned
 	if (what == "yaw") { v = w.player.yaw * 180.0f / 3.14159265f; return true; }
 	if (what == "pitch") { v = w.player.pitch * 180.0f / 3.14159265f; return true; }

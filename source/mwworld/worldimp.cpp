@@ -20,7 +20,7 @@ float* ScriptInstance::local(const std::string& lowerName)
 	return i < 0 ? nullptr : &locals[i];
 }
 
-int World::spawnActor(const std::string& id, const float pos[3], float yaw, int inCell)
+int World::spawnActor(const std::string& id, const float pos[3], float yaw, int inCell, const std::vector<ContentItem>* kept)
 {
 	auto sp = game.spawns.find(lower(id));
 	if (sp == game.spawns.end() || sp->second.actor < 0 || sp->second.actor >= (int)game.actors.size())
@@ -57,7 +57,13 @@ int World::spawnActor(const std::string& id, const float pos[3], float yaw, int 
 	r.boxStart[0] = pos[0] - 30.0f; r.boxStart[1] = pos[1] - 30.0f; r.boxStart[2] = pos[2];
 	r.boxStart[3] = pos[0] + 30.0f; r.boxStart[4] = pos[1] + 30.0f; r.boxStart[5] = pos[2] + 128.0f;
 	r.fitBox();
-	fillContents(game, r, stats.level, (unsigned)rand());
+	// (kept: what it held when it was saved, or when its cell went from memory. The dice roll either way, so that a kept list
+	// leaves what comes after as it was)
+	unsigned contentsRoll = (unsigned)rand();
+	if (kept)
+		r.contents = *kept;
+	else
+		fillContents(game, r, stats.level, contentsRoll);
 	initActorState(game, r);
 	int slot = takeSlots(freeRefs, 1);
 	if (slot < 0)
@@ -270,11 +276,11 @@ void World::scaleObject(int ri, float scale)
 // PlaceItem / PlaceItemCell (OpenMW's placeObject): a person or creature placed as PlaceAtMe places them, an item as one
 // dropped there, anything else (Tribunal's dart trap projectile, an activator) as an object of its own with its script
 // running from the start (drawn when it has a world visual: particles.WORLD_FX). Nothing for an id the game lacks
-int World::placeObject(const std::string& id, int cell, const float pos[3], float yaw)
+int World::placeObject(const std::string& id, int cell, const float pos[3], float yaw, const std::vector<ContentItem>* kept)
 {
 	std::string l = lower(id);
 	if (game.spawns.count(l))
-		return spawnActor(l, pos, yaw, cell);
+		return spawnActor(l, pos, yaw, cell, kept);
 	const Object* o = game.object(l);
 	if (!o)
 	{
@@ -320,6 +326,8 @@ int World::placeObject(const std::string& id, int cell, const float pos[3], floa
 	memcpy(r.start, pos, sizeof(r.pos));
 	memcpy(r.boxStart, r.boxMin, sizeof(r.boxMin));
 	memcpy(r.boxStart + 3, r.boxMax, sizeof(r.boxMax));
+	if (kept)
+		r.contents = *kept;
 	int slot = takeSlots(freeRefs, 1);
 	if (slot < 0)
 	{
@@ -338,17 +346,39 @@ int World::placeObject(const std::string& id, int cell, const float pos[3], floa
 
 int World::dropItemAt(const InventoryItem& it, const float base[3], float yaw, float dist)
 {
-	float pos[3] = { base[0] + sinf(yaw) * dist, base[1] + cosf(yaw) * dist, base[2] };
-	// Onto the floor there, not through it (from a little above the feet)
-	float best = -1e9f;
-	for (LoadedCell* l : loaded)
+	const float fx = sinf(yaw), fy = cosf(yaw);
+	float pos[3] = { base[0], base[1], base[2] };
+	auto surface = [&](float x, float y, float from) {
+		float best = -1e9f;
+		for (LoadedCell* l : loaded)
+		{
+			float z;
+			if (collisionFloor(l->cell.collision, x, y, from, base[2] - 600.0f, &z) && z > best)
+				best = z;
+		}
+		return best;
+	};
+	// Just ahead, on the highest surface the eye looks down on there: a table or counter the view passes over (most are
+	// over 60 tall), else the floor. Nearer when a wall or a shut door stands that close: it stays on this side, clear of
+	// it by a little, in sight
+	const float eye[3] = { base[0], base[1], base[2] + PLAYER_EYE_HEIGHT };
+	for (float share : { 1.0f, 0.7f, 0.4f })
 	{
-		float z;
-		if (collisionFloor(l->cell.collision, pos[0], pos[1], base[2] + 60.0f, base[2] - 600.0f, &z) && z > best)
-			best = z;
+		const float x = base[0] + fx * dist * share, y = base[1] + fy * dist * share;
+		const float top = surface(x, y, eye[2]);
+		const float past[3] = { x + fx * 10.0f, y + fy * 10.0f, top + 6.0f };
+		if (top > -1e9f && lineOfSight(eye, past))
+		{
+			pos[0] = x;
+			pos[1] = y;
+			pos[2] = top;
+			return dropItem(it, pos, yaw);
+		}
 	}
-	if (best > -1e9f)
-		pos[2] = best;
+	// No room at all: at the feet (OpenMW's dropObjectOnGround: down from 20 over them)
+	const float top = surface(pos[0], pos[1], base[2] + 20.0f);
+	if (top > -1e9f)
+		pos[2] = top;
 	return dropItem(it, pos, yaw);
 }
 

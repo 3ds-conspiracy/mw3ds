@@ -1,0 +1,82 @@
+# start: Seyda Neen
+# A potion the player made, dropped at the pawnbroker's counter in Balmora (66 tall), with the view level: the crosshair
+# passes over the counter, so it goes down just ahead (OpenMW's dropObjectOnGround has only the feet). It lands on the
+# counter and can be seen. Ours looked for the floor from 60 over the feet, under every table and counter taller than
+# that (most of them), where nothing showed of it but its name through the counter.
+#
+# What lies dropped stands on the surface, not half in it (OpenMW's copyObjectToCell: the model's lowest point goes
+# there; the potions' meshes have their origin in the middle). All six potion looks do. Facing a wall it stays on this
+# side. A potion from a save older than the looks gets one when the save loads, so it shows too.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 BOOST:100
+0.3 0 0 0 0 GIVE:apparatus_a_mortar_01
+0.3 0 0 0 0 GIVE:ingred_marshmerrow_01:4
+0.3 0 0 0 0 GIVE:ingred_coprinus_01:4
+0.3 0 0 0 0 BREW:ingred_marshmerrow_01:ingred_coprinus_01
+0.3 0 0 0 0 BREW:ingred_marshmerrow_01:ingred_coprinus_01
+0.3 0 0 0 0 BREW:ingred_marshmerrow_01:ingred_coprinus_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:brewed:ge:3
+0.3 0 0 0 0 GIVE:p_levitation_s
+0.3 0 0 0 0 GIVE:p_frost_resistance_b
+0.3 0 0 0 0 GIVE:p_fortify_personality_c
+0.3 0 0 0 0 GIVE:p_water_breathing_s
+0.3 0 0 0 0 GIVE:p_fortify_magicka_e
+0.3 0 0 0 0 GIVE:p_restore_agility_q
+0.3 0 0 0 0 GOTO:Balmora,_Dralasa_Nithryon:_Pawnbroker
+5 0 0 0
+0.3 0 0 0 0 TPIN:-26:-225:10:180
+2 0 0 0
+0.1 0 0 0 0 EXPECT:cell:Balmora,_Dralasa_Nithryon:_Pawnbroker
+0.3 0 0 0 0 FACE:@-26,-288
+# Level, the counter just ahead: on it, in sight, standing on it
+0.3 0 0 0 0 PITCH:0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 DROPAIM:brewed
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:dropz:ge:69+EXPECT:dropz:le:71
+0.1 0 0 0 0 EXPECT:dropseen:eq:1
+0.1 0 0 0 0 EXPECT:dropmodel:eq:1
+0.1 0 0 0 0 EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.3 0 0 0 0 PITCH:-48
+0.5 0 0 0 0 SHOT
+# The crosshair on the counter's top
+0.3 0 0 0 0 PITCH:-45
+0.3 0 0 0 0 DROPAIM:brewed
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:dropz:ge:69+EXPECT:dropz:le:71
+0.1 0 0 0 0 EXPECT:dropseen:eq:1
+0.1 0 0 0 0 EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.5 0 0 0 0 SHOT
+# All six looks stand on it
+0.3 0 0 0 0 DROPAIM:p_levitation_s
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:dropmodel:eq:1+EXPECT:dropseen:eq:1+EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.3 0 0 0 0 DROPAIM:p_frost_resistance_b
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:dropmodel:eq:1+EXPECT:dropseen:eq:1+EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.3 0 0 0 0 DROPAIM:p_fortify_personality_c
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:dropmodel:eq:1+EXPECT:dropseen:eq:1+EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.3 0 0 0 0 DROPAIM:p_water_breathing_s
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:dropmodel:eq:1+EXPECT:dropseen:eq:1+EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.3 0 0 0 0 DROPAIM:p_fortify_magicka_e
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:dropmodel:eq:1+EXPECT:dropseen:eq:1+EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.3 0 0 0 0 DROPAIM:p_restore_agility_q
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:dropmodel:eq:1+EXPECT:dropseen:eq:1+EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+# Away from the counter, level, on the open floor: it lies on the floor, in sight, ahead
+0.3 0 0 0 0 TPIN:-26:-100:10:0
+1.5 0 0 0
+0.3 0 0 0 0 FACE:@-26,-200
+0.3 0 0 0 0 PITCH:0
+0.3 0 0 0 0 DROPAIM:brewed
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:dropz:le:10
+0.1 0 0 0 0 EXPECT:dropseen:eq:1
+0.1 0 0 0 0 EXPECT:dropbottom:ge:-0.5+EXPECT:dropbottom:le:0.5
+0.3 0 0 0 0 PITCH:-45
+0.5 0 0 0 0 SHOT

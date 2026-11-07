@@ -833,6 +833,10 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 	const float kLongFrame = 0.06f;
 	bool outdoors = scene.here && !(scene.here->flags & CELL_INTERIOR);
 	bool following = p.onGround && !levitating && !p.swimming && outdoors && dt >= kLongFrame;
+	// (a run this long reaches a face too steep to stand on in no time, and a frame's move can raise the land past the
+	// body's height: Fortify Speed to 250 is 40 units a frame at 30 frames a second. The rescue in the air, below)
+	const float kLongMove = 24.0f;
+	bool longMove = p.runSpeed * p.loadSpeed * dt >= kLongMove;
 	for (int s = 0; s < steps; s++)
 	{
 		p.feet[0] += dx / steps;
@@ -945,9 +949,16 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 				p.onGround = true;
 				p.heldUp = true;
 			}
-			else if (wasOnGround && outdoors
+			else if (outdoors && ((wasOnGround
 				&& sampleLand(scene, p.feet, p.feet[2] + (p.heldUp ? 4096.0f : kHeight), p.feet[2] + kStepUp, &landZ))
+				|| (!wasOnGround && sampleLand(scene, p.feet, p.feet[2] + kHeight, (longMove ? fminf(p.feet[2], newZ) : p.feet[2]) + kStepUp, &landZ))))
 			{
+				// (In the air too. A body pressed into land too steep to stand on hangs with its feet about 30 units in the
+				// slope, and a long frame took them past a step's height: nothing below looks that far up, and it fell on down
+				// inside the hill, 600 units under the land in a second. Running at high Speed reaches such a face in no time. Only
+				// once they are past that step: nearer, it is a body sliding down a face, and stopping it there would hold up its fall.
+				// A long run is caught as this frame's fall would take them past it: its next frame's move can raise the land past the
+				// body's height, out of this reach, 100 units sideways into a steep face)
 				// Standing, with no floor under the feet but the land more than a step over them: the body is under the
 				// land (there is nothing to stand on below it), and is put back on it rather than fall for ever. The land
 				// of a cell that came in under feet held up for it may be far over them (a hill), and that is no news;
@@ -971,7 +982,15 @@ void playerUpdate(Player& p, Scene& scene, const PlayerInput& inRaw, float dt)
 					p.fits = bodyFits(scene, p.feet);
 					return;
 				}
-				if (!p.heldUp)
+				// (a few lines a game: what a player's log has to show, when it comes up on a real hill)
+				static int toldInAir = 0;
+				if (!wasOnGround && toldInAir < 20)
+				{
+					toldInAir++;
+					logf("player: in the air under the land at %.0f %.0f %.0f (the land %.0f above the feet): put back on it",
+						p.feet[0], p.feet[1], p.feet[2], landZ - p.feet[2]);
+				}
+				if (wasOnGround && !p.heldUp)
 					monitorOnce("underland", "player under the land at %.0f %.0f %.0f (the land %.0f above the feet): put back on it",
 						p.feet[0], p.feet[1], p.feet[2], landZ - p.feet[2]);
 				p.feet[2] = landZ;

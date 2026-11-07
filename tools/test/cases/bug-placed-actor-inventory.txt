@@ -1,0 +1,56 @@
+# start: Seyda Neen
+# data: tribunal
+# A Dark Brotherhood assassin (placed by dbAttackScript, as anyone a script places) keeps what it holds through a reload
+# and when the player leaves its cell and comes back. Ours saved only where it stood and its health, and rolled its
+# lists again: a looted body was full once more, and what it had been given was gone.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:3+GOD:2
+0.3 0 0 0 0 LEVEL:30
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+5 0 0 0
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:0
+2 0 0 0 0 SLEEP:8
+0.1 0 0 0 0 EXPECT:message:awakened
+3 0 0 0
+0.1 0 0 0 0 EXPECT:global:dbattack:eq:1
+0.1 0 0 0 0 EXPECT:refdist:db_assassin4:lt:600
+# Alive, with something it wasn't born with: still there after a reload
+0.3 0 0 0 0 REFADDITEM:db_assassin4:misc_com_bottle_01:3
+0.1 0 0 0 0 EXPECT:refitem:db_assassin4,misc_com_bottle_01:eq:3
+0.3 0 0 0 0 SAVE:placedinv1
+1 0 0 0
+0.3 0 0 0 0 LOAD:placedinv1
+5 0 0 0
+0.1 0 0 0 0 EXPECT:refitem:db_assassin4,misc_com_bottle_01:eq:3
+# Dead and looted: empty after a reload, not full again
+0.3 0 0 0 0 SLAY:db_assassin4
+2 0 0 0
+0.1 0 0 0 0 EXPECT:dead:db_assassin4
+0.1 0 0 0 0 EXPECT:refstacks:db_assassin4:ge:2
+30 0 0 0 0 ACTIVATE:db_assassin4
+1 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 X
+1 0 0 0
+0.3 0 0 0 0 B
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:misc_com_bottle_01:eq:3
+0.1 0 0 0 0 EXPECT:refstacks:db_assassin4:eq:0
+0.3 0 0 0 0 SAVE:placedinv2
+1 0 0 0
+0.3 0 0 0 0 LOAD:placedinv2
+5 0 0 0
+0.1 0 0 0 0 EXPECT:dead:db_assassin4
+0.1 0 0 0 0 EXPECT:refstacks:db_assassin4:eq:0
+# Out of its cell and back: as it was left
+0.3 0 0 0 0 REFADDITEM:db_assassin4:misc_com_bottle_01:1
+120 0 0 0 0 DOORTO:Seyda_Neen
+10 0 0 0 0 UNTIL:cell:Seyda_Neen
+2 0 0 0
+0.3 0 0 0 0 EVICT:0
+1 0 0 0
+120 0 0 0 0 DOORTO:Seyda_Neen,_Arrille's_Tradehouse
+10 0 0 0 0 UNTIL:cell:Seyda_Neen,_Arrille's_Tradehouse
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refitem:db_assassin4,misc_com_bottle_01:eq:1
+0.1 0 0 0 0 EXPECT:refstacks:db_assassin4:eq:1
