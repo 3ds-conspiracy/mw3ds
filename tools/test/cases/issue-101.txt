@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# issue-101: on the Saves screen, picking a save lights Load, so A loads it and makes no new save. With New save still lit from
+# the opening of the screen, A made a new save and loaded nothing. A straight after opening still makes a new save, as New
+# save is lit: it can't throw away what hasn't been saved.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 GIVE:iron%club:2
+0.3 0 0 0 0 SCREEN:saves
+0.5 0 0 0
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 SNAP:saves
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.3 0 0 0 0 GIVE:iron%club:3
+0.3 0 0 0 0 SCREEN:saves
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 UP
+0.5 0 0 0 0 A
+6 0 0 0
+0.3 0 0 0 0 EXPECT:saves:eq:@0
+0.1 0 0 0 0 EXPECT:count:iron%club:eq:2
+1 0 0 0

@@ -78,6 +78,7 @@ struct World
 	std::vector<ActiveEffect> effects;
 	std::vector<ActiveEffect> abilities;   // race / birthsign abilities' other effects (resistances ...), for good
 	std::vector<ActiveEffect> abilitiesShown;   // every effect of the abilities and worn constant effects (the HUD's icons)
+	int wornResisted = 0;                       // worn items' effects wholly resisted as they went on, for the session to say
 	// Corprus (OpenMW's CorprusStats): gameHour the player caught it (-1: hasn't, -2: Cure Corprus ended it). Every
 	// sWorseningPeriod (24 hours) its other effects are applied once more, with no cap. When it ends (Cure Corprus,
 	// RemoveSpell) what its fortifies gave stays for good and its drains go (corprusKept, saved)

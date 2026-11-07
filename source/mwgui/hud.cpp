@@ -1,5 +1,6 @@
 // The HUD: the top screen's overlay (bars, crosshair, notices), the bottom screen's quick strip, hit indicators
 #include <algorithm>
+#include "mwmechanics/magiceffects.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -92,11 +93,21 @@ const char* Session::hudHandArt()
 	return w.game.art.hud.count("werewolf_hand") ? "werewolf_hand" : nullptr;
 }
 
+// How much of the view Blind takes, 0 to 100 (god mode sees through it: OpenMW's Player::update)
+int Session::blindView()
+{
+	return testGod ? 0 : std::max(0, std::min(100, (int)w.effectTotal(EFF_BLIND)));
+}
+
 void Session::drawTop()
 {
 	const UiInput& in = uiIn();
 	(void)in;
 	drawWerewolfView();
+	// Blind: black over the view by its points, nothing seen at 100 (OpenMW's Player::update: setBlindness, a black fader on
+	// its FadeToBlack layer, over the world and under the HUD: the crosshair, labels and notices stay on top)
+	if (int blind = blindView())
+		uiRect(0, 0, 400, 240, C2D_Color32(0, 0, 0, (u8)(blind * 255 / 100)));
 	// (aimShift: in 3D, the crosshair and the label sit at the depth of what's aimed at)
 	float ax = aimShift;
 	if (!indicators.empty())

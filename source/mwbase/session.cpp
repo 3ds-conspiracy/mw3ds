@@ -126,6 +126,10 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		updateCorprus();
 	}
 
+	// A worn item's effect wholly resisted as it went on says so, one notice an effect (OpenMW's applyMagicEffect)
+	for (; w.wornResisted > 0; w.wornResisted--)
+		notify(w.game.gmst("smagicpcresisted", "You resisted the effects of the spell."));
+
 	openPendingMenu();
 
 	bool menu = menuOpen() || wantName;

@@ -106,7 +106,11 @@ void World::recomputeStats()
 			it.roll = ((u32)rand() << 1) | 1u;
 		if (it.kept[0] < 0)
 			for (size_t k = 0; k < 8; k++)
+			{
 				it.kept[k] = k < en->effects.size() ? (short)lroundf(1000.0f * constantEffectKept(en->effects[k].effect)) : 1000;
+				if (it.kept[k] == 0)
+					wornResisted++;
+			}
 		abilities.push_back(en->id);
 		rolls.push_back(ranged ? it.roll : 0u);
 		kept.push_back(it.kept);

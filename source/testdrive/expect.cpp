@@ -380,6 +380,17 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 			ok |= lower(nt.text).find(want) != std::string::npos;
 		snprintf(got, sizeof(got), "%s", ok ? "shown" : "not shown");
 	}
+	else if (what == "nomessage" && a.size() >= 2)
+	{
+		// EXPECT:nomessage:<text, underscores for spaces>: no message box or notice on screen holds it
+		std::string want = lower(spaced(a[1]));
+		ok = true;
+		for (auto& m : s.messages)
+			ok &= lower(m.text).find(want) == std::string::npos;
+		for (auto& nt : s.notes)
+			ok &= lower(nt.text).find(want) == std::string::npos;
+		snprintf(got, sizeof(got), "%s", ok ? "not shown" : "shown");
+	}
 	else if (what == "screen" && a.size() >= 2)
 	{
 		ok = (int)s.screen == screenByName(a[1]);

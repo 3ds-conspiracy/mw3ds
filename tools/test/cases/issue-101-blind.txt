@@ -1,0 +1,44 @@
+# start: Seyda Neen
+# issue-101: Blind darkens the player's view, as OpenMW's Player feeds its magnitude to a black fader over the screen: at 100
+# points nothing is seen. The Boots of Blinding Speed on: all of it. Off: none. Resist Magicka drunk first takes it down
+# (bug-blinding-boots-potions has the numbers). God mode sees through it (OpenMW: World::getGodModeState).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 HIDEACTORS:3000
+0.5 0 0 0 0 EXPECT:blindview:eq:0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GIVE:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:blindview:eq:100
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 GOD
+0.5 0 0 0 0 EXPECT:blindview:eq:0
+0.3 0 0 0 0 GOD:0
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:blindview:eq:0
+# The counter: Resist Magicka drunk before the boots go on. Five potions (100%): no Blind at all, the view stays clear, and it
+# stays so with the boots on. Three (60%): about 40 of the 100 gets through, so the view dims and is not gone
+0.3 0 0 0 0 GIVEPOTION:p_magicka_resistance_e:8
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+1 0 0 0
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:100+EXPECT:blindview:eq:0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+62 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:0
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+1 0 0 0
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:blindview:gt:0+EXPECT:blindview:lt:60
+0.3 0 0 0 0 SHOT
+1 0 0 0

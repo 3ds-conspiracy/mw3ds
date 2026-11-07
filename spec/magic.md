@@ -68,6 +68,15 @@ be resisted.
 The target's numbers are its own: the player's, or an actor's (its record's Willpower, Luck, fatigue, and the effects
 its abilities and the spells on it carry).
 
+A worn item's constant effects are resisted once, as the item goes on, by the resistances of that moment, and what gets
+through stays until it comes off. Resistance gained later does not help. Wholly resisted, it says "sMagicPCResisted", one
+notice an effect. So 100% Resist Magicka of any length, cast just before the Boots of Blinding Speed go on, keeps their
+Blind out for as long as they are worn; with 60% Blind is 40.
+
+The player's Blind darkens the view: black at Blind percent over the world, under the HUD (`Player::update`: setBlindness,
+OpenMW's FadeToBlack layer), never in god mode. Measured and shot against OpenMW 0.51 in 14 scenarios (potions, spell, worn
+items, a Breton's 50%, weakness): the same numbers and the same darkening.
+
 ## Reflect and Spell Absorption (OpenMW: `spelleffects.cpp applyProtections`, `absorbSpell`)
 
 Only for an effect someone else cast (not traps, not the caster's own). Each Reflect and each Spell Absorption on the

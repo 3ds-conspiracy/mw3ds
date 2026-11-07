@@ -300,6 +300,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "jumping") v = w.jumpingEnabled ? 1.0f : 0.0f;     // DisablePlayerJumping / EnablePlayerJumping
 	else if (what == "menuopen") v = s.menuOpen() ? 1.0f : 0.0f;       // a screen, a message or a talk holds the world still
 	else if (what == "loadscreens") v = (float)s.loadScreens;          // trips through the loading screen so far
+	else if (what == "blindview") v = (float)s.blindView();       // how much of the view Blind takes, 0 to 100
 	else if (what == "bartercount") v = (float)s.barterCount;    // how many of the picked stack the barter is asking about
 	else if (what == "restsleep") v = s.restSleep ? 1.0f : 0.0f;       // the rest menu sleeps (else only waits: illegal here)
 	else if (what == "skillsum") { v = 0; for (int k = 0; k < 27; k++) v += st.skills[k]; }   // all 27 skills (jail time)

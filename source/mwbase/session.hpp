@@ -501,6 +501,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void openBarter(int ref);
 	int barterBalance();                          // the deal's worth to the player: what the merchant pays, less what they do
 	int barterHaggled(int price0);                // that balance with the player's haggle on it
+	int blindView();                              // how much of the view Blind takes, 0 to 100
 	bool barterOffer();                           // the deal's Offer: settled at the haggled balance, or refused
 	bool barterTrade(bool sell, int index, int price, int from = -1, int count = 1, bool thanks = true);   // count items bought (from's
 	                                                                                    // contents: the merchant's or a

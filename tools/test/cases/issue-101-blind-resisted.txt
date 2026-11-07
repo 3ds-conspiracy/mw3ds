@@ -1,0 +1,29 @@
+# start: Seyda Neen
+# issue-101: boots whose Blind is wholly resisted as they go on say so (OpenMW's applyMagicEffect: a magnitude multiplier of 0
+# on the player: sMagicPCResisted, seen in OpenMW 0.51 with 100% Resist Magicka before the Boots of Blinding Speed). Part
+# resisted, or nothing to resist, says nothing. Back on with the same resistance: the same message again.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+HIDEACTORS:3000
+0.3 0 0 0 0 GIVE:boots%of%blinding%speed[unique]
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:blindview:ge:98+EXPECT:nomessage:resisted
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+0.3 0 0 0 0 EFFECT:93:60:600
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:blindview:ge:38+EXPECT:blindview:le:40+EXPECT:nomessage:resisted
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+0.3 0 0 0 0 EFFECT:93:40:600
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:blindview:eq:0+EXPECT:message:resisted
+0.3 0 0 0 0 SHOT
+8 0 0 0
+0.1 0 0 0 0 EXPECT:nomessage:resisted
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:nomessage:resisted
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:message:resisted
+1 0 0 0

@@ -1,0 +1,32 @@
+# start: Seyda Neen
+# issue-101: how much Blind a wearer of the Boots of Blinding Speed gets goes by their Resist Magicka less their Weakness to it
+# (OpenMW's getEffectResistanceAttribute, capped at 100; the same numbers seen in OpenMW 0.51). A Breton's own 50%: the screen
+# dims, it doesn't go black. On top of that a Weakness of 20 (itself halved by the Breton's 50% as it lands, so 10) with 100 of
+# resistance is 90 net: a little gets through. 120 of resistance against it is 100 net or more: none.
+# (PCRACE sets the race alone; the race menu goes on to work the stats out, as the shirt's GIVE does here. chargen.txt has the menu.)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 PCRACE:breton
+0.3 0 0 0 0 GIVE:common_shirt_01
+0.3 0 0 0 0 SEED:1+HIDEACTORS:3000
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:93:eq:50
+0.3 0 0 0 0 GIVE:boots%of%blinding%speed[unique]
+1 0 0 0
+0.1 0 0 0 0 EXPECT:blindview:ge:48+EXPECT:blindview:le:50
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+0.3 0 0 0 0 EFFECT:31:20:600
+0.3 0 0 0 0 EFFECT:93:50:600
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:93:eq:100+EXPECT:effect:31:eq:10
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.1 0 0 0 0 EXPECT:blindview:ge:8+EXPECT:blindview:le:10
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+0.3 0 0 0 0 EFFECT:93:20:600
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:93:eq:120
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.1 0 0 0 0 EXPECT:blindview:eq:0+EXPECT:attr:speed:ge:200
+1 0 0 0

@@ -424,6 +424,10 @@ void Session::drawSaves()
 		}
 		return;
 	}
+	// Picking a row lights Load: A then loads it. With New save still lit from the opening of the screen it made a new save and
+	// loaded nothing. On opening New save stays lit: A straight away must not throw away what has not been saved
+	if (canLoad && ((uiIn().down & (KEY_UP | KEY_DOWN)) || (pick >= 0 && !(uiIn().down & KEY_A))))
+		focus = 1;
 	int b = buttonRow({ canSave ? "New save" : playerDead ? "(dead)" : "(finish chargen)", "Load", w.game.gmstLabel("sdelete", "Delete"),
 		w.game.gmstLabel("sback", "Back") }, focus);
 	if (b == 2 && canDelete)
