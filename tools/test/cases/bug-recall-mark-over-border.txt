@@ -1,0 +1,27 @@
+# Recall to a Mark cast just over a cell border arrives whole (the player's New 3DS, Red Mountain): a step over the
+# line keeps the cell left as the current one, so Mark kept that cell with a spot in the next. Recall from indoors
+# loaded the cell under the spot, then asked whether the marked one had loaded: "Could not load Red Mountain Region
+# (out of memory?)" with 24 MB free, and the arrival stopped there, the player left at the room's height under the land
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 TP:-20480:106488:2320:0
+4 0 0 0
+0.3 0 0 0 0 TP:-20480:106504:2320:0
+3 0 0 0
+0.1 0 0 0 0 SETSKILL:mysticism:600+SETMAGICKA:2000
+0.1 0 0 0 0 ADDEFFECT:60:1:1:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e1
+0.3 0 0 0 0 CAST:mw3ds_test_e1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:marked:eq:1+EXPECT:onground:eq:1+SNAP:playerx+SNAP:playery+SNAP:playerz
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Seyda_Neen,_Arrille's_Tradehouse
+0.1 0 0 0 0 ADDEFFECT:61:1:1:1:0:-:0
+0.1 0 0 0 0 MAKESPELL:e2
+0.1 0 0 0 0 SETMAGICKA:2000
+0.3 0 0 0 0 CAST:mw3ds_test_e2
+4 0 0 0
+0.1 0 0 0 0 EXPECT:notcell:Seyda_Neen,_Arrille's+EXPECT:playerx:ge:@-30+EXPECT:playerx:le:@30+EXPECT:playery:ge:@-30+EXPECT:playery:le:@30
+0.1 0 0 0 0 EXPECT:playerz:ge:@-60+EXPECT:playerz:le:@60+EXPECT:onground:eq:1
+2 0 0 0

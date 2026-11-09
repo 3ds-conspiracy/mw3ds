@@ -807,14 +807,19 @@ bool World::enterCell(int index)
 	if (!cells[index].interior)
 	{
 		streamExterior(true);
+		// The arrival is in the cell under the feet, which streamExterior made the current one: a spot asked for in
+		// one cell but standing in the next (a Mark cast just over a border keeps the cell left) is whole once that
+		// one is in. Asked of the cell given, Recall to such a Mark loaded the right cell, then called it a failure
+		// ("out of memory?" with 24 MB free) and left the player at the old room's height under the land
+		bool in = cells[current].live != nullptr;
 		// The neighbours whose ground is in clear sight of the arrival (nearer than the fog's start) load now too, behind
 		// the loading screen; the rest stream in, inside the fog. With the player's own cell alone, a silt strider stop or
 		// a door near a cell's edge showed the bare distant land beside the player until the next one came
-		if (cells[index].live)
+		if (in)
 			loadCellsNear(player.feet, kExteriorFogStart);
-		logf("world: outside in %s (%d cells loaded), linear free %lu KB", cells[index].name.c_str(),
+		logf("world: outside in %s (%d cells loaded), linear free %lu KB", cells[current].name.c_str(),
 			(int)loaded.size(), linearSpaceFree() / 1024);
-		return cells[index].live != nullptr;
+		return in;
 	}
 	finishStreamJob(*this, true);
 	bool freed = false;

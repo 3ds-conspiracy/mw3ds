@@ -321,7 +321,14 @@ bool Session::instantEffect(int effect, float magnitude)
 		removeSpells(4, false);                           // (OpenMW: curse-type spells)
 		return true;
 	case EFF_MARK:
+		// Outdoors the cell under the feet: just over a border the cell left is still the current one
 		w.markCell = w.current;
+		if (w.current >= 0 && !w.cells[w.current].interior)
+		{
+			int under = w.gridCell((int)floorf(w.player.feet[0] / 8192.0f), (int)floorf(w.player.feet[1] / 8192.0f));
+			if (under >= 0)
+				w.markCell = under;
+		}
 		memcpy(w.markPos, w.player.feet, sizeof(w.markPos));
 		w.markYaw = w.player.yaw;
 		notify("This place is marked for Recall.");
