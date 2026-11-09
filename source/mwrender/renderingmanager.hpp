@@ -46,6 +46,14 @@ float rendererStereoPixels(float depth, float eyeShift);   // a stereo eye's off
 void rendererSetStereoCurve(float share);
 int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift = 0.0f, bool secondEye = false,
 	float fogScale = 1.0f);
+// After rendererDrawWorld and the opaque extras (Session::drawOpaqueExtras): the world's blended surfaces, back to
+// front. Its draws, also counted in g_worldDraws
+int rendererDrawWorldBlended(bool secondEye = false);
+// Between rendererDrawWorld and rendererDrawWorldBlended: something its owner draws itself (draw(ctx, arg)), in its place
+// among the world's blended surfaces by its distance squared from the eye, as OpenMW sorts its transparent bin. Spell
+// visuals and creatures' sprays: drawn after the whole queue, a blended surface that writes depth in front of their far
+// side cut it away (the dwarven ghost's sparkles behind its body). Drawn as the extras are, without fog
+void rendererQueueBlendCall(float d2, void (*draw)(void* ctx, int arg), void* ctx, int arg);
 // Stereo: after the left eye's world and extras are drawn, the record ends (the GPU words from the start of
 // rendererDrawWorld to here); the right eye is then drawn from the record with its own projection, in no CPU time.
 // rendererReplayWorld returns the left eye's draw count, or -1 when there is no record or no room for it (draw

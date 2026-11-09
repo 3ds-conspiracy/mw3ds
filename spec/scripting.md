@@ -134,6 +134,32 @@ fighting and magic, moves the player into the Imperial Prison Ship, sets the Bit
 `GetTarget player` is also true while the actor greets the player. Another actor fought by StartCombat counts (Falco
 Galenus at Baslod: Bloodmoon's ColonyAssassin waits for it; case `script-gettarget-actor`).
 
+## PlayGroup and LoopGroup on actors
+
+OpenMW `CharacterController::playGroup` and `updateAnimQueue`. `PlayGroup <group> [mode]` plays with no end to its
+count: a looping group (`Animation::isLoopingAnimation`: the idles, walks, runs ...) goes round for ever, any other
+plays once and holds its last frame. `LoopGroup <group> <count> [mode]` goes round that many more times. While a
+script's group plays, nothing else starts over it; `PlayGroup Idle` hands the actor back to its own idles.
+
+The mode decides what happens to a script's group still playing:
+
+- 0 (the default): the new group waits. The one playing stops going round (its loop keys no longer send it back) and
+  plays on to its Stop; then the waiting group starts. Only one waits: a later mode 0 call replaces it. A group that
+  has reached its Stop (held, or its loops spent) is not playing, so the new one starts at once.
+- 1: at once.
+- 2: at once, from its Loop Start.
+
+A looping group asked for again while a script plays it, short of its Loop Stop, goes on as it is with its count, and
+the waiting group is dropped (OpenMW's rule for the banners of OutsideBanner); any mode.
+
+Azura's ending (AzuraEnd): Idle2 fades her in and loops; once the movie is over, `PlayGroup, Idle, 0` lets Idle2 play
+past its Loop Stop to its Stop, her parting gesture, before she idles until the script takes her away. The engine
+ignored the mode and cut to Idle (`issue-106-azura-end`).
+
+Not followed: a script's `PlayGroup Idle` is not kept in a queue here (the actor's own idles take over), so a mode 0
+call after it starts at once; OpenMW waits for that idle's cycle. Animated objects (activators) play a script's group at
+once whatever the mode.
+
 ## Findings
 
 - 2026-10-15: CharGen's weather never ran (the engine copied CharGen's other effects by hand). Test

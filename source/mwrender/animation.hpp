@@ -32,6 +32,9 @@ struct Skeleton
 	std::vector<Track> tracks;
 	std::vector<int> trackOfBone;      // -1 when the bone isn't animated
 	std::vector<AnimGroup> groups;     // [0] = Idle, then Idle2 .. Idle9 when present
+	// Its "Sound: <id>" text keys (actors.py sound_keys), by time: played as the animation passes them
+	struct SoundKey { float time; char id[32]; };
+	std::vector<SoundKey> sounds;
 	// The movement root ("Bip01" / "Root Bone"): walk and run cycles carry the distance walked in its
 	// horizontal translation; the game moves the actor itself, so that part is left out (else the body
 	// ran ahead over each cycle and snapped back when it looped)
@@ -65,6 +68,7 @@ struct ActorMesh
 {
 	int tex;
 	u8 flags, alphaRef, kind, hasMorph;
+	bool zwrite = false;               // blended and still writing depth, as OpenMW leaves it (actors.py write_mesh's 64)
 	int bone;                          // rigid: skeleton bone (-1 = actor root)
 	u32 numVerts, numIndices;
 	void* verts;                       // linear memory, 24-byte cell vertex layout
@@ -88,6 +92,8 @@ struct ActorMesh
 	// piece's root) kVfxFps times a second; billboard: it turns to face the eye
 	std::vector<float> track;
 	std::vector<float> vis;            // shown (1) or hidden (0) from each time on: pairs (time, shown), empty: always shown
+	std::vector<float> fade;           // its material's alpha over time (NiAlphaController): pairs (time, alpha), linear
+	                                   // between, empty: whole (Azura's ghost fading in, the Heart of Lorkhan's death flash)
 	bool driven = false;               // the track runs on the actor's driveT (an arrow on its bow's ArrowBone) at its bone
 	u8 hand = 0;                       // 1 a torch (shown while the actor holds it out), 2 a shield (put away then)
 	bool rise = false;                 // the torch's fire or smoke quads: drawn with BATCH_RISE (flags' 128 is the weapon's)
@@ -159,6 +165,11 @@ struct Actor
 	bool driveMorph = false;           // the morphing meshes follow driveT (a bow's string) instead of talking and blinking
 	float driveT = 0.0f;               // the morph's time on the held weapon's own timeline
 	bool frozen = false;               // held where it is in its group (the test driver's POSE): no time passes, no other group starts
+	bool scripted = false;             // a script's PlayGroup / LoopGroup playing: no other group starts over it until the
+	                                   // next one, PlayGroup Idle or its loops run out (OpenMW's isScriptedAnimPlaying)
+	int queued = -1;                   // a script's group waiting for that one to end (mode 0: OpenMW's animation queue);
+	AnimMode queuedMode = ANIM_IDLE;   // the one playing goes round no more meanwhile. How it plays (ANIM_IDLE: PlayGroup
+	s8 queuedLoops = -1;               // Idle) and LoopGroup's count (-1: PlayGroup's)
 	// An NPC: which of the items its library has on are still in its pack (bit k: ActorDef::worn[k]; ~0 as placed), and
 	// whether it has been dressed again from the third-person pieces for what is left (npcDress), lit brighter than a
 	// library is (mwrender/renderingmanager.cpp actorTint scales it back)
@@ -234,11 +245,13 @@ void actorSkinPalette(const Actor& a, const ActorMesh& m, float* out);
 int actorFindGroup(const Skeleton& sk, const char* name);
 // Starts a group; false when the skeleton doesn't have it
 bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode);
+bool actorGroupPlaying(const Skeleton& sk, const Actor& a);
 // Moves / turns the actor (keeps its race scale); yaw 0 faces +Y
 void actorSetPlacement(Actor& a, float x, float y, float z, float yaw);
 // place x bone pose for a rigid mesh
 void actorMeshMatrix(const Actor& a, const ActorMesh& m, C3D_Mtx* out);
 bool actorMeshShown(const Actor& a, const ActorMesh& m);   // its visibility keys allow it now
+float actorMeshFade(const Actor& a, const ActorMesh& m);   // how much of it shows now (its alpha keys), 1 without them
 // One of the groups prefix1, prefix2, ... the skeleton has, at random (OpenMW's chooseRandomGroup: Hit1..Hit5,
 // Death1..Death5, a creature's Attack1..3); "" when it has none
 std::string actorRandomGroup(const ActorSet& set, const Actor& a, const char* prefix);

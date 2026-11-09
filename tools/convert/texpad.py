@@ -70,6 +70,8 @@ def _library_meshes(data):
                 o += 4 + nk * 8 + nv * 12
         if more & 2:
             o += 4 + struct.unpack_from("<I", data, o)[0] * 8
+        if more & 32:
+            o += 4 + struct.unpack_from("<I", data, o)[0] * 8
         if more & 16:
             o += 4
         out.append((name, flags, verts["uv"].copy(), idx.copy()))

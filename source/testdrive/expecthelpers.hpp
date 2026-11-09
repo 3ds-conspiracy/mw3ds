@@ -95,3 +95,37 @@ static inline float shotLumaBox(int n, int x, int y, int bw, int bh)
 	}
 	return v;
 }
+
+// A channel's mean (0..255) over a box (x, y, w x h, top-screen pixels 0..399 x 0..239) of step shot n's top screen:
+// c 'r', 'g', 'b', or 'l' the brightness (the three's mean); -1: no such shot or the box off the screen. What is drawn
+// in front where two things overlap (Dagoth Ur before Akulakhan, the Heart's shield)
+static inline float shotTopBox(int n, int x, int y, int bw, int bh, char c)
+{
+	if (x < 0 || y < 0 || bw <= 0 || bh <= 0 || x + bw > 400 || y + bh > 240)
+		return -1.0f;
+	char path[64];
+	snprintf(path, sizeof(path), "sdmc:/3ds/mw3ds/shot_step_%02d.bmp", n);
+	float v = -1.0f;
+	if (FILE* f = fopen(path, "rb"))
+	{
+		// 400 x 480, 24-bit (blue, green, red), rows bottom first: the top screen is the last 240 rows
+		const size_t row = 400 * 3;
+		u8* line = (u8*)malloc(row);
+		double sum = 0.0;
+		bool ok = line != nullptr;
+		for (int yy = y; ok && yy < y + bh; yy++)
+		{
+			ok = fseek(f, 54 + (long)((240 + 239 - yy) * row), SEEK_SET) == 0 && fread(line, row, 1, f) == 1;
+			for (int xx = x; ok && xx < x + bw; xx++)
+			{
+				const u8* p = line + xx * 3;
+				sum += c == 'r' ? p[2] : c == 'g' ? p[1] : c == 'b' ? p[0] : (p[0] + p[1] + p[2]) / 3.0;
+			}
+		}
+		if (ok)
+			v = (float)(sum / (bw * bh));
+		free(line);
+		fclose(f);
+	}
+	return v;
+}

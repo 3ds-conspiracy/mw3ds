@@ -137,6 +137,16 @@ How a visual looks and how long it plays (2026-10-14, side by side):
   visual with none (Illusion's cast: 1.0 s; Mysticism's hit: 2.0 s). Test `bug-vfx-length` (`vfxlife`).
 - Differs (3DS cost, kept): sprays are not simulated (no particles flying, fading or spreading: a bolt's trail, the
   sparks running up the arms in first person); a spray is fixed quads at its emitter.
+- **Continuous effects and abilities.** An effect with ContinuousVfx (the elemental shields, Shield, Light, Levitate
+  ...: `build_game.py hardcoded_flags` 0x20) loops its hit visual while it lasts. OpenMW starts it when the effect is
+  first applied (`spelleffects.cpp` calls `playEffects`, which adds the visual looping for such an effect, whatever the
+  spell: a cast, a potion, an ability) and `CharacterController::updateContinuousVfx` takes it off once the effect's
+  magnitude is gone or the actor's death has played. So an NPC or creature's ability shows it as long as it has the
+  ability. The 3DS looped it only for a spell cast with a duration. Now an actor's abilities (its record's and what
+  scripts gave it, less what they took) show their continuous effects' visuals each frame they have them
+  (`effectmanager.cpp updateAbilityVfx`). In Morrowind.esm that is Dagoth Ur alone: his script gives and takes
+  `dagoth_ur_shield_01` .. `04` (Fire, Frost, Lightning Shield, Shield) as the Heart of Lorkhan is struck. Test
+  `issue-106-chamber` (`vfxpiece`). Not yet: the player's own abilities.
 
 ## A spell cast by an object (mwscript Cast: a shrine's blessing)
 

@@ -88,8 +88,13 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	float vfxTrimTimer = 0.0f;
 	void updateCreatureFx(float dt);
 	void updateWorldFx();                          // placed objects with a world visual (game firstPerson.worldFx) in range
+	void updateAbilityVfx();                       // actors' abilities' continuous effects: their hit visual over and over
+	void updateAnimationSounds();                  // actors' animations' "Sound:" keys as they pass them
+	void updateObjectSoundKeys();                  // ... and the groups' scripts play on objects (objectSoundKeys)
 	void playObjectGroup(int ref, const std::string& group, bool loop) override;
-	void drawCreatureFx(const float eye[3], bool secondEye);
+	void drawCreatureFxOne(int ref, CreatureFx& st, const float eye[3], bool secondEye);
+	void queueBlendedExtras(const float eye[3], bool secondEye);   // sprays and visuals among the blended surfaces
+	void queueVfx(float d2, size_t i);
 	void trimVfxPieces();                          // spell visuals' pieces nothing is playing let go (memory)
 	// loop: its animation repeats for all of life (a continuous effect's hit: OpenMW's ContinuousVfx)
 	// effect: the magic effect it shows (its particle texture on the shapes that take one), -1 none
@@ -190,6 +195,9 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void updateProjectiles(float dt);
 	void projectileHits(Projectile& p, int victim);
 	void drawExtras(const float eye[3], bool secondEye = false, bool arms = true);
+	void drawOpaqueExtras(const float eye[3], bool secondEye = false);   // before the world's blended surfaces
+	void drawVfx(const float eye[3], bool secondEye, bool opaque);
+	void drawVfxOne(Vfx& v, const float eye[3], bool secondEye, bool opaque);
 	struct BlowRoll { bool lands = true; int kind = 1; float damage = 1.0f, skill = 1.0f; };   // kind 0 glance 1 hit 2 crit
 	BlowRoll rollBlow(float chance, bool ranged, bool vanilla);
 	void addIndicator(const std::string& text, u32 rgb);

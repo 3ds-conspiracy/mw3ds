@@ -65,6 +65,14 @@ std::optional<bool> numberOfVisuals(Session& s, const std::string& what, const s
 					v += 1.0f;
 		return true;
 	}
+	// restfx:<text>: world objects' rest pieces playing now (their sprays that stream at rest) whose static's id has that text
+	if (what == "restfx")
+	{
+		v = 0.0f;
+		for (auto& x : s.vfx)
+			v += x.rest && x.what.find(lower(arg)) != std::string::npos ? 1.0f : 0.0f;
+		return true;
+	}
 	// vfxlife:<text>: seconds the first spell visual showing now whose static's id has that text plays in all (-1 none)
 	if (what == "vfxlife")
 	{
@@ -255,6 +263,8 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	}
 	else if (what == "torchtime") v = w.useTorches() ? 1.0f : 0.0f;   // time for torches here (night, a dark interior)
 	else if (what == "subtitle") v = w.time < s.subtitleUntil && !s.subtitle.empty() ? 1.0f : 0.0f;   // a spoken line written now
+	else if (what == "subtitleclear")   // 1: a subtitle shows and its box ends above y 222, where the health bar of whoever was hit last sits
+		v = w.time < s.subtitleUntil && !s.subtitle.empty() && s.subtitleBottom <= 222.0f ? 1.0f : 0.0f;
 	else if (what == "subtitlehas")     // <text, '_' a space>: the last line spoken (its subtitle) holds it, 1
 		v = lower(s.subtitle).find(lower(spaced(arg))) != std::string::npos ? 1.0f : 0.0f;
 	else if (what == "lampbatches")     // batches the last view drew with lamp light the night left alone (outdoors)
@@ -392,6 +402,12 @@ std::optional<bool> numberOfWorld(Session& s, const std::string& what, const std
 	{
 		int n = -1, x = 0, y = 0, bw = 0, bh = 0;
 		v = sscanf(arg.c_str(), "%d,%d,%d,%d,%d", &n, &x, &y, &bw, &bh) == 5 ? shotLumaBox(n, x, y, bw, bh) : -1.0f;
+	}
+	else if (what == "shottopbox")  // <n>,<x>,<y>,<w>,<h>,<r|g|b|l>: that channel's mean over a box of step shot n's top screen
+	{
+		int n = -1, x = 0, y = 0, bw = 0, bh = 0;
+		char c = 'l';
+		v = sscanf(arg.c_str(), "%d,%d,%d,%d,%d,%c", &n, &x, &y, &bw, &bh, &c) == 6 ? shotTopBox(n, x, y, bw, bh, c) : -1.0f;
 	}
 	else if (what == "shotspread")  // <n>: how far step shot n's top screen's pixels stray from its mean brightness (-1: none)
 		v = shotLuma(atoi(arg.c_str()), 1);

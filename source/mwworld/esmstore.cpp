@@ -1137,6 +1137,7 @@ bool gameLoad(GameData& g, const char* path)
 			FirstPersonDef::WorldFxDef d;
 			d.piece = str(vf, "piece");
 			d.loop = cJSON_IsTrue(cJSON_GetObjectItem(vf, "loop"));
+			d.rest = str(vf, "rest");
 			const cJSON* gr;
 			cJSON_ArrayForEach(gr, cJSON_GetObjectItem(vf, "groups"))
 				if (cJSON_GetArraySize(gr) == 2)
@@ -1148,6 +1149,14 @@ bool gameLoad(GameData& g, const char* path)
 			cJSON_ArrayForEach(gr, cJSON_GetObjectItem(vf, "back"))
 				if (cJSON_IsNumber(gr))
 					d.back[gr->string] = (float)gr->valuedouble;
+			cJSON_ArrayForEach(gr, cJSON_GetObjectItem(vf, "sounds"))
+			{
+				const cJSON* k;
+				cJSON_ArrayForEach(k, gr)
+					if (cJSON_GetArraySize(k) == 2 && cJSON_IsString(cJSON_GetArrayItem(k, 1)))
+						d.sounds[gr->string].push_back({ (float)cJSON_GetArrayItem(k, 0)->valuedouble,
+							cJSON_GetArrayItem(k, 1)->valuestring });
+			}
 			g.firstPerson.worldFx[vf->string] = d;
 		}
 		cJSON_ArrayForEach(vf, cJSON_GetObjectItem(fp, "cpfx"))

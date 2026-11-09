@@ -974,8 +974,9 @@ void Session::say(int ref, const std::string& file, const std::string& text)
 	// Subtitles off: a line that is heard isn't written too (Morrowind's and OpenMW's subtitles setting)
 	if (!text.empty() && (g_subtitles || !voiced))
 	{
-		std::string who = ref >= 0 && w.refs[ref].actor >= 0 ? w.game.actors[w.refs[ref].actor].name + ": " : "";
-		subtitle = who + text;
+		// (the line alone, no speaker's name before it: OpenMW's Say writes its text as it is. The Heart of Lorkhan
+		// Says Dagoth Ur's cries as it is struck, and they read as the Heart's)
+		subtitle = text;
 		subtitleUntil = w.time + duration + 0.5f;
 	}
 }

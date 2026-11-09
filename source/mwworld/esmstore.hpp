@@ -79,6 +79,9 @@ struct FirstPersonDef
 	{
 		std::string piece; bool loop = false; std::unordered_map<std::string, std::pair<float, float>> groups;
 		std::unordered_map<std::string, float> away, back;
+		std::string rest;          // its sprays that stream while it stands at rest (particles.py rest_sprays), looped
+		// its groups' "Sound:" keys, group -> (time, sound id), played as the group passes them
+		std::unordered_map<std::string, std::vector<std::pair<float, std::string>>> sounds;
 	};
 	std::unordered_map<std::string, WorldFxDef> worldFx;
 	std::unordered_map<std::string, std::unordered_map<int, Atom>> races[2];   // [female] race -> slot -> piece

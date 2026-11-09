@@ -118,6 +118,7 @@ struct WindowManagerState
 	int hudEye = 0;                   // the HUD pass drawing now (0 left / mono, 1 right)
 	std::string subtitle;
 	float subtitleUntil = 0.0f;
+	float subtitleBottom = 0.0f;     // where the subtitle's box ended on the top screen when last drawn (tests)
 	float fade = 0.0f;
 
 	// dialogue layout

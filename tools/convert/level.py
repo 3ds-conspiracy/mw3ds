@@ -831,7 +831,10 @@ def main():
         if rec is not None and rec.zstr("RGNN"):
             c["region"] = rec.zstr("RGNN").lower()
     # their ambient loops (rain, ash storm, blight) and thunder
-    for sid in {t["sound"] for t in game["weather_types"] if t["sound"]} | {f"thunder{k}" for k in range(4)}:
+    # and what creatures' animations play as they pass their "Sound:" keys (the Heart of Lorkhan's hits and death)
+    from actors import animation_sounds
+    for sid in ({t["sound"] for t in game["weather_types"] if t["sound"]} | {f"thunder{k}" for k in range(4)}
+                | animation_sounds(db, arch)):
         rec = db["SOUN"].get(sid)
         if rec is not None and sid not in game["sounds"]:
             d = rec.get("DATA")

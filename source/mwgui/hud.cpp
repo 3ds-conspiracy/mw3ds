@@ -153,12 +153,16 @@ void Session::drawTop()
 			notesRight = fmaxf(notesRight, 8 + tw);
 			y += 18;
 		}
+	bool enemyBar = enemyRef >= 0 && w.time < enemyUntil && w.active(enemyRef);
 	if (w.time < subtitleUntil && !subtitle.empty())
 	{
 		std::vector<std::string> lines = uiWrap(subtitle, 380, 0.5f);
 		float lh = uiLineHeight(0.5f);
-		float top = 236 - lines.size() * lh;
+		// (above the health bar of whoever was hit last while it shows: Dagoth Ur's long greeting in Akulakhan's
+		// Chamber had its last line under it)
+		float top = (enemyBar ? 219 : 236) - lines.size() * lh;
 		uiRect(4, top - 2, 392, lines.size() * lh + 4, C2D_Color32(0, 0, 0, 220));   // the world barely shows through
+		subtitleBottom = top + lines.size() * lh + 2;
 		for (size_t i = 0; i < lines.size(); i++)
 			uiTextCentered(200, top + i * lh, 0.5f, col::header, lines[i]);
 	}
@@ -176,7 +180,7 @@ void Session::drawTop()
 		uiRect(170, 150, 60 * attackCharge, 5, col::header);
 	}
 	// Health of whoever was hit last
-	if (enemyRef >= 0 && w.time < enemyUntil && w.active(enemyRef))
+	if (enemyBar)
 	{
 		const Ref& e = w.refs[enemyRef];
 		uiRect(150, 222, 100, 10, C2D_Color32(0, 0, 0, 170));

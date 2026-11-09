@@ -169,8 +169,9 @@ bool Session::vfxBonePos(int follow, const std::string& bone, float out[3])
 		set = &body.set;
 		a = &body.set.actors[0];
 	}
-	else if (follow >= 0 && follow < (int)w.refs.size())
+	else if (follow >= 0 && follow < (int)w.refs.size() && w.active(follow))
 	{
+		// (a despawned summon's slot has no cell: its place would be cells[-1])
 		a = w.actorOf(follow);
 		set = a ? w.actorsOf(follow) : nullptr;
 	}
@@ -269,8 +270,57 @@ static float vfxThinGrow(float share, float dist)
 // Placed objects drawn as their visual (particles.py world_entry): a steaming pool or a lava river's steam
 // over and over, Dagoth Ur's death sparkles from when they are enabled, an activator (the Akulakhan chamber, its
 // bridge) held at rest until a script plays one of its groups. Kept while the object shows and is near
+// An actor's ability with a continuous effect shows that effect's hit visual for as long as the actor has it (OpenMW's
+// playEffects as the effect is first applied, looping for one with ContinuousVfx, and
+// CharacterController::updateContinuousVfx taking it off once the effect is gone or the actor is dead): Dagoth Ur's
+// fire, frost and lightning shields, given and taken by his script (DagothUrCreature2) as the Heart is struck
+void Session::updateAbilityVfx()
+{
+	std::vector<std::pair<int, int>> want;     // (ref, effect)
+	w.forLoadedActors([&](int ri) {
+		const Ref& r = w.refs[ri];
+		if (r.dead || !r.visible() || r.actor < 0)
+			return;
+		auto look = [&](const std::string& id) {
+			auto sp = w.game.spells.find(id);
+			if (sp == w.game.spells.end() || sp->second.type != 1 || !w.actorHasSpell(r, id))
+				return;
+			for (auto& e : sp->second.effects)
+			{
+				auto me = w.game.magicEffects.find(e.effect);
+				if (me != w.game.magicEffects.end() && (me->second.flags & 0x20) && !me->second.hvfx.empty())
+					want.push_back({ ri, e.effect });
+			}
+		};
+		for (auto& id : r.spells)
+			look(id);
+		for (auto& s : w.game.actors[r.actor].spells)
+			look(lower(s));
+	});
+	for (size_t i = 0; i < vfx.size();)
+	{
+		const Vfx& v = vfx[i];
+		if (v.ability && std::find(want.begin(), want.end(), std::make_pair(v.follow, v.effect)) == want.end())
+			vfx.erase(vfx.begin() + i);
+		else
+			i++;
+	}
+	for (auto& [ri, effect] : want)
+	{
+		bool have = false;
+		for (auto& v : vfx)
+			have |= v.ability && v.follow == ri && v.effect == effect;
+		if (have)
+			continue;
+		const Ref& r = w.refs[ri];
+		if (spawnVfx(w.game.magicEffects[effect].hvfx, r.pos, 1e9f, ri, r.rot[2], 1.0f, true, effect))
+			vfx.back().ability = true;
+	}
+}
+
 void Session::updateWorldFx()
 {
+	updateAbilityVfx();
 	// a Clockwork City door's moving collision goes once it is open, comes back once it is shut (playObjectGroup)
 	for (auto it = objectCollision.begin(); it != objectCollision.end();)
 	{
@@ -349,6 +399,20 @@ void Session::updateWorldFx()
 		}
 		vm.piece(w, v.piece);
 		vfx.push_back(v);
+		// Its sprays that OpenMW keeps emitting while the clock stands at its idle (the emitter is on while that time is
+		// within its emit start .. stop, the particles live on in real time): over and over until a script plays a group
+		// (Akulakhan's steam over its head and by the Heart)
+		if (!d.rest.empty() && pg == objectGroups.end())
+		{
+			Vfx rv = v;
+			rv.piece = d.rest;
+			rv.loop = true;
+			rv.age = 0.0f;
+			rv.until = -1.0f;
+			rv.rest = true;
+			vm.piece(w, rv.piece);
+			vfx.push_back(rv);
+		}
 	});
 }
 
@@ -358,6 +422,27 @@ void Session::playObjectGroup(int ref, const std::string& group, bool loop)
 {
 	if (!loop)
 		objectGroups[ref] = { group, (float)w.time };
+	// Its group's "Sound:" keys, each due as the group's clock reaches it (OpenMW's CharacterController::handleTextKey on
+	// an animated object: the booms of Akulakhan's collapse, the bridge to the Heart breaking). A group played again
+	// starts its keys over
+	if (!loop && ref >= 0 && ref < (int)w.refs.size())
+	{
+		for (size_t i = 0; i < objectSoundKeys.size();)
+			if (objectSoundKeys[i].ref == ref)
+				objectSoundKeys.erase(objectSoundKeys.begin() + i);
+			else
+				i++;
+		auto d = w.game.firstPerson.worldFx.find(w.refs[ref].idLower);
+		if (d != w.game.firstPerson.worldFx.end())
+		{
+			std::string g = lower(group);
+			auto keys = d->second.sounds.find(g);
+			auto span = d->second.groups.find(g);
+			if (keys != d->second.sounds.end() && span != d->second.groups.end())
+				for (const auto& k : keys->second)
+					objectSoundKeys.push_back({ ref, w.time + (k.first - span->second.first), k.second });
+		}
+	}
 	// A death group on an object (Bamz-Amschend's cave-in blown by the satchel charge: its boulders fly apart): its
 	// collision goes with it, as OpenMW's animated collision does (the shapes moved away by the group's end)
 	if (lower(group).compare(0, 5, "death") == 0 && ref >= 0 && ref < (int)w.refs.size() && w.refs[ref].colCount)
@@ -382,6 +467,12 @@ void Session::playObjectGroup(int ref, const std::string& group, bool loop)
 				objectCollision[ref] = { w.time, w.time + back->second, false };
 		}
 	}
+	// (its rest piece stops: the clock leaves its idle, its own piece carries the sprays on from there)
+	for (size_t i = 0; i < vfx.size();)
+		if (vfx[i].world && vfx[i].rest && vfx[i].follow == ref)
+			vfx.erase(vfx.begin() + i);
+		else
+			i++;
 	for (auto& v : vfx)
 		if (v.world && v.follow == ref)
 		{
@@ -545,62 +636,53 @@ void Session::updateCreatureFx(float dt)
 			++it;
 }
 
-void Session::drawCreatureFx(const float eye[3], bool secondEye)
+void Session::drawCreatureFxOne(int ref, CreatureFx& st, const float eye[3], bool secondEye)
 {
-	for (auto& kv : creatureFx)
+	FpPiece* piece = st.live.empty() ? nullptr : vm.piece(w, st.piece);
+	if (!piece)
+		return;
+	const Ref& r = w.refs[ref];
+	float ex = r.pos[0] - eye[0], ey = r.pos[1] - eye[1], ez = r.pos[2] - eye[2];
+	float dist = sqrtf(ex * ex + ey * ey + ez * ez);
+	float weight = fminf(2.0f, fmaxf(0.3f, 400.0f / fmaxf(1.0f, dist)));
+	float share = fminf(1.0f, rendererSpriteShare() * weight);
+	u32 keepBelow = share >= 1.0f ? 0xFFFFFFFFu : (u32)(share * 4294967295.0f);
+	float grow = vfxThinGrow(share, dist);
+	int wanted = 0;
+	for (size_t k = 0; k < piece->meshes.size(); k++)
 	{
-		CreatureFx& st = kv.second;
-		FpPiece* piece = st.live.empty() ? nullptr : vm.piece(w, st.piece);
-		if (!piece)
-			continue;
-		const Ref& r = w.refs[kv.first];
-		float ex = r.pos[0] - eye[0], ey = r.pos[1] - eye[1], ez = r.pos[2] - eye[2];
-		float dist = sqrtf(ex * ex + ey * ey + ez * ez);
-		float weight = fminf(2.0f, fmaxf(0.3f, 400.0f / fmaxf(1.0f, dist)));
-		float share = fminf(1.0f, rendererSpriteShare() * weight);
-		u32 keepBelow = share >= 1.0f ? 0xFFFFFFFFu : (u32)(share * 4294967295.0f);
-		float grow = vfxThinGrow(share, dist);
-		int wanted = 0;
-		for (size_t k = 0; k < piece->meshes.size(); k++)
+		const ActorMesh& m = piece->meshes[k];
+		float pos[100 * 3], half[100];
+		u32 col[100];
+		int n = 0;
+		for (size_t i = 0; i + 10 <= st.live.size(); i += 10)
 		{
-			const ActorMesh& m = piece->meshes[k];
-			float pos[100 * 3], half[100];
-			u32 col[100];
-			int n = 0;
-			for (size_t i = 0; i + 10 <= st.live.size(); i += 10)
-			{
-				const float* lv = &st.live[i];
-				if ((size_t)lv[0] != k)
-					continue;
-				wanted++;
-				if (n >= 100 || (u32)((i / 10 + 1) * 2654435761u) > keepBelow)
-					continue;
-				pos[n * 3] = lv[1];
-				pos[n * 3 + 1] = lv[2];
-				pos[n * 3 + 2] = lv[3];
-				half[n] = spriteSize(m, lv[9], lv[7], lv[8]) * grow;
-				col[n] = spriteColour(m, lv[7] / lv[8]);
-				n++;
-			}
-			if (n)
-				rendererDrawSprites(pos, half, n, piece->textures[m.tex], 0xFFFFFFFF, col, (m.flags & BATCH_ADDITIVE) != 0);
+			const float* lv = &st.live[i];
+			if ((size_t)lv[0] != k)
+				continue;
+			wanted++;
+			if (n >= 100 || (u32)((i / 10 + 1) * 2654435761u) > keepBelow)
+				continue;
+			pos[n * 3] = lv[1];
+			pos[n * 3 + 1] = lv[2];
+			pos[n * 3 + 2] = lv[3];
+			half[n] = spriteSize(m, lv[9], lv[7], lv[8]) * grow;
+			col[n] = spriteColour(m, lv[7] / lv[8]);
+			n++;
 		}
-		if (!secondEye)
-			rendererSpritesWanted(wanted * weight);
+		if (n)
+			rendererDrawSprites(pos, half, n, piece->textures[m.tex], 0xFFFFFFFF, col, (m.flags & BATCH_ADDITIVE) != 0);
 	}
+	if (!secondEye)
+		rendererSpritesWanted(wanted * weight);
 }
 
 // Projectiles, the rain and ash, then the player's arms over everything (after rendererDrawWorld); arms false: a view held elsewhere for
 // a side-by-side shot, no arms (the body still, in third person)
 void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 {
-	if (!secondEye)
-	{
-		rendererSpriteFrame();
-		vfxSpritedLast = vfxSprited;
-		vfxSprited = 0;
-	}
-	drawCreatureFx(eye, secondEye);
+	// (the creatures' sprays and the spell visuals' blended parts went in among the world's blended surfaces:
+	// queueBlendedExtras)
 	for (auto& p : projectiles)
 	{
 		if (!p.spell.empty())
@@ -704,120 +786,6 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 		for (auto& m : piece->meshes)
 			rendererDrawMeshGlow(m, &model, piece->textures[m.tex], glow);
 	}
-	// Spell visuals of the moment, facing as their actor faces (none past kVfxRange from the eye: many casters at once)
-	for (auto& v : vfx)
-	{
-		float dx = v.pos[0] - eye[0], dy = v.pos[1] - eye[1];
-		float range = v.world ? kWorldFxRange : kVfxRange;
-		if (dx * dx + dy * dy > range * range)
-			continue;
-		FpPiece* piece = vm.piece(w, v.piece);
-		if (!piece)
-			continue;
-		C3D_Mtx vm_;
-		Mtx_Identity(&vm_);
-		Mtx_Translate(&vm_, v.pos[0], v.pos[1], v.pos[2], true);
-		Mtx_RotateZ(&vm_, -v.yaw, true);
-		// (a piece with no animation of its own swells into place)
-		float grow = v.scale * (piece->length > 0.0f ? 1.0f : 0.6f + 0.4f * fminf(1.0f, v.age / 0.25f));
-		Mtx_Scale(&vm_, grow, grow, grow);
-		float age = v.loop && piece->length > 0.0f ? fmodf(v.age, piece->length) : v.age;   // (a continuous one over and over)
-		bool sprited = false;
-		for (auto& m : piece->meshes)
-		{
-			C3D_Mtx at;
-			if (!m.sprites.empty())
-			{
-				// particle records: each where its velocity and the spray's pull have it now, its size and colour
-				// over its life (particles.py)
-				float pos[100 * 3], half[100];
-				u32 col[100];
-				int n = 0;
-				// (a continuous one replays its particles every cycle; the last cycle's still finish)
-				auto vl = w.game.firstPerson.vfxLength.find(v.piece);
-				float cycle = vl != w.game.firstPerson.vfxLength.end() ? vl->second : 0.0f;
-				float now = v.loop && cycle > 0.0f ? fmodf(v.age, cycle) : v.age;
-				// (the frame's budget spread evenly: every visual keeps the same share of its particles, the same ones
-				// each frame, each drawn as much bigger as it stands for more)
-				// (weighted by distance: a near one keeps more, a far one, small on screen, fewer)
-				float ex = v.pos[0] - eye[0], ey = v.pos[1] - eye[1], ez = v.pos[2] - eye[2];
-				float dist = sqrtf(ex * ex + ey * ey + ez * ez);
-				float weight = fminf(2.0f, fmaxf(0.3f, 400.0f / fmaxf(1.0f, dist)));
-				float share = fminf(1.0f, rendererSpriteShare() * weight);
-				u32 keepBelow = share >= 1.0f ? 0xFFFFFFFFu : (u32)(share * 4294967295.0f);
-				float grow = vfxThinGrow(share, dist);
-				int wanted = 0;
-				for (size_t i = 0; i + 9 <= m.sprites.size() * (v.loop && cycle > 0.0f ? 2 : 1); i += 9)
-				{
-					size_t ri = i % m.sprites.size();
-					const float* r = &m.sprites[ri];
-					float a = now - r[0] + (i >= m.sprites.size() ? cycle : 0.0f);
-					if (a < 0.0f || a >= r[7] || (i >= m.sprites.size() && v.age < cycle))
-						continue;
-					// (born before 0: one the model was saved with, alive at the start only, not every cycle)
-					if (r[0] < 0.0f && v.age >= cycle && v.loop)
-						continue;
-					wanted++;
-					if (n >= 100 || (u32)((ri / 9 + 1) * 2654435761u) > keepBelow)
-						continue;
-					float lp[3];
-					for (int k = 0; k < 3; k++)
-						lp[k] = r[1 + k] + r[4 + k] * a + 0.5f * m.spriteAccel[k] * a * a;
-					for (int k = 0; k < 3; k++)
-						pos[n * 3 + k] = vm_.r[k].x * lp[0] + vm_.r[k].y * lp[1] + vm_.r[k].z * lp[2] + vm_.r[k].w;
-					half[n] = spriteSize(m, r[8], a, r[7]) * v.scale * grow;
-					col[n] = spriteColour(m, a / r[7]);
-					n++;
-				}
-				if (!secondEye)
-				{
-					rendererSpritesWanted(wanted * weight);
-					if (n > 0)
-						sprited = true;
-				}
-				rendererDrawSprites(pos, half, n, fxTexture(m, piece->textures[m.tex], v.effect), 0xFFFFFFFF, col,
-					(m.flags & BATCH_ADDITIVE) != 0);
-				continue;
-			}
-			if (!fpTrackMatrix(m, vm_, age, at))
-				continue;
-			// its texture sliding and its fade, as their controllers have them at this point (looping with it)
-			float trackT = v.loop && piece->length > 0.0f ? age : v.age;
-			if (!m.uvTrack.empty())
-			{
-				size_t nT = m.uvTrack.size() / 2;
-				size_t k = std::min(nT - 1, (size_t)(trackT * kVfxFps));
-				if (v.loop)
-					k = (size_t)(trackT * kVfxFps) % nT;
-				rendererUvOverride(true, m.uvTrack[k * 2], -m.uvTrack[k * 2 + 1]);
-			}
-			if (!m.alphaTrack.empty())
-			{
-				size_t nT = m.alphaTrack.size();
-				size_t k = v.loop ? (size_t)(trackT * kVfxFps) % nT : std::min(nT - 1, (size_t)(trackT * kVfxFps));
-				rendererAlphaScale(m.alphaTrack[k]);
-			}
-			if (m.flipFrames)
-			{
-				int f = (int)(v.age * m.flipFps);
-				f = v.loop ? f % m.flipFrames : std::min((int)m.flipFrames - 1, f);
-				rendererUvOverride(true, (float)(f % m.flipCols) / m.flipCols, -(float)(f / m.flipCols) / m.flipRows);
-			}
-			if (!m.pathFrames.empty())
-			{
-				ActorMesh fm = m;
-				fm.verts = m.pathFrames[std::min(m.pathFrames.size() - 1, (size_t)(v.age * m.pathFps))];
-				rendererDrawMesh(fm, &at, fxTexture(m, piece->textures[m.tex], v.effect));
-			}
-			else
-				rendererDrawMesh(m, &at, fxTexture(m, piece->textures[m.tex], v.effect));
-			rendererUvOverride(false);
-			if (!m.alphaTrack.empty())
-				rendererAlphaScale(1.0f);
-		}
-		if (sprited && !secondEye)
-			vfxSprited++;
-	}
 	// Dropped items, with their own mesh where they lie
 	for (int i : w.spawned)
 	{
@@ -856,6 +824,291 @@ void Session::drawExtras(const float eye[3], bool secondEye, bool arms)
 			armsEyeSet = true;
 		}
 	}
+}
+
+// An opaque mesh of a spell visual or world piece (no blending, no sprays): drawn with the world's opaque surfaces
+static bool vfxMeshOpaque(const ActorMesh& m)
+{
+	return m.sprites.empty() && !(m.flags & BATCH_BLEND);
+}
+
+// Spell visuals of the moment, facing as their actor faces (none past kVfxRange from the eye: many casters at once), and
+// the world pieces. opaque: only their opaque meshes, else all the rest
+// A spell visual's or world piece's place: where it stands, turned and sized
+static void vfxPlace(const World& w, const RenderState::Vfx& v, const FpPiece* piece, C3D_Mtx& out)
+{
+	Mtx_Identity(&out);
+	Mtx_Translate(&out, v.pos[0], v.pos[1], v.pos[2], true);
+	// (a placed object's own piece turned as the object is, all three ways as a placed static: the bridge to the
+	// Heart, tilted down along its length, went up the other way with its yaw only)
+	if (v.world && v.follow >= 0 && v.follow < (int)w.refs.size())
+	{
+		Mtx_RotateX(&out, -w.refs[v.follow].rot[0], true);
+		Mtx_RotateY(&out, -w.refs[v.follow].rot[1], true);
+	}
+	Mtx_RotateZ(&out, -v.yaw, true);
+	// (a piece with no animation of its own swells into place)
+	float grow = v.scale * (piece->length > 0.0f ? 1.0f : 0.6f + 0.4f * fminf(1.0f, v.age / 0.25f));
+	Mtx_Scale(&out, grow, grow, grow);
+}
+
+static bool vfxInRange(const RenderState::Vfx& v, const float eye[3])
+{
+	float dx = v.pos[0] - eye[0], dy = v.pos[1] - eye[1];
+	float range = v.world ? RenderState::kWorldFxRange : RenderState::kVfxRange;
+	return dx * dx + dy * dy <= range * range;
+}
+
+void Session::drawVfx(const float eye[3], bool secondEye, bool opaque)
+{
+	for (auto& v : vfx)
+		drawVfxOne(v, eye, secondEye, opaque);
+}
+
+void Session::drawVfxOne(Vfx& v, const float eye[3], bool secondEye, bool opaque)
+{
+	if (!vfxInRange(v, eye))
+		return;
+	FpPiece* piece = vm.piece(w, v.piece);
+	if (!piece)
+		return;
+	C3D_Mtx vm_;
+	vfxPlace(w, v, piece, vm_);
+	// (the sprays it draws, for its place among the blended surfaces next frame: queueBlendedExtras)
+	if (!opaque && !secondEye)
+		v.drawnSet = false;
+	float age = v.loop && piece->length > 0.0f ? fmodf(v.age, piece->length) : v.age;   // (a continuous one over and over)
+	bool sprited = false;
+	for (auto& m : piece->meshes)
+	{
+		C3D_Mtx at;
+		if (opaque != vfxMeshOpaque(m))
+			continue;
+		if (!m.sprites.empty())
+		{
+			// particle records: each where its velocity and the spray's pull have it now, its size and colour
+			// over its life (particles.py)
+			float pos[100 * 3], half[100];
+			u32 col[100];
+			int n = 0;
+			// (a continuous one replays its particles every cycle; the last cycle's still finish)
+			auto vl = w.game.firstPerson.vfxLength.find(v.piece);
+			float cycle = vl != w.game.firstPerson.vfxLength.end() ? vl->second : 0.0f;
+			float now = v.loop && cycle > 0.0f ? fmodf(v.age, cycle) : v.age;
+			// (the frame's budget spread evenly: every visual keeps the same share of its particles, the same ones
+			// each frame, each drawn as much bigger as it stands for more)
+			// (weighted by distance: a near one keeps more, a far one, small on screen, fewer)
+			float ex = v.pos[0] - eye[0], ey = v.pos[1] - eye[1], ez = v.pos[2] - eye[2];
+			float dist = sqrtf(ex * ex + ey * ey + ez * ez);
+			float weight = fminf(2.0f, fmaxf(0.3f, 400.0f / fmaxf(1.0f, dist)));
+			float share = fminf(1.0f, rendererSpriteShare() * weight);
+			u32 keepBelow = share >= 1.0f ? 0xFFFFFFFFu : (u32)(share * 4294967295.0f);
+			float grow = vfxThinGrow(share, dist);
+			int wanted = 0;
+			for (size_t i = 0; i + 9 <= m.sprites.size() * (v.loop && cycle > 0.0f ? 2 : 1); i += 9)
+			{
+				size_t ri = i % m.sprites.size();
+				const float* r = &m.sprites[ri];
+				float a = now - r[0] + (i >= m.sprites.size() ? cycle : 0.0f);
+				if (a < 0.0f || a >= r[7] || (i >= m.sprites.size() && v.age < cycle))
+					continue;
+				// (born before 0: one the model was saved with, alive at the start only, not every cycle)
+				if (r[0] < 0.0f && v.age >= cycle && v.loop)
+					continue;
+				wanted++;
+				if (n >= 100 || (u32)((ri / 9 + 1) * 2654435761u) > keepBelow)
+					continue;
+				float lp[3];
+				for (int k = 0; k < 3; k++)
+					lp[k] = r[1 + k] + r[4 + k] * a + 0.5f * m.spriteAccel[k] * a * a;
+				for (int k = 0; k < 3; k++)
+					pos[n * 3 + k] = vm_.r[k].x * lp[0] + vm_.r[k].y * lp[1] + vm_.r[k].z * lp[2] + vm_.r[k].w;
+				half[n] = spriteSize(m, r[8], a, r[7]) * v.scale * grow;
+				col[n] = spriteColour(m, a / r[7]);
+				n++;
+			}
+			if (!secondEye)
+			{
+				rendererSpritesWanted(wanted * weight);
+				if (n > 0)
+					sprited = true;
+			}
+			if (!opaque && !secondEye)
+				for (int s = 0; s < n; s++)
+					for (int k = 0; k < 3; k++)
+					{
+						float p = pos[s * 3 + k];
+						v.drawnLo[k] = v.drawnSet && v.drawnLo[k] < p ? v.drawnLo[k] : p;
+						v.drawnHi[k] = v.drawnSet && v.drawnHi[k] > p ? v.drawnHi[k] : p;
+						v.drawnSet = v.drawnSet || k == 2;
+					}
+			rendererDrawSprites(pos, half, n, fxTexture(m, piece->textures[m.tex], v.effect), 0xFFFFFFFF, col,
+				(m.flags & BATCH_ADDITIVE) != 0);
+			continue;
+		}
+		if (!fpTrackMatrix(m, vm_, age, at))
+			continue;
+		// its texture sliding and its fade, as their controllers have them at this point (looping with it)
+		float trackT = v.loop && piece->length > 0.0f ? age : v.age;
+		if (!m.uvTrack.empty())
+		{
+			size_t nT = m.uvTrack.size() / 2;
+			size_t k = std::min(nT - 1, (size_t)(trackT * kVfxFps));
+			if (v.loop)
+				k = (size_t)(trackT * kVfxFps) % nT;
+			rendererUvOverride(true, m.uvTrack[k * 2], -m.uvTrack[k * 2 + 1]);
+		}
+		if (!m.alphaTrack.empty())
+		{
+			size_t nT = m.alphaTrack.size();
+			size_t k = v.loop ? (size_t)(trackT * kVfxFps) % nT : std::min(nT - 1, (size_t)(trackT * kVfxFps));
+			rendererAlphaScale(m.alphaTrack[k]);
+		}
+		if (m.flipFrames)
+		{
+			int f = (int)(v.age * m.flipFps);
+			f = v.loop ? f % m.flipFrames : std::min((int)m.flipFrames - 1, f);
+			rendererUvOverride(true, (float)(f % m.flipCols) / m.flipCols, -(float)(f / m.flipCols) / m.flipRows);
+		}
+		if (!m.pathFrames.empty())
+		{
+			ActorMesh fm = m;
+			fm.verts = m.pathFrames[std::min(m.pathFrames.size() - 1, (size_t)(v.age * m.pathFps))];
+			rendererDrawMesh(fm, &at, fxTexture(m, piece->textures[m.tex], v.effect));
+		}
+		else
+			rendererDrawMesh(m, &at, fxTexture(m, piece->textures[m.tex], v.effect));
+		rendererUvOverride(false);
+		if (!m.alphaTrack.empty())
+			rendererAlphaScale(1.0f);
+	}
+	if (sprited && !secondEye)
+		vfxSprited++;
+}
+
+// The extras' opaque meshes, between rendererDrawWorld and rendererDrawWorldBlended: Akulakhan, drawn after the
+// blended queue, painted over Dagoth Ur's blended body and the Heart's shield (both behind it from the door). Then the
+// sprays and the visuals' blended parts queued among the blended surfaces (queueBlendedExtras)
+void Session::drawOpaqueExtras(const float eye[3], bool secondEye)
+{
+	if (!secondEye)
+	{
+		rendererSpriteFrame();
+		vfxSpritedLast = vfxSprited;
+		vfxSprited = 0;
+	}
+	drawVfx(eye, secondEye, true);
+	queueBlendedExtras(eye, secondEye);
+}
+
+static float midDist2(const float lo[3], const float hi[3], const float eye[3])
+{
+	float d2 = 0.0f;
+	for (int k = 0; k < 3; k++)
+	{
+		float d = (lo[k] + hi[k]) * 0.5f - eye[k];
+		d2 += d * d;
+	}
+	return d2;
+}
+
+// Where an actor's blended meshes are in the blended queue (rendererDrawWorld sorts them by its middle, 64 over its
+// feet), just nearer: what is drawn there comes right after them. -1: not drawn as one (or gone: a summon's end visual
+// outlives the summon)
+static float afterActorDist2(World& w, int ref, const float eye[3])
+{
+	const Actor* a = ref >= 0 && ref < (int)w.refs.size() && w.active(ref) ? w.actorOf(ref) : nullptr;
+	if (!a)
+		return -1.0f;
+	float d[3] = { a->place[3] - eye[0], a->place[7] - eye[1], a->place[11] + 64.0f - eye[2] };
+	return (d[0] * d[0] + d[1] * d[1] + d[2] * d[2]) * 0.99999f;
+}
+
+// The creatures' sprays and the spell visuals' and world pieces' blended parts go in among the world's blended surfaces
+// (rendererQueueBlendCall), as OpenMW sorts its transparent bin by distance: drawn after all of them, one behind a
+// blended surface showed in front of it. One that belongs to an actor (its sprays, a spell visual on it) comes right after
+// that actor's own meshes, as before: its body's depth hides what is behind it, and the near side of a shield around it
+// goes over it (Dagoth Ur's). Another by the middle of what it draws: its meshes' bounds where it stands joined with the
+// sprays it drew the frame before
+void Session::queueBlendedExtras(const float eye[3], bool secondEye)
+{
+	memcpy(queuedEye, eye, sizeof(queuedEye));
+	queuedSecondEye = secondEye;
+	for (auto& kv : creatureFx)
+	{
+		const CreatureFx& st = kv.second;
+		if (st.live.size() < 10)
+			continue;
+		float key = afterActorDist2(w, kv.first, eye);
+		if (key < 0.0f)
+		{
+			float lo[3], hi[3];
+			for (size_t i = 0; i + 10 <= st.live.size(); i += 10)
+				for (int k = 0; k < 3; k++)
+				{
+					float p = st.live[i + 1 + k];
+					lo[k] = i && lo[k] < p ? lo[k] : p;
+					hi[k] = i && hi[k] > p ? hi[k] : p;
+				}
+			key = midDist2(lo, hi, eye);
+		}
+		rendererQueueBlendCall(key, [](void* s, int ref) {
+			Session* ss = (Session*)s;
+			auto it = ss->creatureFx.find(ref);
+			if (it != ss->creatureFx.end())
+				ss->drawCreatureFxOne(ref, it->second, ss->queuedEye, ss->queuedSecondEye);
+		}, this, kv.first);
+	}
+	for (size_t i = 0; i < vfx.size(); i++)
+	{
+		const Vfx& v = vfx[i];
+		FpPiece* piece = vfxInRange(v, eye) ? vm.piece(w, v.piece) : nullptr;
+		if (!piece)
+			continue;
+		float key = !v.world ? afterActorDist2(w, v.follow, eye) : -1.0f;
+		if (key >= 0.0f)
+		{
+			queueVfx(key, i);
+			continue;
+		}
+		float lo[3], hi[3];
+		bool any = false;
+		if (piece->lo[0] != piece->hi[0] || piece->lo[1] != piece->hi[1] || piece->lo[2] != piece->hi[2])
+		{
+			C3D_Mtx at;
+			vfxPlace(w, v, piece, at);
+			for (int c = 0; c < 2; c++)
+			{
+				const float* q = c ? piece->hi : piece->lo;
+				for (int k = 0; k < 3; k++)
+				{
+					float p = at.r[k].x * q[0] + at.r[k].y * q[1] + at.r[k].z * q[2] + at.r[k].w;
+					lo[k] = any && lo[k] < p ? lo[k] : p;
+					hi[k] = any && hi[k] > p ? hi[k] : p;
+				}
+				any = true;
+			}
+		}
+		if (v.drawnSet)
+			for (int k = 0; k < 3; k++)
+			{
+				lo[k] = any ? fminf(lo[k], v.drawnLo[k]) : v.drawnLo[k];
+				hi[k] = any ? fmaxf(hi[k], v.drawnHi[k]) : v.drawnHi[k];
+			}
+		if (!any && !v.drawnSet)
+			for (int k = 0; k < 3; k++)
+				lo[k] = hi[k] = v.pos[k];
+		queueVfx(midDist2(lo, hi, eye), i);
+	}
+}
+
+void Session::queueVfx(float d2, size_t i)
+{
+	rendererQueueBlendCall(d2, [](void* s, int i) {
+		Session* ss = (Session*)s;
+		if (i >= 0 && i < (int)ss->vfx.size())
+			ss->drawVfxOne(ss->vfx[i], ss->queuedEye, ss->queuedSecondEye, false);
+	}, this, (int)i);
 }
 
 // spell visuals age and go

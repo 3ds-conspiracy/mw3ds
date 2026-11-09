@@ -137,10 +137,19 @@ void Session::knockDown(int ri, bool out)
 	if (Actor* a = w.actorOf(ri))
 	{
 		ActorSet& set = *w.actorsOf(ri);
-		if (actorPlay(set, *a, out ? "KnockOut" : "KnockDown", ANIM_HOLD))
+		if (!a->scripted && actorPlay(set, *a, out ? "KnockOut" : "KnockDown", ANIM_HOLD))
 		{
 			const AnimGroup& g = actorSkeleton(set, a->skeleton).groups[a->group];
 			r.knockTimer = fmaxf(r.knockTimer, g.stop - g.start);
+		}
+		else if (!out)
+		{
+			// No KnockDown in its model (the Heart of Lorkhan), or a script's group playing over it: down for no longer than
+			// the blow, nothing falls, and the group it was playing goes on (OpenMW's refreshHitRecoilAnims ends a hit
+			// state with no group the next frame). It stood back up into Idle after 2.7 s, over the Heart's Idle2-5
+			r.knockTimer = 0.0f;
+			logf("combat: %s staggered (no KnockDown)", r.id.c_str());
+			return;
 		}
 	}
 	playSound(ri, "Body Fall Medium");

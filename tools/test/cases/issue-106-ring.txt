@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# Issue 106, the ending: the Ring of Azura, put out when she has spoken, turns where it floats (ringAzuraScript: Rotate
+# Z 30 until it is taken) and shimmers as an enchanted thing does (its enchantment's first effect's colour: near
+# white). Drawn on its own, as the things scripts turn are, it had no shimmer: a dark speck in the cave (the box over
+# it 11.7 without, 18 with it; OpenMW's 20.5)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:50
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+3 0 0 0
+0.3 0 0 0 0 ENABLE:ring_of_azura
+1 0 0 0
+60 0 0 0 0 WALKTO:ring_of_azura
+0.5 0 0 0 0 FACE:ring_of_azura:mid
+0.3 0 0 0 0 HUD:off
+0.5 0 0 0 0 SHOT+SNAP:refyaw:ring_of_azura
+# 30 degrees a second
+1 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refyaw:ring_of_azura:gt:@20
+# up close (the side-by-side's camera, 60 units off): two shots a second apart
+0.5 0 0 0 0 CAM:4039:5220:14279:0:0+POV:first
+0.5 0 0 0 0 SHOT
+1 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:shottopbox:2,193,100,18,22,l:ge:15+EXPECT:shottopbox:3,193,100,18,22,l:ge:15

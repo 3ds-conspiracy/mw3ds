@@ -163,7 +163,28 @@ def skeleton_export(nif, groups=None):
 
     for r in nif.roots:
         walk(r, -1)
-    return {"bones": bones, "tracks": tracks, "groups": groups, "index": index}
+    return {"bones": bones, "tracks": tracks, "groups": groups, "index": index, "sounds": sound_keys(nif, intervals)}
+
+
+def sound_keys(nif, intervals):
+    """The skeleton's "Sound: <id>" text keys inside its exported groups, [(time, sound id)]: OpenMW's
+    CharacterController::handleTextKey plays each as the animation passes it, at the actor (the Heart of Lorkhan's
+    Hearthit1..4 as each Keening blow starts its Idle2..5, Heartdead with its Death1; the centurions' own attack and
+    rolling sounds). Not the swings' swishes nor the bows' and crossbows' pull and shot (base_anim's): the combat code
+    plays those (mwmechanics/combat.cpp, aicombat.cpp)."""
+    out = []
+    for b in nif.blocks:
+        if b["type"] != "NiTextKeyExtraData":
+            continue
+        for t, text in b.get("keys", []):
+            for line in text.replace(chr(13), "").split(chr(10)):
+                what, _, sound = line.partition(":")
+                sound = sound.strip()
+                if what.strip().lower() != "sound" or not sound or sound.lower().startswith("swish")                         or sound.lower() in ("bowpull", "bowshoot", "crossbowpull", "crossbowshoot"):
+                    continue
+                if any(s - 1e-4 <= t <= e + 1e-4 for s, e in intervals):
+                    out.append((float(t), sound))         # (as the groups' own times: a key on a start is on it)
+    return sorted(out)
 
 
 def actor_mesh(s, skeleton, tex, colors):
@@ -174,6 +195,8 @@ def actor_mesh(s, skeleton, tex, colors):
     flags = (s["flags"] & ~FLAG_WEAPON) | (FLAG_WEAPON if s.get("weapon") else 0)
     mesh = {"tex": tex, "flags": flags, "alpha_ref": s["alpha_ref"], "tris": s["tris"],
             "uv": s["uv"] * [1.0, -1.0] + [0.0, 1.0], "colors": colors, "bone": -1, "kind": 0}
+    if s.get("zwrite"):
+        mesh["zwrite"] = True
     local = np.identity(4)
     if s["skinned"]:
         mesh["kind"] = 1
@@ -199,6 +222,8 @@ def actor_mesh(s, skeleton, tex, colors):
         mesh["bone"] = skeleton["index"].get(s.get("bone") or "", -1)
     if s.get("vis"):
         mesh["vis"] = s["vis"]
+    if s.get("fade"):
+        mesh["fade"] = s["fade"]
     if s.get("hand"):
         mesh["hand"] = s["hand"]
     if s.get("glow"):
@@ -224,7 +249,7 @@ def merge_meshes(meshes):
             out.append(m)
             continue
         key = (m["kind"], m["tex"], m.get("tex_name"), m["flags"], m["alpha_ref"], m["bone"] if m["kind"] == 0 else None,
-               tuple(m.get("vis") or ()), m.get("hand"), m.get("glow"))
+               tuple(m.get("vis") or ()), tuple(m.get("fade") or ()), m.get("hand"), m.get("glow"), m.get("zwrite"))
         groups.setdefault(key, []).append(m)
     for key, ms in groups.items():
         if len(ms) == 1 or sum(len(m["pos"]) for m in ms) > 65000:
@@ -250,14 +275,40 @@ def merge_meshes(meshes):
     return out
 
 
+def animation_sounds(db, arch):
+    """Every sound a creature's model names in its "Sound:" text keys (sound_keys), lowercase ids: what the level's
+    sounds must hold for the engine to play them as the animations pass the keys. And an activator's in the groups its
+    world entry keeps (particles.world_entry "sounds": Akulakhan's collapse, the bridge to the Heart breaking)."""
+    from nif import Nif
+    from particles import world_entry, scripted_group_objects
+    scripted = scripted_group_objects(db)
+    out, seen = set(), set()
+    for rec in db["objects"].values():
+        model = (rec.zstr("MODL") or "").lower() if rec.tag in ("CREA", "ACTI") else ""
+        if not model or model in seen:
+            continue
+        seen.add(model)
+        try:
+            nif = Nif(arch.read("meshes/" + model))
+        except Exception:
+            continue
+        if rec.tag == "CREA":
+            out.update(s.lower() for _, s in sound_keys(nif, [(-1e9, 1e9)]))
+        elif any(b["type"] == "NiTextKeyExtraData" for b in nif.blocks):
+            for keys in world_entry(nif, "", False, rec.id.lower() in scripted).get("sounds", {}).values():
+                out.update(s for _, s in keys)
+    return out
+
+
 def write_skeletons(path, skeletons):
-    """Every skeleton the level's actors use, once: 'MWS1' u32 count, then skeletons as in .act v1."""
+    """Every skeleton the level's actors use, once: 'MWS2' u32 count, then skeletons as in .act v1, each followed by
+    its sound keys (u32 n, n x (f32 time, char[32] sound id): sound_keys)."""
     with open(path, "wb") as f:
-        f.write(b"MWS1" + struct.pack("<I", len(skeletons)))
-        write_skeleton_list(f, skeletons)
+        f.write(b"MWS2" + struct.pack("<I", len(skeletons)))
+        write_skeleton_list(f, skeletons, sounds=True)
 
 
-def write_skeleton_list(f, skeletons):
+def write_skeleton_list(f, skeletons, sounds=False):
     for sk in skeletons:
         f.write(struct.pack("<I", len(sk["bones"])))
         for b in sk["bones"]:
@@ -278,12 +329,18 @@ def write_skeleton_list(f, skeletons):
         for g in sk["groups"]:
             f.write(g["name"].encode("latin-1")[:15].ljust(16, b"\x00"))
             f.write(struct.pack("<4f", g["start"], g["loop_start"], g["loop_stop"], g["stop"]))
+        if sounds:
+            keys = sk.get("sounds") or []
+            f.write(struct.pack("<I", len(keys)))
+            for t, sound in keys:
+                f.write(struct.pack("<f", t) + sound.encode("latin-1")[:31].ljust(32, b"\x00"))
 
 
 def write_mesh(f, m, tex_name=None):
     """One actor mesh; in library files (tex_name given) the texture goes by name. The byte after kind: 1 morphs
     follow, 2 visibility keys follow (after the morphs), 4 a torch (held out at night), 8 a shield (put away then),
-    16 an enchanted glow's colour follows (u32 0xRRGGBB, last)."""
+    16 an enchanted glow's colour follows (u32 0xRRGGBB, last), 32 its material's alpha keys follow (after the
+    visibility keys), 64 blended and still writing depth (meshes.py zwrite: nothing follows)."""
     n = len(m["pos"])
     if tex_name is None:
         f.write(struct.pack("<i", m["tex"]))
@@ -291,7 +348,8 @@ def write_mesh(f, m, tex_name=None):
         name = tex_name.encode("latin-1")
         f.write(struct.pack("<H", len(name)) + name)
     more = (1 if m.get("morph") and m["morph"]["morphs"] else 0) | (2 if m.get("vis") else 0)
-    more |= {"torch": 4, "shield": 8}.get(m.get("hand"), 0) | (16 if m.get("glow") else 0)
+    more |= {"torch": 4, "shield": 8}.get(m.get("hand"), 0) | (16 if m.get("glow") else 0) | (32 if m.get("fade") else 0)
+    more |= 64 if m.get("zwrite") else 0
     f.write(struct.pack("<BBBBiII", m["flags"], m["alpha_ref"], m["kind"], more, m["bone"], n, len(m["tris"])))
     v = np.zeros(n, dtype=[("pos", "<f4", 3), ("uv", "<f4", 2), ("color", "u1", 4)])
     v["pos"], v["uv"], v["color"] = m["pos"], m["uv"], m["colors"]
@@ -318,6 +376,12 @@ def write_mesh(f, m, tex_name=None):
         f.write(struct.pack("<I", len(m["vis"])))
         for t, shown in m["vis"]:
             f.write(struct.pack("<2f", t, 1.0 if shown else 0.0))
+    if m.get("fade"):
+        # how much of it shows from each key's time on, linear between (its material's NiAlphaController): u32 n,
+        # n x (f32 time, f32 alpha)
+        f.write(struct.pack("<I", len(m["fade"])))
+        for t, alpha in m["fade"]:
+            f.write(struct.pack("<2f", t, alpha))
     if m.get("glow"):
         f.write(struct.pack("<I", m["glow"]))
 

@@ -222,6 +222,11 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, 
                 flags |= FLAG_ADDITIVE
         if alpha and alpha["flags"] & 0x200:
             flags |= FLAG_TEST
+        # A blended shape writes depth unless its NiZBufferProperty says not (OpenMW's nifloader leaves the depth mask
+        # on for a blended drawable and sorts it among the transparent ones): Dagoth Ur's mask over his head, a
+        # ghost's robe over its back. Only a blended untested one needs saying: the engine writes depth for the rest
+        zprop = last_prop(props, "NiZBufferProperty")
+        zwrite = bool(flags & FLAG_BLEND and not flags & FLAG_TEST and (zprop is None or zprop["flags"] & 2))
         if stencil and stencil["draw_mode"] == 3:
             flags |= FLAG_TWO_SIDED
         if clamp != 3:
@@ -232,7 +237,7 @@ def extract_shapes(arch, nif, skeleton=None, bind_pose=False, vis_hidden=False, 
             "tris": np.array(tris, dtype=np.uint32),
             "tex": tex, "texprop": texprop["index"] if texprop else -1,
             "flags": flags, "skinned": b["skin"] != -1, "name": b["name"], "block": b["index"],
-            "alpha_ref": alpha["threshold"] if alpha else 0,
+            "alpha_ref": alpha["threshold"] if alpha else 0, "zwrite": zwrite,
             "mat": last_prop(props, "NiMaterialProperty"),
             "vcp": last_prop(props, "NiVertexColorProperty"),
             "raw": raw,

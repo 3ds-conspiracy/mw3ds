@@ -156,6 +156,20 @@ def vis_keys(nif, block, parents, end=None):
     return out
 
 
+def fade_keys(nif, mat):
+    """A material's alpha over the model's timeline, from its NiAlphaController (the Heart of Lorkhan's flash as it
+    dies, Azura's ghost fading in): [(time, alpha)], clamped at both ends, linear between; None without one."""
+    c = nif.get(mat.get("controller", -1)) if mat else None
+    while c:
+        if c["type"] == "NiAlphaController":
+            d = nif.get(c.get("data", -1))
+            keys = d.get("keys") if d else None
+            if keys:
+                return [(round(float(t), 4), float(v[0] if isinstance(v, (list, tuple)) else v)) for t, v in keys]
+        c = nif.get(c.get("next_controller", -1))
+    return None
+
+
 class CreatureBuilder:
     def __init__(self, arch, npcs, db=None):
         self.arch, self.npcs = arch, npcs          # NpcBuilder: shared NIF cache
@@ -186,6 +200,10 @@ class CreatureBuilder:
             vis = vis_keys(nif, s.get("block", -1), parents, end)
             if vis:
                 s["vis"] = vis
+            # (a material whose alpha its animation sets: baked whole, the keys say how much of it shows when)
+            fade = fade_keys(nif, s.get("mat"))
+            if fade:
+                s["fade"], s["mat"] = fade, dict(s["mat"], alpha=1.0)
             if s["skinned"] or "raw" not in s:
                 continue
             # Rigid pieces ride the node they hang from; keep their own transform below it

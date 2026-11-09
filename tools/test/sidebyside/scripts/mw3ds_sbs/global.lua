@@ -68,6 +68,13 @@ local function act(s, player)
 			types.Player.quests(player)[a[2]]:addJournalEntry(tonumber(a[3]), player)
 		elseif a[1] == 'give' then
 			world.createObject(a[2], 1):moveInto(types.Actor.inventory(player))
+		elseif a[1] == 'enable' then
+			-- enable:<id>: every object of that id in the player's cell enabled (one a quest puts out: the Ring of Azura)
+			for _, o in ipairs(player.cell:getAll()) do
+				if o.recordId == a[2] then
+					o.enabled = true
+				end
+			end
 		elseif a[1] == 'global' then
 			world.mwscript.getGlobalVariables(player)[a[2]] = tonumber(a[3])
 		elseif a[1] == 'spawn' then

@@ -421,6 +421,68 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	}
 }
 
+// An animation's "Sound: <id>" text keys: each plays at the actor as its animation passes it (OpenMW's
+// CharacterController::handleTextKey; the keys are its skeleton's, actors.py sound_keys): the Heart of Lorkhan's
+// Hearthit1 .. 4 as each Keening blow starts its next group, Heartdead with its Death1. A group just begun counts from
+// its start, so a key on its first frame plays; a loop going round counts on from its Loop Start. Not the swings'
+// swishes nor the bows' and crossbows' pull and shot: the combat code plays those (mwmechanics/combat.cpp, aicombat.cpp)
+static bool combatPlays(const char* id)
+{
+	return strncasecmp(id, "swish", 5) == 0 || strcasecmp(id, "bowpull") == 0 || strcasecmp(id, "bowshoot") == 0
+		|| strcasecmp(id, "crossbowpull") == 0 || strcasecmp(id, "crossbowshoot") == 0;
+}
+
+void Session::updateAnimationSounds()
+{
+	for (LoadedCell* l : w.loaded)
+		for (const Actor& a : l->actors.actors)
+		{
+			const Skeleton& sk = actorSkeleton(l->actors, a.skeleton);
+			if (sk.sounds.empty() || a.ref < 0 || a.group < 0 || a.group >= (int)sk.groups.size())
+				continue;
+			auto it = animSoundAt.find(a.ref);
+			bool seen = it != animSoundAt.end() && it->second.frame + 1 == w.frame;
+			SoundState::AnimSoundAt was = seen ? it->second : SoundState::AnimSoundAt{ a.group, a.time, w.frame };
+			animSoundAt[a.ref] = { a.group, a.time, w.frame };
+			if (!seen || (was.group == a.group && a.time == was.time))
+				continue;                // (just come in sight, or not moving on: nothing passed)
+			const AnimGroup& g = sk.groups[a.group];
+			auto play = [&](float lo, float hi, bool fromLo) {
+				for (const auto& k : sk.sounds)
+					if ((fromLo ? k.time >= lo - 0.001f : k.time > lo) && k.time <= hi && !combatPlays(k.id))
+						playSound(a.ref, k.id);
+			};
+			if (was.group != a.group || (a.time < was.time && a.time < g.loopStart))
+				play(g.start, a.time, true);                       // (a group begun, or begun again)
+			else if (a.time < was.time)
+			{
+				play(was.time, g.loopStop, false);                 // (round its loop)
+				play(g.loopStart, a.time, true);
+			}
+			else
+				play(was.time, a.time, false);
+		}
+}
+
+// The keys of the groups scripts play on objects, as they come due (queued by playObjectGroup), from the object. One
+// whose cell has gone or that is disabled drops its keys: OpenMW runs an object's animation only in the active cells
+void Session::updateObjectSoundKeys()
+{
+	for (size_t i = 0; i < objectSoundKeys.size();)
+	{
+		const SoundState::ObjectSoundKey& k = objectSoundKeys[i];
+		if (k.ref < 0 || k.ref >= (int)w.refs.size() || !w.active(k.ref) || !w.refs[k.ref].visible())
+			objectSoundKeys.erase(objectSoundKeys.begin() + i);
+		else if (w.time >= k.at)
+		{
+			playSound(k.ref, k.id);
+			objectSoundKeys.erase(objectSoundKeys.begin() + i);
+		}
+		else
+			i++;
+	}
+}
+
 // The moving animations' steps (base_anim.nif: the ground one cycle carries the body, and where in the cycle its SoundGen
 // Right and Left keys fall). OpenMW plays the walk at the speed the player goes, so a step comes every so far walked.
 // The cycle is the group's loop (Loop Start to Loop Stop), where it plays on: the run's feet fall half a loop apart

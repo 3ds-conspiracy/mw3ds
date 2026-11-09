@@ -43,6 +43,7 @@ void setLamp(const CellBatch& b);
 void initFogRamp();
 void updateLightRamp();
 void enableFog(const Cell& cell, float fogStart, float fogEnd);
+void restoreFog();
 void drawBatchTex(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time);
 int drawBatches(Cell& cell, std::vector<CellBatch>& batches, int pass, const std::vector<u8>* visible, float time);
 void sharedPlaceView(const C3D_Mtx& view, const SharedPlace& p, C3D_Mtx* out);

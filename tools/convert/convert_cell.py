@@ -435,6 +435,18 @@ def is_marker(model):
     return model.lower().replace("/", "\\").rsplit("\\", 1)[-1].startswith("marker")
 
 
+def faded_figure(nif):
+    """A model that is a skinned figure with animation groups and a material its animation fades (an NiAlphaController):
+    Azura's ghost. The town banners, skinned and animated too, fade nothing and stay baked."""
+    if nif is None:
+        return False
+    skinned = any(b["type"] in ("NiTriShape", "NiTriStrips") and b.get("skin", -1) != -1 for b in nif.blocks)
+    groups = any(":" in k[1] for b in nif.blocks if b["type"] == "NiTextKeyExtraData" for k in b.get("keys", []))
+    fades = any(b["type"] == "NiAlphaController" and (nif.get(b.get("target", -1)) or {}).get("type") == "NiMaterialProperty"
+                for b in nif.blocks)
+    return skinned and groups and fades
+
+
 def world_shapes(shapes, m):
     for s in shapes:
         s["pos"] = s["pos"] @ m[:3, :3].T + m[:3, 3]
@@ -1135,6 +1147,15 @@ class Converter:
                     aiw = rec.get("AI_W")
                     npc_models.append({"ref": ri, "shapes": shapes, "info": actor_info, "id": rec.id.lower(),
                                        "idle": list(aiw[5:13]) if aiw else [0] * 8})
+            elif rec.tag == "ACTI" and faded_figure(self.load_nif(rec.zstr("MODL") or "") if rec.zstr("MODL") else None):
+                # A skinned figure its own animation fades in and out (Azura's ghost at the end): drawn as a creature
+                # is, with no stats, and the script's PlayGroup moves it. Baked, its skinned body was left out and the
+                # rest kept at its resting alpha, 0: she never showed
+                shapes, actor_info = self.creatures.build(rec, ref)
+                if actor_info:
+                    npc_models.append({"ref": ri, "shapes": shapes, "info": actor_info, "id": rec.id.lower(),
+                                       "idle": [0] * 8})
+                    continue
             else:
                 model = rec.zstr("MODL")
                 if not model or is_marker(model):

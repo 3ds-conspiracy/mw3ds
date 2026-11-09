@@ -18,9 +18,13 @@ struct SkinDraw { Cell* cell; const Actor* a; const ActorMesh* m; C3D_Mtx mv; fl
 // cell's blended batches by their bounds' middle, actors' rigid blended meshes by the actor. A Khajiit's ears (blended
 // hair) were drawn before the tapestry behind them, which then painted over them
 struct BlendDraw { float d2; Cell* cell; const CellBatch* batch; const ActorMesh* mesh; C3D_Mtx mv; u32 shimmer; const Actor* skinned = nullptr;
-	float alpha = 1.0f;               // (an actor drawn see-through: Invisibility, Chameleon)
+	float alpha = 1.0f;               // (an actor drawn see-through: Invisibility, Chameleon; times its mesh's fade)
+	float actorAlpha = 1.0f;          // (the actor's own, without the fade: a rigid mesh's depth write, blendDepthWrite)
 	float tint[3] = { 1, 1, 1 };      // (an actor's: actorTint; a cell batch's: the world's)
-	const void* colors = nullptr; };  // (a shared model's batch: the placement's colours, CellBatch::colors)
+	const void* colors = nullptr;     // (a shared model's batch: the placement's colours, CellBatch::colors)
+	void (*call)(void* ctx, int arg) = nullptr;   // (drawn by its owner in its place: rendererQueueBlendCall)
+	void* ctx = nullptr;
+	int arg = 0; };
 
 struct GpuState
 {

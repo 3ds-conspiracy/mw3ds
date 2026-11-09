@@ -1,0 +1,57 @@
+# start: Seyda Neen
+# Issue 106: the chamber falls silent once the Heart is gone. After the last Keening blow the original goes on with sound:
+# the Heart's script (LorkhanHeart) loops "endrumble" from it until the player leaves the chamber, and once the player is
+# back near the entrance (DagothDoorDetector, 1200 units) EndGame plays Akulakhan's Death1, whose model times ten booms
+# to its collapse (its text keys "Sound: Endboom1" .. 4), and the rope bridge's Death1 ("Sound: Ropebridge"). OpenMW
+# plays an animated object's Sound keys as its group passes them, as an actor's (CharacterController::handleTextKey)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+BOOST:100+EFFECT:80:5000:900+GOD
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:10
+0.3 0 0 0 0 GIVE:wraithguard
+0.3 0 0 0 0 GIVE:keening
+0.3 0 0 0 0 GIVE:sunder
+0.3 0 0 0 0 EQUIP:wraithguard
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+2 0 0 0
+120 0 0 0 0 DOORTO:Akulakhan's_Chamber
+10 0 0 0 0 UNTIL:cell:Akulakhan's_Chamber
+0.3 0 0 0 0 EXPECT:cell:Akulakhan's_Chamber
+# Sunder, then Keening five times
+0.3 0 0 0 0 EQUIP:sunder
+60 0 0 0 0 STRIKE:heart_akulakhan:1
+1 0 0 0
+0.3 0 0 0 0 EQUIP:keening
+1.5 0 0 0
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle2+EXPECT:soundstarted:hearthit1:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:frostshield:eq:1+EXPECT:vfxpiece:fireshield:eq:0
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle3+EXPECT:soundstarted:hearthit2:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:lightningshield:eq:1+EXPECT:vfxpiece:frostshield:eq:0
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle4+EXPECT:soundstarted:hearthit3:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:lightningshield:eq:1+EXPECT:vfxpiece:shieldhit:eq:1
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle5+EXPECT:soundstarted:hearthit4:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:shield:eq:0
+# the fifth: Death1, Heartdead with it
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+6 0 0 0
+0.3 0 0 0 0 EXPECT:global:heartdestroyed:eq:1+EXPECT:refgroup:heart_akulakhan:Death1
+# the rumble from the Heart's place
+3 0 0 0
+0.3 0 0 0 0 EXPECT:soundstarted:endrumble:ge:1
+# back up to the entrance: EndGame, the giant's collapse and the bridge's
+120 0 0 0 0 WALKTO:@-96,1350,1729
+2 0 0 0
+0.3 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:20+EXPECT:soundstarted:endboom1:ge:1+EXPECT:soundstarted:ropebridge:ge:1
+5 0 0 0
+0.3 0 0 0 0 EXPECT:soundstarted:endboom3:ge:1+EXPECT:soundstarted:endboom4:ge:1
+12 0 0 0
+0.3 0 0 0 0 EXPECT:soundstarted:endboom1:ge:2+EXPECT:soundstarted:endboom2:ge:2+EXPECT:soundstarted:endboom4:ge:4
+0.3 0 0 0 0 EXPECT:soundstarted:endrumble:ge:1
+1 0 0 0

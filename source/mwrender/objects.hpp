@@ -135,6 +135,7 @@ struct DoorMesh
 {
 	int ref;
 	std::vector<CellBatch> batches;
+	u32 glow = ~0u;                    // enchanted: its shimmer's colour (0 none; ~0: not looked up yet)
 };
 
 struct Cell

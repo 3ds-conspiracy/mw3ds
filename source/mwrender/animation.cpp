@@ -90,7 +90,8 @@ static void readRotKeys(FILE* f, std::vector<RotKey>& out, u32 count)
 	}
 }
 
-static void readSkeletons(FILE* f, std::vector<Skeleton>& out, u32 count)
+// sounds: each skeleton's sound keys follow its groups (an 'MWS2' file: actors.py write_skeletons)
+static void readSkeletons(FILE* f, std::vector<Skeleton>& out, u32 count, bool sounds = false)
 {
 	out.resize(count);
 	for (auto& sk : out)
@@ -122,6 +123,17 @@ static void readSkeletons(FILE* f, std::vector<Skeleton>& out, u32 count)
 		rd(f, n);
 		sk.groups.resize(n);
 		fread(sk.groups.data(), sizeof(AnimGroup), n, f);
+		if (sounds)
+		{
+			rd(f, n);
+			sk.sounds.resize(n);
+			for (auto& k : sk.sounds)
+			{
+				rd(f, k.time);
+				fread(k.id, 32, 1, f);
+				k.id[31] = 0;
+			}
+		}
 		sk.numIdle = 0;
 		while (sk.numIdle < (int)sk.groups.size() && strncmp(sk.groups[sk.numIdle].name, "Idle", 4) == 0)
 			sk.numIdle++;
@@ -166,8 +178,8 @@ bool skeletonsLoadInto(const char* path, std::vector<Skeleton>& out)
 	u32 count = 0;
 	fread(magic, 4, 1, f);
 	rd(f, count);
-	if (memcmp(magic, "MWS1", 4) == 0)
-		readSkeletons(f, out, count);
+	if (memcmp(magic, "MWS1", 4) == 0 || memcmp(magic, "MWS2", 4) == 0)
+		readSkeletons(f, out, count, magic[3] == '2');
 	zclose(f);
 	return !out.empty();
 }
@@ -243,8 +255,8 @@ bool skeletonsLoad(const char* path)
 	u32 count = 0;
 	fread(magic, 4, 1, f);
 	rd(f, count);
-	if (memcmp(magic, "MWS1", 4) == 0)
-		readSkeletons(f, g_sharedSkeletons, count);
+	if (memcmp(magic, "MWS1", 4) == 0 || memcmp(magic, "MWS2", 4) == 0)
+		readSkeletons(f, g_sharedSkeletons, count, magic[3] == '2');
 	zclose(f);
 	logf("actors: %d shared skeletons", (int)g_sharedSkeletons.size());
 	return !g_sharedSkeletons.empty();
@@ -324,9 +336,11 @@ void actorSkinPalette(const Actor& a, const ActorMesh& m, float* out)
 // One mesh after its texture: render state, buffers, skinning, morphs
 static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 {
-		u8 more = 0;           // 1 morphs, 2 visibility keys follow; 4 a torch, 8 a shield; 16 a glow follows (actors.py write_mesh)
+		u8 more = 0;           // 1 morphs, 2 visibility keys follow; 4 a torch, 8 a shield; 16 a glow follows; 32 fade keys
+		                       // follow; 64 blended and writing depth (actors.py write_mesh)
 		rd(f, m.flags); rd(f, m.alphaRef); rd(f, m.kind); rd(f, more);
 		m.hasMorph = more & 1;
+		m.zwrite = (more & 64) != 0;
 		m.hand = (more & 4) ? 1 : (more & 8) ? 2 : 0;
 		rd(f, m.bone);
 		rd(f, m.numVerts);
@@ -399,6 +413,14 @@ static bool readMesh(FILE* f, ActorMesh& m, ActorSet& set, const u8* tint)
 				return false;
 			fread(m.vis.data(), 4, nv * 2, f);
 		}
+		if (more & 32)
+		{
+			u32 nf = 0;
+			rd(f, nf);
+			if (!tryResize(m.fade, nf * 2))
+				return false;
+			fread(m.fade.data(), 4, nf * 2, f);
+		}
 		if (more & 16)
 			rd(f, m.glow);           // enchanted: shimmers in this colour
 	return true;
@@ -420,12 +442,33 @@ bool actorMeshShown(const Actor& a, const ActorMesh& m)
 	// (the torch while it's held out, the shield while it isn't)
 	if ((m.hand == 1 && !a.torchOut) || (m.hand == 2 && (a.torchOut || a.bothHands)))
 		return false;
+	// (faded out altogether: Azura's ghost before she shows, the Heart's flash before it dies)
+	if (!m.fade.empty() && actorMeshFade(a, m) < 0.004f)
+		return false;
 	if (m.vis.empty())
 		return true;
 	float on = m.vis[1];
 	for (size_t k = 0; k + 1 < m.vis.size() && m.vis[k] <= a.time; k += 2)
 		on = m.vis[k + 1];
 	return on > 0.5f;
+}
+
+// Its material's NiAlphaController at the actor's animation time: linear between its keys, held before the first and
+// after the last (the controller's clamp)
+float actorMeshFade(const Actor& a, const ActorMesh& m)
+{
+	if (m.fade.size() < 2)
+		return 1.0f;
+	if (a.time <= m.fade[0])
+		return m.fade[1];
+	for (size_t k = 2; k + 1 < m.fade.size(); k += 2)
+		if (a.time < m.fade[k])
+		{
+			float t0 = m.fade[k - 2], t1 = m.fade[k];
+			float f = t1 > t0 ? (a.time - t0) / (t1 - t0) : 1.0f;
+			return m.fade[k - 1] + (m.fade[k + 1] - m.fade[k - 1]) * f;
+		}
+	return m.fade[m.fade.size() - 1];
 }
 
 // 'MWL1' library file: an NPC / creature record's meshes, textures by name (looked up in the cell's list)
@@ -651,7 +694,7 @@ int actorFindGroup(const Skeleton& sk, const char* name)
 
 bool actorPlay(ActorSet& set, Actor& a, const char* group, AnimMode mode)
 {
-	if (a.frozen)
+	if (a.frozen || a.scripted)
 		return true;
 
 	// Swimming: the water's versions of walking every way, standing, being hit and dying (when the skeleton has them;
@@ -835,6 +878,37 @@ static int pickIdle(const Skeleton& sk, const Actor& a)
 	return best;
 }
 
+// A group still playing (OpenMW's Animation::isPlaying): short of its Stop, or going round with loops left and no
+// script's group waiting
+bool actorGroupPlaying(const Skeleton& sk, const Actor& a)
+{
+	if (a.group < 0 || a.group >= (int)sk.groups.size())
+		return false;
+	return (a.mode == ANIM_LOOP && a.loopsLeft != 0 && a.queued < 0) || a.time < sk.groups[a.group].stop;
+}
+
+// The script's group that waited for the one before to end starts (OpenMW's updateAnimQueue: the next in the queue);
+// PlayGroup Idle's ends the scripted animations
+static void startQueued(ActorSet& set, Actor& a)
+{
+	const Skeleton& sk = actorSkeleton(set, a.skeleton);
+	int q = a.queued;
+	a.queued = -1;
+	a.scripted = false;
+	if (a.queuedMode == ANIM_IDLE || q < 0 || q >= (int)sk.groups.size())
+	{
+		actorPlay(set, a, "Idle", ANIM_IDLE);
+		return;
+	}
+	char name[sizeof(sk.groups[q].name) + 1] = {};
+	memcpy(name, sk.groups[q].name, sizeof(name) - 1);
+	if (q == a.group)
+		a.mode = ANIM_ONCE;                // (the same group again: from its start)
+	a.scripted = actorPlay(set, a, name, a.queuedMode);
+	if (a.scripted && a.queuedMode == ANIM_LOOP && a.queuedLoops >= 0)
+		a.loopsLeft = a.queuedLoops;
+}
+
 void actorAnimate(ActorSet& set, Actor& a, float dt)
 {
 	if (a.frozen)
@@ -862,8 +936,11 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 		a.time += dt * a.rate;
 		const AnimGroup& g = sk.groups[a.group];
 		// A looping group with its own Loop Stop before Stop goes round from there back to Loop Start while loops are
-		// left, then plays on to Stop (OpenMW's AnimState); equal loop keys hold that frame (the jump in the air)
-		if (a.mode == ANIM_LOOP && a.loopsLeft != 0 && g.loopStop < g.stop && g.loopStart <= g.loopStop && a.time >= g.loopStop)
+		// left, then plays on to Stop (OpenMW's AnimState); equal loop keys hold that frame (the jump in the air). A
+		// script's group waiting for it stops it going round (OpenMW's updateAnimQueue: setLoopingEnabled), and starts
+		// at its Stop
+		if (a.mode == ANIM_LOOP && a.loopsLeft != 0 && a.queued < 0 && g.loopStop < g.stop && g.loopStart <= g.loopStop
+			&& a.time >= g.loopStop)
 		{
 			if (a.loopsLeft > 0)
 				a.loopsLeft--;
@@ -871,7 +948,9 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 		}
 		else if (a.time >= g.stop)
 		{
-			if (a.mode == ANIM_LOOP && a.loopsLeft != 0)
+			if (a.queued >= 0)
+				startQueued(set, a);
+			else if (a.mode == ANIM_LOOP && a.loopsLeft != 0)
 			{
 				if (a.loopsLeft > 0)
 					a.loopsLeft--;
@@ -881,6 +960,7 @@ void actorAnimate(ActorSet& set, Actor& a, float dt)
 				a.time = g.stop;
 			else if (sk.numIdle > 0)
 			{
+				a.scripted = false;          // (a LoopGroup's loops run out)
 				a.mode = ANIM_IDLE;
 				a.group = pickIdle(sk, a);
 				a.time = sk.groups[a.group].start;

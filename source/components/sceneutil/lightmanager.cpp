@@ -69,7 +69,7 @@ void Session::updateLights()
 				lamps.push_back(L);
 			}
 		});
-		w.forLoadedActors([&](int i) {
+		auto lightAt = [&](int i) {
 			Actor* a = w.actorOf(i);
 			if (!a)
 				return;
@@ -92,7 +92,14 @@ void Session::updateLights()
 			}
 			for (int k = 0; k < 3; k++)
 				a->lampNow[k] = fminf(fmaxf(sum[k], 0.0f), 255.0f);
-		});
+		};
+		w.forLoadedActors(lightAt);
+		// (and a figure drawn as an actor with no stats, Azura's ghost: left at none, its lamps' share went from its
+		// light and she stood black before the cave's blue mushrooms)
+		for (LoadedCell* l : w.loaded)
+			for (const Actor& a : l->actors.actors)
+				if (a.ref >= 0 && a.ref < (int)w.refs.size() && w.refs[a.ref].actor < 0)
+					lightAt(a.ref);
 	}
 }
 

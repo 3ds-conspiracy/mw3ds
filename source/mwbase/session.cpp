@@ -209,6 +209,8 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	updateMouths(dt);
 
 	updateFootsteps(in, menu, dt);
+	updateAnimationSounds();
+	updateObjectSoundKeys();
 	if (w.werewolfJustChanged)
 	{
 		w.werewolfJustChanged = false;

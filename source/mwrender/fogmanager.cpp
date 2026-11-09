@@ -86,11 +86,27 @@ void rendererSetHorizon(float scale)
 	g_gpu.horizonScale = scale;
 }
 
+static void fogStage();
+
 void enableFog(const Cell& cell, float fogStart, float fogEnd)
 {
 	invalidateState();
 	setFogVec(fogStart, fogEnd);
 	g_gpu.fogColor = curveColor(g_gpu.daylight ? g_gpu.dayFog : 0xFF000000 | (cell.fog[2] << 16) | (cell.fog[1] << 8) | cell.fog[0]);    // 0xAABBGGRR
+	fogStage();
+}
+
+// The world's fog again (the frame's, as rendererDrawWorld set it) after something drawn without it among the world's
+// blended surfaces (rendererQueueBlendCall)
+void restoreFog()
+{
+	invalidateState();
+	setFogVec(g_gpu.lastFog[0], g_gpu.lastFog[1]);
+	fogStage();
+}
+
+static void fogStage()
+{
 	C3D_TexBind(1, &g_gpu.fogRamp);
 	C3D_TexEnv* env = C3D_GetTexEnv(kTevFog);
 	C3D_TexEnvInit(env);

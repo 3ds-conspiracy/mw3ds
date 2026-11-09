@@ -36,6 +36,7 @@ float gpuModelMs(u32 draws, u32 tris)
 }
 int g_sharedDrawn = 0;                       // shared models' placements the last view drew (tests)
 int g_worldDraws = 0;                        // draws the last view of the world made (the left eye's; tests)
+static u64 s_blendSince = 0;                  // (the blended pass's profile start, rendererDrawWorld to rendererDrawWorldBlended)
 int g_skippedDraws = 0;               // draws dropped because the GPU command buffer was nearly full
 // Blended draws of the last frame made after a nearer blended one (OpenMW sorts them back to front: a blended surface
 // behind drawn after one in front paints over it, as neither writes depth)
@@ -297,6 +298,20 @@ bool batchWritesDepth(u8 flags)
 	return !(flags & BATCH_BLEND) || (flags & BATCH_TEST);
 }
 
+// An actor's blended mesh that isn't tested writes depth too when its model leaves it on (ActorMesh::zwrite): Dagoth
+// Ur's mask, blended as all of him, let his head drawn after it show through it in dark patches. Not while the actor
+// is drawn see-through (Invisibility, Chameleon), as before
+static bool g_blendDepth = false;
+
+static void blendDepthWrite(bool on)
+{
+	if (on != g_blendDepth)
+	{
+		g_blendDepth = on;
+		g_gpu.last.valid = false;
+	}
+}
+
 static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float time)
 {
 	if (g_gpu.last.valid && g_gpu.last.tex == tex && g_gpu.last.flags == b.flags && g_gpu.last.alphaRef == b.alphaRef
@@ -315,7 +330,7 @@ static void setBatchState(C3D_Tex* tex, const CellBatch& b, DrawMode mode, float
 	else if (b.flags & BATCH_DECAL)
 		C3D_DepthTest(true, GPU_GEQUAL, GPU_WRITE_COLOR);
 	else
-		C3D_DepthTest(true, GPU_GREATER, batchWritesDepth(b.flags) ? GPU_WRITE_ALL : GPU_WRITE_COLOR);
+		C3D_DepthTest(true, GPU_GREATER, batchWritesDepth(b.flags) || g_blendDepth ? GPU_WRITE_ALL : GPU_WRITE_COLOR);
 	C3D_AlphaTest((b.flags & BATCH_TEST) != 0, GPU_GREATER, b.alphaRef);
 	C3D_CullFace((b.flags & BATCH_TWO_SIDED) ? GPU_CULL_NONE : GPU_CULL_BACK_CCW);
 
@@ -598,13 +613,28 @@ static int drawBlendQueue(float time)
 	{
 		g_blendOutOfOrder += bd.d2 > last * 1.0001f ? 1 : 0;
 		last = bd.d2;
+		if (bd.call)
+		{
+			// (as the extras after the queue are drawn: no fog, the world's tint, no texture offset; then the fog back)
+			bool fogWas = g_gpu.fogOn;
+			disableFog();
+			setUvOffset(0.0f, 0.0f);
+			setTint(worldTint());
+			setModelView(g_gpu.view);
+			bd.call(bd.ctx, bd.arg);
+			if (fogWas)
+				restoreFog();
+			continue;
+		}
 		if (bd.skinned)
 		{
 			// (a blended skinned mesh: drawn with shaders/skin.v.pica on its own, in its place in the order)
 			SkinDraw sd = { bd.cell, bd.skinned, bd.mesh, bd.mv, bd.alpha };
 			memcpy(sd.tint, bd.tint, sizeof(sd.tint));
 			g_gpu.skinQueue.push_back(sd);
+			blendDepthWrite(bd.mesh->zwrite && bd.skinned->alpha >= 0.999f);
 			draws += drawSkinQueue(time);
+			blendDepthWrite(false);
 			continue;
 		}
 		setModelView(bd.mv);
@@ -630,7 +660,11 @@ static int drawBlendQueue(float time)
 			bool flat = m.glow && !g_gpu.caustCount;
 			if (flat)
 				glowStage(m.glow);         // (enchanted armour and clothing: flat only without the caustic frames)
+			// (a mesh its own fade makes see-through writes depth as OpenMW's does; one of an actor drawn see-through
+			// doesn't, as a skinned one: a dwarven ghost's Chameleon body cut away the glow behind it)
+			blendDepthWrite(m.zwrite && bd.actorAlpha >= 0.999f);
 			drawBatch(*bd.cell, b, DRAW_WORLD, time);
+			blendDepthWrite(false);
 			if (ghost)
 				rendererAlphaScale(1.0f);
 			if (flat)
@@ -1267,6 +1301,16 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 			setModelView(mv);
 			draws += drawBatches(l->cell, d.batches, 0, nullptr, time);
 			draws += drawBatches(l->cell, d.batches, 2, nullptr, time);
+			// An enchanted one shimmers as one lying in the cell's batches does (the Ring of Azura, turning where it
+			// floats: its white glimmer. It was a dark speck in the cave)
+			if (d.glow == ~0u)
+				d.glow = r.obj && !r.obj->ench.empty() ? w.game.enchantGlow(r.idLower) : 0;
+			if (d.glow && g_gpu.caustCount)
+				for (const CellBatch& b : d.batches)
+				{
+					drawShimmer(b, d.glow);
+					draws++;
+				}
 		}
 
 	// Animated actors: skinned meshes are already in world space, rigid parts ride their bone.
@@ -1323,9 +1367,12 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						continue;
 					if (far && m.numIndices < kActorDetailTris * 3)
 						continue;
-					if (m.gpuSkin && ((m.flags & BATCH_BLEND) || ghost))
+					// (a mesh its animation fades: see-through by that much, in the back-to-front queue)
+					const float meshAlpha = m.fade.empty() ? a.alpha : a.alpha * actorMeshFade(a, m);
+					const bool see = ghost || meshAlpha < 0.999f;
+					if (m.gpuSkin && ((m.flags & BATCH_BLEND) || see))
 					{
-						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a, a.alpha };
+						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, &a, meshAlpha };
 						memcpy(bd.tint, tint, sizeof(bd.tint));
 						g_gpu.blendQueue.push_back(bd);
 						continue;
@@ -1337,9 +1384,10 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						g_gpu.skinQueue.push_back(sd);
 						continue;
 					}
-					if ((m.flags & BATCH_BLEND) || ghost)
+					if ((m.flags & BATCH_BLEND) || see)
 					{
-						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, nullptr, a.alpha };
+						BlendDraw bd = { d[0] * d[0] + d[1] * d[1] + d[2] * d[2], &l->cell, nullptr, &m, placeMv, 0, nullptr, meshAlpha };
+						bd.actorAlpha = a.alpha;
 						memcpy(bd.tint, tint, sizeof(bd.tint));
 						if (m.bone >= 0 && m.kind != ACTOR_SKINNED)
 						{
@@ -1426,13 +1474,32 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 				g_gpu.blendQueue.push_back(bd);
 			}
 	}
-	draws += drawBlendQueue(time);
-	drawProfAdd(DRAWP_BLEND, drawSince);
-	setModelView(view);
+	// (the queue itself waits for rendererDrawWorldBlended: the opaque extras go in first, so a blended mesh behind
+	// one isn't painted over, and one in front of it still covers it)
+	s_blendSince = drawSince;
+	if (!secondEye)
+		g_worldDraws = draws;
+	return draws;
+}
+
+void rendererQueueBlendCall(float d2, void (*draw)(void* ctx, int arg), void* ctx, int arg)
+{
+	BlendDraw bd = { d2, nullptr, nullptr, nullptr, g_gpu.view, 0 };
+	bd.call = draw;
+	bd.ctx = ctx;
+	bd.arg = arg;
+	g_gpu.blendQueue.push_back(bd);
+}
+
+int rendererDrawWorldBlended(bool secondEye)
+{
+	int draws = drawBlendQueue(g_gpu.time);
+	drawProfAdd(DRAWP_BLEND, s_blendSince);
+	setModelView(g_gpu.view);
 	disableFog();
 	setUvOffset(0.0f, 0.0f);
 	if (!secondEye)
-		g_worldDraws = draws;
+		g_worldDraws += draws;
 	return draws;
 }
 

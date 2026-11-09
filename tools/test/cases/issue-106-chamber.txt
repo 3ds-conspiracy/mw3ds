@@ -1,0 +1,71 @@
+# start: Seyda Neen
+# Issue 106, the rest of Akulakhan's Chamber against OpenMW:
+# - Dagoth Ur's gold mask hides his head. All his shapes are blended with no NiZBufferProperty, which OpenMW leaves
+#   writing depth; here they wrote none, and his dark head, drawn after the mask, showed through it in patches
+#   (refzwrite: his blended meshes that write depth; shot 0 close up).
+# - Akulakhan's steam streams while it stands at rest: the plume over its head and the four by the Heart. OpenMW runs an
+#   animated object's emitters on its animation's clock, held at its idle, and lets the particles live in real time;
+#   here they were held still with the clock and thinned with the collapse's bursts to a few dots (restfx: its rest
+#   piece playing; shot 1 looking up at its head).
+# - Dagoth Ur wears the shield his script (DagothUrCreature2) gives him as an ability: fire, then frost after the first
+#   Keening blow, lightning after the second, lightning and a plain shield after the third (its own RemoveSpell takes
+#   the fire one there, not the lightning), none after the fourth. OpenMW plays a continuous effect's hit visual for
+#   as long as it lasts, an ability's too (vfxpiece: the shields' VFX_*Shield / VFX_ShieldHit following him).
+# - The Heart cries out as each blow starts its group and as it dies: its animation's Sound keys, Hearthit1 .. 4 and
+#   Heartdead (soundstarted).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+BOOST:100+EFFECT:80:5000:900+GOD
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:10
+0.3 0 0 0 0 GIVE:wraithguard
+0.3 0 0 0 0 GIVE:keening
+0.3 0 0 0 0 GIVE:sunder
+0.3 0 0 0 0 EQUIP:wraithguard
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+2 0 0 0
+120 0 0 0 0 DOORTO:Akulakhan's_Chamber
+10 0 0 0 0 UNTIL:cell:Akulakhan's_Chamber
+0.3 0 0 0 0 EXPECT:cell:Akulakhan's_Chamber
+# shot 0: his face close up, from the front and a little to his right
+0.1 0 0 0 0 TPIN:-61:1540:1880:0+HUD:off+HALT:on
+0.3 0 0 0 0 CAM:-136:1900:1870:45:0+POV:first+VMPOSE:off+POSE:dagoth_ur_2:idle:0.300:180
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refzwrite:dagoth_ur_2:ge:1
+# shot 1: Akulakhan's head from the door, its plume going up
+0.1 0 0 0 0 TPIN:-96:880:1820:0+CAM:-96:1180:1820:0:25+POV:first+VMPOSE:off
+3 0 0 0
+0.1 0 0 0 0 SHOT
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:restfx:in_akulakhan00:eq:1
+0.3 0 0 0 0 POSE:dagoth_ur_2:off+CAM:off+HUD:on+HALT:off
+# his fire shield on him (his script gives it once he has stood a moment)
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refspell:dagoth_ur_2,dagoth_ur_shield_01:eq:1+EXPECT:vfxpiece:fireshield:eq:1
+# Sunder, then Keening five times
+0.3 0 0 0 0 EQUIP:sunder
+60 0 0 0 0 STRIKE:heart_akulakhan:1
+1 0 0 0
+0.3 0 0 0 0 EQUIP:keening
+1.5 0 0 0
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle2+EXPECT:soundstarted:hearthit1:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:frostshield:eq:1+EXPECT:vfxpiece:fireshield:eq:0
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle3+EXPECT:soundstarted:hearthit2:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:lightningshield:eq:1+EXPECT:vfxpiece:frostshield:eq:0
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle4+EXPECT:soundstarted:hearthit3:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:lightningshield:eq:1+EXPECT:vfxpiece:shieldhit:eq:1
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle5+EXPECT:soundstarted:hearthit4:eq:1
+0.3 0 0 0 0 EXPECT:vfxpiece:shield:eq:0
+# the fifth: Death1, Heartdead with it
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+6 0 0 0
+0.3 0 0 0 0 EXPECT:global:heartdestroyed:eq:1+EXPECT:refgroup:heart_akulakhan:Death1
+0.3 0 0 0 0 EXPECT:soundstarted:heartdead:eq:1+EXPECT:soundstarted:hearthit1:eq:1

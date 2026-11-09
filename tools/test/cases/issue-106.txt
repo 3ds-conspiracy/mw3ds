@@ -1,0 +1,90 @@
+# start: Seyda Neen
+# Issue 106: Akulakhan's Chamber as the player meets it.
+# - From the door Dagoth Ur stands in front of Akulakhan. His body and mask are blended, so they write no depth, and
+#   Akulakhan (a world piece) was drawn after them and painted over him.
+# - The Heart's fire shield shows around it. It was painted over by Akulakhan the same way.
+# - The rope bridge's planks run down to the Heart along its walkway. The piece was turned by its yaw only, so it
+#   rose the other way, and it kept its model's root offset, so it stood 29 over the walkway (a placed object's root
+#   doesn't count: spec/world-rules.md section 9; the data's piece comes from tools/convert/particles.py).
+# - Struck with Keening, the Heart's cries are written as they are said. "Heart of Lorkhan:" no longer goes before
+#   them (OpenMW's Say writes the text alone).
+# - Dagoth Ur's long greeting ends above the health bar of whoever was hit last, its last line no longer under it.
+# Shots 0-3 are read back by box (shottopbox). Their boxes were taken from the fixed and the unfixed build's shots.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+BOOST:100+EFFECT:80:5000:900+GOD
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:10
+0.3 0 0 0 0 GIVE:wraithguard
+0.3 0 0 0 0 GIVE:keening
+0.3 0 0 0 0 GIVE:sunder
+0.3 0 0 0 0 EQUIP:wraithguard
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+2 0 0 0
+120 0 0 0 0 DOORTO:Akulakhan's_Chamber
+10 0 0 0 0 UNTIL:cell:Akulakhan's_Chamber
+0.3 0 0 0 0 EXPECT:cell:Akulakhan's_Chamber
+# shot 0: from the door, Dagoth Ur against Akulakhan
+0.1 0 0 0 0 TPIN:-96:1280:1729:0+CAM:-96:1180:1820:0:-12+HUD:off+HALT:on
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.5 0 0 0
+# shot 1: the Heart close up, its shield around it
+0.1 0 0 0 0 TPIN:-12:3500:-200:0+CAM:-12:3620:-130:0:-8
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.5 0 0 0
+# shot 2: from the bridge's far end, looking back along it
+0.1 0 0 0 0 CAM:-12:3500:-140:180:4
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.5 0 0 0
+# shot 3: the bridge from its side, the eye level with where the player stands on it there (OpenMW: -143)
+0.1 0 0 0 0 CAM:300:2000:-143:270:0
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.5 0 0 0
+# Dagoth Ur's body where Akulakhan's dark chest was (red: 11 painted over, 48 drawn)
+0.3 0 0 0 0 EXPECT:shottopbox:0,202,60,14,40,r:ge:30
+# the shield's glow left of the Heart, over the floor (red: 74 without it, 98 with it)
+0.3 0 0 0 0 EXPECT:shottopbox:1,165,130,12,40,r:ge:86
+# the planks under the eye, going down ahead (brightness: 15 when they rose overhead, 58 under the eye)
+0.3 0 0 0 0 EXPECT:shottopbox:2,150,190,100,50,l:ge:35
+# the planks' lit edge on the rows OpenMW draws it (brightness: 3 with the model's root offset, 30 without)
+0.3 0 0 0 0 EXPECT:shottopbox:3,190,111,30,9,l:ge:15
+# His greeting again (six lines), with his health bar up: struck, the box ends above the bar (its last line was under it)
+0.3 0 0 0 0 CAM:off+HUD:on+HALT:off
+0.3 0 0 0 0 EQUIP:keening
+0.3 0 0 0 0 SETLOCAL:dagoth_ur_2:state:0
+60 0 0 0 0 STRIKE:dagoth_ur_2:1
+1.2 0 0 0
+0.3 0 0 0 0 EXPECT:subtitlehas:for_my_mercy:eq:1+EXPECT:subtitleclear:eq:1
+0.1 0 0 0 0 SHOT
+0.5 0 0 0
+# Sunder, then Keening: the Heart's first cry
+0.3 0 0 0 0 EQUIP:sunder
+60 0 0 0 0 STRIKE:heart_akulakhan:1
+1 0 0 0
+0.3 0 0 0 0 EQUIP:keening
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:subtitle:eq:1
+0.3 0 0 0 0 EXPECT:subtitlehas:What_are_you_doing:eq:1
+0.3 0 0 0 0 EXPECT:subtitlehas:Heart:eq:0
+0.3 0 0 0 0 SHOT
+# Each Keening blow's group stays: the Heart has no KnockDown, so a blow that would knock it down lasts no longer than
+# a frame (OpenMW's refreshHitRecoilAnims) and never sends it back to its plain Idle over the script's PlayGroup
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle2
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle3
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle4
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+3.5 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:heart_akulakhan:Idle5
+# the fifth: Death1, held (the Heart gone from view)
+60 0 0 0 0 STRIKE:heart_akulakhan:0.3
+6 0 0 0
+0.3 0 0 0 0 EXPECT:global:heartdestroyed:eq:1+EXPECT:refgroup:heart_akulakhan:Death1
+0.3 0 0 0 0 SHOT

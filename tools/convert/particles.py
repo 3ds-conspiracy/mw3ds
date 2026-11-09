@@ -664,12 +664,26 @@ def peak_live(record_sets, duration, step=0.05):
     return best
 
 
-def make_piece(static_id, db, arch, fp, ts):
+REST_CYCLE = 4.0         # seconds a rest piece's records go round in (rest_sprays)
+
+
+def rest_sprays(nif, world):
+    """The sprays of an object held at rest by its groups (world_entry) that OpenMW keeps emitting there: an animated
+    object's particle controllers run on its animation's clock, held at its idle until a script plays a group, and
+    NifOsg's ParticleSystemController only switches the emitter on while that time is within emit start .. stop; the
+    particles themselves go on living in real time. Akulakhan's steam: the plume over its head and the four by the
+    Heart stream at rest, its collapse's bursts wait for its Death1."""
+    t = world["groups"].get("idle", [0.0, 0.0])[0] if world and world["groups"] else 0.0
+    return [sp for sp in sprays(nif) if sp["ctrl"]["emit_start"] <= t < sp["ctrl"]["emit_stop"]]
+
+
+def make_piece(static_id, db, arch, fp, ts, rest=False):
     """A spell visual or world object made drawable the best way spray by spray (internal/PFX-PROCESS.md): sprays whose
     emitter stands still for the effect's life as flipbooks (a quad per emitter), sprays whose emitter moves as particle
     records, within the sprite budget; its other shapes kept (a world object's ambient shapes stay in its cell). fp: the
-    FirstPerson its shapes come from, ts: the TextureSet its textures are asked of. Returns {"base": piece name,
-    "meshes", "duration", "report": [lines], "world": its world_entry or None}."""
+    FirstPerson its shapes come from, ts: the TextureSet its textures are asked of. rest: only its rest_sprays, as
+    records going round every REST_CYCLE on the world's clock (its "rest" piece, played while it stands at rest), no
+    shapes. Returns {"base": piece name, "meshes", "duration", "report": [lines], "world": its world_entry or None}."""
     global TEXTURES
     from firstperson import vfx_tracks, VFX_FPS
     from nif import Nif
@@ -677,10 +691,21 @@ def make_piece(static_id, db, arch, fp, ts):
     rec = db["objects"][static_id.lower()]
     model = rec.zstr("MODL")
     nif = Nif(arch.read("meshes/" + model))
+    if not is_spell_visual(static_id):
+        # (a world object is placed: its model's root transform doesn't count, as in its cell. The bridge to the Heart
+        # of Lorkhan stood 29 over its walkway with its root's offset)
+        drop_root(nif)
+        drop_root(fp.nif("meshes\\" + model))
     stops = [b["stop_time"] for b in nif.blocks if "stop_time" in b]
     duration = float(max(stops)) if stops else 1.0
     tracks, _, _ = vfx_tracks(nif)
     ss = sprays(nif)
+    if rest:
+        played = static_id.lower() in animated_collision_objects(db, arch)
+        ss = rest_sprays(nif, world_entry(nif, "", played, static_id.lower() in scripted_group_objects(db)))
+        if not ss:
+            return None
+        duration = REST_CYCLE
     def wanders(sp):
         tr = tracks.get(sp["ctrl"]["emitter"])
         return bool(tr) and max(np.linalg.norm(m[:3, 3] - tr[0][:3, 3]) for m in tr) > 1.0
@@ -702,16 +727,18 @@ def make_piece(static_id, db, arch, fp, ts):
     # side, sharp however far they spread; a flipbook frame stretched over a long fall shrinks them to a pixel)
     if not bolt and still and peak_live([emit_records(sp, duration) for sp in ss], duration) <= BUDGET:
         moving, still = ss, []
-    if os.environ.get("PFX_FORCE") == "records" or METHOD.get(static_id.lower()) == "records":
+    if rest or os.environ.get("PFX_FORCE") == "records" or METHOD.get(static_id.lower()) == "records":
         # (every spray as records, thinned: PFX_FORCE to try it, METHOD where the side by side chose it)
         moving, still = ss, []
-    if os.environ.get("PFX_FORCE") == "flip" or METHOD.get(static_id.lower()) == "flip":
+    if not rest and (os.environ.get("PFX_FORCE") == "flip" or METHOD.get(static_id.lower()) == "flip"):
         # (every spray as a flipbook, moving emitters simulated on their path: trails too dense to thin, the
         # Strong platform's swirls of 480 particles each)
         moving, still = [], list(ss)
     played = static_id.lower() in animated_collision_objects(db, arch)
     scripted = static_id.lower() in scripted_group_objects(db)
     world = None if is_spell_visual(static_id) else world_entry(nif, "", played, scripted)
+    if rest:
+        world = {"piece": "", "loop": True, "groups": {}}
     if world and world["groups"]:
         from firstperson import piece_name
         fp.light = room_light(db, static_id)
@@ -721,7 +748,7 @@ def make_piece(static_id, db, arch, fp, ts):
     shapes = [m for m in fp.pieces[name] if not m.get("particles")] if name else []
     if world and not world["groups"]:
         shapes = []            # (an ambient one's shapes stay in its cell, baked; only its sprays are the piece's)
-    base = static_id.lower().replace("vfx_", "pfx_") + "_auto"
+    base = static_id.lower().replace("vfx_", "pfx_") + ("_rest" if rest else "_auto")
     meshes = list(shapes)
     report = [f"{static_id} ({model}): {duration:.2f} s, {len(shapes)} shapes kept"]
     if still:
@@ -765,7 +792,10 @@ def make_piece(static_id, db, arch, fp, ts):
         meshes += spr
         report.append(f"  records: {len(moving)} sprays moving or flat -> {n} particles ({n * 36 // 1024 + 1} KB), peak "
                       f"{peak} live" + (f", thinned 1 in {k} -> {peak2}" if k > 1 else ""))
-    if world is not None:
+    if world is not None and rest:
+        world = {"piece": base, "loop": True, "groups": {}}
+        report.append(f"  at rest: {base}, going round every {duration:g} s")
+    elif world is not None:
         world = world_entry(nif, base, played, scripted)
         report.append(f"  world object: {world}")
     return {"base": base, "meshes": meshes, "duration": duration, "report": report, "world": world}
@@ -779,21 +809,38 @@ def auto(static_id, out_dir, dry=False):
     from mwfiles import Archives, load_db
     arch, db = Archives(), load_db()
     ts = textures.TextureSet(arch)
-    r = make_piece(static_id, db, arch, FirstPerson(db, arch, ts, Path(out_dir) / "fp"), ts)
+    fp = FirstPerson(db, arch, ts, Path(out_dir) / "fp")
+    r = make_piece(static_id, db, arch, fp, ts)
+    rr = with_rest(static_id, db, arch, fp, ts, r)
     if not dry:
-        write_piece(Path(out_dir) / "fp" / f"{r['base']}.fpm", r["meshes"])
-        added = ensure_textures(arch, ts, r["meshes"])
-        if added:
-            r["report"].append(f"  {added} textures encoded")
-        edit_firstperson(out_dir, lambda fpj: register(fpj, static_id, r))
-    print(chr(10).join(r["report"]))
+        for p in [r] + ([rr] if rr else []):
+            write_piece(Path(out_dir) / "fp" / f"{p['base']}.fpm", p["meshes"])
+            added = ensure_textures(arch, ts, p["meshes"])
+            if added:
+                p["report"].append(f"  {added} textures encoded")
+        edit_firstperson(out_dir, lambda fpj: register(fpj, static_id, r, rr))
+    print(chr(10).join(r["report"] + (rr["report"] if rr else [])))
 
 
-def register(fpj, static_id, r):
-    """A piece listed in game firstperson: as the static's own visual, its length, and a world object's entry."""
+def with_rest(static_id, db, arch, fp, ts, r):
+    """The rest piece (make_piece rest=True) of a world object held at rest by its groups, when it has sprays that go
+    on there; named in its world entry's "rest"."""
+    if not r["world"] or not r["world"]["groups"]:
+        return None
+    rr = make_piece(static_id, db, arch, fp, ts, rest=True)
+    if rr:
+        r["world"]["rest"] = rr["base"]
+    return rr
+
+
+def register(fpj, static_id, r, rest=None):
+    """A piece listed in game firstperson: as the static's own visual, its length, and a world object's entry (and
+    the length of its rest piece, with_rest)."""
     sid = static_id.lower()
     fpj["vfx"][sid] = r["base"]
     fpj.setdefault("vfxlen", {})[r["base"]] = r["duration"]
+    if rest:
+        fpj["vfxlen"][rest["base"]] = rest["duration"]
     if r["world"] is not None:
         fpj.setdefault("worldfx", {})[sid] = r["world"]
 
@@ -829,8 +876,11 @@ def build_pieces(db, arch, ts, fp, fpj, log=print):
             r = make_piece(sid, db, arch, fp, ts)
             if sid in anim:
                 shared[model] = r
+        rr = None if sid in anim else with_rest(sid, db, arch, fp, ts, r)
         fp.pieces[r["base"]] = r["meshes"]
-        register(fpj, sid, r)
+        if rr:
+            fp.pieces[rr["base"]] = rr["meshes"]
+        register(fpj, sid, r, rr)
         if old and old != r["base"]:
             replaced.add(old)
     still_used = set(fpj["vfx"].values())
@@ -1057,6 +1107,18 @@ def is_spell_visual(static_id):
 _SPELL_VFX = None
 
 
+def drop_root(nif):
+    """A placed object's model as the game places it: its root node's own rotation, translation and scale dropped (the
+    reference's stand in for them: spec/world-rules.md section 9, convert_cell.load_nif); a root that is the shape itself
+    keeps its own."""
+    for r in nif.roots if nif is not None else []:
+        b = nif.get(r)
+        if b is not None and "rotation" in b and b["type"] not in ("NiTriShape", "NiTriStrips"):
+            b["rotation"] = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+            b["translation"] = [0.0, 0.0, 0.0]
+            b["scale"] = 1.0
+
+
 def world_entry(nif, base, played=False, scripted=False):
     """How a world object's piece plays where it is placed: its animation groups from the text keys ("Death1":
     [start, stop]: an activator a script plays, held at rest until then), else over and over when its controllers
@@ -1084,6 +1146,13 @@ def world_entry(nif, base, played=False, scripted=False):
     out = {"piece": base, "loop": loop, "groups": groups}
     if away or back:
         out["away"], out["back"] = away, back
+    # Its "Sound:" keys in each group, [time, sound id] (OpenMW's CharacterController::handleTextKey plays them on any
+    # animated object as its group passes them): the giant's collapse booms in its Death1, the bridge's break in its own
+    from actors import sound_keys
+    sounds = {g: [[round(t, 3), s.lower()] for t, s in sound_keys(nif, [(a, b)])] for g, (a, b) in groups.items()}
+    sounds = {g: k for g, k in sounds.items() if k}
+    if sounds:
+        out["sounds"] = sounds
     return out
 
 

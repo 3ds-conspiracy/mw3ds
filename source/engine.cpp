@@ -764,6 +764,10 @@ bool Engine::frame()
 		if (loaded && !replayed)
 		{
 			int worldDraws = rendererDrawWorld(session->w, cam, stereoOn ? (eye ? shift : -shift) : 0.0f, eye == 1, fogScale);
+			// (the opaque extras before the world's blended surfaces: a world piece drawn after them painted over them)
+			if (poseIndex >= autocam.size())
+				session->drawOpaqueExtras(cam.pos, eye == 1);
+			worldDraws += rendererDrawWorldBlended(eye == 1);
 			// Both eyes draw the same things (the second reuses the first's lists): a count that differs is
 			// something in one eye only
 			if (eye == 0)

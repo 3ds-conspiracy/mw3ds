@@ -1,0 +1,36 @@
+# start: Seyda Neen
+# Issue 106, the ending: once the movie is over, AzuraEnd plays "PlayGroup, Idle, 0" while her Idle2 still loops. Mode 0
+# waits for the group playing (OpenMW's CharacterController::playGroup queues it, and updateAnimQueue stops the loop):
+# Idle2 plays on past its Loop Stop (8.0 s on her timeline) to its Stop (12.667), her parting gesture, and only then
+# Idle. She went to Idle at once
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:10
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+3 0 0 0
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:20
+2 0 0 0
+0.3 0 0 0 0 TPIN:4037:4800:14215:0
+1 0 0 0 0 HUD:off
+# fading in, then round her loop (5.333 to 8.0)
+6 0 0 0
+0.3 0 0 0 0 EXPECT:refgroup:azura_spirit:Idle2
+0.3 0 0 0 0 HUD:on
+60 0 0 0 0 WALKTO:azura_spirit
+30 0 0 0 0 UNTIL:journal:C3_DestroyDagoth:ge:50
+# (the movie starts the frame the ring comes out: the world waits while it plays; A skips it)
+1 0 0 0 0 EXPECT:movieplaying:eq:1
+0.3 0 0 0 0 A
+0.5 0 0 0 0 EXPECT:movieplaying:eq:0
+# the movie is over and the ring is out: she is still in Idle2, in its loop or past it
+0.3 0 0 0 0 EXPECT:refgroup:azura_spirit:Idle2+EXPECT:refanimtime:azura_spirit:gt:5.3
+0.3 0 0 0 0 HUD:off
+# 3 s on: past the Loop Stop, before the Stop (the gesture)
+2.4 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refgroup:azura_spirit:Idle2+EXPECT:refanimtime:azura_spirit:gt:8.05+EXPECT:refanimtime:azura_spirit:lt:12.667
+# 7.5 s on: Idle2 is over, she idles (Idle: 0 to 2.667) until AzuraEnd takes her away at 9 s
+4.2 0 0 0
+0.3 0 0 0 0 EXPECT:refenabled:azura_spirit:eq:1+EXPECT:refanimtime:azura_spirit:lt:2.7
+3 0 0 0
+0.3 0 0 0 0 EXPECT:refenabled:azura_spirit:eq:0+EXPECT:refenabled:ring_of_azura:eq:1

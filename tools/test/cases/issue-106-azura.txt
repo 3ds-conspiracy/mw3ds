@@ -1,0 +1,25 @@
+# start: Seyda Neen
+# Issue 106, the ending: Azura's spirit fades in before the Facility Cavern's door once the Heart is gone (her model is
+# skinned and its material's alpha is set by her animation: AzuraEnd's PlayGroup Idle2 brings her up from nothing),
+# and the Ring of Azura is there when she has spoken
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:10
+0.3 0 0 0 0 GOTO:Dagoth_Ur,_Facility_Cavern
+3 0 0 0
+# (AzuraEnd keeps her out until the Heart is destroyed: journal 20)
+0.3 0 0 0 0 EXPECT:refenabled:azura_spirit:eq:0
+0.3 0 0 0 0 JOURNAL:C3_DestroyDagoth:20
+2 0 0 0
+0.3 0 0 0 0 TPIN:4037:4800:14215:0
+1 0 0 0 0 HUD:off
+0.3 0 0 0 0 EXPECT:refenabled:azura_spirit:eq:1+EXPECT:refgroup:azura_spirit:Idle2
+# fading in: about 2.7 s on from nothing to whole by 5.3 s, and staying (its loop)
+6 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refgroup:azura_spirit:Idle2+EXPECT:shottopbox:0,193,95,14,50,l:ge:33
+# close: she speaks (the ending's movie), then the ring is placed and she goes
+0.3 0 0 0 0 HUD:on
+60 0 0 0 0 WALKTO:azura_spirit
+15 0 0 0
+0.3 0 0 0 0 EXPECT:journal:C3_DestroyDagoth:ge:50+EXPECT:refenabled:ring_of_azura:eq:1

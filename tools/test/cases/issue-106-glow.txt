@@ -1,0 +1,40 @@
+# start: Seyda Neen
+# Issue 106 follow-up: spell glows around and behind see-through actors. Dagoth Ur's mask fix let actors' blended
+# meshes that OpenMW leaves writing depth write it here too, except while the actor is drawn see-through (Invisibility,
+# Chameleon); but a mesh its own animation fades still wrote it then. A dwarven ghost (Chameleon 60) cut away the glow of
+# its own cast behind its body, a dark band (shot 1, from its back: about 80, whole 180). Now such an actor's meshes write
+# no depth, as its skinned ones didn't already.
+# And spell visuals and sprays were drawn after every blended surface; OpenMW sorts them in with the rest of its
+# transparent bin. Now they go into the blended queue (rendererQueueBlendCall): one of an actor's right after that
+# actor's own meshes, one standing on its own by the middle of what it draws (shot 2).
+# The ghost casts Fireball (NPCCAST: its cast visual on it), the world held while it glows: shot 0 from its front.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+HOUR:12+SETWEATHER:clear
+0.5 0 0 0 0 GOTO:Balmora
+1 0 0 0
+0.3 0 0 0 0 TPIN:-21571:-16810:498:90
+1 0 0 0 0 PLACEAT:dwarven%ghost:-21161:-16810:498
+0.5 0 0 0
+0.3 0 0 0 0 SETPOS:dwarven%ghost:-21161:-16810:498+HUD:off+POV:first+VMPOSE:off+POSE:dwarven%ghost:idle:0.300:270+CAM:-21371:-16810:598:90:0
+0.5 0 0 0 0 NPCCAST:dwarven%ghost:fireball
+0.6 0 0 0 0 HALT:on
+0.3 0 0 0 0 EXPECT:vfxpiece:destructcast:eq:1
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.3 0 0 0
+0.3 0 0 0 0 POSE:dwarven%ghost:idle:0.300:90
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.3 0 0 0
+# shot 2: a glow standing on its own just behind the ghost, seen through its body: drawn before the ghost, as it is
+# farther, so the body dims it (about 190; cut away, 75; drawn over the ghost as if in front of it, 215)
+0.3 0 0 0 0 HALT:off+POSE:dwarven%ghost:idle:0.300:270
+0.3 0 0 0 0 VFX:VFX_DestructCast:-21101:-16810:483:14
+0.6 0 0 0 0 HALT:on
+1 0 0 0
+0.1 0 0 0 0 SHOT
+0.3 0 0 0
+0.3 0 0 0 0 EXPECT:drawncopies:dwarven%ghost:eq:1
+0.3 0 0 0 0 EXPECT:shottopbox:0,150,110,90,50,l:ge:110+EXPECT:shottopbox:1,205,150,20,40,l:ge:140+EXPECT:shottopbox:2,185,140,24,24,l:ge:140+EXPECT:shottopbox:2,185,140,24,24,l:le:205
+0.3 0 0 0 0 CAM:off+HUD:on+HALT:off
+1 0 0 0

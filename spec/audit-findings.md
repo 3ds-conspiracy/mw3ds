@@ -32,7 +32,7 @@ Line numbers are as reported; OpenMW paths under `build/openmw-full/apps/openmw/
 | I21 | Say | subtitles always shown (OpenMW: only with the Subtitles setting, off by default) | medium | unverified |
 | I22 | Say / SayDone | missing voice file = speaking 1 s + 0.06 s a character (OpenMW: done at once) | low | unverified |
 | I23 | StreamMusic | does nothing | high | unverified |
-| I24 | PlayGroup | actors only (not the player, doors, objects); mode ignored | medium | unverified |
+| I24 | PlayGroup | actors only (not the player, doors, objects). Count follows OpenMW since `issue-106`: a looping group (OpenMW's `isLoopingAnimation` list: idles, walks ...) loops for ever, any other holds its last frame, `PlayGroup Idle` ends it; no other group starts over a script's. Mode (PlayGroup and LoopGroup) followed since `issue-106-azura-end`: 0 waits for a script's group still playing, 1 at once, 2 from Loop Start (scripting.md); activators still play at once | medium | fixed (mode; actors) |
 | I25 | LoopGroup | loop count ignored: loops forever | high | unverified |
 
 ## Script: placement and controls (`transformationextensions.cpp`, `controlextensions.cpp`)

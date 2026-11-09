@@ -238,8 +238,9 @@ file does not count: the reference's stands in for it (rotation and translation 
 reference height +32, its top without the offset (+64 with it); `ex_dae_ruin_01` has a root offset of -1018 and is
 placed with `ex_dae_ruin_entry.max`, `ex_dae_ruin_stair01_short` and the pillars at fixed distances (stairs -258,
 pillars +672) that fit only without it (the entry hall floor, the door and the stairs then meet at the land's height).
-The converter (`convert_cell.py load_nif`, `distant.py`) therefore zeroes the root's rotation, translation and scale
-for placed objects. Models loaded for actors, worn armor and first person are not placed objects and keep theirs.
+The converter (`convert_cell.py load_nif`, `distant.py`, and `particles.py drop_root` for the objects drawn as their
+own animated piece, such as the rope bridge to the Heart of Lorkhan) therefore zeroes the root's rotation, translation
+and scale for placed objects. The piece is turned by the reference's three rotations, as a placed static is. Models loaded for actors, worn armor and first person are not placed objects and keep theirs.
 
 ## 10. Cells at a border, actors over an unloaded cell, followers off a cliff
 
@@ -254,3 +255,67 @@ for placed objects. Models loaded for actors, worn armor and first person are no
 - A follower that cannot walk straight at the player (the player stands below the cliff the strider platform ends
   in) goes by the path grid even when the route ends 600 units or more from the player, as long as its last point
   sees the player. OpenMW paths over its navigation mesh to the player wherever they are.
+
+## 11. An animated object's particles at rest
+
+An activator whose model has animation groups (Akulakhan, the bridge to the Heart) runs its particle controllers on
+its animation's clock. Until a script plays a group the clock stands at its Idle (Akulakhan's: 0). OpenMW's
+ParticleSystemController only switches an emitter on while that time is within its emit start .. stop, and the
+particles then live in real time (osgParticle): an emitter whose window holds the idle time streams for as long as
+the object stands at rest. Akulakhan's plume over its head and the four sprays by the Heart do (their windows run
+from before 0 to the end); its collapse's thirteen bursts (10 to 16 s) wait for its Death1. The 3DS ran all its
+sprays on the held clock, so at rest they stood still, and thinned them 1 in 20 with the bursts, to a few dots.
+Now the sprays that emit at the idle time are a piece of their own (`particles.py rest_sprays`, `<id>_rest`, a
+4 s loop on the world's clock: the world entry's "rest"), played while no group has been, dropped once one is
+(`effectmanager.cpp`); the object's own piece carries them on through the group. Test `issue-106-chamber`
+(`restfx`).
+
+## 12. Blended models and depth
+
+OpenMW leaves a blended NIF shape writing depth unless its NiZBufferProperty turns that off (nifloader puts it in
+the transparent bin, sorted back to front, and keeps the depth mask). Its shapes are drawn one after another, so the
+nearer parts of a blended model hide the farther ones. The 3DS wrote depth for a blended shape only when it is
+alpha tested too. Actors now follow OpenMW: a blended, untested shape of an actor's model writes depth unless its
+NiZBufferProperty says not (`meshes.py zwrite`, the actor mesh's bit 64), except while the actor is drawn see-through
+(Invisibility, Chameleon). Dagoth Ur is all blended: his dark head, drawn after his mask, showed through it in
+patches. Also the ancestor ghosts, the Dwarven specters, the Corprus stalkers, the netches, the Winged Twilights and
+a Dremora's sphere. The Heart of Lorkhan's shells keep theirs off (their NiZBufferProperty). The world's blended
+batches are unchanged. Test `issue-106-chamber` (`refzwrite`). A shape its own animation fades (NiAlphaController)
+keeps writing depth as it fades, as OpenMW's does, but not while its actor is drawn see-through: it did at first, and a
+dwarven ghost (Chameleon 60) cut away the glow of its own cast behind it (`renderingmanager.cpp`, the rigid shape's
+`actorAlpha`). Test `issue-106-glow`.
+
+## 13. Animation sound keys
+
+A "Sound: <id>" text key plays that sound at the actor as its animation passes it (OpenMW's
+`CharacterController::handleTextKey`). A key on a group's first frame plays as the group starts. The converter keeps
+the keys inside each skeleton's groups (`actors.py sound_keys`, after the groups in an `MWS2` skeleton file) and adds
+the sounds they name to the level (`animation_sounds`); the engine plays them each frame
+(`character.cpp updateAnimationSounds`). In Morrowind.esm: the Heart of Lorkhan's Hearthit1 .. 4 and Heartdead, the
+Centurion spider's and sphere's attacks and roll, a Daedroth's step. The swings' swishes (SwishS / M / L) and the
+bows' and crossbows' pull and shot (base_anim's) stay with the combat code, which plays them already. Test `issue-106-chamber` (`soundstarted`).
+
+OpenMW gives an animated object a CharacterController too, so the keys of a group a script plays on an activator play
+the same way, from the object. Akulakhan's Death1, which EndGame plays once the Heart is gone, has ten: Endboom1 .. 4
+over its first 16 s; the bridge to the Heart's Death1 has Ropebridge as it starts. The 3DS played none and converted
+neither sound, so the giant fell apart in silence. The world entry now keeps each kept group's keys
+(`particles.py world_entry` "sounds"), `animation_sounds` adds the sounds an activator's kept groups name, and
+`playObjectGroup` queues the group's keys on the world's clock; `character.cpp updateObjectSoundKeys` plays each as it
+comes due from the object (its record's range: Akulakhan's origin is 5000 units under the chamber floor, still within
+it), and drops them once the object leaves the active cells. A group played again starts its keys over. The Heart's
+own rumble (LorkhanHeart's PlayLoopSound3D "endrumble") plays already; as in OpenMW it is heard only within 2000 units
+of the Heart, so not from the door. The silt striders' Idle has keys too (Silt_1, Silt_2), but their model is baked
+still here, so their groans wait for them to move. Test `issue-106-collapse`.
+
+## 14. Spell visuals and sprays among the blended surfaces
+
+OpenMW sorts its transparent bin by each drawable's distance from the eye, particle systems and spell visuals among
+the blended shapes. The 3DS drew the creatures' sprays and the spell visuals' blended parts after every blended
+surface, so one behind a see-through body or a blended surface showed over it as if in front. Now they go into the
+blended queue (`effectmanager.cpp queueBlendedExtras`, `rendererQueueBlendCall`). One that belongs to an actor (its
+sprays, a spell visual on it) comes right after that actor's own meshes, as it did: its body's depth hides what is
+behind it, and the near side of a shield around it goes over it (Dagoth Ur's fire shield). OpenMW sorts each of its
+shapes on its own and the shield by its middle; with one place per actor here, after it keeps the shield in front.
+One standing on its own (a burst, a world piece) by the middle of what it draws: its meshes' bounds where it stands
+joined with the sprays it drew the frame before. They are still drawn without fog, as before. Flying bolts, rain and
+the dropped items stay after the queue. Test `issue-106-glow` (shot 2: a glow behind a ghost, seen through it).

@@ -119,6 +119,9 @@ recovery. Fatigue below 0 knocks out, whatever brought it there (`CharacterContr
 actor lies in its KnockOut group's loop for as long as the fatigue stays under 0, then plays the rest (getting up). A
 knocked-down actor plays KnockDown through. Ours knocked out only on a melee hit and got up after 3.5 s whatever the
 fatigue, and counted the time on the floor only in a fight (`bug-knockout-fatigue`, 2026-10-13).
+An actor whose model has no KnockDown group, or that plays a script's group (below), is down for that blow only: no fall,
+and what it was playing goes on (OpenMW clears a hit state with no group the next frame). Ours stood it up into Idle
+2.7 s later, over the Heart of Lorkhan's scripted Idle2-5 and Death1 (`issue-106`).
 
 ## Fatigue spent
 

@@ -22,10 +22,13 @@ struct RenderState
 	// Spell visuals: a static's piece for a moment, modelled around an actor's feet and facing as it faces (OpenMW's
 	// Animation::addEffect), or at a spot (an area burst, blood)
 	struct Vfx { std::string piece; float pos[3]; float age, life; int follow; float yaw = 0.0f, scale = 1.0f; bool loop = false; std::string what; int effect = -1;
-		bool world = false; float until = -1.0f; std::string bone; };   // bone: on that bone of its follow (a casting hand's glow)   // world: a placed object's own (updateWorldFx); until: its time held there once reached   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
+		bool world = false; float until = -1.0f; std::string bone; bool rest = false; bool ability = false;
+		float drawnLo[3], drawnHi[3]; bool drawnSet = false; };   // drawn*: the box of the sprays it drew last frame (queueBlendedExtras)   // rest: a world object's rest piece   // ability: an actor's ability's continuous effect (updateAbilityVfx)   // bone: on that bone of its follow (a casting hand's glow)   // world: a placed object's own (updateWorldFx); until: its time held there once reached   // what: its static's id   // follow: -2 stays put, -1 the player, else a ref whose feet it keeps to
 	std::vector<Vfx> vfx;
 	static constexpr int kMaxVfx = 12;             // at once: past it a nearer one takes the farthest one's place
 	int vfxSprited = 0, vfxSpritedLast = 0;        // visuals that drew particle sprites: this frame so far, the last one
+	float queuedEye[3] = { 0.0f, 0.0f, 0.0f };     // the eye the queued sprays and visuals draw for (queueBlendedExtras)
+	bool queuedSecondEye = false;
 	// Creatures' sprays as sprites shed from their bones (particles.py make_creature_piece): per creature ref its
 	// piece, the animation time last seen, each piece mesh's bone, and the live particles (mesh, pos[3], vel[3], age,
 	// life, size)
