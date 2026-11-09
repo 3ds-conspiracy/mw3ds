@@ -37,7 +37,8 @@ const float* followGoal(World& w, Ref& r, const float* who, float dt);
 
 static inline float fatigueTerm(float fatigue, float fatigueMax)
 {
-	return 1.25f - 0.5f * (1.0f - (fatigueMax > 0.0f ? fmaxf(0.0f, fatigue) / fatigueMax : 1.0f));
+	// (at most full: OpenMW's current fatigue never goes over its max)
+	return 1.25f - 0.5f * (1.0f - (fatigueMax > 0.0f ? fminf(1.0f, fmaxf(0.0f, fatigue) / fatigueMax) : 1.0f));
 }
 
 static inline float frand() { return (rand() % 1000) / 1000.0f; }

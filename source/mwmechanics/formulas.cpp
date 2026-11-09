@@ -152,7 +152,8 @@ int Session::crimeBounty(int kind, int arg)
 
 float Session::fatigueTermOf(float fatigue, float fatigueMax)
 {
-	float normalised = floorf(fatigueMax) == 0.0f ? 1.0f : fmaxf(0.0f, fatigue / fatigueMax);
+	// (at most 1: OpenMW's current fatigue never goes over its max, so its getFatigueTerm never sees more)
+	float normalised = floorf(fatigueMax) == 0.0f ? 1.0f : fminf(1.0f, fmaxf(0.0f, fatigue / fatigueMax));
 	return w.game.gmstf("ffatiguebase", 1.25f) - w.game.gmstf("ffatiguemult", 0.5f) * (1.0f - normalised);
 }
 
@@ -221,7 +222,8 @@ float Session::knockdownOdds(int agility)
 float Session::elementalShieldDamage(float magnitude, int destruction, int willpower, int luck, float fatigue, float fatigueMax,
 	float resistance, int roll)
 {
-	float normalised = floorf(fatigueMax) == 0.0f ? 1.0f : fmaxf(0.0f, fatigue / fatigueMax);
+	// (at most 1: OpenMW's current fatigue never goes over its max, so its getFatigueTerm never sees more)
+	float normalised = floorf(fatigueMax) == 0.0f ? 1.0f : fminf(1.0f, fmaxf(0.0f, fatigue / fatigueMax));
 	float save = (destruction + 0.2f * willpower + 0.1f * luck) * 1.25f * normalised;
 	float x = fminf(100.0f, fmaxf(0.0f, save - roll) + resistance);
 	return w.game.gmstf("felementalshieldmult", 0.1f) * magnitude * (1.0f - 0.01f * x);

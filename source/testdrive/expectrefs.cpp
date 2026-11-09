@@ -498,6 +498,8 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		else if (what == "reflevel") v = r.actor >= 0 ? (float)w.game.actors[r.actor].level : -1.0f;
 		else if (what == "refrep") v = r.actor >= 0 ? (float)w.game.actors[r.actor].reputation : -1.0f;   // its own reputation
 		else if (what == "reffatigue") v = r.fatigue;
+		else if (what == "reffatiguemax") v = r.fatigueMax;
+		else if (what == "refevasion") v = s.npcDefense(ri, false);   // what it takes off the player's hit chance, aware
 		else if (what == "refmagicka") v = r.magicka;
 		else if (what == "refhealthmax") v = r.healthMax;
 		else if (what == "refmagickamax") v = r.magickaMax;

@@ -110,7 +110,13 @@ void actorSpellStats(const GameData& g, Ref& r, ActorPools pools)
 	r.fatigueMax = fatigue;
 	r.magickaMax = magicka;
 	if (pools == POOLS_AS_SAVED)
+	{
+		// (OpenMW's DynamicStat never keeps the current above the max: a Blighted Rat's 400 under its drained 70 made
+		// its fatigue term over 3 and its evasion about 48)
+		r.fatigue = fminf(r.fatigue, fatigue);
+		r.magicka = fminf(r.magicka, magicka);
 		return;
+	}
 	r.fatigue = pools == POOLS_FULL ? fatigue : fatigue * fatigueShare;
 	r.magicka = pools == POOLS_FULL ? magicka : magicka * magickaShare;
 }

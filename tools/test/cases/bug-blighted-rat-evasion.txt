@@ -1,0 +1,14 @@
+# start: Seyda Neen
+# A Blighted Rat's Black-Heart Blight drains Strength and Endurance, so its fatigue max is Strength + Willpower + Agility
+# + Endurance with the drain (about 70), not the record's 400. Its fatigue must not stay above that max: the fatigue term
+# went over 3 and its evasion ((Agility 30 / 5 + Luck 75 / 10) x fatigue term, about 17 when rested) came to 48, which
+# left a Short Blade 38 player at -9% to hit
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.3 0 0 0 0 PLACE:rat_blighted:300
+2 0 0 0
+0.3 0 0 0 0 EXPECT:reffatiguemax:rat_blighted:lt:100+EXPECT:reffatigue:rat_blighted:le:100
+0.3 0 0 0 0 EXPECT:refevasion:rat_blighted:ge:15+EXPECT:refevasion:rat_blighted:le:18
+# Still so after it has stood a while (regeneration stops at the max)
+10 0 0 0
+0.3 0 0 0 0 EXPECT:reffatigue:rat_blighted:le:100+EXPECT:refevasion:rat_blighted:le:18
