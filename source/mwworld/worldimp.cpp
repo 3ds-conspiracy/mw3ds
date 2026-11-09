@@ -92,6 +92,15 @@ void World::attachSpawned(int ri)
 	int skel = sp != game.spawns.end() ? sp->second.skeleton : def ? def->skel : -1;
 	if (!l || lib.empty() || skel < 0)
 		return;
+	// Drawn once: one drawn in this cell already keeps that drawing. A cell loading reads back the cells of those
+	// moved into it (readMovedIn), whose changes draw them as they are put back (applyCellState), and then draws all
+	// moved into it: Varvur Sarethi, sent to the Sarethi Guard Quarters by PositionCell, stood there twice after a
+	// load, one of him walking about and the other left in the air where the script set him down (issue 107)
+	if (r.anim >= 0 && r.anim < (int)l->actors.actors.size() && l->actors.actors[r.anim].ref == ri)
+	{
+		syncActor(ri);
+		return;
+	}
 	// A person's box to aim at where they stand, as spawnActor gives one: a leveled list's pick drawn from its own
 	// library (Solstheim's reavers and smugglers) had none, and the crosshair never found them
 	if (!r.hasBox)

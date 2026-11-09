@@ -53,6 +53,18 @@ std::optional<bool> numberOfVisuals(Session& s, const std::string& what, const s
 			v += x.what.find(lower(arg)) != std::string::npos ? 1.0f : 0.0f;
 		return true;
 	}
+	// drawncopies:<id>: how many times someone with that id is drawn in the loaded cells (each drawing of a person in a cell's
+	// actor set still pointing at them; one person drawn twice stood twice: Varvur Sarethi, issue 107)
+	if (what == "drawncopies")
+	{
+		v = 0.0f;
+		std::string id = lower(arg), spacedId = lower(spaced(arg));
+		for (LoadedCell* l : w.loaded)
+			for (const Actor& a : l->actors.actors)
+				if (a.ref >= 0 && a.ref < (int)w.refs.size() && (w.refs[a.ref].idLower == id || w.refs[a.ref].idLower == spacedId))
+					v += 1.0f;
+		return true;
+	}
 	// vfxlife:<text>: seconds the first spell visual showing now whose static's id has that text plays in all (-1 none)
 	if (what == "vfxlife")
 	{

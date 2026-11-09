@@ -1,0 +1,107 @@
+# start: Seyda Neen
+# Issue 107: Varvur Sarethi stood twice, one of him in the air. Someone a door or a script moved to another cell is kept
+# there in his own cell's changes once that cell leaves memory (after a load, every cell but the player's has); entering
+# the place he stands reads his cell back, and he was drawn there twice: once as his cell's changes were put back, again
+# with everyone moved into the place being drawn. The second drawing followed him, the first stood where he was at the
+# load (escorting him home, the picture), or in the air where PositionCell set him down (z -100 in the Sarethi Guard
+# Quarters, the floor at -128). drawncopies: how many times he is drawn
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD+GIVE:key_venimmanor+JOURNAL:HR_RescueSarethi:10
+0.3 0 0 0 0 GOTO:Ald-ruhn
+2 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Entrance
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Venim_Manor_Entrance
+0.5 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Right_Wing
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Venim_Manor_Right_Wing
+0.5 0 0 0
+60 0 0 0 0 ACTIVATE:varvur_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:travel_together
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 CHOICE:1
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_RescueSarethi:ge:50
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+5 0 0 0 0 UNTIL:following:varvur_sarethi
+0.3 0 0 0 0 ESCORT:varvur_sarethi
+# a walk to each door first: the walk waits for Varvur, a DOORTO alone goes through without him
+120 0 0 0 0 WALKTO:@-80,496,112
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Venim_Manor_Entrance
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Venim_Manor_Entrance
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:drawncopies:varvur_sarethi:eq:1
+# saved and loaded here (Venim Manor's right wing, his own cell, is then out of memory)
+1 0 0 0 0 SAVE:issue107
+1 0 0 0 0 LOAD:issue107
+5 0 0 0
+0.3 0 0 0 0 CHECK:varvur_sarethi
+0.1 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:drawncopies:varvur_sarethi:eq:1
+0.3 0 0 0 0 ESCORT:varvur_sarethi
+120 0 0 0 0 WALKTO:@0,-51,-22
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+0.5 0 0 0
+120 0 0 0 0 WALKTO:@-1464,-96,16
+3 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Manor
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Sarethi_Manor
+0.5 0 0 0
+# past Athyn, so Varvur, a few steps behind, stops beside his father
+120 0 0 0 0 WALKTO:@143,1700,-368
+0.3 0 0 0 0 ESCORT:-
+120 0 0 0 0 WALKTO:@250,2400,-368
+8 0 0 0
+0.1 0 0 0 0 EXPECT:journal:HR_RescueSarethi:ge:70
+60 0 0 0 0 ACTIVATE:athyn_sarethi
+1.5 0 0 0
+0.3 0 0 0 0 TOPIC:Varvur_Sarethi
+2 0 0 0 0 UNTIL:talkready
+0.1 0 0 0 0 EXPECT:journal:HR_RescueSarethi:ge:100
+0.3 0 0 0 0 B
+0.5 0 0 0 0 B
+2 0 0 0 0 UNTIL:screen:none
+0.1 0 0 0 0 EXPECT:bounty:eq:0
+0.3 0 0 0 0 CHECK:varvur_sarethi
+0.1 0 0 0 0 SHOT
+# out and back in: his script moves him to the guard quarters
+120 0 0 0 0 DOORTO:Ald-ruhn,_Manor_District
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Manor_District
+0.5 0 0 0
+0.3 0 0 0 0 CHECK:varvur_sarethi
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Manor
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Sarethi_Manor
+2 0 0 0
+0.3 0 0 0 0 CHECK:varvur_sarethi
+0.1 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refcell:varvur_sarethi,Ald-ruhn,%Sarethi%Guard%Quarters:eq:1
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Guard_Quarters
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Sarethi_Guard_Quarters
+2 0 0 0
+0.3 0 0 0 0 CHECK:varvur_sarethi
+0.3 0 0 0 0 EXPECT:drawncopies:varvur_sarethi:eq:1+EXPECT:refz:varvur_sarethi:lt:-120
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Manor
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Sarethi_Manor
+2 0 0 0
+# saved and loaded in the manor, then into the guard quarters: his own cell is read back as they load
+1 0 0 0 0 SAVE:issue107b
+1 0 0 0 0 LOAD:issue107b
+5 0 0 0
+120 0 0 0 0 DOORTO:Ald-ruhn,_Sarethi_Guard_Quarters
+10 0 0 0 0 UNTIL:cell:Ald-ruhn,_Sarethi_Guard_Quarters
+2 0 0 0
+# (he wanders off from where his script set him down; looked at from across the room)
+6 0 0 0
+0.3 0 0 0 0 HALT:on+HUD:off+POV:first+VMPOSE:off+CAM:1760:400:-50:270:0
+1 0 0 0
+0.3 0 0 0 0 CHECK:varvur_sarethi
+0.1 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:drawncopies:varvur_sarethi:eq:1+EXPECT:refz:varvur_sarethi:lt:-120
+0.3 0 0 0 0 CAM:off+HUD:on+HALT:off
