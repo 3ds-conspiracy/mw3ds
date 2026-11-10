@@ -192,6 +192,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		useQuickKey(in.quick);
 	profAdd(PROF_OTHER, t);
 	MARK("scripts");
+	w.unsetUnwornEquip();
 	scriptsRun(w, *this, dt);
 	if (w.pcTraveling > 0 && travelCell < 0)
 		w.pcTraveling--;

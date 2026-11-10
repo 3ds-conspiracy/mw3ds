@@ -486,6 +486,7 @@ struct World
 	bool deferEnable(const std::string& id, bool on);   // true: remembered, nothing read
 	void stopGlobalScript(const std::string& name);
 	void setItemScriptLocal(const std::string& itemId, const char* local, float value);
+	void unsetUnwornEquip();                           // OnPCEquip back to 0 on what isn't worn (unequipSlot)
 	// a carried item's script local (nullptr when it has no running script or no such local)
 	float* itemScriptLocal(const std::string& itemId, const char* local);
 };

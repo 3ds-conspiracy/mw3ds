@@ -1,0 +1,43 @@
+# Keening and Sunder wound whoever holds them without Wraithguard on (their scripts ouch_keening / ouch_sunder: 50 to
+# 124 health a second while the global wraithguardEquipped is 0). Wraithguard's script holds that global at 1 while its
+# OnPCEquip is 1, which OpenMW sets back to 0 as the item comes off (InventoryStore::unequipSlot). Ours never set it
+# back: once Wraithguard had been worn, Keening and Sunder did nothing after it came off, and a blade put away (its
+# OnPCEquip still 1) went on wounding
+1 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOTO:Balmora
+1 0 0 0
+0.3 0 0 0 0 HEALTHMAX:2000
+0.3 0 0 0 0 GIVE:wraithguard
+0.3 0 0 0 0 EQUIP:wraithguard
+1 0 0 0 0 EXPECT:global:wraithguardequipped:eq:1
+# Wraithguard on: Sunder held does nothing
+0.3 0 0 0 0 GIVE:sunder
+0.3 0 0 0 0 EQUIP:sunder
+0.1 0 0 0 0 SNAP:health
+3 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-1
+# Wraithguard taken off: Sunder wounds
+0.3 0 0 0 0 UNEQUIP:wraithguard
+0.5 0 0 0 0 EXPECT:global:wraithguardequipped:eq:0
+0.1 0 0 0 0 SNAP:health
+3 0 0 0
+0.1 0 0 0 0 EXPECT:health:lt:@-100+SHOT
+# Sunder put away too: no more wounds
+0.3 0 0 0 0 UNEQUIP:sunder
+0.3 0 0 0 0 FILL
+0.1 0 0 0 0 SNAP:health
+3 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-1
+# Keening, Wraithguard on and then off again: harmless, then wounding
+0.3 0 0 0 0 EQUIP:wraithguard
+0.5 0 0 0 0 EXPECT:global:wraithguardequipped:eq:1
+0.3 0 0 0 0 GIVE:keening
+0.3 0 0 0 0 EQUIP:keening
+0.1 0 0 0 0 SNAP:health
+3 0 0 0
+0.1 0 0 0 0 EXPECT:health:ge:@-1
+0.3 0 0 0 0 UNEQUIP:wraithguard
+0.1 0 0 0 0 SNAP:health
+3 0 0 0
+0.1 0 0 0 0 EXPECT:health:lt:@-100+EXPECT:global:wraithguardequipped:eq:0+SHOT

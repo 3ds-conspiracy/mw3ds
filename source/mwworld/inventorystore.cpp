@@ -20,6 +20,40 @@ int Session::armorSkill(const Object* o)
 
 // ---- Equipment
 
+// OnPCEquip back to 0 on a carried item that isn't worn or held (OpenMW's InventoryStore::unequipSlot unsets it as the
+// player's slot empties, however it empties: taken off, swapped, sold, dropped). It stayed 1 here: Wraithguard's script
+// holds the global wraithguardEquipped at 1 while its OnPCEquip is, so once it had been worn Keening and Sunder never
+// wounded again, and Keening put away went on wounding. Only things that are worn or held, and not an item whose script
+// sets PCSkipEquip (it is used rather than worn, its script clears OnPCEquip itself). Every frame, before the scripts:
+// a saved game holding a stale 1 comes right too
+void World::unsetUnwornEquip()
+{
+	for (auto& s : scripts)
+	{
+		if (s.item.empty())
+			continue;
+		float* on = s.local("onpcequip");
+		if (!on || *on == 0.0f)
+			continue;
+		float* skip = s.local("pcskipequip");
+		if (skip && *skip != 0.0f)
+			continue;
+		const Object* o = game.object(s.item);
+		if (!o || (o->recType != REC_WEAP && o->recType != REC_ARMO && o->recType != REC_CLOT && o->recType != REC_LIGH
+			&& o->recType != REC_LOCK && o->recType != REC_PROB))
+			continue;
+		bool worn = false;
+		for (auto& it : inventory)
+			if (it.equipped && it.id == s.item)
+			{
+				worn = true;
+				break;
+			}
+		if (!worn)
+			*on = 0.0f;
+	}
+}
+
 InventoryItem* Session::playerWeaponItem()
 {
 	for (auto& it : w.inventory)
