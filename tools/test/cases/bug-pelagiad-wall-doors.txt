@@ -1,0 +1,46 @@
+# Fort Pelagiad's north wall: its corner pieces and towers are stored in the record of the cell north of Pelagiad's
+# (0, -6), though they stand in Pelagiad's own (0, -7). Out of a North Wall upper door only the cell arrived in was
+# loaded at first, so the walkway under the door's destination wasn't there: the player was set down on the grass inside
+# the wall. Each upper door must leave the player on the walkway (some 2194 high); @5 already did (a wall piece of
+# Pelagiad's own under it). DOORTO:outside@<n>: the North Wall's doors out, by the driver's ranking from the door in
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_Fort_Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_North_Wall
+1 0 0 0
+90 0 0 0 0 DOORTO:outside@0
+2 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:2150+SHOT
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_Fort_Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_North_Wall
+1 0 0 0
+90 0 0 0 0 DOORTO:outside@1
+2 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:2150+SHOT
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_Fort_Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_North_Wall
+1 0 0 0
+90 0 0 0 0 DOORTO:outside@4
+2 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:2150+SHOT
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_Fort_Pelagiad
+1 0 0 0
+90 0 0 0 0 DOORTO:Pelagiad,_North_Wall
+1 0 0 0
+90 0 0 0 0 DOORTO:outside@5
+2 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:2150+SHOT

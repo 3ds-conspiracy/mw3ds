@@ -255,6 +255,13 @@ and scale for placed objects. The piece is turned by the reference's three rotat
 - A follower that cannot walk straight at the player (the player stands below the cliff the strider platform ends
   in) goes by the path grid even when the route ends 600 units or more from the player, as long as its last point
   sees the player. OpenMW paths over its navigation mesh to the player wherever they are.
+- An exterior reference belongs to the cell whose record holds it, wherever it stands (OpenMW moves one only by a
+  plugin's MVRF). 45 of Morrowind.esm's stand in the next cell over from their record's, never farther: OpenMW's
+  3 x 3 active cells always hold them. Ours load only the cell arrived in at a door, the ring after it: Fort
+  Pelagiad's north wall (corners, towers, a wall piece) is in the record of the cell north of Pelagiad's, and the
+  North Wall's upper doors set the player down on the grass inside it. The converter gives such an object's collision
+  to the cell it stands in as well (`convert_cell.py exterior_cell`, guests; drawing stays with its record's cell, and
+  objects scripts move or toggle keep theirs only there). `bug-pelagiad-wall-doors`.
 
 ## 11. An animated object's particles at rest
 

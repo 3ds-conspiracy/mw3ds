@@ -431,6 +431,11 @@ def color3(d, off):
     return np.array(list(d[off:off + 3]), dtype=float) / 255.0
 
 
+def grid_of(ref):
+    """The exterior grid cell a reference stands in."""
+    return (int(math.floor(ref["pos"][0] / CELL_SIZE)), int(math.floor(ref["pos"][1] / CELL_SIZE)))
+
+
 def is_marker(model):
     return model.lower().replace("/", "\\").rsplit("\\", 1)[-1].startswith("marker")
 
@@ -1060,7 +1065,40 @@ class Converter:
                "weather": weather, "file": file}
         if share:
             env["share"] = True          # (only then: other cells' cache keys stay as they were)
+        # Objects a neighbouring cell's record holds that stand in this one (45 in Morrowind.esm: most of Fort
+        # Pelagiad's north wall is in the record of the cell north of Pelagiad's): their collision is this cell's too.
+        # After a door only the cell arrived in is loaded at first, and the walkway under the North Wall's upper doors
+        # wasn't there: the player was set down on the grass inside the wall. (OpenMW keeps the 3 x 3 cells round the
+        # player loaded, and they stay in their record's cell there too)
+        if walkable:
+            guests = []
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    other = self.db["CELL"].get((gx + dx, gy + dy)) if dx or dy else None
+                    if other is not None:
+                        guests += [r for r in cell_refs(other) if grid_of(r) == (gx, gy)]
+            if guests:
+                env["guests"] = guests   # (only then: other cells' cache keys stay as they were)
         return self.convert(name, refs, env, spawn)
+
+    def guest_collision(self, ref):
+        """A neighbouring cell's object standing in this cell (exterior_cell's guests): its baked collision, in world
+        space, or None. Not an object scripts move or toggle (its collision is kept apart with its own reference), a
+        swinging door or a light that can be carried (they block at run time, if at all)."""
+        rec = self.db["objects"].get(ref["id"].lower())
+        rid = ref["id"].lower()
+        if (rec is None or rec.tag not in COLLIDING_TYPES or rid in self.dynamic or rid in self.toggled
+                or rid in self.anim_col or (rec.tag == "DOOR" and "dest" not in ref)):
+            return None
+        if rec.tag == "LIGH" and struct.unpack_from("<i", rec.get("LHDT"), 20)[0] & LIGHT_CAN_CARRY:
+            return None
+        model = rec.zstr("MODL")
+        nif = self.load_nif(model) if model and not is_marker(model) else None
+        col = collision_triangles(nif) if nif is not None else None
+        if col is None:
+            return None
+        m = ref_matrix(ref)
+        return col[0] @ m[:3, :3].T + m[:3, 3], col[1]
 
     def lights_of(self, refs):
         """The references' lights (on by default): position from the mesh's AttachLight node when present."""
@@ -1233,6 +1271,12 @@ class Converter:
         shared = share_models(candidates, groups, lights, ambient, sun, sun_dir, chunk_of) if candidates else []
 
         sky = []
+        for ref in env.get("guests", []):
+            col = self.guest_collision(ref)
+            if col is not None:
+                col_pos.append(col[0])
+                col_tris.append(col[1] + col_count)
+                col_count += len(col[0])
         if not env["interior"]:
             terrain, (gx, gy), walkable = env["terrain"], env["grid"], env["walkable"]
             for s in terrain_shapes(self.db, self.arch, terrain, gx, gy, walkable, sun, ambient, textures, lights):
