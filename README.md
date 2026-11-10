@@ -52,7 +52,7 @@ to get the CIA onto the 3DS: [STEAM-DECK.md](STEAM-DECK.md)):
 ```sh
 mkdir -p ~/mw3ds
 podman run --rm -v ~/.local/share/Steam/steamapps/common/Morrowind:/morrowind:ro -v ~/mw3ds:/out \
-    ghcr.io/3ds-conspiracy/mw3ds-converter:0.2.9 --tribunal --bloodmoon
+    ghcr.io/3ds-conspiracy/mw3ds-converter:0.2.10 --tribunal --bloodmoon
 ```
 
 The CIA lands in `~/mw3ds`. Leave out `--tribunal` / `--bloodmoon` for a game without those add-ons, and add
