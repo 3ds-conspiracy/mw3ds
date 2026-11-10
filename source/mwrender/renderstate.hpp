@@ -12,6 +12,11 @@ struct RenderState
 	// menu was open this session (Session::preloadRacePreview)
 	bool racePreloaded = false, raceMenuSeen = false;
 	float thirdDistance = 0.0f;               // eased camera distance (walls pull it in)
+	// SELECT held: the camera turns round the player (OpenMW's preview mode, Session::povUpdate). povHold: seconds held
+	// (-1: not held); orbitYaw: the camera's turn from behind the player, orbitPitch: its own pitch; orbitFromFirst: the
+	// hold began in first person, which comes back on release. thirdZoom: the third-person distance, zoomed while held
+	float povHold = -1.0f, orbitYaw = 0.0f, orbitPitch = 0.0f, thirdZoom = 220.0f;
+	bool orbiting = false, orbitFromFirst = false;
 	// Weather outdoors: its ambient loop (rain, ash storm), thunder, and the rain / ash in the world round the eye
 	int weatherChannel = -1;
 	std::string weatherSound;

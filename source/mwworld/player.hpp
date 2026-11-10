@@ -18,7 +18,8 @@ struct PlayerInput
 	bool cast;            // pressed: cast the selected spell
 	bool sneak;           // held: sneak (L, outside fly mode)
 	int quick = -1;       // quick key used this frame (ZL + D-pad: 0 up, 1 right, 2 down, 3 left)
-	bool togglePov = false;  // SELECT: first / third person
+	bool togglePov = false;  // SELECT pressed: a tap switches first / third person (Session::povUpdate)
+	bool povHeld = false;    // SELECT held: a hold turns the camera round the player
 	bool activate = false;   // GoldenEye: a tap of A (let go before it aimed): activate (the other layouts: A pressed)
 	// Gyro aim: how fast the console turns, degrees a second (sensitivity applied), around its up axis (+ right)
 	// and across (+ up). Turned into view angles one to one, not through the stick's look speed
@@ -71,6 +72,7 @@ struct Scene
 };
 
 static const float PLAYER_EYE_HEIGHT = 124.0f;   // eye level of a default-height race
+static const float kLookSpeed = 1.8f;            // radians a second at a full push of the look stick
 
 // Eye height above the world origin (lowered while sneaking or knocked down)
 inline float playerEyeZ(const Player& p) { return p.feet[2] + PLAYER_EYE_HEIGHT - p.eyeDrop; }

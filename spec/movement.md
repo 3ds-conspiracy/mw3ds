@@ -83,6 +83,26 @@ volume, 0.2 of the sound's own ([Sound] footsteps volume; MWSound::Type::Foot): 
 Tests: `issue-27`, `bug-footsteps-gait`, `bug-footsteps-run-even`, `bug-footsteps-walk-even`, `bug-footsteps-sneak-even`,
 `bug-footsteps-volume`.
 
+## The camera: first / third person and the view key held (2026-11-08, issue 102)
+
+OpenMW's `scripts/omw/camera/camera.lua` (`updatePOV`, `zoom`) and `mwrender/camera.cpp`. Our view key is SELECT.
+
+- A tap switches first / third person when the key is let go, if it was held no longer than 0.25 s (`switchLimit`).
+- Held in third person, the camera goes at once into preview: the look turns the camera round the player, who
+  doesn't turn. Held in first person, preview starts once the key has been held past 0.25 s.
+- Let go, the view is the one it was before the key went down (or the other one after a tap), and the camera is
+  behind the player again.
+- Zoom (OpenMW's Zoom3rdPerson, the mouse wheel) changes the third-person distance, 30 to the Maximum Camera
+  Distance setting (800 by default), and the distance is kept. OpenMW zooms in first person too (out of it into third)
+  and keeps the distance in saves.
+
+Ours (`Session::povUpdate`, `viewCamera`): the same tap and hold. While held, the look (the C-stick, the D-pad where it
+looks, gyro aim, a stylus slide) and the Circle Pad's left / right turn and tilt the camera, and the Circle Pad's
+up / down zooms (it has no wheel, and nothing else is free while the player stands still); the player doesn't walk
+meanwhile, and the crosshair and the name under it are hidden. The zoom is 60 to 800 (nearer, our camera, which turns
+round a point over the head, sees into it), 220 by default, kept until the game is closed, not in saves (differs, kept).
+`issue-102` checks it.
+
 ## Findings (2026-09-29)
 
 1. **Levitation speed** was the run speed x `(0.3 + Levitate / 50)`, at most 2x; OpenMW: `fMinFlySpeed` to

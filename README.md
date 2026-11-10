@@ -173,7 +173,7 @@ that walks and turns, on the Xbox layout's buttons, and a button that stops you 
 | L | Cast the selected spell |
 | Y | Jump |
 | B | Sneak on / off |
-| SELECT | First / third person |
+| SELECT | Tap: first / third person. Hold: turn the camera round you, the Circle Pad up / down zooms |
 | D-Pad | Left / right: strafe; up / down: look |
 | START | Menu: save, rest, options |
 | Touch screen | Inventory, magic, map, stats, quick keys |
@@ -205,7 +205,8 @@ Layout screen (X there) hides them. Nothing needs ZL or ZR.
 | Y | Jump (held: swim up) |
 | B (hold) | Sneak |
 | D-Pad | Left / right: strafe; up / down: look |
-| SELECT, START | First / third person, menu |
+| SELECT | Tap: first / third person. Hold: turn the camera round you, the Circle Pad up / down zooms |
+| START | Menu: save, rest, options |
 
 ## Testing and reporting
 

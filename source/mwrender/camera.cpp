@@ -14,23 +14,89 @@
 #include "components/debug/debuglog.hpp"
 #include <malloc.h>
 
-// Third person: the camera orbits a point just above the head, 220 units back along the view, pulled in front of
-// walls: looking up swings it down behind the player, looking down swings it up over them, and the player stays in the
-// middle of the view (OpenMW's third-person camera: the focal point minus the view direction times the distance).
-// The face preview looks at the player's face from in front
+// SELECT (OpenMW's TogglePOV, its camera.lua): a tap, let go within kSwitchLimit, switches first / third person as
+// it is let go. Held, the camera turns round the player (OpenMW's preview mode): at once in third person, once held
+// past kSwitchLimit in first person, which comes back when it is let go. Meanwhile the look (the C-stick, the D-pad
+// where it looks, gyro aim, a stylus slide) and the Circle Pad's left / right swing the camera round and tilt it; the
+// Circle Pad's up / down zooms in and out (OpenMW's Zoom3rdPerson, the mouse wheel there), and the zoom stays. The
+// player stands still: the pads are the camera's. Let go, the camera is back behind the player
+void Session::povUpdate(PlayerInput& in, bool menu, float dt)
+{
+	const float kSwitchLimit = 0.25f;
+	// (OpenMW zooms 30 to its Maximum Camera Distance, 800 by default; nearer than 60 our camera, over the head, sees
+	// into it)
+	const float kZoomMin = 60.0f, kZoomMax = 800.0f;
+	bool can = !menu && !playerDead;
+	if (povHold < 0.0f && in.togglePov && can)
+		povHold = 0.0f;
+	if (povHold < 0.0f)
+		return;
+	if (in.povHeld && can)
+	{
+		povHold += dt;
+		if (!orbiting && (thirdPerson || povHold >= kSwitchLimit))
+		{
+			orbiting = true;
+			orbitFromFirst = !thirdPerson;
+			orbitYaw = 0.0f;
+			orbitPitch = w.player.pitch;
+			if (!thirdPerson)
+			{
+				thirdPerson = true;
+				thirdDistance = 0.0f;
+				body.acting = BODY_NONE;
+			}
+		}
+	}
+	else
+	{
+		// Let go (or a menu came up, or the player died): back as it was, or the other view after a tap
+		bool tap = can && povHold <= kSwitchLimit, was = thirdPerson;
+		if (orbiting && orbitFromFirst)
+			thirdPerson = false;
+		orbiting = orbitFromFirst = false;
+		povHold = -1.0f;
+		if (tap)
+			thirdPerson = !thirdPerson;
+		if (thirdPerson != was)
+		{
+			thirdDistance = 0.0f;
+			body.acting = BODY_NONE;          // a blow or cast under way when the view changes starts afresh
+		}
+		return;
+	}
+	if (!orbiting)
+		return;
+	const float kDegrees = 3.14159265f / 180.0f;
+	orbitYaw += (in.lookX + in.moveX) * kLookSpeed * dt + in.gyroYaw * kDegrees * dt + in.stylusYaw;
+	orbitPitch += in.lookY * kLookSpeed * dt + in.gyroPitch * kDegrees * dt + in.stylusPitch;
+	orbitPitch = fmaxf(-1.5f, fminf(1.5f, orbitPitch));
+	// (a full push takes it from 220 to 800 in about a second, the same share of the distance a second however far)
+	thirdZoom = fmaxf(kZoomMin, fminf(kZoomMax, thirdZoom * expf(-in.moveY * 1.2f * dt)));
+	in.moveX = in.moveY = in.lookX = in.lookY = 0.0f;
+	in.gyroYaw = in.gyroPitch = in.stylusYaw = in.stylusPitch = 0.0f;
+	in.quick = -1;
+}
+
+// Third person: the camera orbits a point just above the head, thirdZoom units back along the view (220 unless zoomed),
+// pulled in front of walls: looking up swings it down behind the player, looking down swings it up over them, and the
+// player stays in the middle of the view (OpenMW's third-person camera: the focal point minus the view direction times
+// the distance). SELECT held turns it round the player (povUpdate). The face preview looks at the player's face from
+// in front
 void Session::viewCamera(RenderCamera& cam)
 {
 	if (!thirdPerson && !previewFace)
 		return;
 	const Player& p = w.player;
-	const float yaw = p.yaw + (previewFace ? previewSpin : 0.0f);
+	bool orbit = orbiting && !previewFace && !(playerDead && deathView);
+	const float yaw = p.yaw + (previewFace ? previewSpin : orbit ? orbitYaw : 0.0f);
 	float fx = sinf(yaw), fy = cosf(yaw);
 	float head[3] = { p.feet[0], p.feet[1], p.feet[2] + (previewFace ? 118.0f : 120.0f) };
-	float want = previewFace ? 70.0f : 220.0f;
+	float want = previewFace ? 70.0f : thirdZoom;
 	float dir = previewFace ? 1.0f : -1.0f;       // the preview stands in front, facing back
 	// (dead: from behind and above, looking down at the body where it fell. The face preview is level with the face,
 	// whatever way the player looked when it opened: looking up, it sat under the chin, aimed level at the chest)
-	const float pitch = playerDead && deathView ? -0.6f : previewFace ? 0.0f : p.pitch;
+	const float pitch = playerDead && deathView ? -0.6f : previewFace ? 0.0f : orbit ? orbitPitch : p.pitch;
 	float cp = cosf(pitch), sp = sinf(pitch);
 	float to[3] = { head[0] + dir * fx * cp * want, head[1] + dir * fy * cp * want, head[2] - sp * want };
 	// walls between the head and the camera pull it in
@@ -52,6 +118,11 @@ void Session::viewCamera(RenderCamera& cam)
 	}
 	else if (playerDead && deathView)
 		cam.pitch = pitch;
+	else if (orbit)
+	{
+		cam.yaw = yaw;
+		cam.pitch = pitch;
+	}
 }
 
 // ---- Stereo 3D

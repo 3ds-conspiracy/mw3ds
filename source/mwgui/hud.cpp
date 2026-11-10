@@ -120,12 +120,14 @@ void Session::drawTop()
 			last = now;
 		drawIndicators(dt);
 	}
-	if (!menuOpen())
+	// (not while SELECT held turns the camera round the player: the middle of the view isn't where they aim, OpenMW's
+	// preview mode shows no crosshair)
+	if (!menuOpen() && !orbiting)
 	{
 		uiRect(199 + ax, 117, 3, 7, C2D_Color32(255, 255, 255, 150));
 		uiRect(197 + ax, 119, 7, 3, C2D_Color32(255, 255, 255, 150));
 	}
-	if (target >= 0 && !menuOpen())
+	if (target >= 0 && !menuOpen() && !orbiting)
 	{
 		// (a long name, "Hut Door - Ald-ruhn, Tiras Sadus: General Merchandise", wraps over lines inside the screen)
 		std::vector<std::string> lines = targetPopupLines(target);

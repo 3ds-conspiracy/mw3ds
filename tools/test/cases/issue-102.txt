@@ -1,0 +1,60 @@
+# Issue 102: SELECT held turns the camera round the player (OpenMW's preview mode: the view key held). The C-stick
+# swings it round to the player's face, the D-pad tilts it, the Circle Pad's up / down zooms in and out, and the player
+# stands still meanwhile; let go, the camera is back behind them and the zoom stays. A tap still switches first / third
+# person, as it is let go; a hold begun in first person goes out past a quarter second and comes back in on release
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Balmora
+1 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:0
+# A tap: third person, the camera behind the player
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:1+EXPECT:orbiting:eq:0+EXPECT:viewcamangle:gt:150+SHOT
+0.1 0 0 0 0 SNAP:yaw+SNAP:pitch+SNAP:moved+SNAP:viewcamz
+# Held, the C-stick swings the camera round to the player's face (1.8 radians a second for 1.5 s: some 155 degrees);
+# the player doesn't turn
+1.5 0 0 1 0 SELECT
+0.5 0 0 0 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:orbiting:eq:1+EXPECT:viewcamangle:lt:45+EXPECT:yaw:ge:@-1+EXPECT:yaw:le:@1+SHOT
+# The D-pad's down tilts it up over the player, looking down; the player's own look stays
+0.5 0 0 0 0 SELECT+DOWN
+0.3 0 0 0 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:viewcamz:gt:@60+EXPECT:pitch:ge:@-1+EXPECT:pitch:le:@1+SHOT
+# The Circle Pad's up zooms in, its down out; the player doesn't walk
+0.1 0 0 0 0 SELECT+SNAP:thirdzoom
+0.5 0 1 0 0 SELECT
+0.3 0 0 0 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:thirdzoom:lt:@-80+EXPECT:moved:le:5+SHOT
+1.2 0 -1 0 0 SELECT
+0.3 0 0 0 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:thirdzoom:gt:400+EXPECT:moved:le:5+SHOT
+# Let go: back behind the player, still in third person, the zoom kept
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:orbiting:eq:0+EXPECT:thirdperson:eq:1+EXPECT:viewcamangle:gt:150+EXPECT:thirdzoom:gt:400+SHOT
+# A tap: first person again
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:0+EXPECT:viewcamdist:lt:1
+# Held in first person: nothing for a quarter second, then the camera goes out and round; let go, first person again
+0.2 0 0 0 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:orbiting:eq:0+EXPECT:thirdperson:eq:0
+1 0 0 -1 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:orbiting:eq:1+EXPECT:thirdperson:eq:1+EXPECT:viewcamangle:lt:150+SHOT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:orbiting:eq:0+EXPECT:thirdperson:eq:0
+# And the Circle Pad walks again
+0.1 0 0 0 0 SNAP:moved
+1 0 1 0
+0.1 0 0 0 0 EXPECT:moved:ge:50
+# The GoldenEye layout (an Old 3DS's one stick): its Circle Pad turns the camera round and zooms it too
+0.3 0 0 0 0 CONTROLS:goldeneye
+1 1 0 0 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:orbiting:eq:1+EXPECT:viewcamangle:lt:150+SNAP:thirdzoom+SNAP:moved
+0.5 0 -1 0 0 SELECT
+0.1 0 0 0 0 SELECT+EXPECT:thirdzoom:gt:@50+EXPECT:moved:le:5
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:orbiting:eq:0+EXPECT:thirdperson:eq:0
+# The Controls screen says what a tap and a hold of SELECT do
+0.3 0 0 0 0 CONTROLS:classic+SCREEN:controls
+0.5 0 0 0 0 SHOT

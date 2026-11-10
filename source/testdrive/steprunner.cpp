@@ -48,6 +48,7 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	down = first ? s.keys : 0;
 	held = s.keys;
 	in.togglePov = down & KEY_SELECT;
+	in.povHeld = held & KEY_SELECT;
 	in.sheathe = (held & KEY_ZL) && (down & KEY_X);
 	if (held & KEY_ZL)
 	{

@@ -40,6 +40,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	// face preview (previewFace)
 	PlayerBody body;
 	void viewCamera(RenderCamera& cam);
+	void povUpdate(PlayerInput& in, bool menu, float dt);
 	bool saveUnreadable = false;      // start(): the save asked for is there but won't read (nothing started over it)
 	std::string saveNeeds;            // ... because it was made with this add-on, which the data lacks ("tribunal")
 	void revealLocalMap();            // the squares round the player come out of the fog

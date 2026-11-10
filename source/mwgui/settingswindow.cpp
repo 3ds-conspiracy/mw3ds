@@ -354,13 +354,13 @@ void Session::drawControls()
 		{ "Circle Pad / C-Stick", "Move (pushed far: run) / look" }, { "A", "Activate: talk, open, take" },
 		{ "R (hold, release)", "Wind up, strike" }, { "X", "Ready / put away the weapon" }, { "L", "Cast the selected spell" },
 		{ "Y", "Jump (swim up in water)" }, { "ZL (hold)", "Sneak" },
-		{ "D-Pad", "Quick keys" }, { "SELECT", "First / third person" }, { "START", "Menu: save, rest, options" },
+		{ "D-Pad", "Quick keys" }, { "SELECT", "1st / 3rd; held: orbit, zoom" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Inventory, magic, map, stats" } };
 	static const char* kClassic[][2] = {
 		{ "Circle Pad", "Move (pushed far: run)" }, { "C-Stick / D-Pad", "Look" }, { "A", "Activate: talk, open, take" },
 		{ "X (hold, release)", "Ready weapon, wind up, strike" }, { "ZL + X", "Put the weapon away" }, { "Y", "Cast the selected spell" },
 		{ "B", "Jump (swim up in water)" }, { "L (hold)", "Sneak" },
-		{ "ZL + D-Pad", "Quick keys" }, { "SELECT", "First / third person" }, { "START", "Menu: save, rest, options" },
+		{ "ZL + D-Pad", "Quick keys" }, { "SELECT", "1st / 3rd; held: orbit, zoom" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Inventory, magic, map, stats" } };
 	// One stick (an Old 3DS without the C-stick) on the Xbox buttons: the pad walks and turns; an aim button held
 	// stands still and the pad aims
@@ -368,7 +368,7 @@ void Session::drawControls()
 		{ "Circle Pad", "Walk (far: run) up, down; turn" }, { "A (hold) / ZL / ZR", "Aim: stand still, the pad aims" },
 		{ "A (tap)", "Activate: talk, open, take" }, { "R (hold, release)", "Wind up, strike" },
 		{ "L", "Cast the selected spell" }, { "X", "Ready / put away the weapon" },
-		{ "Y", "Jump (swim up in water)" }, { "B", "Sneak on / off" }, { "SELECT", "First / third person" },
+		{ "Y", "Jump (swim up in water)" }, { "B", "Sneak on / off" }, { "SELECT", "1st / 3rd; held: orbit, zoom" },
 		{ "D-Pad", "Left / right: strafe; up / down: look" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Menus, quick keys" } };
 	// The stylus in the right hand looks; the left hand moves and fights (stylusInput)
@@ -377,7 +377,7 @@ void Session::drawControls()
 		{ "Circle Pad", "Move (pushed far: run)" }, { "Stylus (slide)", "Look" },
 		{ "A", "Activate: talk, open, take" }, { "R (hold, release)", "Wind up, strike" },
 		{ "L", "Cast the selected spell" }, { "X", "Ready / put away the weapon" },
-		{ "Y", "Jump (held: swim up)" }, { "B (hold)", "Sneak" }, { "SELECT", "First / third person" },
+		{ "Y", "Jump (held: swim up)" }, { "B (hold)", "Sneak" }, { "SELECT", "1st / 3rd; held: orbit, zoom" },
 		{ "D-Pad", "Strafe; look up / down" }, { "START", "Menu: save, rest, options" },
 		{ "Map's glass buttons", "The same (B: sneak on / off)" },
 		{ "C-Stick, ZL, ZR", "If there: look; sneak; rise" } };

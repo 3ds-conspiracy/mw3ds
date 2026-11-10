@@ -217,6 +217,23 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 		s.viewCamera(c);
 		v = c.pos[2] - w.player.feet[2];
 	}
+	else if (what == "orbiting") v = s.orbiting ? 1.0f : 0.0f;        // SELECT held turns the camera round the player
+	else if (what == "thirdzoom") v = s.thirdZoom;                    // the third-person camera's distance, as zoomed
+	// Third person: where the camera stands round the player, seen from above: degrees between the way the player faces
+	// and the way from the player to the camera (180: behind, 0: in front, looking at their face); and how far it is
+	// from the point over the head it turns round (0 in first person)
+	else if (what == "viewcamangle" || what == "viewcamdist")
+	{
+		RenderCamera c = { { w.player.feet[0], w.player.feet[1], w.player.feet[2] + 120.0f }, w.player.yaw, w.player.pitch };
+		s.viewCamera(c);
+		float dx = c.pos[0] - w.player.feet[0], dy = c.pos[1] - w.player.feet[1], dz = c.pos[2] - w.player.feet[2] - 120.0f;
+		float flat = sqrtf(dx * dx + dy * dy);
+		if (what == "viewcamdist")
+			v = sqrtf(flat * flat + dz * dz);
+		else
+			v = flat < 1.0f ? 0.0f : acosf(fmaxf(-1.0f, fminf(1.0f, (dx * sinf(w.player.yaw) + dy * cosf(w.player.yaw)) / flat)))
+				* 57.29578f;
+	}
 	else if (what == "unaimable")
 	{
 		// loaded people (and bodies) within 2000 units the crosshair can't find where they stand

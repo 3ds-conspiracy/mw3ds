@@ -135,6 +135,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	bool menu = menuOpen() || wantName;
 	PlayerInput in = inRaw;
 	playerControls(in, menu);
+	povUpdate(in, menu, dt);
 	playerMove(in, dt, t);
 
 	// The converted land ends at the walkable bounds

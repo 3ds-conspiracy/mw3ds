@@ -83,6 +83,7 @@ void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, float padY,
 	in.jump = down & KEY_Y;
 	in.sneak = sneakOn;
 	in.togglePov = down & KEY_SELECT;
+	in.povHeld = held & KEY_SELECT;
 }
 
 // Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
@@ -213,6 +214,7 @@ void stylusInput(PlayerInput& in, u32 held, u32 down)
 	in.up = held & (KEY_Y | KEY_ZR);
 	in.sneak = in.down = held & (KEY_B | KEY_ZL);
 	in.togglePov = down & KEY_SELECT;
+	in.povHeld = held & KEY_SELECT;
 }
 
 int stylusPadAt(int x, int y)
@@ -346,6 +348,7 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 		in.jump = down & KEY_Y;
 		in.fast = held & KEY_B;
 		in.togglePov = down & KEY_SELECT;
+		in.povHeld = held & KEY_SELECT;
 		in.up = held & KEY_ZR;
 		in.down = held & KEY_ZL;
 		in.sneak = held & KEY_ZL;
@@ -368,6 +371,7 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	}
 	in.jump = down & KEY_B;
 	in.togglePov = down & KEY_SELECT;
+	in.povHeld = held & KEY_SELECT;
 	in.fast = held & KEY_ZR;
 	in.up = held & KEY_R;
 	in.down = held & KEY_L;

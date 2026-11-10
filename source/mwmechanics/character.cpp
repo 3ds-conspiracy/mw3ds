@@ -363,13 +363,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		thirdPerson = deathView = false;
 		body.acting = BODY_NONE;
 	}
-	// The body seen from outside: dressed as the player is, doing what they do
-	if (in.togglePov && !menuOpen())
-	{
-		thirdPerson = !thirdPerson;
-		thirdDistance = 0.0f;
-		body.acting = BODY_NONE;              // a blow or cast under way when the view changes starts afresh
-	}
+	// The body seen from outside (SELECT: povUpdate): dressed as the player is, doing what they do
 	bool wasPreview = previewFace;
 	previewFace = screen == SCR_RACE;          // character creation: the face being chosen
 	if (previewFace)

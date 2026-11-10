@@ -511,7 +511,6 @@ static const float kHeight = 128.0f;
 static const float kStepUp = 34.0f;
 static const float kGravity = 627.0f;
 static const float kFlySpeed = 300.0f;
-static const float kLookSpeed = 1.8f;
 static const float kSwimDepth = 95.0f;      // feet below the surface while swimming: the head stays out
 static const float kSneakDrop = 28.0f;      // eye lowered while sneaking
 static const float kKnockDrop = 90.0f;      // ... and while knocked down
