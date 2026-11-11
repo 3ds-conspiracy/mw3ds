@@ -373,7 +373,7 @@ void Session::playerMove(const PlayerInput& in, float dt, u64& t)
 {
 	bool jumped = in.jump && w.player.onGround && !w.player.flying;
 	Scene scene = w.scene();
-	profAdd(PROF_OTHER, t);
+	profAddOther(PROF_O_SCENE, t);
 	playerUpdate(w.player, scene, in, dt);
 	profAdd(PROF_PLAYER, t);
 	if (jumped)

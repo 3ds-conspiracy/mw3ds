@@ -910,6 +910,9 @@ bool Engine::frame()
 			(pp[PROF_AI] - pp[PROF_DETECT] - pp[PROF_FX]) / frames, pp[PROF_SCRIPTS] / frames, pp[PROF_OTHER] / frames,
 			pp[PROF_DETECT] / frames, pp[PROF_FX] / frames, pp[PROF_GREET] / frames, pp[PROF_SOUND] / frames,
 			pp[PROF_TAIL] / frames, g_profActorsMs / frames, g_drawnBatches, g_culledBatches, stereoOn ? "on" : "off");
+		logf("profile other: screens %.2f controls %.2f scene %.2f aim %.2f viewmodel %.2f gravity %.2f effects %.2f ms",
+			pp[PROF_O_SCREENS] / frames, pp[PROF_O_CONTROLS] / frames, pp[PROF_O_SCENE] / frames, pp[PROF_O_AIM] / frames,
+			pp[PROF_O_VIEWMODEL] / frames, pp[PROF_O_GRAVITY] / frames, pp[PROF_O_EFFECTS] / frames);
 		const float* pd = g_profDraw;
 		logf("profile draw: wait %.2f sky %.2f cull %.2f opaque %.2f distant %.2f layers %.2f actors %.2f blend %.2f "
 			"extras %.2f hud %.2f bottom %.2f map %.2f ms, ui draws top %d bottom %d, "

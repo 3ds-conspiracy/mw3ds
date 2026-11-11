@@ -25,9 +25,12 @@
 // Update profile parts (Session::update; logged by main once a second). PROF_AI is all of combatUpdate; the detection
 // rays and the visual sweeps inside it (PROF_DETECT, PROF_FX) are counted again on their own, and main takes them off
 // it when it logs. PROF_GREET, PROF_SOUND and PROF_TAIL are the update's end: monitors and greetings; the sounds; the
-// sky, dress, lights and visuals
+// sky, dress, lights and visuals. PROF_OTHER's own parts are counted again after it (the "profile other" line): the
+// screens' upkeep, the controls and the point of view, the scene put together for the player's move, what is aimed
+// at, the view model, gravity on people, the active effects, recharge and casts
 enum { PROF_WORLD, PROF_PLAYER, PROF_STREAM, PROF_AI, PROF_SCRIPTS, PROF_OTHER, PROF_DETECT, PROF_FX, PROF_GREET, PROF_SOUND,
-	PROF_TAIL, PROF_COUNT };
+	PROF_TAIL, PROF_O_SCREENS, PROF_O_CONTROLS, PROF_O_SCENE, PROF_O_AIM, PROF_O_VIEWMODEL, PROF_O_GRAVITY, PROF_O_EFFECTS,
+	PROF_COUNT };
 extern float g_profParts[PROF_COUNT];
 
 #include "platform/console.hpp"

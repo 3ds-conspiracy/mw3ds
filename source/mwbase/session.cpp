@@ -131,11 +131,13 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		notify(w.game.gmst("smagicpcresisted", "You resisted the effects of the spell."));
 
 	openPendingMenu();
+	profAddOther(PROF_O_SCREENS, t);
 
 	bool menu = menuOpen() || wantName;
 	PlayerInput in = inRaw;
 	playerControls(in, menu);
 	povUpdate(in, menu, dt);
+	profAddOther(PROF_O_CONTROLS, t);
 	playerMove(in, dt, t);
 
 	// The converted land ends at the walkable bounds
@@ -158,7 +160,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 		}
 	}
 	// Outdoors: follow the player into other grid cells, loading one missing neighbour per frame
-	profAdd(PROF_OTHER, t);
+	profAddOther(PROF_O_CONTROLS, t);
 	w.streamExterior(false);
 	w.retryMissingTextures(dt);
 	// (the responses a talk read back from the card go again once it is over)
@@ -169,13 +171,15 @@ void Session::update(const PlayerInput& inRaw, float dt)
 
 	aimAndActivate(in, menu);
 
-	profAdd(PROF_OTHER, t);
+	profAddOther(PROF_O_AIM, t);
 	MARK("combat");
 	combatUpdate(in, dt, menu);
 	profAdd(PROF_AI, t);
 	viewModelUpdate(in, dt);
+	profAddOther(PROF_O_VIEWMODEL, t);
 	MARK("gravity");
 	actorGravity(dt);
+	profAddOther(PROF_O_GRAVITY, t);
 	MARK("effects");
 	updateEffects(dt);
 	rechargeItems(dt);
@@ -190,7 +194,7 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	}
 	if (in.quick >= 0 && !menu && w.controlsEnabled && !playerDead && !werewolfRefused())
 		useQuickKey(in.quick);
-	profAdd(PROF_OTHER, t);
+	profAddOther(PROF_O_EFFECTS, t);
 	MARK("scripts");
 	w.unsetUnwornEquip();
 	scriptsRun(w, *this, dt);
