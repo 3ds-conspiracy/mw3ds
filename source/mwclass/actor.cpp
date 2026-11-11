@@ -6,6 +6,9 @@
 
 void MWClass::Actor::search(Session& s, int ref)
 {
+	// (not while the inventory window isn't allowed: OpenMW's ActionOpen does nothing then)
+	if (!(s.w.menusEnabled & MENU_INVENTORY))
+		return;
 	s.containerRef = ref;
 	s.openScreen(SCR_CONTAINER);
 	// Opening a body (or pockets) can pass its diseases on, as a blow does (OpenMW's ActionOpen: diseaseContact)

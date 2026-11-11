@@ -26,7 +26,9 @@ void Session::povUpdate(PlayerInput& in, bool menu, float dt)
 	// (OpenMW zooms 30 to its Maximum Camera Distance, 800 by default; nearer than 60 our camera, over the head, sees
 	// into it)
 	const float kZoomMin = 60.0f, kZoomMax = 800.0f;
-	bool can = !menu && !playerDead;
+	// (not while a script has the view switch off, as Morrowind's CharGen script has until character creation is over:
+	// OpenMW's view key does nothing then, a tap or a hold alike, its playerviewswitch control)
+	bool can = !menu && !playerDead && !(w.controlsOff & 2u);
 	if (povHold < 0.0f && in.togglePov && can)
 		povHold = 0.0f;
 	if (povHold < 0.0f)
