@@ -49,6 +49,19 @@ static const char* boundItem(int e)
 	}
 }
 
+// One of the items a Bound spell conjures (OpenMW's MechanicsManager::isBoundItem): it stays with the one it was
+// conjured for, never dropped into the world, put in a container, sold or given away, so it can't outlast its spell
+bool isBoundItem(const std::string& id)
+{
+	if (strcasecmp(id.c_str(), "bound_gauntlet_right") == 0)
+		return true;
+	for (int e = 120; e <= 131; e++)
+		if (const char* item = boundItem(e))
+			if (strcasecmp(id.c_str(), item) == 0)
+				return true;
+	return false;
+}
+
 // A lasting change to an attribute or skill: it never shows below 0, the part below 0 is owed back first
 static void shiftStat(int& value, int& below, int by)
 {

@@ -9,6 +9,7 @@
 
 // The running game: world state, dialogue, menus, and everything scripts call into.
 const char* summonCreatureId(int effect);    // the creature a summoning effect calls (mwmechanics/spelleffects.cpp), nullptr if none
+bool isBoundItem(const std::string& id);     // an item a Bound spell conjures (mwmechanics/spelleffects.cpp)
 void summonSpot(World& w, const float caster[3], float yaw, float out[3]);   // where it comes (mwmechanics/summoning.cpp)
 float npcClimbSlope(const World& w, const Ref& r);   // the steepest land an actor walks up now, degrees (mwphysics/movementsolver.cpp)
 
