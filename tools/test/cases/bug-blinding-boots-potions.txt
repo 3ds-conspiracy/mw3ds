@@ -1,0 +1,47 @@
+# start: Seyda Neen
+# The Boots of Blinding Speed and real Resist Magicka potions (Exclusive: 20 points for 60 seconds, each drink its own
+# application), as OpenMW resists an equipment spell's effects once, as they are added. Boots on first: drinking changes
+# nothing. Five drunk first: on without their Blind, and it stays off once the potions have run out. Three drunk first
+# (60%): about 40 of the 100 Blind gets through, less Willpower's small share of the roll. No potions: all of it.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 GIVE:boots%of%blinding%speed[unique]
+0.3 0 0 0 0 GIVEPOTION:p_magicka_resistance_e:8
+# Boots on first, then all the potions the resistance needs: the Blind stays
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:ge:98+EXPECT:attr:speed:ge:200
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:100+EXPECT:effect:47:ge:98
+# Off and on again while the potions run: now they count, and the Blind is gone
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:eq:0
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:100+EXPECT:effect:47:eq:0+EXPECT:attr:speed:ge:200
+# The potions run out, the boots stay on: still no Blind
+62 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:0+EXPECT:effect:47:eq:0+EXPECT:attr:speed:ge:200
+# Off and on with no potions: all of it
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:ge:98
+0.3 0 0 0 0 UNEQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+# Three potions: 60% of it resisted
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+0.3 0 0 0 0 USE:p_magicka_resistance_e
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:93:eq:60
+0.3 0 0 0 0 EQUIP:boots%of%blinding%speed[unique]
+1 0 0 0
+0.3 0 0 0 0 EXPECT:effect:47:ge:38+EXPECT:effect:47:le:40
