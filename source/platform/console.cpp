@@ -14,7 +14,7 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.viewScaleMin = 0.6f;
 		p.viewScaleMax = 1.0f;
 		p.keepViewIndoors = false;
-		p.viewStartsShort = false;
+		p.viewFloorFps = 29.0f;      // (frames past a 60 Hz refresh wait for the next: 30 ms of work showed 23-25 fps)
 		p.workCap = 45.0f;
 		p.actorViewLimit = 0.0f;
 		p.actorDetailScale = 1.0f;
@@ -39,7 +39,7 @@ void consoleProfileInit(bool new3ds, size_t heapBytes)
 		p.viewScaleMin = 0.3f;       // (2150 units: as far as it closes in to hold 20 fps)
 		p.viewScaleMax = 0.8f;
 		p.keepViewIndoors = true;
-		p.viewStartsShort = true;    // (the view it can hold is found from below: not a slow start, then closing in)
+		p.viewFloorFps = 19.5f;      // (its 20 cap: a steady 20 measures 19.9 to 20.1 over a second)
 		p.workCap = 70.0f;
 		p.actorViewLimit = 4000.0f;
 		p.actorDetailScale = 0.67f;

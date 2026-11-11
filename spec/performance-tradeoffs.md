@@ -54,13 +54,15 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
 
 ## View distance and detail
 
-- **Never farther than OpenMW's view (7168); shorter when frames run long.** The dynamic view closes in with the fog
-  (Options > Video > Dynamic view). An Old 3DS or 2DS runs a steady 20 fps outdoors (30 indoors) and
-  keeps it with the view: 0.8 of OpenMW's at most, closing in as far as 0.3 (2150) whenever frames come slower than
-  20 a second, growing back only with room to spare. The view is drawn in steps of a twentieth, moved only once the
-  adapted scale is a whole step away: drawn as adapted, the fog's reach followed the scale's saw of a few thousandths
-  a frame at its threshold, and on an Old 3DS the walkways' edges in the fog flashed. (`source/mwrender/objects.hpp`,
-  `Session::viewScale`, `Session::viewDrawn`, `Session::adaptView`, `platform/console.cpp`)
+- **Never farther than OpenMW's view (7168); shorter when frames run long.** Options > Video > View distance: Max
+  (the console's longest: OpenMW's on a New 3DS, 0.8 of it on an Old 3DS or 2DS), Mid, Min (0.6 / 0.3), or Auto.
+  Auto (user, 2026-11-10) is the longest view, dropped to Mid in one step when the frame rate over a second falls
+  under 20 on an Old 3DS (under 30 on a New 3DS), and tried at the longest again a second later; dropped again soon
+  after a try, the next try waits twice as long, up to half a minute. It used to move the fog a little every frame,
+  an Old 3DS's out from its shortest after every trip: on the console it sat at its shortest for minutes at 13-18 fps,
+  no faster than at its longest, which an Old 3DS holds most of the time. An Old 3DS runs a steady 20 fps outdoors
+  (30 indoors and on light roads). (`source/mwrender/objects.hpp`, `Session::viewScale`, `Session::adaptView`,
+  `platform/console.cpp`)
 - **Rain and storms shorten the view.** OpenMW draws the whole view and moves the fog's start in; drawing land hidden in
   thick fog cost both consoles their frame rate. (`World::weatherFogScale`)
 - **Small clutter stops at a distance by its size.** Each size tier vanishes at about 25 pixels on screen. An Old 3DS

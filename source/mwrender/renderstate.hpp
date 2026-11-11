@@ -55,15 +55,16 @@ struct RenderState
 	float renderCost = 0.0f;          // smoothed per-frame render time (ms) of one eye
 	float eyeCmdUse = 0.0f;           // share of the GPU command buffer one eye's world takes
 	bool stereoCmdRoom = true;
-	// Adaptive view distance outdoors (fog scale), from the frame's CPU / GPU work and the time between frames. An Old
-	// 3DS starts nearer and may close in further, and caps the frame rate at 30 or 20 (frameCap: main hands it to
-	// C3D_FrameRate)
-	float viewScale = g_profile.viewStartsShort ? g_profile.viewScaleMin : g_profile.viewScaleMax, workCost = 0.0f, frameCost = 0.0f;
-	// ... and the share actually drawn: viewScale in steps of kViewStep, moved only once viewScale has left the step
-	// by a whole one. The frame cost hovering at its threshold saws viewScale by a few thousandths every frame, and
-	// drawn as it is, the fog's reach moved with it: on an Old 3DS at its short view the walkways' edges in the fog
-	// flashed frame by frame
-	float viewDrawn = g_profile.viewStartsShort ? g_profile.viewScaleMin : g_profile.viewScaleMax;
+	// View distance Auto outdoors (fog scale): the console's longest view, or its middle one while the longest runs too
+	// slow (Session::adaptView). An Old 3DS also caps the frame rate at 30 or 20 (frameCap: main hands it to
+	// C3D_FrameRate). viewDrawn is the share drawn, the same as viewScale (tests set either)
+	float viewScale = g_profile.viewScaleMax, workCost = 0.0f, frameCost = 0.0f;
+	float viewDrawn = g_profile.viewScaleMax;
+	float viewWindowMs = 0.0f;        // the frame rate measured a second at a time: the time so far, and the frames
+	int viewWindowFrames = 0;
+	float viewRetryIn = 0.0f;         // at the middle view: seconds until the longest is tried again
+	float viewRetryWait = 1.0f;       // ... and how long the next drop waits (twice as long each time it fails again soon)
+	float viewHighFor = 0.0f;         // at the longest view: seconds it has held
 	int frameCap = g_profile.frameCap, capFrames = 0;
 	u64 adaptTick = 0;                // when adaptView last ran (once a frame: the time between frames)
 };

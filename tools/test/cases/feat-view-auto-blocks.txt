@@ -1,0 +1,36 @@
+# console: old
+# View distance Auto in two blocks (user, 2026-11-10): an Old 3DS starts at its longest view (0.8 of OpenMW's) and keeps
+# it while it holds 20 fps; a second under 20 drops it to the middle view (0.55) in one step, and the longest is tried
+# again a second later. Dropped again soon after a try, the next try waits twice as long; ten seconds held at the
+# longest put the wait back to a second. It used to start at its shortest (0.3) and creep out a little each frame, after
+# every trip too, and sat there for minutes at 13-18 fps on the console, no faster than at its longest.
+# (ADAPTVIEW:<work ms>:<frame ms>:<frames> hands frames of that cost to Session::adaptView, as main's loop does)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.5 0 0 0 0 EXPECT:viewdrawn:eq:0.8
+# a steady 20 fps: the longest view stays
+0.1 0 0 0 0 ADAPTVIEW:40:50:60
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.8
+# a second at 18 fps: the middle view, at once
+0.1 0 0 0 0 ADAPTVIEW:45:55:30
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.55+EXPECT:viewscale:eq:0.55
+# a second later the longest is tried again
+0.1 0 0 0 0 ADAPTVIEW:30:50:24
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.8
+# slow again at once: the middle view, and this time two seconds before the next try
+0.1 0 0 0 0 ADAPTVIEW:45:55:24
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.55
+0.1 0 0 0 0 ADAPTVIEW:30:50:20
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.55
+0.1 0 0 0 0 ADAPTVIEW:30:50:24
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.8
+# twelve seconds held at the longest: the next drop waits a second again
+0.1 0 0 0 0 ADAPTVIEW:40:50:240
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.8
+0.1 0 0 0 0 ADAPTVIEW:45:55:24
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.55
+0.1 0 0 0 0 ADAPTVIEW:30:50:24
+0.1 0 0 0 0 EXPECT:viewdrawn:eq:0.8
+# never shorter than the middle view, however slow
+0.1 0 0 0 0 ADAPTVIEW:60:70:200
+0.1 0 0 0 0 EXPECT:viewdrawn:ge:0.55

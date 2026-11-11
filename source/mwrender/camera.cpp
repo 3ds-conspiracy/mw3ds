@@ -178,19 +178,21 @@ float Session::stereoTarget(float slider, float dt)
 	return stereoCmdRoom ? 1.0f : 0.0f;
 }
 
-// Outdoors, the fog (and with it what is drawn) closes in while a frame's work runs past 30 fps
-// and eases back out once there is room again; indoors the view stays whole
+// After each frame: the frame rate cap, the particle budget, and View distance Auto's view outdoors
 //
 // An Old 3DS (a CPU a third as fast) caps the frame rate instead of letting it wander: 30 while a frame's work stays
 // under 30 fps' 33 ms, 20 once it keeps running past, 30 again once it keeps well under. Both are even shares of
-// the screen's 60 Hz: a cap of 24 would show frames for 2 and 3 refreshes in turn, a judder worse than a steady 20.
-// Only past 20 fps' 50 ms does the fog close in (interiors, most of the game, hold 30)
+// the screen's 60 Hz: a cap of 24 would show frames for 2 and 3 refreshes in turn, a judder worse than a steady 20
 //
-// A New 3DS runs uncapped at the screen's 60 Hz, so a frame that misses a refresh waits for the next one: 30 ms of
-// measured work showed 23-25 fps on the console (3D on, outdoors), between the work thresholds, and the view stayed
-// whole. It closes in by the time between frames, the frame rate the player sees, and opens out only while the work
-// leaves room for 30 fps
-static const float kViewStep = 0.05f;      // the drawn view moves in steps of this share of the full view (viewDrawn)
+// View distance Auto (user, 2026-11-10): the console's longest view, dropped to its middle one in a single step when
+// the frame rate over a second falls under the console's floor (an Old 3DS's 20, a New 3DS's 30), and tried at the
+// longest again a second later. Dropped again soon after a try, the next try waits twice as long (up to half a
+// minute: a heavy town isn't tried every other second); once the longest has held for ten seconds the wait is a
+// second again. Only those two views, measured only once a second. It moved the fog a little every frame, an Old
+// 3DS's out from its shortest after every trip: the Old 3DS sat at its shortest view for minutes at 13-18 fps, the
+// frames no faster there (the time went to the people, not the land), and it holds its longest most of the time
+static const float kHighHolds = 10.0f;     // seconds at the longest view that put the next drop's wait back to one
+static const float kRetryWaitMax = 30.0f;  // the longest wait before the longest view is tried again
 
 void Session::adaptView(float workMs, float frameMs)
 {
@@ -201,13 +203,12 @@ void Session::adaptView(float workMs, float frameMs)
 	// the PC build's GPU estimate (GPUMODEL:on) shows here only through this)
 	frameMs = fmaxf(frameMs, workMs);
 	adaptTick = tick;
-	// One long frame (a cell arriving) shouldn't shrink the view: each counts at most as a slow one
+	// One long frame (a cell arriving) counts at most as a slow one
 	workCost += (fminf(workMs, g_profile.workCap) - workCost) * 0.1f;
 	frameCost += (fminf(frameMs, g_profile.workCap) - frameCost) * 0.1f;
-	float budget = 34.0f;
 	if (g_profile.capSteps)
 	{
-		// Outdoors a steady 20 fps, the view giving way to keep it (below); indoors 30, 20 while a room is too heavy:
+		// 30, 20 while the place is too heavy:
 		// two seconds past the 30 fps budget: 20; four seconds well under it: 30 again
 		// (outdoors too: it was held at 20 there whatever the work, and a quiet road at 22 ms of work ran at 20 for nothing)
 		int cap = frameCap;
@@ -225,7 +226,6 @@ void Session::adaptView(float workMs, float frameMs)
 			frameCap = cap;
 			logf("view: frame rate capped at %d (frame work %.1f ms, view %.0f%%)", frameCap, workCost, viewScale * 100.0f);
 		}
-		budget = 44.0f;
 	}
 	// Particle sprites (spell visuals): fewer at once while frames run past the budget, quickly; more again, slowly,
 	// once there is room (indoors too: a fight is the same work there). Spread evenly over the visuals showing
@@ -235,28 +235,44 @@ void Session::adaptView(float workMs, float frameMs)
 		sb = std::max(g_profile.spriteBudgetMin, sb - 8);
 	else if (workCost < spriteMs - 6.0f)
 		sb = std::min(g_profile.spriteBudgetMax, sb + 2);
-	float minScale = g_profile.viewScaleMin, maxScale = g_profile.viewScaleMax;
 	// (Mournhold's big areas under the sky adapt as outdoors: case perf-mournhold-sky-interiors)
 	if (w.current < 0 || !w.cells[w.current].underSky())
 	{
 		// (indoors the view is whole whatever this says: the Old 3DS keeps its outdoor view for the way out)
 		if (!g_profile.keepViewIndoors)
 			viewScale = viewDrawn = 1.0f;
+		viewWindowMs = 0.0f, viewWindowFrames = 0;
 		return;
 	}
-	// (New 3DS: past 34.5 ms between frames is under 29 fps; under 27 ms of work held 29-30 fps on the console. Old 3DS,
-	// at its 20: past 51.5 ms between frames is under 19.4 fps, or the work near the budget; it grows back only with
-	// room to spare. On the console it ran 18 fps while the work, under 47 ms, said all was well: a frame a little over
-	// 50 ms waits for the next refresh)
-	bool slow = g_profile.capSteps ? workCost > budget || frameCost > 51.5f : frameCost > 34.5f;
-	bool room = g_profile.capSteps ? workCost < budget - 8.0f && frameCost < 51.5f : workCost < 27.0f;
-	if (slow)
-		viewScale = fmaxf(minScale, viewScale - (g_profile.capSteps ? 0.006f : 0.004f));
-	else if (room)
-		viewScale = fminf(maxScale, viewScale + 0.002f);
-	// The drawn view (viewDrawn): the nearest step once the scale is a whole step away from the one drawn. At the
-	// threshold the scale saws between -0.006 and +0.002 a frame, well inside a step, so the fog stands still; a real
-	// change of load moves it a step at a time
-	if (fabsf(viewScale - viewDrawn) >= kViewStep - 0.0005f)
-		viewDrawn = fmaxf(minScale, fminf(maxScale, roundf(viewScale / kViewStep) * kViewStep));
+	const float high = g_profile.viewScaleMax, mid = 0.5f * (g_profile.viewScaleMin + g_profile.viewScaleMax);
+	// (one long frame, a cell arriving, counts as a slow one, no more)
+	viewWindowMs += fminf(frameMs, g_profile.workCap);
+	viewWindowFrames++;
+	if (viewWindowMs < 1000.0f)
+		return;
+	float fps = viewWindowFrames * 1000.0f / viewWindowMs, secs = viewWindowMs / 1000.0f;
+	viewWindowMs = 0.0f, viewWindowFrames = 0;
+	if (viewScale > mid + 0.001f)
+	{
+		viewScale = viewDrawn = high;
+		viewHighFor += secs;
+		if (viewHighFor >= kHighHolds)
+			viewRetryWait = 1.0f;
+		if (fps < g_profile.viewFloorFps)
+		{
+			viewScale = viewDrawn = mid;
+			viewRetryIn = viewRetryWait;
+			logf("view: Auto at the middle view (%.1f fps), the longest tried again in %.0f s", fps, viewRetryIn);
+			viewRetryWait = fminf(kRetryWaitMax, viewRetryWait * 2.0f);
+			viewHighFor = 0.0f;
+		}
+	}
+	else if ((viewRetryIn -= secs) <= 0.0f)
+	{
+		viewScale = viewDrawn = high;
+		viewHighFor = 0.0f;
+		logf("view: Auto at the longest view (%.1f fps at the middle)", fps);
+	}
+	else
+		viewScale = viewDrawn = mid;
 }
