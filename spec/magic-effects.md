@@ -215,7 +215,10 @@ All of them are resisted by Resist Magicka (R / W) except Command (not listed in
   gauntlets): the item is added and equipped; the weapon slot also draws the weapon. If it cannot be equipped (beast
   races: boots, helm) the effect ends at once. At the end the item is removed, and on the player the previously equipped
   item is re-equipped when the bound one was in the slot. Non-recastable. Died actor: all effects are cleared, so the item
-  goes.
+  goes. A bound item (any item whose id one of the `sMagicBound*` settings names: `isBoundItem`) never leaves its
+  holder: dropping it to the ground, putting it in a container or giving it to a companion is refused with
+  `sBarterDialog12`, selling it with `sBarterDialog9`, and taking one from a container with `sContentsMessage1`. Were it
+  let go, it would outlast its spell and be kept for good.
 - **Extra Spell** (126): on an NPC, unequips everything except weapon, ammunition, pants, and (if not armor) the left
   hand; autoequip again when it ends. The player is not unequipped.
 - **Soul Trap** (58): on the death of a creature with a soul value > 0 that has Soul Trap > 0 with a *caster who is an
@@ -298,7 +301,9 @@ failed before the fix:
    (`isAggressionCapable`), whatever its magnitude.
 4. **Reflect and Spell Absorption** roll per effect, and absorbed magicka passes the maximum (magic.md).
 5. **Disintegrate Armor** (`bug-disintegrate-armor-order`) took the first armor in the inventory; now the order above.
-6. **Bound items** (`bug-bound-boots-beast`): a beast race's Bound Boots or Helm now ends at once.
+6. **Bound items** (`bug-bound-boots-beast`): a beast race's Bound Boots or Helm now ends at once. (`issue-112`) The
+   inventory's Drop let a bound item go to the ground, where it stayed when the spell ended; now it is refused.
+   Containers already refused one; a merchant never lists one (it is worth nothing).
 7. **Damage Attribute / Skill** (`bug-damage-attribute-cap`) kept damage past 0; each moment is now capped at what is
    left.
 

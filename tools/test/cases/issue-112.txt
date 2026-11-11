@@ -1,0 +1,41 @@
+# Issue 112: a bound weapon dropped to the ground stayed there when its spell ended, and picked up again it was the
+# player's for good. A conjured item can't leave the player (OpenMW's DragAndDrop::drop and isBoundItem, message
+# sBarterDialog12): the inventory's Drop is refused, the item stays in hand, and it goes when the spell ends. An
+# iron dagger beside it still drops (the normal path). The player's way: the inventory, the dagger, Drop; looking at
+# the ground in front, where a dropped one would lie.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETATTR:intelligence:100+SETMAGICKA:2000
+0.1 0 0 0 0 ADDEFFECT:120:1:1:12:0
+0.1 0 0 0 0 MAKESPELL:e120
+0.3 0 0 0 0 PITCH:-45
+0.3 0 0 0 0 CAST:mw3ds_test_e120
+1.5 0 0 0
+0.3 0 0 0 0 EXPECT:count:bound_dagger:eq:1
+0.3 0 0 0 0 SCREEN:inventory
+1.0 0 0 0
+0.3 0 0 0 0 INVSEL:bound_dagger
+1.0 0 0 0
+0.3 0 0 0 0 TAP:160:222
+0.5 0 0 0 0 EXPECT:count:bound_dagger:eq:1+EXPECT:message:summoned_items
+0.3 0 0 0 0 SHOT
+1.5 0 0 0
+0.3 0 0 0 0 B
+2.0 0 0 0
+0.3 0 0 0 0 SHOT
+9 0 0 0
+0.3 0 0 0 0 EXPECT:count:bound_dagger:eq:0
+0.3 0 0 0 0 SHOT
+1.0 0 0 0
+0.3 0 0 0 0 A
+1.0 0 0 0
+0.3 0 0 0 0 EXPECT:count:bound_dagger:eq:0
+0.3 0 0 0 0 SCREEN:inventory
+2.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+1.0 0 0 0
+0.3 0 0 0 0 GIVE:iron_dagger
+0.3 0 0 0 0 SNAP:count:iron_dagger
+0.3 0 0 0 0 DROPAIM:iron_dagger
+0.5 0 0 0 0 EXPECT:count:iron_dagger:eq:@-1

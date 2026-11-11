@@ -227,6 +227,12 @@ void Session::dropFromInventory(int sel, int count)
 {
 	if (sel < 0 || sel >= (int)w.inventory.size() || count <= 0)
 		return;
+	// a conjured item can't go to the ground (OpenMW's DragAndDrop::drop): left there, it would outlast its spell
+	if (isBoundItem(w.inventory[sel].id))
+	{
+		notify(w.game.gmst("sbarterdialog12", "You cannot drop summoned items!"));
+		return;
+	}
 	InventoryItem it = w.inventory[sel];
 	int n = std::min(count, it.count);
 	it.count = n;
