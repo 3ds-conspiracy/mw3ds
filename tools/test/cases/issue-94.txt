@@ -1,0 +1,33 @@
+# start: Imperial Prison Ship
+# Issue 94: before character creation is over, a container opened and SELECT changed to third person. Morrowind allows
+# neither: its CharGen script turns the view switch off (DisablePlayerViewSwitch) and the inventory menu is not
+# enabled yet. OpenMW: with the inventory window not allowed a container, a body, a light and anything picked up do
+# nothing when activated (Container::activate, ActionOpen, Light::activate, Class::defaultItemActivate: no action, no
+# sound), and the view key does nothing while the playerviewswitch control is off, a tap or a hold alike.
+# On the prison ship: SELECT leaves the view in first person, a held SELECT too, and a barrel stays shut. Once the
+# script commands that end character creation's limits have run (EnablePlayerViewSwitch, EnableInventoryMenu), both work.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.1 0 0 0 0 EXPECT:global:chargenstate:ne:-1
+# (the controls as the script gives them back once the player has a name; the view switch and the menus stay off)
+0.2 0 0 0 0 CON:EnablePlayerControls
+0.3 0 0 0 0 SHOT
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:0
+0.3 0 0 0 0 SHOT
+30 0 0 0 0 ACTIVATE:barrel_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none
+0.3 0 0 0 0 SHOT
+0.2 0 0 0 0 CON:EnablePlayerViewSwitch
+0.2 0 0 0 0 CON:EnableInventoryMenu
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:1
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+30 0 0 0 0 ACTIVATE:barrel_01
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 SHOT

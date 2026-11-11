@@ -6,16 +6,21 @@
 
 void MWClass::activate(Session& s, int ref)
 {
+	// While the inventory window is not allowed (character creation, until a script's EnableInventoryMenu) a container,
+	// a light and anything that would be picked up do nothing: no action, no sound, no message (OpenMW's
+	// Container::activate, Light::activate and Class::defaultItemActivate return a NullAction). A body is the same,
+	// where it is opened (Actor::search: OpenMW's ActionOpen)
+	const bool items = (s.w.menusEnabled & MENU_INVENTORY) != 0;
 	switch (s.w.refs[ref].recType)
 	{
 	case REC_NPC_: Npc::activate(s, ref); return;
 	case REC_CREA: Creature::activate(s, ref); return;
 	case REC_DOOR: s.useDoor(ref); return;
-	case REC_CONT: Container::activate(s, ref); return;
+	case REC_CONT: if (items) Container::activate(s, ref); return;
 	case REC_BOOK: Book::activate(s, ref); return;
-	case REC_LIGH: Light::activate(s, ref); return;
+	case REC_LIGH: if (items) Light::activate(s, ref); return;
 	case REC_ACTI: case REC_STAT: return;
-	default: s.pickUp(ref); return;
+	default: if (items) s.pickUp(ref); return;
 	}
 }
 
