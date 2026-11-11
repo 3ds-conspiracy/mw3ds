@@ -117,13 +117,18 @@ std::vector<std::string> Session::targetPopupLines(int ref)
 
 // What A does to what is aimed at, for the bottom screen: short of the date under the map (from x 190), so within 180
 // pixels, over two lines at most, the second cut with ".." when even that is not enough
-std::vector<std::string> Session::targetPromptLines(int ref, float* scale)
+std::string Session::targetPromptText(int ref)
 {
 	const Ref& t = w.refs[ref];
 	// (a creature alive: "Talk to" one with words of its own, else only its name, as OpenMW shows it)
 	bool talks = t.recType == REC_CREA && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));
 	std::string verb = t.dead ? "Search " : t.recType == REC_NPC_ || talks ? "Talk to " : t.recType == REC_CREA ? "" : t.recType == REC_DOOR ? "Open " : "Use ";
-	std::string use = "A: " + verb + targetLabel(ref);
+	return "A: " + verb + targetLabel(ref);
+}
+
+std::vector<std::string> Session::targetPromptLines(int ref, float* scale)
+{
+	std::string use = targetPromptText(ref);
 	// one line at the usual size; else two, a little smaller, and smaller still before anything is cut
 	float s = 0.45f;
 	std::vector<std::string> lines = uiWrap(use, 180.0f, s);

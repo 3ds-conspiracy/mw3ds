@@ -374,10 +374,14 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void werewolfWitnesses();                     // the player just changed into a werewolf: who saw it
 	std::string targetLabel(int ref);
 	std::vector<std::string> targetPopupLines(int ref);    // the name over the crosshair, wrapped to fit the top screen
-	std::vector<std::string> targetPromptLines(int ref, float* scale = nullptr);   // "A: Open <name>" on the bottom screen: one or two lines, at that scale
+	std::string targetPromptText(int ref);                 // "A: Open <name>": what A does to what is aimed at
+	std::vector<std::string> targetPromptLines(int ref, float* scale = nullptr);   // ... on the bottom screen: one or two lines, at that scale
 
 	// screens (mwgui/hud.cpp, mwgui/messagebox.cpp)
-	void drawHud();
+	void drawHud(int parts = HUD_ALL);
+	void drawHudKept(C3D_RenderTarget* bottom, bool touched, bool saved);   // the HUD over its picture kept on the bottom screen
+	u32 hudKey(bool aim = false);     // what the HUD shows besides its bars and its minimap, as one number; or its aim line
+	void hudBars(int* out);           // the bars as drawn: 3 x (now, most, the fill's pixels)
 	std::vector<ActiveEffect> hudEffects();
 	void drawQuickStrip();
 	void drawStylusButtons();         // stylus layouts: the HUD's Use, Cast, Ready, Jump and Sneak

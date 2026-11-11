@@ -487,7 +487,7 @@ bool Engine::frame()
 		clearTop(top, 0x000000FF);
 		C2D_SceneBegin(top);
 		session->movieDraw();
-		C2D_TargetClear(bottom, C2D_Color32(0, 0, 0, 255));
+		uiClearBottom(bottom, C2D_Color32(0, 0, 0, 255));
 		C2D_SceneBegin(bottom);
 		uiTextCentered(160, 110, 0.45f, col::textDim, "A: skip");
 		C2D_Flush();
@@ -840,18 +840,27 @@ bool Engine::frame()
 		drawProfAdd(DRAWP_HUD, drawSince);
 		uiPeakTop = std::max(uiPeakTop, g_uiDraws);
 	}
-	// The HUD (no menu, no message up) is drawn every third frame: 330 pieces of text and frame cost an Old 3DS 5 ms a
-	// frame, and its bars and clock don't need more. Menus and messages draw every frame (taps, scrolling), and so does
-	// the HUD while a finger is on the screen or just lifted: its buttons, quick slots and map read the tap as they draw
+	// The HUD (no menu, no message up) is drawn every third frame, and then only what changed, over its picture kept on
+	// the bottom screen (Session::drawHudKept): whole it is 330 pieces of text and frame, 5 ms of an Old 3DS's frame, and
+	// most of it shows the same for minutes. Menus and messages draw every frame (taps, scrolling), and so does the HUD,
+	// whole, while a finger is on the screen or just lifted: its buttons, quick slots and map read the tap as they draw
 	bool hudOnly = loaded && session->screen == SCR_NONE && session->messages.empty() && !session->wantName;
 	if (!hudOnly || g_mainFrames % 3 == 0 || ui.touching || ui.tapped)
 	{
-		extern int g_uiDraws;
+		extern int g_uiDraws, g_hudPieces;
 		g_uiDraws = 0;
-		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
-		C2D_SceneBegin(bottom);
-		if (loaded)
-			session->drawBottom();
+		if (hudOnly)
+		{
+			session->drawHudKept(bottom, ui.touching || ui.tapped, screenshotSavesFrame());
+			g_hudPieces += g_uiDraws;
+		}
+		else
+		{
+			uiClearBottom(bottom, C2D_Color32(10, 8, 6, 255));
+			C2D_SceneBegin(bottom);
+			if (loaded)
+				session->drawBottom();
+		}
 		drawProfAdd(DRAWP_BOTTOM, drawSince);
 		uiPeakBottom = std::max(uiPeakBottom, g_uiDraws);
 	}

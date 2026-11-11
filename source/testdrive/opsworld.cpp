@@ -314,6 +314,14 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		logf("test: depth16 %s", g_testDepth16 ? "on" : "off");
 		return true;
 	}
+	// HUDWHOLE: the HUD's picture kept on the bottom screen is let go, so its next frame draws it whole (Session::
+	// drawHudKept): a shot after it beside one before shows what the kept picture had wrong, in the emulator
+	if (verb == "HUDWHOLE")
+	{
+		uiHudKeep(false);
+		logf("test: the HUD is drawn whole next");
+		return true;
+	}
 	// PICKCHECK:on|off: a scripted run makes each crosshair pick twice, among the things near and among them all, and
 	// the two must agree (worldPick); off for a run that measures what the pick costs
 	if (verb == "PICKCHECK" && a.size() >= 2)

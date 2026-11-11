@@ -10,3 +10,6 @@ bool screenshotSaveTexture(C3D_Tex* tex, const char* path);
 // The PC build draws only frames that save something: this one is drawn, so a render to a texture saved after it
 // happens (the 3DS draws every frame)
 void screenshotDrawThisFrame();
+// This frame's picture is being saved as it is drawn (the PC build's shots and recordings: it draws those frames
+// alone, so one must hold everything, the HUD whole). Never on the 3DS: its shots read the screens as they are shown
+bool screenshotSavesFrame();

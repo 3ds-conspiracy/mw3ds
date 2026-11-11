@@ -43,6 +43,19 @@ const UiInput& uiIn();
 u32 uiRepeated();                         // the directions in uiIn().down this frame that are a held key's repeat
 void uiConsume(u32 keys);                 // keys handled by gameplay are hidden from widgets this frame
 
+// The HUD's picture stays on the bottom screen's target between frames (Session::drawHudKept). Whatever else draws
+// there (a menu, a loading screen, a movie) clears the target through this, so the HUD knows its picture is gone and
+// draws itself whole when it next shows
+void uiClearBottom(C3D_RenderTarget* bottom, u32 color);
+bool uiHudKept();                         // the bottom screen still holds the HUD as it was last drawn whole
+void uiHudKeep(bool kept);
+// What the widgets draw (where, how big, which colour, which text or picture), summed while asked for: the HUD checks
+// its kept picture with it (a whole draw that sums to something else when nothing it watches changed)
+void uiSumStart();
+void uiSum(bool on);
+u32 uiSumEnd();
+int uiMisses();                           // pictures and icons not drawn so far, their texture not in memory
+
 // Text (system font). scale 0.5 ~ 15 px lines.
 float uiLineHeight(float scale);
 float uiTextWidth(const std::string& s, float scale);

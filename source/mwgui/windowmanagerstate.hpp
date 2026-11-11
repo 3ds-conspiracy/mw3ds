@@ -152,6 +152,17 @@ struct WindowManagerState
 	std::vector<std::string> effectTip;           // the HUD's tapped active-effect icon: its tooltip lines (OpenMW's hover)
 	float effectTipUntil = 0.0f;                  // ... shown on the top screen until then (world time)
 	int hudEffectIcons = 0;                       // tests: the active-effect icons the HUD drew
+	// The HUD's picture kept on the bottom screen between frames (Session::drawHudKept). Its parts: the three bars, the
+	// minimap's square (with the bounty and the frame rate over it), the rest. What the last whole draw showed (hudKey)
+	// and its widgets' sum (uiSumEnd), whether a finger was on the screen then, the bars as drawn last (hudBars), the HUD
+	// frames since that whole draw; tests: the whole draws and the part draws so far
+	// (HUD_AIM: what A does to what is aimed at, and the attack hint under it: it changes with every look round a town)
+	enum { HUD_BARS = 1, HUD_MAP = 2, HUD_REST = 4, HUD_AIM = 8, HUD_ALL = 15 };
+	u32 hudKeyDrawn = 0, hudSumDrawn = 0, hudAimDrawn = 0;
+	bool hudTouchDrawn = false;
+	int hudBarsDrawn[9] = {};
+	int hudSinceWhole = 0;
+	int hudWholeDraws = 0, hudPartDraws = 0;
 	// The stylus layout: the HUD's glass buttons tapped (STYLUS_* bits), taken by the next frame's input; B's sneak
 	// (on / off), Y held down (swim up, rise levitating), R held down (winding up a blow)
 	enum { STYLUS_USE = 1, STYLUS_CAST = 2, STYLUS_READY = 4, STYLUS_JUMP = 8 };

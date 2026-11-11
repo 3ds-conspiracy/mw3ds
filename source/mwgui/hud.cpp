@@ -9,6 +9,7 @@
 #include <cstdio>
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwinput/inputmanagerimp.hpp"
+#include "components/debug/debuglog.hpp"
 #include <array>
 #include <functional>
 #include <sys/stat.h>
@@ -407,160 +408,350 @@ std::vector<ActiveEffect> Session::hudEffects()
 	return shown;
 }
 
-void Session::drawHud()
+// The three bars as they are drawn: each one's two numbers and its fill in pixels (the bar is 172 wide inside its frame)
+void Session::hudBars(int* out)
 {
 	const PlayerStats& s = w.stats;
-	std::string sub;
-	for (auto& r : w.game.races)
-		if (lower(r.id) == lower(s.race))
-			sub = r.name;
-	if (const ClassDef* c = w.playerClass())
-		sub += " " + c->name;
-	header(s.name, sub);
-
-	// Health, magicka, fatigue (Morrowind's colours), the numbers inside the bars
 	float cur[3] = { s.health, s.magicka, s.fatigue }, max[3] = { s.healthMax, s.magickaMax, s.fatigueMax };
-	u32 colors[3] = { col::health, col::magicka, col::fatigue };
 	for (int i = 0; i < 3; i++)
 	{
-		float y = 27 + i * 15;
-		uiBar(6, y, 174, 12, max[i] > 0 ? cur[i] / max[i] : 0, colors[i]);
-		char buf[32];
-		snprintf(buf, sizeof(buf), "%d/%d", (int)cur[i], (int)max[i]);
-		uiTextCentered(93, y + 6 - uiLineHeight(0.36f) / 2, 0.36f, col::textPressed, buf);
+		out[i * 3] = (int)cur[i];
+		out[i * 3 + 1] = (int)max[i];
+		out[i * 3 + 2] = max[i] > 0 ? std::max(0, (int)floorf(172.0f * fminf(cur[i] / max[i], 1.0f) + 0.5f)) : 0;
 	}
+}
 
-	// Weapon and spell, as the boxes by Morrowind's bars
-	const InventoryItem* weapon = nullptr;
+// What the HUD shows besides its bars and its minimap, as one number: its picture is kept on the bottom screen and
+// drawn whole again only when this changes (drawHudKept). Everything drawHud's HUD_REST parts read belongs here; a
+// whole draw now and then checks that nothing was left out. aim: the same for its HUD_AIM part, the line that says what
+// A does to what is aimed at and the attack hint under it
+u32 Session::hudKey(bool aim)
+{
+	u32 h = 2166136261u;
+	auto bytes = [&](const void* p, size_t n) {
+		const u8* b = (const u8*)p;
+		for (size_t i = 0; i < n; i++)
+			h = (h ^ b[i]) * 16777619u;
+	};
+	auto num = [&](int v) { bytes(&v, sizeof(v)); };
+	auto text = [&](const char* t) {
+		size_t n = strlen(t);
+		bytes(t, n);
+		num((int)n);
+	};
+	const PlayerStats& s = w.stats;
+	if (aim)
+	{
+		num(target);
+		if (target >= 0)
+			text(targetPromptText(target).c_str());
+		num(w.fightingEnabled);
+		num(g_controlLayout);
+		text(s.selectedSpell.c_str());
+		return h;
+	}
+	// the header: the name, the race, the class
+	text(s.name.c_str());
+	text(s.race.c_str());
+	text(s.cls.c_str());
+	text(s.customClass.name.c_str());
+	// the weapon box (what is worn: the weapon is one of them; a werewolf's claw) and the spell
+	num(s.werewolf);
 	for (auto& it : w.inventory)
 		if (it.equipped)
-			if (const Object* o = w.game.object(it))
-				if (o->recType == REC_WEAP)
-					weapon = &it;
-	const Object* wo = weapon ? w.game.object(*weapon) : nullptr;
-	float by = 75;
-	uiRect(6, by, 36, 36, col::panel);
-	if (const char* hand = wo ? nullptr : hudHandArt())
+			text(it.id.c_str());
+	text(s.selectedSpell.c_str());
+	// the active effects' icons
+	for (auto& e : w.effects)
 	{
-		const auto& art = w.game.art.hud.find(hand)->second;
-		uiArt(art.file, art.w, art.h, 8, by + 2, 32, 32);
+		num(e.effect);
+		num(e.attribute);
+		num(e.skill);
 	}
-	else if (!(wo && uiIcon(wo->iconIx, 8, by + 2)))
-		uiTextCentered(24, by + 18 - uiLineHeight(0.36f) / 2, 0.36f, col::textDim, wo ? wo->name.str().substr(0, 3) : "Fist");
-	uiFrame(6, by, 36, 36);
-	uiText(48, by + 1, 0.42f, col::text, wo ? wo->name.str() : w.game.gmstLabel("sskillhandtohand", "Hand-to-hand"));
-	std::string spell = s.selectedSpell.empty() ? "" : w.game.spells[s.selectedSpell].name;
-	uiText(48, by + 18, 0.42f, spell.empty() ? col::textDim : col::link, spell.empty() ? "No spell" : spell);
-
-	// The active effects as Morrowind's HUD shows them (hudEffects); a tap shows what it is, how strong and for how
-	// long (OpenMW's tooltip on hover)
-	std::vector<ActiveEffect> shown = hudEffects();
-	hudEffectIcons = 0;
-	for (size_t k = 0; k < shown.size() && k < 10; k++)
+	num(-1);
+	for (auto& e : w.abilitiesShown)
 	{
-		auto me = w.game.magicEffects.find(shown[k].effect);
-		float ix = 6 + k * 17;
-		if (me == w.game.magicEffects.end() || me->second.iconIx < 0 || !uiIcon(me->second.iconIx, ix, 114, 15.0f))
-			continue;
-		hudEffectIcons++;
-		if (uiHit(ix, 114, 16, 16))
+		num(e.effect);
+		num(e.attribute);
+		num(e.skill);
+	}
+	// the notices, and in the stylus layout the lines the prompt took last (the notices end a line sooner above two)
+	for (auto& n : notes)
+		text(n.text.c_str());
+	num(stylusLayout() ? promptRows : 0);
+	// the layout: the stylus's rule and buttons
+	num(g_controlLayout);
+	num(g_stylusButtons);
+	for (auto& q : s.quickKeys)
+		text(q.c_str());
+	// the place under the minimap, the date and the hour
+	text(w.current >= 0 ? w.cells[w.current].name.c_str() : "");
+	GameDate d = w.date();
+	num(d.day);
+	num(d.month);
+	num((int)d.hour);
+	// the menu buttons that can be used
+	num((int)w.menusEnabled);
+	num(w.journal.empty());
+	num(w.game.chargen);
+	num(w.game.map.file.empty());
+	return h;
+}
+
+// The HUD on the bottom screen, its picture kept between frames: the target is not cleared, so what was drawn stays,
+// and a frame draws only what changed. The minimap's square every time (the player moves on it; a few pieces), the
+// bars when a number or a fill moved, the whole HUD when the rest changed (hudKey), while a finger is on the screen
+// (the buttons light under it and read the tap as they draw) and once after it lifts, when the picture is gone (a
+// menu, a loading screen: uiClearBottom), when a picture or an icon had no texture yet, with the stylus layout's glass
+// buttons (they lie over the minimap), and on a frame the PC build saves (it draws those alone). Drawn whole it was
+// about 330 pieces, 5 ms of an Old 3DS's frame, every third frame.
+// A whole draw with nothing changed checks the key (one is made every so often for that): the widgets' draws are
+// summed (uiSum), and a sum unlike the last whole draw's means the HUD shows something hudKey doesn't watch. The picture
+// is right again from that draw on, and the log says so
+void Session::drawHudKept(C3D_RenderTarget* bottom, bool touched, bool saved)
+{
+	const u32 kBack = C2D_Color32(10, 8, 6, 255);
+	const int kCheckEvery = autotest ? 8 : 64;     // HUD frames (a test run checks more often: it is what the checks are for)
+	u32 key = hudKey(), aimKey = hudKey(true);
+	int bars[9];
+	hudBars(bars);
+	bool glass = stylusLayout() && g_stylusButtons;
+	// (the picture is there, drawn with no finger on it, and what it shows is the same: a whole draw now must match it)
+	bool same = uiHudKept() && key == hudKeyDrawn && !touched && !hudTouchDrawn && !glass;
+	// The aim line alone is drawn over its own place, but for the stylus layout (its rule crosses that place, and the
+	// line's height moves the notices) and while a notice shows (its last line can reach into it): whole then
+	bool aimAlone = !stylusLayout() && notes.empty();
+	if (!same || saved || (aimKey != hudAimDrawn && !aimAlone) || ++hudSinceWhole >= kCheckEvery)
+	{
+		uiClearBottom(bottom, kBack);
+		C2D_SceneBegin(bottom);
+		int misses = uiMisses();
+		uiSumStart();
+		drawHud(HUD_ALL);
+		u32 sum = uiSumEnd();
+		bool missed = uiMisses() != misses;
+		if (same && !missed && sum != hudSumDrawn)
+			monitorOnce("hudkey", "the HUD drew something else with nothing it watches changed (Session::hudKey): %s",
+				w.cellName().c_str());
+		hudKeyDrawn = key;
+		hudAimDrawn = aimKey;
+		hudSumDrawn = sum;
+		hudTouchDrawn = touched;
+		hudSinceWhole = 0;
+		memcpy(hudBarsDrawn, bars, sizeof(bars));
+		// (a picture or an icon that had no texture is tried again on the next HUD frame, as it always was)
+		uiHudKeep(!missed);
+		hudWholeDraws++;
+		return;
+	}
+	C2D_SceneBegin(bottom);
+	int parts = HUD_MAP;
+	if (memcmp(hudBarsDrawn, bars, sizeof(bars)) != 0)
+	{
+		// (the bars' place: the three of them and the gaps between)
+		uiRect(6, 27, 174, 42, kBack);
+		memcpy(hudBarsDrawn, bars, sizeof(bars));
+		parts |= HUD_BARS;
+	}
+	if (aimKey != hudAimDrawn)
+	{
+		// (the aim line's place: from under the notices to the menu buttons, left of the quick keys)
+		uiRect(0, 164, 188, 43, kBack);
+		hudAimDrawn = aimKey;
+		parts |= HUD_AIM;
+	}
+	drawHud(parts);
+	hudPartDraws++;
+}
+
+// parts: HUD_ALL, or the parts drawn over the kept picture (drawHudKept). Each part paints all of its own place: the
+// bars theirs, the minimap's square the map, then the bounty and the frame rate over it; nothing of the rest lies there
+void Session::drawHud(int parts)
+{
+	// (only the rest is summed for drawHudKept's check: the bars and the map change by themselves)
+	auto part = [&](int p) {
+		uiSum(p == HUD_REST);
+		return (parts & p) != 0;
+	};
+	const PlayerStats& s = w.stats;
+	bool stylus = stylusLayout();
+	if (part(HUD_REST))
+	{
+		std::string sub;
+		for (auto& r : w.game.races)
+			if (lower(r.id) == lower(s.race))
+				sub = r.name;
+		if (const ClassDef* c = w.playerClass())
+			sub += " " + c->name;
+		header(s.name, sub);
+	}
+
+	// Health, magicka, fatigue (Morrowind's colours), the numbers inside the bars
+	if (part(HUD_BARS))
+	{
+		float cur[3] = { s.health, s.magicka, s.fatigue }, max[3] = { s.healthMax, s.magickaMax, s.fatigueMax };
+		u32 colors[3] = { col::health, col::magicka, col::fatigue };
+		for (int i = 0; i < 3; i++)
 		{
-			const ActiveEffect& sh = shown[k];
-			int flags = me->second.flags;
-			std::string line = effectLabel(sh.effect, sh.skill, sh.attribute);
-			if (!(flags & 0x8))
-				line += " " + std::to_string((int)roundf(sh.magnitude)) + " pts";
-			std::string left = sh.remaining > 1e8f ? "Constant" : sh.remaining >= 120.0f
-				? std::to_string((int)(sh.remaining / 60.0f)) + " min left" : std::to_string((int)ceilf(sh.remaining)) + " s left";
-			effectTip = { line, left + " (" + sh.source + ")" };
-			effectTipUntil = w.time + 3.0f;
-			playSound(-1, "Menu Click");
+			float y = 27 + i * 15;
+			uiBar(6, y, 174, 12, max[i] > 0 ? cur[i] / max[i] : 0, colors[i]);
+			char buf[32];
+			snprintf(buf, sizeof(buf), "%d/%d", (int)cur[i], (int)max[i]);
+			uiTextCentered(93, y + 6 - uiLineHeight(0.36f) / 2, 0.36f, col::textPressed, buf);
 		}
 	}
 
-	// Messages (the stylus layout: a line fewer under a two-line prompt, which ends above its zone's rule)
-	bool stylus = stylusLayout();
-	float y = 133, last = stylus && promptRows > 1 ? 152 : 164;
-	for (auto& n : notes)
+	if (part(HUD_REST))
 	{
-		for (auto& line : uiWrap(n.text, 174, 0.42f))
+		// Weapon and spell, as the boxes by Morrowind's bars
+		const InventoryItem* weapon = nullptr;
+		for (auto& it : w.inventory)
+			if (it.equipped)
+				if (const Object* o = w.game.object(it))
+					if (o->recType == REC_WEAP)
+						weapon = &it;
+		const Object* wo = weapon ? w.game.object(*weapon) : nullptr;
+		float by = 75;
+		uiRect(6, by, 36, 36, col::panel);
+		if (const char* hand = wo ? nullptr : hudHandArt())
 		{
-			if (y > last)
-				break;
-			uiText(6, y, 0.42f, col::text, line);
-			y += uiLineHeight(0.42f);
+			const auto& art = w.game.art.hud.find(hand)->second;
+			uiArt(art.file, art.w, art.h, 8, by + 2, 32, 32);
+		}
+		else if (!(wo && uiIcon(wo->iconIx, 8, by + 2)))
+			uiTextCentered(24, by + 18 - uiLineHeight(0.36f) / 2, 0.36f, col::textDim, wo ? wo->name.str().substr(0, 3) : "Fist");
+		uiFrame(6, by, 36, 36);
+		uiText(48, by + 1, 0.42f, col::text, wo ? wo->name.str() : w.game.gmstLabel("sskillhandtohand", "Hand-to-hand"));
+		std::string spell = s.selectedSpell.empty() ? "" : w.game.spells[s.selectedSpell].name;
+		uiText(48, by + 18, 0.42f, spell.empty() ? col::textDim : col::link, spell.empty() ? "No spell" : spell);
+
+		// The active effects as Morrowind's HUD shows them (hudEffects); a tap shows what it is, how strong and for how
+		// long (OpenMW's tooltip on hover)
+		std::vector<ActiveEffect> shown = hudEffects();
+		hudEffectIcons = 0;
+		for (size_t k = 0; k < shown.size() && k < 10; k++)
+		{
+			auto me = w.game.magicEffects.find(shown[k].effect);
+			float ix = 6 + k * 17;
+			if (me == w.game.magicEffects.end() || me->second.iconIx < 0 || !uiIcon(me->second.iconIx, ix, 114, 15.0f))
+				continue;
+			hudEffectIcons++;
+			if (uiHit(ix, 114, 16, 16))
+			{
+				const ActiveEffect& sh = shown[k];
+				int flags = me->second.flags;
+				std::string line = effectLabel(sh.effect, sh.skill, sh.attribute);
+				if (!(flags & 0x8))
+					line += " " + std::to_string((int)roundf(sh.magnitude)) + " pts";
+				std::string left = sh.remaining > 1e8f ? "Constant" : sh.remaining >= 120.0f
+					? std::to_string((int)(sh.remaining / 60.0f)) + " min left" : std::to_string((int)ceilf(sh.remaining)) + " s left";
+				effectTip = { line, left + " (" + sh.source + ")" };
+				effectTipUntil = w.time + 3.0f;
+				playSound(-1, "Menu Click");
+			}
+		}
+
+		// Messages (the stylus layout: a line fewer under a two-line prompt, which ends above its zone's rule)
+		float y = 133, last = stylus && promptRows > 1 ? 152 : 164;
+		for (auto& n : notes)
+		{
+			for (auto& line : uiWrap(n.text, 174, 0.42f))
+			{
+				if (y > last)
+					break;
+				uiText(6, y, 0.42f, col::text, line);
+				y += uiLineHeight(0.42f);
+			}
 		}
 	}
 
 	// Minimap: tap it for the map (not in the stylus layout: the stylus looks there, and taps its round buttons)
-	bool mapOk = !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen);
-	drawMapView(186, 26, 128, 128, 1.0f, false, w.current >= 0 && w.cells[w.current].interior);
-	if (mapOk && !stylusLayout() && uiHit(186, 26, 128, 128))
-		openScreen(SCR_MAP);
-	std::string here = w.game.cellLabel(w.cellName());
-	hudCaption = here.size() > 26 ? here.substr(0, 25) + "..." : here;
-	uiTextCentered(250, 155, 0.38f, col::textDim, hudCaption);
-	if (stylus)
+	if (part(HUD_MAP))
 	{
-		// The rule between the stylus's zone (above: it looks, but for the round buttons) and the buttons that tap
-		uiRect(4, kStylusTapTop - 1, 312, 1, col::border);
-		if (g_stylusButtons)
-			drawStylusButtons();
+		bool mapOk = !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen);
+		drawMapView(186, 26, 128, 128, 1.0f, false, w.current >= 0 && w.cells[w.current].interior);
+		if (mapOk && !stylus && uiHit(186, 26, 128, 128))
+			openScreen(SCR_MAP);
 	}
-
-	if (target >= 0)
+	if (part(HUD_REST))
 	{
-		// two lines for a long name, a little smaller and higher, and the attack hint below them moves down
-		float s = 0.45f;
-		std::vector<std::string> use = targetPromptLines(target, &s);
-		promptRows = (int)use.size();
-		float lh = uiLineHeight(s);
-		float top = stylus ? kStylusTapTop - 1 - use.size() * lh : use.size() > 1 ? 166 : 172;
-		for (size_t i = 0; i < use.size(); i++)
-			uiText(6, top + i * lh, s, col::link, use[i]);
+		std::string here = w.game.cellLabel(w.cellName());
+		hudCaption = here.size() > 26 ? here.substr(0, 25) + "..." : here;
+		uiTextCentered(250, 155, 0.38f, col::textDim, hudCaption);
+		if (stylus)
+		{
+			// The rule between the stylus's zone (above: it looks, but for the round buttons) and the buttons that tap
+			uiRect(4, kStylusTapTop - 1, 312, 1, col::border);
+			if (g_stylusButtons)
+				drawStylusButtons();
+		}
 	}
-	else
-		promptRows = 1;
-	if (w.fightingEnabled)
+	if (part(HUD_AIM))
 	{
-		// (GoldenEye and the stylus layout: the Xbox buttons)
-		bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout();
-		std::string hint = w.stats.selectedSpell.empty() ? (xbox ? "R: attack (hold to wind up)" : "X: attack (hold to wind up)")
-			: std::string(xbox ? "R: attack   L: cast " : "X: attack   Y: cast ") + w.game.spells[w.stats.selectedSpell].name;
-		// Leave the quick key strip (from x 190) clear, and GoldenEye's 1st / 3rd button (from x 132)
-		float room = g_controlLayout == CONTROLS_GOLDENEYE ? 122.0f : 180.0f;
-		while (hint.size() > 3 && uiTextWidth(hint, 0.38f) > room)
-			hint = hint.substr(0, hint.size() - 4) + "...";
-		uiText(6, promptRows > 1 ? 192 : 190, 0.38f, col::textDim, hint);
+		if (target >= 0)
+		{
+			// two lines for a long name, a little smaller and higher, and the attack hint below them moves down
+			float s = 0.45f;
+			std::vector<std::string> use = targetPromptLines(target, &s);
+			promptRows = (int)use.size();
+			float lh = uiLineHeight(s);
+			float top = stylus ? kStylusTapTop - 1 - use.size() * lh : use.size() > 1 ? 166 : 172;
+			for (size_t i = 0; i < use.size(); i++)
+				uiText(6, top + i * lh, s, col::link, use[i]);
+		}
+		else
+			promptRows = 1;
+		if (w.fightingEnabled)
+		{
+			// (GoldenEye and the stylus layout: the Xbox buttons)
+			bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE || stylus;
+			std::string hint = w.stats.selectedSpell.empty() ? (xbox ? "R: attack (hold to wind up)" : "X: attack (hold to wind up)")
+				: std::string(xbox ? "R: attack   L: cast " : "X: attack   Y: cast ") + w.game.spells[w.stats.selectedSpell].name;
+			// Leave the quick key strip (from x 190) clear, and GoldenEye's 1st / 3rd button (from x 132)
+			float room = g_controlLayout == CONTROLS_GOLDENEYE ? 122.0f : 180.0f;
+			while (hint.size() > 3 && uiTextWidth(hint, 0.38f) > room)
+				hint = hint.substr(0, hint.size() - 4) + "...";
+			uiText(6, promptRows > 1 ? 192 : 190, 0.38f, col::textDim, hint);
+		}
 	}
-	drawQuickStrip();
-	uiTextCentered(250, 166, 0.36f, col::textDim, dateText());
+	if (part(HUD_REST))
+	{
+		drawQuickStrip();
+		uiTextCentered(250, 166, 0.36f, col::textDim, dateText());
+	}
 	// the bounty on the minimap's foot, the frame rate in its top corner (the strip took their place)
-	if (w.bounty > 0)
+	if (part(HUD_MAP))
 	{
-		std::string b = w.game.gmstLabel("sbounty", "Bounty") + " " + std::to_string(w.bounty);
-		uiRect(312 - uiTextWidth(b, 0.4f) - 4, 140, uiTextWidth(b, 0.4f) + 4, 13, C2D_Color32(0, 0, 0, 170));
-		uiTextRight(311, 140, 0.4f, col::health, b);
+		if (w.bounty > 0)
+		{
+			std::string b = w.game.gmstLabel("sbounty", "Bounty") + " " + std::to_string(w.bounty);
+			uiRect(312 - uiTextWidth(b, 0.4f) - 4, 140, uiTextWidth(b, 0.4f) + 4, 13, C2D_Color32(0, 0, 0, 170));
+			uiTextRight(311, 140, 0.4f, col::health, b);
+		}
+		char perf[64];
+		snprintf(perf, sizeof(perf), "%.0f fps", fps);
+		uiTextRight(stylus && g_stylusButtons ? 270 : 312, 27, 0.34f, col::textDim, perf);   // (beside the stylus's R)
 	}
-	char perf[64];
-	snprintf(perf, sizeof(perf), "%.0f fps", fps);
-	uiTextRight(stylusLayout() && g_stylusButtons ? 270 : 312, 27, 0.34f, col::textDim, perf);   // (beside the stylus's R)
-	bool inv = w.menusEnabled & MENU_INVENTORY, stats = w.menusEnabled & MENU_STATS;
-	if (uiButton(2, 208, 51, 28, "Items", false, inv))
-		openScreen(SCR_INVENTORY);
-	if (uiButton(55, 208, 51, 28, w.game.gmstLabel("smagicmenu", "Magic"), false, (w.menusEnabled & MENU_MAGIC) || !w.game.chargen))
-		openScreen(SCR_MAGIC);
-	if (uiButton(108, 208, 51, 28, w.game.gmstLabel("sjournal", "Journal"), false, !w.journal.empty()))
-		openScreen(SCR_JOURNAL);
-	if (uiButton(161, 208, 51, 28, w.game.gmstLabel("smap", "Map"), false, !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen)))
-		openScreen(SCR_MAP);
-	if (uiButton(214, 208, 51, 28, w.game.gmstLabel("sstats", "Stats"), false, stats))
-		openScreen(SCR_STATS);
-	if (uiButton(267, 208, 51, 28, "Saves", false, !wantName))
+	if (part(HUD_REST))
 	{
-		saveList = savesList(dataDir);
-		openScreen(SCR_SAVES);
+		bool inv = w.menusEnabled & MENU_INVENTORY, stats = w.menusEnabled & MENU_STATS;
+		if (uiButton(2, 208, 51, 28, "Items", false, inv))
+			openScreen(SCR_INVENTORY);
+		if (uiButton(55, 208, 51, 28, w.game.gmstLabel("smagicmenu", "Magic"), false, (w.menusEnabled & MENU_MAGIC) || !w.game.chargen))
+			openScreen(SCR_MAGIC);
+		if (uiButton(108, 208, 51, 28, w.game.gmstLabel("sjournal", "Journal"), false, !w.journal.empty()))
+			openScreen(SCR_JOURNAL);
+		if (uiButton(161, 208, 51, 28, w.game.gmstLabel("smap", "Map"), false, !w.game.map.file.empty() && ((w.menusEnabled & MENU_MAP) || !w.game.chargen)))
+			openScreen(SCR_MAP);
+		if (uiButton(214, 208, 51, 28, w.game.gmstLabel("sstats", "Stats"), false, stats))
+			openScreen(SCR_STATS);
+		if (uiButton(267, 208, 51, 28, "Saves", false, !wantName))
+		{
+			saveList = savesList(dataDir);
+			openScreen(SCR_SAVES);
+		}
 	}
+	uiSum(false);
 }
 
 // fades back to clear after travel; scripts can hold it (FadeOut) or bring it back slowly (FadeIn)

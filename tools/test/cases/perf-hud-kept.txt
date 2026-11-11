@@ -1,0 +1,31 @@
+# start: Seyda Neen
+# The HUD's picture stays on the bottom screen between frames, so its upkeep is only what changed. It was drawn whole
+# every third frame: about 330 pieces (text glyphs, bars, frames, buttons), 5 ms of an Old 3DS's frame each time, though
+# most of it shows the same thing for minutes. Now the minimap is redrawn every third frame, the three bars when a
+# number or a fill moves, and the whole HUD only when something it shows changes (the weapon, the spell, a notice, what
+# is aimed at, the date, the place), while a finger is on the screen, and now and then as a check on that.
+# Standing still, the pieces drawn in three seconds are a fraction of what they were (about 9800 natively, where a
+# test run also checks eight times as often as play does). Then the picture follows what changes: a weapon in the
+# hand, a notice, a walk (the map) and fatigue spent (its bar). The last two shots are the kept picture after those and
+# the HUD drawn whole (HUDWHOLE): in the emulator they must show the same thing but the frame rate's number and the
+# fatigue come back meanwhile (natively a saved frame is always drawn whole).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+1 0 0 0
+0.1 0 0 0 0 SNAP:hudpieces
+3 0 0 0
+0.1 0 0 0 0 EXPECT:hudpieces:lt:@6000
+0.3 0 0 0 0 GIVE:iron_dagger
+0.3 0 0 0 0 EQUIP:iron_dagger
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 NOTIFY:The_HUD_shows_this_notice
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+2 0 1 0
+0.3 0 0 0 0 SETFATIGUE:0.25
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 HUDWHOLE
+0.5 0 0 0
+0.3 0 0 0 0 SHOT

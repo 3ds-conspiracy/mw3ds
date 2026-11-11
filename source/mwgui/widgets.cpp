@@ -10,6 +10,8 @@
 
 // 2D draws since the counter was last read (main.cpp compares the two eyes' HUD passes)
 int g_uiDraws = 0;
+// ... and the pieces the HUD drew on the bottom screen since the start (EXPECT:hudpieces: what its upkeep costs)
+int g_hudPieces = 0;
 
 // Plain palette until a theme brings Morrowind.ini's
 namespace col
@@ -50,6 +52,55 @@ int g_uiIconMisses = 0;                 // icons not drawn, their page not in me
 static const int kMaxIconPages = 8;     // loaded at once (128 KB each); unused ones go first
 
 static std::unordered_map<std::string, std::vector<std::string>> s_wrapCache;
+
+// The HUD kept on the bottom screen (widgets.hpp): whether its picture is still there, the sum of what the widgets
+// draw while it asks, and the pictures and icons that had no texture to draw from
+static bool s_hudKept = false;
+static bool s_sumOn = false;
+static u32 s_sum = 0;
+static int s_misses = 0;
+
+void uiClearBottom(C3D_RenderTarget* bottom, u32 color)
+{
+	s_hudKept = false;
+	C2D_TargetClear(bottom, color);
+}
+
+bool uiHudKept() { return s_hudKept; }
+void uiHudKeep(bool kept) { s_hudKept = kept; }
+int uiMisses() { return s_misses; }
+
+void uiSumStart()
+{
+	s_sum = 2166136261u;
+	s_sumOn = false;
+}
+
+void uiSum(bool on) { s_sumOn = on; }
+
+u32 uiSumEnd()
+{
+	s_sumOn = false;
+	return s_sum;
+}
+
+static void sumBytes(const void* p, size_t n)
+{
+	const u8* b = (const u8*)p;
+	for (size_t i = 0; i < n; i++)
+		s_sum = (s_sum ^ b[i]) * 16777619u;
+}
+
+// One draw: what it shows (a text, a picture's name, a piece's place in its sheet), where, how big, which colour
+static void sumDraw(const void* what, size_t n, float a, float b, float c, float d, u32 e)
+{
+	if (!s_sumOn)
+		return;
+	float f[4] = { a, b, c, d };
+	sumBytes(what, n);
+	sumBytes(f, sizeof(f));
+	sumBytes(&e, sizeof(e));
+}
 
 void uiInit()
 {
@@ -179,6 +230,8 @@ bool uiArt(const std::string& file, int w, int h, float x, float y, float dw, fl
 		}
 	}
 	a->lastUse = now;
+	s_misses += !a->ok;
+	sumDraw(file.data(), file.size(), x, y, dw, dh, a->ok);
 	if (!a->ok || w <= 0 || h <= 0)
 		return false;
 	Tex3DS_SubTexture sub = { (u16)w, (u16)h, 0.0f, 1.0f, (float)w / a->tex.width, 1.0f - (float)h / a->tex.height };
@@ -461,6 +514,7 @@ void uiText(float x, float y, float scale, u32 color, const std::string& s)
 {
 	if (s.empty())
 		return;
+	sumDraw(s.data(), s.size(), x, y, scale, 0.0f, color);
 	if (s_fontOn)
 	{
 		float k = fontScale(scale);
@@ -512,6 +566,7 @@ void uiTextRight(float rx, float y, float scale, u32 color, const std::string& s
 
 void uiRect(float x, float y, float w, float h, u32 color)
 {
+	sumDraw("r", 1, x, y, w, h, color);
 	g_uiDraws++;
 	C2D_DrawRectSolid(x, y, 0.5f, w, h, color);
 }
@@ -521,6 +576,7 @@ void uiRect(float x, float y, float w, float h, u32 color)
 static const int kRoundSides = 20;
 void uiDisc(float cx, float cy, float r, u32 color)
 {
+	sumDraw("d", 1, cx, cy, r, 0.0f, color);
 	g_uiDraws++;
 	for (int i = 0; i < kRoundSides; i++)
 	{
@@ -551,6 +607,7 @@ void uiGlassBox(float x, float y, float w, float h, int look)
 
 void uiRing(float cx, float cy, float r0, float r1, u32 color)
 {
+	sumDraw("o", 1, cx, cy, r0, r1, color);
 	g_uiDraws++;
 	for (int i = 0; i < kRoundSides; i++)
 	{
@@ -580,6 +637,8 @@ static void drawPiece(const UiPiece& p, float x, float y, float w, float h, floa
 	Tex3DS_SubTexture sub = { (u16)pw, (u16)ph, (float)p.x / s_def.atlasW, 1.0f - (float)p.y / s_def.atlasH,
 		(p.x + pw) / s_def.atlasW, 1.0f - (p.y + ph) / s_def.atlasH };
 	C2D_Image img = { &s_atlasTex, &sub };
+	int at[2] = { (int)p.x, (int)p.y };
+	sumDraw(at, sizeof(at), x, y, w, h, (u32)(part * 1000.0f));
 	g_uiDraws++;
 	C2D_DrawImageAt(img, x, y, 0.5f, nullptr, w / pw, h / ph);
 }
@@ -603,6 +662,8 @@ bool uiPieceRotated(const char* name, float cx, float cy, float w, float h, floa
 	Tex3DS_SubTexture sub = { p->w, p->h, (float)p->x / s_def.atlasW, 1.0f - (float)p->y / s_def.atlasH,
 		(float)(p->x + p->w) / s_def.atlasW, 1.0f - (float)(p->y + p->h) / s_def.atlasH };
 	C2D_Image img = { &s_atlasTex, &sub };
+	int at[2] = { (int)p->x, (int)p->y };
+	sumDraw(at, sizeof(at), cx, cy, w, h, (u32)(angle * 1000.0f));
 	g_uiDraws++;
 	C2D_DrawImageAtRotated(img, cx, cy, 0.5f, angle, nullptr, w / p->w, h / p->h);
 	return true;
@@ -710,6 +771,7 @@ bool uiIcon(int icon, float x, float y, float size)
 	int page = icon / perPage;
 	if (page >= (int)s_iconPages.size())
 		return false;
+	sumDraw("i", 1, x, y, size, 0.0f, (u32)icon);
 	IconPage& pg = s_iconPages[page];
 	if (!pg.loaded)
 	{
@@ -718,6 +780,7 @@ bool uiIcon(int icon, float x, float y, float size)
 		if (pg.failedAt && s_frame - pg.failedAt < 60)
 		{
 			g_uiIconMisses++;
+			s_misses++;
 			return false;
 		}
 		// Too many pages in memory: drop ones this frame hasn't drawn from (the GPU is done with
@@ -740,6 +803,7 @@ bool uiIcon(int icon, float x, float y, float size)
 				logf("ui: cannot load %s", s_def.iconPages[page].first.c_str());
 			pg.failedAt = s_frame ? s_frame : 1;
 			g_uiIconMisses++;
+			s_misses++;
 			return false;
 		}
 	}

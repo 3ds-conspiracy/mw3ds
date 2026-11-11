@@ -43,8 +43,9 @@ static int drawMode()
 static bool drawOn() { return drawMode() != 0; }
 static bool s_drawThisFrame = false;
 static std::vector<std::string> s_pendingShots;
-// The HUD on the bottom screen is drawn one frame in three (engine.cpp): a shot whose frame skipped it waits for the
-// next frame that draws it (at most two), or its bottom half is the cleared target, black
+// The HUD on the bottom screen is drawn one frame in three (engine.cpp), whole on a frame saved here
+// (screenshotSavesFrame): a shot whose frame skipped it waits for the next frame that draws it (at most two), or its
+// bottom half is the cleared target, black
 static bool s_bottomDrawn = false;
 static int s_shotWaits = 0;
 static std::vector<std::pair<C3D_Tex*, std::string>> s_pendingTexShots;
@@ -1605,6 +1606,12 @@ void screenshotDrawThisFrame()
 {
 	if (drawOn())
 		s_drawThisFrame = true;
+}
+
+// (only saved frames are drawn here: the HUD kept on the bottom screen between frames is drawn whole on each)
+bool screenshotSavesFrame()
+{
+	return drawFrame();
 }
 
 bool screenshotSaveTexture(C3D_Tex* tex, const char* path)

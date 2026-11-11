@@ -106,3 +106,8 @@ bool screenshotSaveTexture(C3D_Tex*, const char*)
 void screenshotDrawThisFrame()
 {
 }
+
+bool screenshotSavesFrame()
+{
+	return false;
+}

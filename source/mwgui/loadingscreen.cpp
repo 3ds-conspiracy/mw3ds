@@ -18,6 +18,7 @@
 #include "mwbase/session.hpp"
 #include "mwinput/inputmanagerimp.hpp"
 #include "mwgui/loadingscreen.hpp"
+#include "mwgui/widgets.hpp"
 
 // Clears the 3D screen's target to an 0xRRGGBBAA colour. The GPU's fill writes the value's low bits as they
 // are, so the Old 3DS's 16-bit target (platform/console.hpp rgb565) takes the colour packed as RGB565: an RGBA8 black
@@ -74,7 +75,7 @@ void drawLoading(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const char* te
 		uiTextCentered(200, 100, 0.8f, col::header, "Morrowind");
 		uiTextCentered(200, 132, 0.5f, col::textDim, text);
 	}
-	C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
+	uiClearBottom(bottom, C2D_Color32(10, 8, 6, 255));
 	C2D_SceneBegin(bottom);
 	uiTextCentered(160, 40, 0.5f, col::textDim, "MW3DS");
 	// What the loader is doing (its last log line), so a hang shows where it stopped
@@ -253,7 +254,7 @@ void startupMovie(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const char* d
 			float k = fmaxf(400.0f / mw, 240.0f / mh) * zoom;
 			C2D_DrawImageAt(img, (400.0f - mw * k) / 2.0f, (240.0f - mh * k) / 2.0f, 0.5f, nullptr, k, k);
 		}
-		C2D_TargetClear(bottom, C2D_Color32(0, 0, 0, 255));
+		uiClearBottom(bottom, C2D_Color32(0, 0, 0, 255));
 		C2D_SceneBegin(bottom);
 		uiTextCentered(160, 110, 0.45f, col::textDim, "A: skip");
 		C3D_FrameEnd(0);
@@ -402,7 +403,7 @@ std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const c
 			if (notice)
 				uiTextCentered(200, 150, 0.5f, col::health, notice);
 		}
-		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
+		uiClearBottom(bottom, C2D_Color32(10, 8, 6, 255));
 		C2D_SceneBegin(bottom);
 		uiRect(0, 0, 320, 20, col::panelLight);
 		uiRect(0, 20, 320, 1, col::border);
@@ -477,7 +478,7 @@ void wrongConsoleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, int max
 		uiTextCentered(200, 24, 0.7f, col::header, "Wrong copy for this console");
 		for (size_t i = 0; i < sizeof(kLines) / sizeof(kLines[0]); i++)
 			uiTextCentered(200, 64 + 15 * i, 0.5f, i >= 8 ? col::header : col::text, kLines[i]);
-		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
+		uiClearBottom(bottom, C2D_Color32(10, 8, 6, 255));
 		C2D_SceneBegin(bottom);
 		uiTextCentered(160, 40, 0.5f, col::textDim, "MW3DS");
 		uiTextCentered(160, 110, 0.5f, col::text, "Press START to quit");
@@ -526,7 +527,7 @@ void noSoundScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom)
 		uiTextCentered(200, 24, 0.7f, col::header, "No sound");
 		for (size_t i = 0; i < sizeof(kLines) / sizeof(kLines[0]); i++)
 			uiTextCentered(200, 64 + 15 * i, 0.5f, i >= 3 && i <= 6 ? col::header : col::text, kLines[i]);
-		C2D_TargetClear(bottom, C2D_Color32(10, 8, 6, 255));
+		uiClearBottom(bottom, C2D_Color32(10, 8, 6, 255));
 		C2D_SceneBegin(bottom);
 		uiTextCentered(160, 40, 0.5f, col::textDim, "MW3DS");
 		uiTextCentered(160, 110, 0.5f, col::text, "Press A to play without sound");
