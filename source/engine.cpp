@@ -211,6 +211,8 @@ bool Engine::prepare()
 	session = new Session();
 	autoinput = loadAutoinput();
 	session->autotest = !autoinput.empty();
+	// (a scripted run makes each crosshair pick the long way too, and the two must agree: worldPick)
+	g_pickCheck = session->autotest;
 	logBuffered(!session->autotest);          // play: the log written every 2 s, tests every line
 	u64 loadStart = osGetTime();
 	// sdmc:/3ds/mw3ds/start.txt: name of the cell to start in (e.g. "Seyda Neen"), skipping chargen,
@@ -541,6 +543,8 @@ bool Engine::frame()
 		session->savePath = kSavePath;
 		// a test reload: still a test (and still invincible if it was), its Display settings kept as the case set them
 		session->autotest = !autoinput.empty();
+		// (a scripted run makes each crosshair pick the long way too, and the two must agree: worldPick)
+		g_pickCheck = session->autotest;
 		if (session->autotest)
 		{
 			g_gammaPct = gammaKept;

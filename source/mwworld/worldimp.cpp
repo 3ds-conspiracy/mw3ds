@@ -1237,6 +1237,7 @@ void World::rebuildLoadedLists()
 		if (r.hasBox && r.obj)
 			loadedPickables.push_back(i);        // whether it's usable right now is checked when picking
 	});
+	g_pickSerial++;
 }
 
 static bool isActivatable(const Ref& r)
@@ -1374,13 +1375,139 @@ void doorSwing(const Ref& r, float angle, const float in[3], float out[3])
 		out[i] = in[i] * c + kx[i] * s + k[i] * kv * (1.0f - c);
 }
 
+int g_pickLooked = 0;        // tests: the references the crosshair's pick has looked at so far (EXPECT:picklooked)
+bool g_pickCheck = false;    // a scripted run: each pick is made over every thing as well, and the two must agree
+unsigned g_pickSerial = 1;
+
+// The things near enough to be what the crosshair is on. The pick is made every frame, and it looked at every thing
+// that can be pointed at in the loaded cells (some 1500 in Balmora's nine, each a few hundred instructions to find
+// out of reach: the largest single piece of the game's update in a town on an Old 3DS). The things that stay where
+// they are (all but people) are kept by the 512-unit squares their boxes lie over, sorted again when one of them
+// moves or the cells change (g_pickSerial); a pick then looks at those of the squares within its reach, at every
+// person (they walk), at a door turned open (it is picked where it is drawn, not where its box stands shut), and at
+// what is too wide to sort (a ship that is one activator). They come in the order of World::loadedPickables, so the
+// pick finds what it found among them all: the first of two things equally near is still the first
+namespace
+{
+const float kPickSquare = 512.0f;
+const int kPickWide = 16;              // a box over more squares than this is looked at every time
+struct PickNear
+{
+	const World* world = nullptr;
+	unsigned serial = 0;
+	unsigned calls = 0, builtAt = 0;
+	std::vector<u64> squares;          // (the square << 32) | the thing's place in loadedPickables, sorted
+	std::vector<int> always;           // places in loadedPickables: people, the too wide
+	std::vector<int> doors;            // ... the doors (in their squares as they stand shut too)
+	std::vector<int> near;             // the pick's things
+};
+PickNear s_pick;
+
+inline u32 pickSquare(int x, int y)
+{
+	return ((u32)(x & 0xFFFF) << 16) | (u32)(y & 0xFFFF);
+}
+
+void pickSort(const World& w)
+{
+	PickNear& pk = s_pick;
+	pk.squares.clear();
+	pk.always.clear();
+	pk.doors.clear();
+	for (size_t p = 0; p < w.loadedPickables.size(); p++)
+	{
+		const Ref& r = w.refs[w.loadedPickables[p]];
+		float lo[2], hi[2];
+		bool sound = r.actor < 0;
+		for (int k = 0; k < 2; k++)
+		{
+			lo[k] = floorf(r.boxMin[k] / kPickSquare);
+			hi[k] = floorf(r.boxMax[k] / kPickSquare);
+			sound = sound && lo[k] <= hi[k] && lo[k] > -30000.0f && hi[k] < 30000.0f;      // (not so for a box of NaNs)
+		}
+		if (!sound || (hi[0] - lo[0] + 1.0f) * (hi[1] - lo[1] + 1.0f) > (float)kPickWide)
+		{
+			pk.always.push_back((int)p);
+			continue;
+		}
+		if (r.recType == REC_DOOR)
+			pk.doors.push_back((int)p);
+		for (int x = (int)lo[0]; x <= (int)hi[0]; x++)
+			for (int y = (int)lo[1]; y <= (int)hi[1]; y++)
+				pk.squares.push_back(((u64)pickSquare(x, y) << 32) | (u32)p);
+	}
+	std::sort(pk.squares.begin(), pk.squares.end());
+}
+
+// The things a pick from eye within reach has to look at (references, in loadedPickables' order); all of them when
+// the reach is long, or while things keep moving (one a script moves every frame would have them sorted every frame,
+// dearer than looking at them all: sorted at most every eighth pick)
+const std::vector<int>& pickNear(const World& w, const float eye[3], float reach)
+{
+	PickNear& pk = s_pick;
+	pk.calls++;
+	if (pk.world != &w || pk.serial != g_pickSerial)
+	{
+		if (pk.world == &w && pk.builtAt && pk.calls - pk.builtAt < 8)
+			return w.loadedPickables;
+		pickSort(w);
+		pk.world = &w;
+		pk.serial = g_pickSerial;
+		pk.builtAt = pk.calls;
+	}
+	if (!(reach >= 0.0f && reach < 4096.0f))
+		return w.loadedPickables;
+	pk.near.assign(pk.always.begin(), pk.always.end());
+	for (int p : pk.doors)
+		if (w.refs[w.loadedPickables[p]].doorAngle != 0.0f)
+			pk.near.push_back(p);
+	int x0 = (int)floorf((eye[0] - reach) / kPickSquare), x1 = (int)floorf((eye[0] + reach) / kPickSquare);
+	int y0 = (int)floorf((eye[1] - reach) / kPickSquare), y1 = (int)floorf((eye[1] + reach) / kPickSquare);
+	for (int x = x0; x <= x1; x++)
+		for (int y = y0; y <= y1; y++)
+		{
+			u64 from = (u64)pickSquare(x, y) << 32;
+			for (auto it = std::lower_bound(pk.squares.begin(), pk.squares.end(), from);
+				it != pk.squares.end() && (*it >> 32) == (from >> 32); ++it)
+				pk.near.push_back((int)(u32)*it);
+		}
+	// (a thing over two squares came twice, a door turned open with its square)
+	std::sort(pk.near.begin(), pk.near.end());
+	pk.near.erase(std::unique(pk.near.begin(), pk.near.end()), pk.near.end());
+	for (int& p : pk.near)
+		p = w.loadedPickables[p];
+	return pk.near;
+}
+}
+
+static int pickAmong(const World& w, const std::vector<int>& things, const float eye[3], const float dir[3], float reach);
+
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach)
+{
+	const std::vector<int>& near = pickNear(w, eye, reach);
+	g_pickLooked += (int)near.size();
+	int hit = pickAmong(w, near, eye, dir, reach);
+	if (g_pickCheck && &near != &w.loadedPickables)
+	{
+		int whole = pickAmong(w, w.loadedPickables, eye, dir, reach);
+		if (whole != hit)
+		{
+			monitorOnce("picknear", "the crosshair is on %s among the things near and on %s among them all (worldPick)",
+				hit >= 0 ? w.refs[hit].id.c_str() : "nothing", whole >= 0 ? w.refs[whole].id.c_str() : "nothing");
+			hit = whole;
+		}
+	}
+	return hit;
+}
+
+// The pick among these things (every one of them within reach is looked at: any that isn't is passed over at once)
+static int pickAmong(const World& w, const std::vector<int>& things, const float eye[3], const float dir[3], float reach)
 {
 	int best = -1;
 	float bestT = reach;
 	int shut = -1;           // the nearest shut door on the ray
 	float shutT = reach;
-	for (int i : w.loadedPickables)
+	for (int i : things)
 	{
 		const Ref& r = w.refs[i];
 		// Out of reach first (most of the nine cells' things): the eye's distance to the box. A door turned open is
@@ -1479,7 +1606,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		const Ref& statue = w.refs[best];
 		float originT = (statue.pos[0] - eye[0]) * dir[0] + (statue.pos[1] - eye[1]) * dir[1] + (statue.pos[2] - eye[2]) * dir[2];
 		float actorT = fminf(reach, originT);
-		for (int i : w.loadedPickables)
+		for (int i : things)
 		{
 			const Ref& r = w.refs[i];
 			if (r.actor < 0 || !isActivatable(r) || !boxInReach(r, eye, reach))
@@ -1501,7 +1628,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		const Ref& plant = w.refs[best];
 		float bodyT = reach;
 		int body = -1;
-		for (int i : w.loadedPickables)
+		for (int i : things)
 		{
 			const Ref& r = w.refs[i];
 			if (r.actor < 0 || !r.dead || !isActivatable(r) || !boxInReach(r, eye, reach))
@@ -1531,7 +1658,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		const Ref& body = w.refs[best];
 		int item = -1;
 		float itemT = reach;
-		for (int i : w.loadedPickables)
+		for (int i : things)
 		{
 			const Ref& r = w.refs[i];
 			if (r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
@@ -1558,7 +1685,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		const Ref& box = w.refs[best];
 		int item = -1;
 		float itemT = reach;
-		for (int i : w.loadedPickables)
+		for (int i : things)
 		{
 			const Ref& r = w.refs[i];
 			if (r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
@@ -1604,7 +1731,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		const Ref& box = w.refs[best];
 		int item = -1;
 		float itemT = reach;
-		for (int i : w.loadedPickables)
+		for (int i : things)
 		{
 			const Ref& r = w.refs[i];
 			if (r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))
@@ -1631,7 +1758,7 @@ int worldPick(const World& w, const float eye[3], const float dir[3], float reac
 		float midZ = (low.boxMin[2] + low.boxMax[2]) * 0.5f;
 		int upper = -1;
 		float upperT = reach;
-		for (int i : w.loadedPickables)
+		for (int i : things)
 		{
 			const Ref& r = w.refs[i];
 			if (i == best || r.actor >= 0 || !isItemType(r.type) || !isActivatable(r) || !boxInReach(r, eye, reach))

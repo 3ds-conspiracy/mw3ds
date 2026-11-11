@@ -493,6 +493,9 @@ struct World
 
 // Nearest activatable reference along the view ray within reach, or -1.
 int worldPick(const World& w, const float eye[3], const float dir[3], float reach);
+// A scripted run makes each pick among every thing as well as among the things near: the two must agree (PICKCHECK:off
+// for a run that measures what the pick costs)
+extern bool g_pickCheck;
 // A body lies on the floor: the crosshair meets a dead actor's box only up to this far over its foot (worldPick)
 constexpr float kCorpsePickHeight = 40.0f;
 // A vector turned by `angle` about a door's own swing axis (its local up, tilted with the door: a slave pod's lid)

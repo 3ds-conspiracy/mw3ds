@@ -1,0 +1,24 @@
+# start: Seyda Neen
+# What the crosshair is on is worked out every frame. It looked at every thing that can be pointed at in the loaded
+# cells: in Balmora's nine about 1500, each a few hundred instructions to find out of reach, the largest single piece
+# of the game's update there on an Old 3DS (about 4.5 of 20 ms a frame, the console's own log). Now the things that
+# don't move are kept by where they stand, and a frame looks only at those within reach, with the people, the doors
+# turned open and the few things too wide to sort.
+# Standing in Balmora for three seconds the pick looks at a small part of what it did (148000 references before).
+# Then it still finds a thing that moves: a sword given, dropped and picked up again by aiming at it. A scripted run
+# makes every pick the long way too, and the two must agree (a monitor warning if not).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 GOTO:Balmora
+4 0 0 0
+0.1 0 0 0 0 SNAP:picklooked
+3 0 0 0
+0.1 0 0 0 0 EXPECT:picklooked:lt:@40000
+0.3 0 0 0 0 GIVE:iron_longsword
+0.1 0 0 0 0 EXPECT:count:iron_longsword:eq:1
+0.3 0 0 0 0 DROP:iron%longsword
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:iron%longsword:lt:200+EXPECT:count:iron_longsword:eq:0
+60 0 0 0 0 PICKUP:iron_longsword
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:count:iron_longsword:eq:1

@@ -314,6 +314,15 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 		logf("test: depth16 %s", g_testDepth16 ? "on" : "off");
 		return true;
 	}
+	// PICKCHECK:on|off: a scripted run makes each crosshair pick twice, among the things near and among them all, and
+	// the two must agree (worldPick); off for a run that measures what the pick costs
+	if (verb == "PICKCHECK" && a.size() >= 2)
+	{
+		extern bool g_pickCheck;
+		g_pickCheck = a[1] != "off";
+		logf("test: pick check %s", g_pickCheck ? "on" : "off");
+		return true;
+	}
 	// AUTOSAVE: the door's autosave, as travel makes it (built now, written by the save writer thread where one runs;
 	// the native build writes it on the spot). A test drives the background path and the drains around it
 	if (verb == "AUTOSAVE")

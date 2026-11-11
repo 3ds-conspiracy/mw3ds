@@ -261,6 +261,7 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	else if (what == "messagesidebar") v = s.messageSidebar;   // a message box's buttons are in the right column
 	else if (what == "shimmerframes") v = (float)rendererCausticFrames();   // enchanted items' shimmer frames read
 	else if (what == "iconmisses") { extern int g_uiIconMisses; v = (float)g_uiIconMisses; }   // icons not drawn, page not loaded
+	else if (what == "picklooked") { extern int g_pickLooked; v = (float)g_pickLooked; }   // references the crosshair's pick looked at so far
 	else if (what == "linearfree") v = (float)(linearSpaceFree() / 1024);   // KB of linear memory free
 	else if (what == "spritesasked" || what == "spritesdrawn")   // the last view's particle sprites: wanted / drawn
 	{

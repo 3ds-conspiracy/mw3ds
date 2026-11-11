@@ -10,6 +10,10 @@
 // when it has a key or a level, no lock level to pick)
 constexpr int kKeyOnlyLock = 1000;
 
+// Counts every change to where the things the crosshair can be on stand: one moved (Ref::fitBox, people aside), the
+// loaded cells' lists made again (World::rebuildLoadedLists). worldPick keeps them sorted by place for this number
+extern unsigned g_pickSerial;
+
 struct RefRange { int batch; u32 first, count; };
 struct cJSON;
 cJSON* contentsState(const std::vector<ContentItem>& contents);
@@ -72,6 +76,9 @@ struct Ref
 			boxMin[k] = boxStart[k] + pos[k] - start[k];
 			boxMax[k] = boxStart[3 + k] + pos[k] - start[k];
 		}
+		// (a thing that isn't a person moved: the crosshair's pick sorts the things by where they stand again, worldPick)
+		if (actor < 0)
+			g_pickSerial++;
 	}
 	std::vector<RefRange> ranges;
 	u32 colFirst = 0, colCount = 0;   // its own collision triangles (objects scripts enable / disable)
