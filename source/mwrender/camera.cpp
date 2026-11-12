@@ -184,15 +184,23 @@ float Session::stereoTarget(float slider, float dt)
 // under 30 fps' 33 ms, 20 once it keeps running past, 30 again once it keeps well under. Both are even shares of
 // the screen's 60 Hz: a cap of 24 would show frames for 2 and 3 refreshes in turn, a judder worse than a steady 20
 //
-// View distance Auto (user, 2026-11-10): the console's longest view, dropped to its middle one in a single step when
-// the frame rate over a second falls under the console's floor (an Old 3DS's 20, a New 3DS's 30), and tried at the
-// longest again a second later. Dropped again soon after a try, the next try waits twice as long (up to half a
-// minute: a heavy town isn't tried every other second); once the longest has held for ten seconds the wait is a
-// second again. Only those two views, measured only once a second. It moved the fog a little every frame, an Old
-// 3DS's out from its shortest after every trip: the Old 3DS sat at its shortest view for minutes at 13-18 fps, the
-// frames no faster there (the time went to the people, not the land), and it holds its longest most of the time
-static const float kHighHolds = 10.0f;     // seconds at the longest view that put the next drop's wait back to one
-static const float kRetryWaitMax = 30.0f;  // the longest wait before the longest view is tried again
+// View distance Auto, two ways by console (g_profile.viewEases):
+//
+// A New 3DS (user, 2026-11-11: as it was) eases the fog: it runs uncapped at the screen's 60 Hz, so a frame that misses
+// a refresh waits for the next one: 30 ms of measured work showed 23-25 fps on the console (3D on, outdoors), between
+// the work thresholds, and the view stayed whole. It closes in by the time between frames, the frame rate the player
+// sees, and opens out only while the work leaves room for 30 fps, drawn in steps of kViewStep
+//
+// An Old 3DS (user, 2026-11-10) switches between two views: the console's longest, dropped to its middle one in a
+// single step when the frame rate over a second falls under its floor (20), and tried at the longest again a second
+// later. Dropped again soon after a try, the next try waits twice as long (up to half a minute: a heavy town isn't
+// tried every other second); once the longest has held for ten seconds the wait is a second again. Only those two
+// views, measured only once a second. Eased, it moved the fog a little every frame, out from its shortest after every
+// trip: the Old 3DS sat at its shortest view for minutes at 13-18 fps, the frames no faster there (the time went to the
+// people, not the land), and it holds its longest most of the time
+static const float kViewStep = 0.05f;      // eased: the drawn view moves in steps of this share of the full view (viewDrawn)
+static const float kHighHolds = 10.0f;     // two views: seconds at the longest view that put the next drop's wait back to one
+static const float kRetryWaitMax = 30.0f;  // ... and the longest wait before the longest view is tried again
 
 void Session::adaptView(float workMs, float frameMs)
 {
@@ -242,6 +250,21 @@ void Session::adaptView(float workMs, float frameMs)
 		if (!g_profile.keepViewIndoors)
 			viewScale = viewDrawn = 1.0f;
 		viewWindowMs = 0.0f, viewWindowFrames = 0;
+		return;
+	}
+	if (g_profile.viewEases)
+	{
+		// (past 34.5 ms between frames is under 29 fps; under 27 ms of work held 29-30 fps on the console)
+		const float minScale = g_profile.viewScaleMin, maxScale = g_profile.viewScaleMax;
+		if (frameCost > 34.5f)
+			viewScale = fmaxf(minScale, viewScale - 0.004f);
+		else if (workCost < 27.0f)
+			viewScale = fminf(maxScale, viewScale + 0.002f);
+		// The drawn view (viewDrawn): the nearest step once the scale is a whole step away from the one drawn. At the
+		// threshold the scale saws between -0.004 and +0.002 a frame, well inside a step, so the fog stands still; a real
+		// change of load moves it a step at a time
+		if (fabsf(viewScale - viewDrawn) >= kViewStep - 0.0005f)
+			viewDrawn = fmaxf(minScale, fminf(maxScale, roundf(viewScale / kViewStep) * kViewStep));
 		return;
 	}
 	const float high = g_profile.viewScaleMax, mid = 0.5f * (g_profile.viewScaleMin + g_profile.viewScaleMax);

@@ -215,8 +215,8 @@ void Session::drawOptions()
 				: "Auto gamma on: the inner camera checks the light at each loading screen.");
 		}
 		// View distance (outdoors; OpenMW's 7168 at the most): Max, the console's longest whatever the speed; Min, its
-		// shortest; Mid halfway; Auto between them with the frame rate (a New 3DS from the longest, closing in when slow;
-		// an Old 3DS from the shortest, opening out while there is room). A tap goes Auto, Max, Mid, Min
+		// shortest; Mid halfway; Auto with the frame rate (a New 3DS's fog easing in when slow and out with room; an Old
+		// 3DS's longest view, or its middle one while the longest runs too slow). A tap goes Auto, Max, Mid, Min
 		static const char* kViewNames[4] = { "Min", "Auto", "Max", "Mid" };
 		if (choice(126, "View distance", kViewNames[viewMode]))
 		{

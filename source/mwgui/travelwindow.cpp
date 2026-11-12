@@ -23,10 +23,14 @@ void Session::finishTravel()
 	int dest = travelCell;
 	travelCell = -1;
 	loadScreens++;
-	// (View distance Auto starts at the longest view again in the new place)
-	viewScale = viewDrawn = g_profile.viewScaleMax;
-	viewWindowMs = 0.0f, viewWindowFrames = 0;
-	viewRetryWait = 1.0f, viewHighFor = 0.0f;
+	// (View distance Auto in two views, an Old 3DS's, starts at the longest again in the new place; eased, a New 3DS's
+	// goes on from where it was)
+	if (!g_profile.viewEases)
+	{
+		viewScale = viewDrawn = g_profile.viewScaleMax;
+		viewWindowMs = 0.0f, viewWindowFrames = 0;
+		viewRetryWait = 1.0f, viewHighFor = 0.0f;
+	}
 	// Somewhere else, not a door off the streets around (Recall, an Intervention, a boat, a coc), on an Old 3DS: the
 	// place left goes first, with the objects of its cells, before the new one is read. Cleaned with its cells still
 	// loaded, Balmora's 2,300 objects stayed through a coc to Fort Frostmoth, the fort's cells were read in round them,

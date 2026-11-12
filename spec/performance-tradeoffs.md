@@ -56,13 +56,16 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
 
 - **Never farther than OpenMW's view (7168); shorter when frames run long.** Options > Video > View distance: Max
   (the console's longest: OpenMW's on a New 3DS, 0.8 of it on an Old 3DS or 2DS), Mid, Min (0.6 / 0.3), or Auto.
-  Auto (user, 2026-11-10) is the longest view, dropped to Mid in one step when the frame rate over a second falls
-  under 20 on an Old 3DS (under 30 on a New 3DS), and tried at the longest again a second later; dropped again soon
-  after a try, the next try waits twice as long, up to half a minute. It used to move the fog a little every frame,
-  an Old 3DS's out from its shortest after every trip: on the console it sat at its shortest for minutes at 13-18 fps,
-  no faster than at its longest, which an Old 3DS holds most of the time. An Old 3DS runs a steady 20 fps outdoors
-  (30 indoors and on light roads). (`source/mwrender/objects.hpp`, `Session::viewScale`, `Session::adaptView`,
-  `platform/console.cpp`)
+  Auto works two ways by console (`viewEases`). On a New 3DS (user, 2026-11-11: as it was) the fog eases: it closes in
+  a little each frame while frames come slower than about 29 a second and opens out while the work leaves room for
+  30, down to Min at most, drawn in steps of a twentieth (drawn as adapted, the fog's reach followed the scale's saw
+  of a few thousandths a frame at its threshold, and the walkways' edges in the fog flashed). On an Old 3DS (user,
+  2026-11-10) Auto is the longest view, dropped to Mid in one step when the frame rate over a second falls under 20,
+  and tried at the longest again a second later; dropped again soon after a try, the next try waits twice as long, up
+  to half a minute. Eased, an Old 3DS's view opened out from its shortest after every trip: on the console it sat at
+  its shortest for minutes at 13-18 fps, no faster than at its longest, which it holds most of the time. An Old 3DS
+  runs a steady 20 fps outdoors (30 indoors and on light roads). (`source/mwrender/objects.hpp`, `Session::viewScale`,
+  `Session::viewDrawn`, `Session::adaptView`, `platform/console.cpp`)
 - **Rain and storms shorten the view.** OpenMW draws the whole view and moves the fog's start in; drawing land hidden in
   thick fog cost both consoles their frame rate. (`World::weatherFogScale`)
 - **Small clutter stops at a distance by its size.** Each size tier vanishes at about 25 pixels on screen. An Old 3DS

@@ -17,8 +17,10 @@ struct ConsoleProfile
 	bool capSteps;                   // the cap steps between 30 and 20 with the scene's work (Session::adaptView)
 	float viewScaleMin, viewScaleMax;    // how far the outdoor view may close in, and its longest
 	bool keepViewIndoors;            // indoors the outdoor view stays as it was (else whole again)
-	float viewFloorFps;              // View distance Auto: under this frame rate over a second the longest view drops to the
-	                                 // middle one (Session::adaptView)
+	bool viewEases;                  // View distance Auto moves the fog a little each frame with the frame rate (a New 3DS);
+	                                 // else it switches between the longest and the middle view (Session::adaptView)
+	float viewFloorFps;              // View distance Auto in two views: under this frame rate over a second the longest view
+	                                 // drops to the middle one
 	float workCap;                   // one long frame (a cell arriving) counts as at most this, in ms
 	float actorViewLimit;            // people are drawn no farther than this (0: the renderer's own distance)
 	float actorDetailScale;          // of the renderer's full-detail distance for people

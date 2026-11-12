@@ -55,10 +55,14 @@ struct RenderState
 	float renderCost = 0.0f;          // smoothed per-frame render time (ms) of one eye
 	float eyeCmdUse = 0.0f;           // share of the GPU command buffer one eye's world takes
 	bool stereoCmdRoom = true;
-	// View distance Auto outdoors (fog scale): the console's longest view, or its middle one while the longest runs too
-	// slow (Session::adaptView). An Old 3DS also caps the frame rate at 30 or 20 (frameCap: main hands it to
-	// C3D_FrameRate). viewDrawn is the share drawn, the same as viewScale (tests set either)
+	// View distance Auto outdoors (fog scale, Session::adaptView): a New 3DS's eases with the frame rate; an Old 3DS's is
+	// the console's longest view, or its middle one while the longest runs too slow. An Old 3DS also caps the frame rate
+	// at 30 or 20 (frameCap: main hands it to C3D_FrameRate)
 	float viewScale = g_profile.viewScaleMax, workCost = 0.0f, frameCost = 0.0f;
+	// ... and the share drawn: eased, viewScale in steps of kViewStep, moved only once viewScale has left the step by a
+	// whole one (the frame cost hovering at its threshold saws viewScale by a few thousandths every frame, and drawn as
+	// it is the fog's reach moved with it: the walkways' edges in the fog flashed frame by frame); in two views the same
+	// as viewScale (tests set either)
 	float viewDrawn = g_profile.viewScaleMax;
 	float viewWindowMs = 0.0f;        // the frame rate measured a second at a time: the time so far, and the frames
 	int viewWindowFrames = 0;
