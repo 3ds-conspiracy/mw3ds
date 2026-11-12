@@ -206,6 +206,8 @@ void Session::openScreen(Screen s)
 	focus = 0;
 	containerPutting = false;
 	bookFromItems = false;
+	if (s == SCR_SAVES)
+		saveFilter = SaveFilter();
 	playSound(-1, "Menu Click");
 }
 

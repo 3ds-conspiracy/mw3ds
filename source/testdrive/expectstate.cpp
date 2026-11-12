@@ -144,6 +144,8 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 			v = dated && !(named && oneName) ? 1.0f : 0.0f;
 		}
 	}
+	else if (what == "saveshown")    // rows the Saves screen's list shows (every character's, or the one chosen's)
+		v = (float)saveFiltered(s.saveFilter, s.saveList).size();
 	else if (what == "saves")
 	{
 		// the player's own saves on the card (not the autosave or the starting points)

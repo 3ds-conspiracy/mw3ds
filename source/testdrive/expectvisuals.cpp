@@ -42,6 +42,7 @@ std::optional<bool> numberOfVisuals(Session& s, const std::string& what, const s
 		}
 		return true;
 	}
+	if (what == "savepicking") { v = s.saveFilter.picking ? 1.0f : 0.0f; return true; }    // the Saves screen's list of characters is open
 	if (what == "deletingsave") { v = s.deletingSave ? 1.0f : 0.0f; return true; }    // the Saves screen asks "Delete ...?"
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now
 	// blended draws of the last drawn frame made after a nearer blended one (they go back to front: mwrender/renderingmanager.cpp)

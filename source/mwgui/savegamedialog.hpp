@@ -53,3 +53,22 @@ std::string saveNewPath();
 void saveRow(const std::vector<SaveInfo>& saves, size_t i, std::string& left, std::string& right);
 // The list as UI rows; returns the row activated this frame (tap or A) or -1
 int uiSaveList(UiList& list, const std::vector<SaveInfo>& saves, float x, float y, float w, float h, bool keys = true);
+
+// Whose saves the list shows: every character's (All, as it opens) or one character's, chosen from the list of the
+// characters the saves are of, which the "Character" button over the save list opens (3DS UI: Morrowind's own load
+// menu has no such filter)
+struct SaveFilter
+{
+	std::string name;        // the character shown ("": all of them)
+	bool picking = false;    // the list of characters is open
+	UiList list;
+};
+// The characters the saves are of, each once, in the list's order (the one saved last first)
+std::vector<std::string> saveCharacters(const std::vector<SaveInfo>& saves);
+// The saves the filter lets through, as indexes into saves (all of them on All)
+std::vector<int> saveFiltered(const SaveFilter& f, const std::vector<SaveInfo>& saves);
+// The filter's button across the screen at y, or, while it is open, the list of characters over the screen: then the
+// caller draws nothing else that frame (returns true). Y opens it too; keys false: the button is drawn, nothing opens
+// it. Choosing a character starts rows (the save list) again at its top; a character whose saves are all gone goes back
+// to All
+bool uiSaveFilter(SaveFilter& f, UiList& rows, const std::vector<SaveInfo>& saves, float y, float h, bool keys = true);

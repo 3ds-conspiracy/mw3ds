@@ -1,0 +1,38 @@
+# start: Seyda Neen
+# feat-save-filter: the Saves screen lists every character's saves as it opens (Character: All) and only one
+# character's once that one is chosen from the list of characters its Character button (or Y) opens: a list to pick
+# from, no keyboard. Three saves as Ondrasi, two as Velyna; on Velyna's the list holds her two; a new save as Ondrasi
+# while it shows Velyna's goes to his; B closes the list of characters and keeps the choice; All shows them all again
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+PCNAME:Ondrasi
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves+EXPECT:savepicking:eq:0
+0.3 0 0 0 0 SNAP:saveshown
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 B
+0.3 0 0 0 0 PCNAME:Velyna
+0.3 0 0 0 0 TAP:292:222
+0.3 0 0 0 0 EXPECT:screen:saves
+0.3 0 0 0 0 A
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:saveshown:eq:@5+SHOT
+0.3 0 0 0 0 TAP:160:35
+0.3 0 0 0 0 EXPECT:savepicking:eq:1+SHOT
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:savepicking:eq:0+EXPECT:saveshown:eq:2+EXPECT:screen:saves+SHOT
+0.3 0 0 0 0 PCNAME:Ondrasi
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:saveshown:eq:4
+0.3 0 0 0 0 Y
+0.3 0 0 0 0 EXPECT:savepicking:eq:1
+0.3 0 0 0 0 B
+0.3 0 0 0 0 EXPECT:savepicking:eq:0+EXPECT:screen:saves+EXPECT:saveshown:eq:4
+0.3 0 0 0 0 Y
+0.3 0 0 0 0 UP
+0.3 0 0 0 0 A
+0.3 0 0 0 0 EXPECT:savepicking:eq:0+EXPECT:saveshown:eq:@6
+0.3 0 0 0 0 B
+1 0 0 0

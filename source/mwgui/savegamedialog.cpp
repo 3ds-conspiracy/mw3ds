@@ -374,18 +374,95 @@ int uiSaveList(UiList& list, const std::vector<SaveInfo>& saves, float x, float 
 	return uiList(list, x, y, w, h, rows, 0.45f, keys, &right);
 }
 
+std::vector<std::string> saveCharacters(const std::vector<SaveInfo>& saves)
+{
+	std::vector<std::string> names;
+	for (const SaveInfo& s : saves)
+		if (!s.name.empty() && std::find(names.begin(), names.end(), s.name) == names.end())
+			names.push_back(s.name);
+	return names;
+}
+
+std::vector<int> saveFiltered(const SaveFilter& f, const std::vector<SaveInfo>& saves)
+{
+	std::vector<int> at;
+	for (size_t i = 0; i < saves.size(); i++)
+		if (f.name.empty() || saves[i].name == f.name)
+			at.push_back((int)i);
+	return at;
+}
+
+static std::string savesCount(int n)
+{
+	return std::to_string(n) + (n == 1 ? " save" : " saves");
+}
+
+bool uiSaveFilter(SaveFilter& f, UiList& rows, const std::vector<SaveInfo>& saves, float y, float h, bool keys)
+{
+	std::vector<std::string> names = saveCharacters(saves);
+	if (!f.name.empty() && std::find(names.begin(), names.end(), f.name) == names.end())
+		f.name.clear();
+	if (!f.picking)
+	{
+		bool hit = uiButton(4, y, 312, h, "Character: " + (f.name.empty() ? std::string("All") : f.name));
+		if (keys && (hit || (uiIn().down & KEY_Y)))
+		{
+			f.picking = true;
+			f.list = UiList();
+			auto at = std::find(names.begin(), names.end(), f.name);
+			f.list.selected = f.name.empty() || at == names.end() ? 0 : 1 + (int)(at - names.begin());
+		}
+		return false;
+	}
+	// All first, then each character, the one saved last first; how many saves each has on the right
+	std::vector<std::string> labels = { "All characters" }, right = { savesCount((int)saves.size()) };
+	for (const std::string& n : names)
+	{
+		labels.push_back(n);
+		right.push_back(savesCount((int)std::count_if(saves.begin(), saves.end(),
+			[&](const SaveInfo& s) { return s.name == n; })));
+	}
+	uiRect(4, 24, 312, 180, C2D_Color32(0, 0, 0, 255));
+	uiPanel(4, 24, 312, 180);
+	uiText(10, 28, 0.5f, col::header, "Show the saves of");
+	int pick = uiList(f.list, 8, 46, 304, 154, labels, 0.5f, true, &right);
+	bool back = uiButton(4, 208, 312, 28, "Back");      // (not lit: A chooses the lit row)
+	if (pick >= 0 && pick < (int)labels.size())
+	{
+		std::string was = f.name;
+		f.name = pick == 0 ? "" : names[pick - 1];
+		if (f.name != was)
+			rows = UiList();
+		f.picking = false;
+		logf("saves: showing %s", f.name.empty() ? "every character's saves" : ("the saves of " + f.name).c_str());
+	}
+	else if (back || (uiIn().down & KEY_B))
+		f.picking = false;
+	return true;
+}
+
 // Save a new game or load any save (autosave, your saves, bundled starting points)
 void Session::drawSaves()
 {
 	header("Saves");
-	int pick = uiSaveList(list, saveList, 4, 24, 312, 176, !deletingSave);
+	// (the list of characters, while it is open, takes the screen)
+	if (uiSaveFilter(saveFilter, list, saveList, 24, 22, !deletingSave))
+		return;
+	std::vector<int> shownAt = saveFiltered(saveFilter, saveList);
+	std::vector<SaveInfo> shown;
+	for (int i : shownAt)
+		shown.push_back(saveList[i]);
+	if (!shown.empty() && list.selected >= (int)shown.size())
+		list.selected = (int)shown.size() - 1;
+	int pick = uiSaveList(list, shown, 4, 50, 312, 150, !deletingSave);
 	if (saveList.empty())
-		uiTextCentered(160, 100, 0.5f, col::textDim, "No saves yet");
+		uiTextCentered(160, 112, 0.5f, col::textDim, "No saves yet");
 	// Saving mid-chargen would lose the menus the scripts queued, so wait until they're done
 	bool canSave = pendingMenus.empty() && !wantName && !playerDead;     // (dead: load only)
-	bool canLoad = list.selected >= 0 && list.selected < (int)saveList.size();
+	bool canLoad = list.selected >= 0 && list.selected < (int)shown.size();
+	int at = canLoad ? shownAt[list.selected] : -1;      // the selected save in saveList
 	// (the starting points that come with the game stay)
-	bool canDelete = canLoad && !saveList[list.selected].bundled;
+	bool canDelete = canLoad && !saveList[at].bundled;
 	if (deletingSave)
 	{
 		// "Delete <name>?" Yes / No
@@ -396,7 +473,7 @@ void Session::drawSaves()
 			// (a solid box over the list, and its two buttons inside it, not across the whole screen as a button row)
 			uiRect(20, 70, 280, 100, C2D_Color32(0, 0, 0, 255));
 			uiPanel(20, 70, 280, 100);
-			uiTextBox(scroll, 26, 76, 268, 50, w.game.gmstLabel("sdelete", "Delete") + " " + saveList[list.selected].title + "?", 0.5f, false);
+			uiTextBox(scroll, 26, 76, 268, 50, w.game.gmstLabel("sdelete", "Delete") + " " + saveList[at].title + "?", 0.5f, false);
 			if (uiIn().down & (KEY_LEFT | KEY_RIGHT))
 				focus = 1 - focus;
 			int yn = -1;
@@ -406,14 +483,12 @@ void Session::drawSaves()
 					yn = i;
 			if (yn == 0)
 			{
-				remove(saveList[list.selected].path.c_str());
-				remove((saveList[list.selected].path + ".meta").c_str());
-				logf("saves: deleted %s", saveList[list.selected].path.c_str());
-				forgetSave(saveList[list.selected].path);
-				appendIndex("-\t" + fileOf(saveList[list.selected].path) + "\n");
-				saveList = savesList(dataDir);
-				if (list.selected >= (int)saveList.size())
-					list.selected = (int)saveList.size() - 1;
+				remove(saveList[at].path.c_str());
+				remove((saveList[at].path + ".meta").c_str());
+				logf("saves: deleted %s", saveList[at].path.c_str());
+				forgetSave(saveList[at].path);
+				appendIndex("-\t" + fileOf(saveList[at].path) + "\n");
+				saveList = savesList(dataDir);        // (the selection is kept within the list next frame)
 				notify("Save deleted.");
 			}
 			if (yn >= 0 || (uiIn().down & KEY_B))
@@ -442,11 +517,14 @@ void Session::drawSaves()
 		{
 			notify("Game saved.");
 			addSaveToList(saveList);
+			// (the list shows the save just made: on another character's saves it goes to this one's)
+			if (!saveFilter.name.empty() && saveFilter.name != g_lastSaveInfo.name)
+				saveFilter.name = g_lastSaveInfo.name;
 		}
 	}
 	else if ((b == 1 || (pick >= 0 && (uiIn().down & KEY_A))) && canLoad)
 	{
-		reloadPath = saveList[list.selected].path;
+		reloadPath = saveList[at].path;
 		wantReload = true;
 		closeScreen();
 	}

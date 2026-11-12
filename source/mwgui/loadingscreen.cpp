@@ -285,6 +285,7 @@ std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const c
 	if (saves.empty() && showFrames <= 0)
 		return "";
 	UiList list;
+	SaveFilter filter;           // All as it opens
 	int focus = 1;
 	bool wasTouching = false, dragged = false;
 	int lastX = 0, lastY = 0, pressX = 0, pressY = 0;
@@ -408,13 +409,24 @@ std::string titleScreen(C3D_RenderTarget* top, C3D_RenderTarget* bottom, const c
 		uiRect(0, 0, 320, 20, col::panelLight);
 		uiRect(0, 20, 320, 1, col::border);
 		uiText(6, 2, 0.55f, col::header, "Load game");
-		int pick = uiSaveList(list, saves, 4, 24, 312, 176);
-		if (down & KEY_RIGHT) focus = (focus + 1) % 2;
-		if (down & KEY_LEFT) focus = (focus + 1) % 2;
-		if (uiButton(4, 208, 154, 28, "New game", focus == 0))
-			result = "";
-		if (uiButton(162, 208, 154, 28, "Load", focus == 1) || (pick >= 0 && (down & KEY_A) && focus == 1))
-			result = saves[list.selected].path;
+		// (whose saves: all, or one character's; the list of characters, while it is open, takes the screen)
+		if (!uiSaveFilter(filter, list, saves, 24, 22))
+		{
+			std::vector<int> at = saveFiltered(filter, saves);
+			std::vector<SaveInfo> shown;
+			for (int i : at)
+				shown.push_back(saves[i]);
+			if (!shown.empty() && list.selected >= (int)shown.size())
+				list.selected = (int)shown.size() - 1;
+			int pick = uiSaveList(list, shown, 4, 50, 312, 150);
+			if (down & KEY_RIGHT) focus = (focus + 1) % 2;
+			if (down & KEY_LEFT) focus = (focus + 1) % 2;
+			if (uiButton(4, 208, 154, 28, "New game", focus == 0))
+				result = "";
+			bool load = uiButton(162, 208, 154, 28, "Load", focus == 1) || (pick >= 0 && (down & KEY_A) && focus == 1);
+			if (load && list.selected >= 0 && list.selected < (int)shown.size())
+				result = saves[at[list.selected]].path;
+		}
 		C3D_FrameEnd(0);
 		if (result != "\x01")
 			return result;

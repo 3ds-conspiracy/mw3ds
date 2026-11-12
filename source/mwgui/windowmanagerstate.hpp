@@ -199,6 +199,7 @@ struct WindowManagerState
 	struct BarterLine { bool sell; int from; int index; int count; };
 	std::vector<BarterLine> barterDeal;
 	bool deletingSave = false;                    // Saves screen: asking before deleting the selected save
+	SaveFilter saveFilter;                        // Saves screen: whose saves it lists (All each time it opens)
 	int haggleOffer = -1;                         // barter: the gold the player offers for the balance (-1: the balance)
 	std::string rechargeGem;                       // the soul gem Recharge was chosen on (its soul's creature)
 	int enchanterRef = -1, enchantItem = -1, enchantGem = -1, enchantType = -1;
