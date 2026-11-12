@@ -461,6 +461,9 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void dropFromInventory(int sel, int count);   // the inventory's Drop: that many of the stack into the world
 	// crime (mwmechanics/mechanicsmanagerimp.cpp)
 	void reportCrime(int victim, int bounty);
+	// The player's blow, shot or harmful spell on someone (OpenMW's actorAttacked): the assault, then the fight back
+	void actorAttacked(int ref);
+	bool guardPursues(int ref);             // a guard on his way to arrest the player (OpenMW's AiPursue)
 	// What the people who saw it think of it (OpenMW's reading): disposition and fight change, and at
 	// fight 100 they attack. kind: CRIME_* (value: a theft's worth)
 	enum { CRIME_THEFT, CRIME_PICKPOCKET, CRIME_TRESPASS, CRIME_ASSAULT, CRIME_MURDER };

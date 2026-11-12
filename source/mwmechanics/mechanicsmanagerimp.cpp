@@ -238,12 +238,14 @@ void Session::reportCrime(int victim, int amount)
 {
 	// A crime someone saw goes on record only if someone within the alarm radius reports it: an NPC
 	// with AI Alarm 100 (guards and the like; most commoners have 0). OpenMW's reading.
+	// (the victim counts however far from the player: OpenMW's commitCrime and reportCrime add it to those in the
+	// radius, so a guard shot from across a hall reports it and comes to arrest)
 	float radius = w.game.gmstf("falarmradius", 2000.0f);
 	int reporter = -1;
 	for (int i : w.loadedActors)
 	{
 		const Ref& r = w.refs[i];
-		if (r.recType != REC_NPC_ || r.dead || r.ally || r.actor < 0 || !w.active(i) || w.distanceToPlayer(i) > radius)
+		if (r.recType != REC_NPC_ || r.dead || r.ally || r.actor < 0 || !w.active(i) || (i != victim && w.distanceToPlayer(i) > radius))
 			continue;
 		if ((r.alarm >= 0 ? r.alarm : w.game.actors[r.actor].alarm) >= 100)
 		{
@@ -266,11 +268,12 @@ void Session::reportCrime(int victim, int amount)
 	w.bounty += amount;
 	w.globals["pccrimelevel"] = (float)w.bounty;
 	// The guards within the alarm radius with Alarm 100 are alarmed and come after the player (OpenMW's reportCrime:
-	// setAlarmed, AiPursue); other guards wait until spoken to, or until the bounty reaches iCrimeThreshold
+	// setAlarmed, AiPursue), the victim among them wherever it is; other guards wait until spoken to, or until the bounty
+	// reaches iCrimeThreshold
 	for (int i : w.loadedActors)
 	{
 		Ref& r = w.refs[i];
-		if (r.recType == REC_NPC_ && !r.dead && r.actor >= 0 && w.active(i) && w.distanceToPlayer(i) <= radius
+		if (r.recType == REC_NPC_ && !r.dead && r.actor >= 0 && w.active(i) && (i == victim || w.distanceToPlayer(i) <= radius)
 			&& strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0
 			&& (r.alarm >= 0 ? r.alarm : w.game.actors[r.actor].alarm) >= 100)
 		{
@@ -280,6 +283,34 @@ void Session::reportCrime(int victim, int amount)
 	}
 	notify("Crime reported. Your bounty is " + std::to_string(w.bounty) + " gold.");
 	logf("crime: +%d, bounty %d", amount, w.bounty);
+}
+
+// On his way to arrest the player: a guard told of a crime (or come for a bounty on sight), not fighting anyone, while the
+// bounty stands (OpenMW's AiPursue, which ends once the bounty is paid; guardCheck walks him over)
+bool Session::guardPursues(int ri)
+{
+	if (ri < 0 || ri >= (int)w.refs.size())
+		return false;
+	const Ref& r = w.refs[ri];
+	return r.alarmed && w.bounty > 0 && !w.stats.werewolf && !r.dead && r.actor >= 0 && r.ai != AI_COMBAT && r.duelFoe < 0
+		&& w.active(ri) && strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0;
+}
+
+// The player's blow (a miss too), shot or harmful spell reaches someone (OpenMW's actorAttacked). First the assault, on one
+// who can be its victim (canCommitCrimeAgainst: a person, not fighting the player or another actor, not on his way to
+// arrest the player, not a werewolf); its report sends the guards with Alarm 100 after the player, the one struck too.
+// Then the fight back, by anyone but a guard on his way to arrest the player: he arrests instead, and blows on him then
+// are no new crime. (A companion's forgiven blow, friendlyHit, never gets here)
+void Session::actorAttacked(int ri)
+{
+	Ref& t = w.refs[ri];
+	if (t.dead || t.actor < 0)
+		return;
+	const ActorDef& def = w.game.actors[t.actor];
+	if (t.ai != AI_COMBAT && t.duelFoe < 0 && !guardPursues(ri) && !def.creature && !t.aggressor && !t.werewolf)
+		crimeSeen(CRIME_ASSAULT, 0, ri), reportCrime(ri, kBountyAssault);
+	if (!guardPursues(ri))
+		makeHostile(ri);
 }
 
 // Seen by someone awake who noticed the player just now
@@ -366,16 +397,7 @@ void Session::guardCheck(int ri, float dt)
 	// (nobody arrests a werewolf: OpenMW's updateCrimePursuit leaves it alone in wolf form)
 	if (w.stats.werewolf)
 		return;
-	// The last guard to stop the player is fighting them (Resist Arrest's StartCombat): OpenMW's startCombat sends the
-	// other guards after the player too
-	if (arrestingGuard >= 0 && arrestingGuard != ri && w.refs[arrestingGuard].ai == AI_COMBAT && !w.refs[arrestingGuard].dead)
-		w.arrestDeclined = w.bounty;
-	if (w.arrestDeclined == w.bounty)
-	{
-		if (d <= 1500.0f)
-			makeHostile(ri);
-		return;
-	}
+	// (an arrest resisted brings in the guards on their way to arrest, and no others: makeHostile, OpenMW's startCombat)
 	// Only a guard alarmed by a crime it was told of comes for the player (reportCrime). Others do on sight once the
 	// bounty reaches iCrimeThreshold, and attack from iCrimeThreshold x iCrimeThresholdMultiplier (OpenMW's
 	// updateCrimePursuit: line of sight and the awareness check, which updateDetection keeps in lastSeen). Below that the

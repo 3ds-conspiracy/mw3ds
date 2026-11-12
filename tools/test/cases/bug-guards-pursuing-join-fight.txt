@@ -1,0 +1,28 @@
+# start: Seyda Neen
+# bug-guards-pursuing-join-fight: when a guard starts a fight with the player, every guard on his way to arrest the
+# player fights too, however far, and no other guard does (OpenMW's startCombat: the guards whose AiPursue runs switch
+# to AiCombat). Fort Darius in Gnisis: Uloth gra-Ushar struck, the guards with Alarm 100 come to arrest the player;
+# Resist Arrest; Uloth, Bagamul gro-Dumul and Yambul gro-Bogrol fight, Bogdub gra-Gurakh (Alarm 0: told nothing, so
+# not after the player) stays out. Ours turned every guard within 1500 units on the player once an arrest was resisted,
+# and kept doing so to each guard met while the bounty stood
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Gnisis,_Fort_Darius
+3 0 0 0
+0.3 0 0 0 0 SETALARM:bogdub%gra-gurakh:0
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EQUIP:iron_longsword
+0.1 0 0 0 0 EXPECT:refdist:bagamul%gro-dumul:lt:2000+EXPECT:refdist:yambul%gro-bogrol:lt:2000+EXPECT:refdist:bogdub%gra-gurakh:lt:1500
+0.3 0 0 0 0 HIT:uloth%gra-ushar
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:40+EXPECT:refcombat:uloth%gra-ushar:eq:0+EXPECT:refcombat:bagamul%gro-dumul:eq:0
+8 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue
+0.5 0 0 0 0 CHOICEVAL:3
+1 0 0 0
+0.3 0 0 0 0 B
+2 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none+EXPECT:bounty:eq:40
+0.1 0 0 0 0 EXPECT:refcombat:uloth%gra-ushar:eq:1+EXPECT:refcombat:bagamul%gro-dumul:eq:1+EXPECT:refcombat:yambul%gro-bogrol:eq:1
+0.1 0 0 0 0 EXPECT:refcombat:bogdub%gra-gurakh:eq:0+EXPECT:refdist:bogdub%gra-gurakh:lt:1500
+1 0 0 0

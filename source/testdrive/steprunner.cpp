@@ -142,7 +142,6 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 		{
 			logf("test: chained run: bounty %d paid", session->w.bounty);
 			session->w.bounty = 0;
-			session->w.arrestDeclined = -1;
 		}
 		if (session->screen == SCR_ARREST)
 			session->closeScreen();

@@ -49,7 +49,6 @@ void Session::drawArrest()
 	}
 	else
 	{
-		w.arrestDeclined = w.bounty;
 		if (arrestingGuard >= 0)
 			makeHostile(arrestingGuard);
 		closeScreen();

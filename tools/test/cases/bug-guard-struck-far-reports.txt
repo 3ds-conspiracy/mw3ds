@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# bug-guard-struck-far-reports: the one struck reports the assault however far from the player (OpenMW's commitCrime
+# and reportCrime: the victim is counted even beyond fAlarmRadius), and a guard among them comes to arrest. Fort
+# Darius in Gnisis: the player across the hall, over 2000 units from Bagamul gro-Dumul, everyone nearer told nothing
+# (Alarm 0); Bagamul struck: bounty 40, and he comes to arrest rather than fight. Ours found nobody within the radius
+# to report it (no bounty), and Bagamul fought
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Gnisis,_Fort_Darius
+3 0 0 0
+0.3 0 0 0 0 SETALARM:uloth%gra-ushar:0+SETALARM:bogdub%gra-gurakh:0+SETALARM:yambul%gro-bogrol:0
+0.3 0 0 0 0 SETALARM:sharkub%gro-khashnar:0+SETALARM:mug%gro-dulob:0+SETALARM:ulumpha%gra-sharob:0+SETALARM:chaplain%ogrul:0
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EQUIP:iron_longsword
+20 0 0 0 0 WALKTO:@440,545,128
+1 0 0 0
+0.1 0 0 0 0 EXPECT:refdist:bagamul%gro-dumul:gt:2000+EXPECT:bounty:eq:0
+0.3 0 0 0 0 HIT:bagamul%gro-dumul
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:40+EXPECT:refcombat:bagamul%gro-dumul:eq:0
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refcombat:bagamul%gro-dumul:eq:0
+1 0 0 0

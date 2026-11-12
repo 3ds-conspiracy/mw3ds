@@ -103,7 +103,6 @@ struct World
 		auto it = pcRank.find(faction);
 		return it == pcRank.end() ? -1 : it->second;
 	}
-	int arrestDeclined = -1;      // bounty the player resisted arrest at (guards attack instead of asking)
 	std::unordered_set<std::string> pcExpelled;                  // factions that threw the player out
 	std::unordered_set<std::string> mapKnown;                    // places on the map: visited or ShowMap (lowercase)
 	std::unordered_set<int> mapCells;                            // exterior cells the player has been in or ShowMap revealed (mapCellKey)

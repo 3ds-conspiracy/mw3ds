@@ -31,6 +31,21 @@ void Session::makeHostile(int ri)
 		closeScreen();
 	if (Actor* a = w.actorOf(ri))
 		a->showWeapon = r.actor >= 0 && !w.game.actors[r.actor].weapon.empty();
+	// A guard who starts a fight with the player brings every guard on his way to arrest them into it, however far (OpenMW's
+	// startCombat: the guards whose AiPursue runs fight instead): Resist Arrest, a guard struck while not after the player
+	if (r.actor >= 0 && strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0)
+	{
+		std::vector<int> pursuing;
+		for (int a : w.loadedActors)
+			if (a != ri && guardPursues(a))
+				pursuing.push_back(a);
+		for (int a : pursuing)
+			if (guardPursues(a))     // (one the guard before him already brought in: his call took him)
+			{
+				logf("combat: %s joins %s's fight with the player, on his way to arrest them", w.refs[a].id.c_str(), r.id.c_str());
+				makeHostile(a);
+			}
+	}
 }
 
 // StopCombat: the fight is over for them (OpenMW drops their combat packages; the only one fought here is the player's)

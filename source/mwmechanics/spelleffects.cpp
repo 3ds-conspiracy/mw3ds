@@ -476,12 +476,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 			{
 				logf("magic: %s resists %d", r.id.c_str(), e.effect);
 				if (!r.dead && byPlayer && !friendlyHit(ri))
-				{
-					bool peaceful = r.ai != AI_COMBAT && r.duelFoe < 0;
-					makeHostile(ri);
-					if (peaceful && !def.creature)
-						crimeSeen(CRIME_ASSAULT, 0, ri), reportCrime(ri, kBountyAssault);
-				}
+					actorAttacked(ri);
 				return;
 			}
 		}
@@ -647,12 +642,7 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 	// (the player's spell only: one cast by someone else turned whoever it struck on the player; on one siding with the
 	// player it is a friendly hit, as a blow is)
 	if (harmful(e.effect) && !r.dead && byPlayer && !friendlyHit(ri))
-	{
-		bool peaceful = r.ai != AI_COMBAT && r.duelFoe < 0;
-		makeHostile(ri);
-		if (peaceful && !def.creature)
-			crimeSeen(CRIME_ASSAULT, 0, ri), reportCrime(ri, kBountyAssault);
-	}
+		actorAttacked(ri);
 }
 
 // An active effect ends (its time is up, a cure or Dispel took it, or the same spell was cast again): what it changed

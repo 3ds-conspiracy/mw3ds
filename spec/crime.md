@@ -53,8 +53,15 @@ CharGenState global):
 
 `PayFine` clears the bounty, takes the stolen goods and puts the weapon away; `PayFineThief` (the Thieves Guild) only
 clears the bounty. `GoToJail` clears the bounty and takes the stolen goods too, then `max(1, bounty / iDaysInPrisonMod)`
-days pass. When a guard starts a fight with the player, every guard pursuing them fights too (`startCombat`).
+days pass. When a guard starts a fight with the player, every guard pursuing them fights too, however far, and no other
+guard does (`startCombat`: those whose current package is AiPursue switch to AiCombat).
 Paying calms the witnesses again and clears their Alarmed flag (the crime id).
+
+A guard the player strikes arrests rather than fights back (`actorAttacked`): the assault is reported first, and the
+report gives every guard with Alarm 100 in the radius AiPursue, the one struck too (the victim counts however far
+away); the fight back is skipped for one in pursuit. Blows on a pursuing guard are no new crime
+(`canCommitCrimeAgainst`) and still bring no fight back. A struck guard not after the player (Alarm under 100, or busy
+fighting another actor, which is no crime) fights, and brings the pursuing guards in with him.
 
 Ours: `Session::guardCheck` (`mwmechanics/mechanicsmanagerimp.cpp`) walks the guard over and calls `forceGreeting`; `Ref::alarmed` is the flag
 the Alarmed filter reads (with the bounty still standing); the fixed arrest screen (`drawArrest`) is only for a guard
@@ -94,6 +101,22 @@ with no greeting that fits. `issue-4` (theft during character creation), `crime-
    `iDispAttackMod`, anyone else that x Alarm / 100 only when it turns them hostile; murder and trespass nothing.
 6. **Jail** (fixed, `bug-jail-term`): Security and Sneak gained their point only half the time and lost one the other
    half; UESP's Crime: "For Security or Sneak, however, you actually gain one skill point instead".
+
+## Findings (2026-11-12)
+
+7. **A struck guard fought** (fixed, `bug-guard-struck-arrests`): every blow made its victim fight back before the
+   crime was reported, so a guard the player struck fought them and never asked (an Ald'ruhn guard fought the player
+   for 40 seconds on the console). Now `Session::actorAttacked` (the five places a blow, a miss, a shot or a harmful
+   spell reaches someone) reports the assault first and leaves a guard on his way to arrest (`guardPursues`) out of
+   the fight; blows on him then add nothing. The five places had drifted apart: spells counted a crime on an
+   aggressor or a werewolf, shots on a werewolf; all now follow `canCommitCrimeAgainst`.
+8. **Resisting arrest** (fixed, `bug-guards-pursuing-join-fight`): every guard within 1500 units turned on the player,
+   pursuing or not, and every guard met later did too while the bounty stood (`arrestDeclined`, now gone). Now
+   `makeHostile` on a guard brings in the guards pursuing the player, however far, and no others: Resist Arrest, an
+   attack on sight past `iCrimeThreshold` x `iCrimeThresholdMultiplier`, a guard struck while not after the player.
+9. **The victim beyond the radius** (fixed, `bug-guard-struck-far-reports`): an assault on someone over
+   `fAlarmRadius` from the player went unreported unless someone nearer had Alarm 100. Now the victim counts wherever
+   it is, as a reporter and as a guard sent after the player (`reportCrime`).
 
 ## Findings (2026-10-07)
 

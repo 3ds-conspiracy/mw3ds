@@ -546,20 +546,15 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	bool knockedDown = w.refs[target].knockTimer > 0.0f && w.actorEffect(target, 45) <= 0.0f;
 
 	// Being attacked makes them fight back; attacking someone peaceful is assault (the guards
-	// don't mind you killing mudcrabs, or whoever attacked you first). A companion forgives blows in melee
-	// (friendlyHit); shots never are. One already fighting another actor is no victim of a crime either (OpenMW's
-	// canCommitCrimeAgainst: not while engaged with an actor: Baslod at Falco)
+	// don't mind you killing mudcrabs, or whoever attacked you first), and a guard told of it arrests rather than fight
+	// (actorAttacked). A companion forgives blows in melee (friendlyHit); shots never are. One already fighting another
+	// actor is no victim of a crime either (OpenMW's canCommitCrimeAgainst: not while engaged with an actor: Baslod at Falco)
 	bool wasPeaceful = t.ai != AI_COMBAT && t.duelFoe < 0;
 	bool forgiven = false;
 	if (wasPeaceful && !ranged)
 		forgiven = friendlyHit(target);
 	if (!forgiven)
-	{
-		makeHostile(target);
-		// (a werewolf is no one's victim of a crime: OpenMW's canCommitCrimeAgainst)
-		if (wasPeaceful && !def.creature && !t.aggressor && !t.werewolf)
-			crimeSeen(CRIME_ASSAULT, 0, target), reportCrime(target, kBountyAssault);
-	}
+		actorAttacked(target);
 
 	// The weapon's on-strike enchantment: before the block and the damage (OpenMW; Soul Trap then works on a killing
 	// blow, and a blocked blow still casts). Arrows cast theirs in mwworld/projectilemanager.cpp

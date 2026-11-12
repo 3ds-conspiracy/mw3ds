@@ -134,7 +134,6 @@ void Session::projectileHits(Projectile& p, int victim)
 	if (p.owner < 0 && victim >= 0)
 	{
 		Ref& t = w.refs[victim];
-		const ActorDef& def = w.game.actors[t.actor];
 		const PlayerStats& s = w.stats;
 		// OpenMW's getHitChance with Marksman (evasion 0 when unaware, knocked down or paralyzed)
 		bool aware = npcAware(victim);
@@ -154,10 +153,7 @@ void Session::projectileHits(Projectile& p, int victim)
 		{
 			addIndicator("Miss (" + std::to_string((int)fmaxf(0.0f, chance)) + "%)", 0xffffff);
 			wearLauncher(p);
-			bool peaceful = t.ai != AI_COMBAT && t.duelFoe < 0;
-			makeHostile(victim);
-			if (peaceful && !def.creature && !t.aggressor)
-				crimeSeen(CRIME_ASSAULT, 0, victim), reportCrime(victim, kBountyAssault);
+			actorAttacked(victim);
 			return;
 		}
 		useSkill(SKILL_MARKSMAN, 0, roll.skill);

@@ -193,7 +193,6 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 	Ref& t = w.refs[target];
 	if (w.playerHitAttempt < 0)
 		w.playerHitAttempt = target;
-	const ActorDef& def = w.game.actors[t.actor];
 	const int* pa = s.attributes;
 	int skill = weaponSkill(wpn);
 	// OpenMW's getHitChance: attack term (Fortify Attack, Blind) less their evasion, which is 0 while they are unaware,
@@ -219,10 +218,7 @@ float Session::playerSwing(float charge, const PlayerInput& in)
 			monitorOnce(("legitmiss:" + t.id).c_str(), "the player's blow at %s missed (chance %d%%) in a LEGIT run", t.id.c_str(), (int)chance);
 		if (wit && !(testGod && testGodBlows))
 			wearItem(wit, 0.0f);          // a miss still wears the weapon by 1 (OpenMW's reduceWeaponCondition)
-		bool wasPeaceful = t.ai != AI_COMBAT && t.duelFoe < 0;     // (one fighting another actor: no crime)
-		makeHostile(target);
-		if (wasPeaceful && !def.creature && !t.aggressor && !t.werewolf)
-			crimeSeen(CRIME_ASSAULT, 0, target), reportCrime(target, kBountyAssault);
+		actorAttacked(target);
 		return 0.0f;      // (a miss follows through as the weakest blow: OpenMW)
 	}
 	useSkill(skill, 0, roll.skill);

@@ -1,0 +1,26 @@
+# start: Seyda Neen
+# bug-guard-struck-arrests: a guard the player strikes comes to arrest them, he doesn't fight back (OpenMW's
+# actorAttacked: the assault is reported first, which sends every guard with Alarm 100 within fAlarmRadius after the
+# player, the one struck too (reportCrime's AiPursue); one on his way to arrest doesn't fight back, and a blow on him
+# then is no new crime (canCommitCrimeAgainst: not while he pursues)). Fort Darius in Gnisis: Uloth gra-Ushar struck
+# (the other guards there told nothing: Alarm 0), bounty 40, he comes and opens the arrest talk; a second blow on the
+# way adds nothing. Ours had him fight the player at once, and never ask (an Ald'ruhn guard fought the player for 40
+# seconds on the console)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Gnisis,_Fort_Darius
+3 0 0 0
+0.3 0 0 0 0 SETALARM:bogdub%gra-gurakh:0+SETALARM:bagamul%gro-dumul:0+SETALARM:yambul%gro-bogrol:0
+0.3 0 0 0 0 GIVE:iron_longsword
+0.3 0 0 0 0 EQUIP:iron_longsword
+0.1 0 0 0 0 EXPECT:bounty:eq:0+EXPECT:refdist:uloth%gra-ushar:lt:2000
+0.3 0 0 0 0 HIT:uloth%gra-ushar
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:40+EXPECT:refcombat:uloth%gra-ushar:eq:0
+0.3 0 0 0 0 HIT:uloth%gra-ushar
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:bounty:eq:40+EXPECT:refcombat:uloth%gra-ushar:eq:0
+8 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue+EXPECT:talkingto:uloth%gra-ushar+EXPECT:refcombat:uloth%gra-ushar:eq:0
+0.1 0 0 0 0 EXPECT:refcombat:bogdub%gra-gurakh:eq:0+EXPECT:bounty:eq:40
+1 0 0 0
