@@ -158,6 +158,34 @@ bool Session::npcStep(int ri, Cell& cell, float dirX, float dirY, float step)
 			body[0] += dx * push;
 			body[1] += dy * push;
 		}
+	// Slid round someone, nor through a wall by the pushes after it either (OpenMW's actors are swept against the world's
+	// shapes, never through them): the slide can carry a body well past its step, and the pushes off whatever it lands
+	// in go from there. The three assassins crowding the player by Barenziah's bed in Mournhold's palace slid one 72 units
+	// in a step of 13, over a chair's seat and wedged against the chamber's wall, and the next step pushed it out through
+	// the wall; it stood behind the tapestry for good. (Not one already inside something, which the pushes are bringing
+	// out. A step of one's own is left as it was: a follower pushed on through a thin parasol stalk by the pushes alone,
+	// as Edras Oril was in the Ascadian Isles, has no other way round it without a navigation mesh)
+	if (slid)
+	{
+		float mx = body[0] - r.pos[0], my = body[1] - r.pos[1];
+		if (mx * mx + my * my > (step + 2.0f) * (step + 2.0f))
+		{
+			float from[3] = { r.pos[0], r.pos[1], body[2] };
+			float t;
+			bool crossed = false;
+			for (int k = 0; k < aroundCount && !crossed; k++)
+				crossed = collisionRaycast(around[k]->collision, from, body, &t);
+			if (crossed)
+			{
+				float held[3] = { from[0], from[1], from[2] };
+				for (int k = 0; k < aroundCount; k++)
+					collisionPushSphere(around[k]->collision, held, 22.0f, true);
+				float hx = held[0] - from[0], hy = held[1] - from[1];
+				if (hx * hx + hy * hy < 4.0f * 4.0f)
+					return false;
+			}
+		}
+	}
 	// The player's body is in the way, as a wall is (OpenMW's actors collide with it; they don't shove it): no step
 	// closer than the two bodies' widths (the player's 22, the cylinder they push the player out of, 28). Stepping
 	// aside on the ledge in Abernanit, Alonisea Varys shoved the player off it
