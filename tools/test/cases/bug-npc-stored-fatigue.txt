@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# An NPC with stored stats keeps the fatigue its record stores, as OpenMW's Npc::ensureCustomData sets it after the
+# attributes (each of which works out Strength + Willpower + Agility + Endurance on the way): the sum comes back only
+# once an effect changes one of those four. Ours took the sum for every NPC. The base game's editor stored the sum for
+# most, so few showed it: Crazy_Batou (stored 290, sum 311), Goris the Maggot King (255, 243). The add-ons' people do
+# not follow it (bug-addon-stored-fatigue). Found by the golden runs (golden_compare.py actors, golden_tour_compare.py)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Maren_Ancestral_Tomb
+4 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:reffatiguemax:crazy_batou:eq:290
+0.3 0 0 0 0 GOTO:Venim_Ancestral_Tomb
+4 0 0 0
+0.1 0 0 0 0 EXPECT:reffatiguemax:goris_the_maggot_king:eq:255
+1 0 0 0

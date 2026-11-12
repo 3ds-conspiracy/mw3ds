@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# data: bloodmoon
+# The add-ons' summons have no magnitude and are cast on Self only, as the base game's: OpenMW's HardcodedFlags give
+# Summon Fabricant (137) and Bloodmoon's Summon Wolf, Bear and Bonewolf (138-140) 0x1048, as Summon Scamp's (applied
+# once, Self, no magnitude). Ours had them only for the base game's summons, so Call Wolf (138) showed "1 pts" on
+# the HUD and the add-ons' summons could be made on Touch or Target (golden_compare.py effects --tribunal --bloodmoon).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+HOUR:12
+0.3 0 0 0 0 SETSKILL:conjuration:100
+0.3 0 0 0 0 SPELL:bm_summonwolf
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 SNAP:casts
+0.3 0 0 0 0 FILL+SETMAGICKA:3000
+0.3 0 0 0 0 CAST:bm_summonwolf
+1.2 0 0 0
+0.1 0 0 0 0 EXPECT:casts:gt:@0+EXPECT:effect:138:ge:1
+0.1 0 0 0 0 EXPECT:hudeffecticons:ge:1
+0.3 0 0 0 0 TAP:13:121
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:tipline:call_wolf
+0.1 0 0 0 0 EXPECT:notipline:pts
+0.1 0 0 0 0 EXPECT:tipline:s_left
+1 0 0 0

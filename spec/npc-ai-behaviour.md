@@ -31,6 +31,13 @@ side with the player. One that joins counts as the aggressor, as one attacking o
 Creatures carry their record's package as people do (Gothren's two dremora follow him). Tests: `bug-gothren-guards-join`,
 `bug-follower-leader-joins`.
 
+The same holds for a fight between two actors (StartCombat on another actor): `engageCombat` runs for every pair of
+actors within the processing range (7168 units), not only against the player. One whose side has someone fighting
+actor 2 takes up the fight with it once it has actor 2 in sight; the awareness check always passes on an actor that
+isn't sneaking, so only Invisibility or Chameleon hides one. Bamz-Amschend's Hearthfire Hall: the fabricant and
+centurion leaders StartCombat on each other, and those following each leader join in. Test:
+`bug-followers-join-leader-fight`.
+
 ## Fleeing
 
     Flee >= 100: always

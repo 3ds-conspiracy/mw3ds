@@ -411,7 +411,7 @@ def npc_stats(rec, db):
         magicka = None
     else:
         attrs, skills = list(npdt[2:10]), list(npdt[10:37])
-        health, magicka, _ = struct.unpack_from("<3H", npdt, 38)
+        health, magicka, stored_fatigue = struct.unpack_from("<3H", npdt, 38)
         gold = struct.unpack_from("<i", npdt, 48)[0]
     # magicka: intelligence x (fNPCbaseMagickaMult + a tenth of the Fortify Maximum Magicka on it), as OpenMW's
     # CreatureStats::recalculateMagicka. It runs for every autocalc NPC, and for one with stored stats only when such a
@@ -420,9 +420,14 @@ def npc_stats(rec, db):
     fortify = fortify_max_magicka(rec, db)
     if magicka is None or fortify:
         magicka = int(attrs[1] * (_MAGICKA_MULT + 0.1 * fortify))
-    # fatigue: strength + willpower + agility + endurance, stored or not (OpenMW's CreatureStats::setAttribute sets it
-    # whenever one of those four is set, so the record's own fatigue never shows)
-    fatigue = attrs[ATTR_STRENGTH] + attrs[ATTR_WILLPOWER] + attrs[ATTR_AGILITY] + attrs[ATTR_ENDURANCE]
+    # fatigue: strength + willpower + agility + endurance for an autocalc NPC (OpenMW's CreatureStats::setAttribute sets
+    # it whenever one of those four is set); one with stored stats keeps the record's, which Npc::ensureCustomData sets
+    # after the attributes. An effect on one of the four makes it the sum later (the engine: actorSpellStats). The base
+    # game's editor stored the sum for most, the add-ons' did not: Tharsten Heart-Fang 800, sum 391
+    if len(npdt) == 12:
+        fatigue = attrs[ATTR_STRENGTH] + attrs[ATTR_WILLPOWER] + attrs[ATTR_AGILITY] + attrs[ATTR_ENDURANCE]
+    else:
+        fatigue = stored_fatigue
     aidt = rec.get("AIDT")
     fight = aidt[2] if aidt else 30
     flee = aidt[3] if aidt else 30

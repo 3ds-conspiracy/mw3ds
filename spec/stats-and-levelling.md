@@ -56,9 +56,13 @@ OpenMW `mwclass/npc.cpp` (ensureCustomData, autoCalculateAttributes, autoCalcula
   lasting spells). Every autocalc NPC gets it. An NPC with stored stats keeps the record's magicka unless such a
   Fortify is on it (a Breton or High Elf). The engine applies no Fortify Maximum Magicka to NPCs, so it is counted
   at conversion.
-- **Fatigue:** Strength + Willpower + Agility + Endurance for every NPC: setting those attributes sets it, so a
-  record's stored fatigue never shows.
-- Tests: `bug-npc-autocalc-stats`, and `golden_compare.py actors` against OpenMW's own numbers.
+- **Fatigue:** Strength + Willpower + Agility + Endurance for an autocalc NPC: setting those attributes sets it. An NPC
+  with stored stats keeps the record's fatigue, which `Npc::ensureCustomData` sets after the attributes; it becomes
+  the sum (modified) only once an effect changes one of the four (an ability, a disease, a drain: the engine's
+  `actorSpellStats`). The base game's editor stored the sum for most NPCs; the add-ons' did not (Tharsten Heart-Fang
+  800, sum 391).
+- Tests: `bug-npc-autocalc-stats`, `bug-npc-stored-fatigue`, `bug-addon-stored-fatigue`, and `golden_compare.py
+  actors` against OpenMW's own numbers.
 
 ## Level-up
 

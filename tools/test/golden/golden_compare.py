@@ -34,6 +34,8 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import golden_openmw  # noqa: E402
 ATTRS = ["strength", "intelligence", "willpower", "agility", "speed", "endurance", "personality", "luck"]
 SKILLS = ["block", "armorer", "mediumarmor", "heavyarmor", "bluntweapon", "longblade", "axe", "spear", "athletics",
           "enchant", "destruction", "alteration", "illusion", "conjuration", "mysticism", "restoration", "alchemy",
@@ -848,12 +850,20 @@ def main():
     ap.add_argument("topic", choices=["actors", "spells", "effects", "items", "leveled", "cspells", "alchemy", "signs", "equipment", "factions", "gmst", "cells", "magic", "world"])
     ap.add_argument("--log", default=str(ROOT / "build" / "native-golden" / "sd" / "3ds" / "mw3ds" / "log.txt"),
                     help="spells: the native run's log with the DUMPSPELLS lines")
-    ap.add_argument("--data", default=str(ROOT / "out" / "world"), help="the converted data folder")
+    ap.add_argument("--data", default="", help="the converted data folder (default: out/world; with the add-ons "
+                    "out/data-tribunal-bloodmoon, as the CIA build names it)")
     ap.add_argument("--esm", action="store_true", help="the converter's NPC numbers from the records, no conversion")
-    ap.add_argument("--golden", default=str(ROOT / "build" / "golden" / "openmw-actors.json"))
+    ap.add_argument("--golden", default="", help="OpenMW's answers (default: build/golden/openmw-actors.json, "
+                    "openmw-actors-tribunal-bloodmoon.json with the add-ons)")
+    golden_openmw.addon_args(ap)
     ap.add_argument("--examples", type=int, default=5, help="examples listed per field")
     ap.add_argument("--field", default="", help="only these fields (comma separated)")
     args = ap.parse_args()
+    # (the add-ons: the converters' modules read the switches too, load_from_esm and npcs_with_leveled_items)
+    golden_openmw.set_addons(args)
+    sfx = golden_openmw.suffix()
+    args.data = args.data or str(ROOT / "out" / ("data" + sfx if sfx else "world"))
+    args.golden = args.golden or str(ROOT / "build" / "golden" / f"openmw-actors{sfx}.json")
     golden = json.loads(Path(args.golden).read_text())
     conv = load_from_esm() if args.esm else load_converted(args.data)
     only = set(filter(None, args.field.split(",")))

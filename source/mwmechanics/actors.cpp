@@ -212,6 +212,64 @@ bool Session::sidesInPlayersFight(int i)
 	return npcAware(i) && w.lineOfSight(head, eye);
 }
 
+// ... and one siding with someone who fights another actor (StartCombat on it) takes up that fight too: OpenMW's
+// engageCombat runs for every pair of actors in range, not only against the player. One whose side has someone in
+// combat with actor 2 becomes aggressive to it, and starts combat once aware of it (line of sight; its awareness
+// check always passes on an actor that isn't sneaking or hidden by magic). Bamz-Amschend's Hearthfire Hall: the
+// hulking fabricant and the steam centurion leaders StartCombat on each other, and those following each join in.
+// The foe it takes up, or -1
+int Session::sidesInActorsFight(int i)
+{
+	const Ref& r = w.refs[i];
+	if (r.dead || r.ally)
+		return -1;
+	// Those in such a fight, listed once a frame: every idle actor asks, and the scan of every loaded actor for each of
+	// them cost the New 3DS (no cadence there) a few ms a frame in a town for nothing; most of the time nobody is
+	if (actorDuelsFrame != w.frame)
+	{
+		actorDuelsFrame = w.frame;
+		actorDuels.clear();
+		for (int a : w.loadedActors)
+		{
+			const Ref& o = w.refs[a];
+			if (!o.dead && o.duelFoe >= 0 && w.active(a))
+				actorDuels.push_back(a);
+		}
+	}
+	// (its side worked out only once someone is in such a fight)
+	int leader = -2;
+	for (int a : actorDuels)
+	{
+		// (the list is a frame's: a load in between may have left numbers past the references, or a fight ended since)
+		if (a == i || a >= (int)w.refs.size())
+			continue;
+		const Ref& o = w.refs[a];
+		if (o.dead || o.duelFoe < 0 || o.actor < 0)
+			continue;
+		if (leader == -2)
+		{
+			if (w.followsPlayer(i))
+				return -1;
+			leader = sideLeader(w, i);
+		}
+		if (sideLeader(w, a) != leader)
+			continue;
+		int foe = o.duelFoe;
+		const Ref& f = w.refs[foe];
+		if (foe == i || f.dead || f.actor < 0 || !f.visible() || sideLeader(w, foe) == leader || !w.sameSpace(i, foe))
+			continue;
+		// (OpenMW: within the actors' processing range, 7168 units, then line of sight; Invisibility or Chameleon
+		// hides the foe as from the player)
+		float dx = f.pos[0] - r.pos[0], dy = f.pos[1] - r.pos[1], dz = f.pos[2] - r.pos[2];
+		if (dx * dx + dy * dy + dz * dz > 7168.0f * 7168.0f || w.actorEffect(foe, 39) > 0.0f || w.actorEffect(foe, 40) >= 75.0f)
+			continue;
+		float head[3] = { r.pos[0], r.pos[1], r.pos[2] + 110.0f }, at[3] = { f.pos[0], f.pos[1], f.pos[2] + 110.0f };
+		if (w.lineOfSight(head, at))
+			return foe;
+	}
+	return -1;
+}
+
 // ---- Summoned allies
 
 // The nearest actor fighting the player within 1500: fought as any fight between two actors is (npcDuel: its reach

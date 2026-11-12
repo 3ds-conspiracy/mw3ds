@@ -9,6 +9,10 @@ struct MechanicsState
 {
 
 	// combat (mwmechanics/combat.cpp)
+	// the actors fighting another actor (not the player), listed once a frame for sidesInActorsFight: every idle actor
+	// asks, each frame on a New 3DS, and most of the time the list is empty
+	std::vector<int> actorDuels;
+	u32 actorDuelsFrame = ~0u;
 	float attackCharge = -1.0f;       // 0..1 while X is held, -1 idle
 	int swingCount = 0, castCount = 0;   // blows let go and spells cast (the tests count them)
 	bool castPending = false;         // a spell's animation is playing: it lands at the animation's release mark

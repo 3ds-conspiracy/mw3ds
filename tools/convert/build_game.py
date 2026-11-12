@@ -306,11 +306,13 @@ def hardcoded_flags(k):
     """What the engine knows about an effect that its record doesn't: 0x4 no duration, 0x8 no magnitude,
     0x10 harmful, 0x20 its hit visual repeats while it lasts, 0x40 / 0x80 / 0x100 castable on self / touch / target."""
     # (checked against a running OpenMW: tools/test/golden, golden_compare.py effects; Night Eye on any range, Extra
-    # Spell on touch / target, Vampirism with no duration, Sun Damage on self only, Stunted Magicka with no magnitude)
-    no_magnitude = {0, 2, 39, 45, 46, 58, 60, 61, 62, 63, 69, 70, 71, 72, 73, 132, 133, 134, 136} | set(range(102, 117))         | set(range(120, 132))
+    # Spell on touch / target, Vampirism with no duration, Sun Damage on self only, Stunted Magicka with no magnitude;
+    # the add-ons' summons, Summon Fabricant and Bloodmoon's 138-142, as the base game's: self only, no magnitude)
+    addon_summons = set(range(137, 143))
+    no_magnitude = {0, 2, 39, 45, 46, 58, 60, 61, 62, 63, 69, 70, 71, 72, 73, 132, 133, 134, 136} | set(range(102, 117))         | set(range(120, 132)) | addon_summons
     no_duration = {12, 13, 57, 60, 61, 62, 63, 69, 70, 71, 72, 73, 133}
     harmful = HARMFUL_EFFECTS
-    self_only = {59, 60, 61, 62, 63, 64, 65, 66, 132, 133, 134, 135} | set(range(102, 117)) | (set(range(120, 132)) - {126})
+    self_only = {59, 60, 61, 62, 63, 64, 65, 66, 132, 133, 134, 135} | set(range(102, 117)) | (set(range(120, 132)) - {126}) | addon_summons
     others_only = {12, 13, 44, 58, 101, 118, 119, 126} | set(range(49, 57)) | set(range(85, 90))
     f = 0
     f |= 0x1000 if k in APPLIED_ONCE else 0

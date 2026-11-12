@@ -1,0 +1,18 @@
+# start: Seyda Neen
+# data: tribunal
+# Those siding with an actor take up its fight with another actor, not only with the player (OpenMW's
+# Actors::engageCombat, run for every pair of actors in range: one whose ally fights actor 2 becomes aggressive to it
+# and starts combat once aware of it). Bamz-Amschend's Hearthfire Hall: the hulking fabricant leader and the steam
+# centurion leader StartCombat on each other (fab_cent_attack, cent_fab_attack), and the fabricants and centurions
+# following each leader join in, so the hall is one battle. Ours had the leaders fight alone, their followers standing
+# by (golden_tour_compare.py --tribunal --bloodmoon: OpenMW Combat on the other leader, ours Follow).
+# (the player invisible, so stays out of it, as the tour's foes leave the player aside)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+ACTIVE:39:1
+0.3 0 0 0 0 GOTO:Bamz-Amschend,_Hearthfire_Hall
+0 0 0 0 0 SETUP-END
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refduel:fabricant_hulking_c_l:eq:1+EXPECT:refduel:centurion_steam_c_l:eq:1
+0.1 0 0 0 0 EXPECT:refduel:fabricant_verminous_c:eq:1
+0.1 0 0 0 0 EXPECT:refduel:centurion_steam_a_c:eq:1
+1 0 0 0

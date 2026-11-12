@@ -183,3 +183,12 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
 - **No navigation mesh.** Actors walk on the path grids and climb up to 60 degree slopes; the player 46. A navmesh
   costs memory and CPU the console doesn't have. In a fight an actor climbs only the player's 46 (a quest follower
   keeps 60), so backing up a steep slope wins nobody a fight (`npcClimbSlope`; our own rule).
+
+## AI
+
+- **Bystanders look for their side's fight about once a second.** OpenMW's `engageCombat` runs for every pair of
+  actors in range each frame: someone siding with an actor that fights another actor (not the player) takes up the
+  fight at once. Ours looks once every 30 frames for each actor, spread over them, on both consoles (user,
+  2026-11-11): every idle actor scanning every loaded one each frame cost the New 3DS its frame rate in a town such as
+  Ebonheart, for a moment's head start nobody sees. The actors in such fights are listed once a frame, and with none
+  the look costs nothing. (`Session::sidesInActorsFight`, `mwmechanics/combat.cpp`)

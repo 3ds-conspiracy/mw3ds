@@ -996,6 +996,15 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 				r.aggressor = true;
 				makeHostile(i);
 			}
+			// (the same for a fight with another actor: it takes up its side's foe, kept as StartCombat keeps one. Looked at
+			// once every 30 frames, spread over the actors, on every console (user, 2026-11-11: OpenMW looks each frame;
+			// a second or so before a bystander joins is not seen, the scan every frame cost a town's frame rate))
+			else if (!menu && !calm && (w.frame + i) % 30 == 0 && (r.duelFoe = sidesInActorsFight(i)) >= 0)
+			{
+				logf("combat: %s joins its side's fight with %s", r.id.c_str(), w.refs[r.duelFoe].id.c_str());
+				w.duelAdd(r, w.refs[r.duelFoe].idLower.str());
+				npcDuel(i, dt);
+			}
 			else if (!menu && r.recType == REC_NPC_ && (r.duelFoe = guardFoe(i)) >= 0)
 				npcDuel(i, dt);
 			// one following the player takes on the player's hit attempt foe (OpenMW's engageCombat: an ally's hit attempt

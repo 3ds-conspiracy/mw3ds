@@ -1,6 +1,8 @@
 """Golden run, OpenMW's half: ask a real OpenMW 0.51 what it works out, and save the answers.
 
     python tools/test/golden/golden_openmw.py actors [--timeout 1800] [--from-log] [--out build/golden/openmw-actors.json]
+    python tools/test/golden/golden_openmw.py actors --tribunal --bloodmoon     (with the add-ons: their records too,
+                                                                                 to openmw-actors-tribunal-bloodmoon.json)
 
 Topic "actors": every NPC and creature record of Morrowind.esm is made next to the player in turn, and OpenMW's own
 numbers are dumped: level, the eight attributes, health / magicka / fatigue, the AI settings (fight, flee, alarm,
@@ -11,7 +13,8 @@ golden_compare.py then sets the answers beside what the converter wrote.
 
 OpenMW runs from build/openmw-0.51 (the same unpacked release tools/test/sidebyside.py uses; MW3DS_OPENMW names
 another) with its own config and log in build/golden/openmw, never the user's. It reads the Morrowind folder from .env
-(MW3DS_MORROWIND_DIR) and loads Morrowind.esm only. The answers are derived from the game's data, so they stay under
+(MW3DS_MORROWIND_DIR) and loads Morrowind.esm, with --tribunal / --bloodmoon Tribunal.esm and Bloodmoon.esm after it
+(the converters' load order). The answers are derived from the game's data, so they stay under
 build/ (git-ignored): never commit them.
 """
 import argparse
@@ -32,6 +35,33 @@ OPENMW = Path(os.environ.get("MW3DS_OPENMW") or ROOT / "build" / "openmw-0.51")
 WORK = ROOT / "build" / "golden" / "openmw"
 MOD = Path(__file__).resolve().parent / "mod"
 TAG = "MW3DS-GOLDEN"
+# The add-ons, in load order, each by the converters' switch (tools/convert/mwfiles.py)
+ADDONS = (("tribunal", "MW3DS_TRIBUNAL", "Tribunal"), ("bloodmoon", "MW3DS_BLOODMOON", "Bloodmoon"))
+
+
+def addon_args(ap):
+    """--tribunal / --bloodmoon, as the converters take them."""
+    ap.add_argument("--tribunal", action="store_true", help="with the Tribunal add-on (or MW3DS_TRIBUNAL=1)")
+    ap.add_argument("--bloodmoon", action="store_true", help="with the Bloodmoon add-on (or MW3DS_BLOODMOON=1)")
+
+
+def set_addons(args):
+    """The switches into the environment, where the converters' modules and addons() read them."""
+    for name, env, _ in ADDONS:
+        if getattr(args, name):
+            os.environ[env] = "1"
+
+
+def addons():
+    """The add-ons that are on: ["Tribunal", "Bloodmoon"], in load order."""
+    return [game for _, env, game in ADDONS
+            if os.environ.get(env, "").strip().lower() in ("1", "on", "yes", "true")]
+
+
+def suffix():
+    """What an add-on run's files are called after: "" for Morrowind.esm alone, else "-tribunal-bloodmoon" (as the
+    data folders are: out/data-tribunal-bloodmoon)."""
+    return "".join("-" + a.lower() for a in addons())
 
 
 def q(p):
@@ -58,6 +88,10 @@ def write_setup():
     data_files = mw / "Data Files"
     if not (data_files / "Morrowind.esm").exists():
         sys.exit(f"golden: no Morrowind.esm in {data_files}")
+    for a in addons():
+        for f in (a + ".esm", a + ".bsa"):
+            if not (data_files / f).exists():
+                sys.exit(f"golden: no {f} in {data_files}")
     data = WORK / "data"
     if data.exists():
         shutil.rmtree(data)
@@ -77,8 +111,8 @@ def write_setup():
         f"data={q(OPENMW / 'resources' / 'vfs-mw')}",
         f"data={q(data_files)}",
         f"data={q(data)}",
-        "fallback-archive=Morrowind.bsa",
-        "content=Morrowind.esm",
+        "fallback-archive=Morrowind.bsa"] + [f"fallback-archive={a}.bsa" for a in addons()] + [
+        "content=Morrowind.esm"] + [f"content={a}.esm" for a in addons()] + [
         "content=mw3ds_golden.omwscripts",
         f"user-data={q(user)}"] + fallbacks + [""]))
     (WORK / "settings.cfg").write_text("\n".join([
@@ -218,8 +252,11 @@ def main():
     ap.add_argument("topic", choices=["actors"])
     ap.add_argument("--timeout", type=int, default=1800, help="seconds to give OpenMW")
     ap.add_argument("--from-log", action="store_true", help="read the last run's log, without running OpenMW again")
-    ap.add_argument("--out", type=Path, default=None, help="the answers (default: build/golden/openmw-<topic>.json)")
+    ap.add_argument("--out", type=Path, default=None, help="the answers (default: build/golden/openmw-<topic>.json, "
+                    "openmw-<topic>-tribunal-bloodmoon.json with the add-ons)")
+    addon_args(ap)
     args = ap.parse_args()
+    set_addons(args)
     if args.from_log:
         text = (WORK / "openmw.log").read_text(errors="replace")
         lines = [ln.split(TAG, 1)[1].strip() for ln in text.splitlines() if TAG in ln]
@@ -228,7 +265,7 @@ def main():
     if lines is None:
         sys.exit(1)
     rows = actors(lines)
-    out = args.out or ROOT / "build" / "golden" / f"openmw-{args.topic}.json"
+    out = args.out or ROOT / "build" / "golden" / f"openmw-{args.topic}{suffix()}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(rows, indent=0, sort_keys=True))
     print(f"golden: {len(rows['npc'])} NPCs and {len(rows['creature'])} creatures written to {out}")

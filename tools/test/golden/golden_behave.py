@@ -3,6 +3,14 @@
     python tools/test/golden/golden_behave.py tour [--only <text>] [--limit N] [--stall 120] [--no-dialogue]
     python tools/test/golden/golden_behave.py plan
     python tools/test/golden/golden_behave.py case [--only <text>] [--limit N]    (our engine's half of the tour)
+    python tools/test/golden/golden_behave.py tour --tribunal --bloodmoon [--addon-cells]
+    python tools/test/golden/golden_behave.py case --tribunal --bloodmoon [--addon-cells]
+
+With --tribunal / --bloodmoon the add-ons are loaded after Morrowind.esm on both sides, and the files are named after
+them: build/golden/openmw-tour-tribunal-bloodmoon.txt, cases/scratch/golden-tour-tribunal-bloodmoon.txt (run on the
+Tribunal + Bloodmoon data). --addon-cells keeps only the cells the add-ons' own files hold: the ones they add, and the
+base game's they change (Mournhold, Solstheim, the docks and forts they touch). Without it the tour is every cell, the
+base game's as the add-ons leave them.
 
 The player (god mode, clock stopped) goes to each cell of Morrowind.esm in a fixed order, and after the cell's scripts
 have run the mod (mod_behave) reports: every object's enabled state, place, lock, trap and owner; each script's local
@@ -21,7 +29,7 @@ import sys
 import time
 from pathlib import Path
 
-os.environ["MW3DS_PLUGINS"] = ""       # Morrowind.esm alone, as the OpenMW run loads
+os.environ["MW3DS_PLUGINS"] = ""       # Morrowind.esm (and the add-ons asked for) alone, as the OpenMW run loads
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools" / "convert"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -31,6 +39,15 @@ import mwfiles  # noqa: E402
 MOD = Path(__file__).resolve().parent / "mod_behave"
 WORK = golden_openmw.WORK
 TAG = golden_openmw.TAG
+
+
+def addon_cell_keys():
+    """The cells the add-ons' own files hold (new ones, and the base game's they change), as find_cells keys them."""
+    keys = set()
+    for path in mwfiles.load_order()[1:]:
+        for key in mwfiles.load_db(path)["CELL"]:
+            keys.add(f"ext {key[0]},{key[1]}" if isinstance(key, tuple) else key.lower())
+    return keys
 
 
 def find_cells():
@@ -136,8 +153,11 @@ def run_from(start, cells, dialogue, stall, out):
 def write_case(cells, path):
     """Our engine's half of the tour: the same cells in the same order, the same time in each, and the same stopped
     clock and god mode (native: DUMPTOUR, golden_tour_compare.py)."""
-    rows = ["# start: Seyda Neen", "# Written by tools/test/golden/golden_behave.py case: do not edit.",
-            "3 0 0 0 0 MSG", "0.1 0 0 0 0 GOD:2+TOURSTART"]
+    rows = ["# start: Seyda Neen", "# Written by tools/test/golden/golden_behave.py case: do not edit."]
+    # (run on the add-ons' data, and as their own case: a base game case there has the Dark Brotherhood called off)
+    if golden_openmw.addons():
+        rows.append("# data: " + golden_openmw.addons()[-1].lower())
+    rows += ["3 0 0 0 0 MSG", "0.1 0 0 0 0 GOD:2+TOURSTART"]
     for c in cells:
         go = "GOTO:" + c["cell"].replace(" ", "_") if c["interior"] else f"COE:{c['x']}:{c['y']}"
         # (a menu a script opened is closed at once, as the OpenMW side has it: scripts wait while one is up)
@@ -158,9 +178,20 @@ def main():
     ap.add_argument("--stall", type=int, default=120, help="seconds without a line before moving on")
     ap.add_argument("--resume", type=int, default=0, help="go on from this cell number, adding to --out")
     ap.add_argument("--no-dialogue", action="store_true", help="leave out the dialogue dump")
-    ap.add_argument("--out", type=Path, default=ROOT / "build" / "golden" / "openmw-tour.txt")
+    ap.add_argument("--out", type=Path, default=None, help="OpenMW's lines (default: build/golden/openmw-tour.txt, "
+                    "openmw-tour-tribunal-bloodmoon.txt with the add-ons)")
+    ap.add_argument("--addon-cells", action="store_true", help="only the cells the add-ons' own files hold")
+    golden_openmw.addon_args(ap)
     a = ap.parse_args()
+    golden_openmw.set_addons(a)
+    sfx = golden_openmw.suffix()
+    a.out = a.out or ROOT / "build" / "golden" / f"openmw-tour{sfx}.txt"
     cells = [c for c in find_cells() if a.only.lower() in c["key"]]
+    if a.addon_cells:
+        if not sfx:
+            sys.exit("golden: --addon-cells needs --tribunal or --bloodmoon")
+        theirs = addon_cell_keys()
+        cells = [c for c in cells if c["key"] in theirs]
     if a.limit:
         cells = cells[:a.limit]
     if a.topic == "plan":
@@ -170,7 +201,7 @@ def main():
     if not cells:
         sys.exit(f"golden: no cell holds {a.only!r}")
     if a.topic == "case":
-        write_case(cells, ROOT / "tools" / "test" / "cases" / "scratch" / "golden-tour.txt")
+        write_case(cells, ROOT / "tools" / "test" / "cases" / "scratch" / f"golden-tour{sfx}.txt")
         return
     if golden_openmw.running():
         sys.exit("golden: an openmw.exe is already running: finish it first")

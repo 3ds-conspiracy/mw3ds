@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# data: bloodmoon
+# The add-ons' NPCs with stored stats keep the fatigue their records store (OpenMW's Npc::ensureCustomData; see
+# bug-npc-stored-fatigue). Ours took Strength + Willpower + Agility + Endurance for every NPC: Tharsten Heart-Fang
+# stores 800 (sum 391), Bels Uvenim 325 (sum 355). Found by the golden tour of the add-ons' cells
+# (golden_behave.py tour --tribunal --bloodmoon --addon-cells, golden_tour_compare.py)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Skaal_Village,_The_Greathall
+4 0 0 0
+0 0 0 0 0 SETUP-END
+0.1 0 0 0 0 EXPECT:reffatiguemax:tharsten_heart-fang:eq:800
+0.3 0 0 0 0 GOTO:Mournhold,_Temple_Courtyard
+4 0 0 0
+0.1 0 0 0 0 EXPECT:reffatiguemax:bels_uvenim:eq:325
+1 0 0 0

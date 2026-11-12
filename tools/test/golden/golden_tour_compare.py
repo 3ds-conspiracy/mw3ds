@@ -2,6 +2,7 @@
 
     python tools/test/golden/golden_tour_compare.py [--log build/native-golden/sd/3ds/mw3ds/log.txt]
         [--golden build/golden/openmw-tour.txt] [--show 12] [--only <text>] [--json build/golden/tour-diff.json]
+        [--tribunal] [--bloodmoon]      (the add-ons' tour: openmw-tour-tribunal-bloodmoon.txt and its own diff file)
 
 Compared, cell by cell, only cells both sides reached:
   obj     objects by (id, place): present on both sides, enabled, scale, count, lock, trap, owner. Actors are compared
@@ -14,10 +15,13 @@ A difference is grouped by what differs; each group shows --show examples. Nothi
 import argparse
 import json
 import re
+import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import golden_openmw  # noqa: E402
 GOLDEN_TAG = re.compile(r"golden: (t[a-z]+)\t(.*)$")
 PLACE_SLOP = 2.0
 SPEED_SLOP = 0.5
@@ -223,11 +227,18 @@ def compare_actors(cell, want, have, placed, out):
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--log", type=Path, default=ROOT / "build" / "native-golden" / "sd" / "3ds" / "mw3ds" / "log.txt")
-    ap.add_argument("--golden", type=Path, default=ROOT / "build" / "golden" / "openmw-tour.txt")
+    ap.add_argument("--golden", type=Path, default=None, help="OpenMW's tour (default: build/golden/openmw-tour.txt, "
+                    "openmw-tour-tribunal-bloodmoon.txt with the add-ons)")
     ap.add_argument("--show", type=int, default=12)
     ap.add_argument("--only", default="", help="only groups whose name holds this text")
-    ap.add_argument("--json", type=Path, default=ROOT / "build" / "golden" / "tour-diff.json")
+    ap.add_argument("--json", type=Path, default=None, help="every difference (default: build/golden/tour-diff.json, "
+                    "tour-diff-tribunal-bloodmoon.json with the add-ons)")
+    golden_openmw.addon_args(ap)
     a = ap.parse_args()
+    golden_openmw.set_addons(a)
+    sfx = golden_openmw.suffix()
+    a.golden = a.golden or ROOT / "build" / "golden" / f"openmw-tour{sfx}.txt"
+    a.json = a.json or ROOT / "build" / "golden" / f"tour-diff{sfx}.json"
     want, have = read_openmw(a.golden), read_ours(a.log)
     both = want["cells"] & have["cells"]
     print(f"cells: openmw {len(want['cells'])}, ours {len(have['cells'])}, both {len(both)}")
