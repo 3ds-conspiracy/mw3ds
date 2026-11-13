@@ -14,8 +14,11 @@ and people's contents, dispositions) and the scripts' variables (global, objects
 the game rolled from a levelled list (they are rolled again), objects the 3DS made (dropped items, placed
 creatures), running spell effects, the local map's fog.
 
-Only Morrowind.esm's objects are written; the template's other masters (Tribunal, Bloodmoon) stay listed, so the
-PC game loads the save with the same data files as the template's.
+The save keeps the template's masters, so the PC game loads it with the same data files as the template's. Objects
+come from Morrowind.esm, and from Tribunal.esm and Bloodmoon.esm when the 3DS game was converted with that add-on
+(game.json's "addons") and the template uses it too. Scripts' headers and locals, topics and journal stages are
+those of the PC game's version: the last of the template's masters to have them, in the template's order (the order
+the PC game loaded them in).
 """
 import argparse
 import json
@@ -46,26 +49,33 @@ def record(tag, subs, flags=0):
     return tag.encode("latin-1") + struct.pack("<III", len(body), 0, flags) + body
 
 
-def esm_names(esm):
-    """Ids as Morrowind.esm spells them, by lower case: topics and quests (DIAL), factions, globals and their type,
-    and each quest's name (the journal's title, the INFO with QSTN) with its INFO ids by stage."""
+def esm_names(esm, addons=()):
+    """Ids as Morrowind.esm spells them (an add-on's own as it does), by lower case: topics and quests (DIAL),
+    factions, globals and their type, and each quest's name (the journal's title, the INFO with QSTN) with its INFO
+    ids by stage, from Morrowind.esm and `addons` in load order."""
     names, glob_type, quest_title, infos = {}, {}, {}, {}
-    quest = None
-    for r in read_records(esm, {"DIAL", "INFO", "FACT", "GLOB", "RACE", "CLAS", "BSGN"}):
-        if r.tag == "INFO":
-            if quest:
-                data = r.get("DATA")
-                stage = struct.unpack_from("<i", data, 4)[0] if data and len(data) >= 8 else 0
-                infos.setdefault(quest.lower(), {})[stage] = r.zstr("INAM")
-                if r.get("QSTN") is not None:
-                    quest_title[quest.lower()] = r.zstr("NAME")
-            continue
-        names[r.id.lower()] = r.id
-        if r.tag == "DIAL":
-            d = r.get("DATA")
-            quest = r.id if d and d[0] == 4 else None
-        elif r.tag == "GLOB":
-            glob_type[r.id.lower()] = r.zstr("FNAM") or "f"
+    for path in [Path(esm)] + [Path(esm).with_name(n) for n in addons]:
+        # (within a file the last record counts; an earlier file's spelling and title stay)
+        own_names, own_titles, quest = {}, {}, None
+        for r in read_records(path, {"DIAL", "INFO", "FACT", "GLOB", "RACE", "CLAS", "BSGN"}):
+            if r.tag == "INFO":
+                if quest:
+                    data = r.get("DATA")
+                    stage = struct.unpack_from("<i", data, 4)[0] if data and len(data) >= 8 else 0
+                    infos.setdefault(quest.lower(), {})[stage] = r.zstr("INAM")
+                    if r.get("QSTN") is not None:
+                        own_titles[quest.lower()] = r.zstr("NAME")
+                continue
+            own_names[r.id.lower()] = r.id
+            if r.tag == "DIAL":
+                d = r.get("DATA")
+                quest = r.id if d and d[0] == 4 else None
+            elif r.tag == "GLOB":
+                glob_type[r.id.lower()] = r.zstr("FNAM") or "f"
+        for k, v in own_names.items():
+            names.setdefault(k, v)
+        for k, v in own_titles.items():
+            quest_title.setdefault(k, v)
     # Morrowind.esm's quests have no names: Tribunal gave them theirs, and a PC journal files entries by them
     for extra in ("Tribunal.esm", "Bloodmoon.esm"):
         path = Path(esm).with_name(extra)
@@ -84,12 +94,23 @@ def esm_names(esm):
 class Exporter:
     def __init__(self, data, esm, template):
         self.tables = game_tables(Path(data))
-        self.world = esscells.World(esm, data)
-        self.scripts = esscells.script_tables(data, esm)
-        self.names, self.glob_type, self.quest_title, self.infos = esm_names(esm)
         self.template = list(read_records(template))
-        masters = [text(v) for t, v in self.template[0].subs if t == "MAST"]
-        self.mw = next((k + 1 for k, m in enumerate(masters) if m.lower() == "morrowind.esm"), 1)
+        masters = [text(v).lower() for t, v in self.template[0].subs if t == "MAST"]
+        self.mw = next((k + 1 for k, m in enumerate(masters) if m == "morrowind.esm"), 1)
+        # The add-ons the template's PC game loads, in the order it loaded them (its masters' order: Morrowind.exe
+        # goes by the files' dates, so it may load Tribunal after Bloodmoon): their versions of scripts, topics and
+        # journal stages are the ones it runs, whatever the 3DS game was converted with
+        pc = sorted((a for a in esscells.ADDONS if a.lower() in masters and Path(esm).with_name(a).is_file()),
+                    key=lambda a: masters.index(a.lower()))
+        # The objects go across from the add-ons the 3DS game was converted with that the PC game loads too (a save's
+        # reference names its file by its place in the save's masters, 1 first)
+        built = esscells.data_addons(data, esm)
+        self.addons = [a for a in pc if a in built]
+        self.missing_addons = [a for a in built if a not in self.addons]
+        self.master = [self.mw] + [masters.index(a.lower()) + 1 for a in self.addons]   # World content -> index
+        self.world = esscells.World(esm, data, self.addons)
+        self.scripts = esscells.script_tables(data, esm, pc)
+        self.names, self.glob_type, self.quest_title, self.infos = esm_names(esm, pc)
         self.actor_type = {}
         for p in sorted(Path(data).glob("game_actors_*.json")):
             for a in esscells.read_json(p)["actors"]:
@@ -100,6 +121,10 @@ class Exporter:
 
     def name(self, id_lower):
         return self.names.get(id_lower.lower(), id_lower)
+
+    def frmr(self, orig):
+        """A reference's FRMR in the save: the index of the master it comes from (1 first), then its number."""
+        return (self.master[orig["content"]] << 24) | orig["frmr"]
 
     def tmpl(self, tag, rid=None):
         return next((r for r in self.template if r.tag == tag and (rid is None or r.id == rid)), None)
@@ -150,7 +175,7 @@ class Exporter:
             extra = []
             sc = scripts.get(it["id"])
             if sc and sc["name"].lower() in self.scripts:
-                extra += esscells.scri_subs(sc["name"], *esscells.locals_to_mw(self.scripts[sc["name"].lower()],
+                extra += esscells.scri_subs(sc["name"], *esscells.locals_to_pc(self.scripts[sc["name"].lower()],
                                                                                sc.get("locals", [])))
             if it.get("charge", -1) >= 0:
                 extra.append(("XCHG", struct.pack("<f", it["charge"])))
@@ -263,7 +288,11 @@ class Exporter:
                 self.written.append([file, e["i"]])
             cells.append(record("CELL", subs))
         if skipped:
-            notes.append(f"{skipped} changed objects not written (levelled creatures, or not in Morrowind.esm)")
+            files = " / ".join(["Morrowind.esm"] + self.addons)
+            notes.append(f"{skipped} changed objects not written (levelled creatures, or not in {files})")
+        if self.missing_addons:
+            notes.append(f"the 3DS game has {' and '.join(self.missing_addons)} but the template save doesn't use "
+                         "it: its objects are left out (use a template saved with it on)")
         return cells, changes
 
     def ref_subs(self, e, orig, script, counter, changes):
@@ -282,7 +311,9 @@ class Exporter:
                         items.append(("XCHG", struct.pack("<f", it[4])))
                     if it[3]:
                         items.append(("XSOL", zs(self.name(it[3]))))
-                    items.append(("XHLT", struct.pack("<i", max(0, it[2]))))
+                    # (no condition kept: one never worn down, at its full health as the player's own items)
+                    cond = it[2] if it[2] >= 0 else self.tables["health"].get(it[1], 0)
+                    items.append(("XHLT", struct.pack("<i", cond)))
             if kind == "NPC_":
                 disp = int(e.get("disp", 50))
                 changes.append(record("NPCC", [("NAME", zs(name)), ("NPDT", struct.pack("<BBBBi", max(0, min(255, disp)),
@@ -291,7 +322,7 @@ class Exporter:
                 changes.append(record("CREC" if kind == "CREA" else "CNTC",
                                       [("NAME", zs(name)), ("INDX", struct.pack("<i", n))] + items))
             name = "%s%08d" % (name, n)
-        out = [("FRMR", struct.pack("<I", (self.mw << 24) | orig["frmr"])), ("NAME", zs(name))]
+        out = [("FRMR", struct.pack("<I", self.frmr(orig))), ("NAME", zs(name))]
         if e.get("taken"):
             return out + [("DELE", struct.pack("<I", 0))]
         # the reference's own data as Morrowind.esm has it, with its lock and trap as they are now
@@ -315,7 +346,7 @@ class Exporter:
             acsc[17] = 2
             out += [("ACDT", bytes(acdt)), ("ACSC", bytes(acsc))]
         if script and script["name"].lower() in self.scripts:
-            out += esscells.scri_subs(script["name"], *esscells.locals_to_mw(self.scripts[script["name"].lower()],
+            out += esscells.scri_subs(script["name"], *esscells.locals_to_pc(self.scripts[script["name"].lower()],
                                                                            script.get("locals", [])))
         if not e.get("enabled", 1):
             out.append(("ZNAM", b"\0"))
@@ -358,14 +389,14 @@ class Exporter:
             if not sc or "schd" not in sc:
                 continue
             subs = [("SCHD", zs(sc["name"], 32) + sc["schd"])]
-            subs += esscells.scri_subs(None, *esscells.locals_to_mw(sc, s.get("locals", [])))
+            subs += esscells.scri_subs(None, *esscells.locals_to_pc(sc, s.get("locals", [])))
             if s.get("running", 1):
                 target = 0xFFFFFFFF
                 if s.get("tgt_c") is not None:
                     _, to_mw = self.world.link(s["tgt_c"])
                     idx = to_mw.get(s.get("tgt_i", -1))
                     if idx is not None:
-                        target = (self.mw << 24) | idx
+                        target = self.frmr(self.world.cells[s["tgt_c"]]["refs"][idx])
                 subs.append(("RNAM", struct.pack("<I", target)))
             out.append(record("SCPT", subs))
         return out

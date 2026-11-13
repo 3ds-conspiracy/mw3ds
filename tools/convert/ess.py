@@ -16,8 +16,9 @@ variables (global scripts, objects', carried items'). Objects are found by Morro
 (esscells.py). Not: creatures rolled from a levelled list (the engine rolls its own at the spawn point), items
 enchanted by the player, running spell effects, the map's fog.
 
-Only Morrowind.esm is converted, so a save made with Tribunal, Bloodmoon or other plugins loses whatever came
-from them (items, spells, quests); each one dropped is listed.
+Objects come from Morrowind.esm, and from Tribunal.esm and Bloodmoon.esm when the converted game has that add-on
+(game.json's "addons"). Whatever came from anything else (other plugins, or an add-on the converted game lacks) is
+lost; each one dropped is listed.
 
 The record layout follows OpenMW's essimporter (apps/essimporter), read for the format, written here anew.
 """
@@ -72,17 +73,20 @@ def game_tables(data):
                 spells=spells, skills=skills, cells=cells, globals=globals_)
 
 
-def journal_infos(esm):
-    """Journal INFO id -> (quest id, stage), from Morrowind.esm's journal topics (DIAL type 4)."""
-    out, quest = {}, None
-    for r in read_records(esm, {"DIAL", "INFO"}):
-        if r.tag == "DIAL":
-            d = r.get("DATA")
-            quest = r.id if d and d[0] == 4 else None
-        elif quest is not None:
-            info, data = r.zstr("INAM"), r.get("DATA")
-            if info and data and len(data) >= 8:
-                out[info] = (quest, struct.unpack_from("<i", data, 4)[0])
+def journal_infos(esm, addons=()):
+    """Journal INFO id -> (quest id, stage), from the journal topics (DIAL type 4) of Morrowind.esm and `addons`
+    (Tribunal's and Bloodmoon's quests, and the stages they add to Morrowind's)."""
+    out = {}
+    for path in [Path(esm)] + [Path(esm).with_name(n) for n in addons]:
+        quest = None
+        for r in read_records(path, {"DIAL", "INFO"}):
+            if r.tag == "DIAL":
+                d = r.get("DATA")
+                quest = r.id if d and d[0] == 4 else None
+            elif quest is not None:
+                info, data = r.zstr("INAM"), r.get("DATA")
+                if info and data and len(data) >= 8:
+                    out[info] = (quest, struct.unpack_from("<i", data, 4)[0])
     return out
 
 
@@ -150,9 +154,11 @@ def convert(ess, tables, infos, say):
     if head.tag != "TES3":
         raise ValueError("not a Morrowind save")
     masters = [zstr(v) for v in subs(head, "MAST")]
-    extra = [m for m in masters if m.lower() != "morrowind.esm"]
+    # (the objects of a master the converted game has come across: Morrowind.esm, and the add-ons it was made with)
+    extra = [m for m in masters if m.lower() not in tables["world"].contents]
     if extra:
-        say(f"  made with {', '.join(extra)}: only what comes from Morrowind.esm comes across")
+        say(f"  made with {', '.join(extra)}: only what comes from {', '.join(tables['world'].file_names)} comes "
+            "across")
     dropped = []
 
     npc = next(r for r in by.get("NPC_", []) if r.id == PLAYER_NPC)
@@ -399,7 +405,7 @@ def script_state(tables, scri, dropped):
             dropped.append("script " + name)
         return None
     return {"name": sc["name"], "item": "", "running": 1,
-            "locals": [round(v, 4) for v in esscells.locals_from_mw(sc, shorts, longs, floats)]}
+            "locals": [round(v, 4) for v in esscells.locals_from_pc(sc, shorts, longs, floats)]}
 
 
 def item_list(r, tables):
@@ -407,7 +413,8 @@ def item_list(r, tables):
     out = []
     for it in parse_inventory(r)[0]:
         wears = tables["objects"].get(it["id"].lower(), ("", False))[1]
-        cond = it["condition"] if wears else -1
+        # (at its full health: never worn down, kept without a condition as the player's own items are)
+        cond = it["condition"] if wears and it["condition"] != tables["health"].get(it["id"].lower()) else -1
         # (a negative count: a merchant's stock that comes back, as the engine keeps it too)
         if cond >= 0 or it["soul"] or it["charge"] >= 0:
             out.append([it["signed"], it["id"].lower(), cond, it["soul"], it["charge"]])
@@ -420,7 +427,11 @@ def world_changes(by, masters, tables, dropped):
     """What changed in the world (CELL records' references, their actors and containers, global scripts): the
     engine's refs, scripts and dropped items."""
     world = tables["world"]
-    mw = next((k + 1 for k, m in enumerate(masters) if m.lower() == "morrowind.esm"), 1)
+    content = esscells.save_contents(world, masters)   # FRMR top byte -> the file World read it from
+
+    def key_of(frmr):
+        c = content.get(frmr >> 24)
+        return esscells.ref_key(c, frmr & 0xFFFFFF) if c is not None else None
 
     def indexed(tag):
         out = {}
@@ -452,13 +463,14 @@ def world_changes(by, masters, tables, dropped):
                     drops.append({"id": base.lower(), "n": struct.unpack("<i", cnt)[0] if cnt else 1, "c": file,
                                   "pos": [round(v, 2) for v in pos[:3]], "yaw": round(pos[5], 4)})
                 continue
-            if g[0] >> 24 != mw:
+            key = key_of(g[0])
+            if key is None:
                 continue
-            i = to_ours.get(g[0] & 0xFFFFFF)
+            i = to_ours.get(key)
             if i is None:
                 missed += 1
                 continue
-            orig = world.cells[file]["refs"][g[0] & 0xFFFFFF]
+            orig = world.cells[file]["refs"][key]
             if orig["id"] in world.leveled:
                 continue                     # (a spawn point: the engine rolls its own creature there)
             e = {"c": file, "i": i, "id": ours[i][0]}
@@ -528,8 +540,9 @@ def world_changes(by, masters, tables, dropped):
         sc["running"] = int(rn is not None)
         if rn:
             target = struct.unpack_from("<I", rn)[0]
-            tf = world.where.get(target & 0xFFFFFF) if target >> 24 == mw else None
-            ti = world.link(tf)[0].get(target & 0xFFFFFF) if tf else None
+            tkey = key_of(target)
+            tf = world.where.get(tkey) if tkey is not None else None
+            ti = world.link(tf)[0].get(tkey) if tf else None
             if ti is not None:
                 sc["tgt_c"], sc["tgt_i"] = tf, ti
         scripts.append(sc)
@@ -571,6 +584,16 @@ def keep(base, new):
     return base if same(base, new) else new
 
 
+# An inventory item's data only the 3DS keeps (containerstore.hpp: a worn constant enchantment's die and the part of
+# each effect the player's resistances let through): the PC save has no place for it, so it comes back from the side
+# file
+ENGINE_ITEM = ("kept", "roll")
+
+
+def plain_item(it):
+    return {k: v for k, v in it.items() if k not in ENGINE_ITEM}
+
+
 def side_file(ess, name):
     """The 3DS save an .ess was made from (ess_export.py's <name>.mw3ds): beside it under its own name, else the
     newest one in its folder for the same character (the PC game saved under another name since)."""
@@ -610,11 +633,23 @@ def merge(side, pc, engine_globals):
         elif k == "custom_class":
             st.pop(k, None)
     out["stats"] = st
-    # the inventory: the PC save's, with the 3DS's own made things the PC can't name (enchanted by the player)
+    # the inventory: the PC save's, with the 3DS's own made things the PC can't name (enchanted by the player) and
+    # each item's data the PC format has no place for (ENGINE_ITEM); the 3DS's own list when the PC holds the same
     named = {i["id"] for i in pc["inventory"]}
-    inv = [i for i in base.get("inventory", []) if i["id"] not in named and i["id"] in side.get("unnamed", [])]
-    out["inventory"] = keep(base.get("inventory"), pc["inventory"]) + inv if inv else keep(base.get("inventory"),
-                                                                                          pc["inventory"])
+    unnamed = set(side.get("unnamed", []))
+    base_inv = base.get("inventory", [])
+    sent = [i for i in base_inv if i["id"] in named or i["id"] not in unnamed]
+    if same([plain_item(i) for i in sent], pc["inventory"]):
+        out["inventory"] = base_inv
+    else:
+        spare, inv = list(sent), []
+        for it in pc["inventory"]:
+            m = next((b for b in spare if same(plain_item(b), it)), None)
+            if m is not None:
+                spare.remove(m)
+                it = dict(it, **{k: m[k] for k in ENGINE_ITEM if k in m})
+            inv.append(it)
+        out["inventory"] = inv + [i for i in base_inv if i["id"] not in named and i["id"] in unnamed]
     # the journal: the 3DS's own when the PC wrote no entry since (same entries), else the PC's in its order
     ent = lambda j: sorted((e["quest"], e["index"]) for e in j)
     out["journal"] = base.get("journal", []) if ent(base.get("journal", [])) == ent(pc["journal"]) else pc["journal"]
@@ -715,9 +750,11 @@ def main():
 
     tables = game_tables(args.data)
     esm = mwfiles.DATA_FILES / "Morrowind.esm"
-    tables["world"] = esscells.World(esm, args.data)
-    tables["scripts"] = esscells.script_tables(args.data, esm)
-    infos = journal_infos(esm)
+    # (the add-ons the 3DS game has: a PC save's objects from one of them come across when the save uses it too)
+    addons = esscells.data_addons(args.data, esm)
+    tables["world"] = esscells.World(esm, args.data, addons)
+    tables["scripts"] = esscells.script_tables(args.data, esm, addons)
+    infos = journal_infos(esm, addons)
     failed = 0
     for ess in args.saves:
         print(f"{ess.name}:")
