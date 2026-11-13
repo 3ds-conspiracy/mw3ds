@@ -186,6 +186,13 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
 - **No navigation mesh.** Actors walk on the path grids and climb up to 60 degree slopes; the player 46. A navmesh
   costs memory and CPU the console doesn't have. In a fight an actor climbs only the player's 46 (a quest follower
   keeps 60), so backing up a steep slope wins nobody a fight (`npcClimbSlope`; our own rule).
+- **The Morrowind Optimization Patch's rock collision is kept.** The patch gives many rocks (Solstheim's
+  `Terrain_rocks_BM_*` among them) a simplified collision shape that fills the hollows between the stones, so a
+  creature or the player can stand on an invisible ledge up to about 100 units over the drawn rock: a black bear sent
+  down the Hirstaang Forest hillside stood 114 over the ground on one and never came down. Taking the collision from
+  the game's own meshes instead would add about 0.43 million collision triangles to the world's 14.6 million for the
+  terrain rocks alone (3%), about 3.3 million (22%) for every patched mesh. Kept as the patch has it (user,
+  2026-11-12). (The converters, on the mod data `build_cia_mods.py` uses)
 
 ## AI
 
