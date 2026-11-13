@@ -783,6 +783,11 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 	if (kind == KILL && !fightToken.empty() && fightToken == retryToken && dist > want && (stuckTries > 0 || progressTimer >= 1.5f)
 		&& blowLandsFromHere(s, ref))
 		dist = want;
+	// v2 kit: held a hair short of it (a piece of furniture between, its edge keeping us off) with the walk stalled there,
+	// and a blow from here lands: struck from here, as a player swings across it (hels_assassin1 in the palace, 91 off)
+	else if (kind == KILL && s.kitV2() && dist > want && dist < want + 40.0f && (stuckTries > 0 || progressTimer >= 1.5f)
+		&& blowLandsFromHere(s, ref))
+		dist = want;
 	// a creature's own box keeps us off it further than a person's (a mudcrab's 89 to 129 from its middle, by the side
 	// met): pressed against it (it is what pushed us back this frame), there; as far off as its half length is over a
 	// person's at most. (Counted there at that distance from any side, the Ritual of Water's horker was never walked up to:
@@ -947,6 +952,16 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			p.yaw = atan2f(ax, ay);
 			float cz = (r.boxMin[2] + r.boxMax[2]) * 0.5f, ez = playerEyeZ(p);
 			p.pitch = atan2f(cz - ez, fmaxf(hypotf(ax, ay), 1.0f));
+			// standing on it (come down on its head out of a flight: a draugr by the Isinfier Plains wreck): no blow reaches
+			// down there; a step back off it first, as a player steps down
+			if (r.pos[2] - p.feet[2] < -100.0f && hypotf(ax, ay) < 110.0f && p.onGround && !blowLandsFromHere(s, ref))
+			{
+				if (lineTimer <= 0.0f)
+					logf("drive: %s: standing on it, stepping off", id.c_str());
+				lineTimer += dt;
+				in.moveY = -1.0f;
+				return true;
+			}
 			// a post or a pillar between (no clear line chest to chest nor eye to head, as the blow needs): round it, a
 			// strafe one way and then the other, no swing meanwhile
 			float c1[3] = { p.feet[0], p.feet[1], p.feet[2] + 100.0f }, c2[3] = { r.pos[0], r.pos[1], r.pos[2] + 100.0f };
@@ -1290,6 +1305,10 @@ bool TestDriver::update(Session& s, PlayerInput& in, u32& down, float dt)
 			float zTop = pass == 0 ? p.feet[2] + 60.0f : r.boxMax[2] + 60.0f, zBot = pass == 0 ? p.feet[2] - 60.0f : r.boxMin[2] - 120.0f;
 			float ang = base + 0.3927f * (k % 16) * (viewTries == 2 ? -1.0f : 1.0f), rad = half + (k < 16 ? 70.0f : 130.0f);
 			float cx = bx + sinf(ang) * rad, cy = by + cosf(ang) * rad, fz = -1e9f;
+			// (not where we stand: the look from here has just failed, and a walk to a spot this near ends where it began, within
+			// its 30. A High Ordinator stopped to greet between us and High Pockets in Godsreach: three tries from one place)
+			if (hypotf(cx - p.feet[0], cy - p.feet[1]) < 45.0f)
+				continue;
 			for (Cell* c : sc.cells)
 			{
 				float z;

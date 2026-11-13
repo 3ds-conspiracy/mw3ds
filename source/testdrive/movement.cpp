@@ -207,6 +207,26 @@ bool TestDriver::fightInWay(Session& s, PlayerInput& in, float dt)
 			fightGaveUp.push_back(fightRef);
 		fightHelp = false;
 		logf("drive: %s %s after %.1f s: on to %s", f.id.c_str(), f.dead ? "dead" : "no longer in the way", fightTimer, id.c_str());
+		// v2 kit: a fight that took us on along the way (an escort's, fought where it went) goes on from the route's point
+		// nearest us, not back to the one it was making for: Urvel Dulni's fight with Black Dart Draren took the player
+		// 2500 on down the Temple Sewers East, and the walk turned back round the bend into a rock
+		if (s.kitV2() && path.size() > 1)
+		{
+			auto far2 = [&](size_t k) {
+				const float* q = w.pathPoints[path[k]].pos;
+				float ex = q[0] - p.feet[0], ey = q[1] - p.feet[1];
+				return ex * ex + ey * ey;
+			};
+			size_t best = 0;
+			for (size_t k = 1; k < path.size(); k++)
+				if (fabsf(w.pathPoints[path[k]].pos[2] - p.feet[2]) < 150.0f && far2(k) < far2(best))
+					best = k;
+			if (best > 0 && sqrtf(far2(0)) - sqrtf(far2(best)) > 500.0f)
+			{
+				logf("drive: the fight took us on along the way: on from its point %d of %d", (int)best + 1, (int)path.size());
+				path.erase(path.begin(), path.begin() + best);
+			}
+		}
 		fightRef = -1;
 		progressTimer = 0.0f;
 		memcpy(progressAt, p.feet, sizeof(progressAt));
