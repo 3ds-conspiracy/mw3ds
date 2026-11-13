@@ -93,6 +93,13 @@
 2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 TOPIC:latest_rumors
 2 0 0 0 0 UNTIL:talkready
+# (with Bloodmoon loaded his first latest rumor is its Fort Frostmoth one, ahead of his own in the topic while
+# BM_Rumors is under 50, as OpenMW orders and filters them: Solstheim, the topic it names, takes BM_Rumors to 50 and
+# his own rumor follows. Without Bloodmoon there is no such topic, and the second ask is another rumor)
+0.3 0 0 0 0 TOPIC:solstheim
+2 0 0 0 0 UNTIL:talkready
+0.3 0 0 0 0 TOPIC:latest_rumors
+2 0 0 0 0 UNTIL:talkready
 0.3 0 0 0 0 B
 0.5 0 0 0 0 B
 2 0 0 0 0 UNTIL:screen:none

@@ -14,10 +14,11 @@
 # the same save, read by data without the add-on
 0.3 0 0 0 0 ADDONS:
 0.1 0 0 0 0 EXPECT:saveneeds:withtrib:eq:1
-# a save made without it, read by Tribunal data
+# a save made without it, read by Tribunal data (with Bloodmoon too, as the console's data has it: the first save
+# carries both when the data it was made on has both, and Tribunal alone would rightly say it needs Bloodmoon)
 1 0 0 0 0 SAVE:vanilla
 0.5 0 0 0
-0.3 0 0 0 0 ADDONS:tribunal
+0.3 0 0 0 0 ADDONS:tribunal,bloodmoon
 0.1 0 0 0 0 EXPECT:saveneeds:vanilla:eq:0
 0.1 0 0 0 0 EXPECT:savevalid:vanilla:eq:1
 0.1 0 0 0 0 EXPECT:saveneeds:withtrib:eq:0
