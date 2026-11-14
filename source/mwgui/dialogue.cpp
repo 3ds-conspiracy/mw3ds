@@ -117,8 +117,6 @@ void Session::drawDialogue()
 	C3D_SetScissor(GPU_SCISSOR_DISABLE, 0, 0, 0, 0);
 
 	bool choosing = !dlg.choices.empty();
-	std::vector<std::string> rows = dlg.goodbye || choosing ? std::vector<std::string>() : dlg.topics;
-	// Services sit between the topics and Goodbye
 	bool merchant = isMerchant(dlg.ref);
 	bool travels = speaker.actor >= 0 && !w.game.actors[speaker.actor].travel.empty();
 	// (the Spells service flag, as OpenMW's: every NPC knows its spells, only a spell merchant sells them)
@@ -129,102 +127,103 @@ void Session::drawDialogue()
 	bool enchants = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x10000);
 	bool repairs = speaker.actor >= 0 && (w.game.actors[speaker.actor].services & 0x20000);
 	bool shares = isCompanion(dlg.ref);         // (Tribunal's companions: their script's "companion" not 0)
-	int services = merchant + travels + sells + trains + persuades + makesSpells + enchants + repairs + shares;
-	int pick = uiWrapList(list, 214, 24, 104, 180 - 26 * services, rows, 0.38f, !choosing);
-	float sy = 206 - 26 * services;
-	if (persuades && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("spersuasion", "Persuasion")))
+	// The services lead the topic list and scroll with it, a line under them (OpenMW's DialogueWindow::updateTopicsPane,
+	// its order); none while a choice is asked or after a Goodbye
+	enum { SV_PERSUADE, SV_BARTER, SV_SPELLS, SV_TRAVEL, SV_SPELLMAKE, SV_ENCHANT, SV_TRAIN, SV_REPAIR, SV_SHARE };
+	std::vector<int> svc;
+	std::vector<std::string> rows;
+	if (!choosing && !dlg.goodbye)
 	{
-		list2 = UiList();
-		screen = SCR_PERSUADE;
-		playSound(-1, "Menu Click");
-		return;
+		auto offer = [&](bool has, int kind, const char* gmst, const char* fallback) {
+			if (!has)
+				return;
+			svc.push_back(kind);
+			rows.push_back(w.game.gmst(gmst, fallback));
+		};
+		offer(persuades, SV_PERSUADE, "spersuasion", "Persuasion");
+		offer(merchant, SV_BARTER, "sbarter", "Barter");
+		offer(sells, SV_SPELLS, "sspells", "Spells");
+		offer(travels, SV_TRAVEL, "stravel", "Travel");
+		offer(makesSpells, SV_SPELLMAKE, "sspellmakingmenutitle", "Spellmaking");
+		offer(enchants, SV_ENCHANT, "senchanting", "Enchanting");
+		offer(trains, SV_TRAIN, "strain", "Training");
+		offer(repairs, SV_REPAIR, "srepair", "Repair");
+		// Share: the companion's things and the player's, both ways, no barter (OpenMW: never refused)
+		offer(shares, SV_SHARE, "scompanionshare", "Share");
+		rows.insert(rows.end(), dlg.topics.begin(), dlg.topics.end());
 	}
-	if (persuades)
-		sy += 26;
-	// Share: the companion's things and the player's, both ways, no barter (OpenMW: never refused)
-	if (shares && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("scompanionshare", "Share")))
+	const int lead = (int)svc.size();
+	int pick = uiWrapList(list, 214, 24, 104, 180, rows, 0.38f, !choosing, lead);
+	if (pick >= 0 && pick < lead)
 	{
-		containerRef = dlg.ref;
-		companionSharing = true;
-		companionWarning = pickpocketing = containerPutting = false;
-		grid = UiGrid();
-		screen = SCR_CONTAINER;
-		playSound(-1, "Menu Click");
-		return;
+		switch (svc[pick])
+		{
+		case SV_PERSUADE:
+			list2 = UiList();
+			screen = SCR_PERSUADE;
+			playSound(-1, "Menu Click");
+			return;
+		case SV_SHARE:
+			containerRef = dlg.ref;
+			companionSharing = true;
+			companionWarning = pickpocketing = containerPutting = false;
+			grid = UiGrid();
+			screen = SCR_CONTAINER;
+			playSound(-1, "Menu Click");
+			return;
+		case SV_BARTER:
+			if (serviceRefused())
+				break;
+			openBarter(dlg.ref);
+			playSound(-1, "Menu Click");
+			return;
+		case SV_TRAVEL:
+			if (serviceRefused())
+				break;
+			openTravel();
+			return;
+		case SV_SPELLS:
+			if (serviceRefused())
+				break;
+			barterRef = dlg.ref;
+			list2 = UiList();
+			screen = SCR_SPELLS;
+			playSound(-1, "Menu Click");
+			return;
+		case SV_TRAIN:
+			if (serviceRefused())
+				break;
+			barterRef = dlg.ref;
+			list2 = UiList();
+			screen = SCR_TRAINING;
+			playSound(-1, "Menu Click");
+			return;
+		case SV_SPELLMAKE:
+			if (serviceRefused())
+				break;
+			list2 = UiList();
+			makeEffects.clear();
+			makeSel = -1;
+			makeName.clear();
+			barterRef = dlg.ref;               // (the price is their barter offer)
+			screen = SCR_SPELLMAKE;
+			playSound(-1, "Menu Click");
+			return;
+		case SV_ENCHANT:
+			if (serviceRefused())
+				break;
+			openEnchanting(dlg.ref);
+			playSound(-1, "Menu Click");
+			return;
+		case SV_REPAIR:
+			if (serviceRefused())
+				break;
+			openRepair(dlg.ref, -1);
+			playSound(-1, "Menu Click");
+			return;
+		}
+		pick = -1;
 	}
-	if (shares)
-		sy += 26;
-	if (merchant && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("sbarter", "Barter"))
-		&& !serviceRefused())
-	{
-		openBarter(dlg.ref);
-		playSound(-1, "Menu Click");
-		return;
-	}
-	if (merchant)
-		sy += 26;
-	if (travels && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("stravel", "Travel"))
-		&& !serviceRefused())
-	{
-		openTravel();
-		return;
-	}
-	if (travels)
-		sy += 26;
-	if (sells && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("sspells", "Spells"))
-		&& !serviceRefused())
-	{
-		barterRef = dlg.ref;
-		list2 = UiList();
-		screen = SCR_SPELLS;
-		playSound(-1, "Menu Click");
-		return;
-	}
-	if (sells)
-		sy += 26;
-	if (trains && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("strain", "Training"))
-		&& !serviceRefused())
-	{
-		barterRef = dlg.ref;
-		list2 = UiList();
-		screen = SCR_TRAINING;
-		playSound(-1, "Menu Click");
-		return;
-	}
-	if (trains)
-		sy += 26;
-	if (makesSpells && !choosing && !dlg.goodbye
-		&& uiButton(216, sy, 100, 24, w.game.gmst("sspellmakingmenutitle", "Spellmaking")) && !serviceRefused())
-	{
-		list2 = UiList();
-		makeEffects.clear();
-		makeSel = -1;
-		makeName.clear();
-		barterRef = dlg.ref;               // (the price is their barter offer)
-		screen = SCR_SPELLMAKE;
-		playSound(-1, "Menu Click");
-		return;
-	}
-	if (makesSpells)
-		sy += 26;
-	if (enchants && !choosing && !dlg.goodbye
-		&& uiButton(216, sy, 100, 24, w.game.gmst("senchanting", "Enchanting")) && !serviceRefused())
-	{
-		openEnchanting(dlg.ref);
-		playSound(-1, "Menu Click");
-		return;
-	}
-	if (enchants)
-		sy += 26;
-	if (repairs && !choosing && !dlg.goodbye && uiButton(216, sy, 100, 24, w.game.gmst("srepair", "Repair"))
-		&& !serviceRefused())
-	{
-		openRepair(dlg.ref, -1);
-		playSound(-1, "Menu Click");
-		return;
-	}
-	if (repairs)
-		sy += 26;
 	if (choosing)
 	{
 		// choices: tap them in the text, or press 1-3 style with D-pad + A
@@ -239,7 +238,7 @@ void Session::drawDialogue()
 		if (c >= 0)
 			clicked = -2 - c;
 	}
-	if (pick >= 0 && pick < (int)rows.size())
+	if (pick >= lead && pick < (int)rows.size())
 		clicked = -3000 - pick;
 	bool bye = uiButton(216, 208, 100, 28, w.game.gmst("sgoodbye", "Goodbye"), false, !choosing) ||
 		(!choosing && (in.down & KEY_B));

@@ -125,8 +125,8 @@ void Session::aimAndActivate(const PlayerInput& in, bool menu)
 	bool byInput = g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout();
 	if (!menu && ((!stylusLayout() && (uiIn().down & KEY_A)) || (byInput && in.activate)))
 	{
-		if (!stylusLayout())
-			uiConsume(KEY_A);
+		// (every layout: the A that talks isn't also the dialogue's first press, picking its top row, now Persuasion)
+		uiConsume(KEY_A);
 		if ((byInput ? in.activate : true) && target >= 0 && w.controlsEnabled)
 			playerActivate(target);
 	}

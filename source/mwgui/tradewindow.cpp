@@ -44,9 +44,33 @@ void Session::drawBarter()
 	std::vector<std::pair<int, int>> where;
 	std::vector<int> prices;
 	std::vector<UiGridItem> cells;
+	gridShown.clear();
+	// (both sides in OpenMW's order: by kind and name, the player's own worn and held things first)
+	std::vector<std::pair<int, int>> goods;
+	std::vector<int> order;
 	if (!barterSell)
-		for (auto& g : merchantGoods(barterRef))
+	{
+		goods = merchantGoods(barterRef);
+		for (size_t k = 0; k < goods.size(); k++)
+			order.push_back((int)k);
+		sortListed(w.game, order, [&](int k) {
+			ContentItem good = merchantGood(goods[k]);
+			return ItemListed{ w.game.object(good.second), false, good.condition, good.charge };
+		});
+	}
+	else
+	{
+		for (size_t i = 0; i < w.inventory.size(); i++)
+			order.push_back((int)i);
+		sortListed(w.game, order, [&](int i) {
+			const InventoryItem& it = w.inventory[i];
+			return ItemListed{ w.game.object(it.id), it.equipped, it.condition, it.charge };
+		});
+	}
+	if (!barterSell)
+		for (int k : order)
 		{
+			const std::pair<int, int>& g = goods[k];
 			ContentItem good = merchantGood(g);
 			const Object* o = w.game.object(good.second);
 			if (!merchantTrades(barterRef, o))
@@ -58,9 +82,10 @@ void Session::drawBarter()
 			if (left <= 0)
 				c.flags |= UIGRID_DIM;
 			cells.push_back(c);
+			gridShown.push_back(good.second);
 		}
 	else
-		for (size_t i = 0; i < w.inventory.size(); i++)
+		for (int i : order)
 		{
 			const Object* o = w.game.object(w.inventory[i].id);
 			if (!merchantTrades(barterRef, o))
@@ -72,6 +97,7 @@ void Session::drawBarter()
 			if (left <= 0)
 				c.flags |= UIGRID_DIM;
 			cells.push_back(c);
+			gridShown.push_back(w.inventory[i].id);
 		}
 	if (cells.empty())
 		uiTextCentered(160, 110, 0.5f, col::textDim, barterSell ? "Nothing they would buy" : "Nothing for sale");

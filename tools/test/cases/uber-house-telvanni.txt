@@ -1250,7 +1250,9 @@
 3 0 0 0
 120 0 0 0 0 ACTIVATE:arielle_phiencel
 1.5 0 0 0
-1 0 0 0 0 TAP:266:193
+# (Spells: the second row of her topic list, under Persuasion)
+0.3 0 0 0 0 DOWN
+0.7 0 0 0 0 A
 2 0 0 0
 0.5 0 0 0 0 TAP:100:74
 0.5 0 0 0 0 TAP:78:222
@@ -1271,7 +1273,9 @@
 3 0 0 0
 120 0 0 0 0 ACTIVATE:urtiso_faryon
 1.5 0 0 0
-1 0 0 0 0 TAP:266:165
+# (Spells: the second row of his topic list, under Persuasion)
+0.3 0 0 0 0 DOWN
+0.7 0 0 0 0 A
 2 0 0 0
 0.1 0 0 0 0 DOWN
 0.1 0 0 0 0 DOWN
@@ -1839,7 +1843,9 @@
 3 0 0 0
 120 0 0 0 0 ACTIVATE:arielle_phiencel
 1.5 0 0 0
-1 0 0 0 0 TAP:266:193
+# (Spells: the second row of her topic list, under Persuasion)
+0.3 0 0 0 0 DOWN
+0.7 0 0 0 0 A
 2 0 0 0
 0.1 0 0 0 0 DOWN
 0.1 0 0 0 0 DOWN
@@ -1868,7 +1874,9 @@
 3 0 0 0
 120 0 0 0 0 ACTIVATE:urtiso_faryon
 1.5 0 0 0
-1 0 0 0 0 TAP:266:165
+# (Spells: the second row of his topic list, under Persuasion)
+0.3 0 0 0 0 DOWN
+0.7 0 0 0 0 A
 2 0 0 0
 0.1 0 0 0 0 DOWN
 0.1 0 0 0 0 DOWN

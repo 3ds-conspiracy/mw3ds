@@ -1,0 +1,32 @@
+# start: Seyda Neen
+# ui-quickkey-y: a quick key set from Inventory and from Magic with Y held and a direction, as ZL + D-pad sets one. An
+# Old 3DS has no ZL (its GoldenEye layout uses the quick keys by tapping the HUD's slots), so it had no way to set them;
+# neither menu has a use for Y. Set on the GoldenEye layout: the potion on Up from Inventory, Magic's first entry on
+# Right, the menus left open. Then used as the classic layout uses them (ZL + Up): the
+# potion is drunk
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+CONTROLS:goldeneye
+0.3 0 0 0 0 GIVE:p_restore_health_s:2
+0.3 0 0 0 0 SPELL:fireball
+0.1 0 0 0 0 EXPECT:quickkeysset:eq:0
+0.5 0 0 0 0 SCREEN:inventory
+0.3 0 0 0 0 EXPECT:screen:inventory
+# (the Magic filter, where the potion is the first item)
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.5 0 0 0 0 Y+UP
+0.3 0 0 0 0 EXPECT:quickkeysset:eq:1+EXPECT:screen:inventory+EXPECT:item:p_restore_health_s:eq:2
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0 0 SCREEN:magic
+0.3 0 0 0 0 EXPECT:screen:magic
+0.5 0 0 0 0 Y+RIGHT
+0.3 0 0 0 0 EXPECT:quickkeysset:eq:2+EXPECT:screen:magic
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+0.5 0 0 0
+0.3 0 0 0 0 CONTROLS:classic
+0.5 0 0 0 0 ZL+UP
+1 0 0 0
+0.1 0 0 0 0 EXPECT:item:p_restore_health_s:eq:1

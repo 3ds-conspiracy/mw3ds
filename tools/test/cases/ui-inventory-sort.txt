@@ -1,0 +1,35 @@
+# start: Seyda Neen
+# ui-inventory-sort: the inventory lists its items in OpenMW's order (SortFilterItemModel's Compare), not in the order
+# they were picked up: the player's equipped things first, then by kind (weapons, armor, clothing, potions, ingredients,
+# apparatus, books, lights, misc, lockpicks, repair tools, probes), then by name. Given in the reverse of that order,
+# the Misc filter's eight lie in kind order (the torch first, equipped: the driver equips a light it gives); on the
+# Weapon filter a chitin dagger is listed before an iron one by name, and the iron one first once it is equipped
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1
+0.3 0 0 0 0 GIVE:probe_apprentice_01
+0.3 0 0 0 0 GIVE:repair_prongs
+0.3 0 0 0 0 GIVE:pick_apprentice_01
+0.3 0 0 0 0 GIVE:misc_com_bottle_01
+0.3 0 0 0 0 GIVE:light_com_torch_01
+0.3 0 0 0 0 GIVE:bk_briefhistoryempire1
+0.3 0 0 0 0 GIVE:apparatus_a_mortar_01
+0.3 0 0 0 0 GIVE:ingred_ash_yam_01
+0.3 0 0 0 0 GIVE:iron%dagger
+0.3 0 0 0 0 GIVE:chitin%dagger
+0.5 0 0 0 0 SCREEN:inventory
+0.3 0 0 0 0 EXPECT:screen:inventory
+# the Misc filter (L from All)
+0.3 0 0 0 0 L
+0.3 0 0 0 0 EXPECT:gridcell:0:light_com_torch_01+EXPECT:gridcell:1:ingred_ash_yam_01
+0.1 0 0 0 0 EXPECT:gridcell:2:apparatus_a_mortar_01+EXPECT:gridcell:3:bk_briefhistoryempire1
+0.1 0 0 0 0 EXPECT:gridcell:4:misc_com_bottle_01+EXPECT:gridcell:5:pick_apprentice_01
+0.1 0 0 0 0 EXPECT:gridcell:6:repair_prongs+EXPECT:gridcell:7:probe_apprentice_01
+0.3 0 0 0 0 SHOT
+# the Weapon filter (R twice from Misc): by name, then the equipped one first
+0.3 0 0 0 0 R
+0.3 0 0 0 0 R
+0.3 0 0 0 0 EXPECT:gridcell:0:chitin%dagger+EXPECT:gridcell:1:iron%dagger
+0.3 0 0 0 0 EQUIP:iron%dagger
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:gridcell:0:iron%dagger+EXPECT:gridcell:1:chitin%dagger
+0.3 0 0 0 0 SHOT

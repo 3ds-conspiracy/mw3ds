@@ -958,7 +958,7 @@ int uiList(UiList& list, float x, float y, float w, float h, const std::vector<s
 }
 
 int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows,
-	float scale, bool keys)
+	float scale, bool keys, int lead)
 {
 	float lh = uiLineHeight(scale);
 	std::vector<std::vector<std::string>> lines(rows.size());
@@ -968,7 +968,8 @@ int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vect
 		lines[i] = uiWrap(rows[i], w - 8, scale);
 		if (lines[i].empty())
 			lines[i].push_back("");
-		top[i + 1] = top[i] + lines[i].size() * lh + 4.0f;
+		// (the last lead row a little taller: room above the line under it)
+		top[i + 1] = top[i] + lines[i].size() * lh + 4.0f + ((int)i == lead - 1 && (int)rows.size() > lead ? 6.0f : 0.0f);
 	}
 	float content = top[rows.size()];
 	int result = -1;
@@ -998,8 +999,12 @@ int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vect
 		bool sel = (int)i == list.selected && keys;
 		if (sel)
 			uiRect(x, ry, w, rh, col::select);
+		u32 c = sel ? col::textOver : (int)i < lead ? col::link : col::text;
 		for (size_t k = 0; k < lines[i].size(); k++)
-			uiText(x + 4, ry + 2 + k * lh, scale, sel ? col::textOver : col::text, lines[i][k]);
+			uiText(x + 4, ry + 2 + k * lh, scale, c, lines[i][k]);
+		// (the line between the lead rows and the rest, as OpenMW's topic list has under the services)
+		if ((int)i == lead - 1 && (int)rows.size() > lead)
+			uiRect(x + 4, ry + rh - 3, w - 8, 1, col::textDim);
 		if (uiHit(x, fmaxf(ry, y), w, fminf(rh, y + h - ry)))
 		{
 			list.selected = i;

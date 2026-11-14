@@ -18,7 +18,8 @@ static std::string quickKeyName(int k)
 bool Session::assignQuickKey(const std::string& entry, const std::string& name)
 {
 	const UiInput& in = uiIn();
-	if (!(in.held & KEY_ZL))
+	// (Y as well as ZL: an Old 3DS has no ZL, and neither menu has a use for Y)
+	if (!(in.held & (KEY_ZL | KEY_Y)))
 		return false;
 	static const u32 keys[4] = { KEY_DUP, KEY_DRIGHT, KEY_DDOWN, KEY_DLEFT };
 	// (a direction held with ZL sets the key once: its repeat neither sets it again nor moves the selection)

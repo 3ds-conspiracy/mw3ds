@@ -184,15 +184,38 @@ void Session::drawContainer()
 	int gridY = canPut ? 44 : 26;
 	std::vector<UiGridItem> cells;
 	std::vector<int> mine;             // putting: the inventory index of each cell
+	std::vector<int> theirs;           // taking: the container's index of each cell
+	// (both in OpenMW's order: by kind and name, the player's own worn and held things first)
 	if (putting)
+	{
 		for (size_t i = 0; i < w.inventory.size(); i++)
-		{
 			mine.push_back((int)i);
+		sortListed(w.game, mine, [&](int i) {
+			const InventoryItem& it = w.inventory[i];
+			return ItemListed{ w.game.object(it.id), it.equipped, it.condition, it.charge };
+		});
+		gridShown.clear();
+		for (int i : mine)
+		{
 			cells.push_back(gridItem(w.game.object(w.inventory[i].id), w.inventory[i].id, w.inventory[i].count, w.inventory[i].equipped));
+			gridShown.push_back(w.inventory[i].id);
 		}
+	}
 	else
-		for (auto& it : c.contents)
-			cells.push_back(gridItem(w.game.object(it.second), it.second, stockCount(it.first), false));
+	{
+		for (size_t i = 0; i < c.contents.size(); i++)
+			theirs.push_back((int)i);
+		sortListed(w.game, theirs, [&](int i) {
+			const ContentItem& e = c.contents[i];
+			return ItemListed{ w.game.object(e.second), false, e.condition, e.charge };
+		});
+		gridShown.clear();
+		for (int i : theirs)
+		{
+			cells.push_back(gridItem(w.game.object(c.contents[i].second), c.contents[i].second, stockCount(c.contents[i].first), false));
+			gridShown.push_back(c.contents[i].second);
+		}
+	}
 	if (cells.empty())
 		uiTextCentered(160, 100, 0.5f, col::textDim, putting ? "Nothing" : "Empty");
 	bool aKey = uiIn().down & KEY_A;
@@ -206,9 +229,9 @@ void Session::drawContainer()
 		state = w.inventory[mine[grid.selected]];
 		shown = w.game.object(state.id);
 	}
-	else if (!putting && grid.selected >= 0 && grid.selected < (int)c.contents.size())
+	else if (!putting && grid.selected >= 0 && grid.selected < (int)theirs.size())
 	{
-		const ContentItem& e = c.contents[grid.selected];
+		const ContentItem& e = c.contents[theirs[grid.selected]];
 		state = { lower(e.second), stockCount(e.first), false, e.condition, e.soul, e.charge };
 		shown = w.game.object(e.second);
 	}
@@ -273,8 +296,8 @@ void Session::drawContainer()
 		if (containerPut(mine[pick]))
 			grid.selected = -1;
 	}
-	else if (!putting && pick >= 0 && pick < (int)c.contents.size())
-		take(pick);
+	else if (!putting && pick >= 0 && pick < (int)theirs.size())
+		take(theirs[pick]);
 	else if (!putting && (pressed == takeAll || (uiIn().down & KEY_X)))
 		while (!c.contents.empty() && !caught && screen == SCR_CONTAINER)
 			take(0);

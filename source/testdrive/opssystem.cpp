@@ -17,6 +17,7 @@ extern "C" u32 __ctru_heap_size;
 #include "platform/linear.hpp"
 #include <malloc.h>
 #include "testdrive/testhelpers.hpp"
+#include "mwgui/windowmanagerimp.hpp"
 
 std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 {
@@ -527,55 +528,69 @@ std::optional<bool> opsSystem(Session& s, const std::vector<std::string>& a)
 		return true;
 	}
 	// INVSEL:<id>: the Items menu's All tab, its selection on that item (the D-pad walking to it)
+	// (both walk the list as the screen shows it: sorted, mwgui/sortfilteritemmodel.cpp)
+	auto carried = [&](int i) {
+		const InventoryItem& it = w.inventory[i];
+		return ItemListed{ w.game.object(it.id), it.equipped, it.condition, it.charge };
+	};
 	if (verb == "INVSEL" && a.size() >= 2 && s.screen == SCR_INVENTORY)
 	{
 		s.invTab = 0;
-		int at = 0;
 		// ("brewed": the potion the last brew made, or the last one a save brought)
 		std::string brewed = !s.lastBrewed.empty() ? s.lastBrewed : w.brewed.empty() ? "" : w.brewed.back();
 		std::string want = lower(a[1]) == "brewed" ? brewed : lower(spaced(a[1])), want2 = lower(a[1]) == "brewed" ? brewed : lower(a[1]);
-		for (auto& it : w.inventory)
+		std::vector<int> order;
+		for (size_t i = 0; i < w.inventory.size(); i++)
+			if (w.inventory[i].id != "gold_001")
+				order.push_back((int)i);
+		sortListed(w.game, order, carried);
+		for (size_t at = 0; at < order.size(); at++)
 		{
-			if (it.id == "gold_001")
-				continue;
-			if (lower(it.id) == want || lower(it.id) == want2)
+			const std::string id = lower(w.inventory[order[at]].id);
+			if (id == want || id == want2)
 			{
-				s.grid.selected = at;
+				s.grid.selected = (int)at;
 				return true;
 			}
-			at++;
 		}
 		return fail(a[1] + " is not carried");
 	}
 	// BARTERSEL:<id>: the barter grid's selection moves to that item (the D-pad walking to it)
 	if (verb == "BARTERSEL" && a.size() >= 2 && s.screen == SCR_BARTER && s.barterRef >= 0)
 	{
-		int at = 0;
 		std::string want = lower(spaced(a[1])), want2 = lower(a[1]);
+		std::vector<std::string> ids;           // the grid's items in its order
+		std::vector<int> order;
 		if (s.barterSell)
-			for (auto& it : w.inventory)
-			{
-				if (!s.merchantTrades(s.barterRef, w.game.object(it.id)))
-					continue;
-				if (lower(it.id) == want || lower(it.id) == want2)
-				{
-					s.grid.selected = at;
-					return true;
-				}
-				at++;
-			}
+		{
+			for (size_t i = 0; i < w.inventory.size(); i++)
+				order.push_back((int)i);
+			sortListed(w.game, order, carried);
+			for (int i : order)
+				if (s.merchantTrades(s.barterRef, w.game.object(w.inventory[i].id)))
+					ids.push_back(w.inventory[i].id);
+		}
 		else
-			for (auto& g : s.merchantGoods(s.barterRef))
+		{
+			std::vector<std::pair<int, int>> goods = s.merchantGoods(s.barterRef);
+			for (size_t k = 0; k < goods.size(); k++)
+				order.push_back((int)k);
+			sortListed(w.game, order, [&](int k) {
+				ContentItem good = s.merchantGood(goods[k]);
+				return ItemListed{ w.game.object(good.second), false, good.condition, good.charge };
+			});
+			for (int k : order)
 			{
-				std::string id = s.merchantGood(g).second;
-				if (!s.merchantTrades(s.barterRef, w.game.object(id)))
-					continue;
-				if (lower(id) == want || lower(id) == want2)
-				{
-					s.grid.selected = at;
-					return true;
-				}
-				at++;
+				std::string id = s.merchantGood(goods[k]).second;
+				if (s.merchantTrades(s.barterRef, w.game.object(id)))
+					ids.push_back(id);
+			}
+		}
+		for (size_t at = 0; at < ids.size(); at++)
+			if (lower(ids[at]) == want || lower(ids[at]) == want2)
+			{
+				s.grid.selected = (int)at;
+				return true;
 			}
 		return fail(a[1] + " is not in the barter list");
 	}

@@ -1,0 +1,28 @@
+# start: Seyda Neen
+# ui-dialogue-services: a speaker's services lead the topic list and scroll with it, a line under them, as OpenMW's
+# (DialogueWindow::updateTopicsPane: Persuasion, Barter, Spells, Travel, Spellmaking, Enchanting, Training, Repair,
+# Share, then the topics). They were buttons fixed between the topics and Goodbye, taking the list's room. Arrille
+# offers Persuasion, Barter and Spells: A on the first row persuades, on the second barters (before, the first row was
+# his first topic). Rows of the list like the topics, they scroll up with them in a longer list
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD+SEED:1+HOUR:12
+0.3 0 0 0 0 GOTO:Seyda_Neen,_Arrille's_Tradehouse
+3 0 0 0
+30 0 0 0 0 ACTIVATE:arrille
+10 0 0 0 0 UNTIL:screen:dialogue
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:listsel:eq:0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:persuade
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:barter
+0.3 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:dialogue

@@ -6,8 +6,9 @@
 #include "mwbase/session.hpp"
 #include "mwphysics/physicssystem.hpp"
 
-// How a quick key is set from Inventory / Magic: the D-pad moves the selection there, so both layouts hold ZL
-const char* kQuickHint = "ZL + D-pad: set quick key";
+// How a quick key is set from Inventory / Magic: the D-pad moves the selection there, so a button is held with it. Y,
+// which an Old 3DS has (no ZL there); ZL still does it on a New 3DS (Session::assignQuickKey)
+const char* kQuickHint = "Hold Y + D-pad: set quick key";
 
 void Session::drawInventory()
 {
@@ -48,7 +49,18 @@ void Session::drawInventory()
 		if (!inTab(o, invTab))
 			continue;
 		index.push_back(i);
-		cells.push_back(gridItem(o, it.id, it.count, it.equipped));
+	}
+	// (in OpenMW's order: what is worn and held first, then by kind and name)
+	sortListed(w.game, index, [&](int i) {
+		const InventoryItem& it = w.inventory[i];
+		return ItemListed{ w.game.object(it.id), it.equipped, it.condition, it.charge };
+	});
+	gridShown.clear();
+	for (int i : index)
+	{
+		const InventoryItem& it = w.inventory[i];
+		cells.push_back(gridItem(w.game.object(it.id), it.id, it.count, it.equipped));
+		gridShown.push_back(it.id);
 	}
 	if (cells.empty())
 		uiTextCentered(160, 100, 0.5f, col::textDim, "Nothing");

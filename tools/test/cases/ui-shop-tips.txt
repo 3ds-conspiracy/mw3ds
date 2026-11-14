@@ -7,7 +7,9 @@
 8 0 0 0
 0.3 0 0 0 0 TALK:marayn%dren
 1 0 0 0
-0.3 0 0 0 0 TAP:266:166
+# (Spells: the second row of the topic list, under Persuasion)
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 A
 0.5 0 0 0 0 EXPECT:screen:spells
 0.3 0 0 0 0 EXPECT:tipline:fire_shield
 0.3 0 0 0 0 EXPECT:tipline:school:

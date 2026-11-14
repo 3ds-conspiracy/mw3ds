@@ -107,9 +107,10 @@ struct UiList
 	int marqueeRow = -1;     // the row whose text slides (too long for its space) and for how long it has
 	float marqueeTime = 0.0f;
 };
-// A list whose rows wrap onto more lines when they don't fit the width (dialogue topics and choices)
+// A list whose rows wrap onto more lines when they don't fit the width (dialogue topics and choices). lead: its first
+// rows are of another kind (a speaker's services above the topics), drawn in the link colour with a line under them
 int uiWrapList(UiList& list, float x, float y, float w, float h, const std::vector<std::string>& rows,
-	float scale, bool keys);
+	float scale, bool keys, int lead = 0);
 // right: a column of text at each row's right edge, always shown; the row's own text is cut short before it, and the
 // selected row's slides left and comes round again when it doesn't fit
 // icons: an item icon page number per row (-1: none) drawn at the row's left, the row's text after it

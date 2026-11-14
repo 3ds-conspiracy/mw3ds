@@ -70,6 +70,7 @@ struct WindowManagerState
 	// menu state
 	UiList list, list2;
 	UiGrid grid;                      // item icons (inventory, containers, barter)
+	std::vector<std::string> gridShown;   // the ids in that grid as listed this frame (tests read the order: gridcell)
 	int invTab = 0;                   // inventory filter: all, weapon, apparel, magic, misc
 	int magicTab = 0;                 // Magic menu filter: all, then the six schools
 	int journalTab = 0;               // journal: 0 the entries, 1 the topics index

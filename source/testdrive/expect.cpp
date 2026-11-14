@@ -380,6 +380,14 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 			ok |= lower(nt.text).find(want) != std::string::npos;
 		snprintf(got, sizeof(got), "%s", ok ? "shown" : "not shown");
 	}
+	else if (what == "gridcell" && a.size() >= 3)
+	{
+		// EXPECT:gridcell:<n>:<item id>: the item grid open now (inventory, container, barter) lists that item n-th, from 0
+		int n = atoi(a[1].c_str());
+		std::string at = n >= 0 && n < (int)s.gridShown.size() ? lower(s.gridShown[n]) : "";
+		ok = !at.empty() && (at == lower(a[2]) || at == lower(spaced(a[2])));
+		snprintf(got, sizeof(got), "%s", at.empty() ? "nothing there" : at.c_str());
+	}
 	else if (what == "nomessage" && a.size() >= 2)
 	{
 		// EXPECT:nomessage:<text, underscores for spaces>: no message box or notice on screen holds it
