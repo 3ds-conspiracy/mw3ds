@@ -1,0 +1,23 @@
+# start: Seyda Neen
+# console: old
+# The player's hit attempt foe (OpenMW's Actors::update keeps the last actor the player swung at, for allies taking up
+# the player's fight) whose cell goes out of memory as the player travels on is forgotten with it. A foe fighting
+# someone else isn't one that keeps its cell (Session::refInUse), the Old 3DS lets the cells go behind the loading
+# screen (cleanForLoad), and the reference list shrinks when the slots freed are at its end: the number kept read the
+# freed end of the list in that frame's Session::combatUpdate. An Old 3DS profile crash right after the travel to the
+# Skaal Village in uber-bm-skaal. Here Salvas Areleth, fighting Daral Thireloth and Clendil in Ald Daedroth's Left
+# Wing, is struck, and the player goes to Balmora. Written after the crash was traced (native_crash.txt, pdbsym.py), and
+# it passed before the fix too, even with NATIVE_GUARD=1: Balmora's objects take the freed slots in the same frame, and
+# combatUpdate found one of them there and let the foe go. It keeps the path exercised; it did not reproduce the crash.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2
+0.3 0 0 0 0 GOTO:Ald_Daedroth,_Left_Wing
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refduel:salvas_areleth:eq:1
+0.1 0 0 0 0 REFHEALTH:salvas_areleth:5000
+20 0 0 0 0 STRIKE:salvas_areleth:1
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:hitattempt:eq:1+EXPECT:refduel:salvas_areleth:eq:1
+0.3 0 0 0 0 GOTO:Balmora
+3 0 0 0
+0.1 0 0 0 0 EXPECT:hitattempt:ge:0+EXPECT:cell:Balmora

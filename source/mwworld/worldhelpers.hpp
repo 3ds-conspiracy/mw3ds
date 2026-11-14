@@ -55,10 +55,14 @@ static inline std::string cellFileName(const std::string& cellName)
 	return out;
 }
 
-// Reference slots given back; a free run at the end of the list goes from it (its memory back to the heap)
+// Reference slots given back; a free run at the end of the list goes from it (its memory back to the heap). The player's
+// hit attempt foe among them is forgotten, gone with its cell: kept, combatUpdate read the freed end of the list (an Old
+// 3DS profile crash on arriving at the Skaal Village, the foe fighting a follower when its cell was let go)
 static inline void freeRefSlots(World& w, int first, int n)
 {
 	w.refsChanged();
+	if (w.playerHitAttempt >= first && w.playerHitAttempt < first + n)
+		w.playerHitAttempt = -1;
 	freeSlots(w.freeRefs, first, n);
 	if (!w.freeRefs.empty() && w.freeRefs.back().first + w.freeRefs.back().second == (int)w.refs.size())
 	{

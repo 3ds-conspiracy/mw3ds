@@ -99,6 +99,13 @@ std::optional<bool> numberOfState(Session& s, const std::string& what, const std
 	if (what == "level") v = (float)st.level;
 	else if (what == "levelprog") v = (float)st.levelProgress;
 	else if (what == "health") v = st.health;
+	// the player's hit attempt foe (World::playerHitAttempt): 1 one in memory, 0 none, -1 a slot given back or past the
+	// end of the reference list (its cell let go)
+	else if (what == "hitattempt")
+	{
+		int h = s.w.playerHitAttempt;
+		v = h < 0 ? 0.0f : h < (int)s.w.refs.size() && s.w.refs[h].cell >= 0 ? 1.0f : -1.0f;
+	}
 	else if (what == "bloodhits") v = (float)s.bloodHits;
 	else if (what == "bloodlow") v = s.bloodLow;
 	else if (what == "bloodhigh") v = s.bloodHigh;
