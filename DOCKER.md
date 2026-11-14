@@ -33,7 +33,7 @@ In Steam, right-click Morrowind, then **Manage**, **Browse local files** shows w
 Make a folder for the result, such as `C:\MW3DS-out`, then open **PowerShell** and run (one line):
 
 ```powershell
-docker run --rm -v "C:\Program Files (x86)\Steam\steamapps\common\Morrowind:/morrowind:ro" -v "C:\MW3DS-out:/out" ghcr.io/3ds-conspiracy/mw3ds-converter:0.2.11 --tribunal --bloodmoon
+docker run --rm -v "C:\Program Files (x86)\Steam\steamapps\common\Morrowind:/morrowind:ro" -v "C:\MW3DS-out:/out" ghcr.io/3ds-conspiracy/mw3ds-converter:0.2.12 --tribunal --bloodmoon
 ```
 
 On Linux, in a terminal (the `--user` part makes the files it writes yours):
@@ -41,7 +41,7 @@ On Linux, in a terminal (the `--user` part makes the files it writes yours):
 ```sh
 mkdir -p ~/mw3ds
 docker run --rm --user "$(id -u):$(id -g)" -v ~/.local/share/Steam/steamapps/common/Morrowind:/morrowind:ro -v ~/mw3ds:/out \
-    ghcr.io/3ds-conspiracy/mw3ds-converter:0.2.11 --tribunal --bloodmoon 2>&1 | tee ~/mw3ds/converter-log.txt
+    ghcr.io/3ds-conspiracy/mw3ds-converter:0.2.12 --tribunal --bloodmoon 2>&1 | tee ~/mw3ds/converter-log.txt
 ```
 
 (With podman, say `podman` for `docker` and leave out `--user`. On Fedora and other SELinux systems add `:z` to the
@@ -50,7 +50,7 @@ docker run --rm --user "$(id -u):$(id -g)" -v ~/.local/share/Steam/steamapps/com
 Change the command to fit:
 
 - Another Morrowind folder: change the part before `:/morrowind`.
-- A newer version: change `0.2.11` to the newest one on the [Releases](https://github.com/3ds-conspiracy/mw3ds/releases)
+- A newer version: change `0.2.12` to the newest one on the [Releases](https://github.com/3ds-conspiracy/mw3ds/releases)
   page.
 - An **Old 3DS or 2DS**: add `--old3ds` (smaller textures).
 - No Tribunal or Bloodmoon (not the Game of the Year edition): leave out `--tribunal` / `--bloodmoon`.
