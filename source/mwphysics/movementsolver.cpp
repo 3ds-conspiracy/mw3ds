@@ -475,6 +475,9 @@ void Session::actorGravity(float dt)
 					r.moved = true;
 					w.syncActor(i);
 				}
+				// (a body's box laid where it is drawn, however it died or came back from a save: Ref::fitBox)
+				if (r.dead)
+					r.fitBox();
 				if (dz < -0.5f)
 				{
 					r.pos[2] = best;

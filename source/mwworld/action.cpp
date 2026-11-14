@@ -29,6 +29,17 @@ void Session::playerActivate(int ref)
 	activate(ref);
 }
 
+// Whether the player's A does anything to it now, for the line that says what A does (targetPromptText): its script
+// holds the activation back for itself (as playerActivate hands it over: a bed's Bed_Standard), or its type's own action
+// is more than nothing. Not the Madach Tradehouse banner in Gnisis, whose script only plays its idles (issue 99)
+bool Session::activationOffered(int ref)
+{
+	const Ref& r = w.refs[ref];
+	if (r.script >= 0 && w.scripts[r.script].script->usesOnActivate && w.scripts[r.script].suppress)
+		return true;
+	return MWClass::canActivate(*this, ref);
+}
+
 // A werewolf can't use things (OpenMW's sWerewolfRefusal), with a growl by what it was: one of the Wolf* sounds
 // of the thing's kind at random (WolfNPC1-3, WolfCreature1-3, WolfContainer1-2, WolfActivator1, WolfItem1-3: OpenMW's
 // getWerewolfRefusalSoundId and searchRandom)

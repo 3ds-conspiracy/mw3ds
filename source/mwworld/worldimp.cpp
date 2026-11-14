@@ -481,15 +481,18 @@ void World::relocate(int ri, int cell, const float pos[3], float yaw)
 	logf("world: %s moved to %s", r.idLower.c_str(), cells[cell].name.c_str());
 }
 
-// OpenMW sweeps an actor's collision box down onto the ground (MovementSolver::traceDown): it comes to rest on the
-// highest ground anywhere under the box, and the origin sits the box's lift above that. A creature's box is its model's
-// "Bounding Box" node (tools/convert/creature.py creature_box); one centred and about square stays axis-aligned (the
-// default "actor collision shape type"), any other turns with the creature (Actor::Actor's RotatingBox). How much
-// higher than the ground under its feet (where it stands: walking, falling and slopes go by that, as before) its model
-// is drawn. Sampled at the box's corners and edges, each counting up to a slope's rise from the feet (45 degrees, at
-// most a stair's 48 units): higher is a rock or a wall beside it, which OpenMW's box is pushed away from, not stood on.
-// (Standing it there instead made the next step search for floor from that much higher: creatures walked up slopes too
-// steep for anyone, and a wandering guar climbed a rock beside it)
+// OpenMW sweeps an actor's collision box down onto the ground (MovementSolver::move): it comes to rest on the highest
+// ground anywhere under the box, with the origin at the box's bottom. A creature's box is its model's "Bounding Box"
+// node (tools/convert/creature.py creature_box); one centred and about square stays axis-aligned (the default "actor
+// collision shape type"), any other turns with the creature (Actor::Actor's RotatingBox). Where the box sits in the
+// model up and down is left out, as OpenMW's movement leaves it out (it puts the box half its height over the origin,
+// "vanilla-accurate", not at its place in the model): a cliff racer's box floats 144 over its feet, a bull netch's 348,
+// and one killed in the air, drawn that far under the ground it fell on, was only a name over the grass (issue 99).
+// How much higher than the ground under its feet (where it stands: walking, falling and slopes go by that, as before)
+// its model is drawn. Sampled at the box's corners and edges, each counting up to a slope's rise from the feet (45
+// degrees, at most a stair's 48 units): higher is a rock or a wall beside it, which OpenMW's box is pushed away from, not
+// stood on. (Standing it there instead made the next step search for floor from that much higher: creatures walked up
+// slopes too steep for anyone, and a wandering guar climbed a rock beside it)
 float World::actorBoxLift(int ri)
 {
 	const Ref& r = refs[ri];
@@ -515,7 +518,7 @@ float World::actorBoxLift(int ri)
 				if (collisionFloor(l->cell.collision, px, py, ground + kMaxRise, ground - 200.0f, &z))
 					best = fmaxf(best, fminf(z, ground + rise));
 		}
-	return best - ground + b[4] * s;
+	return best - ground;
 }
 
 void World::snapToFloor(float pos[3])

@@ -696,8 +696,10 @@ void Session::drawHud(int parts)
 			promptRows = (int)use.size();
 			float lh = uiLineHeight(s);
 			float top = stylus ? kStylusTapTop - 1 - use.size() * lh : use.size() > 1 ? 166 : 172;
+			// (its name alone, dim, where A does nothing to it: a sign)
+			u32 c = activationOffered(target) ? col::link : col::textDim;
 			for (size_t i = 0; i < use.size(); i++)
-				uiText(6, top + i * lh, s, col::link, use[i]);
+				uiText(6, top + i * lh, s, c, use[i]);
 		}
 		else
 			promptRows = 1;

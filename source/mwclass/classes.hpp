@@ -13,6 +13,8 @@ namespace MWClass
 {
 	// Activating a reference by its type (OpenMW's Class::activate), once Session::activate has let it through
 	void activate(Session& s, int ref);
+	// Whether that does anything (more than OpenMW's NullAction): what the bottom screen's "A: ..." line offers
+	bool canActivate(Session& s, int ref);
 	// The tooltip's lines for an item's type (OpenMW's Class::getToolTipInfo): its stats, above weight and value; what
 	// it holds or is, below them
 	void toolTipStats(Session& s, const Object& o, const InventoryItem* it);
@@ -26,7 +28,11 @@ namespace MWClass
 		void talk(Session& s, int ref);                // face its head and start the conversation
 	}
 	namespace Npc { void activate(Session& s, int ref); }
-	namespace Creature { void activate(Session& s, int ref); }
+	namespace Creature
+	{
+		void activate(Session& s, int ref);
+		bool canActivate(Session& s, int ref);
+	}
 	namespace Container { void activate(Session& s, int ref); }
 	namespace Light { void activate(Session& s, int ref); }
 	namespace Book

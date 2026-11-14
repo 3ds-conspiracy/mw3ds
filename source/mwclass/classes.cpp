@@ -24,6 +24,22 @@ void MWClass::activate(Session& s, int ref)
 	}
 }
 
+bool MWClass::canActivate(Session& s, int ref)
+{
+	const bool items = (s.w.menusEnabled & MENU_INVENTORY) != 0;
+	switch (s.w.refs[ref].recType)
+	{
+	case REC_NPC_: case REC_DOOR: case REC_BOOK: return true;
+	case REC_CREA: return Creature::canActivate(s, ref);
+	// (the crosshair picks only lights that can be carried: World's isActivatable)
+	case REC_CONT: case REC_LIGH: return items;
+	// an activator does nothing of its own (OpenMW's Activator::activate: a NullAction): a sign, a banner; only its
+	// script makes it do something (Session::activationOffered)
+	case REC_ACTI: case REC_STAT: return false;
+	default: return items;
+	}
+}
+
 void MWClass::toolTipStats(Session& s, const Object& o, const InventoryItem* it)
 {
 	switch (o.recType)

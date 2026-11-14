@@ -60,8 +60,9 @@ struct ActorDef
 	int alarm = 0;                       // AI alarm (0..100): how readily they report crimes
 	int blood = 0;                                     // 0 red, 1 skeleton (white), 2 metal (gold sparks)
 	u8 afloat = 0;                       // creatures: 0x10 swims, 0x20 flies (they don't fall to the floor); 0x40 walks, 0x1 biped
-	// creatures: their model's collision box (center x, y, half extents x, y, the origin's height over its bottom),
-	// rested on the ground under all of it (World::actorBoxLift); hasBox false: the floor under the feet
+	// creatures: their model's collision box (center x, y, half extents x, y, the origin's height over its bottom, which
+	// OpenMW's movement leaves out: the origin is the box's bottom), rested on the ground under all of it
+	// (World::actorBoxLift); hasBox false: the floor under the feet
 	float box[5] = {};
 	bool hasBox = false;
 	bool respawn = false, essential = false;   // come back after dying / their death severs the prophecy

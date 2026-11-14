@@ -42,6 +42,12 @@ std::optional<bool> numberOfVisuals(Session& s, const std::string& what, const s
 		}
 		return true;
 	}
+	// what the bottom prompt offers: 1 "A: ..." (A does something to what is aimed at), 0 its name alone, -1 nothing aimed at
+	if (what == "promptoffers")
+	{
+		v = s.target < 0 ? -1.0f : s.targetPromptText(s.target).compare(0, 3, "A: ") == 0 ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "savepicking") { v = s.saveFilter.picking ? 1.0f : 0.0f; return true; }    // the Saves screen's list of characters is open
 	if (what == "deletingsave") { v = s.deletingSave ? 1.0f : 0.0f; return true; }    // the Saves screen asks "Delete ...?"
 	if (what == "vfxcount") { v = (float)s.vfx.size(); return true; }      // spell visuals showing now

@@ -119,6 +119,9 @@ std::vector<std::string> Session::targetPopupLines(int ref)
 // pixels, over two lines at most, the second cut with ".." when even that is not enough
 std::string Session::targetPromptText(int ref)
 {
+	// (where A does nothing, a sign or a creature with no words, only the name: drawn dim, offering nothing)
+	if (!activationOffered(ref))
+		return targetLabel(ref);
 	const Ref& t = w.refs[ref];
 	// (a creature alive: "Talk to" one with words of its own, else only its name, as OpenMW shows it)
 	bool talks = t.recType == REC_CREA && t.actor >= 0 && ((w.game.actors[t.actor].services & 0x3FFFF) || w.game.speakers.count(t.idLower));

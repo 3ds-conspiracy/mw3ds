@@ -375,6 +375,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void werewolfWitnesses();                     // the player just changed into a werewolf: who saw it
 	std::string targetLabel(int ref);
 	std::vector<std::string> targetPopupLines(int ref);    // the name over the crosshair, wrapped to fit the top screen
+	bool activationOffered(int ref);                       // A does something to it now (a sign: nothing)
 	std::string targetPromptText(int ref);                 // "A: Open <name>": what A does to what is aimed at
 	std::vector<std::string> targetPromptLines(int ref, float* scale = nullptr);   // ... on the bottom screen: one or two lines, at that scale
 

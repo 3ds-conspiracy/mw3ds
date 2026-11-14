@@ -14,6 +14,9 @@ constexpr int kKeyOnlyLock = 1000;
 // loaded cells' lists made again (World::rebuildLoadedLists). worldPick keeps them sorted by place for this number
 extern unsigned g_pickSerial;
 
+// A body lies on the floor: the crosshair meets a dead actor's box only up to this far over its foot (worldPick)
+constexpr float kCorpsePickHeight = 40.0f;
+
 struct RefRange { int batch; u32 first, count; };
 struct cJSON;
 cJSON* contentsState(const std::vector<ContentItem>& contents);
@@ -75,6 +78,21 @@ struct Ref
 		{
 			boxMin[k] = boxStart[k] + pos[k] - start[k];
 			boxMax[k] = boxStart[3 + k] + pos[k] - start[k];
+		}
+		// A body lies where it is drawn: its box goes up with it on a slope (World::actorBoxLift), and one whose standing
+		// box floats more than a stair over its feet (a cliff racer's, a netch's) is laid on the ground there, as low as
+		// the part of a body the crosshair meets: the crosshair finds the body where it lies, not in the air where it
+		// flew, and an eye beside it isn't inside its box (issue 99)
+		if (actor >= 0 && dead)
+		{
+			float ground = pos[2] + boxLift;
+			boxMin[2] += boxLift;
+			boxMax[2] += boxLift;
+			if (boxMin[2] > ground + 48.0f)
+			{
+				boxMin[2] = ground;
+				boxMax[2] = ground + kCorpsePickHeight;
+			}
 		}
 		// (a thing that isn't a person moved: the crosshair's pick sorts the things by where they stand again, worldPick)
 		if (actor < 0)

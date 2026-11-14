@@ -1,0 +1,74 @@
+# start: Seyda Neen
+# issue-99, two things from one report.
+# 1. A flying creature killed in the air falls and lies on the ground. Its model's "Bounding Box" floats over its feet (a
+#    cliff racer's 144 units up, a bull netch's 348), and the model was drawn that much below the ground the box was rested
+#    on: the body was under the ground, only its name left to aim at. OpenMW's movement puts the box's bottom at the origin
+#    (MovementSolver::move, the half height and not the box's offset), so the body lies where it fell. A box hanging below
+#    the feet the other way (a dreugh's, 40) held a dreugh on land that far over the ground.
+# 2. The bottom screen's "A: ..." line is there only when A does something: the Madach Tradehouse banner in Gnisis (an
+#    activator whose script only plays its idles, never asking OnActivate) said "A: Use Madach Tradehouse" and A did
+#    nothing. A bed (Bed_Standard asks OnActivate) still says "A: Use Bed", a body "A: Search"; a living creature with no
+#    words of its own (a dreugh) gives its name alone, A doing nothing to it either
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2+SEED:1+HOUR:12
+0.3 0 0 0 0 BOOST:100
+# open ground outside Seyda Neen, nobody else about
+0.3 0 0 0 0 TP:-10300:-71300:200:0
+3 0 0 0 0 HIDEACTORS:3000
+# a cliff racer killed there lies on the ground, and A searches it
+0.3 0 0 0 0 PLACE:cliff%racer:250
+1 0 0 0
+0.3 0 0 0 0 ENABLE:cliff%racer+HOSTILE:cliff%racer
+2 0 0 0
+120 0 0 0 0 KILL:cliff%racer
+0.1 0 0 0 0 EXPECT:dead:cliff%racer
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refabovefeet:cliff%racer:ge:-1+EXPECT:refabovefeet:cliff%racer:le:49
+# (looking down at it on the ground, as a player would: its box was up in the air where it flew)
+0.5 0 0 0 0 FACE:cliff%racer+PITCH:-50
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:cliff%racer:eq:1+EXPECT:promptoffers:eq:1
+0.3 0 0 0 0 SHOT
+# a bull netch killed there lies on the ground (the racer's body taken away first, so the crosshair has only the netch)
+0.3 0 0 0 0 DISABLE:cliff%racer
+0.3 0 0 0 0 PLACE:netch_bull:400
+2 0 0 0
+0.3 0 0 0 0 ENABLE:netch_bull+HOSTILE:netch_bull
+120 0 0 0 0 KILL:netch_bull
+0.1 0 0 0 0 EXPECT:dead:netch_bull
+6 0 0 0
+0.1 0 0 0 0 EXPECT:refabovefeet:netch_bull:ge:-1+EXPECT:refabovefeet:netch_bull:le:49
+0.5 0 0 0 0 FACE:netch_bull+PITCH:-30
+0.5 0 0 0
+0.3 0 0 0 0 SHOT
+# A on it, aimed where it lies, searches it
+60 0 0 0 0 ACTIVATE:netch_bull
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:container
+0.3 0 0 0 0 B
+0.5 0 0 0
+# a dreugh on land stands on the ground, not 40 over it; A does nothing to it
+0.3 0 0 0 0 PLACE:dreugh:150
+3 0 0 0
+0.1 0 0 0 0 EXPECT:refabovefeet:dreugh:ge:-1+EXPECT:refabovefeet:dreugh:le:25
+0.5 0 0 0 0 FACE:dreugh:mid
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:dreugh:eq:1+EXPECT:promptoffers:eq:0
+# the Madach Tradehouse banner in Gnisis: its name, no "A: Use", and A does nothing
+0.3 0 0 0 0 TP:-84730:91131:1001:0
+3 0 0 0
+0.5 0 0 0 0 FACE:furn_banner_tavern_gnisis:mid
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:furn_banner_tavern_gnisis:eq:1+EXPECT:promptoffers:eq:0
+0.3 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:screen:none
+# a bed in Shishara Hut still offers A (its script takes the activation)
+0.3 0 0 0 0 GOTO:Gnisis,_Shishara_Hut
+3 0 0 0
+60 0 0 0 0 WALKTO:active_de_p_bed_04
+0.5 0 0 0 0 FACE:active_de_p_bed_04:mid+PITCH:-50
+0.5 0 0 0
+0.3 0 0 0 0 EXPECT:refaimed:active_de_p_bed_04:eq:1+EXPECT:promptoffers:eq:1
+0.3 0 0 0 0 SHOT
