@@ -29,13 +29,12 @@ void Session::drawInventory()
 		grid = UiGrid();
 		playSound(-1, "Menu Click");
 	}
-	float weight = 0.0f;
-	for (auto& it : w.inventory)
-		if (const Object* o = w.game.object(it.id))
-			weight += o->weight * it.count;
+	// The load as it slows the player, Feather and Burden in (OpenMW shows it rounded up): a worn Feather ring showed
+	// the bare pack weight
+	float weight = w.encumbrance();
 	float carry = w.game.gmstf("fencumbrancestrmult", 5.0f) * w.stats.attributes[ATTR_STRENGTH];
 	char load[32];
-	snprintf(load, sizeof(load), "%d/%d", (int)weight, (int)carry);
+	snprintf(load, sizeof(load), "%d/%d", (int)ceilf(weight - 0.001f), (int)carry);
 	uiTextRight(316, 26, 0.4f, weight > carry ? col::health : col::textDim, load);
 
 	std::vector<int> index;

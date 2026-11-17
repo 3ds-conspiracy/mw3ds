@@ -454,6 +454,10 @@ struct World
 	int getJournal(const std::string& quest) const;
 	void recomputeStats();
 	void refreshStats();                          // recomputeStats keeping current health / magicka / fatigue
+	float encumbrance() const;                    // the player's load: the pack less Feather plus Burden (0 as a werewolf)
+	// Bound effects of worn constant enchantments: their items conjured while worn, gone when taken off (refreshStats)
+	void wornBoundItems();
+	std::vector<std::pair<std::string, std::string>> wornBound;   // item conjured that way, what it replaced (not saved)
 	// The abilities' and worn constant enchantments' Fortify Health / Magicka / Fatigue as recomputeStats last summed
 	// them, and how much that sum moved then: the current bars move with it (refreshStats)
 	float fortifyMods[3] = {}, fortifyMoved[3] = {};

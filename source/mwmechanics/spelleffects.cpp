@@ -62,6 +62,91 @@ bool isBoundItem(const std::string& id)
 	return false;
 }
 
+// A Bound item put in the player's hand (or on them) in place of what was there, which goes in prev. False when the
+// player can't wear it: a beast race's boots or full helm (OpenMW removes a bound item that can't be equipped with
+// its effect)
+static bool conjureBound(World& w, const std::string& item, std::string& prev)
+{
+	const Object* o = w.game.object(item);
+	if (!o)
+		return false;
+	bool beast = false;
+	for (auto& rc : w.game.races)
+		beast |= rc.beast && strcasecmp(rc.id.c_str(), w.stats.race.c_str()) == 0;
+	if (beast && (o->recType == REC_ARMO || o->recType == REC_CLOT) && (o->flags & 3))
+		return false;
+	for (auto& it : w.inventory)
+	{
+		const Object* io = it.equipped ? w.game.object(it) : nullptr;
+		if (io && io->type == o->type && (o->recType == REC_WEAP || io->subtype == o->subtype))
+		{
+			it.equipped = false;
+			prev = it.id;
+		}
+	}
+	w.addItem(item, 1);
+	for (auto& it : w.inventory)
+		if (it.id == item)
+			it.equipped = true;
+	return true;
+}
+
+// The Bound effects of worn constant enchantments (a self-made ring of Bound Longbow): the item is conjured as the
+// enchanted thing goes on and vanishes as it comes off, what it replaced taken back in hand (OpenMW keeps an item's
+// constant effects as a spell that lasts while it is worn; its Bound effect adds the item when it starts and removes it
+// when it ends). They only went on the ability list, and nothing conjured the item. A timed Bound spell's item is left
+// to its spell
+void World::wornBoundItems()
+{
+	for (int e = 120; e <= 131; e++)
+	{
+		const char* base = boundItem(e);
+		if (!base)
+			continue;
+		bool worn = false, timed = false;
+		for (auto& a : abilities)
+			worn |= a.effect == e;
+		for (auto& a : effects)
+			timed |= a.effect == e;
+		for (int k = 0; k < (e == 131 ? 2 : 1); k++)
+		{
+			std::string item = k ? "bound_gauntlet_right" : base;
+			size_t at = 0;
+			while (at < wornBound.size() && wornBound[at].first != item)
+				at++;
+			if (worn && !timed && itemCount(item) == 0)
+			{
+				std::string prev;
+				if (!conjureBound(*this, item, prev))
+					continue;
+				if (at < wornBound.size())
+				{
+					// (conjured again after a timed Bound spell of the same item took it: it still stands in for
+					// what the first one replaced)
+					if (!prev.empty() && strcasecmp(prev.c_str(), item.c_str()) != 0)
+						wornBound[at].second = prev;
+				}
+				else
+					wornBound.push_back({ item, prev });
+			}
+			else if (!worn && !timed && itemCount(item) > 0)
+			{
+				// (by what is carried, not the record: a save keeps the item, not what it replaced)
+				std::string prev;
+				if (at < wornBound.size())
+				{
+					prev = wornBound[at].second;
+					wornBound.erase(wornBound.begin() + at);
+				}
+				removeItem(item, itemCount(item));
+				for (auto& it : inventory)
+					if (!prev.empty() && it.id == prev)
+						it.equipped = true;
+			}
+		}
+	}
+}
+
 // A lasting change to an attribute or skill: it never shows below 0, the part below 0 is owed back first
 static void shiftStat(int& value, int& below, int by)
 {
@@ -200,30 +285,8 @@ void Session::applyEffectToPlayer(const SpellEffect& e, const std::string& sourc
 		{
 			ActiveEffect b = a;
 			b.item = k ? "bound_gauntlet_right" : item;
-			const Object* o = w.game.object(b.item);
-			if (!o)
-				continue;
-			// what the player can't wear (a beast race's boots or full helm) ends the effect at once (OpenMW: a bound item
-			// that can't be equipped is removed with its effect)
-			bool beast = false;
-			for (auto& rc : w.game.races)
-				beast |= rc.beast && strcasecmp(rc.id.c_str(), w.stats.race.c_str()) == 0;
-			if (beast && (o->recType == REC_ARMO || o->recType == REC_CLOT) && (o->flags & 3))
-				continue;
-			for (auto& it : w.inventory)
-			{
-				const Object* io = it.equipped ? w.game.object(it) : nullptr;
-				if (io && io->type == o->type && (o->recType == REC_WEAP || io->subtype == o->subtype))
-				{
-					it.equipped = false;
-					b.prev = it.id;
-				}
-			}
-			w.addItem(b.item, 1);
-			for (auto& it : w.inventory)
-				if (it.id == b.item)
-					it.equipped = true;
-			w.effects.push_back(b);
+			if (conjureBound(w, b.item, b.prev))       // (what the player can't wear ends the effect at once)
+				w.effects.push_back(b);
 		}
 		return;
 	}
@@ -675,5 +738,6 @@ void Session::endPlayerEffect(size_t i)
 		for (auto& it : w.inventory)
 			if (!a.prev.empty() && it.id == a.prev)
 				it.equipped = true;
+		w.wornBoundItems();        // a worn ring of the same Bound effect conjures its own again
 	}
 }

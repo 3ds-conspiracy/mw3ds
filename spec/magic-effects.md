@@ -218,7 +218,9 @@ All of them are resisted by Resist Magicka (R / W) except Command (not listed in
   goes. A bound item (any item whose id one of the `sMagicBound*` settings names: `isBoundItem`) never leaves its
   holder: dropping it to the ground, putting it in a container or giving it to a companion is refused with
   `sBarterDialog12`, selling it with `sBarterDialog9`, and taking one from a container with `sContentsMessage1`. Were it
-  let go, it would outlast its spell and be kept for good.
+  let go, it would outlast its spell and be kept for good. A **worn constant enchantment** with a Bound effect works
+  the same way: its constant effects are a spell that lasts while the item is worn, so the bound item is added and
+  equipped as it goes on, and removed (the replaced item back in hand) when it comes off, is dropped, sold or put away.
 - **Extra Spell** (126): on an NPC, unequips everything except weapon, ammunition, pants, and (if not armor) the left
   hand; autoequip again when it ends. The player is not unequipped.
 - **Soul Trap** (58): on the death of a creature with a soul value > 0 that has Soul Trap > 0 with a *caster who is an
@@ -303,7 +305,11 @@ failed before the fix:
 5. **Disintegrate Armor** (`bug-disintegrate-armor-order`) took the first armor in the inventory; now the order above.
 6. **Bound items** (`bug-bound-boots-beast`): a beast race's Bound Boots or Helm now ends at once. (`issue-112`) The
    inventory's Drop let a bound item go to the ground, where it stayed when the spell ended; now it is refused.
-   Containers already refused one; a merchant never lists one (it is worth nothing).
+   Containers already refused one; a merchant never lists one (it is worth nothing). (`bug-constant-feather-bound`) A
+   worn constant-effect Bound item (a self-made amulet of Bound Longbow) only went on the ability list: no item came.
+   Now it is conjured while worn and goes when taken off; a timed Bound spell of the same item ending leaves the worn
+   one's. Ours does not save what the worn one replaced: after a load, taking it off removes the bound item but puts
+   nothing back in hand.
 7. **Damage Attribute / Skill** (`bug-damage-attribute-cap`) kept damage past 0; each moment is now capped at what is
    left.
 

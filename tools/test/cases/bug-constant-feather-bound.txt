@@ -1,0 +1,79 @@
+# Worn constant effects of Feather and of a Bound item (a self-made ring and amulet, as the Enchanting screen makes them).
+# Feather: a weak player (Strength 10: 50 to carry) with two cuirasses (56) can't move; the ring of Feather 30 put on, the
+# load is under the limit and they walk, and the inventory's load figure is the pack less 30 (it showed the bare pack
+# weight, so the ring looked as if it did nothing); taken off, stuck again. Bound Longbow: the amulet put on conjures the
+# bow in hand in place of the dagger (only the ability list had it, no bow came); taken off, the bow goes and the dagger
+# is back in hand; dropped while worn, the same. Bound Gauntlets: both hands. A timed Bound Longbow spell ending while
+# the amulet is worn leaves the amulet's bow (OpenMW: an item's constant effects are a spell lasting while it is worn)
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:7
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 SETATTR:strength:10
+0.3 0 0 0 0 SETSKILL:conjuration:600+SETATTR:intelligence:100+SETMAGICKA:2000
+0.3 0 0 0 0 GIVE:trollbone_cuirass
+0.3 0 0 0 0 GIVE:bonemold_cuirass
+0.3 0 0 0 0 GIVE:iron_dagger
+0.1 0 0 0 0 EXPECT:count:trollbone_cuirass:eq:1+EXPECT:count:bonemold_cuirass:eq:1
+0.3 0 0 0 0 ADDEFFECT:8:30:30:0:0
+0.3 0 0 0 0 MAKEITEM:common_ring_01:mw3ds_test_featherring:constant
+0.3 0 0 0 0 ADDEFFECT:125:1:1:0:0
+0.3 0 0 0 0 MAKEITEM:common_amulet_01:mw3ds_test_bowamulet:constant
+0.3 0 0 0 0 ADDEFFECT:131:1:1:0:0
+0.3 0 0 0 0 MAKEITEM:common_amulet_01:mw3ds_test_gauntletamulet:constant
+0.3 0 0 0 0 ADDEFFECT:125:1:1:5:0
+0.3 0 0 0 0 MAKESPELL:bowspell
+0.3 0 0 0 0 EQUIP:iron_dagger
+1 0 0 0
+0.1 0 0 0 0 EXPECT:capacity:eq:50+EXPECT:encumbrance:gt:50
+# 1. Over the limit: no step
+0.3 0 0 0 0 SNAP:encumbrance+SNAP:moved
+1.5 0 1 0
+0.1 0 0 0 0 EXPECT:moved:lt:5
+# 2. The Feather ring on: the load drops by 30, they walk, the inventory says so
+0.3 0 0 0 0 EQUIP:mw3ds_test_featherring
+1 0 0 0
+0.1 0 0 0 0 EXPECT:effect:8:ge:30+EXPECT:encumbrance:lt:@-29.5+EXPECT:encumbrance:gt:@-30.5+EXPECT:encumbrance:lt:50
+0.3 0 0 0 0 SNAP:moved
+1 0 1 0
+0.1 0 0 0 0 EXPECT:moved:gt:20
+0.3 0 0 0 0 SCREEN:inventory
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+# 3. The ring off: stuck again
+0.3 0 0 0 0 UNEQUIP:mw3ds_test_featherring
+1 0 0 0
+0.1 0 0 0 0 EXPECT:encumbrance:gt:50
+0.3 0 0 0 0 SNAP:moved
+1.5 0 1 0
+0.1 0 0 0 0 EXPECT:moved:lt:5
+# 4. The Bound Longbow amulet on: the bow in hand instead of the dagger
+0.3 0 0 0 0 EQUIP:mw3ds_test_bowamulet
+1 0 0 0
+0.1 0 0 0 0 EXPECT:count:bound_longbow:eq:1+EXPECT:equipped:bound_longbow:eq:1+EXPECT:equipped:iron_dagger:eq:0
+0.3 0 0 0 0 SCREEN:inventory
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 SCREEN:none
+# 5. A timed Bound Longbow cast and run out: the amulet's bow is still there
+0.3 0 0 0 0 CAST:mw3ds_test_bowspell
+2 0 0 0
+0.1 0 0 0 0 EXPECT:count:bound_longbow:ge:1
+8 0 0 0
+0.1 0 0 0 0 EXPECT:count:bound_longbow:eq:1+EXPECT:equipped:bound_longbow:eq:1
+# 6. The amulet off: the bow gone, the dagger back in hand
+0.3 0 0 0 0 UNEQUIP:mw3ds_test_bowamulet
+1 0 0 0
+0.1 0 0 0 0 EXPECT:count:bound_longbow:eq:0+EXPECT:equipped:iron_dagger:eq:1
+# 7. On again and dropped: the bow goes with it
+0.3 0 0 0 0 EQUIP:mw3ds_test_bowamulet
+1 0 0 0
+0.1 0 0 0 0 EXPECT:count:bound_longbow:eq:1
+0.3 0 0 0 0 DROPAIM:mw3ds_test_bowamulet
+1 0 0 0
+0.1 0 0 0 0 EXPECT:count:bound_longbow:eq:0+EXPECT:equipped:iron_dagger:eq:1
+# 8. Bound Gauntlets: both hands, both gone with the amulet
+0.3 0 0 0 0 EQUIP:mw3ds_test_gauntletamulet
+1 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:bound_gauntlet_left:eq:1+EXPECT:equipped:bound_gauntlet_right:eq:1
+0.3 0 0 0 0 UNEQUIP:mw3ds_test_gauntletamulet
+1 0 0 0
+0.1 0 0 0 0 EXPECT:count:bound_gauntlet_left:eq:0+EXPECT:count:bound_gauntlet_right:eq:0

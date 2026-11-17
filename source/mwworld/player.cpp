@@ -44,6 +44,19 @@ const BirthDef* World::birthsign() const
 	return nullptr;
 }
 
+// The player's load (OpenMW's Actor::getEncumbrance): what the pack weighs, less Feather, plus Burden, never below 0;
+// nothing in werewolf form (Npc::getEncumbrance)
+float World::encumbrance() const
+{
+	if (stats.werewolf)
+		return 0.0f;
+	float weight = 0.0f;
+	for (auto& it : inventory)
+		if (const Object* o = game.object(it))
+			weight += o->weight * it.count;
+	return fmaxf(0.0f, weight - effectTotal(8) + effectTotal(7));     // Feather, Burden
+}
+
 // Character creation rules: race base attributes, +10 for the class's favored ones;
 // skills 5, minors +10, majors +25, race bonuses, +5 for the class specialization;
 // constant abilities from race and birthsign on top.

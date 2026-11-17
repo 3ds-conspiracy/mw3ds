@@ -396,6 +396,7 @@ void World::refreshStats()
 	float h = stats.health, m = stats.magicka, f = stats.fatigue;
 	recomputeStats();
 	keepBars(h, m, f);
+	wornBoundItems();
 }
 
 // An ability's or a worn constant enchantment's Fortify Health / Magicka / Fatigue coming or going moves the current

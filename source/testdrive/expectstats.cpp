@@ -80,6 +80,7 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 		v = fmaxf(0.0f, w.game.gmstf("fencumbrancestrmult", 5.0f) * st.attributes[ATTR_STRENGTH] + w.effectTotal(8) - w.effectTotal(7));
 		return true;
 	}
+	if (what == "encumbrance") { v = w.encumbrance(); return true; }          // the load the inventory shows (Feather, Burden in)
 	if (what == "hitchance") { v = s.playerDefense(false); return true; }              // Sanctuary, Chameleon, Invisibility
 	if (what == "detectchance") { v = w.effectTotal(40) + (w.effectTotal(39) > 0.0f ? 100.0f : 0.0f); return true; }
 	if (what == "levitating") { v = w.effectTotal(10) > 0.0f ? 1.0f : 0.0f; return true; }

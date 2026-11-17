@@ -9,6 +9,9 @@ Mirrors the OpenMW wiki page *Research:Movement*. Rules read from OpenMW's `mwcl
 
 - **Walk (NPC / player):** `fMinWalkSpeed + 0.01 x Speed x (fMaxWalkSpeed - fMinWalkSpeed)`, times `(1 -
   fEncumberedMoveEffect x load)` (load = encumbrance / capacity), not below 0. Sneaking: x `fSneakSpeedMultiplier`.
+  Encumbrance (`Actor::getEncumbrance`): the pack's weight less Feather plus Burden, never below 0 (0 as a werewolf);
+  capacity `fEncumbranceStrMult x Strength`. The inventory shows encumbrance (rounded up) over capacity: it showed the
+  bare pack weight, so a worn Feather ring looked as if it did nothing (`bug-constant-feather-bound`).
 - **Run:** walk x `(0.01 x Athletics x fAthleticsRunBonus + fBaseRunMultiplier)`. Sneaking never runs.
 - **Swim:** (run or walk) x `(1 + 0.01 x Swift Swim)` x `(fSwimRunBase + 0.01 x Athletics x fSwimRunAthleticsMult)`.
 - **Fly (Levitate, or a flying creature):** `fMinFlySpeed + 0.01 x (Speed + Levitate) x (fMaxFlySpeed -
