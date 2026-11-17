@@ -1655,8 +1655,12 @@ static int pickAmong(const World& w, const std::vector<int>& things, const float
 			best = body;
 	}
 	// A body's box is a crude one (the Journal of Tarhiel lands where he does): an item whose box lies within the
-	// body's and is on the ray is what the crosshair means, as the body's mesh would let the ray through to it
-	if (best >= 0 && w.refs[best].actor >= 0 && w.refs[best].dead)
+	// body's and is on the ray is what the crosshair means, as the body's mesh would let the ray through to it. So too
+	// a shut door's: the trapdoor down in Sorkvild's Tower has a box 272 wide reaching 100 over its lid, round the
+	// table beside it, and the daedric dagger on the table gave "Open Worn Dwemer Door". For a door the item has to lie
+	// wholly inside its box, so one just behind a door, in the next room, never takes the press
+	bool shutDoor = best >= 0 && w.refs[best].recType == REC_DOOR && w.refs[best].doorAngle == 0.0f;
+	if (best >= 0 && ((w.refs[best].actor >= 0 && w.refs[best].dead) || shutDoor))
 	{
 		const Ref& body = w.refs[best];
 		int item = -1;
@@ -1668,7 +1672,8 @@ static int pickAmong(const World& w, const std::vector<int>& things, const float
 				continue;
 			bool inside = true;
 			for (int k = 0; k < 3 && inside; k++)
-				inside = r.boxMax[k] >= body.boxMin[k] && r.boxMin[k] <= body.boxMax[k];
+				inside = shutDoor ? r.boxMin[k] >= body.boxMin[k] && r.boxMax[k] <= body.boxMax[k]
+					: r.boxMax[k] >= body.boxMin[k] && r.boxMin[k] <= body.boxMax[k];
 			float t = inside ? rayBoxEntry(r, eye, dir, itemT) : -1.0f;
 			if (t >= 0.0f && t < itemT)
 			{

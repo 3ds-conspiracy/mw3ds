@@ -1,0 +1,29 @@
+# issue-120: in Sorkvild's Tower at Dagon Fel the daedric dagger on the paper on the table beside the trapdoor down
+# can't be picked: with the crosshair on it the game says "Worn Dwemer Door" and A opens the trapdoor. The trapdoor's box
+# is 272 wide and reaches 100 over its lid, round the table's corner; the ray met that box before the dagger's. OpenMW
+# picks by the meshes, and the dagger lies over the lid: an item wholly inside a shut door's box and on the ray is what
+# the crosshair means. Aimed at the lid itself, the trapdoor is still what the crosshair is on. Pressed by hand, as a
+# player does
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Dagon_Fel,_Sorkvild's_Tower
+3 0 0 0
+# (Hlora Long-Leg downstairs and Sorkvild the Raven upstairs attack on sight: set aside, their blows knock the aim off
+# and are not what this hangs on)
+0.3 0 0 0 0 DISABLE:hlora_long-leg
+0.3 0 0 0 0 DISABLE:sorkvild_the_raven
+0.3 0 0 0 0 TPIN:3450:-2900:15500:90
+3 0 0 0
+0.3 0 0 0 0 EXPECT:count:daedric_dagger:eq:0
+# 1. The dagger on the table: the crosshair is on it, not on the trapdoor
+0.3 0 0 0 0 FACE:daedric_dagger:mid
+2.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:target:eq:1+EXPECT:refaimed:daedric_dagger:eq:1+EXPECT:refaimed:door_dwrv_loaddown00:eq:0
+# 2. A takes it
+0.3 0 0 0 0 A
+2 0 0 0
+0.3 0 0 0 0 EXPECT:count:daedric_dagger:eq:1+EXPECT:cell:Dagon_Fel,_Sorkvild's_Tower
+# 3. The trapdoor's lid, past the table: still the trapdoor
+0.3 0 0 0 0 FACE:door_dwrv_loaddown00:mid
+2.5 0 0 0 0 SHOT
+0.3 0 0 0 0 EXPECT:refaimed:door_dwrv_loaddown00:eq:1
