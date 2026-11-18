@@ -7,7 +7,8 @@
 --saves <folder>: keep test_*.sav checkpoints there between native runs. --exe: another native build (build.py with
 MW3DS_NATIVE_BUILD). A case with "# data: tribunal" in its first lines runs on the Tribunal data (out/tribunal) unless
 --data already holds Tribunal (out/tb); "# data: bloodmoon" on the Tribunal + Bloodmoon data (out/tb) unless --data
-already holds Bloodmoon; "# data: vanilla" is skipped on data with an add-on.
+already holds Bloodmoon; "# data: vanilla" is skipped on data with an add-on. Either add-on folder missing: the CIA
+build's out/data-tribunal-bloodmoon. Data never converted (no game.json): the case fails at once.
 --native draws in software (NATIVE_DRAW=1) only when the case has a SHOT step, or with --draw.
 The last line is the verdict, "RESULT: PASS|FAIL (...)".
 """
@@ -39,10 +40,23 @@ def count(lines, pattern):
     return sum(1 for ln in lines if rx.search(ln))
 
 
+def data_path(data):
+    return Path(data) if Path(data).is_absolute() else ROOT / data
+
+
+def addon_data(want):
+    """The add-on data folder to use: `want` when it has been converted, else the CIA build's Tribunal + Bloodmoon
+    conversion (out/data-tribunal-bloodmoon, which holds both add-ons) when that one has been."""
+    if (data_path(want) / "game.json").is_file():
+        return want
+    fallback = "out/data-tribunal-bloodmoon"
+    return fallback if (data_path(fallback) / "game.json").is_file() else want
+
+
 def data_addons(data):
     """The add-ons a data folder was converted with (game.json "addons": "tribunal", "bloodmoon"); without a
     game.json, guessed from the folder's name (out/tribunal, out/data-tribunal-bloodmoon, out/tb)."""
-    path = Path(data) if Path(data).is_absolute() else ROOT / data
+    path = data_path(data)
     try:
         raw = (path / "game.json").read_bytes()
         # (zlib-packed behind an 8-byte "MWZ1" + length header, as level.py writes it)
@@ -74,13 +88,18 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
     # --data holds Bloodmoon already
     tribunal_case = any(re.match(r"^#\s*data:\s*tribunal\s*$", ln) for ln in inputs[:5])
     bloodmoon_case = any(re.match(r"^#\s*data:\s*bloodmoon\s*$", ln) for ln in inputs[:5])
+    # (when that folder isn't there: the CIA build's Tribunal + Bloodmoon conversion, out/data-tribunal-bloodmoon)
     addons = data_addons(data)
     if bloodmoon_case and "bloodmoon" not in addons:
-        data = os.environ.get("MW3DS_BLOODMOON_DATA") or "out/tb"
+        data = addon_data(os.environ.get("MW3DS_BLOODMOON_DATA") or "out/tb")
         addons = data_addons(data)
     elif tribunal_case and "tribunal" not in addons:
-        data = os.environ.get("MW3DS_TRIBUNAL_DATA") or "out/tribunal"
+        data = addon_data(os.environ.get("MW3DS_TRIBUNAL_DATA") or "out/tribunal")
         addons = data_addons(data)
+    # Data with no game.json was never converted (or was deleted): the game would wait at its title screen until the
+    # run's time ran out, so the case fails at once instead
+    if not (data_path(data) / "game.json").is_file():
+        return [f"== {test}", f"RESULT: FAIL (no converted data at {data}: no game.json)"]
     on_tribunal = "tribunal" in addons
     # "# data: vanilla": a case about the game without the add-ons (trib-vanilla-off): skipped on data with one
     if addons and any(re.match(r"^#\s*data:\s*vanilla\s*$", ln) for ln in inputs[:5]):
