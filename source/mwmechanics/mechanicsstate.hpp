@@ -28,6 +28,10 @@ struct MechanicsState
 	u8 bloodModels = 0;               // the blood splat models hits have thrown so far (bits 0..2; the test driver's bloodmodels)
 	bool playerDead = false;
 	bool weaponDrawn = false;         // weapon (or fists) out: the view model shows it
+	// Magic raised (Morrowind's Ready Magic, OpenMW's draw state Spell: the Classic layout's Y): the hands are up, the
+	// weapon away, and the attack button casts the selected spell
+	bool spellReadied = false;
+	bool castHeld = false;            // ... the attack button was down last frame: one cast a press
 	float drawTimer = 0.0f;           // > 0 while the weapon comes out; the wind-up waits for it
 	bool pickQueued = false;          // a press while the lockpick / probe came up: tried once it's up
 	float sheatheTimer = 0.0f;        // seconds without fighting; the weapon goes away after a while

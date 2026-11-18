@@ -285,6 +285,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	bool centerOnExterior(int x, int y) override;
 	bool toggleGodMode() override { testGod = !testGod; testGodBlows = false; return testGod; }
 	bool isWeaponDrawn(int ref) override;
+	bool isSpellReadied(int ref) override;
 	void explodeSpell(int ref, const std::string& spell) override;
 	bool moviePlaying() const { return movieFile != nullptr; }
 	void movieUpdate(float dt);                   // next frame when it's time; the end
@@ -548,6 +549,9 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	bool wantQuit = false;            // Quit in the game menu: main loop exits
 	const char* dataDir = "";
 	void openRest(bool bed);
+	bool restEnabled();                           // the rest menu may open (EnableRest, or character creation over)
+	void cycleWeapon(int dir);                    // Next / Previous Weapon: -1 the previous, 1 the next (mwgui/inventorywindow.cpp)
+	void cycleSpell(int dir);                     // Next / Previous Spell (mwgui/spellwindow.cpp)
 	void drawRest();
 	void restHour();
 	void finishRest();

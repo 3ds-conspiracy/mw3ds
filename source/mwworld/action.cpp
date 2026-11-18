@@ -133,7 +133,8 @@ void Session::aimAndActivate(const PlayerInput& in, bool menu)
 	target = menu ? -1 : worldPick(w, eye, dir, kReach + w.effectTotal(59) * 22.0f);
 	// (GoldenEye: on a tap of A, let go before it aimed; the press itself is kept from the screens either way)
 	// (the stylus layouts: D-pad up, or the HUD's Use, through in.activate; A is the stylus hand's, or a move)
-	bool byInput = g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout();
+	// (the Classic layout on an Old 3DS: GoldenEye's A)
+	bool byInput = g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout() || classicOld();
 	if (!menu && ((!stylusLayout() && (uiIn().down & KEY_A)) || (byInput && in.activate)))
 	{
 		// (every layout: the A that talks isn't also the dialogue's first press, picking its top row, now Persuasion)

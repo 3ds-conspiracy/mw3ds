@@ -373,6 +373,7 @@ bool Engine::frame()
 	// The scripted tests press the classic buttons, or the layout a CONTROLS: step chose
 	if (session->autotest)
 		g_controlLayout = g_testLayout;
+	g_testScripted = session->autotest;
 	g_menuForInput = session->menuOpen();
 	PlayerInput in = readInput(held, down, up, dt);
 	bool autoShotNow = false;

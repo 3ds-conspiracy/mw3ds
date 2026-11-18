@@ -137,6 +137,15 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	PlayerInput in = inRaw;
 	playerControls(in, menu);
 	povUpdate(in, menu, dt);
+	// Classic: B opens the menus (the inventory first, as Morrowind's B), SELECT the rest menu
+	if (in.openMenus && !menu && !playerDead && (w.menusEnabled & MENU_INVENTORY))
+	{
+		// (the B that opens the menus isn't also the inventory's B, which closes it)
+		uiConsume(KEY_B);
+		openScreen(SCR_INVENTORY);
+	}
+	else if (in.rest && !menu && !playerDead && restEnabled())
+		openRest(false);
 	profAddOther(PROF_O_CONTROLS, t);
 	playerMove(in, dt, t);
 
@@ -185,7 +194,10 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	rechargeItems(dt);
 	castUpdate(dt);
 	// (a cast, like a blow, plays out before the next: OpenMW has one spellcast animation at a time)
-	if (in.cast && !menu && w.controlsEnabled && !playerDead && w.magicEnabled && vm.action != VM_CAST && vm.action != VM_FOLLOW
+	// (magic raised: the attack button casts, once a press, as Morrowind's Ready Magic then Use)
+	bool castNow = in.cast || (spellReadied && in.attack && !castHeld);
+	castHeld = in.attack;
+	if (castNow && !menu && w.controlsEnabled && !playerDead && w.magicEnabled && vm.action != VM_CAST && vm.action != VM_FOLLOW
 		&& !castBusy())
 	{
 		// (a werewolf casts nothing, nor uses quick keys: OpenMW's HUD refuses magic and items in wolf form)
@@ -194,6 +206,11 @@ void Session::update(const PlayerInput& inRaw, float dt)
 	}
 	if (in.quick >= 0 && !menu && w.controlsEnabled && !playerDead && !werewolfRefused())
 		useQuickKey(in.quick);
+	// Classic: X or Y held with L / R steps through the weapons or the spells (OpenMW's Next / Previous Weapon and Spell)
+	if (in.cycleWeapon && !menu && w.controlsEnabled && !playerDead)
+		cycleWeapon(in.cycleWeapon);
+	if (in.cycleSpell && !menu && w.controlsEnabled && !playerDead)
+		cycleSpell(in.cycleSpell);
 	profAddOther(PROF_O_EFFECTS, t);
 	MARK("scripts");
 	w.unsetUnwornEquip();

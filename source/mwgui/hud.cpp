@@ -448,6 +448,9 @@ u32 Session::hudKey(bool aim)
 		num(w.fightingEnabled);
 		num(g_controlLayout);
 		text(s.selectedSpell.c_str());
+		// (the Classic layout's hint: R casts while magic is up; shorter beside an Old 3DS's Rest button)
+		num(spellReadied);
+		num(classicOld());
 		return h;
 	}
 	// the header: the name, the race, the class
@@ -495,6 +498,9 @@ u32 Session::hudKey(bool aim)
 	num(w.journal.empty());
 	num(w.game.chargen);
 	num(w.game.map.file.empty());
+	// (the Classic layout's Rest button on an Old 3DS, and whether it can be used)
+	num(classicOld());
+	num(classicOld() && restEnabled());
 	return h;
 }
 
@@ -705,12 +711,13 @@ void Session::drawHud(int parts)
 			promptRows = 1;
 		if (w.fightingEnabled)
 		{
-			// (GoldenEye and the stylus layout: the Xbox buttons)
-			bool xbox = g_controlLayout == CONTROLS_XBOX || g_controlLayout == CONTROLS_GOLDENEYE || stylus;
-			std::string hint = w.stats.selectedSpell.empty() ? (xbox ? "R: attack (hold to wind up)" : "X: attack (hold to wind up)")
-				: std::string(xbox ? "R: attack   L: cast " : "X: attack   Y: cast ") + w.game.spells[w.stats.selectedSpell].name;
-			// Leave the quick key strip (from x 190) clear, and GoldenEye's 1st / 3rd button (from x 132)
-			float room = g_controlLayout == CONTROLS_GOLDENEYE ? 122.0f : 180.0f;
+			// (GoldenEye and the stylus layout: the Skyrim layout's buttons. Classic: R strikes, or casts while magic is up)
+			bool classic = g_controlLayout == CONTROLS_CLASSIC;
+			const std::string spellName = w.stats.selectedSpell.empty() ? "" : w.game.spells[w.stats.selectedSpell].name;
+			std::string hint = spellName.empty() ? "R: attack (hold to wind up)" : classic && spellReadied ? "R: cast " + spellName
+				: classic ? "R: attack   Y: magic" : "R: attack   L: cast " + spellName;
+			// Leave the quick key strip (from x 190) clear, and the Rest button of the Classic layout on an Old 3DS (from x 132)
+			float room = g_controlLayout == CONTROLS_GOLDENEYE || classicOld() ? 122.0f : 180.0f;
 			while (hint.size() > 3 && uiTextWidth(hint, 0.38f) > room)
 				hint = hint.substr(0, hint.size() - 4) + "...";
 			uiText(6, promptRows > 1 ? 192 : 190, 0.38f, col::textDim, hint);
@@ -720,6 +727,9 @@ void Session::drawHud(int parts)
 	{
 		drawQuickStrip();
 		uiTextCentered(250, 166, 0.36f, col::textDim, dateText());
+		// The Classic layout on an Old 3DS: SELECT is the view's there, so the rest menu is a button here
+		if (classicOld() && uiButton(132, 181, 52, 24, "Rest", false, restEnabled()))
+			openRest(false);
 	}
 	// the bounty on the minimap's foot, the frame rate in its top corner (the strip took their place)
 	if (part(HUD_MAP))

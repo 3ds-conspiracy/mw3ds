@@ -233,6 +233,45 @@ void Session::drawInventory()
 		closeScreen();
 }
 
+// Next / Previous Weapon (OpenMW's InventoryWindow::cycle; the Classic layout's X + L / R): through the carried weapons,
+// lockpicks and probes, by kind and name as the inventory lists them, past the broken ones, round from the last to the
+// first. Never ammunition; not in the middle of a blow or a cast, nor as a werewolf
+void Session::cycleWeapon(int dir)
+{
+	if (attackCharge >= 0.0f || castBusy() || vm.action == VM_FOLLOW || vm.action == VM_CAST || werewolfRefused())
+		return;
+	std::vector<int> index;
+	for (size_t i = 0; i < w.inventory.size(); i++)
+	{
+		const InventoryItem& it = w.inventory[i];
+		const Object* o = w.game.object(it.id);
+		bool hand = o && ((o->recType == REC_WEAP && o->subtype < WEAP_ARROW) || o->recType == REC_LOCK || o->recType == REC_PROB);
+		if (hand && (it.equipped || it.condition != 0))
+			index.push_back(i);
+	}
+	// (the one in hand is not put first here: the order must not change as the hand does)
+	sortListed(w.game, index, [&](int i) {
+		const InventoryItem& it = w.inventory[i];
+		return ItemListed{ w.game.object(it.id), false, it.condition, it.charge };
+	});
+	int n = index.size(), at = -1;
+	for (int k = 0; k < n; k++)
+		if (w.inventory[index[k]].equipped)
+			at = k;
+	for (int step = 1; step <= n; step++)
+	{
+		int k = at < 0 ? (dir > 0 ? step - 1 : n - step) : ((at + dir * step) % n + n) % n;
+		if (k == at)
+			break;
+		std::string name = w.game.object(w.inventory[index[k]].id)->name.str();
+		if (equipItem(index[k]))
+		{
+			notify(name);
+			return;
+		}
+	}
+}
+
 // The inventory's Drop: that many of the stack go into the world (they can be picked up again)
 void Session::dropFromInventory(int sel, int count)
 {

@@ -88,7 +88,11 @@ struct ScriptedInput
 	bool saveLegacy = false;          // SAVEV1:name: the save in version 1 (every cell inside the JSON: old saves still load)
 	std::string saveAs, loadFrom;     // SAVE:name / LOAD:name: sdmc:/3ds/mw3ds/test_<name>.sav (the sweeps
 	                                  // start every quest from the same state)
-	int layout = -1;                  // CONTROLS:classic|xbox|goldeneye|stylus: the button layout from this step on
+	int layout = -1;                  // CONTROLS:classic|xbox|skyrim|goldeneye|stylus: the button layout from this step on
+	// CONTROLS:classicpad|classicold: the Classic layout with the step's keys pressed as its own buttons (classicInput),
+	// on the full pad (1) or an Old 3DS's (2). Plain CONTROLS:classic keeps the driver's own keys (X strikes, Y casts,
+	// L sneaks ...), as every case written before the layout changed presses them
+	int classicPad = 0;
 	int gyroAim = -1;                 // GYROAIM:<percent>|off: gyro aim's sensitivity from this step on (0 off)
 	float gyroYaw = 0.0f, gyroPitch = 0.0f;   // GYRO:yaw:pitch: the console turning (degrees a second) this step
 	int skin = -1;                    // SKIN:gpu|cpu: how the actors of cells loaded from here on are skinned

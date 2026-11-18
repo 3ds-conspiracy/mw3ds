@@ -711,7 +711,9 @@ void ViewModel::update(float dt, bool moving, bool running)
 	case VM_IDLE:
 	{
 		std::string fam = group == "Bow" || group == "Throw" ? "1h" : group;
-		std::string name = (moving ? (running ? "Run" : "Walk") : "Idle") + (moving && fam == "Xbow" ? std::string("2c") : fam);
+		// (magic raised: IdleSpell standing or moving, the first-person rig has no walk for it)
+		std::string name = fam == "Spell" ? "IdleSpell"
+			: (moving ? (running ? "Run" : "Walk") : "Idle") + (moving && fam == "Xbow" ? std::string("2c") : fam);
 		if (!actorPlay(set, a, name.c_str(), ANIM_LOOP))
 			actorPlay(set, a, "Idle1h", ANIM_LOOP);
 		break;

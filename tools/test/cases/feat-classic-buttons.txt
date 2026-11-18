@@ -1,0 +1,126 @@
+# The Classic layout (Morrowind's on the Xbox) with its own buttons pressed (CONTROLS:classicpad), on a console with the
+# C-stick, ZL and ZR: X readies and puts away the weapon as it is let go, Y raises and lowers magic, R strikes (casts while
+# magic is up, once a press, and swings nothing), L jumps, B opens the menus (and the B that closes them opens nothing),
+# ZL held sneaks, ZR switches first / third person, SELECT opens the rest menu, the D-pad uses the quick keys.
+# X held with R / L: the next / previous weapon, round from the last to the first, and letting X go then readies
+# nothing; Y held with R / L the same through the spells. A trigger pressed under X neither jumps nor strikes
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:classicpad
+1 0 0 0
+# X: the weapon (the fists) out when it is let go, and away again
+0.1 0 0 0 0 X
+1 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1+EXPECT:spellreadied:eq:0
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0
+# Y: magic up and down; with the weapon out, magic up puts it away, and X then lowers magic and draws it
+0.1 0 0 0 0 Y
+1 0 0 0
+0.1 0 0 0 0 EXPECT:spellreadied:eq:1+EXPECT:weapondrawn:eq:0+EXPECT:vmgroup:IdleSpell
+# (a script sees it: GetSpellReadied)
+0.2 0 0 0 0 CON:set%timescale%to%player->GetSpellReadied
+0.1 0 0 0 0 EXPECT:global:timescale:eq:1
+0.2 0 0 0 0 CON:set%timescale%to%30
+0.1 0 0 0 0 Y
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:spellreadied:eq:0+EXPECT:weapondrawn:eq:0
+0.1 0 0 0 0 X
+1 0 0 0
+0.1 0 0 0 0 Y
+1 0 0 0
+0.1 0 0 0 0 EXPECT:spellreadied:eq:1+EXPECT:weapondrawn:eq:0
+0.1 0 0 0 0 X
+1 0 0 0
+0.1 0 0 0 0 EXPECT:spellreadied:eq:0+EXPECT:weapondrawn:eq:1
+0.1 0 0 0 0 X
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:0
+# R with magic up casts the selected spell, one cast a press however long it is held, and swings nothing
+0.3 0 0 0 0 BOOST:100+SPELL:fire%bite
+0.1 0 0 0 0 CAST:fire%bite
+2.5 0 0 0
+0.1 0 0 0 0 Y
+1 0 0 0
+0.1 0 0 0 0 SNAP:magicka+SNAP:casts+SNAP:swings
+1 0 0 0 0 R
+2 0 0 0
+0.1 0 0 0 0 EXPECT:magicka:lt:@0+EXPECT:casts:eq:@1+EXPECT:swings:eq:@0+EXPECT:spellreadied:eq:1
+# ... and with magic down it winds up and strikes
+0.1 0 0 0 0 Y
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:spellreadied:eq:0
+0.1 0 0 0 0 SNAP:casts+SNAP:swings
+1.2 0 0 0 0 R
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:swings:eq:@1+EXPECT:casts:eq:@0+EXPECT:weapondrawn:eq:1
+0.1 0 0 0 0 X
+1.5 0 0 0
+# L jumps
+0.1 0 0 0 0 SNAP:playerz
+0.1 0 0 0 0 L
+0.15 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:@10
+1.5 0 0 0
+# B opens the menus (the press that opens them does not close them again); B closes them and opens nothing
+0.1 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:inventory
+0.1 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none
+# ZL held sneaks, let go stands
+0.5 0 0 0 0 ZL
+0.1 0 0 0 0 ZL+EXPECT:sneaking:eq:1
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:0
+# ZR: first / third person
+0.1 0 0 0 0 ZR
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:1
+0.1 0 0 0 0 ZR
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:0
+# SELECT: the rest menu
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:rest
+0.1 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none
+# The D-pad uses a quick key
+0.3 0 0 0 0 GIVE:iron%dagger+GIVE:chitin%shortsword
+0.3 0 0 0 0 QUICKSET:0:inv:iron%dagger
+0.1 0 0 0 0 UP
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:iron%dagger:eq:1
+# X + R: the next weapon, and round again; X + L: the previous one. Letting X go readies nothing, L under X does not jump
+0.2 0 0 0 0 X
+0.1 0 0 0 0 X+R
+0.2 0 0 0 0 X
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:chitin%shortsword:eq:1+EXPECT:equipped:iron%dagger:eq:0+EXPECT:weapondrawn:eq:0
+0.2 0 0 0 0 X
+0.1 0 0 0 0 X+R
+0.2 0 0 0 0 X
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:iron%dagger:eq:1+EXPECT:equipped:chitin%shortsword:eq:0
+0.1 0 0 0 0 SNAP:playerz+SNAP:swings
+0.2 0 0 0 0 X
+0.1 0 0 0 0 X+L
+0.2 0 0 0 0 X
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:equipped:chitin%shortsword:eq:1+EXPECT:weapondrawn:eq:0+EXPECT:playerz:le:@5+EXPECT:swings:eq:@0
+# Y + R / L: through the spells and back; letting Y go raises nothing
+0.3 0 0 0 0 SPELL:fireball
+0.1 0 0 0 0 EXPECT:selspell:fire%bite
+0.2 0 0 0 0 Y
+0.1 0 0 0 0 Y+R
+0.2 0 0 0 0 Y
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:selspell:fireball+EXPECT:spellreadied:eq:0
+0.2 0 0 0 0 Y
+0.1 0 0 0 0 Y+L
+0.2 0 0 0 0 Y
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:selspell:fire%bite+EXPECT:spellreadied:eq:0

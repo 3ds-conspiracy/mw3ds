@@ -67,8 +67,9 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 	if (first && s.layout >= 0)
 	{
 		g_testLayout = g_controlLayout = s.layout;
-		static const char* kNames[4] = { "xbox", "classic", "goldeneye", "stylus" };
-		logf("test: controls %s", kNames[s.layout]);
+		g_testClassicPad = s.classicPad;
+		static const char* kNames[4] = { "skyrim", "classic", "goldeneye", "stylus" };
+		logf("test: controls %s%s", kNames[s.layout], s.classicPad == 1 ? " (its own buttons)" : s.classicPad == 2 ? " (its own buttons, an Old 3DS's)" : "");
 	}
 	if (first && s.frameCap >= 0)
 		g_testFrameCap = s.frameCap == 1;
@@ -96,6 +97,27 @@ void runScriptedStep(Session* session, ScriptedSteps& autoinput, size_t& inputIn
 		goldenEyeInput(state, ge, s.moveX, s.moveY, held, down, released, dt);
 		ge.jump |= s.jump && first;
 		in = ge;
+	}
+	else if (g_controlLayout == CONTROLS_CLASSIC && g_testClassicPad)
+	{
+		// CONTROLS:classicpad / classicold: the step's stick is the Circle Pad (its look the C-stick's on the full pad),
+		// its keys the buttons, through the Classic layout
+		PlayerInput cl = {};
+		cl.quick = -1;
+		cl.moveX = s.moveX;
+		cl.moveY = s.moveY;
+		bool oldPad = g_testClassicPad == 2;
+		if (!oldPad)
+			cl.lookX = s.lookX * lookScale();
+		// (pressed: the keys this step holds that the last one did not, as the console's buttons report them. A key held
+		// across steps, X under X+R, is one press)
+		static u32 lastHeld = 0;
+		u32 released = first ? lastHeld & ~held : 0, pressed = first ? held & ~lastHeld : 0;
+		lastHeld = held;
+		static ClassicState state;        // (its own: the console's pass above runs every frame too)
+		classicInput(state, cl, s.moveX, s.moveY, held, pressed, released, dt, oldPad);
+		cl.jump |= s.jump && first;
+		in = cl;
 	}
 	else if (stylusLayout())
 	{

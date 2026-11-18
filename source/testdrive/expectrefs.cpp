@@ -312,6 +312,11 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 		v = (float)s.attackKind;
 		return true;
 	}
+	if (what == "spellreadied")       // the player's magic is raised (Ready Magic): 1, else 0
+	{
+		v = s.spellReadied ? 1.0f : 0.0f;
+		return true;
+	}
 	if (what == "weapondrawn")
 	{
 		v = s.weaponDrawn ? 1.0f : 0.0f;

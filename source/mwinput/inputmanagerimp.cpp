@@ -86,6 +86,101 @@ void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, float padY,
 	in.povHeld = held & KEY_SELECT;
 }
 
+// The Classic layout: Morrowind's on the Xbox, on the 3DS's buttons. The same on every console but for what an Old 3DS
+// lacks (the C-stick, ZL and ZR), which is told by the console itself: no setting.
+//   Both: L jumps, R winds up and strikes (casts while magic is up), X readies or puts away the weapon, Y raises or
+//     lowers magic, A activates, START the game menu. X held with L / R: the previous / next weapon; Y held with
+//     L / R: the previous / next spell. Swimming and levitating go where the view points
+//   With the C-stick, ZL and ZR (a New 3DS, or an Old one once its Circle Pad Pro is used): the Circle Pad moves, as
+//     fast as it is pushed, the C-stick looks, the D-pad uses the quick keys, B opens the menus, ZL held sneaks, ZR
+//     first / third person (held: the camera turns and zooms), SELECT the rest menu
+//   Without them (an Old 3DS): GoldenEye's pad and D-pad (the pad walks and turns, A held aims with it and a tap of A
+//     activates, the D-pad sidesteps and looks up and down), B sneaks on / off, SELECT first / third person; the menus,
+//     the rest menu and the quick keys are the bottom screen's
+// X and Y do two things each, so they act when let go: Ready Weapon or Ready Magic if no trigger was pressed meanwhile.
+// A trigger pressed under X or Y does nothing else until it is let go (no jump, no blow)
+int g_testClassicPad = 0;          // scripted runs: 1 the full pad, 2 an Old 3DS's (CONTROLS:classicpad / classicold)
+bool g_testScripted = false;       // a scripted run: without CONTROLS:classicpad / classicold, the driver's own buttons
+static bool s_proSeen = false;     // an Old 3DS's Circle Pad Pro was used: ZL, ZR or its stick (until the game is left)
+
+bool classicOldPad()
+{
+	if (g_testClassicPad)
+		return g_testClassicPad == 2;
+	// (a scripted run's Classic is the driver's own buttons, A included, on either console)
+	if (g_testScripted)
+		return false;
+	return g_profile.slowCpu && !s_proSeen;
+}
+
+void classicInput(ClassicState& st, PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt, bool oldPad)
+{
+	const bool x = held & KEY_X, y = held & KEY_Y;
+	if (down & KEY_X) st.xChord = false;
+	if (down & KEY_Y) st.yChord = false;
+	int step = ((down & KEY_R) ? 1 : 0) - ((down & KEY_L) ? 1 : 0);
+	if (step && x)
+	{
+		in.cycleWeapon = step;
+		st.xChord = true;
+	}
+	else if (step && y)
+	{
+		in.cycleSpell = step;
+		st.yChord = true;
+	}
+	in.readyToggle = (up & KEY_X) && !st.xChord;
+	in.magicToggle = (up & KEY_Y) && !st.yChord;
+	if ((x || y) && (down & KEY_R))
+		st.rBlocked = true;
+	if (!(held & KEY_R))
+		st.rBlocked = false;
+	in.attack = (held & KEY_R) && !st.rBlocked;
+	in.jump = (down & KEY_L) && !x && !y;
+	in.cast = in.sheathe = in.fast = in.up = in.down = false;
+	if (!oldPad)
+	{
+		if (down & KEY_DUP) in.quick = 0;
+		if (down & KEY_DRIGHT) in.quick = 1;
+		if (down & KEY_DDOWN) in.quick = 2;
+		if (down & KEY_DLEFT) in.quick = 3;
+		in.openMenus = (down & KEY_B) && !g_menuForInput;     // (the B that closed a menu doesn't open one)
+		in.sneak = held & KEY_ZL;
+		in.togglePov = down & KEY_ZR;
+		in.povHeld = held & KEY_ZR;
+		in.rest = down & KEY_SELECT;
+		return;
+	}
+	// GoldenEye's pad: it walks and turns; A held roots the player and the pad aims, up and down too; a tap of A activates
+	const float kTap = 0.25f;
+	if (held & KEY_A)
+		st.aHeld += dt;
+	in.activate = (up & KEY_A) && st.aHeld < kTap;
+	if (!(held & KEY_A))
+		st.aHeld = 0.0f;
+	float turn = g_geTurnSpeed / 100.0f, aim = g_lookSpeed / 100.0f;
+	in.moveX = in.moveY = 0.0f;
+	if (held & KEY_A)
+	{
+		in.lookX += padX * aim;
+		in.lookY += padY * aim;
+	}
+	else
+	{
+		in.lookX += padX * turn;
+		in.moveY = padY;
+	}
+	if (held & KEY_DLEFT) in.moveX -= 1.0f;
+	if (held & KEY_DRIGHT) in.moveX += 1.0f;
+	if (held & KEY_DUP) in.lookY += aim;
+	if (held & KEY_DDOWN) in.lookY -= aim;
+	if ((down & KEY_B) && !g_menuForInput)
+		st.sneakOn = !st.sneakOn;
+	in.sneak = st.sneakOn;
+	in.togglePov = down & KEY_SELECT;
+	in.povHeld = held & KEY_SELECT;
+}
+
 // Gyro aim (g_gyroAim): the console's turn rates into the input, degrees a second, scaled by the sensitivity.
 // The sensor runs only while it is on; the resting offset is taken off and turns under kSoft a second softened
 static bool s_gyroOn = false;
@@ -197,10 +292,10 @@ PlayerInput invertLook(PlayerInput in)
 }
 
 // The stylus layout's buttons: GoldenEye's (no ZL / ZR, which an Old 3DS lacks), with the stylus to look. The Circle
-// Pad moves as the Xbox layout's stick does (walks and sidesteps, pushed far runs: the stylus turns), A activates, R
+// Pad moves as the Skyrim layout's stick does (walks and sidesteps, pushed far runs: the stylus turns), A activates, R
 // winds up and strikes, L casts, X readies or puts away the weapon, Y jumps (held: swims up, rises), B held sneaks,
 // SELECT first / third person, the D-pad sidesteps (left / right) and looks up / down. A New 3DS's or a Circle Pad
-// Pro's extras, never needed: the C-stick looks too, ZL held sneaks, ZR held rises (as the Xbox layout's). The HUD's
+// Pro's extras, never needed: the C-stick looks too, ZL held sneaks, ZR held rises (as the Skyrim layout's). The HUD's
 // glass buttons are the same buttons under the stylus (Session::stylusButtons), but for B: on / off there
 void stylusInput(PlayerInput& in, u32 held, u32 down)
 {
@@ -306,10 +401,10 @@ void stylusLook(UiInput& ui, PlayerInput& in, bool inPlay)
 	ui.dragDX = ui.dragDY = 0;
 }
 
-// Four button layouts (Options > Controls; START and SELECT the same in all), the stylus layout's in stylusInput:
-//   Xbox (Morrowind on the Xbox): R attack, L cast, X ready / put away the weapon, Y jump, B free (walk or run by the pad),
-//     ZL sneak (down when levitating), ZR up when levitating, D-pad quick keys
-//   Classic: X attack, Y cast, B jump, L sneak, ZL + D-pad quick keys, D-pad look, ZL + X put away
+// Four button layouts (Options > Controls; START the same in all), the stylus layout's in stylusInput:
+//   Skyrim: R attack, L cast, X ready / put away the weapon, Y jump, B free (walk or run by the pad),
+//     ZL sneak (down when levitating), ZR up when levitating, D-pad quick keys, SELECT first / third person
+//   Classic (Morrowind on the Xbox): see classicInput
 //   GoldenEye: see goldenEyeInput
 PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 {
@@ -325,6 +420,12 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 	in.lookY = cy * lookScale();
 	in.quick = -1;
 	gyroInput(in);
+	// (an Old 3DS's Circle Pad Pro shows itself by being used: from then on the Classic layout is the full pad's)
+	if (g_profile.slowCpu && !s_proSeen && ((held & (KEY_ZL | KEY_ZR)) || cx != 0.0f || cy != 0.0f))
+	{
+		s_proSeen = true;
+		logf("input: Circle Pad Pro in use: the Classic layout reads its stick, ZL and ZR");
+	}
 	if (g_controlLayout == CONTROLS_GOLDENEYE)
 	{
 		static GoldenEyeState state;
@@ -336,7 +437,7 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 		stylusInput(in, held, down);
 		return invertLook(in);
 	}
-	if (g_controlLayout == CONTROLS_XBOX)
+	if (g_controlLayout == CONTROLS_SKYRIM)
 	{
 		if (down & KEY_DUP) in.quick = 0;
 		if (down & KEY_DRIGHT) in.quick = 1;
@@ -354,31 +455,10 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 		in.sneak = held & KEY_ZL;
 		return invertLook(in);
 	}
-	if (held & KEY_ZL)
-	{
-		// quick keys: ZL + a direction
-		if (down & KEY_DUP) in.quick = 0;
-		if (down & KEY_DRIGHT) in.quick = 1;
-		if (down & KEY_DDOWN) in.quick = 2;
-		if (down & KEY_DLEFT) in.quick = 3;
-	}
-	else
-	{
-		if (held & KEY_DRIGHT) in.lookX += lookScale();
-		if (held & KEY_DLEFT)  in.lookX -= lookScale();
-		if (held & KEY_DUP)    in.lookY += lookScale();
-		if (held & KEY_DDOWN)  in.lookY -= lookScale();
-	}
-	in.jump = down & KEY_B;
-	in.togglePov = down & KEY_SELECT;
-	in.povHeld = held & KEY_SELECT;
-	in.fast = held & KEY_ZR;
-	in.up = held & KEY_R;
-	in.down = held & KEY_L;
-	// ZL + X puts the weapon away (Morrowind's Ready Weapon toggle); X alone draws and strikes
-	in.sheathe = (held & KEY_ZL) && (down & KEY_X);
-	in.attack = (held & KEY_X) && !(held & KEY_ZL);
-	in.cast = down & KEY_Y;
-	in.sneak = held & KEY_L;
+	static ClassicState classic;
+	bool oldPad = classicOldPad();
+	if (oldPad)
+		in.lookX = in.lookY = 0.0f;      // (no second stick: the pad turns, in classicInput)
+	classicInput(classic, in, in.moveX, in.moveY, held, down, up, dt, oldPad);
 	return invertLook(in);
 }

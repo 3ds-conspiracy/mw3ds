@@ -36,8 +36,13 @@ extern float g_profParts[PROF_COUNT];
 #include "platform/console.hpp"
 #include "mwgui/console.hpp"
 
-enum { CONTROLS_XBOX = 0, CONTROLS_CLASSIC = 1, CONTROLS_GOLDENEYE = 2, CONTROLS_STYLUS = 3 };
+// (Skyrim was named Xbox: settings.txt still says controls=xbox for it, so a choice saved before the name changed holds)
+enum { CONTROLS_SKYRIM = 0, CONTROLS_CLASSIC = 1, CONTROLS_GOLDENEYE = 2, CONTROLS_STYLUS = 3 };
 extern int g_controlLayout;   // button layout (settings.txt controls=xbox|classic|goldeneye|stylus)
+// The Classic layout on a console without the C-stick, ZL and ZR (an Old 3DS whose Circle Pad Pro, if any, is unused):
+// GoldenEye's pad and D-pad under Classic's buttons (mwinput/inputmanagerimp.cpp)
+bool classicOldPad();
+inline bool classicOld() { return g_controlLayout == CONTROLS_CLASSIC && classicOldPad(); }
 // The stylus layout: the stylus in the right hand slides on the bottom screen to look, the left hand moves and fights
 // on the Circle Pad, the D-pad and L (the stick is on the left: a left-hand stylus would leave no stick to walk with)
 inline bool stylusLayout() { return g_controlLayout == CONTROLS_STYLUS; }

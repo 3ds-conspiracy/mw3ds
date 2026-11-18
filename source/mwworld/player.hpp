@@ -14,12 +14,18 @@ struct PlayerInput
 	bool up, down;        // fly mode only
 	bool attack;          // held: winding up a blow, released: strike
 	bool sheathe;         // put the weapon (or fists) away (classic: ZL + X)
-	bool readyToggle;     // ready / put away the weapon (Xbox layout: X)
+	bool readyToggle;     // ready / put away the weapon (X)
 	bool cast;            // pressed: cast the selected spell
 	bool sneak;           // held: sneak (L, outside fly mode)
 	int quick = -1;       // quick key used this frame (ZL + D-pad: 0 up, 1 right, 2 down, 3 left)
 	bool togglePov = false;  // SELECT pressed: a tap switches first / third person (Session::povUpdate)
 	bool povHeld = false;    // SELECT held: a hold turns the camera round the player
+	// Classic (Morrowind on the Xbox): Y raises or lowers magic (R casts while it is up), X or Y held with L / R steps to
+	// the previous / next weapon or spell, B opens the menus, SELECT the rest menu
+	bool magicToggle = false;
+	int cycleWeapon = 0, cycleSpell = 0;    // -1 the previous, 1 the next
+	bool openMenus = false;
+	bool rest = false;
 	bool activate = false;   // GoldenEye: a tap of A (let go before it aimed): activate (the other layouts: A pressed)
 	// Gyro aim: how fast the console turns, degrees a second (sensitivity applied), around its up axis (+ right)
 	// and across (+ up). Turned into view angles one to one, not through the stick's look speed

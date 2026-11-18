@@ -298,7 +298,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		return;
 	const Object* wpn = playerWeapon();
 	InventoryItem* toolItem = playerToolItem();
-	vm.group = vmGroup(wpn, toolItem != nullptr);
+	vm.group = spellReadied ? "Spell" : vmGroup(wpn, toolItem != nullptr);
 	std::string shield;
 	for (auto& it : w.inventory)
 		if (it.equipped && w.game.object(it) && w.game.object(it)->recType == REC_ARMO
@@ -311,7 +311,7 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 	// out (OpenMW's updateCarriedLeftVisible). The left arm holds it up with the Torch group in first person too (OpenMW
 	// plays "torch" on the left arm whatever the view); with the weapon away only the torch is drawn
 	std::string light = playerTorchItem();
-	bool torchOut = !light.empty() && shield.empty() && !casting && (!weaponDrawn || oneHanded);
+	bool torchOut = !light.empty() && shield.empty() && !casting && !spellReadied && (!weaponDrawn || oneHanded);
 	vm.torch = torchOut;
 	vm.set.actors[0].torchOut = torchOut;
 	// The arrow or bolt in the bow or crossbow (OpenMW's attachArrow / releaseArrow): an arrow goes on the string at
@@ -341,9 +341,11 @@ void Session::viewModelUpdate(const PlayerInput& in, float dt)
 		vm.play(VM_KNOCKDOWN, "KnockDown");
 	if (blockUntil > w.time && vm.action == VM_IDLE && !shield.empty())
 		vm.play(VM_BLOCK, "Block");
-	if (!weaponDrawn && vm.action == VM_IDLE)
+	// (magic raised keeps the arms in view as a weapon out does: the empty hands' IdleSpell)
+	const bool handsUp = weaponDrawn || spellReadied;
+	if (!handsUp && vm.action == VM_IDLE)
 		vm.action = VM_NONE;
-	if (weaponDrawn && vm.action == VM_NONE)
+	if (handsUp && vm.action == VM_NONE)
 		vm.action = VM_IDLE;
 	bool moving = fabsf(in.moveX) + fabsf(in.moveY) > 0.2f;
 	vm.update(dt, moving, !w.player.sneaking);

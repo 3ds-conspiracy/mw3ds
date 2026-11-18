@@ -23,6 +23,13 @@ bool Session::enemiesNear()
 	return enemies;
 }
 
+// OpenMW's getRestEnabled: EnableRest has run, or character creation has finished (CharGenState -1)
+bool Session::restEnabled()
+{
+	auto cg = w.globals.find("chargenstate");
+	return (w.menusEnabled & MENU_REST) || !w.game.chargen || (cg != w.globals.end() && cg->second == -1.0f);
+}
+
 // Morrowind's refusals first (World::canRest): enemies about, in the air or in water. Where sleeping is
 // illegal only waiting is offered, except in a bed.
 void Session::openRest(bool bed)

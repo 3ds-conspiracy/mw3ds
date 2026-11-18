@@ -643,6 +643,13 @@ bool World::shownOwned(int ri) const
 	return ownedByOther(ri);
 }
 
+// GetSpellReadied: the player's magic raised (Ready Magic). People and creatures here cast straight from their fight
+// and hold no such stance: never for them
+bool Session::isSpellReadied(int ref)
+{
+	return ref < 0 && spellReadied;
+}
+
 // GetWeaponDrawn: the player's weapon (or fists) out; a person or creature fighting has its weapon out (their draw state
 // follows the fight here)
 bool Session::isWeaponDrawn(int ref)

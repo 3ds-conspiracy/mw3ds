@@ -11,7 +11,7 @@
 // How far (pixels) a finger may wander between press and release and still tap
 static const int kTapSlop = 12;
 
-// GoldenEye (Options > Controls): one stick, for an Old 3DS without the C-stick and ZL / ZR, on the Xbox layout's
+// GoldenEye (Options > Controls): one stick, for an Old 3DS without the C-stick and ZL / ZR, on the Skyrim layout's
 // buttons. The Circle Pad walks (up / down) and turns (left / right); an aim button held roots the player and the
 // pad aims instead, up and down too, at the look speed (half of it was GoldenEye's aim: too slow on the console): A held,
 // or ZL / ZR (Circle Pad Pro / New 3DS). R winds up the attack and leaves the pad walking (it aimed too: the player stood
@@ -28,6 +28,18 @@ struct GoldenEyeState
 
 // A menu is up this frame (the frame loop sets it before the input is read): GoldenEye's B sneaks only outside one
 extern bool g_menuForInput;
+
+// The Classic layout (classicInput, mwinput/inputmanagerimp.cpp): what it keeps from frame to frame
+struct ClassicState
+{
+	bool xChord = false, yChord = false;   // a trigger was pressed while X / Y was held: letting it go readies nothing
+	bool rBlocked = false;                 // R went down under X or Y: no blow until it is let go
+	float aHeld = 0.0f;                    // an Old 3DS's pad: seconds A has been held (a tap activates, a hold aims)
+	bool sneakOn = false;                  // ... and its B: sneaking on / off
+};
+extern int g_testClassicPad;
+extern bool g_testScripted;
+void classicInput(ClassicState& st, PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt, bool oldPad);
 
 // The C-stick up / down for the menus' text panes: -1 (up) to 1 (down), nothing inside the dead zone
 float readStickScroll();

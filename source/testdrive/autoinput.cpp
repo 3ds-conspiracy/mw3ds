@@ -126,8 +126,10 @@ static u32 parseKeys(const char* s, int* tapX, int* tapY, ScriptedInput* step)
 		}
 		if (strncmp(tok, "CONTROLS:", 9) == 0)
 		{
-			step->layout = strcmp(tok + 9, "goldeneye") == 0 ? CONTROLS_GOLDENEYE : strcmp(tok + 9, "xbox") == 0 ? CONTROLS_XBOX
+			step->layout = strcmp(tok + 9, "goldeneye") == 0 ? CONTROLS_GOLDENEYE
+				: strcmp(tok + 9, "xbox") == 0 || strcmp(tok + 9, "skyrim") == 0 ? CONTROLS_SKYRIM
 				: strcmp(tok + 9, "stylus") == 0 ? CONTROLS_STYLUS : CONTROLS_CLASSIC;
+			step->classicPad = strcmp(tok + 9, "classicpad") == 0 ? 1 : strcmp(tok + 9, "classicold") == 0 ? 2 : 0;
 			continue;
 		}
 		if (strcmp(tok, "JAIL") == 0)

@@ -349,6 +349,9 @@ std::optional<float> miscExtensions(Ctx& c, const Node& n, World& w, bool onPlay
 	// The player's or a person's weapon (or fists) out and ready (OpenMW: the draw state is Weapon)
 	case F_GETWEAPONDRAWN:
 		return c.host.isWeaponDrawn(onPlayer || !r ? -1 : ref) ? 1.0f : 0.0f;
+	// The player's magic raised (OpenMW: the draw state is Spell)
+	case F_GETSPELLREADIED:
+		return c.host.isSpellReadied(onPlayer || !r ? -1 : ref) ? 1.0f : 0.0f;
 	// SetDelete 1: gone for good, as disabled (and saved so); 0 brings it back (OpenMW's deleteObject / undeleteObject)
 	case F_SETDELETE:
 		if (r && !onPlayer)

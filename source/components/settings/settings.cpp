@@ -15,7 +15,7 @@
 #include <malloc.h>
 
 static const char* kSettingsPath = "sdmc:/3ds/mw3ds/settings.txt";
-int g_controlLayout = CONTROLS_XBOX;
+int g_controlLayout = CONTROLS_SKYRIM;
 int g_gyroAim = 0;                // gyro aim starts off (until it is tried on the device): Options turns it on
 int g_lookSpeed = kLookDefaultPct, g_geTurnSpeed = 100, g_stylusSpeed = 100;
 bool g_stylusButtons = true;
@@ -61,7 +61,8 @@ void Session::loadSettings()
 		else if (strncmp(line, "numbers=off", 11) == 0) hitIndicators = false;
 		else if (strncmp(line, "bestattack=", 11) == 0) bestAttack = strncmp(line + 11, "on", 2) == 0;
 		else if (strncmp(line, "combat=vanilla", 14) == 0) combatMode = COMBAT_VANILLA;
-		else if (strncmp(line, "controls=xbox", 13) == 0) g_controlLayout = CONTROLS_XBOX;
+		else if (strncmp(line, "controls=xbox", 13) == 0) g_controlLayout = CONTROLS_SKYRIM;
+		else if (strncmp(line, "controls=skyrim", 15) == 0) g_controlLayout = CONTROLS_SKYRIM;
 		else if (strncmp(line, "controls=goldeneye", 18) == 0) g_controlLayout = CONTROLS_GOLDENEYE;
 		else if (strncmp(line, "controls=stylus", 15) == 0) g_controlLayout = CONTROLS_STYLUS;
 		else if (strncmp(line, "gyroaim=off", 11) == 0) gyroOff = true;
@@ -106,6 +107,7 @@ void Session::saveSettings()
 	if (!f)
 		return;
 	fprintf(f, "difficulty=%d\neffects=%d\nmusic=%d\n", difficulty, effectsVolume, musicVolume);
+	// (the Skyrim layout is written under the name it had, xbox: a file from either build reads in the other)
 	static const char* kLayouts[4] = { "xbox", "classic", "goldeneye", "stylus" };
 	fprintf(f, "controls=%s\n", kLayouts[g_controlLayout >= 0 && g_controlLayout < 4 ? g_controlLayout : 0]);
 	if (g_gyroAim > 0)

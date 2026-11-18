@@ -48,9 +48,7 @@ void Session::drawGameMenu()
 		return;
 	}
 	const UiInput& in = uiIn();
-	// OpenMW's getRestEnabled: EnableRest has run, or character creation has finished (CharGenState -1)
-	auto cg = w.globals.find("chargenstate");
-	bool rest = (w.menusEnabled & MENU_REST) || !w.game.chargen || (cg != w.globals.end() && cg->second == -1.0f);
+	bool rest = restEnabled();
 	std::vector<std::string> labels = { "Return to game", "Save / Load", w.game.gmst("srestmenuxbox", "Rest / Wait"),
 		w.game.gmst("soptions", "Options"), "Save and quit" };
 	bool enabled[5] = { true, !wantName, rest, true, pendingMenus.empty() };

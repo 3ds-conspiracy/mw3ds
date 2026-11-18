@@ -715,9 +715,37 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 		if (wpn)
 			playSound(-1, weaponUpSound(wpn));
 	};
-	// Ready Weapon (Xbox layout: X): out if it's away; away if it's out (below)
+	// Ready Weapon (X): out if it's away; away if it's out (below)
 	// (a cast is one upper-body state for its whole animation: no drawing, sheathing or blow until it ends)
 	bool casting = castLock > 0.0f || vm.action == VM_CAST;
+	// Ready Magic (Classic: Y; Morrowind's Ready Magic, OpenMW's draw state Spell): the hands come up and the weapon goes
+	// away; again, or Ready Weapon, and they go down. Up, the attack button casts (Session::update) and swings nothing.
+	// Not as a werewolf, nor while a script has magic off (OpenMW's toggleSpell refuses both)
+	bool canMagic = !menu && w.controlsEnabled && w.magicEnabled && w.player.knockTimer <= 0.0f && !w.stats.werewolf;
+	if (spellReadied && (w.stats.werewolf || !w.magicEnabled || playerDead))
+		spellReadied = false;
+	if (in.magicToggle && !casting && attackCharge < 0.0f)
+	{
+		if (spellReadied)
+		{
+			spellReadied = false;
+			vm.play(VM_UNEQUIP, "SpellUneq");
+		}
+		else if (canMagic)
+		{
+			weaponDrawn = false;
+			pickQueued = false;
+			spellReadied = true;
+			vm.group = "Spell";
+			vm.play(VM_EQUIP, "SpellEq");
+			if (w.stats.selectedSpell.empty())
+				notify("Choose a spell on the Magic screen first.");
+		}
+	}
+	// (Ready Weapon with magic up: the hands go down and the weapon comes out)
+	if (spellReadied && in.readyToggle && canFight && !casting)
+		spellReadied = false;
+	const bool attack = in.attack && !spellReadied;
 	bool putAway = in.sheathe || (in.readyToggle && weaponDrawn);
 	if (canFight && !casting && in.readyToggle && !weaponDrawn)
 	{
@@ -726,7 +754,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 	}
 	// The next blow waits for the last one's follow-through, and for a cast to end (OpenMW: one attack animation at a time)
 	bool busy = attackCharge < 0.0f && (vm.action == VM_FOLLOW || casting);
-	if (canFight && in.attack && !busy)
+	if (canFight && attack && !busy)
 	{
 		sheatheTimer = 0.0f;
 		if (!weaponDrawn)
@@ -812,7 +840,7 @@ void Session::combatUpdate(const PlayerInput& in, float dt, bool menu)
 			playerSwing(1.0f, in);
 		}
 	}
-	else if (attackCharge < -0.5f && !in.attack)
+	else if (attackCharge < -0.5f && !attack)
 		attackCharge = -1.0f;
 	// Put the weapon away after a while without fighting, or when a menu opens
 	if (weaponDrawn && !casting && (putAway || sheatheTimer > 20.0f || (menu && screen != SCR_NONE)) && attackCharge < 0.0f)

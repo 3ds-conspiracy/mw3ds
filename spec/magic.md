@@ -199,6 +199,30 @@ Tests: `openmw-spec-magic` (cost, chance), `openmw-spec-resist` (resistance term
 (hand-written: a Dunmer's Resist Fire 75 and an Altmer's weaknesses read from `const_effects`; the NPC ids
 `ranis_athrys` and `estirdalin` and their races are from memory, check them). EXPECT kind `refeffect:<id>,<effect>`.
 
+## Ready Magic and the next / previous weapon and spell (OpenMW: `mwinput/actionmanager.cpp`, `mwgui/inventorywindow.cpp cycle`, `mwgui/spellwindow.cpp cycle`)
+
+The Classic control layout plays as Morrowind does: magic is raised first, then the attack button casts.
+
+- Ready Magic (Y) raises the hands and puts the weapon away; again it lowers them. Ready Weapon (X) with magic up
+  lowers it and draws the weapon. The draw state is one of nothing, weapon, spell (`Session::weaponDrawn`,
+  `spellReadied`).
+- With magic up the attack button casts the selected spell, once a press, and swings nothing. The cast itself is the
+  same one the other layouts start with their cast button (cost, chance, animation, release).
+- Refused as OpenMW's `toggleSpell` refuses it: as a werewolf, and while a script has magic off
+  (`DisablePlayerMagic`). Either one also lowers magic that is up.
+- `GetSpellReadied` is 1 while the player's magic is up. Differs: always 0 for people and creatures, who cast straight
+  from their fight here and hold no stance.
+- Next / Previous Weapon (X held, R / L): through the carried weapons, lockpicks and probes, by kind and name, past the
+  broken ones, round from the last to the first. Never ammunition. Not during a blow or a cast, nor as a werewolf.
+  Differs: the list is not led by the weapon in hand, so the order holds still while cycling.
+- Next / Previous Spell (Y held, R / L): through what the magic menu lists, powers and spells then the enchanted items
+  that are cast, round from the last to the first. Not during a cast, as a werewolf, or with magic off.
+- Differs (3DS, kept): the first-person arms show the stance (`SpellEq`, `IdleSpell`, `SpellUneq`); the third-person body
+  does not. Magic stays up through menus and has no time limit; the weapon still goes away after 20 s unused.
+
+Tests: `feat-classic-buttons` (the full pad), `feat-classic-old3ds` (an Old 3DS's buttons). Both were written with the
+feature, so they show it works, not that they would have caught a bug.
+
 ## Open
 
 - Actors' attributes and skills under Drain / Fortify / Absorb are kept (`Ref::TimedEffect::key`, read by `EXPECT:refattr` / `refskill`), but combat still uses the record's numbers; Damage / Restore Attribute / Skill on actors is not kept.

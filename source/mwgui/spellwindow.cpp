@@ -1,10 +1,37 @@
 // The magic menu: spells, powers and enchanted items to cast
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 #include "mwgui/inventoryhelpers.hpp"
+
+// Next / Previous Spell (OpenMW's SpellWindow::cycle; the Classic layout's Y + L / R): through what the magic menu lists,
+// the powers and spells then the enchanted items that are cast, round from the last to the first. Not during a cast,
+// nor as a werewolf, nor while a script has magic off
+void Session::cycleSpell(int dir)
+{
+	if (castBusy() || vm.action == VM_CAST || !w.magicEnabled || werewolfRefused())
+		return;
+	std::vector<std::string> ids = knownSpells();
+	for (auto& it : w.inventory)
+		if (const SpellDef* en = w.enchantmentOf(it))
+			if ((en->type == ENCH_USE || en->type == ENCH_ONCE) && w.game.object(it.id)
+				&& std::find(ids.begin(), ids.end(), "item:" + it.id) == ids.end())
+				ids.push_back("item:" + it.id);
+	if (ids.empty())
+	{
+		notify("You know no spells.");
+		return;
+	}
+	int n = ids.size();
+	int at = std::find(ids.begin(), ids.end(), w.stats.selectedSpell) - ids.begin();
+	int k = at >= n ? (dir > 0 ? 0 : n - 1) : ((at + dir) % n + n) % n;
+	w.stats.selectedSpell = ids[k];
+	const Object* io = ids[k].compare(0, 5, "item:") == 0 ? w.game.object(ids[k].substr(5)) : nullptr;
+	notify(io ? io->name.str() : w.game.spells[ids[k]].name);
+}
 
 void Session::drawMagic()
 {

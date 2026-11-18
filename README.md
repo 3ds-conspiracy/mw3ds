@@ -161,7 +161,7 @@ The engine finds out which console it is on and, on an Old 3DS, takes a lighter 
 ### Controls
 
 An Old 3DS has no C-stick and no ZL / ZR (without the Circle Pad Pro), so its default layout is **GoldenEye**: one stick
-that walks and turns, on the Xbox layout's buttons, and a button that stops you to aim. The D-pad strafes.
+that walks and turns, on the Skyrim layout's buttons, and a button that stops you to aim. The D-pad strafes.
 
 | Button | GoldenEye (Old 3DS default) |
 |---|---|
@@ -182,7 +182,32 @@ that walks and turns, on the Xbox layout's buttons, and a button that stops you 
 sessions. Choosing a speed calibrates it: lay the 3DS down for 2 seconds (it also tries once as the game starts). The
 same tab sets one look speed for the sticks, the D-pad and GoldenEye aiming, the GoldenEye turn while walking, and the
 sticks' dead zone (raise it if a stick keeps walking or turning after you let go). Layout shows the buttons and switches
-between Xbox, classic, GoldenEye and stylus (Y).
+between Skyrim, classic, GoldenEye and stylus (Y).
+
+**Classic** (Options > Controls > Layout) is Morrowind's own layout on the Xbox. It needs no setting for the console:
+on an Old 3DS without a Circle Pad Pro it uses GoldenEye's Circle Pad and D-pad under the same buttons, and it changes to
+the full layout the moment a Circle Pad Pro's stick, ZL or ZR is used.
+
+| Button | Classic | Classic on an Old 3DS |
+|---|---|---|
+| Circle Pad | Move: the further you push, the faster | Walk forward / back, turn left / right |
+| C-Stick | Look | - |
+| A | Activate: talk, open, take | Tap: activate. Hold: stand still, the Circle Pad aims |
+| R (hold, release) | Wind up, strike. With magic raised: cast | the same |
+| X | Ready / put away the weapon | the same |
+| Y | Raise / lower magic | the same |
+| X + L / R | Previous / next weapon | the same |
+| Y + L / R | Previous / next spell | the same |
+| L | Jump | Jump |
+| B | Menus | Sneak on / off |
+| ZL (hold) | Sneak | - |
+| ZR | Tap: first / third person. Hold: turn the camera round you, zoom | - |
+| SELECT | Rest | First / third person, as ZR |
+| D-Pad | Quick keys | Left / right: strafe; up / down: look |
+| START | Menu: save, options | the same |
+| Touch screen | Inventory, magic, map, stats | The same, and Rest and the quick keys |
+
+X and Y act as you let them go, since held they pick the weapon or the spell with L and R.
 
 **Stylus** (Options > Controls > Layout): GoldenEye's buttons, but you hold the stylus in your right hand and slide it on
 the bottom screen to look;

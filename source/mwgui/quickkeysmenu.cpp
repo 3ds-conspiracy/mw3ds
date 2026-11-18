@@ -7,12 +7,13 @@
 
 // Known spells and powers; the selected one is cast with Y
 static const char* kQuickDir[4] = { "Up", "Right", "Down", "Left" };
-// (GoldenEye's D-pad moves, the right-hand stylus layout's acts: their quick keys are the touch strip's slots)
+// (GoldenEye's D-pad moves, as the Classic layout's on an Old 3DS; the right-hand stylus layout's acts: their quick keys
+// are the touch strip's slots)
 static std::string quickKeyName(int k)
 {
-	if (g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout())
+	if (g_controlLayout == CONTROLS_GOLDENEYE || stylusLayout() || classicOld())
 		return std::string(kQuickDir[k]) + " (tap its slot)";
-	return std::string(g_controlLayout != CONTROLS_CLASSIC ? "D-Pad " : "ZL + ") + kQuickDir[k];
+	return std::string("D-Pad ") + kQuickDir[k];
 }
 
 bool Session::assignQuickKey(const std::string& entry, const std::string& name)
@@ -42,7 +43,7 @@ void Session::useQuickKey(int k)
 	if (q.empty())
 	{
 		notify("Quick key " + quickKeyName(k) + " is empty: highlight an item or spell in "
-			"Inventory or Magic and press ZL + " + kQuickDir[k] + ".");
+			"Inventory or Magic, hold Y and press " + kQuickDir[k] + ".");
 		return;
 	}
 	if (q.compare(0, 6, "magic:") == 0)

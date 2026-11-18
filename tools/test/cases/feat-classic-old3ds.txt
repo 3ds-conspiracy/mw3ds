@@ -1,0 +1,71 @@
+# The Classic layout on an Old 3DS (no C-stick, ZL or ZR; CONTROLS:classicold presses its buttons): GoldenEye's pad and
+# D-pad under Classic's buttons. The Circle Pad walks and turns; A held stands still and the pad aims, up and down too;
+# the D-pad sidesteps (left / right) and looks up and down, and uses no quick key. B turns sneaking on and off, SELECT
+# switches first / third person, the Rest button on the bottom screen opens the rest menu. X, Y, L and R as on the
+# full pad: X the weapon, Y magic, L jumps, R strikes or casts
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD:2+CONTROLS:classicold
+1 0 0 0
+# The pad to the side turns and walks nowhere; up walks
+0.1 0 0 0 0 SNAP:moved+SNAP:yaw
+1 1 0 0
+0.1 0 0 0 0 EXPECT:moved:le:5+EXPECT:yaw:ge:@40
+0.1 0 0 0 0 SNAP:moved
+1 0 1 0
+0.1 0 0 0 0 EXPECT:moved:ge:@60
+# A held: the pad aims, the player stands
+0.1 0 0 0 0 SNAP:moved+SNAP:pitch
+1 0 0.5 0 0 A
+0.1 0 0 0 0 A+EXPECT:moved:le:5+EXPECT:pitch:ge:@20
+1 0 0 0
+# The D-pad: right sidesteps without turning, up looks up; no quick key is used
+# (a quick key used with its slot empty says so: none is)
+0.1 0 0 0 0 SNAP:moved+SNAP:yaw
+1 0 0 0 0 RIGHT
+0.1 0 0 0 0 EXPECT:moved:ge:@60+EXPECT:yaw:ge:@-1+EXPECT:yaw:le:@1+EXPECT:nomessage:Quick_key
+0.1 0 0 0 0 SNAP:pitch
+0.5 0 0 0 0 UP
+0.1 0 0 0 0 EXPECT:pitch:ge:@10+EXPECT:nomessage:Quick_key
+0.5 0 0 0 0 DOWN
+# B: sneaking on and off
+0.1 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:1+EXPECT:screen:none
+0.1 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:sneaking:eq:0
+# SELECT: first / third person, and no rest menu
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:1+EXPECT:screen:none
+0.1 0 0 0 0 SELECT
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:thirdperson:eq:0
+# The Rest button on the bottom screen
+0.1 0 0 0 0 TAP:158:193
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:rest
+0.1 0 0 0 0 B
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:screen:none+EXPECT:sneaking:eq:0
+# X the weapon, Y magic, L jumps
+0.1 0 0 0 0 X
+1 0 0 0
+0.1 0 0 0 0 EXPECT:weapondrawn:eq:1
+0.1 0 0 0 0 Y
+1 0 0 0
+0.1 0 0 0 0 EXPECT:spellreadied:eq:1+EXPECT:weapondrawn:eq:0
+0.1 0 0 0 0 Y
+1.5 0 0 0
+0.1 0 0 0 0 EXPECT:spellreadied:eq:0
+0.1 0 0 0 0 SNAP:playerz
+0.1 0 0 0 0 L
+0.15 0 0 0
+0.1 0 0 0 0 EXPECT:playerz:ge:@10
+1.5 0 0 0
+# A tap activates nothing here but is not a hold: the player still walks after it
+0.1 0 0 0 0 A
+0.3 0 0 0
+0.1 0 0 0 0 SNAP:moved
+1 0 1 0
+0.1 0 0 0 0 EXPECT:moved:ge:@60

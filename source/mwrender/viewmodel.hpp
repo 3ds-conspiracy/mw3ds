@@ -60,7 +60,7 @@ struct ViewModel
 	std::unordered_map<std::string, u32> failedAt;    // pieces that ran out of memory: when (ms), to try again later
 	u32 retryAt = 0;
 	VmAction action = VM_NONE;
-	std::string group;                        // weapon animation family: 1h 2c 2w HH Bow Xbow Throw
+	std::string group;                        // weapon animation family: 1h 2c 2w HH Bow Xbow Throw, Spell (magic raised)
 	std::string kind = "Chop";                // Chop / Slash / Thrust (melee), Shoot (ranged)
 	float charge = 0.0f;                      // wind-up: 0..1 between min and max attack
 	float speed = 1.0f;                       // the weapon's speed: the swing's animation plays at this rate

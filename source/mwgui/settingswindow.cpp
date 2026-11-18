@@ -346,9 +346,11 @@ void Session::drawOptions()
 // What each button does
 void Session::drawControls()
 {
-	bool xbox = g_controlLayout == CONTROLS_XBOX, goldenEye = g_controlLayout == CONTROLS_GOLDENEYE;
+	bool xbox = g_controlLayout == CONTROLS_SKYRIM, goldenEye = g_controlLayout == CONTROLS_GOLDENEYE;
 	bool stylus = stylusLayout();
-	header(xbox ? "Controls (Xbox layout)" : goldenEye ? "Controls (GoldenEye layout)" : stylus ? "Controls (stylus layout)"
+	// (the Classic layout shows the buttons of the console it is on: classicOldPad)
+	bool classicOldPad3ds = classicOld();
+	header(xbox ? "Controls (Skyrim layout)" : goldenEye ? "Controls (GoldenEye layout)" : stylus ? "Controls (stylus layout)"
 		: "Controls (classic layout)");
 	static const char* kXbox[][2] = {
 		{ "Circle Pad / C-Stick", "Move (pushed far: run) / look" }, { "A", "Activate: talk, open, take" },
@@ -356,13 +358,24 @@ void Session::drawControls()
 		{ "Y", "Jump (swim up in water)" }, { "ZL (hold)", "Sneak" },
 		{ "D-Pad", "Quick keys" }, { "SELECT", "1st / 3rd; held: orbit, zoom" }, { "START", "Menu: save, rest, options" },
 		{ "Touch screen", "Inventory, magic, map, stats" } };
+	// Morrowind's layout on the Xbox (classicInput)
 	static const char* kClassic[][2] = {
-		{ "Circle Pad", "Move (pushed far: run)" }, { "C-Stick / D-Pad", "Look" }, { "A", "Activate: talk, open, take" },
-		{ "X (hold, release)", "Ready weapon, wind up, strike" }, { "ZL + X", "Put the weapon away" }, { "Y", "Cast the selected spell" },
-		{ "B", "Jump (swim up in water)" }, { "L (hold)", "Sneak" },
-		{ "ZL + D-Pad", "Quick keys" }, { "SELECT", "1st / 3rd; held: orbit, zoom" }, { "START", "Menu: save, rest, options" },
-		{ "Touch screen", "Inventory, magic, map, stats" } };
-	// One stick (an Old 3DS without the C-stick) on the Xbox buttons: the pad walks and turns; an aim button held
+		{ "Circle Pad / C-Stick", "Move (further: faster) / look" }, { "A", "Activate: talk, open, take" },
+		{ "R (hold, release)", "Strike; with magic up: cast" }, { "X", "Ready / put away the weapon" },
+		{ "Y", "Raise / lower magic" }, { "X + L / R", "Previous / next weapon" },
+		{ "Y + L / R", "Previous / next spell" }, { "L", "Jump" }, { "B", "Menus" }, { "ZL (hold)", "Sneak" },
+		{ "ZR", "1st / 3rd; held: orbit, zoom" }, { "D-Pad", "Quick keys" },
+		{ "SELECT / START", "Rest / menu: save, options" } };
+	// ... on an Old 3DS (no C-stick, ZL or ZR): GoldenEye's pad and D-pad under the same buttons
+	static const char* kClassicOld[][2] = {
+		{ "Circle Pad", "Walk (far: run) up, down; turn" }, { "A (tap / hold)", "Activate / aim with the pad" },
+		{ "R (hold, release)", "Strike; with magic up: cast" },
+		{ "X", "Ready / put away the weapon" }, { "Y", "Raise / lower magic" },
+		{ "X + L / R", "Previous / next weapon" }, { "Y + L / R", "Previous / next spell" }, { "L", "Jump" },
+		{ "B", "Sneak on / off" }, { "D-Pad", "Strafe; look up / down" },
+		{ "SELECT", "1st / 3rd; held: orbit, zoom" }, { "START", "Menu: save, options" },
+		{ "Touch screen", "Menus, Rest, quick keys" } };
+	// One stick (an Old 3DS without the C-stick) on the Skyrim layout's buttons: the pad walks and turns; an aim button held
 	// stands still and the pad aims
 	static const char* kGoldenEye[][2] = {
 		{ "Circle Pad", "Walk (far: run) up, down; turn" }, { "A (hold) / ZL / ZR", "Aim: stand still, the pad aims" },
@@ -383,17 +396,19 @@ void Session::drawControls()
 		{ "C-Stick, ZL, ZR", "If there: look; sneak; rise" } };
 	float y = 30;
 	int n = xbox ? sizeof(kXbox) / sizeof(kXbox[0]) : goldenEye ? sizeof(kGoldenEye) / sizeof(kGoldenEye[0])
-		: stylus ? sizeof(kStylus) / sizeof(kStylus[0]) : sizeof(kClassic) / sizeof(kClassic[0]);
+		: stylus ? sizeof(kStylus) / sizeof(kStylus[0]) : classicOldPad3ds ? sizeof(kClassicOld) / sizeof(kClassicOld[0])
+		: sizeof(kClassic) / sizeof(kClassic[0]);
 	for (int i = 0; i < n; i++)
 	{
-		const char* const* l = xbox ? kXbox[i] : goldenEye ? kGoldenEye[i] : stylus ? kStylus[i] : kClassic[i];
+		const char* const* l = xbox ? kXbox[i] : goldenEye ? kGoldenEye[i] : stylus ? kStylus[i]
+			: classicOldPad3ds ? kClassicOld[i] : kClassic[i];
 		uiText(14, y, 0.42f, col::header, l[0]);
 		uiText(140, y, 0.42f, col::text, l[1]);
 		y += 13.5f;
 	}
-	// Y: the next layout (Xbox, classic, GoldenEye, stylus); A / B: back to the Controls tab, on its Layout button
-	static const int kNext[4] = { CONTROLS_CLASSIC, CONTROLS_GOLDENEYE, CONTROLS_STYLUS, CONTROLS_XBOX };
-	static const char* kUse[4] = { "Y: Use classic", "Y: Use GoldenEye", "Y: Use stylus", "Y: Use Xbox" };
+	// Y: the next layout (Skyrim, classic, GoldenEye, stylus); A / B: back to the Controls tab, on its Layout button
+	static const int kNext[4] = { CONTROLS_CLASSIC, CONTROLS_GOLDENEYE, CONTROLS_STYLUS, CONTROLS_SKYRIM };
+	static const char* kUse[4] = { "Y: Use classic", "Y: Use GoldenEye", "Y: Use stylus", "Y: Use Skyrim" };
 	int k = g_controlLayout >= 0 && g_controlLayout < 4 ? g_controlLayout : 0;
 	// (the stylus layout's list: X switches its glass buttons over the minimap on or off, between the two)
 	float bw = stylus ? 102 : 154;
