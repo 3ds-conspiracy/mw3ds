@@ -27,6 +27,7 @@
 #include "platform/platform.hpp"
 #include "testdrive/steprunner.hpp"
 #include "mwinput/inputmanagerimp.hpp"
+#include "platform/circlepadpro.hpp"
 #include "mwgui/loadingscreen.hpp"
 
 extern "C" u32 __ctru_heap_size, __ctru_linear_heap_size;
@@ -147,6 +148,9 @@ bool Engine::prepare()
 	crashHandlerInstall(0);
 	watchdogStart();
 	linearLockInit();
+	// (an Old 3DS: a Circle Pad Pro talks over ir:USER, which ir:rst does not read there; a New 3DS has its own)
+	if (!isNew3ds)
+		cppStart();
 	char sysCore[64] = "";
 	if (g_sysCoreThreads)
 		snprintf(sysCore, sizeof(sysCore), ", cells stream on the system core (%lu%% of it ours)", (unsigned long)sysCorePercent);
@@ -354,7 +358,9 @@ bool Engine::frame()
 {
 	hidScanInput();
 	irrstScanInput();
-	u32 down = hidKeysDown(), held = hidKeysHeld(), up = hidKeysUp();
+	// (an Old 3DS's Circle Pad Pro: its ZL, ZR and R with the console's buttons, its stick as the C-stick: cstickRead)
+	cppUpdate();
+	u32 down = hidKeysDown() | cppKeysDown(), held = hidKeysHeld() | cppKeysHeld(), up = hidKeysUp() | cppKeysUp();
 	if (!loaded && (down & KEY_START))
 		return false;
 	if (loaded && session->wantQuit)
@@ -1020,6 +1026,7 @@ void Engine::shutdown()
 	C3D_Fini();
 	// (romfs: unmounted in userAppExit, once newlib's exit has closed whatever is still open on it)
 	exitStep("exit: irrst");
+	cppStop();
 	irrstExit();
 	exitStep("exit: gfx");
 	gfxExit();

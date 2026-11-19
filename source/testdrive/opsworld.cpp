@@ -10,6 +10,8 @@
 #include <tuple>
 #include "testdrive/testdrive.hpp"
 #include "platform/gamma.hpp"
+#include "platform/circlepadpro.hpp"
+#include <vector>
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
 
@@ -418,6 +420,21 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 			return fail("no sound " + a[2]);
 		s.loopSound(ri, a[2], true);
 		logf("test: %s loops %s", w.refs[ri].idLower.c_str(), a[2].c_str());
+		return true;
+	}
+	// CPP:<hex>: one packet from an Old 3DS's Circle Pad Pro, as ir:USER delivers it; CPP:off: the link lost
+	if (verb == "CPP" && a.size() >= 2)
+	{
+		if (a[1] == "off")
+		{
+			cppTestLinkLost();
+			return true;
+		}
+		std::vector<u8> bytes;
+		for (size_t i = 0; i + 1 < a[1].size(); i += 2)
+			bytes.push_back((u8)strtoul(a[1].substr(i, 2).c_str(), nullptr, 16));
+		bool taken = cppTakePacket(bytes.data(), (u32)bytes.size());
+		logf("test: Circle Pad Pro packet %s (%u bytes) %s", a[1].c_str(), (unsigned)bytes.size(), taken ? "taken" : "dropped");
 		return true;
 	}
 	if ((verb == "GAMMA" || verb == "AUTOGAMMA" || verb == "LUX" || verb == "CAMLUMA") && a.size() >= 2)

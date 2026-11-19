@@ -1,0 +1,40 @@
+# console: old
+# Issue 122: a Circle Pad Pro on an Old 3DS. It talks to the console over infrared (ir:USER), and the game took its
+# input only from ir:rst, which carries nothing from it there: no layout saw its stick, ZL, ZR or R. CPP:<hex> hands
+# the game one packet as the IR service delivers it (0xA5, network id, size, the input report, CRC-8): the report's
+# 12-bit stick X / Y (centre 0x800) and ZL / ZR / R (a bit set = not held). Checked: a resting report connects it and
+# switches nothing; ZL, ZR and R reach the console's buttons (and the Classic layout takes the full pad's buttons from
+# then on); the stick reaches the second stick, right and up; a report with a wrong checksum changes nothing; the link
+# lost lets everything go
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.1 0 0 0 0 EXPECT:cppconnected:eq:0+EXPECT:cppused:eq:0
+# At rest: connected, nothing held, the stick centred, the layout unchanged
+0.1 0 0 0 0 CPP:a5000610000880ff009d
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppconnected:eq:1+EXPECT:cppkey:zl:eq:0+EXPECT:cppkey:zr:eq:0+EXPECT:cppkey:r:eq:0+EXPECT:cstickx:eq:0+EXPECT:csticky:eq:0+EXPECT:cppused:eq:0
+# ZL, ZR and R held
+0.1 0 0 0 0 CPP:a50006100008801f00de
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppkey:zl:eq:1+EXPECT:cppkey:zr:eq:1+EXPECT:cppkey:r:eq:1+EXPECT:cppused:eq:1
+# Let go
+0.1 0 0 0 0 CPP:a5000610000880ff009d
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppkey:zl:eq:0+EXPECT:cppkey:zr:eq:0+EXPECT:cppkey:r:eq:0
+# The stick pushed right, then up
+0.1 0 0 0 0 CPP:a5000610ff0f80ff00c6
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cstickx:ge:0.9+EXPECT:csticky:eq:0
+0.1 0 0 0 0 CPP:a500061000f8ffff00be
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:csticky:ge:0.9+EXPECT:cstickx:eq:0
+# A report whose checksum is wrong (ZL held in it) is dropped: the stick stays up, ZL stays up
+0.1 0 0 0 0 CPP:a5000610000880df00cc
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:csticky:ge:0.9+EXPECT:cppkey:zl:eq:0
+# The link lost: not connected, nothing held, the stick centred
+0.1 0 0 0 0 CPP:a50006100008801f00de
+0.3 0 0 0
+0.1 0 0 0 0 CPP:off
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppconnected:eq:0+EXPECT:cppkey:zl:eq:0+EXPECT:cstickx:eq:0+EXPECT:csticky:eq:0

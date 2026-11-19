@@ -12,11 +12,12 @@
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
 #include "mwinput/inputmanagerimp.hpp"
+#include "platform/circlepadpro.hpp"
 
 #ifdef __3DS__
-// The Circle Pad Pro on an Old 3DS: its ZL / ZR reach the buttons only through the ir:rst service, which libctru folds
-// into hidKeysHeld / Down / Up on a New 3DS alone (its weak hidShouldUseIrrst, replaced here). On both consoles now:
-// every layout reads ZL / ZR, and the second stick (hidCstickRead), from the Circle Pad Pro as from a New 3DS
+// ir:rst: a New 3DS's C-stick, ZL and ZR, which libctru folds into hidKeysHeld / Down / Up and hidCstickRead (its weak
+// hidShouldUseIrrst, replaced here to read it on either console). An Old 3DS's Circle Pad Pro comes over ir:USER
+// instead (platform/circlepadpro.cpp): its buttons join these in the frame loop, its stick through cstickRead
 extern "C" bool hidShouldUseIrrst(void)
 {
 	return true;
@@ -27,7 +28,7 @@ extern "C" bool hidShouldUseIrrst(void)
 float readStickScroll()
 {
 	circlePosition cs;
-	hidCstickRead(&cs);
+	cstickRead(&cs);
 	float x, y;
 	stickAxes(cs.dx, cs.dy, stickZone(), x, y);
 	return -y;
@@ -37,7 +38,7 @@ float readStickScroll()
 float readStickTurn()
 {
 	circlePosition cs;
-	hidCstickRead(&cs);
+	cstickRead(&cs);
 	float x, y;
 	stickAxes(cs.dx, cs.dy, stickZone(), x, y);
 	return x;
@@ -102,6 +103,11 @@ void goldenEyeInput(GoldenEyeState& ge, PlayerInput& in, float padX, float padY,
 int g_testClassicPad = 0;          // scripted runs: 1 the full pad, 2 an Old 3DS's (CONTROLS:classicpad / classicold)
 bool g_testScripted = false;       // a scripted run: without CONTROLS:classicpad / classicold, the driver's own buttons
 static bool s_proSeen = false;     // an Old 3DS's Circle Pad Pro was used: ZL, ZR or its stick (until the game is left)
+
+bool classicProSeen()
+{
+	return s_proSeen;
+}
 
 bool classicOldPad()
 {
@@ -410,7 +416,7 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 {
 	circlePosition cp, cs;
 	hidCircleRead(&cp);
-	hidCstickRead(&cs);
+	cstickRead(&cs);
 	PlayerInput in = {};
 	// (both sticks past a round dead zone, rescaled from its edge: stickAxes)
 	stickAxes(cp.dx, cp.dy, stickZone(), in.moveX, in.moveY);

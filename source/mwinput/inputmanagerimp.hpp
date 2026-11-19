@@ -39,6 +39,7 @@ struct ClassicState
 };
 extern int g_testClassicPad;
 extern bool g_testScripted;
+bool classicProSeen();              // an Old 3DS's Circle Pad Pro has been used (the Classic layout reads the full pad)
 void classicInput(ClassicState& st, PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt, bool oldPad);
 
 // The C-stick up / down for the menus' text panes: -1 (up) to 1 (down), nothing inside the dead zone
