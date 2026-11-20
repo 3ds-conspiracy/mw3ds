@@ -12,14 +12,22 @@
 #include "components/debug/debuglog.hpp"
 #include "mwbase/session.hpp"
 #include "mwinput/inputmanagerimp.hpp"
+#include "platform/circlepadpro.hpp"
 
 #ifdef __3DS__
-// The Circle Pad Pro on an Old 3DS: its ZL / ZR reach the buttons only through the ir:rst service, which libctru folds
-// into hidKeysHeld / Down / Up on a New 3DS alone (its weak hidShouldUseIrrst, replaced here). On both consoles now:
-// every layout reads ZL / ZR, and the second stick (hidCstickRead), from the Circle Pad Pro as from a New 3DS
+// ir:rst: a New 3DS's C-stick, ZL and ZR, folded by libctru into hidKeysHeld / Down / Up and hidCstickRead (its weak
+// hidShouldUseIrrst, replaced here). A New 3DS only: ir:rst and ir:USER shut each other out (3dbrew's IR Services;
+// ctru-rs's Circle Pad Pro example keeps ir:rst closed for it), and an Old 3DS's Circle Pad Pro talks over ir:USER
+// (platform/circlepadpro.cpp). It joins the buttons in the frame loop and the second stick through cstickRead
 extern "C" bool hidShouldUseIrrst(void)
 {
-	return true;
+	static int s_new = -1;             // (asked once: hidInit and hidExit call this)
+	if (s_new < 0)
+	{
+		bool n = false;
+		s_new = R_SUCCEEDED(APT_CheckNew3DS(&n)) && n;
+	}
+	return s_new == 1;
 }
 #endif
 
@@ -27,7 +35,7 @@ extern "C" bool hidShouldUseIrrst(void)
 float readStickScroll()
 {
 	circlePosition cs;
-	hidCstickRead(&cs);
+	cstickRead(&cs);
 	float x, y;
 	stickAxes(cs.dx, cs.dy, stickZone(), x, y);
 	return -y;
@@ -37,7 +45,7 @@ float readStickScroll()
 float readStickTurn()
 {
 	circlePosition cs;
-	hidCstickRead(&cs);
+	cstickRead(&cs);
 	float x, y;
 	stickAxes(cs.dx, cs.dy, stickZone(), x, y);
 	return x;
@@ -110,7 +118,13 @@ bool classicOldPad()
 	// (a scripted run's Classic is the driver's own buttons, A included, on either console)
 	if (g_testScripted)
 		return false;
-	return g_profile.slowCpu && !s_proSeen;
+	// (a Circle Pad Pro linked, or used once: the full pad's buttons)
+	return g_profile.slowCpu && !s_proSeen && !cppConnected();
+}
+
+bool classicProSeen()
+{
+	return s_proSeen || cppConnected();
 }
 
 void classicInput(ClassicState& st, PlayerInput& in, float padX, float padY, u32 held, u32 down, u32 up, float dt, bool oldPad)
@@ -410,7 +424,7 @@ PlayerInput readInput(u32 held, u32 down, u32 up, float dt)
 {
 	circlePosition cp, cs;
 	hidCircleRead(&cp);
-	hidCstickRead(&cs);
+	cstickRead(&cs);
 	PlayerInput in = {};
 	// (both sticks past a round dead zone, rescaled from its edge: stickAxes)
 	stickAxes(cp.dx, cp.dy, stickZone(), in.moveX, in.moveY);

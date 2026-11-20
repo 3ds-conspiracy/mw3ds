@@ -58,6 +58,9 @@ static const int kStylusTapTop = 178;
 // Gyro aim (settings.txt gyroaim=on|off, gyrosens=50|100|200): turning the console turns the view, as far as it
 // turned. The percent of that turn (100: one to one), 0 when off
 extern int g_gyroAim;
+// An Old 3DS's Circle Pad Pro (Options > Controls > Pad Pro; settings.txt circlepadpro=on|off): only when on does the
+// game look for it over infrared (platform/circlepadpro.hpp)
+extern bool g_circlePadPro;
 // Look (Controls > Look; settings.txt lookspeed=, geturn=, inverty=on|off): how fast the C-stick, the D-pad and the
 // GoldenEye pad while aiming look (one speed: they were two bars), how fast the GoldenEye pad turns while walking,
 // percent (100: as before); look up and down the other way round. Gyro aim keeps its own speed and is never inverted
@@ -91,6 +94,7 @@ enum Screen
 	SCR_CONSOLE,
 	SCR_CLASS_CREATE,
 	SCR_AUDIO,
+	SCR_PADPRO,
 };
 
 struct MessageState

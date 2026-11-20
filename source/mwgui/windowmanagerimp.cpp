@@ -166,6 +166,7 @@ void Session::drawBottom()
 	case SCR_RECHARGE: drawRecharge(); break;
 	case SCR_OPTIONS: case SCR_AUDIO: case SCR_DISPLAY: case SCR_LOOK: drawOptions(); break;
 	case SCR_CONTROLS: drawControls(); break;
+	case SCR_PADPRO: drawPadPro(); break;
 	case SCR_CONSOLE: drawConsole(); break;
 	case SCR_REPAIR: drawRepair(); break;
 	case SCR_SAVES: drawSaves(); break;

@@ -1,0 +1,73 @@
+# console: old
+# start: Seyda Neen
+# Issue 122: a Circle Pad Pro on an Old 3DS did nothing in any layout. As in the games made for it, it is now turned on
+# by the player (Options > Controls > Pad Pro) and only then looked for over ir:USER; ir:rst stays shut on an Old 3DS,
+# since the two shut each other out. Here: off by default and nothing looked for; turned on through the menus (saved),
+# it is looked for; CPP:<hex> hands the game packets as ir:USER delivers them (0xA5, network id, size, payload,
+# CRC-8). The accessory's calibration answer (its first set with a bad sum, skipped; the second centred at 0x700, scale
+# 1.0) moves the stick's centre: a reading of 0x800 that was centred reads right and up after it. An input report
+# connects it, with its battery; ZL, ZR and R reach the buttons; the stick reaches the second stick, right and up; a
+# report with a wrong checksum changes nothing; the link lost lets everything go and looks again; turned off, all stops
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.1 0 0 0 0 EXPECT:cppsetting:eq:0+EXPECT:cppstate:eq:0+EXPECT:cppconnected:eq:0+EXPECT:cppused:eq:0
+# Options > Controls: five lines down to the buttons, right twice to Pad Pro, A; on its screen A turns it on (saved)
+0.3 0 0 0 0 SCREEN:look
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 A
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:cppsetting:eq:1+EXPECT:savedsetting:circlepadpro:eq:1+EXPECT:cppstate:eq:1+EXPECT:cppconnected:eq:0
+0.3 0 0 0 0 SHOT
+# A report at rest (0x800, battery 20 of 31): connected, nothing held, the stick centred, the Classic layout's full pad
+0.1 0 0 0 0 CPP:a5000610000880f4000a
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppstate:eq:3+EXPECT:cppconnected:eq:1+EXPECT:cppbattery:eq:20+EXPECT:cppkey:zl:eq:0+EXPECT:cppkey:zr:eq:0+EXPECT:cppkey:r:eq:0+EXPECT:cstickx:eq:0+EXPECT:csticky:eq:0+EXPECT:cppused:eq:1
+0.3 0 0 0 0 SHOT
+# Its calibration: the same reading now lies right of and above the centre
+0.1 0 0 0 0 CPP:a50040451100004000000007700000803f0000803fffffff0aff0007700000803f0000803fffffff650000088085eb113f85eb113ffffffff50000088085eb113f85eb113ffffffff5ea
+0.1 0 0 0 0 CPP:a5000610000880f4000a
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cstickx:gt:0+EXPECT:csticky:gt:0
+# At its new centre: still
+0.1 0 0 0 0 CPP:a5000610000770f400b4
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cstickx:eq:0+EXPECT:csticky:eq:0
+# ZL, ZR and R held, then let go
+0.1 0 0 0 0 CPP:a50006100007701400f7
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppkey:zl:eq:1+EXPECT:cppkey:zr:eq:1+EXPECT:cppkey:r:eq:1
+0.1 0 0 0 0 CPP:a5000610000770f400b4
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppkey:zl:eq:0+EXPECT:cppkey:zr:eq:0+EXPECT:cppkey:r:eq:0
+# The stick pushed right, then up
+0.1 0 0 0 0 CPP:a5000610ff0f70f4003d
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cstickx:ge:0.9+EXPECT:csticky:eq:0
+0.1 0 0 0 0 CPP:a500061000f7fff400fb
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:csticky:ge:0.9+EXPECT:cstickx:eq:0
+# A report with a wrong checksum (ZL held in it) is dropped: the stick stays up, ZL stays up
+0.1 0 0 0 0 CPP:a5000610000770d4004f
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:csticky:ge:0.9+EXPECT:cppkey:zl:eq:0
+# The link lost: nothing held, the stick centred, looking again
+0.1 0 0 0 0 CPP:a50006100007701400f7
+0.3 0 0 0
+0.1 0 0 0 0 CPP:lost
+0.3 0 0 0
+0.1 0 0 0 0 EXPECT:cppconnected:eq:0+EXPECT:cppstate:eq:1+EXPECT:cppkey:zl:eq:0+EXPECT:cstickx:eq:0+EXPECT:csticky:eq:0
+# Turned off on its screen (A on the switch): off, saved, nothing looked for
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:cppsetting:eq:0+EXPECT:savedsetting:circlepadpro:eq:0+EXPECT:cppstate:eq:0
+0.3 0 0 0 0 B
+0.5 0 0 0

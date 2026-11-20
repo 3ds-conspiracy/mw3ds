@@ -1,0 +1,37 @@
+# console: old
+# run: emulator
+# start: Seyda Neen
+# Issue 122 through the real ir:USER link: Azahar answers ir:USER as a Circle Pad Pro always seated (its extra_hid,
+# what the games made for it are run against), so the game's own path runs here: ir:USER opened with ir:rst shut,
+# RequireConnection, the calibration read (its first set: centre 0x800, scale 0.57), reports asked for and read. Off
+# by default, nothing opened; turned on through Options > Controls > Pad Pro it connects within a few seconds with a
+# full battery and the stick at rest; turned off it lets go
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1
+0.1 0 0 0 0 EXPECT:cppsetting:eq:0+EXPECT:cppstate:eq:0+EXPECT:cppconnected:eq:0
+# Options > Controls: five lines down to the buttons, right twice to Pad Pro, A; on its screen A turns it on
+0.3 0 0 0 0 SCREEN:look
+0.5 0 0 0
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 DOWN
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 RIGHT
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.3 0 0 0 0 A
+4 0 0 0
+0.1 0 0 0 0 EXPECT:cppsetting:eq:1+EXPECT:cppstate:eq:3+EXPECT:cppconnected:eq:1+EXPECT:cppbattery:eq:31+EXPECT:cstickx:eq:0+EXPECT:csticky:eq:0+EXPECT:cppused:eq:1
+0.5 0 0 0 0 SHOT
+# Still linked a few seconds on (the reports keep coming)
+3 0 0 0
+0.1 0 0 0 0 EXPECT:cppstate:eq:3+EXPECT:cppconnected:eq:1
+# Turned off: let go
+0.3 0 0 0 0 A
+0.5 0 0 0
+0.1 0 0 0 0 EXPECT:cppsetting:eq:0+EXPECT:cppstate:eq:0+EXPECT:cppconnected:eq:0
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 B
+0.5 0 0 0

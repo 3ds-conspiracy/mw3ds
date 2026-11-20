@@ -19,6 +19,7 @@ int g_controlLayout = CONTROLS_SKYRIM;
 int g_gyroAim = 0;                // gyro aim starts off (until it is tried on the device): Options turns it on
 int g_lookSpeed = kLookDefaultPct, g_geTurnSpeed = 100, g_stylusSpeed = 100;
 bool g_stylusButtons = true;
+bool g_circlePadPro = false;      // an Old 3DS's Circle Pad Pro: off until the player turns it on, as in its games
 int g_stickZonePct = kStickZoneDefaultPct;
 bool g_invertY = false;
 bool g_subtitles = true;
@@ -78,6 +79,7 @@ void Session::loadSettings()
 		else if (strncmp(line, "lookspeed=", 10) == 0) g_lookSpeed = std::max(kLookMinPct, std::min(kLookMaxPct, atoi(line + 10)));
 		else if (strncmp(line, "geturn=", 7) == 0) g_geTurnSpeed = std::max(kGeTurnMinPct, std::min(kGeTurnMaxPct, atoi(line + 7)));
 		else if (strncmp(line, "stylusbuttons=", 14) == 0) g_stylusButtons = strncmp(line + 14, "off", 3) != 0;
+		else if (strncmp(line, "circlepadpro=", 13) == 0) g_circlePadPro = strncmp(line + 13, "on", 2) == 0;
 		else if (strncmp(line, "stylusspeed=", 12) == 0)
 			g_stylusSpeed = std::max(kStylusMinPct, std::min(kStylusMaxPct, atoi(line + 12)));
 		// (an older file's geaim= is left unread: the GoldenEye aim looks at the look speed)
@@ -122,6 +124,7 @@ void Session::saveSettings()
 	fprintf(f, "lookspeed=%d\ngeturn=%d\ninverty=%s\n", g_lookSpeed, g_geTurnSpeed, g_invertY ? "on" : "off");
 	fprintf(f, "stylusspeed=%d\nstylusbuttons=%s\n", g_stylusSpeed, g_stylusButtons ? "on" : "off");
 	fprintf(f, "stickzone=%d\n", g_stickZonePct);
+	fprintf(f, "circlepadpro=%s\n", g_circlePadPro ? "on" : "off");
 	fprintf(f, "subtitles=%s\n", g_subtitles ? "on" : "off");
 	fprintf(f, "depth=%s\n", g_depthMode == DEPTH_24 ? "24" : g_depthMode == DEPTH_16_IN_3D ? "16in3d" : "16");
 	fprintf(f, "view=%s\n", viewMode == VIEW_MIN ? "min" : viewMode == VIEW_MAX ? "max" : viewMode == VIEW_MID ? "mid" : "auto");

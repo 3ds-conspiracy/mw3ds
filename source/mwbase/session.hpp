@@ -214,6 +214,7 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	float difficultyScale(bool toPlayer) const;   // damage multiplier: to the player / dealt by the player
 	void drawOptions();               // the Options tabs: Prefs, Audio, Video (SCR_DISPLAY), Controls (SCR_LOOK)
 	void drawControls();              // Options > Controls > Buttons: what each button does
+	void drawPadPro();                // Options > Controls > Pad Pro: an Old 3DS's Circle Pad Pro, on / off and its link
 	void drawConsole();               // Options > Console: one MWScript line at a time (mwgui/console.cpp)
 	void saveSettings();
 	void viewModelUpdate(const PlayerInput& in, float dt);

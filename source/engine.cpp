@@ -27,6 +27,7 @@
 #include "platform/platform.hpp"
 #include "testdrive/steprunner.hpp"
 #include "mwinput/inputmanagerimp.hpp"
+#include "platform/circlepadpro.hpp"
 #include "mwgui/loadingscreen.hpp"
 
 extern "C" u32 __ctru_heap_size, __ctru_linear_heap_size;
@@ -142,7 +143,10 @@ bool Engine::prepare()
 	C3D_Init(C3D_DEFAULT_CMDBUF_SIZE * g_profile.cmdBufScale);
 	C2D_Init(4096);
 	C2D_Prepare();
-	irrstInit();
+	// (ir:rst: a New 3DS's C-stick, ZL and ZR. An Old 3DS keeps it shut: it would shut ir:USER, which its Circle Pad
+	// Pro talks over, out; see hidShouldUseIrrst)
+	if (isNew3ds)
+		irrstInit();
 	logInit();
 	crashHandlerInstall(0);
 	watchdogStart();
@@ -199,7 +203,8 @@ bool Engine::prepare()
 		rendererExit();
 		C2D_Fini();
 		C3D_Fini();
-		irrstExit();
+		if (isNew3ds)
+			irrstExit();
 		logExit();
 		gfxExit();
 		return false;
@@ -263,7 +268,8 @@ bool Engine::prepare()
 			rendererExit();
 			C2D_Fini();
 			C3D_Fini();
-			irrstExit();
+			if (isNew3ds)
+				irrstExit();
 			logExit();
 			gfxExit();
 			return false;
@@ -297,7 +303,8 @@ bool Engine::prepare()
 		rendererExit();
 		C2D_Fini();
 		C3D_Fini();
-		irrstExit();
+		if (isNew3ds)
+			irrstExit();
 		logExit();
 		gfxExit();
 		return false;
@@ -353,8 +360,26 @@ bool Engine::retryFromTitle(bool& loadedOut)
 bool Engine::frame()
 {
 	hidScanInput();
-	irrstScanInput();
+	if (isNew3ds)
+		irrstScanInput();
 	u32 down = hidKeysDown(), held = hidKeysHeld(), up = hidKeysUp();
+	// An Old 3DS's Circle Pad Pro, once turned on in Options: its ZL, ZR and R with the console's buttons, its stick as
+	// the C-stick (cstickRead). What becomes of the link is told as it happens
+	if (!isNew3ds && loaded)
+	{
+		CppState before = cppState();
+		cppUpdate(g_circlePadPro);
+		down |= cppKeysDown();
+		held |= cppKeysHeld();
+		up |= cppKeysUp();
+		CppState now = cppState();
+		if (now != before && now == CPP_CONNECTED)
+			session->notify("Circle Pad Pro connected.");
+		else if (now != before && now == CPP_NOT_FOUND)
+			session->notify("No Circle Pad Pro found: seat the 3DS fully in it, check its batteries, then Look again.");
+		else if (before == CPP_CONNECTED && now == CPP_SEARCHING)
+			session->notify("Circle Pad Pro lost: press ZL or ZR to wake it.");
+	}
 	if (!loaded && (down & KEY_START))
 		return false;
 	if (loaded && session->wantQuit)
@@ -1020,7 +1045,9 @@ void Engine::shutdown()
 	C3D_Fini();
 	// (romfs: unmounted in userAppExit, once newlib's exit has closed whatever is still open on it)
 	exitStep("exit: irrst");
-	irrstExit();
+	cppShutdown();
+	if (isNew3ds)
+		irrstExit();
 	exitStep("exit: gfx");
 	gfxExit();
 	exitStep("exit: process");

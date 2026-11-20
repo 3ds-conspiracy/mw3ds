@@ -10,6 +10,8 @@
 #include <tuple>
 #include "testdrive/testdrive.hpp"
 #include "platform/gamma.hpp"
+#include "platform/circlepadpro.hpp"
+#include <vector>
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
 
@@ -418,6 +420,29 @@ std::optional<bool> opsWorld(Session& s, const std::vector<std::string>& a)
 			return fail("no sound " + a[2]);
 		s.loopSound(ri, a[2], true);
 		logf("test: %s loops %s", w.refs[ri].idLower.c_str(), a[2].c_str());
+		return true;
+	}
+	// An Old 3DS's Circle Pad Pro: CPP:on / CPP:off its setting (Options > Controls > Pad Pro), CPP:lost the link lost,
+	// CPP:<hex> one packet as ir:USER delivers it (0xA5, network id, size, payload, CRC-8): an input report or the
+	// calibration answer
+	if (verb == "CPP" && a.size() >= 2)
+	{
+		if (a[1] == "on" || a[1] == "off")
+		{
+			g_circlePadPro = a[1] == "on";
+			logf("test: Circle Pad Pro %s", a[1].c_str());
+			return true;
+		}
+		if (a[1] == "lost")
+		{
+			cppTestLinkLost();
+			return true;
+		}
+		std::vector<u8> bytes;
+		for (size_t i = 0; i + 1 < a[1].size(); i += 2)
+			bytes.push_back((u8)strtoul(a[1].substr(i, 2).c_str(), nullptr, 16));
+		bool taken = cppTakePacket(bytes.data(), (u32)bytes.size());
+		logf("test: Circle Pad Pro packet of %u bytes %s", (unsigned)bytes.size(), taken ? "taken" : "dropped");
 		return true;
 	}
 	if ((verb == "GAMMA" || verb == "AUTOGAMMA" || verb == "LUX" || verb == "CAMLUMA") && a.size() >= 2)

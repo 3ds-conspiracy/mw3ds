@@ -5,6 +5,7 @@
 
 #include "mwsound/soundmanagerimp.hpp"
 #include "platform/gamma.hpp"
+#include "platform/circlepadpro.hpp"
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 #include <algorithm>
@@ -295,8 +296,28 @@ void Session::drawOptions()
 		}
 		// Layout: the button list, what each button does in the layout in use (Y there switches Xbox, classic, GoldenEye,
 		// stylus)
-		b = buttons(208, 28, { "Default", "Layout", w.game.gmstLabel("sclose", "Close") });
-		closing = b == 2;
+		// (an Old 3DS: Pad Pro, its Circle Pad Pro's screen, between Layout and Close. Default and Layout a little
+		// narrower than in the row of three, over the same middles, so a tap where they were still finds them)
+		bool padPro = g_profile.slowCpu;
+		if (padPro)
+		{
+			int first = line(4);
+			const float xs[4] = { 4, 104, 196, 260 };
+			const float ws[4] = { 96, 88, 60, 56 };
+			const std::string labels[4] = { "Default", "Layout", "Pad Pro", w.game.gmstLabel("sclose", "Close") };
+			for (int i = 0; i < 4; i++)
+				if (uiButton(xs[i], 208, ws[i], 28, labels[i], focus == first + i))
+					b = i;
+		}
+		else
+			b = buttons(208, 28, { "Default", "Layout", w.game.gmstLabel("sclose", "Close") });
+		closing = b == (padPro ? 3 : 2);
+		if (padPro && b == 2)
+		{
+			openScreen(SCR_PADPRO);
+			focus = 0;
+			return;
+		}
 		if (b == 0)
 		{
 			g_lookSpeed = kLookDefaultPct;
@@ -341,6 +362,84 @@ void Session::drawOptions()
 		int to = column + ((in.down & KEY_RIGHT) ? 1 : -1), m = lines[li].count;
 		focus = lines[li].first + ((rep & (KEY_LEFT | KEY_RIGHT)) && (to < 0 || to >= m) ? column : (to + m) % m);
 	}
+}
+
+// An Old 3DS's Circle Pad Pro (platform/circlepadpro.hpp). As in the games made for it, the player turns it on here
+// and only then is it looked for: On / Off, what the link is doing (with its battery once it reports), what to do when
+// it is not found, Look again. Kept in settings.txt
+void Session::drawPadPro()
+{
+	header("Circle Pad Pro");
+	const UiInput& in = uiIn();
+	uiText(10, 30, 0.42f, col::text, "The Circle Pad Pro adds a second stick, ZL and ZR.");
+	uiText(10, 43, 0.42f, col::text, "Turned on, the game looks for it over infrared.");
+	// (focus: 0 the switch, 1 Look again, 2 Close)
+	float nameScale = 0.45f;               // (shrunk to fit beside the switch, as the Options rows' names are)
+	while (nameScale > 0.34f && uiTextWidth("Circle Pad Pro", nameScale) > 104)
+		nameScale -= 0.02f;
+	uiText(10, 68, nameScale, focus == 0 ? col::header : col::text, "Circle Pad Pro");
+	bool toggle = uiButton(118, 64, 198, 22, g_circlePadPro ? "On" : "Off", focus == 0);
+	if (focus == 0 && (in.down & (KEY_LEFT | KEY_RIGHT)))
+		toggle = true;
+	if (toggle)
+	{
+		g_circlePadPro = !g_circlePadPro;
+		saveSettings();
+	}
+	CppState st = g_circlePadPro ? cppState() : CPP_OFF;
+	char battery[48] = "";
+	if (st == CPP_CONNECTED && cppBattery() >= 0)
+		snprintf(battery, sizeof(battery), " (battery %d%%)", cppBattery() * 100 / 31);
+	std::string status = st == CPP_OFF ? "Off" : st == CPP_SEARCHING ? "Looking for it..." : st == CPP_CALIBRATING
+		? "Connecting..." : st == CPP_CONNECTED ? std::string("Connected") + battery : "Not found";
+	uiText(10, 98, 0.45f, col::text, "Status");
+	uiTextRight(310, 98, 0.45f, st == CPP_CONNECTED ? col::header : col::text, status);
+	// What to do, by what the link is doing
+	const char* hint[3] = { "", "", "" };
+	if (st == CPP_OFF)
+	{
+		hint[0] = "Turn it on with the 3DS seated in the Circle Pad Pro.";
+		hint[1] = "Off, the game does not use the infrared at all.";
+	}
+	else if (st == CPP_SEARCHING || st == CPP_CALIBRATING)
+	{
+		hint[0] = "Keep the 3DS seated fully in the Circle Pad Pro.";
+		hint[1] = "Asleep after 5 minutes unused: press ZL or ZR.";
+	}
+	else if (st == CPP_CONNECTED)
+	{
+		hint[0] = "Its stick looks, as the C-stick does on a New 3DS;";
+		hint[1] = "ZL and ZR work in every layout. Controls > Layout";
+		hint[2] = "lists them.";
+	}
+	else
+	{
+		hint[0] = "Seat the 3DS fully in it and check its batteries.";
+		hint[1] = "Asleep after 5 minutes unused: press ZL or ZR,";
+		hint[2] = "then Look again.";
+	}
+	for (int i = 0; i < 3; i++)
+		uiText(10, 124 + i * 14, 0.4f, col::textDim, hint[i]);
+	bool canLook = g_circlePadPro && (st == CPP_NOT_FOUND || st == CPP_SEARCHING);
+	if (uiButton(4, 208, 154, 28, "Look again", focus == 1, canLook) && canLook)
+	{
+		cppLookAgain();
+		notify("Looking for the Circle Pad Pro...");
+	}
+	bool closing = uiButton(162, 208, 154, 28, w.game.gmst("sclose", "Close"), focus == 2);
+	if (closing || (in.down & KEY_B))
+	{
+		openScreen(SCR_LOOK);
+		focus = controlsButtonsFocus() + 1;    // (on its Pad Pro button)
+		return;
+	}
+	// D-pad: up / down between the switch and the buttons, left / right between the buttons
+	if (in.down & KEY_DOWN)
+		focus = focus == 0 ? 1 : 0;
+	else if (in.down & KEY_UP)
+		focus = focus == 0 ? 1 : 0;
+	else if (focus > 0 && (in.down & (KEY_LEFT | KEY_RIGHT)))
+		focus = focus == 1 ? 2 : 1;
 }
 
 // What each button does

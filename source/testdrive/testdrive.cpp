@@ -104,7 +104,7 @@ bool hasArg(const std::string& what)
 		|| what == "npcrun" || what == "refeffect" || what == "fleerating" || what == "fightterm" || what == "hagglechance" || what == "barterprice" || what == "trainprice" || what == "travelprice" || what == "mapseen"
 		|| what == "wcolor" || what == "cellfog" || what == "fogrange" || what == "gridloaded" || what == "savevalid" || what == "saveneeds" || what == "shotluma" || what == "shotlumabox" || what == "shottopbox" || what == "batchdepthwrite" || what == "shotlumagain" || what == "shotspread" || what == "shotdark" || what == "shotblack" || what == "cloudtex" || what == "clouduv" || what == "glyph" || what == "glyphsame" || what == "sunside" || what == "saverow" || what == "moonx" || what == "moonz" || what == "moonalpha" || what == "texlow" || what == "sharedmodels" || what == "texside" || what == "texlod" || what == "texlevels" || what == "regionchance" || what == "regionweather"
 		|| what == "equipped" || what == "canequip" || what == "armorparts" || what == "pickpocketchance" || what == "tooluses" || what == "lighttime" || what == "gyrodps" || what == "gyroyaw" || what == "gyropitch" || what == "gyrosoft" || what == "gyrodrift" || what == "gyrocal" || what == "gyrolevel" || what == "stick" || what == "vmpiece" || what == "vfxpiece" || what == "vfxfxsprites" || what == "vfxdark" || what == "vfxlife" || what == "refsprites" || what == "gamma" || what == "setting" || what == "savedsetting" || what == "conhas" || what == "mapknown" || what == "precip"
-		|| what == "refscale" || what == "refdrawscale" || what == "refradius" || what == "stormdir" || what == "moontint" || what == "subtitlehas" || what == "wloopis";
+		|| what == "refscale" || what == "refdrawscale" || what == "refradius" || what == "stormdir" || what == "moontint" || what == "subtitlehas" || what == "wloopis" || what == "cppkey";
 }
 
 // "@": the value SNAP recorded for the same check; "@1" / "@-2.5": that plus / minus so much
@@ -131,7 +131,7 @@ int screenByName(const std::string& n)
 		{ "alchemy", SCR_ALCHEMY }, { "recharge", SCR_RECHARGE }, { "persuade", SCR_PERSUADE }, { "spells", SCR_SPELLS },
 		{ "race", SCR_RACE }, { "birth", SCR_BIRTH }, { "stats", SCR_STATS }, { "saves", SCR_SAVES }, { "death", SCR_DEATH },
 		{ "journal", SCR_JOURNAL }, { "gamemenu", SCR_GAMEMENU }, { "map", SCR_MAP },
-		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "classlist", SCR_CLASS_LIST }, { "classresult", SCR_CLASS_RESULT }, { "classcreate", SCR_CLASS_CREATE }, { "review", SCR_REVIEW }, { "magic", SCR_MAGIC }, { "options", SCR_OPTIONS }, { "display", SCR_DISPLAY }, { "controls", SCR_CONTROLS }, { "look", SCR_LOOK }, { "console", SCR_CONSOLE },
+		{ "classmethod", SCR_CLASS_METHOD }, { "classquiz", SCR_CLASS_QUIZ }, { "classlist", SCR_CLASS_LIST }, { "classresult", SCR_CLASS_RESULT }, { "classcreate", SCR_CLASS_CREATE }, { "review", SCR_REVIEW }, { "magic", SCR_MAGIC }, { "options", SCR_OPTIONS }, { "display", SCR_DISPLAY }, { "controls", SCR_CONTROLS }, { "padpro", SCR_PADPRO }, { "look", SCR_LOOK }, { "console", SCR_CONSOLE },
 	};
 	for (auto& e : names)
 		if (n == e.name)

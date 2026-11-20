@@ -11,6 +11,8 @@
 #include "testdrive/testdrive.hpp"
 #include "mwbase/session.hpp"
 #include "components/debug/debuglog.hpp"
+#include "platform/circlepadpro.hpp"
+#include "mwinput/inputmanagerimp.hpp"
 
 extern const char* g_playerBlock;
 #include <malloc.h>
@@ -34,6 +36,31 @@ std::optional<bool> numberOfInput(Session& s, const std::string& what, const std
 		twoNumbers(arg, dx, dy);
 		stickAxes(dx, dy, stickZone(), x, y);
 		v = sqrtf(x * x + y * y);
+		return true;
+	}
+	// An Old 3DS's Circle Pad Pro: cppstate (0 off, 1 looking, 2 connecting, 3 connected, 4 not found), cppconnected,
+	// cppbattery (0 to 31), cppused 1 once the Classic layout reads the full pad, cppsetting the Pad Pro switch;
+	// cppkey:zl|zr|r 1 while held on it; cstickx / csticky the second stick through the dead zone (-1 to 1)
+	if (what == "cppstate" || what == "cppconnected" || what == "cppbattery" || what == "cppused" || what == "cppsetting")
+	{
+		v = what == "cppstate" ? (float)cppState() : what == "cppconnected" ? (cppConnected() ? 1.0f : 0.0f)
+			: what == "cppbattery" ? (float)cppBattery() : what == "cppused" ? (classicProSeen() ? 1.0f : 0.0f)
+			: (g_circlePadPro ? 1.0f : 0.0f);
+		return true;
+	}
+	if (what == "cppkey")
+	{
+		u32 k = arg == "zl" ? KEY_ZL : arg == "zr" ? KEY_ZR : arg == "r" ? KEY_R : 0;
+		v = (cppKeysHeld() & k) ? 1.0f : 0.0f;
+		return true;
+	}
+	if (what == "cstickx" || what == "csticky")
+	{
+		circlePosition cs;
+		cstickRead(&cs);
+		float x, y;
+		stickAxes(cs.dx, cs.dy, stickZone(), x, y);
+		v = what == "cstickx" ? x : y;
 		return true;
 	}
 	if (what == "gyrolevel")

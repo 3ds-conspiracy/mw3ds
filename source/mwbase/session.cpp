@@ -90,7 +90,7 @@ bool Session::worldPaused() const
 	switch (screen)
 	{
 	case SCR_INVENTORY: case SCR_MAGIC: case SCR_SPELLS: case SCR_STATS: case SCR_MAP: case SCR_JOURNAL:
-	case SCR_SAVES: case SCR_OPTIONS: case SCR_AUDIO: case SCR_CONTROLS: case SCR_DISPLAY: case SCR_LOOK: case SCR_CONSOLE: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
+	case SCR_SAVES: case SCR_OPTIONS: case SCR_AUDIO: case SCR_CONTROLS: case SCR_PADPRO: case SCR_DISPLAY: case SCR_LOOK: case SCR_CONSOLE: case SCR_GAMEMENU: case SCR_BOOK: case SCR_CONTAINER:
 		return true;
 	default:
 		return false;
