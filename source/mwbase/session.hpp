@@ -76,6 +76,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void pollSaveWriter();            // finished background saves: their meta line and notice (each frame)
 	void shutdown();                  // frees the cell and stops its sounds (before deleting the session)
 	const char* savePath = nullptr;
+	std::string reportShot;           // a bug report's screenshot: named when the report is filed, saved at the
+	                                  // next C3D_FrameBegin (mwrender/screenshotmanager.hpp: only there is a frame's transfer finished)
 	void skipChargen();
 	void giveItems(const std::vector<std::pair<int, std::string>>& items);
 	void updateAmbience();

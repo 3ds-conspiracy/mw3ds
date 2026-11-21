@@ -13,7 +13,7 @@ struct WindowManagerState
 	std::vector<MessageState> messages;
 	std::vector<ScriptMenu> pendingMenus;
 	bool wantName = false;            // main loop shows the system keyboard between frames
-	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE, TEXT_CLASSNAME, TEXT_CLASSDESC, TEXT_OFFER, TEXT_MAPNOTE, TEXT_BARTERCOUNT };
+	enum { TEXT_NONE, TEXT_MAKENAME, TEXT_SEARCH, TEXT_CONSOLE, TEXT_CLASSNAME, TEXT_CLASSDESC, TEXT_OFFER, TEXT_MAPNOTE, TEXT_BARTERCOUNT, TEXT_BUGREPORT };
 	enum { VIEW_MIN, VIEW_AUTO, VIEW_MAX, VIEW_MID };
 	int wantText = TEXT_NONE;         // the same, for the name of the spell / item being made, the journal's search or the class being made
 	int travelCell = -1;              // door to another cell: main loop shows a loading screen, then finishTravel()

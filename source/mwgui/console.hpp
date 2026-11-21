@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,9 @@ struct DevConsole
 	bool hasValue = false;               // the last line was an expression: its value
 	float lastValue = 0.0f;
 	size_t runStart = 0;                 // lines[runStart..]: what the last line printed (its echo first)
+	// A line the engine answers itself instead of compiling: tried first, and told what the line was. True:
+	// handled, printed. False: compile it as a script line, as usual. (The session sets it for "report".)
+	std::function<bool(ScriptHost& host, const std::string& line)> commandHook;
 
 	void run(World& w, ScriptHost& host, const std::string& line);
 	void print(const std::string& text, bool error = false);

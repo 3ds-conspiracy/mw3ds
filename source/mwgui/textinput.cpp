@@ -12,6 +12,7 @@
 #include <cstring>
 
 #include "components/debug/debuglog.hpp"
+#include "mwstate/bugreport.hpp"
 #include <malloc.h>
 
 // What was typed on the system keyboard: the name of the spell / enchanted item being made (a cancel keeps the
@@ -39,6 +40,10 @@ void Session::setText(bool confirmed, const std::string& text)
 		list2 = UiList();
 		logf("journal: search \"%s\"", journalSearch.c_str());
 	}
+	// a bug report filed from the game menu: an empty description still files, the position, the cell and
+	// the warnings are the part a player can't write down (the autotest's shot would be a loading screen)
+	else if (kind == TEXT_BUGREPORT)
+		bugReportFile(w, *this, text, !autotest);
 	// the class being made: its name can't be left blank (OpenMW's OK waits for one), its description can
 	else if (kind == TEXT_CLASSNAME && !blank)
 	{

@@ -78,6 +78,9 @@ void DevConsole::run(World& w, ScriptHost& host, const std::string& line)
 	print("> " + line);
 	lastError = false;
 	hasValue = false;
+	// A line the engine answers itself (the "report" that files a bug report) never reaches the compiler
+	if (commandHook && commandHook(host, line))
+		return;
 	if (selected >= (int)w.refs.size())
 		selected = -1;
 
