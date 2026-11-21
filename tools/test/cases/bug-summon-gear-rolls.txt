@@ -1,0 +1,21 @@
+# start: Seyda Neen
+# Golden Saints called up (any actor placed while playing) roll the leveled lists they carry each time, as OpenMW's
+# getLevelledItem does when the actor is made: random_Golden_saint_weapon holds 18 level 1 weapons and
+# random_Golden_saint_shield 20 shields. The converter picked one of each for the record, so every saint came with the
+# same pair (a player's report: summoned Golden Saints always come with the same equipment). Four placed at once by
+# the console's PlaceAtPC, each made as a summon is (World::spawnActor).
+1 0 0 0 0 MSG
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 HOUR:12
+0.3 0 0 0 0 SEED:11
+0.3 0 0 0 0 CON:ToggleAI
+0.3 0 0 0 0 GOTO:Balmora
+6 0 0 0
+0 0 0 0 0 SETUP-END
+0.3 0 0 0 0 CON:PlaceAtPC%"golden%saint_summon"%4%300%0
+1 0 0 0
+0.3 0 0 0 0 EXPECT:refweapon:golden%saint_summon:any
+0.3 0 0 0 0 EXPECT:refweaponkinds:golden%saint_summon:ge:2
+0.3 0 0 0 0 EXPECT:refshieldkinds:golden%saint_summon:ge:2
+0.3 0 0 0 0 EXPECT:refgearshown:golden%saint_summon:eq:1
+1 0 0 0

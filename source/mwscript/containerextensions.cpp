@@ -142,7 +142,7 @@ std::optional<float> containerExtensions(Ctx& c, const Node& n, World& w, bool o
 		}
 		else if (r->actor >= 0 && !w.game.actors[r->actor].creature)
 		{
-			const std::string& wpn = w.game.actors[r->actor].weapon;
+			const std::string wpn = r->weapon.str();
 			if (!wpn.empty() && w.refItemCount(*r, wpn) > 0)
 				o = w.game.object(wpn);
 		}

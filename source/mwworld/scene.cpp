@@ -281,7 +281,7 @@ bool World::cellExits(int ci, std::vector<DoorExit>& out)
 	// whole of Mournhold, Old Mournhold, Bamz-Amschend and Norenen-dur into memory, about 12000 objects of 832 bytes,
 	// and the Old 3DS ran out of heap at the next town)
 	ParsedRefs p;
-	if (!parseRefs(*this, ci, p))
+	if (!parseRefs(*this, ci, p, fillLevel(ci)))
 		return false;
 	for (const Ref& d : p.refs)
 		take(d);
@@ -296,7 +296,7 @@ bool World::ensureRefs(int cellIndex)
 		return cellIndex >= 0;
 	ParsedRefs p;
 	u64 start = osGetTime();
-	if (!parseRefs(*this, cellIndex, p))
+	if (!parseRefs(*this, cellIndex, p, fillLevel(cellIndex)))
 		return false;
 	appendRefs(*this, cellIndex, p);
 	LevelCell& lc = cells[cellIndex];
@@ -483,13 +483,20 @@ static void integrateLevelCell(World& w, int index, LoadedCell* l)
 				w.refs[i].anim = w.refs[i].cellActor = -1;
 			continue;                      // it stands in another cell now
 		}
-		if (w.refs[i].relib)
+		if (w.refs[i].relib || w.refs[i].look > 0)
 		{
-			w.detachActor(i);              // a leveled pick: drawn from its own library, not the cell's
-			w.attachSpawned(i);
+			// a leveled pick, or a look for the player's level (ActorDef::looks): drawn from its own library, not the
+			// cell's; the look in the light the cell placed it in
+			u8 tint[3] = {};
+			const Actor* placed = w.refs[i].look > 0 ? w.actorOf(i) : nullptr;
+			if (placed)
+				memcpy(tint, placed->tint, sizeof(tint));
+			w.detachActor(i);
+			w.attachSpawned(i, placed ? tint : nullptr);
 			continue;
 		}
 		w.syncActor(i);
+		w.actorGear(i);
 		w.refs[i].humanAnim = -1;
 		if (w.refs[i].werewolf)
 			w.werewolfBody(i);             // still in wolf form from before
@@ -592,6 +599,7 @@ struct StreamJob
 	TextureCache* cache;
 	const World* world;
 	bool parseObjects = false;        // the cell's objects weren't read yet: read them on the thread too
+	int level = 1;                    // ... their packs filled for this player level (World::fillLevel)
 	ParsedRefs objects;
 	bool objectsOk = false;
 	Thread thread = nullptr;
@@ -606,7 +614,7 @@ static void streamWorker(void* arg)
 	crashHandlerInstall(1);
 	g_workerAt = "parseRefs";
 	if (j->parseObjects)
-		j->objectsOk = parseRefs(*j->world, j->index, j->objects);
+		j->objectsOk = parseRefs(*j->world, j->index, j->objects, j->level);
 	g_workerAt = "readLevelCell";
 	j->ok = readLevelCell(j->dataDir, j->file, *j->cache, j->cell);
 	g_workerAt = "done";
@@ -671,6 +679,7 @@ static void startStreamJob(World& w, int index)
 	j->cache = &w.textures;
 	j->world = &w;
 	j->parseObjects = !w.cells[index].refsLoaded;
+	j->level = w.fillLevel(index);
 	j->started = osGetTime();
 	// Below the main thread's priority: it runs while the main thread waits for the GPU. An Old 3DS has one core for
 	// the game, so there it goes to the system core (up to half of it, APT_SetAppCpuTimeLimit in engine.cpp) and reads in

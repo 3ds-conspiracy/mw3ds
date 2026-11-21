@@ -131,6 +131,21 @@ void fillContents(const GameData& g, Ref& ref, int level, unsigned seed)
 				ref.contents.emplace_back(n, pick);
 		}
 	}
+	// An NPC whose leveled lists put clothes on them (ActorDef::looks): what those lists give at this level, the look the
+	// converter dressed for the last step at or under it (the 3DS draws people from dressed libraries: their clothes
+	// can't be rolled one by one, the rest of the pack is)
+	if (ref.actor >= 0 && ref.actor < (int)g.actors.size())
+	{
+		const ActorDef& d = g.actors[ref.actor];
+		ref.look = 0;
+		for (size_t k = 1; k < d.looks.size() && k < 127; k++)
+			if (d.looks[k].level <= level)
+				ref.look = (s8)k;
+		if (!d.looks.empty())
+			for (auto& item : d.looks[ref.look].items)
+				if (g.object(item.second.str()))
+					ref.contents.emplace_back(item.first, item.second.str());
+	}
 }
 
 void initActorState(const GameData& g, Ref& ref)
@@ -154,14 +169,34 @@ void initActorState(const GameData& g, Ref& ref)
 	if (!a.aiList.empty())
 		aiStartList(ref, a);
 	actorSpellStats(g, ref, POOLS_FULL);
+	actorAutoEquip(g, ref);
+}
+
+void actorAutoEquip(const GameData& g, Ref& ref)
+{
+	ref.weapon = ref.ammoId = ref.shield = Atom();
+	ref.armor = 0.0f;
+	ref.ammo = 0;
+	if (ref.actor < 0 || ref.actor >= (int)g.actors.size())
+		return;
+	actorPickGear(g, ref);
 	// Ammunition they carry for their bow (or thrown weapons, their own ammunition)
-	const std::string& ammo = !a.ammo.empty() ? a.ammo : a.weapon;
+	const std::string ammo = !ref.ammoId.empty() ? ref.ammoId.str() : ref.weapon.str();
 	for (auto& c : ref.contents)
 		if (c.second == ammo && g.object(ammo) && g.object(ammo)->subtype >= WEAP_THROWN)
 			ref.ammo += stockCount(c.first);
 }
 
-bool parseRefs(const World& w, int cellIndex, ParsedRefs& out)
+// The player's level a cell's containers and people fill their packs for: when its objects were first read
+// (World::cellLevel, as its leveled creatures are picked), so a cell read again holds what it held (OpenMW resolves a
+// container's or an actor's lists once and keeps them); the player's level now for one never read
+int World::fillLevel(int cellIndex) const
+{
+	auto it = cellIndex >= 0 ? cellLevel.find(cells[cellIndex].file) : cellLevel.end();
+	return it != cellLevel.end() ? it->second : stats.level;
+}
+
+bool parseRefs(const World& w, int cellIndex, ParsedRefs& out, int level)
 {
 	const LevelCell& lc = w.cells[cellIndex];
 	std::string p = cellPath(w.dataDir, lc.file, ".json");
@@ -243,7 +278,7 @@ bool parseRefs(const World& w, int cellIndex, ParsedRefs& out)
 			unsigned seed = 2166136261u;
 			for (char ch : lc.file.view())
 				seed = (seed ^ (u8)ch) * 16777619u;
-			fillContents(w.game, ref, w.stats.level, seed ^ (unsigned)out.refs.size() * 2654435761u);
+			fillContents(w.game, ref, level, seed ^ (unsigned)out.refs.size() * 2654435761u);
 		}
 		initActorState(w.game, ref);
 		memcpy(ref.start, ref.pos, sizeof(ref.pos));
@@ -479,6 +514,7 @@ void World::respawnCell(int c)
 				r.fitBox();
 				r.contents.clear();
 				fillContents(game, r, stats.level, (unsigned)rand());
+				actorAutoEquip(game, r);
 				revived++;
 			}
 			// (the record's persistent flag isn't in our data: the essential and the scripted ones stand for it)

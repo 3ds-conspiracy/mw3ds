@@ -177,6 +177,8 @@ cJSON* World::refState(int i) const
 	}
 	if (r.recType == REC_CONT || r.recType == REC_NPC_ || r.recType == REC_CREA)
 		cJSON_AddItemToObject(o, "contents", contentsState(r.contents));
+	if (r.actor >= 0 && r.look > 0)
+		cJSON_AddNumberToObject(o, "look", r.look);     // (the look its pack goes with)
 	return o;
 }
 
@@ -248,6 +250,7 @@ u32 World::refHash(int i) const
 		mixf(r.aiStart);
 		mixi(r.aiRange);
 		mixi(r.aiDone);
+		mixi(r.look);
 	}
 	for (auto& c : r.contents)
 	{
@@ -373,7 +376,17 @@ void World::applyRefState(Ref& r, const cJSON* it)
 	}
 	r.fitBox();                    // moved: its box goes with it
 	if (const cJSON* c = cJSON_GetObjectItem(it, "contents"))
+	{
 		readContentsState(c, r.contents);
+		// What it fights with comes from that pack, and the look it is drawn in with it (a save from before: a level 1
+		// player's, which its pack then holds)
+		if (r.actor >= 0)
+		{
+			int look = (int)num(it, "look", 0);
+			r.look = (s8)(look > 0 && look < (int)game.actors[r.actor].looks.size() ? look : 0);
+			actorAutoEquip(game, r);
+		}
+	}
 }
 
 cJSON* World::scriptState(const ScriptInstance& s) const

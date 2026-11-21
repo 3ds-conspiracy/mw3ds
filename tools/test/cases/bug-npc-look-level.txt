@@ -1,0 +1,16 @@
+# start: Seyda Neen
+# An NPC whose leveled list puts clothes on them looks the part for the player's level. Audenian Valius (Vivec,
+# Telvanni Enchanter) draws three times from l_m_enchantitem_telvanni_rank8, whose entries start at level 10: a level 1
+# player meets him in his extravagant robe, a level 20 one in the Flameeater Robe he then carries (OpenMW rolls the
+# list at the player's level and he wears the best robe). The 3DS draws him from a look the converter dressed for
+# each level step of his lists; ours had the level 1 look only.
+1 0 0 0 0 MSG+LEVEL:20
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 GOTO:Vivec,_Telvanni_Enchanter
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Vivec,_Telvanni_Enchanter
+0.3 0 0 0 0 EXPECT:refwears:audenian%valius,flameeater%robe:eq:1
+0.3 0 0 0 0 EXPECT:refwears:audenian%valius,extravagant_robe_01_a:eq:0
+0.3 0 0 0 0 EXPECT:refitem:audenian%valius,flameeater%robe:ge:1
+0.3 0 0 0 0 EXPECT:refdressed:audenian%valius:eq:0
+1 0 0 0

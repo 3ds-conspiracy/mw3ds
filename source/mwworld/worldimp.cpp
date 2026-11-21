@@ -82,13 +82,15 @@ int World::spawnActor(const std::string& id, const float pos[3], float yaw, int 
 	return slot;
 }
 
-void World::attachSpawned(int ri)
+void World::attachSpawned(int ri, const u8* tint)
 {
 	Ref& r = refs[ri];
 	LoadedCell* l = r.cell >= 0 ? cells[placeOf(ri)].live : nullptr;
 	auto sp = game.spawns.find(r.idLower);
 	const ActorDef* def = r.actor >= 0 ? &game.actors[r.actor] : nullptr;
-	std::string lib = sp != game.spawns.end() ? sp->second.lib : def ? def->lib.str() : "";
+	// (a look for the player's level, ActorDef::looks: the library the converter dressed for it)
+	const ActorLook* look = def ? def->look(r.look) : nullptr;
+	std::string lib = look ? look->lib.str() : sp != game.spawns.end() ? sp->second.lib : def ? def->lib.str() : "";
 	int skel = sp != game.spawns.end() ? sp->second.skeleton : def ? def->skel : -1;
 	if (!l || lib.empty() || skel < 0)
 		return;
@@ -118,8 +120,8 @@ void World::attachSpawned(int ri)
 	const float up = sp != game.spawns.end() ? sp->second.size[1] : 1.0f;
 	float c = cosf(r.rot[2]) * across, s = sinf(r.rot[2]) * across;
 	float place[12] = { c, s, 0.0f, r.pos[0], -s, c, 0.0f, r.pos[1], 0.0f, 0.0f, up, r.pos[2] };
-	// (lit by the cell's light as a placement there is: the library's even light stood out dark)
-	r.anim = actorsAddFromLibrary(l->actors, l->cell, textures, dataDir, lib, ri, skel, place, l->actors.cellLight);
+	// (lit by the cell's light as a placement there is: the library's even light stood out dark; or as given)
+	r.anim = actorsAddFromLibrary(l->actors, l->cell, textures, dataDir, lib, ri, skel, place, tint ? tint : l->actors.cellLight);
 	CellActor ca = {};
 	strncpy(ca.id, r.id.c_str(), sizeof(ca.id) - 1);
 	strncpy(ca.name, game.actors[r.actor].name.c_str(), sizeof(ca.name) - 1);
@@ -130,6 +132,7 @@ void World::attachSpawned(int ri)
 	l->cell.actors.push_back(ca);
 	r.cellActor = l->cell.actors.size() - 1;
 	syncActor(ri);
+	actorGear(ri);
 }
 
 void World::werewolfBody(int ri)

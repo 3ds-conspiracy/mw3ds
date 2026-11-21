@@ -1218,6 +1218,9 @@
 120 0 0 0 0 WAYTO:@-1257,2066,-810
 120 0 0 0 0 WAYTO:@-1254,2481,-764
 120 0 0 0 0 WAYTO:@-1061,2654,-759
+# (halfway up the bend: from -1061,2654 straight to the next point the walk could slide along the north wall onto a
+# ledge, or be pushed back down the tunnel and stick)
+120 0 0 0 0 WAYTO:@-832,2675,-720
 120 0 0 0 0 WAYTO:@-604,2716,-681
 120 0 0 0 0 WAYTO:@-243,2700,-504
 120 0 0 0 0 WAYTO:@188,2689,-357

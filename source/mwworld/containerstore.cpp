@@ -163,8 +163,7 @@ void World::refAddItem(Ref& r, const std::string& id, int count)
 	// their shock darts up as they run low; OpenMW's actors draw from their inventory)
 	if (r.actor >= 0 && count > 0)
 	{
-		const ActorDef& def = game.actors[r.actor];
-		const std::string& ammo = !def.ammo.empty() ? def.ammo : def.weapon;
+		const std::string ammo = !r.ammoId.empty() ? r.ammoId.str() : r.weapon.str();
 		const Object* o = l == ammo ? game.object(ammo) : nullptr;
 		if (o && o->recType == REC_WEAP && o->subtype >= WEAP_THROWN)
 			r.ammo += count;

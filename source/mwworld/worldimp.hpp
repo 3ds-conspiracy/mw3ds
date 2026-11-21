@@ -30,6 +30,15 @@ enum SaveOutcome { SAVE_FAILED = 0, SAVE_WRITTEN, SAVE_QUEUED };
 
 float angleDelta(float a, float b);    // a - b wrapped into -pi..pi
 void fillContents(const GameData& g, Ref& ref, int level, unsigned seed);   // record items, leveled lists picked
+// What an actor fights with, worked out from what it carries (OpenMW's InventoryStore::autoEquip): Ref::weapon, ammoId,
+// shield, armor, and its arrows' count. actorPickGear is the choice alone (mwworld/inventorystore.cpp)
+void actorAutoEquip(const GameData& g, Ref& ref);
+void actorPickGear(const GameData& g, Ref& ref);
+struct World;
+// What an actor fights with (lowercase ids, "" none) and the clothing and armour of the look it is drawn in
+std::string actorWeaponId(const World& w, int ri);
+std::string actorShieldId(const World& w, int ri);
+const std::vector<Atom>& actorLookWorn(const World& w, int ri);
 // A merchant's stack with a negative count is a restocking quantity: it shows |count| and buying never depletes it
 inline int stockCount(int count) { return count < 0 ? -count : count; }
 // A leveled line's separate rolls: one per unit with the each flag and more than one, else one for the whole count
@@ -344,7 +353,9 @@ struct World
 	// How far above where it stands (the ground under its feet) a creature's model is drawn: its collision box rested on
 	// the highest ground under all of it (0 without a box)
 	float actorBoxLift(int ri);
-	void attachSpawned(int ri);       // its mesh and collision in its (loaded) cell
+	void attachSpawned(int ri, const u8* tint = nullptr);   // its mesh and collision in its (loaded) cell (tint: its light)
+	void actorGear(int ri);           // its weapon and shield drawn as what it fights with (npcGear)
+	int fillLevel(int cellIndex) const;   // the player level a cell's packs are filled for
 	// A person drawn as what they are: in wolf form Bloodmoon's werewolf body (the bm_werewolf_default creature's
 	// library: OpenMW draws a werewolf on the wolf skeleton with its skin), else their own model again
 	void werewolfBody(int ri);

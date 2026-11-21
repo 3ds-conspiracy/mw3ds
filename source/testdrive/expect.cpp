@@ -204,7 +204,7 @@ bool TestDriver::expect(Session& s, const std::string& spec, bool quiet)
 	{
 		// EXPECT:refweapon:<ref>:<weapon id or "none">: the weapon that actor fights with
 		int ri = findRef(s, a[1], false);
-		std::string wpn = ri >= 0 && w.refs[ri].actor >= 0 ? w.game.actors[w.refs[ri].actor].weapon : "";
+		std::string wpn = ri >= 0 && w.refs[ri].actor >= 0 ? actorWeaponId(w, ri) : "";
 		ok = a[2] == "any" ? !wpn.empty() : a[2] == "none" ? wpn.empty() : wpn == lower(spaced(a[2]));
 		snprintf(got, sizeof(got), "%.80s", ri < 0 ? "no such ref" : wpn.empty() ? "none" : wpn.c_str());
 	}

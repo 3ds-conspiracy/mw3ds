@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "components/misc/atom.hpp"
+
 // Animated NPCs from cells/<cell>.act (tools/convert/actors.py documents the layout).
 
 // A rotation key's unit quaternion in 16 bits a part (x 32767; the files hold floats): 12 bytes a key, not 20. The
@@ -58,6 +60,8 @@ struct MorphTrack
 
 enum { ACTOR_RIGID = 0, ACTOR_SKINNED = 1 };
 enum { ACTOR_MESH_WEAPON = 128 };      // mesh flag: the weapon, drawn only while fighting
+// A library's even light against a third-person piece's (about 0.5 / 0.8): a piece among library meshes is dimmed by it
+constexpr float kPieceLight = 0.63f;
 
 // How the current animation group plays
 enum AnimMode { ANIM_IDLE, ANIM_LOOP, ANIM_ONCE, ANIM_HOLD };   // random idles / repeat / then idle / freeze at end
@@ -176,6 +180,10 @@ struct Actor
 	u32 wornMask = ~0u;
 	const char* wornGivenSeen = nullptr;      // the Ref::wornGiven it was last dressed for
 	bool dressed = false;
+	// What its weapon and shield meshes are of (npcGear): its library's (a level 1 player's pick) until they are swapped
+	// for what it fights with (Ref::weapon, shield); gearKnown: looked at once
+	Atom weaponShown, shieldShown;
+	bool gearKnown = false;
 	float scaleFactor = 1.0f;          // SetScale's factor its place already holds (World::syncActor brings it to the Ref's)
 };
 

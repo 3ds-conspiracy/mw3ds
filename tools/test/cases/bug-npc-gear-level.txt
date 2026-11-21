@@ -1,0 +1,17 @@
+# start: Seyda Neen
+# An NPC's leveled weapon is picked for the player's level when their cell is first read (OpenMW's getLevelledItem,
+# then autoEquip), not once for a level 1 player by the converter. Almsi Oren (Habinbaes) carries l_n_wpn_missle_thrown,
+# which has no "all levels" flag: at level 20 its highest entry at or under the level is the silver dart alone, at level
+# 1 the chitin throwing star. Ours gave her the throwing stars whatever the player's level. (AI off: she would throw
+# the darts away before the checks.)
+1 0 0 0 0 MSG+LEVEL:20
+0.3 0 0 0 0 GOD
+0.3 0 0 0 0 CON:ToggleAI
+0.3 0 0 0 0 GOTO:Habinbaes
+6 0 0 0
+0.3 0 0 0 0 EXPECT:cell:Habinbaes
+0.3 0 0 0 0 EXPECT:refweapon:almsi_oren:silver%dart
+0.3 0 0 0 0 EXPECT:refitem:almsi%oren,silver%dart:ge:1
+0.3 0 0 0 0 EXPECT:refitem:almsi%oren,chitin%throwing%star:eq:0
+0.3 0 0 0 0 EXPECT:refgearshown:almsi_oren:eq:1
+1 0 0 0

@@ -1397,7 +1397,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 						}
 						const Ref& ar = w.refs[a.ref];
 						if ((m.flags & ACTOR_MESH_WEAPON) && g_gpu.caustCount && ar.actor >= 0)
-							bd.shimmer = w.game.enchantGlow(w.game.actors[ar.actor].weapon);
+							bd.shimmer = w.game.enchantGlow(ar.weapon);
 						g_gpu.blendQueue.push_back(bd);
 						continue;
 					}
@@ -1427,7 +1427,7 @@ int rendererDrawWorld(World& w, const RenderCamera& cam, float eyeShift, bool se
 					// their weapon, enchanted, shimmers
 					const Ref& ar = w.refs[a.ref];
 					if ((m.flags & ACTOR_MESH_WEAPON) && g_gpu.caustCount && ar.actor >= 0)
-						if (u32 glow = w.game.enchantGlow(w.game.actors[ar.actor].weapon))
+						if (u32 glow = w.game.enchantGlow(ar.weapon))
 						{
 							drawShimmer(b, glow);
 							draws++;

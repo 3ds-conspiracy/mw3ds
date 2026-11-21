@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <strings.h>
 
 #include "platform/linear.hpp"
 #include "components/debug/debuglog.hpp"
@@ -470,6 +471,49 @@ void PlayerBody::free(World& w)
 	ready = false;
 }
 
+// A third-person piece's meshes read for one actor alone (a skin re-posed on the CPU writes its own vertices), their
+// textures joined to the cell's list. False when it won't load
+static bool takePiece(World& w, LoadedCell& l, const Skeleton& sk, const std::string& name, u32 glow, bool shield,
+	std::vector<ActorMesh>& out)
+{
+	FpPiece* p = fpLoadPiece(w, sk, name);
+	if (!p)
+		return false;
+	for (auto& m : p->meshes)
+	{
+		ActorMesh copy = m;
+		copy.tex = -1;
+		const std::string& tex = m.tex >= 0 && m.tex < (int)p->texNames.size() ? p->texNames[m.tex] : std::string();
+		for (size_t k = 0; k < l.cell.textureNames.size() && !tex.empty(); k++)
+			if (l.cell.textureNames[k] == tex)
+				copy.tex = k;
+		if (copy.tex < 0 && !tex.empty())
+		{
+			copy.tex = l.cell.textureNames.size();
+			l.cell.textureNames.push_back(tex);
+			l.cell.textures.push_back(w.textures.acquire(w.dataDir, tex));
+		}
+		copy.glow = glow;
+		if (shield)
+			copy.hand = 2;                // put away while both hands are busy or the torch is out
+		// (a rigid one that doesn't morph is never rewritten, as a library's: its source positions go, heap kept)
+		if (copy.kind != ACTOR_SKINNED && !copy.hasMorph)
+			std::vector<float>().swap(copy.src);
+		out.push_back(copy);
+	}
+	p->meshes.clear();                    // (their buffers are the actor's now; the piece gives back its own textures)
+	fpFreePiece(w, p);
+	return true;
+}
+
+static void freeMesh(ActorMesh& m)
+{
+	lockedLinearFree(m.verts);
+	lockedLinearFree(m.indices);
+	for (void* v : m.pathFrames)
+		lockedLinearFree(v);
+}
+
 bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::vector<std::string>& items)
 {
 	const ThirdPersonDef& t = w.game.firstPerson.third;
@@ -531,63 +575,26 @@ bool npcDress(World& w, LoadedCell& l, Actor& a, const ActorDef& d, const std::v
 					glow[s.first] = w.game.enchantGlow(id);
 				}
 		}
-	// The pieces, read for this actor alone (a skin re-posed on the CPU writes its own vertices)
+	// The pieces, read for this actor alone. Its shield is npcGear's: what it holds stays as it is
 	const Skeleton& sk = actorSkeleton(l.actors, a.skeleton);
 	std::vector<ActorMesh> made;
 	bool ok = true;
 	for (int s = 0; s < kSlotCount && ok; s++)
-	{
-		if (part[s].empty())
-			continue;
-		FpPiece* p = fpLoadPiece(w, sk, part[s]);
-		if (!p)
-		{
-			ok = false;
-			break;
-		}
-		for (auto& m : p->meshes)
-		{
-			ActorMesh copy = m;
-			copy.tex = -1;
-			const std::string& name = m.tex >= 0 && m.tex < (int)p->texNames.size() ? p->texNames[m.tex] : std::string();
-			for (size_t k = 0; k < l.cell.textureNames.size() && !name.empty(); k++)
-				if (l.cell.textureNames[k] == name)
-					copy.tex = k;
-			if (copy.tex < 0 && !name.empty())
-			{
-				copy.tex = l.cell.textureNames.size();
-				l.cell.textureNames.push_back(name);
-				l.cell.textures.push_back(w.textures.acquire(w.dataDir, name));
-			}
-			copy.glow = glow[s];
-			if (s == SLOT_SHIELD)
-				copy.hand = 2;            // put away while both hands are busy or the torch is out
-			made.push_back(copy);
-		}
-		p->meshes.clear();                // (their buffers are the actor's now; the piece gives back its own textures)
-		fpFreePiece(w, p);
-	}
+		if (!part[s].empty() && s != SLOT_SHIELD)
+			ok = takePiece(w, l, sk, part[s], glow[s], false, made);
 	if (!ok)
 	{
 		for (auto& m : made)
-		{
-			lockedLinearFree(m.verts);
-			lockedLinearFree(m.indices);
-		}
+			freeMesh(m);
 		return false;
 	}
-	// The library's torch and weapon stay; the rest goes
+	// The library's torch, weapon and shield stay; the rest goes
 	std::vector<ActorMesh> keep;
 	for (auto& m : a.meshes)
-		if (m.hand == 1 || (m.flags & 128))
+		if (m.hand == 1 || m.hand == 2 || (m.flags & ACTOR_MESH_WEAPON))
 			keep.push_back(m);
 		else
-		{
-			lockedLinearFree(m.verts);
-			lockedLinearFree(m.indices);
-			for (void* v : m.pathFrames)
-				lockedLinearFree(v);
-		}
+			freeMesh(m);
 	keep.insert(keep.end(), made.begin(), made.end());
 	a.meshes.swap(keep);
 	a.skinned = false;
@@ -627,20 +634,28 @@ static bool wearBetter(const Object* add, const Object* old)
 	return add->recType == REC_ARMO ? add->armor > old->armor : add->value > old->value;
 }
 
+// What the library it is drawn from has on: its look's (ActorDef::looks), else the record's
+static const std::vector<Atom>& libraryWorn(const ActorDef& d, const Ref& r)
+{
+	const ActorLook* lk = d.look(r.look);
+	return lk ? lk->worn : d.worn;
+}
+
 std::vector<std::string> npcWornItems(const World& w, const Ref& r, const ActorDef& d, u32* maskOut)
 {
 	u32 mask = 0;
 	std::vector<std::string> left;
-	for (size_t k = 0; k < d.worn.size() && k < 32; k++)
+	const std::vector<Atom>& worn = libraryWorn(d, r);
+	for (size_t k = 0; k < worn.size() && k < 32; k++)
 	{
 		// (rings and amulets show nothing: one gone changes no part)
-		if (!w.game.firstPerson.third.items.count(d.worn[k].str()))
+		if (!w.game.firstPerson.third.items.count(worn[k].str()))
 		{
 			mask |= 1u << k;
 			continue;
 		}
 		for (const ContentItem& c : r.contents)
-			if (c.first != 0 && c.second == d.worn[k].view())
+			if (c.first != 0 && c.second == worn[k].view())
 			{
 				mask |= 1u << k;
 				left.push_back(c.second);
@@ -684,6 +699,99 @@ std::vector<std::string> npcWornItems(const World& w, const Ref& r, const ActorD
 	return left;
 }
 
+// What an actor holds drawn as what it fights with (Ref::weapon, shield: rolled from the leveled lists it carries, as
+// OpenMW's getLevelledItem and autoEquip give them). Its library has a level 1 player's pick on it: one that differs is
+// taken off and the third-person piece of the other hung on its bone, as OpenMW's NpcAnimation and
+// CreatureWeaponAnimation attach what is equipped. A weapon shows only while it fights (ACTOR_MESH_WEAPON), a shield
+// always (put away while both hands are busy). A piece among library meshes takes their light: its own x kPieceLight x
+// where it stands (Actor::tint), unless it was dressed from the pieces (all of it lit so then: actorTint)
+void npcGear(World& w, LoadedCell& l, Actor& a, const Ref& r)
+{
+	if (r.actor < 0 || r.werewolf)
+		return;                          // (the wolf's body holds nothing)
+	const ActorDef& d = w.game.actors[r.actor];
+	if (!a.gearKnown)
+	{
+		const ActorLook* lk = d.look(r.look);
+		a.weaponShown = lk ? lk->weapon : d.weapon;
+		a.shieldShown = lk ? lk->shield : d.shield;
+		a.gearKnown = true;
+	}
+	const bool weapon = a.weaponShown != r.weapon, shield = a.shieldShown != r.shield;
+	if (!weapon && !shield)
+		return;
+	const Skeleton& sk = actorSkeleton(l.actors, a.skeleton);
+	std::vector<ActorMesh> made;
+	if (weapon && !r.weapon.empty())
+	{
+		auto fit = w.game.firstPerson.items.find(w.game.modelId(r.weapon.str()));
+		if (fit != w.game.firstPerson.items.end() && fit->second.slots.count(SLOT_WEAPON))
+		{
+			size_t first = made.size();
+			if (takePiece(w, l, sk, fit->second.slots.at(SLOT_WEAPON).first.str(), w.game.enchantGlow(r.weapon.str()), false, made))
+				for (size_t k = first; k < made.size(); k++)
+					made[k].flags |= ACTOR_MESH_WEAPON;
+		}
+	}
+	if (shield && !r.shield.empty())
+	{
+		auto fit = w.game.firstPerson.third.items.find(w.game.modelId(r.shield.str()));
+		if (fit != w.game.firstPerson.third.items.end())
+		{
+			auto sit = fit->second.find(SLOT_SHIELD);
+			if (sit != fit->second.end())
+				takePiece(w, l, sk, (d.female && !sit->second.second.empty() ? sit->second.second : sit->second.first).str(),
+					w.game.enchantGlow(r.shield.str()), true, made);
+		}
+	}
+	if (!a.dressed)
+		for (ActorMesh& m : made)
+		{
+			for (u32 i = 0; i < m.numVerts; i++)
+			{
+				u8* c = (u8*)m.verts + i * 24 + 20;
+				for (int k = 0; k < 3; k++)
+				{
+					u32 v = (u32)(c[k] * kPieceLight * a.tint[k] / 64.0f);
+					c[k] = v > 255 ? 255 : (u8)v;
+				}
+			}
+			GSPGPU_FlushDataCache(m.verts, m.numVerts * 24);
+		}
+	// What it held goes (a torch is the other hand's, hand 1). A creature's library hangs its shield on its Shield Bone
+	// unmarked (creature.py): its rigid meshes there
+	int shieldBone = -1;
+	for (size_t k = 0; k < sk.bones.size() && d.creature; k++)
+		if (strcasecmp(sk.bones[k].name, "shield bone") == 0)
+			shieldBone = (int)k;
+	auto held = [&](const ActorMesh& m) {
+		if (m.flags & ACTOR_MESH_WEAPON)
+			return weapon;
+		return shield && (m.hand == 2 || (m.hand == 0 && m.kind != ACTOR_SKINNED && shieldBone >= 0 && m.bone == shieldBone));
+	};
+	std::vector<ActorMesh> keep;
+	for (auto& m : a.meshes)
+		if (held(m))
+			freeMesh(m);
+		else
+			keep.push_back(m);
+	keep.insert(keep.end(), made.begin(), made.end());
+	a.meshes.swap(keep);
+	a.deformed = false;
+	logf("npcgear: %s holds %s, %s (its library: %s, %s)", d.id.c_str(), r.weapon.empty() ? "no weapon" : r.weapon.c_str(),
+		r.shield.empty() ? "no shield" : r.shield.c_str(), a.weaponShown.empty() ? "none" : a.weaponShown.c_str(),
+		a.shieldShown.empty() ? "none" : a.shieldShown.c_str());
+	a.weaponShown = r.weapon;
+	a.shieldShown = r.shield;
+}
+
+void World::actorGear(int ri)
+{
+	LoadedCell* l = ri >= 0 && refs[ri].cell >= 0 ? cells[placeOf(ri)].live : nullptr;
+	if (Actor* a = l ? actorOf(ri) : nullptr)
+		npcGear(*this, *l, *a, refs[ri]);
+}
+
 void Session::updateDress(float dt)
 {
 	if ((dressTimer -= dt) > 0.0f)
@@ -694,13 +802,18 @@ void Session::updateDress(float dt)
 		{
 			if (a.ref < 0 || a.ref >= (int)w.refs.size() || w.refs[a.ref].actor < 0)
 				continue;
-			const Ref& r = w.refs[a.ref];
+			Ref& r = w.refs[a.ref];
 			const ActorDef& d = w.game.actors[r.actor];
-			if (d.creature || (d.worn.empty() && r.wornGiven.empty()) || d.worn.size() > 32)
+			// A shield taken from its pack (a stripped corpse) is off its arm too
+			if (!r.shield.empty() && w.refItemCount(r, r.shield.str()) <= 0)
+				r.shield = Atom();
+			npcGear(w, *l, a, r);
+			const std::vector<Atom>& worn = libraryWorn(d, r);
+			if (d.creature || (worn.empty() && r.wornGiven.empty()) || worn.size() > 32)
 				continue;
 			u32 mask = 0;
 			std::vector<std::string> left = npcWornItems(w, r, d, &mask);
-			u32 all = d.worn.size() == 32 ? ~0u : (1u << d.worn.size()) - 1;
+			u32 all = worn.size() == 32 ? ~0u : (1u << worn.size()) - 1;
 			// (what a script gave it: told apart by its interned text, one copy per text)
 			const char* given = r.wornGiven.empty() ? nullptr : r.wornGiven.c_str();
 			if (a.wornMask == ~0u && mask == all && !a.dressed && !given)
@@ -709,6 +822,14 @@ void Session::updateDress(float dt)
 				continue;
 			a.wornMask = mask;
 			a.wornGivenSeen = given;
+			// (a shield a script gave it that beats its own goes on its arm: npcGear)
+			for (auto& id : left)
+				if (const Object* o = w.game.object(id))
+					if (o->recType == REC_ARMO && o->subtype == 8 && lower(id) != r.shield.str())
+					{
+						r.shield = lower(id);
+						npcGear(w, *l, a, r);
+					}
 			if (!npcDress(w, *l, a, d, left))
 				logf("npcdress: %s kept as it was (a piece wouldn't load)", d.id.c_str());
 		}

@@ -201,7 +201,6 @@ void rendererSetDaylight(const float land[3], const float sky[3], const float fo
 
 // A person's or creature's tint: its meshes carry the light where it was placed (Actor::tint, baked in when they load);
 // outdoors the hour darkens the sun's and the sky's share of it, not the lamps' (Actor::lamp), channel by channel
-static const float kPieceLight = 0.63f;    // a library's even light against a third-person piece's (about 0.5 / 0.8)
 void actorTint(const Actor& a, float out[3])
 {
 	const float* t = worldTint();

@@ -31,6 +31,16 @@ struct AiStep
 	bool repeat = false;
 };
 
+// One look of an NPC whose leveled lists dress them (tools/convert/npclooks.py): from that player level on, the clothes
+// and armour those lists give, drawn from a library the converter dressed so (lib), with the weapon and shield it holds
+struct ActorLook
+{
+	int level = 1;
+	Atom lib, weapon, shield;
+	std::vector<Atom> worn;
+	std::vector<std::pair<int, Atom>> items;   // what those lists put in its pack (count, lowercase id)
+};
+
 struct ActorDef
 {
 	Atom id, name;                       // (interned: 4 bytes each where a std::string is 24)
@@ -40,8 +50,14 @@ struct ActorDef
 	int skills[27] = {};
 	int health = 50, fatigue = 200, gold = 0, fight = 30;
 	unsigned services = 0;
-	Atom weapon;                         // lowercase WEAP id they fight with, "" = hand-to-hand
-	float armor = 0.0f;                  // armor rating
+	// The weapon (lowercase WEAP id, "" hand-to-hand) and armour rating of a level 1 player's pick: what its library holds.
+	// What each one fights with is its own (Ref::weapon, actorAutoEquip), from what it carries
+	Atom weapon;
+	float armor = 0.0f;
+	bool weaponShield = true;            // fights with the weapon and shield it carries (creatures: the record's flag)
+	Atom scriptWeapon;                   // creatures: a weapon its own script gives it (creature.py script_weapon)
+	std::vector<ActorLook> looks;        // NPCs whose leveled lists dress them: [0] a level 1 player's, then by level
+	const ActorLook* look(int k) const { return k > 0 && k < (int)looks.size() ? &looks[k] : nullptr; }
 	std::vector<TravelDest> travel;      // caravaner / boatman destinations inside the level
 	int wander = 0;                      // AI_W distance: strolls this far from their spot
 	// First AI package when it isn't wandering (AIPKG_*, -1 none): target id, destination, hours
@@ -71,7 +87,7 @@ struct ActorDef
 	int ctype = -1;                      // creatures: 0 creature, 1 daedra, 2 undead, 3 humanoid (-1: data from before it)
 	int resistNormal = 0;                // percent: blows from ordinary weapons do that much less (ghosts)
 	int hello = 30;                      // AI Hello: greets within hello x iGreetDistanceMultiplier (0: never)
-	Atom ammo, shield;                   // lowercase ids: arrows / bolts for their bow, the shield they carry
+	Atom ammo, shield;                   // lowercase ids: arrows / bolts for their bow, the shield (a level 1 player's pick)
 	std::vector<Atom> combatSpells;          // lowercase: harmful spells they cast at the player, heals
 	std::vector<Atom> diseases;              // lowercase: diseases their blows can pass on
 	std::vector<std::pair<int, float>> constEffects;   // effect, magnitude: resistances, shields ... their abilities keep on them

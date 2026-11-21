@@ -1,5 +1,5 @@
 # Activating containers and bodies as the player does (spec/activation.md: Containers). Source: mwclass/container.cpp Container::activate, npc.cpp Npc::activate.
-3 0 0 0 0 MSG
+3 0 0 0 0 MSG+SEED:1
 0.3 0 0 0 0 GOD
 # 1. Locked chest without its key (Beshara, Com_Chest_11_alvur, lock 30, key_alvur): stays shut, LockedChest sound; with the key: message, opens, key stays
 0.3 0 0 0 0 GOTO:Beshara

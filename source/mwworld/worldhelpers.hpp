@@ -31,7 +31,8 @@ static const int kMonthDays[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 
 void initActorState(const GameData& g, Ref& ref);
 enum ActorPools { POOLS_FULL, POOLS_KEEP_SHARE, POOLS_AS_SAVED };
 void actorSpellStats(const GameData& g, Ref& r, ActorPools pools);
-bool parseRefs(const World& w, int cellIndex, ParsedRefs& out);
+// level: the player's level its packs are filled for (World::fillLevel, worked out on the main thread)
+bool parseRefs(const World& w, int cellIndex, ParsedRefs& out, int level);
 int takeSlots(std::vector<std::pair<int, int>>& free, int n);
 void freeSlots(std::vector<std::pair<int, int>>& free, int first, int n);
 void appendRefs(World& w, int cellIndex, ParsedRefs& p);

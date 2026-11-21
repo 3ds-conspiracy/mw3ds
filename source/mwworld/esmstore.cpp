@@ -548,6 +548,35 @@ bool gameLoad(GameData& g, const char* path)
 				a.hasBox = true;
 			}
 		a.ammo = lower(str(it, "ammo")); a.shield = lower(str(it, "shield"));
+		// (data from before the flag: the converter armed only the creatures that have it)
+		a.weaponShield = !a.creature || (cJSON_GetObjectItem(it, "wshield") ? num(it, "wshield") != 0
+			: !a.weapon.empty() || !a.shield.empty());
+		// (data from before the key: a creature's weapon was all the converter knew of, its script's included)
+		a.scriptWeapon = lower(str(it, cJSON_GetObjectItem(it, "script_weapon") || !a.creature ? "script_weapon" : "weapon"));
+		const cJSON* lk;
+		cJSON_ArrayForEach(lk, arr(it, "looks"))
+		{
+			ActorLook l;
+			l.level = (int)num(lk, "level", 1);
+			// (the first is a level 1 player's: the record's own library, worn pieces, weapon and shield)
+			l.lib = cJSON_GetObjectItem(lk, "lib") ? str(lk, "lib") : a.lib.str();
+			l.weapon = cJSON_GetObjectItem(lk, "weapon") ? lower(str(lk, "weapon")) : a.weapon.str();
+			l.shield = cJSON_GetObjectItem(lk, "shield") ? lower(str(lk, "shield")) : a.shield.str();
+			if (const cJSON* wn = cJSON_GetObjectItem(lk, "worn"))
+			{
+				const cJSON* wi;
+				cJSON_ArrayForEach(wi, wn)
+					if (cJSON_IsString(wi))
+						l.worn.push_back(wi->valuestring);
+			}
+			else
+				l.worn = a.worn;
+			const cJSON* li;
+			cJSON_ArrayForEach(li, arr(lk, "items"))
+				if (cJSON_GetArraySize(li) >= 2)
+					l.items.emplace_back(cJSON_GetArrayItem(li, 0)->valueint, lower(cJSON_GetArrayItem(li, 1)->valuestring));
+			a.looks.push_back(l);
+		}
 		const cJSON* cs;
 		cJSON_ArrayForEach(cs, arr(it, "combat_spells"))
 			a.combatSpells.push_back(lower(cs->valuestring));

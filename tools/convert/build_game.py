@@ -14,8 +14,9 @@ import struct
 
 from mwfiles import DATA_FILES, bloodmoon, game_path, read_game, read_records, text, tribunal
 from mwscript import ScriptError, compile_script, compile_snippet
-from creature import creature_stats
-from npcstats import HARMFUL_EFFECTS, ai_package, bind, npc_items, npc_stats, weapon_damage
+from creature import creature_stats, script_weapon
+from npclooks import look_tiers, runtime_items
+from npcstats import HARMFUL_EFFECTS, ai_package, bind, npc_stats, weapon_damage
 
 ITEM_TYPES = {"MISC", "BOOK", "ALCH", "INGR", "WEAP", "ARMO", "CLOT", "LIGH", "APPA", "LOCK", "PROB", "REPA"}
 # Engine sounds used by the runtime (item pickup, doors, UI, journal, footsteps)
@@ -221,6 +222,12 @@ def npc_info(rec, db):
         info["afloat"] = flags & 0x71
     if (flags >> 10) & 3:
         info["blood"] = (flags >> 10) & 3            # 1 skeleton (white), 2 metal (gold sparks); 0 red
+    if rec.tag == "CREA":
+        # 0x4 Weapon and Shield: it fights with what it carries, picked from its pack at run time (actorAutoEquip), or
+        # with what its script gives it
+        info["wshield"] = 1 if flags & 0x4 else 0
+        if flags & 0x4 and script_weapon(rec, db):
+            info["script_weapon"] = script_weapon(rec, db).lower()
     if rec.tag == "CREA" and aidt and len(aidt) >= 12:
         # creatures trade and train too (Creeper, the mudcrab merchant): their AIDT services
         info["services"] = struct.unpack_from("<I", aidt, 8)[0] & 0x3FFFF
@@ -737,14 +744,16 @@ def build(db, cells, actor_records, actor_cells):
                     ir = db["objects"].get(item.lower())
                     if ir is not None:
                         objects[item.lower()] = object_entry(ir)
-    bind(db)        # the leveled lists in an NPC's inventory become the items they wear and carry
+    # An actor's pack: its leveled lists stay lists, rolled by the engine at the player's level when it is made (OpenMW's
+    # getLevelledItem), but for those that dress an NPC, which are picked here for each step of its looks (npclooks.py)
+    bind(db)
     for a in actors:
         rec = db["objects"][a["id"].lower()]
-        items = npc_items(rec)
+        items = runtime_items(rec, db)
         objects[a["id"].lower()] = {"id": a["id"], "type": rec.tag, "name": a["name"], "script": a["script"],
                                     "items": [[n, i] for n, i in items]}
-        # Their inventory can be bought or looted
-        for _, item in items:
+        # Their inventory can be bought or looted (what their looks give too)
+        for _, item in items + [x for _, tier in look_tiers(rec, db) for x in tier]:
             ir = db["objects"].get(item.lower())
             if ir is not None and ir.tag in ITEM_TYPES:
                 objects[item.lower()] = object_entry(ir)

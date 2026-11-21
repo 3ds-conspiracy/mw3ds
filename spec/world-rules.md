@@ -28,13 +28,17 @@ flag, it is rolled once per unit (each roll gives 1 item); otherwise it is rolle
 whole count (the nested pick is never top level, so *each* applies only to the line itself). A negative count keeps
 its sign through the leveled pick. The new items take the container's owner (a plain container has none).
 
-**What NPCs and creatures carry and wear** (differs, kept). OpenMW fills an actor's inventory by the same pick, for
-the player's level when the actor's cell first loads, and the NPC wears the best of what came. The 3DS bakes each
-NPC's look (its worn pieces are part of its converted model), so the converter picks an actor's lists once, for a new
-character (`npcstats.py PICK_LEVEL`, level 1), and the inventory is that same pick: what they wear and what they carry
-agree. A list with every entry above level 1 gives nothing, as `getLevelledItem` does (step 4): Baladas Demnevanni's
-four picks from `l_m_enchantitem_telvanni_rank8` (levels 10 to 14) gave him the Devil Cephalopod Helm when the
-converter picked for his own level, 35. Cost: a high-level player meets actors with a new character's gear.
+**What NPCs and creatures carry and wear.** OpenMW fills an actor's inventory by the same pick, for the player's level
+when the actor is made (its cell first loaded, a summon called up), and the actor equips the best of what came
+(`InventoryStore::autoEquip`). The 3DS rolls an actor's lists so too (`fillContents`; a cell's people for the level its
+objects were first read at, `World::fillLevel`, so a cell read again holds what it held) and picks what it fights with
+from its pack (`actorAutoEquip`, the converter's rules: weapon by the best weapon skill and the highest maximum damage,
+a bow only with arrows; shield by rating for the wearer's skill; a creature only with the Weapon and Shield flag). Two
+Golden Saints called up can hold different weapons. One part differs (3DS, kept: spec/performance-tradeoffs.md): a
+list that can dress an NPC is picked by the converter for each level step of its lists (`npclooks.py`, seeded by the
+record), and the NPC is drawn from that step's library. A list with every entry above the level gives nothing, as
+`getLevelledItem` does (step 4): Baladas Demnevanni's four picks from `l_m_enchantitem_telvanni_rank8` (levels 10 to
+14) give him nothing below level 10. Cases: `bug-summon-gear-rolls`, `bug-npc-gear-level`, `bug-npc-look-level`.
 
 **When a container is filled.** A container is unresolved until something touches it (open, take, put, script
 reads); then `resolve` fills it from the record, once. Content already there is zeroed first. The generator seed is

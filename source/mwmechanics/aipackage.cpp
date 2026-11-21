@@ -75,9 +75,9 @@ void Session::npcOpenDoor(int ri, int door)
 	if (r.ai != AI_COMBAT && r.duelFoe < 0 && (r.aiPackage == AIPKG_WANDER || r.aiPackage == AIPKG_IDLE || r.aiPackage == AIPKG_NONE))
 		return;
 	// (OpenMW's canOpenDoors: people, and creatures that walk on two legs or carry weapons; a rat or a guar does not.
-	// The weapon flag isn't converted: a creature's own weapon stands for it)
+	// The Weapon and Shield flag: ActorDef::weaponShield)
 	const ActorDef& def = w.game.actors[r.actor];
-	if (def.creature && !(def.afloat & 0x01) && def.weapon.empty())
+	if (def.creature && !(def.afloat & 0x01) && !def.weaponShield)
 		return;
 	bool locked = d.lockLevel > 0, trapped = !d.trap.empty() && !d.disarmed;
 	if (locked || trapped)

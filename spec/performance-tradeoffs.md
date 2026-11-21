@@ -45,12 +45,15 @@ Each entry: what we do, what OpenMW does, why, and where it lives.
   about 29 meshes each, against about 35 put together from parts). One whose clothes leave its pack (a stripped
   corpse) is put together from the shared third-person pieces at run time instead (`npcDress`): about 6 more draws
   for that one. OpenMW builds every NPC from parts.
-- **What an NPC wears and wields is picked for a level 1 player.** The converter rolls an NPC's leveled item lists
-  once (`npcstats.py PICK_LEVEL`) and bakes the result, so their look and the weapon they fight with don't scale with the
-  player; OpenMW rolls them at the player's level when the cell first loads. Their inventory (loot) is still rolled at
-  the player's level at run time (`fillContents`), so the two can differ. 500 NPCs have a list whose pick changes with
-  level (weapons 384, clothing 115, armour 18). Swapping weapons / shields at run time was weighed and declined
-  (2026-11-04).
+- **The clothes an NPC's leveled lists give are picked once for each level step, not rolled.** (user, 2026-11-21) Weapons,
+  shields and everything else an actor's lists give are rolled at the player's level when it is made, as OpenMW's
+  `getLevelledItem` (a cell's people when the cell is first read, a summon each time it is called), and what it fights
+  with is picked from its pack (`actorAutoEquip`). Its library holds a level 1 player's weapon and shield: where the
+  roll differs they are taken off and the third-person pieces of the others hung on its bones (`npcGear`): no more
+  draws, one piece read from the card. A list that can dress an NPC (a robe, a helmet) can't be rolled one by one: the
+  converter picks it for each level step of its lists (`npclooks.py`) and a step that shows other clothes gets a library
+  of its own (`<id>_<level>.aml`: on Morrowind.esm 20 NPCs, 64 libraries, 3.5 MB), so two of the same NPC met at the same level wear
+  the same where OpenMW may dress them differently. OpenMW builds every NPC from parts.
 
 ## View distance and detail
 

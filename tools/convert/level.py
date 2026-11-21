@@ -43,7 +43,8 @@ from creature import resolve_leveled
 from firstperson import FirstPerson
 from particles import build_pieces
 from mwfiles import CODEC, DATA_FILES, Archives, bloodmoon, cell_refs, game_path, load_db, load_order, read_game, safe_name, text
-from npcstats import npc_stats, worn_items
+from npcstats import EQ_LEFT, npc_stats, worn_items
+from npclooks import looks_entry
 from terrain import CELL_SIZE
 from terrain import Terrain
 from worldmap import build_map, town_labels
@@ -865,7 +866,11 @@ def main():
     print(f"  cell entries (tests): {len(entries)}")
     # Each actor's mesh library and skeleton: an NPC moved to another cell (PositionCell) is drawn from them
     # NPCs also carry what their library has on: head and hair (body part ids) and the worn items, so one whose clothes
-    # leave its pack (a stripped corpse) is dressed again from the third-person pieces at run time (Session::updateDress)
+    # leave its pack (a stripped corpse) is dressed again from the third-person pieces at run time (Session::updateDress).
+    # Not the shield: the engine puts on the one it rolled for that actor (npcGear). And an NPC whose leveled lists dress
+    # them gets a look for each level step of those lists, each step that shows other clothes with a library of its own
+    # (npclooks.py)
+    looks = 0
     for a, rec in zip(game["actors"], actor_records):
         skel = conv.actor_skeleton.get(rec.id.lower())
         if skel is not None:
@@ -875,7 +880,13 @@ def main():
                 beast = race is not None and struct.unpack_from("<i", race.get("RADT"), 136)[0] & 2
                 worn = worn_items(rec, db["objects"], npc_stats(rec, db)["skills"], beast)
                 a["head"], a["hair"] = (rec.zstr("BNAM") or "").lower(), (rec.zstr("KNAM") or "").lower()
-                a["worn"] = [r.id.lower() for r in worn.values() if r is not None and r.tag in ("ARMO", "CLOT")]
+                a["worn"] = [r.id.lower() for slot, r in worn.items()
+                             if r is not None and r.tag in ("ARMO", "CLOT") and slot != EQ_LEFT]
+                entry = looks_entry(conv, rec, db)
+                if entry:
+                    a["looks"] = entry
+                    looks += sum(1 for e in entry if e.get("lib"))
+    print(f"  NPC looks by level: {sum(1 for a in game['actors'] if a.get('looks'))} NPCs, {looks} libraries", flush=True)
     game["town_spawns"] = {}
     for t in towns:
         tc = town_cells(db, t)

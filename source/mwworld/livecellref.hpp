@@ -136,6 +136,11 @@ struct Ref
 	bool aggressor = false;       // started the fight (killing them isn't murder)
 	int duelFoe = -1;             // StartCombat on another actor: the ref it fights now (not saved; -1: none)
 	Atom wornGiven;               // clothes and armour a script gave it, ids joined by '|' (saved): put on if better
+	// What it fights with, from what it carries (actorAutoEquip, OpenMW's InventoryStore::autoEquip): weapon, the arrows or
+	// bolts for it, shield (lowercase ids, "" none), armour rating. Worked out again whenever its pack is filled or read back
+	Atom weapon, ammoId, shield;
+	float armor = 0.0f;
+	s8 look = 0;                  // the ActorDef::looks entry its leveled lists dressed it in (saved with its pack)
 	Atom duelWith;                // all it was set on, ids joined by '|' (saved): OpenMW's stacked AiCombat packages
 	bool alarmed = false;         // a guard come to arrest the player (OpenMW's Alarmed, for the dialogue filter)
 	// The player's crime they saw or suffered (OpenMW's NpcStats crime id; -1 none) and the disposition it took from them:

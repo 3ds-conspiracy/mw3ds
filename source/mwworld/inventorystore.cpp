@@ -20,6 +20,165 @@ int Session::armorSkill(const Object* o)
 
 // ---- Equipment
 
+std::string actorWeaponId(const World& w, int ri)
+{
+	return w.refs[ri].actor >= 0 ? w.refs[ri].weapon.str() : std::string();
+}
+
+std::string actorShieldId(const World& w, int ri)
+{
+	return w.refs[ri].actor >= 0 ? w.refs[ri].shield.str() : std::string();
+}
+
+const std::vector<Atom>& actorLookWorn(const World& w, int ri)
+{
+	static const std::vector<Atom> kNone;
+	const Ref& r = w.refs[ri];
+	if (r.actor < 0)
+		return kNone;
+	const ActorDef& d = w.game.actors[r.actor];
+	const ActorLook* l = d.look(r.look);
+	return l ? l->worn : d.worn;
+}
+
+// The skill a weapon of that WEAP type trains, -1 for arrows and bolts (as npcstats.py WEAPON_SKILL)
+static int gearSkill(int type)
+{
+	switch (type)
+	{
+	case 0: return SKILL_SHORT_BLADE;
+	case 1: case 2: return SKILL_LONG_BLADE;
+	case 3: case 4: case 5: return SKILL_BLUNT;
+	case 6: return SKILL_SPEAR;
+	case 7: case 8: return SKILL_AXE;
+	case WEAP_BOW: case WEAP_CROSSBOW: case WEAP_THROWN: return SKILL_MARKSMAN;
+	default: return -1;
+	}
+}
+
+// OpenMW's InventoryStore::autoEquip, as the converter picks it for a library (npcstats.py combat_weapon,
+// preferred_shield / best_shield, armor_rating):
+// - the weapon: the weapon skills from the highest down (ties in autoEquipWeapon's order: long blade, axe, spear, short
+//   blade, marksman, blunt; a skill at 0 never), and for each the carried weapon of that skill with the highest maximum
+//   of chop, slash and thrust (the later of equals); a bow or crossbow only with arrows / bolts (the one of the highest
+//   chop maximum, the later of equals), else the next skill. A creature only with the Weapon and Shield flag, and
+//   without one carried, the weapon its script gives it
+// - the shield: a person's of the best rating for their skill in its weight class (fUnarmoredBase1 / 2 the bar it must
+//   pass), the first of equals; a creature's of the best rating
+// - a person's armour rating: each slot's best carried piece for their skill, else Unarmored, by slot weight
+void actorPickGear(const GameData& g, Ref& ref)
+{
+	const ActorDef& d = g.actors[ref.actor];
+	if (!d.weaponShield)
+		return;
+	std::vector<const Object*> weapons, armor;
+	for (auto& c : ref.contents)
+		if (c.first != 0)
+			if (const Object* o = g.object(c.second))
+			{
+				if (o->recType == REC_WEAP)
+					weapons.push_back(o);
+				else if (o->recType == REC_ARMO)
+					armor.push_back(o);
+			}
+	auto bestOf = [&](int type) {
+		const Object* best = nullptr;
+		int top = 0;
+		for (const Object* w : weapons)
+			if (w->subtype == type && w->chop[1] >= top)
+			{
+				best = w;
+				top = w->chop[1];
+			}
+		return best;
+	};
+	const Object* arrow = bestOf(WEAP_ARROW);
+	const Object* bolt = bestOf(WEAP_BOLT);
+	static const int kOrder[6] = { SKILL_LONG_BLADE, SKILL_AXE, SKILL_SPEAR, SKILL_SHORT_BLADE, SKILL_MARKSMAN, SKILL_BLUNT };
+	bool visited[6] = {};
+	for (int round = 0; round < 6 && ref.weapon.empty(); round++)
+	{
+		int pick = -1, top = 0;
+		for (int k = 0; k < 6; k++)
+			if (!visited[k] && d.skills[kOrder[k]] > top)
+			{
+				pick = k;
+				top = d.skills[kOrder[k]];
+			}
+		if (pick < 0)
+			break;
+		visited[pick] = true;
+		const Object* weapon = nullptr;
+		int most = 0;
+		for (const Object* w : weapons)
+		{
+			if (gearSkill(w->subtype) != kOrder[pick])
+				continue;
+			for (int hi : { (int)w->chop[1], (int)w->slash[1], (int)w->thrust[1] })
+				if (hi >= most)
+				{
+					weapon = w;
+					most = hi;
+				}
+		}
+		if (!weapon)
+			continue;
+		const Object* ammo = weapon->subtype == WEAP_BOW ? arrow : weapon->subtype == WEAP_CROSSBOW ? bolt : nullptr;
+		if ((weapon->subtype == WEAP_BOW || weapon->subtype == WEAP_CROSSBOW) && !ammo)
+			continue;
+		ref.weapon = lower(weapon->id.str());
+		if (ammo)
+			ref.ammoId = lower(ammo->id.str());
+	}
+	if (ref.weapon.empty() && d.creature)
+		ref.weapon = d.scriptWeapon;
+	const float unarmored = (g.gmstf("funarmoredbase1", 0.1f) * d.skills[SKILL_UNARMORED])
+		* (g.gmstf("funarmoredbase2", 0.065f) * d.skills[SKILL_UNARMORED]);
+	auto rating = [&](const Object* o) {
+		float wt = o->subtype >= 0 && o->subtype < 11 ? kArmorSlotBaseWeight[o->subtype] : 0.0f;
+		if (o->weight == 0.0f || wt == 0.0f)
+			return (float)o->armor;
+		int skill = o->weight <= wt * g.gmstf("flightmaxmod", 0.6f) + 0.0005f ? SKILL_LIGHT_ARMOR
+			: o->weight <= wt * g.gmstf("fmedmaxmod", 0.9f) + 0.0005f ? SKILL_MEDIUM_ARMOR : SKILL_HEAVY_ARMOR;
+		return o->armor * (float)d.skills[skill] / g.gmstf("ibasearmorskill", 30.0f);
+	};
+	const Object* shield = nullptr;
+	float best = d.creature ? -1.0f : unarmored;
+	for (const Object* o : armor)
+		if (o->subtype == 8)
+		{
+			float r = d.creature ? (float)o->armor : rating(o);
+			if (r > best)
+			{
+				shield = o;
+				best = r;
+			}
+		}
+	if (shield)
+		ref.shield = lower(shield->id.str());
+	if (d.creature)
+		return;
+	static const int kSlot[11] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 6, 7 };
+	float slots[9];
+	bool worn[9] = {};
+	for (int k = 0; k < 9; k++)
+		slots[k] = unarmored;
+	for (const Object* o : armor)
+	{
+		if (o->subtype < 0 || o->subtype >= 11)
+			continue;
+		int s = kSlot[o->subtype];
+		float r = rating(o);
+		if (!worn[s] || r > slots[s])
+			slots[s] = r;
+		worn[s] = true;
+	}
+	float total = 0.0f;
+	for (int k = 0; k < 9; k++)
+		total += kArmorSlotWeight[k] * slots[k];
+	ref.armor = roundf(total * 10.0f) / 10.0f;
+}
+
 // OnPCEquip back to 0 on a carried item that isn't worn or held (OpenMW's InventoryStore::unequipSlot unsets it as the
 // player's slot empties, however it empties: taken off, swapped, sold, dropped). It stayed 1 here: Wraithguard's script
 // holds the global wraithguardEquipped at 1 while its OnPCEquip is, so once it had been worn Keening and Sunder never

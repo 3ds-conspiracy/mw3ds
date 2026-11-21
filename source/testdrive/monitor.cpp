@@ -207,6 +207,13 @@ void Session::monitorActors(float dt)
 			}
 		}
 		bool near = r.aiPackage != AIPKG_TRAVEL && leaderDist < 300.0f;
+		// (a fighter with a bow, crossbow or thrown weapon and something to loose stands where it shoots from: OpenMW's
+		// startCombatMove gives ranged combat no side steps, and backs it off only from a foe that closes in)
+		if (r.ai == AI_COMBAT && r.ammo > 0)
+		{
+			const Object* wo = w.game.object(r.weapon.str());
+			near = near || (wo && wo->subtype >= WEAP_BOW && wo->subtype <= WEAP_THROWN);
+		}
 		// (a fleeing actor stands while its foe is out of reach, one held in a pose for a test stands: not stuck)
 		const Actor* held = w.actorOf(i);
 		if (!going || near || r.knockTimer > 0.0f || (r.fleeing && r.fleeState == 0) || (held && held->frozen) || (dlg.open && dlg.ref == i))

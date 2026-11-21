@@ -14,15 +14,14 @@ static const float kArcherMinRange = 350.0f, kArcherMaxRange = 1600.0f;
 void Session::npcFire(int ri)
 {
 	Ref& r = w.refs[ri];
-	const ActorDef& def = w.game.actors[r.actor];
-	const Object* wpn = w.game.object(def.weapon);
+	const Object* wpn = w.game.object(r.weapon);
 	if (!wpn || r.ammo <= 0)
 		return;
 	r.ammo--;
 	// (a thrown one leaves what it carries: the sphere archers' script counts its darts with GetItemCount and tops
 	// them up. Arrows and bolts stay as they were, the archers' fights in the quest runs unchanged)
 	if (wpn->subtype == WEAP_THROWN)
-		w.refRemoveItem(r, def.weapon, 1);
+		w.refRemoveItem(r, r.weapon.str(), 1);
 	float from[3] = { r.pos[0] + sinf(r.rot[2]) * 30.0f, r.pos[1] + cosf(r.rot[2]) * 30.0f, r.pos[2] + 110.0f };
 	float to[3] = { w.player.feet[0], w.player.feet[1], w.player.feet[2] + 90.0f };
 	float d[3] = { to[0] - from[0], to[1] - from[1], to[2] - from[2] };
@@ -31,13 +30,13 @@ void Session::npcFire(int ri)
 	float err = (100 - w.actorSkill(ri, SKILL_MARKSMAN)) * 0.0015f;
 	for (int k = 0; k < 3; k++)
 		d[k] = d[k] / len + (frand() - 0.5f) * err;
-	const std::string& ammo = wpn->subtype == WEAP_THROWN ? def.weapon : def.ammo;
+	const std::string& ammo = wpn->subtype == WEAP_THROWN ? r.weapon : r.ammoId;
 	// (the player's rule: fProjectileMinSpeed .. MaxSpeed, or fThrownWeaponMin .. MaxSpeed, by the draw)
 	bool thrown = wpn->subtype == WEAP_THROWN;
 	float draw = 0.6f + 0.4f * frand();
 	float lo = thrown ? w.game.gmstf("fthrownweaponminspeed", 300.0f) : w.game.gmstf("fprojectileminspeed", 400.0f);
 	float hi = thrown ? w.game.gmstf("fthrownweaponmaxspeed", 1000.0f) : w.game.gmstf("fprojectilemaxspeed", 3000.0f);
-	fireProjectile(ri, from, d, lo + (hi - lo) * draw, ammo, def.weapon, draw, "");
+	fireProjectile(ri, from, d, lo + (hi - lo) * draw, ammo, r.weapon, draw, "");
 	playSound(ri, wpn->subtype == WEAP_CROSSBOW ? "crossbowShoot" : wpn->subtype == WEAP_BOW ? "bowShoot" : "SwishM");
 }
 
@@ -93,7 +92,7 @@ bool Session::combatMove(int ri, Cell& cell, float dist, float facing, bool rang
 	{
 		ActorSet& set = *w.actorsOf(ri);
 		if (!actorPlay(set, *a, group, ANIM_LOOP))
-			actorPlay(set, *a, stanceGroup(set, *a, "RunForward", w.game.object(def.weapon)).c_str(), ANIM_LOOP);
+			actorPlay(set, *a, stanceGroup(set, *a, "RunForward", w.game.object(r.weapon)).c_str(), ANIM_LOOP);
 	}
 	return true;
 }
@@ -102,7 +101,7 @@ void Session::npcCombat(int ri, float dt)
 {
 	Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
-	const Object* wpn = w.game.object(def.weapon);
+	const Object* wpn = w.game.object(r.weapon);
 	float dx = w.player.feet[0] - r.pos[0], dy = w.player.feet[1] - r.pos[1];
 	float dist = sqrtf(dx * dx + dy * dy);
 	if (dist > kHostileGiveUp || playerDead || !waterCreatureCanFight(w, ri))

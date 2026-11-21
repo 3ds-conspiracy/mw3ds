@@ -425,6 +425,27 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 				v += stockCount(it.first);
 		return true;
 	}
+	if (what == "refweaponkinds" || what == "refshieldkinds")
+	{
+		// refweaponkinds:<id> / refshieldkinds:<id>: how many different weapons (shields) the living ones of that id in the
+		// loaded cells fight with (summons and placed actors roll their leveled gear each: OpenMW's getLevelledItem)
+		std::string want = lower(spaced(arg));
+		std::unordered_set<std::string> kinds;
+		bool any = false;
+		// (every active one: those placed while playing aren't among the cells' own)
+		for (int i = 0; i < (int)w.refs.size(); i++)
+		{
+			const Ref& r = w.refs[i];
+			if (r.cell < 0 || r.actor < 0 || r.dead || !w.active(i) || lower(spaced(r.idLower)) != want)
+				continue;
+			any = true;
+			kinds.insert(what == "refweaponkinds" ? actorWeaponId(w, i) : actorShieldId(w, i));
+		}
+		if (!any)
+			return false;
+		v = (float)kinds.size();
+		return true;
+	}
 	if (what == "refstacks")
 	{
 		// refstacks:<container or actor>: how many stacks it holds
@@ -721,6 +742,11 @@ std::optional<bool> numberOfRefs(Session& s, const std::string& what, const std:
 			v = npcClimbSlope(w, w.refs[ri]);
 		else if (what == "refz")            // the height of its feet
 			v = w.refs[ri].pos[2];
+		else if (what == "refgearshown")    // 1 when the weapon and shield it is drawn with are what it fights with (npcGear)
+		{
+			const Actor* a = w.actorOf(ri);
+			v = a && a->gearKnown && a->weaponShown == w.refs[ri].weapon && a->shieldShown == w.refs[ri].shield ? 1.0f : 0.0f;
+		}
 		else if (what == "refdressed")      // 1 once it has been dressed again from the third-person pieces (npcDress)
 		{
 			const Actor* a = w.actorOf(ri);

@@ -220,7 +220,7 @@ std::optional<bool> numberOfStats(Session& s, const std::string& what, const std
 		if (ri < 0 || w.refs[ri].actor < 0)
 			return false;
 		const ActorDef& def = w.game.actors[w.refs[ri].actor];
-		const Object* wpn = w.game.object(def.weapon);
+		const Object* wpn = w.game.object(w.refs[ri].weapon);
 		if (wpn && isRanged(wpn))
 			wpn = nullptr;
 		v = actorMeleeReach(w, w.refs[ri], wpn, def.creature);

@@ -30,7 +30,7 @@ void Session::makeHostile(int ri)
 	if (dlg.open && dlg.ref == ri)
 		closeScreen();
 	if (Actor* a = w.actorOf(ri))
-		a->showWeapon = r.actor >= 0 && !w.game.actors[r.actor].weapon.empty();
+		a->showWeapon = r.actor >= 0 && !r.weapon.empty();
 	// A guard who starts a fight with the player brings every guard on his way to arrest them into it, however far (OpenMW's
 	// startCombat: the guards whose AiPursue runs fight instead): Resist Arrest, a guard struck while not after the player
 	if (r.actor >= 0 && strcasecmp(w.game.actors[r.actor].cls.c_str(), "guard") == 0)
@@ -385,8 +385,7 @@ void Session::npcDuel(int ri, float dt)
 	}
 	Ref& f = w.refs[fi];
 	const ActorDef& def = w.game.actors[r.actor];
-	const ActorDef& fdef = w.game.actors[f.actor];
-	const Object* wpn = w.game.object(def.weapon);
+	const Object* wpn = w.game.object(r.weapon);
 	if (wpn && (wpn->recType != REC_WEAP || isRanged(wpn)))
 		wpn = nullptr;
 	Actor* a = w.actorOf(ri);
@@ -420,7 +419,7 @@ void Session::npcDuel(int ri, float dt)
 	}
 	else
 	{
-		bool stepped = cell && combatMove(ri, *cell, dist, diff, false, w.game.object(fdef.weapon), dt);
+		bool stepped = cell && combatMove(ri, *cell, dist, diff, false, w.game.object(f.weapon), dt);
 		if (!stepped && a && (a->mode == ANIM_LOOP || a->mode == ANIM_IDLE))
 		{
 			// ready to strike: the weapon's stance (its idles otherwise, left to run on)
@@ -487,7 +486,7 @@ void Session::npcDuel(int ri, float dt)
 				{
 					if (f.knockTimer > 0.0f && w.actorEffect(fi, 45) <= 0.0f)
 						dmg *= w.game.gmstf("fcombatkodamagemult", 1.5f);
-					dmg = fmaxf(1.0f, applyArmor(dmg, fdef.armor + w.actorEffect(fi, 3)));
+					dmg = fmaxf(1.0f, applyArmor(dmg, f.armor + w.actorEffect(fi, 3)));
 				}
 				logf("combat: %s hits %s for %.1f%s", r.id.c_str(), f.id.c_str(), dmg, fatigueOnly ? " fatigue" : "");
 				if (!fatigueOnly && f.health - dmg <= 0.0f)

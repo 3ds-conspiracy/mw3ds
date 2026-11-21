@@ -309,7 +309,7 @@ void Session::npcHitsPlayer(int ri, float dmg, bool fatigueOnly, int skill, bool
 		blockUntil = w.time + 0.8f;
 		// The block tires: fFatigueBlockBase + load x fFatigueBlockMult + the attacker's weapon weight x swing x
 		// fWeaponFatigueBlockMult
-		const Object* aw = w.game.object(def.weapon);
+		const Object* aw = w.game.object(r.weapon);
 		s.fatigue -= w.game.gmstf("ffatigueblockbase", 0.0f) + playerLoad * w.game.gmstf("ffatigueblockmult", 0.0f)
 			+ (aw && aw->recType == REC_WEAP ? aw->weight * 0.5f * w.game.gmstf("fweaponfatigueblockmult", 0.0f) : 0.0f);
 		const Object* so = w.game.object(*shield);
@@ -444,7 +444,7 @@ void Session::npcStrike(int ri)
 {
 	Ref& r = w.refs[ri];
 	const ActorDef& def = w.game.actors[r.actor];
-	const Object* wpn = w.game.object(def.weapon);
+	const Object* wpn = w.game.object(r.weapon);
 	if (wpn && (wpn->recType != REC_WEAP || isRanged(wpn)))
 		wpn = nullptr;
 	float charge = frand();                    // the swing's strength (OpenMW's AI: uniform 0..1)
@@ -530,7 +530,6 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 		w.refs[target].attacked = true;
 	}
 	Ref& t = w.refs[target];
-	const ActorDef& def = w.game.actors[t.actor];
 	const PlayerStats& s = w.stats;
 	// harness GOD: one blow (armor and resistances still apply), but not where the script runs the fight
 	// (the Heart of Lorkhan resets its health and counts Sunder and Keening hits)
@@ -566,7 +565,7 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 		return;
 
 	// Their shield, if they see it coming
-	const Object* shield = w.game.object(def.shield);
+	const Object* shield = w.game.object(t.shield);
 	float toPlayer = atan2f(w.player.feet[0] - t.pos[0], w.player.feet[1] - t.pos[1]);
 	float npcBlockAngle = angleDiff(toPlayer, t.rot[2]) * 57.2958f;
 	// (OpenMW's blockMeleeAttack: not down or paralyzed, the shield out; being unaware or mid-swing doesn't stop it)
@@ -618,7 +617,7 @@ void Session::playerHitsNpc(int target, float damage, int skill, bool fatigueOnl
 	// (+ Shield); OpenMW: armor leaves at least 1, but a blow that Resist Normal Weapons took down to nothing does none
 	// (Creeper's "immune to normal weapons": an ordinary dagger does not scratch him)
 	if (!fatigueOnly)
-		damage = damage > 0.0f ? fmaxf(1.0f, applyArmor(damage, def.armor + w.actorEffect(target, 3))) : 0.0f;
+		damage = damage > 0.0f ? fmaxf(1.0f, applyArmor(damage, t.armor + w.actorEffect(target, 3))) : 0.0f;
 	damage *= difficultyScale(false);
 	logf("combat: player hits %s for %.1f%s", t.id.c_str(), damage, fatigueOnly ? " fatigue" : "");
 	{
