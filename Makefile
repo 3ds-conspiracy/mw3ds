@@ -60,6 +60,9 @@ CFLAGS	:=	-g -Wall -O3 -flto=auto -fomit-frame-pointer -fno-math-errno -mword-re
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE) -D__3DS__
+# Extra defines for a one-off build, as make.py MW3DS_DEFINES=-DMW3DS_GAMMA_TOUR (none by default; delete the .o
+# files of what they change before and after, or the other build keeps them)
+CFLAGS	+=	$(MW3DS_DEFINES)
 
 CXXFLAGS	:= $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++20
 

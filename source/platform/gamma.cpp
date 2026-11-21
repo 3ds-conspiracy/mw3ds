@@ -41,6 +41,27 @@ static int s_camFailures = 0;
 static bool s_qtmOpen = false;                   // QTM's session is open (only while Auto gamma reads from it)
 static bool s_qtmReal = false;                   // ... as a real qtmInit (a test's LUX: opens none)
 
+#ifdef MW3DS_GAMMA_TOUR
+// Testing build only (make.py MW3DS_DEFINES=-DMW3DS_GAMMA_TOUR): a line for every light reading, for tuning Auto gamma
+// on a tour of real rooms. The normal build has none of this
+static bool s_lcdOpen = false;
+
+static void tourLog(const char* what, float reading, float target)
+{
+	u32 top = 0, bottom = 0;
+#ifdef __3DS__
+	if (s_lcdOpen)
+	{
+		GSPLCD_GetBrightness(GSPLCD_SCREEN_TOP, &top);
+		GSPLCD_GetBrightness(GSPLCD_SCREEN_BOTTOM, &bottom);
+	}
+#endif
+	logf("gamma tour: %s %.0f, smoothed lux %.0f, lift %.2f, target %.2f, used %.2f, slider %d%%, backlight %lu/%lu",
+		what, reading, s_lux, s_lift, target, s_value < 0.0f ? 1.0f : s_value, g_gammaPct, (unsigned long)top,
+		(unsigned long)bottom);
+}
+#endif
+
 // QTM drives the head tracking and its IR LED beside the inner camera: a session is held only while Auto gamma polls it
 static bool qtmSessionOpen()
 {
@@ -196,12 +217,25 @@ void gammaInit()
 #endif
 	logf("gamma: light reading %s", s_sensor == SENSOR_QTM ? "QTM lux" : s_sensor == SENSOR_CAMERA
 		? "inner camera at loading screens" : "none");
+#ifdef MW3DS_GAMMA_TOUR
+#ifdef __3DS__
+	s_lcdOpen = R_SUCCEEDED(gspLcdInit());
+#endif
+	logf("gamma tour: on (auto %s, slider %d%%)", gammaAutoOn() ? "on" : "off", g_gammaPct);
+#endif
 }
 
 void gammaExit()
 {
 	gammaLoadEnd();
 	qtmSessionClose();
+#ifdef MW3DS_GAMMA_TOUR
+#ifdef __3DS__
+	if (s_lcdOpen)
+		gspLcdExit();
+#endif
+	s_lcdOpen = false;
+#endif
 }
 
 bool gammaQtmOpen()
@@ -253,6 +287,9 @@ float gammaUpdate(float dt)
 #endif
 		(void)open;
 		useLux(lux);
+#ifdef MW3DS_GAMMA_TOUR
+		tourLog("lux", lux, gammaTarget());
+#endif
 	}
 	float target = gammaTarget();
 	if (s_value < 0.0f)
@@ -299,10 +336,16 @@ void gammaLoadEnd()
 	{
 		if (s_camFailures++ == 0)
 			logf("gamma: no camera reading at this load (the last one stays)");
+#ifdef MW3DS_GAMMA_TOUR
+		tourLog("camera luma (none, last kept)", -1.0f, gammaTarget());
+#endif
 		return;
 	}
 	useLuma(s_camLuma);
 	s_value = gammaTarget();         // (behind the loading screen: no easing)
+#ifdef MW3DS_GAMMA_TOUR
+	tourLog("camera luma", (float)s_camLuma, s_value);
+#endif
 }
 
 void gammaTestLux(float lux)
