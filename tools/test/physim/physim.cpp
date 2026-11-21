@@ -27,22 +27,28 @@ static bool readCel(const char* path, Cell& cell)
 	fread(magic, 4, 1, f);
 	fread(&version, 4, 1, f);
 	fread(&flags, 4, 1, f);
-	if (memcmp(magic, "MWC1", 4) || version < 6 || version > 7)
+	if (memcmp(magic, "MWC1", 4) || version < 6 || version > 10)
 		return false;
 	cell.flags = flags;
-	fseek(f, 5 * 4 + 8 + 4 + 3 * 4, SEEK_CUR);
+	// CellHeader's tail (spawn, yaw, pitch, ambient, fog, fogDensity), then CellHeaderV4's bounds
+	fseek(f, 5 * 4 + 8 + 4, SEEK_CUR);
+	fseek(f, 3 * 4, SEEK_CUR);
 	fread(cell.bounds, 4, 4, f);
 	u32 n;
 	fread(&n, 4, 1, f);
 	fseek(f, 64 * n, SEEK_CUR);
+	// Batches, skipped: v4 adds bounds, v5 the quantization, v8 flip frames, v9 the scroll, v10 the lamp
 	fread(&n, 4, 1, f);
+	const int hdr = 16 + (version >= 4 ? 24 : 0) + (version >= 5 ? 32 + (version >= 8 ? 4 : 0)
+		+ (version >= 9 ? 4 : 0) + (version >= 10 ? 4 : 0) : 0);
 	for (u32 i = 0; i < n; i++)
 	{
-		u8 hdr[72];
-		fread(hdr, 72, 1, f);
+		u8 h[16];
+		fread(h, 16, 1, f);
 		u32 nv, ni;
-		memcpy(&nv, hdr + 8, 4);
-		memcpy(&ni, hdr + 12, 4);
+		memcpy(&nv, h + 8, 4);
+		memcpy(&ni, h + 12, 4);
+		fseek(f, hdr - 16, SEEK_CUR);
 		fseek(f, nv * 16 + ni * 2 + ((ni & 1) ? 2 : 0), SEEK_CUR);
 	}
 	if (!collisionRead(cell.collision, f, version))
@@ -105,6 +111,90 @@ int main(int argc, char** argv)
 		}
 	}
 	float start[3] = { (float)atof(argv[2]), (float)atof(argv[3]), (float)atof(argv[4]) };
+	if (argc > 5 && strcmp(argv[5], "brute") == 0)
+	{
+		// Every triangle tested by hand (no grid): what the nearest hit really is, with the triangle it is,
+		// so a raycast through the grid can be checked against the same triangles one by one
+		auto sub3 = [](const float* x, const float* y, float* out) {
+			out[0] = x[0] - y[0]; out[1] = x[1] - y[1]; out[2] = x[2] - y[2];
+		};
+		auto dot3 = [](const float* x, const float* y) { return x[0] * y[0] + x[1] * y[1] + x[2] * y[2]; };
+		float deg = argc > 9 ? (float)atof(argv[9]) : 180.0f;
+		float a = deg * 3.14159265f / 180.0f;
+		float from[3] = { start[0], start[1], start[2] + 70 };
+		float d[3] = { cosf(a) * 4000, sinf(a) * 4000, 0 };
+		const CollisionMesh& m = cell.collision;
+		float best = 2.0f;
+		size_t which = 0;
+		for (size_t i = 0; i + 2 < m.tris.size(); i += 3)
+		{
+			const float* p0 = &m.verts[m.tris[i] * 3];
+			const float* p1 = &m.verts[m.tris[i + 1] * 3];
+			const float* p2 = &m.verts[m.tris[i + 2] * 3];
+			float e1[3], e2[3], pv[3], tv[3], qv[3];
+			sub3(p1, p0, e1);
+			sub3(p2, p0, e2);
+			pv[0] = d[1] * e2[2] - d[2] * e2[1]; pv[1] = d[2] * e2[0] - d[0] * e2[2]; pv[2] = d[0] * e2[1] - d[1] * e2[0];
+			float det = dot3(e1, pv);
+			if (fabsf(det) < 1e-6f)
+				continue;
+			float inv = 1.0f / det;
+			sub3(from, p0, tv);
+			float u = dot3(tv, pv) * inv;
+			if (u < -1e-3f || u > 1.001f)
+				continue;
+			qv[0] = tv[1] * e1[2] - tv[2] * e1[1]; qv[1] = tv[2] * e1[0] - tv[0] * e1[2]; qv[2] = tv[0] * e1[1] - tv[1] * e1[0];
+			float v = dot3(d, qv) * inv;
+			if (v < -1e-3f || u + v > 1.001f)
+				continue;
+			float tt = dot3(e2, qv) * inv;
+			if (tt >= 0.0f && tt <= 1.0f && tt < best)
+				best = tt, which = i / 3;
+		}
+		if (best > 1.0f)
+			printf("brute over %zu tris at %.0f deg: nothing within 4000\n", m.tris.size() / 3, deg);
+		else
+		{
+			printf("brute over %zu tris at %.0f deg: hit at %.0f units, triangle %zu\n", m.tris.size() / 3, deg,
+				best * 4000, which);
+			for (int k = 0; k < 3; k++)
+			{
+				const float* p = &m.verts[m.tris[which * 3 + k] * 3];
+				printf("   corner %d: %.3f %.3f %.3f (vertex %u)\n", k, p[0], p[1], p[2], m.tris[which * 3 + k]);
+			}
+		}
+		return 0;
+	}
+	if (argc > 5 && strcmp(argv[5], "dump") == 0)
+	{
+		// Every collision triangle whose box overlaps the box around the spot: what the engine really has
+		// there, to set beside what a decoder of the same file reads
+		float r = argc > 9 ? (float)atof(argv[9]) : 80.0f;
+		const CollisionMesh& m = cell.collision;
+		for (size_t i = 0; i + 2 < m.tris.size(); i += 3)
+		{
+			float v[3][3];
+			for (int k = 0; k < 3; k++)
+				memcpy(v[k], &m.verts[m.tris[i + k] * 3], 3 * sizeof(float));
+			float lo[3] = { v[0][0], v[0][1], v[0][2] }, hi[3] = { v[0][0], v[0][1], v[0][2] };
+			for (int k = 1; k < 3; k++)
+				for (int d = 0; d < 3; d++)
+				{
+					lo[d] = fminf(lo[d], v[k][d]);
+					hi[d] = fmaxf(hi[d], v[k][d]);
+				}
+			bool in = true;
+			for (int d = 0; d < 3; d++)
+				in &= lo[d] <= start[d] + r && hi[d] >= start[d] - r;
+			if (!in)
+				continue;
+			printf("tri %zu %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f %.3f\n", i / 3, v[0][0], v[0][1], v[0][2],
+				v[1][0], v[1][1], v[1][2], v[2][0], v[2][1], v[2][2]);
+		}
+		printf("grid origin %.0f %.0f, %u x %u cells of %.0f, %zu tris, %zu verts\n", m.originX, m.originY,
+			m.nx, m.ny, m.cellSize, m.tris.size() / 3, m.verts.size() / 3);
+		return 0;
+	}
 	if (argc > 5 && strcmp(argv[5], "rays") == 0)
 	{
 		// The escape test's 16 rays from that spot (feet): where each hits
@@ -270,3 +360,44 @@ int main(int argc, char** argv)
 			std::get<1>(top[i].second) * 50, std::get<2>(top[i].second) * 50);
 	return bad ? 3 : 0;
 }
+
+// The parts of the engine this harness never runs, defined so the game's own physics files link without
+// pulling in their .cpp's: the cell arena, the profile counters, the combat and world calls the movement
+// solver only reaches through code paths a walk never takes.
+#include "components/debug/debuglog.hpp"
+#include "components/debug/profile.hpp"
+#include "platform/cellarena.hpp"
+#include "platform/memstat.hpp"
+#include "mwworld/worldimp.hpp"
+#include "mwbase/session.hpp"
+#include "mwmechanics/combathelpers.hpp"
+
+int g_profCalls[PCALL_COUNT];
+unsigned g_pickSerial;
+volatile bool g_heapProbeFailed = false;
+
+bool cadenceOn(int) { return false; }
+void logf(const char* fmt, ...) { va_list ap; va_start(ap, fmt); vprintf(fmt, ap); va_end(ap); fputc('\n', stdout); }
+
+// malloc under the arena's name: the Cell's block comes from and goes back to the same place
+bool cellScopeOpen() { return false; }
+void* cellArenaAlloc(size_t bytes) { return malloc(bytes); }
+bool cellArenaRelease(void* p) { free(p); return true; }
+bool cellArenaFits(size_t) { return true; }
+
+float zMoverTop(World&, const Ref&, const Cell&) { return 0.0f; }
+float trailHeightNear(float, float) { return 0.0f; }
+
+float Session::fatigueTermOf(float, float) { return 0.0f; }
+float Session::fallDamage(float, int, float) { return 0.0f; }
+void Session::killNpc(int, bool) {}
+void Session::knockDown(int, bool) {}
+void Session::npcOpenDoor(int, int) {}
+
+int World::gridCell(int, int) const { return -1; }
+bool World::underWater(float) const { return false; }
+float World::actorBoxLift(int) { return 0.0f; }
+Actor* World::actorOf(int) { return nullptr; }
+void World::syncActor(int) {}
+int World::actorSkill(int, int) const { return 0; }
+float World::distanceToPlayer(int) const { return 0.0f; }
