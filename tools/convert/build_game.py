@@ -12,7 +12,7 @@ import re
 import math
 import struct
 
-from mwfiles import DATA_FILES, bloodmoon, game_path, read_game, read_records, text, tribunal
+from mwfiles import DATA_FILES, bloodmoon, game_path, load_order, read_game, read_records, text, tribunal
 from mwscript import ScriptError, compile_script, compile_snippet
 from creature import creature_stats
 from npcstats import HARMFUL_EFFECTS, ai_package, bind, npc_items, npc_stats, weapon_damage
@@ -948,6 +948,10 @@ def build(db, cells, actor_records, actor_cells):
         # The add-ons the data was converted with, in load order (the engine turns their rules on from this):
         # "tribunal", "bloodmoon"
         "addons": (["tribunal"] if tribunal() else []) + (["bloodmoon"] if bloodmoon() else []),
+        # The plugins on top of the master and the add-ons, in load order (a case written for a plugin set like
+        # Tamriel Rebuilt runs only on data that lists one; see run_test.py's "# data: plugins")
+        "plugins": [p.name.lower() for p in load_order()[1:]
+                    if p.name.lower() not in ("tribunal.esm", "bloodmoon.esm")],
         # The start scripts (SSCR: Tribunal's TribunalMain, MarkTRStartScript, TribFabAttackCheck), run as a game
         # starts (OpenMW's GlobalScripts::addStartup)
         "start_scripts": sorted({r.id.lower() for r in read_game({"SSCR"}) if r.id.lower() in compiled}),

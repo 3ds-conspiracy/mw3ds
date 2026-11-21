@@ -1,0 +1,8 @@
+# data: plugins
+# Tamriel Rebuilt exterior smoke: Hla Oad's cell (ext_m6_m5), a TR-only town on the mainland.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Hla_Oad
+40 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 QUIT

@@ -68,6 +68,17 @@ def data_addons(data):
         return {a for a in ("tribunal", "bloodmoon") if a in name}
 
 
+def data_plugins(data):
+    """The plugins a data folder was converted with, beyond the master and the add-ons (game.json "plugins",
+    written by build_game.py); [] for a plain conversion, and also for an old one that predates the key."""
+    try:
+        raw = (data_path(data) / "game.json").read_bytes()
+        # (zlib-packed behind an 8-byte "MWZ1" + length header, as level.py writes it)
+        return list(json.loads(zlib.decompress(raw[8:]) if raw[:4] == b"MWZ1" else raw).get("plugins", []))
+    except (OSError, ValueError, zlib.error):
+        return []
+
+
 def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=False, native=False, sd="", exe="",
         saves="", draw=False, shots="", old3ds=False, pattern=DEFAULT_PATTERN, stereo=False):
     """Runs one case; returns the lines to print (the verdict last)."""
@@ -104,6 +115,10 @@ def run(test, start="Balmora", data="out/data", wait=300, app="", emu="", fast=F
     # "# data: vanilla": a case about the game without the add-ons (trib-vanilla-off): skipped on data with one
     if addons and any(re.match(r"^#\s*data:\s*vanilla\s*$", ln) for ln in inputs[:5]):
         return [f"== {test}", "RESULT: PASS (skipped: vanilla data only)"]
+    # "# data: plugins": a case written for a plugin set (Tamriel Rebuilt and the like): it runs on data
+    # converted with plugins (game.json "plugins") and is skipped, not failed, on the plain game's
+    if any(re.match(r"^#\s*data:\s*plugins\s*$", ln) for ln in inputs[:5]) and not data_plugins(data):
+        return [f"== {test}", f"RESULT: PASS (skipped: no plugins in {data})"]
     # A vanilla case on the Tribunal data plays as someone the Dark Brotherhood has already given up on (TR_DBAttack 50,
     # dbattackScript's end): the add-on's assassins otherwise strike at the first rest, and a vanilla case can't rest
     # with one about ("enemies are nearby"). A Bloodmoon case is written for the Tribunal + Bloodmoon data and keeps

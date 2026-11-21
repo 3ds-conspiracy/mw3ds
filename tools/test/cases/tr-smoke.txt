@@ -1,0 +1,15 @@
+# data: plugins
+# Tamriel Rebuilt smoke: a TR-only interior (Hla Oad, Okur's House), a TR-only NPC (Okur), TR dialogue.
+# start: Seyda Neen
+3 0 0 0 0 MSG
+0.3 0 0 0 0 GOD:2
+0.3 0 0 0 0 GOTO:Hla_Oad,_Okur's_House
+25 0 0 0
+0.2 0 0 0 0 SHOT
+0.3 0 0 0 0 TALK:Okur
+2 0 0 0
+0.2 0 0 0 0 SHOT
+3 0 0 0
+0.3 0 0 0 0 B
+8 0 0 0
+0.3 0 0 0 0 QUIT
