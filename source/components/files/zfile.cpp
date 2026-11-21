@@ -23,6 +23,8 @@ char* zreadAll(const char* path, size_t* sizeOut)
 	char* raw = (char*)malloc(fileSize + 1);
 	if (!raw)
 	{
+		// (callers read a null as "no such file": say when it is the heap that is gone instead)
+		logf("zfile: %s: out of memory reading (%lu KB)", path, (unsigned long)fileSize / 1024);
 		fclose(f);
 		return nullptr;
 	}
@@ -38,12 +40,22 @@ char* zreadAll(const char* path, size_t* sizeOut)
 	u32 size;
 	memcpy(&size, raw + 4, 4);
 	char* out = (char*)malloc(size + 1);
+	if (!out)
+	{
+		// (an allocation that failed, not a broken file: a full heap made three good Tamriel Rebuilt
+		// files look corrupt. The main loop gives memory back, as `new` does when it runs out)
+		logf("zfile: %s: out of memory inflating (%lu KB needed)", path, (unsigned long)size / 1024);
+		g_memoryLow = true;
+		free(raw);
+		return nullptr;
+	}
 	uLongf outLen = size;
-	int rc = out ? uncompress((Bytef*)out, &outLen, (const Bytef*)raw + 8, got - 8) : Z_MEM_ERROR;
+	int rc = uncompress((Bytef*)out, &outLen, (const Bytef*)raw + 8, got - 8);
 	free(raw);
 	if (rc != Z_OK || outLen != size)
 	{
-		logf("zfile: %s: inflate failed (%d)", path, rc);
+		logf("zfile: %s: inflate failed (%d, %lu of %lu KB)", path, rc, (unsigned long)outLen / 1024,
+			(unsigned long)size / 1024);
 		// (out of heap: the main loop gives memory back, as when `new` runs out; zlib's malloc never told it)
 		if (rc == Z_MEM_ERROR)
 			g_memoryLow = true;
