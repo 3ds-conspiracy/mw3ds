@@ -1,0 +1,32 @@
+# The player's Fortify, Drain and Damage Attribute on a creature (a player's report: "NPCs and creatures don't seem to
+# be affected"). The console's GetStrength on a creature read the record's value, and Damage Attribute did nothing.
+# OpenMW changes a creature's attributes as a person's (skills are people's only).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:destruction:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12
+1 0 0 0 0 HIDEACTORS:3000
+1 0 0 0 0 PLACE:scamp:250
+1.5 0 0 0
+0.1 0 0 0 0 SNAP:refattr:scamp,strength
+2 0 0 0 0 SCREEN:console+CON:scamp->GetStrength
+0.1 0 0 0 0 SNAP:conval+EXPECT:conval:gt:0
+0.3 0 0 0 0 SCREEN:none
+0.1 0 0 0 0 ADDEFFECT:79:25:25:6:2:strength+MAKESPELL:fort+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:scamp:mw3ds_test_fort
+2 0 0 0 0 SCREEN:console+CON:scamp->GetStrength
+0.1 0 0 0 0 EXPECT:conval:gt:@+EXPECT:refattr:scamp,strength:gt:@
+0.3 0 0 0 0 SCREEN:none
+6 0 0 0 0
+0.1 0 0 0 0 ADDEFFECT:17:20:20:6:2:strength+MAKESPELL:drain+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:scamp:mw3ds_test_drain
+2 0 0 0 0 SCREEN:console+CON:scamp->GetStrength
+0.1 0 0 0 0 EXPECT:conval:lt:@+EXPECT:refattr:scamp,strength:lt:@
+0.3 0 0 0 0 SCREEN:none
+6 0 0 0 0
+0.1 0 0 0 0 ADDEFFECT:22:5:5:3:2:strength+MAKESPELL:dmg+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:scamp:mw3ds_test_dmg
+6 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:scamp->GetStrength
+0.1 0 0 0 0 EXPECT:conval:lt:@+EXPECT:refattr:scamp,strength:lt:@
+0.3 0 0 0 0 SCREEN:none

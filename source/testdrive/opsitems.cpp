@@ -33,6 +33,22 @@ std::optional<bool> opsItems(Session& s, const std::vector<std::string>& a)
 		s.makeEffects.clear();
 		return true;
 	}
+	// MAGICSEL:<spell id>: in the magic menu (on All), a finger on that spell's row
+	if (verb == "MAGICSEL" && a.size() >= 2)
+	{
+		std::string id = w.game.spells.count(lower(a[1])) ? lower(a[1]) : lower(spaced(a[1]));
+		std::vector<std::string> known = s.knownSpells();
+		auto at = std::find(known.begin(), known.end(), id);
+		if (at == known.end())
+			return fail(a[1] + " isn't a known spell");
+		if (s.magicTab != 0)
+		{
+			s.magicTab = 0;
+			s.list = UiList();
+		}
+		s.list.selected = (int)(at - known.begin());
+		return true;
+	}
 	// MAKEITEM:<base item>:<id>[:use|constant|once][:charge]: the effects ADDEFFECT put together become an enchantment on a
 	// copy of the base item, carried (CAST:item:<id> casts it). Enchantment effects are never dispelled; "use" ones are
 	// active effects (a Fortify goes past 100), "constant" ones count as abilities while worn (capped at 100)

@@ -313,5 +313,17 @@ failed before the fix:
 7. **Damage Attribute / Skill** (`bug-damage-attribute-cap`) kept damage past 0; each moment is now capped at what is
    left.
 
-Left as they are: Sun Damage's curve (ours a sine from 6 to 20 h, halved under cloud), Damage / Restore Attribute and
-Disintegrate on people (not kept), spells between two NPCs never reflected or absorbed.
+8. **The player's spells on people and creatures** (2026-11-22, a player's report that Fortify / Drain / Damage
+   Attribute and Skill and Levitate did nothing to others): (`bug-npc-attr-spells`, `bug-npc-skill-spells`,
+   `bug-creature-attr-spells`) the console's Get<Attribute> / Get<Skill> on an actor read the record's value plus
+   scripts' changes; OpenMW's reads the modified value, so a Drain or Fortify that did work in combat showed nothing.
+   Damage and Restore Attribute / Skill on an actor were dropped; now a Damage takes its magnitude a second (capped at
+   what is left) into the actor's lasting damage (`Ref::statDamage`, saved), and a Restore takes it back.
+   (`bug-npc-levitate`) Levitate on an actor was dropped; now it holds them up (`World::actorLevitating`: OpenMW's
+   isFlying, not while paralysed or where levitation is disabled) and they climb or sink toward where they go, as a
+   creature that flies (`zMoverTop`); when it ends they fall. Paralyze and Damage Health / Magicka / Fatigue were right
+   (`npc-spells-dynamic`).
+
+Left as they are: Sun Damage's curve (ours a sine from 6 to 20 h, halved under cloud), Disintegrate on people (not
+kept), spells between two NPCs never reflected or absorbed, an actor's fatigue and magicka maximums not following a
+changed attribute.

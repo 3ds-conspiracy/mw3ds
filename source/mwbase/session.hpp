@@ -425,6 +425,8 @@ struct Session : ScriptHost, WindowManagerState, MechanicsState, RenderState, So
 	void updateEffects(float dt);
 	void endPlayerEffect(size_t i);                    // an active effect ends: its changes undone, it is removed
 	std::vector<std::string> knownSpells();
+	bool inherentSpell(const std::string& id);   // a power, or the race's or birthsign's: the magic menu can't delete it
+	void deleteSpell(const std::string& id);     // the magic menu's Delete: the player forgets a spell
 	int spellSchool(const SpellDef& sp, float* lowest = nullptr);
 	std::string spellSound(const SpellDef& sp, int kind);
 	// A spell's area effects of this range where it lands: everyone within (but who it struck already);

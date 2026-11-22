@@ -223,9 +223,20 @@ The Classic control layout plays as Morrowind does: magic is raised first, then 
 Tests: `feat-classic-buttons` (the full pad), `feat-classic-old3ds` (an Old 3DS's buttons). Both were written with the
 feature, so they show it works, not that they would have caught a bug.
 
+## Deleting a spell (OpenMW: `mwgui/spellwindow.cpp askDeleteSpell`, `onDeleteSpellAccept`)
+
+- The magic menu's Delete on the selected spell asks `sQuestionDeleteSpell` ("Delete %s?" with the spell's name), Yes /
+  No, No lit first. Yes: the player forgets the spell; if it was the one ready to cast, none is.
+- A power, or a spell the race or the birthsign gives, can't be deleted: `sDeleteSpellError`. An enchanted item's entry
+  isn't a spell: Delete does nothing on it.
+- Differs (3DS UI, kept): a Delete button in the menu's row instead of OpenMW's Shift-click (Morrowind's) and its own
+  Delete button.
+
+Test: `bug-delete-spell`.
+
 ## Open
 
-- Actors' attributes and skills under Drain / Fortify / Absorb are kept (`Ref::TimedEffect::key`, read by `EXPECT:refattr` / `refskill`), but combat still uses the record's numbers; Damage / Restore Attribute / Skill on actors is not kept.
+- Actors' fatigue and magicka maximums don't follow an attribute changed by a spell (OpenMW recalculates them).
 - The spells on actors are not saved; a reload clears them.
 - The cast chance passed to the resistance roll is capped at 0..100 here (OpenMW's is uncapped).
 - Cure Corprus now ends the Corprus effect only, as OpenMW does: `World::corprusSince` = -2, the disease stays on the list and its other effects go on.

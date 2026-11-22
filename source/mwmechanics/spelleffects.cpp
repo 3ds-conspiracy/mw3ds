@@ -597,6 +597,24 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 		}
 		break;
 	}
+	// Damage and Restore Attribute / Skill: a second at a time for the duration, keyed (updateActorEffects); what a
+	// Damage took stays until restored. Skills on people only
+	case EFF_DAMAGE_ATTRIBUTE: case EFF_RESTORE_ATTRIBUTE: case EFF_DAMAGE_SKILL: case EFF_RESTORE_SKILL:
+	{
+		bool skill = e.effect == EFF_DAMAGE_SKILL || e.effect == EFF_RESTORE_SKILL;
+		int key = skill ? e.skill : e.attribute;
+		if (key < 0 || key >= (skill ? 27 : 8) || (skill && def.creature))
+			return;
+		r.effects.push_back({ e.effect, mag, fmaxf(1.0f, dur), key });
+		break;
+	}
+	// Levitate: held up and moving up and down toward where they go while it lasts (World::actorLevitating, npcMoveTo);
+	// none where levitation is disabled
+	case EFF_LEVITATE:
+		if (w.levitationDisabled)
+			return;
+		timed(fmaxf(1.0f, dur));
+		break;
 	case EFF_FORTIFY_HEALTH: case EFF_FORTIFY_FATIGUE: case EFF_FORTIFY_MAGICKA:
 		// raises the current value and the maximum, both taken back at the end
 		(e.effect == EFF_FORTIFY_HEALTH ? r.healthMax : e.effect == EFF_FORTIFY_FATIGUE ? r.fatigueMax : r.magickaMax) += mag;
@@ -694,11 +712,11 @@ void Session::applyEffectToActor(int ri, const SpellEffect& e, bool byPlayer, fl
 		r.soulTrapUntil = w.time + fmaxf(1.0f, dur);
 		break;
 	default:
-		// (Burden, Feather, the Disintegrates and Damage Attribute / Skill last on them too, as OpenMW keeps every
-		// effect of a spell active for its duration; what they do to a person's gear and load isn't kept here)
+		// (Burden, Feather and the Disintegrates last on them too, as OpenMW keeps every effect of a spell active for its
+		// duration; what they do to a person's gear and load isn't kept here)
 		if ((e.effect >= EFF_WEAKNESS_FIRE && e.effect <= EFF_DISINTEGRATE_ARMOR)
 			|| (e.effect >= EFF_RESIST_FIRE && e.effect <= EFF_RESIST_PARALYSIS) || e.effect == EFF_BURDEN
-			|| e.effect == EFF_FEATHER || e.effect == EFF_DAMAGE_ATTRIBUTE || e.effect == EFF_DAMAGE_SKILL)
+			|| e.effect == EFF_FEATHER)
 			timed(fmaxf(1.0f, dur));
 		break;
 	}

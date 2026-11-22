@@ -13,6 +13,9 @@
 // (a swimmer stays 50 under the surface, as a floating corpse), else a huge number
 float zMoverTop(World& w, const Ref& r, const Cell& cell)
 {
+	// (anyone held up by Levitate flies: OpenMW's isFlying)
+	if ((r.recType == REC_NPC_ || r.recType == REC_CREA) && !r.effects.empty() && w.actorLevitating(r))
+		return 1e9f;
 	if (r.recType != REC_CREA)
 		return -1e9f;
 	u8 f = w.game.actors[r.actor].afloat;

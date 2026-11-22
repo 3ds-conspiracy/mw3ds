@@ -144,6 +144,7 @@ void Session::monitorActors(float dt)
 			u8 afloat = w.game.actors[r.actor].afloat;
 			creature = (afloat & 0x20) || ((afloat & 0x10) && w.underWater(r.pos[2]));
 		}
+		creature |= !r.effects.empty() && w.actorLevitating(r);     // (Levitate holds anyone up)
 		bool idle = r.ai != AI_COMBAT && !r.falling && r.knockTimer <= 0.0f && !a->swimming;
 		// (on the floor anywhere from the floor under the middle up to the highest under the feet: a step and
 		// gravity stand them on the latter, as OpenMW's actor box rests on a slope or a ledge's edge)

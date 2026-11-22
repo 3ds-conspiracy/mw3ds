@@ -212,6 +212,7 @@ struct Ref
 	// Raise / LowerRank replace it (-1: the record's), AddSpell / RemoveSpell give and take spells (lowercase)
 	std::vector<float> statDelta;   // 8 attributes then 27 skills; empty until a script changes one (memory)
 	std::vector<float> spellDelta;  // the same, from its abilities, diseases and curses (actorSpellStats); empty for most
+	std::vector<float> statDamage;  // the same, points a Damage Attribute / Skill took, until a Restore gives them back (saved; empty for most)
 	int level = -1, rank = -1;
 	std::vector<std::string> spells, noSpells;
 	// AI package (AIWander / AITravel / AIFollow / AIEscort / AIActivate, or the record's own)

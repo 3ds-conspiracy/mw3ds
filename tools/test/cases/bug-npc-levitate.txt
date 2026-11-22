@@ -1,0 +1,40 @@
+# The player's Levitate on someone else (a player's report: "targeted levitation spells also have no effect on
+# others"). Ours dropped it: a person struck by it went on walking the ground. OpenMW's isFlying holds for any actor
+# with Levitate on them (not while paralysed); one that flies moves up and down toward where it goes and does not fall
+# (canActorMoveByZAxis), so a foe below a levitating player rises to them.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:alteration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 TP:-10300:-71300:200:0+HOUR:12+SETWEATHER:0
+1 0 0 0 0 HIDEACTORS:3000
+1 0 0 0 0 PLACE:fargoth:350
+0.1 0 0 0 0 ENABLE:fargoth
+2 0 0 0
+0.1 0 0 0 0 EXPECT:refabove:fargoth:lt:20
+# Levitate 5 on him for 30 s
+0.1 0 0 0 0 ADDEFFECT:10:5:5:30:2:-+MAKESPELL:levt+SETMAGICKA:2000
+3 0 0 0 0 CASTAT:fargoth:mw3ds_test_levt
+0.1 0 0 0 0 EXPECT:refeffect:fargoth,10:gt:0
+# The player levitates and hangs 450 up; he comes after the player, flying up
+0.1 0 0 0 0 ADDEFFECT:10:5:5:40:0:-+MAKESPELL:fly+SETMAGICKA:2000
+2.5 0 0 0 0 CAST:mw3ds_test_fly
+0.1 0 0 0 0 EXPECT:levitating:eq:1
+1 0 0 0 0 TP:-10300:-71550:650:0+POV:third+FACE:fargoth
+0.1 0 0 0 0 HOSTILE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.5 0 0 0 0 FACE:fargoth
+0.1 0 0 0 0 EXPECT:refabove:fargoth:gt:150

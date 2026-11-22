@@ -1,0 +1,35 @@
+# A spell the player made or bought can be deleted from the magic menu (a player's report: "I also don't know of a way
+# to delete custom spells"). Ours had no way. OpenMW's SpellWindow (askDeleteSpell): Delete on the selected spell asks
+# sQuestionDeleteSpell, Yes forgets it (and it is no longer the one ready); a power, or a spell the race or birthsign
+# gives, can't be deleted (sDeleteSpellError).
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+PCRACE:dark_elf
+0.3 0 0 0 0 SETSKILL:destruction:600+SETATTR:intelligence:100
+0.1 0 0 0 0 ADDEFFECT:14:5:5:0:2:-+MAKESPELL:zap
+0.1 0 0 0 0 SPELL:fire_bite
+0.1 0 0 0 0 EXPECT:spell:mw3ds_test_zap
+# Delete on the made spell, then Yes
+1 0 0 0 0 SCREEN:magic
+0.5 0 0 0 0 MAGICSEL:mw3ds_test_zap
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 RIGHT
+0.5 0 0 0 0 A
+0.5 0 0 0 0 SHOT
+0.3 0 0 0 0 LEFT
+0.5 0 0 0 0 A
+0.5 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:nospell:mw3ds_test_zap+EXPECT:spell:fire_bite
+0.1 0 0 0 0 EXPECT:screen:magic
+# No keeps it
+0.5 0 0 0 0 MAGICSEL:fire_bite
+0.3 0 0 0 0 RIGHT
+0.5 0 0 0 0 A
+0.5 0 0 0 0 A
+0.1 0 0 0 0 EXPECT:spell:fire_bite
+# The race's power can't go (the list keeps it)
+0.5 0 0 0 0 MAGICSEL:ancestor_guardian+SNAP:magicshown
+0.3 0 0 0 0 RIGHT
+0.5 0 0 0 0 A
+1 0 0 0 0 SHOT
+0.1 0 0 0 0 EXPECT:magicshown:eq:@
+0.3 0 0 0 0 SCREEN:none

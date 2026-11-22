@@ -1,0 +1,42 @@
+# The player's Paralyze and Damage Health / Magicka / Fatigue on a person work (a player's report said so; kept as a
+# check beside bug-npc-attr-spells): Paralyze holds them, each Damage takes its points off, as the console's GetHealth,
+# GetMagicka and GetFatigue read.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:destruction:600+SETSKILL:illusion:600+SETATTR:intelligence:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 FILL
+12 0 0 0 0 WALKTO:ajira
+# Paralyze 10 s: she drops and can't move
+0.1 0 0 0 0 ADDEFFECT:45:1:1:10:2:-+MAKESPELL:para+SETMAGICKA:2000
+3 0 0 0 0 CASTAT:ajira:mw3ds_test_para
+0.1 0 0 0 0 EXPECT:refeffect:ajira,45:gt:0+EXPECT:refknock:ajira:gt:0
+# Damage Health 20
+0.1 0 0 0 0 SNAP:refhealth:ajira
+2 0 0 0 0 SCREEN:console+CON:ajira->GetHealth
+0.1 0 0 0 0 SNAP:conval
+0.3 0 0 0 0 SCREEN:none
+0.1 0 0 0 0 ADDEFFECT:23:20:20:0:2:-+MAKESPELL:hp+SETMAGICKA:2000
+3 0 0 0 0 CASTAT:ajira:mw3ds_test_hp
+2 0 0 0 0 SCREEN:console+CON:ajira->GetHealth
+0.1 0 0 0 0 EXPECT:conval:lt:@+EXPECT:refhealth:ajira:lt:@
+0.3 0 0 0 0 SCREEN:none
+# Damage Magicka 20
+2 0 0 0 0 SCREEN:console+CON:ajira->GetMagicka
+0.1 0 0 0 0 SNAP:conval
+0.3 0 0 0 0 SCREEN:none
+0.1 0 0 0 0 ADDEFFECT:24:20:20:0:2:-+MAKESPELL:mp+SETMAGICKA:2000
+3 0 0 0 0 CASTAT:ajira:mw3ds_test_mp
+2 0 0 0 0 SCREEN:console+CON:ajira->GetMagicka
+0.1 0 0 0 0 EXPECT:conval:lt:@
+0.3 0 0 0 0 SCREEN:none
+# Damage Fatigue 40
+2 0 0 0 0 SCREEN:console+CON:ajira->GetFatigue
+0.1 0 0 0 0 SNAP:conval
+0.3 0 0 0 0 SCREEN:none
+0.1 0 0 0 0 ADDEFFECT:25:40:40:0:2:-+MAKESPELL:fat+SETMAGICKA:2000
+3 0 0 0 0 CASTAT:ajira:mw3ds_test_fat
+2 0 0 0 0 SCREEN:console+CON:ajira->GetFatigue
+0.1 0 0 0 0 EXPECT:conval:lt:@
+0.3 0 0 0 0 SCREEN:none

@@ -125,6 +125,8 @@ cJSON* World::refState(int i) const
 			cJSON_AddNumberToObject(o, "rank", r.rank);
 		if (!r.statDelta.empty())
 			cJSON_AddItemToObject(o, "stat_delta", floats(r.statDelta.data(), r.statDelta.size()));
+		if (!r.statDamage.empty())
+			cJSON_AddItemToObject(o, "stat_damage", floats(r.statDamage.data(), r.statDamage.size()));
 		if (r.werewolf)
 			cJSON_AddNumberToObject(o, "werewolf", 1);
 		if (!r.scriptEffects.empty())
@@ -223,6 +225,7 @@ u32 World::refHash(int i) const
 		mixi(r.level);
 		mixi(r.rank);
 		mix(r.statDelta.data(), r.statDelta.size() * sizeof(float));
+		mix(r.statDamage.data(), r.statDamage.size() * sizeof(float));
 		mixi(r.werewolf);
 		mix(r.scriptEffects.data(), r.scriptEffects.size() * sizeof(r.scriptEffects[0]));
 		for (auto& id : r.spells)
@@ -325,6 +328,12 @@ void World::applyRefState(Ref& r, const cJSON* it)
 		{
 			r.statDelta.assign(35, 0.0f);
 			readFloats(d, r.statDelta.data(), 35);
+		}
+		r.statDamage.clear();
+		if (const cJSON* d = cJSON_GetObjectItem(it, "stat_damage"))
+		{
+			r.statDamage.assign(35, 0.0f);
+			readFloats(d, r.statDamage.data(), 35);
 		}
 		for (int k = 0; k < 2; k++)
 		{

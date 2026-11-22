@@ -184,6 +184,14 @@ bool statFunction(Ctx& c, const Node& n, bool onPlayer, Ref* r, int ref, float* 
 			*out = 0.0f;
 			return true;
 		}
+		// Get<Stat> reads the modified value, as the rules do: abilities, Fortify, Drain and Damage on them counted
+		// (OpenMW's GetAttribute / GetSkill: getModified). The console's ajira->GetStrength read her record's 30 under a
+		// Drain Strength
+		if (op == 0 && ref >= 0 && ref < (int)w.refs.size() && &w.refs[ref] == r)
+		{
+			*out = (float)(attr >= 0 ? w.actorAttribute(ref, attr) : w.actorSkill(ref, skill));
+			return true;
+		}
 		const ActorDef& a = w.game.actors[r->actor];
 		float base = (float)(attr >= 0 ? a.attributes[attr] : a.skills[skill]);
 		int slot = attr >= 0 ? attr : 8 + skill;

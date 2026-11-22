@@ -1,0 +1,49 @@
+# The player's Fortify, Drain and Damage Skill on a person (a player's report: "fortify/damage/drain ... skill spells
+# have no effect on them", checked with the console). The console's GetAlchemy on an NPC read the record's value, blind
+# to every spell on them, and Damage Skill did nothing at all. OpenMW's Get<Skill> reads the modified value; a Damage
+# takes its magnitude a second for its duration and the points stay gone until a Restore Skill gives them back.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:destruction:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 FILL
+12 0 0 0 0 WALKTO:ajira
+0.1 0 0 0 0 SNAP:refskill:ajira,alchemy
+2 0 0 0 0 SCREEN:console+CON:ajira->GetAlchemy
+0.1 0 0 0 0 SNAP:conval+EXPECT:conval:gt:0
+0.3 0 0 0 0 SCREEN:none
+# Fortify Alchemy 25 for 6 s: up while it lasts, back after
+0.1 0 0 0 0 ADDEFFECT:83:25:25:6:2:alchemy+MAKESPELL:fort+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_fort
+2 0 0 0 0 SCREEN:console+CON:ajira->GetAlchemy
+0.1 0 0 0 0 EXPECT:conval:gt:@+EXPECT:refskill:ajira,alchemy:gt:@
+0.3 0 0 0 0 SCREEN:none
+6 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetAlchemy
+0.1 0 0 0 0 EXPECT:conval:eq:@
+0.3 0 0 0 0 SCREEN:none
+# Drain Alchemy 20 for 6 s: down while it lasts, back after
+0.1 0 0 0 0 ADDEFFECT:21:20:20:6:2:alchemy+MAKESPELL:drain+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_drain
+2 0 0 0 0 SCREEN:console+CON:ajira->GetAlchemy
+0.1 0 0 0 0 EXPECT:conval:lt:@+EXPECT:refskill:ajira,alchemy:lt:@
+0.3 0 0 0 0 SCREEN:none
+6 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetAlchemy
+0.1 0 0 0 0 EXPECT:conval:eq:@
+0.3 0 0 0 0 SCREEN:none
+# Damage Alchemy 5 a second for 3 s: 15 points gone, and still gone once it has ended
+0.1 0 0 0 0 ADDEFFECT:26:5:5:3:2:alchemy+MAKESPELL:dmg+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_dmg
+6 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetAlchemy
+0.1 0 0 0 0 EXPECT:conval:lt:@+EXPECT:refskill:ajira,alchemy:lt:@
+0.3 0 0 0 0 SCREEN:none
+# Restore Alchemy gives them back
+0.1 0 0 0 0 ADDEFFECT:78:20:20:2:2:alchemy+MAKESPELL:rest+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_rest
+4 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetAlchemy
+0.1 0 0 0 0 EXPECT:conval:eq:@+EXPECT:refskill:ajira,alchemy:eq:@
+0.3 0 0 0 0 SCREEN:none

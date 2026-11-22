@@ -425,6 +425,12 @@ void Session::actorGravity(float dt)
 		}
 		if (creature && !r.dead && (afloat & 0x20))
 			continue;
+		// (one held up by Levitate doesn't fall either; when it ends they drop as from a ledge)
+		if (!r.effects.empty() && w.actorLevitating(r))
+		{
+			r.falling = false;
+			continue;
+		}
 		if (creature && !r.dead && (afloat & 0x10) && w.underWater(r.pos[2]))
 			continue;
 		// The floor under them: every quarter second while standing, every frame while falling. Under the

@@ -1,0 +1,50 @@
+# The player's Fortify, Drain and Damage Attribute on a person (a player's report: "fortify/damage/drain attribute ...
+# spells have no effect on them", checked with the console). The console's GetStrength on an NPC read the record's
+# value, blind to every spell on them, and Damage Attribute did nothing at all. OpenMW's GetStrength reads the
+# modified value (base, plus Fortify, less Drain and Damage); a Damage takes its magnitude a second for its duration
+# and the points stay gone when it ends, until a Restore Attribute gives them back.
+3 0 0 0 0 MSG
+0.3 0 0 0 0 SEED:1+GOD
+0.3 0 0 0 0 SETSKILL:destruction:600+SETSKILL:restoration:600+SETATTR:intelligence:100
+0.3 0 0 0 0 GOTO:Balmora,_Guild_of_Mages
+8 0 0 0
+0.3 0 0 0 0 FILL
+12 0 0 0 0 WALKTO:ajira
+0.1 0 0 0 0 SNAP:refattr:ajira,strength
+2 0 0 0 0 SCREEN:console+CON:ajira->GetStrength
+0.1 0 0 0 0 SNAP:conval+EXPECT:conval:gt:0
+0.3 0 0 0 0 SCREEN:none
+# Fortify Strength 25 for 6 s: up while it lasts, back after
+0.1 0 0 0 0 ADDEFFECT:79:25:25:6:2:strength+MAKESPELL:fort+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_fort
+2 0 0 0 0 SCREEN:console+CON:ajira->GetStrength
+0.1 0 0 0 0 EXPECT:conval:gt:@+EXPECT:refattr:ajira,strength:gt:@
+0.3 0 0 0 0 SCREEN:none
+6 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetStrength
+0.1 0 0 0 0 EXPECT:conval:eq:@
+0.3 0 0 0 0 SCREEN:none
+# Drain Strength 20 for 6 s: down while it lasts, back after
+0.1 0 0 0 0 ADDEFFECT:17:20:20:6:2:strength+MAKESPELL:drain+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_drain
+2 0 0 0 0 SCREEN:console+CON:ajira->GetStrength
+0.1 0 0 0 0 EXPECT:conval:lt:@+EXPECT:refattr:ajira,strength:lt:@
+0.3 0 0 0 0 SCREEN:none
+6 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetStrength
+0.1 0 0 0 0 EXPECT:conval:eq:@
+0.3 0 0 0 0 SCREEN:none
+# Damage Strength 5 a second for 3 s: 15 points gone, and still gone once it has ended
+0.1 0 0 0 0 ADDEFFECT:22:5:5:3:2:strength+MAKESPELL:dmg+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_dmg
+6 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetStrength
+0.1 0 0 0 0 EXPECT:conval:lt:@+EXPECT:refattr:ajira,strength:lt:@
+0.3 0 0 0 0 SCREEN:none
+# Restore Strength gives them back
+0.1 0 0 0 0 ADDEFFECT:74:20:20:2:2:strength+MAKESPELL:rest+SETMAGICKA:2000
+2.5 0 0 0 0 CASTAT:ajira:mw3ds_test_rest
+4 0 0 0 0
+2 0 0 0 0 SCREEN:console+CON:ajira->GetStrength
+0.1 0 0 0 0 EXPECT:conval:eq:@+EXPECT:refattr:ajira,strength:eq:@
+0.3 0 0 0 0 SCREEN:none

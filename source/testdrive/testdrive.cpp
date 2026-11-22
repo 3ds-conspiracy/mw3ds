@@ -159,7 +159,7 @@ bool TestDriver::playerToken(const std::string& tok)
 		// (SEED: the dice made repeatable from there, nothing given or set: a long run seeds a section whose outcome is a
 		// script's roll, so a change before it doesn't flip it. SCRIPTROLL: a script's own die picked, nothing else; ROLL: a
 		// persuasion's, so a taunt meant to provoke does, on any dice)
-		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "LEGIT", "SEED", "RANDSEED", "SCRIPTROLL", "ROLL",
+		"STICKUP", "STICKRIGHT", "STICKLEFT", "MSG", "SHOT", "SAVE", "LOAD", "SAVESEL", "MAGICSEL", "LEGIT", "SEED", "RANDSEED", "SCRIPTROLL", "ROLL",
 		"EXPECT", "SNAP", "CHECK", "PROBE",
 		"WALKTO", "FLYTO", "HOPTO", "ESCORT", "DOORTO", "ACTIVATE", "PICKUP", "LOOT", "PUT", "KILL", "FIGHT", "SKYTO", "OPEN", "BRING", "WAYTO", "STRIKE", "FACE", "SNEAK",
 		"TOPIC", "CHOICE", "CHOICEVAL", "PERSUADE", "TRAVEL", "BARTER", "BARTERSEL", "INVSEL", "BUY", "SELL", "TRAIN", "SPELLMAKE", "MAKEPICK", "MAKETARGET",

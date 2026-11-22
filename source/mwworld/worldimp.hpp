@@ -479,6 +479,7 @@ struct World
 	float actorEffect(int ref, int effect) const;       // an actor's: its abilities' constant effects + the spells on it
 	int actorAttribute(int ref, int attribute) const;  // an actor's modified attribute: its record's, with the spells on it
 	int actorSkill(int ref, int skill) const;          // the same for a skill
+	bool actorLevitating(const Ref& r) const;          // Levitate holds it up (alive, not paralysed, levitation allowed)
 	void reapplyEffects();
 	const RaceDef* race() const;
 	const ClassDef* playerClass() const;

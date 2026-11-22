@@ -121,18 +121,47 @@ void actorSpellStats(const GameData& g, Ref& r, ActorPools pools)
 	r.magicka = pools == POOLS_FULL ? magicka : magicka * magickaShare;
 }
 
+// Points a Damage Attribute / Skill took from one of its 8 attributes then 27 skills, whole (a part counts as one)
+static int damagedBy(const Ref& r, int slot)
+{
+	return r.statDamage.empty() ? 0 : (int)ceilf(r.statDamage[slot] - 0.001f);
+}
+
 int World::actorAttribute(int ri, int a) const
 {
 	const Ref& r = refs[ri];
-	int base = std::max(0, game.actors[r.actor].attributes[a] + (int)standingStat(r, a));
+	int base = std::max(0, game.actors[r.actor].attributes[a] + (int)standingStat(r, a) - damagedBy(r, a));
 	return r.effects.empty() ? base : modifiedStat(r, base, a, false);
 }
 
 int World::actorSkill(int ri, int k) const
 {
 	const Ref& r = refs[ri];
-	int base = std::max(0, game.actors[r.actor].skills[k] + (int)standingStat(r, 8 + k));
+	int base = std::max(0, game.actors[r.actor].skills[k] + (int)standingStat(r, 8 + k) - damagedBy(r, 8 + k));
 	return r.effects.empty() ? base : modifiedStat(r, base, k, true);
+}
+
+// An actor held up by Levitate (OpenMW's World::isFlying for one that can't fly of itself): a spell, an ability or a
+// script's on them, while they live, aren't paralysed and levitation works here
+bool World::actorLevitating(const Ref& r) const
+{
+	if (r.dead || levitationDisabled || r.actor < 0)
+		return false;
+	float lev = 0.0f;
+	for (auto& t : r.effects)
+	{
+		if (t.effect == EFF_PARALYZE)
+			return false;
+		if (t.effect == EFF_LEVITATE)
+			lev += t.magnitude;
+	}
+	for (auto& c : game.actors[r.actor].constEffects)
+		if (c.first == EFF_LEVITATE)
+			lev += c.second;
+	for (auto& sc : r.scriptEffects)
+		if (sc.first == EFF_LEVITATE)
+			lev += sc.second;
+	return lev > 0.0f;
 }
 
 float World::effectTotal(int effect) const
@@ -202,6 +231,33 @@ void Session::updateActorEffects(int ri, float dt)
 		case EFF_RESTORE_HEALTH: r.health = fminf(r.healthMax, r.health + amount); break;
 		case EFF_RESTORE_FATIGUE: r.fatigue = fminf(r.fatigueMax, r.fatigue + amount); break;
 		case EFF_RESTORE_MAGICKA: r.magicka = fminf(r.magickaMax, r.magicka + amount); break;
+		// Damage Attribute / Skill take the magnitude a second from it, the points kept after the spell ends; Restore
+		// gives them back. A moment's damage is at most what is left of the value (OpenMW's damageAttribute / damageSkill
+		// and restore: on the player's rules, updateEffects)
+		case EFF_DAMAGE_ATTRIBUTE: case EFF_RESTORE_ATTRIBUTE: case EFF_DAMAGE_SKILL: case EFF_RESTORE_SKILL:
+		{
+			bool skill = t.effect == EFF_DAMAGE_SKILL || t.effect == EFF_RESTORE_SKILL;
+			if (t.key < 0 || t.key >= (skill ? 27 : 8))
+				break;
+			bool damage = t.effect == EFF_DAMAGE_ATTRIBUTE || t.effect == EFF_DAMAGE_SKILL;
+			if (r.statDamage.empty())
+			{
+				if (!damage)
+					break;
+				r.statDamage.assign(35, 0.0f);
+			}
+			float& d = r.statDamage[skill ? 8 + t.key : t.key];
+			if (damage)
+			{
+				float left = (float)(skill ? w.actorSkill(ri, t.key) : w.actorAttribute(ri, t.key));
+				d += fminf(left, amount);
+			}
+			else
+				d = fmaxf(0.0f, d - amount);
+			if (std::all_of(r.statDamage.begin(), r.statDamage.end(), [](float v) { return v <= 0.0f; }))
+				r.statDamage.clear();
+			break;
+		}
 		// Absorb: theirs becomes the player's
 		case EFF_ABSORB_HEALTH:
 			if (!r.dead)

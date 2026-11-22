@@ -6,6 +6,7 @@
 #include "mwgui/windowmanagerimp.hpp"
 #include "mwbase/session.hpp"
 #include "mwgui/inventoryhelpers.hpp"
+#include "components/debug/debuglog.hpp"
 
 // Next / Previous Spell (OpenMW's SpellWindow::cycle; the Classic layout's Y + L / R): through what the magic menu lists,
 // the powers and spells then the enchanted items that are cast, round from the last to the first. Not during a cast,
@@ -121,14 +122,85 @@ void Session::drawMagic()
 	if (!active.empty())
 		uiText(8, 160, 0.42f, col::textDim, "Active: " + active.substr(0, 60));
 	int sel = list.selected < (int)ids.size() ? list.selected : -1;
-	int b = buttonRow({ "Select", w.game.gmst("sclose", "Close") }, focus);
-	if (b == 0 && sel >= 0)
+	if (deletingSpell)
+	{
+		// "Delete <name>?" Yes / No (OpenMW's sQuestionDeleteSpell)
+		if (sel < 0 || ids[sel].compare(0, 5, "item:") == 0)
+			deletingSpell = false;
+		else
+		{
+			std::string q = w.game.gmst("squestiondeletespell", "Delete %s?");
+			size_t at = q.find("%s");
+			if (at != std::string::npos)
+				q.replace(at, 2, w.game.spells[ids[sel]].name);
+			uiRect(20, 70, 280, 100, C2D_Color32(0, 0, 0, 255));
+			uiPanel(20, 70, 280, 100);
+			uiTextBox(scroll, 26, 76, 268, 50, q, 0.5f, false);
+			if (uiIn().down & (KEY_LEFT | KEY_RIGHT))
+				focus = 1 - focus;
+			int yn = -1;
+			const std::string kAnswer[2] = { w.game.gmstLabel("syes", "Yes"), w.game.gmstLabel("sno", "No") };
+			for (int i = 0; i < 2; i++)
+				if (uiButton(34 + i * 132, 132, 120, 28, kAnswer[i], i == focus))
+					yn = i;
+			if (yn == 0)
+				deleteSpell(ids[sel]);
+			if (yn >= 0 || (uiIn().down & KEY_B))
+			{
+				deletingSpell = false;
+				focus = 0;
+			}
+		}
+		return;
+	}
+	int b = buttonRow({ "Select", w.game.gmstLabel("sdelete", "Delete"), w.game.gmst("sclose", "Close") }, focus);
+	if (b == 1 && sel >= 0 && ids[sel].compare(0, 5, "item:") != 0)
+	{
+		// A spell bought or made goes; the race's and the birthsign's, and powers, can't (OpenMW's askDeleteSpell:
+		// sDeleteSpellError). An enchanted item's entry isn't a spell to delete
+		if (inherentSpell(ids[sel]))
+			notify(w.game.gmst("sdeletespellerror", "You cannot delete this spell."));
+		else
+		{
+			deletingSpell = true;
+			focus = 1;               // (No)
+		}
+	}
+	else if (b == 0 && sel >= 0)
 	{
 		w.stats.selectedSpell = ids[sel];
 		const Object* io = ids[sel].compare(0, 5, "item:") == 0 ? w.game.object(ids[sel].substr(5)) : nullptr;
 		notify((io ? io->name.str() : w.game.spells[ids[sel]].name) + " is ready (" + castHint() + ").");
 		closeScreen();
 	}
-	else if (b == 1 || (uiIn().down & KEY_B))
+	else if (b == 2 || (uiIn().down & KEY_B))
 		closeScreen();
+}
+
+// A spell the player can't delete: a power, or one the race or birthsign gives (OpenMW's askDeleteSpell)
+bool Session::inherentSpell(const std::string& id)
+{
+	auto sp = w.game.spells.find(id);
+	if (sp == w.game.spells.end() || sp->second.type == 5)
+		return true;
+	if (const RaceDef* r = w.race())
+		for (auto& s : r->spells)
+			if (lower(s) == id)
+				return true;
+	if (const BirthDef* b = w.birthsign())
+		for (auto& s : b->spells)
+			if (lower(s) == id)
+				return true;
+	return false;
+}
+
+// The player forgets the spell; the one ready to cast goes with it (OpenMW's onDeleteSpellAccept)
+void Session::deleteSpell(const std::string& id)
+{
+	w.stats.spells.erase(std::remove_if(w.stats.spells.begin(), w.stats.spells.end(),
+		[&](const std::string& s) { return lower(s) == id; }), w.stats.spells.end());
+	if (w.stats.selectedSpell == id)
+		w.stats.selectedSpell.clear();
+	logf("magic: deleted spell %s", id.c_str());
+	playSound(-1, "Menu Click");
 }
